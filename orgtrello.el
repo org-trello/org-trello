@@ -49,30 +49,44 @@
 
 ;;; Code:
 
+;; Personal setup
+
+;; 1) retrieve your trello api key https://trello.com/1/appKey/generate
+;; Then add those entries inside the ~/.trello/config.el:
+;; ;; -*- lisp -*-
+;; (defvar consumer-key "consumer-key")
+;; (defvar consumer-secret-key "consumer-secret-key"})
+;; 2) then connect to this url with your browser
+;; https://trello.com/1/authorize?response_type=token&name=org-trello&scope=read,write&expiration=never&key=<consumer-key>
+;; Add another entry inside the ~/.trello/config.el
+
+;; Static setup
+
 (require 'json)
-
 (defvar app-name "org-trello")
-
 (add-to-list 'load-path "./emacs-request")
 (require 'request)
 
-;; 1) retrieve your trello api key https://trello.com/1/appKey/generate
-;; 2) then connect to this url with your browser
-;; https://trello.com/1/authorize?response_type=token&name=org-trello&scope=read,write&expiration=never&key=<your-api-key>
-;; 3) then edit a file ~/.trello/token and add this content and then save the file
-;; ;; -*- lisp -*-
-;; (defvar secret-token "<your-token>")
+;; Load the setup from this file
+(load "/home/tony/.trello/config.el")
 
-;; load the token for trello
-(load "/home/tony/.trello/token")
+;; trello url
+(defvar URL "https://api.trello.com/1" "The needed prefix url for trello")
+
+(defun compute-url (url path) "Compute url with authentication needed."
+  (format "%s%s?key=%s&token=%s"
+          url
+          path
+          consumer-key
+          secret-token))
 
 (request
-   "http://localhost:3000"
+   (compute-url URL "/member/me/boards")
    ;; :params nil
    :parser 'json-read
    :success (function*
              (lambda (&key data &allow-other-keys)
-               (message "%S" (assoc-default 'description data)))))
+               (message "%S" data))))
 
 ;; (request
 ;;    "http://localhost:3000"
