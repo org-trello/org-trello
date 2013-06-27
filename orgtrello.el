@@ -73,20 +73,30 @@
 ;; trello url
 (defvar URL "https://api.trello.com/1" "The needed prefix url for trello")
 
-(defun compute-url (url path) "Compute url with authentication needed."
-  (format "%s%s?key=%s&token=%s"
-          url
-          path
-          consumer-key
-          secret-token))
-
-(request
-   (compute-url URL "/member/me/boards")
+(defun api-query (method path)
+  (request
+   (format "%s%s" URL path)
+   :params `((key . ,consumer-key)
+             (token . ,secret-token))
+   :type method
    ;; :params nil
    :parser 'json-read
    :success (function*
              (lambda (&key data &allow-other-keys)
-               (message "%S" data))))
+               (message "%S"  data)))))
+
+(api-query "GET" "/member/me/boards")
+
+(defvar tmp nil)
+(setq tmp
+      (request
+       (compute-url URL "/member/me/boards")
+       ;; :params nil
+       :type "GET"
+       :parser 'json-read
+       :success (function*
+                 (lambda (&key data &allow-other-keys)
+                   (message "%S" data)))))
 
 ;; (request
 ;;    "http://localhost:3000"
