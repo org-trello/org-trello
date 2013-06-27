@@ -53,6 +53,9 @@
 
 (defvar app-name "org-trello")
 
+(add-to-list 'load-path "./emacs-request")
+(require 'request)
+
 ;; 1) retrieve your trello api key https://trello.com/1/appKey/generate
 ;; 2) then connect to this url with your browser
 ;; https://trello.com/1/authorize?response_type=token&name=org-trello&scope=read,write&expiration=never&key=<your-api-key>
@@ -63,9 +66,26 @@
 ;; load the token for trello
 (load "/home/tony/.trello/token")
 
+(request
+   "http://localhost:3000"
+   ;; :params nil
+   :parser 'json-read
+   :success (function*
+             (lambda (&key data &allow-other-keys)
+               (message "%S" (assoc-default 'description data)))))
+
+;; (request
+;;    "http://localhost:3000"
+;;    :params '((q . "emacs awesome"))
+;;    :parser 'json-read
+;;    :success (function*
+;;              (lambda (&key data &allow-other-keys)
+;;                (let* ((tweet (elt (assoc-default 'results data) 0))
+;;                       (text (assoc-default 'text tweet))
+;;                       (user (assoc-default 'from_user_name tweet)))
+;;                  (message "%s says %s" user text)))))
+
 ;; Now we can play around with trello from here
-
-
 
 (provide 'org-trello)
 
