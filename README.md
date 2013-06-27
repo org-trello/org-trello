@@ -3,6 +3,10 @@ org-trello
 
 Sync your org-mode files with your trello boards.
 
+# under development
+
+Not ready :D
+
 # why?
 
 - org-mode is what I need.
