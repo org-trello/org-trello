@@ -3,7 +3,7 @@
 (ert-deftest testing-get-boards ()
   (let ((h (get-boards)))
     (should (equal (gethash :method h) :get))
-    (should (equal (gethash :uri    h) "/members/me/board"))
+    (should (equal (gethash :uri    h) "/members/me/boards"))
     (should (equal (gethash :params h) nil))))
 
 (ert-deftest testing-get-board ()

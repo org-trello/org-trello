@@ -2,7 +2,7 @@
 
 (defun get-boards ()
   "Retrieve the boards of the current user."
-  (make-hash :get "/members/me/board"))
+  (make-hash :get "/members/me/boards"))
 
 (defun get-board (id)
   "Retrieve the boards of the current user."
