@@ -62,6 +62,12 @@
     (should (equal (gethash :params h) '(("name" . "name-card")
                                          ("idList" . :id-list))))))
 
+(ert-deftest testing-move-card-without-name ()
+  (let ((h (move-card :id-card :id-list)))
+    (should (equal (gethash :method h) :put))
+    (should (equal (gethash :uri    h) "/cards/:id-card"))
+    (should (equal (gethash :params h) '(("idList" . :id-list))))))
+
 (ert-deftest testing-add-checklist ()
   (let ((h (add-checklist "id-card" "name-checklist")))
     (should (equal (gethash :method h) :post))

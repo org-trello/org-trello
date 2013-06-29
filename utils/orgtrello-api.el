@@ -36,10 +36,13 @@
   "List all the cards"
   (make-hash :get (format "/lists/%s/cards" list-id)))
 
-(defun move-card (id idList name)
+(defun move-card (card-id idList &optional name)
   "Move a card to another list"
-  (make-hash :put (format "/cards/%s" id) `(("name" . ,name)
-                                            ("idList" . ,idList))))
+  (if name
+      (setq data `(("name" . ,name)
+                   ("idList" . ,idList)))
+    (setq data `(("idList" . ,idList))))
+  (make-hash :put (format "/cards/%s" card-id) data))
 
 (defun add-checklist (card-id name)
   "Add a checklist to a card"
