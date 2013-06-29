@@ -71,6 +71,17 @@
     (should (equal (gethash :params h) '(("name" . "list-name")
                                          ("idBoard" . "board-id"))))))
 
+(defun add-card (name idList)
+  "Add a card to a board"
+  (make-hash :post "/cards/" `(("name" . ,name) ("idList" . ,idList))))
+
+(ert-deftest testing-add-card ()
+  (let ((h (add-card "card-name" "list-id")))
+    (should (equal (gethash :method h) :post))
+    (should (equal (gethash :uri    h) "/cards/"))
+    (should (equal (gethash :params h) '(("name" . "card-name") ("idList" . "list-id"))))))
+
+
 (provide 'apitrello)
 
 ;;; apitrello ends here
