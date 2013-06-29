@@ -1,4 +1,4 @@
-(require 'hash)
+(require 'orgtrello-hash)
 
 (defun get-boards ()
   "Retrieve the boards of the current user."
@@ -158,6 +158,6 @@
     (should (equal (gethash :uri    h) "/cards/:card-id/checklist/:checklist-id/checkItem/:task-id"))
     (should (equal (gethash :params h) '(("state" ."incomplete"))))))
 
-(provide 'api)
+(provide 'orgtrello-api)
 
-;;; api ends here
+;;; orgtrello-api ends here

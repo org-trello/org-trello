@@ -9,27 +9,27 @@
 
 (defvar URL "https://api.trello.com/1" "The needed prefix url for trello")
 
-(defun trello-query (query-map)
+(defun orgtrello-http (query-map)
   "Query the trello api. This method will dispatch depending on the method."
   (let ((method (gethash :method query-map)))
-    (if (equal :get  method)
-        (trello--get query-map)
+    (if (equal :get method)
+        (orgtrello--get query-map)
         (trello-post-or-put query-map))))
 
-(defun trello--compute-method (method)
+(defun orgtrello--compute-method (method)
   "Given the keywords :get, :post, :put, :delete, map them into standard uppercase string."
   (cond ((equal :get    method) "GET")
         ((equal :post   method) "POST")
         ((equal :put    method) "PUT")
         ((equal :delete method) "DELETE")))
 
-(ert-deftest testing-trello--compute-method ()
-  (should (equal (trello--compute-method :get)    "GET"))
-  (should (equal (trello--compute-method :post)   "POST"))
-  (should (equal (trello--compute-method :put)    "PUT"))
-  (should (equal (trello--compute-method :delete) "DELETE")))
+(ert-deftest testing-orgtrello--compute-method ()
+  (should (equal (orgtrello--compute-method :get)    "GET"))
+  (should (equal (orgtrello--compute-method :post)   "POST"))
+  (should (equal (orgtrello--compute-method :put)    "PUT"))
+  (should (equal (orgtrello--compute-method :delete) "DELETE")))
 
-(defun trello--get (query-map)
+(defun orgtrello--get (query-map)
   "GET"
   (let* ((uri    (gethash :uri    query-map))
          (params (gethash :params query-map)))
@@ -43,14 +43,14 @@
                (lambda (&key data &allow-other-keys)
                  (message "%S"  data))))))
 
-(defun trello--post-or-put (query-map)
+(defun orgtrello--post-or-put (query-map)
   "POST or PUT"
   (let* ((method (gethash :uri    query-map))
          (uri    (gethash :uri    query-map))
          (params (gethash :params query-map)))
     (request
      uri
-     :type    (trello--compute-method method)
+     :type    (orgtrello--compute-method method)
      :params  `((key . ,consumer-key)
                (token . ,secret-token))
      :headers '(("Content-type" "application/json"))
@@ -87,6 +87,6 @@
 ;;                       (user (assoc-default 'from_user_name tweet)))
 ;;                  (message "%s says %s" user text)))))
 
-(provide 'query)
+(provide 'orgtrello-query)
 
-;;; query.el ends here
+;;; orgtrello-query.el ends here

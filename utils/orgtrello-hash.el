@@ -1,4 +1,4 @@
-;;; hash.el --- Build hash map easily
+;;; orgtrello-hash.el --- Build hash map easily
 
 (defun make-hash (method uri &optional params)
   "Utility function to ease the creation of the map - wait, where are my clojure data again!?"
@@ -14,4 +14,4 @@
     (should (equal (gethash :uri    h) :some-uri))
     (should (equal (gethash :params h) nil))))
 
-(provide 'hash)
+(provide 'orgtrello-hash)

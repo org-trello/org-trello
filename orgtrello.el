@@ -1,4 +1,4 @@
-;;; org-trello.el -- Simple mode for syncing org-mode and trello
+;;; orgtrello.el -- Simple mode for syncing org-mode and trello
 
 ;; Copyright (C) 2013 Antoine R. Dumont
 
@@ -68,13 +68,14 @@
 (add-to-list 'load-path "./utils")
 
 ;; query
-(require 'query)
+(require 'orgtrello-api)
+(require 'orgtrello-query)
 
-;; (trello-query ...)
+(orgtrello-http (get-boards))
 
 
 ;; Now we can play around with trello from here
 
-(provide 'org-trello)
+(provide 'orgtrello)
 
 ;;; org-trello.el ends here
