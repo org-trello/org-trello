@@ -81,6 +81,16 @@
     (should (equal (gethash :uri    h) "/cards/"))
     (should (equal (gethash :params h) '(("name" . "card-name") ("idList" . "list-id"))))))
 
+(defun get-cards (list-id)
+  "List all the cards"
+  (make-hash :get (format "/lists/%s/cards" list-id)))
+
+(ert-deftest testing-get-cards ()
+  (let ((h (get-cards :list-id)))
+    (should (equal (gethash :method h) :get))
+    (should (equal (gethash :uri    h) "/lists/:list-id/cards"))
+    (should (equal (gethash :params h) nil))))
+
 
 (provide 'apitrello)
 
