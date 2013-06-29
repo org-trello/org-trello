@@ -65,6 +65,7 @@
 (require 'json)
 (defvar app-name "org-trello")
 (add-to-list 'load-path "./emacs-request")
+(add-to-list 'load-path "./utils")
 (require 'request)
 
 ;; Load the setup from this file

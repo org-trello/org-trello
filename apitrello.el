@@ -1,4 +1,4 @@
-(load "./hash-util.el")
+(load "hash")
 
 (defun get-boards ()
   "Retrieve the boards of the current user."
