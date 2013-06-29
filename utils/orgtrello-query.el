@@ -58,6 +58,8 @@
      :success (function*
                (lambda (&key data &allow-other-keys)
                  (message "success: %S" data)))
+     ;; :success (lambda (&rest args)
+     ;;            (princ (plist-get args :data)))
      :error (function*
                (lambda (&key data &allow-other-keys)
                  (message "error: %S" data))))))
