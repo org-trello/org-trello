@@ -11,3 +11,13 @@
     (should (equal (gethash :method h) :some-method))
     (should (equal (gethash :uri    h) :some-uri))
     (should (equal (gethash :params h) nil))))
+
+(defun get-boards ()
+  "Retrieve the boards of the current user."
+  (make-hash :get "/members/me/board"))
+
+(ert-deftest testing-get-boards ()
+  (let ((h (get-boards)))
+    (should (equal (gethash :method h) :get))
+    (should (equal (gethash :uri    h) "/members/me/board"))
+    (should (equal (gethash :params h) nil))))
