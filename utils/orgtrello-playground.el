@@ -11,8 +11,8 @@
                 (assq property)
                 cdr))))
 
-(-filter (lambda (board)
-           (string= (->> board (assq 'name) cdr) "api test board")) boards)
+;; (-filter (lambda (board)
+;;            (string= (->> board (assq 'name) cdr) "api test board")) boards)
 
 ;; (--filter (= it 2) '(1 2 3))
 ;; (--filter (string= it "abc") '("zref" "abc" "cdf"))
