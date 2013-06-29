@@ -13,7 +13,7 @@
   "Query the trello api. This method will dispatch depending on the method."
   (let ((method (gethash :method query-map)))
     (if (equal :get method)
-        (orgtrello--get query-map)
+        (orgtrello--get     query-map)
         (trello-post-or-put query-map))))
 
 (defun orgtrello--compute-method (method)
@@ -34,21 +34,23 @@
   (format "%s%s" *TRELLO-URL* uri))
 
 (ert-deftest testing-orgtrello--compute-url ()
-  (should (equal (orgtrello--compute-url "/uri")            (format "%s%s" *TRELLO-URL* "/uri")))
-  (should (equal (orgtrello--compute-url "/uri/other")      (format "%s%s" *TRELLO-URL* "/uri/other")))
-  (should (equal (orgtrello--compute-url "/uri/some/other") (format "%s%s" *TRELLO-URL* "/uri/some/other"))))
+  (should (equal (orgtrello--compute-url "/uri")
+                 (format "%s%s" *TRELLO-URL* "/uri")))
+  (should (equal (orgtrello--compute-url "/uri/other")
+                 (format "%s%s" *TRELLO-URL* "/uri/other")))
+  (should (equal (orgtrello--compute-url "/uri/some/other")
+                 (format "%s%s" *TRELLO-URL* "/uri/some/other"))))
 
 (defun orgtrello--get (query-map)
   "GET"
   (let* ((method (gethash :method query-map))
          (uri    (gethash :uri    query-map))
          (params (gethash :params query-map)))
-    (request
-     (orgtrello--compute-url uri)
-     :type (orgtrello--compute-method method)
-     :params `((key . ,consumer-key)
-               (token . ,access-token))
-     :parser 'json-read
+    (request   (orgtrello--compute-url uri)
+     :type     (orgtrello--compute-method method)
+     :params  `((key . ,consumer-key)
+                (token . ,access-token))
+     :parser  'json-read
      :success (function*
                (lambda (&key data &allow-other-keys)
                  (message "%S" data))))))
@@ -58,11 +60,10 @@
   (let* ((method (gethash :method query-map))
          (uri    (gethash :uri    query-map))
          (params (gethash :params query-map)))
-    (request
-     (orgtrello--compute-url uri)
+    (request  (orgtrello--compute-url uri)
      :type    (orgtrello--compute-method method)
      :params  `((key . ,consumer-key)
-               (token . ,access-token))
+                (token . ,access-token))
      :headers '(("Content-type" "application/json"))
      :data    (json-encode params)
      :parser  'json-read
