@@ -1,7 +1,7 @@
 #+title: TODO orgtrello's dev progress
 #+author: Antoine R. Dumont
 
-* IN-PROGRESS pre-requisites [55%]
+* IN-PROGRESS pre-requisites [77%]
 ** DONE emacs-lisp HTTP Client
 CLOSED: [2013-06-29 sam. 15:29]
 ** DONE authentication in trello
@@ -13,9 +13,14 @@ CLOSED: [2013-06-29 sam. 15:29]
 ** IN-PROGRESS porting tinkering results into emacs-lisp
 ** DONE testing
 CLOSED: [2013-06-29 sam. 15:29]
-** TODO Rewrite tests using `expectations`
+** DONE testing in batch mode
+CLOSED: [2013-06-29 sam. 16:49]
+** DONE Define use case
+CLOSED: [2013-06-29 sam. 16:49]
 ** TODO trying out the results interactively
-** TODO Define use case
+
 * Imports
 
 * Exports
+* Later
+** TODO Rewrite tests using `expectations`
