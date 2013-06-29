@@ -55,7 +55,6 @@
 ;; Then add those entries inside the ~/.trello/config.el:
 ;; ;; -*- lisp -*-
 ;; (defvar consumer-key "consumer-key")
-;; (defvar consumer-secret-key "consumer-secret-key"})
 ;; 2) then connect to this url with your browser
 ;; https://trello.com/1/authorize?response_type=token&name=org-trello&scope=read,write&expiration=never&key=<consumer-key>
 ;; Add another entry inside the ~/.trello/config.el
@@ -72,7 +71,6 @@
 (require 'orgtrello-query)
 
 (orgtrello-http (get-boards))
-
 
 ;; Now we can play around with trello from here
 

@@ -3,7 +3,7 @@ org-trello
 
 Sync your org-mode files with your trello boards.
 
-# under development
+# under heavy development
 
 Not ready :D
 
@@ -13,7 +13,23 @@ Not ready :D
 - Trello is what my team need.
 - org-trello may satisfy everybody.
 
-# Usage
+# Setup
+
+1) Retrieve your trello api key from https://trello.com/1/appKey/generate
+Then add those entries inside the file `~/.trello/config.el`:
+
+```emacs-lisp
+;; -*- lisp -*-
+(defvar consumer-key "consumer-key")
+```
+
+2) then connect to this url with your browser
+https://trello.com/1/authorize?response_type=token&name=org-trello&scope=read,write&expiration=never&key=<consumer-key>
+Add another entry inside the `~/.trello/config.el`
+
+Then you're good to go.
+
+# Use case
 
 1. open an org-mode file
 2. edit the identity of the desired board (must have been presetup with the at least 3 columns - todo, doing, done)
