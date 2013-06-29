@@ -125,6 +125,15 @@
     (should (equal (gethash :uri    h) "/cards/:card-id/checklists"))
     (should (equal (gethash :params h) nil))))
 
+(defun get-checklist (checklist-id)
+  "Retrieve all the information from a checklist"
+  (make-hash :get (format "/checklists/%s" checklist-id)))
+
+(ert-deftest testing-get-checklist ()
+  (let ((h (get-checklist :checklist-id)))
+    (should (equal (gethash :method h) :get))
+    (should (equal (gethash :uri    h) "/checklists/:checklist-id"))
+    (should (equal (gethash :params h) nil))))
 
 (provide 'apitrello)
 
