@@ -1,6 +1,6 @@
 (require 'orgtrello-api)
 (require 'orgtrello-query)
-(require 'clj-thrush)
+(require 'dash)
 
 (setq boards-request-response (orgtrello-http (get-boards)))
 (setq boards                  (request-response-data boards-request-response))
