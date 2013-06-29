@@ -103,6 +103,18 @@
     (should (equal (gethash :params h) '(("idList" . "id-list")
                                          ("name" . "name-card"))))))
 
+(defun add-checklist (card-id name)
+  "Add a checklist to a card"
+  (make-hash :post
+             (format "/cards/%s/checklists" card-id)
+             `(("name" . ,name))))
+
+(ert-deftest testing-add-checklist ()
+  (let ((h (add-checklist "id-card" "name-checklist")))
+    (should (equal (gethash :method h) :post))
+    (should (equal (gethash :uri    h) "/cards/id-card/checklists"))
+    (should (equal (gethash :params h) '(("name" . "name-checklist"))))))
+
 
 (provide 'apitrello)
 
