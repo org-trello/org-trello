@@ -45,15 +45,15 @@
 
 (defun orgtrello--post-or-put (query-map)
   "POST or PUT"
-  (let* ((method (gethash :method query-map))
-         (uri    (gethash :uri    query-map))
-         (params (gethash :params query-map)))
+  (let* ((method  (gethash :method query-map))
+         (uri     (gethash :uri    query-map))
+         (payload (gethash :params query-map)))
     (request  (orgtrello--compute-url uri)
      :type    (orgtrello--compute-method method)
      :params  `((key . ,consumer-key)
                 (token . ,access-token))
      :headers '(("Content-type" "application/json"))
-     :data    (json-encode params)
+     :data    (json-encode payload)
      :parser  'json-read
      :success (function*
                (lambda (&key data &allow-other-keys)
