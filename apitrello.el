@@ -93,15 +93,15 @@
 
 (defun move-card (id idList name)
   "Move a card to another list"
-  (make-hash :put (format "/cards/" id) `(("name" . ,name)
-                                          ("idList" . ,idList))))
+  (make-hash :put (format "/cards/%s" id) `(("name" . ,name)
+                                            ("idList" . ,idList))))
 
 (ert-deftest testing-move-card ()
-  (let ((h (move-card "id-card" "id-list" "name-card")))
+  (let ((h (move-card :id-card :id-list "name-card")))
     (should (equal (gethash :method h) :put))
-    (should (equal (gethash :uri    h) "/cards/id-card"))
-    (should (equal (gethash :params h) '(("idList" . "id-list")
-                                         ("name" . "name-card"))))))
+    (should (equal (gethash :uri    h) "/cards/:id-card"))
+    (should (equal (gethash :params h) '(("name" . "name-card")
+                                         ("idList" . :id-list))))))
 
 (defun add-checklist (card-id name)
   "Add a checklist to a card"
