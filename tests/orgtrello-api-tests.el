@@ -1,4 +1,4 @@
-(require 'orgtrello-hash)
+(require 'orgtrello-api)
 
 (ert-deftest testing-get-boards ()
   (let ((h (get-boards)))
@@ -91,3 +91,7 @@
     (should (equal (gethash :method h) :put))
     (should (equal (gethash :uri    h) "/cards/:card-id/checklist/:checklist-id/checkItem/:task-id"))
     (should (equal (gethash :params h) '(("state" ."incomplete"))))))
+
+(provide 'orgtrello-api-tests)
+
+;;; orgtrello-api-tests.el end here

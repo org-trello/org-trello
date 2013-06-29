@@ -13,3 +13,7 @@
                  (format "%s%s" *TRELLO-URL* "/uri/other")))
   (should (equal (orgtrello--compute-url "/uri/some/other")
                  (format "%s%s" *TRELLO-URL* "/uri/some/other"))))
+
+(provide 'orgtrello-query-tests)
+
+;;; orgtrello-query-tests.el end here

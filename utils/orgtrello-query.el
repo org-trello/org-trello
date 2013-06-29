@@ -5,7 +5,7 @@
 (load (concat (getenv "HOME") "/.trello/config.el"))
 
 (require 'request)
-(require 'hash)
+(require 'orgtrello-hash)
 
 (defvar *TRELLO-URL* "https://api.trello.com/1" "The needed prefix url for trello")
 
