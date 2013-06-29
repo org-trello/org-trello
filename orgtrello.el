@@ -75,6 +75,9 @@
 
 ;; (orgtrello-http (get-boards))
 
+(setq boards-request-response (orgtrello-http (get-boards)))
+(setq boards                 (request-response-data boards-request-response))
+
 (provide 'orgtrello)
 
 ;;; org-trello.el ends here
