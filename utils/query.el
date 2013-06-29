@@ -50,7 +50,7 @@
          (params (gethash :params query-map)))
     (request
      uri
-     :type    (compute-method method)
+     :type    (trello--compute-method method)
      :params  `((key . ,consumer-key)
                (token . ,secret-token))
      :headers '(("Content-type" "application/json"))
