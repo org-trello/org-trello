@@ -57,7 +57,8 @@
 ;; (defvar consumer-key "consumer-key")
 ;; 2) then connect to this url with your browser
 ;; https://trello.com/1/authorize?response_type=token&name=org-trello&scope=read,write&expiration=never&key=<consumer-key>
-;; Add another entry inside the ~/.trello/config.el
+;; Add another entry inside the `~/.trello/config.el`
+;; (defvar access-token "your-access-token")
 
 ;; Static setup
 

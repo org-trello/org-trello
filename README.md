@@ -20,12 +20,16 @@ Then add those entries inside the file `~/.trello/config.el`:
 
 ```emacs-lisp
 ;; -*- lisp -*-
-(defvar consumer-key "consumer-key")
+(defvar consumer-key "your-consumer-key")
 ```
 
 2) then connect to this url with your browser
 https://trello.com/1/authorize?response_type=token&name=org-trello&scope=read,write&expiration=never&key=<consumer-key>
 Add another entry inside the `~/.trello/config.el`
+
+```emacs-lisp
+(defvar access-token "your-access-token")
+```
 
 Then you're good to go.
 
