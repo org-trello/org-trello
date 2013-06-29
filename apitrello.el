@@ -135,6 +135,16 @@
     (should (equal (gethash :uri    h) "/checklists/:checklist-id"))
     (should (equal (gethash :params h) nil))))
 
+(defun add-tasks (name checklist-id)
+  "Add todo tasks (trello items) to a checklist with id 'id'"
+  (make-hash :post (format "/checklists/%s/checkItems" checklist-id) `(("name" . ,name))))
+
+(ert-deftest testing-add-tasks ()
+  (let ((h (add-tasks "task-name" :checklist-id)))
+    (should (equal (gethash :method h) :post))
+    (should (equal (gethash :uri    h) "/checklists/:checklist-id/checkItems"))
+    (should (equal (gethash :params h) '(("name" . "task-name"))))))
+
 (provide 'apitrello)
 
 ;;; apitrello ends here
