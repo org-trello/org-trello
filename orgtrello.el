@@ -71,9 +71,9 @@
 (require 'orgtrello-api)
 (require 'orgtrello-query)
 
-(orgtrello-http (get-boards))
-
 ;; Now we can play around with trello from here
+
+;; (orgtrello-http (get-boards))
 
 (provide 'orgtrello)
 
