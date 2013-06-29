@@ -87,17 +87,6 @@
 
 (api-query "GET" "/member/me/boards")
 
-(defvar tmp nil)
-(setq tmp
-      (request
-       (compute-url URL "/member/me/boards")
-       ;; :params nil
-       :type "GET"
-       :parser 'json-read
-       :success (function*
-                 (lambda (&key data &allow-other-keys)
-                   (message "%S" data)))))
-
 ;; (request
 ;;    "http://localhost:3000"
 ;;    :params '((q . "emacs awesome"))
