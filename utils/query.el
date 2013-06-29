@@ -29,10 +29,6 @@
   (should (equal (trello--compute-method :put)    "PUT"))
   (should (equal (trello--compute-method :delete) "DELETE")))
 
-(defun make-data-from-hash (params)
-  "Given a map params, transforms it into a list of cons cell."
-    )
-
 (defun trello--get (query-map)
   "GET"
   (let* ((uri    (gethash :uri    query-map))
@@ -58,7 +54,7 @@
      :params  `((key . ,consumer-key)
                (token . ,secret-token))
      :headers '(("Content-type" "application/json"))
-     :data    (json-encode (make-data-from-hash params))
+     :data    (json-encode params)
      :parser  'json-read
      :success (function*
                (lambda (&key data &allow-other-keys)

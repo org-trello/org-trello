@@ -1,4 +1,4 @@
-(load "hash")
+(require 'hash)
 
 (defun get-boards ()
   "Retrieve the boards of the current user."
@@ -59,3 +59,18 @@
     (should (equal (gethash :method h) :get))
     (should (equal (gethash :uri    h) "/lists/:list-id"))
     (should (equal (gethash :params h) nil))))
+
+(defun add-list (name idBoard)
+  "Add a list - the name and the board id are mandatory (so i say!)."
+  (make-hash :post "/lists/" `(("name" . ,name) ("idBoard" . ,idBoard))))
+
+(ert-deftest testing-add-list ()
+  (let ((h (add-list "list-name" "board-id")))
+    (should (equal (gethash :method h) :post))
+    (should (equal (gethash :uri    h) "/lists/"))
+    (should (equal (gethash :params h) '(("name" . "list-name")
+                                         ("idBoard" . "board-id"))))))
+
+(provide 'apitrello)
+
+;;; apitrello ends here
