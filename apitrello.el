@@ -91,6 +91,18 @@
     (should (equal (gethash :uri    h) "/lists/:list-id/cards"))
     (should (equal (gethash :params h) nil))))
 
+(defun move-card (id idList name)
+  "Move a card to another list"
+  (make-hash :put (format "/cards/" id) `(("name" . ,name)
+                                          ("idList" . ,idList))))
+
+(ert-deftest testing-move-card ()
+  (let ((h (move-card "id-card" "id-list" "name-card")))
+    (should (equal (gethash :method h) :put))
+    (should (equal (gethash :uri    h) "/cards/id-card"))
+    (should (equal (gethash :params h) '(("idList" . "id-list")
+                                         ("name" . "name-card"))))))
+
 
 (provide 'apitrello)
 
