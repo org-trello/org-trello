@@ -1,16 +1,4 @@
-(defun make-hash (method uri &optional params)
-  "Utility function to ease the creation of the map - wait, where are my clojure data again!?"
-  (setq h (make-hash-table :test 'equal))
-  (puthash :method method h)
-  (puthash :uri    uri    h)
-  (if params (puthash :params params h))
-  h)
-
-(ert-deftest testing-make-hash ()
-  (let ((h (make-hash :some-method :some-uri)))
-    (should (equal (gethash :method h) :some-method))
-    (should (equal (gethash :uri    h) :some-uri))
-    (should (equal (gethash :params h) nil))))
+(load "./hash-util.el")
 
 (defun get-boards ()
   "Retrieve the boards of the current user."
@@ -40,4 +28,14 @@
   (let ((h (get-cards :board-id)))
     (should (equal (gethash :method h) :get))
     (should (equal (gethash :uri    h) "/boards/:board-id/cards"))
+    (should (equal (gethash :params h) nil))))
+
+(defun get-card (card-id)
+  "Detail of a card with id card-id."
+  (make-hash :get (format "/cards/%s" card-id)))
+
+(ert-deftest testing-get-card ()
+  (let ((h (get-card :card-id)))
+    (should (equal (gethash :method h) :get))
+    (should (equal (gethash :uri    h) "/cards/:card-id"))
     (should (equal (gethash :params h) nil))))
