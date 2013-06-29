@@ -13,8 +13,8 @@
   "Query the trello api. This method will dispatch depending on the method."
   (let ((method (gethash :method query-map)))
     (if (equal :get method)
-        (orgtrello--get     query-map)
-        (trello-post-or-put query-map))))
+        (orgtrello--get         query-map)
+        (orgtrello--post-or-put query-map))))
 
 (defun orgtrello--compute-method (method)
   "Given the keywords :get, :post, :put, :delete, map them into standard uppercase string."
