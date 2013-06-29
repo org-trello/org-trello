@@ -158,6 +158,6 @@
     (should (equal (gethash :uri    h) "/cards/:card-id/checklist/:checklist-id/checkItem/:task-id"))
     (should (equal (gethash :params h) '(("state" ."incomplete"))))))
 
-(provide 'apitrello)
+(provide 'api)
 
-;;; apitrello ends here
+;;; api ends here
