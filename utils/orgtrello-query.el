@@ -30,8 +30,7 @@
 (defun orgtrello--get (query-map)
   "GET"
   (let* ((method (gethash :method query-map))
-         (uri    (gethash :uri    query-map))
-         (params (gethash :params query-map)))
+         (uri    (gethash :uri    query-map)))
     (request   (orgtrello--compute-url uri)
      :type     (orgtrello--compute-method method)
      :params  `((key . ,consumer-key)
