@@ -54,7 +54,7 @@
      :type    (orgtrello--compute-method method)
      :params  `((key . ,consumer-key)
                 (token . ,access-token))
-     :headers '(("Content-type" "application/json"))
+     :headers '(("Content-type" . "application/json"))
      :data    (json-encode payload)
      :parser  'json-read
      :success (function*
