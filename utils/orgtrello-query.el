@@ -37,7 +37,7 @@
      uri
      :type "GET"
      :params `((key . ,consumer-key)
-               (token . ,secret-token))
+               (token . ,access-token))
      :parser 'json-read
      :success (function*
                (lambda (&key data &allow-other-keys)
@@ -52,7 +52,7 @@
      uri
      :type    (orgtrello--compute-method method)
      :params  `((key . ,consumer-key)
-               (token . ,secret-token))
+               (token . ,access-token))
      :headers '(("Content-type" "application/json"))
      :data    (json-encode params)
      :parser  'json-read
@@ -65,7 +65,7 @@
 ;;   (request
 ;;    (format "%s%s" URL path)
 ;;    :params `((key . ,consumer-key)
-;;              (token . ,secret-token))
+;;              (token . ,access-token))
 ;;    :type method
 ;;    ;; :params nil
 ;;    :parser 'json-read
