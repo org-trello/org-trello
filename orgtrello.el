@@ -66,38 +66,12 @@
 (defvar app-name "org-trello")
 (add-to-list 'load-path "./emacs-request")
 (add-to-list 'load-path "./utils")
-(require 'request)
 
-;; Load the setup from this file
-(load "/home/tony/.trello/config.el")
+;; query
+(require 'query)
 
-;; trello url
-(defvar URL "https://api.trello.com/1" "The needed prefix url for trello")
+;; (trello-query ...)
 
-(defun api-query (method path)
-  (request
-   (format "%s%s" URL path)
-   :params `((key . ,consumer-key)
-             (token . ,secret-token))
-   :type method
-   ;; :params nil
-   :parser 'json-read
-   :success (function*
-             (lambda (&key data &allow-other-keys)
-               (message "%S"  data)))))
-
-(api-query "GET" "/member/me/boards")
-
-;; (request
-;;    "http://localhost:3000"
-;;    :params '((q . "emacs awesome"))
-;;    :parser 'json-read
-;;    :success (function*
-;;              (lambda (&key data &allow-other-keys)
-;;                (let* ((tweet (elt (assoc-default 'results data) 0))
-;;                       (text (assoc-default 'text tweet))
-;;                       (user (assoc-default 'from_user_name tweet)))
-;;                  (message "%s says %s" user text)))))
 
 ;; Now we can play around with trello from here
 
