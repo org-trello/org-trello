@@ -39,3 +39,13 @@
     (should (equal (gethash :method h) :get))
     (should (equal (gethash :uri    h) "/cards/:card-id"))
     (should (equal (gethash :params h) nil))))
+
+(defun get-lists (board-id)
+  "Display the lists of the board"
+  (make-hash :get (format "/boards/%s/lists" board-id)))
+
+(ert-deftest testing-get-lists ()
+  (let ((h (get-lists :board-id)))
+    (should (equal (gethash :method h) :get))
+    (should (equal (gethash :uri    h) "/boards/:board-id/lists"))
+    (should (equal (gethash :params h) nil))))
