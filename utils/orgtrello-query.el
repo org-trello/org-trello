@@ -32,6 +32,7 @@
   (let* ((method (gethash :method query-map))
          (uri    (gethash :uri    query-map)))
     (request   (orgtrello--compute-url uri)
+     ;; :sync    t
      :type     (orgtrello--compute-method method)
      :params  `((key . ,consumer-key)
                 (token . ,access-token))
@@ -49,6 +50,7 @@
          (uri     (gethash :uri    query-map))
          (payload (gethash :params query-map)))
     (request  (orgtrello--compute-url uri)
+     ;; :sync    t
      :type    (orgtrello--compute-method method)
      :params  `((key . ,consumer-key)
                 (token . ,access-token))
