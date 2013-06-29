@@ -7,7 +7,7 @@
 (require 'request)
 (require 'hash)
 
-(defvar URL "https://api.trello.com/1" "The needed prefix url for trello")
+(defvar *TRELLO-URL* "https://api.trello.com/1" "The needed prefix url for trello")
 
 (defun orgtrello-http (query-map)
   "Query the trello api. This method will dispatch depending on the method."
@@ -29,12 +29,21 @@
   (should (equal (orgtrello--compute-method :put)    "PUT"))
   (should (equal (orgtrello--compute-method :delete) "DELETE")))
 
+(defun orgtrello--compute-url (uri)
+  "Compute the trello url from the given uri."
+  (format "%s%s" *TRELLO-URL* uri))
+
+(ert-deftest testing-orgtrello--compute-url ()
+  (should (equal (orgtrello--compute-url "/uri")            (format "%s%s" *TRELLO-URL* "/uri")))
+  (should (equal (orgtrello--compute-url "/uri/other")      (format "%s%s" *TRELLO-URL* "/uri/other")))
+  (should (equal (orgtrello--compute-url "/uri/some/other") (format "%s%s" *TRELLO-URL* "/uri/some/other"))))
+
 (defun orgtrello--get (query-map)
   "GET"
   (let* ((uri    (gethash :uri    query-map))
          (params (gethash :params query-map)))
     (request
-     uri
+     (orgtrello--compute-url uri)
      :type "GET"
      :params `((key . ,consumer-key)
                (token . ,access-token))
@@ -49,7 +58,7 @@
          (uri    (gethash :uri    query-map))
          (params (gethash :params query-map)))
     (request
-     uri
+     (orgtrello--compute-url uri)
      :type    (orgtrello--compute-method method)
      :params  `((key . ,consumer-key)
                (token . ,access-token))
