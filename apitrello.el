@@ -31,3 +31,13 @@
     (should (equal (gethash :method h) :get))
     (should (equal (gethash :uri    h) "/boards/:id"))
     (should (equal (gethash :params h) nil))))
+
+(defun get-cards (board-id)
+  "cards of a board"
+  (make-hash :get (format "/boards/%s/cards" board-id)))
+
+(ert-deftest testing-get-cards ()
+  (let ((h (get-cards :board-id)))
+    (should (equal (gethash :method h) :get))
+    (should (equal (gethash :uri    h) "/boards/:board-id/cards"))
+    (should (equal (gethash :params h) nil))))
