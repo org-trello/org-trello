@@ -38,7 +38,10 @@
      :parser  'json-read
      :success (function*
                (lambda (&key data &allow-other-keys)
-                 (message "%S" data))))))
+                 (message "success: %S" data)))
+     :error (function*
+               (lambda (&key data &allow-other-keys)
+                 (message "error: %S" data))))))
 
 (defun orgtrello--post-or-put (query-map)
   "POST or PUT"
@@ -54,7 +57,10 @@
      :parser  'json-read
      :success (function*
                (lambda (&key data &allow-other-keys)
-                 (message "%S"  data))))))
+                 (message "success: %S" data)))
+     :error (function*
+               (lambda (&key data &allow-other-keys)
+                 (message "error: %S" data))))))
 
 ;; trying out the request api
 ;; (defun api-query (method path)
