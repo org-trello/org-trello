@@ -145,6 +145,19 @@
     (should (equal (gethash :uri    h) "/checklists/:checklist-id/checkItems"))
     (should (equal (gethash :params h) '(("name" . "task-name"))))))
 
+(defun check-or-uncheck-tasks (card-id checklist-id task-id state)
+  "Update a task"
+  (make-hash
+   :put
+   (format "/cards/%s/checklist/%s/checkItem/%s" card-id checklist-id task-id)
+   `(("state" . ,state))))
+
+(ert-deftest testing-check-or-uncheck-states ()
+  (let ((h (check-or-uncheck-tasks :card-id :checklist-id :task-id "incomplete")))
+    (should (equal (gethash :method h) :put))
+    (should (equal (gethash :uri    h) "/cards/:card-id/checklist/:checklist-id/checkItem/:task-id"))
+    (should (equal (gethash :params h) '(("state" ."incomplete"))))))
+
 (provide 'apitrello)
 
 ;;; apitrello ends here
