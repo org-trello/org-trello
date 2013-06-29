@@ -40,17 +40,18 @@
 
 (defun orgtrello--get (query-map)
   "GET"
-  (let* ((uri    (gethash :uri    query-map))
+  (let* ((method (gethash :uri    query-map))
+         (uri    (gethash :uri    query-map))
          (params (gethash :params query-map)))
     (request
      (orgtrello--compute-url uri)
-     :type "GET"
+     :type method
      :params `((key . ,consumer-key)
                (token . ,access-token))
      :parser 'json-read
      :success (function*
                (lambda (&key data &allow-other-keys)
-                 (message "%S"  data))))))
+                 (message "%S" data))))))
 
 (defun orgtrello--post-or-put (query-map)
   "POST or PUT"
