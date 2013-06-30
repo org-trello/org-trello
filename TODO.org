@@ -43,13 +43,17 @@ CLOSED: [2013-06-30 dim. 15:47]
 - org-list-get-children
 - org-list-get-subtree
 
-*** IN-PROGRESS Hooks [25%]
+*** IN-PROGRESS Hooks [80%]
 **** DONE state change for an item - org-trigger-hook (look also to org-after-todo-state-change-hook)
 CLOSED: [2013-06-30 dim. 16:21]
 Adding a simple function that displays a message to the org-trigger-hook.
-**** TODO create new task (org-insert-heading-hook?)
-**** TODO delete task ()
-**** TODO promote a task (org-after-promote-entry-hook? / org-after-demote-entry-hook?)
+**** DONE create new task (org-insert-heading-hook
+CLOSED: [2013-06-30 dim. 16:28]
+**** DONE promote a task (org-after-promote-entry-hook
+CLOSED: [2013-06-30 dim. 16:39]
+**** DONE demote a task (org-after-demote-entry-hook)
+CLOSED: [2013-06-30 dim. 16:40]
+**** TODO delete task (?)
 ** TODO Finding out howto make an emacs minor mode             :howTo:emacs
 * Imports
 * Exports

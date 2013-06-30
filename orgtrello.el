@@ -95,6 +95,21 @@
 (add-hook 'org-after-todo-state-change-hook 'org-trello--extends-org-after-todo-state-change-hook)
 ;; (remove-hook 'org-trigger-hook 'org-trello--extends-org-after-todo-state-change-hook)
 
+(defun org-trello--org-insert-heading-hook ()
+  (message "new creation"))
+
+(add-hook 'org-insert-heading-hook 'org-trello--org-insert-heading-hook)
+
 (provide 'orgtrello)
+
+(defun org-trello--org-after-promote-entry-hook ()
+  (message "promotion"))
+
+(add-hook 'org-after-promote-entry-hook 'org-trello--org-after-promote-entry-hook)
+
+(defun org-trello--org-after-demote-entry-hook ()
+  (message "demotion"))
+
+(add-hook 'org-after-demote-entry-hook 'org-trello--org-after-demote-entry-hook)
 
 ;;; org-trello.el ends here
