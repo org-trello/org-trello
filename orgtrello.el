@@ -1,4 +1,4 @@
-;;; orgtrello.el -- Simple mode for syncing org-mode and trello
+;;; orgtrello.el -- Minor mode for org-mode to sync org-mode and trello
 
 ;; Copyright (C) 2013 Antoine R. Dumont
 
@@ -25,31 +25,7 @@
 
 ;;; Commentary:
 
-;; Simple mode for synching org-mode and trello
-
-;; This mode requires oauth.el:
-;; git clone git://github.com/psanford/emacs-oauth.git
-;; and json.el:
-;; http://edward.oconnor.cx/2006/03/json.el
-
-;; You will need to register for an oauth key/secret at
-;; https://trello.com/1/appKey/generate
-
-;; Once you have a key and secrect, set consumer-key
-;; and consumer-secret-key with those values.
-
-;; Add the following to your emacs init file
-;; (require 'org-trello)
-;; (authenticate unix-user-name)
-
-;; Useful functions:
-;; list-messages
-;; post-message
-;; post-buffer-contents
-
-;;; Code:
-
-;; Personal setup
+;; Minor mode for org-mode to sync org-mode and trello
 
 ;; 1) retrieve your trello api key https://trello.com/1/appKey/generate
 ;; Then add those entries inside the ~/.trello/config.el:
@@ -60,7 +36,10 @@
 ;; Add another entry inside the `~/.trello/config.el`
 ;; (defvar access-token "your-access-token")
 
-;; Static setup
+;; Add the following to your emacs init file
+;; (require 'orgtrello)
+
+;;; Code:
 
 (require 'json)
 (defvar app-name "org-trello")
@@ -83,9 +62,11 @@
   :lighter " ot" ;; the name on the modeline
   :keymap  (let ((map (make-sparse-keymap)))
              (define-key map (kbd "C-c H") 'orgtrello-minor-mode-testing)
+             ;; define other bindings...
+
              map))
 ;;;###autoload
 
 (add-hook 'org-mode-hook 'orgtrello-mode)
 
-;;; org-trello.el ends here
+;;; orgtrello.el ends here
