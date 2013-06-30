@@ -43,7 +43,13 @@ CLOSED: [2013-06-30 dim. 15:47]
 - org-list-get-children
 - org-list-get-subtree
 
-*** TODO Simple org-cycle-hook that displays a simple message
+*** IN-PROGRESS Hooks [33%]
+**** DONE state change for an item - org-trigger-hook
+CLOSED: [2013-06-30 dim. 16:09]
+Adding a simple function that displays a message to the org-trigger-hook.
+**** TODO create new task
+**** TODO delete task
+
 ** TODO Finding out howto make an emacs minor mode             :howTo:emacs
 * Imports
 * Exports
