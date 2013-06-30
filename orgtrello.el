@@ -84,4 +84,6 @@
              (define-key map (kbd "C-c H") 'orgtrello-minor-mode-testing)
              map))
 
+(add-hook 'org-mode-hook 'orgtrello-mode)
+
 ;;; org-trello.el ends here
