@@ -76,17 +76,24 @@
 
 ;; (orgtrello-http (get-boards))
 
-(defun org-trello--extends-org (list)
+(defun org-trello--extends-org-trigger-hook (list)
   (let* ((type (plist-get list :type))
          (from (plist-get list :from))
          (to   (plist-get list :to)))
     (message "type: %s\nfrom: %s\nto: %s" type from to)))
 
+(defun org-trello--extends-org-after-todo-state-change-hook ()
+  (message "%S" org-state))
+
 ;; (add-hook <the-hook> <the-function-to-add-to-the-hook>)
 ;; means to remove hook
 ;; (remove-hook <the-hook> <the-function-to-remove-from-the-hook>)
 
-(add-hook 'org-trigger-hook 'org-trello--extends-org)
+;; (add-hook 'org-trigger-hook 'org-trello--extends-org-trigger-hook)
+;; (remove-hook 'org-trigger-hook 'org-trello--extends-org-trigger-hook)
+
+(add-hook 'org-after-todo-state-change-hook 'org-trello--extends-org-after-todo-state-change-hook)
+;; (remove-hook 'org-trigger-hook 'org-trello--extends-org-after-todo-state-change-hook)
 
 (provide 'orgtrello)
 
