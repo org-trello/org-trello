@@ -1,7 +1,7 @@
 #+title: TODO orgtrello's dev progress
 #+author: Antoine R. Dumont
 
-* IN-PROGRESS pre-requisites [72%]
+* IN-PROGRESS pre-requisites [81%]
 ** DONE emacs-lisp HTTP Client
 CLOSED: [2013-06-29 sam. 15:29]
 ** DONE authentication in trello
@@ -10,7 +10,8 @@ CLOSED: [2013-06-29 sam. 15:29]
 CLOSED: [2013-06-29 sam. 15:29]
 ** DONE api tinkering (see [[https://github.com/ardumont/trello-lab][ardumont/trello-lab]] on github)
 CLOSED: [2013-06-29 sam. 15:29]
-** IN-PROGRESS porting tinkering results into emacs-lisp
+** DONE porting tinkering results into emacs-lisp
+CLOSED: [2013-06-30 dim. 13:37]
 ** DONE testing
 CLOSED: [2013-06-29 sam. 15:29]
 ** DONE testing in batch mode
@@ -20,12 +21,13 @@ CLOSED: [2013-06-29 sam. 16:49]
 ** DONE trying out the results interactively
 CLOSED: [2013-06-30 dim. 00:13]
 
-** TODO Finding out the org-mode hooks
+** TODO Finding out the org-mode hooks                 :howTo:emacs:orgMode:
 http://orgmode.org/worg/org-configs/org-hooks.html
 - org-after-todo-state-change-hook
 - etc...
-** TODO Finding out howto make an emacs minor mode
+** TODO Finding out howto make an emacs minor mode             :howTo:emacs:
+
 * Imports
 * Exports
 * Later
-** TODO Rewrite tests using `expectations`
+** TODO Rewrite tests using `expectations`                             :dev:
