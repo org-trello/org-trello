@@ -54,7 +54,9 @@ CLOSED: [2013-06-30 dim. 16:39]
 **** DONE demote a task (org-after-demote-entry-hook)
 CLOSED: [2013-06-30 dim. 16:40]
 **** TODO delete task (?)
-** TODO Finding out howto make an emacs minor mode             :howTo:emacs
+** IN-PROGRESS Finding out howto make an emacs minor mode             :howTo:emacs
+https://www.gnu.org/software/emacs/manual/html_node/emacs/Modes.html#Modes
+http://nullprogram.com/blog/2013/02/06/
 * Imports
 * Exports
 * Later
