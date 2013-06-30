@@ -21,12 +21,29 @@ CLOSED: [2013-06-29 sam. 16:49]
 ** DONE trying out the results interactively
 CLOSED: [2013-06-30 dim. 00:13]
 
-** TODO Finding out the org-mode hooks                 :howTo:emacs:orgMode:
+** IN-PROGRESS Finding out the org-mode hooks [66%]     :howTo:emacs:orgMode:
 http://orgmode.org/worg/org-configs/org-hooks.html
-- org-after-todo-state-change-hook
-- etc...
-** TODO Finding out howto make an emacs minor mode             :howTo:emacs:
+1) org-after-todo-state-change-hook
+2) etc...
+*** DONE hook that seems interesting for the goal at end
+CLOSED: [2013-06-30 dim. 15:47]
+- org-cycle-hook
+*** DONE miscellaneous functions that seems useful for the goat at end
+CLOSED: [2013-06-30 dim. 15:47]
+- org-cycle
+- org-block-todo-from-children-or-siblings-or-parent
+- org-entry-is-done-p
+- org-entry-is-todo-p
+- save-excursion
+- org-back-to-heading
+- org-next-item
+- org-list-has-child-p
+- org-list-get-parent
+- org-list-get-children
+- org-list-get-subtree
 
+*** TODO Simple org-cycle-hook that displays a simple message
+** TODO Finding out howto make an emacs minor mode             :howTo:emacs
 * Imports
 * Exports
 * Later
