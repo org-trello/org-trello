@@ -78,11 +78,13 @@
   (interactive)
   (message "hello from orgtrello-mode"))
 
+;;;###autoload
 (define-minor-mode orgtrello-mode "Sync your org-mode and your trello together."
   :lighter " ot" ;; the name on the modeline
   :keymap  (let ((map (make-sparse-keymap)))
              (define-key map (kbd "C-c H") 'orgtrello-minor-mode-testing)
              map))
+;;;###autoload
 
 (add-hook 'org-mode-hook 'orgtrello-mode)
 
