@@ -76,6 +76,14 @@
 
 ;; (orgtrello-http (get-boards))
 
+(defun org-trello--extends-org (state)
+  (message "%S" state))
+
+(add-hook 'org-cycle-hook 'org-trello--extends-org)
+
+;; means to remove hook
+;; (remove-hook 'org-cycle-hook 'org-trello--extends-org)
+
 (provide 'orgtrello)
 
 ;;; org-trello.el ends here
