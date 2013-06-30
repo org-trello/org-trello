@@ -70,6 +70,7 @@
 ;; query
 (require 'orgtrello-api)
 (require 'orgtrello-query)
+(require 'dash)
 
 ;; Now we can play around with trello from here
 
