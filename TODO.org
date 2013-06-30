@@ -23,6 +23,7 @@ CLOSED: [2013-06-30 dim. 00:13]
 
 ** IN-PROGRESS Finding out the org-mode hooks [66%]     :howTo:emacs:orgMode:
 http://orgmode.org/worg/org-configs/org-hooks.html
+http://orgmode.org/worg/doc.html
 1) org-after-todo-state-change-hook
 2) etc...
 *** DONE hook that seems interesting for the goal at end
