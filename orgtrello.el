@@ -70,7 +70,6 @@
 ;; query
 (require 'orgtrello-api)
 (require 'orgtrello-query)
-(require 'clj-thrush)
 
 ;; Now we can play around with trello from here
 
