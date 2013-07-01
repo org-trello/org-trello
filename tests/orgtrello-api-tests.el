@@ -93,10 +93,11 @@
     (should (equal (gethash :params h) nil))))
 
 (ert-deftest testing-orgtrello-api--add-tasks ()
-  (let ((h (orgtrello-api--add-tasks "task-name" :checklist-id)))
+  (let ((h (orgtrello-api--add-tasks :checklist-id "task-name" t)))
     (should (equal (gethash :method h) :post))
     (should (equal (gethash :uri    h) "/checklists/:checklist-id/checkItems"))
-    (should (equal (gethash :params h) '(("name" . "task-name"))))))
+    (should (equal (gethash :params h) '(("name"  . "task-name")
+                                         ("checked" . t))))))
 
 (ert-deftest testing-orgtrello-api--update-task ()
   (let ((h (orgtrello-api--update-task :card-id :checklist-id :task-id :task-name "incomplete")))

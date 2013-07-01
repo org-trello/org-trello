@@ -4,6 +4,15 @@
 * IN-PROGRESS development steps [94%] :orgtrello-id-51d18669dbb4f4076b001bde:
 ** DONE emacs-lisp HTTP Client :orgtrello-id-51d1dbfee2ec4af31c000d4f:
 CLOSED: [2013-06-29 sam. 15:29]
+*** TODO for fun :orgtrello-id-51d1e62b033a0bcc1c000eb1:
+*** DONE for fun strike through :orgtrello-id-51d1e631f80dcf2f27000d35:
+CLOSED: [2013-07-01 lun. 22:27]
+*** DONE test :orgtrello-id-51d1e6515bd52d070e000f70:
+CLOSED: [2013-07-01 lun. 22:27]
+*** DONE another test which will be ok :orgtrello-id-51d1e74afe15222a510007a3:
+CLOSED: [2013-07-01 lun. 22:28]
+*** DONE yet another test renamed :orgtrello-id-51d1e761a969945d14000e65:
+CLOSED: [2013-07-01 lun. 22:32]
 ** DONE authentication in trello :orgtrello-id-51d1dc0d5d7cbfef26000bb5:
 CLOSED: [2013-06-29 sam. 15:29]
 ** DONE http request on trello api :orgtrello-id-51d1dc1b780af29860000c73:

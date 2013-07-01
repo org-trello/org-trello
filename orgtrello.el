@@ -88,12 +88,14 @@
          (orgtrello--checklist-id (gethash :id checklist-meta))
          (orgtrello--card-id      (gethash :id card-meta))
          (orgtrello--task-name    (gethash :title task-meta))
-         (orgtrello--state        (if (string= "DONE" (gethash :keyword task-meta)) "complete" "incomplete"))
+         ;; the trello api is strange
+         (orgtrello--task-state   (if (string= "DONE" (gethash :keyword task-meta)) "complete" "incomplete")) ;; update api call
+         (orgtrello--task-check   (if (string= "DONE" (gethash :keyword task-meta)) 't nil))                  ;; create api call
          (orgtrello--action       (if orgtrello--task-id
                                       ;; update - rename, check or uncheck the task
-                                      (orgtrello-api--update-task orgtrello--card-id orgtrello--checklist-id orgtrello--task-id orgtrello--task-name orgtrello--state)
+                                      (orgtrello-api--update-task orgtrello--card-id orgtrello--checklist-id orgtrello--task-id orgtrello--task-name orgtrello--task-state)
                                     ;; create
-                                    (orgtrello-api--add-tasks orgtrello--task-name orgtrello--checklist-id))))
+                                    (orgtrello-api--add-tasks orgtrello--checklist-id orgtrello--task-name orgtrello--task-check))))
     (orgtrello-query-http orgtrello--action)))
 
 (defun orgtrello--too-deep-level (meta &optional parent-meta grandparent-meta)
