@@ -4,15 +4,6 @@
 * IN-PROGRESS development steps [94%] :orgtrello-id-51d18669dbb4f4076b001bde:
 ** DONE emacs-lisp HTTP Client :orgtrello-id-51d1dbfee2ec4af31c000d4f:
 CLOSED: [2013-06-29 sam. 15:29]
-*** TODO for fun :orgtrello-id-51d1e62b033a0bcc1c000eb1:
-*** DONE for fun strike through :orgtrello-id-51d1e631f80dcf2f27000d35:
-CLOSED: [2013-07-01 lun. 22:27]
-*** DONE test :orgtrello-id-51d1e6515bd52d070e000f70:
-CLOSED: [2013-07-01 lun. 22:27]
-*** DONE another test which will be ok :orgtrello-id-51d1e74afe15222a510007a3:
-CLOSED: [2013-07-01 lun. 22:28]
-*** DONE yet another test renamed :orgtrello-id-51d1e761a969945d14000e65:
-CLOSED: [2013-07-01 lun. 22:32]
 ** DONE authentication in trello :orgtrello-id-51d1dc0d5d7cbfef26000bb5:
 CLOSED: [2013-06-29 sam. 15:29]
 ** DONE http request on trello api :orgtrello-id-51d1dc1b780af29860000c73:
@@ -93,7 +84,8 @@ CLOSED: [2013-07-01 lun. 16:00]
 ** IN-PROGRESS Depending on the level, trigger the right api call :orgtrello-id-51d1df7779592bc71c000cd9:
 *** DONE Dispatch on the level :orgtrello-id-51d1df80fe952bce1c00099b:
 CLOSED: [2013-07-01 lun. 12:15]
-*** IN-PROGRESS Basic [87%]
+*** DONE Basic [100%] :orgtrello-id-51d1e8033c800aa34700019e:
+CLOSED: [2013-07-01 lun. 22:35]
 **** DONE level 1 - api create trello card
 CLOSED: [2013-07-01 lun. 12:44]
 - simple display of the api call result
@@ -119,9 +111,10 @@ CLOSED: [2013-07-01 lun. 22:35]
 **** TODO level 3 - create/update trello task
 * Questions
 ** How to persist the identifier?
-top of my head - maybe i can use tags (cf. org-set-tags)
+We use tag at the moment.
 ** How to deal with promotion/demotion?
-no idea yet.
+We do not deal with it at the moment.
+No idea how to deal with it.
 ** Import - Existing and compatible org-mode file into trello?
 ** Export - Existing trello board into org-mode file?
 * Later

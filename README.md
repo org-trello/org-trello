@@ -15,6 +15,8 @@ Not ready :D
 
 # Setup
 
+## Trello related
+
 1) Retrieve your trello api key from https://trello.com/1/appKey/generate
 Then add those entries inside the file `~/.trello/config.el`:
 
@@ -33,6 +35,16 @@ Add another entry inside the `~/.trello/config.el`
 
 Then you're good to go.
 
+## emacs related
+
+orgtrello is a minor mode for org-mode to sync.
+
+``` emacs-lisp
+;; orgtrello depends on dash, org-mode
+
+(require 'orgtrello)
+```
+
 # Use case
 
 1. open an org-mode file
@@ -47,65 +59,26 @@ Then you're good to go.
 *** task3
 ```
 
-Trello:
-- `card-identity` will be created in trello in the `todo` column.
-- `checklist` will be added to the card `card-identity`
-- the 3 tasks are added to the checklist `checklist`
-
-It is to be noted that no move has taken place yet.
-
-4. User has done the task 1 and fill his/her org-mode:
-
-```org-mode
-* card-identity
-** checklist
-*** DONE task1
-*** task2
-*** task3
-```
+*BINDING* C-c H (will change)
 
 Trello:
-- The card `card-identity` is moved to the `doing` column.
-- The task task1 is checked.
+- Card:
+  - Place yourself on the `card-identity` and hit the binding *BINDING*, this will create the card in the `TODO` column in your trello board
+  - You can edit the title and hit *BINDING*, this will update the title in trello
+  - Change the status from TODO to any intermediary status, then hit the binding, this will move the card to the list `DOING`.
+  - Once done, move the status of the card from anything to DONE, hit the binding, this will move the card to the list `DONE`.
+- Checklist:
+  - Place yourself on the checklist `checklist`, hit the binding, this will add `checklist` as a checklist to your card `card-identity`
+  - Rename your checklist and hit again the binding to update its label
 
-5. User has finished all tasks
-```org-mode
-* card-identity
-** checklist
-*** DONE task1
-*** DONE task2
-*** DONE task3
-```
+- Task:
+  - Place yourself on your task and hit *BINDING*, this will add the item to such checklist.
+  - Change the name of the task and hit *BINDING*, this will update its label
+  - Change the status of the task to `DONE` and hit the binding, this will check such item in trello.
 
-Trello:
-- The card `card-identity` is moved to the `done` column.
-- The tasks `task1`, `task2`, `task3` are checked.
+# Release note
 
-6. User add other tasks
-```org-mode
-* card-identity
-** checklist
-*** DONE task1
-*** DONE task2
-*** DONE task3
-*** task4
-```
-
-Trello:
-- the card `card-identity` is moved back to the `doing` column.
-
-7. User pass all tasks to todo
-```org-mode
-* card-identity
-** checklist
-*** task1
-*** task2
-*** task3
-*** task4
-```
-
-Trello:
-- the card `card-identity` is moved back to todo.
+[What has been done and remains to be done](./TODO.org)
 
 # License
 
