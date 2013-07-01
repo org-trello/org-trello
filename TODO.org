@@ -2,13 +2,13 @@
 #+author: Antoine R. Dumont
 
 * IN-PROGRESS development steps [94%] :orgtrello-id-51d18669dbb4f4076b001bde:
-** DONE emacs-lisp HTTP Client
+** DONE emacs-lisp HTTP Client :orgtrello-id-51d1dbfee2ec4af31c000d4f:
 CLOSED: [2013-06-29 sam. 15:29]
-** DONE authentication in trello
+** DONE authentication in trello :orgtrello-id-51d1dc0d5d7cbfef26000bb5:
 CLOSED: [2013-06-29 sam. 15:29]
-** DONE http request on trello api
+** DONE http request on trello api :orgtrello-id-51d1dc1b780af29860000c73:
 CLOSED: [2013-06-29 sam. 15:29]
-** DONE api tinkering (see [[https://github.com/ardumont/trello-lab][ardumont/trello-lab]] on github)
+** DONE api tinkering (see [[https://github.com/ardumont/trello-lab][ardumont/trello-lab]] on github) :orgtrello-id-51d1dc3d40b92b7f3300002c:
 CLOSED: [2013-06-29 sam. 15:29]
 ** DONE porting tinkering results into emacs-lisp
 CLOSED: [2013-06-30 dim. 13:37]
@@ -81,10 +81,10 @@ CLOSED: [2013-07-01 lun. 11:00]
 CLOSED: [2013-07-01 lun. 11:00]
 ** DONE binding to describe the current heading
 CLOSED: [2013-07-01 lun. 16:00]
-** TODO Depending on the level, trigger the right api call
+** IN-PROGRESS Depending on the level, trigger the right api call
 *** DONE Dispatch on the level
 CLOSED: [2013-07-01 lun. 12:15]
-*** TODO Basic [37%]
+*** IN-PROGRESS Basic [62%]
 **** DONE level 1 - api create trello card
 CLOSED: [2013-07-01 lun. 12:44]
 - simple display of the api call result
@@ -93,9 +93,11 @@ CLOSED: [2013-07-01 lun. 12:44]
 CLOSED: [2013-07-01 lun. 16:00]
 **** DONE level 2 - update trello card
 CLOSED: [2013-07-01 lun. 16:00]
-**** TODO level 2 - create trello checklist
-**** TODO level 2 - update trello checklist
-**** TODO level 3 - create trello item (which i call task)
+**** DONE level 2 - create trello checklist
+CLOSED: [2013-07-01 lun. 21:46]
+**** DONE level 2 - update trello checklist
+CLOSED: [2013-07-01 lun. 21:46]
+**** TODO level 3 - create trello item
 **** TODO level 3 - update trello item
 **** TODO > level 4 - display that we do not deal with such level
 

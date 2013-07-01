@@ -74,6 +74,12 @@
     (should (equal (gethash :uri    h) "/cards/id-card/checklists"))
     (should (equal (gethash :params h) '(("name" . "name-checklist"))))))
 
+(ert-deftest testing-orgtrello-api--update-checklist ()
+  (let ((h (orgtrello-api--update-checklist :id-checklist "name-checklist")))
+    (should (equal (gethash :method h) :put))
+    (should (equal (gethash :uri    h) "/checklists/:id-checklist"))
+    (should (equal (gethash :params h) '(("name" . "name-checklist"))))))
+
 (ert-deftest testing-orgtrello-api--get-checklists ()
   (let ((h (orgtrello-api--get-checklists :card-id)))
     (should (equal (gethash :method h) :get))

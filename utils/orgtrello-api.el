@@ -52,6 +52,12 @@
              (format "/cards/%s/checklists" card-id)
              `(("name" . ,name))))
 
+(defun orgtrello-api--update-checklist (checklist-id name)
+  "Update the checklist's name"
+  (orgtrello-hash--make-hash :put
+             (format "/checklists/%s" checklist-id)
+             `(("name" . ,name))))
+
 (defun orgtrello-api--get-checklists (card-id)
   "List the checklists of a card"
   (orgtrello-hash--make-hash :get (format "/cards/%s/checklists" card-id)))

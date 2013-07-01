@@ -3,7 +3,15 @@
 (require 'orgtrello-hash)
 
 (defun orgtrello-data-metadata ()
+  "Compute the metadata from the org-heading-components entry"
   (let* ((org-metadata (org-heading-components)))
+    (orgtrello-data--get-metadata org-metadata)))
+
+(defun orgtrello-data-parent-metadata ()
+  "Compute the metadata from the org-heading-components entry"
+  (let* ((org-metadata (save-excursion
+                         (org-up-heading-safe)
+                         (org-heading-components))))
     (orgtrello-data--get-metadata org-metadata)))
 
 (defun orgtrello-data--get-level (heading-metadata)
