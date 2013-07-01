@@ -1,74 +1,76 @@
+;;; orgtrello-api.el
+
 (require 'orgtrello-hash)
 
-(defun get-boards ()
+(defun orgtrello-api--get-boards ()
   "Retrieve the boards of the current user."
-  (make-hash :get "/members/me/boards"))
+  (orgtrello-hash--make-hash :get "/members/me/boards"))
 
-(defun get-board (id)
+(defun orgtrello-api--get-board (id)
   "Retrieve the boards of the current user."
-  (make-hash :get (format "/boards/%s" id)))
+  (orgtrello-hash--make-hash :get (format "/boards/%s" id)))
 
-(defun get-cards (board-id)
+(defun orgtrello-api--get-cards (board-id)
   "cards of a board"
-  (make-hash :get (format "/boards/%s/cards" board-id)))
+  (orgtrello-hash--make-hash :get (format "/boards/%s/cards" board-id)))
 
-(defun get-card (card-id)
+(defun orgtrello-api--get-card (card-id)
   "Detail of a card with id card-id."
-  (make-hash :get (format "/cards/%s" card-id)))
+  (orgtrello-hash--make-hash :get (format "/cards/%s" card-id)))
 
-(defun get-lists (board-id)
+(defun orgtrello-api--get-lists (board-id)
   "Display the lists of the board"
-  (make-hash :get (format "/boards/%s/lists" board-id)))
+  (orgtrello-hash--make-hash :get (format "/boards/%s/lists" board-id)))
 
-(defun get-list (list-id)
+(defun orgtrello-api--get-list (list-id)
   "Get a list by id"
-  (make-hash :get (format "/lists/%s" list-id)))
+  (orgtrello-hash--make-hash :get (format "/lists/%s" list-id)))
 
-(defun add-list (name idBoard)
+(defun orgtrello-api--add-list (name idBoard)
   "Add a list - the name and the board id are mandatory (so i say!)."
-  (make-hash :post "/lists/" `(("name" . ,name) ("idBoard" . ,idBoard))))
+  (orgtrello-hash--make-hash :post "/lists/" `(("name" . ,name) ("idBoard" . ,idBoard))))
 
-(defun add-card (name idList)
+(defun orgtrello-api--add-card (name idList)
   "Add a card to a board"
-  (make-hash :post "/cards/" `(("name" . ,name) ("idList" . ,idList))))
+  (orgtrello-hash--make-hash :post "/cards/" `(("name" . ,name) ("idList" . ,idList))))
 
-(defun get-cards (list-id)
+(defun orgtrello-api--get-cards (list-id)
   "List all the cards"
-  (make-hash :get (format "/lists/%s/cards" list-id)))
+  (orgtrello-hash--make-hash :get (format "/lists/%s/cards" list-id)))
 
-(defun move-card (card-id idList &optional name)
+(defun orgtrello-api--move-card (card-id idList &optional name)
   "Move a card to another list"
   (if name
-      (setq data `(("name" . ,name)
+      (setq data `(("name"   . ,name)
                    ("idList" . ,idList)))
     (setq data `(("idList" . ,idList))))
-  (make-hash :put (format "/cards/%s" card-id) data))
+  (orgtrello-hash--make-hash :put (format "/cards/%s" card-id) data))
 
-(defun add-checklist (card-id name)
+(defun orgtrello-api--add-checklist (card-id name)
   "Add a checklist to a card"
-  (make-hash :post
+  (orgtrello-hash--make-hash :post
              (format "/cards/%s/checklists" card-id)
              `(("name" . ,name))))
 
-(defun get-checklists (card-id)
+(defun orgtrello-api--get-checklists (card-id)
   "List the checklists of a card"
-  (make-hash :get (format "/cards/%s/checklists" card-id)))
+  (orgtrello-hash--make-hash :get (format "/cards/%s/checklists" card-id)))
 
-(defun get-checklist (checklist-id)
+(defun orgtrello-api--get-checklist (checklist-id)
   "Retrieve all the information from a checklist"
-  (make-hash :get (format "/checklists/%s" checklist-id)))
+  (orgtrello-hash--make-hash :get (format "/checklists/%s" checklist-id)))
 
-(defun add-tasks (name checklist-id)
+(defun orgtrello-api--add-tasks (name checklist-id)
   "Add todo tasks (trello items) to a checklist with id 'id'"
-  (make-hash :post (format "/checklists/%s/checkItems" checklist-id) `(("name" . ,name))))
+  (orgtrello-hash--make-hash :post (format "/checklists/%s/checkItems" checklist-id) `(("name" . ,name))))
 
-(defun check-or-uncheck-tasks (card-id checklist-id task-id state)
+(defun orgtrello-api--check-or-uncheck-tasks (card-id checklist-id task-id state)
   "Update a task"
-  (make-hash
+  (orgtrello-hash--make-hash
    :put
    (format "/cards/%s/checklist/%s/checkItem/%s" card-id checklist-id task-id)
    `(("state" . ,state))))
 
 (provide 'orgtrello-api)
 
-;;; orgtrello-api ends here
+;;; orgtrello-api.el ends here

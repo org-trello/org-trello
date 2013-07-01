@@ -1,7 +1,7 @@
 #+title: TODO orgtrello's dev progress
 #+author: Antoine R. Dumont
 
-* IN-PROGRESS pre-requisites [81%]
+* IN-PROGRESS development steps [94%] :orgtrello-id-51d18669dbb4f4076b001bde:
 ** DONE emacs-lisp HTTP Client
 CLOSED: [2013-06-29 sam. 15:29]
 ** DONE authentication in trello
@@ -20,8 +20,8 @@ CLOSED: [2013-06-29 sam. 16:49]
 CLOSED: [2013-06-29 sam. 16:49]
 ** DONE trying out the results interactively
 CLOSED: [2013-06-30 dim. 00:13]
-
-** IN-PROGRESS Finding out the org-mode hooks [66%]     :howTo:emacs:orgMode:
+** DONE Finding out the org-mode hooks [66%]           :howTo:emacs:orgMode:
+CLOSED: [2013-07-01 lun. 10:58]
 http://orgmode.org/worg/org-configs/org-hooks.html
 http://orgmode.org/worg/doc.html
 1) org-after-todo-state-change-hook
@@ -29,9 +29,15 @@ http://orgmode.org/worg/doc.html
 *** DONE hook that seems interesting for the goal at end
 CLOSED: [2013-06-30 dim. 15:47]
 - org-cycle-hook
+- org-after-todo-state-change-hook
+- org-insert-heading-hook
+- org-after-promote-entry-hook
+- org-after-demote-entry-hook
 *** DONE miscellaneous functions that seems useful for the goat at end
-CLOSED: [2013-06-30 dim. 15:47]
+CLOSED: [2013-07-01 lun. 08:05]
 - org-cycle
+- org-current-level
+- org-heading-components
 - org-block-todo-from-children-or-siblings-or-parent
 - org-entry-is-done-p
 - org-entry-is-todo-p
@@ -42,8 +48,7 @@ CLOSED: [2013-06-30 dim. 15:47]
 - org-list-get-parent
 - org-list-get-children
 - org-list-get-subtree
-
-*** IN-PROGRESS Hooks [80%]
+*** PENDING Hooks [80%]
 **** DONE state change for an item - org-trigger-hook (look also to org-after-todo-state-change-hook)
 CLOSED: [2013-06-30 dim. 16:21]
 Adding a simple function that displays a message to the org-trigger-hook.
@@ -54,10 +59,56 @@ CLOSED: [2013-06-30 dim. 16:39]
 **** DONE demote a task (org-after-demote-entry-hook)
 CLOSED: [2013-06-30 dim. 16:40]
 **** TODO delete task (?)
-** IN-PROGRESS Finding out howto make an emacs minor mode             :howTo:emacs
+** DONE Finding out howto make an emacs minor mode             :howTo:emacs
+CLOSED: [2013-07-01 lun. 08:04]
 https://www.gnu.org/software/emacs/manual/html_node/emacs/Modes.html#Modes
 http://nullprogram.com/blog/2013/02/06/
-* Imports
-* Exports
+** DONE function generating metadata
+CLOSED: [2013-07-01 lun. 10:58]
+*** org-current-level
+Compute the current level (number of stars)
+*** org-get-heading
+return the title heading
+*** org-heading-components
+return the list of metadata (including title, keyword and level)
+** DONE Find org function that extract information from line (org-heading-components)
+CLOSED: [2013-07-01 lun. 11:00]
+** DONE Develop simple function to compute the needed data only
+CLOSED: [2013-07-01 lun. 11:00]
+** DONE Plug the call of a function that displays such informations in a hook
+CLOSED: [2013-07-01 lun. 11:00]
+** DONE Plug the call of a function that displays such informations with a binding
+CLOSED: [2013-07-01 lun. 11:00]
+** DONE binding to describe the current heading
+CLOSED: [2013-07-01 lun. 16:00]
+** TODO Depending on the level, trigger the right api call
+*** DONE Dispatch on the level
+CLOSED: [2013-07-01 lun. 12:15]
+*** TODO Basic [37%]
+**** DONE level 1 - api create trello card
+CLOSED: [2013-07-01 lun. 12:44]
+- simple display of the api call result
+- plug the call
+**** DONE level 1 - http call to create the card
+CLOSED: [2013-07-01 lun. 16:00]
+**** DONE level 2 - update trello card
+CLOSED: [2013-07-01 lun. 16:00]
+**** TODO level 2 - create trello checklist
+**** TODO level 2 - update trello checklist
+**** TODO level 3 - create trello item (which i call task)
+**** TODO level 3 - update trello item
+**** TODO > level 4 - display that we do not deal with such level
+
+*** TODO Advanced (cf. org-get-entry) [0%]
+**** TODO level 1 - create/update trello card + any checklist + any tasks associated with the checklists
+**** TODO level 2 - create/update trello checklist + any tasks associated to the checklist
+**** TODO level 3 - create/update trello task
+* Questions
+** How to persist the identifier?
+top of my head - maybe i can use tags (cf. org-set-tags)
+** How to deal with promotion/demotion?
+no idea yet.
+** Import - Existing and compatible org-mode file into trello?
+** Export - Existing trello board into org-mode file?
 * Later
 ** TODO Rewrite tests using `expectations`                             :dev:

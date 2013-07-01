@@ -1,3 +1,6 @@
+init:
+	git submodule init && git submodule update
+
 test:
 	emacs --no-init-file -batch \
 		-l ert \
