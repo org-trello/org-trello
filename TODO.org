@@ -110,7 +110,8 @@ CLOSED: [2013-07-01 lun. 21:46]
 CLOSED: [2013-07-01 lun. 21:59]
 **** DONE level 3 - update trello item
 CLOSED: [2013-07-01 lun. 22:19]
-**** TODO > level 4 - display that we do not deal with such level
+**** DONE > level 4 - display that we do not deal with such level
+CLOSED: [2013-07-01 lun. 22:35]
 
 *** TODO Advanced (cf. org-get-entry) [0%]
 **** TODO level 1 - create/update trello card + any checklist + any tasks associated with the checklists

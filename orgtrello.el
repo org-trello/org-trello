@@ -100,7 +100,7 @@
 
 (defun orgtrello--too-deep-level (meta &optional parent-meta grandparent-meta)
   "Deal with too deep level."
-  "Do not deal with level superior to 4.")
+  (message "Your arborescence depth is too deep. We only support up to depth 3.\nLevel 1 - card\nLevel 2 - checklist\nLevel 3 - items/tasks"))
 
 (defun orgtrello--dispatch-map-creation ()
   "Dispatch map for the creation of card/checklist/item."
