@@ -1,7 +1,11 @@
 #+title: TODO orgtrello's dev progress
 #+author: Antoine R. Dumont
+#+property: board-id      50bcfd2f033110476000e768
+#+property: todo-list-id  51d15c319c93af375200155f
+#+property: doing-list-id 0
+#+property: done-list-id  0
 
-* IN-PROGRESS development steps [89%] :orgtrello-id-51d18669dbb4f4076b001bde:
+* IN-PROGRESS Development steps [90%] :orgtrello-id-51d18669dbb4f4076b001bde:
 ** DONE emacs-lisp HTTP Client :orgtrello-id-51d1dbfee2ec4af31c000d4f:
 CLOSED: [2013-06-29 sam. 15:29]
 ** DONE authentication in trello :orgtrello-id-51d1dc0d5d7cbfef26000bb5:
@@ -109,7 +113,20 @@ CLOSED: [2013-07-01 lun. 22:35]
 **** TODO level 1 - create/update trello card + any checklist + any tasks associated with the checklists
 **** TODO level 2 - create/update trello checklist + any tasks associated to the checklist
 **** TODO level 3 - create/update trello task
-** TODO Adding org metadata file `a la` #+BOARD-ID, #+TODO-LIST-ID, #+DOING-LIST-ID, #+DONE-LIST-ID to permit the user to setup easily without touching lisp code
+** DONE Adding org metadata file `a la` #+BOARD-ID, #+TODO-LIST-ID, #+DOING-LIST-ID, #+DONE-LIST-ID to permit the user to setup easily without touching lisp code
+CLOSED: [2013-07-01 lun. 23:31]
+Adding this:
+#+begin_src org-mode
+#+property: board-id      50bcfd2f033110476000e768
+#+property: todo-list-id  51d15c319c93af375200155f
+#+property: doing-list-id 0
+#+property: done-list-id  0
+#+end_src
+
+** TODO Delete
+*** TODO card
+*** TODO checklist
+*** TODO task
 
 * Questions
 ** How to persist the identifier?

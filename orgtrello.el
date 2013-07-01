@@ -52,20 +52,22 @@
 (require 'orgtrello-query)
 (require 'orgtrello-data)
 
-(defvar *BOARD-ID*      "50bcfd2f033110476000e768")
-(defvar *TODO-LIST-ID*  "51d15c319c93af375200155f")
-;;(defvar *DOING-LIST-ID* "51d15c98741fd4673a0014b5")
+(defvar *BOARD-ID*      "board-id")
+(defvar *TODO-LIST-ID*  "todo-list-id")
+(defvar *DOING-LIST-ID* "doing-list-id")
+(defvar *DONE-LIST-ID*  "doing-list-id")
 
 (defun orgtrello--card (card-meta &optional parent-meta grandparent-meta)
   "Deal with create/update card"
   ;; parent and grandparent are useless here
-  (let* ((orgtrello--card-id   (gethash :id    card-meta))
+  (let* ((orgtrello--list-id   (assoc-default *TODO-LIST-ID* org-file-properties)) ;; at the moment, every new card is created in the todo list
+         (orgtrello--card-id   (gethash :id    card-meta))
          (orgtrello--card-name (gethash :title card-meta))
          (orgtrello--action    (if orgtrello--card-id
                                    ;; update
-                                   (orgtrello-api--move-card orgtrello--card-id *TODO-LIST-ID* orgtrello--card-name)
+                                   (orgtrello-api--move-card orgtrello--card-id orgtrello--list-id orgtrello--card-name)
                                  ;; create
-                                 (orgtrello-api--add-card orgtrello--card-name *TODO-LIST-ID*))))
+                                 (orgtrello-api--add-card orgtrello--card-name orgtrello--list-id))))
     (orgtrello-query-http orgtrello--action)))
 
 (defun orgtrello--checklist (checklist-meta &optional card-meta grandparent-meta)
@@ -139,14 +141,19 @@
                                      (org-up-heading-safe)
                                      (org-heading-components)))
          (grandparent-meta (orgtrello-data--get-metadata org-grandparent-metadata)))
-    (message "org-heading: %s\norg-metadata: %s\norgtrello-metadata: %s\norg-parent-metadata: %s\norgtrello-parent-metadata: %s\norg-grandparent-metadata: %s\norgtrello-grandparent-metadata: %s"
+    (message "org-heading: %s\norg-metadata: %s\norgtrello-metadata: %s\norg-parent-metadata: %s\norgtrello-parent-metadata: %s\norg-grandparent-metadata: %s\norgtrello-grandparent-metadata: %s\n%S\n%s %s %s %s"
              org-heading
              org-metadata
              meta
              org-parent-metadata
              parent-meta
              org-grandparent-metadata
-             grandparent-meta)))
+             grandparent-meta
+             org-file-properties
+             (assoc-default *BOARD-ID*      org-file-properties)
+             (assoc-default *TODO-LIST-ID*  org-file-properties)
+             (assoc-default *DOING-LIST-ID* org-file-properties)
+             (assoc-default *DONE-LIST-ID*  org-file-properties))))
 
 ;;;###autoload
 (define-minor-mode orgtrello-mode "Sync your org-mode and your trello together."
