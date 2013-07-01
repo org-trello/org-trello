@@ -70,12 +70,13 @@
   "Add todo tasks (trello items) to a checklist with id 'id'"
   (orgtrello-hash--make-hash :post (format "/checklists/%s/checkItems" checklist-id) `(("name" . ,name))))
 
-(defun orgtrello-api--check-or-uncheck-tasks (card-id checklist-id task-id state)
+(defun orgtrello-api--update-task (card-id checklist-id task-id name state)
   "Update a task"
   (orgtrello-hash--make-hash
    :put
    (format "/cards/%s/checklist/%s/checkItem/%s" card-id checklist-id task-id)
-   `(("state" . ,state))))
+   `(("name"  . ,name)
+     ("state" . ,state))))
 
 (provide 'orgtrello-api)
 

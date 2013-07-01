@@ -81,10 +81,10 @@ CLOSED: [2013-07-01 lun. 11:00]
 CLOSED: [2013-07-01 lun. 11:00]
 ** DONE binding to describe the current heading
 CLOSED: [2013-07-01 lun. 16:00]
-** IN-PROGRESS Depending on the level, trigger the right api call
-*** DONE Dispatch on the level
+** IN-PROGRESS Depending on the level, trigger the right api call :orgtrello-id-51d1df7779592bc71c000cd9:
+*** DONE Dispatch on the level :orgtrello-id-51d1df80fe952bce1c00099b:
 CLOSED: [2013-07-01 lun. 12:15]
-*** IN-PROGRESS Basic [62%]
+*** IN-PROGRESS Basic [87%]
 **** DONE level 1 - api create trello card
 CLOSED: [2013-07-01 lun. 12:44]
 - simple display of the api call result
@@ -97,8 +97,10 @@ CLOSED: [2013-07-01 lun. 16:00]
 CLOSED: [2013-07-01 lun. 21:46]
 **** DONE level 2 - update trello checklist
 CLOSED: [2013-07-01 lun. 21:46]
-**** TODO level 3 - create trello item
-**** TODO level 3 - update trello item
+**** DONE level 3 - create trello item
+CLOSED: [2013-07-01 lun. 21:59]
+**** DONE level 3 - update trello item
+CLOSED: [2013-07-01 lun. 22:19]
 **** TODO > level 4 - display that we do not deal with such level
 
 *** TODO Advanced (cf. org-get-entry) [0%]

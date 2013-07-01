@@ -98,11 +98,12 @@
     (should (equal (gethash :uri    h) "/checklists/:checklist-id/checkItems"))
     (should (equal (gethash :params h) '(("name" . "task-name"))))))
 
-(ert-deftest testing-orgtrello-api--check-or-uncheck-states ()
-  (let ((h (orgtrello-api--check-or-uncheck-tasks :card-id :checklist-id :task-id "incomplete")))
+(ert-deftest testing-orgtrello-api--update-task ()
+  (let ((h (orgtrello-api--update-task :card-id :checklist-id :task-id :task-name "incomplete")))
     (should (equal (gethash :method h) :put))
     (should (equal (gethash :uri    h) "/cards/:card-id/checklist/:checklist-id/checkItem/:task-id"))
-    (should (equal (gethash :params h) '(("state" ."incomplete"))))))
+    (should (equal (gethash :params h) '(("name"  . :task-name)
+                                         ("state" ."incomplete"))))))
 
 (provide 'orgtrello-api-tests)
 

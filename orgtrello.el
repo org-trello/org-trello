@@ -56,35 +56,47 @@
 (defvar *TODO-LIST-ID*  "51d15c319c93af375200155f")
 ;;(defvar *DOING-LIST-ID* "51d15c98741fd4673a0014b5")
 
-(defun orgtrello--card (card-meta &optional parent-meta)
+(defun orgtrello--card (card-meta &optional parent-meta grandparent-meta)
   "Deal with create/update card"
+  ;; parent and grandparent are useless here
   (let* ((orgtrello--card-id   (gethash :id    card-meta))
          (orgtrello--card-name (gethash :title card-meta))
          (orgtrello--action    (if orgtrello--card-id
-                                 ;; update
-                                 (orgtrello-api--move-card orgtrello--card-id *TODO-LIST-ID* orgtrello--card-name)
+                                   ;; update
+                                   (orgtrello-api--move-card orgtrello--card-id *TODO-LIST-ID* orgtrello--card-name)
                                  ;; create
                                  (orgtrello-api--add-card orgtrello--card-name *TODO-LIST-ID*))))
     (orgtrello-query-http orgtrello--action)))
 
-(defun orgtrello--checklist (checklist-meta &optional card-meta)
+(defun orgtrello--checklist (checklist-meta &optional card-meta grandparent-meta)
   "Deal with create/update checklist"
+  ;; grandparent is useless here
   (let* ((orgtrello--checklist-id   (gethash :id checklist-meta))
          (orgtrello--card-id        (gethash :id card-meta))
          (orgtrello--checklist-name (gethash :title checklist-meta))
          (orgtrello--action         (if orgtrello--checklist-id
-                                      ;; update
-                                      (orgtrello-api--update-checklist orgtrello--checklist-id orgtrello--checklist-name)
+                                        ;; update
+                                        (orgtrello-api--update-checklist orgtrello--checklist-id orgtrello--checklist-name)
                                       ;; create
                                       (orgtrello-api--add-checklist orgtrello--card-id orgtrello--checklist-name))))
     (orgtrello-query-http orgtrello--action)))
 
-(defun orgtrello--task (meta &optional parent-meta)
+(defun orgtrello--task (task-meta &optional checklist-meta card-meta)
   "Deal with create/update task"
-  "create/update task"
-  )
+  ;; card-meta is only usefull for the update part
+  (let* ((orgtrello--task-id      (gethash :id task-meta))
+         (orgtrello--checklist-id (gethash :id checklist-meta))
+         (orgtrello--card-id      (gethash :id card-meta))
+         (orgtrello--task-name    (gethash :title task-meta))
+         (orgtrello--state        (if (string= "DONE" (gethash :keyword task-meta)) "complete" "incomplete"))
+         (orgtrello--action       (if orgtrello--task-id
+                                      ;; update - rename, check or uncheck the task
+                                      (orgtrello-api--update-task orgtrello--card-id orgtrello--checklist-id orgtrello--task-id orgtrello--task-name orgtrello--state)
+                                    ;; create
+                                    (orgtrello-api--add-tasks orgtrello--task-name orgtrello--checklist-id))))
+    (orgtrello-query-http orgtrello--action)))
 
-(defun orgtrello--too-deep-level (meta &optional parent-meta)
+(defun orgtrello--too-deep-level (meta &optional parent-meta grandparent-meta)
   "Deal with too deep level."
   "Do not deal with level superior to 4.")
 
@@ -98,15 +110,15 @@
 
 (defvar *MAP-DISPATCH-CREATE-UPDATE* (orgtrello--dispatch-map-creation))
 
-(defun orgtrello--dispatch-create (meta &optional other-meta)
+(defun orgtrello--dispatch-create (meta &optional parent-meta grandparent-meta)
   (let* ((level       (gethash :level meta))
          (dispatch-fn (gethash level *MAP-DISPATCH-CREATE-UPDATE* 'orgtrello--too-deep-level)))
-    (funcall dispatch-fn meta other-meta)))
+    (funcall dispatch-fn meta parent-meta grandparent-meta)))
 
 (defun orgtrello--do-action ()
   "Compute the action needed to be done depending on the current heading's level."
   (interactive)
-  (orgtrello--dispatch-create (orgtrello-data-metadata) (orgtrello-data-parent-metadata)))
+  (orgtrello--dispatch-create (orgtrello-data-metadata) (orgtrello-data-parent-metadata) (orgtrello-data-grandparent-metadata)))
 
 (defun orgtrello--describe-heading ()
   "Describe the current heading's metadata"
@@ -119,13 +131,20 @@
          (org-parent-metadata (save-excursion
                                 (org-up-heading-safe)
                                 (org-heading-components)))
-         (parent-meta (orgtrello-data--get-metadata org-parent-metadata)))
-    (message "org-heading: %s\norg-metadata: %s\norgtrello-metadata: %s\norg-parent-metadata: %s\norgtrello-parent-metadata: %s"
+         (parent-meta (orgtrello-data--get-metadata org-parent-metadata))
+         (org-grandparent-metadata (save-excursion
+                                     (org-up-heading-safe)
+                                     (org-up-heading-safe)
+                                     (org-heading-components)))
+         (grandparent-meta (orgtrello-data--get-metadata org-grandparent-metadata)))
+    (message "org-heading: %s\norg-metadata: %s\norgtrello-metadata: %s\norg-parent-metadata: %s\norgtrello-parent-metadata: %s\norg-grandparent-metadata: %s\norgtrello-grandparent-metadata: %s"
              org-heading
              org-metadata
              meta
              org-parent-metadata
-             parent-meta)))
+             parent-meta
+             org-grandparent-metadata
+             grandparent-meta)))
 
 ;;;###autoload
 (define-minor-mode orgtrello-mode "Sync your org-mode and your trello together."
