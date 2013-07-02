@@ -109,7 +109,8 @@ CLOSED: [2013-07-01 lun. 22:19]
 **** DONE > level 4 - display that we do not deal with such level
 CLOSED: [2013-07-01 lun. 22:35]
 
-*** IN-PROGRESS Depending on the card's state (level 1 entry), move the card to the list (todo, doing, done) [50%]
+*** DONE Depending on the card's state (level 1 entry), move the card to the list (todo, doing, done) [100%]
+CLOSED: [2013-07-02 mar. 18:43]
 **** DONE Find id board
 CLOSED: [2013-07-02 mar. 17:02]
 
@@ -140,7 +141,8 @@ trello-lab.playground> (-> board1
   :subscribed false}]
 #+end_src
 
-**** TODO
+**** DONE code the id to look for depending on the state
+CLOSED: [2013-07-02 mar. 18:43]
 *** TODO Advanced (cf. org-get-entry) [0%]
 **** TODO level 1 - create/update trello card + any checklist + any tasks associated with the checklists
 **** TODO level 2 - create/update trello checklist + any tasks associated to the checklist

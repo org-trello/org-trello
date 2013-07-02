@@ -62,12 +62,25 @@
 (defvar *TODO* "TODO" "org-mode todo state")
 (defvar *DONE* "DONE" "org-mode done state")
 
+(defun orgtrello--compute-list-key (state)
+  "Given a state, compute the list id for the creation of a card"
+  (cond ((string= state *TODO*) *TODO-LIST-ID*)
+        ((string= state *DONE*) *DONE-LIST-ID*)
+        (t                      *DOING-LIST-ID*)))
+
+(ert-deftest testing-orgtrello--compute-list-key ()
+  (should (equal (orgtrello--compute-list-key *TODO*)        *TODO-LIST-ID*))
+  (should (equal (orgtrello--compute-list-key *DONE*)        *DONE-LIST-ID*))
+  (should (equal (orgtrello--compute-list-key "otherwise")   *DOING-LIST-ID*))
+  (should (equal (orgtrello--compute-list-key "IN PROGRESS") *DOING-LIST-ID*)))
+
 (defun orgtrello--card (card-meta &optional parent-meta grandparent-meta)
   "Deal with create/update card"
   ;; parent and grandparent are useless here
-  (let* ((orgtrello--list-id   (assoc-default *TODO-LIST-ID* org-file-properties)) ;; at the moment, every new card is created in the todo list
-         (orgtrello--card-id   (gethash :id    card-meta))
-         (orgtrello--card-name (gethash :title card-meta))
+  (let* ((orgtrello--card-kwd  (gethash :keyword card-meta))
+         (orgtrello--list-id   (assoc-default (orgtrello--compute-list-key orgtrello--card-kwd) org-file-properties))
+         (orgtrello--card-id   (gethash :id      card-meta))
+         (orgtrello--card-name (gethash :title   card-meta))
          (orgtrello--action    (if orgtrello--card-id
                                    ;; update
                                    (orgtrello-api--move-card orgtrello--card-id orgtrello--list-id orgtrello--card-name)
