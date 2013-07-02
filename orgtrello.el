@@ -137,8 +137,8 @@
          (dispatch-fn (gethash level *MAP-DISPATCH-CREATE-UPDATE* 'orgtrello--too-deep-level)))
     (funcall dispatch-fn meta parent-meta grandparent-meta)))
 
-(defun orgtrello--do-action ()
-  "Compute the action needed to be done depending on the current heading's level."
+(defun orgtrello--do-create-simple ()
+  "Do the actual simple creation of a card, checklist or task."
   (interactive)
   (orgtrello--dispatch-create (orgtrello-data-metadata) (orgtrello-data-parent-metadata) (orgtrello-data-grandparent-metadata)))
 
