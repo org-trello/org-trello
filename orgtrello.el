@@ -150,8 +150,8 @@
     (mapcar (lambda (mapdata)
               (let ((query-http (orgtrello--dispatch-create (gethash :current mapdata) (gethash :parent mapdata) (gethash :grandparent mapdata))))
                 ;; side effect, sniffffff
+                ;; the query is synchronous as there is order in the current list - FIXME any better way?
                 (puthash :sync 't query-http)
-                ;; the query is synchroneous as there is order in the current list
                 (orgtrello-query-http query-http)))
             list-map-metadata)))
 
@@ -191,7 +191,7 @@
 
 (defun orgtrello--find-block ()
   (interactive)
-  (message "found: %S" (org-goto-local-search-headings "Development steps" nil nil)))
+  (message "found: %s" (org-entry-get (point) "orgtrello-id")))
 
 ;;;###autoload
 (define-minor-mode orgtrello-mode "Sync your org-mode and your trello together."

@@ -60,8 +60,8 @@
                         (lambda (&key data &allow-other-keys)
                           (message "success: %S" data)))
               :error   (function*
-                        (lambda (&key error-thrown &allow-other-keys)
-                          (message "error: %S" error-thrown))))))
+                      (lambda (&key error-thrown response &allow-other-keys)
+                        (message "error: %S\n%S" error-thrown response))))))
 
 (defun orgtrello-query--post-or-put (query-map)
   "POST or PUT"
@@ -93,13 +93,13 @@
                               (if original-id ;; id already present in the org-mode file
                                   ;; no need to add another
                                   (message "id %s already present" original-id)
-                                ;; not present, this was just created, we add it to the current entry
-                                (org-toggle-tag (format "orgtrello-id-%s" id) "on"))))))
+                                ;; not present, this was just created, we add a simple property
+                                (org-set-property "orgtrello-id" id))))))
               ;; :success (lambda (&rest args)
               ;;            (princ (plist-get args :data)))
               :error (function*
-                      (lambda (&key error-thrown &allow-other-keys)
-                        (message "error: %S" error-thrown))))))
+                      (lambda (&key error-thrown response &allow-other-keys)
+                        (message "error: %S\n%S" error-thrown response))))))
 
 (provide 'orgtrello-query)
 

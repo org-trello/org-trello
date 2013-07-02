@@ -3,24 +3,25 @@
 (require 'orgtrello-hash)
 
 (defun orgtrello-data-metadata ()
-  "Compute the metadata from the org-heading-components entry - current entry."
-  (let* ((org-metadata (org-heading-components)))
-    (orgtrello-data--get-metadata org-metadata)))
+  "Compute the metadata from the org-heading-components entry, add the identifier and extract the metadata needed."
+  (let* ((id           (org-entry-get (point) "orgtrello-id"))
+         (org-metadata (org-heading-components)))
+    (->> org-metadata
+         (cons id)
+         orgtrello-data--get-metadata)))
 
 (defun orgtrello-data-parent-metadata ()
-  "Compute the metadata from the org-heading-components entry - current entry's parent."
-  (let* ((org-metadata (save-excursion
-                         (org-up-heading-safe)
-                         (org-heading-components))))
-    (orgtrello-data--get-metadata org-metadata)))
+  "Extract the metadata from the current heading's parent."
+  (save-excursion
+    (org-up-heading-safe)
+    (orgtrello-data-metadata)))
 
 (defun orgtrello-data-grandparent-metadata ()
-  "Compute the metadata from the org-heading-components entry - current entry's grand-parent."
-  (let* ((org-metadata (save-excursion
-                         (org-up-heading-safe)
-                         (org-up-heading-safe)
-                         (org-heading-components))))
-    (orgtrello-data--get-metadata org-metadata)))
+  "Extract the metadata from the current heading's grandparent."
+  (save-excursion
+    (org-up-heading-safe)
+    (org-up-heading-safe)
+    (orgtrello-data-metadata)))
 
 (defun orgtrello-data-compute-full-metadata ()
   "Compute the metadata from the org-heading-components entry - full card up to level 3 (rest is dismissed)."
@@ -53,28 +54,20 @@
             (gethash 3 dispatch-map-list))))
 
 (defun orgtrello-data--get-level (heading-metadata)
-  "Given the heading-metadata returned by the function 'org-heading-components, extract the level."
-  (car heading-metadata))
+  "Given the heading-metadata, extract the level"
+  (second heading-metadata))
 
 (defun orgtrello-data--get-keyword (heading-metadata)
-  "Given the heading-metadata returned by the function 'org-heading-components, extract the keyword."
-  (third heading-metadata))
+  "Given the heading-metadata, extract the keyword."
+  (fourth heading-metadata))
 
 (defun orgtrello-data--get-title (heading-metadata)
-  "Given the heading-metadata returned by the function 'org-heading-components, extract the title."
-  (fifth heading-metadata))
-
-(defun orgtrello-data--extract-id-from-title (heading-title)
-  "Given a title, return the id prefixed by :orgtrello-id- and suffixed by :, or nil otherwise."
-  (if heading-title
-      (let ((heading-id (first (cdr (org-split-string heading-title ":orgtrello-id-")))))
-        (if heading-id
-            (first (org-split-string heading-id ":"))))))
+  "Given the heading-metadata, extract the title."
+  (sixth heading-metadata))
 
 (defun orgtrello-data--get-id (heading-metadata)
-  "Get the id if present in the title"
-  (let ((title (orgtrello-data--get-title heading-metadata)))
-          (orgtrello-data--extract-id-from-title title)))
+  "Given the heading-metadata, extract the id."
+  (car heading-metadata))
 
 (defun orgtrello-data--get-metadata (heading-metadata)
   "Given the heading-metadata returned by the function 'org-heading-components, make it a hashmap with key :level, :keyword, :title. and their respective value"
