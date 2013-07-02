@@ -23,16 +23,25 @@
     (orgtrello-data--get-metadata org-metadata)))
 
 (defun orgtrello-data-compute-full-metadata ()
-  "Compute the metadata from the org-heading-components entry - current entry's children (the last one is the current entry)"
-  (let* ((orgtrello--list-headings nil))
-    ;; extract all headings into a list
-    (org-map-tree
-     (lambda ()
-       (let* ((heading (orgtrello-data-metadata))
-              (level   (gethash :level heading)))
-         (if (< level 4)
-             (push heading orgtrello--list-headings)))))
-    orgtrello--list-headings))
+  "Compute the metadata from the org-heading-components entry - full card up to level 3 (rest is dismissed)."
+  (let* ((orgtrello-data--list-headings nil))
+    (save-excursion
+      ;; up to the highest level
+      (while (org-up-heading-safe))
+      ;; extract all headings up to level 3 into a list of orgtrello metadata
+      (org-map-tree
+       (lambda ()
+         (let* ((heading (orgtrello-data-metadata))
+                (level   (gethash :level heading)))
+           (if (< level 4)
+               (let* ((parent-heading      (orgtrello-data-parent-metadata))
+                      (grandparent-heading (orgtrello-data-grandparent-metadata))
+                      (mapdata (make-hash-table :test 'equal)))
+                 (puthash :current     heading             mapdata)
+                 (puthash :parent      parent-heading      mapdata)
+                 (puthash :grandparent grandparent-heading mapdata)
+                 (push mapdata orgtrello-data--list-headings)))))))
+    orgtrello-data--list-headings))
 
 (defun orgtrello-data--get-level (heading-metadata)
   "Given the heading-metadata returned by the function 'org-heading-components, extract the level."
