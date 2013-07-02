@@ -82,7 +82,7 @@
                           ;; will update via tag the trello id of the new persisted data (if needed)
                           (let* ((metadata    (orgtrello-data-metadata))
                                  (original-id (gethash :id metadata))
-                                 (id          (cdr (assq 'id data))))
+                                 (id          (assoc-default 'id data)))
                             (if original-id ;; id already present in the org-mode file, no need to add another
                                 (message "id %s already present" original-id)
                               ;; not present, this was just created, we add it
