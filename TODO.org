@@ -5,7 +5,7 @@
 #+property: doing-list-id 51d15c98741fd4673a0014b5
 #+property: done-list-id  50bcfd2f033110476000e76b
 
-* IN-PROGRESS Development steps [82%] :orgtrello-id-51d18669dbb4f4076b001bde:
+* IN-PROGRESS Development steps [76%] :orgtrello-id-51d18669dbb4f4076b001bde:
 ** DONE emacs-lisp HTTP Client :orgtrello-id-51d1dbfee2ec4af31c000d4f:
 CLOSED: [2013-06-29 sam. 15:29]
 ** DONE authentication in trello :orgtrello-id-51d1dc0d5d7cbfef26000bb5:
@@ -24,7 +24,7 @@ CLOSED: [2013-06-29 sam. 16:49]
 CLOSED: [2013-06-29 sam. 16:49]
 ** DONE trying out the results interactively
 CLOSED: [2013-06-30 dim. 00:13]
-** DONE Finding out the org-mode hooks [66%]           :howTo:emacs:orgMode:
+** DONE Finding out the org-mode hooks [100%]           :howTo:emacs:orgMode:
 CLOSED: [2013-07-01 lun. 10:58]
 http://orgmode.org/worg/org-configs/org-hooks.html
 http://orgmode.org/worg/doc.html
@@ -52,7 +52,8 @@ CLOSED: [2013-07-01 lun. 08:05]
 - org-list-get-parent
 - org-list-get-children
 - org-list-get-subtree
-*** PENDING Hooks [80%]
+*** CANCELLED Hooks [80%]
+CLOSED: [2013-07-02 mar. 18:55]
 **** DONE state change for an item - org-trigger-hook (look also to org-after-todo-state-change-hook)
 CLOSED: [2013-06-30 dim. 16:21]
 Adding a simple function that displays a message to the org-trigger-hook.
@@ -85,7 +86,8 @@ CLOSED: [2013-07-01 lun. 11:00]
 CLOSED: [2013-07-01 lun. 11:00]
 ** DONE binding to describe the current heading
 CLOSED: [2013-07-01 lun. 16:00]
-** IN-PROGRESS Depending on the level, trigger the right api call :orgtrello-id-51d1df7779592bc71c000cd9:
+** DONE Depending on the level, trigger the right api call :orgtrello-id-51d1df7779592bc71c000cd9:
+CLOSED: [2013-07-02 mar. 18:50]
 *** DONE Dispatch on the level :orgtrello-id-51d1df80fe952bce1c00099b:
 CLOSED: [2013-07-01 lun. 12:15]
 *** DONE Basic [100%] :orgtrello-id-51d1e8033c800aa34700019e:
@@ -143,10 +145,6 @@ trello-lab.playground> (-> board1
 
 **** DONE code the id to look for depending on the state
 CLOSED: [2013-07-02 mar. 18:43]
-*** TODO Advanced (cf. org-get-entry) [0%]
-**** TODO level 1 - create/update trello card + any checklist + any tasks associated with the checklists
-**** TODO level 2 - create/update trello checklist + any tasks associated to the checklist
-**** TODO level 3 - create/update trello task
 ** DONE Adding org metadata file `a la` #+BOARD-ID, #+TODO-LIST-ID, #+DOING-LIST-ID, #+DONE-LIST-ID to permit the user to setup easily without touching lisp code
 CLOSED: [2013-07-01 lun. 23:31]
 Adding this:
@@ -158,13 +156,20 @@ Adding this:
 #+end_src
 Note: # + instead of #+ to avoid org-mode capturing the bad ones.
 
-** TODO Delete
+** DONE Make orgtrello a minor mode for org-mode
+CLOSED: [2013-07-02 mar. 16:36]
+** TODO Advanced creation (cf. org-get-entry) [0%]
+*** TODO level 2 - create/update trello checklist + any tasks associated to the checklist
+*** TODO level 1 - create/update trello card + any checklist + any tasks associated with the checklists
+** TODO Delete [0%]
 *** TODO card
 *** TODO checklist
 *** TODO task
 
-** DONE Make orgtrello a minor mode for org-mode
-CLOSED: [2013-07-02 mar. 16:36]
+** TODO Sync [%]
+*** TODO Given a trello board, download into org-mode file
+*** TODO Given a org-mode file, fill in the board
+Dismiss non compatible org-mode entries
 ** TODO Make an interactive setup for retrieving the list ids of the board
 This will ease the installation of the list-ids in top of the org file.
 Workflow:
@@ -197,6 +202,7 @@ and let the browser opens
 #+end_src
 - Display what has been done to the user's filesystem by showing the content of *~/.trello/config.el*.
 
+** TODO Make a release on marmalade/melpa
 * Questions
 ** How to persist the identifier?
 We use tag at the moment.
@@ -214,4 +220,4 @@ Dependencies:
 ** Import - Existing and compatible org-mode file into trello?
 ** Export - Existing trello board into org-mode file?
 * Later
-** TODO Rewrite tests using `expectations`                             :dev:
+** TODO Rewrite tests using `expectations` (mock)                       :dev:
