@@ -173,12 +173,18 @@
              (assoc-default *DOING-LIST-ID* org-file-properties)
              (assoc-default *DONE-LIST-ID*  org-file-properties))))
 
+(defun orgtrello--describe-all-heading ()
+  "Describe the heading and its sublist."
+  (interactive)
+  (message "all heading"))
+
 ;;;###autoload
 (define-minor-mode orgtrello-mode "Sync your org-mode and your trello together."
   :lighter " ot" ;; the name on the modeline
   :keymap  (let ((map (make-sparse-keymap)))
              (define-key map (kbd "C-c H") 'orgtrello--do-action)
              (define-key map (kbd "C-c z") 'orgtrello--describe-heading)
+             (define-key map (kbd "C-c x") 'orgtrello--describe-all-heading)
              ;; define other bindings...
              map))
 ;;;###autoload
