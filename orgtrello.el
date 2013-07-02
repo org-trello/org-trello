@@ -52,10 +52,15 @@
 (require 'orgtrello-query)
 (require 'orgtrello-data)
 
-(defvar *BOARD-ID*      "board-id")
-(defvar *TODO-LIST-ID*  "todo-list-id")
-(defvar *DOING-LIST-ID* "doing-list-id")
-(defvar *DONE-LIST-ID*  "doing-list-id")
+;; Properties key for the orgtrello headers #+PROPERTY board-id, etc...
+(defvar *BOARD-ID*      "board-id"      "orgtrello property board-id entry")
+(defvar *TODO-LIST-ID*  "todo-list-id"  "orgtrello property todo list id")
+(defvar *DOING-LIST-ID* "doing-list-id" "orgtrello property doing list id")
+(defvar *DONE-LIST-ID*  "done-list-id"  "orgtrello property done list id")
+
+;; Specific state - FIXME check if they do not already exist on org-mode to avoid potential collisions
+(defvar *TODO* "TODO" "org-mode todo state")
+(defvar *DONE* "DONE" "org-mode done state")
 
 (defun orgtrello--card (card-meta &optional parent-meta grandparent-meta)
   "Deal with create/update card"
@@ -90,9 +95,9 @@
          (orgtrello--checklist-id (gethash :id checklist-meta))
          (orgtrello--card-id      (gethash :id card-meta))
          (orgtrello--task-name    (gethash :title task-meta))
-         ;; the trello api is strange
-         (orgtrello--task-state   (if (string= "DONE" (gethash :keyword task-meta)) "complete" "incomplete")) ;; update api call
-         (orgtrello--task-check   (if (string= "DONE" (gethash :keyword task-meta)) 't nil))                  ;; create api call
+         ;; FIXME - the trello api is strange - extract those calls into function
+         (orgtrello--task-state   (if (string= *DONE* (gethash :keyword task-meta)) "complete" "incomplete")) ;; update api call
+         (orgtrello--task-check   (if (string= *DONE* (gethash :keyword task-meta)) 't nil))                  ;; create api call
          (orgtrello--action       (if orgtrello--task-id
                                       ;; update - rename, check or uncheck the task
                                       (orgtrello-api--update-task orgtrello--card-id orgtrello--checklist-id orgtrello--task-id orgtrello--task-name orgtrello--task-state)
