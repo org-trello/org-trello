@@ -48,27 +48,29 @@
 (defun orgtrello-query--get (query-map)
   "GET"
   (let* ((method (gethash :method query-map))
-         (uri    (gethash :uri    query-map)))
-    (request   (orgtrello-query--compute-url uri)
-     ;; :sync    t
-     :type     (orgtrello-query--compute-method method)
-     :params  `((key . ,consumer-key)
-                (token . ,access-token))
-     :parser  'json-read
-     :success (function*
-               (lambda (&key data &allow-other-keys)
-                 (message "success: %S" data)))
-     :error (function*
-               (lambda (&key data &allow-other-keys)
-                 (message "error: %S" data))))))
+         (uri    (gethash :uri    query-map))
+         (sync     (gethash :sync   query-map)))
+    (request  (orgtrello-query--compute-url uri)
+              :sync    sync
+              :type    (orgtrello-query--compute-method method)
+              :params  `((key . ,consumer-key)
+                         (token . ,access-token))
+              :parser  'json-read
+              :success (function*
+                        (lambda (&key data &allow-other-keys)
+                          (message "success: %S" data)))
+              :error   (function*
+                        (lambda (&key data &allow-other-keys)
+                          (message "error: %S" data))))))
 
 (defun orgtrello-query--post-or-put (query-map)
   "POST or PUT"
   (let* ((method   (gethash :method query-map))
          (uri      (gethash :uri    query-map))
-         (payload  (gethash :params query-map)))
+         (payload  (gethash :params query-map))
+         (sync     (gethash :sync   query-map)))
     (request  (orgtrello-query--compute-url uri)
-              ;; :sync    t
+              :sync    sync
               :type    (orgtrello-query--compute-method method)
               :params  `((key . ,consumer-key)
                          (token . ,access-token))

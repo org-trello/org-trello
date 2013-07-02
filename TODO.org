@@ -5,15 +5,14 @@
 #+property: doing-list-id 51d15c98741fd4673a0014b5
 #+property: done-list-id  50bcfd2f033110476000e76b
 
-* IN-PROGRESS Development steps [76%] :orgtrello-id-51d18669dbb4f4076b001bde:
-** DONE emacs-lisp HTTP Client :orgtrello-id-51d1dbfee2ec4af31c000d4f:
+* IN-PROGRESS Development steps [80%]
+** DONE emacs-lisp HTTP Client
 CLOSED: [2013-06-29 sam. 15:29]
-asdlgjsdl
-** DONE authentication in trello :orgtrello-id-51d1dc0d5d7cbfef26000bb5:
+** DONE authentication in trello
 CLOSED: [2013-06-29 sam. 15:29]
-** DONE http request on trello api :orgtrello-id-51d1dc1b780af29860000c73:
+** DONE http request on trello api
 CLOSED: [2013-06-29 sam. 15:29]
-** DONE api tinkering (see [[https://github.com/ardumont/trello-lab][ardumont/trello-lab]] on github) :orgtrello-id-51d1dc3d40b92b7f3300002c:
+** DONE api tinkering (see [[https://github.com/ardumont/trello-lab][ardumont/trello-lab]] on github)
 CLOSED: [2013-06-29 sam. 15:29]
 ** DONE porting tinkering results into emacs-lisp
 CLOSED: [2013-06-30 dim. 13:37]
@@ -87,11 +86,11 @@ CLOSED: [2013-07-01 lun. 11:00]
 CLOSED: [2013-07-01 lun. 11:00]
 ** DONE binding to describe the current heading
 CLOSED: [2013-07-01 lun. 16:00]
-** DONE Depending on the level, trigger the right api call :orgtrello-id-51d1df7779592bc71c000cd9:
+** DONE Depending on the level, trigger the right api call
 CLOSED: [2013-07-02 mar. 18:50]
-*** DONE Dispatch on the level :orgtrello-id-51d1df80fe952bce1c00099b:
+*** DONE Dispatch on the level
 CLOSED: [2013-07-01 lun. 12:15]
-*** DONE Basic [100%] :orgtrello-id-51d1e8033c800aa34700019e:
+*** DONE Basic [100%]
 CLOSED: [2013-07-01 lun. 22:35]
 **** DONE level 1 - api create trello card
 CLOSED: [2013-07-01 lun. 12:44]
@@ -159,15 +158,20 @@ Note: # + instead of #+ to avoid org-mode capturing the bad ones.
 
 ** DONE Make orgtrello a minor mode for org-mode
 CLOSED: [2013-07-02 mar. 16:36]
-** IN-PROGRESS Advanced creation (cf. org-get-entry) [0%]
-*** IN-PROGRESS level 2 - create/update trello checklist + any tasks associated to the checklist
-*** TODO level 1 - create/update trello card + any checklist + any tasks associated with the checklists
+** DONE create/update trello card from top (card) to bottom (items)
+CLOSED: [2013-07-02 mar. 22:24]
+*** DONE Retrieve all the list - org-map-tree
+CLOSED: [2013-07-02 mar. 22:20]
+*** DONE A binding to describe the extraction of all data
+CLOSED: [2013-07-02 mar. 22:21]
+*** IN-PROGRESS Trigger the creation of the card and every level up to 3 (checklist + task)
+** TODO Improve the callback (at the moment, the id is written where the carret is, so if we move while a http request takes place, the id is written badly)
 ** TODO Delete [0%]
 *** TODO card
 *** TODO checklist
 *** TODO task
 
-** TODO Sync [%]
+** TODO Sync [0%]
 *** TODO Given a trello board, download into org-mode file
 *** TODO Given a org-mode file, fill in the board
 Dismiss non compatible org-mode entries

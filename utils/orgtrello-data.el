@@ -24,7 +24,11 @@
 
 (defun orgtrello-data-compute-full-metadata ()
   "Compute the metadata from the org-heading-components entry - full card up to level 3 (rest is dismissed)."
-  (let* ((orgtrello-data--list-headings nil))
+  (let* ((dispatch-map-list (make-hash-table :test 'equal)))
+    ;; build the dispatch map into which add the data depending on the level
+    (puthash 1 nil dispatch-map-list)
+    (puthash 2 nil dispatch-map-list)
+    (puthash 3 nil dispatch-map-list)
     (save-excursion
       ;; up to the highest level
       (while (org-up-heading-safe))
@@ -37,11 +41,16 @@
                (let* ((parent-heading      (orgtrello-data-parent-metadata))
                       (grandparent-heading (orgtrello-data-grandparent-metadata))
                       (mapdata (make-hash-table :test 'equal)))
+                 ;; build the metadata with every important pieces
                  (puthash :current     heading             mapdata)
                  (puthash :parent      parent-heading      mapdata)
                  (puthash :grandparent grandparent-heading mapdata)
-                 (push mapdata orgtrello-data--list-headings)))))))
-    orgtrello-data--list-headings))
+                 (push mapdata (gethash level dispatch-map-list))))))))
+    ;; order of the list is important as we need to be certain that the card (level 1) is created before adding
+    ;; checklist (level 2) and tasks (level 3)
+    (append (gethash 1 dispatch-map-list)
+            (gethash 2 dispatch-map-list)
+            (gethash 3 dispatch-map-list))))
 
 (defun orgtrello-data--get-level (heading-metadata)
   "Given the heading-metadata returned by the function 'org-heading-components, extract the level."

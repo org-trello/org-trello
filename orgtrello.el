@@ -75,34 +75,32 @@
   (should (equal (orgtrello--compute-list-key "IN PROGRESS") *DOING-LIST-ID*)))
 
 (defun orgtrello--card (card-meta &optional parent-meta grandparent-meta)
-  "Deal with create/update card"
+  "Deal with create/update card query build"
   ;; parent and grandparent are useless here
   (let* ((orgtrello--card-kwd  (gethash :keyword card-meta))
          (orgtrello--list-id   (assoc-default (orgtrello--compute-list-key orgtrello--card-kwd) org-file-properties))
          (orgtrello--card-id   (gethash :id      card-meta))
-         (orgtrello--card-name (gethash :title   card-meta))
-         (orgtrello--action    (if orgtrello--card-id
-                                   ;; update
-                                   (orgtrello-api--move-card orgtrello--card-id orgtrello--list-id orgtrello--card-name)
-                                 ;; create
-                                 (orgtrello-api--add-card orgtrello--card-name orgtrello--list-id))))
-    (orgtrello-query-http orgtrello--action)))
+         (orgtrello--card-name (gethash :title   card-meta)))
+    (if orgtrello--card-id
+        ;; update
+        (orgtrello-api--move-card orgtrello--card-id orgtrello--list-id orgtrello--card-name)
+      ;; create
+      (orgtrello-api--add-card orgtrello--card-name orgtrello--list-id))))
 
 (defun orgtrello--checklist (checklist-meta &optional card-meta grandparent-meta)
-  "Deal with create/update checklist"
+  "Deal with create/update checklist query build"
   ;; grandparent is useless here
   (let* ((orgtrello--checklist-id   (gethash :id checklist-meta))
          (orgtrello--card-id        (gethash :id card-meta))
-         (orgtrello--checklist-name (gethash :title checklist-meta))
-         (orgtrello--action         (if orgtrello--checklist-id
-                                        ;; update
-                                        (orgtrello-api--update-checklist orgtrello--checklist-id orgtrello--checklist-name)
-                                      ;; create
-                                      (orgtrello-api--add-checklist orgtrello--card-id orgtrello--checklist-name))))
-    (orgtrello-query-http orgtrello--action)))
+         (orgtrello--checklist-name (gethash :title checklist-meta)))
+    (if orgtrello--checklist-id
+        ;; update
+        (orgtrello-api--update-checklist orgtrello--checklist-id orgtrello--checklist-name)
+      ;; create
+      (orgtrello-api--add-checklist orgtrello--card-id orgtrello--checklist-name))))
 
 (defun orgtrello--task (task-meta &optional checklist-meta card-meta)
-  "Deal with create/update task"
+  "Deal with create/update task query build"
   ;; card-meta is only usefull for the update part
   (let* ((orgtrello--task-id      (gethash :id task-meta))
          (orgtrello--checklist-id (gethash :id checklist-meta))
@@ -110,17 +108,16 @@
          (orgtrello--task-name    (gethash :title task-meta))
          ;; FIXME - the trello api is strange - extract those calls into function
          (orgtrello--task-state   (if (string= *DONE* (gethash :keyword task-meta)) "complete" "incomplete")) ;; update api call
-         (orgtrello--task-check   (if (string= *DONE* (gethash :keyword task-meta)) 't nil))                  ;; create api call
-         (orgtrello--action       (if orgtrello--task-id
-                                      ;; update - rename, check or uncheck the task
-                                      (orgtrello-api--update-task orgtrello--card-id orgtrello--checklist-id orgtrello--task-id orgtrello--task-name orgtrello--task-state)
-                                    ;; create
-                                    (orgtrello-api--add-tasks orgtrello--checklist-id orgtrello--task-name orgtrello--task-check))))
-    (orgtrello-query-http orgtrello--action)))
+         (orgtrello--task-check   (if (string= *DONE* (gethash :keyword task-meta)) 't nil))) ;; create api call
+    (if orgtrello--task-id
+        ;; update - rename, check or uncheck the task
+        (orgtrello-api--update-task orgtrello--card-id orgtrello--checklist-id orgtrello--task-id orgtrello--task-name orgtrello--task-state)
+      ;; create
+      (orgtrello-api--add-tasks orgtrello--checklist-id orgtrello--task-name orgtrello--task-check))))
 
 (defun orgtrello--too-deep-level (meta &optional parent-meta grandparent-meta)
   "Deal with too deep level."
-  (message "Your arborescence depth is too deep. We only support up to depth 3.\nLevel 1 - card\nLevel 2 - checklist\nLevel 3 - items/tasks"))
+  "Your arborescence depth is too deep. We only support up to depth 3.\nLevel 1 - card\nLevel 2 - checklist\nLevel 3 - items/tasks")
 
 (defun orgtrello--dispatch-map-creation ()
   "Dispatch map for the creation of card/checklist/item."
@@ -140,7 +137,23 @@
 (defun orgtrello--do-create-simple ()
   "Do the actual simple creation of a card, checklist or task."
   (interactive)
-  (orgtrello--dispatch-create (orgtrello-data-metadata) (orgtrello-data-parent-metadata) (orgtrello-data-grandparent-metadata)))
+  (let ((query-http (orgtrello--dispatch-create (orgtrello-data-metadata) (orgtrello-data-parent-metadata) (orgtrello-data-grandparent-metadata))))
+    ;; FIXME? can't we do better that this?
+    (if (hash-table-p query-http)
+        (orgtrello-query-http query-http)
+      (message query-http))))
+
+(defun orgtrello--do-create-full-card ()
+  "Do the actual full card creation - from card to task."
+  (interactive)
+  (let ((list-map-metadata (orgtrello-data-compute-full-metadata)))
+    (mapcar (lambda (mapdata)
+              (let ((query-http (orgtrello--dispatch-create (gethash :current mapdata) (gethash :parent mapdata) (gethash :grandparent mapdata))))
+                ;; side effect, sniffffff
+                (puthash :sync 't query-http)
+                ;; the query is synchroneous as there is order in the current list
+                (orgtrello-query-http query-http)))
+            list-map-metadata)))
 
 (defun orgtrello--describe-heading ()
   "Describe the current heading's metadata"
@@ -172,14 +185,16 @@
 (defun orgtrello--describe-headings ()
   "Describe the heading and its sublist."
   (interactive)
-  (message "%S" (orgtrello-data-compute-full-metadata)))
+  (let* ((meta       (orgtrello-data-compute-full-metadata))
+         (count-meta (length meta)))
+    (message "meta: %S\ncount: %s" meta count-meta)))
 
 ;;;###autoload
 (define-minor-mode orgtrello-mode "Sync your org-mode and your trello together."
   :lighter " ot" ;; the name on the modeline
   :keymap  (let ((map (make-sparse-keymap)))
              (define-key map (kbd "C-c H") 'orgtrello--do-create-simple)
-             (define-key map (kbd "C-c J") 'orgtrello--do-create-full)
+             (define-key map (kbd "C-c J") 'orgtrello--do-create-full-card)
              (define-key map (kbd "C-c z") 'orgtrello--describe-heading)
              (define-key map (kbd "C-c x") 'orgtrello--describe-headings)
              ;; define other bindings...
