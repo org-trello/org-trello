@@ -2,10 +2,10 @@
 #+author: Antoine R. Dumont
 #+property: board-id      50bcfd2f033110476000e768
 #+property: todo-list-id  51d15c319c93af375200155f
-#+property: doing-list-id 0
-#+property: done-list-id  0
+#+property: doing-list-id 51d15c98741fd4673a0014b5
+#+property: done-list-id  50bcfd2f033110476000e76b
 
-* IN-PROGRESS Development steps [90%] :orgtrello-id-51d18669dbb4f4076b001bde:
+* IN-PROGRESS Development steps [82%] :orgtrello-id-51d18669dbb4f4076b001bde:
 ** DONE emacs-lisp HTTP Client :orgtrello-id-51d1dbfee2ec4af31c000d4f:
 CLOSED: [2013-06-29 sam. 15:29]
 ** DONE authentication in trello :orgtrello-id-51d1dc0d5d7cbfef26000bb5:
@@ -109,6 +109,38 @@ CLOSED: [2013-07-01 lun. 22:19]
 **** DONE > level 4 - display that we do not deal with such level
 CLOSED: [2013-07-01 lun. 22:35]
 
+*** IN-PROGRESS Depending on the card's state (level 1 entry), move the card to the list (todo, doing, done) [50%]
+**** DONE Find id board
+CLOSED: [2013-07-02 mar. 17:02]
+
+from [[https://github.com/ardumont/trello-lab][trello-lab]]:
+#+begin_src clojure
+trello-lab.playground> (-> board1
+                           :id
+                           lists
+                           query/execute
+                           clojure.pprint/pprint)
+[{:id "51d15c319c93af375200155f",
+  :name "Todo",
+  :closed false,
+  :idBoard "50bcfd2f033110476000e768",
+  :pos 1536,
+  :subscribed false}
+ {:id "51d15c98741fd4673a0014b5",
+  :name "Doing",
+  :closed false,
+  :idBoard "50bcfd2f033110476000e768",
+  :pos 3072,
+  :subscribed false}
+ {:id "50bcfd2f033110476000e76b",
+  :name "Done",
+  :closed false,
+  :idBoard "50bcfd2f033110476000e768",
+  :pos 263168,
+  :subscribed false}]
+#+end_src
+
+**** TODO
 *** TODO Advanced (cf. org-get-entry) [0%]
 **** TODO level 1 - create/update trello card + any checklist + any tasks associated with the checklists
 **** TODO level 2 - create/update trello checklist + any tasks associated to the checklist
@@ -117,23 +149,66 @@ CLOSED: [2013-07-01 lun. 22:35]
 CLOSED: [2013-07-01 lun. 23:31]
 Adding this:
 #+begin_src org-mode
-#+property: board-id      50bcfd2f033110476000e768
-#+property: todo-list-id  51d15c319c93af375200155f
-#+property: doing-list-id 0
-#+property: done-list-id  0
+# +property: board-id      <board-id>
+# +property: todo-list-id  <todo-list-id>
+# +property: doing-list-id <doing-list-id>
+# +property: done-list-id  <done-list-id>
 #+end_src
+Note: # + instead of #+ to avoid org-mode capturing the bad ones.
 
 ** TODO Delete
 *** TODO card
 *** TODO checklist
 *** TODO task
 
+** DONE Make orgtrello a minor mode for org-mode
+CLOSED: [2013-07-02 mar. 16:36]
+** TODO Make an interactive setup for retrieving the list ids of the board
+This will ease the installation of the list-ids in top of the org file.
+Workflow:
+- M-x orgtrello-install-list-ids - interactive command to install the board and list ids
+- Make a request to list the board ids (name + ids), and display them on a buffer.
+- Prompt for the user to choose the board-id he wants
+- Make a request to list the different lists and then generate the following properties
+#+begin_src txt
+# +property: board-id      <board-id>
+# +property: todo-list-id  <todo-list-id>
+# +property: doing-list-id <doing-list-id>
+# +property: done-list-id  <done-list-id>
+#+end_src
+Note: # + instead of #+ because otherwise, org-mode captures them and overwrite the right ones.
+** TODO Make an interactive setup for retrieving the consumer key and the secret-token
+This will ease the installation of the *config.el* file
+- M-x install-orgtrello
+- Make a request on https://trello.com/1/appKey/generate
+- Retrieve the consumer-key
+- Make a request on
+  https://trello.com/1/authorize?response_type=token&name=org-trello&scope=read,write&expiration=never&key=<consumer-key>
+and let the browser opens
+- Prompt for the user to input its token
+- Generate the following file *~/.trello/config.el*
+#+begin_src emacs-lisp
+;; from: https://trello.com/1/appKey/generate
+(defvar consumer-key "<consumer-key>")
+;; from: https://trello.com/1/authorize?response_type=token&name=org-trello&scope=read,write&expiration=never&key=<consumer-key>
+(defvar access-token "<access-token>")
+#+end_src
+- Display what has been done to the user's filesystem by showing the content of *~/.trello/config.el*.
+
 * Questions
 ** How to persist the identifier?
 We use tag at the moment.
 ** How to deal with promotion/demotion?
 We do not deal with it at the moment.
-No idea how to deal with it.
+Idea: - demotion: remove the card and add the checklist or the task to the card if need be
+      - promotion: remove the checklist and create the card if need be
+      - promotion: the item and create the checklist if need be
+???
+
+Dependencies:
+- Delete must be implemented.
+- Create card with full arborescence must also be implemented.
+
 ** Import - Existing and compatible org-mode file into trello?
 ** Export - Existing trello board into org-mode file?
 * Later
