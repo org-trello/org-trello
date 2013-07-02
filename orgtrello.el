@@ -159,7 +159,7 @@
                                      (org-up-heading-safe)
                                      (org-heading-components)))
          (grandparent-meta (orgtrello-data--get-metadata org-grandparent-metadata)))
-    (message "org-heading: %s\norg-metadata: %s\norgtrello-metadata: %s\norg-parent-metadata: %s\norgtrello-parent-metadata: %s\norg-grandparent-metadata: %s\norgtrello-grandparent-metadata: %s\n%S\n%s %s %s %s"
+    (message "org-heading: %s\norg-metadata: %s\norgtrello-metadata: %s\norg-parent-metadata: %s\norgtrello-parent-metadata: %s\norg-grandparent-metadata: %s\norgtrello-grandparent-metadata: %s"
              org-heading
              org-metadata
              meta
@@ -167,24 +167,21 @@
              parent-meta
              org-grandparent-metadata
              grandparent-meta
-             org-file-properties
-             (assoc-default *BOARD-ID*      org-file-properties)
-             (assoc-default *TODO-LIST-ID*  org-file-properties)
-             (assoc-default *DOING-LIST-ID* org-file-properties)
-             (assoc-default *DONE-LIST-ID*  org-file-properties))))
+             org-file-properties)))
 
-(defun orgtrello--describe-all-heading ()
+(defun orgtrello--describe-headings ()
   "Describe the heading and its sublist."
   (interactive)
-  (message "all heading"))
+  (message "%S" (orgtrello-data-compute-full-metadata)))
 
 ;;;###autoload
 (define-minor-mode orgtrello-mode "Sync your org-mode and your trello together."
   :lighter " ot" ;; the name on the modeline
   :keymap  (let ((map (make-sparse-keymap)))
-             (define-key map (kbd "C-c H") 'orgtrello--do-action)
+             (define-key map (kbd "C-c H") 'orgtrello--do-create-simple)
+             (define-key map (kbd "C-c J") 'orgtrello--do-create-full)
              (define-key map (kbd "C-c z") 'orgtrello--describe-heading)
-             (define-key map (kbd "C-c x") 'orgtrello--describe-all-heading)
+             (define-key map (kbd "C-c x") 'orgtrello--describe-headings)
              ;; define other bindings...
              map))
 ;;;###autoload

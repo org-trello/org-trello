@@ -8,6 +8,7 @@
 * IN-PROGRESS Development steps [76%] :orgtrello-id-51d18669dbb4f4076b001bde:
 ** DONE emacs-lisp HTTP Client :orgtrello-id-51d1dbfee2ec4af31c000d4f:
 CLOSED: [2013-06-29 sam. 15:29]
+asdlgjsdl
 ** DONE authentication in trello :orgtrello-id-51d1dc0d5d7cbfef26000bb5:
 CLOSED: [2013-06-29 sam. 15:29]
 ** DONE http request on trello api :orgtrello-id-51d1dc1b780af29860000c73:
@@ -158,8 +159,8 @@ Note: # + instead of #+ to avoid org-mode capturing the bad ones.
 
 ** DONE Make orgtrello a minor mode for org-mode
 CLOSED: [2013-07-02 mar. 16:36]
-** TODO Advanced creation (cf. org-get-entry) [0%]
-*** TODO level 2 - create/update trello checklist + any tasks associated to the checklist
+** IN-PROGRESS Advanced creation (cf. org-get-entry) [0%]
+*** IN-PROGRESS level 2 - create/update trello checklist + any tasks associated to the checklist
 *** TODO level 1 - create/update trello card + any checklist + any tasks associated with the checklists
 ** TODO Delete [0%]
 *** TODO card
