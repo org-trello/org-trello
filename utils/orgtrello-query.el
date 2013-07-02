@@ -60,8 +60,8 @@
                         (lambda (&key data &allow-other-keys)
                           (message "success: %S" data)))
               :error   (function*
-                        (lambda (&key data &allow-other-keys)
-                          (message "error: %S" data))))))
+                        (lambda (&key error-thrown &allow-other-keys)
+                          (message "error: %S" error-thrown))))))
 
 (defun orgtrello-query--post-or-put (query-map)
   "POST or PUT"
@@ -91,8 +91,8 @@
               ;; :success (lambda (&rest args)
               ;;            (princ (plist-get args :data)))
               :error (function*
-                      (lambda (&key data &allow-other-keys)
-                        (message "error: %S" data))))))
+                      (lambda (&key error-thrown &allow-other-keys)
+                        (message "error: %S" error-thrown))))))
 
 (provide 'orgtrello-query)
 
