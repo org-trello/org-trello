@@ -80,14 +80,21 @@
               :success (function*
                         (lambda (&key data &allow-other-keys)
                           ;; will update via tag the trello id of the new persisted data (if needed)
-                          (let* ((metadata    (orgtrello-data-metadata))
-                                 (original-id (gethash :id metadata))
-                                 (id          (assoc-default 'id data)))
-                            (if original-id ;; id already present in the org-mode file, no need to add another
-                                (message "id %s already present" original-id)
-                              ;; not present, this was just created, we add it
-                              (org-toggle-tag (format "orgtrello-id-%s" id) "on")))
-                          (message "success: %S" data)))
+                          (save-excursion
+                            ;; first, we need to find the entry to update
+                            ;; up to root
+                            (while (org-up-heading-safe))
+                            ;; find the current entry
+                            (org-goto-local-search-headings (assoc-default 'name data) nil nil)
+                            ;; now we extract the data
+                            (let* ((metadata    (orgtrello-data-metadata))
+                                   (original-id (gethash :id metadata))
+                                   (id          (assoc-default 'id data)))
+                              (if original-id ;; id already present in the org-mode file
+                                  ;; no need to add another
+                                  (message "id %s already present" original-id)
+                                ;; not present, this was just created, we add it to the current entry
+                                (org-toggle-tag (format "orgtrello-id-%s" id) "on"))))))
               ;; :success (lambda (&rest args)
               ;;            (princ (plist-get args :data)))
               :error (function*

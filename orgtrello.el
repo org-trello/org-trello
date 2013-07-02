@@ -189,6 +189,10 @@
          (count-meta (length meta)))
     (message "meta: %S\ncount: %s" meta count-meta)))
 
+(defun orgtrello--find-block ()
+  (interactive)
+  (message "found: %S" (org-goto-local-search-headings "Development steps" nil nil)))
+
 ;;;###autoload
 (define-minor-mode orgtrello-mode "Sync your org-mode and your trello together."
   :lighter " ot" ;; the name on the modeline
@@ -197,6 +201,7 @@
              (define-key map (kbd "C-c J") 'orgtrello--do-create-full-card)
              (define-key map (kbd "C-c z") 'orgtrello--describe-heading)
              (define-key map (kbd "C-c x") 'orgtrello--describe-headings)
+             (define-key map (kbd "C-c F") 'orgtrello--find-block)
              ;; define other bindings...
              map))
 ;;;###autoload

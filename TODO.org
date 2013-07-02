@@ -5,7 +5,7 @@
 #+property: doing-list-id 51d15c98741fd4673a0014b5
 #+property: done-list-id  50bcfd2f033110476000e76b
 
-* IN-PROGRESS Development steps [80%]
+* IN-PROGRESS Development steps [78%]
 ** DONE emacs-lisp HTTP Client
 CLOSED: [2013-06-29 sam. 15:29]
 ** DONE authentication in trello
@@ -165,7 +165,9 @@ CLOSED: [2013-07-02 mar. 22:20]
 *** DONE A binding to describe the extraction of all data
 CLOSED: [2013-07-02 mar. 22:21]
 *** IN-PROGRESS Trigger the creation of the card and every level up to 3 (checklist + task)
-** TODO Improve the callback (at the moment, the id is written where the carret is, so if we move while a http request takes place, the id is written badly)
+** DONE Improve the callback (at the moment, the id is written where the carret is, so if we move while a http request takes place, the id is written badly)
+CLOSED: [2013-07-03 mer. 00:47]
+** TODO Improve the id generation and use some kind of external db (as org2blog and its .org2blog file)
 ** TODO Delete [0%]
 *** TODO card
 *** TODO checklist
