@@ -236,3 +236,10 @@ Dependencies:
 ** Export - Existing trello board into org-mode file?
 * Later
 ** TODO Rewrite tests using `expectations` (mock)                       :dev:
+* TODO card for testing
+** checklist 0
+*** task1
+*** task2
+*** DONE task3
+CLOSED: [2013-07-03 mer. 09:26]
+** checklist 1
