@@ -177,8 +177,10 @@
 (define-minor-mode orgtrello-mode "Sync your org-mode and your trello together."
   :lighter " ot" ;; the name on the modeline
   :keymap  (let ((map (make-sparse-keymap)))
+             ;; binding will change
              (define-key map (kbd "C-c H") 'orgtrello--do-create-simple)
              (define-key map (kbd "C-c J") 'orgtrello--do-create-full-card)
+             ;; for debugging purposes (I do not know any better yet)
              (define-key map (kbd "C-c z") 'orgtrello--describe-heading)
              (define-key map (kbd "C-c x") 'orgtrello--describe-headings)
              (define-key map (kbd "C-c F") 'orgtrello--find-block)
