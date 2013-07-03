@@ -24,6 +24,12 @@
     (should (equal (gethash :uri    h) "/cards/:card-id"))
     (should (equal (gethash :params h) nil))))
 
+(ert-deftest testing-orgtrello-api--delete-card ()
+  (let ((h (orgtrello-api--delete-card :card-id)))
+    (should (equal (gethash :method h) :delete))
+    (should (equal (gethash :uri    h) "/cards/:card-id"))
+    (should (equal (gethash :params h) nil))))
+
 (ert-deftest testing-orgtrello-api--get-lists ()
   (let ((h (orgtrello-api--get-lists :board-id)))
     (should (equal (gethash :method h) :get))

@@ -18,6 +18,10 @@
   "Detail of a card with id card-id."
   (orgtrello-hash--make-hash :get (format "/cards/%s" card-id)))
 
+(defun orgtrello-api--delete-card (card-id)
+  "Delete a card with id card-id."
+  (orgtrello-hash--make-hash :delete (format "/cards/%s" card-id)))
+
 (defun orgtrello-api--get-lists (board-id)
   "Display the lists of the board"
   (orgtrello-hash--make-hash :get (format "/boards/%s/lists" board-id)))
