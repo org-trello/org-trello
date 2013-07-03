@@ -8,7 +8,7 @@ test:
 
 tar:
 	sed "s/###VERSION###/\"$(VERSION)\"/" orgtrello-pkg-template.el > orgtrello-pkg.el
-	tar acvf orgtrello-$(VERSION).tar.gz utils/ orgtrello.el orgtrello-pkg.el README.md COPYING
+	tar cvf orgtrello-$(VERSION).tar utils/ orgtrello.el orgtrello-pkg.el README.md COPYING
 
 clean:
-	rm -f *.tar.gz
+	rm -f *.tar
