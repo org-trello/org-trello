@@ -5,7 +5,7 @@
 #+property: doing-list-id 51d15c98741fd4673a0014b5
 #+property: done-list-id  50bcfd2f033110476000e76b
 
-* IN-PROGRESS Development steps [82%]
+* IN-PROGRESS Development steps [79%]
 ** DONE emacs-lisp HTTP Client
 CLOSED: [2013-06-29 sam. 15:29]
 ** DONE authentication in trello
@@ -177,7 +177,7 @@ Why? Do not know why yet!
 CLOSED: [2013-07-03 mer. 00:47]
 ** DONE Improve the id generation and use the properties instead of tags (cf. org2blog)
 CLOSED: [2013-07-03 mer. 01:25]
-** PENDING Delete [0%]
+** IN-PROGRESS Delete [0%]
 *** PENDING card
 **** DONE api call
 CLOSED: [2013-07-03 mer. 17:18]

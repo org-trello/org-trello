@@ -140,9 +140,9 @@
 (provide 'orgtrello-api-tests)
 
 (ert-deftest testing-orgtrello-api--delete-task ()
-  (let ((h (orgtrello-api--delete-task :task-id)))
+  (let ((h (orgtrello-api--delete-task :checklist-id :task-id)))
     (should (equal (gethash :method h) :delete))
-    (should (equal (gethash :uri    h) "/tasks/:task-id"))
+    (should (equal (gethash :uri    h) "/checklists/:checklist-id/checkItems/:task-id"))
     (should (equal (gethash :params h) nil))))
 
 ;;; orgtrello-api-tests.el end here
