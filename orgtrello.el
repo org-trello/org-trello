@@ -251,14 +251,15 @@
 (defun orgtrello--do-delete-simple ()
   "Do the simple deletion of a card, checklist or task."
   (interactive)
-  (let* ((entry-metadata (orgtrello-data-entry-get-full-metadata))
-         (id             (gethash :id entry-metadata)))
-    (if (and entry-metadata id)
+  (let* ((entry-metadata   (orgtrello-data-entry-get-full-metadata))
+         (current-metadata (gethash :current entry-metadata))
+         (id               (gethash :id current-metadata)))
+    (if (and current-metadata id)
         (let ((query-http (orgtrello--dispatch-delete (gethash :current entry-metadata) (gethash :parent entry-metadata))))
           (if (hash-table-p query-http)
               (orgtrello-query-http query-http)
             (message query-http)))
-      (message "Is not synchronized yet on trello."))))
+      (message "Entity not synchronized on trello yet!"))))
 
 ;;;###autoload
 (define-minor-mode orgtrello-mode "Sync your org-mode and your trello together."

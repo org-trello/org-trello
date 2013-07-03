@@ -14,9 +14,10 @@
 (defun orgtrello-query--make-dispatch-http-query ()
   "Make a map that will dispatch the function to call depending on the http verb :get, :put, :post, etc..."
   (let* ((map-dispatch (make-hash-table :test 'equal)))
-    (puthash :get  'orgtrello-query--get         map-dispatch)
-    (puthash :put  'orgtrello-query--post-or-put map-dispatch)
-    (puthash :post 'orgtrello-query--post-or-put map-dispatch)
+    (puthash :get    'orgtrello-query--get         map-dispatch)
+    (puthash :put    'orgtrello-query--post-or-put map-dispatch)
+    (puthash :post   'orgtrello-query--post-or-put map-dispatch)
+    (puthash :delete 'orgtrello-query--delete      map-dispatch)
     map-dispatch))
 
 (defvar *MAP-DISPATCH-HTTP-QUERY* (orgtrello-query--make-dispatch-http-query))
@@ -94,6 +95,23 @@
                                 (org-set-property "orgtrello-id" id))))))
               ;; :success (lambda (&rest args)
               ;;            (princ (plist-get args :data)))
+              :error (function*
+                      (lambda (&key error-thrown response &allow-other-keys)
+                        (message "error: %S\n%S" error-thrown response))))))
+
+(defun orgtrello-query--delete (query-map)
+  "DELETE"
+  (let* ((method   (gethash :method query-map))
+         (uri      (gethash :uri    query-map))
+         (sync     (gethash :sync   query-map)))
+    (request  (orgtrello-query--compute-url uri)
+              :sync    sync
+              :type    (orgtrello-query--compute-method method)
+              :params  `((key . ,consumer-key)
+                         (token . ,access-token))
+              :success (function*
+                        (lambda (&key data response &allow-other-keys)
+                          (org-delete-property "orgtrello-id")))
               :error (function*
                       (lambda (&key error-thrown response &allow-other-keys)
                         (message "error: %S\n%S" error-thrown response))))))
