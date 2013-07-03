@@ -219,7 +219,12 @@ and let the browser opens
 #+end_src
 - Display what has been done to the user's filesystem by showing the content of *~/.trello/config.el*.
 
+** TODO Look at the request package from the melpa repository
+If the submodule is useless, remove emacs-request and install the other one
 ** TODO Make a release on marmalade/melpa
+- Look at org2blog repository for example
+- Search for a tutorial
+** TODO Improve the synchronous creation of cards (and sub-elements...) to avoid the emacs blocking
 * Questions
 ** How to persist the identifier?
 We use tag at the moment.
