@@ -91,6 +91,10 @@
      (format "/cards/%s/checklist/%s/checkItem/%s" card-id checklist-id task-id)
      payload)))
 
+(defun orgtrello-api--delete-task (task-id)
+  "Delete a task with id task-id"
+  (orgtrello-hash--make-hash :delete (format "/tasks/%s" task-id)))
+
 (provide 'orgtrello-api)
 
 ;;; orgtrello-api.el ends here

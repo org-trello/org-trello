@@ -139,4 +139,10 @@
     (should (equal (gethash :params h) '(("name"  . :task-name))))))
 (provide 'orgtrello-api-tests)
 
+(ert-deftest testing-orgtrello-api--delete-task ()
+  (let ((h (orgtrello-api--delete-task :task-id)))
+    (should (equal (gethash :method h) :delete))
+    (should (equal (gethash :uri    h) "/tasks/:task-id"))
+    (should (equal (gethash :params h) nil))))
+
 ;;; orgtrello-api-tests.el end here
