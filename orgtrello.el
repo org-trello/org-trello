@@ -1,6 +1,6 @@
 ;;; orgtrello.el -- Minor mode for org-mode to sync org-mode and trello
 
-;; Copyright (C) 2013 Antoine R. Dumont
+;; Copyright (C) 2013 Antoine R. Dumont <eniotna.t AT gmail.com>
 
 ;; Author: Antoine R. Dumont <eniotna.t AT gmail.com>
 ;; Version: 0.1
