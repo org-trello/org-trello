@@ -144,16 +144,60 @@
         (orgtrello-query-http query-http)
       (message query-http))))
 
+(defun orgtrello--merge-map (entry map-ids-by-name)
+  "Given a map of (id . name) and an entry, return the entry updated with the id if not already present."
+  (let* ((orgtrello--merge-map-id   (gethash :id entry))
+         (orgtrello--merge-map-name (gethash :title entry)))
+    (if orgtrello--merge-map-id
+        ;; already identified, return the entry without any modification
+        entry
+      ;; not present, we add the entry :id with its value and return such value
+      (progn
+        (puthash :id (gethash orgtrello--merge-map-name map-ids-by-name) entry)
+        entry))))
+
+(ert-deftest testing-orgtrello--merge-map ()
+  (let* ((entry   (orgtrello-hash--make-hash-org :level :method "the name of the entry" nil))
+         (map-ids (make-hash-table :test 'equal)))
+    (puthash "the name of the entry" :some-id map-ids)
+    (should (equal (gethash :id (orgtrello--merge-map entry map-ids)) :some-id))))
+
+(ert-deftest testing-orgtrello--merge-map2 ()
+  (let* ((entry   (orgtrello-hash--make-hash-org :level :method :title :id-already-there))
+         (map-ids (make-hash-table :test 'equal)))
+    (puthash :title :some-id map-ids)
+    (should (equal (gethash :id (orgtrello--merge-map entry map-ids)) :id-already-there))))
+
+(ert-deftest testing-orgtrello--merge-map3 ()
+  (let* ((entry   (orgtrello-hash--make-hash-org :level :method :title :id-already-there))
+         (map-ids (make-hash-table :test 'equal)))
+    (should (equal (gethash :id (orgtrello--merge-map entry map-ids)) :id-already-there))))
+
 (defun orgtrello--do-create-full-card ()
-  "Do the actual full card creation - from card to task."
+  "Do the actual full card creation - from card to task. Beware full side effects..."
   (interactive)
-  (let ((list-entries-metadata (orgtrello-data-compute-full-metadata)))
+  ;; beware, the list-entries-metadata is stored once and not updated after each http call, thus do not possess the
+  ;; newly created id
+  (defvar orgtrello--do-create-full-card-response-http-data nil)
+  (let* ((list-entries-metadata (orgtrello-data-compute-full-metadata))
+         (map-ids               (make-hash-table :test 'equal)))
     (mapcar (lambda (mapdata)
-              (let ((query-http (orgtrello--dispatch-create (gethash :current mapdata) (gethash :parent mapdata) (gethash :grandparent mapdata))))
+              (let* ((current     (gethash :current     mapdata))
+                     (parent      (gethash :parent      mapdata))
+                     (grandparent (gethash :grandparent mapdata))
+                     (query-http (orgtrello--dispatch-create
+                                  (orgtrello--merge-map current map-ids)
+                                  (orgtrello--merge-map parent map-ids)
+                                  (orgtrello--merge-map grandparent map-ids))))
                 ;; side effect, sniffffff
-                ;; the query is synchronous as there is order in the current list - FIXME any better way?
+                ;; the query is synchronous as there is order in the current list - FIXME any better way? queues?
                 (puthash :sync 't query-http)
-                (orgtrello-query-http query-http)))
+                ;; execute and retrieve the result of the request
+                (setq orgtrello--do-create-full-card-response-http-data (request-response-data (orgtrello-query-http query-http)))
+                ;; keep the last id
+                (puthash (assoc-default 'name orgtrello--do-create-full-card-response-http-data)
+                         (assoc-default 'id orgtrello--do-create-full-card-response-http-data)
+                         map-ids)))
             list-entries-metadata)))
 
 (defun orgtrello--describe-heading ()

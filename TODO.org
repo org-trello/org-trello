@@ -5,7 +5,7 @@
 #+property: doing-list-id 51d15c98741fd4673a0014b5
 #+property: done-list-id  50bcfd2f033110476000e76b
 
-* IN-PROGRESS Development steps [82%]
+* IN-PROGRESS Development steps [79%]
 ** DONE emacs-lisp HTTP Client
 CLOSED: [2013-06-29 sam. 15:29]
 ** DONE authentication in trello
@@ -164,7 +164,8 @@ CLOSED: [2013-07-02 mar. 22:24]
 CLOSED: [2013-07-02 mar. 22:20]
 *** DONE A binding to describe the extraction of all data
 CLOSED: [2013-07-02 mar. 22:21]
-*** IN-PROGRESS Trigger the creation of the card and every level up to 3 (checklist + task)
+*** DONE Trigger the creation of the card and every level up to 3 (checklist + task)
+CLOSED: [2013-07-03 mer. 14:15]
 - At the moment, need to create the card first
 - Then hit again, this will create the checklists
 - Then hit again, this will create the tasks
@@ -176,6 +177,7 @@ Why? Do not know why yet!
 CLOSED: [2013-07-03 mer. 00:47]
 ** DONE Improve the id generation and use the properties instead of tags (cf. org2blog)
 CLOSED: [2013-07-03 mer. 01:25]
+** TODO Improve the synchronous creation of cards (and sub-elements...) of to avoid the blocking
 ** TODO Delete [0%]
 *** TODO card
 *** TODO checklist
