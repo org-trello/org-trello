@@ -127,7 +127,7 @@
     (puthash 3 'orgtrello--task      dispatch-map)
     dispatch-map))
 
-(defvar *MAP-DISPATCH-CREATE-UPDATE* (orgtrello--dispatch-map-creation))
+(defvar *MAP-DISPATCH-CREATE-UPDATE* (orgtrello--dispatch-map-creation) "Dispatch map for the creation/update of card/checklist/task")
 
 (defun orgtrello--dispatch-create (meta &optional parent-meta grandparent-meta)
   (let* ((level       (gethash :level meta))
@@ -217,6 +217,49 @@
   (interactive)
   (message "found: %s" (org-entry-get (point) "orgtrello-id")))
 
+(defun orgtrello--card-delete (card-meta &optional parent-meta)
+  "Deal with the deletion query of a card"
+  ;; parent is useless here
+  (orgtrello-api--delete-card (gethash :id card-meta)))
+
+(defun orgtrello--checklist-delete (checklist-meta &optional parent-meta)
+  "Deal with the deletion query of a checklist"
+  ;; parent is useless here
+  (orgtrello-api--delete-checklist (gethash :id checklist-meta)))
+
+(defun orgtrello--task-delete (task-meta &optional checklist-meta)
+  "Deal with create/update task query build"
+  (let* ((orgtrello--task-id      (gethash :id task-meta))
+         (orgtrello--checklist-id (gethash :id checklist-meta)))
+    (orgtrello-api--delete-task orgtrello--checklist-id orgtrello--task-id)))
+
+(defun orgtrello--dispatch-map-delete ()
+  "Dispatch map for the deletion of card/checklist/item."
+  (let* ((dispatch-map (make-hash-table :test 'equal)))
+    (puthash 1 'orgtrello--card-delete      dispatch-map)
+    (puthash 2 'orgtrello--checklist-delete dispatch-map)
+    (puthash 3 'orgtrello--task-delete      dispatch-map)
+    dispatch-map))
+
+(defvar *MAP-DISPATCH-DELETE* (orgtrello--dispatch-map-delete) "Dispatch map for the deletion query of card/checklist/task.")
+
+(defun orgtrello--dispatch-delete (meta &optional parent-meta)
+  (let* ((level       (gethash :level meta))
+         (dispatch-fn (gethash level *MAP-DISPATCH-DELETE* 'orgtrello--too-deep-level)))
+    (funcall dispatch-fn meta parent-meta)))
+
+(defun orgtrello--do-delete-simple ()
+  "Do the simple deletion of a card, checklist or task."
+  (interactive)
+  (let* ((entry-metadata (orgtrello-data-entry-get-full-metadata))
+         (id             (gethash :id entry-metadata)))
+    (if (and entry-metadata id)
+        (let ((query-http (orgtrello--dispatch-delete (gethash :current entry-metadata) (gethash :parent entry-metadata))))
+          (if (hash-table-p query-http)
+              (orgtrello-query-http query-http)
+            (message query-http)))
+      (message "Is not synchronized yet on trello."))))
+
 ;;;###autoload
 (define-minor-mode orgtrello-mode "Sync your org-mode and your trello together."
   :lighter " ot" ;; the name on the modeline
@@ -224,6 +267,7 @@
              ;; binding will change
              (define-key map (kbd "C-c H") 'orgtrello--do-create-simple)
              (define-key map (kbd "C-c J") 'orgtrello--do-create-full-card)
+             (define-key map (kbd "C-c K") 'orgtrello--do-delete-simple)
              ;; for debugging purposes (I do not know any better yet)
              (define-key map (kbd "C-c z") 'orgtrello--describe-heading)
              (define-key map (kbd "C-c x") 'orgtrello--describe-headings)
