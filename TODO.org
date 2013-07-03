@@ -165,6 +165,13 @@ CLOSED: [2013-07-02 mar. 22:20]
 *** DONE A binding to describe the extraction of all data
 CLOSED: [2013-07-02 mar. 22:21]
 *** IN-PROGRESS Trigger the creation of the card and every level up to 3 (checklist + task)
+- At the moment, need to create the card first
+- Then hit again, this will create the checklists
+- Then hit again, this will create the tasks
+Why? Do not know why yet!
+
+- Limit: I had to make the http request synchronous
+
 ** DONE Improve the callback (at the moment, the id is written where the carret is, so if we move while a http request takes place, the id is written badly)
 CLOSED: [2013-07-03 mer. 00:47]
 ** DONE Improve the id generation and use the properties instead of tags (cf. org2blog)
