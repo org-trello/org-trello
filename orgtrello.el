@@ -41,13 +41,14 @@
 
 ;;; Code:
 
-(require 'json)
-(defvar app-name "org-trello")
-(add-to-list 'load-path "./emacs-request")
 (add-to-list 'load-path "./utils")
 
 ;; query
+(require 'org)
+(require 'json)
 (require 'dash)
+(require 'request)
+
 (require 'orgtrello-api)
 (require 'orgtrello-query)
 (require 'orgtrello-data)

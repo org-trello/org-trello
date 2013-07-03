@@ -1,3 +1,0 @@
-[submodule "emacs-request"]
-	path = emacs-request
-	url = git@github.com:tkf/emacs-request.git
