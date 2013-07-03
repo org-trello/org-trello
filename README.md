@@ -5,7 +5,18 @@ Sync your org-mode files with your trello boards.
 
 # under heavy development
 
-Not ready :D
+Disclaimer:
+- Not ready :D
+- Possible api breakage and whatnot...
+
+What works:
+Only `C-c H` (not definitive binding) to push your org-mode modifications to trello asynchronously and bits by bits
+(card, then checklist, then task).
+
+# Contributions
+
+Pull Requests welcome
+cf. [What has been done and remains to be done](./TODO.org)
 
 # why?
 
