@@ -111,7 +111,10 @@
                          (token . ,access-token))
               :success (function*
                         (lambda (&key data response &allow-other-keys)
-                          (org-delete-property "orgtrello-id")))
+                          (org-delete-property "orgtrello-id")
+                          (org-force-cycle-archived)
+                          (kill-line)
+                          (kill-line)))
               :error (function*
                       (lambda (&key error-thrown response &allow-other-keys)
                         (message "error: %S\n%S" error-thrown response))))))

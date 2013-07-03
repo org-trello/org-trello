@@ -267,8 +267,8 @@
   :keymap  (let ((map (make-sparse-keymap)))
              ;; binding will change
              (define-key map (kbd "C-c H") 'orgtrello--do-create-simple)
-             (define-key map (kbd "C-c J") 'orgtrello--do-create-full-card)
-             (define-key map (kbd "C-c K") 'orgtrello--do-delete-simple)
+             (define-key map (kbd "C-c j") 'orgtrello--do-create-full-card)
+             (define-key map (kbd "C-c k") 'orgtrello--do-delete-simple)
              ;; for debugging purposes (I do not know any better yet)
              (define-key map (kbd "C-c z") 'orgtrello--describe-heading)
              (define-key map (kbd "C-c x") 'orgtrello--describe-headings)

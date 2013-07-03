@@ -5,7 +5,7 @@
 #+property: doing-list-id 51d15c98741fd4673a0014b5
 #+property: done-list-id  50bcfd2f033110476000e76b
 
-* IN-PROGRESS Development steps [79%]
+* IN-PROGRESS Development steps [82%]
 ** DONE emacs-lisp HTTP Client
 CLOSED: [2013-06-29 sam. 15:29]
 ** DONE authentication in trello
@@ -177,19 +177,26 @@ Why? Do not know why yet!
 CLOSED: [2013-07-03 mer. 00:47]
 ** DONE Improve the id generation and use the properties instead of tags (cf. org2blog)
 CLOSED: [2013-07-03 mer. 01:25]
-** IN-PROGRESS Delete [0%]
-*** PENDING card
+** DONE Delete [100%]
+CLOSED: [2013-07-03 mer. 20:31]
+*** DONE card
+CLOSED: [2013-07-03 mer. 20:31]
 **** DONE api call
 CLOSED: [2013-07-03 mer. 17:18]
-**** TODO plug
-*** PENDING checklist
+**** DONE plug
+CLOSED: [2013-07-03 mer. 20:31]
+*** DONE checklist
+CLOSED: [2013-07-03 mer. 20:31]
 **** DONE api call
 CLOSED: [2013-07-03 mer. 17:18]
-**** TODO plug
-*** PENDING task
+**** DONE plug
+CLOSED: [2013-07-03 mer. 20:31]
+*** DONE task
+CLOSED: [2013-07-03 mer. 20:31]
 **** DONE api call
 CLOSED: [2013-07-03 mer. 17:18]
-**** TODO plug
+**** DONE plug
+CLOSED: [2013-07-03 mer. 20:31]
 ** TODO Sync [0%]
 *** TODO Given a trello board, download into org-mode file
 *** TODO Given a org-mode file, fill in the board
@@ -256,6 +263,8 @@ Dependencies:
 ** Import - Existing and compatible org-mode file into trello?
 ** Export - Existing trello board into org-mode file?
 * TODO card for testing
+:PROPERTIES:
+:END:
 ** TODO checklist 0
 *** task1
 *** task2
