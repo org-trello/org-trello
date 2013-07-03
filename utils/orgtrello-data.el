@@ -2,7 +2,7 @@
 
 (require 'orgtrello-hash)
 
-(defun orgtrello-data-metadata ()
+(defun orgtrello-data--metadata ()
   "Compute the metadata from the org-heading-components entry, add the identifier and extract the metadata needed."
   (let* ((id           (org-entry-get (point) "orgtrello-id"))
          (org-metadata (org-heading-components)))
@@ -10,18 +10,33 @@
          (cons id)
          orgtrello-data--get-metadata)))
 
-(defun orgtrello-data-parent-metadata ()
+(defun orgtrello-data--parent-metadata ()
   "Extract the metadata from the current heading's parent."
   (save-excursion
     (org-up-heading-safe)
     (orgtrello-data-metadata)))
 
-(defun orgtrello-data-grandparent-metadata ()
+(defun orgtrello-data--grandparent-metadata ()
   "Extract the metadata from the current heading's grandparent."
   (save-excursion
     (org-up-heading-safe)
     (org-up-heading-safe)
     (orgtrello-data-metadata)))
+
+(defun orgtrello-data-entry-get-full-metadata ()
+  "Compute the metadata needed for one entry into a map with keys :current, :parent, :grandparent.
+   Returns nil if the level is superior to 4."
+  (let* ((heading (orgtrello-data--metadata))
+         (level   (gethash :level heading)))
+    (if (< level 4)
+        (let* ((parent-heading      (orgtrello-data--parent-metadata))
+               (grandparent-heading (orgtrello-data--grandparent-metadata))
+               (mapdata (make-hash-table :test 'equal)))
+          ;; build the metadata with every important pieces
+          (puthash :current     heading             mapdata)
+          (puthash :parent      parent-heading      mapdata)
+          (puthash :grandparent grandparent-heading mapdata)
+          mapdata))))
 
 (defun orgtrello-data-compute-full-metadata ()
   "Compute the metadata from the org-heading-components entry - full card up to level 3 (rest is dismissed)."
@@ -33,20 +48,8 @@
     (save-excursion
       ;; up to the highest level
       (while (org-up-heading-safe))
-      ;; extract all headings up to level 3 into a list of orgtrello metadata
-      (org-map-tree
-       (lambda ()
-         (let* ((heading (orgtrello-data-metadata))
-                (level   (gethash :level heading)))
-           (if (< level 4)
-               (let* ((parent-heading      (orgtrello-data-parent-metadata))
-                      (grandparent-heading (orgtrello-data-grandparent-metadata))
-                      (mapdata (make-hash-table :test 'equal)))
-                 ;; build the metadata with every important pieces
-                 (puthash :current     heading             mapdata)
-                 (puthash :parent      parent-heading      mapdata)
-                 (puthash :grandparent grandparent-heading mapdata)
-                 (push mapdata (gethash level dispatch-map-list))))))))
+      ;; retrieve all metadata
+      (org-map-tree (lambda () (push (orgtrello-data-entry-get-full-metadata) (gethash level dispatch-map-list)))))
     ;; order of the list is important as we need to be certain that the card (level 1) is created before adding
     ;; checklist (level 2) and tasks (level 3)
     (append (gethash 1 dispatch-map-list)

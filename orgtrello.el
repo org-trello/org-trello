@@ -137,7 +137,8 @@
 (defun orgtrello--do-create-simple ()
   "Do the actual simple creation of a card, checklist or task."
   (interactive)
-  (let ((query-http (orgtrello--dispatch-create (orgtrello-data-metadata) (orgtrello-data-parent-metadata) (orgtrello-data-grandparent-metadata))))
+  (let* ((entry-metadata (orgtrello-data-entry-get-full-metadata))
+         (query-http     (orgtrello--dispatch-create (gethash :current entry-metadata) (gethash :parent entry-metadata) (gethash :grandparent entry-metadata))))
     ;; FIXME? can't we do better that this?
     (if (hash-table-p query-http)
         (orgtrello-query-http query-http)
@@ -146,41 +147,20 @@
 (defun orgtrello--do-create-full-card ()
   "Do the actual full card creation - from card to task."
   (interactive)
-  (let ((list-map-metadata (orgtrello-data-compute-full-metadata)))
+  (let ((list-entries-metadata (orgtrello-data-compute-full-metadata)))
     (mapcar (lambda (mapdata)
               (let ((query-http (orgtrello--dispatch-create (gethash :current mapdata) (gethash :parent mapdata) (gethash :grandparent mapdata))))
                 ;; side effect, sniffffff
                 ;; the query is synchronous as there is order in the current list - FIXME any better way?
                 (puthash :sync 't query-http)
                 (orgtrello-query-http query-http)))
-            list-map-metadata)))
+            list-entries-metadata)))
 
 (defun orgtrello--describe-heading ()
   "Describe the current heading's metadata"
   (interactive)
-  (let* ((org-heading (org-get-heading))
-         ;; retrieve data from the current heading
-         (org-metadata (org-heading-components))
-         (meta (orgtrello-data--get-metadata org-metadata))
-         ;; retrieve data from the current heading's parent
-         (org-parent-metadata (save-excursion
-                                (org-up-heading-safe)
-                                (org-heading-components)))
-         (parent-meta (orgtrello-data--get-metadata org-parent-metadata))
-         (org-grandparent-metadata (save-excursion
-                                     (org-up-heading-safe)
-                                     (org-up-heading-safe)
-                                     (org-heading-components)))
-         (grandparent-meta (orgtrello-data--get-metadata org-grandparent-metadata)))
-    (message "org-heading: %s\norg-metadata: %s\norgtrello-metadata: %s\norg-parent-metadata: %s\norgtrello-parent-metadata: %s\norg-grandparent-metadata: %s\norgtrello-grandparent-metadata: %s"
-             org-heading
-             org-metadata
-             meta
-             org-parent-metadata
-             parent-meta
-             org-grandparent-metadata
-             grandparent-meta
-             org-file-properties)))
+  (let* ((entry-metadata (orgtrello-data-entry-get-full-metadata)))
+    (message "entry metadata: %S" entry-metadata)))
 
 (defun orgtrello--describe-headings ()
   "Describe the heading and its sublist."
