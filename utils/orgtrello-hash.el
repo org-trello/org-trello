@@ -1,6 +1,7 @@
 ;;; orgtrello-hash.el --- Build hash map easily
 
 (defun orgtrello-hash--make-hash-org (level keyword title id)
+  "Utility function to ease the creation of the orgtrello-metadata"
   (setq h (make-hash-table :test 'equal))
   (puthash :level   level   h)
   (puthash :keyword keyword h)
