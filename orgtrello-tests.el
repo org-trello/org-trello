@@ -1,6 +1,5 @@
 (require 'ert)
 
-(add-to-list 'load-path "./emacs-request")
 (add-to-list 'load-path "./tests")
 (add-to-list 'load-path "./utils")
 
