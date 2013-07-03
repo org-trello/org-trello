@@ -1,16 +1,16 @@
 VERSION=$$(date "+%Y%m%d.%H%M")
-FILE=orgtrello-$(VERSION)
+FILE=org-trello-$(VERSION)
 
 test:
 	emacs --no-init-file -batch \
 		-l ert \
-		-l ./orgtrello-tests.el \
+		-l ./org-trello-tests.el \
 		-f ert-run-tests-batch-and-exit
 
 tar:
 	mkdir -p $(FILE)
-	sed "s/###VERSION###/\"$(VERSION)\"/" orgtrello-pkg-template.el > $(FILE)/orgtrello-pkg.el
-	cp -r utils/ orgtrello.el orgtrello-pkg.el README.md COPYING $(FILE)
+	sed "s/###VERSION###/\"$(VERSION)\"/" org-trello-pkg-template.el > $(FILE)/org-trello-pkg.el
+	cp -r utils/ org-trello.el README.md COPYING $(FILE)
 	tar cvf $(FILE).tar $(FILE)
 
 clean:

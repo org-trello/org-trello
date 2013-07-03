@@ -1,4 +1,4 @@
-;;; orgtrello.el -- Minor mode for org-mode to sync org-mode and trello
+;;; org-trello.el -- Minor mode for org-mode to sync org-mode and trello
 
 ;; Copyright (C) 2013 Antoine R. Dumont <eniotna.t AT gmail.com>
 
@@ -36,7 +36,7 @@
 ;; (defvar access-token "your-access-token")
 
 ;; Add the following to your emacs init file
-;; (require 'orgtrello)
+;; (require 'org-trello)
 
 ;;; Code:
 
@@ -262,7 +262,7 @@
       (message "Entity not synchronized on trello yet!"))))
 
 ;;;###autoload
-(define-minor-mode orgtrello-mode "Sync your org-mode and your trello together."
+(define-minor-mode org-trello-mode "Sync your org-mode and your trello together."
   :lighter " ot" ;; the name on the modeline
   :keymap  (let ((map (make-sparse-keymap)))
              ;; binding will change
@@ -277,8 +277,8 @@
              map))
 ;;;###autoload
 
-(add-hook 'org-mode-hook 'orgtrello-mode)
+(add-hook 'org-mode-hook 'org-trello-mode)
 
-(provide 'orgtrello)
+(provide 'org-trello)
 
-;;; orgtrello.el ends here
+;;; org-trello.el ends here
