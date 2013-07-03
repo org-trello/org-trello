@@ -3,7 +3,6 @@
 ;; Copyright (C) 2013 Antoine R. Dumont <eniotna.t AT gmail.com>
 
 ;; Author: Antoine R. Dumont <eniotna.t AT gmail.com>
-;; Version: 0.1
 ;; Keywords: org-mode trello sync
 
 ;; This file is NOT part of GNU Emacs.
