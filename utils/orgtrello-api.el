@@ -70,6 +70,10 @@
   "Retrieve all the information from a checklist"
   (orgtrello-hash--make-hash :get (format "/checklists/%s" checklist-id)))
 
+(defun orgtrello-api--delete-checklist (checklist-id)
+  "Delete a checklist with checklist-id"
+  (orgtrello-hash--make-hash :delete (format "/checklists/%s" checklist-id)))
+
 (defun orgtrello-api--add-tasks (checklist-id name &optional checked)
   "Add todo tasks (trello items) to a checklist with id 'id'"
   (let* ((payload (if checked
