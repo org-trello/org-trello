@@ -66,18 +66,22 @@
   "Retrieve all the information from a checklist"
   (orgtrello-hash--make-hash :get (format "/checklists/%s" checklist-id)))
 
-(defun orgtrello-api--add-tasks (checklist-id name checked)
+(defun orgtrello-api--add-tasks (checklist-id name &optional checked)
   "Add todo tasks (trello items) to a checklist with id 'id'"
-  (orgtrello-hash--make-hash :post (format "/checklists/%s/checkItems" checklist-id) `(("name"  . ,name)
-                                                                                       ("checked" . ,checked))))
+  (let* ((payload (if checked
+                      `(("name"  . ,name) ("checked" . ,checked))
+                    `(("name" . ,name)))))
+    (orgtrello-hash--make-hash :post (format "/checklists/%s/checkItems" checklist-id) payload)))
 
-(defun orgtrello-api--update-task (card-id checklist-id task-id name state)
+(defun orgtrello-api--update-task (card-id checklist-id task-id name &optional state)
   "Update a task"
-  (orgtrello-hash--make-hash
-   :put
-   (format "/cards/%s/checklist/%s/checkItem/%s" card-id checklist-id task-id)
-   `(("name"  . ,name)
-     ("state" . ,state))))
+  (let* ((payload (if state
+                      `(("name"  . ,name) ("state" . ,state))
+                    `(("name" . ,name)))))
+    (orgtrello-hash--make-hash
+     :put
+     (format "/cards/%s/checklist/%s/checkItem/%s" card-id checklist-id task-id)
+     payload)))
 
 (provide 'orgtrello-api)
 
