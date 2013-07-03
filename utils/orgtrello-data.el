@@ -26,7 +26,7 @@
 (defun orgtrello-data-entry-get-full-metadata ()
   "Compute the metadata needed for one entry into a map with keys :current, :parent, :grandparent.
    Returns nil if the level is superior to 4."
-  (let* ((heading (orgtrello-data--metadata))
+  (let* ((heading (orgtrello-data-metadata))
          (level   (gethash :level heading)))
     (if (< level 4)
         (let* ((parent-heading      (orgtrello-data--parent-metadata))
