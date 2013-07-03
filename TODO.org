@@ -5,7 +5,7 @@
 #+property: doing-list-id 51d15c98741fd4673a0014b5
 #+property: done-list-id  50bcfd2f033110476000e76b
 
-* IN-PROGRESS Development steps [85%]
+* IN-PROGRESS Development steps [86%]
 ** DONE emacs-lisp HTTP Client
 CLOSED: [2013-06-29 sam. 15:29]
 ** DONE authentication in trello
@@ -197,7 +197,8 @@ CLOSED: [2013-07-03 mer. 20:31]
 CLOSED: [2013-07-03 mer. 17:18]
 **** DONE plug
 CLOSED: [2013-07-03 mer. 20:31]
-** TODO Make an interactive setup for retrieving the consumer key and the secret-token
+** DONE Make an interactive setup for retrieving the consumer key and the secret-token and generate it inside ~/.trello/config.el
+CLOSED: [2013-07-03 mer. 23:30]
 This will ease the installation of the *config.el* file
 - M-x install-orgtrello
 - Open the browser on https://trello.com/1/appKey/generate

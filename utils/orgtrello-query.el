@@ -2,7 +2,7 @@
 ;; trello-query is the main entry point
 
 ;; Load the setup from the $HOME/.trello/config.el
-(load (concat (getenv "HOME") "/.trello/config.el"))
+(load *CONFIG-FILE*)
 
 (require 'org)
 (require 'request)

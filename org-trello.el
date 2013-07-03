@@ -26,6 +26,7 @@
 
 ;; Minor mode for org-mode to sync org-mode and trello
 
+;; Manually
 ;; 1) retrieve your trello api key https://trello.com/1/appKey/generate
 ;; Then add those entries inside the ~/.trello/config.el:
 ;; ;; -*- lisp -*-
@@ -34,6 +35,9 @@
 ;; https://trello.com/1/authorize?response_type=token&name=org-trello&scope=read,write&expiration=never&key=<consumer-key>
 ;; Add another entry inside the `~/.trello/config.el`
 ;; (defvar access-token "your-access-token")
+
+;; Automatically
+;; M-x orgtrello--do-install-keys-and-token (or C-c I)
 
 ;; 3) Add the following to your emacs init file
 ;; (require 'org-trello)
@@ -74,6 +78,16 @@
 (require 'orgtrello-api)
 (require 'orgtrello-query)
 (require 'orgtrello-data)
+
+(defvar *CONFIG-DIR* (concat (getenv "HOME") "/" ".trello"))
+(defvar *CONFIG-FILE* (concat *CONFIG-DIR* "/config.el")
+"1) retrieve your trello api key https://trello.com/1/appKey/generate
+Then add those entries inside the ~/.trello/config.el:
+\(defvar consumer-key 'consumer-key'\)
+2) then connect to this url with your browser
+https://trello.com/1/authorize?response_type=token&name=org-trello&scope=read,write&expiration=never&key=<consumer-key>
+Add another entry inside the '~/.trello/config.el'
+\(defvar access-token 'your-access-token'\)")
 
 ;; Properties key for the orgtrello headers #+PROPERTY board-id, etc...
 (defvar *BOARD-ID*      "board-id"      "orgtrello property board-id entry")
@@ -284,6 +298,27 @@
             (message query-http)))
       (message "Entity not synchronized on trello yet!"))))
 
+(defun orgtrello--do-config-file (consumer-key access-token)
+  "Persist the file config-file with the input of the user."
+  (make-directory *CONFIG-DIR* t)
+  (with-temp-file *CONFIG-FILE*
+    (erase-buffer)
+    (goto-char (point-min))
+    (insert (format "(defvar consumer-key \"%s\"\)" orgtrello--consumer-key))
+    (insert (format "(defvar access-token \"%s\")\)" orgtrello--access-token))
+    (write-file *CONFIG-FILE* 't)))
+
+(defun orgtrello--do-install-keys-and-token ()
+  "Procedure to install the consumer-key and the token for the user in the config-file."
+  (interactive)
+  (defvar orgtrello--consumer-key nil)
+  (defvar orgtrello--access-token nil)
+  (browse-url "https://trello.com/1/appKey/generate")
+  (setq orgtrello--consumer-key (read-input "Consumer-key: "))
+  (browse-url (format "https://trello.com/1/authorize?response_type=token&name=org-trello&scope=read,write&expiration=never&key=%s" orgtrello--consumer-key))
+  (setq orgtrello--access-token (read-input "Access-token: "))
+  (orgtrello--do-config-file orgtrello--consumer-key orgtrello--access-token))
+
 ;;;###autoload
 (define-minor-mode org-trello-mode "Sync your org-mode and your trello together."
   :lighter " ot" ;; the name on the modeline
@@ -292,6 +327,7 @@
              (define-key map (kbd "C-c H") 'orgtrello--do-create-simple)
              (define-key map (kbd "C-c j") 'orgtrello--do-create-full-card)
              (define-key map (kbd "C-c k") 'orgtrello--do-delete-simple)
+             (define-key map (kbd "C-c I") 'orgtrello--do-install-keys-and-token)
              ;; for debugging purposes (I do not know any better yet)
              (define-key map (kbd "C-c z") 'orgtrello--describe-heading)
              (define-key map (kbd "C-c x") 'orgtrello--describe-headings)
