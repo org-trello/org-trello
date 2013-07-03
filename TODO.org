@@ -243,12 +243,10 @@ CLOSED: [2013-07-03 mer. 18:44]
 *** DONE Deal with generate the version
 CLOSED: [2013-07-03 mer. 18:44]
 *** TODO Make a release on marmalade/melpa
-- Look at org2blog repository for example
-- Search for a tutorial
-
+http://www.marmalade-repo.org/packages
+https://github.com/milkypostman/melpa
+http://nic.ferrier.me.uk/blog/2012_07/emacs-packages-for-programmers
 * Questions
-** How to persist the identifier?
-We use tag at the moment.
 ** How to deal with promotion/demotion?
 We do not deal with it at the moment.
 Idea: - demotion: remove the card and add the checklist or the task to the card if need be
