@@ -239,9 +239,20 @@ Dependencies:
 * Later
 ** TODO Rewrite tests using `expectations` (mock)                       :dev:
 * TODO card for testing
-** checklist 0
+** TODO checklist 0
 *** task1
 *** task2
 *** DONE task3
 CLOSED: [2013-07-03 mer. 09:26]
-** checklist 1
+** IN-PROGRESS checklist 1
+** TODO another deep checklists
+*** DONE do
+CLOSED: [2013-07-03 mer. 14:19]
+*** DONE you
+CLOSED: [2013-07-03 mer. 14:19]
+*** DONE like it
+CLOSED: [2013-07-03 mer. 14:18]
+** IN-PROGRESS Does this work or not?
+*** TODO yes
+*** empty
+*** no
