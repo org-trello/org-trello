@@ -3,5 +3,4 @@
     (json    "1.3")
     (dash    "20130617.739")
     ;; check for emacs-request from package list
-    (request "20130526.1915")
-    ))
+    (request "20130526.1915")))

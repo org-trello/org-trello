@@ -4,10 +4,10 @@
 ;; Load the setup from the $HOME/.trello/config.el
 (load (concat (getenv "HOME") "/.trello/config.el"))
 
+(require 'org)
 (require 'request)
 (require 'orgtrello-hash)
 (require 'orgtrello-data)
-(require 'org)
 
 (defvar *TRELLO-URL* "https://api.trello.com/1" "The needed prefix url for trello")
 
