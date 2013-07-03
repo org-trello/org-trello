@@ -35,8 +35,31 @@
 ;; Add another entry inside the `~/.trello/config.el`
 ;; (defvar access-token "your-access-token")
 
-;; Add the following to your emacs init file
+;; 3) Add the following to your emacs init file
 ;; (require 'org-trello)
+
+;; 4) You need to make your org-mode buffer aware of trello.
+;; At the moment, this routine is manual.
+
+;; Add this to the top of your org-mode file
+
+;; ```org-mode
+;; #+property: board-id      <BOARD-ID>
+;; #+property: todo-list-id  <TODO-LIST-ID>
+;; #+property: doing-list-id <DOING-LIST-ID>
+;; #+property: done-list-id  <DONE-LIST-ID>
+;; ```
+
+;; Example:
+
+;; ```org-mode
+;; #+title: TODO orgtrello's dev progress
+;; #+author: Antoine R. Dumont
+;; #+property: board-id      50bcfd2f033110476000e768
+;; #+property: todo-list-id  51d15c319c93af375200155f
+;; #+property: doing-list-id 51d15c319c93af3752001500
+;; #+property: done-list-id  51d15c319c93ag375200155f
+;; ```
 
 ;;; Code:
 
