@@ -81,9 +81,6 @@
                         (lambda (&key data &allow-other-keys)
                           ;; will update via tag the trello id of the new persisted data (if needed)
                           (save-excursion
-                            ;; first, we need to find the entry to update
-                            ;; up to root
-                            (while (org-up-heading-safe))
                             ;; find the current entry
                             (org-goto-local-search-headings (assoc-default 'name data) nil nil)
                             ;; now we extract the data
