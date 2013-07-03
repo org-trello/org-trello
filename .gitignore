@@ -1,5 +1,6 @@
 *.elc
 *.log
 *.html
-/orgtrello*.tar.gz
 /orgtrello-pkg.el
+/orgtrello-*.tar*
+orgtrello-*/
