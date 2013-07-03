@@ -50,11 +50,13 @@
       (while (org-up-heading-safe))
       ;; retrieve all metadata
       (org-map-tree (lambda () (push (orgtrello-data-entry-get-full-metadata) (gethash level dispatch-map-list)))))
-    ;; order of the list is important as we need to be certain that the card (level 1) is created before adding
-    ;; checklist (level 2) and tasks (level 3)
-    (append (gethash 1 dispatch-map-list)
-            (gethash 2 dispatch-map-list)
-            (gethash 3 dispatch-map-list))))
+    ;; first the card
+    ;; then the checklists
+    ;; then the tasks
+    ;; reverse the result list to keep the right order in one time (I have no control over org-map-tree + push
+    (reverse (append (gethash 3 dispatch-map-list)
+                     (gethash 2 dispatch-map-list)
+                     (gethash 1 dispatch-map-list)))))
 
 (defun orgtrello-data--get-level (heading-metadata)
   "Given the heading-metadata, extract the level"
