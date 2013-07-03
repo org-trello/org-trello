@@ -5,7 +5,7 @@
 #+property: doing-list-id 51d15c98741fd4673a0014b5
 #+property: done-list-id  50bcfd2f033110476000e76b
 
-* IN-PROGRESS Development steps [82%]
+* IN-PROGRESS Development steps [85%]
 ** DONE emacs-lisp HTTP Client
 CLOSED: [2013-06-29 sam. 15:29]
 ** DONE authentication in trello
@@ -197,10 +197,22 @@ CLOSED: [2013-07-03 mer. 20:31]
 CLOSED: [2013-07-03 mer. 17:18]
 **** DONE plug
 CLOSED: [2013-07-03 mer. 20:31]
-** TODO Sync [0%]
-*** TODO Given a trello board, download into org-mode file
-*** TODO Given a org-mode file, fill in the board
-Dismiss non compatible org-mode entries
+** TODO Make an interactive setup for retrieving the consumer key and the secret-token
+This will ease the installation of the *config.el* file
+- M-x install-orgtrello
+- Open the browser on https://trello.com/1/appKey/generate
+- Let the user retrieve the consumer-key and input it in the modeline.
+- Open the browser on https://trello.com/1/authorize?response_type=token&name=org-trello&scope=read,write&expiration=never&key=<consumer-key>
+- Prompt for the user to input its token
+- Generate the following file *~/.trello/config.el*
+#+begin_src emacs-lisp
+;; from: https://trello.com/1/appKey/generate
+(defvar consumer-key "<consumer-key>")
+;; from: https://trello.com/1/authorize?response_type=token&name=org-trello&scope=read,write&expiration=never&key=<consumer-key>
+(defvar access-token "<access-token>")
+#+end_src
+- Display what has been done to the user's filesystem by showing the content of *~/.trello/config.el*.
+
 ** TODO Make an interactive setup for retrieving the list ids of the board
 This will ease the installation of the list-ids in top of the org file.
 Workflow:
@@ -215,24 +227,10 @@ Workflow:
 # +property: done-list-id  <done-list-id>
 #+end_src
 Note: # + instead of #+ because otherwise, org-mode captures them and overwrite the right ones.
-** TODO Make an interactive setup for retrieving the consumer key and the secret-token
-This will ease the installation of the *config.el* file
-- M-x install-orgtrello
-- Make a request on https://trello.com/1/appKey/generate
-- Retrieve the consumer-key
-- Make a request on
-  https://trello.com/1/authorize?response_type=token&name=org-trello&scope=read,write&expiration=never&key=<consumer-key>
-and let the browser opens
-- Prompt for the user to input its token
-- Generate the following file *~/.trello/config.el*
-#+begin_src emacs-lisp
-;; from: https://trello.com/1/appKey/generate
-(defvar consumer-key "<consumer-key>")
-;; from: https://trello.com/1/authorize?response_type=token&name=org-trello&scope=read,write&expiration=never&key=<consumer-key>
-(defvar access-token "<access-token>")
-#+end_src
-- Display what has been done to the user's filesystem by showing the content of *~/.trello/config.el*.
-
+** TODO Sync [0%]
+*** TODO Given a trello board, download into org-mode file
+*** TODO Given a org-mode file, fill in the board
+Dismiss non compatible org-mode entries
 ** TODO Improvments
 *** TODO Improve the synchronous creation of cards (and sub-elements...) to avoid the emacs blocking
 *** TODO Rewrite tests using `expectations` (mock)                    :dev:
