@@ -38,17 +38,17 @@
   "Add a card to a board"
   (orgtrello-hash--make-hash :post "/cards/" `(("name" . ,name) ("idList" . ,idList))))
 
-(defun orgtrello-api--get-cards (list-id)
+(defun orgtrello-api--get-cards-from-list (list-id)
   "List all the cards"
   (orgtrello-hash--make-hash :get (format "/lists/%s/cards" list-id)))
 
 (defun orgtrello-api--move-card (card-id idList &optional name)
   "Move a card to another list"
-  (if name
-      (setq data `(("name"   . ,name)
-                   ("idList" . ,idList)))
-    (setq data `(("idList" . ,idList))))
-  (orgtrello-hash--make-hash :put (format "/cards/%s" card-id) data))
+  (let ((orgtrello-api--move-card-data (if name
+                                           `(("name"   . ,name)
+                                             ("idList" . ,idList))
+                                         `(("idList" . ,idList)))))
+    (orgtrello-hash--make-hash :put (format "/cards/%s" card-id) orgtrello-api--move-card-data)))
 
 (defun orgtrello-api--add-checklist (card-id name)
   "Add a checklist to a card"

@@ -55,8 +55,8 @@
     (should (equal (gethash :uri    h) "/cards/"))
     (should (equal (gethash :params h) '(("name" . "card-name") ("idList" . "list-id"))))))
 
-(ert-deftest testing-orgtrello-api--get-cards ()
-  (let ((h (orgtrello-api--get-cards :list-id)))
+(ert-deftest testing-orgtrello-api--get-cards-from-list ()
+  (let ((h (orgtrello-api--get-cards-from-list :list-id)))
     (should (equal (gethash :method h) :get))
     (should (equal (gethash :uri    h) "/lists/:list-id/cards"))
     (should (equal (gethash :params h) nil))))

@@ -49,7 +49,10 @@
       ;; up to the highest level
       (while (org-up-heading-safe))
       ;; retrieve all metadata
-      (org-map-tree (lambda () (push (orgtrello-data-entry-get-full-metadata) (gethash level dispatch-map-list)))))
+      (org-map-tree (lambda ()
+                      (let* ((full-metadata (orgtrello-data-entry-get-full-metadata))
+                             (level         (gethash :level full-metadata)))
+                        (push full-metadata (gethash level dispatch-map-list))))))
     ;; first the card
     ;; then the checklists
     ;; then the tasks
