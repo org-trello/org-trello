@@ -1,9 +1,6 @@
 ;; Main 'namespace' to declare the query function to execute to connect to trello
 ;; trello-query is the main entry point
 
-;; Load the setup from the $HOME/.trello/config.el
-(load *CONFIG-FILE*)
-
 (require 'org)
 (require 'request)
 (require 'orgtrello-hash)
