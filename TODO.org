@@ -6,9 +6,6 @@
 #+author: Antoine R. Dumont
 
 * IN-PROGRESS v0.0.1 [96%]
-:PROPERTIES:
-:orgtrello-id: 51d5ad913aeb675630001887
-:END:
 ** DONE emacs-lisp HTTP Client
 CLOSED: [2013-06-29 sam. 15:29]
 ** DONE authentication in trello
@@ -248,9 +245,6 @@ https://github.com/milkypostman/melpa
 http://nic.ferrier.me.uk/blog/2012_07/emacs-packages-for-programmers
 
 * TODO v0.0.2
-:PROPERTIES:
-:orgtrello-id: 51d5ada2b56b98354e0030a9
-:END:
 ** TODO Another way of setting up the org-mode file and the trello board
 This will ease the installation of the list-ids in top of the org file.
 Workflow:

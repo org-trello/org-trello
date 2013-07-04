@@ -26,9 +26,18 @@ cf. [What has been done and remains to be done](./TODO.org)
 
 # Release notes
 
+## v0.0.1
+
+- write only mode at the moment (org-mode pushes to trello, no reading yet)
 - simple entity creation (card, checklist, item/task)                 - request asynchroneous
 - complex entity creation (from card, including checklist, item/task) - request synchroneous (block emacs until done, need to be improved)
 - entity deletion (card, checklist, item/task)
+- Interactive command to ease the setup of the consumer-key and the access-token
+- Interactive command to ease the setup of one org-mode file (which represents one trello board). I assume there exists
+  a 'todo', 'doing', and 'done' list (named that way too)
+- Control that the setup file (consumer-key and access-token) are rightly generated (to avoid later problem)
+- Control that the properties on the current org-mode file are rightly setuped to access a trello board
+- packaging for melpa
 
 [More details on what has been done and remains to be done](./TODO.org)
 
