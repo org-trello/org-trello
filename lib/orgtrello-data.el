@@ -1,6 +1,7 @@
 ;;; orgtrello-data.el
 
 (require 'orgtrello-hash)
+(require 'dash)
 
 (defun orgtrello-data-metadata ()
   "Compute the metadata from the org-heading-components entry, add the identifier and extract the metadata needed."

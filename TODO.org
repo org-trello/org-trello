@@ -1,7 +1,7 @@
 #+property: board-id      50bcfd2f033110476000e768
-#+property: todo-list-id  51d15c319c93af375200155f
-#+property: doing-list-id 51d15c98741fd4673a0014b5
-#+property: done-list-id  50bcfd2f033110476000e76b
+#+property: todo-list-id  51d5edbed94d81af0d001d90
+#+property: doing-list-id 51d5edc892695e997c002209
+#+property: done-list-id  51d5edb9357aaa643f00403d
 #+title: TODO orgtrello's dev progress
 #+author: Antoine R. Dumont
 
