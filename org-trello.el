@@ -26,44 +26,44 @@
 
 ;; Minor mode for org-mode to sync org-mode and trello
 
+;; 1) Add the following to your emacs init file
+;; (require 'org-trello)
+
+;; Automatically
+;; 2) Install the consumer-key and the read-write token for org-trello to be able to work in your name with your trello boards
+;; M-x orgtrello-do-install-keys-and-token
+;;
+;; 3) For each org-mode file, you want to connect your org-mode file with a trello board
+;; M-x orgtrello-do-install-board-and-lists
+
 ;; Manually
-;; 1) retrieve your trello api key https://trello.com/1/appKey/generate
+;; 2) retrieve your trello api key https://trello.com/1/appKey/generate
 ;; Then add those entries inside the ~/.trello/config.el:
 ;; ;; -*- lisp -*-
 ;; (defvar consumer-key "consumer-key")
-;; 2) then connect to this url with your browser
+
+;; 3) then connect to this url with your browser
 ;; https://trello.com/1/authorize?response_type=token&name=org-trello&scope=read,write&expiration=never&key=<consumer-key>
 ;; Add another entry inside the `~/.trello/config.el`
 ;; (defvar access-token "your-access-token")
 
-;; Automatically
-;; M-x orgtrello--do-install-keys-and-token (or C-c I)
-
-;; 3) Add the following to your emacs init file
-;; (require 'org-trello)
-
 ;; 4) You need to make your org-mode buffer aware of trello.
-;; At the moment, this routine is manual.
 
 ;; Add this to the top of your org-mode file
 
-;; ```org-mode
 ;; #+property: board-id      <BOARD-ID>
 ;; #+property: todo-list-id  <TODO-LIST-ID>
 ;; #+property: doing-list-id <DOING-LIST-ID>
 ;; #+property: done-list-id  <DONE-LIST-ID>
-;; ```
 
 ;; Example:
 
-;; ```org-mode
-;; #+title: TODO orgtrello's dev progress
+;; #+title: todo orgtrello's dev progress
 ;; #+author: Antoine R. Dumont
 ;; #+property: board-id      50bcfd2f033110476000e768
 ;; #+property: todo-list-id  51d15c319c93af375200155f
 ;; #+property: doing-list-id 51d15c319c93af3752001500
 ;; #+property: done-list-id  51d15c319c93ag375200155f
-;; ```
 
 ;;; Code:
 
@@ -171,7 +171,7 @@ Add another entry inside the '~/.trello/config.el'
          (dispatch-fn (gethash level *MAP-DISPATCH-CREATE-UPDATE* 'orgtrello--too-deep-level)))
     (funcall dispatch-fn meta parent-meta grandparent-meta)))
 
-(defun orgtrello--do-create-simple ()
+(defun orgtrello-do-create-simple ()
   "Do the actual simple creation of a card, checklist or task."
   (interactive)
   (let* ((entry-metadata (orgtrello-data-entry-get-full-metadata))
@@ -210,7 +210,7 @@ Add another entry inside the '~/.trello/config.el'
          (map-ids (make-hash-table :test 'equal)))
     (should (equal (gethash :id (orgtrello--merge-map entry map-ids)) :id-already-there))))
 
-(defun orgtrello--do-create-full-card ()
+(defun orgtrello-do-create-full-card ()
   "Do the actual full card creation - from card to task. Beware full side effects..."
   (interactive)
   ;; beware, the list-entries-metadata is stored once and not updated after each http call, thus do not possess the
@@ -284,7 +284,7 @@ Add another entry inside the '~/.trello/config.el'
          (dispatch-fn (gethash level *MAP-DISPATCH-DELETE* 'orgtrello--too-deep-level)))
     (funcall dispatch-fn meta parent-meta)))
 
-(defun orgtrello--do-delete-simple ()
+(defun orgtrello-do-delete-simple ()
   "Do the simple deletion of a card, checklist or task."
   (interactive)
   (let* ((entry-metadata   (orgtrello-data-entry-get-full-metadata))
@@ -309,7 +309,7 @@ Add another entry inside the '~/.trello/config.el'
     (insert (format "(setq access-token \"%s\")" access-token))
     (write-file *CONFIG-FILE* 't)))
 
-(defun orgtrello--do-install-keys-and-token ()
+(defun orgtrello-do-install-keys-and-token ()
   "Procedure to install the consumer-key and the token for the user in the config-file."
   (interactive)
   (defvar orgtrello--consumer-key nil)
@@ -428,10 +428,10 @@ Add another entry inside the '~/.trello/config.el'
   :lighter " ot" ;; the name on the modeline
   :keymap  (let ((map (make-sparse-keymap)))
              ;; binding will change
-             (define-key map (kbd "C-c H") 'orgtrello--do-create-simple)
-             (define-key map (kbd "C-c j") 'orgtrello--do-create-full-card)
-             (define-key map (kbd "C-c k") 'orgtrello--do-delete-simple)
-             (define-key map (kbd "C-c I") 'orgtrello--do-install-keys-and-token)
+             (define-key map (kbd "C-c H") 'orgtrello-do-create-simple)
+             (define-key map (kbd "C-c j") 'orgtrello-do-create-full-card)
+             (define-key map (kbd "C-c k") 'orgtrello-do-delete-simple)
+             (define-key map (kbd "C-c I") 'orgtrello-do-install-keys-and-token)
              (define-key map (kbd "C-c J") 'orgtrello-do-install-board-and-lists)
              ;; for debugging purposes (I do not know any better yet)
              ;; (define-key map (kbd "C-c z") 'orgtrello--describe-heading)
