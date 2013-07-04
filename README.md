@@ -3,26 +3,16 @@ org-trello
 
 Sync your org-mode files with your trello boards.
 
-# under heavy development
-
-Disclaimer:
-- Not ready :D
-- Possible api breakage and whatnot...
-
-What works:
-Only `C-c H` (not definitive binding) to push your org-mode modifications to trello asynchronously and bits by bits
-(card, then checklist, then task).
-
-# Contributions
-
-Pull Requests welcome
-cf. [What has been done and remains to be done](./TODO.org)
-
 # why?
 
 - org-mode is what I need.
 - Trello is what my team need.
 - org-trello may satisfy everybody.
+
+# Contributions
+
+Pull Requests welcome
+cf. [What has been done and remains to be done](./TODO.org)
 
 # Release notes
 
@@ -41,23 +31,92 @@ cf. [What has been done and remains to be done](./TODO.org)
 
 [More details on what has been done and remains to be done](./TODO.org)
 
+# Install
+
+## melpa
+
+Add this to your emacs's init file (~/.emacs, ~/.emacs.d/init.el, or *scratch*, or whatnot...)
+
+``` lisp
+(require 'package)
+
+(add-to-list 'package-archives
+             '("melpa" . "http://melpa.milkbox.net/packages/") t)
+
+(package-initialize)
+```
+Then hit, M-x eval-buffer to evaluate the contents.
+Now, you can install org-trello:
+
+``` lisp
+(when (not package-archive-contents)
+  (package-refresh-contents))
+
+;; Add in your own as you wish:
+(defvar my-packages '(org-trello)
+  "A list of packages to ensure are installed at launch.")
+
+(dolist (p my-packages)
+  (when (not (package-installed-p p))
+    (package-install p)))
+```
+
+Again, hit M-x eval-buffer
+
+## github
+
+Download org-trello from GitHub
+
+```sh
+git clone http://github.com/ardumont/org-trello.git
+```
+
+Add the org-trello directory to your load path and then add
+
+``` lisp
+(add-to-list 'load-path "/path/to/org-trello/"))
+(require 'org-trello)
+```
+
 # Setup
 
 ## Trello related
 
-1) Retrieve your trello api key from https://trello.com/1/appKey/generate
+### Automatic
+
+#### keys
+
+Install the consumer-key and the read-write token for org-trello to be able to work in your name with your trello boards
+
+``` lisp
+M-x orgtrello-do-install-keys-and-token
+```
+
+#### Sync org to trello
+
+For each org-mode file, you need to connect your org-mode file with a trello board
+
+``` lisp
+M-x orgtrello-do-install-board-and-lists
+```
+
+### Manual
+
+#### keys
+
+Retrieve your trello api key from https://trello.com/1/appKey/generate
 Then add those entries inside the file `~/.trello/config.el`:
 
-```emacs-lisp
-;; -*- lisp -*-
+``` lisp
 (defvar consumer-key "your-consumer-key")
 ```
 
-2) then connect to this url with your browser
-https://trello.com/1/authorize?response_type=token&name=org-trello&scope=read,write&expiration=never&key=<consumer-key>
+#### read/write token
+
+Then connect to this url with your browser https://trello.com/1/authorize?response_type=token&name=org-trello&scope=read,write&expiration=never&key=<consumer-key>
 Add another entry inside the `~/.trello/config.el`
 
-```emacs-lisp
+``` lisp
 (defvar access-token "your-access-token")
 ```
 
@@ -67,7 +126,7 @@ Then you're good to go.
 
 orgtrello is a minor mode for org-mode to sync.
 
-``` emacs-lisp
+``` lisp
 (require 'orgtrello)
 ```
 
@@ -78,7 +137,7 @@ At the moment, this routine is manual.
 
 Add this to the top of your org-mode file
 
-```org-mode
+``` org-mode
 #+property: board-id      <BOARD-ID>
 #+property: todo-list-id  <TODO-LIST-ID>
 #+property: doing-list-id <DOING-LIST-ID>
@@ -87,13 +146,13 @@ Add this to the top of your org-mode file
 
 Example:
 
-```org-mode
-#+title: TODO orgtrello's dev progress
-#+author: Antoine R. Dumont
+``` org-mode
 #+property: board-id      50bcfd2f033110476000e768
 #+property: todo-list-id  51d15c319c93af375200155f
 #+property: doing-list-id 51d15c319c93af3752001500
 #+property: done-list-id  51d15c319c93ag375200155f
+#+title: TODO orgtrello's dev progress
+#+author: Antoine R. Dumont
 ```
 
 # Use case
@@ -112,9 +171,12 @@ are not important but can be helpful to not lost oneself)
 ```
 
 Actual bindings (not definitive, suggestions are welcome):
-- *BINDING-SIMPLE-CREATION*  C-c H
-- *BINDING-COMPLEX-CREATION* C-c j
-- *BINDING-DELETION*         C-c k
+- *BINDING-SIMPLE-CREATION*  C-c o c - Create asynchronously a card/checklist/item with the subtree.
+- *BINDING-COMPLEX-CREATION* C-c o C - Create synchronously a card/checklist/item with the subtree.
+- *BINDING-DELETION*         C-c o k - Kill the arborescence tree and the corresponding entity.
+- *BINDING-SETUP-KEY*        C-c o i - Interactive command to install the keys and the access-token.
+- *BINDING-SETUP-BOARD*      C-c o p - Interactive command to select the board and attach the todo, doing and done list.
+- *BINDING-DESCRIBE*         C-c o d - This very binding to display this help menu.
 
 Trello:
 - Card:
