@@ -230,6 +230,8 @@ Workflow:
 # +property: done-list-id  <done-list-id>
 #+end_src
 Note: # + instead of #+ because otherwise, org-mode captures them and overwrite the right ones.
+** DONE Control the access to the function depending on the ~/.trello/config.el file.
+CLOSED: [2013-07-04 jeu. 18:25]
 ** PENDING Packaging
 *** DONE Make a multi-file package
 CLOSED: [2013-07-03 mer. 18:44]

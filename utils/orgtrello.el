@@ -4,16 +4,6 @@
 (require 'orgtrello-query)
 (require 'orgtrello-data)
 
-(defvar *CONFIG-DIR* (concat (getenv "HOME") "/" ".trello"))
-(defvar *CONFIG-FILE* (concat *CONFIG-DIR* "/config.el")
-"1) retrieve your trello api key https://trello.com/1/appKey/generate
-Then add those entries inside the ~/.trello/config.el:
-\(defvar consumer-key 'consumer-key'\)
-2) then connect to this url with your browser
-https://trello.com/1/authorize?response_type=token&name=org-trello&scope=read,write&expiration=never&key=<consumer-key>
-Add another entry inside the '~/.trello/config.el'
-\(defvar access-token 'your-access-token'\)")
-
 ;; Properties key for the orgtrello headers #+PROPERTY board-id, etc...
 (defvar *BOARD-ID*      "board-id"      "orgtrello property board-id entry")
 (defvar *TODO-LIST-ID*  "todo-list-id"  "orgtrello property todo list id")
@@ -92,7 +82,6 @@ Add another entry inside the '~/.trello/config.el'
 
 (defun orgtrello-do-create-simple ()
   "Do the actual simple creation of a card, checklist or task."
-  (interactive)
   (let* ((entry-metadata (orgtrello-data-entry-get-full-metadata))
          (query-http     (orgtrello--dispatch-create (gethash :current entry-metadata) (gethash :parent entry-metadata) (gethash :grandparent entry-metadata))))
     ;; FIXME? can't we do better that this?
@@ -114,7 +103,6 @@ Add another entry inside the '~/.trello/config.el'
 
 (defun orgtrello-do-create-full-card ()
   "Do the actual full card creation - from card to task. Beware full side effects..."
-  (interactive)
   ;; beware, the list-entries-metadata is stored once and not updated after each http call, thus do not possess the
   ;; newly created id
   (defvar orgtrello--do-create-full-card-response-http-data nil)
@@ -138,21 +126,18 @@ Add another entry inside the '~/.trello/config.el'
                          map-ids)))
             list-entries-metadata)))
 
-(defun orgtrello--describe-heading ()
+(defun orgtrello-describe-heading ()
   "Describe the current heading's metadata"
-  (interactive)
   (let* ((entry-metadata (orgtrello-data-entry-get-full-metadata)))
     (message "entry metadata: %S" entry-metadata)))
 
-(defun orgtrello--describe-headings ()
+(defun orgtrello-describe-headings ()
   "Describe the heading and its sublist."
-  (interactive)
   (let* ((meta       (orgtrello-data-compute-full-metadata))
          (count-meta (length meta)))
     (message "meta: %S\ncount: %s" meta count-meta)))
 
-(defun orgtrello--find-block ()
-  (interactive)
+(defun orgtrello-find-block ()
   (message "found: %s" (org-entry-get (point) "orgtrello-id")))
 
 (defun orgtrello--card-delete (card-meta &optional parent-meta)
@@ -188,7 +173,6 @@ Add another entry inside the '~/.trello/config.el'
 
 (defun orgtrello-do-delete-simple ()
   "Do the simple deletion of a card, checklist or task."
-  (interactive)
   (let* ((entry-metadata   (orgtrello-data-entry-get-full-metadata))
          (current-metadata (gethash :current entry-metadata))
          (id               (gethash :id current-metadata)))
@@ -205,8 +189,6 @@ Add another entry inside the '~/.trello/config.el'
   (with-temp-file *CONFIG-FILE*
     (erase-buffer)
     (goto-char (point-min))
-    (insert (format "(defvar consumer-key nil)\n"))
-    (insert (format "(defvar access-token nil)\n"))
     (insert (format "(setq consumer-key \"%s\")\n" consumer-key))
     (insert (format "(setq access-token \"%s\")" access-token))
     (write-file *CONFIG-FILE* 't)))
