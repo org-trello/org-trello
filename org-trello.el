@@ -126,16 +126,27 @@ Add another entry inside the '~/.trello/config.el'
           (message "You need to setup your:\n- consumer-key and your access-token for org-trello to work ok. Use M-x orgtrello-do-install-keys-and-token\n- org-mode file and connect it to trello. Use M-x orgtrello-do-install-board-and-lists")))
     (funcall fn-to-control-and-execute)))
 
+(defun org-trello/describe-bindings ()
+  "A simple message to describe the standard bindings used."
+  (interactive)
+  (message "C-c o c - Create/Update asynchronously simple a card/checklist/item depending on the level and status. Do not deal with level superior to 4.
+C-c o C - Create synchronously a card/checklist/item with the subtree.
+C-c o k - Kill the arborescence tree and the corresponding entity.
+C-c o i - Interactive command to install the keys and the access-token.
+C-c o p - Interactive command to select the board and attach the todo, doing and done list.
+C-c o d - This very binding to display this help menu."))
+
 ;;;###autoload
 (define-minor-mode org-trello-mode "Sync your org-mode and your trello together."
   :lighter " ot" ;; the name on the modeline
   :keymap  (let ((map (make-sparse-keymap)))
              ;; binding will change
-             (define-key map (kbd "C-c H") (lambda () (interactive) (org-trello/control-and-do '(org-trello/--control-keys org-trello/--control-properties) 'orgtrello-do-create-simple)))
-             (define-key map (kbd "C-c j") (lambda () (interactive) (org-trello/control-and-do '(org-trello/--control-keys org-trello/--control-properties) 'orgtrello-do-create-full-card)))
-             (define-key map (kbd "C-c k") (lambda () (interactive) (org-trello/control-and-do '(org-trello/--control-keys org-trello/--control-properties) 'orgtrello-do-delete-simple)))
-             (define-key map (kbd "C-c I") (lambda () (interactive) (org-trello/control-and-do nil                                                          'orgtrello-do-install-keys-and-token)))
-             (define-key map (kbd "C-c J") (lambda () (interactive) (org-trello/control-and-do '(org-trello/--control-keys)                                 'orgtrello-do-install-board-and-lists)))
+             (define-key map (kbd "C-c o c") (lambda () (interactive) (org-trello/control-and-do '(org-trello/--control-keys org-trello/--control-properties) 'orgtrello-do-create-simple)))
+             (define-key map (kbd "C-c o C") (lambda () (interactive) (org-trello/control-and-do '(org-trello/--control-keys org-trello/--control-properties) 'orgtrello-do-create-full-card)))
+             (define-key map (kbd "C-c o k") (lambda () (interactive) (org-trello/control-and-do '(org-trello/--control-keys org-trello/--control-properties) 'orgtrello-do-delete-simple)))
+             (define-key map (kbd "C-c o i") (lambda () (interactive) (org-trello/control-and-do nil                                                          'orgtrello-do-install-keys-and-token)))
+             (define-key map (kbd "C-c o p") (lambda () (interactive) (org-trello/control-and-do '(org-trello/--control-keys)                                 'orgtrello-do-install-board-and-lists)))
+             (define-key map (kbd "C-c o d") (lambda () (interactive) (org-trello/control-and-do nil                                                          'org-trello/describe-bindings)))
              ;; for debugging purposes (I do not know any better yet)
              ;; (define-key map (kbd "C-c z") (lambda () (org-trello/control-and-do nil 'orgtrello-describe-heading)))
              ;; (define-key map (kbd "C-c x") (lambda () (org-trello/control-and-do nil 'orgtrello-describe-headings)))
