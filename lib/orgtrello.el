@@ -99,39 +99,40 @@
   "Do the actual full card creation - from card to task. Beware full side effects..."
   ;; beware, the list-entries-metadata is stored once and not updated after each http call, thus do not possess the
   ;; newly created id
-  (defvar orgtrello--do-create-full-card-response-http-data nil)
   (let* ((list-entries-metadata (orgtrello-data-compute-full-metadata))
          (map-ids               (make-hash-table :test 'equal)))
     (mapcar (lambda (mapdata)
-              (let* ((current     (gethash :current     mapdata))
-                     (parent      (gethash :parent      mapdata))
-                     (grandparent (gethash :grandparent mapdata))
-                     (query-http (orgtrello--dispatch-create
-                                  (orgtrello--merge-map current map-ids)
-                                  (orgtrello--merge-map parent map-ids)
-                                  (orgtrello--merge-map grandparent map-ids))))
-                ;; side effect, sniffffff
-                ;; the query is synchronous as there is order in the current list - FIXME any better way? queues?
-                ;; execute and retrieve the result of the request
-                (setq orgtrello--do-create-full-card-response-http-data (orgtrello-query-http-sync query-http))
+              (let* ((current                                           (gethash :current     mapdata))
+                     (parent                                            (gethash :parent      mapdata))
+                     (grandparent                                       (gethash :grandparent mapdata))
+                     (query-http                                        (orgtrello--dispatch-create
+                                                                         (orgtrello--merge-map current map-ids)
+                                                                         (orgtrello--merge-map parent map-ids)
+                                                                         (orgtrello--merge-map grandparent map-ids)))
+                     ;; the query is synchronous as there is order in the current list - FIXME any better way? queues?
+                     ;; execute and retrieve the result of the request
+                     (orgtrello--do-create-full-card-response-http-data (orgtrello-query-http-sync query-http)))
                 ;; keep the last id
                 (puthash (assoc-default 'name orgtrello--do-create-full-card-response-http-data)
-                         (assoc-default 'id orgtrello--do-create-full-card-response-http-data)
+                         (assoc-default 'id   orgtrello--do-create-full-card-response-http-data)
                          map-ids)))
             list-entries-metadata)))
 
 (defun orgtrello-describe-heading ()
+  (interactive)
   "Describe the current heading's metadata"
   (let* ((entry-metadata (orgtrello-data-entry-get-full-metadata)))
     (message "entry metadata: %S" entry-metadata)))
 
 (defun orgtrello-describe-headings ()
+  (interactive)
   "Describe the heading and its sublist."
-  (let* ((meta       (orgtrello-data-compute-full-metadata))
-         (count-meta (length meta)))
-    (message "meta: %S\ncount: %s" meta count-meta)))
+  (let* ((orgtrello--describe-headings-meta       (orgtrello-data-compute-full-metadata))
+         (orgtrello--describe-headings-count-meta (length orgtrello--describe-headings-meta)))
+    (message "meta: %S\ncount: %s" orgtrello--describe-headings-meta orgtrello--describe-headings-count-meta)))
 
 (defun orgtrello-find-block ()
+  (interactive)
   (message "found: %s" (org-entry-get (point) "orgtrello-id")))
 
 (defun orgtrello--card-delete (card-meta &optional parent-meta)

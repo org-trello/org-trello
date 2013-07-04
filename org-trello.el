@@ -58,12 +58,12 @@
 
 ;; Example:
 
-;; #+title: todo orgtrello's dev progress
-;; #+author: Antoine R. Dumont
 ;; #+property: board-id      50bcfd2f033110476000e768
 ;; #+property: todo-list-id  51d15c319c93af375200155f
 ;; #+property: doing-list-id 51d15c319c93af3752001500
 ;; #+property: done-list-id  51d15c319c93ag375200155f
+;; #+title: todo orgtrello's dev progress
+;; #+author: Antoine R. Dumont
 
 ;;; Code:
 

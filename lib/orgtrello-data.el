@@ -40,26 +40,27 @@
 
 (defun orgtrello-data-compute-full-metadata ()
   "Compute the metadata from the org-heading-components entry - full card up to level 3 (rest is dismissed)."
-  (let* ((dispatch-map-list (make-hash-table :test 'equal)))
+  (let* ((orgtrello-data-compute-full-metadata--dispatch-map-list (make-hash-table :test 'equal)))
     ;; build the dispatch map into which add the data depending on the level
-    (puthash 1 nil dispatch-map-list)
-    (puthash 2 nil dispatch-map-list)
-    (puthash 3 nil dispatch-map-list)
     (save-excursion
       ;; up to the highest level
       (while (org-up-heading-safe))
       ;; retrieve all metadata
-      (org-map-tree (lambda ()
-                      (let* ((full-metadata (orgtrello-data-entry-get-full-metadata))
-                             (level         (gethash :level full-metadata)))
-                        (push full-metadata (gethash level dispatch-map-list))))))
+      (org-map-tree
+       (lambda ()
+         (let* ((orgtrello-data-entry-get-full-metadata-value (orgtrello-data-entry-get-full-metadata)))
+           (if orgtrello-data-entry-get-full-metadata-value
+               (let* ((current (gethash :current orgtrello-data-entry-get-full-metadata-value))
+                      (level   (gethash :level current))
+                      (list    (gethash level orgtrello-data-compute-full-metadata--dispatch-map-list)))
+                 (puthash level (push orgtrello-data-entry-get-full-metadata-value list) orgtrello-data-compute-full-metadata--dispatch-map-list)))))))
     ;; first the card
     ;; then the checklists
     ;; then the tasks
     ;; reverse the result list to keep the right order in one time (I have no control over org-map-tree + push
-    (reverse (append (gethash 3 dispatch-map-list)
-                     (gethash 2 dispatch-map-list)
-                     (gethash 1 dispatch-map-list)))))
+    (reverse (append (gethash 3 orgtrello-data-compute-full-metadata--dispatch-map-list)
+                     (gethash 2 orgtrello-data-compute-full-metadata--dispatch-map-list)
+                     (gethash 1 orgtrello-data-compute-full-metadata--dispatch-map-list)))))
 
 (defun orgtrello-data--get-level (heading-metadata)
   "Given the heading-metadata, extract the level"
