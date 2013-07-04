@@ -67,7 +67,7 @@
 
 ;;; Code:
 
-(add-to-list 'load-path "./utils")
+(add-to-list 'load-path "./lib")
 
 ;; query
 (require 'org)
