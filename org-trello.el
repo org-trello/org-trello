@@ -228,9 +228,8 @@ Add another entry inside the '~/.trello/config.el'
                                   (orgtrello--merge-map grandparent map-ids))))
                 ;; side effect, sniffffff
                 ;; the query is synchronous as there is order in the current list - FIXME any better way? queues?
-                (puthash :sync 't query-http)
                 ;; execute and retrieve the result of the request
-                (setq orgtrello--do-create-full-card-response-http-data (request-response-data (orgtrello-query-http query-http)))
+                (setq orgtrello--do-create-full-card-response-http-data (orgtrello-query-http-sync query-http))
                 ;; keep the last id
                 (puthash (assoc-default 'name orgtrello--do-create-full-card-response-http-data)
                          (assoc-default 'id orgtrello--do-create-full-card-response-http-data)
@@ -298,14 +297,16 @@ Add another entry inside the '~/.trello/config.el'
             (message query-http)))
       (message "Entity not synchronized on trello yet!"))))
 
-(defun orgtrello--do-config-file (consumer-key access-token)
+(defun orgtrello--do-install-config-file (consumer-key access-token)
   "Persist the file config-file with the input of the user."
   (make-directory *CONFIG-DIR* t)
   (with-temp-file *CONFIG-FILE*
     (erase-buffer)
     (goto-char (point-min))
-    (insert (format "(defvar consumer-key \"%s\"\)" orgtrello--consumer-key))
-    (insert (format "(defvar access-token \"%s\")\)" orgtrello--access-token))
+    (insert (format "(defvar consumer-key nil)\n"))
+    (insert (format "(defvar access-token nil)\n"))
+    (insert (format "(setq consumer-key \"%s\")\n" consumer-key))
+    (insert (format "(setq access-token \"%s\")" access-token))
     (write-file *CONFIG-FILE* 't)))
 
 (defun orgtrello--do-install-keys-and-token ()
@@ -314,10 +315,113 @@ Add another entry inside the '~/.trello/config.el'
   (defvar orgtrello--consumer-key nil)
   (defvar orgtrello--access-token nil)
   (browse-url "https://trello.com/1/appKey/generate")
-  (setq orgtrello--consumer-key (read-input "Consumer-key: "))
+  (setq orgtrello--consumer-key (read-string "Consumer-key: "))
   (browse-url (format "https://trello.com/1/authorize?response_type=token&name=org-trello&scope=read,write&expiration=never&key=%s" orgtrello--consumer-key))
-  (setq orgtrello--access-token (read-input "Access-token: "))
-  (orgtrello--do-config-file orgtrello--consumer-key orgtrello--access-token))
+  (setq orgtrello--access-token (read-string "Access-token: "))
+  (orgtrello--do-install-config-file orgtrello--consumer-key orgtrello--access-token))
+
+(defun orgtrello--id-name (entities)
+  "Given a list of association list (representing entities), return a map (id, name)."
+  (let* ((id-name (make-hash-table :test 'equal)))
+    (->> entities
+      (--map (puthash (assoc-default 'id it) (assoc-default 'name it) id-name)))
+    id-name))
+
+(ert-deftest testing-orgtrello--id-name ()
+  (let* ((entities [((id . "id")
+                     (shortUrl . "https://trello.com/b/ePrdEnzC")
+                     (url . "https://trello.com/board/devops/4f96a984dbb00d733b04d8b5") (name . "testing board"))
+                    ((id . "another-id")
+                     f(shortUrl . "https://trello.com/b/ePrdEnzC")
+                     (url . "https://trello.com/board/devops/4f96a984dbb00d733b04d8b5")
+                     (name . "testing board 2"))
+                    ((id . "yet-another-id")
+                     (shortUrl . "https://trello.com/b/ePrdEnzC")
+                     (url . "https://trello.com/board/devops/4f96a984dbb00d733b04d8b5")
+                     (name . "testing board 3"))])
+         (hashtable-result (orgtrello--id-name entities))
+         (hashtable-expected (make-hash-table :test 'equal)))
+    (puthash "id" "testing board" hashtable-expected)
+    (puthash "another-id" "testing board 2" hashtable-expected)
+    (puthash "yet-another-id" "testing board 3" hashtable-expected)
+    (should (equal (gethash "id" hashtable-result) (gethash "id" hashtable-expected)))
+    (should (equal (gethash "another-id" hashtable-result) (gethash "another-id" hashtable-expected)))
+    (should (equal (gethash "yet-another-id" hashtable-result) (gethash "yet-another-id" hashtable-expected)))
+    (should (equal (length (values hashtable-result)) (length (values hashtable-expected))))))
+
+(defun orgtrello--name-id (entities)
+  "Given a list of association list (representing entities), return a map (id, name)."
+  (let* ((name-id (make-hash-table :test 'equal)))
+    (->> entities
+      (--map (puthash (downcase (assoc-default'name it)) (downcase (assoc-default 'id it)) name-id)))
+    name-id))
+
+(ert-deftest testing-orgtrello--name-id ()
+  (let* ((entities [((id . "id")
+                     (shortUrl . "https://trello.com/b/ePrdEnzC")
+                     (name . "testing board"))
+                    ((id . "another-id")
+                     f(shortUrl . "https://trello.com/b/ePrdEnzC")
+                     (name . "testing board 2"))
+                    ((id . "yet-another-id")
+                     (shortUrl . "https://trello.com/b/ePrdEnzC")
+                     (name . "testing board 3"))])
+         (hashtable-result (orgtrello--name-id entities))
+         (hashtable-expected (make-hash-table :test 'equal)))
+    (puthash "testing board" "id" hashtable-expected)
+    (puthash "testing board 2" "another-id"  hashtable-expected)
+    (puthash "testing board 3" "yet-another-id"  hashtable-expected)
+    (should (equal (gethash "testing board" hashtable-result) (gethash "testing board" hashtable-expected)))
+    (should (equal (gethash "testing board 2" hashtable-result) (gethash "testing board 2" hashtable-expected)))
+    (should (equal (gethash "testing board 3" hashtable-result) (gethash "testing board 3" hashtable-expected)))
+    (should (equal (length (values hashtable-result)) (length (values hashtable-expected))))))
+
+(defun orgtrello--list-boards ()
+  "Return the map of the existing boards associated to the current account. (Synchronous request)"
+  (orgtrello-query-http-sync (orgtrello-api--get-boards)))
+
+(defun orgtrello--list-board-lists (board-id)
+  "Return the map of the existing list of the board with id board-id. (Synchronous request)"
+  (orgtrello-query-http-sync (orgtrello-api--get-lists board-id)))
+
+(defun orgtrello--choose-board (boards)
+  "Given a map of boards, display the possible boards for the user to choose which one he wants to work with."
+  ;; ugliest ever
+  (defvar board-chosen nil)
+  (let* ((str-key-val  "")
+         (i            0)
+         (i-id (make-hash-table :test 'equal)))
+    (maphash (lambda (id name)
+               (setq str-key-val (format "%s%d: %s\n" str-key-val i name))
+               (puthash (format "%d" i) id i-id)
+               (setq i (+ 1 i)))
+             boards)
+    (setq board-chosen
+          (read-string (format "%s\nInput the number of the board desired: " str-key-val)))
+    (while (not (gethash board-chosen i-id))
+      (setq board-chosen
+            (read-string (format "%s\nInput the number of the board desired: " str-key-val))))
+    (gethash board-chosen i-id)))
+
+(defun orgtrello-update-orgmode-file-with-properties (board-id board-lists-hash-name-id)
+  "Update the orgmode file with the needed headers for org-trello to work."
+  (with-current-buffer (current-buffer)
+    (goto-char (point-min))
+    (insert (format "#+property: board-id      %s\n" board-id))
+    (insert (format "#+property: todo-list-id  %s\n" (gethash "todo"  board-lists-hash-name-id)))
+    (insert (format "#+property: doing-list-id %s\n" (gethash "doing" board-lists-hash-name-id)))
+    (insert (format "#+property: done-list-id  %s\n" (gethash "done"  board-lists-hash-name-id)))
+    (save-buffer)))
+
+(defun orgtrello-do-install-board-and-lists ()
+  "Interactive command to install the list boards"
+  (interactive)
+  (load *CONFIG-FILE*)
+  (if (not (and consumer-key access-token))
+      (message "You need to setup your account to be able to connect to trello.\nInstall manually (report to the doc) or M-x orgtrello--do-install-keys-and-token")
+    (let* ((chosen-id-board (orgtrello--choose-board (orgtrello--id-name (orgtrello--list-boards))))
+           (board-lists     (orgtrello--name-id (orgtrello--list-board-lists chosen-id-board))))
+      (orgtrello-update-orgmode-file-with-properties chosen-id-board board-lists))))
 
 ;;;###autoload
 (define-minor-mode org-trello-mode "Sync your org-mode and your trello together."
@@ -328,10 +432,11 @@ Add another entry inside the '~/.trello/config.el'
              (define-key map (kbd "C-c j") 'orgtrello--do-create-full-card)
              (define-key map (kbd "C-c k") 'orgtrello--do-delete-simple)
              (define-key map (kbd "C-c I") 'orgtrello--do-install-keys-and-token)
+             (define-key map (kbd "C-c J") 'orgtrello-do-install-board-and-lists)
              ;; for debugging purposes (I do not know any better yet)
-             (define-key map (kbd "C-c z") 'orgtrello--describe-heading)
-             (define-key map (kbd "C-c x") 'orgtrello--describe-headings)
-             (define-key map (kbd "C-c F") 'orgtrello--find-block)
+             ;; (define-key map (kbd "C-c z") 'orgtrello--describe-heading)
+             ;; (define-key map (kbd "C-c x") 'orgtrello--describe-headings)
+             ;; (define-key map (kbd "C-c F") 'orgtrello--find-block)
              ;; define other bindings...
              map))
 ;;;###autoload

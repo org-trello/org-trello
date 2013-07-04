@@ -23,10 +23,18 @@
 (defvar *MAP-DISPATCH-HTTP-QUERY* (orgtrello-query--make-dispatch-http-query))
 
 (defun orgtrello-query-http (query-map)
-  "Query the trello api. This method will dispatch depending on the method."
+  "Query the trello api asynchronously."
   (let* ((method      (gethash :method query-map))
          (fn-dispatch (gethash method *MAP-DISPATCH-HTTP-QUERY*)))
     (funcall fn-dispatch query-map)))
+
+(defun orgtrello-query-http-sync (query-map)
+  "Query the trello api synchronously and return the data of the request."
+  (let* ((method      (gethash :method query-map))
+         (fn-dispatch (gethash method *MAP-DISPATCH-HTTP-QUERY*)))
+    (puthash :sync t query-map)
+    (let ((request-response (funcall fn-dispatch query-map)))
+      (request-response-data request-response))))
 
 (defun orgtrello-query--map-dispatch-http-verb ()
   (let* ((map-dispatch (make-hash-table :test 'equal)))
