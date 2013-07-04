@@ -4,12 +4,6 @@
 (require 'orgtrello-query)
 (require 'orgtrello-data)
 
-;; Properties key for the orgtrello headers #+PROPERTY board-id, etc...
-(defvar *BOARD-ID*      "board-id"      "orgtrello property board-id entry")
-(defvar *TODO-LIST-ID*  "todo-list-id"  "orgtrello property todo list id")
-(defvar *DOING-LIST-ID* "doing-list-id" "orgtrello property doing list id")
-(defvar *DONE-LIST-ID*  "done-list-id"  "orgtrello property done list id")
-
 ;; Specific state - FIXME check if they do not already exist on org-mode to avoid potential collisions
 (defvar *TODO* "TODO" "org-mode todo state")
 (defvar *DONE* "DONE" "org-mode done state")
@@ -253,14 +247,15 @@
     (insert (format "#+property: todo-list-id  %s\n" (gethash "todo"  board-lists-hash-name-id)))
     (insert (format "#+property: doing-list-id %s\n" (gethash "doing" board-lists-hash-name-id)))
     (insert (format "#+property: done-list-id  %s\n" (gethash "done"  board-lists-hash-name-id)))
-    (save-buffer)))
+    (save-buffer)
+    (org-mode-restart)))
 
 (defun orgtrello-do-install-board-and-lists ()
   "Interactive command to install the list boards"
   (interactive)
   (load *CONFIG-FILE*)
   (if (not (and consumer-key access-token))
-      (message "You need to setup your account to be able to connect to trello.\nInstall manually (report to the doc) or M-x orgtrello--do-install-keys-and-token")
+      (message "You need to setup your account to be able to connect to trello.\nInstall manually (report to the doc) or M-x orgtrello-do-install-keys-and-token")
     (let* ((chosen-id-board (orgtrello--choose-board (orgtrello--id-name (orgtrello--list-boards))))
            (board-lists     (orgtrello--name-id (orgtrello--list-board-lists chosen-id-board))))
       (orgtrello-update-orgmode-file-with-properties chosen-id-board board-lists))))

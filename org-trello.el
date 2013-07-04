@@ -89,8 +89,21 @@ Add another entry inside the '~/.trello/config.el'
 (defvar consumer-key nil)
 (defvar access-token nil)
 
-(defun org-trello-control ()
-  "org-trello needs to control that the consumer-key and the access-token are set before letting anything happens. Returns t if everything is ok."
+;; Properties key for the orgtrello headers #+PROPERTY board-id, etc...
+(defvar *BOARD-ID*      "board-id"      "orgtrello property board-id entry")
+(defvar *TODO-LIST-ID*  "todo-list-id"  "orgtrello property todo list id")
+(defvar *DOING-LIST-ID* "doing-list-id" "orgtrello property doing list id")
+(defvar *DONE-LIST-ID*  "done-list-id"  "orgtrello property done list id")
+
+(defun org-trello/--control-properties ()
+  "org-trello needs the properties board-id, todo-list-id, doing-list-id, done-list-id to be able to work ok."
+  (and (assoc-default *BOARD-ID*      org-file-properties)
+       (assoc-default *TODO-LIST-ID*  org-file-properties)
+       (assoc-default *DOING-LIST-ID* org-file-properties)
+       (assoc-default *DONE-LIST-ID*  org-file-properties)))
+
+(defun org-trello/--control-keys ()
+  "org-trello needs the consumer-key and the access-token to access the trello resources. Return t if everything is ok."
   (if (and consumer-key access-token)
       ;; everything is ok
       t
@@ -102,31 +115,31 @@ Add another entry inside the '~/.trello/config.el'
            ;; still not loaded, something is not right!
            (and consumer-key access-token)))))
 
-(defun org-trello-do-action (control-fn fn)
-  "Execute the function fn if control-fn is nil or if the result of control-fn is true."
-  (if control-fn
+(defun org-trello/control-and-do (control-fns fn-to-control-and-execute)
+  "Execute the function fn if control-fns is nil or if the result of apply every function to fn is ok."
+  (if control-fns
       (progn
-        (if (funcall control-fn)
+        (if (--all? (identity it) (--map (funcall it) control-fns))
             ;; ok, we call the function
-            (funcall fn)
+            (funcall fn-to-control-and-execute)
           ;; there is some trouble, trying to help the user
-          (message "You need to setup your consumer-key and your access-token for org-trello to work ok.\nUse M-x orgtrello-do-install-keys-and-token")))
-    (funcall fn)))
+          (message "You need to setup your:\n- consumer-key and your access-token for org-trello to work ok. Use M-x orgtrello-do-install-keys-and-token\n- org-mode file and connect it to trello. Use M-x orgtrello-do-install-board-and-lists")))
+    (funcall fn-to-control-and-execute)))
 
 ;;;###autoload
 (define-minor-mode org-trello-mode "Sync your org-mode and your trello together."
   :lighter " ot" ;; the name on the modeline
   :keymap  (let ((map (make-sparse-keymap)))
              ;; binding will change
-             (define-key map (kbd "C-c H") (lambda () (interactive) (org-trello-do-action 'org-trello-control 'orgtrello-do-create-simple)))
-             (define-key map (kbd "C-c j") (lambda () (interactive) (org-trello-do-action 'org-trello-control 'orgtrello-do-create-full-card)))
-             (define-key map (kbd "C-c k") (lambda () (interactive) (org-trello-do-action 'org-trello-control 'orgtrello-do-delete-simple)))
-             (define-key map (kbd "C-c I") (lambda () (interactive) (org-trello-do-action nil                 'orgtrello-do-install-keys-and-token)))
-             (define-key map (kbd "C-c J") (lambda () (interactive) (org-trello-do-action 'org-trello-control 'orgtrello-do-install-board-and-lists)))
+             (define-key map (kbd "C-c H") (lambda () (interactive) (org-trello/control-and-do '(org-trello/--control-keys org-trello/--control-properties) 'orgtrello-do-create-simple)))
+             (define-key map (kbd "C-c j") (lambda () (interactive) (org-trello/control-and-do '(org-trello/--control-keys org-trello/--control-properties) 'orgtrello-do-create-full-card)))
+             (define-key map (kbd "C-c k") (lambda () (interactive) (org-trello/control-and-do '(org-trello/--control-keys org-trello/--control-properties) 'orgtrello-do-delete-simple)))
+             (define-key map (kbd "C-c I") (lambda () (interactive) (org-trello/control-and-do nil                                                          'orgtrello-do-install-keys-and-token)))
+             (define-key map (kbd "C-c J") (lambda () (interactive) (org-trello/control-and-do '(org-trello/--control-keys)                                 'orgtrello-do-install-board-and-lists)))
              ;; for debugging purposes (I do not know any better yet)
-             ;; (define-key map (kbd "C-c z") (lambda () (org-trello-do-action nil 'orgtrello-describe-heading)))
-             ;; (define-key map (kbd "C-c x") (lambda () (org-trello-do-action nil 'orgtrello-describe-headings)))
-             ;; (define-key map (kbd "C-c F") (lambda () (org-trello-do-action nil 'orgtrello-find-block)))
+             ;; (define-key map (kbd "C-c z") (lambda () (org-trello/control-and-do nil 'orgtrello-describe-heading)))
+             ;; (define-key map (kbd "C-c x") (lambda () (org-trello/control-and-do nil 'orgtrello-describe-headings)))
+             ;; (define-key map (kbd "C-c F") (lambda () (org-trello/control-and-do nil 'orgtrello-find-block)))
              ;; define other bindings...
              map))
 ;;;###autoload
