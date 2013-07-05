@@ -1,5 +1,7 @@
 ;;; orgtrello-hash.el --- Utility function to help in initializing orgtrello's hashmap
 
+(require 'cl-lib)
+
 (defun orgtrello-hash--make-hash-org (level keyword title id point)
   "Utility function to ease the creation of the orgtrello-metadata"
   (let ((h (make-hash-table :test 'equal)))
