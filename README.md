@@ -24,7 +24,6 @@ cf. [What has been done and remains to be done](./TODO.org)
 
 - write only mode at the moment (org-mode pushes to trello, no reading yet)
 - simple entity creation (card, checklist, item/task)                 - request asynchroneous
-- complex entity creation (from card, including checklist, item/task) - request synchroneous (block emacs until done, need to be improved)
 - entity deletion (card, checklist, item/task)
 - Interactive command to ease the setup of the consumer-key and the access-token
 - Interactive command to ease the setup of one org-mode file (which represents one trello board). I assume there exists

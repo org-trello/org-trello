@@ -131,15 +131,15 @@ C-c o d - This very binding to display this help menu."))
   :keymap  (let ((map (make-sparse-keymap)))
              ;; binding will change
              (define-key map (kbd "C-c o c") 'org-trello/create-simple-entity)
-             (define-key map (kbd "C-c o C") 'org-trello/create-entity)
+             ;; (define-key map (kbd "C-c o C") 'org-trello/create-entity) ;; does not work yet
              (define-key map (kbd "C-c o k") 'org-trello/delete-entity)
              (define-key map (kbd "C-c o i") 'org-trello/setup-key-and-token)
              (define-key map (kbd "C-c o p") 'org-trello/install-board-and-lists-ids)
              (define-key map (kbd "C-c o d") 'org-trello/describe-bindings)
              ;; for debugging purposes (I do not know any better yet)
-             (define-key map (kbd "C-c z") 'orgtrello-describe-heading)
-             (define-key map (kbd "C-c x") 'orgtrello-describe-headings)
-             (define-key map (kbd "C-c F") 'orgtrello-find-block)
+             ;; (define-key map (kbd "C-c z") 'orgtrello-describe-heading)
+             ;; (define-key map (kbd "C-c x") 'orgtrello-describe-headings)
+             ;; (define-key map (kbd "C-c F") 'orgtrello-find-block)
              ;; define other bindings...
              map))
 

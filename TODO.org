@@ -247,7 +247,7 @@ https://github.com/milkypostman/melpa
 http://nic.ferrier.me.uk/blog/2012_07/emacs-packages-for-programmers
 
 * TODO v0.0.2 (or idea box or wish list or whatever)
-** TODO Create complex entities (does not work yet)
+** TODO Create complex entities (does not work yet!)
 ** TODO If no level 3, we may create a dummy checklist and attach every todo to such dummy checklist
 ** TODO A fake trello server to be able to test without a network
 ** TODO Testing the packaging
