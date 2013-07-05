@@ -23,7 +23,7 @@ cf. [What has been done and remains to be done](./TODO.org)
 ## v0.0.1
 
 - write only mode at the moment (org-mode pushes to trello, no reading yet)
-- simple entity creation (card, checklist, item/task)                 - request asynchroneous
+- simple entity creation (card, checklist, item/task), the request is asynchroneous
 - entity deletion (card, checklist, item/task)
 - Interactive command to ease the setup of the consumer-key and the access-token
 - Interactive command to ease the setup of one org-mode file (which represents one trello board). I assume there exists
@@ -174,12 +174,16 @@ are not important but can be helpful to not lost oneself)
 ```
 
 Actual bindings (not definitive, suggestions are welcome):
-- *BINDING-SIMPLE-CREATION*  C-c o c - Create asynchronously a card/checklist/item with the subtree.
-- *BINDING-COMPLEX-CREATION* C-c o C - Create synchronously a card/checklist/item with the subtree.
-- *BINDING-DELETION*         C-c o k - Kill the arborescence tree and the corresponding entity.
-- *BINDING-SETUP-KEY*        C-c o i - Interactive command to install the keys and the access-token.
-- *BINDING-SETUP-BOARD*      C-c o p - Interactive command to select the board and attach the todo, doing and done list.
-- *BINDING-DESCRIBE*         C-c o d - This very binding to display this help menu.
+- *BINDING-SIMPLE-CREATION*
+        C-c o c - Create asynchronously a card/checklist/item with the subtree.
+- *BINDING-DELETION*
+        C-c o k - Kill the arborescence tree and the corresponding entity.
+- *BINDING-SETUP-KEY*
+        C-c o i - Interactive command to install the keys and the access-token.
+- *BINDING-SETUP-BOARD*
+        C-c o I - Interactive command to select the board and attach the todo, doing and done list.
+- *BINDING-DESCRIBE*
+        C-c o h - help binding
 
 Trello:
 - Card:
