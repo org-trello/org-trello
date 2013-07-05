@@ -51,10 +51,12 @@
   (format "%s%s" *TRELLO-URL* uri))
 
 (cl-defun standard-error-callback (&key error-thrown &allow-other-keys)
-          (message "There was some problem during the request to trello: %s" error-thrown))
+  "Standard error callback"
+  (message "There was some problem during the request to trello: %s" error-thrown))
 
 (cl-defun standard-success-callback ()
-          (message "Success."))
+  "Standard success callback"
+  (message "Success."))
 
 (defun orgtrello-query--get (query-map)
   "GET"
