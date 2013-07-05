@@ -67,14 +67,23 @@
 
 ;;; Code:
 
-(add-to-list 'load-path "./lib")
-
-;; query
 (require 'org)
 (require 'json)
 (require 'dash)
 (require 'request)
+(require 'cl-lib)
+
+(add-to-list 'load-path "lib")
+
+(load-library "orgtrello-hash")
+(load-library "orgtrello-data")
+(load-library "orgtrello-api")
+(load-library "orgtrello-query")
+(load-library "orgtrello")
+
+;; force the loading
 (require 'orgtrello)
+(require 'orgtrello-data)
 
 (defvar *CONFIG-DIR* (concat (getenv "HOME") "/" ".trello"))
 (defvar *CONFIG-FILE* (concat *CONFIG-DIR* "/config.el")
@@ -104,22 +113,20 @@ Add another entry inside the '~/.trello/config.el'
 
 (defun org-trello/--control-keys ()
   "org-trello needs the consumer-key and the access-token to access the trello resources. Return t if everything is ok."
-  (if (and consumer-key access-token)
-      ;; everything is ok
-      t
-    ;; the data are not set,
-    (progn
+  (or (and consumer-key access-token)
+      ;; the data are not set,
       (and (file-exists-p *CONFIG-FILE*)
            ;; trying to load them
            (load *CONFIG-FILE*)
            ;; still not loaded, something is not right!
-           (and consumer-key access-token)))))
+           (and consumer-key access-token))))
 
 (defun org-trello/--control-and-do (control-fns fn-to-control-and-execute)
   "Execute the function fn if control-fns is nil or if the result of apply every function to fn is ok."
   (if control-fns
       (progn
-        (if (--all? (identity it) (--map (funcall it) control-fns))
+        (if (--all? (identity it) (--map (funcall it) control-fns));; beware, i'm calling control functions which have
+            ;; side effects, not a good idea with mapcar but i need their respective result
             ;; ok, we call the function
             (funcall fn-to-control-and-execute)
           ;; there is some trouble, trying to help the user
@@ -179,9 +186,10 @@ C-c o d - This very binding to display this help menu."))
              (define-key map (kbd "C-c X") 'orgtrello-data-entry-get-full-metadata)
              ;; define other bindings...
              map))
-;;;###autoload
 
 (add-hook 'org-mode-hook 'org-trello-mode)
+
+(message "org-trello loaded!")
 
 (provide 'org-trello)
 

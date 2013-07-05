@@ -95,6 +95,8 @@
   "Delete a task with id task-id"
   (orgtrello-hash--make-hash :delete (format "/checklists/%s/checkItems/%s" checklist-id task-id)))
 
+(message "orgtrello-api loaded!")
+
 (provide 'orgtrello-api)
 
 ;;; orgtrello-api.el ends here

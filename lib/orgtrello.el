@@ -261,6 +261,8 @@
            (board-lists     (orgtrello--name-id (orgtrello--list-board-lists chosen-id-board))))
       (orgtrello-update-orgmode-file-with-properties chosen-id-board board-lists))))
 
+(message "orgtrello loaded!")
+
 (provide 'orgtrello)
 
 ;;; orgtrello.el ends here

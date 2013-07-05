@@ -3,7 +3,7 @@
 (require 'org)
 (require 'request)
 (require 'orgtrello-data)
-(require 'cl)
+(require 'cl-lib)
 
 (defvar *TRELLO-URL* "https://api.trello.com/1" "The needed prefix url for trello")
 
@@ -68,28 +68,29 @@
                        (lambda (&key error-thrown response &allow-other-keys)
                          (message "error: %S\n%S" error-thrown response))))))
 
-(defun* orgtrello-query/--post-put-success-callback-update-id (&key data &allow-other-keys)
+(cl-defun orgtrello-query/--post-put-success-callback-update-id (&key data &allow-other-keys)
   "Called back function at the end of the post/put request to update the trello id in the org-mode file."
-  (let* ((data-id   (assoc-default 'id data))
-         (data-name (assoc-default 'name data)))
+  (let* ((orgtrello-query/--entry-new-id (assoc-default 'id data))
+         (orgtrello-query/--entry-name   (assoc-default 'name data)))
     ;; for testing reasons
     ;; (interactive)
     ;; (defvar data nil)
     ;; (setq data '((id . "1234") (name . "v0.0.1")))
     ;; will update via tag the trello id of the new persisted data (if needed)
     (save-excursion
-      (message "entity: %s" data-name)
       (while (org-up-heading-safe))
       ;; find the current entry
-      (org-goto-local-search-headings data-name nil nil)
+      (org-goto-local-search-headings orgtrello-query/--entry-name nil nil)
       ;; now we extract the data
-      (let* ((metadata    (orgtrello-data-metadata))
-             (original-id (gethash :id metadata)))
-        (if original-id ;; id already present in the org-mode file
+      (let* ((orgtrello-query/--entry-metadata (orgtrello-data-metadata))
+             (orgtrello-query/--entry-id       (gethash :id orgtrello-query/--entry-metadata)))
+        (if orgtrello-query/--entry-id ;; id already present in the org-mode file
             ;; no need to add another
-            (message "id %s already present" original-id)
-          ;; not present, this was just created, we add a simple property
-          (org-set-property "orgtrello-id" data-id))))))
+            (message "entity '%s' synced with id '%s'" orgtrello-query/--entry-name orgtrello-query/--entry-id)
+          (progn
+            ;; not present, this was just created, we add a simple property
+            (org-set-property "orgtrello-id" orgtrello-query/--entry-new-id)
+            (message "Newly entity '%s' synced with id '%s'" orgtrello-query/--entry-name orgtrello-query/--entry-new-id)))))))
 
 (defun orgtrello-query--post-or-put (query-map)
   "POST or PUT"
@@ -112,12 +113,13 @@
                      (lambda (&key error-thrown response &allow-other-keys)
                        (message "error: %S\n%S" error-thrown response))))))
 
-(defun* orgtrello-query/--delete-success-callback (&key data response &allow-other-keys)
+(cl-defun orgtrello-query/--delete-success-callback (&key data response &allow-other-keys)
   "Callback function called at the end of a successful delete request."
   (org-delete-property "orgtrello-id")
   (org-force-cycle-archived)
   (kill-line)
-  (kill-line))
+  (kill-line)
+  (message "Entity deleted!" ))
 
 (defun orgtrello-query--delete (query-map)
   "DELETE"
@@ -133,6 +135,8 @@
              :error (function*
                      (lambda (&key error-thrown response &allow-other-keys)
                        (message "error: %S\n%S" error-thrown response))))))
+
+(message "orgtrello-query loaded!")
 
 (provide 'orgtrello-query)
 

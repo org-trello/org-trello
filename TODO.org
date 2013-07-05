@@ -5,7 +5,7 @@
 #+title: TODO orgtrello's dev progress
 #+author: Antoine R. Dumont
 
-* DONE v0.0.1 [96%]
+* DONE v0.0.1 [100%]
 CLOSED: [2013-07-04 jeu. 20:19]
 ** DONE emacs-lisp HTTP Client
 CLOSED: [2013-06-29 sam. 15:29]
@@ -246,8 +246,8 @@ http://www.marmalade-repo.org/packages
 https://github.com/milkypostman/melpa
 http://nic.ferrier.me.uk/blog/2012_07/emacs-packages-for-programmers
 
-** IN-PROGRESS problem in callback land
-* TODO v0.0.2
+* TODO v0.0.2 (or idea box or wish list or whatever)
+** TODO If no level 3, we may create a dummy checklist and attach every todo to such dummy checklist
 ** TODO A fake trello server to be able to test without a network
 ** TODO Another way of setting up the org-mode file and the trello board by creating the board
 This will ease the installation of the list-ids in top of the org file.

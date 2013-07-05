@@ -87,6 +87,8 @@
          (id      (orgtrello-data--get-id      heading-metadata)))
     (orgtrello-hash--make-hash-org level keyword title id)))
 
+(message "orgtrello-data loaded!")
+
 (provide 'orgtrello-data)
 
 ;;; orgtrello-data.el ends here
