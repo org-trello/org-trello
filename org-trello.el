@@ -97,13 +97,13 @@
   (message "Syncing complex entity...")
   (org-trello/--control-and-do '(orgtrello/--control-keys orgtrello/--control-properties) 'orgtrello-do-create-full-card))
 
-(defun org-trello/delete-entity ()
+(defun org-trello/kill-entity ()
   "Control first, then if ok, delete the entity and all its arborescence."
   (interactive)
   (message "Delete entity...")
   (org-trello/--control-and-do '(orgtrello/--control-keys orgtrello/--control-properties) 'orgtrello-do-delete-simple))
 
-(defun org-trello/setup-key-and-token ()
+(defun org-trello/install-key-and-token ()
   "No control, trigger the setup installation of the key and the read/write token."
   (interactive)
   (message "Setup key and token...")
@@ -115,15 +115,14 @@
   (message "Install boards and lists...")
   (org-trello/--control-and-do '(orgtrello/--control-keys) 'orgtrello-do-install-board-and-lists))
 
-(defun org-trello/describe-bindings ()
+(defun org-trello/help-describing-bindings ()
   "A simple message to describe the standard bindings used."
   (interactive)
   (message "C-c o c - Create/Update asynchronously simple a card/checklist/item depending on the level and status. Do not deal with level superior to 4.
-C-c o C - Create synchronously a card/checklist/item with the subtree.
 C-c o k - Kill the arborescence tree and the corresponding entity.
 C-c o i - Interactive command to install the keys and the access-token.
-C-c o p - Interactive command to select the board and attach the todo, doing and done list.
-C-c o d - This very binding to display this help menu."))
+C-c o I - Interactive command to select the board and attach the todo, doing and done list.
+C-c o h - This very binding to display this help menu."))
 
 ;;;###autoload
 (define-minor-mode org-trello-mode "Sync your org-mode and your trello together."
@@ -132,10 +131,10 @@ C-c o d - This very binding to display this help menu."))
              ;; binding will change
              (define-key map (kbd "C-c o c") 'org-trello/create-simple-entity)
              ;; (define-key map (kbd "C-c o C") 'org-trello/create-entity) ;; does not work yet
-             (define-key map (kbd "C-c o k") 'org-trello/delete-entity)
-             (define-key map (kbd "C-c o i") 'org-trello/setup-key-and-token)
-             (define-key map (kbd "C-c o p") 'org-trello/install-board-and-lists-ids)
-             (define-key map (kbd "C-c o d") 'org-trello/describe-bindings)
+             (define-key map (kbd "C-c o k") 'org-trello/kill-entity)
+             (define-key map (kbd "C-c o i") 'org-trello/install-key-and-token)
+             (define-key map (kbd "C-c o I") 'org-trello/install-board-and-lists-ids)
+             (define-key map (kbd "C-c o h") 'org-trello/help-describing-bindings)
              ;; for debugging purposes (I do not know any better yet)
              ;; (define-key map (kbd "C-c z") 'orgtrello-describe-heading)
              ;; (define-key map (kbd "C-c x") 'orgtrello-describe-headings)
