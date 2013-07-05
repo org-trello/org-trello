@@ -115,7 +115,7 @@ Add another entry inside the '~/.trello/config.el'
            ;; still not loaded, something is not right!
            (and consumer-key access-token)))))
 
-(defun org-trello/control-and-do (control-fns fn-to-control-and-execute)
+(defun org-trello/--control-and-do (control-fns fn-to-control-and-execute)
   "Execute the function fn if control-fns is nil or if the result of apply every function to fn is ok."
   (if control-fns
       (progn
@@ -129,27 +129,27 @@ Add another entry inside the '~/.trello/config.el'
 (defun org-trello/create-simple-entity ()
   "Control first, then if ok, create a simple entity."
   (interactive)
-  (org-trello/control-and-do '(org-trello/--control-keys org-trello/--control-properties) 'orgtrello-do-create-simple))
+  (org-trello/--control-and-do '(org-trello/--control-keys org-trello/--control-properties) 'orgtrello-do-create-simple))
 
 (defun org-trello/create-entity ()
   "Control first, then if ok, create an entity and all its arborescence if need be."
   (interactive)
-  (org-trello/control-and-do '(org-trello/--control-keys org-trello/--control-properties) 'orgtrello-do-create-full-card))
+  (org-trello/--control-and-do '(org-trello/--control-keys org-trello/--control-properties) 'orgtrello-do-create-full-card))
 
 (defun org-trello/delete-entity ()
   "Control first, then if ok, delete the entity and all its arborescence."
   (interactive)
-  (org-trello/control-and-do '(org-trello/--control-keys org-trello/--control-properties) 'orgtrello-do-delete-simple))
+  (org-trello/--control-and-do '(org-trello/--control-keys org-trello/--control-properties) 'orgtrello-do-delete-simple))
 
 (defun org-trello/setup-key-and-token ()
   "No control, trigger the setup installation of the key and the read/write token."
   (interactive)
-  (org-trello/control-and-do nil 'orgtrello-do-install-keys-and-token))
+  (org-trello/--control-and-do nil 'orgtrello-do-install-keys-and-token))
 
 (defun org-trello/install-board-and-lists-ids ()
   "Control first, then if ok, trigger the setup installation of the trello board to sync with."
   (interactive)
-  (org-trello/control-and-do '(org-trello/--control-keys) 'orgtrello-do-install-board-and-lists))
+  (org-trello/--control-and-do '(org-trello/--control-keys) 'orgtrello-do-install-board-and-lists))
 
 (defun org-trello/describe-bindings ()
   "A simple message to describe the standard bindings used."
