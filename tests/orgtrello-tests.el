@@ -9,19 +9,19 @@
   (should (equal (orgtrello--compute-list-key "IN PROGRESS") *DOING-LIST-ID*)))
 
 (ert-deftest testing-orgtrello--merge-map ()
-  (let* ((entry   (orgtrello-hash--make-hash-org :level :method "the name of the entry" nil))
+  (let* ((entry   (orgtrello-hash--make-hash-org :level :method "the name of the entry" nil :pt))
          (map-ids (make-hash-table :test 'equal)))
     (puthash "the name of the entry" :some-id map-ids)
     (should (equal (gethash :id (orgtrello--merge-map entry map-ids)) :some-id))))
 
 (ert-deftest testing-orgtrello--merge-map2 ()
-  (let* ((entry   (orgtrello-hash--make-hash-org :level :method :title :id-already-there))
+  (let* ((entry   (orgtrello-hash--make-hash-org :level :method :title :id-already-there :pt))
          (map-ids (make-hash-table :test 'equal)))
     (puthash :title :some-id map-ids)
     (should (equal (gethash :id (orgtrello--merge-map entry map-ids)) :id-already-there))))
 
 (ert-deftest testing-orgtrello--merge-map3 ()
-  (let* ((entry   (orgtrello-hash--make-hash-org :level :method :title :id-already-there))
+  (let* ((entry   (orgtrello-hash--make-hash-org :level :method :title :id-already-there :point))
          (map-ids (make-hash-table :test 'equal)))
     (should (equal (gethash :id (orgtrello--merge-map entry map-ids)) :id-already-there))))
 

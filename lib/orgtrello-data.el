@@ -5,10 +5,12 @@
 
 (defun orgtrello-data-metadata ()
   "Compute the metadata from the org-heading-components entry, add the identifier and extract the metadata needed."
-  (let* ((id           (org-entry-get (point) "orgtrello-id"))
+  (let* ((pt           (point))
+         (id           (org-entry-get pt "orgtrello-id"))
          (org-metadata (org-heading-components)))
     (->> org-metadata
          (cons id)
+         (cons pt)
          orgtrello-data--get-metadata)))
 
 (defun orgtrello-data--parent-metadata ()
@@ -65,27 +67,32 @@
 
 (defun orgtrello-data--get-level (heading-metadata)
   "Given the heading-metadata, extract the level"
-  (second heading-metadata))
+  (third heading-metadata))
 
 (defun orgtrello-data--get-keyword (heading-metadata)
   "Given the heading-metadata, extract the keyword."
-  (fourth heading-metadata))
+  (fifth heading-metadata))
 
 (defun orgtrello-data--get-title (heading-metadata)
   "Given the heading-metadata, extract the title."
-  (sixth heading-metadata))
+  (seventh heading-metadata))
 
 (defun orgtrello-data--get-id (heading-metadata)
   "Given the heading-metadata, extract the id."
-  (car heading-metadata))
+  (second heading-metadata))
+
+(defun orgtrello-data--get-point (heading-metadata)
+  "Given the heading-metadata, extract the id."
+  (first heading-metadata))
 
 (defun orgtrello-data--get-metadata (heading-metadata)
   "Given the heading-metadata returned by the function 'org-heading-components, make it a hashmap with key :level, :keyword, :title. and their respective value"
   (let* ((level   (orgtrello-data--get-level   heading-metadata))
          (title   (orgtrello-data--get-title   heading-metadata))
          (keyword (orgtrello-data--get-keyword heading-metadata))
-         (id      (orgtrello-data--get-id      heading-metadata)))
-    (orgtrello-hash--make-hash-org level keyword title id)))
+         (id      (orgtrello-data--get-id      heading-metadata))
+         (point   (orgtrello-data--get-point   heading-metadata)))
+    (orgtrello-hash--make-hash-org level keyword title id point)))
 
 (message "orgtrello-data loaded!")
 

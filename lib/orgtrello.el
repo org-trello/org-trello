@@ -101,11 +101,15 @@
 
 (defvar *MAP-DISPATCH-CREATE-UPDATE* (orgtrello--dispatch-map-creation) "Dispatch map for the creation/update of card/checklist/task")
 
+(defun orgtrello--set-marker ()
+  "Set the consumer-key to make a pointer to get back to when the request is finished"
+  (org-set-property *ORGTRELLO-MARKER* *ORGTRELLO-MARKER*))
+
 (defun orgtrello--dispatch-create (meta &optional parent-meta grandparent-meta)
   (let* ((level       (gethash :level meta))
          (dispatch-fn (gethash level *MAP-DISPATCH-CREATE-UPDATE* 'orgtrello--too-deep-level)))
     ;; set the consumer-key to make a pointer to get back to when the request is finished
-    (org-set-property *ORGTRELLO-MARKER* *ORGTRELLO-MARKER*)
+    (orgtrello--set-marker)
     ;; then execute the call
     (funcall dispatch-fn meta parent-meta grandparent-meta)))
 
@@ -138,19 +142,26 @@
          (map-ids               (make-hash-table :test 'equal)))
     (mapcar (lambda (mapdata)
               (let* ((current                                           (gethash :current     mapdata))
+                     (current-position-to-go-to                         (gethash :point       current))
                      (parent                                            (gethash :parent      mapdata))
                      (grandparent                                       (gethash :grandparent mapdata))
                      (query-http                                        (orgtrello--dispatch-create
                                                                          (orgtrello--merge-map current map-ids)
                                                                          (orgtrello--merge-map parent map-ids)
-                                                                         (orgtrello--merge-map grandparent map-ids)))
-                     ;; the query is synchronous as there is order in the current list - FIXME any better way? queues?
-                     ;; execute and retrieve the result of the request
-                     (orgtrello--do-create-full-card-response-http-data (orgtrello-query-http-sync query-http)))
-                ;; keep the last id
-                (puthash (assoc-default 'name orgtrello--do-create-full-card-response-http-data)
-                         (assoc-default 'id   orgtrello--do-create-full-card-response-http-data)
-                         map-ids)))
+                                                                         (orgtrello--merge-map grandparent map-ids))))
+                ;; will make our mark
+                (save-excursion
+                  ;; move to the entity to sync
+                  (goto-char current-position-to-go-to)
+                  ;; set the consumer-key to make a pointer to get back to when the request is finished
+                  (orgtrello--set-marker))
+                (let (;; the query is synchronous as there is order in the current list - FIXME any better way? queues?
+                      ;; execute and retrieve the result of the request
+                      (orgtrello--do-create-full-card-response-http-data (orgtrello-query-http-sync query-http)))
+                  ;; keep the last id
+                  (puthash (assoc-default 'name orgtrello--do-create-full-card-response-http-data)
+                           (assoc-default 'id   orgtrello--do-create-full-card-response-http-data)
+                           map-ids))))
             list-entries-metadata)))
 
 (defun orgtrello-describe-heading ()

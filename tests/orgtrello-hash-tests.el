@@ -1,11 +1,12 @@
 (require 'orgtrello-hash)
 
 (ert-deftest testing-orgtrello-hash--make-hash-org ()
-  (let* ((meta (orgtrello-hash--make-hash-org 0 "IN PROGRESS" "some title" "some id")))
+  (let* ((meta (orgtrello-hash--make-hash-org 0 "IN PROGRESS" "some title" "some id" "point")))
     (should (equal (gethash :title   meta) "some title"))
     (should (equal (gethash :keyword meta) "IN PROGRESS"))
     (should (equal (gethash :level   meta) 0))
-    (should (equal (gethash :id      meta) "some id"))))
+    (should (equal (gethash :id      meta) "some id"))
+    (should (equal (gethash :point   meta) "point"))))
 
 (ert-deftest testing-orgtrello-hash--make-hash ()
   (let ((h (orgtrello-hash--make-hash :some-method :some-uri)))
