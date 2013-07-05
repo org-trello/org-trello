@@ -39,13 +39,12 @@
 ;; Manually
 ;; 2) retrieve your trello api key https://trello.com/1/appKey/generate
 ;; Then add those entries inside the ~/.trello/config.el:
-;; ;; -*- lisp -*-
-;; (defvar consumer-key "consumer-key")
+;; (defvar *consumer-key* "consumer-key")
 ;;
 ;; 3) then connect to this url with your browser
 ;; https://trello.com/1/authorize?response_type=token&name=org-trello&scope=read,write&expiration=never&key=<consumer-key>
 ;; Add another entry inside the `~/.trello/config.el`
-;; (defvar access-token "your-access-token")
+;; (defvar *access-token* "your-access-token")
 ;;
 ;; 4) You need to make your org-mode buffer aware of trello.
 ;;
@@ -56,15 +55,6 @@
 ;; #+property: doing-list-id <DOING-LIST-ID>
 ;; #+property: done-list-id  <DONE-LIST-ID>
 ;;
-;; Example:
-;;
-;; #+property: board-id      50bcfd2f033110476000e768
-;; #+property: todo-list-id  51d15c319c93af375200155f
-;; #+property: doing-list-id 51d15c319c93af3752001500
-;; #+property: done-list-id  51d15c319c93ag375200155f
-;; #+title: todo orgtrello's dev progress
-;; #+author: Antoine R. Dumont
-
 ;;; Code:
 
 (require 'org)

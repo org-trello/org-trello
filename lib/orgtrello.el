@@ -14,18 +14,11 @@
 (defvar *DOING-LIST-ID* "doing-list-id" "orgtrello property doing list id")
 (defvar *DONE-LIST-ID*  "done-list-id"  "orgtrello property done list id")
 
-(defvar *CONFIG-DIR* (concat (getenv "HOME") "/" ".trello"))
-(defvar *CONFIG-FILE* (concat *CONFIG-DIR* "/config.el")
-"1) retrieve your trello api key https://trello.com/1/appKey/generate
-Then add those entries inside the ~/.trello/config.el:
-\(defvar consumer-key 'consumer-key'\)
-2) then connect to this url with your browser
-https://trello.com/1/authorize?response_type=token&name=org-trello&scope=read,write&expiration=never&key=<consumer-key>
-Add another entry inside the '~/.trello/config.el'
-\(defvar access-token 'your-access-token'\)")
+(defvar *CONFIG-DIR*  (concat (getenv "HOME") "/" ".trello"))
+(defvar *CONFIG-FILE* (concat *CONFIG-DIR* "/config.el"))
 
-(defvar consumer-key nil)
-(defvar access-token nil)
+(defvar *consumer-key* nil)
+(defvar *access-token* nil)
 
 (defun orgtrello/--control-properties ()
   "org-trello needs the properties board-id, todo-list-id, doing-list-id, done-list-id to be able to work ok."
@@ -35,14 +28,14 @@ Add another entry inside the '~/.trello/config.el'
        (assoc-default *DONE-LIST-ID*  org-file-properties)))
 
 (defun orgtrello/--control-keys ()
-  "org-trello needs the consumer-key and the access-token to access the trello resources. Return t if everything is ok."
-  (or (and consumer-key access-token)
+  "org-trello needs the *consumer-key* and the *access-token* to access the trello resources. Return t if everything is ok."
+  (or (and *consumer-key* *access-token*)
       ;; the data are not set,
       (and (file-exists-p *CONFIG-FILE*)
            ;; trying to load them
            (load *CONFIG-FILE*)
            ;; still not loaded, something is not right!
-           (and consumer-key access-token))))
+           (and *consumer-key* *access-token*))))
 
 (defun orgtrello--compute-list-key (state)
   "Given a state, compute the list id for the creation of a card"
@@ -214,26 +207,26 @@ Add another entry inside the '~/.trello/config.el'
             (message query-http)))
       (message "Entity not synchronized on trello yet!"))))
 
-(defun orgtrello--do-install-config-file (consumer-key access-token)
+(defun orgtrello--do-install-config-file (*consumer-key* *access-token*)
   "Persist the file config-file with the input of the user."
   (make-directory *CONFIG-DIR* t)
   (with-temp-file *CONFIG-FILE*
     (erase-buffer)
     (goto-char (point-min))
-    (insert (format "(setq consumer-key \"%s\")\n" consumer-key))
-    (insert (format "(setq access-token \"%s\")" access-token))
+    (insert (format "(setq *consumer-key* \"%s\")\n" *consumer-key*))
+    (insert (format "(setq *access-token* \"%s\")" *access-token*))
     (write-file *CONFIG-FILE* 't)))
 
 (defun orgtrello-do-install-keys-and-token ()
-  "Procedure to install the consumer-key and the token for the user in the config-file."
+  "Procedure to install the *consumer-key* and the token for the user in the config-file."
   (interactive)
-  (defvar orgtrello--consumer-key nil)
+  (defvar orgtrello--*consumer-key* nil)
   (defvar orgtrello--access-token nil)
   (browse-url "https://trello.com/1/appKey/generate")
-  (setq orgtrello--consumer-key (read-string "Consumer-key: "))
-  (browse-url (format "https://trello.com/1/authorize?response_type=token&name=org-trello&scope=read,write&expiration=never&key=%s" orgtrello--consumer-key))
+  (setq orgtrello--*consumer-key* (read-string "*consumer-key*: "))
+  (browse-url (format "https://trello.com/1/authorize?response_type=token&name=org-trello&scope=read,write&expiration=never&key=%s" orgtrello--*consumer-key*))
   (setq orgtrello--access-token (read-string "Access-token: "))
-  (orgtrello--do-install-config-file orgtrello--consumer-key orgtrello--access-token))
+  (orgtrello--do-install-config-file orgtrello--*consumer-key* orgtrello--access-token))
 
 (defun orgtrello--id-name (entities)
   "Given a list of association list (representing entities), return a map (id, name)."
@@ -291,7 +284,7 @@ Add another entry inside the '~/.trello/config.el'
   "Interactive command to install the list boards"
   (interactive)
   (load *CONFIG-FILE*)
-  (if (not (and consumer-key access-token))
+  (if (not (and *consumer-key* *access-token*))
       (message "You need to setup your account to be able to connect to trello.\nInstall manually (report to the doc) or M-x orgtrello-do-install-keys-and-token")
     (let* ((chosen-id-board (orgtrello--choose-board (orgtrello--id-name (orgtrello--list-boards))))
            (board-lists     (orgtrello--name-id (orgtrello--list-board-lists chosen-id-board))))

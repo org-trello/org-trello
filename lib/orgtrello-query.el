@@ -58,8 +58,8 @@
     (request (orgtrello-query--compute-url uri)
              :sync    sync
              :type    (orgtrello-query--compute-method method)
-             :params  `((key . ,consumer-key)
-                        (token . ,access-token))
+             :params  `((key . ,*consumer-key*)
+                        (token . ,*access-token*))
              :parser  'json-read
              :success (function*
                        (lambda (&key data &allow-other-keys)
@@ -101,8 +101,8 @@
     (request (orgtrello-query--compute-url uri)
              :sync    sync
              :type    (orgtrello-query--compute-method method)
-             :params  `((key . ,consumer-key)
-                        (token . ,access-token))
+             :params  `((key . ,*consumer-key*)
+                        (token . ,*access-token*))
              :headers '(("Content-type" . "application/json"))
              :data    (json-encode payload)
              :parser  'json-read
@@ -129,8 +129,8 @@
     (request (orgtrello-query--compute-url uri)
              :sync    sync
              :type    (orgtrello-query--compute-method method)
-             :params  `((key . ,consumer-key)
-                        (token . ,access-token))
+             :params  `((key . ,*consumer-key*)
+                        (token . ,*access-token*))
              :success 'orgtrello-query/--delete-success-callback
              :error (function*
                      (lambda (&key error-thrown response &allow-other-keys)
