@@ -85,42 +85,6 @@
 (require 'orgtrello)
 (require 'orgtrello-data)
 
-(defvar *CONFIG-DIR* (concat (getenv "HOME") "/" ".trello"))
-(defvar *CONFIG-FILE* (concat *CONFIG-DIR* "/config.el")
-"1) retrieve your trello api key https://trello.com/1/appKey/generate
-Then add those entries inside the ~/.trello/config.el:
-\(defvar consumer-key 'consumer-key'\)
-2) then connect to this url with your browser
-https://trello.com/1/authorize?response_type=token&name=org-trello&scope=read,write&expiration=never&key=<consumer-key>
-Add another entry inside the '~/.trello/config.el'
-\(defvar access-token 'your-access-token'\)")
-
-(defvar consumer-key nil)
-(defvar access-token nil)
-
-;; Properties key for the orgtrello headers #+PROPERTY board-id, etc...
-(defvar *BOARD-ID*      "board-id"      "orgtrello property board-id entry")
-(defvar *TODO-LIST-ID*  "todo-list-id"  "orgtrello property todo list id")
-(defvar *DOING-LIST-ID* "doing-list-id" "orgtrello property doing list id")
-(defvar *DONE-LIST-ID*  "done-list-id"  "orgtrello property done list id")
-
-(defun org-trello/--control-properties ()
-  "org-trello needs the properties board-id, todo-list-id, doing-list-id, done-list-id to be able to work ok."
-  (and (assoc-default *BOARD-ID*      org-file-properties)
-       (assoc-default *TODO-LIST-ID*  org-file-properties)
-       (assoc-default *DOING-LIST-ID* org-file-properties)
-       (assoc-default *DONE-LIST-ID*  org-file-properties)))
-
-(defun org-trello/--control-keys ()
-  "org-trello needs the consumer-key and the access-token to access the trello resources. Return t if everything is ok."
-  (or (and consumer-key access-token)
-      ;; the data are not set,
-      (and (file-exists-p *CONFIG-FILE*)
-           ;; trying to load them
-           (load *CONFIG-FILE*)
-           ;; still not loaded, something is not right!
-           (and consumer-key access-token))))
-
 (defun org-trello/--control-and-do (control-fns fn-to-control-and-execute)
   "Execute the function fn if control-fns is nil or if the result of apply every function to fn is ok."
   (if control-fns
@@ -136,17 +100,17 @@ Add another entry inside the '~/.trello/config.el'
 (defun org-trello/create-simple-entity ()
   "Control first, then if ok, create a simple entity."
   (interactive)
-  (org-trello/--control-and-do '(org-trello/--control-keys org-trello/--control-properties) 'orgtrello-do-create-simple))
+  (org-trello/--control-and-do '(orgtrello/--control-keys orgtrello/--control-properties) 'orgtrello-do-create-simple))
 
 (defun org-trello/create-entity ()
   "Control first, then if ok, create an entity and all its arborescence if need be."
   (interactive)
-  (org-trello/--control-and-do '(org-trello/--control-keys org-trello/--control-properties) 'orgtrello-do-create-full-card))
+  (org-trello/--control-and-do '(orgtrello/--control-keys orgtrello/--control-properties) 'orgtrello-do-create-full-card))
 
 (defun org-trello/delete-entity ()
   "Control first, then if ok, delete the entity and all its arborescence."
   (interactive)
-  (org-trello/--control-and-do '(org-trello/--control-keys org-trello/--control-properties) 'orgtrello-do-delete-simple))
+  (org-trello/--control-and-do '(orgtrello/--control-keys orgtrello/--control-properties) 'orgtrello-do-delete-simple))
 
 (defun org-trello/setup-key-and-token ()
   "No control, trigger the setup installation of the key and the read/write token."
@@ -156,7 +120,7 @@ Add another entry inside the '~/.trello/config.el'
 (defun org-trello/install-board-and-lists-ids ()
   "Control first, then if ok, trigger the setup installation of the trello board to sync with."
   (interactive)
-  (org-trello/--control-and-do '(org-trello/--control-keys) 'orgtrello-do-install-board-and-lists))
+  (org-trello/--control-and-do '(orgtrello/--control-keys) 'orgtrello-do-install-board-and-lists))
 
 (defun org-trello/describe-bindings ()
   "A simple message to describe the standard bindings used."

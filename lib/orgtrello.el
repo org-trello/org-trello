@@ -8,6 +8,42 @@
 (defvar *TODO* "TODO" "org-mode todo state")
 (defvar *DONE* "DONE" "org-mode done state")
 
+;; Properties key for the orgtrello headers #+PROPERTY board-id, etc...
+(defvar *BOARD-ID*      "board-id"      "orgtrello property board-id entry")
+(defvar *TODO-LIST-ID*  "todo-list-id"  "orgtrello property todo list id")
+(defvar *DOING-LIST-ID* "doing-list-id" "orgtrello property doing list id")
+(defvar *DONE-LIST-ID*  "done-list-id"  "orgtrello property done list id")
+
+(defvar *CONFIG-DIR* (concat (getenv "HOME") "/" ".trello"))
+(defvar *CONFIG-FILE* (concat *CONFIG-DIR* "/config.el")
+"1) retrieve your trello api key https://trello.com/1/appKey/generate
+Then add those entries inside the ~/.trello/config.el:
+\(defvar consumer-key 'consumer-key'\)
+2) then connect to this url with your browser
+https://trello.com/1/authorize?response_type=token&name=org-trello&scope=read,write&expiration=never&key=<consumer-key>
+Add another entry inside the '~/.trello/config.el'
+\(defvar access-token 'your-access-token'\)")
+
+(defvar consumer-key nil)
+(defvar access-token nil)
+
+(defun orgtrello/--control-properties ()
+  "org-trello needs the properties board-id, todo-list-id, doing-list-id, done-list-id to be able to work ok."
+  (and (assoc-default *BOARD-ID*      org-file-properties)
+       (assoc-default *TODO-LIST-ID*  org-file-properties)
+       (assoc-default *DOING-LIST-ID* org-file-properties)
+       (assoc-default *DONE-LIST-ID*  org-file-properties)))
+
+(defun orgtrello/--control-keys ()
+  "org-trello needs the consumer-key and the access-token to access the trello resources. Return t if everything is ok."
+  (or (and consumer-key access-token)
+      ;; the data are not set,
+      (and (file-exists-p *CONFIG-FILE*)
+           ;; trying to load them
+           (load *CONFIG-FILE*)
+           ;; still not loaded, something is not right!
+           (and consumer-key access-token))))
+
 (defun orgtrello--compute-list-key (state)
   "Given a state, compute the list id for the creation of a card"
   (cond ((string= state *TODO*) *TODO-LIST-ID*)
