@@ -68,6 +68,28 @@
                        (lambda (&key error-thrown response &allow-other-keys)
                          (message "error: %S\n%S" error-thrown response))))))
 
+(defun* orgtrello-query/--post-put-success-callback-update-id (&key data &allow-other-keys)
+  "Called back function at the end of the post/put request to update the trello id in the org-mode file."
+  ;; for testing reasons
+  ;; (interactive)
+  ;; (defvar data nil)
+  ;; (setq data '((id . "1234") (name . "v0.0.1")))
+  ;; will update via tag the trello id of the new persisted data (if needed)
+  (save-excursion
+    (message "entity: %s" (assoc-default 'name data))
+    (while (org-up-heading-safe))
+    ;; find the current entry
+    (org-goto-local-search-headings (assoc-default 'name data) nil nil)
+    ;; now we extract the data
+    (let* ((metadata    (orgtrello-data-metadata))
+           (original-id (gethash :id metadata))
+           (id          (assoc-default 'id data)))
+      (if original-id ;; id already present in the org-mode file
+          ;; no need to add another
+          (message "id %s already present" original-id)
+        ;; not present, this was just created, we add a simple property
+        (org-set-property "orgtrello-id" id)))))
+
 (defun orgtrello-query--post-or-put (query-map)
   "POST or PUT"
   (let* ((method  (gethash :method query-map))
@@ -82,28 +104,19 @@
              :headers '(("Content-type" . "application/json"))
              :data    (json-encode payload)
              :parser  'json-read
-             :success (function*
-                       (lambda (&key data &allow-other-keys)
-                         ;; will update via tag the trello id of the new persisted data (if needed)
-                         (save-excursion
-                           (message "entity: %s" (assoc-default 'name data))
-                           (while (org-up-heading-safe))
-                           ;; find the current entry
-                           (org-goto-local-search-headings (assoc-default 'name data) nil nil)
-                           ;; now we extract the data
-                           (let* ((metadata    (orgtrello-data-metadata))
-                                  (original-id (gethash :id metadata))
-                                  (id          (assoc-default 'id data)))
-                             (if original-id ;; id already present in the org-mode file
-                                 ;; no need to add another
-                                 (message "id %s already present" original-id)
-                               ;; not present, this was just created, we add a simple property
-                               (org-set-property "orgtrello-id" id))))))
+             :success 'orgtrello-query/--post-put-success-callback-update-id
              ;; :success (lambda (&rest args)
              ;;            (princ (plist-get args :data)))
              :error (function*
                      (lambda (&key error-thrown response &allow-other-keys)
                        (message "error: %S\n%S" error-thrown response))))))
+
+(defun* orgtrello-query/--delete-success-callback (&key data response &allow-other-keys)
+  "Callback function called at the end of a successful delete request."
+  (org-delete-property "orgtrello-id")
+  (org-force-cycle-archived)
+  (kill-line)
+  (kill-line))
 
 (defun orgtrello-query--delete (query-map)
   "DELETE"
@@ -115,12 +128,7 @@
              :type    (orgtrello-query--compute-method method)
              :params  `((key . ,consumer-key)
                         (token . ,access-token))
-             :success (function*
-                       (lambda (&key data response &allow-other-keys)
-                         (org-delete-property "orgtrello-id")
-                         (org-force-cycle-archived)
-                         (kill-line)
-                         (kill-line)))
+             :success 'orgtrello-query/--delete-success-callback
              :error (function*
                      (lambda (&key error-thrown response &allow-other-keys)
                        (message "error: %S\n%S" error-thrown response))))))
