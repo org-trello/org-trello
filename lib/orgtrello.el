@@ -17,8 +17,9 @@
 (defvar *CONFIG-DIR*  (concat (getenv "HOME") "/" ".trello"))
 (defvar *CONFIG-FILE* (concat *CONFIG-DIR* "/config.el"))
 
-(defvar *consumer-key* nil)
-(defvar *access-token* nil)
+(defvar *consumer-key*     nil "Id representing the user")
+(defvar *access-token*     nil "Read/write Access token to use trello in the user's name ")
+(defvar *ORGTRELLO-MARKER* nil "Marker used for syncing the data in trello")
 
 (defun orgtrello/--control-properties ()
   "org-trello needs the properties board-id, todo-list-id, doing-list-id, done-list-id to be able to work ok."
@@ -35,7 +36,9 @@
            ;; trying to load them
            (load *CONFIG-FILE*)
            ;; still not loaded, something is not right!
-           (and *consumer-key* *access-token*))))
+           (and *consumer-key* *access-token*)
+           ;; setting the marker once
+           (setq *ORGTRELLO-MARKER* (format "orgtrello-marker-%s" *consumer-key*)))))
 
 (defun orgtrello--compute-list-key (state)
   "Given a state, compute the list id for the creation of a card"
@@ -101,6 +104,9 @@
 (defun orgtrello--dispatch-create (meta &optional parent-meta grandparent-meta)
   (let* ((level       (gethash :level meta))
          (dispatch-fn (gethash level *MAP-DISPATCH-CREATE-UPDATE* 'orgtrello--too-deep-level)))
+    ;; set the consumer-key to make a pointer to get back to when the request is finished
+    (org-set-property *ORGTRELLO-MARKER* *ORGTRELLO-MARKER*)
+    ;; then execute the call
     (funcall dispatch-fn meta parent-meta grandparent-meta)))
 
 (defun orgtrello-do-create-simple ()

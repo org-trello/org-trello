@@ -52,6 +52,12 @@
 
 (cl-defun standard-error-callback (&key error-thrown &allow-other-keys)
   "Standard error callback"
+  (save-excursion
+      (while (org-up-heading-safe))
+      ;; find the current entry through the pointer
+      (org-goto-local-search-headings *ORGTRELLO-MARKER* nil t)
+      ;; remove the marker now that we're done
+      (org-delete-property *ORGTRELLO-MARKER*))
   (message "There was some problem during the request to trello: %s" error-thrown))
 
 (cl-defun standard-success-callback ()
@@ -76,14 +82,13 @@
   "Called back function at the end of the post/put request to update the trello id in the org-mode file."
   (let* ((orgtrello-query/--entry-new-id (assoc-default 'id data))
          (orgtrello-query/--entry-name   (assoc-default 'name data)))
-    ;; for testing reasons
-    ;; (interactive)
-    ;; (defvar data nil)
-    ;; (setq data '((id . "1234") (name . "v0.0.1")))
     ;; will update via tag the trello id of the new persisted data (if needed)
     (save-excursion
-      ;; find the current entry
-      (org-goto-local-search-headings orgtrello-query/--entry-name nil nil)
+      ;;(while (org-up-heading-safe))
+      ;; find the current entry through the pointer
+      (org-goto-local-search-headings *ORGTRELLO-MARKER* nil t)
+      ;; remove the marker now that we're done
+      (org-delete-property *ORGTRELLO-MARKER*)
       ;; now we extract the data
       (let* ((orgtrello-query/--entry-metadata (orgtrello-data-metadata))
              (orgtrello-query/--entry-id       (gethash :id orgtrello-query/--entry-metadata)))
@@ -114,11 +119,11 @@
 
 (cl-defun orgtrello-query/--delete-success-callback (&key data response &allow-other-keys)
   "Callback function called at the end of a successful delete request."
-  (org-delete-property "orgtrello-id")
-  (hide-subtree)
-  (kill-line)
-  (kill-line)
-  (message "Entity deleted!"))
+  (progn (org-delete-property "orgtrello-id")
+         (hide-subtree)
+         (kill-line)
+         (kill-line)
+         (message "Entity deleted!")))
 
 (defun orgtrello-query--delete (query-map)
   "DELETE"
