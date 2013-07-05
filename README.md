@@ -20,7 +20,7 @@ cf. [What has been done and remains to be done](./TODO.org)
 
 # Release notes
 
-## v0.0.1 (almost there)
+## v0.0.1
 
 - write only mode at the moment (org-mode pushes to trello, no reading yet)
 - simple entity creation (card, checklist, item/task)                 - request asynchroneous
@@ -30,7 +30,7 @@ cf. [What has been done and remains to be done](./TODO.org)
   a 'todo', 'doing', and 'done' list (named that way too)
 - Control that the setup file (consumer-key and access-token) are rightly generated (to avoid later problem)
 - Control that the properties on the current org-mode file are rightly setuped to access a trello board
-- packaging for melpa (not released yet)
+- packaging for melpa
 
 [More details on what has been done and remains to be done](./TODO.org)
 
