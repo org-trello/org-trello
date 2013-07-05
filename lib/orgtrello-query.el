@@ -50,6 +50,12 @@
   "Compute the trello url from the given uri."
   (format "%s%s" *TRELLO-URL* uri))
 
+(cl-defun standard-error-callback (&key error-thrown &allow-other-keys)
+          (message "There was some problem during the request to trello: %s" error-thrown))
+
+(cl-defun standard-success-callback ()
+          (message "Success."))
+
 (defun orgtrello-query--get (query-map)
   "GET"
   (let* ((method (gethash :method query-map))
@@ -61,12 +67,8 @@
              :params  `((key . ,*consumer-key*)
                         (token . ,*access-token*))
              :parser  'json-read
-             :success (function*
-                       (lambda (&key data &allow-other-keys)
-                         (message "success: %S" data)))
-             :error   (function*
-                       (lambda (&key error-thrown response &allow-other-keys)
-                         (message "error: %S\n%S" error-thrown response))))))
+             :success 'standard-success-callback
+             :error   'standard-error-callback)))
 
 (cl-defun orgtrello-query/--post-put-success-callback-update-id (&key data &allow-other-keys)
   "Called back function at the end of the post/put request to update the trello id in the org-mode file."
@@ -107,11 +109,7 @@
              :data    (json-encode payload)
              :parser  'json-read
              :success 'orgtrello-query/--post-put-success-callback-update-id
-             ;; :success (lambda (&rest args)
-             ;;            (princ (plist-get args :data)))
-             :error (function*
-                     (lambda (&key error-thrown response &allow-other-keys)
-                       (message "error: %S\n%S" error-thrown response))))))
+             :error   'standard-error-callback)))
 
 (cl-defun orgtrello-query/--delete-success-callback (&key data response &allow-other-keys)
   "Callback function called at the end of a successful delete request."
@@ -132,9 +130,7 @@
              :params  `((key . ,*consumer-key*)
                         (token . ,*access-token*))
              :success 'orgtrello-query/--delete-success-callback
-             :error (function*
-                     (lambda (&key error-thrown response &allow-other-keys)
-                       (message "error: %S\n%S" error-thrown response))))))
+             :error   'standard-error-callback)))
 
 (message "orgtrello-query loaded!")
 
