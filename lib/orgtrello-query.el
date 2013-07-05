@@ -82,7 +82,6 @@
     ;; (setq data '((id . "1234") (name . "v0.0.1")))
     ;; will update via tag the trello id of the new persisted data (if needed)
     (save-excursion
-      (while (org-up-heading-safe))
       ;; find the current entry
       (org-goto-local-search-headings orgtrello-query/--entry-name nil nil)
       ;; now we extract the data
