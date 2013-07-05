@@ -63,7 +63,7 @@
 (require 'request)
 (require 'cl-lib)
 
-(add-to-list 'load-path "lib")
+(add-to-list 'load-path (concat default-directory  "/lib"))
 
 (load-library "orgtrello-hash")
 (load-library "orgtrello-data")
