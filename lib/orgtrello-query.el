@@ -53,7 +53,7 @@
 (cl-defun standard-error-callback (&key error-thrown &allow-other-keys)
   "Standard error callback"
   (save-excursion
-      (while (org-up-heading-safe))
+;;      (while (org-up-heading-safe))
       ;; find the current entry through the pointer
       (org-goto-local-search-headings *ORGTRELLO-MARKER* nil t)
       ;; remove the marker now that we're done
