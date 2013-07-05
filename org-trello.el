@@ -88,26 +88,31 @@
 (defun org-trello/create-simple-entity ()
   "Control first, then if ok, create a simple entity."
   (interactive)
+  (message "Syncing entity...")
   (org-trello/--control-and-do '(orgtrello/--control-keys orgtrello/--control-properties) 'orgtrello-do-create-simple))
 
 (defun org-trello/create-entity ()
   "Control first, then if ok, create an entity and all its arborescence if need be."
   (interactive)
+  (message "Syncing complex entity...")
   (org-trello/--control-and-do '(orgtrello/--control-keys orgtrello/--control-properties) 'orgtrello-do-create-full-card))
 
 (defun org-trello/delete-entity ()
   "Control first, then if ok, delete the entity and all its arborescence."
   (interactive)
+  (message "Delete entity...")
   (org-trello/--control-and-do '(orgtrello/--control-keys orgtrello/--control-properties) 'orgtrello-do-delete-simple))
 
 (defun org-trello/setup-key-and-token ()
   "No control, trigger the setup installation of the key and the read/write token."
   (interactive)
+  (message "Setup key and token...")
   (org-trello/--control-and-do nil 'orgtrello-do-install-keys-and-token))
 
 (defun org-trello/install-board-and-lists-ids ()
   "Control first, then if ok, trigger the setup installation of the trello board to sync with."
   (interactive)
+  (message "Install boards and lists...")
   (org-trello/--control-and-do '(orgtrello/--control-keys) 'orgtrello-do-install-board-and-lists))
 
 (defun org-trello/describe-bindings ()
