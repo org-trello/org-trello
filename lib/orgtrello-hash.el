@@ -1,4 +1,4 @@
-;;; orgtrello-hash.el --- Build hash map easily
+;;; orgtrello-hash.el --- Utility function to help in initializing orgtrello's hashmap
 
 (defun orgtrello-hash--make-hash-org (level keyword title id)
   "Utility function to ease the creation of the orgtrello-metadata"
@@ -18,3 +18,5 @@
   h)
 
 (provide 'orgtrello-hash)
+
+;;; orgtrello-hash.el ends here

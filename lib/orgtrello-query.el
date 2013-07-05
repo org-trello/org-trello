@@ -1,10 +1,9 @@
-;; Main 'namespace' to declare the query function to execute to connect to trello
-;; trello-query is the main entry point
+;;; orgtrello-query.el -- Http query 'namespace' to declare the query functions to execute the sync on trello
 
 (require 'org)
 (require 'request)
-(require 'orgtrello-hash)
 (require 'orgtrello-data)
+(require 'cl)
 
 (defvar *TRELLO-URL* "https://api.trello.com/1" "The needed prefix url for trello")
 

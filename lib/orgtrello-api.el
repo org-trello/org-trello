@@ -1,4 +1,4 @@
-;;; orgtrello-api.el
+;;; orgtrello-api.el -- Contract to interface with the trello's public api
 
 (require 'orgtrello-hash)
 
