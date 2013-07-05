@@ -81,9 +81,7 @@
 (load-library "orgtrello-query")
 (load-library "orgtrello")
 
-;; force the loading
 (require 'orgtrello)
-(require 'orgtrello-data)
 
 (defun org-trello/--control-and-do (control-fns fn-to-control-and-execute)
   "Execute the function fn if control-fns is nil or if the result of apply every function to fn is ok."
@@ -147,7 +145,6 @@ C-c o d - This very binding to display this help menu."))
              (define-key map (kbd "C-c z") 'orgtrello-describe-heading)
              (define-key map (kbd "C-c x") 'orgtrello-describe-headings)
              (define-key map (kbd "C-c F") 'orgtrello-find-block)
-             (define-key map (kbd "C-c X") 'orgtrello-data-entry-get-full-metadata)
              ;; define other bindings...
              map))
 
