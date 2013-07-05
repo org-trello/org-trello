@@ -126,6 +126,31 @@ Add another entry inside the '~/.trello/config.el'
           (message "You need to setup your:\n- consumer-key and your access-token for org-trello to work ok. Use M-x orgtrello-do-install-keys-and-token\n- org-mode file and connect it to trello. Use M-x orgtrello-do-install-board-and-lists")))
     (funcall fn-to-control-and-execute)))
 
+(defun org-trello/create-simple-entity ()
+  "Control first, then if ok, create a simple entity."
+  (interactive)
+  (org-trello/control-and-do '(org-trello/--control-keys org-trello/--control-properties) 'orgtrello-do-create-simple))
+
+(defun org-trello/create-entity ()
+  "Control first, then if ok, create an entity and all its arborescence if need be."
+  (interactive)
+  (org-trello/control-and-do '(org-trello/--control-keys org-trello/--control-properties) 'orgtrello-do-create-full-card))
+
+(defun org-trello/delete-entity ()
+  "Control first, then if ok, delete the entity and all its arborescence."
+  (interactive)
+  (org-trello/control-and-do '(org-trello/--control-keys org-trello/--control-properties) 'orgtrello-do-delete-simple))
+
+(defun org-trello/setup-key-and-token ()
+  "No control, trigger the setup installation of the key and the read/write token."
+  (interactive)
+  (org-trello/control-and-do nil 'orgtrello-do-install-keys-and-token))
+
+(defun org-trello/install-board-and-lists-ids ()
+  "Control first, then if ok, trigger the setup installation of the trello board to sync with."
+  (interactive)
+  (org-trello/control-and-do '(org-trello/--control-keys) 'orgtrello-do-install-board-and-lists))
+
 (defun org-trello/describe-bindings ()
   "A simple message to describe the standard bindings used."
   (interactive)
@@ -141,16 +166,17 @@ C-c o d - This very binding to display this help menu."))
   :lighter " ot" ;; the name on the modeline
   :keymap  (let ((map (make-sparse-keymap)))
              ;; binding will change
-             (define-key map (kbd "C-c o c") (lambda () (interactive) (org-trello/control-and-do '(org-trello/--control-keys org-trello/--control-properties) 'orgtrello-do-create-simple)))
-             (define-key map (kbd "C-c o C") (lambda () (interactive) (org-trello/control-and-do '(org-trello/--control-keys org-trello/--control-properties) 'orgtrello-do-create-full-card)))
-             (define-key map (kbd "C-c o k") (lambda () (interactive) (org-trello/control-and-do '(org-trello/--control-keys org-trello/--control-properties) 'orgtrello-do-delete-simple)))
-             (define-key map (kbd "C-c o i") (lambda () (interactive) (org-trello/control-and-do nil                                                          'orgtrello-do-install-keys-and-token)))
-             (define-key map (kbd "C-c o p") (lambda () (interactive) (org-trello/control-and-do '(org-trello/--control-keys)                                 'orgtrello-do-install-board-and-lists)))
-             (define-key map (kbd "C-c o d") (lambda () (interactive) (org-trello/control-and-do nil                                                          'org-trello/describe-bindings)))
+             (define-key map (kbd "C-c o c") 'org-trello/create-simple-entity)
+             (define-key map (kbd "C-c o C") 'org-trello/create-entity)
+             (define-key map (kbd "C-c o k") 'org-trello/delete-entity)
+             (define-key map (kbd "C-c o i") 'org-trello/setup-key-and-token)
+             (define-key map (kbd "C-c o p") 'org-trello/install-board-and-lists-ids)
+             (define-key map (kbd "C-c o d") 'org-trello/describe-bindings)
              ;; for debugging purposes (I do not know any better yet)
-             ;; (define-key map (kbd "C-c z") (lambda () (org-trello/control-and-do nil 'orgtrello-describe-heading)))
-             ;; (define-key map (kbd "C-c x") (lambda () (org-trello/control-and-do nil 'orgtrello-describe-headings)))
-             ;; (define-key map (kbd "C-c F") (lambda () (org-trello/control-and-do nil 'orgtrello-find-block)))
+             (define-key map (kbd "C-c z") 'orgtrello-describe-heading)
+             (define-key map (kbd "C-c x") 'orgtrello-describe-headings)
+             (define-key map (kbd "C-c F") 'orgtrello-find-block)
+             (define-key map (kbd "C-c X") 'orgtrello-data-entry-get-full-metadata)
              ;; define other bindings...
              map))
 ;;;###autoload
