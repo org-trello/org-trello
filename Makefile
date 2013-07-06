@@ -17,7 +17,7 @@ clean:
 
 prepare:
 	mkdir -p $(PACKAGE_FOLDER)
-	cp -r org-trello.el org-trello-pkg.el org-trello-readme.txt $(PACKAGE_FOLDER)
+	cp -r org-trello.el org-trello-pkg.el $(PACKAGE_FOLDER)
 
 package: clean pkg-el prepare
 	tar cvf $(ARCHIVE) $(PACKAGE_FOLDER)
@@ -29,9 +29,9 @@ info:
 untar:
 	tar xvf $(ARCHIVE)
 
-test-install-package-file: package untar
-	cd ./$(PACKAGE_FOLDER)
-	bash ~/bin/emacs/emacs-install-clean.el org-trello.el .
+# test-install-package-file: package untar
+# 	cd ./$(PACKAGE_FOLDER)
+# 	bash ~/bin/emacs/emacs-install-clean.el org-trello.el .
 
 # build-package:
 # 	emacs --batch -l ./build.el -- org-trello.el
