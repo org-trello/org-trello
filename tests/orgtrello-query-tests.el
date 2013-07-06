@@ -1,5 +1,5 @@
 (require 'orgtrello-query)
-(require 'cl-lib)
+(eval-when-compile (require 'cl-lib))
 
 (ert-deftest testing-orgtrello-query--compute-method ()
   (should (equal (orgtrello-query--compute-method :get)    "GET"))

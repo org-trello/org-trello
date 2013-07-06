@@ -65,7 +65,7 @@
 (require 'json)
 (require 'dash)
 (require 'request)
-(require 'cl-lib)
+(eval-when-compile (require 'cl-lib))
 
 (add-to-list 'load-path (concat default-directory  "lib"))
 

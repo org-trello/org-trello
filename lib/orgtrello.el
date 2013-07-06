@@ -4,7 +4,7 @@
 (require 'orgtrello-api)
 (require 'orgtrello-query)
 (require 'orgtrello-data)
-(require 'cl-lib)
+(eval-when-compile (require 'cl-lib))
 
 ;; Specific state - FIXME check if they do not already exist on org-mode to avoid potential collisions
 (defvar *TODO* "TODO" "org-mode todo state")

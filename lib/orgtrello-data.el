@@ -3,7 +3,7 @@
 (require 'org)
 (require 'orgtrello-hash)
 (require 'dash)
-(require 'cl-lib)
+(eval-when-compile (require 'cl-lib))
 
 (defun orgtrello-data-metadata ()
   "Compute the metadata from the org-heading-components entry, add the identifier and extract the metadata needed."

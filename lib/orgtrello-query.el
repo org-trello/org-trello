@@ -3,7 +3,7 @@
 (require 'org)
 (require 'request)
 (require 'orgtrello-data)
-(require 'cl-lib)
+(eval-when-compile (require 'cl-lib))
 
 (defvar *TRELLO-URL* "https://api.trello.com/1" "The needed prefix url for trello")
 

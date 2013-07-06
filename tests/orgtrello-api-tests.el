@@ -1,5 +1,5 @@
 (require 'orgtrello-api)
-(require 'cl-lib)
+(eval-when-compile (require 'cl-lib))
 
 (ert-deftest testing-orgtrello-api--get-boards ()
   (let ((h (orgtrello-api--get-boards)))

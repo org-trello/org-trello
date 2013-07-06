@@ -1,7 +1,7 @@
 ;;; orgtrello-api.el -- Contract to interface with the trello's public api
 
 (require 'orgtrello-hash)
-(require 'cl-lib)
+(eval-when-compile (require 'cl-lib))
 
 (defun orgtrello-api--get-boards ()
   "Retrieve the boards of the current user."
