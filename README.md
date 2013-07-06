@@ -11,10 +11,6 @@ Sync your org-mode files with your trello boards.
 - Trello is what my team need.
 - org-trello may satisfy everybody.
 
-# still in dev
-
-But almost there for the v0.0.1
-
 # Contributions
 
 Pull Requests welcome
