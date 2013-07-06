@@ -46,7 +46,7 @@
     (should (equal (gethash "id" hashtable-result) (gethash "id" hashtable-expected)))
     (should (equal (gethash "another-id" hashtable-result) (gethash "another-id" hashtable-expected)))
     (should (equal (gethash "yet-another-id" hashtable-result) (gethash "yet-another-id" hashtable-expected)))
-    (should (equal (length (values hashtable-result)) (length (values hashtable-expected))))))
+    (should (equal (length (cl-values hashtable-result)) (length (cl-values hashtable-expected))))))
 
 (ert-deftest testing-orgtrello--name-id ()
   (let* ((entities [((id . "id")
@@ -66,7 +66,7 @@
     (should (equal (gethash "testing board" hashtable-result) (gethash "testing board" hashtable-expected)))
     (should (equal (gethash "testing board 2" hashtable-result) (gethash "testing board 2" hashtable-expected)))
     (should (equal (gethash "testing board 3" hashtable-result) (gethash "testing board 3" hashtable-expected)))
-    (should (equal (length (values hashtable-result)) (length (values hashtable-expected))))))
+    (should (equal (length (cl-values hashtable-result)) (length (cl-values hashtable-expected))))))
 
 (provide 'orgtrello-tests)
 
