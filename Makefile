@@ -17,7 +17,7 @@ clean:
 
 prepare:
 	mkdir -p $(PACKAGE_FOLDER)
-	cp -r org-trello.el org-trello-pkg.el org-trello-readme.txt lib/ $(PACKAGE_FOLDER)
+	cp -r org-trello.el org-trello-pkg.el org-trello-readme.txt $(PACKAGE_FOLDER)
 
 package: clean pkg-el prepare
 	tar cvf $(ARCHIVE) $(PACKAGE_FOLDER)
