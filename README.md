@@ -1,6 +1,8 @@
 org-trello
 ==========
 
+[![Build Status](https://travis-ci.org/ardumont/org-trello.png?branch=master)](https://travis-ci.org/ardumont/org-trello)
+
 Sync your org-mode files with your trello boards.
 
 # why?
