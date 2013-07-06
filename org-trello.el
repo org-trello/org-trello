@@ -1,4 +1,4 @@
-;;; org-trello.el -- Minor mode for org-mode to sync org-mode and trello
+;;; org-trello.el --- Minor mode for org-mode to sync org-mode and trello
 
 ;; Copyright (C) 2013 Antoine R. Dumont <eniotna.t AT gmail.com>
 
