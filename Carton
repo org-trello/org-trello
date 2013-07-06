@@ -1,0 +1,14 @@
+(source "melpa" "http://melpa.milkbox.net/packages/")
+
+(package "org-trello" "0.0.1" "org-mode minor mode to synchronize org-mode file and a trello board [source: https://github.com/ardumont/org-trello]")
+
+(depends-on "org"     "7.9.2")
+(depends-on "dash"    "20130617.739")
+(depends-on "request" "20130526.1915")
+(depends-on "cl-lib"  "0.3.0")
+(depends-on "json"    "1.3")
+
+(development
+ (depends-on "ecukes")
+ (depends-on "espuds")
+ (depends-on "ert"))

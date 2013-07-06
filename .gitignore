@@ -2,3 +2,4 @@
 *.log
 *.html
 /testing-clean-install/
+/elpa/
