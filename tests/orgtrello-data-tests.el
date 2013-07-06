@@ -1,6 +1,7 @@
 ;;; orgtrello-data-tests
 
 (require 'orgtrello-data)
+(require 'cl-lib)
 
 (ert-deftest testing-orgtrello-data--get-level ()
   (should (equal (orgtrello-data--get-level '(:pt :id 0 0 "IN PROGRESS" nil "HEADING_LABEL" nil)) 0))

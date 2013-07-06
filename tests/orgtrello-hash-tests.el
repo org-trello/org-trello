@@ -1,4 +1,5 @@
 (require 'orgtrello-hash)
+(require 'cl-lib)
 
 (ert-deftest testing-orgtrello-hash--make-hash-org ()
   (let* ((meta (orgtrello-hash--make-hash-org 0 "IN PROGRESS" "some title" "some id" "point")))

@@ -1,6 +1,7 @@
 ;;; orgtrello-tests.el
 
 (require 'orgtrello)
+(require 'cl-lib)
 
 (ert-deftest testing-orgtrello--compute-list-key ()
   (should (equal (orgtrello--compute-list-key *TODO*)        *TODO-LIST-ID*))
