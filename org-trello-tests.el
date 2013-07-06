@@ -2,11 +2,6 @@
 
 (message "Launching tests!")
 
-(load-file "lib/orgtrello-hash.el")
-(load-file "lib/orgtrello-data.el")
-(load-file "lib/orgtrello-api.el")
-(load-file "lib/orgtrello-query.el")
-(load-file "lib/orgtrello.el")
 (load-file "org-trello.el")
 
 (load-file "tests/orgtrello-hash-tests.el")
