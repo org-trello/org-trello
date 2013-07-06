@@ -1,4 +1,4 @@
-;;; orgtrello-api.el -- Contract to interface with the trello's public api
+;;; orgtrello-api.el --- Contract to interface with the trello's public api
 
 (require 'orgtrello-hash)
 (eval-when-compile (require 'cl-lib))

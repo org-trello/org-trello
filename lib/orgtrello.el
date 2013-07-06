@@ -1,4 +1,4 @@
-;;; orgtrello.el
+;;; orgtrello.el --- Orchestration of the different namespaces in the org-trello
 
 (require 'org)
 (require 'orgtrello-api)

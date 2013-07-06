@@ -1,4 +1,4 @@
-;;; orgtrello-query.el -- Http query 'namespace' to declare the query functions to execute the sync on trello
+;;; orgtrello-query.el --- HTTP query 'namespace' to declare the query functions to execute the sync on trello
 
 (require 'org)
 (require 'request)

@@ -67,7 +67,7 @@
 (require 'request)
 (eval-when-compile (require 'cl-lib))
 
-(add-to-list 'load-path (concat default-directory  "lib"))
+(add-to-list 'load-path (expand-file-name "./lib"))
 
 (load-library "orgtrello-hash")
 (load-library "orgtrello-data")

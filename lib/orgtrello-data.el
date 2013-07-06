@@ -1,4 +1,4 @@
-;;; orgtrello-data.el -- The extracting/manipulation data from the org-mode file.
+;;; orgtrello-data.el --- The extracting/manipulation data from the org-mode file.
 
 (require 'org)
 (require 'orgtrello-hash)
