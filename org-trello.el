@@ -5,7 +5,8 @@
 ;; Author: Antoine R. Dumont <eniotna.t AT gmail.com>
 ;; Version: 0.0.1
 ;; Package-Requires: ((org "7.9.2") (dash "20130617.739") (request "20130526.1915") (cl-lib "0.3.0") (json "1.3"))
-;; Keywords: org-mode trello sync
+;; Keywords: org-mode trello sync org-trello
+;; URL: https://github.com/ardumont/org-trello
 
 ;; This file is NOT part of GNU Emacs.
 

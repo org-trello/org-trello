@@ -2,12 +2,6 @@
 
 (package-file "org-trello.el")
 
-(depends-on "org"     "7.9.2")
-(depends-on "dash"    "20130617.739")
-(depends-on "request" "20130526.1915")
-(depends-on "cl-lib"  "0.3.0")
-(depends-on "json"    "1.3")
-
 (development
  (depends-on "ecukes")
  (depends-on "espuds")
