@@ -15,10 +15,10 @@
 (load-file "tests/orgtrello-query-tests.el")
 (load-file "tests/orgtrello-tests.el")
 
-(require 'orgtrello-tests)
 (require 'orgtrello-hash-tests)
 (require 'orgtrello-query-tests)
 (require 'orgtrello-api-tests)
 (require 'orgtrello-data-tests)
+(require 'orgtrello-tests)
 
 (message "Tests done!")
