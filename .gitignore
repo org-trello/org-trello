@@ -3,3 +3,6 @@
 *.html
 /testing-clean-install/
 /elpa/
+*.tar
+/org-trello-*/
+.elpa

@@ -1,3 +1,7 @@
+VERSION=0.0.1
+PACKAGE_FOLDER=org-trello-$(VERSION)
+ARCHIVE=$(PACKAGE_FOLDER).tar
+
 test:
 	# carton setups the elpa env for me
 	carton exec emacs --no-init-file -batch \
@@ -5,14 +9,29 @@ test:
 			-l ./org-trello-tests.el \
 			-f ert-run-tests-batch-and-exit
 
-package:
+pkg-el:
 	carton package
+
+clean:
+	rm -rf *.tar $(PACKAGE_FOLDER)
+
+prepare:
+	mkdir -p $(PACKAGE_FOLDER)
+	cp -r org-trello.el org-trello-pkg.el org-trello-readme.txt lib/ $(PACKAGE_FOLDER)
+
+package: clean pkg-el prepare
+	tar cvf $(ARCHIVE) $(PACKAGE_FOLDER)
+	rm -rf $(PACKAGE_FOLDER)
 
 info:
 	carton info
 
-# test-package:
-# 	bash ~/bin/emacs/emacs-install-clean.el ~/repo/perso/melpa/packages/org-trello-20130705.1722.tar testing-clean-install/
+untar:
+	tar xvf $(ARCHIVE)
+
+test-install-package-file: package untar
+	cd ./$(PACKAGE_FOLDER)
+	bash ~/bin/emacs/emacs-install-clean.el org-trello.el .
 
 # build-package:
 # 	emacs --batch -l ./build.el -- org-trello.el
