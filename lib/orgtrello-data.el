@@ -1,5 +1,6 @@
 ;;; orgtrello-data.el -- The extracting/manipulation data from the org-mode file.
 
+(require 'org)
 (require 'orgtrello-hash)
 (require 'dash)
 (require 'cl-lib)

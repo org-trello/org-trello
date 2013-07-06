@@ -1,5 +1,6 @@
 ;;; orgtrello.el
 
+(require 'org)
 (require 'orgtrello-api)
 (require 'orgtrello-query)
 (require 'orgtrello-data)
