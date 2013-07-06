@@ -68,23 +68,23 @@
 
 (defun orgtrello-data--get-level (heading-metadata)
   "Given the heading-metadata, extract the level"
-  (third heading-metadata))
+  (cl-third heading-metadata))
 
 (defun orgtrello-data--get-keyword (heading-metadata)
   "Given the heading-metadata, extract the keyword."
-  (fifth heading-metadata))
+  (cl-fifth heading-metadata))
 
 (defun orgtrello-data--get-title (heading-metadata)
   "Given the heading-metadata, extract the title."
-  (seventh heading-metadata))
+  (cl-seventh heading-metadata))
 
 (defun orgtrello-data--get-id (heading-metadata)
   "Given the heading-metadata, extract the id."
-  (second heading-metadata))
+  (cl-second heading-metadata))
 
 (defun orgtrello-data--get-point (heading-metadata)
   "Given the heading-metadata, extract the id."
-  (first heading-metadata))
+  (cl-first heading-metadata))
 
 (defun orgtrello-data--get-metadata (heading-metadata)
   "Given the heading-metadata returned by the function 'org-heading-components, make it a hashmap with key :level, :keyword, :title. and their respective value"
