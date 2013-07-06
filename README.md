@@ -18,6 +18,17 @@ cf. [What has been done and remains to be done](./TODO.org)
 
 # Release notes
 
+## Details
+
+[What has been done and remains to be done](./TODO.org)
+
+## v0.0.2
+
+- Technical release fixing technical details
+- Fixing the packaging (inlining into org-trello.el)
+- Adding ci-travis
+- Local packaging to help testing
+
 ## v0.0.1
 
 - write only mode at the moment (org-mode pushes to trello, no reading yet)
@@ -29,8 +40,6 @@ cf. [What has been done and remains to be done](./TODO.org)
 - Control that the setup file (consumer-key and access-token) are rightly generated (to avoid later problem)
 - Control that the properties on the current org-mode file are rightly setuped to access a trello board
 - packaging for melpa
-
-[More details on what has been done and remains to be done](./TODO.org)
 
 # Install
 
