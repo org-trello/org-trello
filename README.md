@@ -177,14 +177,23 @@ are not important but can be helpful to not lost oneself)
 
 Actual bindings (not definitive, suggestions are welcome):
 - *BINDING-SIMPLE-CREATION*
+
         C-c o c - Create asynchronously a card/checklist/item with the subtree.
+
 - *BINDING-DELETION*
+
         C-c o k - Kill the arborescence tree and the corresponding entity.
+
 - *BINDING-SETUP-KEY*
+
         C-c o i - Interactive command to install the keys and the access-token.
+
 - *BINDING-SETUP-BOARD*
+
         C-c o I - Interactive command to select the board and attach the todo, doing and done list.
+
 - *BINDING-DESCRIBE*
+
         C-c o h - help binding
 
 Trello:
