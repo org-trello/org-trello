@@ -69,7 +69,7 @@
 
 ;; #################### orgtrello-hash
 
-(defun orgtrello-hash--make-hash-org (level keyword title id point)
+(defun orgtrello-hash/make-hash-org (level keyword title id point)
   "Utility function to ease the creation of the orgtrello-metadata"
   (let ((h (make-hash-table :test 'equal)))
     (puthash :level   level   h)
@@ -79,7 +79,7 @@
     (puthash :point   point   h)
     h))
 
-(defun orgtrello-hash--make-hash (method uri &optional params)
+(defun orgtrello-hash/make-hash (method uri &optional params)
   "Utility function to ease the creation of the map - wait, where are my clojure data again!?"
   (let ((h (make-hash-table :test 'equal)))
     (puthash :method method h)
@@ -91,7 +91,7 @@
 
 ;; #################### orgtrello-data
 
-(defun orgtrello-data-metadata ()
+(defun orgtrello-data/metadata ()
   "Compute the metadata from the org-heading-components entry, add the identifier and extract the metadata needed."
   (let* ((pt           (point))
          (id           (org-entry-get pt "orgtrello-id"))
@@ -99,29 +99,29 @@
     (->> org-metadata
          (cons id)
          (cons pt)
-         orgtrello-data--get-metadata)))
+         orgtrello-data/--get-metadata)))
 
-(defun orgtrello-data--parent-metadata ()
+(defun orgtrello-data/--parent-metadata ()
   "Extract the metadata from the current heading's parent."
   (save-excursion
     (org-up-heading-safe)
-    (orgtrello-data-metadata)))
+    (orgtrello-data/metadata)))
 
-(defun orgtrello-data--grandparent-metadata ()
+(defun orgtrello-data/--grandparent-metadata ()
   "Extract the metadata from the current heading's grandparent."
   (save-excursion
     (org-up-heading-safe)
     (org-up-heading-safe)
-    (orgtrello-data-metadata)))
+    (orgtrello-data/metadata)))
 
-(defun orgtrello-data-entry-get-full-metadata ()
+(defun orgtrello-data/entry-get-full-metadata ()
   "Compute the metadata needed for one entry into a map with keys :current, :parent, :grandparent.
    Returns nil if the level is superior to 4."
-  (let* ((heading (orgtrello-data-metadata))
+  (let* ((heading (orgtrello-data/metadata))
          (level   (gethash :level heading)))
     (if (< level 4)
-        (let* ((parent-heading      (orgtrello-data--parent-metadata))
-               (grandparent-heading (orgtrello-data--grandparent-metadata))
+        (let* ((parent-heading      (orgtrello-data/--parent-metadata))
+               (grandparent-heading (orgtrello-data/--grandparent-metadata))
                (mapdata (make-hash-table :test 'equal)))
           ;; build the metadata with every important pieces
           (puthash :current     heading             mapdata)
@@ -129,156 +129,156 @@
           (puthash :grandparent grandparent-heading mapdata)
           mapdata))))
 
-(defun orgtrello-data--get-level (heading-metadata)
+(defun orgtrello-data/--get-level (heading-metadata)
   "Given the heading-metadata, extract the level"
   (cl-third heading-metadata))
 
-(defun orgtrello-data--get-keyword (heading-metadata)
+(defun orgtrello-data/--get-keyword (heading-metadata)
   "Given the heading-metadata, extract the keyword."
   (cl-fifth heading-metadata))
 
-(defun orgtrello-data--get-title (heading-metadata)
+(defun orgtrello-data/--get-title (heading-metadata)
   "Given the heading-metadata, extract the title."
   (cl-seventh heading-metadata))
 
-(defun orgtrello-data--get-id (heading-metadata)
+(defun orgtrello-data/--get-id (heading-metadata)
   "Given the heading-metadata, extract the id."
   (cl-second heading-metadata))
 
-(defun orgtrello-data--get-point (heading-metadata)
+(defun orgtrello-data/--get-point (heading-metadata)
   "Given the heading-metadata, extract the id."
   (cl-first heading-metadata))
 
-(defun orgtrello-data--get-metadata (heading-metadata)
+(defun orgtrello-data/--get-metadata (heading-metadata)
   "Given the heading-metadata returned by the function 'org-heading-components, make it a hashmap with key :level, :keyword, :title. and their respective value"
-  (let* ((level   (orgtrello-data--get-level   heading-metadata))
-         (title   (orgtrello-data--get-title   heading-metadata))
-         (keyword (orgtrello-data--get-keyword heading-metadata))
-         (id      (orgtrello-data--get-id      heading-metadata))
-         (point   (orgtrello-data--get-point   heading-metadata)))
-    (orgtrello-hash--make-hash-org level keyword title id point)))
+  (let* ((level   (orgtrello-data/--get-level   heading-metadata))
+         (title   (orgtrello-data/--get-title   heading-metadata))
+         (keyword (orgtrello-data/--get-keyword heading-metadata))
+         (id      (orgtrello-data/--get-id      heading-metadata))
+         (point   (orgtrello-data/--get-point   heading-metadata)))
+    (orgtrello-hash/make-hash-org level keyword title id point)))
 
 (message "orgtrello-data loaded!")
 
 ;; #################### orgtrello-api
 
-(defun orgtrello-api--get-boards ()
+(defun orgtrello-api/get-boards ()
   "Retrieve the boards of the current user."
-  (orgtrello-hash--make-hash :get "/members/me/boards"))
+  (orgtrello-hash/make-hash :get "/members/me/boards"))
 
-(defun orgtrello-api--get-board (id)
+(defun orgtrello-api/get-board (id)
   "Retrieve the boards of the current user."
-  (orgtrello-hash--make-hash :get (format "/boards/%s" id)))
+  (orgtrello-hash/make-hash :get (format "/boards/%s" id)))
 
-(defun orgtrello-api--get-cards (board-id)
+(defun orgtrello-api/get-cards (board-id)
   "cards of a board"
-  (orgtrello-hash--make-hash :get (format "/boards/%s/cards" board-id)))
+  (orgtrello-hash/make-hash :get (format "/boards/%s/cards" board-id)))
 
-(defun orgtrello-api--get-card (card-id)
+(defun orgtrello-api/get-card (card-id)
   "Detail of a card with id card-id."
-  (orgtrello-hash--make-hash :get (format "/cards/%s" card-id)))
+  (orgtrello-hash/make-hash :get (format "/cards/%s" card-id)))
 
-(defun orgtrello-api--delete-card (card-id)
+(defun orgtrello-api/delete-card (card-id)
   "Delete a card with id card-id."
-  (orgtrello-hash--make-hash :delete (format "/cards/%s" card-id)))
+  (orgtrello-hash/make-hash :delete (format "/cards/%s" card-id)))
 
-(defun orgtrello-api--get-lists (board-id)
+(defun orgtrello-api/get-lists (board-id)
   "Display the lists of the board"
-  (orgtrello-hash--make-hash :get (format "/boards/%s/lists" board-id)))
+  (orgtrello-hash/make-hash :get (format "/boards/%s/lists" board-id)))
 
-(defun orgtrello-api--get-list (list-id)
+(defun orgtrello-api/get-list (list-id)
   "Get a list by id"
-  (orgtrello-hash--make-hash :get (format "/lists/%s" list-id)))
+  (orgtrello-hash/make-hash :get (format "/lists/%s" list-id)))
 
-(defun orgtrello-api--add-list (name idBoard)
+(defun orgtrello-api/add-list (name idBoard)
   "Add a list - the name and the board id are mandatory (so i say!)."
-  (orgtrello-hash--make-hash :post "/lists/" `(("name" . ,name) ("idBoard" . ,idBoard))))
+  (orgtrello-hash/make-hash :post "/lists/" `(("name" . ,name) ("idBoard" . ,idBoard))))
 
-(defun orgtrello-api--add-card (name idList)
+(defun orgtrello-api/add-card (name idList)
   "Add a card to a board"
-  (orgtrello-hash--make-hash :post "/cards/" `(("name" . ,name) ("idList" . ,idList))))
+  (orgtrello-hash/make-hash :post "/cards/" `(("name" . ,name) ("idList" . ,idList))))
 
-(defun orgtrello-api--get-cards-from-list (list-id)
+(defun orgtrello-api/get-cards-from-list (list-id)
   "List all the cards"
-  (orgtrello-hash--make-hash :get (format "/lists/%s/cards" list-id)))
+  (orgtrello-hash/make-hash :get (format "/lists/%s/cards" list-id)))
 
-(defun orgtrello-api--move-card (card-id idList &optional name)
+(defun orgtrello-api/move-card (card-id idList &optional name)
   "Move a card to another list"
-  (let ((orgtrello-api--move-card-data (if name
+  (let ((orgtrello-api/move-card-data (if name
                                            `(("name"   . ,name)
                                              ("idList" . ,idList))
                                          `(("idList" . ,idList)))))
-    (orgtrello-hash--make-hash :put (format "/cards/%s" card-id) orgtrello-api--move-card-data)))
+    (orgtrello-hash/make-hash :put (format "/cards/%s" card-id) orgtrello-api/move-card-data)))
 
-(defun orgtrello-api--add-checklist (card-id name)
+(defun orgtrello-api/add-checklist (card-id name)
   "Add a checklist to a card"
-  (orgtrello-hash--make-hash :post
+  (orgtrello-hash/make-hash :post
              (format "/cards/%s/checklists" card-id)
              `(("name" . ,name))))
 
-(defun orgtrello-api--update-checklist (checklist-id name)
+(defun orgtrello-api/update-checklist (checklist-id name)
   "Update the checklist's name"
-  (orgtrello-hash--make-hash :put
+  (orgtrello-hash/make-hash :put
              (format "/checklists/%s" checklist-id)
              `(("name" . ,name))))
 
-(defun orgtrello-api--get-checklists (card-id)
+(defun orgtrello-api/get-checklists (card-id)
   "List the checklists of a card"
-  (orgtrello-hash--make-hash :get (format "/cards/%s/checklists" card-id)))
+  (orgtrello-hash/make-hash :get (format "/cards/%s/checklists" card-id)))
 
-(defun orgtrello-api--get-checklist (checklist-id)
+(defun orgtrello-api/get-checklist (checklist-id)
   "Retrieve all the information from a checklist"
-  (orgtrello-hash--make-hash :get (format "/checklists/%s" checklist-id)))
+  (orgtrello-hash/make-hash :get (format "/checklists/%s" checklist-id)))
 
-(defun orgtrello-api--delete-checklist (checklist-id)
+(defun orgtrello-api/delete-checklist (checklist-id)
   "Delete a checklist with checklist-id"
-  (orgtrello-hash--make-hash :delete (format "/checklists/%s" checklist-id)))
+  (orgtrello-hash/make-hash :delete (format "/checklists/%s" checklist-id)))
 
-(defun orgtrello-api--add-tasks (checklist-id name &optional checked)
+(defun orgtrello-api/add-tasks (checklist-id name &optional checked)
   "Add todo tasks (trello items) to a checklist with id 'id'"
   (let* ((payload (if checked
                       `(("name"  . ,name) ("checked" . ,checked))
                     `(("name" . ,name)))))
-    (orgtrello-hash--make-hash :post (format "/checklists/%s/checkItems" checklist-id) payload)))
+    (orgtrello-hash/make-hash :post (format "/checklists/%s/checkItems" checklist-id) payload)))
 
-(defun orgtrello-api--update-task (card-id checklist-id task-id name &optional state)
+(defun orgtrello-api/update-task (card-id checklist-id task-id name &optional state)
   "Update a task"
   (let* ((payload (if state
                       `(("name"  . ,name) ("state" . ,state))
                     `(("name" . ,name)))))
-    (orgtrello-hash--make-hash
+    (orgtrello-hash/make-hash
      :put
      (format "/cards/%s/checklist/%s/checkItem/%s" card-id checklist-id task-id)
      payload)))
 
-(defun orgtrello-api--delete-task (checklist-id task-id)
+(defun orgtrello-api/delete-task (checklist-id task-id)
   "Delete a task with id task-id"
-  (orgtrello-hash--make-hash :delete (format "/checklists/%s/checkItems/%s" checklist-id task-id)))
+  (orgtrello-hash/make-hash :delete (format "/checklists/%s/checkItems/%s" checklist-id task-id)))
 
 (message "orgtrello-api loaded!")
 
-;; #################### orgtrello-query
+;; #################### orgtrello-query/
 
 (defvar *TRELLO-URL* "https://api.trello.com/1" "The needed prefix url for trello")
 
-(defun orgtrello-query--make-dispatch-http-query ()
+(defun orgtrello-query/--make-dispatch-http-query ()
   "Make a map that will dispatch the function to call depending on the http verb :get, :put, :post, etc..."
   (let* ((map-dispatch (make-hash-table :test 'equal)))
-    (puthash :get    'orgtrello-query--get         map-dispatch)
-    (puthash :put    'orgtrello-query--post-or-put map-dispatch)
-    (puthash :post   'orgtrello-query--post-or-put map-dispatch)
-    (puthash :delete 'orgtrello-query--delete      map-dispatch)
+    (puthash :get    'orgtrello-query/--get         map-dispatch)
+    (puthash :put    'orgtrello-query/--post-or-put map-dispatch)
+    (puthash :post   'orgtrello-query/--post-or-put map-dispatch)
+    (puthash :delete 'orgtrello-query/--delete      map-dispatch)
     map-dispatch))
 
-(defvar *MAP-DISPATCH-HTTP-QUERY* (orgtrello-query--make-dispatch-http-query))
+(defvar *MAP-DISPATCH-HTTP-QUERY* (orgtrello-query/--make-dispatch-http-query))
 
-(defun orgtrello-query-http (query-map)
+(defun orgtrello-query/http (query-map)
   "Query the trello api asynchronously."
   (let* ((method      (gethash :method query-map))
          (fn-dispatch (gethash method *MAP-DISPATCH-HTTP-QUERY*)))
     (funcall fn-dispatch query-map)))
 
-(defun orgtrello-query-http-sync (query-map)
+(defun orgtrello-query/http-sync (query-map)
   "Query the trello api synchronously and return the data of the request."
   (let* ((method      (gethash :method query-map))
          (fn-dispatch (gethash method *MAP-DISPATCH-HTTP-QUERY*)))
@@ -286,7 +286,7 @@
     (let ((request-response (funcall fn-dispatch query-map)))
       (request-response-data request-response))))
 
-(defun orgtrello-query--map-dispatch-http-verb ()
+(defun orgtrello-query/--map-dispatch-http-verb ()
   (let* ((map-dispatch (make-hash-table :test 'equal)))
     (puthash :get    "GET"    map-dispatch)
     (puthash :put    "PUT"    map-dispatch)
@@ -294,13 +294,13 @@
     (puthash :delete "DELETE" map-dispatch)
     map-dispatch))
 
-(defvar *MAP-DISPATCH-HTTP-VERB* (orgtrello-query--map-dispatch-http-verb))
+(defvar *MAP-DISPATCH-HTTP-VERB* (orgtrello-query/--map-dispatch-http-verb))
 
-(defun orgtrello-query--compute-method (method)
+(defun orgtrello-query/--compute-method (method)
   "Given the keywords :get, :post, :put, :delete, map them into standard uppercase string."
   (gethash method *MAP-DISPATCH-HTTP-VERB*))
 
-(defun orgtrello-query--compute-url (uri)
+(defun orgtrello-query/--compute-url (uri)
   "Compute the trello url from the given uri."
   (format "%s%s" *TRELLO-URL* uri))
 
@@ -318,14 +318,14 @@
   "Standard success callback"
   (message "Success."))
 
-(defun orgtrello-query--get (query-map)
+(defun orgtrello-query/--get (query-map)
   "GET"
   (let* ((method (gethash :method query-map))
          (uri    (gethash :uri    query-map))
          (sync   (gethash :sync   query-map)))
-    (request (orgtrello-query--compute-url uri)
+    (request (orgtrello-query/--compute-url uri)
              :sync    sync
-             :type    (orgtrello-query--compute-method method)
+             :type    (orgtrello-query/--compute-method method)
              :params  `((key . ,*consumer-key*)
                         (token . ,*access-token*))
              :parser  'json-read
@@ -344,7 +344,7 @@
       ;; remove the marker now that we're done
       (org-delete-property *ORGTRELLO-MARKER*)
       ;; now we extract the data
-      (let* ((orgtrello-query/--entry-metadata (orgtrello-data-metadata))
+      (let* ((orgtrello-query/--entry-metadata (orgtrello-data/metadata))
              (orgtrello-query/--entry-id       (gethash :id orgtrello-query/--entry-metadata)))
         (if orgtrello-query/--entry-id ;; id already present in the org-mode file
             ;; no need to add another
@@ -354,15 +354,15 @@
             (org-set-property "orgtrello-id" orgtrello-query/--entry-new-id)
             (message "Newly entity '%s' synced with id '%s'" orgtrello-query/--entry-name orgtrello-query/--entry-new-id)))))))
 
-(defun orgtrello-query--post-or-put (query-map)
+(defun orgtrello-query/--post-or-put (query-map)
   "POST or PUT"
   (let* ((method  (gethash :method query-map))
          (uri     (gethash :uri    query-map))
          (payload (gethash :params query-map))
          (sync    (gethash :sync   query-map)))
-    (request (orgtrello-query--compute-url uri)
+    (request (orgtrello-query/--compute-url uri)
              :sync    sync
-             :type    (orgtrello-query--compute-method method)
+             :type    (orgtrello-query/--compute-method method)
              :params  `((key . ,*consumer-key*)
                         (token . ,*access-token*))
              :headers '(("Content-type" . "application/json"))
@@ -379,20 +379,20 @@
          (kill-line)
          (message "Entity deleted!")))
 
-(defun orgtrello-query--delete (query-map)
+(defun orgtrello-query/--delete (query-map)
   "DELETE"
   (let* ((method (gethash :method query-map))
          (uri    (gethash :uri    query-map))
          (sync   (gethash :sync   query-map)))
-    (request (orgtrello-query--compute-url uri)
+    (request (orgtrello-query/--compute-url uri)
              :sync    sync
-             :type    (orgtrello-query--compute-method method)
+             :type    (orgtrello-query/--compute-method method)
              :params  `((key . ,*consumer-key*)
                         (token . ,*access-token*))
              :success 'orgtrello-query/--delete-success-callback
              :error   'standard-error-callback)))
 
-(message "orgtrello-query loaded!")
+(message "orgtrello-query/ loaded!")
 
 ;; #################### orgtrello
 
@@ -432,172 +432,172 @@
            ;; setting the marker once
            (setq *ORGTRELLO-MARKER* (format "orgtrello-marker-%s" *consumer-key*)))))
 
-(defun orgtrello--compute-list-key (state)
+(defun orgtrello/--compute-list-key (state)
   "Given a state, compute the list id for the creation of a card"
   (cond ((string= state *TODO*) *TODO-LIST-ID*)
         ((string= state *DONE*) *DONE-LIST-ID*)
         (t                      *DOING-LIST-ID*)))
 
-(defun orgtrello--card (card-meta &optional parent-meta grandparent-meta)
+(defun orgtrello/--card (card-meta &optional parent-meta grandparent-meta)
   "Deal with create/update card query build"
   ;; parent and grandparent are useless here
-  (let* ((orgtrello--card-kwd  (gethash :keyword card-meta))
-         (orgtrello--list-id   (assoc-default (orgtrello--compute-list-key orgtrello--card-kwd) org-file-properties))
-         (orgtrello--card-id   (gethash :id      card-meta))
-         (orgtrello--card-name (gethash :title   card-meta)))
-    (if orgtrello--card-id
+  (let* ((orgtrello/--card-kwd  (gethash :keyword card-meta))
+         (orgtrello/--list-id   (assoc-default (orgtrello/--compute-list-key orgtrello/--card-kwd) org-file-properties))
+         (orgtrello/--card-id   (gethash :id      card-meta))
+         (orgtrello/--card-name (gethash :title   card-meta)))
+    (if orgtrello/--card-id
         ;; update
-        (orgtrello-api--move-card orgtrello--card-id orgtrello--list-id orgtrello--card-name)
+        (orgtrello-api/move-card orgtrello/--card-id orgtrello/--list-id orgtrello/--card-name)
       ;; create
-      (orgtrello-api--add-card orgtrello--card-name orgtrello--list-id))))
+      (orgtrello-api/add-card orgtrello/--card-name orgtrello/--list-id))))
 
-(defun orgtrello--checklist (checklist-meta &optional card-meta grandparent-meta)
+(defun orgtrello/--checklist (checklist-meta &optional card-meta grandparent-meta)
   "Deal with create/update checklist query build"
   ;; grandparent is useless here
-  (let* ((orgtrello--checklist-id   (gethash :id checklist-meta))
-         (orgtrello--card-id        (gethash :id card-meta))
-         (orgtrello--checklist-name (gethash :title checklist-meta)))
-    (if orgtrello--checklist-id
+  (let* ((orgtrello/--checklist-id   (gethash :id checklist-meta))
+         (orgtrello/--card-id        (gethash :id card-meta))
+         (orgtrello/--checklist-name (gethash :title checklist-meta)))
+    (if orgtrello/--checklist-id
         ;; update
-        (orgtrello-api--update-checklist orgtrello--checklist-id orgtrello--checklist-name)
+        (orgtrello-api/update-checklist orgtrello/--checklist-id orgtrello/--checklist-name)
       ;; create
-      (orgtrello-api--add-checklist orgtrello--card-id orgtrello--checklist-name))))
+      (orgtrello-api/add-checklist orgtrello/--card-id orgtrello/--checklist-name))))
 
-(defun orgtrello--task (task-meta &optional checklist-meta card-meta)
+(defun orgtrello/--task (task-meta &optional checklist-meta card-meta)
   "Deal with create/update task query build"
   ;; card-meta is only usefull for the update part
-  (let* ((orgtrello--task-id      (gethash :id task-meta))
-         (orgtrello--checklist-id (gethash :id checklist-meta))
-         (orgtrello--card-id      (gethash :id card-meta))
-         (orgtrello--task-name    (gethash :title task-meta))
+  (let* ((orgtrello/--task-id      (gethash :id task-meta))
+         (orgtrello/--checklist-id (gethash :id checklist-meta))
+         (orgtrello/--card-id      (gethash :id card-meta))
+         (orgtrello/--task-name    (gethash :title task-meta))
          ;; FIXME - the trello api is strange - extract those calls into function
-         (orgtrello--task-state   (if (string= *DONE* (gethash :keyword task-meta)) "complete" "incomplete")) ;; update api call
-         (orgtrello--task-check   (if (string= *DONE* (gethash :keyword task-meta)) 't nil))) ;; create api call
-    (if orgtrello--task-id
+         (orgtrello/--task-state   (if (string= *DONE* (gethash :keyword task-meta)) "complete" "incomplete")) ;; update api call
+         (orgtrello/--task-check   (if (string= *DONE* (gethash :keyword task-meta)) 't nil))) ;; create api call
+    (if orgtrello/--task-id
         ;; update - rename, check or uncheck the task
-        (orgtrello-api--update-task orgtrello--card-id orgtrello--checklist-id orgtrello--task-id orgtrello--task-name orgtrello--task-state)
+        (orgtrello-api/update-task orgtrello/--card-id orgtrello/--checklist-id orgtrello/--task-id orgtrello/--task-name orgtrello/--task-state)
       ;; create
-      (orgtrello-api--add-tasks orgtrello--checklist-id orgtrello--task-name orgtrello--task-check))))
+      (orgtrello-api/add-tasks orgtrello/--checklist-id orgtrello/--task-name orgtrello/--task-check))))
 
-(defun orgtrello--too-deep-level (meta &optional parent-meta grandparent-meta)
+(defun orgtrello/--too-deep-level (meta &optional parent-meta grandparent-meta)
   "Deal with too deep level."
   "Your arborescence depth is too deep. We only support up to depth 3.\nLevel 1 - card\nLevel 2 - checklist\nLevel 3 - items/tasks")
 
-(defun orgtrello--dispatch-map-creation ()
+(defun orgtrello/--dispatch-map-creation ()
   "Dispatch map for the creation of card/checklist/item."
   (let* ((dispatch-map (make-hash-table :test 'equal)))
-    (puthash 1 'orgtrello--card      dispatch-map)
-    (puthash 2 'orgtrello--checklist dispatch-map)
-    (puthash 3 'orgtrello--task      dispatch-map)
+    (puthash 1 'orgtrello/--card      dispatch-map)
+    (puthash 2 'orgtrello/--checklist dispatch-map)
+    (puthash 3 'orgtrello/--task      dispatch-map)
     dispatch-map))
 
-(defvar *MAP-DISPATCH-CREATE-UPDATE* (orgtrello--dispatch-map-creation) "Dispatch map for the creation/update of card/checklist/task")
+(defvar *MAP-DISPATCH-CREATE-UPDATE* (orgtrello/--dispatch-map-creation) "Dispatch map for the creation/update of card/checklist/task")
 
-(defun orgtrello--set-marker ()
+(defun orgtrello/--set-marker ()
   "Set the consumer-key to make a pointer to get back to when the request is finished"
   (org-set-property *ORGTRELLO-MARKER* *ORGTRELLO-MARKER*))
 
-(defun orgtrello--dispatch-create (meta &optional parent-meta grandparent-meta)
+(defun orgtrello/--dispatch-create (meta &optional parent-meta grandparent-meta)
   (let* ((level       (gethash :level meta))
-         (dispatch-fn (gethash level *MAP-DISPATCH-CREATE-UPDATE* 'orgtrello--too-deep-level)))
+         (dispatch-fn (gethash level *MAP-DISPATCH-CREATE-UPDATE* 'orgtrello/--too-deep-level)))
     ;; set the consumer-key to make a pointer to get back to when the request is finished
-    (orgtrello--set-marker)
+    (orgtrello/--set-marker)
     ;; then execute the call
     (funcall dispatch-fn meta parent-meta grandparent-meta)))
 
-(defun orgtrello-do-create-simple (&optional sync)
+(defun orgtrello/do-create-simple (&optional sync)
   "Do the actual simple creation of a card, checklist or task. Optionally, we can render the creation synchronous."
-  (let* ((entry-metadata (orgtrello-data-entry-get-full-metadata))
-         (query-http     (orgtrello--dispatch-create (gethash :current entry-metadata) (gethash :parent entry-metadata) (gethash :grandparent entry-metadata))))
+  (let* ((entry-metadata (orgtrello-data/entry-get-full-metadata))
+         (query-http     (orgtrello/--dispatch-create (gethash :current entry-metadata) (gethash :parent entry-metadata) (gethash :grandparent entry-metadata))))
     ;; FIXME? can't we do better that this?
     (if (hash-table-p query-http)
         (if sync
-            (orgtrello-query-http-sync query-http)
-            (orgtrello-query-http      query-http))
+            (orgtrello-query/http-sync query-http)
+            (orgtrello-query/http      query-http))
       (message query-http))))
 
-(defun orgtrello--merge-map (entry map-ids-by-name)
+(defun orgtrello/--merge-map (entry map-ids-by-name)
   "Given a map of (id . name) and an entry, return the entry updated with the id if not already present."
-  (let* ((orgtrello--merge-map-id   (gethash :id entry))
-         (orgtrello--merge-map-name (gethash :title entry)))
-    (if orgtrello--merge-map-id
+  (let* ((orgtrello/--merge-map-id   (gethash :id entry))
+         (orgtrello/--merge-map-name (gethash :title entry)))
+    (if orgtrello/--merge-map-id
         ;; already identified, return the entry without any modification
         entry
       ;; not present, we add the entry :id with its value and return such value
       (progn
-        (puthash :id (gethash orgtrello--merge-map-name map-ids-by-name) entry)
+        (puthash :id (gethash orgtrello/--merge-map-name map-ids-by-name) entry)
         entry))))
 
-(defun orgtrello-do-create-full-card ()
+(defun orgtrello/do-create-full-card ()
   "Do the actual full card creation - from card to task. Beware full side effects..."
   (message "Syncing full card structure.")
   (save-excursion
     ;; up to the highest level to begin the sync in order
     (while (org-up-heading-safe))
     ;; iterate over the map of
-    (org-map-tree (lambda () (orgtrello-do-create-simple t)))))
+    (org-map-tree (lambda () (orgtrello/do-create-simple t)))))
 
-(defun orgtrello-describe-heading ()
+(defun orgtrello/describe-heading ()
   (interactive)
   "Describe the current heading's metadata"
-  (let* ((entry-metadata (orgtrello-data-entry-get-full-metadata)))
+  (let* ((entry-metadata (orgtrello-data/entry-get-full-metadata)))
     (message "entry metadata: %S" entry-metadata)))
 
-(defun orgtrello-describe-headings ()
+(defun orgtrello/describe-headings ()
   (interactive)
   "Describe the heading and its sublist."
-  (let* ((orgtrello--describe-headings-meta       (orgtrello-data-compute-full-metadata))
-         (orgtrello--describe-headings-count-meta (length orgtrello--describe-headings-meta)))
-    (message "meta: %S\ncount: %s" orgtrello--describe-headings-meta orgtrello--describe-headings-count-meta)))
+  (let* ((orgtrello/--describe-headings-meta       (orgtrello-data/compute-full-metadata))
+         (orgtrello/--describe-headings-count-meta (length orgtrello/--describe-headings-meta)))
+    (message "meta: %S\ncount: %s" orgtrello/--describe-headings-meta orgtrello/--describe-headings-count-meta)))
 
-(defun orgtrello-find-block ()
+(defun orgtrello/find-block ()
   (interactive)
   (message "found: %s" (org-entry-get (point) "orgtrello-id")))
 
-(defun orgtrello--card-delete (card-meta &optional parent-meta)
+(defun orgtrello/--card-delete (card-meta &optional parent-meta)
   "Deal with the deletion query of a card"
   ;; parent is useless here
-  (orgtrello-api--delete-card (gethash :id card-meta)))
+  (orgtrello-api/delete-card (gethash :id card-meta)))
 
-(defun orgtrello--checklist-delete (checklist-meta &optional parent-meta)
+(defun orgtrello/--checklist-delete (checklist-meta &optional parent-meta)
   "Deal with the deletion query of a checklist"
   ;; parent is useless here
-  (orgtrello-api--delete-checklist (gethash :id checklist-meta)))
+  (orgtrello-api/delete-checklist (gethash :id checklist-meta)))
 
-(defun orgtrello--task-delete (task-meta &optional checklist-meta)
+(defun orgtrello/--task-delete (task-meta &optional checklist-meta)
   "Deal with create/update task query build"
-  (let* ((orgtrello--task-id      (gethash :id task-meta))
-         (orgtrello--checklist-id (gethash :id checklist-meta)))
-    (orgtrello-api--delete-task orgtrello--checklist-id orgtrello--task-id)))
+  (let* ((orgtrello/--task-id      (gethash :id task-meta))
+         (orgtrello/--checklist-id (gethash :id checklist-meta)))
+    (orgtrello-api/delete-task orgtrello/--checklist-id orgtrello/--task-id)))
 
-(defun orgtrello--dispatch-map-delete ()
+(defun orgtrello/--dispatch-map-delete ()
   "Dispatch map for the deletion of card/checklist/item."
   (let* ((dispatch-map (make-hash-table :test 'equal)))
-    (puthash 1 'orgtrello--card-delete      dispatch-map)
-    (puthash 2 'orgtrello--checklist-delete dispatch-map)
-    (puthash 3 'orgtrello--task-delete      dispatch-map)
+    (puthash 1 'orgtrello/--card-delete      dispatch-map)
+    (puthash 2 'orgtrello/--checklist-delete dispatch-map)
+    (puthash 3 'orgtrello/--task-delete      dispatch-map)
     dispatch-map))
 
-(defvar *MAP-DISPATCH-DELETE* (orgtrello--dispatch-map-delete) "Dispatch map for the deletion query of card/checklist/task.")
+(defvar *MAP-DISPATCH-DELETE* (orgtrello/--dispatch-map-delete) "Dispatch map for the deletion query of card/checklist/task.")
 
-(defun orgtrello--dispatch-delete (meta &optional parent-meta)
+(defun orgtrello/--dispatch-delete (meta &optional parent-meta)
   (let* ((level       (gethash :level meta))
-         (dispatch-fn (gethash level *MAP-DISPATCH-DELETE* 'orgtrello--too-deep-level)))
+         (dispatch-fn (gethash level *MAP-DISPATCH-DELETE* 'orgtrello/--too-deep-level)))
     (funcall dispatch-fn meta parent-meta)))
 
-(defun orgtrello-do-delete-simple ()
+(defun orgtrello/do-delete-simple ()
   "Do the simple deletion of a card, checklist or task."
-  (let* ((entry-metadata   (orgtrello-data-entry-get-full-metadata))
+  (let* ((entry-metadata   (orgtrello-data/entry-get-full-metadata))
          (current-metadata (gethash :current entry-metadata))
          (id               (gethash :id current-metadata)))
     (if (and current-metadata id)
-        (let ((query-http (orgtrello--dispatch-delete (gethash :current entry-metadata) (gethash :parent entry-metadata))))
+        (let ((query-http (orgtrello/--dispatch-delete (gethash :current entry-metadata) (gethash :parent entry-metadata))))
           (if (hash-table-p query-http)
-              (orgtrello-query-http query-http)
+              (orgtrello-query/http query-http)
             (message query-http)))
       (message "Entity not synchronized on trello yet!"))))
 
-(defun orgtrello--do-install-config-file (*consumer-key* *access-token*)
+(defun orgtrello/--do-install-config-file (*consumer-key* *access-token*)
   "Persist the file config-file with the input of the user."
   (make-directory *CONFIG-DIR* t)
   (with-temp-file *CONFIG-FILE*
@@ -607,40 +607,40 @@
     (insert (format "(setq *access-token* \"%s\")" *access-token*))
     (write-file *CONFIG-FILE* 't)))
 
-(defun orgtrello-do-install-keys-and-token ()
+(defun orgtrello/do-install-keys-and-token ()
   "Procedure to install the *consumer-key* and the token for the user in the config-file."
   (interactive)
-  (defvar orgtrello--*consumer-key* nil)
-  (defvar orgtrello--access-token nil)
+  (defvar orgtrello/--*consumer-key* nil)
+  (defvar orgtrello/--access-token nil)
   (browse-url "https://trello.com/1/appKey/generate")
-  (setq orgtrello--*consumer-key* (read-string "*consumer-key*: "))
-  (browse-url (format "https://trello.com/1/authorize?response_type=token&name=org-trello&scope=read,write&expiration=never&key=%s" orgtrello--*consumer-key*))
-  (setq orgtrello--access-token (read-string "Access-token: "))
-  (orgtrello--do-install-config-file orgtrello--*consumer-key* orgtrello--access-token))
+  (setq orgtrello/--*consumer-key* (read-string "*consumer-key*: "))
+  (browse-url (format "https://trello.com/1/authorize?response_type=token&name=org-trello&scope=read,write&expiration=never&key=%s" orgtrello/--*consumer-key*))
+  (setq orgtrello/--access-token (read-string "Access-token: "))
+  (orgtrello/--do-install-config-file orgtrello/--*consumer-key* orgtrello/--access-token))
 
-(defun orgtrello--id-name (entities)
+(defun orgtrello/--id-name (entities)
   "Given a list of association list (representing entities), return a map (id, name)."
   (let* ((id-name (make-hash-table :test 'equal)))
     (->> entities
       (--map (puthash (assoc-default 'id it) (assoc-default 'name it) id-name)))
     id-name))
 
-(defun orgtrello--name-id (entities)
+(defun orgtrello/--name-id (entities)
   "Given a list of association list (representing entities), return a map (id, name)."
   (let* ((name-id (make-hash-table :test 'equal)))
     (->> entities
       (--map (puthash (downcase (assoc-default'name it)) (downcase (assoc-default 'id it)) name-id)))
     name-id))
 
-(defun orgtrello--list-boards ()
+(defun orgtrello/--list-boards ()
   "Return the map of the existing boards associated to the current account. (Synchronous request)"
-  (orgtrello-query-http-sync (orgtrello-api--get-boards)))
+  (orgtrello-query/http-sync (orgtrello-api/get-boards)))
 
-(defun orgtrello--list-board-lists (board-id)
+(defun orgtrello/--list-board-lists (board-id)
   "Return the map of the existing list of the board with id board-id. (Synchronous request)"
-  (orgtrello-query-http-sync (orgtrello-api--get-lists board-id)))
+  (orgtrello-query/http-sync (orgtrello-api/get-lists board-id)))
 
-(defun orgtrello--choose-board (boards)
+(defun orgtrello/--choose-board (boards)
   "Given a map of boards, display the possible boards for the user to choose which one he wants to work with."
   ;; ugliest ever
   (defvar board-chosen nil)
@@ -659,7 +659,7 @@
             (read-string (format "%s\nInput the number of the board desired: " str-key-val))))
     (gethash board-chosen i-id)))
 
-(defun orgtrello-update-orgmode-file-with-properties (board-id board-lists-hash-name-id)
+(defun orgtrello/update-orgmode-file-with-properties (board-id board-lists-hash-name-id)
   "Update the orgmode file with the needed headers for org-trello to work."
   (with-current-buffer (current-buffer)
     (goto-char (point-min))
@@ -670,15 +670,15 @@
     (save-buffer)
     (org-mode-restart)))
 
-(defun orgtrello-do-install-board-and-lists ()
+(defun orgtrello/do-install-board-and-lists ()
   "Interactive command to install the list boards"
   (interactive)
   (load *CONFIG-FILE*)
   (if (not (and *consumer-key* *access-token*))
-      (message "You need to setup your account to be able to connect to trello.\nInstall manually (report to the doc) or M-x orgtrello-do-install-keys-and-token")
-    (let* ((chosen-id-board (orgtrello--choose-board (orgtrello--id-name (orgtrello--list-boards))))
-           (board-lists     (orgtrello--name-id (orgtrello--list-board-lists chosen-id-board))))
-      (orgtrello-update-orgmode-file-with-properties chosen-id-board board-lists))))
+      (message "You need to setup your account to be able to connect to trello.\nInstall manually (report to the doc) or M-x orgtrello/do-install-keys-and-token")
+    (let* ((chosen-id-board (orgtrello/--choose-board (orgtrello/--id-name (orgtrello/--list-boards))))
+           (board-lists     (orgtrello/--name-id (orgtrello/--list-board-lists chosen-id-board))))
+      (orgtrello/update-orgmode-file-with-properties chosen-id-board board-lists))))
 
 (message "orgtrello loaded!")
 
@@ -693,38 +693,38 @@
             ;; ok, we call the function
             (funcall fn-to-control-and-execute)
           ;; there is some trouble, trying to help the user
-          (message "You need to setup your:\n- consumer-key and your access-token for org-trello to work ok. Use M-x orgtrello-do-install-keys-and-token\n- org-mode file and connect it to trello. Use M-x orgtrello-do-install-board-and-lists")))
+          (message "You need to setup your:\n- consumer-key and your access-token for org-trello to work ok. Use M-x orgtrello/do-install-keys-and-token\n- org-mode file and connect it to trello. Use M-x orgtrello/do-install-board-and-lists")))
     (funcall fn-to-control-and-execute)))
 
 (defun org-trello/create-simple-entity ()
   "Control first, then if ok, create a simple entity."
   (interactive)
   (message "Syncing entity...")
-  (org-trello/--control-and-do '(orgtrello/--control-keys orgtrello/--control-properties) 'orgtrello-do-create-simple))
+  (org-trello/--control-and-do '(orgtrello/--control-keys orgtrello/--control-properties) 'orgtrello/do-create-simple))
 
 (defun org-trello/create-entity ()
   "Control first, then if ok, create an entity and all its arborescence if need be."
   (interactive)
   (message "Syncing complex entity...")
-  (org-trello/--control-and-do '(orgtrello/--control-keys orgtrello/--control-properties) 'orgtrello-do-create-full-card))
+  (org-trello/--control-and-do '(orgtrello/--control-keys orgtrello/--control-properties) 'orgtrello/do-create-full-card))
 
 (defun org-trello/kill-entity ()
   "Control first, then if ok, delete the entity and all its arborescence."
   (interactive)
   (message "Delete entity...")
-  (org-trello/--control-and-do '(orgtrello/--control-keys orgtrello/--control-properties) 'orgtrello-do-delete-simple))
+  (org-trello/--control-and-do '(orgtrello/--control-keys orgtrello/--control-properties) 'orgtrello/do-delete-simple))
 
 (defun org-trello/install-key-and-token ()
   "No control, trigger the setup installation of the key and the read/write token."
   (interactive)
   (message "Setup key and token...")
-  (org-trello/--control-and-do nil 'orgtrello-do-install-keys-and-token))
+  (org-trello/--control-and-do nil 'orgtrello/do-install-keys-and-token))
 
 (defun org-trello/install-board-and-lists-ids ()
   "Control first, then if ok, trigger the setup installation of the trello board to sync with."
   (interactive)
   (message "Install boards and lists...")
-  (org-trello/--control-and-do '(orgtrello/--control-keys) 'orgtrello-do-install-board-and-lists))
+  (org-trello/--control-and-do '(orgtrello/--control-keys) 'orgtrello/do-install-board-and-lists))
 
 (defun org-trello/help-describing-bindings ()
   "A simple message to describe the standard bindings used."
@@ -747,9 +747,9 @@ C-c o h - This very binding to display this help menu."))
              (define-key map (kbd "C-c o I") 'org-trello/install-board-and-lists-ids)
              (define-key map (kbd "C-c o h") 'org-trello/help-describing-bindings)
              ;; for debugging purposes (I do not know any better yet)
-             ;; (define-key map (kbd "C-c z") 'orgtrello-describe-heading)
-             ;; (define-key map (kbd "C-c x") 'orgtrello-describe-headings)
-             ;; (define-key map (kbd "C-c F") 'orgtrello-find-block)
+             ;; (define-key map (kbd "C-c z") 'orgtrello/describe-heading)
+             ;; (define-key map (kbd "C-c x") 'orgtrello/describe-headings)
+             ;; (define-key map (kbd "C-c F") 'orgtrello/find-block)
              ;; define other bindings...
              map))
 
