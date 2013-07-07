@@ -20,7 +20,14 @@ cf. [What has been done and remains to be done](./TODO.org)
 
 ## Details
 
-[What has been done and remains to be done](./TODO.org)
+[todo/done](./TODO.org)
+
+## v0.0.3
+
+- DONE Syncing complex entities
+- DONE cleanup useless tests
+- DONE Namespace cleanup
+- cf. [todo/done](./TODO.org) for the remains
 
 ## v0.0.2
 
