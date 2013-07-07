@@ -258,7 +258,7 @@ CLOSED: [2013-07-07 dim. 10:54]
 ** DONE Local packaging to help testing
 CLOSED: [2013-07-07 dim. 10:54]
 
-* IN-PROGRESS v0.0.3 [43%]
+* IN-PROGRESS v0.0.3 [90%]
 ** DONE Syncing complex entities
 CLOSED: [2013-07-07 dim. 10:55]
 ** DONE cleanup useless tests
@@ -276,7 +276,14 @@ CLOSED: [2013-07-07 dim. 18:05]
 ** DONE Given a org-mode file, fill in the trello board
 CLOSED: [2013-07-07 dim. 18:51]
 Dismiss non compatible org-mode entries
+** DONE Announce in emacs mailing list
+CLOSED: [2013-07-07 dim. 19:11]
+emacs-orgmode@gnu.org
+gnu-emacs-sources@gnu.org
+** DONE Filter out the closed boards from the "choose board list"
+CLOSED: [2013-07-07 dim. 22:27]
 ** TODO Given a trello board, sync into a org-mode file
+* v0.0.4
 ** TODO Replace already present properties regarding boards before injecting new ones.
 ** TODO A fake trello server to be able to test without a network
 ** TODO Testing the packaging

@@ -520,7 +520,7 @@
   "Do the actual simple creation of a card, checklist or task. Optionally, we can render the creation synchronous."
   (let* ((entry-metadata (orgtrello-data/entry-get-full-metadata))
          (query-http     (orgtrello/--dispatch-create (gethash :current entry-metadata) (gethash :parent entry-metadata) (gethash :grandparent entry-metadata))))
-    ;; FIXME? can't we do better that this?
+    ;; FIXME? can't we do better than this?
     (if (hash-table-p query-http)
         (if sync
             (orgtrello-query/http-sync query-http)
@@ -636,24 +636,24 @@
 (defun orgtrello/--id-name (entities)
   "Given a list of association list (representing entities), return a map (id, name)."
   (let* ((id-name (make-hash-table :test 'equal)))
-    (->> entities
-      (--map (puthash (assoc-default 'id it) (assoc-default 'name it) id-name)))
+    (--map (puthash (assoc-default 'id it) (assoc-default 'name it) id-name) entities)
     id-name))
 
 (defun orgtrello/--name-id (entities)
   "Given a list of association list (representing entities), return a map (id, name)."
   (let* ((name-id (make-hash-table :test 'equal)))
-    (->> entities
-      (--map (puthash (downcase (assoc-default'name it)) (downcase (assoc-default 'id it)) name-id)))
+    (--map (puthash (downcase (assoc-default'name it)) (downcase (assoc-default 'id it)) name-id) entities)
     name-id))
 
 (defun orgtrello/--list-boards ()
   "Return the map of the existing boards associated to the current account. (Synchronous request)"
-  (orgtrello-query/http-sync (orgtrello-api/get-boards)))
+  (remove-if-not
+   (lambda (board) (equal :json-false (assoc-default 'closed board)))
+   (orgtrello-query/http-sync (orgtrello-api/get-boards) 'standard-success-callback)))
 
 (defun orgtrello/--list-board-lists (board-id)
   "Return the map of the existing list of the board with id board-id. (Synchronous request)"
-  (orgtrello-query/http-sync (orgtrello-api/get-lists board-id)))
+  (orgtrello-query/http-sync (orgtrello-api/get-lists board-id) 'standard-success-callback))
 
 (defun orgtrello/--choose-board (boards)
   "Given a map of boards, display the possible boards for the user to choose which one he wants to work with."
@@ -690,9 +690,12 @@
 (defun orgtrello/do-install-board-and-lists ()
   "Interactive command to install the list boards"
   (interactive)
-  (cl-destructuring-bind (orgtrello/--chosen-board-id orgtrello/--chosen-board-name) (orgtrello/--choose-board (orgtrello/--id-name (orgtrello/--list-boards)))
-                         (let ((orgtrello/--chosen-board-lists (orgtrello/--name-id (orgtrello/--list-board-lists orgtrello/--chosen-board-id))))
-                           (orgtrello/update-orgmode-file-with-properties orgtrello/--chosen-board-name orgtrello/--chosen-board-id orgtrello/--chosen-board-lists))))
+  cl-destructuring-bind
+  ((orgtrello/--chosen-board-id orgtrello/--chosen-board-name) (orgtrello/--choose-board (orgtrello/--id-name (orgtrello/--list-boards)))
+   (orgtrello/update-orgmode-file-with-properties
+    orgtrello/--chosen-board-name
+    orgtrello/--chosen-board-id
+    (orgtrello/--name-id (orgtrello/--list-board-lists orgtrello/--chosen-board-id)))))
 
 (defun orgtrello/create-board (board-name &optional board-description)
   "Create a board with name and description."
