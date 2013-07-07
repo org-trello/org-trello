@@ -529,13 +529,15 @@
     ;; then execute the call
     (funcall dispatch-fn meta parent-meta grandparent-meta)))
 
-(defun orgtrello-do-create-simple ()
-  "Do the actual simple creation of a card, checklist or task."
+(defun orgtrello-do-create-simple (&optional sync)
+  "Do the actual simple creation of a card, checklist or task. Optionally, we can render the creation synchronous."
   (let* ((entry-metadata (orgtrello-data-entry-get-full-metadata))
          (query-http     (orgtrello--dispatch-create (gethash :current entry-metadata) (gethash :parent entry-metadata) (gethash :grandparent entry-metadata))))
     ;; FIXME? can't we do better that this?
     (if (hash-table-p query-http)
-        (orgtrello-query-http query-http)
+        (if sync
+            (orgtrello-query-http-sync query-http)
+            (orgtrello-query-http      query-http))
       (message query-http))))
 
 (defun orgtrello--merge-map (entry map-ids-by-name)
