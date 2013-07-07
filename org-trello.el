@@ -686,12 +686,9 @@
 (defun orgtrello/do-install-board-and-lists ()
   "Interactive command to install the list boards"
   (interactive)
-  (load *CONFIG-FILE*)
-  (if (not (and *consumer-key* *access-token*))
-      (message "You need to setup your account to be able to connect to trello.\nInstall manually (report to the doc) or M-x orgtrello/do-install-keys-and-token")
-    (cl-destructuring-bind (orgtrello/--chosen-board-id orgtrello/--chosen-board-name) (orgtrello/--choose-board (orgtrello/--id-name (orgtrello/--list-boards)))
-                           (let ((orgtrello/--chosen-board-lists (orgtrello/--name-id (orgtrello/--list-board-lists orgtrello/--chosen-board-id))))
-                             (orgtrello/update-orgmode-file-with-properties orgtrello/--chosen-board-name orgtrello/--chosen-board-id orgtrello/--chosen-board-lists)))))
+  (cl-destructuring-bind (orgtrello/--chosen-board-id orgtrello/--chosen-board-name) (orgtrello/--choose-board (orgtrello/--id-name (orgtrello/--list-boards)))
+                         (let ((orgtrello/--chosen-board-lists (orgtrello/--name-id (orgtrello/--list-board-lists orgtrello/--chosen-board-id))))
+                           (orgtrello/update-orgmode-file-with-properties orgtrello/--chosen-board-name orgtrello/--chosen-board-id orgtrello/--chosen-board-lists))))
 
 (defun orgtrello/create-board (board-name &optional board-description)
   "Create a board with name and description."
@@ -702,17 +699,13 @@
 (defun orgtrello/do-create-board-and-lists ()
   "Interactive command to create a board and the lists"
   (interactive)
-  (load *CONFIG-FILE*)
-  (if (not (and *consumer-key* *access-token*))
-      (message "You need to setup your account to be able to connect to trello.\nInstall manually (report to the doc) or M-x orgtrello/do-install-keys-and-token")
-    (progn
-      (defvar orgtrello/--board-name nil)        (setq orgtrello/--board-name nil)
-      (defvar orgtrello/--board-description nil) (setq orgtrello/--board-description nil)
-      (while (not orgtrello/--board-name) (setq orgtrello/--board-name (read-string "Please, input the desired board name: ")))
-      (setq orgtrello/--board-description (read-string "Please, input the board description (empty for none): "))
-      (cl-destructuring-bind (orgtrello/--board-id orgtrello/--board-name) (orgtrello/create-board orgtrello/--board-name orgtrello/--board-description)
-                             (let ((orgtrello/--board-lists (orgtrello/--name-id (orgtrello/--list-board-lists orgtrello/--board-id))))
-                               (orgtrello/update-orgmode-file-with-properties orgtrello/--board-name orgtrello/--board-id orgtrello/--board-lists))))))
+  (defvar orgtrello/--board-name nil)        (setq orgtrello/--board-name nil)
+  (defvar orgtrello/--board-description nil) (setq orgtrello/--board-description nil)
+  (while (not orgtrello/--board-name) (setq orgtrello/--board-name (read-string "Please, input the desired board name: ")))
+  (setq orgtrello/--board-description (read-string "Please, input the board description (empty for none): "))
+  (cl-destructuring-bind (orgtrello/--board-id orgtrello/--board-name) (orgtrello/create-board orgtrello/--board-name orgtrello/--board-description)
+                         (let ((orgtrello/--board-lists (orgtrello/--name-id (orgtrello/--list-board-lists orgtrello/--board-id))))
+                           (orgtrello/update-orgmode-file-with-properties orgtrello/--board-name orgtrello/--board-id orgtrello/--board-lists))))
 
 (message "orgtrello loaded!")
 

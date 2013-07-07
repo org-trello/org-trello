@@ -1,7 +1,8 @@
-#+property: board-id      50bcfd2f033110476000e768
-#+property: todo-list-id  51d5edbed94d81af0d001d90
-#+property: doing-list-id 51d5edc892695e997c002209
-#+property: done-list-id  51d5edb9357aaa643f00403d
+#+property: board-name    api test board
+#+property: board-id      51d99192cfa84c3a3000432e
+#+property: todo-list-id  51d99192cfa84c3a3000432f
+#+property: doing-list-id 51d99192cfa84c3a30004330
+#+property: done-list-id  51d99192cfa84c3a30004331
 #+title: TODO orgtrello's dev progress
 #+author: Antoine R. Dumont
 
@@ -257,7 +258,7 @@ CLOSED: [2013-07-07 dim. 10:54]
 ** DONE Local packaging to help testing
 CLOSED: [2013-07-07 dim. 10:54]
 
-* IN-PROGRESS v0.0.3 [35%]
+* IN-PROGRESS v0.0.3 [37%]
 ** DONE Syncing complex entities
 CLOSED: [2013-07-07 dim. 10:55]
 ** DONE cleanup useless tests
@@ -270,7 +271,8 @@ CLOSED: [2013-07-07 dim. 15:11]
 CLOSED: [2013-07-07 dim. 17:32]
 ** DONE Display the name of the board as a property file
 CLOSED: [2013-07-07 dim. 18:02]
-** TODO Cleanup the useless controls
+** DONE Cleanup the useless controls
+CLOSED: [2013-07-07 dim. 18:05]
 ** TODO Replace already present properties regarding boards.
 ** TODO Given a org-mode file, fill in the trello board
 Dismiss non compatible org-mode entries
