@@ -516,7 +516,7 @@
     ;; then execute the call
     (funcall dispatch-fn meta parent-meta grandparent-meta)))
 
-(defun orgtrello/do-create-simple (&optional sync)
+(defun orgtrello/do-create-simple-entity (&optional sync)
   "Do the actual simple creation of a card, checklist or task. Optionally, we can render the creation synchronous."
   (let* ((entry-metadata (orgtrello-data/entry-get-full-metadata))
          (query-http     (orgtrello/--dispatch-create (gethash :current entry-metadata) (gethash :parent entry-metadata) (gethash :grandparent entry-metadata))))
@@ -539,14 +539,18 @@
         (puthash :id (gethash orgtrello/--merge-map-name map-ids-by-name) entry)
         entry))))
 
-(defun orgtrello/do-create-full-card ()
+(defun orgtrello/do-create-complex-entity ()
   "Do the actual full card creation - from card to task. Beware full side effects..."
   (message "Syncing full card structure.")
   (save-excursion
     ;; up to the highest level to begin the sync in order
     (while (org-up-heading-safe))
     ;; iterate over the map of
-    (org-map-tree (lambda () (orgtrello/do-create-simple t)))))
+    (org-map-tree (lambda () (orgtrello/do-create-simple-entity t)))))
+
+(defun orgtrello/do-sync-full-file ()
+  "Full org-mode file synchronisation. Beware, this will block emacs as the request is synchroneous."
+  (org-map-entries (lambda () (orgtrello/do-create-simple-entity t)) t 'file))
 
 (defun orgtrello/describe-heading ()
   (interactive)
@@ -727,13 +731,19 @@
   "Control first, then if ok, create a simple entity."
   (interactive)
   (message "Syncing entity...")
-  (org-trello/--control-and-do '(orgtrello/--control-keys orgtrello/--control-properties) 'orgtrello/do-create-simple))
+  (org-trello/--control-and-do '(orgtrello/--control-keys orgtrello/--control-properties) 'orgtrello/do-create-simple-entity))
 
-(defun org-trello/create-entity ()
+(defun org-trello/create-complex-entity ()
   "Control first, then if ok, create an entity and all its arborescence if need be."
   (interactive)
   (message "Syncing complex entity...")
-  (org-trello/--control-and-do '(orgtrello/--control-keys orgtrello/--control-properties) 'orgtrello/do-create-full-card))
+  (org-trello/--control-and-do '(orgtrello/--control-keys orgtrello/--control-properties) 'orgtrello/do-create-complex-entity))
+
+(defun org-trello/sync-to-trello ()
+  "Control first, then if ok, sync the org-mode file completely to trello."
+  (interactive)
+  (message "Syncing org-mode file to trello...")
+  (org-trello/--control-and-do '(orgtrello/--control-keys orgtrello/--control-properties) 'orgtrello/do-sync-full-file))
 
 (defun org-trello/kill-entity ()
   "Control first, then if ok, delete the entity and all its arborescence."
@@ -763,6 +773,8 @@
   "A simple message to describe the standard bindings used."
   (interactive)
   (message "C-c o c - Create/Update asynchronously simple a card/checklist/item depending on the level and status. Do not deal with level superior to 4.
+C-c o C - Create/Update a complete card/checklist/item and its subtree.
+C-c o s - Synchronize the org-mode file to the trello board.
 C-c o k - Kill the arborescence tree and the corresponding entity.
 C-c o i - Interactive command to install the keys and the access-token.
 C-c o I - Interactive command to select the board and attach the todo, doing and done list.
@@ -775,7 +787,8 @@ C-c o h - This very binding to display this help menu."))
   :keymap  (let ((map (make-sparse-keymap)))
              ;; binding will change
              (define-key map (kbd "C-c o c") 'org-trello/create-simple-entity)
-             (define-key map (kbd "C-c o C") 'org-trello/create-entity) ;; does not work yet
+             (define-key map (kbd "C-c o C") 'org-trello/create-complex-entity)
+             (define-key map (kbd "C-c o s") 'org-trello/sync-to-trello)
              (define-key map (kbd "C-c o k") 'org-trello/kill-entity)
              (define-key map (kbd "C-c o i") 'org-trello/install-key-and-token)
              (define-key map (kbd "C-c o I") 'org-trello/install-board-and-lists-ids)

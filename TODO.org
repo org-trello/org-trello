@@ -1,8 +1,8 @@
 #+property: board-name    api test board
-#+property: board-id      51d99192cfa84c3a3000432e
-#+property: todo-list-id  51d99192cfa84c3a3000432f
-#+property: doing-list-id 51d99192cfa84c3a30004330
-#+property: done-list-id  51d99192cfa84c3a30004331
+#+property: board-id      51d99bbc1e1d8988390047f2
+#+property: todo-list-id  51d99bbc1e1d8988390047f3
+#+property: doing-list-id 51d99bbc1e1d8988390047f4
+#+property: done-list-id  51d99bbc1e1d8988390047f5
 #+title: TODO orgtrello's dev progress
 #+author: Antoine R. Dumont
 
@@ -258,7 +258,7 @@ CLOSED: [2013-07-07 dim. 10:54]
 ** DONE Local packaging to help testing
 CLOSED: [2013-07-07 dim. 10:54]
 
-* IN-PROGRESS v0.0.3 [37%]
+* IN-PROGRESS v0.0.3 [43%]
 ** DONE Syncing complex entities
 CLOSED: [2013-07-07 dim. 10:55]
 ** DONE cleanup useless tests
@@ -273,10 +273,11 @@ CLOSED: [2013-07-07 dim. 17:32]
 CLOSED: [2013-07-07 dim. 18:02]
 ** DONE Cleanup the useless controls
 CLOSED: [2013-07-07 dim. 18:05]
-** TODO Replace already present properties regarding boards.
-** TODO Given a org-mode file, fill in the trello board
+** DONE Given a org-mode file, fill in the trello board
+CLOSED: [2013-07-07 dim. 18:51]
 Dismiss non compatible org-mode entries
 ** TODO Given a trello board, sync into a org-mode file
+** TODO Replace already present properties regarding boards before injecting new ones.
 ** TODO A fake trello server to be able to test without a network
 ** TODO Testing the packaging
 ** TODO Rewrite tests using `expectations` (mock)                      :dev:
