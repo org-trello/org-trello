@@ -1,9 +1,8 @@
-VERSION=0.0.1
+VERSION=$$(grep "^;; Version: " org-trello.el | cut -f3 -d' ')
 PACKAGE_FOLDER=org-trello-$(VERSION)
 ARCHIVE=$(PACKAGE_FOLDER).tar
 
 test:
-	# carton setups the elpa env for me
 	carton exec emacs --no-init-file -batch \
 			-l ert \
 			-l ./org-trello-tests.el \

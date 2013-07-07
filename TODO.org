@@ -264,6 +264,8 @@ CLOSED: [2013-07-07 dim. 10:55]
 CLOSED: [2013-07-07 dim. 11:02]
 ** DONE Namespace cleanup
 CLOSED: [2013-07-07 dim. 11:34]
+** DONE Building package is now able to deal with the right version
+CLOSED: [2013-07-07 dim. 15:11]
 ** TODO Given a trello board, sync into a org-mode file
 ** TODO Given a org-mode file, fill in the trello board
 Dismiss non compatible org-mode entries
