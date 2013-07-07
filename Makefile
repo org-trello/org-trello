@@ -29,9 +29,9 @@ info:
 untar:
 	tar xvf $(ARCHIVE)
 
-# test-install-package-file: package untar
-# 	cd ./$(PACKAGE_FOLDER)
-# 	bash ~/bin/emacs/emacs-install-clean.el org-trello.el .
+test-install-package-file: package untar
+	cd ./$(PACKAGE_FOLDER)
+	emacs-install-clean.el org-trello.el .
 
-# build-package:
-# 	emacs --batch -l ./build.el -- org-trello.el
+build-package:
+	emacs --batch -l ./build.el -- org-trello.el
