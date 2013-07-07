@@ -129,30 +129,6 @@
           (puthash :grandparent grandparent-heading mapdata)
           mapdata))))
 
-(defun orgtrello-data-compute-full-metadata ()
-  "Compute the metadata from the org-heading-components entry - full card up to level 3 (rest is dismissed)."
-  (let* ((orgtrello-data-compute-full-metadata--dispatch-map-list (make-hash-table :test 'equal)))
-    ;; build the dispatch map into which add the data depending on the level
-    (save-excursion
-      ;; up to the highest level
-      (while (org-up-heading-safe))
-      ;; retrieve all metadata
-      (org-map-tree
-       (lambda ()
-         (let* ((orgtrello-data-entry-get-full-metadata-value (orgtrello-data-entry-get-full-metadata)))
-           (if orgtrello-data-entry-get-full-metadata-value
-               (let* ((current (gethash :current orgtrello-data-entry-get-full-metadata-value))
-                      (level   (gethash :level current))
-                      (list    (gethash level orgtrello-data-compute-full-metadata--dispatch-map-list)))
-                 (puthash level (push orgtrello-data-entry-get-full-metadata-value list) orgtrello-data-compute-full-metadata--dispatch-map-list)))))))
-    ;; first the card
-    ;; then the checklists
-    ;; then the tasks
-    ;; reverse the result list to keep the right order in one time (I have no control over org-map-tree + push
-    (reverse (append (gethash 3 orgtrello-data-compute-full-metadata--dispatch-map-list)
-                     (gethash 2 orgtrello-data-compute-full-metadata--dispatch-map-list)
-                     (gethash 1 orgtrello-data-compute-full-metadata--dispatch-map-list)))))
-
 (defun orgtrello-data--get-level (heading-metadata)
   "Given the heading-metadata, extract the level"
   (cl-third heading-metadata))
@@ -554,33 +530,12 @@
 
 (defun orgtrello-do-create-full-card ()
   "Do the actual full card creation - from card to task. Beware full side effects..."
-  ;; beware, the list-entries-metadata is stored once and not updated after each http call, thus do not possess the
-  ;; newly created id
-  (let* ((list-entries-metadata (orgtrello-data-compute-full-metadata))
-         (map-ids               (make-hash-table :test 'equal)))
-    (mapcar (lambda (mapdata)
-              (let* ((current                                           (gethash :current     mapdata))
-                     (current-position-to-go-to                         (gethash :point       current))
-                     (parent                                            (gethash :parent      mapdata))
-                     (grandparent                                       (gethash :grandparent mapdata))
-                     (query-http                                        (orgtrello--dispatch-create
-                                                                         (orgtrello--merge-map current map-ids)
-                                                                         (orgtrello--merge-map parent map-ids)
-                                                                         (orgtrello--merge-map grandparent map-ids))))
-                ;; will make our mark
-                (save-excursion
-                  ;; move to the entity to sync
-                  (goto-char current-position-to-go-to)
-                  ;; set the consumer-key to make a pointer to get back to when the request is finished
-                  (orgtrello--set-marker))
-                (let (;; the query is synchronous as there is order in the current list - FIXME any better way? queues?
-                      ;; execute and retrieve the result of the request
-                      (orgtrello--do-create-full-card-response-http-data (orgtrello-query-http-sync query-http)))
-                  ;; keep the last id
-                  (puthash (assoc-default 'name orgtrello--do-create-full-card-response-http-data)
-                           (assoc-default 'id   orgtrello--do-create-full-card-response-http-data)
-                           map-ids))))
-            list-entries-metadata)))
+  (message "Syncing full card structure.")
+  (save-excursion
+    ;; up to the highest level to begin the sync in order
+    (while (org-up-heading-safe))
+    ;; iterate over the map of
+    (org-map-tree (lambda () (orgtrello-do-create-simple t)))))
 
 (defun orgtrello-describe-heading ()
   (interactive)
@@ -786,7 +741,7 @@ C-c o h - This very binding to display this help menu."))
   :keymap  (let ((map (make-sparse-keymap)))
              ;; binding will change
              (define-key map (kbd "C-c o c") 'org-trello/create-simple-entity)
-             ;; (define-key map (kbd "C-c o C") 'org-trello/create-entity) ;; does not work yet
+             (define-key map (kbd "C-c o C") 'org-trello/create-entity) ;; does not work yet
              (define-key map (kbd "C-c o k") 'org-trello/kill-entity)
              (define-key map (kbd "C-c o i") 'org-trello/install-key-and-token)
              (define-key map (kbd "C-c o I") 'org-trello/install-board-and-lists-ids)

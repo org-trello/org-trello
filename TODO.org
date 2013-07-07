@@ -257,8 +257,9 @@ CLOSED: [2013-07-07 dim. 10:54]
 ** DONE Local packaging to help testing
 CLOSED: [2013-07-07 dim. 10:54]
 
-* TODO v0.0.3 (or idea box or wish list or whatever)
-** TODO Create complex entities (does not work yet!)
+* IN-PROGRESS v0.0.3
+** DONE Syncing complex entities
+CLOSED: [2013-07-07 dim. 10:55]
 ** TODO If no level 3, we may create a dummy checklist and attach every todo to such dummy checklist
 ** TODO A fake trello server to be able to test without a network
 ** TODO Testing the packaging
