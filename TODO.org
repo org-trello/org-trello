@@ -268,6 +268,10 @@ CLOSED: [2013-07-07 dim. 11:34]
 CLOSED: [2013-07-07 dim. 15:11]
 ** DONE Create a board from org-mode
 CLOSED: [2013-07-07 dim. 17:32]
+** DONE Display the name of the board as a property file
+CLOSED: [2013-07-07 dim. 18:02]
+** TODO Cleanup the useless controls
+** TODO Replace already present properties regarding boards.
 ** TODO Given a org-mode file, fill in the trello board
 Dismiss non compatible org-mode entries
 ** TODO Given a trello board, sync into a org-mode file
