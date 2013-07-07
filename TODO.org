@@ -282,7 +282,10 @@ emacs-orgmode@gnu.org
 gnu-emacs-sources@gnu.org
 ** DONE Filter out the closed boards from the "choose board list"
 CLOSED: [2013-07-07 dim. 22:27]
-** TODO Given a trello board, sync into a org-mode file
+** DONE filter out level > 4 when syncing.
+CLOSED: [2013-07-07 dim. 23:03]
+** PENDING Given a trello board, sync into a org-mode file
+
 * v0.0.4
 ** TODO Replace already present properties regarding boards before injecting new ones.
 ** TODO A fake trello server to be able to test without a network

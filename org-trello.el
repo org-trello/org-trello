@@ -340,7 +340,7 @@
              :params  `((key . ,*consumer-key*)
                         (token . ,*access-token*))
              :parser  'json-read
-             :success (if success-callback success-callback 'standard-success-callback)
+             :success success-callback
              :error   'standard-error-callback)))
 
 (cl-defun orgtrello-query/--post-put-success-callback-update-id (&key data &allow-other-keys)
@@ -379,7 +379,7 @@
              :headers '(("Content-type" . "application/json"))
              :data    (json-encode payload)
              :parser  'json-read
-             :success (if success-callback success-callback 'orgtrello-query/--post-put-success-callback-update-id)
+             :success success-callback
              :error   'standard-error-callback)))
 
 (cl-defun orgtrello-query/--delete-success-callback (&key data response &allow-other-keys)
@@ -400,7 +400,7 @@
              :type    (orgtrello-query/--compute-method method)
              :params  `((key . ,*consumer-key*)
                         (token . ,*access-token*))
-             :success (if success-callback success-callback 'orgtrello-query/--delete-success-callback)
+             :success success-callback
              :error   'standard-error-callback)))
 
 (message "orgtrello-query/ loaded!")
@@ -518,14 +518,14 @@
 
 (defun orgtrello/do-create-simple-entity (&optional sync)
   "Do the actual simple creation of a card, checklist or task. Optionally, we can render the creation synchronous."
-  (let* ((entry-metadata (orgtrello-data/entry-get-full-metadata))
-         (query-http     (orgtrello/--dispatch-create (gethash :current entry-metadata) (gethash :parent entry-metadata) (gethash :grandparent entry-metadata))))
-    ;; FIXME? can't we do better than this?
-    (if (hash-table-p query-http)
-        (if sync
-            (orgtrello-query/http-sync query-http)
-            (orgtrello-query/http      query-http))
-      (message query-http))))
+  (let ((entry-metadata (orgtrello-data/entry-get-full-metadata)))
+    (if entry-metadata
+        (let ((query-http (orgtrello/--dispatch-create (gethash :current entry-metadata) (gethash :parent entry-metadata) (gethash :grandparent entry-metadata))))
+          ;; FIXME? can't we do better than this?
+          (if (hash-table-p query-http)
+              (if sync (orgtrello-query/http-sync query-http 'orgtrello-query/--post-put-success-callback-update-id)
+                       (orgtrello-query/http      query-http 'orgtrello-query/--post-put-success-callback-update-id))
+            (message query-http))))))
 
 (defun orgtrello/--merge-map (entry map-ids-by-name)
   "Given a map of (id . name) and an entry, return the entry updated with the id if not already present."
@@ -608,7 +608,7 @@
     (if (and current-metadata id)
         (let ((query-http (orgtrello/--dispatch-delete (gethash :current entry-metadata) (gethash :parent entry-metadata))))
           (if (hash-table-p query-http)
-              (orgtrello-query/http query-http)
+              (orgtrello-query/http query-http 'orgtrello-query/--delete-success-callback)
             (message query-http)))
       (message "Entity not synchronized on trello yet!"))))
 
