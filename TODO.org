@@ -264,29 +264,20 @@ CLOSED: [2013-07-07 dim. 10:55]
 CLOSED: [2013-07-07 dim. 11:02]
 ** DONE Namespace cleanup
 CLOSED: [2013-07-07 dim. 11:34]
-** TODO If no level 3, we may create a dummy checklist and attach every todo to such dummy checklist
-** TODO A fake trello server to be able to test without a network
-** TODO Testing the packaging
-** TODO Another way of setting up the org-mode file and the trello board by creating the board for example
-This will ease the installation of the list-ids in top of the org file.
-Workflow:
-- M-x orgtrello-create-board - interactive command to create a board and the needed lists
-#+begin_src txt
-# +property: board-id      <board-id>
-# +property: todo-list-id  <todo-list-id>
-# +property: doing-list-id <doing-list-id>
-# +property: done-list-id  <done-list-id>
-#+end_src
-Note: # + instead of #+ because otherwise, org-mode captures them and overwrite the right ones.
-** TODO Create the lists todo, doing, done in a given board
-** TODO Given a trello board, create a org-mode file
+** TODO Given a trello board, sync into a org-mode file
 ** TODO Given a org-mode file, fill in the trello board
 Dismiss non compatible org-mode entries
-** TODO Improve the synchronous creation of cards (and sub-elements...) to avoid the emacs blocking
+** TODO Create a board from org-mode
+** TODO Create the lists todo, doing, done in a given board
+** TODO A fake trello server to be able to test without a network
+** TODO Testing the packaging
 ** TODO Rewrite tests using `expectations` (mock)                      :dev:
+** TODO Improve the synchronous creation of cards (and sub-elements...) to avoid the emacs blocking
 ** TODO Assign yourself to the card?
 Is this really usefull?
 
+** TODO Release in marmalade the tags
+** TODO If no level 3, we may create a dummy checklist and attach every todo to such dummy checklist
 * Questions
 ** How to deal with promotion/demotion?
 We do not deal with it at the moment.
