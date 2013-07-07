@@ -257,7 +257,7 @@ CLOSED: [2013-07-07 dim. 10:54]
 ** DONE Local packaging to help testing
 CLOSED: [2013-07-07 dim. 10:54]
 
-* IN-PROGRESS v0.0.3
+* IN-PROGRESS v0.0.3 [35%]
 ** DONE Syncing complex entities
 CLOSED: [2013-07-07 dim. 10:55]
 ** DONE cleanup useless tests
@@ -266,11 +266,11 @@ CLOSED: [2013-07-07 dim. 11:02]
 CLOSED: [2013-07-07 dim. 11:34]
 ** DONE Building package is now able to deal with the right version
 CLOSED: [2013-07-07 dim. 15:11]
-** TODO Given a trello board, sync into a org-mode file
+** DONE Create a board from org-mode
+CLOSED: [2013-07-07 dim. 17:32]
 ** TODO Given a org-mode file, fill in the trello board
 Dismiss non compatible org-mode entries
-** TODO Create a board from org-mode
-** TODO Create the lists todo, doing, done in a given board
+** TODO Given a trello board, sync into a org-mode file
 ** TODO A fake trello server to be able to test without a network
 ** TODO Testing the packaging
 ** TODO Rewrite tests using `expectations` (mock)                      :dev:

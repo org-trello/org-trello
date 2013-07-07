@@ -53,6 +53,19 @@
 
 ;; ########################## orgtrello-api
 
+(ert-deftest testing-orgtrello-api/add-board ()
+  (let ((h (orgtrello-api/add-board ":some-board")))
+    (should (equal (gethash :method h) :post))
+    (should (equal (gethash :uri    h) "/boards"))
+    (should (equal (gethash :params h) '(("name" . ":some-board"))))))
+
+(ert-deftest testing-orgtrello-api/add-board-with-description ()
+  (let ((h (orgtrello-api/add-board "some-board" "some-description")))
+    (should (equal (gethash :method h) :post))
+    (should (equal (gethash :uri    h) "/boards"))
+    (should (equal (gethash :params h) '(("name" . "some-board")
+                                         ("desc" . "some-description"))))))
+
 (ert-deftest testing-orgtrello-api/get-boards ()
   (let ((h (orgtrello-api/get-boards)))
     (should (equal (gethash :method h) :get))
