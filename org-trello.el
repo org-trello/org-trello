@@ -861,28 +861,29 @@
 (defun org-trello/help-describing-bindings ()
   "A simple message to describe the standard bindings used."
   (interactive)
-  (message "C-c o c - Create/Update asynchronously simple a card/checklist/item depending on the level and status. Do not deal with level superior to 4.
-C-c o C - Create/Update a complete card/checklist/item and its subtree.
-C-c o s - Synchronize the org-mode file to the trello board.
-C-c o k - Kill the arborescence tree and the corresponding entity.
-C-c o i - Interactive command to install the keys and the access-token.
+  (message "C-c o i - Interactive command to install the keys and the access-token.
 C-c o I - Interactive command to select the board and attach the todo, doing and done list.
-C-c o b - Create interactively a board
-C-c o h - This very binding to display this help menu."))
+C-c o b - Create interactively a board and attach the org-mode file to this trello board.
+C-c o c - Create/Update asynchronously an entity (card/checklist/item) depending on its level and status. Do not deal with level superior to 4.
+C-c o C - Create/Update a complete entity card/checklist/item and its subtree (depending on its level).
+C-c o s - Synchronize the org-mode file to the trello board (org-mode -> trello).
+C-c o S - Synchronize the org-mode file from the trello board (trello -> org-mode).
+C-c o k - Kill the entity (and its arborescence tree).
+C-c o h - This help message."))
 
 ;;;###autoload
 (define-minor-mode org-trello-mode "Sync your org-mode and your trello together."
   :lighter " ot" ;; the name on the modeline
   :keymap  (let ((map (make-sparse-keymap)))
              ;; binding will change
+             (define-key map (kbd "C-c o i") 'org-trello/install-key-and-token)
+             (define-key map (kbd "C-c o I") 'org-trello/install-board-and-lists-ids)
+             (define-key map (kbd "C-c o b") 'org-trello/create-board)
              (define-key map (kbd "C-c o c") 'org-trello/create-simple-entity)
              (define-key map (kbd "C-c o C") 'org-trello/create-complex-entity)
              (define-key map (kbd "C-c o s") 'org-trello/sync-to-trello)
              (define-key map (kbd "C-c o S") 'org-trello/sync-from-trello)
              (define-key map (kbd "C-c o k") 'org-trello/kill-entity)
-             (define-key map (kbd "C-c o i") 'org-trello/install-key-and-token)
-             (define-key map (kbd "C-c o I") 'org-trello/install-board-and-lists-ids)
-             (define-key map (kbd "C-c o b") 'org-trello/create-board)
              (define-key map (kbd "C-c o h") 'org-trello/help-describing-bindings)
              ;; for debugging purposes (I do not know any better yet)
              ;; (define-key map (kbd "C-c z") 'orgtrello/describe-heading)
