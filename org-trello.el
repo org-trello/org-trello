@@ -69,14 +69,13 @@
 
 ;; #################### orgtrello-hash
 
-(defun orgtrello-hash/make-hash-org (level keyword title id point)
+(defun orgtrello-hash/make-hash-org (level keyword title id)
   "Utility function to ease the creation of the orgtrello-metadata"
   (let ((h (make-hash-table :test 'equal)))
     (puthash :level   level   h)
     (puthash :keyword keyword h)
     (puthash :title   title   h)
     (puthash :id      id      h)
-    (puthash :point   point   h)
     h))
 
 (defun orgtrello-hash/make-hash (method uri &optional params)
@@ -95,12 +94,10 @@
 
 (defun orgtrello-data/metadata ()
   "Compute the metadata from the org-heading-components entry, add the identifier and extract the metadata needed."
-  (let* ((pt           (point))
-         (id           (org-entry-get pt *ORGTRELLO-ID*))
+  (let* ((id           (org-entry-get pt *ORGTRELLO-ID*))
          (org-metadata (org-heading-components)))
     (->> org-metadata
          (cons id)
-         (cons pt)
          orgtrello-data/--get-metadata)))
 
 (defun orgtrello-data/--parent-metadata ()
@@ -131,34 +128,10 @@
           (puthash :grandparent grandparent-heading mapdata)
           mapdata))))
 
-(defun orgtrello-data/--get-level (heading-metadata)
-  "Given the heading-metadata, extract the level"
-  (cl-third heading-metadata))
-
-(defun orgtrello-data/--get-keyword (heading-metadata)
-  "Given the heading-metadata, extract the keyword."
-  (cl-fifth heading-metadata))
-
-(defun orgtrello-data/--get-title (heading-metadata)
-  "Given the heading-metadata, extract the title."
-  (cl-seventh heading-metadata))
-
-(defun orgtrello-data/--get-id (heading-metadata)
-  "Given the heading-metadata, extract the id."
-  (cl-second heading-metadata))
-
-(defun orgtrello-data/--get-point (heading-metadata)
-  "Given the heading-metadata, extract the id."
-  (cl-first heading-metadata))
-
 (defun orgtrello-data/--get-metadata (heading-metadata)
   "Given the heading-metadata returned by the function 'org-heading-components, make it a hashmap with key :level, :keyword, :title. and their respective value"
-  (let* ((level   (orgtrello-data/--get-level   heading-metadata))
-         (title   (orgtrello-data/--get-title   heading-metadata))
-         (keyword (orgtrello-data/--get-keyword heading-metadata))
-         (id      (orgtrello-data/--get-id      heading-metadata))
-         (point   (orgtrello-data/--get-point   heading-metadata)))
-    (orgtrello-hash/make-hash-org level keyword title id point)))
+  (cl-destructuring-bind (id level _ keyword _ title &rest) heading-metadata
+                         (orgtrello-hash/make-hash-org level keyword title id)))
 
 (message "orgtrello-data loaded!")
 
