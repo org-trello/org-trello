@@ -198,7 +198,7 @@ Actual bindings (not definitive, suggestions regarding those bindings are welcom
 
 1. open an org-mode file
 
-2. Install the key and the token file (`C-c o i` or `M-x orgtrello/do-install-keys-and-token`).
+2. Install the key and the token file (`C-c o i` or `M-x orgtrello/do-install-key-and-token`).
 This will open your browser to retrieve the needed informations (`consumer-key` then the `access-token`) and wait for your input in emacs.
 *Remark:* This need to done once and for all time until you revoke such token.
 

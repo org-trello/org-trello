@@ -35,10 +35,10 @@
 ;;
 ;; Automatically
 ;; 2) Install the consumer-key and the read-write token for org-trello to be able to work in your name with your trello boards
-;; M-x orgtrello-do-install-keys-and-token
+;; M-x orgtrello/do-install-key-and-token
 ;;
 ;; 3) For each org-mode file, you want to connect your org-mode file with a trello board
-;; M-x orgtrello-do-install-board-and-lists
+;; M-x orgtrello/do-install-board-and-lists
 ;;
 ;; Manually
 ;; 2) retrieve your trello api key https://trello.com/1/appKey/generate
@@ -94,7 +94,7 @@
 
 (defun orgtrello-data/metadata ()
   "Compute the metadata from the org-heading-components entry, add the identifier and extract the metadata needed."
-  (let* ((id           (org-entry-get pt *ORGTRELLO-ID*))
+  (let* ((id           (org-entry-get (point) *ORGTRELLO-ID*))
          (org-metadata (org-heading-components)))
     (->> org-metadata
          (cons id)
@@ -675,7 +675,7 @@
     (insert (format "(setq *access-token* \"%s\")" *access-token*))
     (write-file *CONFIG-FILE* 't)))
 
-(defun orgtrello/do-install-keys-and-token ()
+(defun orgtrello/do-install-key-and-token ()
   "Procedure to install the *consumer-key* and the token for the user in the config-file."
   (interactive)
   (defvar orgtrello/--*consumer-key* nil)
@@ -743,8 +743,7 @@
 (defun orgtrello/do-install-board-and-lists ()
   "Interactive command to install the list boards"
   (interactive)
-  cl-destructuring-bind
-  ((orgtrello/--chosen-board-id orgtrello/--chosen-board-name) (orgtrello/--choose-board (orgtrello/--id-name (orgtrello/--list-boards)))
+  (cl-destructuring-bind (orgtrello/--chosen-board-id orgtrello/--chosen-board-name) (orgtrello/--choose-board (orgtrello/--id-name (orgtrello/--list-boards)))
    (orgtrello/update-orgmode-file-with-properties
     orgtrello/--chosen-board-name
     orgtrello/--chosen-board-id
@@ -780,7 +779,7 @@
             ;; ok, we call the function
             (funcall fn-to-control-and-execute)
           ;; there is some trouble, trying to help the user
-          (message "You need to setup your:\n- consumer-key and your access-token for org-trello to work ok. Use M-x orgtrello/do-install-keys-and-token\n- org-mode file and connect it to trello. Use M-x orgtrello/do-install-board-and-lists")))
+          (message "You need to setup your:\n- consumer-key and your access-token for org-trello to work ok. Use M-x orgtrello/do-install-key-and-token\n- org-mode file and connect it to trello. Use M-x orgtrello/do-install-board-and-lists")))
     (funcall fn-to-control-and-execute)))
 
 (defun org-trello/create-simple-entity ()
@@ -817,7 +816,7 @@
   "No control, trigger the setup installation of the key and the read/write token."
   (interactive)
   (message "Setup key and token...")
-  (org-trello/--control-and-do nil 'orgtrello/do-install-keys-and-token))
+  (org-trello/--control-and-do nil 'orgtrello/do-install-key-and-token))
 
 (defun org-trello/install-board-and-lists-ids ()
   "Control first, then if ok, trigger the setup installation of the trello board to sync with."
