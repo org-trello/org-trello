@@ -91,10 +91,12 @@
 
 ;; #################### orgtrello-data
 
+(defvar *ORGTRELLO-ID* "orgtrello-id" "Marker used for the trello identifier")
+
 (defun orgtrello-data/metadata ()
   "Compute the metadata from the org-heading-components entry, add the identifier and extract the metadata needed."
   (let* ((pt           (point))
-         (id           (org-entry-get pt "orgtrello-id"))
+         (id           (org-entry-get pt *ORGTRELLO-ID*))
          (org-metadata (org-heading-components)))
     (->> org-metadata
          (cons id)
@@ -259,6 +261,10 @@
      (format "/cards/%s/checklist/%s/checkItem/%s" card-id checklist-id task-id)
      payload)))
 
+(defun orgtrello-api/get-tasks (checklist-id)
+  "List the checklist items."
+    (orgtrello-hash/make-hash :get (format "/checklists/%s/checkItems/" checklist-id)))
+
 (defun orgtrello-api/delete-task (checklist-id task-id)
   "Delete a task with id task-id"
   (orgtrello-hash/make-hash :delete (format "/checklists/%s/checkItems/%s" checklist-id task-id)))
@@ -362,7 +368,7 @@
             (message "entity '%s' synced with id '%s'" orgtrello-query/--entry-name orgtrello-query/--entry-id)
           (progn
             ;; not present, this was just created, we add a simple property
-            (org-set-property "orgtrello-id" orgtrello-query/--entry-new-id)
+            (org-set-property *ORGTRELLO-ID* orgtrello-query/--entry-new-id)
             (message "Newly entity '%s' synced with id '%s'" orgtrello-query/--entry-name orgtrello-query/--entry-new-id)))))))
 
 (defun orgtrello-query/--post-or-put (query-map &optional success-callback)
@@ -384,7 +390,7 @@
 
 (cl-defun orgtrello-query/--delete-success-callback (&key data response &allow-other-keys)
   "Callback function called at the end of a successful delete request."
-  (progn (org-delete-property "orgtrello-id")
+  (progn (org-delete-property *ORGTRELLO-ID*)
          (hide-subtree)
          (kill-line)
          (kill-line)
@@ -549,8 +555,82 @@
     (org-map-tree (lambda () (orgtrello/do-create-simple-entity t)))))
 
 (defun orgtrello/do-sync-full-file ()
-  "Full org-mode file synchronisation. Beware, this will block emacs as the request is synchroneous."
+  "Full org-mode file synchronisation. Beware, this will block emacs as the request is synchronous."
   (org-map-entries (lambda () (orgtrello/do-create-simple-entity t)) t 'file))
+
+(defun trace (e &optional label)
+  "Decorator for some inaccessible code to easily 'message'."
+  (progn
+    (if label
+        (message "TRACE: %s: %S" label e)
+        (message "TRACE: %S" e))
+    e))
+
+(defun orgtrello/--compute-card-status (card-id-list)
+  "Given a card's id (list todo, doing, done), compute the status of a card"
+  (cond ((equal (assoc-default *TODO-LIST-ID*  org-file-properties) card-id-list) "TODO")
+        ((equal (assoc-default *DOING-LIST-ID* org-file-properties) card-id-list) "IN-PROGRESS")
+        ((equal (assoc-default *DONE-LIST-ID*  org-file-properties) card-id-list) "DONE")))
+
+(defun orgtrello/--compute-card-to-org-entry (card)
+  "Given a card, compute its org-mode entry equivalence."
+  (let* ((orgtrello/--card-name                                    (assoc-default 'name card))
+         (orgtrello/--card-status (orgtrello/--compute-card-status (assoc-default 'idList card))))
+    (format "* %s %s\n" orgtrello/--card-status orgtrello/--card-name)))
+
+(defun orgtrello/--compute-checklist-to-org-entry (checklist)
+  "Given a checklist, compute its org-mode entry equivalence."
+  (let ((orgtrello/--checklist-name  (assoc-default 'name checklist)))
+    (format "** %s\n" orgtrello/--checklist-name)))
+
+(defun orgtrello/--compute-item-to-org-entry (item)
+  "Given a checklist item, compute its org-mode entry equivalence."
+  (let* ((orgtrello/--item-name  (assoc-default 'name  item))
+         (orgtrello/--item-state (assoc-default 'state item)))
+    (format "*** %s %s\n"
+            (if (string= "complete" orgtrello/--item-state) "DONE" "TODO")
+            orgtrello/--item-name)))
+
+(defun orgtrello/--compute-entity-to-org-entry (entity)
+  "Given an entity, compute its org representation."
+  (cond ((assoc-default 'idList entity) (orgtrello/--compute-card-to-org-entry entity))           ;; card      (level 1)
+        ((assoc-default 'idCard entity) (orgtrello/--compute-checklist-to-org-entry entity))      ;; checklist (level 2)
+        ((assoc-default 'state entity)  (orgtrello/--compute-item-to-org-entry entity))))         ;; items     (level 3)
+
+(defun orgtrello/--do-retrieve-checklists-from-card (card)
+  "Given a card, return the list containing the card, the checklists from this card, and the items from the checklists. The order is guaranted."
+  (cl-reduce
+   (lambda (acc-list checklist-id)
+     (let ((orgtrello/--checklist (orgtrello-query/http-sync (orgtrello-api/get-checklist checklist-id))))
+       (append (cons orgtrello/--checklist (orgtrello/--do-retrieve-checklists-and-items orgtrello/--checklist)) acc-list)))
+   (assoc-default 'idChecklists card)
+   :initial-value nil))
+
+(defun orgtrello/--do-retrieve-checklists-and-items (checklist)
+  "Given a checklist id, retrieve all the items from the checklist and return a list containing first the checklist, then the items."
+  (--map it (assoc-default 'checkItems checklist)))
+
+(defun orgtrello/do-sync-full-from-trello ()
+  "Full org-mode file synchronisation. Beware, this will block emacs as the request is synchronous."
+  (let* ((orgtrello/--board-id (assoc-default *BOARD-ID* org-file-properties))
+         (orgtrello/--cards    (orgtrello-query/http-sync (orgtrello-api/get-cards orgtrello/--board-id) 'standard-success-callback))
+         (orgtrello/--entities (cl-reduce
+                                (lambda (orgtrello/--acc-list orgtrello/--entity-card)
+                                  (append (cons orgtrello/--entity-card (orgtrello/--do-retrieve-checklists-from-card orgtrello/--entity-card)) orgtrello/--acc-list))
+                                orgtrello/--cards
+                                :initial-value nil))) ;; FIXME filter on only the todo, doing, done lists
+
+    (with-current-buffer (current-buffer)
+      (cl-reduce
+       (lambda (str-acc entity)
+         (let ((orgtrello/--entry-new-id   (assoc-default 'id   entity))
+               (orgtrello/--entry-new-name (assoc-default 'name entity)))
+           (message "Syncing entity '%s' with id '%s'..." orgtrello/--entry-new-name orgtrello/--entry-new-id)
+           (insert (orgtrello/--compute-entity-to-org-entry entity))
+           (org-set-property *ORGTRELLO-ID* orgtrello/--entry-new-id)))
+       orgtrello/--entities
+       :initial-value "")
+      (save-buffer))))
 
 (defun orgtrello/describe-heading ()
   (interactive)
@@ -567,7 +647,7 @@
 
 (defun orgtrello/find-block ()
   (interactive)
-  (message "found: %s" (org-entry-get (point) "orgtrello-id")))
+  (message "found: %s" (org-entry-get (point) *ORGTRELLO-ID*)))
 
 (defun orgtrello/--card-delete (card-meta &optional parent-meta)
   "Deal with the deletion query of a card"
@@ -748,6 +828,12 @@
   (message "Syncing org-mode file to trello...")
   (org-trello/--control-and-do '(orgtrello/--control-keys orgtrello/--control-properties) 'orgtrello/do-sync-full-file))
 
+(defun org-trello/sync-from-trello ()
+  "Control first, then if ok, sync the org-mode file from the trello board."
+  (interactive)
+  (message "Syncing trello board to org-mode file...")
+  (org-trello/--control-and-do '(orgtrello/--control-keys orgtrello/--control-properties) 'orgtrello/do-sync-full-from-trello))
+
 (defun org-trello/kill-entity ()
   "Control first, then if ok, delete the entity and all its arborescence."
   (interactive)
@@ -792,6 +878,7 @@ C-c o h - This very binding to display this help menu."))
              (define-key map (kbd "C-c o c") 'org-trello/create-simple-entity)
              (define-key map (kbd "C-c o C") 'org-trello/create-complex-entity)
              (define-key map (kbd "C-c o s") 'org-trello/sync-to-trello)
+             (define-key map (kbd "C-c o S") 'org-trello/sync-from-trello)
              (define-key map (kbd "C-c o k") 'org-trello/kill-entity)
              (define-key map (kbd "C-c o i") 'org-trello/install-key-and-token)
              (define-key map (kbd "C-c o I") 'org-trello/install-board-and-lists-ids)

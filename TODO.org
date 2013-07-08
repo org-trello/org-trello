@@ -258,7 +258,8 @@ CLOSED: [2013-07-07 dim. 10:54]
 ** DONE Local packaging to help testing
 CLOSED: [2013-07-07 dim. 10:54]
 
-* IN-PROGRESS v0.0.3 [90%]
+* DONE v0.0.3 [100%]
+CLOSED: [2013-07-08 lun. 14:07]
 ** DONE Syncing complex entities
 CLOSED: [2013-07-07 dim. 10:55]
 ** DONE cleanup useless tests
@@ -284,7 +285,8 @@ gnu-emacs-sources@gnu.org
 CLOSED: [2013-07-07 dim. 22:27]
 ** DONE filter out level > 4 when syncing.
 CLOSED: [2013-07-07 dim. 23:03]
-** PENDING Given a trello board, sync into a org-mode file
+** DONE Given a trello board, sync into a org-mode file
+CLOSED: [2013-07-08 lun. 14:07]
 
 * v0.0.4
 ** TODO Replace already present properties regarding boards before injecting new ones.
