@@ -27,6 +27,15 @@ cf. [What has been done and remains to be done](./TODO.org)
 - DONE Syncing complex entities
 - DONE cleanup useless tests
 - DONE Namespace cleanup
+- DONE Building package is now able to deal with the right version
+- DONE Create a board from org-mode
+- DONE Display the name of the board as a property file
+- DONE Cleanup the useless controls
+- DONE Given a org-mode file, fill in the trello board
+- DONE Announce in emacs mailing list
+- DONE Filter out the closed boards from the "choose board list"
+- DONE filter out level > 4 when syncing.
+- DONE Given a trello board, sync into a org-mode file
 - cf. [todo/done](./TODO.org) for the remains
 
 ## v0.0.2
@@ -172,12 +181,44 @@ Example:
 #+author: Antoine R. Dumont
 ```
 
-# Use case
+# Bindings
+
+Actual bindings (not definitive, suggestions regarding those bindings are welcome):
+- C-c o i - Interactive command to install the keys and the access-token.
+- C-c o I - Interactive command to select the board and attach the todo, doing and done list.
+- C-c o b - Create interactively a board and attach the org-mode file to this trello board.
+- C-c o c - Create/Update asynchronously an entity (card/checklist/item) depending on its level and status. Do not deal with level superior to 4.
+- C-c o C - Create/Update a complete entity card/checklist/item and its subtree (depending on its level).
+- C-c o s - Synchronize the org-mode file to the trello board (org-mode -> trello).
+- C-c o S - Synchronize the org-mode file from the trello board (trello -> org-mode).
+- C-c o k - Kill the entity (and its arborescence tree).
+- C-c o h - This help message.
+
+# Use cases
 
 1. open an org-mode file
-2. edit the identity of the desired board (must have been preset with the at least 3 columns - todo, doing, done - name
-are not important but can be helpful to not lost oneself)
-3. create a todo list following this line:
+
+2. Install the key and the token file (`C-c o i` or `M-x orgtrello/do-install-keys-and-token`).
+This will open your browser to retrieve the needed informations (`consumer-key` then the `access-token`) and wait for your input in emacs.
+*Remark:* This need to done once and for all time until you revoke such token.
+
+3. Setup your org-mode file with your trello board (`C-c o I` or `M-x orgtrello/do-install-board-and-lists`).
+This will present you a list of your actual boards. Select the one you want and hit enter.
+This will edit your org-mode file with properties needed.
+
+*Remarks:*
+- This need to be done once for each org-mode file you want to sync with a trello board.
+- You can create directly a board (`C-c o b` or `M-x orgtrello/do-create-board-and-lists`)
+
+4. Now you are ready to use org-mode as usual.
+
+The idea is this:
+- 3 levels:
+  level 1 - Card
+  level 2 - Checklist
+  level 3 - Item
+
+For example:
 
 ```org-mode
 * card-identity
@@ -187,28 +228,7 @@ are not important but can be helpful to not lost oneself)
 *** task3
 ```
 
-Actual bindings (not definitive, suggestions are welcome):
-- *BINDING-SIMPLE-CREATION*
-
-        C-c o c - Create asynchronously a card/checklist/item with the subtree.
-
-- *BINDING-DELETION*
-
-        C-c o k - Kill the arborescence tree and the corresponding entity.
-
-- *BINDING-SETUP-KEY*
-
-        C-c o i - Interactive command to install the keys and the access-token.
-
-- *BINDING-SETUP-BOARD*
-
-        C-c o I - Interactive command to select the board and attach the todo, doing and done list.
-
-- *BINDING-DESCRIBE*
-
-        C-c o h - help binding
-
-Trello:
+Creation step by step:
 - Card:
   - Place yourself on the `card-identity` and hit the binding *BINDING-SIMPLE-CREATION*, this will create the card in the `TODO` column in your trello board
   - You can edit the title and hit *BINDING-SIMPLE-CREATION*, this will update the title in trello
@@ -221,6 +241,23 @@ Trello:
   - Place yourself on your task and hit *BINDING-SIMPLE-CREATION*, this will add the item to such checklist.
   - Change the name of the task and hit *BINDING-SIMPLE-CREATION*, this will update its label
   - Change the status of the task to `DONE` and hit the binding, this will check such item in trello.
+
+5. You can sync all of the entity and its arborescence once:
+Place yourself on the entity (card or checklist) and hit `C-c o C`.
+
+At the moment, this action is synchonous.
+
+6. You can sync all your org-mode file to trello too.
+Hit `C-c o s`.
+
+At the moment, this action is synchonous.
+
+7. You can sync the content of your board into an org-mode file too.
+Hit `C-c o S`.
+
+At the moment, this action is synchronous.
+
+8. You can remove the entity and its arborescence with `C-c o k`.
 
 # License
 

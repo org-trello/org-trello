@@ -1,7 +1,8 @@
-#+property: board-id      50bcfd2f033110476000e768
-#+property: todo-list-id  51d5edbed94d81af0d001d90
-#+property: doing-list-id 51d5edc892695e997c002209
-#+property: done-list-id  51d5edb9357aaa643f00403d
+#+property: board-name    api test board
+#+property: board-id      51d99bbc1e1d8988390047f2
+#+property: todo-list-id  51d99bbc1e1d8988390047f3
+#+property: doing-list-id 51d99bbc1e1d8988390047f4
+#+property: done-list-id  51d99bbc1e1d8988390047f5
 #+title: TODO orgtrello's dev progress
 #+author: Antoine R. Dumont
 
@@ -257,22 +258,45 @@ CLOSED: [2013-07-07 dim. 10:54]
 ** DONE Local packaging to help testing
 CLOSED: [2013-07-07 dim. 10:54]
 
-* IN-PROGRESS v0.0.3
+* DONE v0.0.3 [100%]
+CLOSED: [2013-07-08 lun. 14:07]
 ** DONE Syncing complex entities
 CLOSED: [2013-07-07 dim. 10:55]
 ** DONE cleanup useless tests
 CLOSED: [2013-07-07 dim. 11:02]
 ** DONE Namespace cleanup
 CLOSED: [2013-07-07 dim. 11:34]
-** TODO Given a trello board, sync into a org-mode file
-** TODO Given a org-mode file, fill in the trello board
+** DONE Building package is now able to deal with the right version
+CLOSED: [2013-07-07 dim. 15:11]
+** DONE Create a board from org-mode
+CLOSED: [2013-07-07 dim. 17:32]
+** DONE Display the name of the board as a property file
+CLOSED: [2013-07-07 dim. 18:02]
+** DONE Cleanup the useless controls
+CLOSED: [2013-07-07 dim. 18:05]
+** DONE Given a org-mode file, fill in the trello board
+CLOSED: [2013-07-07 dim. 18:51]
 Dismiss non compatible org-mode entries
-** TODO Create a board from org-mode
-** TODO Create the lists todo, doing, done in a given board
+** DONE Announce in emacs mailing list
+CLOSED: [2013-07-07 dim. 19:11]
+emacs-orgmode@gnu.org
+gnu-emacs-sources@gnu.org
+** DONE Filter out the closed boards from the "choose board list"
+CLOSED: [2013-07-07 dim. 22:27]
+** DONE filter out level > 4 when syncing.
+CLOSED: [2013-07-07 dim. 23:03]
+** DONE Given a trello board, sync into a org-mode file
+CLOSED: [2013-07-08 lun. 14:07]
+
+* TODO v0.0.4
+** TODO Improvments [0%]
+*** DONE Rewrite tests using `expectations`
+CLOSED: [2013-07-08 lun. 19:09]
+*** TODO filter out directly with the api the data we do not need to avoid unnecessary network traffic
+*** TODO How to deal with synchronizing the org-mode buffer and the trello board without a synchronized request?
+*** TODO Replace already present properties regarding boards before injecting new ones.
 ** TODO A fake trello server to be able to test without a network
 ** TODO Testing the packaging
-** TODO Rewrite tests using `expectations` (mock)                      :dev:
-** TODO Improve the synchronous creation of cards (and sub-elements...) to avoid the emacs blocking
 ** TODO Assign yourself to the card?
 Is this really usefull?
 
@@ -292,21 +316,3 @@ Dependencies:
 
 ** Import - Existing and compatible org-mode file into trello?
 ** Export - Existing trello board into org-mode file?
-* TODO card for testing
-** TODO checklist 0
-*** task1
-*** task2
-*** DONE task3
-CLOSED: [2013-07-03 mer. 09:26]
-** IN-PROGRESS checklist 1
-** TODO another deep checklists
-*** DONE do
-CLOSED: [2013-07-03 mer. 14:19]
-*** DONE you
-CLOSED: [2013-07-03 mer. 14:19]
-*** DONE like it
-CLOSED: [2013-07-03 mer. 14:18]
-** IN-PROGRESS Does this work or not?
-*** TODO yes
-*** empty
-*** no
