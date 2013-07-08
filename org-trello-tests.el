@@ -1,4 +1,6 @@
 (require 'ert)
+(require 'ert-expectations)
+(require 'el-mock)
 
 (message "Launching tests!")
 
@@ -6,219 +8,233 @@
 
 ;; ########################## orgtrello-hash
 
-(ert-deftest testing-orgtrello-hash/make-hash-org ()
-  (let* ((meta (orgtrello-hash/make-hash-org 0 "IN PROGRESS" "some title" "some id" "point")))
-    (should (equal (gethash :title   meta) "some title"))
-    (should (equal (gethash :keyword meta) "IN PROGRESS"))
-    (should (equal (gethash :level   meta) 0))
-    (should (equal (gethash :id      meta) "some id"))
-    (should (equal (gethash :point   meta) "point"))))
+(expectations
+;;  (desc "testing orgtrello-hash/make-hash-org")
+  (expect "some title"  (gethash :title   (orgtrello-hash/make-hash-org 0 "IN PROGRESS" "some title" "some id" "point")))
+  (expect "IN PROGRESS" (gethash :keyword (orgtrello-hash/make-hash-org 0 "IN PROGRESS" "some title" "some id" "point")))
+  (expect 0             (gethash :level   (orgtrello-hash/make-hash-org 0 "IN PROGRESS" "some title" "some id" "point")))
+  (expect "some id"     (gethash :id      (orgtrello-hash/make-hash-org 0 "IN PROGRESS" "some title" "some id" "point")))
+  (expect "point"       (gethash :point   (orgtrello-hash/make-hash-org 0 "IN PROGRESS" "some title" "some id" "point"))))
 
-(ert-deftest testing-orgtrello-hash/make-hash ()
-  (let ((h (orgtrello-hash/make-hash :some-method :some-uri)))
-    (should (equal (gethash :method h) :some-method))
-    (should (equal (gethash :uri    h) :some-uri))
-    (should (equal (gethash :params h) nil))))
+(expectations
+  (expect :some-method (gethash :method (orgtrello-hash/make-hash :some-method :some-uri)))
+  (expect :some-uri    (gethash :uri    (orgtrello-hash/make-hash :some-method :some-uri)))
+  (expect nil          (gethash :params (orgtrello-hash/make-hash :some-method :some-uri))))
 
 ;; ########################## orgtrello-data
 
-(ert-deftest testing-orgtrello-data/--get-level ()
-  (should (equal (orgtrello-data/--get-level '(:pt :id 0 0 "IN PROGRESS" nil "HEADING_LABEL" nil)) 0))
-  (should (equal (orgtrello-data/--get-level '(:pt :id 1 0 "IN PROGRESS" nil "HEADING_LABEL" nil)) 1)))
+(expectations
+  (expect 0 (orgtrello-data/--get-level '(:pt :id 0 0 "IN PROGRESS" nil "HEADING_LABEL" nil)))
+  (expect 1 (orgtrello-data/--get-level '(:pt :id 1 0 "IN PROGRESS" nil "HEADING_LABEL" nil))))
 
-(ert-deftest testing-orgtrello-data/--get-keyword ()
-  (should (equal (orgtrello-data/--get-keyword '(:pt :id 0  0 "IN PROGRESS" nil "HEADING_LABEL" nil)) "IN PROGRESS"))
-  (should (equal (orgtrello-data/--get-keyword '(:pt :id 1  0 "TODO"        nil "HEADING_LABEL" nil)) "TODO")))
+(expectations
+  (expect "IN PROGRESS" (orgtrello-data/--get-keyword '(:pt :id 0  0 "IN PROGRESS" nil "HEADING_LABEL" nil)))
+  (expect "TODO"        (orgtrello-data/--get-keyword '(:pt :id 1  0 "TODO"        nil "HEADING_LABEL" nil))))
 
-(ert-deftest testing-orgtrello-data/--get-title ()
-;;  (should (equal (orgtrello-data/--get-title '(:pt :id 0  0 "IN PROGRESS" :some nil :tags))              nil))
-  (should (equal (orgtrello-data/--get-title '(:pt :id 0  0 "IN PROGRESS" :some "title 0" nil))          "title 0"))
-  (should (equal (orgtrello-data/--get-title '(:pt :id 1  0 "TODO"        :some "some other title" nil)) "some other title")))
+(expectations
+  (expect "title 0"          (orgtrello-data/--get-title '(:pt :id 0  0 "IN PROGRESS" :some "title 0" nil)))
+  (expect "some other title" (orgtrello-data/--get-title '(:pt :id 1  0 "TODO"        :some "some other title" nil))))
 
-(ert-deftest testing-orgtrello-data/--get-id ()
-  (should (equal (orgtrello-data/--get-id '(:pt nil 1  0 "TODO"  nil "some other title" nil)) nil))
-  (should (equal (orgtrello-data/--get-id '(:pt :id0 1  0 "TODO" nil "some other title" nil)) :id0)))
+(expectations
+  (expect nil  (orgtrello-data/--get-id '(:pt nil 1  0 "TODO"  nil "some other title" nil)))
+  (expect :id0 (orgtrello-data/--get-id '(:pt :id0 1  0 "TODO" nil "some other title" nil))))
 
-(ert-deftest testing-orgtrello-data/--get-point ()
-  (should (equal (orgtrello-data/--get-point '(:pt nil 1  0 "TODO"  nil "some other title" nil)) :pt))
-  (should (equal (orgtrello-data/--get-point '(:pt2 :id0 1  0 "TODO" nil "some other title" nil)) :pt2)))
+(expectations
+  (expect :pt  (orgtrello-data/--get-point '(:pt nil 1  0 "TODO"  nil "some other title" nil)))
+  (expect :pt2 (orgtrello-data/--get-point '(:pt2 :id0 1  0 "TODO" nil "some other title" nil))))
 
-(ert-deftest testing-orgtrello-data/--get-metadata ()
-  (let* ((meta (orgtrello-data/--get-metadata '(:pt :id 0 1 "IN PROGRESS" nil "some title :orgtrello-id-identifier:" nil))))
-    (should (equal (gethash :title   meta) "some title :orgtrello-id-identifier:"))
-    (should (equal (gethash :keyword meta) "IN PROGRESS"))
-    (should (equal (gethash :level   meta) 0))
-    (should (equal (gethash :id      meta) :id))
-    (should (equal (gethash :point   meta) :pt))))
+(expectations
+  (expect "some title :orgtrello-id-identifier:" (gethash :title   (orgtrello-data/--get-metadata '(:pt :id 0 1 "IN PROGRESS" nil "some title :orgtrello-id-identifier:" nil))))
+  (expect "IN PROGRESS"                          (gethash :keyword (orgtrello-data/--get-metadata '(:pt :id 0 1 "IN PROGRESS" nil "some title :orgtrello-id-identifier:" nil))))
+  (expect 0                                      (gethash :level   (orgtrello-data/--get-metadata '(:pt :id 0 1 "IN PROGRESS" nil "some title :orgtrello-id-identifier:" nil))))
+  (expect :id                                    (gethash :id      (orgtrello-data/--get-metadata '(:pt :id 0 1 "IN PROGRESS" nil "some title :orgtrello-id-identifier:" nil))))
+  (expect :pt                                    (gethash :point   (orgtrello-data/--get-metadata '(:pt :id 0 1 "IN PROGRESS" nil "some title :orgtrello-id-identifier:" nil)))))
 
 ;; ########################## orgtrello-api
 
-(ert-deftest testing-orgtrello-api/get-boards ()
-  (let ((h (orgtrello-api/get-boards)))
-    (should (equal (gethash :method h) :get))
-    (should (equal (gethash :uri    h) "/members/me/boards"))
-    (should (equal (gethash :params h) nil))))
+(expectations
+  (expect :post                       (gethash :method (orgtrello-api/add-board ":some-board")))
+  (expect "/boards"                   (gethash :uri    (orgtrello-api/add-board ":some-board")))
+  (expect '(("name" . ":some-board")) (gethash :params (orgtrello-api/add-board ":some-board"))))
 
-(ert-deftest testing-orgtrello-api/get-board ()
-  (let ((h (orgtrello-api/get-board :id)))
-    (should (equal (gethash :method h) :get))
-    (should (equal (gethash :uri    h) "/boards/:id"))
-    (should (equal (gethash :params h) nil))))
+(expectations
+  (expect :post                            (gethash :method (orgtrello-api/add-board "some-board" "some-description")))
+  (expect "/boards"                        (gethash :uri    (orgtrello-api/add-board "some-board" "some-description")))
+  (expect '(("name" . "some-board")
+            ("desc" . "some-description")) (gethash :params (orgtrello-api/add-board "some-board" "some-description"))))
 
-(ert-deftest testing-orgtrello-api/get-cards ()
-  (let ((h (orgtrello-api/get-cards :board-id)))
-    (should (equal (gethash :method h) :get))
-    (should (equal (gethash :uri    h) "/boards/:board-id/cards"))
-    (should (equal (gethash :params h) nil))))
+(expectations
+  (expect :get                 (gethash :method (orgtrello-api/get-boards)))
+  (expect "/members/me/boards" (gethash :uri    (orgtrello-api/get-boards)))
+  (expect nil                  (gethash :params (orgtrello-api/get-boards))))
 
-(ert-deftest testing-orgtrello-api/get-card ()
-  (let ((h (orgtrello-api/get-card :card-id)))
-    (should (equal (gethash :method h) :get))
-    (should (equal (gethash :uri    h) "/cards/:card-id"))
-    (should (equal (gethash :params h) nil))))
+(expectations
+  (expect :get          (gethash :method (orgtrello-api/get-board :id)))
+  (expect "/boards/:id" (gethash :uri    (orgtrello-api/get-board :id)))
+  (expect nil           (gethash :params (orgtrello-api/get-board :id))))
 
-(ert-deftest testing-orgtrello-api/delete-card ()
-  (let ((h (orgtrello-api/delete-card :card-id)))
-    (should (equal (gethash :method h) :delete))
-    (should (equal (gethash :uri    h) "/cards/:card-id"))
-    (should (equal (gethash :params h) nil))))
+(expectations
+  (expect :get                      (gethash :method (orgtrello-api/get-cards :board-id)))
+  (expect "/boards/:board-id/cards" (gethash :uri    (orgtrello-api/get-cards :board-id)))
+  (expect nil                       (gethash :params (orgtrello-api/get-cards :board-id))))
 
-(ert-deftest testing-orgtrello-api/get-lists ()
-  (let ((h (orgtrello-api/get-lists :board-id)))
-    (should (equal (gethash :method h) :get))
-    (should (equal (gethash :uri    h) "/boards/:board-id/lists"))
-    (should (equal (gethash :params h) nil))))
+(expectations
+  (expect :get              (gethash :method (orgtrello-api/get-card :card-id)))
+  (expect "/cards/:card-id" (gethash :uri    (orgtrello-api/get-card :card-id)))
+  (expect nil               (gethash :params (orgtrello-api/get-card :card-id))))
 
-(ert-deftest testing-orgtrello-api/get-list ()
-  (let ((h (orgtrello-api/get-list :list-id)))
-    (should (equal (gethash :method h) :get))
-    (should (equal (gethash :uri    h) "/lists/:list-id"))
-    (should (equal (gethash :params h) nil))))
+(expectations
+  (expect :delete           (gethash :method (orgtrello-api/delete-card :card-id)))
+  (expect "/cards/:card-id" (gethash :uri    (orgtrello-api/delete-card :card-id)))
+  (expect nil               (gethash :params (orgtrello-api/delete-card :card-id))))
 
-(ert-deftest testing-orgtrello-api/add-list ()
-  (let ((h (orgtrello-api/add-list "list-name" "board-id")))
-    (should (equal (gethash :method h) :post))
-    (should (equal (gethash :uri    h) "/lists/"))
-    (should (equal (gethash :params h) '(("name" . "list-name")
-                                         ("idBoard" . "board-id"))))))
+(expectations
+  (expect :get                      (gethash :method (orgtrello-api/get-lists :board-id)))
+  (expect "/boards/:board-id/lists" (gethash :uri    (orgtrello-api/get-lists :board-id)))
+  (expect nil                       (gethash :params (orgtrello-api/get-lists :board-id))))
 
-(ert-deftest testing-orgtrello-api/add-card ()
-  (let ((h (orgtrello-api/add-card "card-name" "list-id")))
-    (should (equal (gethash :method h) :post))
-    (should (equal (gethash :uri    h) "/cards/"))
-    (should (equal (gethash :params h) '(("name" . "card-name") ("idList" . "list-id"))))))
+(expectations
+  (expect :get              (gethash :method (orgtrello-api/get-list :list-id)))
+  (expect "/lists/:list-id" (gethash :uri    (orgtrello-api/get-list :list-id)))
+  (expect nil               (gethash :params (orgtrello-api/get-list :list-id))))
 
-(ert-deftest testing-orgtrello-api/get-cards-from-list ()
-  (let ((h (orgtrello-api/get-cards-from-list :list-id)))
-    (should (equal (gethash :method h) :get))
-    (should (equal (gethash :uri    h) "/lists/:list-id/cards"))
-    (should (equal (gethash :params h) nil))))
+(expectations
+  (expect :post                                                                                    (gethash :method (orgtrello-api/add-list "list-name" "board-id")))
+  (expect "/lists/"                                                                                (gethash :uri    (orgtrello-api/add-list "list-name" "board-id")))
+  (expect '(("name" . "list-name")
+                                                                         ("idBoard" . "board-id")) (gethash :params (orgtrello-api/add-list "list-name" "board-id"))))
 
-(ert-deftest testing-orgtrello-api/move-card ()
-  (let ((h (orgtrello-api/move-card :id-card :id-list "name-card")))
-    (should (equal (gethash :method h) :put))
-    (should (equal (gethash :uri    h) "/cards/:id-card"))
-    (should (equal (gethash :params h) '(("name"   . "name-card")
-                                         ("idList" . :id-list))))))
+(expectations
+  (expect :post                                            (gethash :method (orgtrello-api/add-card "card-name" "list-id")))
+  (expect "/cards/"                                        (gethash :uri    (orgtrello-api/add-card "card-name" "list-id")))
+  (expect '(("name" . "card-name") ("idList" . "list-id")) (gethash :params (orgtrello-api/add-card "card-name" "list-id"))))
 
-(ert-deftest testing-orgtrello-api/move-card-without-name ()
-  (let ((h (orgtrello-api/move-card :id-card :id-list)))
-    (should (equal (gethash :method h) :put))
-    (should (equal (gethash :uri    h) "/cards/:id-card"))
-    (should (equal (gethash :params h) '(("idList" . :id-list))))))
+(expectations
+  (expect :get                    (gethash :method (orgtrello-api/get-cards-from-list :list-id)))
+  (expect "/lists/:list-id/cards" (gethash :uri    (orgtrello-api/get-cards-from-list :list-id)))
+  (expect nil                     (gethash :params (orgtrello-api/get-cards-from-list :list-id))))
 
-(ert-deftest testing-orgtrello-api/add-checklist ()
-  (let ((h (orgtrello-api/add-checklist "id-card" "name-checklist")))
-    (should (equal (gethash :method h) :post))
-    (should (equal (gethash :uri    h) "/cards/id-card/checklists"))
-    (should (equal (gethash :params h) '(("name" . "name-checklist"))))))
+(expectations
+  (expect :put                                                                                          (gethash :method (orgtrello-api/move-card :id-card :id-list "name-card")))
+  (expect "/cards/:id-card"                                                                             (gethash :uri    (orgtrello-api/move-card :id-card :id-list "name-card")))
+  (expect '(("name"   . "name-card")
+                                                                                 ("idList" . :id-list)) (gethash :params (orgtrello-api/move-card :id-card :id-list "name-card"))))
 
-(ert-deftest testing-orgtrello-api/update-checklist ()
-  (let ((h (orgtrello-api/update-checklist :id-checklist "name-checklist")))
-    (should (equal (gethash :method h) :put))
-    (should (equal (gethash :uri    h) "/checklists/:id-checklist"))
-    (should (equal (gethash :params h) '(("name" . "name-checklist"))))))
+(expectations
+  (expect :put                     (gethash :method (orgtrello-api/move-card :id-card :id-list)))
+  (expect "/cards/:id-card"        (gethash :uri    (orgtrello-api/move-card :id-card :id-list)))
+  (expect '(("idList" . :id-list)) (gethash :params (orgtrello-api/move-card :id-card :id-list))))
 
-(ert-deftest testing-orgtrello-api/delete-checklist ()
-  (let ((h (orgtrello-api/delete-checklist :id-checklist)))
-    (should (equal (gethash :method h) :delete))
-    (should (equal (gethash :uri    h) "/checklists/:id-checklist"))
-    (should (equal (gethash :params h) nil))))
+(expectations
+  (expect :post                          (gethash :method (orgtrello-api/add-checklist "id-card" "name-checklist")))
+  (expect "/cards/id-card/checklists"    (gethash :uri    (orgtrello-api/add-checklist "id-card" "name-checklist")))
+  (expect '(("name" . "name-checklist")) (gethash :params (orgtrello-api/add-checklist "id-card" "name-checklist"))))
 
-(ert-deftest testing-orgtrello-api/get-checklists ()
-  (let ((h (orgtrello-api/get-checklists :card-id)))
-    (should (equal (gethash :method h) :get))
-    (should (equal (gethash :uri    h) "/cards/:card-id/checklists"))
-    (should (equal (gethash :params h) nil))))
+(expectations
+  (expect :put                           (gethash :method (orgtrello-api/update-checklist :id-checklist "name-checklist")))
+  (expect "/checklists/:id-checklist"    (gethash :uri    (orgtrello-api/update-checklist :id-checklist "name-checklist")))
+  (expect '(("name" . "name-checklist")) (gethash :params (orgtrello-api/update-checklist :id-checklist "name-checklist"))))
 
-(ert-deftest testing-orgtrello-api/get-checklist ()
-  (let ((h (orgtrello-api/get-checklist :checklist-id)))
-    (should (equal (gethash :method h) :get))
-    (should (equal (gethash :uri    h) "/checklists/:checklist-id"))
-    (should (equal (gethash :params h) nil))))
+(expectations
+  (expect :delete                     (gethash :method (orgtrello-api/delete-checklist :id-checklist)))
+  (expect "/checklists/:id-checklist" (gethash :uri    (orgtrello-api/delete-checklist :id-checklist)))
+  (expect nil                         (gethash :params (orgtrello-api/delete-checklist :id-checklist))))
 
-(ert-deftest testing-orgtrello-api/add-tasks ()
-  (let ((h (orgtrello-api/add-tasks :checklist-id "task-name" t)))
-    (should (equal (gethash :method h) :post))
-    (should (equal (gethash :uri    h) "/checklists/:checklist-id/checkItems"))
-    (should (equal (gethash :params h) '(("name"  . "task-name")
-                                         ("checked" . t))))))
+(expectations
+  (expect :get                         (gethash :method (orgtrello-api/get-checklists :card-id)))
+  (expect "/cards/:card-id/checklists" (gethash :uri    (orgtrello-api/get-checklists :card-id)))
+  (expect nil                          (gethash :params (orgtrello-api/get-checklists :card-id))))
 
-(ert-deftest testing-orgtrello-api/add-tasks-with-state-nil ()
-  (let ((h (orgtrello-api/add-tasks :checklist-id "task-name")))
-    (should (equal (gethash :method h) :post))
-    (should (equal (gethash :uri    h) "/checklists/:checklist-id/checkItems"))
-    (should (equal (gethash :params h) '(("name"  . "task-name")))))
-  (let ((h (orgtrello-api/add-tasks :checklist-id "task-name" nil)))
-    (should (equal (gethash :method h) :post))
-    (should (equal (gethash :uri    h) "/checklists/:checklist-id/checkItems"))
-    (should (equal (gethash :params h) '(("name"  . "task-name"))))))
+(expectations
+  (expect :get                        (gethash :method (orgtrello-api/get-checklist :checklist-id)))
+  (expect "/checklists/:checklist-id" (gethash :uri    (orgtrello-api/get-checklist :checklist-id)))
+  (expect nil                         (gethash :params (orgtrello-api/get-checklist :checklist-id))))
 
-(ert-deftest testing-orgtrello-api/update-task ()
-  (let ((h (orgtrello-api/update-task :card-id :checklist-id :task-id :task-name "incomplete")))
-    (should (equal (gethash :method h) :put))
-    (should (equal (gethash :uri    h) "/cards/:card-id/checklist/:checklist-id/checkItem/:task-id"))
-    (should (equal (gethash :params h) '(("name"  . :task-name)
-                                         ("state" ."incomplete"))))))
+(expectations
+  (expect :post                                  (gethash :method (orgtrello-api/add-tasks :checklist-id "task-name" t)))
+  (expect "/checklists/:checklist-id/checkItems" (gethash :uri    (orgtrello-api/add-tasks :checklist-id "task-name" t)))
+  (expect '(("name"  . "task-name")
+            ("checked" . t))                     (gethash :params (orgtrello-api/add-tasks :checklist-id "task-name" t))))
 
-(ert-deftest testing-orgtrello-api/update-task-with-state-nil ()
-  (let ((h (orgtrello-api/update-task :card-id :checklist-id :task-id :task-name)))
-    (should (equal (gethash :method h) :put))
-    (should (equal (gethash :uri    h) "/cards/:card-id/checklist/:checklist-id/checkItem/:task-id"))
-    (should (equal (gethash :params h) '(("name"  . :task-name)))))
-  (let ((h (orgtrello-api/update-task :card-id :checklist-id :task-id :task-name nil)))
-    (should (equal (gethash :method h) :put))
-    (should (equal (gethash :uri    h) "/cards/:card-id/checklist/:checklist-id/checkItem/:task-id"))
-    (should (equal (gethash :params h) '(("name"  . :task-name))))))
+(expectations
+  (expect :post                                  (gethash :method (orgtrello-api/add-tasks :checklist-id "task-name")))
+  (expect "/checklists/:checklist-id/checkItems" (gethash :uri    (orgtrello-api/add-tasks :checklist-id "task-name")))
+  (expect '(("name"  . "task-name"))             (gethash :params (orgtrello-api/add-tasks :checklist-id "task-name"))))
 
-(ert-deftest testing-orgtrello-api/delete-task ()
-  (let ((h (orgtrello-api/delete-task :checklist-id :task-id)))
-    (should (equal (gethash :method h) :delete))
-    (should (equal (gethash :uri    h) "/checklists/:checklist-id/checkItems/:task-id"))))
+(expectations
+  (expect :post                                  (gethash :method (orgtrello-api/add-tasks :checklist-id "task-name" nil)))
+  (expect "/checklists/:checklist-id/checkItems" (gethash :uri    (orgtrello-api/add-tasks :checklist-id "task-name" nil)))
+  (expect '(("name"  . "task-name"))             (gethash :params (orgtrello-api/add-tasks :checklist-id "task-name" nil))))
+
+(expectations
+  (expect :put                                                                                                                        (gethash :method (orgtrello-api/update-task :card-id :checklist-id :task-id :task-name "incomplete")))
+  (expect "/cards/:card-id/checklist/:checklist-id/checkItem/:task-id"                                                                (gethash :uri    (orgtrello-api/update-task :card-id :checklist-id :task-id :task-name "incomplete")))
+  (expect '(("name"  . :task-name)
+                                                                                                             ("state" ."incomplete")) (gethash :params (orgtrello-api/update-task :card-id :checklist-id :task-id :task-name "incomplete"))))
+
+(expectations
+  (expect :put                                                         (gethash :method (orgtrello-api/update-task :card-id :checklist-id :task-id :task-name)))
+  (expect "/cards/:card-id/checklist/:checklist-id/checkItem/:task-id" (gethash :uri    (orgtrello-api/update-task :card-id :checklist-id :task-id :task-name)))
+  (expect '(("name"  . :task-name))                                    (gethash :params (orgtrello-api/update-task :card-id :checklist-id :task-id :task-name))))
+
+(expectations
+  (expect :put                                                         (gethash :method (orgtrello-api/update-task :card-id :checklist-id :task-id :task-name nil)))
+  (expect "/cards/:card-id/checklist/:checklist-id/checkItem/:task-id" (gethash :uri    (orgtrello-api/update-task :card-id :checklist-id :task-id :task-name nil)))
+  (expect '(("name"  . :task-name))                                    (gethash :params (orgtrello-api/update-task :card-id :checklist-id :task-id :task-name nil))))
+
+(expectations
+  (expect :delete                                         (gethash :method (orgtrello-api/delete-task :checklist-id :task-id)))
+  (expect "/checklists/:checklist-id/checkItems/:task-id" (gethash :uri    (orgtrello-api/delete-task :checklist-id :task-id))))
+
+(expectations
+  (expect :get                                    (gethash :method (orgtrello-api/get-tasks :checklist-id)))
+  (expect "/checklists/:checklist-id/checkItems/" (gethash :uri    (orgtrello-api/get-tasks :checklist-id))))
+
+(expectations
+  (expect '(((pos . 16384)
+             (name . "yes")
+             (id . "51da82abf4deb8010b003850")
+             (state . "incomplete"))
+            ((pos . 32768)
+             (name . "empty")
+             (id . "51da82abc2b917772100240e")
+             (state . "incomplete"))
+            ((pos . 49152)
+             (name . "no")
+             (id . "51da82ac6054b8c35300ba98")
+             (state . "incomplete")))  (orgtrello/--do-retrieve-checklists-and-items '((checkItems . [((pos . 16384)
+                                                                                                       (name . "yes")
+                                                                                                       (id . "51da82abf4deb8010b003850")
+                                                                                                       (state . "incomplete"))
+                                                                                                      ((pos . 32768)
+                                                                                                       (name . "empty")
+                                                                                                       (id . "51da82abc2b917772100240e")
+                                                                                                       (state . "incomplete"))
+                                                                                                      ((pos . 49152)
+                                                                                                       (name . "no")
+                                                                                                       (id . "51da82ac6054b8c35300ba98")
+                                                                                                       (state . "incomplete"))])))))
 
 ;; ########################## orgtrello-query
 
-(ert-deftest testing-orgtrello-query/--compute-method ()
-  (should (equal (orgtrello-query/--compute-method :get)    "GET"))
-  (should (equal (orgtrello-query/--compute-method :post)   "POST"))
-  (should (equal (orgtrello-query/--compute-method :put)    "PUT"))
-  (should (equal (orgtrello-query/--compute-method :delete) "DELETE")))
+(expectations
+  (expect "GET"    (orgtrello-query/--compute-method :get))
+  (expect "POST"   (orgtrello-query/--compute-method :post))
+  (expect "PUT"    (orgtrello-query/--compute-method :put))
+  (expect "DELETE" (orgtrello-query/--compute-method :delete)))
 
-(ert-deftest testing-orgtrello-query/--compute-url ()
-  (should (equal (orgtrello-query/--compute-url "/uri")
-                 (format "%s%s" *TRELLO-URL* "/uri")))
-  (should (equal (orgtrello-query/--compute-url "/uri/other")
-                 (format "%s%s" *TRELLO-URL* "/uri/other")))
-  (should (equal (orgtrello-query/--compute-url "/uri/some/other")
-                 (format "%s%s" *TRELLO-URL* "/uri/some/other"))))
+(expectations
+  (expect (format "%s%s" *TRELLO-URL* "/uri")            (orgtrello-query/--compute-url "/uri")     )
+  (expect (format "%s%s" *TRELLO-URL* "/uri/other")      (orgtrello-query/--compute-url "/uri/other")     )
+  (expect (format "%s%s" *TRELLO-URL* "/uri/some/other") (orgtrello-query/--compute-url "/uri/some/other")     ))
 
 ;; ########################## orgtrello-tests
 
-(ert-deftest testing-orgtrello/--compute-list-key ()
-  (should (equal (orgtrello/--compute-list-key *TODO*)        *TODO-LIST-ID*))
-  (should (equal (orgtrello/--compute-list-key *DONE*)        *DONE-LIST-ID*))
-  (should (equal (orgtrello/--compute-list-key "otherwise")   *DOING-LIST-ID*))
-  (should (equal (orgtrello/--compute-list-key "IN PROGRESS") *DOING-LIST-ID*)))
+(expectations
+  (expect *TODO-LIST-ID*  (orgtrello/--compute-list-key *TODO*)       )
+  (expect *DONE-LIST-ID*  (orgtrello/--compute-list-key *DONE*)       )
+  (expect *DOING-LIST-ID*  (orgtrello/--compute-list-key "otherwise")  )
+  (expect *DOING-LIST-ID*  (orgtrello/--compute-list-key "IN PROGRESS") ))
 
 (ert-deftest testing-orgtrello/--merge-map ()
   (let* ((entry   (orgtrello-hash/make-hash-org :level :method "the name of the entry" nil :pt))
