@@ -289,11 +289,12 @@ CLOSED: [2013-07-07 dim. 23:03]
 CLOSED: [2013-07-08 lun. 14:07]
 
 * TODO v0.0.4
-** TODO Improvments [%]
+** TODO Improvments [0%]
+*** DONE Rewrite tests using `expectations`
+CLOSED: [2013-07-08 lun. 19:09]
 *** TODO filter out directly with the api the data we do not need to avoid unnecessary network traffic
 *** TODO How to deal with synchronizing the org-mode buffer and the trello board without a synchronized request?
 *** TODO Replace already present properties regarding boards before injecting new ones.
-*** TODO Rewrite tests using `expectations` (mock)                    :dev:
 ** TODO A fake trello server to be able to test without a network
 ** TODO Testing the packaging
 ** TODO Assign yourself to the card?
