@@ -288,8 +288,10 @@ CLOSED: [2013-07-07 dim. 23:03]
 ** DONE Given a trello board, sync into a org-mode file
 CLOSED: [2013-07-08 lun. 14:07]
 
-* TODO v0.0.4
-** TODO Improvments [50%]
+* IN-PROGRESS v0.0.4
+** DONE Deploy on marmalade the stable version (and update the readme about it)
+CLOSED: [2013-07-11 jeu. 18:42]
+** IN-PROGRESS Improvments [50%]
 *** DONE Rewrite tests using `expectations`
 CLOSED: [2013-07-08 lun. 19:09]
 *** DONE Simplify some code regarding destructuring for example
@@ -304,7 +306,6 @@ CLOSED: [2013-07-08 lun. 19:47]
 ** TODO Assign yourself to the card?
 Is this really usefull?
 
-** TODO Release in marmalade the tags
 ** TODO If no level 3, we may create a dummy checklist and attach every todo to such dummy checklist
 * Questions
 ** How to deal with promotion/demotion?
