@@ -4,7 +4,7 @@
 
 ;; Author: Antoine R. Dumont <eniotna.t AT gmail.com>
 ;; Maintainer: Antoine R. Dumont <eniotna.t AT gmail.com>
-;; Version: 0.0.3
+;; Version: 0.0.3.1
 ;; Package-Requires: ((org "7.9.2") (dash "1.4.0") (request "0.1.0") (cl-lib "0.3.0") (json "1.3"))
 ;; Keywords: org-mode trello sync org-trello
 ;; URL: https://github.com/ardumont/org-trello
@@ -34,30 +34,11 @@
 ;; (require 'org-trello)
 ;;
 ;; Automatically
-;; 2) Install the consumer-key and the read-write token for org-trello to be able to work in your name with your trello boards
+;; 2) Once - Install the consumer-key and the read-write token for org-trello to be able to work in your name with your trello boards
 ;; M-x orgtrello/do-install-key-and-token
 ;;
-;; 3) For each org-mode file, you want to connect your org-mode file with a trello board
+;; 3) Once per org-mode file/board you want to connect to
 ;; M-x orgtrello/do-install-board-and-lists
-;;
-;; Manually
-;; 2) retrieve your trello api key https://trello.com/1/appKey/generate
-;; Then add those entries inside the ~/.trello/config.el:
-;; (defvar *consumer-key* "consumer-key")
-;;
-;; 3) then connect to this url with your browser
-;; https://trello.com/1/authorize?response_type=token&name=org-trello&scope=read,write&expiration=never&key=<consumer-key>
-;; Add another entry inside the `~/.trello/config.el`
-;; (defvar *access-token* "your-access-token")
-;;
-;; 4) You need to make your org-mode buffer aware of trello.
-;;
-;; Add this to the top of your org-mode file
-;;
-;; #+property: board-id      <BOARD-ID>
-;; #+property: todo-list-id  <TODO-LIST-ID>
-;; #+property: doing-list-id <DOING-LIST-ID>
-;; #+property: done-list-id  <DONE-LIST-ID>
 ;;
 ;;; Code:
 
