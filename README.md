@@ -59,20 +59,35 @@ cf. [What has been done and remains to be done](./TODO.org)
 
 # Install
 
-## melpa
+## marmalade - Stable version
 
 Add this to your emacs's init file (~/.emacs, ~/.emacs.d/init.el, or *scratch*, or whatnot...)
 
 ``` lisp
 (require 'package)
 
-(add-to-list 'package-archives
-             '("melpa" . "http://melpa.milkbox.net/packages/") t)
+(add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/") t)
 
 (package-initialize)
 ```
-Then hit, M-x eval-buffer to evaluate the contents.
-Now, you can install org-trello:
+Then hit, `M-x eval-buffer` to evaluate the contents.
+
+## melpa - ~snapshot
+
+Add this to your emacs's init file (~/.emacs, ~/.emacs.d/init.el, or *scratch*, or whatnot...)
+
+``` lisp
+(require 'package)
+
+(add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
+
+(package-initialize)
+```
+Then hit, `M-x eval-buffer` to evaluate the contents.
+
+## org-trello
+
+You can install org-trello:
 
 ``` lisp
 (when (not package-archive-contents)
@@ -87,7 +102,7 @@ Now, you can install org-trello:
     (package-install p)))
 ```
 
-Again, hit M-x eval-buffer
+Again, hit `M-x eval-buffer`.
 
 ## github
 
@@ -198,7 +213,7 @@ Actual bindings (not definitive, suggestions regarding those bindings are welcom
 
 1. open an org-mode file
 
-2. Install the key and the token file (`C-c o i` or `M-x orgtrello/do-install-keys-and-token`).
+2. Install the key and the token file (`C-c o i` or `M-x orgtrello/do-install-key-and-token`).
 This will open your browser to retrieve the needed informations (`consumer-key` then the `access-token`) and wait for your input in emacs.
 *Remark:* This need to done once and for all time until you revoke such token.
 
