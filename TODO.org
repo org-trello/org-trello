@@ -1,8 +1,12 @@
 #+property: board-name    api test board
 #+property: board-id      51d99bbc1e1d8988390047f2
-#+property: todo-list-id  51d99bbc1e1d8988390047f3
-#+property: doing-list-id 51d99bbc1e1d8988390047f4
-#+property: done-list-id  51d99bbc1e1d8988390047f5
+#+property: TODO 51d99bbc1e1d8988390047f3
+#+property: IN-PROGRESS 51d99bbc1e1d8988390047f4
+#+property: DONE 51d99bbc1e1d8988390047f5
+#+property: PENDING 51e53898ea3d1780690015ca
+#+property: FAIL 51e538a26f75d07902002d25
+#+property: DELEGATED 51e538a89c05f1e25c0027c6
+#+property: CANCELLED 51e538e6c7a68fa0510014ee
 #+title: TODO orgtrello's dev progress
 #+author: Antoine R. Dumont
 
@@ -288,19 +292,38 @@ CLOSED: [2013-07-07 dim. 23:03]
 ** DONE Given a trello board, sync into a org-mode file
 CLOSED: [2013-07-08 lun. 14:07]
 
-* IN-PROGRESS v0.0.4
+* DONE v0.0.4 [100%]
+CLOSED: [2013-07-16 mar. 16:16]
 ** DONE Deploy on marmalade the stable version (and update the readme about it)
 CLOSED: [2013-07-11 jeu. 18:42]
-** IN-PROGRESS Improvments [50%]
-*** DONE Rewrite tests using `expectations`
+** DONE Rewrite tests using `expectations`
 CLOSED: [2013-07-08 lun. 19:09]
-*** DONE Simplify some code regarding destructuring for example
+** DONE Simplify some code regarding destructuring for example
 CLOSED: [2013-07-08 lun. 19:47]
-*** DONE Remove useless code
+** DONE Remove useless code
 CLOSED: [2013-07-08 lun. 19:47]
-*** TODO filter out directly with the api the data we do not need to avoid unnecessary network traffic
-*** TODO How to deal with synchronizing the org-mode buffer and the trello board without a synchronized request?
-*** TODO Replace already present properties regarding boards before injecting new ones.
+** DONE Improve documentations and sync the routine check message with the documentation.
+CLOSED: [2013-07-16 mar. 14:21]
+** DONE Permit the user to deal with his/her own trello list (based on his/her org-mode keywords - cf. http://orgmode.org/manual/In_002dbuffer-settings.html) [100%]
+CLOSED: [2013-07-16 mar. 16:11]
+*** DONE When installing board, list all name-id pair as properties file
+CLOSED: [2013-07-16 mar. 13:08]
+*** DONE Ensure the control check for only todo, doing, done.
+CLOSED: [2013-07-16 mar. 13:16]
+*** DONE Ensure the state computation of a card take into account the multiple list
+CLOSED: [2013-07-16 mar. 14:23]
+*** DONE Load all properties list id
+CLOSED: [2013-07-16 mar. 14:23]
+*** DONE Creating the board with the right cards (name attached to keyword)
+CLOSED: [2013-07-16 mar. 16:10]
+*** DONE Fix non interactive command that are defined as though they were (we need to ensure the passage by the controlling function).
+CLOSED: [2013-07-16 mar. 16:03]
+** DONE Update documentation
+CLOSED: [2013-07-16 mar. 16:16]
+* TODO v0.0.5 [0%]
+** TODO filter out directly with the api the data we do not need to avoid unnecessary network traffic
+** TODO How to deal with synchronizing the org-mode buffer and the trello board without a synchronized request?
+** TODO Replace already present properties regarding boards before injecting new ones.
 ** TODO A fake trello server to be able to test without a network
 ** TODO Testing the packaging
 ** TODO Assign yourself to the card?
@@ -318,6 +341,3 @@ Idea: - demotion: remove the card and add the checklist or the task to the card 
 Dependencies:
 - Delete must be implemented.
 - Create with full arborescence from the current level must also be implemented.
-
-** Import - Existing and compatible org-mode file into trello?
-** Export - Existing trello board into org-mode file?

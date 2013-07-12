@@ -22,6 +22,16 @@ cf. [What has been done and remains to be done](./TODO.org)
 
 [todo/done](./TODO.org)
 
+## v0.0.4
+
+- DONE Permit the user to deal with his/her own trello list (based on his/her org-mode keywords - cf. http://orgmode.org/manual/In_002dbuffer-settings.html)
+- DONE Deploy on marmalade the stable version (and update the readme about it)
+- DONE Rewrite tests using `expectations`
+- DONE Simplify some code regarding destructuring for example
+- DONE Remove useless code
+- DONE Improve documentations and sync the routine check message with the documentation.
+- DONE Update documentation
+
 ## v0.0.3
 
 - DONE Syncing complex entities
@@ -119,88 +129,86 @@ Add the org-trello directory to your load path and then add
 (require 'org-trello)
 ```
 
+## Example
+
+- [Adding emacs repository](https://github.com/ardumont/install-packages-pack/blob/master/init.el)
+- [Installing org-trello](https://github.com/ardumont/orgmode-pack/blob/master/init.el#L1)
+
 # Setup
 
-## Trello related
+## Emacs related
 
-### Automatic
-
-#### keys
-
-Install the consumer-key and the read-write token for org-trello to be able to work in your name with your trello boards
-
-``` lisp
-M-x orgtrello-do-install-keys-and-token
-```
-
-#### Sync org to trello
-
-For each org-mode file, you need to connect your org-mode file with a trello board
-
-``` lisp
-M-x orgtrello-do-install-board-and-lists
-```
-
-### Manual
-
-#### keys
-
-Retrieve your trello api key from https://trello.com/1/appKey/generate
-Then add those entries inside the file `~/.trello/config.el`:
-
-``` lisp
-(defvar consumer-key "your-consumer-key")
-```
-
-#### read/write token
-
-Then connect to this url with your browser https://trello.com/1/authorize?response_type=token&name=org-trello&scope=read,write&expiration=never&key=<consumer-key>
-Add another entry inside the `~/.trello/config.el`
-
-``` lisp
-(defvar access-token "your-access-token")
-```
-
-Then you're good to go.
-
-## emacs related
-
-orgtrello is a minor mode for org-mode to sync.
+Orgtrello is a minor mode for org-mode to sync.
+Simply, require it somewhere on your load file (~/.emacs or ~/.emacs.d/init.el).
 
 ``` lisp
 (require 'orgtrello)
 ```
 
-## org-mode file
+For example, here is my [startup file](https://github.com/ardumont/orgmode-pack/blob/master/init.el#L3).
 
-You need to make your org-mode buffer aware of trello.
-At the moment, this routine is manual.
+## Trello related
 
-Add this to the top of your org-mode file
+### keys
 
-``` org-mode
-#+property: board-id      <BOARD-ID>
-#+property: todo-list-id  <TODO-LIST-ID>
-#+property: doing-list-id <DOING-LIST-ID>
-#+property: done-list-id  <DONE-LIST-ID>
+Install the consumer-key and the read-write token for org-trello to be able to work in your name with your trello boards.
+
+`C-c o i`
+
+or
+
+``` lisp
+M-x org-trello/install-key-and-token
 ```
 
-Example:
+### Sync org to trello
 
-``` org-mode
-#+property: board-id      50bcfd2f033110476000e768
-#+property: todo-list-id  51d15c319c93af375200155f
-#+property: doing-list-id 51d15c319c93af3752001500
-#+property: done-list-id  51d15c319c93ag375200155f
-#+title: TODO orgtrello's dev progress
-#+author: Antoine R. Dumont
+#### pre-requisite
+
+Beware, this step implicitely requires you to prepare your trello board by creating the needed list (in accordance to your org-mode keywords, cf. [org-todo-keywords](http://orgmode.org/manual/In_002dbuffer-settings.html)).
+
+For example, I use the following keywords:
+
+```lisp
+(setq org-todo-keywords
+   '((sequence "TODO" "IN-PROGRESS" "PENDING" "|"  "DONE" "FAIL" "DELEGATED" "CANCELLED")))
+```
+This is one way to setup org-mode, this can also be done on a org-mode file basis (cf. [previous link](http://orgmode.org/manual/In_002dbuffer-settings.html))
+
+As a consequence, I need to create the list "TODO", "IN-PROGRESS", "PENDING", "DONE", "FAIL", "DELEGATED", and "CANCELLED" in my trello board before.
+
+#### Sync
+
+For each org-mode file, you need to connect your org-mode file with a trello board.
+
+`C-c o I`
+
+or
+
+``` lisp
+M-x org-trello/install-board-and-lists-ids
+```
+
+A simpler way would be to...
+
+### Create a board
+
+You can avoid the previous step and create directly a board from your org-mode file.
+This will create the list from the keywords you use in your org-mode (cf. [org-todo-keywords](http://orgmode.org/manual/In_002dbuffer-settings.html)).
+
+`C-c o b`
+
+or
+
+``` lisp
+M-x org-trello/create-board
 ```
 
 # Bindings
 
 Actual bindings (not definitive, suggestions regarding those bindings are welcome):
-- C-c o i - Interactive command to install the keys and the access-token.
-- C-c o I - Interactive command to select the board and attach the todo, doing and done list.
+- C-c o i - Interactive command to install the key and the read/write access-token.
+- C-c o I - Interactive command to setup your org-mode file to work with your remote trello board
 - C-c o b - Create interactively a board and attach the org-mode file to this trello board.
 - C-c o c - Create/Update asynchronously an entity (card/checklist/item) depending on its level and status. Do not deal with level superior to 4.
 - C-c o C - Create/Update a complete entity card/checklist/item and its subtree (depending on its level).
@@ -213,11 +221,11 @@ Actual bindings (not definitive, suggestions regarding those bindings are welcom
 
 1. open an org-mode file
 
-2. Install the key and the token file (`C-c o i` or `M-x orgtrello/do-install-key-and-token`).
+2. Install the key and the token file (`C-c o i` or `M-x org-trello/install-key-and-token`).
 This will open your browser to retrieve the needed informations (`consumer-key` then the `access-token`) and wait for your input in emacs.
 *Remark:* This need to done once and for all time until you revoke such token.
 
-3. Setup your org-mode file with your trello board (`C-c o I` or `M-x orgtrello/do-install-board-and-lists`).
+3. Setup your org-mode file with your trello board (`C-c o I` or `M-x org-trello/install-board-and-lists-ids`).
 This will present you a list of your actual boards. Select the one you want and hit enter.
 This will edit your org-mode file with properties needed.
 
