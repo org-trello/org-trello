@@ -1,3 +1,4 @@
+(require 'cl-lib)
 (require 'ert)
 (require 'ert-expectations)
 (require 'el-mock)
@@ -10,11 +11,10 @@
 
 (expectations
 ;;  (desc "testing orgtrello-hash/make-hash-org")
-  (expect "some title"  (gethash :title   (orgtrello-hash/make-hash-org 0 "IN PROGRESS" "some title" "some id" "point")))
-  (expect "IN PROGRESS" (gethash :keyword (orgtrello-hash/make-hash-org 0 "IN PROGRESS" "some title" "some id" "point")))
-  (expect 0             (gethash :level   (orgtrello-hash/make-hash-org 0 "IN PROGRESS" "some title" "some id" "point")))
-  (expect "some id"     (gethash :id      (orgtrello-hash/make-hash-org 0 "IN PROGRESS" "some title" "some id" "point")))
-  (expect "point"       (gethash :point   (orgtrello-hash/make-hash-org 0 "IN PROGRESS" "some title" "some id" "point"))))
+  (expect "some title"  (gethash :title   (orgtrello-hash/make-hash-org 0 "IN PROGRESS" "some title" "some id")))
+  (expect "IN PROGRESS" (gethash :keyword (orgtrello-hash/make-hash-org 0 "IN PROGRESS" "some title" "some id")))
+  (expect 0             (gethash :level   (orgtrello-hash/make-hash-org 0 "IN PROGRESS" "some title" "some id")))
+  (expect "some id"     (gethash :id      (orgtrello-hash/make-hash-org 0 "IN PROGRESS" "some title" "some id"))))
 
 (expectations
   (expect :some-method (gethash :method (orgtrello-hash/make-hash :some-method :some-uri)))
@@ -24,31 +24,10 @@
 ;; ########################## orgtrello-data
 
 (expectations
-  (expect 0 (orgtrello-data/--get-level '(:pt :id 0 0 "IN PROGRESS" nil "HEADING_LABEL" nil)))
-  (expect 1 (orgtrello-data/--get-level '(:pt :id 1 0 "IN PROGRESS" nil "HEADING_LABEL" nil))))
-
-(expectations
-  (expect "IN PROGRESS" (orgtrello-data/--get-keyword '(:pt :id 0  0 "IN PROGRESS" nil "HEADING_LABEL" nil)))
-  (expect "TODO"        (orgtrello-data/--get-keyword '(:pt :id 1  0 "TODO"        nil "HEADING_LABEL" nil))))
-
-(expectations
-  (expect "title 0"          (orgtrello-data/--get-title '(:pt :id 0  0 "IN PROGRESS" :some "title 0" nil)))
-  (expect "some other title" (orgtrello-data/--get-title '(:pt :id 1  0 "TODO"        :some "some other title" nil))))
-
-(expectations
-  (expect nil  (orgtrello-data/--get-id '(:pt nil 1  0 "TODO"  nil "some other title" nil)))
-  (expect :id0 (orgtrello-data/--get-id '(:pt :id0 1  0 "TODO" nil "some other title" nil))))
-
-(expectations
-  (expect :pt  (orgtrello-data/--get-point '(:pt nil 1  0 "TODO"  nil "some other title" nil)))
-  (expect :pt2 (orgtrello-data/--get-point '(:pt2 :id0 1  0 "TODO" nil "some other title" nil))))
-
-(expectations
-  (expect "some title :orgtrello-id-identifier:" (gethash :title   (orgtrello-data/--get-metadata '(:pt :id 0 1 "IN PROGRESS" nil "some title :orgtrello-id-identifier:" nil))))
-  (expect "IN PROGRESS"                          (gethash :keyword (orgtrello-data/--get-metadata '(:pt :id 0 1 "IN PROGRESS" nil "some title :orgtrello-id-identifier:" nil))))
-  (expect 0                                      (gethash :level   (orgtrello-data/--get-metadata '(:pt :id 0 1 "IN PROGRESS" nil "some title :orgtrello-id-identifier:" nil))))
-  (expect :id                                    (gethash :id      (orgtrello-data/--get-metadata '(:pt :id 0 1 "IN PROGRESS" nil "some title :orgtrello-id-identifier:" nil))))
-  (expect :pt                                    (gethash :point   (orgtrello-data/--get-metadata '(:pt :id 0 1 "IN PROGRESS" nil "some title :orgtrello-id-identifier:" nil)))))
+  (expect "some title :orgtrello-id-identifier:" (gethash :title   (orgtrello-data/--get-metadata '(:id 0 1 "IN PROGRESS" nil "some title :orgtrello-id-identifier:" nil))))
+  (expect "IN PROGRESS"                          (gethash :keyword (orgtrello-data/--get-metadata '(:id 0 1 "IN PROGRESS" nil "some title :orgtrello-id-identifier:" nil))))
+  (expect 0                                      (gethash :level   (orgtrello-data/--get-metadata '(:id 0 1 "IN PROGRESS" nil "some title :orgtrello-id-identifier:" nil))))
+  (expect :id                                    (gethash :id      (orgtrello-data/--get-metadata '(:id 0 1 "IN PROGRESS" nil "some title :orgtrello-id-identifier:" nil)))))
 
 ;; ########################## orgtrello-api
 
@@ -99,10 +78,10 @@
   (expect nil               (gethash :params (orgtrello-api/get-list :list-id))))
 
 (expectations
-  (expect :post                                                                                    (gethash :method (orgtrello-api/add-list "list-name" "board-id")))
-  (expect "/lists/"                                                                                (gethash :uri    (orgtrello-api/add-list "list-name" "board-id")))
+  (expect :post                       (gethash :method (orgtrello-api/add-list "list-name" "board-id")))
+  (expect "/lists/"                   (gethash :uri    (orgtrello-api/add-list "list-name" "board-id")))
   (expect '(("name" . "list-name")
-                                                                         ("idBoard" . "board-id")) (gethash :params (orgtrello-api/add-list "list-name" "board-id"))))
+            ("idBoard" . "board-id")) (gethash :params (orgtrello-api/add-list "list-name" "board-id"))))
 
 (expectations
   (expect :post                                            (gethash :method (orgtrello-api/add-card "card-name" "list-id")))
@@ -237,19 +216,19 @@
   (expect *DOING-LIST-ID*  (orgtrello/--compute-list-key "IN PROGRESS") ))
 
 (ert-deftest testing-orgtrello/--merge-map ()
-  (let* ((entry   (orgtrello-hash/make-hash-org :level :method "the name of the entry" nil :pt))
+  (let* ((entry   (orgtrello-hash/make-hash-org :level :method "the name of the entry" nil))
          (map-ids (make-hash-table :test 'equal)))
     (puthash "the name of the entry" :some-id map-ids)
     (should (equal (gethash :id (orgtrello/--merge-map entry map-ids)) :some-id))))
 
 (ert-deftest testing-orgtrello/--merge-map2 ()
-  (let* ((entry   (orgtrello-hash/make-hash-org :level :method :title :id-already-there :pt))
+  (let* ((entry   (orgtrello-hash/make-hash-org :level :method :title :id-already-there))
          (map-ids (make-hash-table :test 'equal)))
     (puthash :title :some-id map-ids)
     (should (equal (gethash :id (orgtrello/--merge-map entry map-ids)) :id-already-there))))
 
 (ert-deftest testing-orgtrello/--merge-map3 ()
-  (let* ((entry   (orgtrello-hash/make-hash-org :level :method :title :id-already-there :point))
+  (let* ((entry   (orgtrello-hash/make-hash-org :level :method :title :id-already-there))
          (map-ids (make-hash-table :test 'equal)))
     (should (equal (gethash :id (orgtrello/--merge-map entry map-ids)) :id-already-there))))
 
@@ -273,7 +252,7 @@
     (should (equal (gethash "id" hashtable-result) (gethash "id" hashtable-expected)))
     (should (equal (gethash "another-id" hashtable-result) (gethash "another-id" hashtable-expected)))
     (should (equal (gethash "yet-another-id" hashtable-result) (gethash "yet-another-id" hashtable-expected)))
-    (should (equal (length (cl-values hashtable-result)) (length (cl-values hashtable-expected))))))
+    (should (equal (cl-hash-table-count hashtable-result) (cl-hash-table-count hashtable-expected)))))
 
 (ert-deftest testing-orgtrello/--name-id ()
   (let* ((entities [((id . "id")
@@ -293,6 +272,6 @@
     (should (equal (gethash "testing board" hashtable-result) (gethash "testing board" hashtable-expected)))
     (should (equal (gethash "testing board 2" hashtable-result) (gethash "testing board 2" hashtable-expected)))
     (should (equal (gethash "testing board 3" hashtable-result) (gethash "testing board 3" hashtable-expected)))
-    (should (equal (length (cl-values hashtable-result)) (length (cl-values hashtable-expected))))))
+    (should (equal (cl-hash-table-count hashtable-result) (cl-hash-table-count hashtable-expected)))))
 
 (message "Tests done!")
