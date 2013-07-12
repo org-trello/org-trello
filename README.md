@@ -274,6 +274,17 @@ At the moment, this action is synchronous.
 
 8. You can remove the entity and its arborescence with `C-c o k`.
 
+# Demo
+
+- [Install](http://youtu.be/e3NzllAHbHY)
+- [Setup key and token](http://youtu.be/ReUp1Wn5scc)
+- [Attach org-mode file to one trello board](http://youtu.be/2PT8K1HG-eY)
+- [Synchronize one entity](http://youtu.be/ILPs74L5LFU)
+- [Synchronize one complete entity and move entity according to status](http://youtu.be/H8DXm5BLaD0)
+- [Synchronize from org-mode file to trello](http://youtu.be/d6SATWzhQhs)
+- [Synchronize from trello to org-mode files](http://youtu.be/-ldo8gvhaTY)
+- [Create board and sync](http://youtu.be/6k4zRm6t8ZY)
+
 # License
 
 org-trello is free software under GPL v3. See COPYING file for details.
