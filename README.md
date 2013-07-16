@@ -3,7 +3,7 @@ org-trello
 
 [![Build Status](https://travis-ci.org/ardumont/org-trello.png?branch=master)](https://travis-ci.org/ardumont/org-trello)
 
-Sync your org-mode files with your trello boards.
+Minor emacs mode for org-mode - 2-way synchronization between org-mode file and trello board
 
 # why?
 
@@ -13,14 +13,20 @@ Sync your org-mode files with your trello boards.
 
 # Contributions
 
-Pull Requests welcome
-cf. [What has been done and remains to be done](./TODO.org)
+- Pull Requests welcome (cf. [todo](./TODO.org) - better read on emacs's org-mode buffer)
+- Appreciate any feedback
+- Open issues if you want something to be done
+- Open issues for bugs too (please describe maximum inputs, version, *Messages* buffer, stacktrace, etc...)
+- [What has been done and remains to be done](./TODO.org)
 
 # Release notes
 
-## Details
+## v0.0.4.1
 
-[todo/done](./TODO.org)
+- DONE Fix the creation board routine regarding the org-mode keywords (dynamic typing hell!)
+- DONE Improve documentation regarding the possibilities to setup the org-mode keyword
+- DONE Upgrade version to 0.0.4.1
+- DONE Release on github, melpa, marmalade
 
 ## v0.0.4
 
@@ -31,6 +37,7 @@ cf. [What has been done and remains to be done](./TODO.org)
 - DONE Remove useless code
 - DONE Improve documentations and sync the routine check message with the documentation.
 - DONE Update documentation
+- DONE Release on github, melpa, marmalade
 
 ## v0.0.3
 
@@ -47,6 +54,7 @@ cf. [What has been done and remains to be done](./TODO.org)
 - DONE filter out level > 4 when syncing.
 - DONE Given a trello board, sync into a org-mode file
 - cf. [todo/done](./TODO.org) for the remains
+- DONE Release on github (and the previous version too)
 
 ## v0.0.2
 
@@ -165,19 +173,24 @@ M-x org-trello/install-key-and-token
 
 #### pre-requisite
 
-Beware, this step implicitely requires you to prepare your trello board by creating the needed list (in accordance to your org-mode keywords, cf. [org-todo-keywords](http://orgmode.org/manual/In_002dbuffer-settings.html)).
+Beware, this step implicitely requires you to prepare your trello board by creating the needed list (in accordance to your org-mode keywords, cf. [org-todo-keywords](https://www.gnu.org/software/emacs/manual/html_node/org/Per_002dfile-keywords.html)).
 
-For example, I use the following keywords:
+For example, you could either use the following keywords globally:
 
 ```lisp
 (setq org-todo-keywords
    '((sequence "TODO" "IN-PROGRESS" "PENDING" "|"  "DONE" "FAIL" "DELEGATED" "CANCELLED")))
 ```
-This is one way to setup org-mode, this can also be done on a org-mode file basis (cf. [previous link](http://orgmode.org/manual/In_002dbuffer-settings.html))
 
-As a consequence, I need to create the list "TODO", "IN-PROGRESS", "PENDING", "DONE", "FAIL", "DELEGATED", and "CANCELLED" in my trello board before.
+Or, you could also setup your org-mode file locally, adding this as a org-mode header in your file (cf. [previous link](https://www.gnu.org/software/emacs/manual/html_node/org/Per_002dfile-keywords.html)):
 
-#### Sync
+```orgmode
+#+TODO: TODO IN-PROGRESS PENDING | DONE FAIL DELEGATED CANCELLED
+```
+
+Either way, you need to create the list "TODO", "IN-PROGRESS", "PENDING", "DONE", "FAIL", "DELEGATED", and "CANCELLED" in your trello board before launching the routine to setup your org-mode buffer.
+
+#### Sync your org-mode buffer
 
 For each org-mode file, you need to connect your org-mode file with a trello board.
 
@@ -189,7 +202,7 @@ or
 M-x org-trello/install-board-and-lists-ids
 ```
 
-A simpler way would be to...
+A simpler way could be to create a board from scratch (if you can).
 
 ### Create a board
 
