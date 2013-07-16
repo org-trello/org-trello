@@ -7,8 +7,9 @@
 #+property: FAIL 51e538a26f75d07902002d25
 #+property: DELEGATED 51e538a89c05f1e25c0027c6
 #+property: CANCELLED 51e538e6c7a68fa0510014ee
-#+title: TODO orgtrello's dev progress
-#+author: Antoine R. Dumont
+#+TITLE: TODO orgtrello's dev progress
+#+AUTHOR: Antoine R. Dumont
+#+STYLE: <style> h1,h2,h3 {font-family: arial, helvetica, sans-serif} </style>
 
 * DONE v0.0.1 [100%]
 CLOSED: [2013-07-04 jeu. 20:19]
@@ -320,6 +321,16 @@ CLOSED: [2013-07-16 mar. 16:10]
 CLOSED: [2013-07-16 mar. 16:03]
 ** DONE Update documentation
 CLOSED: [2013-07-16 mar. 16:16]
+* DONE v0.0.4.1 [100%]
+CLOSED: [2013-07-16 mar. 20:28]
+** DONE Fix the creation board routine regarding the org-mode keywords (dynamic typing hell!)
+CLOSED: [2013-07-16 mar. 20:03]
+** DONE Improve documentation regarding the possibilities to setup the org-mode keyword
+CLOSED: [2013-07-16 mar. 20:04]
+** DONE Upgrade version to 0.0.4.1
+CLOSED: [2013-07-16 mar. 20:03]
+** DONE Release on github
+CLOSED: [2013-07-16 mar. 20:04]
 * TODO v0.0.5 [0%]
 ** TODO filter out directly with the api the data we do not need to avoid unnecessary network traffic
 ** TODO How to deal with synchronizing the org-mode buffer and the trello board without a synchronized request?

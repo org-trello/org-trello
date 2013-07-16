@@ -4,7 +4,7 @@
 
 ;; Author: Antoine R. Dumont <eniotna.t AT gmail.com>
 ;; Maintainer: Antoine R. Dumont <eniotna.t AT gmail.com>
-;; Version: 0.0.4
+;; Version: 0.0.4.1
 ;; Package-Requires: ((org "7.9.2") (dash "1.4.0") (request "0.1.0") (cl-lib "0.3.0") (json "1.3"))
 ;; Keywords: org-mode trello sync org-trello
 ;; URL: https://github.com/ardumont/org-trello
@@ -389,14 +389,11 @@
 (defvar *BOARD-NAME* "board-name" "orgtrello property board-name entry")
 
 (defun orgtrello/filtered-kwds ()
-  "org keywords used (based on org-todo-keywords)."
-  (let ((ftd-kwds (cdr (first (--filter (equal 'sequence (first it)) org-todo-keywords)))))
-    (--filter (not (string= "|" it)) ftd-kwds)))
+  "org keywords used (based on org-todo-keywords-1)."
+  org-todo-keywords-1)
 
-(defvar *LIST-NAMES* (orgtrello/filtered-kwds) "orgtrello property names of the different lists. This use the standard 'org-todo-keywords property from org-mode.")
-(defvar *HMAP-ID-NAME*  nil                    "orgtrello hash map containing for each id, the associated name (or org keyword).")
-
-;; org-todo-keys
+(defvar *LIST-NAMES*   nil "orgtrello property names of the different lists. This use the standard 'org-todo-keywords property from org-mode.")
+(defvar *HMAP-ID-NAME* nil "orgtrello hash map containing for each id, the associated name (or org keyword).")
 
 (defvar *CONFIG-DIR*  (concat (getenv "HOME") "/" ".trello"))
 (defvar *CONFIG-FILE* (concat *CONFIG-DIR* "/config.el"))
@@ -405,23 +402,25 @@
 (defvar *access-token*     nil "Read/write Access token to use trello in the user's name ")
 (defvar *ORGTRELLO-MARKER* nil "Marker used for syncing the data in trello")
 
-(defcustom orgtrello/keyword-to-list '("todo" "doing" "done")
-  "List of keywords to use to bridge the gap between trello list and the org-keywords"
-  :group 'org-trello)
-
-(defun orgtrello/--control-properties ()
-  "org-trello needs the properties board-id and all list id from the trello board to be setuped on header property file."
-  (let* ((orgtrello/--hmap-id-name (cl-reduce
+(defun orgtrello/--setup-properties ()
+  "Setup the properties according to the org-mode setup"
+  (let* ((orgtrello/--list-keywords (orgtrello/filtered-kwds))
+         (orgtrello/--hmap-id-name (cl-reduce
                                     (lambda (hmap name)
                                       (progn
                                         (puthash (assoc-default name org-file-properties) name hmap)
                                         hmap))
-                                    *LIST-NAMES*
-                                    :initial-value (make-hash-table :test 'equal)))
-         (orgtrello/--hmap-count   (cl-hash-table-count orgtrello/--hmap-id-name)))
+                                    orgtrello/--list-keywords
+                                    :initial-value (make-hash-table :test 'equal))))
+    (setq *LIST-NAMES*   orgtrello/--list-keywords)
+    (setq *HMAP-ID-NAME* orgtrello/--hmap-id-name)
+    t))
+
+(defun orgtrello/--control-properties ()
+  "org-trello needs the properties board-id and all list id from the trello board to be setuped on header property file."
+  (let ((orgtrello/--hmap-count   (cl-hash-table-count *HMAP-ID-NAME*)))
     (and (assoc-default *BOARD-ID* org-file-properties)
-         (= (length *LIST-NAMES*) orgtrello/--hmap-count)
-         (setq *HMAP-ID-NAME* orgtrello/--hmap-id-name))))
+         (= (length *LIST-NAMES*) orgtrello/--hmap-count))))
 
 (defun orgtrello/--control-keys ()
   "org-trello needs the *consumer-key* and the *access-token* to access the trello resources. Return t if everything is ok."
@@ -830,31 +829,31 @@
   "Control first, then if ok, create a simple entity."
   (interactive)
   (message "Synchronizing entity...")
-  (org-trello/--control-and-do '(orgtrello/--control-keys orgtrello/--control-properties) 'orgtrello/do-create-simple-entity))
+  (org-trello/--control-and-do '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties) 'orgtrello/do-create-simple-entity))
 
 (defun org-trello/create-complex-entity ()
   "Control first, then if ok, create an entity and all its arborescence if need be."
   (interactive)
   (message "Synchronizing complex entity...")
-  (org-trello/--control-and-do '(orgtrello/--control-keys orgtrello/--control-properties) 'orgtrello/do-create-complex-entity))
+  (org-trello/--control-and-do '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties) 'orgtrello/do-create-complex-entity))
 
 (defun org-trello/sync-to-trello ()
   "Control first, then if ok, sync the org-mode file completely to trello."
   (interactive)
   (message "Synchronizing org-mode file to trello...")
-  (org-trello/--control-and-do '(orgtrello/--control-keys orgtrello/--control-properties) 'orgtrello/do-sync-full-file))
+  (org-trello/--control-and-do '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties) 'orgtrello/do-sync-full-file))
 
 (defun org-trello/sync-from-trello ()
   "Control first, then if ok, sync the org-mode file from the trello board."
   (interactive)
   (message "Synchronizing trello board to org-mode file...")
-  (org-trello/--control-and-do '(orgtrello/--control-keys orgtrello/--control-properties) 'orgtrello/do-sync-full-from-trello))
+  (org-trello/--control-and-do '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties) 'orgtrello/do-sync-full-from-trello))
 
 (defun org-trello/kill-entity ()
   "Control first, then if ok, delete the entity and all its arborescence."
   (interactive)
   (message "Delete entity...")
-  (org-trello/--control-and-do '(orgtrello/--control-keys orgtrello/--control-properties) 'orgtrello/do-delete-simple))
+  (org-trello/--control-and-do '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties) 'orgtrello/do-delete-simple))
 
 (defun org-trello/install-key-and-token ()
   "No control, trigger the setup installation of the key and the read/write token."
@@ -866,13 +865,19 @@
   "Control first, then if ok, trigger the setup installation of the trello board to sync with."
   (interactive)
   (message "Install boards and lists...")
-  (org-trello/--control-and-do '(orgtrello/--control-keys) 'orgtrello/do-install-board-and-lists))
+  (org-trello/--control-and-do '(orgtrello/--setup-properties orgtrello/--control-keys) 'orgtrello/do-install-board-and-lists))
 
 (defun org-trello/create-board ()
   "Control first, then if ok, trigger the board creation."
   (interactive)
   (message "Install boards and lists...")
-  (org-trello/--control-and-do '(orgtrello/--control-keys) 'orgtrello/do-create-board-and-lists))
+  (org-trello/--control-and-do '(orgtrello/--setup-properties orgtrello/--control-keys) 'orgtrello/do-create-board-and-lists))
+
+(defun org-trello/check-setup ()
+  "Check the current setup."
+  (interactive)
+  (message "Describe the current setup...")
+  (org-trello/--control-and-do '(orgtrello/--setup-properties orgtrello/--control-keys) (lambda () (message "Setup ok!"))))
 
 (defun org-trello/help-describing-bindings ()
   "A simple message to describe the standard bindings used."
@@ -902,6 +907,7 @@ C-c o h - This help message."))
              (define-key map (kbd "C-c o k") 'org-trello/kill-entity)
              (define-key map (kbd "C-c o h") 'org-trello/help-describing-bindings)
              ;; for debugging purposes (I do not know any better yet)
+             (define-key map (kbd "C-c o d") 'org-trello/check-setup)
              ;; (define-key map (kbd "C-c z") 'orgtrello/describe-heading)
              ;; (define-key map (kbd "C-c x") 'orgtrello/describe-headings)
              ;; (define-key map (kbd "C-c F") 'orgtrello/find-block)
