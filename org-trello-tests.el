@@ -78,6 +78,11 @@
   (expect nil               (gethash :params (orgtrello-api/get-list :list-id))))
 
 (expectations
+  (expect :put                     (gethash :method (orgtrello-api/close-list :list-id)))
+  (expect "/lists/:list-id/closed" (gethash :uri    (orgtrello-api/close-list :list-id)))
+  (expect '((value . t))           (gethash :params (orgtrello-api/close-list :list-id))))
+
+(expectations
   (expect :post                       (gethash :method (orgtrello-api/add-list "list-name" "board-id")))
   (expect "/lists/"                   (gethash :uri    (orgtrello-api/add-list "list-name" "board-id")))
   (expect '(("name" . "list-name")
@@ -208,12 +213,6 @@
   (expect (format "%s%s" *TRELLO-URL* "/uri/some/other") (orgtrello-query/--compute-url "/uri/some/other")     ))
 
 ;; ########################## orgtrello-tests
-
-(expectations
-  (expect *TODO-LIST-ID*  (orgtrello/--compute-list-key *TODO*)       )
-  (expect *DONE-LIST-ID*  (orgtrello/--compute-list-key *DONE*)       )
-  (expect *DOING-LIST-ID*  (orgtrello/--compute-list-key "otherwise")  )
-  (expect *DOING-LIST-ID*  (orgtrello/--compute-list-key "IN PROGRESS") ))
 
 (ert-deftest testing-orgtrello/--merge-map ()
   (let* ((entry   (orgtrello-hash/make-hash-org :level :method "the name of the entry" nil))

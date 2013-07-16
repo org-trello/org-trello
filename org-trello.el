@@ -4,7 +4,7 @@
 
 ;; Author: Antoine R. Dumont <eniotna.t AT gmail.com>
 ;; Maintainer: Antoine R. Dumont <eniotna.t AT gmail.com>
-;; Version: 0.0.3.1
+;; Version: 0.0.4
 ;; Package-Requires: ((org "7.9.2") (dash "1.4.0") (request "0.1.0") (cl-lib "0.3.0") (json "1.3"))
 ;; Keywords: org-mode trello sync org-trello
 ;; URL: https://github.com/ardumont/org-trello
@@ -34,11 +34,16 @@
 ;; (require 'org-trello)
 ;;
 ;; Automatically
-;; 2) Once - Install the consumer-key and the read-write token for org-trello to be able to work in your name with your trello boards
-;; M-x orgtrello/do-install-key-and-token
+;; 2) Once - Install the consumer-key and the read-write token for org-trello to be able to work in your name with your trello boards (C-c o i)
+;; M-x org-trello/install-key-and-token
 ;;
-;; 3) Once per org-mode file/board you want to connect to
-;; M-x orgtrello/do-install-board-and-lists
+;; 3) Once per org-mode file/board you want to connect to (C-c o I)
+;; M-x org-trello/install-board-and-lists-ids
+;;
+;; *Beware* you must setup your trello board with the name you use as keywords (TODO, DONE e.g) on your org-mode file.
+;;
+;; 4) You can also create a board directly from a org-mode buffer (C-c o b)
+;; M-x org-trello/create-board
 ;;
 ;;; Code:
 
@@ -150,6 +155,10 @@
   "Display the lists of the board"
   (orgtrello-hash/make-hash :get (format "/boards/%s/lists" board-id)))
 
+(defun orgtrello-api/close-list (list-id)
+  "'Close' the list with id list-id."
+  (orgtrello-hash/make-hash :put (format "/lists/%s/closed" list-id) '((value . t))))
+
 (defun orgtrello-api/get-list (list-id)
   "Get a list by id"
   (orgtrello-hash/make-hash :get (format "/lists/%s" list-id)))
@@ -240,18 +249,18 @@
 
 (defvar *MAP-DISPATCH-HTTP-QUERY* (orgtrello-query/--make-dispatch-http-query))
 
-(defun orgtrello-query/http (query-map &optional success-callback)
+(defun orgtrello-query/http (query-map &optional success-callback error-callback)
   "Query the trello api asynchronously."
   (let* ((method      (gethash :method query-map))
          (fn-dispatch (gethash method *MAP-DISPATCH-HTTP-QUERY*)))
-    (funcall fn-dispatch query-map success-callback)))
+    (funcall fn-dispatch query-map success-callback error-callback)))
 
-(defun orgtrello-query/http-sync (query-map &optional success-callback)
+(defun orgtrello-query/http-sync (query-map &optional success-callback error-callback)
   "Query the trello api synchronously and return the data of the request."
   (let* ((method      (gethash :method query-map))
          (fn-dispatch (gethash method *MAP-DISPATCH-HTTP-QUERY*)))
     (puthash :sync t query-map)
-    (let ((request-response (funcall fn-dispatch query-map success-callback)))
+    (let ((request-response (funcall fn-dispatch query-map success-callback error-callback)))
       (request-response-data request-response))))
 
 (defun orgtrello-query/--map-dispatch-http-verb ()
@@ -272,7 +281,7 @@
   "Compute the trello url from the given uri."
   (format "%s%s" *TRELLO-URL* uri))
 
-(cl-defun standard-error-callback (&key error-thrown &allow-other-keys)
+(cl-defun error-callback-and-action (&key error-thrown &allow-other-keys)
   "Standard error callback"
   (save-excursion
       ;; find the current entry through the pointer
@@ -285,11 +294,15 @@
   "Standard success callback"
   (message "Success."))
 
+(cl-defun standard-error-callback (&key error-thrown &allow-other-keys)
+  "Standard success callback"
+  (message "There was some problem during the request to trello: %s" error-thrown))
+
 (cl-defun standard-success-callback-display (&key data &allow-other-keys)
   "Standard success callback"
   (message "data: %S" data))
 
-(defun orgtrello-query/--get (query-map &optional success-callback)
+(defun orgtrello-query/--get (query-map &optional success-callback error-callback)
   "GET"
   (let* ((method (gethash :method query-map))
          (uri    (gethash :uri    query-map))
@@ -300,8 +313,8 @@
              :params  `((key . ,*consumer-key*)
                         (token . ,*access-token*))
              :parser  'json-read
-             :success success-callback
-             :error   'standard-error-callback)))
+             :success (if success-callback success-callback 'standard-success-callback)
+             :error   (if error-callback error-callback 'error-callback-and-action))))
 
 (cl-defun orgtrello-query/--post-put-success-callback-update-id (&key data &allow-other-keys)
   "Called back function at the end of the post/put request to update the trello id in the org-mode file."
@@ -319,13 +332,13 @@
              (orgtrello-query/--entry-id       (gethash :id orgtrello-query/--entry-metadata)))
         (if orgtrello-query/--entry-id ;; id already present in the org-mode file
             ;; no need to add another
-            (message "entity '%s' synced with id '%s'" orgtrello-query/--entry-name orgtrello-query/--entry-id)
+            (message "Entity '%s' synced with id '%s'" orgtrello-query/--entry-name orgtrello-query/--entry-id)
           (progn
             ;; not present, this was just created, we add a simple property
             (org-set-property *ORGTRELLO-ID* orgtrello-query/--entry-new-id)
             (message "Newly entity '%s' synced with id '%s'" orgtrello-query/--entry-name orgtrello-query/--entry-new-id)))))))
 
-(defun orgtrello-query/--post-or-put (query-map &optional success-callback)
+(defun orgtrello-query/--post-or-put (query-map &optional success-callback error-callback)
   "POST or PUT"
   (let* ((method  (gethash :method query-map))
          (uri     (gethash :uri    query-map))
@@ -339,8 +352,8 @@
              :headers '(("Content-type" . "application/json"))
              :data    (json-encode payload)
              :parser  'json-read
-             :success success-callback
-             :error   'standard-error-callback)))
+             :success (if success-callback success-callback 'standard-success-callback)
+             :error   (if error-callback error-callback 'error-callback-and-action))))
 
 (cl-defun orgtrello-query/--delete-success-callback (&key data response &allow-other-keys)
   "Callback function called at the end of a successful delete request."
@@ -350,7 +363,7 @@
          (kill-line)
          (message "Entity deleted!")))
 
-(defun orgtrello-query/--delete (query-map &optional success-callback)
+(defun orgtrello-query/--delete (query-map &optional success-callback error-callback)
   "DELETE"
   (let* ((method (gethash :method query-map))
          (uri    (gethash :uri    query-map))
@@ -360,8 +373,8 @@
              :type    (orgtrello-query/--compute-method method)
              :params  `((key . ,*consumer-key*)
                         (token . ,*access-token*))
-             :success success-callback
-             :error   'standard-error-callback)))
+             :success (if success-callback success-callback 'standard-success-callback)
+             :error   (if error-callback error-callback 'error-callback-and-action))))
 
 (message "orgtrello-query/ loaded!")
 
@@ -372,10 +385,18 @@
 (defvar *DONE* "DONE" "org-mode done state")
 
 ;; Properties key for the orgtrello headers #+PROPERTY board-id, etc...
-(defvar *BOARD-ID*      "board-id"      "orgtrello property board-id entry")
-(defvar *TODO-LIST-ID*  "todo-list-id"  "orgtrello property todo list id")
-(defvar *DOING-LIST-ID* "doing-list-id" "orgtrello property doing list id")
-(defvar *DONE-LIST-ID*  "done-list-id"  "orgtrello property done list id")
+(defvar *BOARD-ID* "board-id" "orgtrello property board-id entry")
+(defvar *BOARD-NAME* "board-name" "orgtrello property board-name entry")
+
+(defun orgtrello/filtered-kwds ()
+  "org keywords used (based on org-todo-keywords)."
+  (let ((ftd-kwds (cdr (first (--filter (equal 'sequence (first it)) org-todo-keywords)))))
+    (--filter (not (string= "|" it)) ftd-kwds)))
+
+(defvar *LIST-NAMES* (orgtrello/filtered-kwds) "orgtrello property names of the different lists. This use the standard 'org-todo-keywords property from org-mode.")
+(defvar *HMAP-ID-NAME*  nil                    "orgtrello hash map containing for each id, the associated name (or org keyword).")
+
+;; org-todo-keys
 
 (defvar *CONFIG-DIR*  (concat (getenv "HOME") "/" ".trello"))
 (defvar *CONFIG-FILE* (concat *CONFIG-DIR* "/config.el"))
@@ -384,12 +405,23 @@
 (defvar *access-token*     nil "Read/write Access token to use trello in the user's name ")
 (defvar *ORGTRELLO-MARKER* nil "Marker used for syncing the data in trello")
 
+(defcustom orgtrello/keyword-to-list '("todo" "doing" "done")
+  "List of keywords to use to bridge the gap between trello list and the org-keywords"
+  :group 'org-trello)
+
 (defun orgtrello/--control-properties ()
-  "org-trello needs the properties board-id, todo-list-id, doing-list-id, done-list-id to be able to work ok."
-  (and (assoc-default *BOARD-ID*      org-file-properties)
-       (assoc-default *TODO-LIST-ID*  org-file-properties)
-       (assoc-default *DOING-LIST-ID* org-file-properties)
-       (assoc-default *DONE-LIST-ID*  org-file-properties)))
+  "org-trello needs the properties board-id and all list id from the trello board to be setuped on header property file."
+  (let* ((orgtrello/--hmap-id-name (cl-reduce
+                                    (lambda (hmap name)
+                                      (progn
+                                        (puthash (assoc-default name org-file-properties) name hmap)
+                                        hmap))
+                                    *LIST-NAMES*
+                                    :initial-value (make-hash-table :test 'equal)))
+         (orgtrello/--hmap-count   (cl-hash-table-count orgtrello/--hmap-id-name)))
+    (and (assoc-default *BOARD-ID* org-file-properties)
+         (= (length *LIST-NAMES*) orgtrello/--hmap-count)
+         (setq *HMAP-ID-NAME* orgtrello/--hmap-id-name))))
 
 (defun orgtrello/--control-keys ()
   "org-trello needs the *consumer-key* and the *access-token* to access the trello resources. Return t if everything is ok."
@@ -403,19 +435,18 @@
            ;; setting the marker once
            (setq *ORGTRELLO-MARKER* (format "orgtrello-marker-%s" *consumer-key*)))))
 
-(defun orgtrello/--compute-list-key (state)
-  "Given a state, compute the list id for the creation of a card"
-  (cond ((string= state *TODO*) *TODO-LIST-ID*)
-        ((string= state *DONE*) *DONE-LIST-ID*)
-        (t                      *DOING-LIST-ID*)))
+(defun orgtrello/--retrieve-state-of-card (card-meta)
+  "Given a card, retrieve its state depending on its :keyword metadata. If empty or no keyword then, its equivalence is *TODO*, otherwise, return its current state."
+  (let* ((orgtrello/--card-kwd (gethash :keyword card-meta *TODO*)))
+    (if orgtrello/--card-kwd orgtrello/--card-kwd *TODO*)))
 
 (defun orgtrello/--card (card-meta &optional parent-meta grandparent-meta)
   "Deal with create/update card query build"
   ;; parent and grandparent are useless here
-  (let* ((orgtrello/--card-kwd  (gethash :keyword card-meta))
-         (orgtrello/--list-id   (assoc-default (orgtrello/--compute-list-key orgtrello/--card-kwd) org-file-properties))
-         (orgtrello/--card-id   (gethash :id      card-meta))
-         (orgtrello/--card-name (gethash :title   card-meta)))
+  (let* ((orgtrello/--card-kwd  (orgtrello/--retrieve-state-of-card card-meta))
+         (orgtrello/--list-id   (assoc-default orgtrello/--card-kwd org-file-properties))
+         (orgtrello/--card-id   (gethash :id    card-meta))
+         (orgtrello/--card-name (gethash :title card-meta)))
     (if orgtrello/--card-id
         ;; update
         (orgtrello-api/move-card orgtrello/--card-id orgtrello/--list-id orgtrello/--card-name)
@@ -499,9 +530,13 @@
         (puthash :id (gethash orgtrello/--merge-map-name map-ids-by-name) entry)
         entry))))
 
+(defun orgtrello/--board-name ()
+  "Compute the board's name"
+  (assoc-default *BOARD-NAME* org-file-properties))
+
 (defun orgtrello/do-create-complex-entity ()
   "Do the actual full card creation - from card to task. Beware full side effects..."
-  (message "Syncing full card structure.")
+  (message "Synchronizing full card structure on board '%s'..." (orgtrello/--board-name))
   (save-excursion
     ;; up to the highest level to begin the sync in order
     (while (org-up-heading-safe))
@@ -510,6 +545,7 @@
 
 (defun orgtrello/do-sync-full-file ()
   "Full org-mode file synchronisation. Beware, this will block emacs as the request is synchronous."
+  (message "Synchronizing org-mode file to the board '%s'. This may take some time, some coffee may be a good idea..." (orgtrello/--board-name))
   (org-map-entries (lambda () (orgtrello/do-create-simple-entity t)) t 'file))
 
 (defun trace (e &optional label)
@@ -520,11 +556,9 @@
         (message "TRACE: %S" e))
     e))
 
-(defun orgtrello/--compute-card-status (card-id-list)
-  "Given a card's id (list todo, doing, done), compute the status of a card"
-  (cond ((equal (assoc-default *TODO-LIST-ID*  org-file-properties) card-id-list) "TODO")
-        ((equal (assoc-default *DOING-LIST-ID* org-file-properties) card-id-list) "IN-PROGRESS")
-        ((equal (assoc-default *DONE-LIST-ID*  org-file-properties) card-id-list) "DONE")))
+(defun orgtrello/--compute-card-status (card-id-list )
+  "Given a card's id, compute its status."
+  (gethash card-id-list *HMAP-ID-NAME*))
 
 (defun orgtrello/--compute-card-to-org-entry (card)
   "Given a card, compute its org-mode entry equivalence."
@@ -566,10 +600,12 @@
 
 (defun orgtrello/do-sync-full-from-trello ()
   "Full org-mode file synchronisation. Beware, this will block emacs as the request is synchronous."
+  (message "Synchronizing the trello board '%s' to the org-mode file. This may take a moment, some coffee may be a good idea..." (orgtrello/--board-name))
   (let* ((orgtrello/--board-id (assoc-default *BOARD-ID* org-file-properties))
          (orgtrello/--cards    (orgtrello-query/http-sync (orgtrello-api/get-cards orgtrello/--board-id) 'standard-success-callback))
          (orgtrello/--entities (cl-reduce
                                 (lambda (orgtrello/--acc-list orgtrello/--entity-card)
+                                  (message "Synchronizing card '%s'..." (assoc-default 'name orgtrello/--entity-card))
                                   (append (cons orgtrello/--entity-card (orgtrello/--do-retrieve-checklists-from-card orgtrello/--entity-card)) orgtrello/--acc-list))
                                 orgtrello/--cards
                                 :initial-value nil))) ;; FIXME filter on only the todo, doing, done lists
@@ -579,7 +615,7 @@
        (lambda (str-acc entity)
          (let ((orgtrello/--entry-new-id   (assoc-default 'id   entity))
                (orgtrello/--entry-new-name (assoc-default 'name entity)))
-           (message "Syncing entity '%s' with id '%s'..." orgtrello/--entry-new-name orgtrello/--entry-new-id)
+           (message "Synchronizing entity '%s' with id '%s'..." orgtrello/--entry-new-name orgtrello/--entry-new-id)
            (insert (orgtrello/--compute-entity-to-org-entry entity))
            (org-set-property *ORGTRELLO-ID* orgtrello/--entry-new-id)))
        orgtrello/--entities
@@ -676,7 +712,7 @@
 (defun orgtrello/--name-id (entities)
   "Given a list of association list (representing entities), return a map (id, name)."
   (let* ((name-id (make-hash-table :test 'equal)))
-    (--map (puthash (downcase (assoc-default'name it)) (downcase (assoc-default 'id it)) name-id) entities)
+    (--map (puthash (assoc-default'name it) (assoc-default 'id it) name-id) entities)
     name-id))
 
 (defun orgtrello/--list-boards ()
@@ -709,15 +745,20 @@
            (orgtrello/--chosen-board-name (gethash orgtrello/--chosen-board-id boards)))
       `(,orgtrello/--chosen-board-id ,orgtrello/--chosen-board-name))))
 
+(defun orgtrello/convention-property-name (name)
+  "Use the right convention for the property used in the headers of the org-mode file."
+  name)
+
 (defun orgtrello/update-orgmode-file-with-properties (board-name board-id board-lists-hash-name-id)
   "Update the orgmode file with the needed headers for org-trello to work."
   (with-current-buffer (current-buffer)
     (goto-char (point-min))
     (insert (format "#+property: board-name    %s\n" board-name))
     (insert (format "#+property: board-id      %s\n" board-id))
-    (insert (format "#+property: todo-list-id  %s\n" (gethash "todo"  board-lists-hash-name-id (gethash "to do" board-lists-hash-name-id))))
-    (insert (format "#+property: doing-list-id %s\n" (gethash "doing" board-lists-hash-name-id)))
-    (insert (format "#+property: done-list-id  %s\n" (gethash "done"  board-lists-hash-name-id)))
+    (maphash
+     (lambda (name id)
+       (insert (format "#+property: %s %s\n" (orgtrello/convention-property-name name) id)))
+     board-lists-hash-name-id)
     (save-buffer)
     (org-mode-restart)))
 
@@ -730,11 +771,31 @@
     orgtrello/--chosen-board-id
     (orgtrello/--name-id (orgtrello/--list-board-lists orgtrello/--chosen-board-id)))))
 
-(defun orgtrello/create-board (board-name &optional board-description)
-  "Create a board with name and description."
-  (let* ((board-data (orgtrello-query/http-sync (orgtrello-api/add-board board-name board-description)
-                                                'standard-success-callback-display)))
-    (mapcar (lambda (prop) (assoc-default prop board-data)) '(id name))))
+(defun orgtrello/--create-board (board-name &optional board-description)
+  "Create a board with name and eventually a description."
+  (progn
+    (message "Creating board '%s'" board-name)
+    (let* ((board-data (orgtrello-query/http-sync (orgtrello-api/add-board board-name board-description))))
+      (--map (assoc-default it board-data) '(id name)))))
+
+(defun orgtrello/--close-lists (list-ids)
+  "Given a list of ids, close those lists."
+  (mapc (lambda (list-id)
+          (progn
+            (message "Closing default list with id %s" list-id)
+            (orgtrello-query/http (orgtrello-api/close-list list-id) 'standard-success-callback 'standard-error-callback)))
+        list-ids))
+
+(defun orgtrello/--create-lists-according-to-keywords (board-id list-keywords)
+  "Given a list of names, build those lists on the trello boards. Return the hashmap (name, id) of the new lists created."
+  (cl-reduce
+   (lambda (acc-hash-name-id list-name)
+     (progn
+       (message "Board id %s - Creating list '%s'" board-id list-name)
+       (puthash list-name (assoc-default 'id (orgtrello-query/http-sync (orgtrello-api/add-list list-name board-id))) acc-hash-name-id)
+       acc-hash-name-id))
+   list-keywords
+   :initial-value (make-hash-table :test 'equal)))
 
 (defun orgtrello/do-create-board-and-lists ()
   "Interactive command to create a board and the lists"
@@ -743,9 +804,11 @@
   (defvar orgtrello/--board-description nil) (setq orgtrello/--board-description nil)
   (while (not orgtrello/--board-name) (setq orgtrello/--board-name (read-string "Please, input the desired board name: ")))
   (setq orgtrello/--board-description (read-string "Please, input the board description (empty for none): "))
-  (cl-destructuring-bind (orgtrello/--board-id orgtrello/--board-name) (orgtrello/create-board orgtrello/--board-name orgtrello/--board-description)
-                         (let ((orgtrello/--board-lists (orgtrello/--name-id (orgtrello/--list-board-lists orgtrello/--board-id))))
-                           (orgtrello/update-orgmode-file-with-properties orgtrello/--board-name orgtrello/--board-id orgtrello/--board-lists))))
+  (cl-destructuring-bind (orgtrello/--board-id orgtrello/--board-name) (orgtrello/--create-board orgtrello/--board-name orgtrello/--board-description)
+                         (let* ((orgtrello/--board-list-ids       (--map (assoc-default 'id it) (orgtrello/--list-board-lists orgtrello/--board-id)))  ;; first retrieve the existing lists (created by default on trello)
+                                (orgtrello/--lists-to-close       (orgtrello/--close-lists orgtrello/--board-list-ids))                                ;; close those lists (they may surely not match the name we want)
+                                (orgtrello/--board-lists-hname-id (orgtrello/--create-lists-according-to-keywords orgtrello/--board-id *LIST-NAMES*))) ;; create the list, this returns the ids list
+                           (orgtrello/update-orgmode-file-with-properties orgtrello/--board-name orgtrello/--board-id orgtrello/--board-lists-hname-id))))
 
 (message "orgtrello loaded!")
 
@@ -760,31 +823,31 @@
             ;; ok, we call the function
             (funcall fn-to-control-and-execute)
           ;; there is some trouble, trying to help the user
-          (message "You need to setup your:\n- consumer-key and your access-token for org-trello to work ok. Use M-x orgtrello/do-install-key-and-token\n- org-mode file and connect it to trello. Use M-x orgtrello/do-install-board-and-lists")))
+          (message "You need to:\n- C-c o i or M-x org-trello/install-key-and-token      - Setup your consumer-key and r/w access-token.\n- C-c o I or M-x org-trello/install-board-and-list-ids - Setup org-mode file and connect it to trello.\n                                                       - Beware, for this, you need to prepare your trello board lists with the same name as your\n                                                       - org-mode keywords (TODO, DONE for example).\n- C-c o b or M-x org-trello/create-board               - You can replace the previous step by creating directly a new board from your org-mode buffer.")))
     (funcall fn-to-control-and-execute)))
 
 (defun org-trello/create-simple-entity ()
   "Control first, then if ok, create a simple entity."
   (interactive)
-  (message "Syncing entity...")
+  (message "Synchronizing entity...")
   (org-trello/--control-and-do '(orgtrello/--control-keys orgtrello/--control-properties) 'orgtrello/do-create-simple-entity))
 
 (defun org-trello/create-complex-entity ()
   "Control first, then if ok, create an entity and all its arborescence if need be."
   (interactive)
-  (message "Syncing complex entity...")
+  (message "Synchronizing complex entity...")
   (org-trello/--control-and-do '(orgtrello/--control-keys orgtrello/--control-properties) 'orgtrello/do-create-complex-entity))
 
 (defun org-trello/sync-to-trello ()
   "Control first, then if ok, sync the org-mode file completely to trello."
   (interactive)
-  (message "Syncing org-mode file to trello...")
+  (message "Synchronizing org-mode file to trello...")
   (org-trello/--control-and-do '(orgtrello/--control-keys orgtrello/--control-properties) 'orgtrello/do-sync-full-file))
 
 (defun org-trello/sync-from-trello ()
   "Control first, then if ok, sync the org-mode file from the trello board."
   (interactive)
-  (message "Syncing trello board to org-mode file...")
+  (message "Synchronizing trello board to org-mode file...")
   (org-trello/--control-and-do '(orgtrello/--control-keys orgtrello/--control-properties) 'orgtrello/do-sync-full-from-trello))
 
 (defun org-trello/kill-entity ()
