@@ -4,7 +4,7 @@
 
 ;; Author: Antoine R. Dumont <eniotna.t AT gmail.com>
 ;; Maintainer: Antoine R. Dumont <eniotna.t AT gmail.com>
-;; Version: 0.0.4.1
+;; Version: 0.0.5
 ;; Package-Requires: ((org "7.9.2") (dash "1.4.0") (request "0.1.0") (cl-lib "0.3.0") (json "1.3"))
 ;; Keywords: org-mode trello sync org-trello
 ;; URL: https://github.com/ardumont/org-trello
@@ -597,29 +597,74 @@
   "Given a checklist id, retrieve all the items from the checklist and return a list containing first the checklist, then the items."
   (--map it (assoc-default 'checkItems checklist)))
 
+(defun orgtrello/--compute-full-entities-from-trello (cards)
+  "Given a list of cards, compute the full cards data from the trello boards"
+  ;; will compute the hash-table from such list
+  (cl-reduce
+   (lambda (orgtrello/--acc-hash orgtrello/--entity)
+     (puthash (assoc-default 'id orgtrello/--entity) orgtrello/--entity orgtrello/--acc-hash)
+     orgtrello/--acc-hash)
+   ;; will compute the full list of entities
+   (cl-reduce
+    (lambda (orgtrello/--acc-list orgtrello/--entity-card)
+      (message "Computing card '%s' data..." (assoc-default 'name orgtrello/--entity-card))
+      (append (cons orgtrello/--entity-card (orgtrello/--do-retrieve-checklists-from-card orgtrello/--entity-card)) orgtrello/--acc-list))
+    cards
+    :initial-value nil)
+   :initial-value (make-hash-table :test 'equal)))
+
+(defun orgtrello/--update-buffer-with-remaining-trello-data (entities)
+  "Given a map of entities, dump those entities in the current buffer."
+  (if entities ;; could be empty
+      (with-current-buffer (current-buffer)
+        ;; go at the end of the file
+        (goto-char (point-max))
+        ;; dump the remaining entities
+        (maphash
+         (lambda (orgtrello/--entry-new-id orgtrello/--entity)
+           (let ((orgtrello/--entry-new-name (assoc-default 'name orgtrello/--entity)))
+             (message "Synchronizing new entity '%s' with id '%s'..." orgtrello/--entry-new-name orgtrello/--entry-new-id)
+             (insert (orgtrello/--compute-entity-to-org-entry orgtrello/--entity))
+             (org-set-property *ORGTRELLO-ID* orgtrello/--entry-new-id)))
+         entities)
+        (save-buffer))))
+
+(defun orgtrello/--sync-buffer-with-trello-data (entities)
+  "Given all the entites, update the current buffer with those."
+  (with-current-buffer (current-buffer)
+    (org-map-entries
+     (lambda ()
+       (let ((entry-metadata (orgtrello-data/entry-get-full-metadata)))
+         (if entry-metadata ;; if level > 4, entry-metadata is not considered as this is not represented in trello board
+             ;; will search 'entities' hash table for updates (do not compute diffs, take them as is)
+             (let* ((orgtrello/--entity         (gethash :current entry-metadata))
+                    (orgtrello/--entity-id      (gethash :id orgtrello/--entity))
+                    (orgtrello/--entity-updated (gethash orgtrello/--entity-id entities)))
+               (if orgtrello/--entity-updated
+                   ;; found something, we update by squashing the current contents
+                   (let* ((orgtrello/--entry-new-id   (assoc-default 'id   orgtrello/--entity-updated))
+                          (orgtrello/--entry-new-name (assoc-default 'name orgtrello/--entity-updated)))
+                     ;; update the buffer with the new updates (there may be none but naively we will overwrite at the moment)
+                     (message "Synchronizing entity '%s' with id '%s'..." orgtrello/--entry-new-name orgtrello/--entry-new-id)
+                     (org-show-entry)
+                     (kill-whole-line)
+                     (insert (orgtrello/--compute-entity-to-org-entry orgtrello/--entity-updated))
+                     ;; remove the entry from the hash-table
+                     (remhash orgtrello/--entity-id entities)))))))
+     t
+     'file)
+    (save-buffer))
+  ;; return the entities which has been dryed
+  entities)
+
 (defun orgtrello/do-sync-full-from-trello ()
   "Full org-mode file synchronisation. Beware, this will block emacs as the request is synchronous."
   (message "Synchronizing the trello board '%s' to the org-mode file. This may take a moment, some coffee may be a good idea..." (orgtrello/--board-name))
-  (let* ((orgtrello/--board-id (assoc-default *BOARD-ID* org-file-properties))
-         (orgtrello/--cards    (orgtrello-query/http-sync (orgtrello-api/get-cards orgtrello/--board-id) 'standard-success-callback))
-         (orgtrello/--entities (cl-reduce
-                                (lambda (orgtrello/--acc-list orgtrello/--entity-card)
-                                  (message "Synchronizing card '%s'..." (assoc-default 'name orgtrello/--entity-card))
-                                  (append (cons orgtrello/--entity-card (orgtrello/--do-retrieve-checklists-from-card orgtrello/--entity-card)) orgtrello/--acc-list))
-                                orgtrello/--cards
-                                :initial-value nil))) ;; FIXME filter on only the todo, doing, done lists
-
-    (with-current-buffer (current-buffer)
-      (cl-reduce
-       (lambda (str-acc entity)
-         (let ((orgtrello/--entry-new-id   (assoc-default 'id   entity))
-               (orgtrello/--entry-new-name (assoc-default 'name entity)))
-           (message "Synchronizing entity '%s' with id '%s'..." orgtrello/--entry-new-name orgtrello/--entry-new-id)
-           (insert (orgtrello/--compute-entity-to-org-entry entity))
-           (org-set-property *ORGTRELLO-ID* orgtrello/--entry-new-id)))
-       orgtrello/--entities
-       :initial-value "")
-      (save-buffer))))
+  (let* ((orgtrello/--board-id           (assoc-default *BOARD-ID* org-file-properties))
+         (orgtrello/--cards              (orgtrello-query/http-sync (orgtrello-api/get-cards orgtrello/--board-id) 'standard-success-callback))
+         (orgtrello/--entities-hash-map  (orgtrello/--compute-full-entities-from-trello orgtrello/--cards))
+         (orgtrello/--remaining-entities (orgtrello/--sync-buffer-with-trello-data orgtrello/--entities-hash-map)))
+    (orgtrello/--update-buffer-with-remaining-trello-data orgtrello/--remaining-entities)))
 
 (defun orgtrello/describe-heading ()
   (interactive)

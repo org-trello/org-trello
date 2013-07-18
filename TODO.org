@@ -331,16 +331,31 @@ CLOSED: [2013-07-16 mar. 20:04]
 CLOSED: [2013-07-16 mar. 20:03]
 ** DONE Release on github
 CLOSED: [2013-07-16 mar. 20:04]
-* TODO v0.0.5 [0%]
-** TODO filter out directly with the api the data we do not need to avoid unnecessary network traffic
-** TODO How to deal with synchronizing the org-mode buffer and the trello board without a synchronized request?
+* DONE v0.0.5 [100%]
+CLOSED: [2013-07-18 jeu. 16:06]
+** DONE Synchronizing from the trello board must simply computes and add/remove what's changed [100%]
+CLOSED: [2013-07-18 jeu. 15:30]
+*** DONE Refactor current sync-from-trello function to let emerge the contract
+CLOSED: [2013-07-18 jeu. 12:09]
+*** DONE Compute the current content of the trello board as a hash-table, the synchronisation of the buffer still working.
+CLOSED: [2013-07-18 jeu. 13:42]
+*** DONE Merge naively the content of the org-mode buffer and trello board (priority to the trello data if conflicts). If nothing is present, dump as before the content.
+CLOSED: [2013-07-18 jeu. 14:59]
+** DONE Rewrite the release notes in their own file
+CLOSED: [2013-07-17 mer. 20:23]
+** DONE Update the release notes
+CLOSED: [2013-07-18 jeu. 15:59]
+** DONE Update the version
+CLOSED: [2013-07-18 jeu. 15:59]
+** DONE Look on how to make a toc in the README.md in github
+CLOSED: [2013-07-18 jeu. 16:04]
+** DONE Release on github, marmalade, melpa
+CLOSED: [2013-07-18 jeu. 16:06]
+* TODO v0.0.6 [0%]
+** TODO Filter out directly with the api the data we do not need to avoid unnecessary network traffic
 ** TODO Replace already present properties regarding boards before injecting new ones.
 ** TODO A fake trello server to be able to test without a network
-** TODO Testing the packaging
-** TODO Assign yourself to the card?
-Is this really usefull?
-
-** TODO If no level 3, we may create a dummy checklist and attach every todo to such dummy checklist
+** TODO Testing the packaging, at the moment, this is done manually (make package & M-x package-install-file)
 * Questions
 ** How to deal with promotion/demotion?
 We do not deal with it at the moment.
@@ -352,3 +367,6 @@ Idea: - demotion: remove the card and add the checklist or the task to the card 
 Dependencies:
 - Delete must be implemented.
 - Create with full arborescence from the current level must also be implemented.
+** How to deal with synchronizing the org-mode buffer and the trello board without a synchronized request?
+** Is the assignment to one's card necessary?
+** if there is no level 3 (items), can't we just create a dummy checklist with all the second level as items?
