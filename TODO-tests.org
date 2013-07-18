@@ -10,340 +10,183 @@
 #+title: synced from trello
 #+author: Antoine R. Dumont
 
-* DONE v0.0.1 [100%]
-CLOSED: [2013-07-04 jeu. 20:19]
-:PROPERTIES:
-:orgtrello-id: 51e5566c7e0367312e00135a
-:END:
-** DONE emacs-lisp HTTP Client
-CLOSED: [2013-06-29 sam. 15:29]
-** DONE authentication in trello
-CLOSED: [2013-06-29 sam. 15:29]
-** DONE http request on trello api
-CLOSED: [2013-06-29 sam. 15:29]
-** DONE api tinkering (see [[https://github.com/ardumont/trello-lab][ardumont/trello-lab]] on github)
-CLOSED: [2013-06-29 sam. 15:29]
-** DONE porting tinkering results into emacs-lisp
-CLOSED: [2013-06-30 dim. 13:37]
-** DONE testing
-CLOSED: [2013-06-29 sam. 15:29]
-** DONE testing in batch mode
-CLOSED: [2013-06-29 sam. 16:49]
-** DONE Define use case
-CLOSED: [2013-06-29 sam. 16:49]
-** DONE trying out the results interactively
-CLOSED: [2013-06-30 dim. 00:13]
-** DONE Finding out the org-mode hooks [100%]           :howTo:emacs:orgMode:
-CLOSED: [2013-07-01 lun. 10:58]
-http://orgmode.org/worg/org-configs/org-hooks.html
-http://orgmode.org/worg/doc.html
-1) org-after-todo-state-change-hook
-2) etc...
-*** DONE hook that seems interesting for the goal at end
-CLOSED: [2013-06-30 dim. 15:47]
-- org-cycle-hook
-- org-after-todo-state-change-hook
-- org-insert-heading-hook
-- org-after-promote-entry-hook
-- org-after-demote-entry-hook
-*** DONE miscellaneous functions that seems useful for the goat at end
-CLOSED: [2013-07-01 lun. 08:05]
-- org-cycle
-- org-current-level
-- org-heading-components
-- org-block-todo-from-children-or-siblings-or-parent
-- org-entry-is-done-p
-- org-entry-is-todo-p
-- save-excursion
-- org-back-to-heading
-- org-next-item
-- org-list-has-child-p
-- org-list-get-parent
-- org-list-get-children
-- org-list-get-subtree
-*** DONE Hooks [100%]
-CLOSED: [2013-07-02 mar. 18:55]
-**** DONE state change for an item - org-trigger-hook (look also to org-after-todo-state-change-hook)
-CLOSED: [2013-06-30 dim. 16:21]
-Adding a simple function that displays a message to the org-trigger-hook.
-**** DONE create new task (org-insert-heading-hook
-CLOSED: [2013-06-30 dim. 16:28]
-**** DONE promote a task (org-after-promote-entry-hook
-CLOSED: [2013-06-30 dim. 16:39]
-**** DONE demote a task (org-after-demote-entry-hook)
-CLOSED: [2013-06-30 dim. 16:40]
-** DONE Finding out howto make an emacs minor mode             :howTo:emacs
-CLOSED: [2013-07-01 lun. 08:04]
-https://www.gnu.org/software/emacs/manual/html_node/emacs/Modes.html#Modes
-http://nullprogram.com/blog/2013/02/06/
-** DONE function generating metadata
-CLOSED: [2013-07-01 lun. 10:58]
-*** org-current-level
-Compute the current level (number of stars)
-*** org-get-heading
-return the title heading
-*** org-heading-components
-return the list of metadata (including title, keyword and level)
-** DONE Find org function that extract information from line (org-heading-components)
-CLOSED: [2013-07-01 lun. 11:00]
-** DONE Develop simple function to compute the needed data only
-CLOSED: [2013-07-01 lun. 11:00]
-** DONE Plug the call of a function that displays such informations in a hook
-CLOSED: [2013-07-01 lun. 11:00]
-** DONE Plug the call of a function that displays such informations with a binding
-CLOSED: [2013-07-01 lun. 11:00]
-** DONE binding to describe the current heading
-CLOSED: [2013-07-01 lun. 16:00]
-** DONE Depending on the level, trigger the right api call
-CLOSED: [2013-07-02 mar. 18:50]
-*** DONE Dispatch on the level
-CLOSED: [2013-07-01 lun. 12:15]
-*** DONE Basic [100%]
-CLOSED: [2013-07-01 lun. 22:35]
-**** DONE level 1 - api create trello card
-CLOSED: [2013-07-01 lun. 12:44]
-- simple display of the api call result
-- plug the call
-**** DONE level 1 - http call to create the card
-CLOSED: [2013-07-01 lun. 16:00]
-**** DONE level 2 - update trello card
-CLOSED: [2013-07-01 lun. 16:00]
-**** DONE level 2 - create trello checklist
-CLOSED: [2013-07-01 lun. 21:46]
-**** DONE level 2 - update trello checklist
-CLOSED: [2013-07-01 lun. 21:46]
-**** DONE level 3 - create trello item
-CLOSED: [2013-07-01 lun. 21:59]
-**** DONE level 3 - update trello item
-CLOSED: [2013-07-01 lun. 22:19]
-**** DONE > level 4 - display that we do not deal with such level
-CLOSED: [2013-07-01 lun. 22:35]
-
-*** DONE Depending on the card's state (level 1 entry), move the card to the list (todo, doing, done) [100%]
-CLOSED: [2013-07-02 mar. 18:43]
-**** DONE Find id board
-CLOSED: [2013-07-02 mar. 17:02]
-
-from [[https://github.com/ardumont/trello-lab][trello-lab]]:
-#+begin_src clojure
-trello-lab.playground> (-> board1
-                           :id
-                           lists
-                           query/execute
-                           clojure.pprint/pprint)
-[{:id "51d15c319c93af375200155f",
-  :name "Todo",
-  :closed false,
-  :idBoard "50bcfd2f033110476000e768",
-  :pos 1536,
-  :subscribed false}
- {:id "51d15c98741fd4673a0014b5",
-  :name "Doing",
-  :closed false,
-  :idBoard "50bcfd2f033110476000e768",
-  :pos 3072,
-  :subscribed false}
- {:id "50bcfd2f033110476000e76b",
-  :name "Done",
-  :closed false,
-  :idBoard "50bcfd2f033110476000e768",
-  :pos 263168,
-  :subscribed false}]
-#+end_src
-
-**** DONE code the id to look for depending on the state
-CLOSED: [2013-07-02 mar. 18:43]
-** DONE Adding org metadata file `a la` #+BOARD-ID, #+TODO-LIST-ID, #+DOING-LIST-ID, #+DONE-LIST-ID to permit the user to setup easily without touching lisp code
-CLOSED: [2013-07-01 lun. 23:31]
-Adding this:
-#+begin_src org-mode
-# +property: board-id      <board-id>
-# +property: todo-list-id  <todo-list-id>
-# +property: doing-list-id <doing-list-id>
-# +property: done-list-id  <done-list-id>
-#+end_src
-Note: # + instead of #+ to avoid org-mode capturing the bad ones.
-
-** DONE Make orgtrello a minor mode for org-mode
-CLOSED: [2013-07-02 mar. 16:36]
-** DONE create/update trello card from top (card) to bottom (items)
-CLOSED: [2013-07-02 mar. 22:24]
-*** DONE Retrieve all the list - org-map-tree
-CLOSED: [2013-07-02 mar. 22:20]
-*** DONE A binding to describe the extraction of all data
-CLOSED: [2013-07-02 mar. 22:21]
-*** DONE Trigger the creation of the card and every level up to 3 (checklist + task)
-CLOSED: [2013-07-03 mer. 14:15]
-- At the moment, need to create the card first
-- Then hit again, this will create the checklists
-- Then hit again, this will create the tasks
-Why? Do not know why yet!
-
-- Limit: I had to make the http request synchronous
-
-** DONE Improve the callback (at the moment, the id is written where the carret is, so if we move while a http request takes place, the id is written badly)
-CLOSED: [2013-07-03 mer. 00:47]
-** DONE Improve the id generation and use the properties instead of tags (cf. org2blog)
-CLOSED: [2013-07-03 mer. 01:25]
-** DONE Delete [100%]
-CLOSED: [2013-07-03 mer. 20:31]
-*** DONE card
-CLOSED: [2013-07-03 mer. 20:31]
-**** DONE api call
-CLOSED: [2013-07-03 mer. 17:18]
-**** DONE plug
-CLOSED: [2013-07-03 mer. 20:31]
-*** DONE checklist
-CLOSED: [2013-07-03 mer. 20:31]
-**** DONE api call
-CLOSED: [2013-07-03 mer. 17:18]
-**** DONE plug
-CLOSED: [2013-07-03 mer. 20:31]
-*** DONE task
-CLOSED: [2013-07-03 mer. 20:31]
-**** DONE api call
-CLOSED: [2013-07-03 mer. 17:18]
-**** DONE plug
-CLOSED: [2013-07-03 mer. 20:31]
-** DONE Make an interactive setup for retrieving the consumer key and the secret-token and generate it inside ~/.trello/config.el
-CLOSED: [2013-07-03 mer. 23:30]
-This will ease the installation of the *config.el* file
-- M-x install-orgtrello
-- Open the browser on https://trello.com/1/appKey/generate
-- Let the user retrieve the consumer-key and input it in the modeline.
-- Open the browser on https://trello.com/1/authorize?response_type=token&name=org-trello&scope=read,write&expiration=never&key=<consumer-key>
-- Prompt for the user to input its token
-- Generate the following file *~/.trello/config.el*
-#+begin_src emacs-lisp
-;; from: https://trello.com/1/appKey/generate
-(defvar consumer-key "<consumer-key>")
-;; from: https://trello.com/1/authorize?response_type=token&name=org-trello&scope=read,write&expiration=never&key=<consumer-key>
-(defvar access-token "<access-token>")
-#+end_src
-- Display what has been done to the user's filesystem by showing the content of *~/.trello/config.el*.
-
-** DONE Make an interactive setup for retrieving the list ids of the board
-CLOSED: [2013-07-04 jeu. 15:32]
-This will ease the installation of the list-ids in top of the org file.
-Workflow:
-- M-x orgtrello-do-install-board-and-lists - interactive command to install the board and list ids
-- Make a request to list the board ids (name + ids), and display them on a buffer.
-- Prompt for the user to choose the board-id he wants
-- Retrieve the todo, doing and done id list
-- Generate the different metadata needed in the org-mode file
-#+begin_src txt
-# +property: board-id      <board-id>
-# +property: todo-list-id  <todo-list-id>
-# +property: doing-list-id <doing-list-id>
-# +property: done-list-id  <done-list-id>
-#+end_src
-Note: # + instead of #+ because otherwise, org-mode captures them and overwrite the right ones.
-** DONE Control the access to the function depending on the ~/.trello/config.el file.
-CLOSED: [2013-07-04 jeu. 18:25]
-** DONE Control the access to the function depending on the properties board-id, todo-list-id, etc...
-CLOSED: [2013-07-04 jeu. 19:16]
-** DONE Packaging [%]
-CLOSED: [2013-07-04 jeu. 20:19]
-*** DONE Make a multi-file package
-CLOSED: [2013-07-03 mer. 18:44]
-*** DONE Deal with generate the version
-CLOSED: [2013-07-03 mer. 18:44]
-*** DONE Make a release on marmalade/melpa
-CLOSED: [2013-07-04 jeu. 20:19]
-http://www.marmalade-repo.org/packages
-https://github.com/milkypostman/melpa
-http://nic.ferrier.me.uk/blog/2012_07/emacs-packages-for-programmers
-
-* DONE v0.0.2 [100%]
-CLOSED: [2013-07-07 dim. 10:54]
-** DONE Technical release fixing technical details
-CLOSED: [2013-07-07 dim. 10:54]
-** DONE Fixing the packaging (inlining into org-trello.el)
-CLOSED: [2013-07-07 dim. 10:54]
-** DONE Adding ci-travis
-CLOSED: [2013-07-07 dim. 10:54]
-** DONE Local packaging to help testing
-CLOSED: [2013-07-07 dim. 10:54]
-
-* DONE v0.0.3 [100%]
-CLOSED: [2013-07-08 lun. 14:07]
-** DONE Syncing complex entities
-CLOSED: [2013-07-07 dim. 10:55]
-** DONE cleanup useless tests
-CLOSED: [2013-07-07 dim. 11:02]
-** DONE Namespace cleanup
-CLOSED: [2013-07-07 dim. 11:34]
-** DONE Building package is now able to deal with the right version
-CLOSED: [2013-07-07 dim. 15:11]
-** DONE Create a board from org-mode
-CLOSED: [2013-07-07 dim. 17:32]
-** DONE Display the name of the board as a property file
-CLOSED: [2013-07-07 dim. 18:02]
-** DONE Cleanup the useless controls
-CLOSED: [2013-07-07 dim. 18:05]
-** DONE Given a org-mode file, fill in the trello board
-CLOSED: [2013-07-07 dim. 18:51]
-Dismiss non compatible org-mode entries
-** DONE Announce in emacs mailing list
-CLOSED: [2013-07-07 dim. 19:11]
-emacs-orgmode@gnu.org
-gnu-emacs-sources@gnu.org
-** DONE Filter out the closed boards from the "choose board list"
-CLOSED: [2013-07-07 dim. 22:27]
-** DONE filter out level > 4 when syncing.
-CLOSED: [2013-07-07 dim. 23:03]
-** DONE Given a trello board, sync into a org-mode file
-CLOSED: [2013-07-08 lun. 14:07]
-
-* DONE v0.0.4 [100%]
-CLOSED: [2013-07-16 mar. 16:16]
-** DONE Deploy on marmalade the stable version (and update the readme about it)
-CLOSED: [2013-07-11 jeu. 18:42]
-** DONE Rewrite tests using `expectations`
-CLOSED: [2013-07-08 lun. 19:09]
-** DONE Simplify some code regarding destructuring for example
-CLOSED: [2013-07-08 lun. 19:47]
-** DONE Remove useless code
-CLOSED: [2013-07-08 lun. 19:47]
-** DONE Improve documentations and sync the routine check message with the documentation.
-CLOSED: [2013-07-16 mar. 14:21]
-** DONE Permit the user to deal with his/her own trello list (based on his/her org-mode keywords - cf. http://orgmode.org/manual/In_002dbuffer-settings.html) [100%]
-CLOSED: [2013-07-16 mar. 16:11]
-*** DONE When installing board, list all name-id pair as properties file
-CLOSED: [2013-07-16 mar. 13:08]
-*** DONE Ensure the control check for only todo, doing, done.
-CLOSED: [2013-07-16 mar. 13:16]
-*** DONE Ensure the state computation of a card take into account the multiple list
-CLOSED: [2013-07-16 mar. 14:23]
-*** DONE Load all properties list id
-CLOSED: [2013-07-16 mar. 14:23]
-*** DONE Creating the board with the right cards (name attached to keyword)
-CLOSED: [2013-07-16 mar. 16:10]
-*** DONE Fix non interactive command that are defined as though they were (we need to ensure the passage by the controlling function).
-CLOSED: [2013-07-16 mar. 16:03]
-** DONE Update documentation
-CLOSED: [2013-07-16 mar. 16:16]
-* TODO v0.0.5 [0%]
-** TODO filter out directly with the api the data we do not need to avoid unnecessary network traffic
-** TODO How to deal with synchronizing the org-mode buffer and the trello board without a synchronized request?
-** TODO Replace already present properties regarding boards before injecting new ones.
-** TODO A fake trello server to be able to test without a network
-** TODO Testing the packaging
-** TODO Assign yourself to the card?
-Is this really usefull?
-
-** TODO If no level 3, we may create a dummy checklist and attach every todo to such dummy checklist
-* Questions
+* PENDING Questions
 :PROPERTIES:
 :orgtrello-id: 51e559ad536240d935001d97
 :END:
 ** How to deal with promotion/demotion?
-We do not deal with it at the moment.
-Idea: - demotion: remove the card and add the checklist or the task to the card if need be
-      - promotion: remove the checklist and create the card if need be
-      - promotion: the item and create the checklist if need be
-???
-
-Dependencies:
-- Delete must be implemented.
-- Create with full arborescence from the current level must also be implemented.
+:PROPERTIES:
+:orgtrello-id: 51e567aff8d10f7b21001fb8
+:END:
+* DONE v0.0.4 [100%]
+:PROPERTIES:
+:orgtrello-id: 51e568237e0367312e001704
+:END:
+** Permit the user to deal with his/her own trello list (based on his/her org-mode keywords - cf. http://orgmode.org/manual/In_002dbuffer-settings.html) [100%]
+:PROPERTIES:
+:orgtrello-id: 51e56829b62b81cc12001ec1
+:END:
+*** DONE When installing board, list all name-id pair as properties file
+:PROPERTIES:
+:orgtrello-id: 51e5682acb1782557b0022cb
+:END:
+*** DONE Ensure the control check for only todo, doing, done.
+:PROPERTIES:
+:orgtrello-id: 51e5682bd23ccba35c0038e0
+:END:
+*** DONE Ensure the state computation of a card take into account the multiple list
+:PROPERTIES:
+:orgtrello-id: 51e5682ba375c5ae5c00365c
+:END:
+*** DONE Load all properties list id
+:PROPERTIES:
+:orgtrello-id: 51e5682ce4140e2b3e001892
+:END:
+*** DONE Creating the board with the right cards (name attached to keyword)
+:PROPERTIES:
+:orgtrello-id: 51e5682dacd719ce0e002232
+:END:
+*** DONE Fix non interactive command that are defined as though they were (we need to ensure the passage by the controlling function).
+:PROPERTIES:
+:orgtrello-id: 51e5682e64efe1e617002196
+:END:
+** Remove useless code
+:PROPERTIES:
+:orgtrello-id: 51e568278c58efb3590018aa
+:END:
+** Simplify some code regarding destructuring for example
+:PROPERTIES:
+:orgtrello-id: 51e56826ff7e2fed38002034
+:END:
+** Deploy on marmalade the stable version (and update the readme about it)
+:PROPERTIES:
+:orgtrello-id: 51e568243da1dc133e001742
+:END:
+** Rewrite tests using `expectations`
+:PROPERTIES:
+:orgtrello-id: 51e56825f190e6736a0022dc
+:END:
+** Update documentation
+:PROPERTIES:
+:orgtrello-id: 51e5682f06f5cf5826001ed3
+:END:
+** Improve documentations and sync the routine check message with the documentation.
+:PROPERTIES:
+:orgtrello-id: 51e568288ee143012a002952
+:END:
+* DONE Programming in Haskell
+:PROPERTIES:
+:orgtrello-id: 51e02fb683d8ac5a4500358b
+:END:
+* DONE Clojure Programming
+:PROPERTIES:
+:orgtrello-id: 51e02fb663b4da66050026e3
+:END:
+* DONE Joy of Clojure
+:PROPERTIES:
+:orgtrello-id: 51e02fb50bd93ea60600235b
+:END:
+* IN-PROGRESS Functional programming in Haskell
+:PROPERTIES:
+:orgtrello-id: 51e02fb455ff94a71e002133
+:END:
+* IN-PROGRESS Programming in scala
+:PROPERTIES:
+:orgtrello-id: 51e02e12e2e19b983f0015dc
+:END:
+** chapters
+:PROPERTIES:
+:orgtrello-id: 51e02e406fd8f8526b00397e
+:END:
+*** DONE introduction
+:PROPERTIES:
+:orgtrello-id: 51e02e4f870e404154001eaf
+:END:
+*** DONE Ch. 1 - A scalable language
+:PROPERTIES:
+:orgtrello-id: 51e02e504e843c9d4b001e3c
+:END:
+*** DONE Ch. 2 - First steps in scala
+:PROPERTIES:
+:orgtrello-id: 51e02e50870e404154001eb0
+:END:
+*** DONE Ch. 3 - Next steps in scala
+:PROPERTIES:
+:orgtrello-id: 51e02e510f5a0ed737003474
+:END:
+*** DONE Ch. 4 - Classes and objects
+:PROPERTIES:
+:orgtrello-id: 51e02e52178c2b042b0026b9
+:END:
+*** DONE Ch. 5 - Basic types and operations
+:PROPERTIES:
+:orgtrello-id: 51e02e536bb045e42a00375b
+:END:
+*** DONE Ch. 6 - Functional objects
+:PROPERTIES:
+:orgtrello-id: 51e02e543d261677540038db
+:END:
+*** TODO Ch. 7 - Buit-in control structures
+:PROPERTIES:
+:orgtrello-id: 51e02e54daac63334f00215c
+:END:
+*** TODO Ch. 8 - Functions and closures
+:PROPERTIES:
+:orgtrello-id: 51e02e557946c71c38002424
+:END:
+*** TODO Ch. 9 - Control abstraction
+:PROPERTIES:
+:orgtrello-id: 51e02e5610f4cc366b002140
+:END:
+*** TODO Ch. 10 - Composition and inheritance
+:PROPERTIES:
+:orgtrello-id: 51e02e5783d8ac5a4500353a
+:END:
+*** TODO Ch. 11 - Scala's hierarchy
+:PROPERTIES:
+:orgtrello-id: 51e02e58f286ac5c5400381d
+:END:
+*** TODO Ch. 12 - Traits
+:PROPERTIES:
+:orgtrello-id: 51e02e58daac63334f00215d
+:END:
+*** TODO ...
+:PROPERTIES:
+:orgtrello-id: 51e02e5947dcbde3470014ec
+:END:
+* TODO v0.0.5 [0%]
+:PROPERTIES:
+:orgtrello-id: 51e5682fff4c36b43e002304
+:END:
+** Testing the packaging
+:PROPERTIES:
+:orgtrello-id: 51e5683329ef12da5d00289c
+:END:
+** Replace already present properties regarding boards before injecting new ones.
+:PROPERTIES:
+:orgtrello-id: 51e56832ff4c36b43e002306
+:END:
+** If no level 3, we may create a dummy checklist and attach every todo to such dummy checklist
+:PROPERTIES:
+:orgtrello-id: 51e56835143dcadf290022a1
+:END:
+** filter out directly with the api the data we do not need to avoid unnecessary network traffic
+:PROPERTIES:
+:orgtrello-id: 51e56830f8cd1d22240019cf
+:END:
+** How to deal with synchronizing the org-mode buffer and the trello board without a synchronized request?
+:PROPERTIES:
+:orgtrello-id: 51e56831047fa0e57a001f87
+:END:
+** Assign yourself to the card?
+:PROPERTIES:
+:orgtrello-id: 51e5683437df571d2a0021b1
+:END:
+** A fake trello server to be able to test without a network
+:PROPERTIES:
+:orgtrello-id: 51e5683253c09b776a0032c5
+:END:
+* TODO Structure and Interpretation of Computer programs
+:PROPERTIES:
+:orgtrello-id: 51e02fb783d8ac5a4500358d
+:END:

@@ -5,6 +5,31 @@ org-trello
 
 Minor emacs mode for org-mode - 2-way synchronization between org-mode file and trello board
 
+**Table of Contents**  *generated with [DocToc](http://doctoc.herokuapp.com/)*
+
+- [org-trello](#org-trello)
+- [why?](#why)
+- [Contributions](#contributions)
+- [Release notes](./release-notes.md)
+- [Install](#install)
+	- [marmalade - Stable version](#marmalade---stable-version)
+	- [melpa - ~snapshot](#melpa---snapshot)
+	- [org-trello](#org-trello-1)
+	- [github](#github)
+	- [Example](#example)
+- [Setup](#setup)
+	- [Emacs related](#emacs-related)
+	- [Trello related](#trello-related)
+		- [keys](#keys)
+		- [Sync org to trello](#sync-org-to-trello)
+			- [pre-requisite](#pre-requisite)
+			- [Sync your org-mode buffer](#sync-your-org-mode-buffer)
+		- [Create a board](#create-a-board)
+- [Bindings](#bindings)
+- [Use cases](#use-cases)
+- [Demo (in videos)](#demo)
+- [License](#license)
+
 # why?
 
 - org-mode is what I need.
@@ -21,59 +46,7 @@ Minor emacs mode for org-mode - 2-way synchronization between org-mode file and 
 
 # Release notes
 
-## v0.0.4.1
-
-- DONE Fix the creation board routine regarding the org-mode keywords (dynamic typing hell!)
-- DONE Improve documentation regarding the possibilities to setup the org-mode keyword
-- DONE Upgrade version to 0.0.4.1
-- DONE Release on github, melpa, marmalade
-
-## v0.0.4
-
-- DONE Permit the user to deal with his/her own trello list (based on his/her org-mode keywords - cf. http://orgmode.org/manual/In_002dbuffer-settings.html)
-- DONE Deploy on marmalade the stable version (and update the readme about it)
-- DONE Rewrite tests using `expectations`
-- DONE Simplify some code regarding destructuring for example
-- DONE Remove useless code
-- DONE Improve documentations and sync the routine check message with the documentation.
-- DONE Update documentation
-- DONE Release on github, melpa, marmalade
-
-## v0.0.3
-
-- DONE Syncing complex entities
-- DONE cleanup useless tests
-- DONE Namespace cleanup
-- DONE Building package is now able to deal with the right version
-- DONE Create a board from org-mode
-- DONE Display the name of the board as a property file
-- DONE Cleanup the useless controls
-- DONE Given a org-mode file, fill in the trello board
-- DONE Announce in emacs mailing list
-- DONE Filter out the closed boards from the "choose board list"
-- DONE filter out level > 4 when syncing.
-- DONE Given a trello board, sync into a org-mode file
-- cf. [todo/done](./TODO.org) for the remains
-- DONE Release on github (and the previous version too)
-
-## v0.0.2
-
-- Technical release fixing technical details
-- Fixing the packaging (inlining into org-trello.el)
-- Adding ci-travis
-- Local packaging to help testing
-
-## v0.0.1
-
-- write only mode at the moment (org-mode pushes to trello, no reading yet)
-- simple entity creation (card, checklist, item/task), the request is asynchroneous
-- entity deletion (card, checklist, item/task)
-- Interactive command to ease the setup of the consumer-key and the access-token
-- Interactive command to ease the setup of one org-mode file (which represents one trello board). I assume there exists
-  a 'todo', 'doing', and 'done' list (named that way too)
-- Control that the setup file (consumer-key and access-token) are rightly generated (to avoid later problem)
-- Control that the properties on the current org-mode file are rightly setuped to access a trello board
-- packaging for melpa
+[Release notes](./release-notes.md)
 
 # Install
 
@@ -295,7 +268,7 @@ At the moment, this action is synchronous.
 
 8. You can remove the entity and its arborescence with `C-c o k`.
 
-# Demo
+# Demo (in video)
 
 - [Install](http://youtu.be/e3NzllAHbHY)
 - [Setup key and token](http://youtu.be/ReUp1Wn5scc)
