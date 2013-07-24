@@ -439,46 +439,79 @@
   (let* ((orgtrello/--card-kwd (gethash :keyword card-meta *TODO*)))
     (if orgtrello/--card-kwd orgtrello/--card-kwd *TODO*)))
 
+(defun orgtrello/--checks-before-sync-card (card-meta)
+  "Checks done before synchronizing the cards."
+  (let ((orgtrello/--card-name (gethash :title card-meta)))
+    (if orgtrello/--card-name
+        :ok
+      "Cannot synchronize the card - missing mandatory label. Skip it...")))
+
 (defun orgtrello/--card (card-meta &optional parent-meta grandparent-meta)
   "Deal with create/update card query build. If the checks are ko, the error message is returned."
-  (let ((orgtrello/--card-name (gethash :title card-meta)))
+  (let ((checks-ok-or-error-message (orgtrello/--checks-before-sync-card card-meta)))
     ;; title is mandatory
-    (if orgtrello/--card-name
+    (if (equal :ok checks-ok-or-error-message)
         ;; parent and grandparent are useless here
         (let* ((orgtrello/--card-kwd  (orgtrello/--retrieve-state-of-card card-meta))
                (orgtrello/--list-id   (assoc-default orgtrello/--card-kwd org-file-properties))
-               (orgtrello/--card-id   (gethash :id    card-meta)))
+               (orgtrello/--card-id   (gethash :id    card-meta))
+               (orgtrello/--card-name (gethash :title card-meta)))
           (if orgtrello/--card-id
               ;; update
               (orgtrello-api/move-card orgtrello/--card-id orgtrello/--list-id orgtrello/--card-name)
             ;; create
             (orgtrello-api/add-card orgtrello/--card-name orgtrello/--list-id)))
-      "Cannot synchronize the card - missing mandatory label. Skip it...")))
+      checks-ok-or-error-message)))
+
+(defun orgtrello/--checks-before-sync-checklist (checklist-meta card-meta)
+  "Checks done before synchronizing the checklist."
+  (let ((orgtrello/--checklist-name (gethash :title checklist-meta))
+        (orgtrello/--card-id        (gethash :id card-meta)))
+    (if orgtrello/--checklist-name
+        (if orgtrello/--card-id
+            :ok
+          "Cannot synchronize the checklist - we need the card to be synchronized first. Skip it...")
+      "Cannot synchronize the checklist - missing mandatory label. Skip it...")))
 
 (defun orgtrello/--checklist (checklist-meta &optional card-meta grandparent-meta)
   "Deal with create/update checklist query build. If the checks are ko, the error message is returned."
-  (let ((orgtrello/--checklist-name (gethash :title checklist-meta)))
+  (let ((checks-ok-or-error-message (orgtrello/--checks-before-sync-checklist checklist-meta card-meta)))
     ;; title is mandatory
-    (if orgtrello/--checklist-name
+    (if (equal :ok checks-ok-or-error-message)
         ;; grandparent is useless here
         (let* ((orgtrello/--checklist-id   (gethash :id checklist-meta))
-               (orgtrello/--card-id        (gethash :id card-meta)))
+               (orgtrello/--card-id        (gethash :id card-meta))
+               (orgtrello/--checklist-name (gethash :title checklist-meta)))
           (if orgtrello/--checklist-id
               ;; update
               (orgtrello-api/update-checklist orgtrello/--checklist-id orgtrello/--checklist-name)
             ;; create
             (orgtrello-api/add-checklist orgtrello/--card-id orgtrello/--checklist-name)))
-      "Cannot synchronize the checklist - missing mandatory label. Skip it...")))
+      checks-ok-or-error-message)))
+
+(defun orgtrello/--checks-before-sync-item (task-meta checklist-meta card-meta)
+  "Checks done before synchronizing the checklist."
+  (let ((orgtrello/--task-name    (gethash :title task-meta))
+        (orgtrello/--checklist-id (gethash :id checklist-meta))
+        (orgtrello/--card-id      (gethash :id card-meta)))
+    (if orgtrello/--task-name
+        (if orgtrello/--checklist-id
+            (if orgtrello/--card-id
+                :ok
+              "Cannot synchronize the item - we need the card to be synchronized first. Skip it...")
+          "Cannot synchronize the item - we need the checklist to be synchronized first. Skip it...")
+      "Cannot synchronize the item - missing mandatory label. Skip it...")))
 
 (defun orgtrello/--task (task-meta &optional checklist-meta card-meta)
   "Deal with create/update task query build. If the checks are ko, the error message is returned."
-  (let ((orgtrello/--task-name (gethash :title task-meta)))
+  (let ((checks-ok-or-error-message (orgtrello/--checks-before-sync-item task-meta checklist-meta card-meta)))
     ;; title is mandatory
-    (if orgtrello/--task-name
+    (if (equal :ok checks-ok-or-error-message)
         ;; card-meta is only usefull for the update part
         (let* ((orgtrello/--task-id      (gethash :id task-meta))
                (orgtrello/--checklist-id (gethash :id checklist-meta))
                (orgtrello/--card-id      (gethash :id card-meta))
+               (orgtrello/--task-name    (gethash :title task-meta))
                ;; FIXME - the trello api is strange - extract those calls into function
                (orgtrello/--task-state   (if (string= *DONE* (gethash :keyword task-meta)) "complete" "incomplete")) ;; update api call
                (orgtrello/--task-check   (if (string= *DONE* (gethash :keyword task-meta)) 't nil))) ;; create api call
@@ -487,7 +520,7 @@
               (orgtrello-api/update-task orgtrello/--card-id orgtrello/--checklist-id orgtrello/--task-id orgtrello/--task-name orgtrello/--task-state)
             ;; create
             (orgtrello-api/add-tasks orgtrello/--checklist-id orgtrello/--task-name orgtrello/--task-check)))
-      "Cannot synchronize the item - missing mandatory label. Skip it...")))
+      checks-ok-or-error-message)))
 
 (defun orgtrello/--too-deep-level (meta &optional parent-meta grandparent-meta)
   "Deal with too deep level."
