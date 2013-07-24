@@ -9,6 +9,7 @@ Minor emacs mode for org-mode - 2-way synchronization between org-mode file and 
 
 - [org-trello](#org-trello)
 - [why?](#why)
+- [Emacs version](#emacs-version)
 - [Demo](#demo)
 - [Contributions](#contributions)
 - [Release notes](#release-notes)
@@ -42,6 +43,10 @@ Minor emacs mode for org-mode - 2-way synchronization between org-mode file and 
 - [org-mode](http://orgmode.org/) is what I need.
 - [Trello](http://trello.com/) is what my team need.
 - [org-trello](https://github.com/ardumont/org-trello) may satisfy everybody.
+
+# Emacs version
+
+Tested on GNU Emacs 24.1.1 (x86_64-pc-linux-gnu, X toolkit, Xaw3d scroll bars) of 2012-09-22 on batsu, modified by Debian
 
 # Demo
 
@@ -306,7 +311,6 @@ This will update any already present entry in the org-mode file and create the o
 
 You can remove any entity and its arborescence with `C-c o k`.
 This will also remove the entry from the org-mode buffer.
-
 
 # Errors
 
