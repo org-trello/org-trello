@@ -220,11 +220,15 @@ Actual bindings (not definitive, suggestions regarding those bindings are welcom
 
 # Use cases
 
+
+## Setup
+
 1. open an org-mode file
 
 2. Install the key and the token file (`C-c o i` or `M-x org-trello/install-key-and-token`).
 This will open your browser to retrieve the needed informations (`consumer-key` then the `access-token`) and wait for your input in emacs.
-*Remark:* This need to done once and for all time until you revoke such token.
+
+*Remark:* This need to be done once and for all until you revoke such token.
 
 3. Setup your org-mode file with your trello board (`C-c o I` or `M-x org-trello/install-board-and-lists-ids`).
 This will present you a list of your actual boards. Select the one you want and hit enter.
@@ -234,54 +238,67 @@ This will edit your org-mode file with properties needed.
 - This need to be done once for each org-mode file you want to sync with a trello board.
 - You can create directly a board (`C-c o b` or `M-x orgtrello/do-create-board-and-lists`)
 
-4. Now you are ready to use org-mode as usual.
+Now you are ready to use org-mode as usual.
 
-The idea is this:
-- 3 levels:
-  level 1 - Card
-  level 2 - Checklist
-  level 3 - Item
+## Creation step-by-step
+
+The idea is this, you have 3 levels:
+- level 1 - Card
+- level 2 - Checklist
+- level 3 - Item
 
 For example:
 
 ```org-mode
-* card-identity
-** checklist
-*** task1
-*** task2
-*** task3
+* card-identity (label mandatory)
+** checklist (label mandatory)
+*** task1 (label mandatory)
+*** task2 (label mandatory)
+*** task3 (label mandatory)
 ```
 
-Creation step by step:
 - Card:
-  - Place yourself on the `card-identity` and hit the binding *BINDING-SIMPLE-CREATION*, this will create the card in the `TODO` column in your trello board
-  - You can edit the title and hit *BINDING-SIMPLE-CREATION*, this will update the title in trello
+  - Place yourself on the `card-identity` and hit the binding `C-c o c`, this will create the card in the `TODO` column in your trello board.
+  - You can edit the label and hit `C-c o c` again, this time, this will update the label in trello
   - Change the status from TODO to any intermediary status, then hit the binding, this will move the card to the list `DOING`.
   - Once done, move the status of the card from anything to DONE, hit the binding, this will move the card to the list `DONE`.
+
 - Checklist:
   - Place yourself on the checklist `checklist`, hit the binding, this will add `checklist` as a checklist to your card `card-identity`
-  - Rename your checklist and hit again the binding to update its label
+  - Rename your checklist and hit again the binding to update its label.
+
 - Task:
-  - Place yourself on your task and hit *BINDING-SIMPLE-CREATION*, this will add the item to such checklist.
-  - Change the name of the task and hit *BINDING-SIMPLE-CREATION*, this will update its label
+  - Place yourself on your task and hit the binding, this will add the item to such checklist.
+  - Change the label of the task and hit the binding, this will update its label.
   - Change the status of the task to `DONE` and hit the binding, this will check such item in trello.
 
-5. You can sync all of the entity and its arborescence once:
-Place yourself on the entity (card or checklist) and hit `C-c o C`.
+## Creation full entity
 
-At the moment, this action is synchonous.
+You can sync all of the entity and its arborescence once.
+For this, place yourself on the entity (card or checklist) and hit `C-c o C`.
 
-6. You can sync all your org-mode file to trello too.
-Hit `C-c o s`.
+*Note*: At the moment, this action is synchroneous.
 
-At the moment, this action is synchonous.
+## Sync org-mode file to trello board
 
-7. You can sync the content of your board into an org-mode file too.
+You can sync all your org-mode file to trello too.
+For this, hit `C-c o s`.
+
+*Note*: At the moment, this action is synchroneous.
+
+## Sync org-mode file from trello board
+
+You can sync the content of your trello board into an org-mode file too.
 Hit `C-c o S`.
 
-At the moment, this action is synchronous.
+This will update any already present entry in the org-mode file and create the one not created yet.
 
-8. You can remove the entity and its arborescence with `C-c o k`.
+*Note*: At the moment, this action is synchroneous.
+
+## Remove entity
+
+You can remove any entity and its arborescence with `C-c o k`.
+This will also remove the entry from the org-mode buffer.
 
 # License
 
