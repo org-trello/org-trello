@@ -32,9 +32,9 @@ Minor emacs mode for org-mode - 2-way synchronization between org-mode file and 
 
 # why?
 
-- org-mode is what I need.
-- Trello is what my team need.
-- org-trello may satisfy everybody.
+- [org-mode](http://orgmode.org/) is what I need.
+- [Trello](http://trello.com/) is what my team need.
+- [org-trello](https://github.com/ardumont/org-trello) may satisfy everybody.
 
 # Demo
 
