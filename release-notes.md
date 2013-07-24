@@ -8,6 +8,7 @@
 - DONE Mention the possible errors
 - DONE Mention the emacs version
 - DONE Update release notes
+- DONE Update the version
 - DONE Make a release
 
 # v0.0.5

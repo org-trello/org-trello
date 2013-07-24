@@ -369,6 +369,8 @@ CLOSED: [2013-07-24 mer. 21:07]
 CLOSED: [2013-07-24 mer. 21:21]
 ** DONE Update release notes
 CLOSED: [2013-07-24 mer. 21:22]
+** DONE Update the version
+CLOSED: [2013-07-24 mer. 21:26]
 ** DONE Make a release
 CLOSED: [2013-07-24 mer. 21:22]
 * TODO v0.0.7 [0%]
