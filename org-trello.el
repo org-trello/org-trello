@@ -470,7 +470,7 @@
     (if orgtrello/--checklist-name
         (if orgtrello/--card-id
             :ok
-          "Cannot synchronize the checklist - we need the card to be synchronized first. Skip it...")
+          "Cannot synchronize the checklist - the card must be synchronized first. Skip it...")
       "Cannot synchronize the checklist - missing mandatory label. Skip it...")))
 
 (defun orgtrello/--checklist (checklist-meta &optional card-meta grandparent-meta)
@@ -498,8 +498,8 @@
         (if orgtrello/--checklist-id
             (if orgtrello/--card-id
                 :ok
-              "Cannot synchronize the item - we need the card to be synchronized first. Skip it...")
-          "Cannot synchronize the item - we need the checklist to be synchronized first. Skip it...")
+              "Cannot synchronize the item - the card must be synchronized first. Skip it...")
+          "Cannot synchronize the item - the checklist must be synchronized first. Skip it...")
       "Cannot synchronize the item - missing mandatory label. Skip it...")))
 
 (defun orgtrello/--task (task-meta &optional checklist-meta card-meta)

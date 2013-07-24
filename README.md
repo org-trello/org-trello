@@ -11,10 +11,10 @@ Minor emacs mode for org-mode - 2-way synchronization between org-mode file and 
 - [why?](#why)
 - [Demo](#demo)
 - [Contributions](#contributions)
-- [Release notes](./release-notes.md)
+- [Release notes](#release-notes)
 - [Install](#install)
 	- [marmalade - Stable version](#marmalade---stable-version)
-	- [melpa - ~snapshot](#melpa---snapshot)
+	- [melpa - ~snapshot](#melpa---~snapshot)
 	- [org-trello](#org-trello-1)
 	- [github](#github)
 	- [Example](#example)
@@ -28,6 +28,13 @@ Minor emacs mode for org-mode - 2-way synchronization between org-mode file and 
 		- [Create a board](#create-a-board)
 - [Bindings](#bindings)
 - [Use cases](#use-cases)
+	- [Setup](#setup-1)
+	- [Creation step-by-step](#creation-step-by-step)
+	- [Creation full entity](#creation-full-entity)
+	- [Sync org-mode file to trello board](#sync-org-mode-file-to-trello-board)
+	- [Sync org-mode file from trello board](#sync-org-mode-file-from-trello-board)
+	- [Remove entity](#remove-entity)
+- [Errors](#errors)
 - [License](#license)
 
 # why?
@@ -299,6 +306,54 @@ This will update any already present entry in the org-mode file and create the o
 
 You can remove any entity and its arborescence with `C-c o k`.
 This will also remove the entry from the org-mode buffer.
+
+
+# Errors
+
+Here is the error message if trying to sync in such condition:
+
+- without setuping the consumer-key and the access-token:
+```
+- C-c o i or M-x org-trello/install-key-and-token      - Setup your consumer-key and r/w access-token.
+- C-c o I or M-x org-trello/install-board-and-list-ids - Setup org-mode file and connect it to trello.
+                                                       - Beware, for this, you need to prepare your trello board lists with the same name as your
+                                                       - org-mode keywords (TODO, DONE for example).
+- C-c o b or M-x org-trello/create-board               - You can replace the previous step by creating directly a new board from your org-mode buffer.
+```
+
+- without setuping the org-mode buffer:
+```
+- C-c o i or M-x org-trello/install-key-and-token      - Setup your consumer-key and r/w access-token.
+- C-c o I or M-x org-trello/install-board-and-list-ids - Setup org-mode file and connect it to trello.
+                                                       - Beware, for this, you need to prepare your trello board lists with the same name as your
+                                                       - org-mode keywords (TODO, DONE for example).
+- C-c o b or M-x org-trello/create-board               - You can replace the previous step by creating directly a new board from your org-mode buffer.
+```
+
+- no label on the card:
+```
+Cannot synchronize the card - missing mandatory label. Skip it...
+```
+
+- no label on the checklist:
+```
+Cannot synchronize the checklist - missing mandatory label. Skip it...
+```
+
+- no label on the item:
+```
+Cannot synchronize the item - missing mandatory label. Skip it...
+```
+
+- syncing the checklist without syncing the card first:
+```
+Cannot synchronize the checklist - the card must synchronized first. Skip it...
+```
+
+- syncing the item without syncing the checklist first:
+```
+Cannot synchronize the item - the checklist must be synchronized first. Skip it...
+```
 
 # License
 
