@@ -9,6 +9,7 @@ Minor emacs mode for org-mode - 2-way synchronization between org-mode file and 
 
 - [org-trello](#org-trello)
 - [why?](#why)
+- [Demo](#demo)
 - [Contributions](#contributions)
 - [Release notes](./release-notes.md)
 - [Install](#install)
@@ -27,7 +28,6 @@ Minor emacs mode for org-mode - 2-way synchronization between org-mode file and 
 		- [Create a board](#create-a-board)
 - [Bindings](#bindings)
 - [Use cases](#use-cases)
-- [Demo (in videos)](#demo)
 - [License](#license)
 
 # why?
@@ -35,6 +35,19 @@ Minor emacs mode for org-mode - 2-way synchronization between org-mode file and 
 - org-mode is what I need.
 - Trello is what my team need.
 - org-trello may satisfy everybody.
+
+# Demo
+
+- [Install](http://youtu.be/e3NzllAHbHY)
+- [Setup key and token](http://youtu.be/ReUp1Wn5scc)
+- [Attach org-mode file to one trello board](http://youtu.be/2PT8K1HG-eY)
+- [Synchronize one entity](http://youtu.be/ILPs74L5LFU)
+- [Synchronize one complete entity and move entity according to status](http://youtu.be/H8DXm5BLaD0)
+- [Synchronize from org-mode file to trello](http://youtu.be/d6SATWzhQhs)
+- [Synchronize from trello to org-mode files](http://youtu.be/-ldo8gvhaTY)
+- [Create board and sync](http://youtu.be/6k4zRm6t8ZY)
+- Delete entity - no video yet
+- Setup org-mode keyword list + create board - no video yet
 
 # Contributions
 
@@ -61,7 +74,8 @@ Add this to your emacs's init file (~/.emacs, ~/.emacs.d/init.el, or *scratch*, 
 
 (package-initialize)
 ```
-Then hit, `M-x eval-buffer` to evaluate the contents.
+
+Then hit `M-x eval-buffer` to evaluate the buffer's contents.
 
 ## melpa - ~snapshot
 
@@ -74,11 +88,12 @@ Add this to your emacs's init file (~/.emacs, ~/.emacs.d/init.el, or *scratch*, 
 
 (package-initialize)
 ```
-Then hit, `M-x eval-buffer` to evaluate the contents.
+
+Then hit `M-x eval-buffer` to evaluate the buffer's contents.
 
 ## org-trello
 
-You can install org-trello:
+To install org-trello:
 
 ``` lisp
 (when (not package-archive-contents)
@@ -93,7 +108,7 @@ You can install org-trello:
     (package-install p)))
 ```
 
-Again, hit `M-x eval-buffer`.
+Again hit `M-x eval-buffer`.
 
 ## github
 
@@ -119,8 +134,8 @@ Add the org-trello directory to your load path and then add
 
 ## Emacs related
 
-Orgtrello is a minor mode for org-mode to sync.
-Simply, require it somewhere on your load file (~/.emacs or ~/.emacs.d/init.el).
+Org-trello is a minor mode for org-mode to sync.
+Simply, require it somewhere in your load file (~/.emacs or ~/.emacs.d/init.el).
 
 ``` lisp
 (require 'orgtrello)
@@ -267,17 +282,6 @@ Hit `C-c o S`.
 At the moment, this action is synchronous.
 
 8. You can remove the entity and its arborescence with `C-c o k`.
-
-# Demo (in video)
-
-- [Install](http://youtu.be/e3NzllAHbHY)
-- [Setup key and token](http://youtu.be/ReUp1Wn5scc)
-- [Attach org-mode file to one trello board](http://youtu.be/2PT8K1HG-eY)
-- [Synchronize one entity](http://youtu.be/ILPs74L5LFU)
-- [Synchronize one complete entity and move entity according to status](http://youtu.be/H8DXm5BLaD0)
-- [Synchronize from org-mode file to trello](http://youtu.be/d6SATWzhQhs)
-- [Synchronize from trello to org-mode files](http://youtu.be/-ldo8gvhaTY)
-- [Create board and sync](http://youtu.be/6k4zRm6t8ZY)
 
 # License
 
