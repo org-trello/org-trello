@@ -1,3 +1,15 @@
+# v0.0.6
+
+- DONE Test that the title/label of the entity is set when syncing to avoid a 400 error
+- DONE Before making the request, ensure that everything is ok (checklist needs the card id, items needs the checklist id, etc...)
+- DONE Up the demo video in the beginning of the readme
+- DONE Improve readme with links to org-mode and trello
+- DONE Improve readme's use cases
+- DONE Mention the possible errors
+- DONE Mention the emacs version
+- DONE Update release notes
+- DONE Make a release
+
 # v0.0.5
 
 - DONE Synchronizing from the trello board must simply computes and add/remove what's changed [100%]

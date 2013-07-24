@@ -351,7 +351,7 @@ CLOSED: [2013-07-18 jeu. 15:59]
 CLOSED: [2013-07-18 jeu. 16:04]
 ** DONE Release on github, marmalade, melpa
 CLOSED: [2013-07-18 jeu. 16:06]
-* IN-PROGRESS v0.0.6 [75%]
+* IN-PROGRESS v0.0.6 [87%]
 ** DONE Test that the title/label of the entity is set when syncing to avoid a 400 error
 CLOSED: [2013-07-24 mer. 19:46]
 ** DONE Before making the request, ensure that everything is ok (checklist needs the card id, items needs the checklist id, etc...)
@@ -366,7 +366,8 @@ CLOSED: [2013-07-24 mer. 20:58]
 CLOSED: [2013-07-24 mer. 21:07]
 ** DONE Mention the emacs version
 CLOSED: [2013-07-24 mer. 21:21]
-** TODO Update release notes
+** DONE Update release notes
+CLOSED: [2013-07-24 mer. 21:22]
 ** TODO Make a release
 * TODO v0.0.7 [0%]
 ** TODO Filter out directly with the api the data we do not need to avoid unnecessary network traffic
