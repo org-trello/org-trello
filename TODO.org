@@ -351,7 +351,10 @@ CLOSED: [2013-07-18 jeu. 15:59]
 CLOSED: [2013-07-18 jeu. 16:04]
 ** DONE Release on github, marmalade, melpa
 CLOSED: [2013-07-18 jeu. 16:06]
-* TODO v0.0.6 [0%]
+* TODO v0.0.6 [16%]
+** DONE Test that the title/label of the entity is set when syncing to avoid a 400 error
+CLOSED: [2013-07-24 mer. 19:46]
+** TODO The same way as before, ensure that before making the request, the needed data are ok (checklist needs the card id, the item needs the checklist id, etc...)
 ** TODO Filter out directly with the api the data we do not need to avoid unnecessary network traffic
 ** TODO Replace already present properties regarding boards before injecting new ones.
 ** TODO A fake trello server to be able to test without a network

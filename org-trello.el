@@ -440,45 +440,51 @@
     (if orgtrello/--card-kwd orgtrello/--card-kwd *TODO*)))
 
 (defun orgtrello/--card (card-meta &optional parent-meta grandparent-meta)
-  "Deal with create/update card query build"
-  ;; parent and grandparent are useless here
-  (let* ((orgtrello/--card-kwd  (orgtrello/--retrieve-state-of-card card-meta))
-         (orgtrello/--list-id   (assoc-default orgtrello/--card-kwd org-file-properties))
-         (orgtrello/--card-id   (gethash :id    card-meta))
-         (orgtrello/--card-name (gethash :title card-meta)))
-    (if orgtrello/--card-id
-        ;; update
-        (orgtrello-api/move-card orgtrello/--card-id orgtrello/--list-id orgtrello/--card-name)
-      ;; create
-      (orgtrello-api/add-card orgtrello/--card-name orgtrello/--list-id))))
+  "Deal with create/update card query build - beware the title is mandatory, return nil if no title."
+  (let ((orgtrello/--card-name (gethash :title card-meta)))
+    ;; title is mandatory
+    (if orgtrello/--card-name
+        ;; parent and grandparent are useless here
+        (let* ((orgtrello/--card-kwd  (orgtrello/--retrieve-state-of-card card-meta))
+               (orgtrello/--list-id   (assoc-default orgtrello/--card-kwd org-file-properties))
+               (orgtrello/--card-id   (gethash :id    card-meta)))
+          (if orgtrello/--card-id
+              ;; update
+              (orgtrello-api/move-card orgtrello/--card-id orgtrello/--list-id orgtrello/--card-name)
+            ;; create
+            (orgtrello-api/add-card orgtrello/--card-name orgtrello/--list-id))))))
 
 (defun orgtrello/--checklist (checklist-meta &optional card-meta grandparent-meta)
-  "Deal with create/update checklist query build"
-  ;; grandparent is useless here
-  (let* ((orgtrello/--checklist-id   (gethash :id checklist-meta))
-         (orgtrello/--card-id        (gethash :id card-meta))
-         (orgtrello/--checklist-name (gethash :title checklist-meta)))
-    (if orgtrello/--checklist-id
-        ;; update
-        (orgtrello-api/update-checklist orgtrello/--checklist-id orgtrello/--checklist-name)
-      ;; create
-      (orgtrello-api/add-checklist orgtrello/--card-id orgtrello/--checklist-name))))
+  "Deal with create/update checklist query build - beware the title is mandatory, return nil if no title."
+  (let ((orgtrello/--checklist-name (gethash :title checklist-meta)))
+    ;; title is mandatory
+    (if orgtrello/--checklist-name
+        ;; grandparent is useless here
+        (let* ((orgtrello/--checklist-id   (gethash :id checklist-meta))
+               (orgtrello/--card-id        (gethash :id card-meta)))
+          (if orgtrello/--checklist-id
+              ;; update
+              (orgtrello-api/update-checklist orgtrello/--checklist-id orgtrello/--checklist-name)
+            ;; create
+            (orgtrello-api/add-checklist orgtrello/--card-id orgtrello/--checklist-name))))))
 
 (defun orgtrello/--task (task-meta &optional checklist-meta card-meta)
-  "Deal with create/update task query build"
-  ;; card-meta is only usefull for the update part
-  (let* ((orgtrello/--task-id      (gethash :id task-meta))
-         (orgtrello/--checklist-id (gethash :id checklist-meta))
-         (orgtrello/--card-id      (gethash :id card-meta))
-         (orgtrello/--task-name    (gethash :title task-meta))
-         ;; FIXME - the trello api is strange - extract those calls into function
-         (orgtrello/--task-state   (if (string= *DONE* (gethash :keyword task-meta)) "complete" "incomplete")) ;; update api call
-         (orgtrello/--task-check   (if (string= *DONE* (gethash :keyword task-meta)) 't nil))) ;; create api call
-    (if orgtrello/--task-id
-        ;; update - rename, check or uncheck the task
-        (orgtrello-api/update-task orgtrello/--card-id orgtrello/--checklist-id orgtrello/--task-id orgtrello/--task-name orgtrello/--task-state)
-      ;; create
-      (orgtrello-api/add-tasks orgtrello/--checklist-id orgtrello/--task-name orgtrello/--task-check))))
+  "Deal with create/update task query build - beware the title is mandatory, return nil if no title."
+  (let ((orgtrello/--task-name (gethash :title task-meta)))
+    ;; title is mandatory
+    (if orgtrello/--task-name
+        ;; card-meta is only usefull for the update part
+        (let* ((orgtrello/--task-id      (gethash :id task-meta))
+               (orgtrello/--checklist-id (gethash :id checklist-meta))
+               (orgtrello/--card-id      (gethash :id card-meta))
+               ;; FIXME - the trello api is strange - extract those calls into function
+               (orgtrello/--task-state   (if (string= *DONE* (gethash :keyword task-meta)) "complete" "incomplete")) ;; update api call
+               (orgtrello/--task-check   (if (string= *DONE* (gethash :keyword task-meta)) 't nil))) ;; create api call
+          (if orgtrello/--task-id
+              ;; update - rename, check or uncheck the task
+              (orgtrello-api/update-task orgtrello/--card-id orgtrello/--checklist-id orgtrello/--task-id orgtrello/--task-name orgtrello/--task-state)
+            ;; create
+            (orgtrello-api/add-tasks orgtrello/--checklist-id orgtrello/--task-name orgtrello/--task-check))))))
 
 (defun orgtrello/--too-deep-level (meta &optional parent-meta grandparent-meta)
   "Deal with too deep level."
@@ -501,8 +507,6 @@
 (defun orgtrello/--dispatch-create (meta &optional parent-meta grandparent-meta)
   (let* ((level       (gethash :level meta))
          (dispatch-fn (gethash level *MAP-DISPATCH-CREATE-UPDATE* 'orgtrello/--too-deep-level)))
-    ;; set the consumer-key to make a pointer to get back to when the request is finished
-    (orgtrello/--set-marker)
     ;; then execute the call
     (funcall dispatch-fn meta parent-meta grandparent-meta)))
 
@@ -511,11 +515,23 @@
   (let ((entry-metadata (orgtrello-data/entry-get-full-metadata)))
     (if entry-metadata
         (let ((query-http (orgtrello/--dispatch-create (gethash :current entry-metadata) (gethash :parent entry-metadata) (gethash :grandparent entry-metadata))))
-          ;; FIXME? can't we do better than this?
-          (if (hash-table-p query-http)
-              (if sync (orgtrello-query/http-sync query-http 'orgtrello-query/--post-put-success-callback-update-id)
-                       (orgtrello-query/http      query-http 'orgtrello-query/--post-put-success-callback-update-id))
-            (message query-http))))))
+          (if query-http
+              ;; query-http is not nil, we may be able to sync
+              (if (hash-table-p query-http)
+                  ;; if it's a hash-table we can do the sync
+                  (progn
+                    ;; set the consumer-key to make a pointer to get back to when the request is finished
+                    (orgtrello/--set-marker)
+                    ;; is the request synchroneous or not?
+                    (if sync
+                        ;; synchroneous request
+                        (orgtrello-query/http-sync query-http 'orgtrello-query/--post-put-success-callback-update-id)
+                      ;; asynchroneous one
+                      (orgtrello-query/http query-http 'orgtrello-query/--post-put-success-callback-update-id)))
+                ;; else it's a string to display
+                (message query-http))
+            ;; query-http returns nil so we cannot do any sync, the only reason possible is that some mandatory field (for example, the entity label is missing)
+            (message "Missing mandatory field, cannot synchronize such entity. Skip it..."))))))
 
 (defun orgtrello/--merge-map (entry map-ids-by-name)
   "Given a map of (id . name) and an entry, return the entry updated with the id if not already present."
