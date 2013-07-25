@@ -373,6 +373,14 @@ CLOSED: [2013-07-24 mer. 21:22]
 CLOSED: [2013-07-24 mer. 21:26]
 ** DONE Make a release
 CLOSED: [2013-07-24 mer. 21:22]
+* DONE v0.0.6.1 [100%]
+CLOSED: [2013-07-25 jeu. 10:44]
+** DONE Fix the json-1.3 dependency, sometimes only 1.2 is available
+CLOSED: [2013-07-25 jeu. 10:43]
+** DONE Update version
+CLOSED: [2013-07-25 jeu. 10:44]
+** DONE Release
+CLOSED: [2013-07-25 jeu. 10:44]
 * TODO v0.0.7 [0%]
 ** TODO Filter out directly with the api the data we do not need to avoid unnecessary network traffic
 ** TODO Replace already present properties regarding boards before injecting new ones.
