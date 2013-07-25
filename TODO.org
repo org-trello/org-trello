@@ -381,14 +381,18 @@ CLOSED: [2013-07-25 jeu. 10:43]
 CLOSED: [2013-07-25 jeu. 10:44]
 ** DONE Release
 CLOSED: [2013-07-25 jeu. 10:44]
-* IN-PROGRESS v0.0.7 [75%]
+* DONE v0.0.7 [100%]
+CLOSED: [2013-07-25 jeu. 20:40]
 ** DONE Reference missing bindings in documentation
 CLOSED: [2013-07-25 jeu. 19:44]
 ** DONE Upgrade version
 CLOSED: [2013-07-25 jeu. 19:45]
 ** DONE Improve the error message around the setup (the setup message is too generic and must be more detailed)
 CLOSED: [2013-07-25 jeu. 20:05]
-** TODO For the saving of the buffer after the synchronization is done (after all we write the trello ids in the buffer)
+** DONE Save the buffer after the synchronization is done (after all we write the trello ids in the buffer)
+CLOSED: [2013-07-25 jeu. 20:40]
+** DONE Release
+CLOSED: [2013-07-25 jeu. 20:40]
 * TODO v0.0.8 [0%]
 ** TODO Look to the org-mode's standard checklist http://orgmode.org/manual/Checkboxes.html
 ** TODO Filter out directly with the api the data we do not need to avoid unnecessary network traffic

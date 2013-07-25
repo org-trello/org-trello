@@ -336,7 +336,8 @@
           (progn
             ;; not present, this was just created, we add a simple property
             (org-set-property *ORGTRELLO-ID* orgtrello-query/--entry-new-id)
-            (message "Newly entity '%s' synced with id '%s'" orgtrello-query/--entry-name orgtrello-query/--entry-new-id)))))))
+            (message "Newly entity '%s' synced with id '%s'" orgtrello-query/--entry-name orgtrello-query/--entry-new-id))))
+      (save-buffer))))
 
 (defun orgtrello-query/--post-or-put (query-map &optional success-callback error-callback)
   "POST or PUT"
