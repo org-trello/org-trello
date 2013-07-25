@@ -60,6 +60,7 @@ Tested on GNU Emacs 24.1.1 (x86_64-pc-linux-gnu, X toolkit, Xaw3d scroll bars) o
 - [Create board and sync](http://youtu.be/6k4zRm6t8ZY)
 - Delete entity - no video yet
 - Setup org-mode keyword list + create board - no video yet
+- Check the setup - no video yet
 
 # Contributions
 
@@ -228,10 +229,10 @@ Actual bindings (not definitive, suggestions regarding those bindings are welcom
 - C-c o s - Synchronize the org-mode file to the trello board (org-mode -> trello).
 - C-c o S - Synchronize the org-mode file from the trello board (trello -> org-mode).
 - C-c o k - Kill the entity (and its arborescence tree).
+- C-c o d - Simple routine to check that the setup is ok. If everything is ok, will simply display 'Setup ok!'
 - C-c o h - This help message.
 
 # Use cases
-
 
 ## Setup
 
@@ -314,24 +315,34 @@ This will also remove the entry from the org-mode buffer.
 
 # Errors
 
-Here is the error message if trying to sync in such condition:
+Here are the possible error messages you can have if trying to sync in bad condition:
 
 - without setuping the consumer-key and the access-token:
 ```
-- C-c o i or M-x org-trello/install-key-and-token      - Setup your consumer-key and r/w access-token.
-- C-c o I or M-x org-trello/install-board-and-list-ids - Setup org-mode file and connect it to trello.
-                                                       - Beware, for this, you need to prepare your trello board lists with the same name as your
-                                                       - org-mode keywords (TODO, DONE for example).
-- C-c o b or M-x org-trello/create-board               - You can replace the previous step by creating directly a new board from your org-mode buffer.
+ - Setup problem - You need to install the consumer-key and the read/write access-token - C-c o i or M-x org-trello/install-board-and-lists-ids
 ```
 
 - without setuping the org-mode buffer:
 ```
-- C-c o i or M-x org-trello/install-key-and-token      - Setup your consumer-key and r/w access-token.
-- C-c o I or M-x org-trello/install-board-and-list-ids - Setup org-mode file and connect it to trello.
-                                                       - Beware, for this, you need to prepare your trello board lists with the same name as your
-                                                       - org-mode keywords (TODO, DONE for example).
-- C-c o b or M-x org-trello/create-board               - You can replace the previous step by creating directly a new board from your org-mode buffer.
+ - Setup problem.
+Either you did not connect your org-mode buffer with a trello board, to correct this:
+  * attach to a board through C-c o I or M-x org-trello/install-board-and-lists-ids
+  * or create a board from scratch with C-c o b or M-x org-trello/create-board).
+Either your org-mode's todo keyword list and your trello board lists are not named the same way (which they must).
+For this, connect to trello and rename your board's list according to your org-mode's todo list.
+Also, you can specify on your org-mode buffer the todo list you want to work with, for example: #+TODO: TODO DOING | DONE FAIL (hit C-c C-c to refresh the setup)
+```
+
+- If the board's list names are different from your org-mode's keyword list:
+
+```
+ - Setup problem.
+Either you did not connect your org-mode buffer with a trello board, to correct this:
+  * attach to a board through C-c o I or M-x org-trello/install-board-and-lists-ids
+  * or create a board from scratch with C-c o b or M-x org-trello/create-board).
+Either your org-mode's todo keyword list and your trello board lists are not named the same way (which they must).
+For this, connect to trello and rename your board's list according to your org-mode's todo list.
+Also, you can specify on your org-mode buffer the todo list you want to work with, for example: #+TODO: TODO DOING | DONE FAIL (hit C-c C-c to refresh the setup)
 ```
 
 - no label on the card:

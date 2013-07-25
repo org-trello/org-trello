@@ -1,3 +1,11 @@
+# v0.0.7
+
+- DONE Reference missing bindings in documentation
+- DONE Upgrade version
+- DONE Improve the error message around the setup (the setup message is too generic and must be more detailed)
+- DONE Save the buffer after the synchronization is done (after all we write the trello ids in the buffer)
+- DONE Release
+
 # v0.0.6.1
 
 - DONE Fix the json-1.3 dependency, sometimes only 1.2 is available
