@@ -4,7 +4,7 @@
 
 ;; Author: Antoine R. Dumont <eniotna.t AT gmail.com>
 ;; Maintainer: Antoine R. Dumont <eniotna.t AT gmail.com>
-;; Version: 0.0.6.1
+;; Version: 0.0.7
 ;; Package-Requires: ((org "7.9.2") (dash "1.4.0") (request "0.1.0") (cl-lib "0.3.0") (json "1.2"))
 ;; Keywords: org-mode trello sync org-trello
 ;; URL: https://github.com/ardumont/org-trello
@@ -336,7 +336,8 @@
           (progn
             ;; not present, this was just created, we add a simple property
             (org-set-property *ORGTRELLO-ID* orgtrello-query/--entry-new-id)
-            (message "Newly entity '%s' synced with id '%s'" orgtrello-query/--entry-name orgtrello-query/--entry-new-id)))))))
+            (message "Newly entity '%s' synced with id '%s'" orgtrello-query/--entry-name orgtrello-query/--entry-new-id))))
+      (save-buffer))))
 
 (defun orgtrello-query/--post-or-put (query-map &optional success-callback error-callback)
   "POST or PUT"
@@ -403,7 +404,7 @@
 (defvar *ORGTRELLO-MARKER* nil "Marker used for syncing the data in trello")
 
 (defun orgtrello/--setup-properties ()
-  "Setup the properties according to the org-mode setup"
+  "Setup the properties according to the org-mode setup. Return :ok."
   (let* ((orgtrello/--list-keywords (orgtrello/filtered-kwds))
          (orgtrello/--hmap-id-name (cl-reduce
                                     (lambda (hmap name)
@@ -414,25 +415,29 @@
                                     :initial-value (make-hash-table :test 'equal))))
     (setq *LIST-NAMES*   orgtrello/--list-keywords)
     (setq *HMAP-ID-NAME* orgtrello/--hmap-id-name)
-    t))
+    :ok))
 
 (defun orgtrello/--control-properties ()
-  "org-trello needs the properties board-id and all list id from the trello board to be setuped on header property file."
+  "org-trello needs the properties board-id and all list id from the trello board to be setuped on header property file. Returns :ok if everything is ok, or the error message if problems."
   (let ((orgtrello/--hmap-count   (cl-hash-table-count *HMAP-ID-NAME*)))
-    (and (assoc-default *BOARD-ID* org-file-properties)
-         (= (length *LIST-NAMES*) orgtrello/--hmap-count))))
+    (if (and (assoc-default *BOARD-ID* org-file-properties)
+             (= (length *LIST-NAMES*) orgtrello/--hmap-count))
+        :ok
+      "Setup problem.\nEither you did not connect your org-mode buffer with a trello board, to correct this:\n  * attach to a board through C-c o I or M-x org-trello/install-board-and-lists-ids\n  * or create a board from scratch with C-c o b or M-x org-trello/create-board).\nEither your org-mode's todo keyword list and your trello board lists are not named the same way (which they must).\nFor this, connect to trello and rename your board's list according to your org-mode's todo list.\nAlso, you can specify on your org-mode buffer the todo list you want to work with, for example: #+TODO: TODO DOING | DONE FAIL (hit C-c C-c to refresh the setup)")))
 
 (defun orgtrello/--control-keys ()
-  "org-trello needs the *consumer-key* and the *access-token* to access the trello resources. Return t if everything is ok."
-  (or (and *consumer-key* *access-token*)
-      ;; the data are not set,
-      (and (file-exists-p *CONFIG-FILE*)
-           ;; trying to load them
-           (load *CONFIG-FILE*)
-           ;; still not loaded, something is not right!
-           (and *consumer-key* *access-token*)
-           ;; setting the marker once
-           (setq *ORGTRELLO-MARKER* (format "orgtrello-marker-%s" *consumer-key*)))))
+  "org-trello needs the *consumer-key* and the *access-token* to access the trello resources. Returns :ok if everything is ok, or the error message if problems."
+  (if (or (and *consumer-key* *access-token*)
+          ;; the data are not set,
+          (and (file-exists-p *CONFIG-FILE*)
+               ;; trying to load them
+               (load *CONFIG-FILE*)
+               ;; still not loaded, something is not right!
+               (and *consumer-key* *access-token*)
+               ;; setting the marker once
+               (setq *ORGTRELLO-MARKER* (format "orgtrello-marker-%s" *consumer-key*))))
+      :ok
+      "Setup problem - You need to install the consumer-key and the read/write access-token - C-c o i or M-x org-trello/install-board-and-lists-ids"))
 
 (defun orgtrello/--retrieve-state-of-card (card-meta)
   "Given a card, retrieve its state depending on its :keyword metadata. If empty or no keyword then, its equivalence is *TODO*, otherwise, return its current state."
@@ -911,13 +916,14 @@
 (defun org-trello/--control-and-do (control-fns fn-to-control-and-execute)
   "Execute the function fn if control-fns is nil or if the result of apply every function to fn is ok."
   (if control-fns
-      (progn
-        (if (--all? (identity it) (--map (funcall it) control-fns));; beware, i'm calling control functions which have
-            ;; side effects, not a good idea with mapcar but i need their respective result
-            ;; ok, we call the function
-            (funcall fn-to-control-and-execute)
-          ;; there is some trouble, trying to help the user
-          (message "You need to:\n- C-c o i or M-x org-trello/install-key-and-token      - Setup your consumer-key and r/w access-token.\n- C-c o I or M-x org-trello/install-board-and-list-ids - Setup org-mode file and connect it to trello.\n                                                       - Beware, for this, you need to prepare your trello board lists with the same name as your\n                                                       - org-mode keywords (TODO, DONE for example).\n- C-c o b or M-x org-trello/create-board               - You can replace the previous step by creating directly a new board from your org-mode buffer.")))
+      (let* ((org-trello/--control-ok-or-error-messages (--map (funcall it) control-fns))
+             (org-trello/--error-messages               (--filter (not (equal :ok it)) org-trello/--control-ok-or-error-messages)))
+        (if org-trello/--error-messages
+            ;; there are some trouble, we display all the error messages to help the user understand the problem
+            (message "List of errors:\n %s" (--mapcat (concat "- " it "\n") org-trello/--error-messages))
+          ;; ok execute the function as the controls are ok
+          (funcall fn-to-control-and-execute)))
+    ;; no control, we simply execute the function
     (funcall fn-to-control-and-execute)))
 
 (defun org-trello/create-simple-entity ()
@@ -972,7 +978,7 @@
   "Check the current setup."
   (interactive)
   (message "Describe the current setup...")
-  (org-trello/--control-and-do '(orgtrello/--setup-properties orgtrello/--control-keys) (lambda () (message "Setup ok!"))))
+  (org-trello/--control-and-do '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties) (lambda () (message "Setup ok!"))))
 
 (defun org-trello/help-describing-bindings ()
   "A simple message to describe the standard bindings used."
@@ -985,6 +991,7 @@ C-c o C - Create/Update a complete entity card/checklist/item and its subtree (d
 C-c o s - Synchronize the org-mode file to the trello board (org-mode -> trello).
 C-c o S - Synchronize the org-mode file from the trello board (trello -> org-mode).
 C-c o k - Kill the entity (and its arborescence tree).
+C-c o d - Simple routine to check that the setup is ok. If everything is ok, will simply display 'Setup ok!'
 C-c o h - This help message."))
 
 ;;;###autoload
