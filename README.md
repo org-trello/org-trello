@@ -228,10 +228,10 @@ Actual bindings (not definitive, suggestions regarding those bindings are welcom
 - C-c o s - Synchronize the org-mode file to the trello board (org-mode -> trello).
 - C-c o S - Synchronize the org-mode file from the trello board (trello -> org-mode).
 - C-c o k - Kill the entity (and its arborescence tree).
+- C-c o d - Simple routine to check that the setup is ok. If everything is ok, will simply display 'Setup ok!'
 - C-c o h - This help message.
 
 # Use cases
-
 
 ## Setup
 
@@ -314,7 +314,7 @@ This will also remove the entry from the org-mode buffer.
 
 # Errors
 
-Here is the error message if trying to sync in such condition:
+Here are the possible error messages you can have if trying to sync in bad condition:
 
 - without setuping the consumer-key and the access-token:
 ```

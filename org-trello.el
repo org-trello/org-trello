@@ -972,7 +972,7 @@
   "Check the current setup."
   (interactive)
   (message "Describe the current setup...")
-  (org-trello/--control-and-do '(orgtrello/--setup-properties orgtrello/--control-keys) (lambda () (message "Setup ok!"))))
+  (org-trello/--control-and-do '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties) (lambda () (message "Setup ok!"))))
 
 (defun org-trello/help-describing-bindings ()
   "A simple message to describe the standard bindings used."
@@ -985,6 +985,7 @@ C-c o C - Create/Update a complete entity card/checklist/item and its subtree (d
 C-c o s - Synchronize the org-mode file to the trello board (org-mode -> trello).
 C-c o S - Synchronize the org-mode file from the trello board (trello -> org-mode).
 C-c o k - Kill the entity (and its arborescence tree).
+C-c o d - Simple routine to check that the setup is ok. If everything is ok, will simply display 'Setup ok!'
 C-c o h - This help message."))
 
 ;;;###autoload

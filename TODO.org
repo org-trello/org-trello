@@ -381,7 +381,13 @@ CLOSED: [2013-07-25 jeu. 10:43]
 CLOSED: [2013-07-25 jeu. 10:44]
 ** DONE Release
 CLOSED: [2013-07-25 jeu. 10:44]
-* TODO v0.0.7 [0%]
+* IN-PROGRESS v0.0.7 [33%]
+** DONE Reference missing bindings in documentation
+CLOSED: [2013-07-25 jeu. 19:44]
+** TODO Upgrade version
+** TODO Improve the error message around the setup (the setup message is too generic and must be more detailed)
+* TODO v0.0.8 [0%]
+** TODO Look to the org-mode's standard checklist http://orgmode.org/manual/Checkboxes.html
 ** TODO Filter out directly with the api the data we do not need to avoid unnecessary network traffic
 ** TODO Replace already present properties regarding boards before injecting new ones.
 ** TODO A fake trello server to be able to test without a network
