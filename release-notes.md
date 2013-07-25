@@ -1,3 +1,9 @@
+# v0.0.6.1
+
+- DONE Fix the json-1.3 dependency, sometimes only 1.2 is available
+- DONE Update version
+- DONE Release
+
 # v0.0.6
 
 - DONE Test that the title/label of the entity is set when syncing to avoid a 400 error
