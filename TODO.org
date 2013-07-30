@@ -393,10 +393,12 @@ CLOSED: [2013-07-25 jeu. 20:05]
 CLOSED: [2013-07-25 jeu. 20:40]
 ** DONE Release
 CLOSED: [2013-07-25 jeu. 20:40]
-* IN-PROGRESS v0.0.8 [25%]
+* IN-PROGRESS v0.0.8 [40%]
 ** DONE Fix the cl-lib dependency
 CLOSED: [2013-07-30 mar. 17:13]
-** TODO Improve the saving of the buffer at the end of the sync between org and trello
+** DONE Improve the message when an action is done to let the user know when the action is done!
+CLOSED: [2013-07-30 mar. 17:32]
+** TODO No saving of the buffer at the end of the sync between org and trello as this avoid the user to see what's going on
 ** TODO Implement a simple checklist with the current implementation
 ** TODO A simple and parametrable setup to make the user choose to use the checklist system or not
 * TODO v0.0.9 [%]

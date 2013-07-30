@@ -18,7 +18,7 @@
 :PROPERTIES:
 :orgtrello-id: 51e567aff8d10f7b21001fb8
 :END:
-* DONE v0.0.4 [100%]
+* DONE v0.0.4 [0%]
 :PROPERTIES:
 :orgtrello-id: 51e568237e0367312e001704
 :END:
@@ -189,4 +189,32 @@
 * TODO Structure and Interpretation of Computer programs
 :PROPERTIES:
 :orgtrello-id: 51e02fb783d8ac5a4500358d
+:END:
+* DELEGATED yet another fail
+:PROPERTIES:
+:orgtrello-id: 51e7e60bd23ccba35c00a588
+:END:
+* PENDING testing new card
+:PROPERTIES:
+:orgtrello-id: 51e7e605d4a5057d6b0003d1
+:END:
+** Checklist
+:PROPERTIES:
+:orgtrello-id: 51e7e6579f58d6ff1a007277
+:END:
+*** DONE does this work
+:PROPERTIES:
+:orgtrello-id: 51e7e65ad4e11fbc7d006eae
+:END:
+*** TODO it seems
+:PROPERTIES:
+:orgtrello-id: 51e7e65d26db90df23000495
+:END:
+*** TODO seeing with items
+:PROPERTIES:
+:orgtrello-id: 51e7e6629dc499317c003598
+:END:
+* TODO Structure and Interpretation of Computer programs
+:PROPERTIES:
+:orgtrello-id: 51f7e30e64f441472a000133
 :END:
