@@ -526,6 +526,16 @@
           "Cannot synchronize the item - the checklist must be synchronized first. Skip it...")
       "Cannot synchronize the item - missing mandatory label. Skip it...")))
 
+(defun orgtrello/--task-compute-check (task-meta checklist-meta)
+  "Compute the task's check status (for update)"
+  (let* ((orgtrello/--task-compute-check--task-status      (gethash :keyword task-meta)))
+    (if (string= *DONE* orgtrello/--task-compute-check--task-status) 't nil)))
+
+(defun orgtrello/--task-compute-state (task-meta checklist-meta)
+  "Compute the task's state (for creation)"
+  (let* ((orgtrello/--task-compute-state--task-status      (gethash :keyword task-meta)))
+    (string= *DONE* orgtrello/--task-compute-state--task-status) "complete" "incomplete"))
+
 (defun orgtrello/--task (task-meta &optional checklist-meta card-meta)
   "Deal with create/update task query build. If the checks are ko, the error message is returned."
   (let ((checks-ok-or-error-message (orgtrello/--checks-before-sync-item task-meta checklist-meta card-meta)))
@@ -535,15 +545,12 @@
         (let* ((orgtrello/--task-id      (gethash :id task-meta))
                (orgtrello/--checklist-id (gethash :id checklist-meta))
                (orgtrello/--card-id      (gethash :id card-meta))
-               (orgtrello/--task-name    (gethash :title task-meta))
-               ;; FIXME - the trello api is strange - extract those calls into function
-               (orgtrello/--task-state   (if (string= *DONE* (gethash :keyword task-meta)) "complete" "incomplete")) ;; update api call
-               (orgtrello/--task-check   (if (string= *DONE* (gethash :keyword task-meta)) 't nil))) ;; create api call
+               (orgtrello/--task-name    (gethash :title task-meta)))
           (if orgtrello/--task-id
               ;; update - rename, check or uncheck the task
-              (orgtrello-api/update-task orgtrello/--card-id orgtrello/--checklist-id orgtrello/--task-id orgtrello/--task-name orgtrello/--task-state)
+              (orgtrello-api/update-task orgtrello/--card-id orgtrello/--checklist-id orgtrello/--task-id orgtrello/--task-name (orgtrello/--task-compute-state task-meta checklist-meta))
             ;; create
-            (orgtrello-api/add-tasks orgtrello/--checklist-id orgtrello/--task-name orgtrello/--task-check)))
+            (orgtrello-api/add-tasks orgtrello/--checklist-id orgtrello/--task-name (orgtrello/--task-compute-check task-meta checklist-meta))))
       checks-ok-or-error-message)))
 
 (defun orgtrello/--too-deep-level (meta &optional parent-meta grandparent-meta)

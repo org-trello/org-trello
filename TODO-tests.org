@@ -23,6 +23,7 @@
 :orgtrello-id: 51e568237e0367312e001704
 :END:
 ** Permit the user to deal with his/her own trello list (based on his/her org-mode keywords - cf. http://orgmode.org/manual/In_002dbuffer-settings.html) [100%]
+CLOSED: [2013-07-30 mar. 23:39]
 :PROPERTIES:
 :orgtrello-id: 51e56829b62b81cc12001ec1
 :END:
