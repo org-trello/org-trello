@@ -214,7 +214,3 @@
 :PROPERTIES:
 :orgtrello-id: 51e7e6629dc499317c003598
 :END:
-* TODO Structure and Interpretation of Computer programs
-:PROPERTIES:
-:orgtrello-id: 51f7e30e64f441472a000133
-:END:
