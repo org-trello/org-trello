@@ -393,7 +393,7 @@ CLOSED: [2013-07-25 jeu. 20:05]
 CLOSED: [2013-07-25 jeu. 20:40]
 ** DONE Release
 CLOSED: [2013-07-25 jeu. 20:40]
-* IN-PROGRESS v0.0.8 [60%]
+* IN-PROGRESS v0.0.8 [100%]
 DEADLINE: <2013-07-30 mar.>
 ** DONE Fix the cl-lib dependency
 CLOSED: [2013-07-30 mar. 17:13]
@@ -403,8 +403,10 @@ CLOSED: [2013-07-30 mar. 17:32]
 CLOSED: [2013-07-30 mar. 18:20]
 ** DONE Sync org DEADLINE with trello card due - https://github.com/ardumont/org-trello/issues/17
 CLOSED: [2013-07-30 mar. 23:29]
-** TODO Implement a simple checklist with the current implementation
-** TODO A simple and parametrable setup to make the user choose to use the checklist system or not
+** DONE Done, Todo on "check lists" - Once the user sets a "check list" to DONE or TODO, then check or uncheck all the tasks it contains. - https://github.com/ardumont/org-trello/issues/16
+CLOSED: [2013-07-31 mer. 01:38]
+** DONE A simple and parametrable setup to make the user choose to use the checklist system or not
+CLOSED: [2013-07-31 mer. 01:39]
 * TODO v0.0.9 [0%]
 ** TODO Introducing C-c o h at the loading of the buffer when ot is loaded
 ** TODO Implement the org-mode's standard checklist http://orgmode.org/manual/Checkboxes.html

@@ -295,4 +295,30 @@
     (should (equal (gethash "testing board 3" hashtable-result) (gethash "testing board 3" hashtable-expected)))
     (should (equal (hash-table-count hashtable-result) (hash-table-count hashtable-expected)))))
 
+(expectations
+  (expect ""     (orgtrello/--compute-state-from-keyword ""))
+  (expect "TODO" (orgtrello/--compute-state-from-keyword *TODO*))
+  (expect "DONE" (orgtrello/--compute-state-from-keyword *DONE*))
+  (expect "TODO" (orgtrello/--compute-state-from-keyword "IN")))
+
+(expectations
+  (expect "complete" (orgtrello/--task-compute-state t "DONE" "DONE"))
+  (expect "complete" (orgtrello/--task-compute-state t "TODO" "DONE"))
+  (expect "incomplete" (orgtrello/--task-compute-state t "DONE" "TODO"))
+  (expect "incomplete" (orgtrello/--task-compute-state t "TODO" "TODO"))
+  (expect "complete" (orgtrello/--task-compute-state nil "DONE" "DONE"))
+  (expect "incomplete" (orgtrello/--task-compute-state nil "TODO" "DONE"))
+  (expect "complete" (orgtrello/--task-compute-state nil "DONE" "TODO"))
+  (expect "incomplete" (orgtrello/--task-compute-state nil "TODO" "TODO")) )
+
+(expectations
+  (expect t (orgtrello/--task-compute-check t "DONE" "DONE"))
+  (expect t (orgtrello/--task-compute-check t "TODO" "DONE"))
+  (expect nil (orgtrello/--task-compute-check t "DONE" "TODO"))
+  (expect nil (orgtrello/--task-compute-check t "TODO" "TODO"))
+  (expect t (orgtrello/--task-compute-check nil "DONE" "DONE"))
+  (expect nil (orgtrello/--task-compute-check nil "TODO" "DONE"))
+  (expect t (orgtrello/--task-compute-check nil "DONE" "TODO"))
+  (expect nil (orgtrello/--task-compute-check nil "TODO" "TODO")) )
+
 (message "Tests done!")

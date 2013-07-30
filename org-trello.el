@@ -54,6 +54,14 @@
 (require 'cl-lib)
 (require 'parse-time)
 
+;; #################### overriding setup
+
+(defvar *ORGTRELLO-CHECKLIST-UPDATE-ITEMS* t
+  "A variable to permit the checklist's status to be pass along to its items. t, if checklist's status is DONE, the items are updated to DONE (org-mode buffer and trello board), nil only the items's status is used.
+  To update this, the user need to update with such code: (setq *CHECKLIST-UPDATE-ITEMS* nil)")
+
+(setq *ORGTRELLO-CHECKLIST-UPDATE-ITEMS* nil)
+
 ;; #################### orgtrello-hash
 
 (defun orgtrello-hash/make-hash-org (level keyword title id due)
@@ -526,15 +534,37 @@
           "Cannot synchronize the item - the checklist must be synchronized first. Skip it...")
       "Cannot synchronize the item - missing mandatory label. Skip it...")))
 
-(defun orgtrello/--task-compute-check (task-meta checklist-meta)
-  "Compute the task's check status (for update)"
-  (let* ((orgtrello/--task-compute-check--task-status      (gethash :keyword task-meta)))
-    (if (string= *DONE* orgtrello/--task-compute-check--task-status) 't nil)))
+(defun orgtrello/--task-compute-state (checklist-update-items-p task-state checklist-state)
+  "Compute the task's state (for creation)."
+  (let* ((orgtrello/--task-compute-state--checklist-status checklist-state)
+         (orgtrello/--task-compute-state--task-status      task-state))
+    (cond ((and checklist-update-items-p (string= *DONE* orgtrello/--task-compute-state--checklist-status))                                                       "complete")
+          ((and checklist-update-items-p (or orgtrello/--task-compute-state--checklist-status (string= *TODO* orgtrello/--task-compute-state--checklist-status))) "incomplete")
+          ((string= *DONE* orgtrello/--task-compute-state--task-status)                                                                                           "complete")
+          (t                                                                                                                                                      "incomplete"))))
 
-(defun orgtrello/--task-compute-state (task-meta checklist-meta)
-  "Compute the task's state (for creation)"
-  (let* ((orgtrello/--task-compute-state--task-status      (gethash :keyword task-meta)))
-    (string= *DONE* orgtrello/--task-compute-state--task-status) "complete" "incomplete"))
+
+(defun orgtrello/--task-compute-check (checklist-update-items-p task-state checklist-state)
+  "Compute the task's check status (for update)."
+  (let* ((orgtrello/--task-compute-check--checklist-status checklist-state)
+         (orgtrello/--task-compute-check--task-status      task-state))
+    (cond ((and checklist-update-items-p (string= *DONE* orgtrello/--task-compute-check--checklist-status))                                                      't)
+          ((and checklist-update-items-p (or orgtrello/--task-compute-check--checklist-status (string= *TODO* orgtrello/--task-compute-check--checklist-status))) nil)
+          ((string= *DONE* orgtrello/--task-compute-check--task-status)                                                                                          't)
+          (t                                                                                                                                                     nil))))
+
+(defun orgtrello/--compute-state-from-keyword (state)
+  "Given a state, compute the org equivalent (to use with org-todo function)"
+  (cond ((or (not state) (string= "" state)) "")
+        ((string= *DONE* state)              *DONE*)
+        ((string= *TODO* state)              *TODO*)
+        (t                                   *TODO*)))
+
+(defun orgtrello/--update-item-according-to-checklist-status (checklist-update-items-p checklist-meta)
+  "Update the item of the checklist according to the status of the checklist."
+  (if checklist-update-items-p
+      (let ((orgtrello/--checklist-status (orgtrello/--compute-state-from-keyword (gethash :keyword checklist-meta))))
+        (org-todo orgtrello/--checklist-status))))
 
 (defun orgtrello/--task (task-meta &optional checklist-meta card-meta)
   "Deal with create/update task query build. If the checks are ko, the error message is returned."
@@ -545,12 +575,17 @@
         (let* ((orgtrello/--task-id      (gethash :id task-meta))
                (orgtrello/--checklist-id (gethash :id checklist-meta))
                (orgtrello/--card-id      (gethash :id card-meta))
-               (orgtrello/--task-name    (gethash :title task-meta)))
+               (orgtrello/--task-name    (gethash :title task-meta))
+               (orgtrello/--task-state   (gethash :keyword task-meta))
+               (orgtrello/--checklist-state    (gethash :keyword checklist-meta)))
+
+          (orgtrello/--update-item-according-to-checklist-status *ORGTRELLO-CHECKLIST-UPDATE-ITEMS* checklist-meta)
+          ;; update/create items
           (if orgtrello/--task-id
               ;; update - rename, check or uncheck the task
-              (orgtrello-api/update-task orgtrello/--card-id orgtrello/--checklist-id orgtrello/--task-id orgtrello/--task-name (orgtrello/--task-compute-state task-meta checklist-meta))
+              (orgtrello-api/update-task orgtrello/--card-id orgtrello/--checklist-id orgtrello/--task-id orgtrello/--task-name (trace (orgtrello/--task-compute-state *ORGTRELLO-CHECKLIST-UPDATE-ITEMS* orgtrello/--task-state orgtrello/--checklist-state)))
             ;; create
-            (orgtrello-api/add-tasks orgtrello/--checklist-id orgtrello/--task-name (orgtrello/--task-compute-check task-meta checklist-meta))))
+            (orgtrello-api/add-tasks orgtrello/--checklist-id orgtrello/--task-name (orgtrello/--task-compute-check *ORGTRELLO-CHECKLIST-UPDATE-ITEMS* orgtrello/--task-state orgtrello/--checklist-state))))
       checks-ok-or-error-message)))
 
 (defun orgtrello/--too-deep-level (meta &optional parent-meta grandparent-meta)
@@ -752,23 +787,6 @@
            (orgtrello/--remaining-entities (orgtrello/--sync-buffer-with-trello-data orgtrello/--entities-hash-map)))
       (orgtrello/--update-buffer-with-remaining-trello-data orgtrello/--remaining-entities))
     (message "Synchronizing the trello board '%s' to the org-mode file - done!" orgtrello/--board-name-to-sync)))
-
-(defun orgtrello/describe-heading ()
-  (interactive)
-  "Describe the current heading's metadata"
-  (let* ((entry-metadata (orgtrello-data/entry-get-full-metadata)))
-    (message "entry metadata: %S\n%S\n%S" entry-metadata (org-heading-components) (org-entry-get (point) "DEADLINE"))))
-
-(defun orgtrello/describe-headings ()
-  (interactive)
-  "Describe the heading and its sublist."
-  (let* ((orgtrello/--describe-headings-meta       (orgtrello-data/compute-full-metadata))
-         (orgtrello/--describe-headings-count-meta (length orgtrello/--describe-headings-meta)))
-    (message "meta: %S\ncount: %s" orgtrello/--describe-headings-meta orgtrello/--describe-headings-count-meta)))
-
-(defun orgtrello/find-block ()
-  (interactive)
-  (message "found: %s" (org-entry-get (point) *ORGTRELLO-ID*)))
 
 (defun orgtrello/--card-delete (card-meta &optional parent-meta)
   "Deal with the deletion query of a card"
@@ -1026,6 +1044,27 @@ C-c o k - Kill the entity (and its arborescence tree).
 C-c o d - Simple routine to check that the setup is ok. If everything is ok, will simply display 'Setup ok!'
 C-c o h - This help message."))
 
+(defun org-trello/describe-heading ()
+  (interactive)
+  "Describe the current heading's metadata"
+  (let* ((entry-metadata (orgtrello-data/entry-get-full-metadata)))
+    (message "entry metadata: %S\n%S\n%S" entry-metadata (org-heading-components) (org-entry-get (point) "DEADLINE"))))
+
+(defun org-trello/describe-headings ()
+  (interactive)
+  "Describe the heading and its sublist."
+  (let* ((orgtrello/--describe-headings-meta       (orgtrello-data/compute-full-metadata))
+         (orgtrello/--describe-headings-count-meta (length orgtrello/--describe-headings-meta)))
+    (message "meta: %S\ncount: %s" orgtrello/--describe-headings-meta orgtrello/--describe-headings-count-meta)))
+
+(defun org-trello/find-block ()
+  (interactive)
+  (message "found: %s" (org-entry-get (point) *ORGTRELLO-ID*)))
+
+(defun org-trello/testing-thing ()
+  (interactive)
+  (org-map-tree (lambda () (org-todo *TODO*))))
+
 ;;;###autoload
 (define-minor-mode org-trello-mode "Sync your org-mode and your trello together."
   :lighter " ot" ;; the name on the modeline
@@ -1042,9 +1081,10 @@ C-c o h - This help message."))
              (define-key map (kbd "C-c o h") 'org-trello/help-describing-bindings)
              ;; for debugging purposes (I do not know any better yet)
              (define-key map (kbd "C-c o d") 'org-trello/check-setup)
-             (define-key map (kbd "C-c o z") 'orgtrello/describe-heading)
-             ;; (define-key map (kbd "C-c o x") 'orgtrello/describe-headings)
-             ;; (define-key map (kbd "C-c o F") 'orgtrello/find-block)
+             (define-key map (kbd "C-c o z") 'org-trello/describe-heading)
+             (define-key map (kbd "C-c o t") 'org-trello/testing-thing)
+             ;; (define-key map (kbd "C-c o x") 'org-trello/describe-headings)
+             ;; (define-key map (kbd "C-c o F") 'org-trello/find-block)
              ;; define other bindings...
              map))
 
