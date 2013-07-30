@@ -52,16 +52,18 @@
 (require 'dash)
 (require 'request)
 (require 'cl-lib)
+(require 'parse-time)
 
 ;; #################### orgtrello-hash
 
-(defun orgtrello-hash/make-hash-org (level keyword title id)
+(defun orgtrello-hash/make-hash-org (level keyword title id due)
   "Utility function to ease the creation of the orgtrello-metadata"
   (let ((h (make-hash-table :test 'equal)))
     (puthash :level   level   h)
     (puthash :keyword keyword h)
     (puthash :title   title   h)
     (puthash :id      id      h)
+    (puthash :due     due     h)
     h))
 
 (defun orgtrello-hash/make-hash (method uri &optional params)
@@ -78,12 +80,28 @@
 
 (defvar *ORGTRELLO-ID* "orgtrello-id" "Marker used for the trello identifier")
 
+(defun orgtrello-data/--convert-orgmode-date-to-trello-date (orgmode-date)
+  "Convert the org-mode deadline into a time adapted for trello."
+  (if (and orgmode-date (not (string-match-p "T*Z" orgmode-date)))
+      (cl-destructuring-bind (sec min hour day mon year dow dst tz)
+                             (--map (if it
+                                        (if (< it 10)
+                                            (concat "0" (int-to-string it))
+                                          (int-to-string it)))
+                                    (parse-time-string orgmode-date))
+                             (let* ((year-mon-day (concat year "-" mon "-" day "T"))
+                                    (hour-min-sec (if hour (concat hour ":" min ":" sec) "00:00:00")))
+                               (concat year-mon-day hour-min-sec ".000Z")))
+    orgmode-date))
+
 (defun orgtrello-data/metadata ()
   "Compute the metadata from the org-heading-components entry, add the identifier and extract the metadata needed."
-  (let* ((id           (org-entry-get (point) *ORGTRELLO-ID*))
-         (org-metadata (org-heading-components)))
-    (->> org-metadata
-         (cons id)
+  (let* ((orgtrello-data/metadata--id       (org-entry-get (point) *ORGTRELLO-ID*))
+         (orgtrello-data/metadata--due      (orgtrello-data/--convert-orgmode-date-to-trello-date (org-entry-get (point) "DEADLINE")))
+         (orgtrello-data/metadata--metadata (org-heading-components)))
+    (->> orgtrello-data/metadata--metadata
+         (cons orgtrello-data/metadata--due)
+         (cons orgtrello-data/metadata--id)
          orgtrello-data/--get-metadata)))
 
 (defun orgtrello-data/--parent-metadata ()
@@ -116,8 +134,8 @@
 
 (defun orgtrello-data/--get-metadata (heading-metadata)
   "Given the heading-metadata returned by the function 'org-heading-components, make it a hashmap with key :level, :keyword, :title. and their respective value"
-  (cl-destructuring-bind (id level _ keyword _ title &rest) heading-metadata
-                         (orgtrello-hash/make-hash-org level keyword title id)))
+  (cl-destructuring-bind (id due level _ keyword _ title &rest) heading-metadata
+                         (orgtrello-hash/make-hash-org level keyword title id due)))
 
 (message "orgtrello-data loaded!")
 
@@ -167,21 +185,22 @@
   "Add a list - the name and the board id are mandatory (so i say!)."
   (orgtrello-hash/make-hash :post "/lists/" `(("name" . ,name) ("idBoard" . ,idBoard))))
 
-(defun orgtrello-api/add-card (name idList)
+(defun orgtrello-api/add-card (name idList &optional due)
   "Add a card to a board"
-  (orgtrello-hash/make-hash :post "/cards/" `(("name" . ,name) ("idList" . ,idList))))
+  (let* ((orgtrello-api/add-card--default-params `(("name" . ,name) ("idList" . ,idList)))
+         (orgtrello-api/add-card--params (if due (cons `("due" . ,due) orgtrello-api/add-card--default-params) orgtrello-api/add-card--default-params)))
+    (orgtrello-hash/make-hash :post "/cards/" orgtrello-api/add-card--params)))
 
 (defun orgtrello-api/get-cards-from-list (list-id)
   "List all the cards"
   (orgtrello-hash/make-hash :get (format "/lists/%s/cards" list-id)))
 
-(defun orgtrello-api/move-card (card-id idList &optional name)
+(defun orgtrello-api/move-card (card-id idList &optional name due)
   "Move a card to another list"
-  (let ((orgtrello-api/move-card-data (if name
-                                           `(("name"   . ,name)
-                                             ("idList" . ,idList))
-                                         `(("idList" . ,idList)))))
-    (orgtrello-hash/make-hash :put (format "/cards/%s" card-id) orgtrello-api/move-card-data)))
+  (let* ((orgtrello-api/move-card--default-params `(("idList" . ,idList)))
+         (orgtrello-api/move-card--params-name (if name (cons `("name" . ,name) orgtrello-api/move-card--default-params) orgtrello-api/move-card--default-params))
+         (orgtrello-api/move-card--params-due  (if due (cons `("due" . ,due) orgtrello-api/move-card--params-name) orgtrello-api/move-card--params-name)))
+    (orgtrello-hash/make-hash :put (format "/cards/%s" card-id) orgtrello-api/move-card--params-due)))
 
 (defun orgtrello-api/add-checklist (card-id name)
   "Add a checklist to a card"
@@ -459,12 +478,13 @@
         (let* ((orgtrello/--card-kwd  (orgtrello/--retrieve-state-of-card card-meta))
                (orgtrello/--list-id   (assoc-default orgtrello/--card-kwd org-file-properties))
                (orgtrello/--card-id   (gethash :id    card-meta))
-               (orgtrello/--card-name (gethash :title card-meta)))
+               (orgtrello/--card-name (gethash :title card-meta))
+               (orgtrello/--card-due  (gethash :due   card-meta)))
           (if orgtrello/--card-id
               ;; update
-              (orgtrello-api/move-card orgtrello/--card-id orgtrello/--list-id orgtrello/--card-name)
+              (orgtrello-api/move-card orgtrello/--card-id orgtrello/--list-id orgtrello/--card-name orgtrello/--card-due)
             ;; create
-            (orgtrello-api/add-card orgtrello/--card-name orgtrello/--list-id)))
+            (orgtrello-api/add-card orgtrello/--card-name orgtrello/--list-id orgtrello/--card-due)))
       checks-ok-or-error-message)))
 
 (defun orgtrello/--checks-before-sync-checklist (checklist-meta card-meta)
@@ -618,8 +638,10 @@
 (defun orgtrello/--compute-card-to-org-entry (card)
   "Given a card, compute its org-mode entry equivalence."
   (let* ((orgtrello/--card-name                                    (assoc-default 'name card))
-         (orgtrello/--card-status (orgtrello/--compute-card-status (assoc-default 'idList card))))
-    (format "* %s %s\n" orgtrello/--card-status orgtrello/--card-name)))
+         (orgtrello/--card-status (orgtrello/--compute-card-status (assoc-default 'idList card)))
+         (orgtrello/--card-due-date (assoc-default 'due card)))
+    (format "* %s %s\n%s" orgtrello/--card-status orgtrello/--card-name
+            (if orgtrello/--card-due-date (format "DEADLINE: <%s>\n" orgtrello/--entity-due-date) ""))))
 
 (defun orgtrello/--compute-checklist-to-org-entry (checklist)
   "Given a checklist, compute its org-mode entry equivalence."
@@ -678,7 +700,7 @@
         ;; dump the remaining entities
         (maphash
          (lambda (orgtrello/--entry-new-id orgtrello/--entity)
-           (let ((orgtrello/--entry-new-name (assoc-default 'name orgtrello/--entity)))
+           (let ((orgtrello/--entry-new-name  (assoc-default 'name orgtrello/--entity)))
              (message "Synchronizing new entity '%s' with id '%s'..." orgtrello/--entry-new-name orgtrello/--entry-new-id)
              (insert (orgtrello/--compute-entity-to-org-entry orgtrello/--entity))
              (org-set-property *ORGTRELLO-ID* orgtrello/--entry-new-id)))
@@ -697,12 +719,14 @@
                     (orgtrello/--entity-updated (gethash orgtrello/--entity-id entities)))
                (if orgtrello/--entity-updated
                    ;; found something, we update by squashing the current contents
-                   (let* ((orgtrello/--entry-new-id   (assoc-default 'id   orgtrello/--entity-updated))
-                          (orgtrello/--entry-new-name (assoc-default 'name orgtrello/--entity-updated)))
+                   (let* ((orgtrello/--entry-new-id    (assoc-default 'id   orgtrello/--entity-updated))
+                          (orgtrello/--entity-due-date (assoc-default 'due  orgtrello/--entity-updated))
+                          (orgtrello/--entry-new-name  (assoc-default 'name orgtrello/--entity-updated)))
                      ;; update the buffer with the new updates (there may be none but naively we will overwrite at the moment)
                      (message "Synchronizing entity '%s' with id '%s'..." orgtrello/--entry-new-name orgtrello/--entry-new-id)
                      (org-show-entry)
                      (kill-whole-line)
+                     (if orgtrello/--entity-due-date (kill-whole-line))
                      (insert (orgtrello/--compute-entity-to-org-entry orgtrello/--entity-updated))
                      ;; remove the entry from the hash-table
                      (remhash orgtrello/--entity-id entities)))))))
@@ -726,7 +750,7 @@
   (interactive)
   "Describe the current heading's metadata"
   (let* ((entry-metadata (orgtrello-data/entry-get-full-metadata)))
-    (message "entry metadata: %S" entry-metadata)))
+    (message "entry metadata: %S\n%S\n%S" entry-metadata (org-heading-components) (org-entry-get (point) "DEADLINE"))))
 
 (defun orgtrello/describe-headings ()
   (interactive)
@@ -1011,9 +1035,9 @@ C-c o h - This help message."))
              (define-key map (kbd "C-c o h") 'org-trello/help-describing-bindings)
              ;; for debugging purposes (I do not know any better yet)
              (define-key map (kbd "C-c o d") 'org-trello/check-setup)
-             ;; (define-key map (kbd "C-c z") 'orgtrello/describe-heading)
-             ;; (define-key map (kbd "C-c x") 'orgtrello/describe-headings)
-             ;; (define-key map (kbd "C-c F") 'orgtrello/find-block)
+             (define-key map (kbd "C-c o z") 'orgtrello/describe-heading)
+             ;; (define-key map (kbd "C-c o x") 'orgtrello/describe-headings)
+             ;; (define-key map (kbd "C-c o F") 'orgtrello/find-block)
              ;; define other bindings...
              map))
 

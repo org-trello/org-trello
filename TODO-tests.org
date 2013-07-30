@@ -194,23 +194,16 @@
 :PROPERTIES:
 :orgtrello-id: 51e7e60bd23ccba35c00a588
 :END:
+* TODO testing
+:PROPERTIES:
+:orgtrello-id: 51f81cafc309d79908000e53
+:END:
 * PENDING testing new card
+DEADLINE: <2013-07-31T07:00:00.000Z>
 :PROPERTIES:
-:orgtrello-id: 51e7e605d4a5057d6b0003d1
+:orgtrello-id: 51f8271d6ebe2a381f00000d
 :END:
-** Checklist
+** test
 :PROPERTIES:
-:orgtrello-id: 51e7e6579f58d6ff1a007277
-:END:
-*** DONE does this work
-:PROPERTIES:
-:orgtrello-id: 51e7e65ad4e11fbc7d006eae
-:END:
-*** TODO it seems
-:PROPERTIES:
-:orgtrello-id: 51e7e65d26db90df23000495
-:END:
-*** TODO seeing with items
-:PROPERTIES:
-:orgtrello-id: 51e7e6629dc499317c003598
+:orgtrello-id: 51f82b6c100066113c00011f
 :END:
