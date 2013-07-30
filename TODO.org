@@ -393,8 +393,14 @@ CLOSED: [2013-07-25 jeu. 20:05]
 CLOSED: [2013-07-25 jeu. 20:40]
 ** DONE Release
 CLOSED: [2013-07-25 jeu. 20:40]
-* TODO v0.0.8 [0%]
-** TODO Look to the org-mode's standard checklist http://orgmode.org/manual/Checkboxes.html
+* IN-PROGRESS v0.0.8 [25%]
+** DONE Fix the cl-lib dependency
+CLOSED: [2013-07-30 mar. 17:13]
+** TODO Improve the saving of the buffer at the end of the sync between org and trello
+** TODO Implement a simple checklist with the current implementation
+** TODO A simple and parametrable setup to make the user choose to use the checklist system or not
+* TODO v0.0.9 [%]
+** TODO Implement the org-mode's standard checklist http://orgmode.org/manual/Checkboxes.html
 ** TODO Filter out directly with the api the data we do not need to avoid unnecessary network traffic
 ** TODO Replace already present properties regarding boards before injecting new ones.
 ** TODO A fake trello server to be able to test without a network

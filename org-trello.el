@@ -51,7 +51,7 @@
 (require 'json)
 (require 'dash)
 (require 'request)
-(eval-when-compile (require 'cl-lib))
+(require 'cl-lib)
 
 ;; #################### orgtrello-hash
 
