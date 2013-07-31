@@ -18,35 +18,37 @@
 :PROPERTIES:
 :orgtrello-id: 51e567aff8d10f7b21001fb8
 :END:
-* DONE v0.0.4 [0%]
+* DONE v0.0.4 [100%]
 :PROPERTIES:
 :orgtrello-id: 51e568237e0367312e001704
 :END:
-** Permit the user to deal with his/her own trello list (based on his/her org-mode keywords - cf. http://orgmode.org/manual/In_002dbuffer-settings.html) [100%]
+** DONE Permit the user to deal with his/her own trello list (based on his/her org-mode keywords - cf. http://orgmode.org/manual/In_002dbuffer-settings.html) [100%]
+CLOSED: [2013-07-31 mer. 02:03]
 :PROPERTIES:
 :orgtrello-id: 51e56829b62b81cc12001ec1
 :END:
-*** Ensure the control check for only todo, doing, done.
+*** DONE Ensure the control check for only todo, doing, done.
+CLOSED: [2013-07-31 mer. 02:03]
 :PROPERTIES:
 :orgtrello-id: 51e5682bd23ccba35c0038e0
 :END:
 *** DONE Ensure the state computation of a card take into account the multiple list
-CLOSED: [2013-07-31 mer. 01:35]
+CLOSED: [2013-07-31 mer. 02:03]
 :PROPERTIES:
 :orgtrello-id: 51e5682ba375c5ae5c00365c
 :END:
 *** DONE Load all properties list id
-CLOSED: [2013-07-31 mer. 01:35]
+CLOSED: [2013-07-31 mer. 02:03]
 :PROPERTIES:
 :orgtrello-id: 51e5682ce4140e2b3e001892
 :END:
 *** DONE Creating the board with the right cards (name attached to keyword)
-CLOSED: [2013-07-31 mer. 01:35]
+CLOSED: [2013-07-31 mer. 02:03]
 :PROPERTIES:
 :orgtrello-id: 51e5682dacd719ce0e002232
 :END:
 *** DONE Fix non interactive command that are defined as though they were (we need to ensure the passage by the controlling function).
-CLOSED: [2013-07-31 mer. 01:35]
+CLOSED: [2013-07-31 mer. 02:03]
 :PROPERTIES:
 :orgtrello-id: 51e5682e64efe1e617002196
 :END:
@@ -206,4 +208,12 @@ DEADLINE: <2013-07-31T07:00:00.000Z>
 ** test
 :PROPERTIES:
 :orgtrello-id: 51f82b6c100066113c00011f
+:END:
+* TODO new cards
+:PROPERTIES:
+:orgtrello-id: 51f8471352b8b0b54f00086c
+:END:
+** new cl
+:PROPERTIES:
+:orgtrello-id: 51f84714d55b904a03000740
 :END:

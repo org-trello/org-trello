@@ -10,7 +10,9 @@ Minor emacs mode for org-mode - 2-way synchronization between org-mode file and 
 - [org-trello](#org-trello)
 - [why?](#why)
 - [Emacs version](#emacs-version)
-- [Demo](#demo)
+- [TL;DR](#tl;dr)
+	- [Fast help](#fast-help)
+	- [Demo](#demo)
 - [Contributions](#contributions)
 - [Release notes](#release-notes)
 - [Install](#install)
@@ -31,6 +33,8 @@ Minor emacs mode for org-mode - 2-way synchronization between org-mode file and 
 - [Use cases](#use-cases)
 	- [Setup](#setup-1)
 	- [Creation step-by-step](#creation-step-by-step)
+	- [Card and deadline/due date](#card-and-deadlinedue-date)
+	- [Checklist and transitivity](#checklist-and-transitivity)
 	- [Creation full entity](#creation-full-entity)
 	- [Sync org-mode file to trello board](#sync-org-mode-file-to-trello-board)
 	- [Sync org-mode file from trello board](#sync-org-mode-file-from-trello-board)
@@ -48,7 +52,24 @@ Minor emacs mode for org-mode - 2-way synchronization between org-mode file and 
 
 Tested on GNU Emacs 24.1.1 (x86_64-pc-linux-gnu, X toolkit, Xaw3d scroll bars) of 2012-09-22 on batsu, modified by Debian
 
-# Demo
+# TL;DR
+
+## Fast help
+
+Yank this into a scratch buffer:
+``` lisp
+(require 'package)
+(add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/") t)
+;; or (add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
+(package-initialize)
+(package-install 'org-trello)
+(require 'org-trello)
+```
+then `M-x eval-buffer`
+
+Now open an org-mode buffer, then hit: `C-c o h`
+
+## Demo
 
 - [Install](http://youtu.be/e3NzllAHbHY)
 - [Setup key and token](http://youtu.be/ReUp1Wn5scc)
@@ -284,6 +305,24 @@ For example:
   - Place yourself on your task and hit the binding, this will add the item to such checklist.
   - Change the label of the task and hit the binding, this will update its label.
   - Change the status of the task to `DONE` and hit the binding, this will check such item in trello.
+
+## Card and deadline/due date
+
+You can use [org-mode's deadline](http://orgmode.org/manual/Inserting-deadline_002fschedule.html), this is mapped to trello's due date notion during the synchronize step.
+
+## Checklist and transitivity
+
+By default now, the status of the checklist does transit to the items.
+Thus:
+- if the status of the checklist is DONE, every item will be synced to DONE and the org-mode buffer will be updated accordingly.
+- if the status of the checklist is TODO, every item will be synced to TODO and the org-mode buffer will be updated accordingly.
+
+If you do not want this, you can disable this by adding this line to your emacs's startup file:
+
+```lisp
+(require 'org-trello)
+(setq *ORGTRELLO-CHECKLIST-UPDATE-ITEMS* nil)
+```
 
 ## Creation full entity
 

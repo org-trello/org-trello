@@ -58,9 +58,9 @@
 
 (defvar *ORGTRELLO-CHECKLIST-UPDATE-ITEMS* t
   "A variable to permit the checklist's status to be pass along to its items. t, if checklist's status is DONE, the items are updated to DONE (org-mode buffer and trello board), nil only the items's status is used.
-  To update this, the user need to update with such code: (setq *CHECKLIST-UPDATE-ITEMS* nil)")
-
-(setq *ORGTRELLO-CHECKLIST-UPDATE-ITEMS* nil)
+  To deactivate such behavior, update in your init.el:
+  (require 'org-trello)
+  (setq *ORGTRELLO-CHECKLIST-UPDATE-ITEMS* nil)")
 
 ;; #################### orgtrello-hash
 
@@ -583,7 +583,7 @@
           ;; update/create items
           (if orgtrello/--task-id
               ;; update - rename, check or uncheck the task
-              (orgtrello-api/update-task orgtrello/--card-id orgtrello/--checklist-id orgtrello/--task-id orgtrello/--task-name (trace (orgtrello/--task-compute-state *ORGTRELLO-CHECKLIST-UPDATE-ITEMS* orgtrello/--task-state orgtrello/--checklist-state)))
+              (orgtrello-api/update-task orgtrello/--card-id orgtrello/--checklist-id orgtrello/--task-id orgtrello/--task-name (orgtrello/--task-compute-state *ORGTRELLO-CHECKLIST-UPDATE-ITEMS* orgtrello/--task-state orgtrello/--checklist-state))
             ;; create
             (orgtrello-api/add-tasks orgtrello/--checklist-id orgtrello/--task-name (orgtrello/--task-compute-check *ORGTRELLO-CHECKLIST-UPDATE-ITEMS* orgtrello/--task-state orgtrello/--checklist-state))))
       checks-ok-or-error-message)))
