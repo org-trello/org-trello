@@ -445,7 +445,7 @@
 
 (defun orgtrello/--control-properties ()
   "org-trello needs the properties board-id and all list id from the trello board to be setuped on header property file. Returns :ok if everything is ok, or the error message if problems."
-  (let ((orgtrello/--hmap-count   (cl-hash-table-count *HMAP-ID-NAME*)))
+  (let ((orgtrello/--hmap-count   (hash-table-count *HMAP-ID-NAME*)))
     (if (and (assoc-default *BOARD-ID* org-file-properties)
              (= (length *LIST-NAMES*) orgtrello/--hmap-count))
         :ok
@@ -1033,16 +1033,17 @@
 (defun org-trello/help-describing-bindings ()
   "A simple message to describe the standard bindings used."
   (interactive)
-  (message "C-c o i - Interactive command to install the keys and the access-token.
-C-c o I - Interactive command to select the board and attach the todo, doing and done list.
-C-c o b - Create interactively a board and attach the org-mode file to this trello board.
-C-c o c - Create/Update asynchronously an entity (card/checklist/item) depending on its level and status. Do not deal with level superior to 4.
-C-c o C - Create/Update a complete entity card/checklist/item and its subtree (depending on its level).
-C-c o s - Synchronize the org-mode file to the trello board (org-mode -> trello).
-C-c o S - Synchronize the org-mode file from the trello board (trello -> org-mode).
-C-c o k - Kill the entity (and its arborescence tree).
-C-c o d - Simple routine to check that the setup is ok. If everything is ok, will simply display 'Setup ok!'
-C-c o h - This help message."))
+  (message
+"C-c o i - M-x org-trello/install-key-and-token       - Install the keys and the access-token.
+C-c o I - M-x org-trello/install-board-and-lists-ids - Select the board and attach the todo, doing and done list.
+C-c o b - M-x org-trello/create-board                - Create interactively a board and attach the org-mode file to this trello board.
+C-c o c - M-x org-trello/create-simple-entity        - Create/Update an entity (card/checklist/item) depending on its level and status. Do not deal with level superior to 4.
+C-c o C - M-x org-trello/create-complex-entity       - Create/Update a complete entity card/checklist/item and its subtree (depending on its level).
+C-c o s - M-x org-trello/sync-to-trello              - Synchronize the org-mode file to the trello board (org-mode -> trello).
+C-c o S - M-x org-trello/sync-from-trello            - Synchronize the org-mode file from the trello board (trello -> org-mode).
+C-c o k - M-x org-trello/kill-entity                 - Kill the entity (and its arborescence tree).
+C-c o d - M-x org-trello/check-setup                 - Simple routine to check that the setup is ok. If everything is ok, will simply display 'Setup ok!'
+C-c o h - M-x org-trello/help-describing-bindings    - This help message."))
 
 ;;;###autoload
 (define-minor-mode org-trello-mode "Sync your org-mode and your trello together."

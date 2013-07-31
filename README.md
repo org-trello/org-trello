@@ -242,16 +242,16 @@ M-x org-trello/create-board
 # Bindings
 
 Actual bindings (not definitive, suggestions regarding those bindings are welcome):
-- C-c o i - Interactive command to install the key and the read/write access-token.
-- C-c o I - Interactive command to setup your org-mode file to work with your remote trello board
-- C-c o b - Create interactively a board and attach the org-mode file to this trello board.
-- C-c o c - Create/Update asynchronously an entity (card/checklist/item) depending on its level and status. Do not deal with level superior to 4.
-- C-c o C - Create/Update a complete entity card/checklist/item and its subtree (depending on its level).
-- C-c o s - Synchronize the org-mode file to the trello board (org-mode -> trello).
-- C-c o S - Synchronize the org-mode file from the trello board (trello -> org-mode).
-- C-c o k - Kill the entity (and its arborescence tree).
-- C-c o d - Simple routine to check that the setup is ok. If everything is ok, will simply display 'Setup ok!'
-- C-c o h - This help message.
+- C-c o i - M-x org-trello/install-key-and-token       - Install the keys and the access-token.
+- C-c o I - M-x org-trello/install-board-and-lists-ids - Select the board and attach the todo, doing and done list.
+- C-c o b - M-x org-trello/create-board                - Create interactively a board and attach the org-mode file to this trello board.
+- C-c o c - M-x org-trello/create-simple-entity        - Create/Update an entity (card/checklist/item) depending on its level and status. Do not deal with level superior to 4.
+- C-c o C - M-x org-trello/create-complex-entity       - Create/Update a complete entity card/checklist/item and its subtree (depending on its level).
+- C-c o s - M-x org-trello/sync-to-trello              - Synchronize the org-mode file to the trello board (org-mode -> trello).
+- C-c o S - M-x org-trello/sync-from-trello            - Synchronize the org-mode file from the trello board (trello -> org-mode).
+- C-c o k - M-x org-trello/kill-entity                 - Kill the entity (and its arborescence tree).
+- C-c o d - M-x org-trello/check-setup                 - Simple routine to check that the setup is ok. If everything is ok, will simply display 'Setup ok!'
+- C-c o h - M-x org-trello/help-describing-bindings    - This help message.
 
 # Use cases
 
@@ -317,7 +317,7 @@ Thus:
 - if the status of the checklist is DONE, every item will be synced to DONE and the org-mode buffer will be updated accordingly.
 - if the status of the checklist is TODO, every item will be synced to TODO and the org-mode buffer will be updated accordingly.
 
-If you do not want this, you can disable this by adding this line to your emacs's startup file:
+If you do not want this, you can disable it by adding those lines to your emacs's startup file:
 
 ```lisp
 (require 'org-trello)
@@ -326,26 +326,20 @@ If you do not want this, you can disable this by adding this line to your emacs'
 
 ## Creation full entity
 
-You can sync all of the entity and its arborescence once.
-For this, place yourself on the entity (card or checklist) and hit `C-c o C`.
-
-*Note*: At the moment, this action is synchroneous.
+You can sync all the entities and their arborescence once.
+Place yourself on the entity (card or checklist or item/task) and hit `C-c o C`.
 
 ## Sync org-mode file to trello board
 
-You can sync all your org-mode file to trello too.
-For this, hit `C-c o s`.
-
-*Note*: At the moment, this action is synchroneous.
+You can sync all your org-mode file to trello.
+Hit `C-c o s`.
 
 ## Sync org-mode file from trello board
 
-You can sync the content of your trello board into an org-mode file too.
+You can sync the content of your trello board into an org-mode file.
 Hit `C-c o S`.
 
 This will update any already present entry in the org-mode file and create the one not created yet.
-
-*Note*: At the moment, this action is synchroneous.
 
 ## Remove entity
 
@@ -354,7 +348,7 @@ This will also remove the entry from the org-mode buffer.
 
 # Errors
 
-Here are the possible error messages you can have if trying to sync in bad condition:
+Here are the possible error messages you can have if trying to sync in bad conditions:
 
 - without setuping the consumer-key and the access-token:
 ```
