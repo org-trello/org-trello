@@ -393,8 +393,33 @@ CLOSED: [2013-07-25 jeu. 20:05]
 CLOSED: [2013-07-25 jeu. 20:40]
 ** DONE Release
 CLOSED: [2013-07-25 jeu. 20:40]
-* TODO v0.0.8 [0%]
-** TODO Look to the org-mode's standard checklist http://orgmode.org/manual/Checkboxes.html
+* DONE v0.0.8 [100%]
+CLOSED: [2013-07-31 mer. 01:42] DEADLINE: <2013-07-30 mar.>
+** DONE Fix the cl-lib dependency
+CLOSED: [2013-07-30 mar. 17:13]
+** DONE Improve the message when an action is done to let the user know when the action is done!
+CLOSED: [2013-07-30 mar. 17:32]
+** DONE Better saving buffer policy
+CLOSED: [2013-07-30 mar. 18:20]
+** DONE Sync org DEADLINE with trello card due - https://github.com/ardumont/org-trello/issues/17
+CLOSED: [2013-07-30 mar. 23:29]
+** DONE Done, Todo on "check lists" - Once the user sets a "check list" to DONE or TODO, then check or uncheck all the tasks it contains. - https://github.com/ardumont/org-trello/issues/16
+CLOSED: [2013-07-31 mer. 01:38]
+** DONE A simple and parametrable setup to make the user choose to use the checklist system or not
+CLOSED: [2013-07-31 mer. 01:39]
+** DONE Upgrade version
+CLOSED: [2013-07-31 mer. 01:40]
+** DONE Release notes
+CLOSED: [2013-07-31 mer. 01:42]
+** DONE Release
+CLOSED: [2013-07-31 mer. 01:42]
+** DONE Update documentation about deadline, checklist
+CLOSED: [2013-07-31 mer. 02:06]
+** DONE Cleanup the debugging functions
+CLOSED: [2013-07-31 mer. 02:06]
+* TODO v0.0.9 [0%]
+** TODO Introducing C-c o h at the loading of the buffer when ot is loaded
+** TODO Implement the org-mode's standard checklist http://orgmode.org/manual/Checkboxes.html
 ** TODO Filter out directly with the api the data we do not need to avoid unnecessary network traffic
 ** TODO Replace already present properties regarding boards before injecting new ones.
 ** TODO A fake trello server to be able to test without a network

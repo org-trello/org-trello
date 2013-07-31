@@ -1,3 +1,17 @@
+# v0.0.8
+
+- DONE Fix the cl-lib dependency
+- DONE Improve the message when an action is done to let the user know when the action is done!
+- DONE Better saving buffer policy
+- DONE Sync org DEADLINE with trello card due - https://github.com/ardumont/org-trello/issues/17
+- DONE Done, Todo on "check lists" - Once the user sets a "check list" to DONE or TODO, then check or uncheck all the tasks it contains. - https://github.com/ardumont/org-trello/issues/16
+- DONE A simple and parametrable setup to make the user choose to use the checklist system or not
+- DONE Upgrade version
+- DONE Release notes
+- DONE Release
+- DONE Update documentation about deadline, checklist
+- DONE Cleanup the debugging functions
+
 # v0.0.7
 
 - DONE Reference missing bindings in documentation
