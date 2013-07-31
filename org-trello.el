@@ -1044,27 +1044,6 @@ C-c o k - Kill the entity (and its arborescence tree).
 C-c o d - Simple routine to check that the setup is ok. If everything is ok, will simply display 'Setup ok!'
 C-c o h - This help message."))
 
-(defun org-trello/describe-heading ()
-  (interactive)
-  "Describe the current heading's metadata"
-  (let* ((entry-metadata (orgtrello-data/entry-get-full-metadata)))
-    (message "entry metadata: %S\n%S\n%S" entry-metadata (org-heading-components) (org-entry-get (point) "DEADLINE"))))
-
-(defun org-trello/describe-headings ()
-  (interactive)
-  "Describe the heading and its sublist."
-  (let* ((orgtrello/--describe-headings-meta       (orgtrello-data/compute-full-metadata))
-         (orgtrello/--describe-headings-count-meta (length orgtrello/--describe-headings-meta)))
-    (message "meta: %S\ncount: %s" orgtrello/--describe-headings-meta orgtrello/--describe-headings-count-meta)))
-
-(defun org-trello/find-block ()
-  (interactive)
-  (message "found: %s" (org-entry-get (point) *ORGTRELLO-ID*)))
-
-(defun org-trello/testing-thing ()
-  (interactive)
-  (org-map-tree (lambda () (org-todo *TODO*))))
-
 ;;;###autoload
 (define-minor-mode org-trello-mode "Sync your org-mode and your trello together."
   :lighter " ot" ;; the name on the modeline
@@ -1079,12 +1058,7 @@ C-c o h - This help message."))
              (define-key map (kbd "C-c o S") 'org-trello/sync-from-trello)
              (define-key map (kbd "C-c o k") 'org-trello/kill-entity)
              (define-key map (kbd "C-c o h") 'org-trello/help-describing-bindings)
-             ;; for debugging purposes (I do not know any better yet)
              (define-key map (kbd "C-c o d") 'org-trello/check-setup)
-             (define-key map (kbd "C-c o z") 'org-trello/describe-heading)
-             (define-key map (kbd "C-c o t") 'org-trello/testing-thing)
-             ;; (define-key map (kbd "C-c o x") 'org-trello/describe-headings)
-             ;; (define-key map (kbd "C-c o F") 'org-trello/find-block)
              ;; define other bindings...
              map))
 

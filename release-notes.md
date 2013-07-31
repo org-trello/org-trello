@@ -9,6 +9,8 @@
 - DONE Upgrade version
 - DONE Release notes
 - DONE Release
+- DONE Update documentation about deadline, checklist
+- DONE Cleanup the debugging functions
 
 # v0.0.7
 
