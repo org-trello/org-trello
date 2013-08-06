@@ -627,9 +627,10 @@
                     ;; synchroneous request
                     (orgtrello-query/http-sync query-http-or-error-msg 'orgtrello-query/--post-put-success-callback-update-id)
                   ;; asynchroneous one
-                  (orgtrello-query/http query-http-or-error-msg 'orgtrello-query/--post-put-success-callback-update-id)))
+                  (orgtrello-query/http query-http-or-error-msg 'orgtrello-query/--post-put-success-callback-update-id))
+                "Syncronizing simple entity done!")
             ;; else it's a string to display
-            (message query-http-or-error-msg))))))
+            query-http-or-error-msg)))))
 
 (defun orgtrello/--merge-map (entry map-ids-by-name)
   "Given a map of (id . name) and an entry, return the entry updated with the id if not already present."
@@ -656,14 +657,14 @@
       (while (org-up-heading-safe))
       ;; iterate over the map of
       (org-map-tree (lambda () (orgtrello/do-create-simple-entity t))))
-    (message "Synchronizing full card structure on board '%s' - done!" orgtrello/--board-name-to-sync)))
+    (format "Synchronizing full card structure on board '%s' - done!" orgtrello/--board-name-to-sync)))
 
 (defun orgtrello/do-sync-full-file ()
   "Full org-mode file synchronisation. Beware, this will block emacs as the request is synchronous."
   (let ((orgtrello/--board-name-to-sync (orgtrello/--board-name)))
     (message "Synchronizing org-mode file to the board '%s'. This may take some time, some coffee may be a good idea..." (orgtrello/--board-name))
     (org-map-entries (lambda () (orgtrello/do-create-simple-entity t)) t 'file)
-    (message "Synchronizing org-mode file to the board '%s' - done!" orgtrello/--board-name-to-sync))  )
+    (format "Synchronizing org-mode file to the board '%s' - done!" orgtrello/--board-name-to-sync)))
 
 (defun trace (e &optional label)
   "Decorator for some inaccessible code to easily 'message'."
@@ -749,7 +750,7 @@
          entities))))
 
 (defun orgtrello/--sync-buffer-with-trello-data (entities)
-  "Given all the entites, update the current buffer with those."
+  "Given all the entities, update the current buffer with those."
   (with-current-buffer (current-buffer)
     (org-map-entries
      (lambda ()
@@ -786,7 +787,7 @@
            (orgtrello/--entities-hash-map  (orgtrello/--compute-full-entities-from-trello orgtrello/--cards))
            (orgtrello/--remaining-entities (orgtrello/--sync-buffer-with-trello-data orgtrello/--entities-hash-map)))
       (orgtrello/--update-buffer-with-remaining-trello-data orgtrello/--remaining-entities))
-    (message "Synchronizing the trello board '%s' to the org-mode file - done!" orgtrello/--board-name-to-sync)))
+    (format "Synchronizing the trello board '%s' to the org-mode file - done!" orgtrello/--board-name-to-sync)))
 
 (defun orgtrello/--card-delete (card-meta &optional parent-meta)
   "Deal with the deletion query of a card"
@@ -827,11 +828,13 @@
     (if (and current-metadata id)
         (let ((query-http-or-error-msg (orgtrello/--dispatch-delete (gethash :current entry-metadata) (gethash :parent entry-metadata))))
           (if (hash-table-p query-http-or-error-msg)
-              (if sync
-                  (orgtrello-query/http-sync query-http-or-error-msg 'orgtrello-query/--delete-success-callback)
-                (orgtrello-query/http query-http-or-error-msg 'orgtrello-query/--delete-success-callback))
-            (message query-http-or-error-msg)))
-      (message "Entity not synchronized on trello yet!"))))
+              (progn
+                (if sync
+                    (orgtrello-query/http-sync query-http-or-error-msg 'orgtrello-query/--delete-success-callback)
+                  (orgtrello-query/http query-http-or-error-msg 'orgtrello-query/--delete-success-callback))
+                "Delete entity done!")
+            query-http-or-error-msg))
+      "Entity not synchronized on trello yet!")))
 
 (defun orgtrello/--do-install-config-file (*consumer-key* *access-token*)
   "Persist the file config-file with the input of the user."
@@ -852,7 +855,8 @@
   (setq orgtrello/--*consumer-key* (read-string "*consumer-key*: "))
   (browse-url (format "https://trello.com/1/authorize?response_type=token&name=org-trello&scope=read,write&expiration=never&key=%s" orgtrello/--*consumer-key*))
   (setq orgtrello/--access-token (read-string "Access-token: "))
-  (orgtrello/--do-install-config-file orgtrello/--*consumer-key* orgtrello/--access-token))
+  (orgtrello/--do-install-config-file orgtrello/--*consumer-key* orgtrello/--access-token)
+  (format "Install key and read/write access token done!"))
 
 (defun orgtrello/--id-name (entities)
   "Given a list of association list (representing entities), return a map (id, name)."
@@ -920,7 +924,8 @@
    (orgtrello/update-orgmode-file-with-properties
     orgtrello/--chosen-board-name
     orgtrello/--chosen-board-id
-    (orgtrello/--name-id (orgtrello/--list-board-lists orgtrello/--chosen-board-id)))))
+    (orgtrello/--name-id (orgtrello/--list-board-lists orgtrello/--chosen-board-id))))
+  (format "Install board and list ids done!"))
 
 (defun orgtrello/--create-board (board-name &optional board-description)
   "Create a board with name and eventually a description."
@@ -959,7 +964,8 @@
                          (let* ((orgtrello/--board-list-ids       (--map (assoc-default 'id it) (orgtrello/--list-board-lists orgtrello/--board-id)))  ;; first retrieve the existing lists (created by default on trello)
                                 (orgtrello/--lists-to-close       (orgtrello/--close-lists orgtrello/--board-list-ids))                                ;; close those lists (they may surely not match the name we want)
                                 (orgtrello/--board-lists-hname-id (orgtrello/--create-lists-according-to-keywords orgtrello/--board-id *LIST-NAMES*))) ;; create the list, this returns the ids list
-                           (orgtrello/update-orgmode-file-with-properties orgtrello/--board-name orgtrello/--board-id orgtrello/--board-lists-hname-id))))
+                           (orgtrello/update-orgmode-file-with-properties orgtrello/--board-name orgtrello/--board-id orgtrello/--board-lists-hname-id)))
+  "Create board and lists done!")
 
 (message "orgtrello loaded!")
 
@@ -967,10 +973,13 @@
 
 (defun org-trello/--msg-deco-control-and-do (msg control-fns fn-to-control-and-execute &optional save-buffer-p)
   "A simple decorator function to display message in mini-buffer before and after the execution of the control"
-  (message (concat msg "...") )
-  (org-trello/--control-and-do control-fns fn-to-control-and-execute)
-  (if save-buffer-p (save-buffer))
-  (message (concat msg " - done!")))
+  (message (concat msg "..."))
+  (let ((org-trello/--result-action (org-trello/--control-and-do control-fns fn-to-control-and-execute)))
+    ;; do we have to save the buffer
+    (if save-buffer-p (save-buffer))
+    (if (string-or-null-p org-trello/--result-action)
+        (message  org-trello/--result-action)
+        (message (concat msg " - done!")))))
 
 (defun org-trello/--control-and-do (control-fns fn-to-control-and-execute)
   "Execute the function fn if control-fns is nil or if the result of apply every function to fn is ok."

@@ -22,33 +22,28 @@
 :PROPERTIES:
 :orgtrello-id: 51e568237e0367312e001704
 :END:
-** Permit the user to deal with his/her own trello list (based on his/her org-mode keywords - cf. http://orgmode.org/manual/In_002dbuffer-settings.html) [100%]
+** Permit the user to deal with his/her own trello list (based on his/her org-mode keywords - cf. http://orgmode.org/manual/In_002dbuffer-settings.html) [0%]
 CLOSED: [2013-07-31 mer. 02:03]
 :PROPERTIES:
 :orgtrello-id: 51e56829b62b81cc12001ec1
 :END:
-*** DONE Ensure the control check for only todo, doing, done.
-CLOSED: [2013-07-31 mer. 02:03]
+*** Ensure the control check for only todo, doing, done.
 :PROPERTIES:
 :orgtrello-id: 51e5682bd23ccba35c0038e0
 :END:
-*** DONE Ensure the state computation of a card take into account the multiple list
-CLOSED: [2013-07-31 mer. 02:03]
+*** Ensure the state computation of a card take into account the multiple list
 :PROPERTIES:
 :orgtrello-id: 51e5682ba375c5ae5c00365c
 :END:
-*** DONE Load all properties list id
-CLOSED: [2013-07-31 mer. 02:03]
+*** Load all properties list id
 :PROPERTIES:
 :orgtrello-id: 51e5682ce4140e2b3e001892
 :END:
-*** DONE Creating the board with the right cards (name attached to keyword)
-CLOSED: [2013-07-31 mer. 02:03]
+*** Creating the board with the right cards (name attached to keyword)
 :PROPERTIES:
 :orgtrello-id: 51e5682dacd719ce0e002232
 :END:
-*** DONE Fix non interactive command that are defined as though they were (we need to ensure the passage by the controlling function).
-CLOSED: [2013-07-31 mer. 02:03]
+*** Fix non interactive command that are defined as though they were (we need to ensure the passage by the controlling function).
 :PROPERTIES:
 :orgtrello-id: 51e5682e64efe1e617002196
 :END:
@@ -100,59 +95,59 @@ CLOSED: [2013-07-31 mer. 02:03]
 :PROPERTIES:
 :orgtrello-id: 51e02e406fd8f8526b00397e
 :END:
-*** DONE introduction
+*** introduction
 :PROPERTIES:
 :orgtrello-id: 51e02e4f870e404154001eaf
 :END:
-*** DONE Ch. 1 - A scalable language
+*** Ch. 1 - A scalable language
 :PROPERTIES:
 :orgtrello-id: 51e02e504e843c9d4b001e3c
 :END:
-*** DONE Ch. 2 - First steps in scala
+*** Ch. 2 - First steps in scala
 :PROPERTIES:
 :orgtrello-id: 51e02e50870e404154001eb0
 :END:
-*** DONE Ch. 3 - Next steps in scala
+*** Ch. 3 - Next steps in scala
 :PROPERTIES:
 :orgtrello-id: 51e02e510f5a0ed737003474
 :END:
-*** DONE Ch. 4 - Classes and objects
+*** Ch. 4 - Classes and objects
 :PROPERTIES:
 :orgtrello-id: 51e02e52178c2b042b0026b9
 :END:
-*** DONE Ch. 5 - Basic types and operations
+*** Ch. 5 - Basic types and operations
 :PROPERTIES:
 :orgtrello-id: 51e02e536bb045e42a00375b
 :END:
-*** DONE Ch. 6 - Functional objects
+*** Ch. 6 - Functional objects
 :PROPERTIES:
 :orgtrello-id: 51e02e543d261677540038db
 :END:
-*** TODO Ch. 7 - Buit-in control structures
+*** Ch. 7 - Buit-in control structures
 :PROPERTIES:
 :orgtrello-id: 51e02e54daac63334f00215c
 :END:
-*** TODO Ch. 8 - Functions and closures
+*** Ch. 8 - Functions and closures
 :PROPERTIES:
 :orgtrello-id: 51e02e557946c71c38002424
 :END:
-*** TODO Ch. 9 - Control abstraction
+*** Ch. 9 - Control abstraction
 :PROPERTIES:
 :orgtrello-id: 51e02e5610f4cc366b002140
 :END:
-*** TODO Ch. 10 - Composition and inheritance
+*** Ch. 10 - Composition and inheritance
 :PROPERTIES:
 :orgtrello-id: 51e02e5783d8ac5a4500353a
 :END:
-*** TODO Ch. 11 - Scala's hierarchy
+*** Ch. 11 - Scala's hierarchy
 :PROPERTIES:
 :orgtrello-id: 51e02e58f286ac5c5400381d
 :END:
-*** TODO Ch. 12 - Traits
+*** Ch. 12 - Traits
 :PROPERTIES:
 :orgtrello-id: 51e02e58daac63334f00215d
 :END:
-*** TODO ...
+*** ...
 :PROPERTIES:
 :orgtrello-id: 51e02e5947dcbde3470014ec
 :END:
@@ -200,16 +195,15 @@ CLOSED: [2013-07-31 mer. 02:03]
 :PROPERTIES:
 :orgtrello-id: 51f81cafc309d79908000e53
 :END:
-* PENDING testing new card
-DEADLINE: <2013-07-31T07:00:00.000Z>
-:PROPERTIES:
-:orgtrello-id: 51f8271d6ebe2a381f00000d
-:END:
-** test
-:PROPERTIES:
-:orgtrello-id: 51f82b6c100066113c00011f
-:END:
 * CANCELLED cancelled task
 :PROPERTIES:
 :orgtrello-id: 51ffe96c32c0ac5e59000850
+:END:
+* IN-PROGRESS adding new simple entity
+:PROPERTIES:
+:orgtrello-id: 5200fdbc063bc43e080020e9
+:END:
+** checklist
+:PROPERTIES:
+:orgtrello-id: 5200fdc65357d84b3f0038f1
 :END:

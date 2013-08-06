@@ -417,11 +417,14 @@ CLOSED: [2013-07-31 mer. 01:42]
 CLOSED: [2013-07-31 mer. 02:06]
 ** DONE Cleanup the debugging functions
 CLOSED: [2013-07-31 mer. 02:06]
-* TODO v0.0.9 [11%]
+* TODO v0.0.9 [50%]
 ** DONE Fix bug regarding the saving buffer routine
 CLOSED: [2013-08-06 mar. 15:41]
-** TODO Refactoring some code regarding the message to display in the minibuffer
+** DONE Refactoring action code regarding the message to display in the minibuffer (ATM we do not see what is done or not any longer)
+CLOSED: [2013-08-06 mar. 15:51]
 ** TODO Refactoring the http and http-sync method
+** TODO Improve the delete entity action by forcing the caret to go at the begin of the line before killing anything.
+* TODO v0.1.0 [%]
 ** TODO Introducing C-c o h at the loading of the buffer when ot is loaded
 ** TODO Implement the org-mode's standard checklist http://orgmode.org/manual/Checkboxes.html
 ** TODO Filter out directly with the api the data we do not need to avoid unnecessary network traffic
