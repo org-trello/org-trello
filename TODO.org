@@ -417,7 +417,7 @@ CLOSED: [2013-07-31 mer. 01:42]
 CLOSED: [2013-07-31 mer. 02:06]
 ** DONE Cleanup the debugging functions
 CLOSED: [2013-07-31 mer. 02:06]
-* TODO v0.0.9 [50%]
+* IN-PROGRESS v0.0.9 [66%]
 ** DONE Fix bug regarding the saving buffer routine
 CLOSED: [2013-08-06 mar. 15:41]
 ** DONE Refactoring action code regarding the message to display in the minibuffer (ATM we do not see what is done or not any longer)
@@ -426,7 +426,8 @@ CLOSED: [2013-08-06 mar. 15:51]
 CLOSED: [2013-08-06 mar. 16:10]
 ** DONE Improve the delete entity action by forcing the caret to go at the begin of the line of the heading before killing anything.
 CLOSED: [2013-08-06 mar. 16:21]
-** TODO Update version
+** DONE Update version
+CLOSED: [2013-08-06 mar. 16:23]
 ** TODO release notes
 ** TODO Release on marmalade/melpa
 * TODO v0.1.0 [%]

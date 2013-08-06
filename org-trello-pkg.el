@@ -1,3 +1,3 @@
-(define-package "org-trello" "0.0.8"
+(define-package "org-trello" "0.0.9"
   "Minor mode for org-mode to sync org-mode and trello"
   '((org "7.9.2") (dash "1.4.0") (request "0.1.0") (cl-lib "0.3.0") (json "1.2")))
