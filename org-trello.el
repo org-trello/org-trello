@@ -377,11 +377,14 @@
 
 (cl-defun orgtrello-query/--delete-success-callback (&key data response &allow-other-keys)
   "Callback function called at the end of a successful delete request."
-  (progn (org-delete-property *ORGTRELLO-ID*)
-         (hide-subtree)
-         (kill-line)
-         (kill-line)
-         (message "Entity deleted!")))
+  (progn
+    (org-back-to-heading t)
+    (org-delete-property *ORGTRELLO-ID*)
+    (hide-subtree)
+    (beginning-of-line)
+    (kill-line)
+    (kill-line)
+    (message "Entity deleted!")))
 
 (defun orgtrello-query/--delete (query-map &optional success-callback error-callback)
   "DELETE"

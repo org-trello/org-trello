@@ -206,4 +206,4 @@ CLOSED: [2013-07-31 mer. 02:03]
 ** checklist
 :PROPERTIES:
 :orgtrello-id: 5200fdc65357d84b3f0038f1
-:END:
+:END
