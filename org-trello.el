@@ -280,8 +280,12 @@
   "Query the trello api asynchronously."
   (let* ((method      (gethash :method query-map))
          (fn-dispatch (gethash method *MAP-DISPATCH-HTTP-QUERY*)))
-    (if sync (puthash :sync t query-map))
-    (funcall fn-dispatch query-map success-callback error-callback)))
+    (if sync
+        (progn ;; synchronous request
+          (puthash :sync t query-map)
+          (let ((request-response (funcall fn-dispatch query-map success-callback error-callback)))
+            (request-response-data request-response)))
+      (funcall fn-dispatch query-map success-callback error-callback))))
 
 (defun orgtrello-query/--map-dispatch-http-verb ()
   (let* ((map-dispatch (make-hash-table :test 'equal)))
@@ -301,7 +305,7 @@
   "Compute the trello url from the given uri."
   (format "%s%s" *TRELLO-URL* uri))
 
-(cl-defun error-callback-and-action (&key error-thrown &allow-other-keys)
+(cl-defun standard-error-callback (&key error-thrown &allow-other-keys)
   "Standard error callback"
   (save-excursion
       ;; find the current entry through the pointer

@@ -27,23 +27,23 @@ CLOSED: [2013-07-31 mer. 02:03]
 :PROPERTIES:
 :orgtrello-id: 51e56829b62b81cc12001ec1
 :END:
-*** Ensure the control check for only todo, doing, done.
+*** TODO Ensure the control check for only todo, doing, done.
 :PROPERTIES:
 :orgtrello-id: 51e5682bd23ccba35c0038e0
 :END:
-*** Ensure the state computation of a card take into account the multiple list
+*** TODO Ensure the state computation of a card take into account the multiple list
 :PROPERTIES:
 :orgtrello-id: 51e5682ba375c5ae5c00365c
 :END:
-*** Load all properties list id
+*** TODO Load all properties list id
 :PROPERTIES:
 :orgtrello-id: 51e5682ce4140e2b3e001892
 :END:
-*** Creating the board with the right cards (name attached to keyword)
+*** TODO Creating the board with the right cards (name attached to keyword)
 :PROPERTIES:
 :orgtrello-id: 51e5682dacd719ce0e002232
 :END:
-*** Fix non interactive command that are defined as though they were (we need to ensure the passage by the controlling function).
+*** TODO Fix non interactive command that are defined as though they were (we need to ensure the passage by the controlling function).
 :PROPERTIES:
 :orgtrello-id: 51e5682e64efe1e617002196
 :END:
@@ -95,59 +95,59 @@ CLOSED: [2013-07-31 mer. 02:03]
 :PROPERTIES:
 :orgtrello-id: 51e02e406fd8f8526b00397e
 :END:
-*** introduction
+*** TODO introduction
 :PROPERTIES:
 :orgtrello-id: 51e02e4f870e404154001eaf
 :END:
-*** Ch. 1 - A scalable language
+*** TODO Ch. 1 - A scalable language
 :PROPERTIES:
 :orgtrello-id: 51e02e504e843c9d4b001e3c
 :END:
-*** Ch. 2 - First steps in scala
+*** TODO Ch. 2 - First steps in scala
 :PROPERTIES:
 :orgtrello-id: 51e02e50870e404154001eb0
 :END:
-*** Ch. 3 - Next steps in scala
+*** TODO Ch. 3 - Next steps in scala
 :PROPERTIES:
 :orgtrello-id: 51e02e510f5a0ed737003474
 :END:
-*** Ch. 4 - Classes and objects
+*** TODO Ch. 4 - Classes and objects
 :PROPERTIES:
 :orgtrello-id: 51e02e52178c2b042b0026b9
 :END:
-*** Ch. 5 - Basic types and operations
+*** TODO Ch. 5 - Basic types and operations
 :PROPERTIES:
 :orgtrello-id: 51e02e536bb045e42a00375b
 :END:
-*** Ch. 6 - Functional objects
+*** TODO Ch. 6 - Functional objects
 :PROPERTIES:
 :orgtrello-id: 51e02e543d261677540038db
 :END:
-*** Ch. 7 - Buit-in control structures
+*** TODO Ch. 7 - Buit-in control structures
 :PROPERTIES:
 :orgtrello-id: 51e02e54daac63334f00215c
 :END:
-*** Ch. 8 - Functions and closures
+*** TODO Ch. 8 - Functions and closures
 :PROPERTIES:
 :orgtrello-id: 51e02e557946c71c38002424
 :END:
-*** Ch. 9 - Control abstraction
+*** TODO Ch. 9 - Control abstraction
 :PROPERTIES:
 :orgtrello-id: 51e02e5610f4cc366b002140
 :END:
-*** Ch. 10 - Composition and inheritance
+*** TODO Ch. 10 - Composition and inheritance
 :PROPERTIES:
 :orgtrello-id: 51e02e5783d8ac5a4500353a
 :END:
-*** Ch. 11 - Scala's hierarchy
+*** TODO Ch. 11 - Scala's hierarchy
 :PROPERTIES:
 :orgtrello-id: 51e02e58f286ac5c5400381d
 :END:
-*** Ch. 12 - Traits
+*** TODO Ch. 12 - Traits
 :PROPERTIES:
 :orgtrello-id: 51e02e58daac63334f00215d
 :END:
-*** ...
+*** TODO ...
 :PROPERTIES:
 :orgtrello-id: 51e02e5947dcbde3470014ec
 :END:
@@ -205,5 +205,11 @@ CLOSED: [2013-07-31 mer. 02:03]
 :END:
 ** checklist
 :PROPERTIES:
+:orgtrello-id: 52010796e907d80b7b002a48
+:END:
 :orgtrello-id: 5200fdc65357d84b3f0038f1
 :END
+** checklist
+:PROPERTIES:
+:orgtrello-id: 5200fdc65357d84b3f0038f1
+:END:
