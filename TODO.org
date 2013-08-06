@@ -417,7 +417,8 @@ CLOSED: [2013-07-31 mer. 01:42]
 CLOSED: [2013-07-31 mer. 02:06]
 ** DONE Cleanup the debugging functions
 CLOSED: [2013-07-31 mer. 02:06]
-* IN-PROGRESS v0.0.9 [85%]
+* DONE v0.0.9 [100%]
+CLOSED: [2013-08-06 mar. 16:44]
 ** DONE Update videos with the new features in the readme
 CLOSED: [2013-08-06 mar. 16:25]
 ** DONE Fix bug regarding the saving buffer routine
@@ -432,7 +433,8 @@ CLOSED: [2013-08-06 mar. 16:21]
 CLOSED: [2013-08-06 mar. 16:23]
 ** DONE Release notes
 CLOSED: [2013-08-06 mar. 16:24]
-** TODO Release on marmalade/melpa
+** DONE Release on marmalade/melpa
+CLOSED: [2013-08-06 mar. 16:44]
 * TODO v0.1.0 [%]
 ** TODO Introducing C-c o h at the loading of the buffer when ot is loaded
 ** TODO Implement the org-mode's standard checklist http://orgmode.org/manual/Checkboxes.html
