@@ -79,9 +79,11 @@ Now open an org-mode buffer, then hit: `C-c o h`
 - [Synchronize from org-mode file to trello](http://youtu.be/d6SATWzhQhs)
 - [Synchronize from trello to org-mode files](http://youtu.be/-ldo8gvhaTY)
 - [Create board and sync](http://youtu.be/6k4zRm6t8ZY)
-- Delete entity - no video yet
-- Setup org-mode keyword list + create board - no video yet
-- Check the setup - no video yet
+- [Create board with your own keywords](http://youtu.be/1UYYXjCwshs)
+- [Use the checklist Luke!](http://youtu.be/M9xAvO3m_mU)
+- [Kill entities](http://youtu.be/C1c_m9LHyC0)
+- [Simple help routine](http://youtu.be/g-lW0lDFU5Y)
+- [Check your Setup](http://youtu.be/2OlmPMwtCAs)
 
 # Contributions
 
