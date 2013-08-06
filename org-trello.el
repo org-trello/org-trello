@@ -680,7 +680,7 @@
          (orgtrello/--card-status (orgtrello/--compute-card-status (assoc-default 'idList card)))
          (orgtrello/--card-due-date (assoc-default 'due card)))
     (format "* %s %s\n%s" orgtrello/--card-status orgtrello/--card-name
-            (if orgtrello/--card-due-date (format "DEADLINE: <%s>\n" orgtrello/--entity-due-date) ""))))
+            (if orgtrello/--card-due-date (format "DEADLINE: <%s>\n" orgtrello/--card-due-date) ""))))
 
 (defun orgtrello/--compute-checklist-to-org-entry (checklist)
   "Given a checklist, compute its org-mode entry equivalence."
