@@ -993,12 +993,12 @@
 (defun org-trello/create-complex-entity ()
   "Control first, then if ok, create an entity and all its arborescence if need be."
   (interactive)
-  (org-trello/--msg-deco-control-and-do "Synchronizing complex entity" '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties) 'orgtrello/do-create-complex-entity) t)
+  (org-trello/--msg-deco-control-and-do "Synchronizing complex entity" '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties) 'orgtrello/do-create-complex-entity t))
 
 (defun org-trello/sync-to-trello ()
   "Control first, then if ok, sync the org-mode file completely to trello."
   (interactive)
-  (org-trello/--msg-deco-control-and-do "Synchronizing org-mode file to trello" '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties) 'orgtrello/do-sync-full-file) t)
+  (org-trello/--msg-deco-control-and-do "Synchronizing org-mode file to trello" '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties) 'orgtrello/do-sync-full-file t))
 
 (defun org-trello/sync-from-trello ()
   "Control first, then if ok, sync the org-mode file from the trello board."
@@ -1008,22 +1008,22 @@
 (defun org-trello/kill-entity ()
   "Control first, then if ok, delete the entity and all its arborescence."
   (interactive)
-  (org-trello/--control-and-do '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties) (lambda () (orgtrello/do-delete-simple t))) t)
+  (org-trello/--msg-deco-control-and-do "Delete entity" '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties) (lambda () (orgtrello/do-delete-simple t)) t))
 
 (defun org-trello/install-key-and-token ()
   "No control, trigger the setup installation of the key and the read/write token."
   (interactive)
-  (org-trello/--msg-deco-control-and-do "Setup key and token" nil 'orgtrello/do-install-key-and-token) t)
+  (org-trello/--msg-deco-control-and-do "Setup key and token" nil 'orgtrello/do-install-key-and-token t))
 
 (defun org-trello/install-board-and-lists-ids ()
   "Control first, then if ok, trigger the setup installation of the trello board to sync with."
   (interactive)
-  (org-trello/--msg-deco-control-and-do "Install boards and lists" '(orgtrello/--setup-properties orgtrello/--control-keys) 'orgtrello/do-install-board-and-lists) t)
+  (org-trello/--msg-deco-control-and-do "Install boards and lists" '(orgtrello/--setup-properties orgtrello/--control-keys) 'orgtrello/do-install-board-and-lists t))
 
 (defun org-trello/create-board ()
   "Control first, then if ok, trigger the board creation."
   (interactive)
-  (org-trello/--msg-deco-control-and-do "Install boards and lists" '(orgtrello/--setup-properties orgtrello/--control-keys) 'orgtrello/do-create-board-and-lists) t)
+  (org-trello/--msg-deco-control-and-do "Install boards and lists" '(orgtrello/--setup-properties orgtrello/--control-keys) 'orgtrello/do-create-board-and-lists t))
 
 (defun org-trello/check-setup ()
   "Check the current setup."

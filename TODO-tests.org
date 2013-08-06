@@ -18,11 +18,11 @@
 :PROPERTIES:
 :orgtrello-id: 51e567aff8d10f7b21001fb8
 :END:
-* DONE v0.0.4 [100%]
+* DONE v0.0.4 [0%]
 :PROPERTIES:
 :orgtrello-id: 51e568237e0367312e001704
 :END:
-** DONE Permit the user to deal with his/her own trello list (based on his/her org-mode keywords - cf. http://orgmode.org/manual/In_002dbuffer-settings.html) [100%]
+** Permit the user to deal with his/her own trello list (based on his/her org-mode keywords - cf. http://orgmode.org/manual/In_002dbuffer-settings.html) [100%]
 CLOSED: [2013-07-31 mer. 02:03]
 :PROPERTIES:
 :orgtrello-id: 51e56829b62b81cc12001ec1
@@ -209,11 +209,7 @@ DEADLINE: <2013-07-31T07:00:00.000Z>
 :PROPERTIES:
 :orgtrello-id: 51f82b6c100066113c00011f
 :END:
-* TODO new cards
+* CANCELLED cancelled task
 :PROPERTIES:
-:orgtrello-id: 51f8471352b8b0b54f00086c
-:END:
-** new cl
-:PROPERTIES:
-:orgtrello-id: 51f84714d55b904a03000740
+:orgtrello-id: 51ffe96c32c0ac5e59000850
 :END:
