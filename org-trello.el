@@ -276,19 +276,12 @@
 
 (defvar *MAP-DISPATCH-HTTP-QUERY* (orgtrello-query/--make-dispatch-http-query))
 
-(defun orgtrello-query/http (query-map &optional success-callback error-callback)
+(defun orgtrello-query/http (query-map &optional success-callback error-callback sync)
   "Query the trello api asynchronously."
   (let* ((method      (gethash :method query-map))
          (fn-dispatch (gethash method *MAP-DISPATCH-HTTP-QUERY*)))
+    (if sync (puthash :sync t query-map))
     (funcall fn-dispatch query-map success-callback error-callback)))
-
-(defun orgtrello-query/http-sync (query-map &optional success-callback error-callback)
-  "Query the trello api synchronously and return the data of the request."
-  (let* ((method      (gethash :method query-map))
-         (fn-dispatch (gethash method *MAP-DISPATCH-HTTP-QUERY*)))
-    (puthash :sync t query-map)
-    (let ((request-response (funcall fn-dispatch query-map success-callback error-callback)))
-      (request-response-data request-response))))
 
 (defun orgtrello-query/--map-dispatch-http-verb ()
   (let* ((map-dispatch (make-hash-table :test 'equal)))
@@ -321,8 +314,8 @@
   "Standard success callback"
   (message "Success."))
 
-(cl-defun standard-error-callback (&key error-thrown &allow-other-keys)
-  "Standard success callback"
+(cl-defun simple-error-callback (&key error-thrown &allow-other-keys)
+  "Standard error callback"
   (message "There was some problem during the request to trello: %s" error-thrown))
 
 (cl-defun standard-success-callback-display (&key data &allow-other-keys)
@@ -341,7 +334,7 @@
                         (token . ,*access-token*))
              :parser  'json-read
              :success (if success-callback success-callback 'standard-success-callback)
-             :error   (if error-callback error-callback 'error-callback-and-action))))
+             :error   (if error-callback error-callback 'standard-error-callback))))
 
 (cl-defun orgtrello-query/--post-put-success-callback-update-id (&key data &allow-other-keys)
   "Called back function at the end of the post/put request to update the trello id in the org-mode file."
@@ -380,7 +373,7 @@
              :data    (json-encode payload)
              :parser  'json-read
              :success (if success-callback success-callback 'standard-success-callback)
-             :error   (if error-callback error-callback 'error-callback-and-action))))
+             :error   (if error-callback error-callback 'standard-error-callback))))
 
 (cl-defun orgtrello-query/--delete-success-callback (&key data response &allow-other-keys)
   "Callback function called at the end of a successful delete request."
@@ -401,7 +394,7 @@
              :params  `((key . ,*consumer-key*)
                         (token . ,*access-token*))
              :success (if success-callback success-callback 'standard-success-callback)
-             :error   (if error-callback error-callback 'error-callback-and-action))))
+             :error   (if error-callback error-callback 'standard-error-callback))))
 
 (message "orgtrello-query/ loaded!")
 
@@ -622,12 +615,8 @@
               (progn
                 ;; set the consumer-key to make a pointer to get back to when the request is finished
                 (orgtrello/--set-marker)
-                ;; is the request synchroneous or not?
-                (if sync
-                    ;; synchroneous request
-                    (orgtrello-query/http-sync query-http-or-error-msg 'orgtrello-query/--post-put-success-callback-update-id)
-                  ;; asynchroneous one
-                  (orgtrello-query/http query-http-or-error-msg 'orgtrello-query/--post-put-success-callback-update-id))
+                ;; request
+                (orgtrello-query/http query-http-or-error-msg 'orgtrello-query/--post-put-success-callback-update-id 'standard-error-callback sync)
                 "Syncronizing simple entity done!")
             ;; else it's a string to display
             query-http-or-error-msg)))))
@@ -709,7 +698,7 @@
   "Given a card, return the list containing the card, the checklists from this card, and the items from the checklists. The order is guaranted."
   (cl-reduce
    (lambda (acc-list checklist-id)
-     (let ((orgtrello/--checklist (orgtrello-query/http-sync (orgtrello-api/get-checklist checklist-id))))
+     (let ((orgtrello/--checklist (orgtrello-query/http (orgtrello-api/get-checklist checklist-id) 'standard-success-callback 'standard-error-callback t)))
        (append (cons orgtrello/--checklist (orgtrello/--do-retrieve-checklists-and-items orgtrello/--checklist)) acc-list)))
    (assoc-default 'idChecklists card)
    :initial-value nil))
@@ -783,7 +772,7 @@
   (let ((orgtrello/--board-name-to-sync (orgtrello/--board-name)))
     (message "Synchronizing the trello board '%s' to the org-mode file. This may take a moment, some coffee may be a good idea..." orgtrello/--board-name-to-sync)
     (let* ((orgtrello/--board-id           (assoc-default *BOARD-ID* org-file-properties))
-           (orgtrello/--cards              (orgtrello-query/http-sync (orgtrello-api/get-cards orgtrello/--board-id) 'standard-success-callback))
+           (orgtrello/--cards              (orgtrello-query/http (orgtrello-api/get-cards orgtrello/--board-id) 'standard-success-callback 'standard-error-callback t))
            (orgtrello/--entities-hash-map  (orgtrello/--compute-full-entities-from-trello orgtrello/--cards))
            (orgtrello/--remaining-entities (orgtrello/--sync-buffer-with-trello-data orgtrello/--entities-hash-map)))
       (orgtrello/--update-buffer-with-remaining-trello-data orgtrello/--remaining-entities))
@@ -829,9 +818,7 @@
         (let ((query-http-or-error-msg (orgtrello/--dispatch-delete (gethash :current entry-metadata) (gethash :parent entry-metadata))))
           (if (hash-table-p query-http-or-error-msg)
               (progn
-                (if sync
-                    (orgtrello-query/http-sync query-http-or-error-msg 'orgtrello-query/--delete-success-callback)
-                  (orgtrello-query/http query-http-or-error-msg 'orgtrello-query/--delete-success-callback))
+                (orgtrello-query/http query-http-or-error-msg 'orgtrello-query/--delete-success-callback 'standard-error-callback sync)
                 "Delete entity done!")
             query-http-or-error-msg))
       "Entity not synchronized on trello yet!")))
@@ -874,11 +861,11 @@
   "Return the map of the existing boards associated to the current account. (Synchronous request)"
   (remove-if-not
    (lambda (board) (equal :json-false (assoc-default 'closed board)))
-   (orgtrello-query/http-sync (orgtrello-api/get-boards) 'standard-success-callback)))
+   (orgtrello-query/http (orgtrello-api/get-boards) 'standard-success-callback 'standard-error-callback t)))
 
 (defun orgtrello/--list-board-lists (board-id)
   "Return the map of the existing list of the board with id board-id. (Synchronous request)"
-  (orgtrello-query/http-sync (orgtrello-api/get-lists board-id) 'standard-success-callback))
+  (orgtrello-query/http (orgtrello-api/get-lists board-id) 'standard-success-callback 'standard-error-callback t))
 
 (defun orgtrello/--choose-board (boards)
   "Given a map of boards, display the possible boards for the user to choose which one he wants to work with."
@@ -931,7 +918,7 @@
   "Create a board with name and eventually a description."
   (progn
     (message "Creating board '%s'" board-name)
-    (let* ((board-data (orgtrello-query/http-sync (orgtrello-api/add-board board-name board-description))))
+    (let* ((board-data (orgtrello-query/http (orgtrello-api/add-board board-name board-description) 'standard-success-callback 'standard-error-callback t)))
       (--map (assoc-default it board-data) '(id name)))))
 
 (defun orgtrello/--close-lists (list-ids)
@@ -939,7 +926,7 @@
   (mapc (lambda (list-id)
           (progn
             (message "Closing default list with id %s" list-id)
-            (orgtrello-query/http (orgtrello-api/close-list list-id) 'standard-success-callback 'standard-error-callback)))
+            (orgtrello-query/http (orgtrello-api/close-list list-id) 'standard-success-callback 'simple-error-callback)))
         list-ids))
 
 (defun orgtrello/--create-lists-according-to-keywords (board-id list-keywords)
@@ -948,7 +935,7 @@
    (lambda (acc-hash-name-id list-name)
      (progn
        (message "Board id %s - Creating list '%s'" board-id list-name)
-       (puthash list-name (assoc-default 'id (orgtrello-query/http-sync (orgtrello-api/add-list list-name board-id))) acc-hash-name-id)
+       (puthash list-name (assoc-default 'id (orgtrello-query/http (orgtrello-api/add-list list-name board-id) 'standard-success-callback 'standard-error-callback t)) acc-hash-name-id)
        acc-hash-name-id))
    list-keywords
    :initial-value (make-hash-table :test 'equal)))
