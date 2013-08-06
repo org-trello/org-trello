@@ -417,18 +417,19 @@ CLOSED: [2013-07-31 mer. 01:42]
 CLOSED: [2013-07-31 mer. 02:06]
 ** DONE Cleanup the debugging functions
 CLOSED: [2013-07-31 mer. 02:06]
-* IN-PROGRESS v0.0.9 [66%]
+* IN-PROGRESS v0.0.9 [83%]
 ** DONE Fix bug regarding the saving buffer routine
 CLOSED: [2013-08-06 mar. 15:41]
 ** DONE Refactoring action code regarding the message to display in the minibuffer (ATM we do not see what is done or not any longer)
 CLOSED: [2013-08-06 mar. 15:51]
-** DONE Refactoring the http and http-sync method
+** DONE Refactoring the http and http-sync functions
 CLOSED: [2013-08-06 mar. 16:10]
 ** DONE Improve the delete entity action by forcing the caret to go at the begin of the line of the heading before killing anything.
 CLOSED: [2013-08-06 mar. 16:21]
 ** DONE Update version
 CLOSED: [2013-08-06 mar. 16:23]
-** TODO release notes
+** DONE Release notes
+CLOSED: [2013-08-06 mar. 16:24]
 ** TODO Release on marmalade/melpa
 * TODO v0.1.0 [%]
 ** TODO Introducing C-c o h at the loading of the buffer when ot is loaded

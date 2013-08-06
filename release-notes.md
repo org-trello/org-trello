@@ -1,3 +1,12 @@
+# v0.0.9
+
+- DONE Fix bug regarding the saving buffer routine
+- DONE Refactoring action code regarding the message to display in the minibuffer (ATM we do not see what is done or not any longer)
+- DONE Refactoring the http and http-sync functions
+- DONE Improve the delete entity action by forcing the caret to go at the begin of the line of the heading before killing anything.
+- DONE Update version
+- DONE Release notes
+
 # v0.0.8
 
 - DONE Fix the cl-lib dependency
