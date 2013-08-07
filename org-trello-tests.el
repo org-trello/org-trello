@@ -248,6 +248,34 @@
 
 ;; ########################## orgtrello-tests
 
+(defun orgtrello/--keyword (entity-meta &optional default-value)
+  "Retrieve the keyword from the entity. If default-value is specified, this is the default value if no keyword is present"
+  (gethash :keyword entity-meta default-value))
+
+(defun orgtrello/--label (entity-meta)
+  "Retrieve the label from the entity."
+  (gethash :title entity-meta))
+
+(defun orgtrello/--id (entity-meta)
+  "Retrieve the id from the entity."
+  (gethash :id entity-meta))
+
+(defun orgtrello/--level (entity-meta)
+  "Retrieve the level from the entity."
+  (gethash :level entity-meta))
+
+(defun orgtrello/--due (entity-meta)
+  "Retrieve the due date from the entity."
+  (gethash :due entity-meta))
+
+(ert-deftest testing-orgtrello/--compute-data-from-entity-meta ()
+  (let* ((entry   (orgtrello-hash/make-hash-org :some-level :some-keyword :some-label :some-id :some-due)))
+    (should (equal (orgtrello/--id entry)      :some-id))
+    (should (equal (orgtrello/--label entry)   :some-label))
+    (should (equal (orgtrello/--keyword entry) :some-keyword))
+    (should (equal (orgtrello/--level entry)   :some-level))
+    (should (equal (orgtrello/--due entry)     :some-due))))
+
 (ert-deftest testing-orgtrello/--merge-map ()
   (let* ((entry   (orgtrello-hash/make-hash-org :level :method "the name of the entry" nil "due"))
          (map-ids (make-hash-table :test 'equal)))
