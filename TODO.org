@@ -435,7 +435,7 @@ CLOSED: [2013-08-06 mar. 16:23]
 CLOSED: [2013-08-06 mar. 16:24]
 ** DONE Release on marmalade/melpa
 CLOSED: [2013-08-06 mar. 16:44]
-* IN-PROGRESS v0.1.0 [88%]
+* IN-PROGRESS v0.1.0 [90%]
 ** DONE Migrate carton to card.el (travis-ci builds break because of this)
 CLOSED: [2013-08-07 mer. 10:37]
 ** DONE Order of creation of list (from keywords) in trello does not match the order of the keyword
@@ -454,6 +454,8 @@ CLOSED: [2013-08-07 mer. 11:52]
 CLOSED: [2013-08-07 mer. 12:14]
 ** DONE Abstract away the return data from the http request
 CLOSED: [2013-08-07 mer. 12:43]
+** DONE Update org version to the latest stable
+CLOSED: [2013-08-07 mer. 13:15]
 ** TODO Release notes
 * TODO 0.1.1
 ** TODO Introducing C-c o h at the loading of the buffer when ot is loaded
