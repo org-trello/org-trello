@@ -10,20 +10,139 @@
 #+title: synced from trello
 #+author: Antoine R. Dumont
 
-* PENDING Questions
+* TODO Programming in scala
 :PROPERTIES:
-:orgtrello-id: 51e559ad536240d935001d97
+:orgtrello-id: 51e02e12e2e19b983f0015dc
 :END:
-** How to deal with promotion/demotion?
+** chapters
 :PROPERTIES:
-:orgtrello-id: 51e567aff8d10f7b21001fb8
+:orgtrello-id: 51e02e406fd8f8526b00397e
+:END:
+*** DONE introduction
+:PROPERTIES:
+:orgtrello-id: 51e02e4f870e404154001eaf
+:END:
+*** DONE Ch. 1 - A scalable language
+:PROPERTIES:
+:orgtrello-id: 51e02e504e843c9d4b001e3c
+:END:
+*** DONE Ch. 2 - First steps in scala
+:PROPERTIES:
+:orgtrello-id: 51e02e50870e404154001eb0
+:END:
+*** DONE Ch. 3 - Next steps in scala
+:PROPERTIES:
+:orgtrello-id: 51e02e510f5a0ed737003474
+:END:
+*** DONE Ch. 4 - Classes and objects
+:PROPERTIES:
+:orgtrello-id: 51e02e52178c2b042b0026b9
+:END:
+*** DONE Ch. 5 - Basic types and operations
+:PROPERTIES:
+:orgtrello-id: 51e02e536bb045e42a00375b
+:END:
+*** DONE Ch. 6 - Functional objects
+:PROPERTIES:
+:orgtrello-id: 51e02e543d261677540038db
+:END:
+*** DONE Ch. 7 - Buit-in control structures
+:PROPERTIES:
+:orgtrello-id: 51e02e54daac63334f00215c
+:END:
+*** DONE Ch. 8 - Functions and closures
+:PROPERTIES:
+:orgtrello-id: 51e02e557946c71c38002424
+:END:
+*** DONE Ch. 9 - Control abstraction
+:PROPERTIES:
+:orgtrello-id: 51e02e5610f4cc366b002140
+:END:
+*** DONE Ch. 10 - Composition and inheritance
+:PROPERTIES:
+:orgtrello-id: 51e02e5783d8ac5a4500353a
+:END:
+*** DONE Ch. 11 - Scala's hierarchy
+:PROPERTIES:
+:orgtrello-id: 51e02e58f286ac5c5400381d
+:END:
+*** DONE Ch. 12 - Traits
+:PROPERTIES:
+:orgtrello-id: 51e02e58daac63334f00215d
+:END:
+*** DONE ...
+:PROPERTIES:
+:orgtrello-id: 51e02e5947dcbde3470014ec
+:END:
+* TODO v0.0.5 [0%]
+:PROPERTIES:
+:orgtrello-id: 51e5682fff4c36b43e002304
+:END:
+** Testing the packaging
+:PROPERTIES:
+:orgtrello-id: 51e5683329ef12da5d00289c
+:END:
+** Replace already present properties regarding boards before injecting new ones.
+:PROPERTIES:
+:orgtrello-id: 51e56832ff4c36b43e002306
+:END:
+** If no level 3, we may create a dummy checklist and attach every todo to such dummy checklist
+:PROPERTIES:
+:orgtrello-id: 51e56835143dcadf290022a1
+:END:
+** filter out directly with the api the data we do not need to avoid unnecessary network traffic
+:PROPERTIES:
+:orgtrello-id: 51e56830f8cd1d22240019cf
+:END:
+** How to deal with synchronizing the org-mode buffer and the trello board without a synchronized request?
+:PROPERTIES:
+:orgtrello-id: 51e56831047fa0e57a001f87
+:END:
+** Assign yourself to the card?
+:PROPERTIES:
+:orgtrello-id: 51e5683437df571d2a0021b1
+:END:
+** A fake trello server to be able to test without a network
+:PROPERTIES:
+:orgtrello-id: 51e5683253c09b776a0032c5
+:END:
+* TODO testing
+:PROPERTIES:
+:orgtrello-id: 51f81cafc309d79908000e53
+:END:
+* IN-PROGRESS Functional programming in Haskell
+:PROPERTIES:
+:orgtrello-id: 51e02fb455ff94a71e002133
+:END:
+* IN-PROGRESS adding new simple entity
+:PROPERTIES:
+:orgtrello-id: 5200fdbc063bc43e080020e9
+:END:
+** checklist
+:PROPERTIES:
+:orgtrello-id: 52010796e907d80b7b002a48
+:END:
+** checklist
+:PROPERTIES:
+:orgtrello-id: 5200fdc65357d84b3f0038f1
+:END:
+* DONE Joy of Clojure
+:PROPERTIES:
+:orgtrello-id: 51e02fb50bd93ea60600235b
+:END:
+* DONE Clojure Programming
+:PROPERTIES:
+:orgtrello-id: 51e02fb663b4da66050026e3
+:END:
+* DONE Programming in Haskell
+:PROPERTIES:
+:orgtrello-id: 51e02fb683d8ac5a4500358b
 :END:
 * DONE v0.0.4 [0%]
 :PROPERTIES:
 :orgtrello-id: 51e568237e0367312e001704
 :END:
 ** Permit the user to deal with his/her own trello list (based on his/her org-mode keywords - cf. http://orgmode.org/manual/In_002dbuffer-settings.html) [0%]
-CLOSED: [2013-07-31 mer. 02:03]
 :PROPERTIES:
 :orgtrello-id: 51e56829b62b81cc12001ec1
 :END:
@@ -71,145 +190,19 @@ CLOSED: [2013-07-31 mer. 02:03]
 :PROPERTIES:
 :orgtrello-id: 51e568288ee143012a002952
 :END:
-* DONE Programming in Haskell
+* PENDING Questions
 :PROPERTIES:
-:orgtrello-id: 51e02fb683d8ac5a4500358b
+:orgtrello-id: 51e559ad536240d935001d97
 :END:
-* DONE Clojure Programming
+** How to deal with promotion/demotion?
 :PROPERTIES:
-:orgtrello-id: 51e02fb663b4da66050026e3
-:END:
-* DONE Joy of Clojure
-:PROPERTIES:
-:orgtrello-id: 51e02fb50bd93ea60600235b
-:END:
-* IN-PROGRESS Functional programming in Haskell
-:PROPERTIES:
-:orgtrello-id: 51e02fb455ff94a71e002133
-:END:
-* IN-PROGRESS Programming in scala
-:PROPERTIES:
-:orgtrello-id: 51e02e12e2e19b983f0015dc
-:END:
-** chapters
-:PROPERTIES:
-:orgtrello-id: 51e02e406fd8f8526b00397e
-:END:
-*** TODO introduction
-:PROPERTIES:
-:orgtrello-id: 51e02e4f870e404154001eaf
-:END:
-*** TODO Ch. 1 - A scalable language
-:PROPERTIES:
-:orgtrello-id: 51e02e504e843c9d4b001e3c
-:END:
-*** TODO Ch. 2 - First steps in scala
-:PROPERTIES:
-:orgtrello-id: 51e02e50870e404154001eb0
-:END:
-*** TODO Ch. 3 - Next steps in scala
-:PROPERTIES:
-:orgtrello-id: 51e02e510f5a0ed737003474
-:END:
-*** TODO Ch. 4 - Classes and objects
-:PROPERTIES:
-:orgtrello-id: 51e02e52178c2b042b0026b9
-:END:
-*** TODO Ch. 5 - Basic types and operations
-:PROPERTIES:
-:orgtrello-id: 51e02e536bb045e42a00375b
-:END:
-*** TODO Ch. 6 - Functional objects
-:PROPERTIES:
-:orgtrello-id: 51e02e543d261677540038db
-:END:
-*** TODO Ch. 7 - Buit-in control structures
-:PROPERTIES:
-:orgtrello-id: 51e02e54daac63334f00215c
-:END:
-*** TODO Ch. 8 - Functions and closures
-:PROPERTIES:
-:orgtrello-id: 51e02e557946c71c38002424
-:END:
-*** TODO Ch. 9 - Control abstraction
-:PROPERTIES:
-:orgtrello-id: 51e02e5610f4cc366b002140
-:END:
-*** TODO Ch. 10 - Composition and inheritance
-:PROPERTIES:
-:orgtrello-id: 51e02e5783d8ac5a4500353a
-:END:
-*** TODO Ch. 11 - Scala's hierarchy
-:PROPERTIES:
-:orgtrello-id: 51e02e58f286ac5c5400381d
-:END:
-*** TODO Ch. 12 - Traits
-:PROPERTIES:
-:orgtrello-id: 51e02e58daac63334f00215d
-:END:
-*** TODO ...
-:PROPERTIES:
-:orgtrello-id: 51e02e5947dcbde3470014ec
-:END:
-* TODO v0.0.5 [0%]
-:PROPERTIES:
-:orgtrello-id: 51e5682fff4c36b43e002304
-:END:
-** Testing the packaging
-:PROPERTIES:
-:orgtrello-id: 51e5683329ef12da5d00289c
-:END:
-** Replace already present properties regarding boards before injecting new ones.
-:PROPERTIES:
-:orgtrello-id: 51e56832ff4c36b43e002306
-:END:
-** If no level 3, we may create a dummy checklist and attach every todo to such dummy checklist
-:PROPERTIES:
-:orgtrello-id: 51e56835143dcadf290022a1
-:END:
-** filter out directly with the api the data we do not need to avoid unnecessary network traffic
-:PROPERTIES:
-:orgtrello-id: 51e56830f8cd1d22240019cf
-:END:
-** How to deal with synchronizing the org-mode buffer and the trello board without a synchronized request?
-:PROPERTIES:
-:orgtrello-id: 51e56831047fa0e57a001f87
-:END:
-** Assign yourself to the card?
-:PROPERTIES:
-:orgtrello-id: 51e5683437df571d2a0021b1
-:END:
-** A fake trello server to be able to test without a network
-:PROPERTIES:
-:orgtrello-id: 51e5683253c09b776a0032c5
-:END:
-* TODO Structure and Interpretation of Computer programs
-:PROPERTIES:
-:orgtrello-id: 51e02fb783d8ac5a4500358d
+:orgtrello-id: 51e567aff8d10f7b21001fb8
 :END:
 * DELEGATED yet another fail
 :PROPERTIES:
 :orgtrello-id: 51e7e60bd23ccba35c00a588
 :END:
-* TODO testing
-:PROPERTIES:
-:orgtrello-id: 51f81cafc309d79908000e53
-:END:
 * CANCELLED cancelled task
 :PROPERTIES:
 :orgtrello-id: 51ffe96c32c0ac5e59000850
-:END:
-* IN-PROGRESS adding new simple entity
-:PROPERTIES:
-:orgtrello-id: 5200fdbc063bc43e080020e9
-:END:
-** checklist
-:PROPERTIES:
-:orgtrello-id: 52010796e907d80b7b002a48
-:END:
-:orgtrello-id: 5200fdc65357d84b3f0038f1
-:END
-** checklist
-:PROPERTIES:
-:orgtrello-id: 5200fdc65357d84b3f0038f1
 :END:

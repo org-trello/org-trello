@@ -761,7 +761,7 @@
    (cl-reduce
     (lambda (orgtrello/--acc-list orgtrello/--entity-card)
       (message "Computing card '%s' data..." (assoc-default 'name orgtrello/--entity-card))
-      (append (cons orgtrello/--entity-card (orgtrello/--do-retrieve-checklists-from-card orgtrello/--entity-card)) orgtrello/--acc-list))
+      (append orgtrello/--acc-list (cons orgtrello/--entity-card (orgtrello/--do-retrieve-checklists-from-card orgtrello/--entity-card))))
     cards
     :initial-value nil)
    :initial-value (make-hash-table :test 'equal)))
