@@ -431,7 +431,7 @@
 
 (defun orgtrello/--setup-properties ()
   "Setup the properties according to the org-mode setup. Return :ok."
-  (let* ((orgtrello/--list-keywords (orgtrello/filtered-kwds))
+  (let* ((orgtrello/--list-keywords (reverse (orgtrello/filtered-kwds)))
          (orgtrello/--hmap-id-name (cl-reduce
                                     (lambda (hmap name)
                                       (progn
