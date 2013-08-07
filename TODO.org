@@ -435,8 +435,9 @@ CLOSED: [2013-08-06 mar. 16:23]
 CLOSED: [2013-08-06 mar. 16:24]
 ** DONE Release on marmalade/melpa
 CLOSED: [2013-08-06 mar. 16:44]
-* TODO v0.1.0 [20%]
-** TODO Migrate carton to card.el (travis-ci builds break because of this)
+* IN-PROGRESS v0.1.0 [50%]
+** DONE Migrate carton to card.el (travis-ci builds break because of this)
+CLOSED: [2013-08-07 mer. 10:37]
 ** DONE Order of creation of list (from keywords) in trello does not match the order of the keyword
 CLOSED: [2013-08-07 mer. 09:32]
 ** DONE Abstract away the query (:method, :uri, ...) implementation
@@ -444,6 +445,10 @@ CLOSED: [2013-08-07 mer. 09:54]
 ** DONE Abstract away the implementation of the org-data some more (access of the information from the map are embedded in the function instead of delegating to dedicated function, thus not hiding the implementation)
 CLOSED: [2013-08-07 mer. 10:09]
 ** TODO Order when synchronizing from trello does not match trello's order
+** TODO Release notes
+** TODO Version
+**
+* TODO 0.1.1
 ** TODO Introducing C-c o h at the loading of the buffer when ot is loaded
 ** TODO Implement the org-mode's standard checklist http://orgmode.org/manual/Checkboxes.html
 ** TODO Filter out directly with the api the data we do not need to avoid unnecessary network traffic
