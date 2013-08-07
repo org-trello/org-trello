@@ -230,9 +230,21 @@
   (expect "DELETE" (orgtrello-query/--compute-method :delete)))
 
 (expectations
-  (expect (format "%s%s" *TRELLO-URL* "/uri")            (orgtrello-query/--compute-url "/uri")     )
-  (expect (format "%s%s" *TRELLO-URL* "/uri/other")      (orgtrello-query/--compute-url "/uri/other")     )
-  (expect (format "%s%s" *TRELLO-URL* "/uri/some/other") (orgtrello-query/--compute-url "/uri/some/other")     ))
+  (expect (format "%s%s" *TRELLO-URL* "/uri")            (orgtrello-query/--compute-url "/uri"))
+  (expect (format "%s%s" *TRELLO-URL* "/uri/other")      (orgtrello-query/--compute-url "/uri/other"))
+  (expect (format "%s%s" *TRELLO-URL* "/uri/some/other") (orgtrello-query/--compute-url "/uri/some/other")))
+
+(defvar org-trello-tests/--query-map (make-hash-table :test 'equal))
+(puthash :method :some-get org-trello-tests/--query-map)
+(puthash :uri    :some-uri org-trello-tests/--query-map)
+(puthash :sync   :some-sync org-trello-tests/--query-map)
+(puthash :params :some-params org-trello-tests/--query-map)
+
+(expectations
+  (expect :some-get (orgtrello-query/--method org-trello-tests/--query-map))
+  (expect :some-uri (orgtrello-query/--uri org-trello-tests/--query-map))
+  (expect :some-sync (orgtrello-query/--sync org-trello-tests/--query-map))
+  (expect :some-params (orgtrello-query/--params  org-trello-tests/--query-map)))
 
 ;; ########################## orgtrello-tests
 

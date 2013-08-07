@@ -326,11 +326,27 @@
   "Standard success callback"
   (message "data: %S" data))
 
+(defun orgtrello-query/--method (query-map)
+  "Retrieve the http method"
+  (gethash :method query-map))
+
+(defun orgtrello-query/--uri (query-map)
+  "Retrieve the http uri"
+  (gethash :uri query-map))
+
+(defun orgtrello-query/--sync (query-map)
+  "Retrieve the http sync flag"
+  (gethash :sync query-map))
+
+(defun orgtrello-query/--params (query-map)
+  "Retrieve the http params"
+  (gethash :params query-map))
+
 (defun orgtrello-query/--get (query-map &optional success-callback error-callback)
   "GET"
-  (let* ((method (gethash :method query-map))
-         (uri    (gethash :uri    query-map))
-         (sync   (gethash :sync   query-map)))
+  (let* ((method (orgtrello-query/--method query-map))
+         (uri    (orgtrello-query/--uri    query-map))
+         (sync   (orgtrello-query/--sync   query-map)))
     (request (orgtrello-query/--compute-url uri)
              :sync    sync
              :type    (orgtrello-query/--compute-method method)
@@ -364,10 +380,10 @@
 
 (defun orgtrello-query/--post-or-put (query-map &optional success-callback error-callback)
   "POST or PUT"
-  (let* ((method  (gethash :method query-map))
-         (uri     (gethash :uri    query-map))
-         (payload (gethash :params query-map))
-         (sync    (gethash :sync   query-map)))
+  (let* ((method  (orgtrello-query/--method query-map))
+         (uri     (orgtrello-query/--uri    query-map))
+         (payload (orgtrello-query/--params query-map))
+         (sync    (orgtrello-query/--sync   query-map)))
     (request (orgtrello-query/--compute-url uri)
              :sync    sync
              :type    (orgtrello-query/--compute-method method)
@@ -392,9 +408,9 @@
 
 (defun orgtrello-query/--delete (query-map &optional success-callback error-callback)
   "DELETE"
-  (let* ((method (gethash :method query-map))
-         (uri    (gethash :uri    query-map))
-         (sync   (gethash :sync   query-map)))
+  (let* ((method (orgtrello-query/--method query-map))
+         (uri    (orgtrello-query/--uri    query-map))
+         (sync   (orgtrello-query/--sync   query-map)))
     (request (orgtrello-query/--compute-url uri)
              :sync    sync
              :type    (orgtrello-query/--compute-method method)
