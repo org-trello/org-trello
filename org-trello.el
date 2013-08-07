@@ -356,10 +356,46 @@
              :success (if success-callback success-callback 'standard-success-callback)
              :error   (if error-callback error-callback 'standard-error-callback))))
 
+(defun orgtrello-query/--id (entity-data)
+  "Extract the id of the entity from the entity"
+  (assoc-default 'id entity-data))
+
+(defun orgtrello-query/--name (entity-data)
+  "Extract the name of the entity from the entity"
+  (assoc-default 'name entity-data))
+
+(defun orgtrello-query/--list-id (entity-data)
+  "Extract the list identitier of the entity from the entity"
+  (assoc-default 'idList entity-data))
+
+(defun orgtrello-query/--checklist-ids (entity-data)
+  "Extract the checklist identifier of the entity from the entity"
+  (assoc-default 'idChecklists entity-data))
+
+(defun orgtrello-query/--check-items (entity-data)
+  "Extract the checklist identifier of the entity from the entity"
+  (assoc-default 'checkItems entity-data))
+
+(defun orgtrello-query/--card-id (entity-data)
+  "Extract the card identifier of the entity from the entity"
+  (assoc-default 'idCard entity-data))
+
+(defun orgtrello-query/--due (entity-data)
+  "Extract the due date of the entity from the query response"
+  (assoc-default 'due entity-data))
+
+(defun orgtrello-query/--state (entity-data)
+  "Extract the state of the entity"
+  (assoc-default 'state entity-data))
+
+(defun orgtrello-query/--close-property (entity-data)
+  "Extract the closed property of the entity"
+  (assoc-default 'closed entity-data))
+
 (cl-defun orgtrello-query/--post-put-success-callback-update-id (&key data &allow-other-keys)
   "Called back function at the end of the post/put request to update the trello id in the org-mode file."
-  (let* ((orgtrello-query/--entry-new-id (assoc-default 'id data))
-         (orgtrello-query/--entry-name   (assoc-default 'name data)))
+  (let* ((orgtrello-query/--entry-new-id (orgtrello-query/--id data))
+         (orgtrello-query/--entry-name   (orgtrello-query/--name data)))
     ;; will update via tag the trello id of the new persisted data (if needed)
     (save-excursion
       ;;(while (org-up-heading-safe))
@@ -712,30 +748,30 @@
 
 (defun orgtrello/--compute-card-to-org-entry (card)
   "Given a card, compute its org-mode entry equivalence."
-  (let* ((orgtrello/--card-name                                    (assoc-default 'name card))
-         (orgtrello/--card-status (orgtrello/--compute-card-status (assoc-default 'idList card)))
-         (orgtrello/--card-due-date (assoc-default 'due card)))
+  (let* ((orgtrello/--card-name     (orgtrello-query/--name card))
+         (orgtrello/--card-status   (orgtrello/--compute-card-status (orgtrello-query/--list-id card)))
+         (orgtrello/--card-due-date (orgtrello-query/--due card)))
     (format "* %s %s\n%s" orgtrello/--card-status orgtrello/--card-name
             (if orgtrello/--card-due-date (format "DEADLINE: <%s>\n" orgtrello/--card-due-date) ""))))
 
 (defun orgtrello/--compute-checklist-to-org-entry (checklist)
   "Given a checklist, compute its org-mode entry equivalence."
-  (let ((orgtrello/--checklist-name  (assoc-default 'name checklist)))
+  (let ((orgtrello/--checklist-name  (orgtrello-query/--name checklist)))
     (format "** %s\n" orgtrello/--checklist-name)))
 
 (defun orgtrello/--compute-item-to-org-entry (item)
   "Given a checklist item, compute its org-mode entry equivalence."
-  (let* ((orgtrello/--item-name  (assoc-default 'name  item))
-         (orgtrello/--item-state (assoc-default 'state item)))
+  (let* ((orgtrello/--item-name  (orgtrello-query/--name  item))
+         (orgtrello/--item-state (orgtrello-query/--state item)))
     (format "*** %s %s\n"
             (if (string= "complete" orgtrello/--item-state) "DONE" "TODO")
             orgtrello/--item-name)))
 
 (defun orgtrello/--compute-entity-to-org-entry (entity)
   "Given an entity, compute its org representation."
-  (cond ((assoc-default 'idList entity) (orgtrello/--compute-card-to-org-entry entity))           ;; card      (level 1)
-        ((assoc-default 'idCard entity) (orgtrello/--compute-checklist-to-org-entry entity))      ;; checklist (level 2)
-        ((assoc-default 'state entity)  (orgtrello/--compute-item-to-org-entry entity))))         ;; items     (level 3)
+  (cond ((orgtrello-query/--list-id entity) (orgtrello/--compute-card-to-org-entry entity))           ;; card      (level 1)
+        ((orgtrello-query/--card-id entity) (orgtrello/--compute-checklist-to-org-entry entity))      ;; checklist (level 2)
+        ((orgtrello-query/--state entity)  (orgtrello/--compute-item-to-org-entry entity))))         ;; items     (level 3)
 
 (defun orgtrello/--do-retrieve-checklists-from-card (card)
   "Given a card, return the list containing the card, the checklists from this card, and the items from the checklists. The order is guaranted."
@@ -743,23 +779,23 @@
    (lambda (acc-list checklist-id)
      (let ((orgtrello/--checklist (orgtrello-query/http (orgtrello-api/get-checklist checklist-id) 'standard-success-callback 'standard-error-callback t)))
        (append (cons orgtrello/--checklist (orgtrello/--do-retrieve-checklists-and-items orgtrello/--checklist)) acc-list)))
-   (assoc-default 'idChecklists card)
+   (orgtrello-query/--checklist-ids card)
    :initial-value nil))
 
 (defun orgtrello/--do-retrieve-checklists-and-items (checklist)
   "Given a checklist id, retrieve all the items from the checklist and return a list containing first the checklist, then the items."
-  (--map it (assoc-default 'checkItems checklist)))
+  (--map it (orgtrello-query/--check-items checklist)))
 
 (defun orgtrello/--compute-full-entities-from-trello (cards)
   "Given a list of cards, compute the full cards data from the trello boards. The order from the trello board is now kept."
   ;; will compute the hash-table of entities (id, entity)
   (cl-reduce
    (lambda (orgtrello/--acc-hash orgtrello/--entity-card)
-     (message "Computing card '%s' data..." (assoc-default 'name orgtrello/--entity-card))
+     (message "Computing card '%s' data..." (orgtrello-query/--name orgtrello/--entity-card))
      ;; adding the entity card
-     (puthash (assoc-default 'id orgtrello/--entity-card) orgtrello/--entity-card orgtrello/--acc-hash)
+     (puthash (orgtrello-query/--id orgtrello/--entity-card) orgtrello/--entity-card orgtrello/--acc-hash)
      ;; fill in the other remaining entities (checklist/items)
-     (--map (puthash (assoc-default 'id it) it orgtrello/--acc-hash) (orgtrello/--do-retrieve-checklists-from-card orgtrello/--entity-card))
+     (--map (puthash (orgtrello-query/--id it) it orgtrello/--acc-hash) (orgtrello/--do-retrieve-checklists-from-card orgtrello/--entity-card))
      orgtrello/--acc-hash)
    cards
    :initial-value (make-hash-table :test 'equal)))
@@ -773,7 +809,7 @@
         ;; dump the remaining entities
         (maphash
          (lambda (orgtrello/--entry-new-id orgtrello/--entity)
-           (let ((orgtrello/--entry-new-name  (assoc-default 'name orgtrello/--entity)))
+           (let ((orgtrello/--entry-new-name  (orgtrello-query/--name orgtrello/--entity)))
              (message "Synchronizing new entity '%s' with id '%s'..." orgtrello/--entry-new-name orgtrello/--entry-new-id)
              (insert (orgtrello/--compute-entity-to-org-entry orgtrello/--entity))
              (org-set-property *ORGTRELLO-ID* orgtrello/--entry-new-id)))
@@ -794,9 +830,9 @@
                     (orgtrello/--entity-updated (gethash orgtrello/--entity-id entities)))
                (if orgtrello/--entity-updated
                    ;; found something, we update by squashing the current contents
-                   (let* ((orgtrello/--entry-new-id    (assoc-default 'id   orgtrello/--entity-updated))
-                          (orgtrello/--entity-due-date (assoc-default 'due  orgtrello/--entity-updated))
-                          (orgtrello/--entry-new-name  (assoc-default 'name orgtrello/--entity-updated)))
+                   (let* ((orgtrello/--entry-new-id    (orgtrello-query/--id   orgtrello/--entity-updated))
+                          (orgtrello/--entity-due-date (orgtrello-query/--due  orgtrello/--entity-updated))
+                          (orgtrello/--entry-new-name  (orgtrello-query/--name orgtrello/--entity-updated)))
                      ;; update the buffer with the new updates (there may be none but naively we will overwrite at the moment)
                      (message "Synchronizing entity '%s' with id '%s'..." orgtrello/--entry-new-name orgtrello/--entry-new-id)
                      (org-show-entry)
@@ -889,21 +925,21 @@
   (format "Install key and read/write access token done!"))
 
 (defun orgtrello/--id-name (entities)
-  "Given a list of association list (representing entities), return a map (id, name)."
+  "Given a list of entities, return a map of (id, name)."
   (let* ((id-name (make-hash-table :test 'equal)))
-    (--map (puthash (assoc-default 'id it) (assoc-default 'name it) id-name) entities)
+    (--map (puthash (orgtrello-query/--id it) (orgtrello-query/--name it) id-name) entities)
     id-name))
 
 (defun orgtrello/--name-id (entities)
-  "Given a list of association list (representing entities), return a map (id, name)."
+  "Given a list of entities, return a map of (id, name)."
   (let* ((name-id (make-hash-table :test 'equal)))
-    (--map (puthash (assoc-default'name it) (assoc-default 'id it) name-id) entities)
+    (--map (puthash (orgtrello-query/--name it) (orgtrello-query/--id it) name-id) entities)
     name-id))
 
 (defun orgtrello/--list-boards ()
   "Return the map of the existing boards associated to the current account. (Synchronous request)"
   (remove-if-not
-   (lambda (board) (equal :json-false (assoc-default 'closed board)))
+   (lambda (board) (equal :json-false (orgtrello-query/--close-property board)))
    (orgtrello-query/http (orgtrello-api/get-boards) 'standard-success-callback 'standard-error-callback t)))
 
 (defun orgtrello/--list-board-lists (board-id)
@@ -962,7 +998,7 @@
   (progn
     (message "Creating board '%s'" board-name)
     (let* ((board-data (orgtrello-query/http (orgtrello-api/add-board board-name board-description) 'standard-success-callback 'standard-error-callback t)))
-      (--map (assoc-default it board-data) '(id name)))))
+      (list (orgtrello-query/--id board-data) (orgtrello-query/--name board-data)))))
 
 (defun orgtrello/--close-lists (list-ids)
   "Given a list of ids, close those lists."
@@ -978,7 +1014,7 @@
    (lambda (acc-hash-name-id list-name)
      (progn
        (message "Board id %s - Creating list '%s'" board-id list-name)
-       (puthash list-name (assoc-default 'id (orgtrello-query/http (orgtrello-api/add-list list-name board-id) 'standard-success-callback 'standard-error-callback t)) acc-hash-name-id)
+       (puthash list-name (orgtrello-query/--id (orgtrello-query/http (orgtrello-api/add-list list-name board-id) 'standard-success-callback 'standard-error-callback t)) acc-hash-name-id)
        acc-hash-name-id))
    list-keywords
    :initial-value (make-hash-table :test 'equal)))
@@ -991,7 +1027,7 @@
   (while (not orgtrello/--board-name) (setq orgtrello/--board-name (read-string "Please, input the desired board name: ")))
   (setq orgtrello/--board-description (read-string "Please, input the board description (empty for none): "))
   (cl-destructuring-bind (orgtrello/--board-id orgtrello/--board-name) (orgtrello/--create-board orgtrello/--board-name orgtrello/--board-description)
-                         (let* ((orgtrello/--board-list-ids       (--map (assoc-default 'id it) (orgtrello/--list-board-lists orgtrello/--board-id)))  ;; first retrieve the existing lists (created by default on trello)
+                         (let* ((orgtrello/--board-list-ids       (--map (orgtrello-query/--id it) (orgtrello/--list-board-lists orgtrello/--board-id)))  ;; first retrieve the existing lists (created by default on trello)
                                 (orgtrello/--lists-to-close       (orgtrello/--close-lists orgtrello/--board-list-ids))                                ;; close those lists (they may surely not match the name we want)
                                 (orgtrello/--board-lists-hname-id (orgtrello/--create-lists-according-to-keywords orgtrello/--board-id *LIST-NAMES*))) ;; create the list, this returns the ids list
                            (orgtrello/update-orgmode-file-with-properties orgtrello/--board-name orgtrello/--board-id orgtrello/--board-lists-hname-id)))

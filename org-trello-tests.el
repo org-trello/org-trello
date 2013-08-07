@@ -246,27 +246,43 @@
   (expect :some-sync (orgtrello-query/--sync org-trello-tests/--query-map))
   (expect :some-params (orgtrello-query/--params  org-trello-tests/--query-map)))
 
+(expectations
+  (expect :some-id (orgtrello-query/--id '((id . :some-id))))
+  (expect nil      (orgtrello-query/--id '((noid . :some-id)))))
+
+(expectations
+  (expect :some-name (orgtrello-query/--name '((name . :some-name))))
+  (expect nil        (orgtrello-query/--name '((noname . :some-name)))))
+
+(expectations
+  (expect :some-list-id (orgtrello-query/--list-id '((idList . :some-list-id))))
+  (expect nil           (orgtrello-query/--list-id '((noIdList . :some-list-id)))))
+
+(expectations
+  (expect :some-clist-ids (orgtrello-query/--checklist-ids '((idChecklists . :some-clist-ids))))
+  (expect nil             (orgtrello-query/--checklist-ids '((no . :some-clist-ids)))))
+
+(expectations
+  (expect :some-check-items (orgtrello-query/--check-items '((checkItems . :some-check-items))))
+  (expect nil               (orgtrello-query/--check-items '((no . :some-check-items)))))
+
+(expectations
+  (expect :some-card-id (orgtrello-query/--card-id '((idCard . :some-card-id))))
+  (expect nil           (orgtrello-query/--card-id '((no . :some-card-id)))))
+
+(expectations
+  (expect :some-due (orgtrello-query/--due '((due . :some-due))))
+  (expect nil       (orgtrello-query/--due '((no . :some-due)))))
+
+(expectations
+  (expect :some-state (orgtrello-query/--state '((state . :some-state))))
+  (expect nil         (orgtrello-query/--state '((no . :some-state)))))
+
+(expectations
+  (expect :closed (orgtrello-query/--close-property '((closed . :closed))))
+  (expect nil     (orgtrello-query/--close-property '((no . :some-state)))))
+
 ;; ########################## orgtrello-tests
-
-(defun orgtrello/--keyword (entity-meta &optional default-value)
-  "Retrieve the keyword from the entity. If default-value is specified, this is the default value if no keyword is present"
-  (gethash :keyword entity-meta default-value))
-
-(defun orgtrello/--label (entity-meta)
-  "Retrieve the label from the entity."
-  (gethash :title entity-meta))
-
-(defun orgtrello/--id (entity-meta)
-  "Retrieve the id from the entity."
-  (gethash :id entity-meta))
-
-(defun orgtrello/--level (entity-meta)
-  "Retrieve the level from the entity."
-  (gethash :level entity-meta))
-
-(defun orgtrello/--due (entity-meta)
-  "Retrieve the due date from the entity."
-  (gethash :due entity-meta))
 
 (ert-deftest testing-orgtrello/--compute-data-from-entity-meta ()
   (let* ((entry   (orgtrello-hash/make-hash-org :some-level :some-keyword :some-label :some-id :some-due)))
