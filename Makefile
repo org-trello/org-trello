@@ -3,7 +3,7 @@ PACKAGE_FOLDER=org-trello-$(VERSION)
 ARCHIVE=$(PACKAGE_FOLDER).tar
 
 test:
-	cask exec emacs --no-init-file -batch \
+	cask exec emacs -q -batch \
 			-l ert \
 			-l ./org-trello-tests.el \
 			-f ert-run-tests-batch-and-exit
@@ -34,3 +34,11 @@ test-install-package-file: package untar
 
 build-package:
 	emacs --batch -l ./build.el -- org-trello.el
+
+tangle:
+	cask exec emacs -q -batch \
+			-l org \
+			./org-trello.org \
+			-e org-babel-tangle
+
+ttest: tangle test

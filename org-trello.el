@@ -1,3 +1,4 @@
+
 ;;; org-trello.el --- Minor mode for org-mode to sync org-mode and trello
 
 ;; Copyright (C) 2013 Antoine R. Dumont <eniotna.t AT gmail.com>
@@ -45,6 +46,7 @@
 ;; 4) You can also create a board directly from a org-mode buffer (C-c o b)
 ;; M-x org-trello/create-board
 ;;
+
 ;;; Code:
 
 (require 'org)
@@ -322,10 +324,6 @@
   "Standard error callback"
   (message "There was some problem during the request to trello: %s" error-thrown))
 
-(cl-defun standard-success-callback-display (&key data &allow-other-keys)
-  "Standard success callback"
-  (message "data: %S" data))
-
 (defun orgtrello-query/--method (query-map)
   "Retrieve the http method"
   (gethash :method query-map))
@@ -467,10 +465,6 @@
 (defvar *BOARD-ID* "board-id" "orgtrello property board-id entry")
 (defvar *BOARD-NAME* "board-name" "orgtrello property board-name entry")
 
-(defun orgtrello/filtered-kwds ()
-  "org keywords used (based on org-todo-keywords-1)."
-  org-todo-keywords-1)
-
 (defvar *LIST-NAMES*   nil "orgtrello property names of the different lists. This use the standard 'org-todo-keywords property from org-mode.")
 (defvar *HMAP-ID-NAME* nil "orgtrello hash map containing for each id, the associated name (or org keyword).")
 
@@ -480,6 +474,10 @@
 (defvar *consumer-key*     nil "Id representing the user")
 (defvar *access-token*     nil "Read/write Access token to use trello in the user's name ")
 (defvar *ORGTRELLO-MARKER* nil "Marker used for syncing the data in trello")
+
+(defun orgtrello/filtered-kwds ()
+  "org keywords used (based on org-todo-keywords-1)."
+  org-todo-keywords-1)
 
 (defun orgtrello/--setup-properties ()
   "Setup the properties according to the org-mode setup. Return :ok."
@@ -696,21 +694,9 @@
                 (orgtrello/--set-marker)
                 ;; request
                 (orgtrello-query/http query-http-or-error-msg 'orgtrello-query/--post-put-success-callback-update-id 'standard-error-callback sync)
-                "Syncronizing simple entity done!")
+                "Synchronizing simple entity done!")
             ;; else it's a string to display
             query-http-or-error-msg)))))
-
-(defun orgtrello/--merge-map (entry map-ids-by-name)
-  "Given a map of (id . name) and an entry, return the entry updated with the id if not already present."
-  (let* ((orgtrello/--merge-map-id   (orgtrello/--id entry))
-         (orgtrello/--merge-map-name (orgtrello/--label entry)))
-    (if orgtrello/--merge-map-id
-        ;; already identified, return the entry without any modification
-        entry
-      ;; not present, we add the entry :id with its value and return such value
-      (progn
-        (puthash :id (gethash orgtrello/--merge-map-name map-ids-by-name) entry)
-        entry))))
 
 (defun orgtrello/--board-name ()
   "Compute the board's name"
@@ -742,7 +728,7 @@
         (message "TRACE: %S" e))
     e))
 
-(defun orgtrello/--compute-card-status (card-id-list )
+(defun orgtrello/--compute-card-status (card-id-list)
   "Given a card's id, compute its status."
   (gethash card-id-list *HMAP-ID-NAME*))
 
@@ -771,7 +757,7 @@
   "Given an entity, compute its org representation."
   (cond ((orgtrello-query/--list-id entity) (orgtrello/--compute-card-to-org-entry entity))           ;; card      (level 1)
         ((orgtrello-query/--card-id entity) (orgtrello/--compute-checklist-to-org-entry entity))      ;; checklist (level 2)
-        ((orgtrello-query/--state entity)  (orgtrello/--compute-item-to-org-entry entity))))         ;; items     (level 3)
+        ((orgtrello-query/--state entity)  (orgtrello/--compute-item-to-org-entry entity))))          ;; items     (level 3)
 
 (defun orgtrello/--do-retrieve-checklists-from-card (card)
   "Given a card, return the list containing the card, the checklists from this card, and the items from the checklists. The order is guaranted."
@@ -1063,27 +1049,47 @@
 (defun org-trello/create-simple-entity ()
   "Control first, then if ok, create a simple entity."
   (interactive)
-  (org-trello/--msg-deco-control-and-do "Synchronizing entity" '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties) (lambda () (orgtrello/do-create-simple-entity t)) t))
+  (org-trello/--msg-deco-control-and-do
+     "Synchronizing entity"
+     '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties)
+     (lambda () (orgtrello/do-create-simple-entity t))
+     t))
 
 (defun org-trello/create-complex-entity ()
   "Control first, then if ok, create an entity and all its arborescence if need be."
   (interactive)
-  (org-trello/--msg-deco-control-and-do "Synchronizing complex entity" '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties) 'orgtrello/do-create-complex-entity t))
+  (org-trello/--msg-deco-control-and-do
+     "Synchronizing complex entity"
+     '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties)
+     'orgtrello/do-create-complex-entity
+     t))
 
 (defun org-trello/sync-to-trello ()
   "Control first, then if ok, sync the org-mode file completely to trello."
   (interactive)
-  (org-trello/--msg-deco-control-and-do "Synchronizing org-mode file to trello" '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties) 'orgtrello/do-sync-full-file t))
+  (org-trello/--msg-deco-control-and-do
+     "Synchronizing org-mode file to trello"
+     '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties)
+     'orgtrello/do-sync-full-file
+     t))
 
 (defun org-trello/sync-from-trello ()
   "Control first, then if ok, sync the org-mode file from the trello board."
   (interactive)
-  (org-trello/--msg-deco-control-and-do "Synchronizing trello board to org-mode file" '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties) 'orgtrello/do-sync-full-from-trello t))
+  (org-trello/--msg-deco-control-and-do
+     "Synchronizing trello board to org-mode file"
+     '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties)
+     'orgtrello/do-sync-full-from-trello
+     t))
 
 (defun org-trello/kill-entity ()
   "Control first, then if ok, delete the entity and all its arborescence."
   (interactive)
-  (org-trello/--msg-deco-control-and-do "Delete entity" '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties) (lambda () (orgtrello/do-delete-simple t)) t))
+  (org-trello/--msg-deco-control-and-do
+     "Delete entity"
+     '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties)
+     (lambda () (orgtrello/do-delete-simple t))
+     t))
 
 (defun org-trello/install-key-and-token ()
   "No control, trigger the setup installation of the key and the read/write token."
@@ -1093,17 +1099,27 @@
 (defun org-trello/install-board-and-lists-ids ()
   "Control first, then if ok, trigger the setup installation of the trello board to sync with."
   (interactive)
-  (org-trello/--msg-deco-control-and-do "Install boards and lists" '(orgtrello/--setup-properties orgtrello/--control-keys) 'orgtrello/do-install-board-and-lists t))
+  (org-trello/--msg-deco-control-and-do
+     "Install boards and lists"
+     '(orgtrello/--setup-properties orgtrello/--control-keys)
+     'orgtrello/do-install-board-and-lists
+     t))
 
 (defun org-trello/create-board ()
   "Control first, then if ok, trigger the board creation."
   (interactive)
-  (org-trello/--msg-deco-control-and-do "Install boards and lists" '(orgtrello/--setup-properties orgtrello/--control-keys) 'orgtrello/do-create-board-and-lists t))
+  (org-trello/--msg-deco-control-and-do
+     "Create board and lists"
+     '(orgtrello/--setup-properties orgtrello/--control-keys)
+     'orgtrello/do-create-board-and-lists
+     t))
 
 (defun org-trello/check-setup ()
   "Check the current setup."
   (interactive)
-  (org-trello/--control-and-do '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties) (lambda () (message "Setup ok!"))))
+  (org-trello/--control-and-do
+     '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties)
+     (lambda () (message "Setup ok!"))))
 
 (defun org-trello/help-describing-bindings ()
   "A simple message to describe the standard bindings used."

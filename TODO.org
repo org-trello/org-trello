@@ -464,12 +464,14 @@ CLOSED: [2013-08-07 mer. 13:16]
 ** DONE Release on marmalade/melpa
 CLOSED: [2013-08-07 mer. 13:19]
 * TODO 0.1.1
+** DONE Literate org-trello
+CLOSED: [2013-08-09 ven. 16:16]
+** TODO Testing the packaging, at the moment, this is done manually (make package & M-x package-install-file)
 ** TODO Introducing C-c o h at the loading of the buffer when ot is loaded
 ** TODO Implement the org-mode's standard checklist http://orgmode.org/manual/Checkboxes.html
 ** TODO Filter out directly with the api the data we do not need to avoid unnecessary network traffic
 ** TODO Replace already present properties regarding boards before injecting new ones.
 ** TODO A fake trello server to be able to test without a network
-** TODO Testing the packaging, at the moment, this is done manually (make package & M-x package-install-file)
 * Questions
 ** How to deal with promotion/demotion?
 We do not deal with it at the moment.
