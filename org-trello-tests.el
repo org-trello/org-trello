@@ -230,11 +230,67 @@
   (expect "DELETE" (orgtrello-query/--compute-method :delete)))
 
 (expectations
-  (expect (format "%s%s" *TRELLO-URL* "/uri")            (orgtrello-query/--compute-url "/uri")     )
-  (expect (format "%s%s" *TRELLO-URL* "/uri/other")      (orgtrello-query/--compute-url "/uri/other")     )
-  (expect (format "%s%s" *TRELLO-URL* "/uri/some/other") (orgtrello-query/--compute-url "/uri/some/other")     ))
+  (expect (format "%s%s" *TRELLO-URL* "/uri")            (orgtrello-query/--compute-url "/uri"))
+  (expect (format "%s%s" *TRELLO-URL* "/uri/other")      (orgtrello-query/--compute-url "/uri/other"))
+  (expect (format "%s%s" *TRELLO-URL* "/uri/some/other") (orgtrello-query/--compute-url "/uri/some/other")))
+
+(defvar org-trello-tests/--query-map (make-hash-table :test 'equal))
+(puthash :method :some-get org-trello-tests/--query-map)
+(puthash :uri    :some-uri org-trello-tests/--query-map)
+(puthash :sync   :some-sync org-trello-tests/--query-map)
+(puthash :params :some-params org-trello-tests/--query-map)
+
+(expectations
+  (expect :some-get (orgtrello-query/--method org-trello-tests/--query-map))
+  (expect :some-uri (orgtrello-query/--uri org-trello-tests/--query-map))
+  (expect :some-sync (orgtrello-query/--sync org-trello-tests/--query-map))
+  (expect :some-params (orgtrello-query/--params  org-trello-tests/--query-map)))
+
+(expectations
+  (expect :some-id (orgtrello-query/--id '((id . :some-id))))
+  (expect nil      (orgtrello-query/--id '((noid . :some-id)))))
+
+(expectations
+  (expect :some-name (orgtrello-query/--name '((name . :some-name))))
+  (expect nil        (orgtrello-query/--name '((noname . :some-name)))))
+
+(expectations
+  (expect :some-list-id (orgtrello-query/--list-id '((idList . :some-list-id))))
+  (expect nil           (orgtrello-query/--list-id '((noIdList . :some-list-id)))))
+
+(expectations
+  (expect :some-clist-ids (orgtrello-query/--checklist-ids '((idChecklists . :some-clist-ids))))
+  (expect nil             (orgtrello-query/--checklist-ids '((no . :some-clist-ids)))))
+
+(expectations
+  (expect :some-check-items (orgtrello-query/--check-items '((checkItems . :some-check-items))))
+  (expect nil               (orgtrello-query/--check-items '((no . :some-check-items)))))
+
+(expectations
+  (expect :some-card-id (orgtrello-query/--card-id '((idCard . :some-card-id))))
+  (expect nil           (orgtrello-query/--card-id '((no . :some-card-id)))))
+
+(expectations
+  (expect :some-due (orgtrello-query/--due '((due . :some-due))))
+  (expect nil       (orgtrello-query/--due '((no . :some-due)))))
+
+(expectations
+  (expect :some-state (orgtrello-query/--state '((state . :some-state))))
+  (expect nil         (orgtrello-query/--state '((no . :some-state)))))
+
+(expectations
+  (expect :closed (orgtrello-query/--close-property '((closed . :closed))))
+  (expect nil     (orgtrello-query/--close-property '((no . :some-state)))))
 
 ;; ########################## orgtrello-tests
+
+(ert-deftest testing-orgtrello/--compute-data-from-entity-meta ()
+  (let* ((entry   (orgtrello-hash/make-hash-org :some-level :some-keyword :some-label :some-id :some-due)))
+    (should (equal (orgtrello/--id entry)      :some-id))
+    (should (equal (orgtrello/--label entry)   :some-label))
+    (should (equal (orgtrello/--keyword entry) :some-keyword))
+    (should (equal (orgtrello/--level entry)   :some-level))
+    (should (equal (orgtrello/--due entry)     :some-due))))
 
 (ert-deftest testing-orgtrello/--merge-map ()
   (let* ((entry   (orgtrello-hash/make-hash-org :level :method "the name of the entry" nil "due"))

@@ -3,13 +3,13 @@ PACKAGE_FOLDER=org-trello-$(VERSION)
 ARCHIVE=$(PACKAGE_FOLDER).tar
 
 test:
-	carton exec emacs --no-init-file -batch \
+	cask exec emacs --no-init-file -batch \
 			-l ert \
 			-l ./org-trello-tests.el \
 			-f ert-run-tests-batch-and-exit
 
 pkg-el:
-	carton package
+	cask package
 
 clean:
 	rm -rf *.tar $(PACKAGE_FOLDER)
@@ -23,7 +23,7 @@ package: clean pkg-el prepare
 	rm -rf $(PACKAGE_FOLDER)
 
 info:
-	carton info
+	cask info
 
 untar:
 	tar xvf $(ARCHIVE)

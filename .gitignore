@@ -6,3 +6,4 @@
 *.tar
 /org-trello-*/
 .elpa
+.cask
