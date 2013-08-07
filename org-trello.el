@@ -447,7 +447,7 @@
 
 (defun orgtrello/--setup-properties ()
   "Setup the properties according to the org-mode setup. Return :ok."
-  (let* ((orgtrello/--list-keywords (reverse (orgtrello/filtered-kwds)))
+  (let* ((orgtrello/--list-keywords (nreverse (orgtrello/filtered-kwds)))
          (orgtrello/--hmap-id-name (cl-reduce
                                     (lambda (hmap name)
                                       (progn
@@ -777,7 +777,9 @@
              (message "Synchronizing new entity '%s' with id '%s'..." orgtrello/--entry-new-name orgtrello/--entry-new-id)
              (insert (orgtrello/--compute-entity-to-org-entry orgtrello/--entity))
              (org-set-property *ORGTRELLO-ID* orgtrello/--entry-new-id)))
-         entities))))
+         entities)
+        (goto-char (point-min))
+        (org-sort-entries t ?o))))
 
 (defun orgtrello/--sync-buffer-with-trello-data (entities)
   "Given all the entities, update the current buffer with those."
