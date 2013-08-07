@@ -50,7 +50,9 @@ Minor emacs mode for org-mode - 2-way synchronization between org-mode file and 
 
 # Emacs version
 
-Tested on GNU Emacs 24.1.1 (x86_64-pc-linux-gnu, X toolkit, Xaw3d scroll bars) of 2012-09-22 on batsu, modified by Debian
+Tested on:
+- GNU Emacs 24.1.1 (x86_64-pc-linux-gnu, X toolkit, Xaw3d scroll bars) of 2012-09-22 on batsu, modified by Debian (<= 0.0.9)
+- GNU Emacs 24.3.1 (x86_64-pc-linux-gnu, X toolkit, Xaw3d scroll bars) of 2013-04-14 on marid, modified by Debian (from 0.1.0)
 
 # TL;DR
 

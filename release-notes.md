@@ -1,3 +1,18 @@
+# 0.1.0
+
+- DONE Fix importing of cards with due date - https://github.com/ardumont/org-trello/pull/22
+- DONE Migrate carton to card.el (travis-ci builds break because of this)
+- DONE Order of creation of list (from keywords) in trello does not match the order of the keyword
+- DONE Abstract away the query (:method, :uri, ...) implementation
+- DONE Abstract away the implementation of the org-data some more (access of the information from the map are embedded in the function instead of delegating to dedicated function, thus not hiding the implementation)
+- DONE Version
+- DONE Order when synchronizing from trello does not match trello's order
+- DONE Refactor the sync from trello routine function (2 reduce embedded, only one is sufficient)
+- DONE Enforce the order of the card accord to the org keywords after dumping the new entries from trello
+- DONE Abstract away the return data from the http request
+- DONE Update org version to the latest stable
+- DONE Release notes
+
 # v0.0.9
 
 - DONE Update videos with the new features in the readme
