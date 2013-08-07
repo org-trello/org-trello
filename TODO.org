@@ -435,7 +435,8 @@ CLOSED: [2013-08-06 mar. 16:23]
 CLOSED: [2013-08-06 mar. 16:24]
 ** DONE Release on marmalade/melpa
 CLOSED: [2013-08-06 mar. 16:44]
-* IN-PROGRESS v0.1.0 [91%]
+* DONE v0.1.0 [100%]
+CLOSED: [2013-08-07 mer. 13:19]
 ** DONE Fix importing of cards with due date - https://github.com/ardumont/org-trello/pull/22
 Thanks @wordempire
 ** DONE Migrate carton to card.el (travis-ci builds break because of this)
@@ -460,7 +461,8 @@ CLOSED: [2013-08-07 mer. 12:43]
 CLOSED: [2013-08-07 mer. 13:15]
 ** DONE Release notes
 CLOSED: [2013-08-07 mer. 13:16]
-** TODO Release on marmalade/melpa
+** DONE Release on marmalade/melpa
+CLOSED: [2013-08-07 mer. 13:19]
 * TODO 0.1.1
 ** TODO Introducing C-c o h at the loading of the buffer when ot is loaded
 ** TODO Implement the org-mode's standard checklist http://orgmode.org/manual/Checkboxes.html
