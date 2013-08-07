@@ -751,19 +751,17 @@
   (--map it (assoc-default 'checkItems checklist)))
 
 (defun orgtrello/--compute-full-entities-from-trello (cards)
-  "Given a list of cards, compute the full cards data from the trello boards"
-  ;; will compute the hash-table from such list
+  "Given a list of cards, compute the full cards data from the trello boards. The order from the trello board is now kept."
+  ;; will compute the hash-table of entities (id, entity)
   (cl-reduce
-   (lambda (orgtrello/--acc-hash orgtrello/--entity)
-     (puthash (assoc-default 'id orgtrello/--entity) orgtrello/--entity orgtrello/--acc-hash)
+   (lambda (orgtrello/--acc-hash orgtrello/--entity-card)
+     (message "Computing card '%s' data..." (assoc-default 'name orgtrello/--entity-card))
+     ;; adding the entity card
+     (puthash (assoc-default 'id orgtrello/--entity-card) orgtrello/--entity-card orgtrello/--acc-hash)
+     ;; fill in the other remaining entities (checklist/items)
+     (--map (puthash (assoc-default 'id it) it orgtrello/--acc-hash) (orgtrello/--do-retrieve-checklists-from-card orgtrello/--entity-card))
      orgtrello/--acc-hash)
-   ;; will compute the full list of entities
-   (cl-reduce
-    (lambda (orgtrello/--acc-list orgtrello/--entity-card)
-      (message "Computing card '%s' data..." (assoc-default 'name orgtrello/--entity-card))
-      (append orgtrello/--acc-list (cons orgtrello/--entity-card (orgtrello/--do-retrieve-checklists-from-card orgtrello/--entity-card))))
-    cards
-    :initial-value nil)
+   cards
    :initial-value (make-hash-table :test 'equal)))
 
 (defun orgtrello/--update-buffer-with-remaining-trello-data (entities)

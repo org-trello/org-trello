@@ -435,7 +435,7 @@ CLOSED: [2013-08-06 mar. 16:23]
 CLOSED: [2013-08-06 mar. 16:24]
 ** DONE Release on marmalade/melpa
 CLOSED: [2013-08-06 mar. 16:44]
-* IN-PROGRESS v0.1.0 [62%]
+* IN-PROGRESS v0.1.0 [75%]
 ** DONE Migrate carton to card.el (travis-ci builds break because of this)
 CLOSED: [2013-08-07 mer. 10:37]
 ** DONE Order of creation of list (from keywords) in trello does not match the order of the keyword
@@ -448,7 +448,8 @@ CLOSED: [2013-08-07 mer. 10:09]
 CLOSED: [2013-08-07 mer. 10:50]
 ** DONE Order when synchronizing from trello does not match trello's order
 CLOSED: [2013-08-07 mer. 11:43]
-** TODO Some refactoring on the sync from trello routine (2 reduce embedded, only one is sufficient)
+** DONE Refactor the sync from trello routine function (2 reduce embedded, only one is sufficient)
+CLOSED: [2013-08-07 mer. 11:52]
 ** TODO Abstract away the return data from the http request
 ** TODO Release notes
 * TODO 0.1.1
