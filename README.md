@@ -3,7 +3,7 @@ org-trello
 
 [![Build Status](https://travis-ci.org/ardumont/org-trello.png?branch=master)](https://travis-ci.org/ardumont/org-trello)
 
-Minor emacs mode for org-mode - 2-way synchronization between org-mode file and trello board
+Minor emacs mode for org-mode - 2-way synchronization between org and trello board
 
 **Table of Contents**  *generated with [DocToc](http://doctoc.herokuapp.com/)*
 
@@ -13,9 +13,22 @@ Minor emacs mode for org-mode - 2-way synchronization between org-mode file and 
 - [TL;DR](#tl;dr)
 	- [Fast help](#fast-help)
 	- [Demo](#demo)
+		- [Synchronize one entity](#synchronize-one-entity)
+		- [Install](#install)
+		- [Setup key and token](#setup-key-and-token)
+		- [Attach org file to trello board](#attach-org-file-to-trello-board)
+		- [Synchronize one complete entity](#synchronize-one-complete-entity)
+		- [Synchronize from org to trello](#synchronize-from-org-to-trello)
+		- [Synchronize from trello to org](#synchronize-from-trello-to-org)
+		- [Create board and sync](#create-board-and-sync)
+		- [Create board with your keywords](#create-board-with-your-keywords)
+		- [Use the checklist Luke!](#use-the-checklist-luke!)
+		- [Kill entities](#kill-entities)
+		- [Simple help routine](#simple-help-routine)
+		- [Check your Setup](#check-your-setup)
 - [Contributions](#contributions)
 - [Release notes](#release-notes)
-- [Install](#install)
+- [Install](#install-1)
 	- [marmalade - Stable version](#marmalade---stable-version)
 	- [melpa - ~snapshot](#melpa---~snapshot)
 	- [org-trello](#org-trello-1)
@@ -73,19 +86,57 @@ Now open an org-mode buffer, then hit: `C-c o h`
 
 ## Demo
 
-- [Install](http://youtu.be/e3NzllAHbHY)
-- [Setup key and token](http://youtu.be/ReUp1Wn5scc)
-- [Attach org-mode file to one trello board](http://youtu.be/2PT8K1HG-eY)
-- [Synchronize one entity](http://youtu.be/ILPs74L5LFU)
-- [Synchronize one complete entity and move entity according to status](http://youtu.be/H8DXm5BLaD0)
-- [Synchronize from org-mode file to trello](http://youtu.be/d6SATWzhQhs)
-- [Synchronize from trello to org-mode files](http://youtu.be/-ldo8gvhaTY)
-- [Create board and sync](http://youtu.be/6k4zRm6t8ZY)
-- [Create board with your own keywords](http://youtu.be/1UYYXjCwshs)
-- [Use the checklist Luke!](http://youtu.be/M9xAvO3m_mU)
-- [Kill entities](http://youtu.be/C1c_m9LHyC0)
-- [Simple help routine](http://youtu.be/g-lW0lDFU5Y)
-- [Check your Setup](http://youtu.be/2OlmPMwtCAs)
+### Synchronize one entity
+
+[<img src="https://i1.ytimg.com/vi/ILPs74L5LFU/0.jpg" />](http://youtu.be/ILPs74L5LFU)
+
+### Install
+
+[<img src="https://i1.ytimg.com/vi/e3NzllAHbHY/0.jpg" />](http://youtu.be/e3NzllAHbHY)
+
+### Setup key and token
+
+[<img src="https://i1.ytimg.com/vi/ReUp1Wn5scc/0.jpg" />](http://youtu.be/ReUp1Wn5scc)
+
+### Attach org file to trello board
+
+[<img src="https://i1.ytimg.com/vi/2PT8K1HG-eY/0.jpg" />](http://youtu.be/2PT8K1HG-eY)
+
+### Synchronize one complete entity
+
+[<img src="https://i1.ytimg.com/vi/H8DXm5BLaD0/0.jpg" />](http://youtu.be/H8DXm5BLaD0)
+
+### Synchronize from org to trello
+
+[<img src="https://i1.ytimg.com/vi/d6SATWzhQhs/0.jpg" />](http://youtu.be/d6SATWzhQhs)
+
+### Synchronize from trello to org
+
+[<img src="https://i1.ytimg.com/vi/-ldo8gvhaTY/0.jpg" />](http://youtu.be/-ldo8gvhaTY)
+
+### Create board and sync
+
+[<img src="https://i1.ytimg.com/vi/6k4zRm6t8ZY/0.jpg" />](http://youtu.be/6k4zRm6t8ZY)
+
+### Create board with your keywords
+
+[<img src="https://i1.ytimg.com/vi/1UYYXjCwshs/0.jpg" />](http://youtu.be/1UYYXjCwshs)
+
+### Use the checklist Luke!
+
+[<img src="https://i1.ytimg.com/vi/M9xAvO3m_mU/0.jpg" />](http://youtu.be/M9xAvO3m_mU)
+
+### Kill entities
+
+[<img src="https://i1.ytimg.com/vi/C1c_m9LHyC0/0.jpg" />](http://youtu.be/C1c_m9LHyC0)
+
+### Simple help routine
+
+[<img src="https://i1.ytimg.com/vi/g-lW0lDFU5Y/0.jpg" />](http://youtu.be/g-lW0lDFU5Y)
+
+### Check your Setup
+
+[<img src="https://i1.ytimg.com/vi/1UYYXjCwshs/0.jpg" />](http://youtu.be/2OlmPMwtCAs)
 
 # Contributions
 
