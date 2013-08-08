@@ -335,9 +335,9 @@
     (should (equal (hash-table-count hashtable-result) (hash-table-count hashtable-expected)))))
 
 (expectations
-  (expect ""     (orgtrello/--compute-state-from-keyword ""))
+  (expect "TODO" (orgtrello/--compute-state-from-keyword ""))
   (expect "TODO" (orgtrello/--compute-state-from-keyword *TODO*))
-  (expect "DONE" (orgtrello/--compute-state-from-keyword *DONE*))
+  (expect 'done  (orgtrello/--compute-state-from-keyword *DONE*))
   (expect "TODO" (orgtrello/--compute-state-from-keyword "IN")))
 
 (expectations

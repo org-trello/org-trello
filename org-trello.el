@@ -1,3 +1,4 @@
+
 ;;; org-trello.el --- Org minor mode to synchronize with trello
 
 ;; Copyright (C) 2013 Antoine R. Dumont <eniotna.t AT gmail.com>
@@ -83,7 +84,7 @@
     (if params (puthash :params params h))
     h))
 
-(message "orgtrello-hash loaded!")
+(message "org-trello - orgtrello-hash loaded!")
 
 ;; #################### orgtrello-data
 
@@ -146,7 +147,7 @@
   (cl-destructuring-bind (id due level _ keyword _ title &rest) heading-metadata
                          (orgtrello-hash/make-hash-org level keyword title id due)))
 
-(message "orgtrello-data loaded!")
+(message "org-trello - orgtrello-data loaded!")
 
 ;; #################### orgtrello-api
 
@@ -260,7 +261,7 @@
   "Delete a task with id task-id"
   (orgtrello-hash/make-hash :delete (format "/checklists/%s/checkItems/%s" checklist-id task-id)))
 
-(message "orgtrello-api loaded!")
+(message "org-trello - orgtrello-api loaded!")
 
 ;; #################### orgtrello-query/
 
@@ -452,7 +453,7 @@
              :success (if success-callback success-callback 'standard-success-callback)
              :error   (if error-callback error-callback 'standard-error-callback))))
 
-(message "orgtrello-query/ loaded!")
+(message "org-trello - orgtrello-query/ loaded!")
 
 ;; #################### orgtrello
 
@@ -603,29 +604,27 @@
           "Cannot synchronize the item - the checklist must be synchronized first. Skip it...")
       "Cannot synchronize the item - missing mandatory label. Skip it...")))
 
+(defun orgtrello/--task-compute-state-or-check (checklist-update-items-p task-state checklist-state possible-states)
+  "Compute the task's state/check (for creation/update). The 2 possible states are in the list possible states, first position is the 'checked' one, and second the unchecked one."
+  (let* ((orgtrello/--task-checked   (first possible-states))
+         (orgtrello/--task-unchecked (second possible-states)))
+    (cond ((and checklist-update-items-p (string= *DONE* checklist-state))                      orgtrello/--task-checked)
+          ((and checklist-update-items-p (or checklist-state (string= *TODO* checklist-state))) orgtrello/--task-unchecked)
+          ((string= *DONE* task-state)                                                          orgtrello/--task-checked)
+          (t                                                                                    orgtrello/--task-unchecked))))
+
 (defun orgtrello/--task-compute-state (checklist-update-items-p task-state checklist-state)
   "Compute the task's state (for creation)."
-  (let* ((orgtrello/--task-compute-state--checklist-status checklist-state)
-         (orgtrello/--task-compute-state--task-status      task-state))
-    (cond ((and checklist-update-items-p (string= *DONE* orgtrello/--task-compute-state--checklist-status))                                                       "complete")
-          ((and checklist-update-items-p (or orgtrello/--task-compute-state--checklist-status (string= *TODO* orgtrello/--task-compute-state--checklist-status))) "incomplete")
-          ((string= *DONE* orgtrello/--task-compute-state--task-status)                                                                                           "complete")
-          (t                                                                                                                                                      "incomplete"))))
-
+  (orgtrello/--task-compute-state-or-check checklist-update-items-p task-state checklist-state '("complete" "incomplete")))
 
 (defun orgtrello/--task-compute-check (checklist-update-items-p task-state checklist-state)
   "Compute the task's check status (for update)."
-  (let* ((orgtrello/--task-compute-check--checklist-status checklist-state)
-         (orgtrello/--task-compute-check--task-status      task-state))
-    (cond ((and checklist-update-items-p (string= *DONE* orgtrello/--task-compute-check--checklist-status))                                                      't)
-          ((and checklist-update-items-p (or orgtrello/--task-compute-check--checklist-status (string= *TODO* orgtrello/--task-compute-check--checklist-status))) nil)
-          ((string= *DONE* orgtrello/--task-compute-check--task-status)                                                                                          't)
-          (t                                                                                                                                                     nil))))
+    (orgtrello/--task-compute-state-or-check checklist-update-items-p task-state checklist-state '(t nil)))
 
 (defun orgtrello/--compute-state-from-keyword (state)
   "Given a state, compute the org equivalent (to use with org-todo function)"
-  (cond ((or (not state) (string= "" state)) "")
-        ((string= *DONE* state)              *DONE*)
+  (cond ((or (not state) (string= "" state)) *TODO*)
+        ((string= *DONE* state)              'done)
         ((string= *TODO* state)              *TODO*)
         (t                                   *TODO*)))
 
@@ -704,13 +703,11 @@
 (defun orgtrello/do-create-complex-entity ()
   "Do the actual full card creation - from card to task. Beware full side effects..."
   (let ((orgtrello/--board-name-to-sync (orgtrello/--board-name)))
-    (message "Synchronizing full card structure on board '%s'..." orgtrello/--board-name-to-sync)
+    (message "Synchronizing full entity with its structure on board '%s'..." orgtrello/--board-name-to-sync)
     (save-excursion
-      ;; up to the highest level to begin the sync in order
-      (while (org-up-heading-safe))
       ;; iterate over the map of
       (org-map-tree (lambda () (orgtrello/do-create-simple-entity t))))
-    (format "Synchronizing full card structure on board '%s' - done!" orgtrello/--board-name-to-sync)))
+    (format "Synchronizing full entity with its structure on board '%s' - done" orgtrello/--board-name-to-sync)))
 
 (defun orgtrello/do-sync-full-file ()
   "Full org-mode file synchronisation. Beware, this will block emacs as the request is synchronous."
@@ -972,11 +969,11 @@
   "Remove the current org-trello properties"
   (with-current-buffer (current-buffer)
     (goto-char (point-min))
-    (orgtrello/--delete-buffer-property (format "#+property: " *BOARD-ID*))
-    (orgtrello/--delete-buffer-property (format "#+property: " *BOARD-NAME*))
+    (orgtrello/--delete-buffer-property (format "#+property: %s" *BOARD-ID*))
+    (orgtrello/--delete-buffer-property (format "#+property: %s" *BOARD-NAME*))
     (maphash
      (lambda (name id)
-       (orgtrello/--delete-buffer-property (format "#+property: " (orgtrello/convention-property-name name))))
+       (orgtrello/--delete-buffer-property (format "#+property: %s" (orgtrello/convention-property-name name))))
      board-lists-hash-name-id)
     (if update-todo-keywords
         (orgtrello/--delete-buffer-property "#+TODO: "))))
@@ -992,7 +989,7 @@
     (maphash
      (lambda (name id)
        (insert (format "#+property: %s %s\n" (orgtrello/convention-property-name name) id)))
-     (trace  board-lists-hash-name-id :board-lists-hash-name-id))
+     board-lists-hash-name-id)
     (if update-todo-keywords
         (progn
           ;; install the todo list
@@ -1067,7 +1064,7 @@
                            (orgtrello/update-orgmode-file-with-properties orgtrello/--board-name orgtrello/--board-id orgtrello/--board-lists-hname-id)))
   "Create board and lists done!")
 
-(message "orgtrello loaded!")
+(message "org-trello - orgtrello loaded!")
 
 ;; #################### org-trello
 
