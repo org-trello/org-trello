@@ -1,7 +1,4 @@
-org-trello
-==========
-
-[![Build Status](https://travis-ci.org/ardumont/org-trello.png?branch=master)](https://travis-ci.org/ardumont/org-trello)
+# org-trello [![Build Status](https://travis-ci.org/ardumont/org-trello.png?branch=master)](https://travis-ci.org/ardumont/org-trello)
 
 Minor emacs mode for org-mode - 2-way synchronization between org and trello board
 
