@@ -52,7 +52,7 @@
 (require 'json)
 (require 'dash)
 (require 'request)
-(require 'cl-lib)
+(eval-when-compile (require 'cl-lib))
 (require 'parse-time)
 
 ;; #################### overriding setup
@@ -749,7 +749,7 @@
   (let* ((orgtrello/--item-name  (orgtrello-query/--name  item))
          (orgtrello/--item-state (orgtrello-query/--state item)))
     (format "*** %s %s\n"
-            (if (string= "complete" orgtrello/--item-state) "DONE" "TODO")
+            (if (string= "complete" orgtrello/--item-state) *DONE* *TODO*)
             orgtrello/--item-name)))
 
 (defun orgtrello/--compute-entity-to-org-entry (entity)
@@ -780,7 +780,10 @@
      ;; adding the entity card
      (puthash (orgtrello-query/--id orgtrello/--entity-card) orgtrello/--entity-card orgtrello/--acc-hash)
      ;; fill in the other remaining entities (checklist/items)
-     (--map (puthash (orgtrello-query/--id it) it orgtrello/--acc-hash) (orgtrello/--do-retrieve-checklists-from-card orgtrello/--entity-card))
+     (mapc
+      (lambda (it)
+        (puthash (orgtrello-query/--id it) it orgtrello/--acc-hash))
+      (orgtrello/--do-retrieve-checklists-from-card orgtrello/--entity-card))
      orgtrello/--acc-hash)
    cards
    :initial-value (make-hash-table :test 'equal)))
@@ -907,23 +910,23 @@
   (browse-url (format "https://trello.com/1/authorize?response_type=token&name=org-trello&scope=read,write&expiration=never&key=%s" orgtrello/--*consumer-key*))
   (setq orgtrello/--access-token (read-string "Access-token: "))
   (orgtrello/--do-install-config-file orgtrello/--*consumer-key* orgtrello/--access-token)
-  (format "Install key and read/write access token done!"))
+  "Install key and read/write access token done!")
 
 (defun orgtrello/--id-name (entities)
   "Given a list of entities, return a map of (id, name)."
   (let* ((id-name (make-hash-table :test 'equal)))
-    (--map (puthash (orgtrello-query/--id it) (orgtrello-query/--name it) id-name) entities)
+    (mapc (lambda (it) (puthash (orgtrello-query/--id it) (orgtrello-query/--name it) id-name)) entities)
     id-name))
 
 (defun orgtrello/--name-id (entities)
   "Given a list of entities, return a map of (id, name)."
   (let* ((name-id (make-hash-table :test 'equal)))
-    (--map (puthash (orgtrello-query/--name it) (orgtrello-query/--id it) name-id) entities)
+    (mapc (lambda (it) (puthash (orgtrello-query/--name it) (orgtrello-query/--id it) name-id)) entities)
     name-id))
 
 (defun orgtrello/--list-boards ()
   "Return the map of the existing boards associated to the current account. (Synchronous request)"
-  (remove-if-not
+  (cl-remove-if-not
    (lambda (board) (equal :json-false (orgtrello-query/--close-property board)))
    (orgtrello-query/http (orgtrello-api/get-boards) 'standard-success-callback 'standard-error-callback t)))
 
@@ -953,7 +956,7 @@
 
 (defun orgtrello/convention-property-name (name)
   "Use the right convention for the property used in the headers of the org-mode file."
-  (replace-in-string name " " "-"))
+  (replace-regexp-in-string " " "-" name))
 
 (defun orgtrello/--delete-buffer-property (property-name)
   "A simple routine to delete a #+property: entry from the org-mode buffer."
@@ -1019,7 +1022,7 @@
        orgtrello/--chosen-board-id
        orgtrello/--board-lists-hname-id
        t)))
-  (format "Install board and list ids done!"))
+  "Install board and list ids done!")
 
 (defun orgtrello/--create-board (board-name &optional board-description)
   "Create a board with name and eventually a description."

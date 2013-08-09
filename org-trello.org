@@ -119,7 +119,7 @@ We depend on:
 (require 'json)
 (require 'dash)
 (require 'request)
-(require 'cl-lib)
+(eval-when-compile (require 'cl-lib))
 (require 'parse-time)
 
 #+end_src
@@ -1275,7 +1275,7 @@ Given an entry which represents an item/task, compute its equivalent org format.
   (let* ((orgtrello/--item-name  (orgtrello-query/--name  item))
          (orgtrello/--item-state (orgtrello-query/--state item)))
     (format "*** %s %s\n"
-            (if (string= "complete" orgtrello/--item-state) "DONE" "TODO")
+            (if (string= "complete" orgtrello/--item-state) *DONE* *TODO*)
             orgtrello/--item-name)))
 
 #+end_src
@@ -1341,7 +1341,10 @@ Given a list of cards, retrieve the full arborescence of such cards (computing t
      ;; adding the entity card
      (puthash (orgtrello-query/--id orgtrello/--entity-card) orgtrello/--entity-card orgtrello/--acc-hash)
      ;; fill in the other remaining entities (checklist/items)
-     (--map (puthash (orgtrello-query/--id it) it orgtrello/--acc-hash) (orgtrello/--do-retrieve-checklists-from-card orgtrello/--entity-card))
+     (mapc
+      (lambda (it)
+        (puthash (orgtrello-query/--id it) it orgtrello/--acc-hash))
+      (orgtrello/--do-retrieve-checklists-from-card orgtrello/--entity-card))
      orgtrello/--acc-hash)
    cards
    :initial-value (make-hash-table :test 'equal)))
@@ -1466,7 +1469,7 @@ First routine to ask input for the user:
   (browse-url (format "https://trello.com/1/authorize?response_type=token&name=org-trello&scope=read,write&expiration=never&key=%s" orgtrello/--*consumer-key*))
   (setq orgtrello/--access-token (read-string "Access-token: "))
   (orgtrello/--do-install-config-file orgtrello/--*consumer-key* orgtrello/--access-token)
-  (format "Install key and read/write access token done!"))
+  "Install key and read/write access token done!")
 
 #+end_src
 
@@ -1522,7 +1525,7 @@ This:
        orgtrello/--chosen-board-id
        orgtrello/--board-lists-hname-id
        t)))
-  (format "Install board and list ids done!"))
+  "Install board and list ids done!")
 
 #+end_src
 
@@ -1628,7 +1631,7 @@ Given a list of entities, return a map of (id . name)
 (defun orgtrello/--id-name (entities)
   "Given a list of entities, return a map of (id, name)."
   (let* ((id-name (make-hash-table :test 'equal)))
-    (--map (puthash (orgtrello-query/--id it) (orgtrello-query/--name it) id-name) entities)
+    (mapc (lambda (it) (puthash (orgtrello-query/--id it) (orgtrello-query/--name it) id-name)) entities)
     id-name))
 
 #+end_src
@@ -1642,7 +1645,7 @@ Given a list of entities, return a map of (name . id)
 (defun orgtrello/--name-id (entities)
   "Given a list of entities, return a map of (id, name)."
   (let* ((name-id (make-hash-table :test 'equal)))
-    (--map (puthash (orgtrello-query/--name it) (orgtrello-query/--id it) name-id) entities)
+    (mapc (lambda (it) (puthash (orgtrello-query/--name it) (orgtrello-query/--id it) name-id)) entities)
     name-id))
 
 #+end_src
@@ -1655,7 +1658,7 @@ Execute the query that return a list of boards from the user's current trello ac
 #+begin_src lisp :cache yes
 (defun orgtrello/--list-boards ()
   "Return the map of the existing boards associated to the current account. (Synchronous request)"
-  (remove-if-not
+  (cl-remove-if-not
    (lambda (board) (equal :json-false (orgtrello-query/--close-property board)))
    (orgtrello-query/http (orgtrello-api/get-boards) 'standard-success-callback 'standard-error-callback t)))
 
@@ -1682,7 +1685,7 @@ Replace the space by dash at the moment.
 #+begin_src lisp :cache yes
 (defun orgtrello/convention-property-name (name)
   "Use the right convention for the property used in the headers of the org-mode file."
-  (replace-in-string name " " "-"))
+  (replace-regexp-in-string " " "-" name))
 
 #+end_src
 
