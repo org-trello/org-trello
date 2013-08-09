@@ -1,19 +1,16 @@
-#+property: board-name    api test board
-#+property: board-id      51d99bbc1e1d8988390047f2
-#+property: TODO 51d99bbc1e1d8988390047f3
-#+property: IN-PROGRESS 51d99bbc1e1d8988390047f4
-#+property: DONE 51d99bbc1e1d8988390047f5
-#+property: PENDING 51e53898ea3d1780690015ca
-#+property: FAIL 51e538a26f75d07902002d25
-#+property: DELEGATED 51e538a89c05f1e25c0027c6
-#+property: CANCELLED 51e538e6c7a68fa0510014ee
+#+property: board-name    board-testing
+#+property: board-id      5205105909bcb72724001b8b
+#+property: CANCELLED 5205105a4592451d24002d43
+#+property: DELEGATED 5205105a1eb8dbeb48001bcf
+#+property: FAIL 5205105bfc8a97c453001c12
+#+property: DONE 5205105c10ca666521001909
+#+property: PENDING 5205105c5b37634d24001ed3
+#+property: IN-PROGRESS 5205105d10d491730c000da0
+#+property: TODO 5205105dc5970697630008f7
 #+title: synced from trello
 #+author: Antoine R. Dumont
 
 * TODO Programming in scala
-:PROPERTIES:
-:orgtrello-id: 51e02e12e2e19b983f0015dc
-:END:
 ** chapters
 :PROPERTIES:
 :orgtrello-id: 51e02e406fd8f8526b00397e
@@ -69,10 +66,6 @@
 *** Ch. 12 - Traits
 :PROPERTIES:
 :orgtrello-id: 51e02e58daac63334f00215d
-:END:
-*** ...
-:PROPERTIES:
-:orgtrello-id: 51e02e5947dcbde3470014ec
 :END:
 * TODO v0.0.5 [0%]
 :PROPERTIES:

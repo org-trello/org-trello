@@ -463,17 +463,22 @@ CLOSED: [2013-08-07 mer. 13:15]
 CLOSED: [2013-08-07 mer. 13:16]
 ** DONE Release on marmalade/melpa
 CLOSED: [2013-08-07 mer. 13:19]
-* TODO 0.1.1
+* IN-PROGRESS 0.1.1
 ** DONE Literate org-trello
 CLOSED: [2013-08-09 ven. 16:16]
 ** DONE Testing the packaging, at the moment, this is done manually (make package & M-x package-install-file)
 CLOSED: [2013-08-09 ven. 16:16]
 ** DONE Introducing C-c o h at the loading of the buffer when ot is loaded
 CLOSED: [2013-08-09 ven. 16:36]
-** TODO Implement the org-mode's standard checklist http://orgmode.org/manual/Checkboxes.html
+** DONE Update readme/main page with images on videos
+CLOSED: [2013-08-09 ven. 16:56]
+** DONE Replace already present properties regarding boards before injecting new ones.
+CLOSED: [2013-08-09 ven. 17:58]
+** TODO Improve the current attach board and list routine to avoid manual setup for the user
+** TODO End to end tests
 ** TODO Filter out directly with the api the data we do not need to avoid unnecessary network traffic
-** TODO Replace already present properties regarding boards before injecting new ones.
 ** TODO A fake trello server to be able to test without a network
+** TODO Implement the org-mode's standard checklist http://orgmode.org/manual/Checkboxes.html
 * Questions
 ** How to deal with promotion/demotion?
 We do not deal with it at the moment.

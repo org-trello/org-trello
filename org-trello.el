@@ -955,12 +955,33 @@
   "Use the right convention for the property used in the headers of the org-mode file."
   name)
 
+(defun orgtrello/--delete-buffer-property (property-name)
+  "A simple routine to delete a #+property: entry from the org-mode buffer."
+  (let ((current-point (trace (search-forward (format "#+property: " property-name) nil t))))
+    (if current-point
+        (progn
+          (goto-char current-point)
+          (beginning-of-line)
+          (kill-line)
+          (kill-line)))))
+
+(defun orgtrello/--remove-properties-file (board-lists-hash-name-id)
+  "Remove the current org-trello properties"
+  (with-current-buffer (current-buffer)
+    (goto-char (point-min))
+    (orgtrello/--delete-buffer-property *BOARD-ID*)
+    (orgtrello/--delete-buffer-property *BOARD-NAME*)
+    (maphash
+     (lambda (name id)
+       (orgtrello/--delete-buffer-property (orgtrello/convention-property-name name)))
+     board-lists-hash-name-id)))
+
 (defun orgtrello/update-orgmode-file-with-properties (board-name board-id board-lists-hash-name-id)
   "Update the orgmode file with the needed headers for org-trello to work."
   (with-current-buffer (current-buffer)
     (goto-char (point-min))
-    (insert (format "#+property: board-name    %s\n" board-name))
-    (insert (format "#+property: board-id      %s\n" board-id))
+    (insert (format "#+property: %s    %s\n" *BOARD-NAME* board-name))
+    (insert (format "#+property: %s      %s\n" *BOARD-ID* board-id))
     (maphash
      (lambda (name id)
        (insert (format "#+property: %s %s\n" (orgtrello/convention-property-name name) id)))
@@ -972,10 +993,14 @@
   "Interactive command to install the list boards"
   (interactive)
   (cl-destructuring-bind (orgtrello/--chosen-board-id orgtrello/--chosen-board-name) (orgtrello/--choose-board (orgtrello/--id-name (orgtrello/--list-boards)))
-   (orgtrello/update-orgmode-file-with-properties
-    orgtrello/--chosen-board-name
-    orgtrello/--chosen-board-id
-    (orgtrello/--name-id (orgtrello/--list-board-lists orgtrello/--chosen-board-id))))
+    (let ((orgtrello/--board-lists-hname-id (orgtrello/--name-id (orgtrello/--list-board-lists orgtrello/--chosen-board-id))))
+      ;; remove any eventual present entry
+      (orgtrello/--remove-properties-file orgtrello/--board-lists-hname-id)
+      ;; update with new ones
+      (orgtrello/update-orgmode-file-with-properties
+       orgtrello/--chosen-board-name
+       orgtrello/--chosen-board-id
+       orgtrello/--board-lists-hname-id)))
   (format "Install board and list ids done!"))
 
 (defun orgtrello/--create-board (board-name &optional board-description)
@@ -1015,6 +1040,9 @@
                          (let* ((orgtrello/--board-list-ids       (--map (orgtrello-query/--id it) (orgtrello/--list-board-lists orgtrello/--board-id)))  ;; first retrieve the existing lists (created by default on trello)
                                 (orgtrello/--lists-to-close       (orgtrello/--close-lists orgtrello/--board-list-ids))                                ;; close those lists (they may surely not match the name we want)
                                 (orgtrello/--board-lists-hname-id (orgtrello/--create-lists-according-to-keywords orgtrello/--board-id *LIST-NAMES*))) ;; create the list, this returns the ids list
+                           ;; remove eventual already present entry
+                           (orgtrello/--remove-properties-file orgtrello/--board-lists-hname-id)
+                           ;; update org buffer with new ones
                            (orgtrello/update-orgmode-file-with-properties orgtrello/--board-name orgtrello/--board-id orgtrello/--board-lists-hname-id)))
   "Create board and lists done!")
 
