@@ -1057,14 +1057,13 @@
     ;; do we have to save the buffer
     (if save-buffer-p (save-buffer))
     (if (string-or-null-p org-trello/--result-action)
-        (message  org-trello/--result-action)
-        (message (concat msg " - done!")))))
+      (message org-trello/--result-action)
+      (message (concat msg " - done!")))))
 
 (defun org-trello/--control-and-do (control-fns fn-to-control-and-execute)
   "Execute the function fn if control-fns is nil or if the result of apply every function to fn is ok."
   (if control-fns
-      (let* ((org-trello/--control-ok-or-error-messages (--map (funcall it) control-fns))
-             (org-trello/--error-messages               (--filter (not (equal :ok it)) org-trello/--control-ok-or-error-messages)))
+      (let* ((org-trello/--error-messages (--filter (not (equal :ok (funcall it))) control-fns)))
         (if org-trello/--error-messages
             ;; there are some trouble, we display all the error messages to help the user understand the problem
             (message "List of errors:\n %s" (--mapcat (concat "- " it "\n") org-trello/--error-messages))

@@ -475,10 +475,10 @@ CLOSED: [2013-08-09 ven. 16:56]
 ** DONE Replace already present properties regarding boards before injecting new ones.
 CLOSED: [2013-08-09 ven. 17:58]
 ** TODO Improve the current attach board and list routine to avoid manual setup for the user
-** TODO End to end tests
+** TODO End to end tests (hint: ecuke)
 ** TODO Filter out directly with the api the data we do not need to avoid unnecessary network traffic
 ** TODO A fake trello server to be able to test without a network
-** TODO Implement the org-mode's standard checklist http://orgmode.org/manual/Checkboxes.html
+** TODO Implement org's standard checklist http://orgmode.org/manual/Checkboxes.html
 * Questions
 ** How to deal with promotion/demotion?
 We do not deal with it at the moment.
