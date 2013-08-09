@@ -1,4 +1,3 @@
-
 ;;; org-trello.el --- Minor mode for org-mode to sync org-mode and trello
 
 ;; Copyright (C) 2013 Antoine R. Dumont <eniotna.t AT gmail.com>
@@ -1152,7 +1151,8 @@ C-c o h - M-x org-trello/help-describing-bindings    - This help message."))
              (define-key map (kbd "C-c o h") 'org-trello/help-describing-bindings)
              (define-key map (kbd "C-c o d") 'org-trello/check-setup)
              ;; define other bindings...
-             map))
+             map)
+  :after-hook (message "ot is on! To begin with, hit C-c o h or M-x 'org-trello/help-describing-bindings"))
 
 (add-hook 'org-mode-hook 'org-trello-mode)
 

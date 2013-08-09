@@ -468,7 +468,8 @@ CLOSED: [2013-08-07 mer. 13:19]
 CLOSED: [2013-08-09 ven. 16:16]
 ** DONE Testing the packaging, at the moment, this is done manually (make package & M-x package-install-file)
 CLOSED: [2013-08-09 ven. 16:16]
-** TODO Introducing C-c o h at the loading of the buffer when ot is loaded
+** DONE Introducing C-c o h at the loading of the buffer when ot is loaded
+CLOSED: [2013-08-09 ven. 16:36]
 ** TODO Implement the org-mode's standard checklist http://orgmode.org/manual/Checkboxes.html
 ** TODO Filter out directly with the api the data we do not need to avoid unnecessary network traffic
 ** TODO Replace already present properties regarding boards before injecting new ones.

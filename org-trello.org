@@ -195,7 +195,11 @@ And we propose default bindings for the user to access the org-trello routine.
              (define-key map (kbd "C-c o h") 'org-trello/help-describing-bindings)
              (define-key map (kbd "C-c o d") 'org-trello/check-setup)
              ;; define other bindings...
-             map))
+             map)
+  :after-hook (message "ot is on! To begin with, hit C-c o h or M-x 'org-trello/help-describing-bindings"))
+
+;;;### autoload
+(message "org-trello loading. To begin with org-trello, hit C-c o h or M-x 'org-trello/help-describing-bindings")
 
 (add-hook 'org-mode-hook 'org-trello-mode)
 
