@@ -361,3 +361,6 @@
   (expect nil (orgtrello/--task-compute-check nil "TODO" "TODO")) )
 
 (message "Tests done!")
+
+(provide 'org-trello-tests)
+;;; org-trello-tests ends here

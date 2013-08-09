@@ -466,7 +466,8 @@ CLOSED: [2013-08-07 mer. 13:19]
 * TODO 0.1.1
 ** DONE Literate org-trello
 CLOSED: [2013-08-09 ven. 16:16]
-** TODO Testing the packaging, at the moment, this is done manually (make package & M-x package-install-file)
+** DONE Testing the packaging, at the moment, this is done manually (make package & M-x package-install-file)
+CLOSED: [2013-08-09 ven. 16:16]
 ** TODO Introducing C-c o h at the loading of the buffer when ot is loaded
 ** TODO Implement the org-mode's standard checklist http://orgmode.org/manual/Checkboxes.html
 ** TODO Filter out directly with the api the data we do not need to avoid unnecessary network traffic
