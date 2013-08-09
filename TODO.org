@@ -476,6 +476,8 @@ CLOSED: [2013-08-09 ven. 16:56]
 CLOSED: [2013-08-09 ven. 17:58]
 ** DONE Improve the current attach board and list routine to avoid manual setup for the user
 CLOSED: [2013-08-09 ven. 23:25]
+** DONE Update version
+CLOSED: [2013-08-09 ven. 23:31]
 ** TODO End to end tests (hint: ecukes)
 ** TODO Filter out directly with the api the data we do not need to avoid unnecessary network traffic
 ** TODO A fake trello server to be able to test without a network
