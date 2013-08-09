@@ -478,6 +478,8 @@ CLOSED: [2013-08-09 ven. 17:58]
 CLOSED: [2013-08-09 ven. 23:25]
 ** DONE Update version
 CLOSED: [2013-08-09 ven. 23:31]
+** DONE Update dependencies lib to more recent version.
+CLOSED: [2013-08-09 ven. 23:33]
 ** TODO End to end tests (hint: ecukes)
 ** TODO Filter out directly with the api the data we do not need to avoid unnecessary network traffic
 ** TODO A fake trello server to be able to test without a network
