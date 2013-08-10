@@ -1073,7 +1073,10 @@
   (message (concat msg "..."))
   (let ((org-trello/--result-action (org-trello/--control-and-do control-fns fn-to-control-and-execute)))
     ;; do we have to save the buffer
-    (if save-buffer-p (save-buffer))
+    (if save-buffer-p
+        (progn
+          (save-buffer)
+          (org-mode-restart)))
     (if (string-or-null-p org-trello/--result-action)
       (message org-trello/--result-action)
       (message (concat msg " - done!")))))
