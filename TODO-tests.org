@@ -11,9 +11,9 @@
 #+title: synced from trello
 #+author: Antoine R. Dumont
 
-* TODO Reasoned schemer
+* TODO Structure and Interpretations of computer programs
 :PROPERTIES:
-:orgtrello-id: 520674cfd657c06a73000b0b
+:orgtrello-id: 520674c9ff6dec6f73000470
 :END:
 * TODO Little schemer
 :PROPERTIES:
@@ -27,9 +27,37 @@
 :PROPERTIES:
 :orgtrello-id: 520674d87067ca1b0f0009aa
 :END:
-* TODO Structure and Interpretations of computer programs
+* DONE Clojure Programming
 :PROPERTIES:
-:orgtrello-id: 520674c9ff6dec6f73000470
+:orgtrello-id: 51e02fb663b4da66050026e3
+:END:
+* DONE Functional programming in Haskell
+:PROPERTIES:
+:orgtrello-id: 51e02fb455ff94a71e002133
+:END:
+* DONE Programming in Haskell
+:PROPERTIES:
+:orgtrello-id: 51e02fb683d8ac5a4500358b
+:END:
+* PENDING Questions about life, the universe and everything
+:PROPERTIES:
+:orgtrello-id: 51e559ad536240d935001d97
+:END:
+** How to deal with promotion/demotion?
+:PROPERTIES:
+:orgtrello-id: 51e567aff8d10f7b21001fb8
+:END:
+* DELEGATED yet another fail
+:PROPERTIES:
+:orgtrello-id: 51e7e60bd23ccba35c00a588
+:END:
+* CANCELLED cancelled task
+:PROPERTIES:
+:orgtrello-id: 51ffe96c32c0ac5e59000850
+:END:
+* IN-PROGRESS Reasoned schemer
+:PROPERTIES:
+:orgtrello-id: 520674cfd657c06a73000b0b
 :END:
 * DONE Programming in scala
 :PROPERTIES:
@@ -91,154 +119,27 @@
 :PROPERTIES:
 :orgtrello-id: 51e02e58daac63334f00215d
 :END:
-* IN-PROGRESS Joy of Clojure [0%]
+* DONE Joy of Clojure [100%]
 :PROPERTIES:
 :orgtrello-id: 51e02fb50bd93ea60600235b
-:END:
-** Part 1 Foundations [100%]
-CLOSED: [2011-12-08 jeu. 19:59]
-:PROPERTIES:
-:orgtrello-id: 520676bbded0605131000568
-:END:
-*** DONE Clojure philosophy [100%]
-CLOSED: [2011-12-08 jeu. 19:59]
-:PROPERTIES:
-:orgtrello-id: 520676bbbc23678c62000d4a
-:END:
-***** DONE The Clojure way
-CLOSED: [2011-12-08 jeu. 19:58]
-***** DONE Why a(nother) Lisp?
-CLOSED: [2011-12-08 jeu. 19:58]
-***** DONE Functional Programming
-CLOSED: [2011-12-08 jeu. 19:58]
-***** DONE Why Clojure isn't especially object oriented
-CLOSED: [2011-12-08 jeu. 19:59]
-***** DONE Summary
-CLOSED: [2011-12-08 jeu. 19:59]
-*** DONE Drinking from the Clojure firehose
-CLOSED: [2011-12-08 jeu. 19:59]
-:PROPERTIES:
-:orgtrello-id: 520676bdf9fd5d320d000b63
-:END:
-*** DONE Dipping our toes in the pool
-CLOSED: [2011-12-08 jeu. 19:59]
-:PROPERTIES:
-:orgtrello-id: 520676bee360a0f02f000b74
-:END:
-** Part 2 Data Types [16%]
-CLOSED: [2012-01-13 ven. 00:27]
-:PROPERTIES:
-:orgtrello-id: 520676bf3d4830490d000d71
-:END:
-*** DONE On scalars [100%]
-CLOSED: [2011-12-08 jeu. 20:00]
-:PROPERTIES:
-:orgtrello-id: 520676c0088d0e6620000478
-:END:
-***** DONE 4.1 Understanding precision
-CLOSED: [2011-12-08 jeu. 19:59]
-***** DONE 4.2 Trying to be rational
-CLOSED: [2011-12-08 jeu. 19:59]
-***** DONE 4.3 When to use keywords
-CLOSED: [2011-12-08 jeu. 19:59]
-***** DONE 4.4 Symbolic resolutions
-CLOSED: [2011-12-08 jeu. 19:59]
-***** DONE 4.5 Regular expressions-The second problem
-CLOSED: [2011-12-08 jeu. 20:00]
-***** DONE 4.6 Summary
-CLOSED: [2011-12-08 jeu. 20:00]
-*** DONE Composite data types [100%]
-CLOSED: [2012-01-13 ven. 00:27]
-:PROPERTIES:
-:orgtrello-id: 520676c3aea4261431000ace
-:END:
-***** DONE 5.1 Persistence, sequence and complexity
-CLOSED: [2012-01-13 ven. 00:26]
-***** DONE 5.2 Vectors: creating and using them in all their varieties
-CLOSED: [2012-01-13 ven. 00:26]
-***** DONE 5.3 Lists: Clojure's code form data structure
-CLOSED: [2012-01-13 ven. 00:26]
-***** DONE 5.4 How to use persistant queues
-CLOSED: [2012-01-13 ven. 00:26]
-***** DONE 5.5 Persistant sets
-CLOSED: [2012-01-13 ven. 00:26]
-***** DONE 5.6 Thinking in maps
-CLOSED: [2012-01-13 ven. 00:26]
-***** DONE 5.7 Putting it all together: finding the position of items in a sequence
-CLOSED: [2012-01-13 ven. 00:26]
-***** DONE 5.8 Summary
-CLOSED: [2012-01-13 ven. 00:26]
-** Part 3 Functional Programming [0%]
-:PROPERTIES:
-:orgtrello-id: 520676c5b1cde2027c0001f6
-:END:
-*** TODO Being lazy and set in your ways
-:PROPERTIES:
-:orgtrello-id: 520676c61d6d442931000b6c
-:END:
-*** TODO Immutability
-:PROPERTIES:
-:orgtrello-id: 520676c66c66d08820000bf1
-:END:
-*** TODO Designing a persistent toy
-:PROPERTIES:
-:orgtrello-id: 520676c757f171592e0004c3
-:END:
-*** TODO Laziness
-:PROPERTIES:
-:orgtrello-id: 520676c8306e6e0d31000a74
-:END:
-*** TODO Putting it all together: a lazy quicksort
-:PROPERTIES:
-:orgtrello-id: 520676c975059a39310003f8
-:END:
-*** TODO Functional programming
-:PROPERTIES:
-:orgtrello-id: 520676cae46070a320000d82
-:END:
-*** TODO Functions in all their forms [100%]
-:PROPERTIES:
-:orgtrello-id: 520676cb4573217473000647
-:END:
-***** DONE 7.1.1 First-class functions
-CLOSED: [2012-01-13 ven. 00:27]
-***** DONE 7.1.2 Higher-order functions
-CLOSED: [2012-01-13 ven. 00:27]
-***** DONE 7.1.3 Pure functions
-CLOSED: [2012-01-13 ven. 00:27]
-***** DONE 7.1.4 Named arguments
-CLOSED: [2012-01-13 ven. 00:27]
-***** DONE 7.1.5 Constraining functions with pre- and postconditions
-CLOSED: [2012-01-13 ven. 00:27]
-*** TODO Closures
-:PROPERTIES:
-:orgtrello-id: 520676cc35bc150a31000bcc
-:END:
-*** TODO Thinking recursively
-:PROPERTIES:
-:orgtrello-id: 520676cc1bdad3d43e000330
-:END:
-*** TODO Putting it all together: A* pathfinding
-:PROPERTIES:
-:orgtrello-id: 520676cdaee5c71e310004c3
 :END:
 ** Part 4 Large-Scale Design [0%]
 :PROPERTIES:
 :orgtrello-id: 520676ce5260e17d2e0004e3
 :END:
-*** TODO Macros
+*** DONE Macros
 :PROPERTIES:
 :orgtrello-id: 520676cf2ba49f390d00053a
 :END:
-*** TODO Combining data and code
+*** DONE Combining data and code
 :PROPERTIES:
 :orgtrello-id: 520676cf8184bc4f31000bd2
 :END:
-*** TODO Java.next
+*** DONE Java.next
 :PROPERTIES:
 :orgtrello-id: 520676d0b2f4bf0915000bad
 :END:
-*** TODO Mutation
+*** DONE Mutation
 :PROPERTIES:
 :orgtrello-id: 520676d157f171592e0004c4
 :END:
@@ -246,40 +147,83 @@ CLOSED: [2012-01-13 ven. 00:27]
 :PROPERTIES:
 :orgtrello-id: 520676d2a573f12b15000c06
 :END:
-*** TODO Performance
+*** DONE Performance
 :PROPERTIES:
 :orgtrello-id: 520676d2b68b77c62f000560
 :END:
-*** TODO Clojure changes the way you think
+*** DONE Clojure changes the way you think
 :PROPERTIES:
 :orgtrello-id: 520676d3477e9f86620003d8
 :END:
-
-* DONE Clojure Programming
+** Part 2 Data Types [100%]
 :PROPERTIES:
-:orgtrello-id: 51e02fb663b4da66050026e3
+:orgtrello-id: 520676bf3d4830490d000d71
 :END:
-* DONE Functional programming in Haskell
+*** DONE On scalars [100%]
 :PROPERTIES:
-:orgtrello-id: 51e02fb455ff94a71e002133
+:orgtrello-id: 520676c0088d0e6620000478
 :END:
-* DONE Programming in Haskell
+*** DONE Composite data types [100%]
 :PROPERTIES:
-:orgtrello-id: 51e02fb683d8ac5a4500358b
+:orgtrello-id: 520676c3aea4261431000ace
 :END:
-* PENDING Questions about life, the universe and everything
+** Part 1 Foundations [0%]
 :PROPERTIES:
-:orgtrello-id: 51e559ad536240d935001d97
+:orgtrello-id: 520676bbded0605131000568
 :END:
-** How to deal with promotion/demotion?
+*** DONE Clojure philosophy [100%]
 :PROPERTIES:
-:orgtrello-id: 51e567aff8d10f7b21001fb8
+:orgtrello-id: 520676bbbc23678c62000d4a
 :END:
-* DELEGATED yet another fail
+*** DONE Drinking from the Clojure firehose
 :PROPERTIES:
-:orgtrello-id: 51e7e60bd23ccba35c00a588
+:orgtrello-id: 520676bdf9fd5d320d000b63
 :END:
-* CANCELLED cancelled task
+*** DONE Dipping our toes in the pool
 :PROPERTIES:
-:orgtrello-id: 51ffe96c32c0ac5e59000850
+:orgtrello-id: 520676bee360a0f02f000b74
+:END:
+** Part 3 Functional Programming [0%]
+:PROPERTIES:
+:orgtrello-id: 520676c5b1cde2027c0001f6
+:END:
+*** DONE Being lazy and set in your ways
+:PROPERTIES:
+:orgtrello-id: 520676c61d6d442931000b6c
+:END:
+*** DONE Immutability
+:PROPERTIES:
+:orgtrello-id: 520676c66c66d08820000bf1
+:END:
+*** DONE Designing a persistent toy
+:PROPERTIES:
+:orgtrello-id: 520676c757f171592e0004c3
+:END:
+*** DONE Laziness
+:PROPERTIES:
+:orgtrello-id: 520676c8306e6e0d31000a74
+:END:
+*** DONE Putting it all together: a lazy quicksort
+:PROPERTIES:
+:orgtrello-id: 520676c975059a39310003f8
+:END:
+*** DONE Functional programming
+:PROPERTIES:
+:orgtrello-id: 520676cae46070a320000d82
+:END:
+*** DONE Functions in all their forms [100%]
+:PROPERTIES:
+:orgtrello-id: 520676cb4573217473000647
+:END:
+*** DONE Closures
+:PROPERTIES:
+:orgtrello-id: 520676cc35bc150a31000bcc
+:END:
+*** DONE Thinking recursively
+:PROPERTIES:
+:orgtrello-id: 520676cc1bdad3d43e000330
+:END:
+*** DONE Putting it all together: A* pathfinding
+:PROPERTIES:
+:orgtrello-id: 520676cdaee5c71e310004c3
 :END:

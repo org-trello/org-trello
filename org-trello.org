@@ -1493,14 +1493,12 @@ First routine to ask input for the user:
 (defun orgtrello/do-install-key-and-token ()
   "Procedure to install the *consumer-key* and the token for the user in the config-file."
   (interactive)
-  (defvar orgtrello/--*consumer-key* nil)
-  (defvar orgtrello/--access-token nil)
   (browse-url "https://trello.com/1/appKey/generate")
-  (setq orgtrello/--*consumer-key* (read-string "*consumer-key*: "))
-  (browse-url (format "https://trello.com/1/authorize?response_type=token&name=org-trello&scope=read,write&expiration=never&key=%s" orgtrello/--*consumer-key*))
-  (setq orgtrello/--access-token (read-string "Access-token: "))
-  (orgtrello/--do-install-config-file orgtrello/--*consumer-key* orgtrello/--access-token)
-  "Install key and read/write access token done!")
+  (let ((orgtrello/--*consumer-key* (read-string "*consumer-key*: ")))
+    (browse-url (format "https://trello.com/1/authorize?response_type=token&name=org-trello&scope=read,write&expiration=never&key=%s" orgtrello/--*consumer-key*))
+    (let ((orgtrello/--access-token (read-string "Access-token: ")))
+      (orgtrello/--do-install-config-file orgtrello/--*consumer-key* orgtrello/--access-token)
+      "Install key and read/write access token done!")))
 
 #+end_src
 
@@ -2734,12 +2732,12 @@ Utility namespace in charge of simplifying the construction of org-trello data.
 *** orgtrello-hash/make-hash-org
 
 A simple factory function to create a map from the needed org entity data.
+#+name:  orgtrello-hash/make-hash-org
+#+begin_src lisp :cache yes
 
 
 ;; #################### orgtrello-hash
 
-#+name:  orgtrello-hash/make-hash-org
-#+begin_src lisp :cache yes
 (defun orgtrello-hash/make-hash-org (level keyword title id due)
   "Utility function to ease the creation of the orgtrello-metadata"
   (let ((h (make-hash-table :test 'equal)))
@@ -2749,6 +2747,7 @@ A simple factory function to create a map from the needed org entity data.
     (puthash :id      id      h)
     (puthash :due     due     h)
     h))
+
 #+end_src
 
 *** orgtrello-hash/make-hash

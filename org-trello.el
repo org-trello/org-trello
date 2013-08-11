@@ -1,4 +1,3 @@
-
 ;;; org-trello.el --- Org minor mode to synchronize with trello
 
 ;; Copyright (C) 2013 Antoine R. Dumont <eniotna.t AT gmail.com>
@@ -919,14 +918,12 @@
 (defun orgtrello/do-install-key-and-token ()
   "Procedure to install the *consumer-key* and the token for the user in the config-file."
   (interactive)
-  (defvar orgtrello/--*consumer-key* nil)
-  (defvar orgtrello/--access-token nil)
   (browse-url "https://trello.com/1/appKey/generate")
-  (setq orgtrello/--*consumer-key* (read-string "*consumer-key*: "))
-  (browse-url (format "https://trello.com/1/authorize?response_type=token&name=org-trello&scope=read,write&expiration=never&key=%s" orgtrello/--*consumer-key*))
-  (setq orgtrello/--access-token (read-string "Access-token: "))
-  (orgtrello/--do-install-config-file orgtrello/--*consumer-key* orgtrello/--access-token)
-  "Install key and read/write access token done!")
+  (let ((orgtrello/--*consumer-key* (read-string "*consumer-key*: ")))
+    (browse-url (format "https://trello.com/1/authorize?response_type=token&name=org-trello&scope=read,write&expiration=never&key=%s" orgtrello/--*consumer-key*))
+    (let ((orgtrello/--access-token (read-string "Access-token: ")))
+      (orgtrello/--do-install-config-file orgtrello/--*consumer-key* orgtrello/--access-token)
+      "Install key and read/write access token done!")))
 
 (defun orgtrello/--id-name (entities)
   "Given a list of entities, return a map of (id, name)."
