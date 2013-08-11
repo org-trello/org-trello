@@ -292,23 +292,6 @@
     (should (equal (orgtrello/--level entry)   :some-level))
     (should (equal (orgtrello/--due entry)     :some-due))))
 
-(ert-deftest testing-orgtrello/--merge-map ()
-  (let* ((entry   (orgtrello-hash/make-hash-org :level :method "the name of the entry" nil "due"))
-         (map-ids (make-hash-table :test 'equal)))
-    (puthash "the name of the entry" :some-id map-ids)
-    (should (equal (gethash :id (orgtrello/--merge-map entry map-ids)) :some-id))))
-
-(ert-deftest testing-orgtrello/--merge-map2 ()
-  (let* ((entry   (orgtrello-hash/make-hash-org :level :method :title :id-already-there "due"))
-         (map-ids (make-hash-table :test 'equal)))
-    (puthash :title :some-id map-ids)
-    (should (equal (gethash :id (orgtrello/--merge-map entry map-ids)) :id-already-there))))
-
-(ert-deftest testing-orgtrello/--merge-map3 ()
-  (let* ((entry   (orgtrello-hash/make-hash-org :level :method :title :id-already-there "due"))
-         (map-ids (make-hash-table :test 'equal)))
-    (should (equal (gethash :id (orgtrello/--merge-map entry map-ids)) :id-already-there))))
-
 (ert-deftest testing-orgtrello/--id-name ()
   (let* ((entities [((id . "id")
                      (shortUrl . "https://trello.com/b/ePrdEnzC")
@@ -352,9 +335,9 @@
     (should (equal (hash-table-count hashtable-result) (hash-table-count hashtable-expected)))))
 
 (expectations
-  (expect ""     (orgtrello/--compute-state-from-keyword ""))
+  (expect "TODO" (orgtrello/--compute-state-from-keyword ""))
   (expect "TODO" (orgtrello/--compute-state-from-keyword *TODO*))
-  (expect "DONE" (orgtrello/--compute-state-from-keyword *DONE*))
+  (expect 'done  (orgtrello/--compute-state-from-keyword *DONE*))
   (expect "TODO" (orgtrello/--compute-state-from-keyword "IN")))
 
 (expectations
@@ -378,3 +361,6 @@
   (expect nil (orgtrello/--task-compute-check nil "TODO" "TODO")) )
 
 (message "Tests done!")
+
+(provide 'org-trello-tests)
+;;; org-trello-tests ends here
