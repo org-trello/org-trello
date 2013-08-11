@@ -10,4 +10,4 @@ echo "CURRENT_EMACS = $CURRENT_EMACS"
 "$CURRENT_EMACS" --version
 echo "CURRENT_CMD = $CURRENT_CMD"
 
-make test
+make test itest
