@@ -388,7 +388,7 @@ Otherwise, a simple message "Setup ok!" will be displayed on the minibuffer.
   "Check the current setup."
   (interactive)
   (org-trello/--control-and-do
-     '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties)
+     '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties orgtrello/--control-encoding)
      (lambda () (message "Setup ok!"))))
 
 #+end_src
@@ -406,7 +406,7 @@ At last, saving the buffer as the creation involves some buffer updates (with th
   (interactive)
   (org-trello/--msg-deco-control-and-do
      "Synchronizing entity"
-     '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties)
+     '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties orgtrello/--control-encoding)
      (lambda () (orgtrello/do-create-simple-entity t))
      t))
 
@@ -425,7 +425,7 @@ At last, saving the buffer as the creation involves some buffer updates.
   (interactive)
   (org-trello/--msg-deco-control-and-do
      "Synchronizing complex entity"
-     '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties)
+     '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties orgtrello/--control-encoding)
      'orgtrello/do-create-complex-entity
      t))
 
@@ -445,7 +445,7 @@ At last, we save the buffer as the buffer has been updated.
   (interactive)
   (org-trello/--msg-deco-control-and-do
      "Synchronizing org-mode file to trello"
-     '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties)
+     '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties orgtrello/--control-encoding)
      'orgtrello/do-sync-full-file
      t))
 
@@ -465,7 +465,7 @@ Then saving the buffer as the action involved some buffer updates.
   (interactive)
   (org-trello/--msg-deco-control-and-do
      "Synchronizing trello board to org-mode file"
-     '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties)
+     '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties orgtrello/--control-encoding)
      'orgtrello/do-sync-full-from-trello
      t))
 
@@ -485,7 +485,7 @@ Then saving the buffer as the action involved some buffer updates.
   (interactive)
   (org-trello/--msg-deco-control-and-do
      "Delete entity"
-     '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties)
+     '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties orgtrello/--control-encoding)
      (lambda () (orgtrello/do-delete-simple t))
      t))
 
@@ -587,6 +587,21 @@ This will map later as the list in trello and as keyword in emacs's org-mode buf
 (defun orgtrello/filtered-kwds ()
   "org keywords used (based on org-todo-keywords-1)."
   org-todo-keywords-1)
+
+#+end_src
+
+
+**** orgtrello/--control-encoding
+
+A simple message to make the user aware he needs to use utf-8 encoding.
+
+#+name: orgtrello/--control-encoding
+#+begin_src lisp :cache yes
+(defun orgtrello/--control-encoding ()
+  "Use utf-8, otherwise, there will be trouble."
+  (progn
+    (message "Ensure you use utf-8 encoding for your org buffer.")
+    :ok))
 
 #+end_src
 
@@ -1617,6 +1632,8 @@ Then save the buffer and restart org-mode.
   "Update the orgmode file with the needed headers for org-trello to work."
   (with-current-buffer (current-buffer)
     (goto-char (point-min))
+    ;; force utf-8
+    (set-buffer-file-coding-system 'utf-8-auto)
     ;; install board-name and board-id
     (insert (format "#+property: %s    %s\n" *BOARD-NAME* board-name))
     (insert (format "#+property: %s      %s\n" *BOARD-ID* board-id))
@@ -2717,13 +2734,12 @@ Utility namespace in charge of simplifying the construction of org-trello data.
 *** orgtrello-hash/make-hash-org
 
 A simple factory function to create a map from the needed org entity data.
-
-#+name:  orgtrello-hash/make-hash-org
-#+begin_src lisp :cache yes
 
 
 ;; #################### orgtrello-hash
 
+#+name:  orgtrello-hash/make-hash-org
+#+begin_src lisp :cache yes
 (defun orgtrello-hash/make-hash-org (level keyword title id due)
   "Utility function to ease the creation of the orgtrello-metadata"
   (let ((h (make-hash-table :test 'equal)))
@@ -2733,7 +2749,6 @@ A simple factory function to create a map from the needed org entity data.
     (puthash :id      id      h)
     (puthash :due     due     h)
     h))
-
 #+end_src
 
 *** orgtrello-hash/make-hash
@@ -2825,6 +2840,7 @@ Now let's generate the full code.
 <<orgtrello-setup-variable>>
 <<orgtrello/filtered-kwds>>
 <<orgtrello/--setup-properties>>
+<<orgtrello/--control-encoding>>
 <<orgtrello/--control-properties>>
 <<orgtrello/--control-keys>>
 <<orgtrello/--keyword>>

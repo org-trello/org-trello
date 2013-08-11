@@ -506,6 +506,12 @@
     (setq *HMAP-ID-NAME* orgtrello/--hmap-id-name)
     :ok))
 
+(defun orgtrello/--control-encoding ()
+  "Use utf-8, otherwise, there will be trouble."
+  (progn
+    (message "Ensure you use utf-8 encoding for your org buffer.")
+    :ok))
+
 (defun orgtrello/--control-properties ()
   "org-trello needs the properties board-id and all list id from the trello board to be setuped on header property file. Returns :ok if everything is ok, or the error message if problems."
   (let ((orgtrello/--hmap-count   (hash-table-count *HMAP-ID-NAME*)))
@@ -995,6 +1001,8 @@
   "Update the orgmode file with the needed headers for org-trello to work."
   (with-current-buffer (current-buffer)
     (goto-char (point-min))
+    ;; force utf-8
+    (set-buffer-file-coding-system 'utf-8-auto)
     ;; install board-name and board-id
     (insert (format "#+property: %s    %s\n" *BOARD-NAME* board-name))
     (insert (format "#+property: %s      %s\n" *BOARD-ID* board-id))
@@ -1113,7 +1121,7 @@
   (interactive)
   (org-trello/--msg-deco-control-and-do
      "Synchronizing entity"
-     '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties)
+     '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties orgtrello/--control-encoding)
      (lambda () (orgtrello/do-create-simple-entity t))
      t))
 
@@ -1122,7 +1130,7 @@
   (interactive)
   (org-trello/--msg-deco-control-and-do
      "Synchronizing complex entity"
-     '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties)
+     '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties orgtrello/--control-encoding)
      'orgtrello/do-create-complex-entity
      t))
 
@@ -1131,7 +1139,7 @@
   (interactive)
   (org-trello/--msg-deco-control-and-do
      "Synchronizing org-mode file to trello"
-     '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties)
+     '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties orgtrello/--control-encoding)
      'orgtrello/do-sync-full-file
      t))
 
@@ -1140,7 +1148,7 @@
   (interactive)
   (org-trello/--msg-deco-control-and-do
      "Synchronizing trello board to org-mode file"
-     '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties)
+     '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties orgtrello/--control-encoding)
      'orgtrello/do-sync-full-from-trello
      t))
 
@@ -1149,7 +1157,7 @@
   (interactive)
   (org-trello/--msg-deco-control-and-do
      "Delete entity"
-     '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties)
+     '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties orgtrello/--control-encoding)
      (lambda () (orgtrello/do-delete-simple t))
      t))
 
@@ -1180,7 +1188,7 @@
   "Check the current setup."
   (interactive)
   (org-trello/--control-and-do
-     '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties)
+     '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties orgtrello/--control-encoding)
      (lambda () (message "Setup ok!"))))
 
 (defun org-trello/help-describing-bindings ()
