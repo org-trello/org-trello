@@ -503,6 +503,7 @@ Levels:
 (defvar *consumer-key*     nil "Id representing the user")
 (defvar *access-token*     nil "Read/write Access token to use trello in the user's name ")
 (defvar *ORGTRELLO-MARKER* nil "Marker used for syncing the data in trello")
+(defvar *ORGTRELLO-MARKER-PREFIX* "orgtrello-marker" "Prefix for the org-trello Marker used for syncing the data in trello.")
 
 (defun orgtrello/filtered-kwds ()
   "org keywords used (based on org-todo-keywords-1)."
@@ -538,15 +539,13 @@ Levels:
 
 (defun orgtrello/--control-keys ()
   "org-trello needs the *consumer-key* and the *access-token* to access the trello resources. Returns :ok if everything is ok, or the error message if problems."
-  (if (or (and *consumer-key* *access-token*)
+  (if (or (and *consumer-key* *access-token* *ORGTRELLO-MARKER*)
           ;; the data are not set,
           (and (file-exists-p *CONFIG-FILE*)
                ;; trying to load them
                (load *CONFIG-FILE*)
                ;; still not loaded, something is not right!
-               (and *consumer-key* *access-token*)
-               ;; setting the marker once
-               (setq *ORGTRELLO-MARKER* (format "orgtrello-marker-%s" *consumer-key*))))
+               (and *consumer-key* *access-token* *ORGTRELLO-MARKER*)))
       :ok
     "Setup problem - You need to install the consumer-key and the read/write access-token - C-c o i or M-x org-trello/install-board-and-lists-ids"))
 
@@ -930,6 +929,7 @@ Levels:
     (goto-char (point-min))
     (insert (format "(setq *consumer-key* \"%s\")\n" *consumer-key*))
     (insert (format "(setq *access-token* \"%s\")" *access-token*))
+    (insert (format "(setq *ORGTRELLO-MARKER* \"%s-%s\")" *ORGTRELLO-MARKER-PREFIX* *consumer-key*))
     (write-file *CONFIG-FILE* 't)))
 
 (defun orgtrello/do-install-key-and-token ()
