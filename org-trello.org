@@ -137,6 +137,8 @@ By default, the status of the checklist overrides the item's status.
 
 #+name: setup-org-trello
 #+begin_src lisp :cache yes
+
+
 ;; #################### overriding setup
 
 (defvar *ORGTRELLO-CHECKLIST-UPDATE-ITEMS* t
@@ -278,6 +280,8 @@ As we've seen before, we have a higher-order function =org-trello/--msg-deco-con
 
 #+name: msg-decorator-and-control
 #+begin_src lisp :cache yes
+
+
 ;; #################### org-trello
 
 (defun org-trello/--msg-deco-control-and-do (msg control-fns fn-to-control-and-execute &optional save-buffer-p)
@@ -521,6 +525,8 @@ The user does not have to touch anything on this.
 
 #+name: orgtrello-setup-variable
 #+begin_src lisp :cache yes
+
+
 ;; #################### orgtrello
 
 ;; Specific state - FIXME check if they do not already exist on org-mode to avoid potential collisions
@@ -1819,6 +1825,8 @@ This resumes to only one variable which is the prefix url for the trello api acc
 
 #+name: orgtrello-query-setup
 #+begin_src lisp :cache yes
+
+
 ;; #################### orgtrello-query/
 
 (defvar *TRELLO-URL* "https://api.trello.com/1" "The needed prefix url for trello")
@@ -2281,6 +2289,8 @@ We need a name and an optional description.
 
 #+name: orgtrello-api/add-board
 #+begin_src lisp :cache yes
+
+
 ;; #################### orgtrello-api
 
 (defun orgtrello-api/add-board (name &optional description)
@@ -2580,6 +2590,8 @@ We must improve this.
 
 #+name:  orgtrello-data/--convert-orgmode-date-to-trello-date
 #+begin_src lisp :cache yes
+
+
 ;; #################### orgtrello-data
 
 (defvar *ORGTRELLO-ID* "orgtrello-id" "Marker used for the trello identifier")
@@ -2708,6 +2720,7 @@ A simple factory function to create a map from the needed org entity data.
 
 #+name:  orgtrello-hash/make-hash-org
 #+begin_src lisp :cache yes
+
 
 ;; #################### orgtrello-hash
 

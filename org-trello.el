@@ -48,6 +48,7 @@
 ;;
 
 ;;; Code:
+
 
 (require 'org)
 (require 'json)
@@ -56,6 +57,8 @@
 (eval-when-compile (require 'cl-lib))
 (require 'parse-time)
 
+
+
 ;; #################### overriding setup
 
 (defvar *ORGTRELLO-CHECKLIST-UPDATE-ITEMS* t
@@ -63,6 +66,8 @@
   To deactivate such behavior, update in your init.el:
   (require 'org-trello)
   (setq *ORGTRELLO-CHECKLIST-UPDATE-ITEMS* nil)")
+
+
 
 ;; #################### orgtrello-hash
 
@@ -85,6 +90,8 @@
     h))
 
 (message "org-trello - orgtrello-hash loaded!")
+
+
 
 ;; #################### orgtrello-data
 
@@ -148,6 +155,8 @@
                          (orgtrello-hash/make-hash-org level keyword title id due)))
 
 (message "org-trello - orgtrello-data loaded!")
+
+
 
 ;; #################### orgtrello-api
 
@@ -262,6 +271,8 @@
   (orgtrello-hash/make-hash :delete (format "/checklists/%s/checkItems/%s" checklist-id task-id)))
 
 (message "org-trello - orgtrello-api loaded!")
+
+
 
 ;; #################### orgtrello-query/
 
@@ -454,6 +465,8 @@
              :error   (if error-callback error-callback 'standard-error-callback))))
 
 (message "org-trello - orgtrello-query/ loaded!")
+
+
 
 ;; #################### orgtrello
 
@@ -1065,6 +1078,8 @@
   "Create board and lists done!")
 
 (message "org-trello - orgtrello loaded!")
+
+
 
 ;; #################### org-trello
 
