@@ -4,7 +4,6 @@ Minor emacs mode for org-mode - 2-way synchronization between org and trello boa
 
 **Table of Contents**  *generated with [DocToc](http://doctoc.herokuapp.com/)*
 
-- [org-trello](#org-trello)
 - [why?](#why)
 - [Emacs version](#emacs-version)
 - [TL;DR](#tl;dr)
@@ -28,7 +27,7 @@ Minor emacs mode for org-mode - 2-way synchronization between org and trello boa
 - [Install](#install-1)
 	- [marmalade - Stable version](#marmalade---stable-version)
 	- [melpa - ~snapshot](#melpa---~snapshot)
-	- [org-trello](#org-trello-1)
+	- [org-trello](#org-trello)
 	- [github](#github)
 	- [Example](#example)
 - [Setup](#setup)
@@ -50,6 +49,7 @@ Minor emacs mode for org-mode - 2-way synchronization between org and trello boa
 	- [Sync org-mode file from trello board](#sync-org-mode-file-from-trello-board)
 	- [Remove entity](#remove-entity)
 - [Errors](#errors)
+- [Mailing list](#mailing-list)
 - [License](#license)
 
 # why?
@@ -454,6 +454,11 @@ Cannot synchronize the checklist - the card must synchronized first. Skip it...
 ```
 Cannot synchronize the item - the checklist must be synchronized first. Skip it...
 ```
+
+# Mailing list
+
+- subscripe: Send a mail to emacs.org.trello [AT] librelist.com to subscribe.
+- unsubscribe: Send a mail to emacs.org.trello-unsubscribe [AT] librelist.com to unsubscribe.
 
 # License
 
