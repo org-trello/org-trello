@@ -3,7 +3,7 @@ PACKAGE_FOLDER=org-trello-$(VERSION)
 ARCHIVE=$(PACKAGE_FOLDER).tar
 
 test:
-	cask exec emacs --no-init-file -batch \
+	cask exec emacs -Q -batch \
 			-l ert \
 			-l ./org-trello-tests.el \
 			-f ert-run-tests-batch-and-exit
@@ -25,12 +25,16 @@ package: clean pkg-el prepare
 info:
 	cask info
 
-untar:
-	tar xvf $(ARCHIVE)
+install-package: package
+	cask exec emacs --batch -l ./build.el -- org-trello-$(VERSION).tar
 
-test-install-package-file: package untar
-	cd ./$(PACKAGE_FOLDER)
-	emacs-install-clean.el org-trello.el .
+install-package-and-tests: install-package
+	cask exec emacs -Q --batch -l ./launch-tests.el
 
-build-package:
-	emacs --batch -l ./build.el -- org-trello.el
+tangle:
+	cask exec emacs -Q -batch \
+			-l org \
+			./org-trello.org \
+			-e org-babel-tangle
+
+ttest: tangle test

@@ -7,190 +7,39 @@
 #+property: FAIL 51e538a26f75d07902002d25
 #+property: DELEGATED 51e538a89c05f1e25c0027c6
 #+property: CANCELLED 51e538e6c7a68fa0510014ee
+#+TODO: TODO IN-PROGRESS PENDING | DONE FAIL DELEGATED CANCELLED
 #+title: synced from trello
 #+author: Antoine R. Dumont
 
-* TODO Programming in scala
+* TODO Structure and Interpretations of computer programs
 :PROPERTIES:
-:orgtrello-id: 51e02e12e2e19b983f0015dc
+:orgtrello-id: 520674c9ff6dec6f73000470
 :END:
-** chapters
+* TODO Little schemer
 :PROPERTIES:
-:orgtrello-id: 51e02e406fd8f8526b00397e
+:orgtrello-id: 520674d2a573f12b15000beb
 :END:
-*** introduction
+* TODO Seasoned schemer
 :PROPERTIES:
-:orgtrello-id: 51e02e4f870e404154001eaf
+:orgtrello-id: 520674d63ece1d1831000464
 :END:
-*** Ch. 1 - A scalable language
+* TODO Clojurescript
 :PROPERTIES:
-:orgtrello-id: 51e02e504e843c9d4b001e3c
-:END:
-*** Ch. 2 - First steps in scala
-:PROPERTIES:
-:orgtrello-id: 51e02e50870e404154001eb0
-:END:
-*** Ch. 3 - Next steps in scala
-:PROPERTIES:
-:orgtrello-id: 51e02e510f5a0ed737003474
-:END:
-*** Ch. 4 - Classes and objects
-:PROPERTIES:
-:orgtrello-id: 51e02e52178c2b042b0026b9
-:END:
-*** Ch. 5 - Basic types and operations
-:PROPERTIES:
-:orgtrello-id: 51e02e536bb045e42a00375b
-:END:
-*** Ch. 6 - Functional objects
-:PROPERTIES:
-:orgtrello-id: 51e02e543d261677540038db
-:END:
-*** Ch. 7 - Buit-in control structures
-:PROPERTIES:
-:orgtrello-id: 51e02e54daac63334f00215c
-:END:
-*** Ch. 8 - Functions and closures
-:PROPERTIES:
-:orgtrello-id: 51e02e557946c71c38002424
-:END:
-*** Ch. 9 - Control abstraction
-:PROPERTIES:
-:orgtrello-id: 51e02e5610f4cc366b002140
-:END:
-*** Ch. 10 - Composition and inheritance
-:PROPERTIES:
-:orgtrello-id: 51e02e5783d8ac5a4500353a
-:END:
-*** Ch. 11 - Scala's hierarchy
-:PROPERTIES:
-:orgtrello-id: 51e02e58f286ac5c5400381d
-:END:
-*** Ch. 12 - Traits
-:PROPERTIES:
-:orgtrello-id: 51e02e58daac63334f00215d
-:END:
-*** ...
-:PROPERTIES:
-:orgtrello-id: 51e02e5947dcbde3470014ec
-:END:
-* TODO v0.0.5 [0%]
-:PROPERTIES:
-:orgtrello-id: 51e5682fff4c36b43e002304
-:END:
-** Testing the packaging
-:PROPERTIES:
-:orgtrello-id: 51e5683329ef12da5d00289c
-:END:
-** Replace already present properties regarding boards before injecting new ones.
-:PROPERTIES:
-:orgtrello-id: 51e56832ff4c36b43e002306
-:END:
-** If no level 3, we may create a dummy checklist and attach every todo to such dummy checklist
-:PROPERTIES:
-:orgtrello-id: 51e56835143dcadf290022a1
-:END:
-** filter out directly with the api the data we do not need to avoid unnecessary network traffic
-:PROPERTIES:
-:orgtrello-id: 51e56830f8cd1d22240019cf
-:END:
-** How to deal with synchronizing the org-mode buffer and the trello board without a synchronized request?
-:PROPERTIES:
-:orgtrello-id: 51e56831047fa0e57a001f87
-:END:
-** Assign yourself to the card?
-:PROPERTIES:
-:orgtrello-id: 51e5683437df571d2a0021b1
-:END:
-** A fake trello server to be able to test without a network
-:PROPERTIES:
-:orgtrello-id: 51e5683253c09b776a0032c5
-:END:
-* TODO testing
-:PROPERTIES:
-:orgtrello-id: 51f81cafc309d79908000e53
-:END:
-* IN-PROGRESS Functional programming in Haskell
-:PROPERTIES:
-:orgtrello-id: 51e02fb455ff94a71e002133
-:END:
-* IN-PROGRESS adding new simple entity
-:PROPERTIES:
-:orgtrello-id: 5200fdbc063bc43e080020e9
-:END:
-** checklist
-:PROPERTIES:
-:orgtrello-id: 52010796e907d80b7b002a48
-:END:
-** checklist
-:PROPERTIES:
-:orgtrello-id: 5200fdc65357d84b3f0038f1
-:END:
-* DONE Joy of Clojure
-:PROPERTIES:
-:orgtrello-id: 51e02fb50bd93ea60600235b
+:orgtrello-id: 520674d87067ca1b0f0009aa
 :END:
 * DONE Clojure Programming
 :PROPERTIES:
 :orgtrello-id: 51e02fb663b4da66050026e3
 :END:
+* DONE Functional programming in Haskell
+:PROPERTIES:
+:orgtrello-id: 51e02fb455ff94a71e002133
+:END:
 * DONE Programming in Haskell
 :PROPERTIES:
 :orgtrello-id: 51e02fb683d8ac5a4500358b
 :END:
-* DONE v0.0.4 [0%]
-:PROPERTIES:
-:orgtrello-id: 51e568237e0367312e001704
-:END:
-** Permit the user to deal with his/her own trello list (based on his/her org-mode keywords - cf. http://orgmode.org/manual/In_002dbuffer-settings.html) [0%]
-:PROPERTIES:
-:orgtrello-id: 51e56829b62b81cc12001ec1
-:END:
-*** Ensure the control check for only todo, doing, done.
-:PROPERTIES:
-:orgtrello-id: 51e5682bd23ccba35c0038e0
-:END:
-*** Ensure the state computation of a card take into account the multiple list
-:PROPERTIES:
-:orgtrello-id: 51e5682ba375c5ae5c00365c
-:END:
-*** Load all properties list id
-:PROPERTIES:
-:orgtrello-id: 51e5682ce4140e2b3e001892
-:END:
-*** Creating the board with the right cards (name attached to keyword)
-:PROPERTIES:
-:orgtrello-id: 51e5682dacd719ce0e002232
-:END:
-*** Fix non interactive command that are defined as though they were (we need to ensure the passage by the controlling function).
-:PROPERTIES:
-:orgtrello-id: 51e5682e64efe1e617002196
-:END:
-** Remove useless code
-:PROPERTIES:
-:orgtrello-id: 51e568278c58efb3590018aa
-:END:
-** Simplify some code regarding destructuring for example
-:PROPERTIES:
-:orgtrello-id: 51e56826ff7e2fed38002034
-:END:
-** Deploy on marmalade the stable version (and update the readme about it)
-:PROPERTIES:
-:orgtrello-id: 51e568243da1dc133e001742
-:END:
-** Rewrite tests using `expectations`
-:PROPERTIES:
-:orgtrello-id: 51e56825f190e6736a0022dc
-:END:
-** Update documentation
-:PROPERTIES:
-:orgtrello-id: 51e5682f06f5cf5826001ed3
-:END:
-** Improve documentations and sync the routine check message with the documentation.
-:PROPERTIES:
-:orgtrello-id: 51e568288ee143012a002952
-:END:
-* IN-PROGRESS Questions about life, the universe and everything
+* PENDING Questions about life, the universe and everything
 :PROPERTIES:
 :orgtrello-id: 51e559ad536240d935001d97
 :END:
@@ -205,4 +54,176 @@
 * CANCELLED cancelled task
 :PROPERTIES:
 :orgtrello-id: 51ffe96c32c0ac5e59000850
+:END:
+* IN-PROGRESS Reasoned schemer
+:PROPERTIES:
+:orgtrello-id: 520674cfd657c06a73000b0b
+:END:
+* DONE Programming in scala
+:PROPERTIES:
+:orgtrello-id: 51e02e12e2e19b983f0015dc
+:END:
+** chapters
+:PROPERTIES:
+:orgtrello-id: 51e02e406fd8f8526b00397e
+:END:
+*** DONE introduction
+:PROPERTIES:
+:orgtrello-id: 51e02e4f870e404154001eaf
+:END:
+*** DONE Ch. 1 - A scalable language
+:PROPERTIES:
+:orgtrello-id: 51e02e504e843c9d4b001e3c
+:END:
+*** DONE Ch. 2 - First steps in scala
+:PROPERTIES:
+:orgtrello-id: 51e02e50870e404154001eb0
+:END:
+*** DONE Ch. 3 - Next steps in scala
+:PROPERTIES:
+:orgtrello-id: 51e02e510f5a0ed737003474
+:END:
+*** DONE Ch. 4 - Classes and objects
+:PROPERTIES:
+:orgtrello-id: 51e02e52178c2b042b0026b9
+:END:
+*** DONE Ch. 5 - Basic types and operations
+:PROPERTIES:
+:orgtrello-id: 51e02e536bb045e42a00375b
+:END:
+*** DONE Ch. 6 - Functional objects
+:PROPERTIES:
+:orgtrello-id: 51e02e543d261677540038db
+:END:
+*** DONE Ch. 7 - Buit-in control structures
+:PROPERTIES:
+:orgtrello-id: 51e02e54daac63334f00215c
+:END:
+*** DONE Ch. 8 - Functions and closures
+:PROPERTIES:
+:orgtrello-id: 51e02e557946c71c38002424
+:END:
+*** DONE Ch. 9 - Control abstraction
+:PROPERTIES:
+:orgtrello-id: 51e02e5610f4cc366b002140
+:END:
+*** DONE Ch. 10 - Composition and inheritance
+:PROPERTIES:
+:orgtrello-id: 51e02e5783d8ac5a4500353a
+:END:
+*** DONE Ch. 11 - Scala's hierarchy
+:PROPERTIES:
+:orgtrello-id: 51e02e58f286ac5c5400381d
+:END:
+*** DONE Ch. 12 - Traits
+:PROPERTIES:
+:orgtrello-id: 51e02e58daac63334f00215d
+:END:
+* DONE Joy of Clojure [100%]
+:PROPERTIES:
+:orgtrello-id: 51e02fb50bd93ea60600235b
+:END:
+** Part 4 Large-Scale Design [0%]
+:PROPERTIES:
+:orgtrello-id: 520676ce5260e17d2e0004e3
+:END:
+*** DONE Macros
+:PROPERTIES:
+:orgtrello-id: 520676cf2ba49f390d00053a
+:END:
+*** DONE Combining data and code
+:PROPERTIES:
+:orgtrello-id: 520676cf8184bc4f31000bd2
+:END:
+*** DONE Java.next
+:PROPERTIES:
+:orgtrello-id: 520676d0b2f4bf0915000bad
+:END:
+*** DONE Mutation
+:PROPERTIES:
+:orgtrello-id: 520676d157f171592e0004c4
+:END:
+** Part 5 Tangential Considerations [0%]
+:PROPERTIES:
+:orgtrello-id: 520676d2a573f12b15000c06
+:END:
+*** DONE Performance
+:PROPERTIES:
+:orgtrello-id: 520676d2b68b77c62f000560
+:END:
+*** DONE Clojure changes the way you think
+:PROPERTIES:
+:orgtrello-id: 520676d3477e9f86620003d8
+:END:
+** Part 2 Data Types [100%]
+:PROPERTIES:
+:orgtrello-id: 520676bf3d4830490d000d71
+:END:
+*** DONE On scalars [100%]
+:PROPERTIES:
+:orgtrello-id: 520676c0088d0e6620000478
+:END:
+*** DONE Composite data types [100%]
+:PROPERTIES:
+:orgtrello-id: 520676c3aea4261431000ace
+:END:
+** Part 1 Foundations [0%]
+:PROPERTIES:
+:orgtrello-id: 520676bbded0605131000568
+:END:
+*** DONE Clojure philosophy [100%]
+:PROPERTIES:
+:orgtrello-id: 520676bbbc23678c62000d4a
+:END:
+*** DONE Drinking from the Clojure firehose
+:PROPERTIES:
+:orgtrello-id: 520676bdf9fd5d320d000b63
+:END:
+*** DONE Dipping our toes in the pool
+:PROPERTIES:
+:orgtrello-id: 520676bee360a0f02f000b74
+:END:
+** Part 3 Functional Programming [0%]
+:PROPERTIES:
+:orgtrello-id: 520676c5b1cde2027c0001f6
+:END:
+*** DONE Being lazy and set in your ways
+:PROPERTIES:
+:orgtrello-id: 520676c61d6d442931000b6c
+:END:
+*** DONE Immutability
+:PROPERTIES:
+:orgtrello-id: 520676c66c66d08820000bf1
+:END:
+*** DONE Designing a persistent toy
+:PROPERTIES:
+:orgtrello-id: 520676c757f171592e0004c3
+:END:
+*** DONE Laziness
+:PROPERTIES:
+:orgtrello-id: 520676c8306e6e0d31000a74
+:END:
+*** DONE Putting it all together: a lazy quicksort
+:PROPERTIES:
+:orgtrello-id: 520676c975059a39310003f8
+:END:
+*** DONE Functional programming
+:PROPERTIES:
+:orgtrello-id: 520676cae46070a320000d82
+:END:
+*** DONE Functions in all their forms [100%]
+:PROPERTIES:
+:orgtrello-id: 520676cb4573217473000647
+:END:
+*** DONE Closures
+:PROPERTIES:
+:orgtrello-id: 520676cc35bc150a31000bcc
+:END:
+*** DONE Thinking recursively
+:PROPERTIES:
+:orgtrello-id: 520676cc1bdad3d43e000330
+:END:
+*** DONE Putting it all together: A* pathfinding
+:PROPERTIES:
+:orgtrello-id: 520676cdaee5c71e310004c3
 :END:

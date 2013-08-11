@@ -1,3 +1,26 @@
+# 0.1.1
+
+- DONE Literate org-trello
+- DONE Testing the packaging, at the moment, this is done manually (make package & M-x package-install-file)
+- DONE Introducing C-c o h at the loading of the buffer when ot is loaded
+- DONE Update readme/main page with images on videos
+- DONE Replace already present properties regarding boards before injecting new ones.
+- DONE Improve the current attach board and list routine to avoid manual setup for the user
+- DONE Update version
+- DONE Update dependencies lib to more recent version.
+- DONE Remove some warnings
+- DONE Add some message for the user to warn the user to use UTF-8
+- DONE Force utf-8 for the routine of board installation (create aend attach)
+- DONE Some more refactoring
+- DONE Refactoring: formatting code, install consume-key and access token routine improved, ...
+- DONE Refactoring: UTF-8 warning for every routine + Forcing UTF-8 at setup time (create board and attach board routine)
+- DONE Refactoring: Adding ^L break line inside the code to delimit the `namespace`
+- DONE Refactoring: Improve the callback use by avoiding to specify them
+- DONE Refactoring: Restart org-mode after synchronization to avoid losing the user's setup.
+- DONE Refactoring: Fix some problems (version, checklist mechanism update, warning on format, create complex entity which sync only the current entity)
+- DONE Release notes
+- DONE Release
+
 # 0.1.0
 
 - DONE Fix importing of cards with due date - https://github.com/ardumont/org-trello/pull/22
