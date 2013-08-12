@@ -505,12 +505,12 @@ CLOSED: [2013-08-11 dim. 13:43]
 CLOSED: [2013-08-11 dim. 13:44]
 ** DONE Release
 CLOSED: [2013-08-11 dim. 13:44]
-* IN-PROGRESS 0.1.2 [66%]
+* IN-PROGRESS 0.1.2 [100%]
 ** DONE Improve the setup regarding the org-trello marker.
 CLOSED: [2013-08-11 dim. 20:49]
 ** DONE Beginning end to end tests (primitive entries)
 CLOSED: [2013-08-11 dim. 20:49]
-** TODO Use an intermediary server between org and trello to permit asynchronous actions
+** IN-PROGRESS Use an intermediary server between org and trello to permit asynchronous actions
 * TODO 0.1.3 [%]
 ** TODO Interactive command to remove all org-trello entries
 ** TODO Filter out directly with the api the data we do not need to avoid unnecessary network traffic

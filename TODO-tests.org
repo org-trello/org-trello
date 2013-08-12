@@ -11,33 +11,42 @@
 #+title: synced from trello
 #+author: Antoine R. Dumont
 
-* TODO Structure and Interpretations of computer programs
+* TODO Clojurescript
 :PROPERTIES:
-:orgtrello-id: 520674c9ff6dec6f73000470
+:orgtrello-id: 520abbf1d62006570d0005e2
 :END:
 * TODO Little schemer
 :PROPERTIES:
 :orgtrello-id: 520674d2a573f12b15000beb
 :END:
+
 * TODO Seasoned schemer
 :PROPERTIES:
 :orgtrello-id: 520674d63ece1d1831000464
 :END:
-* TODO Clojurescript
+* IN-PROGRESS Reasoned schemer
 :PROPERTIES:
-:orgtrello-id: 520674d87067ca1b0f0009aa
+:orgtrello-id: 520674cfd657c06a73000b0b
 :END:
-* DONE Clojure Programming
+* IN-PROGRESS simple card
 :PROPERTIES:
-:orgtrello-id: 51e02fb663b4da66050026e3
+:orgtrello-id: 520a9828f0cf56476900017c
 :END:
-* DONE Functional programming in Haskell
+** with 1 checklist
 :PROPERTIES:
-:orgtrello-id: 51e02fb455ff94a71e002133
+:orgtrello-id: 520a984447e16c203000028d
 :END:
-* DONE Programming in Haskell
+*** TODO item0
 :PROPERTIES:
-:orgtrello-id: 51e02fb683d8ac5a4500358b
+:orgtrello-id: 520a984b685170261a0001fc
+:END:
+*** TODO item1
+:PROPERTIES:
+:orgtrello-id: 520a985667b9ae081b000197
+:END:
+* IN-PROGRESS Structure and Interpretations of computer programs
+:PROPERTIES:
+:orgtrello-id: 520aabbd560494726300022a
 :END:
 * PENDING Questions about life, the universe and everything
 :PROPERTIES:
@@ -46,18 +55,6 @@
 ** How to deal with promotion/demotion?
 :PROPERTIES:
 :orgtrello-id: 51e567aff8d10f7b21001fb8
-:END:
-* DELEGATED yet another fail
-:PROPERTIES:
-:orgtrello-id: 51e7e60bd23ccba35c00a588
-:END:
-* CANCELLED cancelled task
-:PROPERTIES:
-:orgtrello-id: 51ffe96c32c0ac5e59000850
-:END:
-* IN-PROGRESS Reasoned schemer
-:PROPERTIES:
-:orgtrello-id: 520674cfd657c06a73000b0b
 :END:
 * DONE Programming in scala
 :PROPERTIES:
@@ -127,7 +124,7 @@
 :PROPERTIES:
 :orgtrello-id: 520676ce5260e17d2e0004e3
 :END:
-*** DONE Macros
+*** TODO Macros
 :PROPERTIES:
 :orgtrello-id: 520676cf2ba49f390d00053a
 :END:
@@ -139,7 +136,7 @@
 :PROPERTIES:
 :orgtrello-id: 520676d0b2f4bf0915000bad
 :END:
-*** DONE Mutation
+*** TODO Mutation
 :PROPERTIES:
 :orgtrello-id: 520676d157f171592e0004c4
 :END:
@@ -147,11 +144,11 @@
 :PROPERTIES:
 :orgtrello-id: 520676d2a573f12b15000c06
 :END:
-*** DONE Performance
+*** TODO Performance
 :PROPERTIES:
 :orgtrello-id: 520676d2b68b77c62f000560
 :END:
-*** DONE Clojure changes the way you think
+*** TODO Clojure changes the way you think
 :PROPERTIES:
 :orgtrello-id: 520676d3477e9f86620003d8
 :END:
@@ -159,11 +156,11 @@
 :PROPERTIES:
 :orgtrello-id: 520676bf3d4830490d000d71
 :END:
-*** DONE On scalars [100%]
+*** TODO On scalars [100%]
 :PROPERTIES:
 :orgtrello-id: 520676c0088d0e6620000478
 :END:
-*** DONE Composite data types [100%]
+*** TODO Composite data types [100%]
 :PROPERTIES:
 :orgtrello-id: 520676c3aea4261431000ace
 :END:
@@ -171,7 +168,7 @@
 :PROPERTIES:
 :orgtrello-id: 520676bbded0605131000568
 :END:
-*** DONE Clojure philosophy [100%]
+*** TODO Clojure philosophy [100%]
 :PROPERTIES:
 :orgtrello-id: 520676bbbc23678c62000d4a
 :END:
@@ -179,7 +176,7 @@
 :PROPERTIES:
 :orgtrello-id: 520676bdf9fd5d320d000b63
 :END:
-*** DONE Dipping our toes in the pool
+*** TODO Dipping our toes in the pool
 :PROPERTIES:
 :orgtrello-id: 520676bee360a0f02f000b74
 :END:
@@ -187,7 +184,7 @@
 :PROPERTIES:
 :orgtrello-id: 520676c5b1cde2027c0001f6
 :END:
-*** DONE Being lazy and set in your ways
+*** TODO Being lazy and set in your ways
 :PROPERTIES:
 :orgtrello-id: 520676c61d6d442931000b6c
 :END:
@@ -223,7 +220,27 @@
 :PROPERTIES:
 :orgtrello-id: 520676cc1bdad3d43e000330
 :END:
-*** DONE Putting it all together: A* pathfinding
+*** TODO Putting it all together: A* pathfinding
 :PROPERTIES:
 :orgtrello-id: 520676cdaee5c71e310004c3
+:END:
+* DONE Clojure Programming
+:PROPERTIES:
+:orgtrello-id: 51e02fb663b4da66050026e3
+:END:
+* DONE Functional programming in Haskell
+:PROPERTIES:
+:orgtrello-id: 51e02fb455ff94a71e002133
+:END:
+* DONE Programming in Haskell
+:PROPERTIES:
+:orgtrello-id: 51e02fb683d8ac5a4500358b
+:END:
+* DELEGATED yet another fail
+:PROPERTIES:
+:orgtrello-id: 51e7e60bd23ccba35c00a588
+:END:
+* CANCELLED cancelled task
+:PROPERTIES:
+:orgtrello-id: 51ffe96c32c0ac5e59000850
 :END:
