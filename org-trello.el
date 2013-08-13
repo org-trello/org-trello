@@ -33,7 +33,6 @@
 ;; 1) Add the following to your emacs init file
 ;; (require 'org-trello)
 ;;
-;; Automatically
 ;; 2) Once - Install the consumer-key and the read-write token for org-trello to be able to work in your name with your trello boards (C-c o i)
 ;; M-x org-trello/install-key-and-token
 ;;
@@ -45,6 +44,11 @@
 ;; 4) You can also create a board directly from a org-mode buffer (C-c o b)
 ;; M-x org-trello/create-board
 ;;
+;; 5) Check your setup (C-c o d)
+;; M-x org-trello/check-setup
+;;
+;; 6) Help (C-c o h)
+;; M-x org-trello/help-describing-setup
 
 ;;; Code:
 
