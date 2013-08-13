@@ -62,7 +62,20 @@
 (require 'elnode)
 
 
-;; #################### message vebosity
+;; #################### overriding setup
+
+(defvar *ORGTRELLO-CHECKLIST-UPDATE-ITEMS* t
+  "A variable to permit the checklist's status to be pass along to its items. t, if checklist's status is DONE, the items are updated to DONE (org-mode buffer and trello board), nil only the items's status is used.
+  To deactivate such behavior, update in your init.el:
+  (require 'org-trello)
+  (setq *ORGTRELLO-CHECKLIST-UPDATE-ITEMS* nil)")
+
+(defvar *consumer-key*     nil "Id representing the user")
+(defvar *access-token*     nil "Read/write Access token to use trello in the user's name ")
+
+
+
+;; #################### message verbosity
 
 (defvar orgtrello/loglevel 5
   "Set log level.
@@ -78,18 +91,6 @@ Levels:
   "Log message."
   (when (<= level orgtrello/loglevel)
     (apply 'message args)))
-
-
-;; #################### overriding setup
-
-(defvar *ORGTRELLO-CHECKLIST-UPDATE-ITEMS* t
-  "A variable to permit the checklist's status to be pass along to its items. t, if checklist's status is DONE, the items are updated to DONE (org-mode buffer and trello board), nil only the items's status is used.
-  To deactivate such behavior, update in your init.el:
-  (require 'org-trello)
-  (setq *ORGTRELLO-CHECKLIST-UPDATE-ITEMS* nil)")
-
-(defvar *consumer-key*     nil "Id representing the user")
-(defvar *access-token*     nil "Read/write Access token to use trello in the user's name ")
 
 
 
@@ -374,20 +375,20 @@ Levels:
 
 (cl-defun orgtrello-query/--standard-error-callback (&key error-thrown symbol-status response &allow-other-keys)
   "Standard error callback. Simply displays a message in the minibuffer with the error code."
-  (message "There was some problem during the request:\n
+  (orgtrello/--log 3 "There was some problem during the request:\n
 - error-thrown: %s\nsymbol-status: %s\nresponse: %s" error-thrown symbol-status response))
 
 (cl-defun orgtrello-query/--standard-success-callback (&key data &allow-other-keys)
   "Standard success callback. Simply displays a \"Success\" message in the minibuffer."
-  (when data (message "response data: %S" data))
-  (message "Success."))
+  (when data (orgtrello/--log 3 "response data: %S" data))
+  (orgtrello/--log 3 "Success."))
 
 (cl-defun orgtrello-query/--update-entity-id-to-buffer-callback (&key data &allow-other-keys)
   "POST/PUT callback to create/update the trello id in the org-mode file."
   (let ((orgtrello-query/--entry-new-id      (orgtrello-query/--id data))
         (orgtrello-query/--entry-position    (orgtrello-query/--position data))
         (orgtrello-query/--entry-buffer-name (orgtrello-query/--buffername data)))
-    (message "orgtrello-query/--update-entity-id-to-buffer-callback: %S - pos %s - id %s" data orgtrello-query/--entry-new-id orgtrello-query/--entry-position)
+    (orgtrello/--log 5 "orgtrello-query/--update-entity-id-to-buffer-callback: %S - pos %s - id %s" data orgtrello-query/--entry-new-id orgtrello-query/--entry-position)
     ;; switch to the right buffer
     (set-buffer orgtrello-query/--entry-buffer-name)
     ;; will update via tag the trello id of the new persisted data (if needed)
@@ -408,7 +409,7 @@ Levels:
 
 (cl-defun orgtrello-query/--delete-success-callback (&key data &allow-other-keys)
   "Callback function called at the end of a successful delete request."
-  (message "orgtrello-query/--delete-success-callback %S" data)
+  (orgtrello/--log 5 "orgtrello-query/--delete-success-callback %S" data)
   (let ((orgtrello-query/--entry-position    (orgtrello-query/--position data))
         (orgtrello-query/--entry-buffer-name (orgtrello-query/--buffername data)))
     (set-buffer orgtrello-query/--entry-buffer-name)
@@ -420,7 +421,7 @@ Levels:
       (beginning-of-line)
       (kill-line)
       (kill-line)))
-  (message "Entity deleted!"))
+  (orgtrello/--log 3 "Entity deleted!"))
 
 (defun orgtrello-query/--authentication-params ()
   "Generates the list of http authentication parameters"
@@ -500,9 +501,9 @@ Levels:
 
 (defun orgtrello-proxy/http (query-map &optional sync success-callback error-callback)
   "Query the trello api asynchronously."
-  (message "Request to trello server to wrap: %S" query-map)
+  (orgtrello/--log 5 "Request to trello server to wrap: %S" query-map)
   (let ((query-map-proxy (orgtrello-hash/make-hash "POST" "/" query-map)))
-    (message "Request to proxy wrapped: %S" query-map-proxy)
+    (orgtrello/--log 5 "Request to proxy wrapped: %S" query-map-proxy)
     (orgtrello-query/--http *ORGTRELLO-PROXY-URL* query-map-proxy sync success-callback error-callback)))
 
 (defvar orgtrello-query/--app-routes '(;; proxy routine
@@ -512,7 +513,7 @@ Levels:
 
 (defun orgtrello-proxy/--response (http-con data)
   "A response wrapper"
-  (message "Responding to the proxy's client with %S" data)
+  (orgtrello/--log 5 "Responding to the proxy's client with %S" data)
   (elnode-http-start http-con 201 '("Content-type" . "application/json"))
   (elnode-http-return http-con (json-encode data)))
 
@@ -521,7 +522,7 @@ Levels:
     "Return a callback function able to deal with the position."
     (cl-defun get-some-insignificant-name (&key data &allow-other-keys)
       "Standard get response will simply relay the information to the client."
-      (message "callback get: %S" data)
+      (orgtrello/--log 5 "callback get: %S" data)
       (orgtrello-proxy/--response http-con data))))
 
 (defun orgtrello-proxy/--standard-post-or-put-or-delete-success-callback (http-connection buffer-metadata)
@@ -531,7 +532,7 @@ Levels:
                 (buffername (second buffer-metadata)))
     (cl-defun put-some-insignificant-name (&key data &allow-other-keys)
       "Will read the information from the response and simply return id and position."
-      (message "callback post/put/delete: %S - position: %s" data position)
+      (orgtrello/--log 5 "callback post/put/delete: %S - position: %s" data position)
       (let ((orgtrello-query/--identifier (orgtrello-query/--id data)))
         (orgtrello-proxy/--response http-con `((id . ,orgtrello-query/--identifier)
                                                (position . ,position)
@@ -565,7 +566,7 @@ Levels:
 
 (defun orgtrello-proxy/--elnode-proxy (http-con)
   "A simple handler to extract the params information and make the request to trello."
-  (message "Proxy server: params -> %S" http-con)
+  (orgtrello/--log 5 "Proxy server: params -> %S" http-con)
   (let* ((query-map-wrapped (orgtrello-proxy/--extract-trello-query http-con))
          (position          (assoc-default 'position query-map-wrapped))
          (buffer-name       (assoc-default 'buffername query-map-wrapped))
@@ -590,7 +591,7 @@ Levels:
 ;; (setq elnode-init-port *ORGTRELLO-PROXY-PORT*)
 ;; (setq elnode-init-host *ORGTRELLO-PROXY-HOST*)
 
-(message "org-trello - orgtrello-proxy loaded!")
+(orgtrello/--log 4 "org-trello - orgtrello-proxy loaded!")
 
 
 
@@ -978,7 +979,7 @@ Levels:
 
 (cl-defun orgtrello/--sync-buffer-with-trello-data-callback (&key data &allow-other-keys)
   "Synchronize the buffer with the response data."
-  (message "Response data: %S" data)
+  (orgtrello/--log 5 "Response data: %S" data)
   (let* ((buffer-name                    (buffer-name))
          (orgtrello/--cards              data)
          (orgtrello/--entities-hash-map  (orgtrello/--compute-full-entities-from-trello orgtrello/--cards))
@@ -1322,12 +1323,12 @@ Levels:
   (interactive)
   (org-trello/--control-and-do
      '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties orgtrello/--control-encoding)
-     (lambda () (orgtrello/--log 4 "Setup ok!"))))
+     (lambda () (orgtrello/--log 0 "Setup ok!"))))
 
 (defun org-trello/help-describing-bindings ()
   "A simple message to describe the standard bindings used."
   (interactive)
-  (orgtrello/--log 4
+  (orgtrello/--log 0
 "C-c o i - M-x org-trello/install-key-and-token       - Install the keys and the access-token.
 C-c o I - M-x org-trello/install-board-and-lists-ids - Select the board and attach the todo, doing and done list.
 C-c o b - M-x org-trello/create-board                - Create interactively a board and attach the org-mode file to this trello board.
@@ -1343,22 +1344,22 @@ C-c o h - M-x org-trello/help-describing-bindings    - This help message."))
 (define-minor-mode org-trello-mode "Sync your org-mode and your trello together."
   :lighter " ot" ;; the name on the modeline
   :keymap  (let ((map (make-sparse-keymap)))
-             ;; synchroneous request (direct to trello)
+             ;; synchronous request (direct to trello)
              (define-key map (kbd "C-c o i") 'org-trello/install-key-and-token)
              (define-key map (kbd "C-c o I") 'org-trello/install-board-and-lists-ids)
              (define-key map (kbd "C-c o b") 'org-trello/create-board)
-             ;; asynchroneous requests (requests through proxy)
-             (define-key map (kbd "C-c o c") 'org-trello/create-simple-entity)
              (define-key map (kbd "C-c o C") 'org-trello/create-complex-entity)
              (define-key map (kbd "C-c o s") 'org-trello/sync-to-trello)
              (define-key map (kbd "C-c o S") 'org-trello/sync-from-trello)
+             ;; asynchronous requests (requests through proxy)
+             (define-key map (kbd "C-c o c") 'org-trello/create-simple-entity)
              (define-key map (kbd "C-c o k") 'org-trello/kill-entity)
              ;; Help
              (define-key map (kbd "C-c o h") 'org-trello/help-describing-bindings)
              (define-key map (kbd "C-c o d") 'org-trello/check-setup)
              ;; define other bindings...
              map)
-  :after-hook (orgtrello/--log 3 "ot is on! To begin with, hit C-c o h or M-x 'org-trello/help-describing-bindings"))
+  :after-hook (orgtrello/--log 0 "ot is on! To begin with, hit C-c o h or M-x 'org-trello/help-describing-bindings"))
 
 (add-hook 'org-mode-hook 'org-trello-mode)
 
