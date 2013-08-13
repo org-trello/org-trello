@@ -57,7 +57,24 @@
 (require 'parse-time)
 
 
+;; #################### message vebosity
 
+(defvar orgtrello/loglevel 5
+  "Set log level.
+Levels:
+0 - no logging
+1 - log errors
+2 - log warnings
+3 - log info
+4 - log debug
+5 - log trace")
+
+(defun orgtrello/--log (level &rest args)
+  "Log message."
+  (when (<= level orgtrello/loglevel)
+    (apply 'message args)))
+
+
 ;; #################### overriding setup
 
 (defvar *ORGTRELLO-CHECKLIST-UPDATE-ITEMS* t
@@ -88,7 +105,7 @@
     (if params (puthash :params params h))
     h))
 
-(message "org-trello - orgtrello-hash loaded!")
+(orgtrello/--log 4 "org-trello - orgtrello-hash loaded!")
 
 
 
@@ -153,7 +170,7 @@
   (cl-destructuring-bind (id due level _ keyword _ title &rest) heading-metadata
                          (orgtrello-hash/make-hash-org level keyword title id due)))
 
-(message "org-trello - orgtrello-data loaded!")
+(orgtrello/--log 4 "org-trello - orgtrello-data loaded!")
 
 
 
@@ -269,7 +286,7 @@
   "Delete a task with id task-id"
   (orgtrello-hash/make-hash :delete (format "/checklists/%s/checkItems/%s" checklist-id task-id)))
 
-(message "org-trello - orgtrello-api loaded!")
+(orgtrello/--log 4 "org-trello - orgtrello-api loaded!")
 
 
 
@@ -324,15 +341,15 @@
       (org-goto-local-search-headings *ORGTRELLO-MARKER* nil t)
       ;; remove the marker now that we're done
       (org-delete-property *ORGTRELLO-MARKER*))
-  (message "There was some problem during the request to trello: %s" error-thrown))
+  (orgtrello/--log 1 "There was some problem during the request to trello: %s" error-thrown))
 
 (cl-defun standard-success-callback ()
   "Standard success callback"
-  (message "Success."))
+  (orgtrello/--log 3 "Success."))
 
 (cl-defun simple-error-callback (&key error-thrown &allow-other-keys)
   "Standard error callback"
-  (message "There was some problem during the request to trello: %s" error-thrown))
+  (orgtrello/--log 1 "There was some problem during the request to trello: %s" error-thrown))
 
 (defun orgtrello-query/--method (query-map)
   "Retrieve the http method"
@@ -416,11 +433,11 @@
              (orgtrello-query/--entry-id       (orgtrello/--id orgtrello-query/--entry-metadata)))
         (if orgtrello-query/--entry-id ;; id already present in the org-mode file
             ;; no need to add another
-            (message "Entity '%s' synced with id '%s'" orgtrello-query/--entry-name orgtrello-query/--entry-id)
+            (orgtrello/--log 3 "Entity '%s' synced with id '%s'" orgtrello-query/--entry-name orgtrello-query/--entry-id)
           (progn
             ;; not present, this was just created, we add a simple property
             (org-set-property *ORGTRELLO-ID* orgtrello-query/--entry-new-id)
-            (message "Newly entity '%s' synced with id '%s'" orgtrello-query/--entry-name orgtrello-query/--entry-new-id)))))))
+            (orgtrello/--log 3 "Newly entity '%s' synced with id '%s'" orgtrello-query/--entry-name orgtrello-query/--entry-new-id)))))))
 
 (defun orgtrello-query/--post-or-put (query-map &optional success-callback error-callback)
   "POST or PUT"
@@ -448,7 +465,7 @@
     (beginning-of-line)
     (kill-line)
     (kill-line)
-    (message "Entity deleted!")))
+    (orgtrello/--log 3 "Entity deleted!")))
 
 (defun orgtrello-query/--delete (query-map &optional success-callback error-callback)
   "DELETE"
@@ -463,7 +480,7 @@
              :success (if success-callback success-callback 'standard-success-callback)
              :error   (if error-callback error-callback 'standard-error-callback))))
 
-(message "org-trello - orgtrello-query/ loaded!")
+(orgtrello/--log 4 "org-trello - orgtrello-query/ loaded!")
 
 
 
@@ -508,7 +525,7 @@
 (defun orgtrello/--control-encoding ()
   "Use utf-8, otherwise, there will be trouble."
   (progn
-    (message "Ensure you use utf-8 encoding for your org buffer.")
+    (orgtrello/--log 1 "Ensure you use utf-8 encoding for your org buffer.")
     :ok))
 
 (defun orgtrello/--control-properties ()
@@ -721,7 +738,7 @@
 (defun orgtrello/do-create-complex-entity ()
   "Do the actual full card creation - from card to task. Beware full side effects..."
   (let ((orgtrello/--board-name-to-sync (orgtrello/--board-name)))
-    (message "Synchronizing full entity with its structure on board '%s'..." orgtrello/--board-name-to-sync)
+    (orgtrello/--log 3 "Synchronizing full entity with its structure on board '%s'..." orgtrello/--board-name-to-sync)
     (save-excursion
       ;; iterate over the map of
       (org-map-tree (lambda () (orgtrello/do-create-simple-entity t))))
@@ -730,7 +747,7 @@
 (defun orgtrello/do-sync-full-file ()
   "Full org-mode file synchronisation. Beware, this will block emacs as the request is synchronous."
   (let ((orgtrello/--board-name-to-sync (orgtrello/--board-name)))
-    (message "Synchronizing org-mode file to the board '%s'. This may take some time, some coffee may be a good idea..." (orgtrello/--board-name))
+    (orgtrello/--log 2 "Synchronizing org-mode file to the board '%s'. This may take some time, some coffee may be a good idea..." (orgtrello/--board-name))
     (org-map-entries (lambda () (orgtrello/do-create-simple-entity t)) t 'file)
     (format "Synchronizing org-mode file to the board '%s' - done!" orgtrello/--board-name-to-sync)))
 
@@ -738,8 +755,8 @@
   "Decorator for some inaccessible code to easily 'message'."
   (progn
     (if label
-        (message "TRACE: %s: %S" label e)
-        (message "TRACE: %S" e))
+        (orgtrello/--log 5 "TRACE: %s: %S" label e)
+        (orgtrello/--log 5 "TRACE: %S" e))
     e))
 
 (defun orgtrello/--compute-card-status (card-id-list)
@@ -791,7 +808,7 @@
   ;; will compute the hash-table of entities (id, entity)
   (cl-reduce
    (lambda (orgtrello/--acc-hash orgtrello/--entity-card)
-     (message "Computing card '%s' data..." (orgtrello-query/--name orgtrello/--entity-card))
+     (orgtrello/--log 3 "Computing card '%s' data..." (orgtrello-query/--name orgtrello/--entity-card))
      ;; adding the entity card
      (puthash (orgtrello-query/--id orgtrello/--entity-card) orgtrello/--entity-card orgtrello/--acc-hash)
      ;; fill in the other remaining entities (checklist/items)
@@ -813,7 +830,7 @@
         (maphash
          (lambda (orgtrello/--entry-new-id orgtrello/--entity)
            (let ((orgtrello/--entry-new-name  (orgtrello-query/--name orgtrello/--entity)))
-             (message "Synchronizing new entity '%s' with id '%s'..." orgtrello/--entry-new-name orgtrello/--entry-new-id)
+             (orgtrello/--log 3 "Synchronizing new entity '%s' with id '%s'..." orgtrello/--entry-new-name orgtrello/--entry-new-id)
              (insert (orgtrello/--compute-entity-to-org-entry orgtrello/--entity))
              (org-set-property *ORGTRELLO-ID* orgtrello/--entry-new-id)))
          entities)
@@ -837,7 +854,7 @@
                           (orgtrello/--entity-due-date (orgtrello-query/--due  orgtrello/--entity-updated))
                           (orgtrello/--entry-new-name  (orgtrello-query/--name orgtrello/--entity-updated)))
                      ;; update the buffer with the new updates (there may be none but naively we will overwrite at the moment)
-                     (message "Synchronizing entity '%s' with id '%s'..." orgtrello/--entry-new-name orgtrello/--entry-new-id)
+                     (orgtrello/--log 3 "Synchronizing entity '%s' with id '%s'..." orgtrello/--entry-new-name orgtrello/--entry-new-id)
                      (org-show-entry)
                      (kill-whole-line)
                      (if orgtrello/--entity-due-date (kill-whole-line))
@@ -852,7 +869,7 @@
 (defun orgtrello/do-sync-full-from-trello ()
   "Full org-mode file synchronisation. Beware, this will block emacs as the request is synchronous."
   (let ((orgtrello/--board-name-to-sync (orgtrello/--board-name)))
-    (message "Synchronizing the trello board '%s' to the org-mode file. This may take a moment, some coffee may be a good idea..." orgtrello/--board-name-to-sync)
+    (orgtrello/--log 2 "Synchronizing the trello board '%s' to the org-mode file. This may take a moment, some coffee may be a good idea..." orgtrello/--board-name-to-sync)
     (let* ((orgtrello/--board-id           (assoc-default *BOARD-ID* org-file-properties))
            (orgtrello/--cards              (orgtrello-query/http (orgtrello-api/get-cards orgtrello/--board-id) t))
            (orgtrello/--entities-hash-map  (orgtrello/--compute-full-entities-from-trello orgtrello/--cards))
@@ -1042,7 +1059,7 @@
 (defun orgtrello/--create-board (board-name &optional board-description)
   "Create a board with name and eventually a description."
   (progn
-    (message "Creating board '%s'" board-name)
+    (orgtrello/--log 3 "Creating board '%s'" board-name)
     (let* ((board-data (orgtrello-query/http (orgtrello-api/add-board board-name board-description) t)))
       (list (orgtrello-query/--id board-data) (orgtrello-query/--name board-data)))))
 
@@ -1050,7 +1067,7 @@
   "Given a list of ids, close those lists."
   (mapc (lambda (list-id)
           (progn
-            (message "Closing default list with id %s" list-id)
+            (orgtrello/--log 3 "Closing default list with id %s" list-id)
             (orgtrello-query/http (orgtrello-api/close-list list-id) nil nil 'simple-error-callback)))
         list-ids))
 
@@ -1059,7 +1076,7 @@
   (cl-reduce
    (lambda (acc-hash-name-id list-name)
      (progn
-       (message "Board id %s - Creating list '%s'" board-id list-name)
+       (orgtrello/--log 3 "Board id %s - Creating list '%s'" board-id list-name)
        (puthash list-name (orgtrello-query/--id (orgtrello-query/http (orgtrello-api/add-list list-name board-id) t)) acc-hash-name-id)
        acc-hash-name-id))
    list-keywords
@@ -1082,7 +1099,7 @@
                            (orgtrello/update-orgmode-file-with-properties orgtrello/--board-name orgtrello/--board-id orgtrello/--board-lists-hname-id)))
   "Create board and lists done!")
 
-(message "org-trello - orgtrello loaded!")
+(orgtrello/--log 4 "org-trello - orgtrello loaded!")
 
 
 
@@ -1090,7 +1107,7 @@
 
 (defun org-trello/--msg-deco-control-and-do (msg control-fns fn-to-control-and-execute &optional save-buffer-p)
   "A simple decorator function to display message in mini-buffer before and after the execution of the control"
-  (message (concat msg "..."))
+  (orgtrello/--log 3 (concat msg "..."))
   (let ((org-trello/--result-action (org-trello/--control-and-do control-fns fn-to-control-and-execute)))
     ;; do we have to save the buffer
     (if save-buffer-p
@@ -1098,8 +1115,8 @@
           (save-buffer)
           (org-mode-restart)))
     (if (string-or-null-p org-trello/--result-action)
-      (message org-trello/--result-action)
-      (message (concat msg " - done!")))))
+      (orgtrello/--log 3 org-trello/--result-action)
+      (orgtrello/--log 3 (concat msg " - done!")))))
 
 (defun org-trello/--control-and-do (control-fns fn-to-control-and-execute)
   "Execute the function fn if control-fns is nil or if the result of apply every function to fn is ok."
@@ -1107,7 +1124,7 @@
       (let* ((org-trello/--error-messages (--filter (not (equal :ok (funcall it))) control-fns)))
         (if org-trello/--error-messages
             ;; there are some trouble, we display all the error messages to help the user understand the problem
-            (message "List of errors:\n %s" (--mapcat (concat "- " it "\n") org-trello/--error-messages))
+            (orgtrello/--log 1 "List of errors:\n %s" (--mapcat (concat "- " it "\n") org-trello/--error-messages))
           ;; ok execute the function as the controls are ok
           (funcall fn-to-control-and-execute)))
     ;; no control, we simply execute the function
@@ -1186,12 +1203,12 @@
   (interactive)
   (org-trello/--control-and-do
      '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties orgtrello/--control-encoding)
-     (lambda () (message "Setup ok!"))))
+     (lambda () (orgtrello/--log 4 "Setup ok!"))))
 
 (defun org-trello/help-describing-bindings ()
   "A simple message to describe the standard bindings used."
   (interactive)
-  (message
+  (orgtrello/--log 4
 "C-c o i - M-x org-trello/install-key-and-token       - Install the keys and the access-token.
 C-c o I - M-x org-trello/install-board-and-lists-ids - Select the board and attach the todo, doing and done list.
 C-c o b - M-x org-trello/create-board                - Create interactively a board and attach the org-mode file to this trello board.
@@ -1220,11 +1237,11 @@ C-c o h - M-x org-trello/help-describing-bindings    - This help message."))
              (define-key map (kbd "C-c o d") 'org-trello/check-setup)
              ;; define other bindings...
              map)
-  :after-hook (message "ot is on! To begin with, hit C-c o h or M-x 'org-trello/help-describing-bindings"))
+  :after-hook (orgtrello/--log 3 "ot is on! To begin with, hit C-c o h or M-x 'org-trello/help-describing-bindings"))
 
 (add-hook 'org-mode-hook 'org-trello-mode)
 
-(message "org-trello loaded!")
+(orgtrello/--log 4 "org-trello loaded!")
 
 (provide 'org-trello)
 
