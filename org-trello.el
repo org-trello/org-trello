@@ -1189,7 +1189,7 @@ Levels:
   "Create a board with name and eventually a description."
   (progn
     (orgtrello-log/msg 3 "Creating board '%s'" board-name)
-    (let* ((board-data (orgtrello-query/http (orgtrello-api/add-board board-name board-description) t)))
+    (let* ((board-data (orgtrello-query/http-trello (orgtrello-api/add-board board-name board-description) t)))
       (list (orgtrello-query/--id board-data) (orgtrello-query/--name board-data)))))
 
 (defun orgtrello/--close-lists (list-ids)
@@ -1197,7 +1197,7 @@ Levels:
   (mapc (lambda (list-id)
           (progn
             (orgtrello-log/msg 3 "Closing default list with id %s" list-id)
-            (orgtrello-query/http (orgtrello-api/close-list list-id) nil nil 'simple-error-callback)))
+            (orgtrello-query/http-trello (orgtrello-api/close-list list-id) nil nil 'simple-error-callback)))
         list-ids))
 
 (defun orgtrello/--create-lists-according-to-keywords (board-id list-keywords)
@@ -1206,7 +1206,7 @@ Levels:
    (lambda (acc-hash-name-id list-name)
      (progn
        (orgtrello-log/msg 3 "Board id %s - Creating list '%s'" board-id list-name)
-       (puthash list-name (orgtrello-query/--id (orgtrello-query/http (orgtrello-api/add-list list-name board-id) t)) acc-hash-name-id)
+       (puthash list-name (orgtrello-query/--id (orgtrello-query/http-trello (orgtrello-api/add-list list-name board-id) t)) acc-hash-name-id)
        acc-hash-name-id))
    list-keywords
    :initial-value (make-hash-table :test 'equal)))
