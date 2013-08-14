@@ -141,10 +141,14 @@ Levels:
                                (concat year-mon-day hour-min-sec ".000Z")))
     orgmode-date))
 
+(defun orgtrello-data/extract-identifier (point)
+  "Extract the identifier from the point."
+  (org-entry-get point *ORGTRELLO-ID*))
+
 (defun orgtrello-data/metadata ()
   "Compute the metadata from the org-heading-components entry, add the identifier and extract the metadata needed."
   (let* ((orgtrello-data/metadata--point       (point))
-         (orgtrello-data/metadata--id          (org-entry-get orgtrello-data/metadata--point *ORGTRELLO-ID*))
+         (orgtrello-data/metadata--id          (orgtrello-data/extract-identifier orgtrello-data/metadata--point))
          (orgtrello-data/metadata--due         (orgtrello-data/--convert-orgmode-date-to-trello-date (org-entry-get orgtrello-data/metadata--point "DEADLINE")))
          (orgtrello-data/metadata--buffer-name (buffer-name))
          (orgtrello-data/metadata--metadata (org-heading-components)))
@@ -861,7 +865,7 @@ Levels:
   "Full org-mode file synchronisation. Beware, this will block emacs as the request is synchronous."
   (let ((orgtrello/--board-name-to-sync (orgtrello/--board-name)))
     (orgtrello-log/msg 2 "Synchronizing org-mode file to the board '%s'. This may take some time, some coffee may be a good idea..." orgtrello/--board-name-to-sync)
-    (org-map-entries (lambda () (orgtrello/do-create-simple-entity t)) t 'file)
+    (org-map-entries 'orgtrello/do-create-simple-entity t 'file)
     (format "Synchronizing org-mode file to the board '%s' - done!" orgtrello/--board-name-to-sync)))
 
 (defun trace (e &optional label)
@@ -1232,10 +1236,10 @@ Levels:
   (orgtrello-log/msg 3 (concat msg "..."))
   (let ((org-trello/--result-action (org-trello/--control-and-do control-fns fn-to-control-and-execute)))
     ;; do we have to save the buffer
-    (if save-buffer-p
-        (progn
-          (save-buffer)
-          (org-mode-restart)))
+    ;; (if save-buffer-p
+    ;;     (progn
+    ;;       (save-buffer)
+    ;;       (org-mode-restart)))
     (if (string-or-null-p org-trello/--result-action)
       (orgtrello-log/msg 3 org-trello/--result-action)
       (orgtrello-log/msg 3 (concat msg " - done!")))))
@@ -1282,11 +1286,16 @@ Levels:
 (defun org-trello/sync-from-trello ()
   "Control first, then if ok, sync the org-mode file from the trello board."
   (interactive)
+  ;; as this action will write on the buffer, we need to remove the hook
+  (remove-hook 'after-change-functions 'org-trello/--create-entity-when-writing)
+  ;; execute the action
   (org-trello/--msg-deco-control-and-do
      "Synchronizing trello board to org-mode file"
      '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties orgtrello/--control-encoding)
      (lambda () (orgtrello/do-sync-full-from-trello t))
-     t))
+     t)
+  ;; add the hook again
+  (add-hook 'after-change-functions 'org-trello/--create-entity-when-writing))
 
 (defun org-trello/kill-entity ()
   "Control first, then if ok, delete the entity and all its arborescence."
@@ -1350,20 +1359,33 @@ C-c o h - M-x org-trello/help-describing-bindings    - This help message."))
              (define-key map (kbd "C-c o i") 'org-trello/install-key-and-token)
              (define-key map (kbd "C-c o I") 'org-trello/install-board-and-lists-ids)
              (define-key map (kbd "C-c o b") 'org-trello/create-board)
-             (define-key map (kbd "C-c o C") 'org-trello/create-complex-entity)
-             (define-key map (kbd "C-c o s") 'org-trello/sync-to-trello)
              (define-key map (kbd "C-c o S") 'org-trello/sync-from-trello)
              ;; asynchronous requests (requests through proxy)
              (define-key map (kbd "C-c o c") 'org-trello/create-simple-entity)
              (define-key map (kbd "C-c o k") 'org-trello/kill-entity)
+             (define-key map (kbd "C-c o s") 'org-trello/sync-to-trello)
+             (define-key map (kbd "C-c o C") 'org-trello/create-complex-entity)
              ;; Help
              (define-key map (kbd "C-c o h") 'org-trello/help-describing-bindings)
              (define-key map (kbd "C-c o d") 'org-trello/check-setup)
              ;; define other bindings...
              map)
-  :after-hook (orgtrello-log/msg 0 "ot is on! To begin with, hit C-c o h or M-x 'org-trello/help-describing-bindings"))
+  :after-hook (progn
+                (add-hook 'after-change-functions 'org-trello/--create-entity-when-writing)
+                (orgtrello-log/msg 0 "ot is on! To begin with, hit C-c o h or M-x 'org-trello/help-describing-bindings")))
 
-(add-hook 'org-mode-hook 'org-trello-mode)
+(defun org-trello/--trigger-create-p (s)
+  "A predicate function to determine if we trigger the creation/update of an entity"
+  (string-match-p "^[\*]+ .+\n$" s))
+
+(defun org-trello/--create-entity-when-writing (beg end len)
+  (if org-trello-mode
+      (let ((org-trello/--potential-entity (thing-at-point 'line)))
+        (if (null (orgtrello-data/extract-identifier (point)))
+            (progn
+              (orgtrello-log/msg 5 "line: '%s'" org-trello/--potential-entity)
+              (if (org-trello/--trigger-create-p org-trello/--potential-entity)
+                  (org-trello/create-simple-entity)))))))
 
 (orgtrello-log/msg 4 "org-trello loaded!")
 

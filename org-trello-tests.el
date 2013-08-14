@@ -359,6 +359,19 @@
   (expect t (orgtrello/--task-compute-check nil "DONE" "TODO"))
   (expect nil (orgtrello/--task-compute-check nil "TODO" "TODO")) )
 
+(expectations
+  (expect nil (org-trello/--trigger-create-p "something not triggering"))
+  (expect nil (org-trello/--trigger-create-p "something still not triggering\n"))
+  (expect nil (org-trello/--trigger-create-p "* something still not triggering"))
+  (expect nil (org-trello/--trigger-create-p "* \n")) ;; not triggering
+  (expect nil (org-trello/--trigger-create-p "*something that should not be ok\n"))
+  (expect nil (org-trello/--trigger-create-p "**something that should not be ok\n"))
+  (expect nil (org-trello/--trigger-create-p "***something that should not be ok\n"))
+  (expect 0 (org-trello/--trigger-create-p "* something that should be ok\n"))
+  (expect 0 (org-trello/--trigger-create-p "** something that should be ok\n"))
+  (expect 0 (org-trello/--trigger-create-p "*** something that should be ok\n"))
+  (expect 0 (org-trello/--trigger-create-p "**** something that should be ok\n")))
+
 (message "Tests done!")
 
 (provide 'org-trello-tests)
