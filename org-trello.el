@@ -1354,6 +1354,19 @@ C-c o k - M-x org-trello/kill-entity                 - Kill the entity (and its 
 C-c o d - M-x org-trello/check-setup                 - Simple routine to check that the setup is ok. If everything is ok, will simply display 'Setup ok!'
 C-c o h - M-x org-trello/help-describing-bindings    - This help message."))
 
+(defun org-trello/--trigger-create-p (s)
+  "A predicate function to determine if we trigger the creation/update of an entity"
+  (string-match-p "^[\*]+ .+\n$" s))
+
+(defun org-trello/--create-entity-when-writing (beg end len)
+  (if org-trello-mode
+      (let ((org-trello/--potential-entity (thing-at-point 'line)))
+        (if (null (orgtrello-data/extract-identifier (point)))
+            (progn
+              (orgtrello-log/msg 5 "line: '%s'" org-trello/--potential-entity)
+              (if (org-trello/--trigger-create-p org-trello/--potential-entity)
+                  (org-trello/create-simple-entity)))))))
+
 ;;;###autoload
 (define-minor-mode org-trello-mode "Sync your org-mode and your trello together."
   :lighter " ot" ;; the name on the modeline
@@ -1376,19 +1389,6 @@ C-c o h - M-x org-trello/help-describing-bindings    - This help message."))
   :after-hook (progn
                 (add-hook 'after-change-functions 'org-trello/--create-entity-when-writing)
                 (orgtrello-log/msg 0 "ot is on! To begin with, hit C-c o h or M-x 'org-trello/help-describing-bindings")))
-
-(defun org-trello/--trigger-create-p (s)
-  "A predicate function to determine if we trigger the creation/update of an entity"
-  (string-match-p "^[\*]+ .+\n$" s))
-
-(defun org-trello/--create-entity-when-writing (beg end len)
-  (if org-trello-mode
-      (let ((org-trello/--potential-entity (thing-at-point 'line)))
-        (if (null (orgtrello-data/extract-identifier (point)))
-            (progn
-              (orgtrello-log/msg 5 "line: '%s'" org-trello/--potential-entity)
-              (if (org-trello/--trigger-create-p org-trello/--potential-entity)
-                  (org-trello/create-simple-entity)))))))
 
 (orgtrello-log/msg 4 "org-trello loaded!")
 
