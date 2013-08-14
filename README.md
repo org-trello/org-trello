@@ -71,11 +71,14 @@ Tested on:
 Yank this into a scratch buffer:
 ``` lisp
 (require 'package)
-(add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/") t)
-;; or (add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
+(add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
+;; or (add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/") t)
 (package-initialize)
 (package-install 'org-trello)
 (require 'org-trello)
+;; to trigger org-trello for each org file
+(add-hook 'org-mode-hook 'org-trello-mode)
+
 ```
 then `M-x eval-buffer`
 
@@ -221,10 +224,13 @@ Add the org-trello directory to your load path and then add
 ## Emacs related
 
 Org-trello is a minor mode for org-mode to sync.
-Simply, require it somewhere in your load file (~/.emacs or ~/.emacs.d/init.el).
+Add this somewhere in your load file (~/.emacs or ~/.emacs.d/init.el).
 
 ``` lisp
 (require 'orgtrello)
+;; to have org-trello activated for all org file, uncomment this
+;; (add-hook 'org-mode-hook 'org-trello-mode)
+;; otherwise, M-x org-trello-mode
 ```
 
 For example, here is my [startup file](https://github.com/ardumont/orgmode-pack/blob/master/init.el#L3).
