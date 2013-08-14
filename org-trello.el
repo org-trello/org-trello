@@ -1367,6 +1367,12 @@ C-c o h - M-x org-trello/help-describing-bindings    - This help message."))
               (if (org-trello/--trigger-create-p org-trello/--potential-entity)
                   (org-trello/create-simple-entity)))))))
 
+(defun org-trello/--prepare-org-trello-mode ()
+  "Preparing org-trello mode"
+  (if auto-complete-mode (auto-complete 0))
+  (add-hook 'after-change-functions 'org-trello/--create-entity-when-writing)
+  (orgtrello-log/msg 0 "ot is on! To begin with, hit C-c o h or M-x 'org-trello/help-describing-bindings"))
+
 ;;;###autoload
 (define-minor-mode org-trello-mode "Sync your org-mode and your trello together."
   :lighter " ot" ;; the name on the modeline
@@ -1386,9 +1392,7 @@ C-c o h - M-x org-trello/help-describing-bindings    - This help message."))
              (define-key map (kbd "C-c o d") 'org-trello/check-setup)
              ;; define other bindings...
              map)
-  :after-hook (progn
-                (add-hook 'after-change-functions 'org-trello/--create-entity-when-writing)
-                (orgtrello-log/msg 0 "ot is on! To begin with, hit C-c o h or M-x 'org-trello/help-describing-bindings")))
+  :after-hook (org-trello/--prepare-org-trello-mode))
 
 (orgtrello-log/msg 4 "org-trello loaded!")
 
