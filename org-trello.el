@@ -587,11 +587,14 @@ Levels:
   "Launch function to start the proxy"
   (elnode-hostpath-dispatcher http-con orgtrello-query/--app-routes))
 
-(elnode-start 'orgtrello-proxy/--proxy-handler :port *ORGTRELLO-PROXY-PORT* :host *ORGTRELLO-PROXY-HOST*)
-;; (elnode-stop *ORGTRELLO-PROXY-PORT*)
+(defun orgtrello-proxy/--start (port host)
+  "Starting the proxy."
+  (elnode-start 'orgtrello-proxy/--proxy-handler :port port :host host)
+  (setq elnode--do-error-logging nil))
 
-;; (setq elnode-init-port *ORGTRELLO-PROXY-PORT*)
-;; (setq elnode-init-host *ORGTRELLO-PROXY-HOST*)
+(orgtrello-proxy/--start *ORGTRELLO-PROXY-PORT* *ORGTRELLO-PROXY-HOST*)
+
+;; (elnode-stop *ORGTRELLO-PROXY-PORT*)
 
 (orgtrello-log/msg 4 "org-trello - orgtrello-proxy loaded!")
 
