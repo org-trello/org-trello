@@ -505,12 +505,27 @@ CLOSED: [2013-08-11 dim. 13:43]
 CLOSED: [2013-08-11 dim. 13:44]
 ** DONE Release
 CLOSED: [2013-08-11 dim. 13:44]
-* IN-PROGRESS 0.1.2 [100%]
+* IN-PROGRESS 0.1.2 [66%]
 ** DONE Improve the setup regarding the org-trello marker.
 CLOSED: [2013-08-11 dim. 20:49]
 ** DONE Beginning end to end tests (primitive entries)
 CLOSED: [2013-08-11 dim. 20:49]
-** IN-PROGRESS Use an intermediary server between org and trello to permit asynchronous actions
+** DONE Use an intermediary server between org and trello to permit asynchronous actions
+CLOSED: [2013-08-14 mer. 16:53]
+** DONE Make the creation asynchronous using the proxy
+CLOSED: [2013-08-14 mer. 16:54]
+** DONE Make the deletion asynchronous using the proxy
+CLOSED: [2013-08-14 mer. 16:54]
+** DONE Creation of new entity as you go
+CLOSED: [2013-08-14 mer. 16:56]
+** DONE Change org-trello's loading policy + update the readme about it
+CLOSED: [2013-08-14 mer. 16:57]
+** DONE Find a way to make the proxy less verbose
+CLOSED: [2013-08-14 mer. 16:57]
+** TODO Fix the loss of todo keywords after the synchronization -> no idea what's wrong here
+** TODO Improve the attachment board routine to add the missing | keyword (hardcode with DONE for example)
+** TODO Render the sync to trello routine asynchronous
+** TODO Try to make the end-to-end test pass (if not possible due to asynchronous request, remove them and think of something else for later)
 * TODO 0.1.3 [%]
 ** TODO Interactive command to remove all org-trello entries
 ** TODO Filter out directly with the api the data we do not need to avoid unnecessary network traffic
