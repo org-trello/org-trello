@@ -103,12 +103,12 @@ Levels:
   "Utility function to ease the creation of the orgtrello-metadata"
   (let ((h (make-hash-table :test 'equal)))
     (puthash :buffername buffer-name h)
-    (puthash :position   position h)
-    (puthash :level      level    h)
-    (puthash :keyword    keyword  h)
-    (puthash :title      title    h)
-    (puthash :id         id       h)
-    (puthash :due        due      h)
+    (puthash :position   position    h)
+    (puthash :level      level       h)
+    (puthash :keyword    keyword     h)
+    (puthash :title      title       h)
+    (puthash :id         id          h)
+    (puthash :due        due         h)
     h))
 
 (defun orgtrello-hash/make-hash (method uri &optional params)
@@ -673,6 +673,10 @@ Levels:
   "Retrieve the due date from the entity."
   (gethash :due entity-meta))
 
+(defun orgtrello/--buffername (entity-meta)
+  "Retrieve the point from the entity."
+  (gethash :buffername entity-meta))
+
 (defun orgtrello/--position (entity-meta)
   "Retrieve the point from the entity."
   (gethash :position entity-meta))
@@ -820,8 +824,8 @@ Levels:
 
 (defun orgtrello/--update-query-with-org-metadata (query-map org-metadata)
   "Given a trello api query, add some metadata needed for org-trello to work (at the moment, only the position)."
-  (puthash :position   (gethash :position org-metadata) query-map)
-  (puthash :buffername (gethash :buffername org-metadata) query-map)
+  (puthash :position   (orgtrello/--position org-metadata)   query-map)
+  (puthash :buffername (orgtrello/--buffername org-metadata) query-map)
   query-map)
 
 (defun orgtrello/do-create-simple-entity (&optional sync)
