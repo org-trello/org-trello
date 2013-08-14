@@ -575,12 +575,7 @@ Levels:
          (buffer-name       (assoc-default 'buffername query-map-wrapped))
          (query-map         (orgtrello-proxy/--compute-trello-query query-map-wrapped))
          (method            (orgtrello-query/--method query-map))
-         (fn-dispatch       (orgtrello-proxy/--dispatch-http-query method))
-         (response-ack      (make-hash-table :test 'equal)))
-    ;; (puthash :status "ok" response-ack)
-    ;; (orgtrello-proxy/--response http-con response-ack)
-    ;; ;; Execute the request to trello (at the moment, synchronous)
-    ;; (funcall fn-dispatch http-con query-map position)
+         (fn-dispatch       (orgtrello-proxy/--dispatch-http-query method)))
     ;; Execute the request to trello (at the moment, synchronous)
     (funcall fn-dispatch http-con query-map (list position buffer-name) t)))
 
