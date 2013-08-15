@@ -534,10 +534,11 @@ CLOSED: [2013-08-15 jeu. 19:36]
 CLOSED: [2013-08-15 jeu. 19:46]
 ** DONE Improve the message when starting and shutting down org-trello-mode
 CLOSED: [2013-08-15 jeu. 19:50]
+** DONE Update version
+CLOSED: [2013-08-15 jeu. 20:00]
 ** TODO Render the sync to trello routine asynchronous
 ** TODO Render the sync complex entity routine asynchronous
 ** TODO Try to make the end-to-end test pass (if not possible due to asynchronous request, remove them and think of something else for later)
-** TODO Update version
 ** TODO Release notes
 ** TODO Release
 * TODO 0.1.3 [%]

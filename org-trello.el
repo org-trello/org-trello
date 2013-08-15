@@ -4,7 +4,7 @@
 
 ;; Author: Antoine R. Dumont <eniotna.t AT gmail.com>
 ;; Maintainer: Antoine R. Dumont <eniotna.t AT gmail.com>
-;; Version: 0.1.1
+;; Version: 0.1.2
 ;; Package-Requires: ((org "8.0.7") (dash "1.5.0") (request "0.2.0") (cl-lib "0.3.0") (json "1.2") (elnode "0.9.9.7.6"))
 ;; Keywords: org-mode trello sync org-trello
 ;; URL: https://github.com/ardumont/org-trello
@@ -1256,9 +1256,11 @@ Levels:
   (orgtrello-log/msg 3 (concat msg "..."))
   (let ((org-trello/--result-action (org-trello/--control-and-do control-fns fn-to-control-and-execute)))
     ;; do we have to save the buffer
-    (if save-buffer-p
+    (when save-buffer-p
         (progn
+          ;; save the buffer
           (save-buffer)
+          ;; reload setup
           (org-set-regexps-and-options)))
     (if (string-or-null-p org-trello/--result-action)
       (orgtrello-log/msg 3 org-trello/--result-action)
@@ -1393,13 +1395,12 @@ C-c o h - M-x org-trello/help-describing-bindings    - This help message."))
   (string-match-p "^[\*]+ .+\n$" s))
 
 (defun org-trello/--create-entity-when-writing (beg end len)
-  (if org-trello-mode
+  (when org-trello-mode
       (let ((org-trello/--potential-entity (thing-at-point 'line)))
-        (if (null (orgtrello-data/extract-identifier (point)))
-            (progn
+        (when (null (orgtrello-data/extract-identifier (point)))
               (orgtrello-log/msg 5 "line: '%s'" org-trello/--potential-entity)
-              (if (org-trello/--trigger-create-p org-trello/--potential-entity)
-                  (org-trello/create-simple-entity)))))))
+              (when (org-trello/--trigger-create-p org-trello/--potential-entity)
+                    (org-trello/create-simple-entity))))))
 
 (defun org-trello/--prepare-org-trello-mode ()
   "Preparing org-trello mode"
