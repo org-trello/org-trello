@@ -1403,9 +1403,14 @@ C-c o h - M-x org-trello/help-describing-bindings    - This help message."))
 
 (defun org-trello/--prepare-org-trello-mode ()
   "Preparing org-trello mode"
-  (if auto-complete-mode (auto-complete 0))
-  (add-hook 'after-change-functions 'org-trello/--create-entity-when-writing)
-  (orgtrello-log/msg 0 "ot is on! To begin with, hit C-c o h or M-x 'org-trello/help-describing-bindings"))
+  (if org-trello-mode
+      (progn
+;;        (if auto-complete-mode (auto-complete 0))
+        (add-hook 'after-change-functions 'org-trello/--create-entity-when-writing)
+        (orgtrello-log/msg 0 "org-trello/ot is on! To begin with, hit C-c o h or M-x 'org-trello/help-describing-bindings"))
+      (progn
+        (remove-hook 'after-change-functions 'org-trello/--create-entity-when-writing)
+        (orgtrello-log/msg 0 "org-trello/ot is off!"))))
 
 ;;;###autoload
 (define-minor-mode org-trello-mode "Sync your org-mode and your trello together."
