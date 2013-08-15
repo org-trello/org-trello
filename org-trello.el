@@ -1239,10 +1239,10 @@ Levels:
   (orgtrello-log/msg 3 (concat msg "..."))
   (let ((org-trello/--result-action (org-trello/--control-and-do control-fns fn-to-control-and-execute)))
     ;; do we have to save the buffer
-    ;; (if save-buffer-p
-    ;;     (progn
-    ;;       (save-buffer)
-    ;;       (org-mode-restart)))
+    (if save-buffer-p
+        (progn
+          (save-buffer)
+          (org-set-regexps-and-options)))
     (if (string-or-null-p org-trello/--result-action)
       (orgtrello-log/msg 3 org-trello/--result-action)
       (orgtrello-log/msg 3 (concat msg " - done!")))))
