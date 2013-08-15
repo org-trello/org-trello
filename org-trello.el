@@ -622,6 +622,9 @@ Levels:
 
 (defun orgtrello/--setup-properties ()
   "Setup the properties according to the org-mode setup. Return :ok."
+  ;; read the setup
+  (org-set-regexps-and-options)
+  ;; now exploit some
   (let* ((orgtrello/--list-keywords (nreverse (orgtrello/filtered-kwds)))
          (orgtrello/--hmap-id-name (cl-reduce
                                     (lambda (hmap name)
@@ -1353,6 +1356,19 @@ Levels:
      '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties orgtrello/--control-encoding)
      (lambda () (orgtrello-log/msg 0 "Setup ok!"))))
 
+(defun org-trello/delete-setup ()
+  "Delete the current setup."
+  (interactive)
+  (org-trello/--control-and-do
+     '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties orgtrello/--control-encoding)
+     (lambda ()
+       ;; remove any orgtrello relative entries
+       (orgtrello/--remove-properties-file *LIST-NAMES* t)
+       ;; remove any identifier from the buffer
+       (org-delete-property-globally *ORGTRELLO-ID*)
+       ;; a simple message to tell the client that the work is done!
+       (orgtrello-log/msg 0 "Cleanup done!"))))
+
 (defun org-trello/help-describing-bindings ()
   "A simple message to describe the standard bindings used."
   (interactive)
@@ -1361,6 +1377,7 @@ Levels:
 C-c o i - M-x org-trello/install-key-and-token       - Install the keys and the access-token.
 C-c o I - M-x org-trello/install-board-and-lists-ids - Select the board and attach the todo, doing and done list.
 C-c o d - M-x org-trello/check-setup                 - Check that the setup is ok. If everything is ok, will simply display 'Setup ok!'
+C-c o D - M-x org-trello/delete-setup                - Clean up the org buffer from all org-trello informations
 # TRELLO RELATED
 C-c o b - M-x org-trello/create-board                - Create interactively a board and attach the org-mode file to this trello board.
 C-c o c - M-x org-trello/create-simple-entity        - Create/Update an entity (card/checklist/item) depending on its level and status. Do not deal with level superior to 4.
@@ -1398,6 +1415,7 @@ C-c o h - M-x org-trello/help-describing-bindings    - This help message."))
              (define-key map (kbd "C-c o i") 'org-trello/install-key-and-token)
              (define-key map (kbd "C-c o I") 'org-trello/install-board-and-lists-ids)
              (define-key map (kbd "C-c o d") 'org-trello/check-setup)
+             (define-key map (kbd "C-c o x") 'org-trello/delete-setup)
              ;; synchronous request (direct to trello)
              (define-key map (kbd "C-c o b") 'org-trello/create-board)
              (define-key map (kbd "C-c o S") 'org-trello/sync-from-trello)
