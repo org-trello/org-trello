@@ -505,7 +505,7 @@ CLOSED: [2013-08-11 dim. 13:43]
 CLOSED: [2013-08-11 dim. 13:44]
 ** DONE Release
 CLOSED: [2013-08-11 dim. 13:44]
-* IN-PROGRESS 0.1.2 [73%]
+* IN-PROGRESS 0.1.2 [78%]
 ** DONE Improve the setup regarding the org-trello marker.
 CLOSED: [2013-08-11 dim. 20:49]
 ** DONE Beginning end to end tests (primitive entries)
@@ -536,16 +536,16 @@ CLOSED: [2013-08-15 jeu. 19:46]
 CLOSED: [2013-08-15 jeu. 19:50]
 ** DONE Update version
 CLOSED: [2013-08-15 jeu. 20:00]
+** DONE Remove end to end test as this can no longer works with asynchronous
+CLOSED: [2013-08-15 jeu. 20:03]
 ** TODO Render the sync to trello routine asynchronous
 ** TODO Render the sync complex entity routine asynchronous
-** TODO Try to make the end-to-end test pass (if not possible due to asynchronous request, remove them and think of something else for later)
 ** TODO Release notes
 ** TODO Release
-* TODO 0.1.3 [%]
-** TODO Interactive command to remove all org-trello entries
-** TODO Filter out directly with the api the data we do not need to avoid unnecessary network traffic
-** TODO Replace already present properties regarding boards before injecting new ones.
+* TODO 0.1.3 [0%]
+** TODO Rethink the end to end test + fake trello server
 ** TODO A fake trello server to be able to test without a network
+** TODO Filter out directly with the api the data we do not need to avoid unnecessary network traffic
 * Questions
 ** How to deal with promotion/demotion?
 We do not deal with it at the moment.
