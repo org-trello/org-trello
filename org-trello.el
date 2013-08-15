@@ -503,7 +503,7 @@ Levels:
 ;; #################### orgtrello-proxy
 
 (defvar *ORGTRELLO-PROXY-HOST* "localhost")
-(defvar *ORGTRELLO-PROXY-PORT* 8009)
+(defvar *ORGTRELLO-PROXY-PORT* 66666)
 (defvar *ORGTRELLO-PROXY-URL* (format "http://%s:%d/proxy" *ORGTRELLO-PROXY-HOST* *ORGTRELLO-PROXY-PORT*))
 
 (defun orgtrello-proxy/http (query-map &optional sync success-callback error-callback)
@@ -514,9 +514,7 @@ Levels:
     (orgtrello-query/--http *ORGTRELLO-PROXY-URL* query-map-proxy sync success-callback error-callback)))
 
 (defvar orgtrello-query/--app-routes '(;; proxy routine
-                                       ("^localhost//proxy/\\(.*\\)" . orgtrello-proxy/--elnode-proxy)
-                                       ;; whatever...
-                                       ("^.*//\\(.*\\)" . elnode-webserver)))
+                                       ("^localhost//proxy/\\(.*\\)" . orgtrello-proxy/--elnode-proxy)))
 
 (defun orgtrello-proxy/--response (http-con data)
   "A response wrapper"

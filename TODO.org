@@ -505,7 +505,7 @@ CLOSED: [2013-08-11 dim. 13:43]
 CLOSED: [2013-08-11 dim. 13:44]
 ** DONE Release
 CLOSED: [2013-08-11 dim. 13:44]
-* IN-PROGRESS 0.1.2 [78%]
+* IN-PROGRESS 0.1.2 [80%]
 ** DONE Improve the setup regarding the org-trello marker.
 CLOSED: [2013-08-11 dim. 20:49]
 ** DONE Beginning end to end tests (primitive entries)
@@ -538,6 +538,8 @@ CLOSED: [2013-08-15 jeu. 19:50]
 CLOSED: [2013-08-15 jeu. 20:00]
 ** DONE Remove end to end test as this can no longer works with asynchronous
 CLOSED: [2013-08-15 jeu. 20:03]
+** DONE Cleanup elnode servers (only the proxy is needed at the moment)
+CLOSED: [2013-08-15 jeu. 20:06]
 ** TODO Render the sync to trello routine asynchronous
 ** TODO Render the sync complex entity routine asynchronous
 ** TODO Release notes
