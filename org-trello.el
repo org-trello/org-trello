@@ -502,9 +502,10 @@ Levels:
 
 ;; #################### orgtrello-proxy
 
-(defvar *ORGTRELLO-PROXY-HOST* "localhost")
-(defvar *ORGTRELLO-PROXY-PORT* 66666)
-(defvar *ORGTRELLO-PROXY-URL* (format "http://%s:%d/proxy" *ORGTRELLO-PROXY-HOST* *ORGTRELLO-PROXY-PORT*))
+(defvar *ORGTRELLO-PROXY-HOST* "localhost" "proxy host")
+(defvar *ORGTRELLO-PROXY-PORT* 66666       "proxy port")
+(defvar *ORGTRELLO-PROXY-URL* nil          "proxy url")
+(setq   *ORGTRELLO-PROXY-URL* (format "http://%s:%d/proxy" *ORGTRELLO-PROXY-HOST* *ORGTRELLO-PROXY-PORT*))
 
 (defun orgtrello-proxy/http (query-map &optional sync success-callback error-callback)
   "Query the trello api asynchronously."
