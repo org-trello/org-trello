@@ -1113,7 +1113,7 @@ Levels:
            (orgtrello/--chosen-board-name (gethash orgtrello/--chosen-board-id boards)))
       `(,orgtrello/--chosen-board-id ,orgtrello/--chosen-board-name))))
 
-(defun orgtrello/convention-property-name (name)
+(defun orgtrello/--convention-property-name (name)
   "Use the right convention for the property used in the headers of the org-mode file."
   (replace-regexp-in-string " " "-" name))
 
@@ -1135,10 +1135,14 @@ Levels:
     (orgtrello/--delete-buffer-property (format "#+property: %s" *BOARD-NAME*))
     (maphash
      (lambda (name id)
-       (orgtrello/--delete-buffer-property (format "#+property: %s" (orgtrello/convention-property-name name))))
+       (orgtrello/--delete-buffer-property (format "#+property: %s" (orgtrello/--convention-property-name name))))
      board-lists-hash-name-id)
     (if update-todo-keywords
         (orgtrello/--delete-buffer-property "#+TODO: "))))
+
+(defun orgtrello/--compute-keyword-separation (name)
+  "Given a keyword done (case insensitive) return a string '| done' or directly the keyword"
+  (if (string= "done" (downcase name)) (format "| %s" name) name))
 
 (defun orgtrello/update-orgmode-file-with-properties (board-name board-id board-lists-hash-name-id &optional update-todo-keywords)
   "Update the orgmode file with the needed headers for org-trello to work."
@@ -1152,13 +1156,13 @@ Levels:
     ;; install the other properties regarding the org keywords
     (maphash
      (lambda (name id)
-       (insert (format "#+property: %s %s\n" (orgtrello/convention-property-name name) id)))
+       (insert (format "#+property: %s %s\n" (orgtrello/--convention-property-name name) id)))
      board-lists-hash-name-id)
     (if update-todo-keywords
         (progn
           ;; install the todo list
           (insert "#+TODO: ")
-          (maphash (lambda (name _) (insert (concat (orgtrello/convention-property-name name) " "))) board-lists-hash-name-id)
+          (maphash (lambda (name _) (insert (concat (orgtrello/--compute-keyword-separation (orgtrello/--convention-property-name name)) " "))) board-lists-hash-name-id)
           (insert "\n")))
     ;; save the buffer
     (save-buffer)
