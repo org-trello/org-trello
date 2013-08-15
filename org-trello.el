@@ -876,8 +876,8 @@ Levels:
   (let ((orgtrello/--board-name-to-sync (orgtrello/--board-name)))
     (orgtrello-log/msg 3 "Synchronizing full entity with its structure on board '%s'..." orgtrello/--board-name-to-sync)
     (save-excursion
-      ;; iterate over the map of
-      (org-map-tree (lambda () (orgtrello/do-create-simple-entity t))))
+      ;; iterate over the map of entries and sync them
+      (org-map-tree 'orgtrello/do-create-simple-entity))
     (format "Synchronizing full entity with its structure on board '%s' - done" orgtrello/--board-name-to-sync)))
 
 (defun orgtrello/do-sync-full-file ()
