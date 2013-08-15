@@ -395,7 +395,7 @@ Levels:
   (let ((orgtrello-query/--entry-new-id      (orgtrello-query/--id data))
         (orgtrello-query/--entry-position    (orgtrello-query/--position data))
         (orgtrello-query/--entry-buffer-name (orgtrello-query/--buffername data)))
-    (orgtrello-log/msg 5 "orgtrello-query/--update-entity-id-to-buffer-callback: %S - pos %s - id %s" data orgtrello-query/--entry-new-id orgtrello-query/--entry-position)
+    (orgtrello-log/msg 5 "Updating entity '%s' in the buffer '%s' at point '%s'..." orgtrello-query/--entry-new-id orgtrello-query/--entry-buffer-name orgtrello-query/--entry-position)
     ;; switch to the right buffer
     (set-buffer orgtrello-query/--entry-buffer-name)
     ;; will update via tag the trello id of the new persisted data (if needed)
@@ -403,9 +403,9 @@ Levels:
       ;; Get back to the buffer
       (goto-char orgtrello-query/--entry-position)
       ;; now we extract the data
-      (let* ((orgtrello-query/--entry-metadata (trace (orgtrello-data/metadata) :entry-meta))
-             (orgtrello-query/--entry-id       (trace (orgtrello/--id orgtrello-query/--entry-metadata) :already-present-id))
-             (orgtrello-query/--entry-name     (trace (orgtrello/--label orgtrello-query/--entry-metadata) :current-name)))
+      (let* ((orgtrello-query/--entry-metadata (orgtrello-data/metadata))
+             (orgtrello-query/--entry-id       (orgtrello/--id orgtrello-query/--entry-metadata))
+             (orgtrello-query/--entry-name     (orgtrello/--label orgtrello-query/--entry-metadata) ))
         (if orgtrello-query/--entry-id ;; id already present in the org-mode file
             ;; no need to add another
             (orgtrello-log/msg 3 "Entity '%s' synced with id '%s'" orgtrello-query/--entry-name orgtrello-query/--entry-id)
@@ -416,9 +416,9 @@ Levels:
 
 (cl-defun orgtrello-query/--delete-success-callback (&key data &allow-other-keys)
   "Callback function called at the end of a successful delete request."
-  (orgtrello-log/msg 5 "orgtrello-query/--delete-success-callback %S" data)
   (let ((orgtrello-query/--entry-position    (orgtrello-query/--position data))
         (orgtrello-query/--entry-buffer-name (orgtrello-query/--buffername data)))
+    (orgtrello-log/msg 5 "Deleting entity in the buffer '%s' at point '%s'" orgtrello-query/--entry-buffer-name orgtrello-query/--entry-position)
     (set-buffer orgtrello-query/--entry-buffer-name)
     (save-excursion
       (goto-char orgtrello-query/--entry-position)
@@ -1044,7 +1044,7 @@ Levels:
           (if (hash-table-p query-http-or-error-msg)
               (progn
                 (orgtrello-proxy/http
-                 (trace (orgtrello/--update-query-with-org-metadata query-http-or-error-msg current-metadata) :current-to-delete)
+                 (orgtrello/--update-query-with-org-metadata query-http-or-error-msg current-metadata)
                  sync
                  'orgtrello-query/--delete-success-callback)
                 "Delete entity done!")
