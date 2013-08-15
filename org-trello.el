@@ -1395,7 +1395,7 @@ C-c o h - M-x org-trello/help-describing-bindings    - This help message."))
 
 (defun org-trello/--trigger-create-p (s)
   "A predicate function to determine if we trigger the creation/update of an entity"
-  (string-match-p "^[\*]+ .+\n$" s))
+  (when (stringp s) (string-match-p "^[\*]+ .+\n$" s)))
 
 (defun org-trello/--create-entity-when-writing (beg end len)
   (when org-trello-mode
