@@ -1357,15 +1357,18 @@ Levels:
   "A simple message to describe the standard bindings used."
   (interactive)
   (orgtrello-log/msg 0
-"C-c o i - M-x org-trello/install-key-and-token       - Install the keys and the access-token.
+"# SETUP RELATED
+C-c o i - M-x org-trello/install-key-and-token       - Install the keys and the access-token.
 C-c o I - M-x org-trello/install-board-and-lists-ids - Select the board and attach the todo, doing and done list.
+C-c o d - M-x org-trello/check-setup                 - Check that the setup is ok. If everything is ok, will simply display 'Setup ok!'
+# TRELLO RELATED
 C-c o b - M-x org-trello/create-board                - Create interactively a board and attach the org-mode file to this trello board.
 C-c o c - M-x org-trello/create-simple-entity        - Create/Update an entity (card/checklist/item) depending on its level and status. Do not deal with level superior to 4.
 C-c o C - M-x org-trello/create-complex-entity       - Create/Update a complete entity card/checklist/item and its subtree (depending on its level).
 C-c o s - M-x org-trello/sync-to-trello              - Synchronize the org-mode file to the trello board (org-mode -> trello).
 C-c o S - M-x org-trello/sync-from-trello            - Synchronize the org-mode file from the trello board (trello -> org-mode).
 C-c o k - M-x org-trello/kill-entity                 - Kill the entity (and its arborescence tree).
-C-c o d - M-x org-trello/check-setup                 - Simple routine to check that the setup is ok. If everything is ok, will simply display 'Setup ok!'
+# HELP
 C-c o h - M-x org-trello/help-describing-bindings    - This help message."))
 
 (defun org-trello/--trigger-create-p (s)
@@ -1391,9 +1394,11 @@ C-c o h - M-x org-trello/help-describing-bindings    - This help message."))
 (define-minor-mode org-trello-mode "Sync your org-mode and your trello together."
   :lighter " ot" ;; the name on the modeline
   :keymap  (let ((map (make-sparse-keymap)))
-             ;; synchronous request (direct to trello)
+             ;; setup relative
              (define-key map (kbd "C-c o i") 'org-trello/install-key-and-token)
              (define-key map (kbd "C-c o I") 'org-trello/install-board-and-lists-ids)
+             (define-key map (kbd "C-c o d") 'org-trello/check-setup)
+             ;; synchronous request (direct to trello)
              (define-key map (kbd "C-c o b") 'org-trello/create-board)
              (define-key map (kbd "C-c o S") 'org-trello/sync-from-trello)
              ;; asynchronous requests (requests through proxy)
@@ -1403,8 +1408,6 @@ C-c o h - M-x org-trello/help-describing-bindings    - This help message."))
              (define-key map (kbd "C-c o C") 'org-trello/create-complex-entity)
              ;; Help
              (define-key map (kbd "C-c o h") 'org-trello/help-describing-bindings)
-             (define-key map (kbd "C-c o d") 'org-trello/check-setup)
-             ;; define other bindings...
              map)
   :after-hook (org-trello/--prepare-org-trello-mode))
 
