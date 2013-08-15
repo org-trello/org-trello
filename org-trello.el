@@ -382,12 +382,12 @@ Levels:
 
 (cl-defun orgtrello-query/--standard-error-callback (&key error-thrown symbol-status response &allow-other-keys)
   "Standard error callback. Simply displays a message in the minibuffer with the error code."
-  (orgtrello-log/msg 3 "There was some problem during the request:\n
-- error-thrown: %s\nsymbol-status: %s\nresponse: %s" error-thrown symbol-status response))
+  (orgtrello-log/msg 3 "client - There was some problem during the request:\n
+- error-thrown: %s\nresponse: %s" error-thrown symbol-status response))
 
 (cl-defun orgtrello-query/--standard-success-callback (&key data &allow-other-keys)
   "Standard success callback. Simply displays a \"Success\" message in the minibuffer."
-  (when data (orgtrello-log/msg 3 "response data: %S" data))
+  (when data (orgtrello-log/msg 3 "client - response data: %S" data))
   (orgtrello-log/msg 3 "Success."))
 
 (cl-defun orgtrello-query/--update-entity-id-to-buffer-callback (&key data &allow-other-keys)
@@ -395,7 +395,7 @@ Levels:
   (let ((orgtrello-query/--entry-new-id      (orgtrello-query/--id data))
         (orgtrello-query/--entry-position    (orgtrello-query/--position data))
         (orgtrello-query/--entry-buffer-name (orgtrello-query/--buffername data)))
-    (orgtrello-log/msg 5 "Updating entity '%s' in the buffer '%s' at point '%s'..." orgtrello-query/--entry-new-id orgtrello-query/--entry-buffer-name orgtrello-query/--entry-position)
+    (orgtrello-log/msg 5 "client - Updating entity '%s' in the buffer '%s' at point '%s'..." orgtrello-query/--entry-new-id orgtrello-query/--entry-buffer-name orgtrello-query/--entry-position)
     ;; switch to the right buffer
     (set-buffer orgtrello-query/--entry-buffer-name)
     ;; will update via tag the trello id of the new persisted data (if needed)
@@ -418,7 +418,7 @@ Levels:
   "Callback function called at the end of a successful delete request."
   (let ((orgtrello-query/--entry-position    (orgtrello-query/--position data))
         (orgtrello-query/--entry-buffer-name (orgtrello-query/--buffername data)))
-    (orgtrello-log/msg 5 "Deleting entity in the buffer '%s' at point '%s'" orgtrello-query/--entry-buffer-name orgtrello-query/--entry-position)
+    (orgtrello-log/msg 5 "client - Deleting entity in the buffer '%s' at point '%s'" orgtrello-query/--entry-buffer-name orgtrello-query/--entry-position)
     (set-buffer orgtrello-query/--entry-buffer-name)
     (save-excursion
       (goto-char orgtrello-query/--entry-position)
@@ -482,8 +482,7 @@ Levels:
 
 (defun orgtrello-query/--http (server query-map &optional sync success-callback error-callback authentication-p)
   "HTTP query the server with the query-map."
-  (let* ((method      (orgtrello-query/--method query-map))
-         (fn-dispatch (orgtrello-query/--dispatch-http-query method)))
+  (let ((fn-dispatch (orgtrello-query/--dispatch-http-query (orgtrello-query/--method query-map))))
     (if sync
         (progn ;; synchronous request
           (puthash :sync t query-map)
@@ -521,16 +520,17 @@ Levels:
 
 (defun orgtrello-proxy/--response (http-con data)
   "A response wrapper"
-  (orgtrello-log/msg 5 "Responding to the proxy's client with %S" data)
-  (elnode-http-start http-con 201 '("Content-type" . "application/json"))
-  (elnode-http-return http-con (json-encode data)))
+  (let ((response-data (json-encode data)))
+    (orgtrello-log/msg 5 "proxy - Responding to client with data '%s'." response-data)
+    (elnode-http-start http-con 201 '("Content-type" . "application/json"))
+    (elnode-http-return http-con response-data)))
 
 (defun orgtrello-proxy/--standard-get-success-callback (http-connection)
   (lexical-let ((http-con http-connection))
     "Return a callback function able to deal with the position."
     (cl-defun get-some-insignificant-name (&key data &allow-other-keys)
       "Standard get response will simply relay the information to the client."
-      (orgtrello-log/msg 5 "callback get: %S" data)
+      (orgtrello-log/msg 5 "proxy - get callback: %S" data)
       (orgtrello-proxy/--response http-con data))))
 
 (defun orgtrello-proxy/--standard-post-or-put-or-delete-success-callback (http-connection buffer-metadata)
@@ -540,7 +540,7 @@ Levels:
                 (buffername (second buffer-metadata)))
     (cl-defun put-some-insignificant-name (&key data &allow-other-keys)
       "Will read the information from the response and simply return id and position."
-      (orgtrello-log/msg 5 "callback post/put/delete: %S - position: %s" data position)
+      (orgtrello-log/msg 5 "proxy - post/put/delete callback: %S - position: %s" data position)
       (let ((orgtrello-query/--identifier (orgtrello-query/--id data)))
         (orgtrello-proxy/--response http-con `((id . ,orgtrello-query/--identifier)
                                                (position . ,position)
@@ -582,8 +582,7 @@ Levels:
          (method            (orgtrello-query/--method query-map))
          (fn-dispatch       (orgtrello-proxy/--dispatch-http-query method)))
     ;; Execute the request to trello (at the moment, synchronous)
-    (funcall fn-dispatch http-con query-map (list position buffer-name) t)
-    (orgtrello-log/msg 5 "Proxy: Request received and transmitted!")))
+    (funcall fn-dispatch http-con query-map (list position buffer-name) t)))
 
 (defun orgtrello-proxy/--proxy-handler (http-con)
   "Proxy handler."
