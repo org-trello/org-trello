@@ -240,7 +240,7 @@
 :PROPERTIES:
 :orgtrello-id: 51e7e60bd23ccba35c00a588
 :END:
-* CANCELLED cancelled task
+* CANCELLED cancelled task 2
 :PROPERTIES:
 :orgtrello-id: 51ffe96c32c0ac5e59000850
 :END:

@@ -6,6 +6,7 @@ Minor emacs mode for org-mode - 2-way synchronization between org and trello boa
 
 - [why?](#why)
 - [Emacs version](#emacs-version)
+- [Migration](#migration)
 - [TL;DR](#tl;dr)
 	- [Fast help](#fast-help)
 	- [Demo](#demo)
@@ -63,6 +64,18 @@ Minor emacs mode for org-mode - 2-way synchronization between org and trello boa
 Tested on:
 - GNU Emacs 24.1.1 (x86_64-pc-linux-gnu, X toolkit, Xaw3d scroll bars) of 2012-09-22 on batsu, modified by Debian (<= 0.0.9)
 - GNU Emacs 24.3.1 (x86_64-pc-linux-gnu, X toolkit, Xaw3d scroll bars) of 2013-04-14 on marid, modified by Debian (from 0.1.0)
+
+# Migration
+
+0.1.1 -> 0.1.2:
+- From the version 0.1.1, the http requests will be asynchronous (not all of them yet).
+For this, we use elnode as a proxy before requesting trello.
+elnode server is started on the port 66666.
+- Another change in the workflow has been made.
+The creation of a new entity is triggered when you begin to type * (or more), add some text and then hit ENTER, the request is sent.
+
+A note, auto-complete when activated, generate a '\n' which triggers the requests too.
+You can always synchronize after this using the old bindings.
 
 # TL;DR
 

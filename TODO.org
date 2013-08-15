@@ -540,6 +540,8 @@ CLOSED: [2013-08-15 jeu. 20:00]
 CLOSED: [2013-08-15 jeu. 20:03]
 ** DONE Cleanup elnode servers (only the proxy is needed at the moment)
 CLOSED: [2013-08-15 jeu. 20:06]
+** DONE Update the readme to explain the migration from 0.1.1 to 0.1.2
+CLOSED: [2013-08-15 jeu. 20:14]
 ** TODO Render the sync to trello routine asynchronous
 ** TODO Render the sync complex entity routine asynchronous
 ** TODO Release notes
