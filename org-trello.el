@@ -503,9 +503,11 @@ Levels:
 ;; #################### orgtrello-proxy
 
 (defvar *ORGTRELLO-PROXY-HOST* "localhost" "proxy host")
-(defvar *ORGTRELLO-PROXY-PORT* 66666       "proxy port")
+(defvar *ORGTRELLO-PROXY-PORT* nil         "proxy port")
 (defvar *ORGTRELLO-PROXY-URL* nil          "proxy url")
-(setq   *ORGTRELLO-PROXY-URL* (format "http://%s:%d/proxy" *ORGTRELLO-PROXY-HOST* *ORGTRELLO-PROXY-PORT*))
+
+(defvar *ORGTRELLO-PROXY-DEFAULT-PORT* 9876 "Default proxy port")
+(setq *ORGTRELLO-PROXY-PORT* *ORGTRELLO-PROXY-DEFAULT-PORT*)
 
 (defun orgtrello-proxy/http (query-map &optional sync success-callback error-callback)
   "Query the trello api asynchronously."
@@ -572,7 +574,7 @@ Levels:
 
 (defun orgtrello-proxy/--elnode-proxy (http-con)
   "A simple handler to extract the params information and make the request to trello."
-  (orgtrello-log/msg 5 "Proxy server: params -> %S" http-con)
+  (orgtrello-log/msg 5 "Proxy: Request received. Transmitting...")
   (let* ((query-map-wrapped (orgtrello-proxy/--extract-trello-query http-con))
          (position          (assoc-default 'position query-map-wrapped))
          (buffer-name       (assoc-default 'buffername query-map-wrapped))
@@ -580,10 +582,11 @@ Levels:
          (method            (orgtrello-query/--method query-map))
          (fn-dispatch       (orgtrello-proxy/--dispatch-http-query method)))
     ;; Execute the request to trello (at the moment, synchronous)
-    (funcall fn-dispatch http-con query-map (list position buffer-name) t)))
+    (funcall fn-dispatch http-con query-map (list position buffer-name) t)
+    (orgtrello-log/msg 5 "Proxy: Request received and transmitted!")))
 
 (defun orgtrello-proxy/--proxy-handler (http-con)
-  "Launch function to start the proxy"
+  "Proxy handler."
   (elnode-hostpath-dispatcher http-con orgtrello-query/--app-routes))
 
 (defun orgtrello-proxy/--start (port host)
@@ -591,9 +594,17 @@ Levels:
   (elnode-start 'orgtrello-proxy/--proxy-handler :port port :host host)
   (setq elnode--do-error-logging nil))
 
-(orgtrello-proxy/--start *ORGTRELLO-PROXY-PORT* *ORGTRELLO-PROXY-HOST*)
+(defun orgtrello-proxy/reload ()
+  "Reload the proxy server."
+  (interactive)
+  ;; stop the default port
+  (elnode-stop *ORGTRELLO-PROXY-DEFAULT-PORT*)
+  ;; update with the new port the user possibly changed
+  (setq *ORGTRELLO-PROXY-URL* (format "http://%s:%d/proxy" *ORGTRELLO-PROXY-HOST* *ORGTRELLO-PROXY-PORT*))
+  ;; start the proxy
+  (orgtrello-proxy/--start *ORGTRELLO-PROXY-PORT* *ORGTRELLO-PROXY-HOST*))
 
-;; (elnode-stop *ORGTRELLO-PROXY-PORT*)
+(orgtrello-proxy/reload)
 
 (orgtrello-log/msg 4 "org-trello - orgtrello-proxy loaded!")
 

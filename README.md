@@ -70,7 +70,14 @@ Tested on:
 0.1.1 -> 0.1.2:
 - From the version 0.1.1, the http requests will be asynchronous (not all of them yet).
 For this, we use elnode as a proxy before requesting trello.
-elnode server is started on the port 66666.
+elnode server is started on the port 9876.
+You can always change this port
+
+``` lisp
+(setq *ORGTRELLO-PROXY-PORT* 9876)
+```
+Then M-x orgtrello-proxy/reload
+
 - Another change in the workflow has been made.
 The creation of a new entity is triggered when you begin to type * (or more), add some text and then hit ENTER, the request is sent.
 
