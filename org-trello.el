@@ -619,10 +619,14 @@ Levels:
   "org keywords used (based on org-todo-keywords-1)."
   org-todo-keywords-1)
 
+(defun orgtrello/reload-setup ()
+  "reload orgtrello setup"
+  (org-set-regexps-and-options))
+
 (defun orgtrello/--setup-properties ()
   "Setup the properties according to the org-mode setup. Return :ok."
   ;; read the setup
-  (org-set-regexps-and-options)
+  (orgtrello/reload-setup)
   ;; now exploit some
   (let* ((orgtrello/--list-keywords (nreverse (orgtrello/filtered-kwds)))
          (orgtrello/--hmap-id-name (cl-reduce
@@ -1172,7 +1176,7 @@ Levels:
     ;; save the buffer
     (save-buffer)
     ;; restart org to make org-trello aware of the new setup
-    (org-mode-restart)))
+    (orgtrello/reload-setup)))
 
 (defun orgtrello/--hash-table-keys (hash-table)
   "Extract the keys from the hash table"
@@ -1260,7 +1264,7 @@ Levels:
           ;; save the buffer
           (save-buffer)
           ;; reload setup
-          (org-set-regexps-and-options)))
+          (orgtrello/reload-setup)))
     (if (string-or-null-p org-trello/--result-action)
       (orgtrello-log/msg 3 org-trello/--result-action)
       (orgtrello-log/msg 3 (concat msg " - done!")))))
