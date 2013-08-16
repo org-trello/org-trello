@@ -534,7 +534,7 @@ Levels:
 (defun orgtrello-proxy/--get (http-con query-map &optional buffer-metadata standard-callback-fn sync)
   "GET on trello with the callback"
   (let ((buffer-name (second buffer-metadata)))
-    (orgtrello-query/http-trello (trace query-map) sync (when standard-callback-fn (funcall standard-callback-fn buffer-name)))))
+    (orgtrello-query/http-trello query-map sync (when standard-callback-fn (funcall standard-callback-fn buffer-name)))))
 
 (defun orgtrello-proxy/--post-or-put (http-con query-map &optional buffer-metadata standard-callback sync)
   "POST/PUT"
@@ -570,11 +570,12 @@ Levels:
          (buffer-name          (assoc-default 'buffername query-map-wrapped))
          (standard-callback    (assoc-default 'callback query-map-wrapped))
          (standard-callback-fn (when standard-callback (symbol-function (intern standard-callback)))) ;; the callback is passed as a string, we want it as a function when defined
+         (sync                 (trace (assoc-default 'sync query-map-wrapped) :sync))
          (query-map            (orgtrello-proxy/--compute-trello-query query-map-wrapped))
          (method               (orgtrello-query/--method query-map))
          (fn-dispatch          (orgtrello-proxy/--dispatch-http-query method)))
     ;; Execute the request to trello (at the moment, synchronous)
-    (funcall fn-dispatch http-con query-map (list position buffer-name) standard-callback-fn)
+    (funcall fn-dispatch http-con query-map (list position buffer-name) standard-callback-fn sync)
     ;; Answer about the update
     (orgtrello-proxy/--response http-con '((status . "ok")))))
 
@@ -840,7 +841,7 @@ Levels:
     ;; then execute the call
     (funcall dispatch-fn meta parent-meta grandparent-meta)))
 
-(defun orgtrello/--update-query-with-org-metadata (query-map org-metadata &optional success-callback buffer-name)
+(defun orgtrello/--update-query-with-org-metadata (query-map org-metadata &optional success-callback buffer-name sync)
   "Given a trello api query, add some metadata needed for org-trello to work (those metadata will be exploited by the proxy)."
   (when org-metadata
         (puthash :position   (orgtrello/--position org-metadata)   query-map)
@@ -849,32 +850,34 @@ Levels:
         (puthash :callback   success-callback                      query-map))
   (when buffer-name
         (puthash :buffername buffer-name                           query-map))
+  (when sync
+        (puthash :sync       sync                                  query-map))
   query-map)
 
 (defun orgtrello/do-create-simple-entity (&optional sync)
   "Do the actual simple creation of a card, checklist or task. Optionally, we can render the creation synchronous."
   (let* ((entry-metadata (orgtrello-data/entry-get-full-metadata))
          (current-entry  (gethash :current entry-metadata)))
-    (if entry-metadata
-        (let ((query-http-or-error-msg (orgtrello/--dispatch-create current-entry (gethash :parent entry-metadata) (gethash :grandparent entry-metadata))))
-          (if (hash-table-p query-http-or-error-msg)
-              ;; if it's a hash-table we can do the sync
-              (progn
-                ;; we enrich the trello query with some org/org-trello metadata (the proxy will deal with them later)
-                ;; and execute the request
-                (orgtrello-proxy/http (orgtrello/--update-query-with-org-metadata query-http-or-error-msg current-entry) sync)
-                "Synchronizing simple entity done!")
-            ;; else it's a string to display
-            query-http-or-error-msg)))))
+    (when entry-metadata
+          (let ((query-http-or-error-msg (orgtrello/--dispatch-create current-entry (gethash :parent entry-metadata) (gethash :grandparent entry-metadata))))
+            (if (hash-table-p query-http-or-error-msg)
+                ;; if it's a hash-table we can do the sync
+                (progn
+                  ;; we enrich the trello query with some org/org-trello metadata (the proxy will deal with them later)
+                  ;; and execute the request
+                  (orgtrello-proxy/http (orgtrello/--update-query-with-org-metadata query-http-or-error-msg current-entry nil nil sync) sync)
+                  "Synchronizing simple entity done!")
+                ;; else it's a string to display
+                query-http-or-error-msg)))))
 
 (defun orgtrello/--board-name ()
   "Compute the board's name"
   (assoc-default *BOARD-NAME* org-file-properties))
 
 (defun orgtrello/--do-sync-entity (level &optional sync)
-  "Sync the entity if the level corresponds to level."
-  (let ((current-entry (orgtrello-data/metadata)))
-    (when (= level (orgtrello/--level current-entry))
+  "Sync the entity with the right level."
+  (let ((orgtrello/--do-sync-entity--current-entry (orgtrello-data/metadata)))
+    (when (= level (orgtrello/--level orgtrello/--do-sync-entity--current-entry))
           (orgtrello/do-create-simple-entity sync))))
 
 (defun orgtrello/do-create-complex-entity ()
@@ -884,9 +887,9 @@ Levels:
     ;; iterate over the map of entries and sync them, breadth first
     (dolist (l '(1 2 3))
       (lexical-let ((level l))
-        (org-map-tree (lambda ()
-                        (message "level: %d" level)
-                        (orgtrello/--do-sync-entity level (= 1 level)))))) ;; level 1 is synchronous
+        (org-map-tree
+         (lambda ()
+           (orgtrello/--do-sync-entity level (<= level 2)))))) ;; level 1 and 2 are synchronous
     (format "Synchronizing full entity with its structure on board '%s' - done" orgtrello/--board-name-to-sync)))
 
 (defun orgtrello/do-sync-full-file ()
