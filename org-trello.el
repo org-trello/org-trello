@@ -1410,10 +1410,12 @@ C-c o h - M-x org-trello/help-describing-bindings    - This help message."))
 (defun org-trello/--create-entity-when-writing (beg end len)
   (when org-trello-mode
       (let ((org-trello/--potential-entity (thing-at-point 'line)))
-        (when (null (orgtrello-data/extract-identifier (point)))
-              (orgtrello-log/msg 5 "line: '%s'" org-trello/--potential-entity)
-              (when (org-trello/--trigger-create-p org-trello/--potential-entity)
-                    (org-trello/create-simple-entity))))))
+        (unless (orgtrello-data/extract-identifier (point))
+                (orgtrello-log/msg 5 "line: '%s'" org-trello/--potential-entity)
+                (when (org-trello/--trigger-create-p org-trello/--potential-entity)
+                      (save-excursion
+                        (beginning-of-line)
+                        (org-trello/create-simple-entity)))))))
 
 (defun org-trello/--prepare-org-trello-mode ()
   "Preparing org-trello mode"
