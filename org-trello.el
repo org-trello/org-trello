@@ -652,11 +652,13 @@ Levels:
 
 (defun orgtrello/--control-properties ()
   "org-trello needs the properties board-id and all list id from the trello board to be setuped on header property file. Returns :ok if everything is ok, or the error message if problems."
-  (let ((orgtrello/--hmap-count   (hash-table-count *HMAP-ID-NAME*)))
-    (if (and (assoc-default *BOARD-ID* org-file-properties)
+  (message "listname: %S\nhmap: %S\norgfp: %S" *HMAP-ID-NAME* *LIST-NAMES* org-file-properties)
+  (let ((orgtrello/--hmap-count (hash-table-count *HMAP-ID-NAME*)))
+    (if (and org-file-properties
+             (assoc-default *BOARD-ID* org-file-properties)
              (= (length *LIST-NAMES*) orgtrello/--hmap-count))
         :ok
-      "Setup problem.\nEither you did not connect your org-mode buffer with a trello board, to correct this:\n  * attach to a board through C-c o I or M-x org-trello/install-board-and-lists-ids\n  * or create a board from scratch with C-c o b or M-x org-trello/create-board).\nEither your org-mode's todo keyword list and your trello board lists are not named the same way (which they must).\nFor this, connect to trello and rename your board's list according to your org-mode's todo list.\nAlso, you can specify on your org-mode buffer the todo list you want to work with, for example: #+TODO: TODO DOING | DONE FAIL (hit C-c C-c to refresh the setup)")))
+        "Setup problem.\nEither you did not connect your org-mode buffer with a trello board, to correct this:\n  * attach to a board through C-c o I or M-x org-trello/install-board-and-lists-ids\n  * or create a board from scratch with C-c o b or M-x org-trello/create-board).\nEither your org-mode's todo keyword list and your trello board lists are not named the same way (which they must).\nFor this, connect to trello and rename your board's list according to your org-mode's todo list.\nAlso, you can specify on your org-mode buffer the todo list you want to work with, for example: #+TODO: TODO DOING | DONE FAIL (hit C-c C-c to refresh the setup)")))
 
 (defun orgtrello/--control-keys ()
   "org-trello needs the *consumer-key* and the *access-token* to access the trello resources. Returns :ok if everything is ok, or the error message if problems."
@@ -1286,7 +1288,8 @@ Levels:
 (defun org-trello/--control-and-do (control-fns fn-to-control-and-execute)
   "Execute the function fn if control-fns is nil or if the result of apply every function to fn is ok."
   (if control-fns
-      (let* ((org-trello/--error-messages (--filter (not (equal :ok (funcall it))) control-fns)))
+      (let* ((org-trello/--controls-done (--map (funcall it) control-fns))
+             (org-trello/--error-messages (--filter (not (equal :ok it)) org-trello/--controls-done)))
         (if org-trello/--error-messages
             ;; there are some trouble, we display all the error messages to help the user understand the problem
             (orgtrello-log/msg 1 "List of errors:\n %s" (--mapcat (concat "- " it "\n") org-trello/--error-messages))
