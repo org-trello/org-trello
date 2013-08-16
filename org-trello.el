@@ -788,10 +788,7 @@ Levels:
 
 (defun orgtrello/--compute-state-from-keyword (state)
   "Given a state, compute the org equivalent (to use with org-todo function)"
-  (cond ((or (not state) (string= "" state)) *TODO*)
-        ((string= *DONE* state)              'done)
-        ((string= *TODO* state)              *TODO*)
-        (t                                   *TODO*)))
+  (if (string= *DONE* state) 'done 'none))
 
 (defun orgtrello/--update-item-according-to-checklist-status (checklist-update-items-p checklist-meta)
   "Update the item of the checklist according to the status of the checklist."
