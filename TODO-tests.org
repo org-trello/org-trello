@@ -184,32 +184,53 @@
 :orgtrello-id: 520d27e97f4cfc3942000623
 :END:
 * DONE Joy of Clojure
+:PROPERTIES:
+:orgtrello-id: 520e97a4146e624d5d00434e
+:END:
 ** Part 1 Foundations [0%]
-*** TODO Clojure philosophy [100%]
-*** TODO Drinking from the Clojure firehose
-*** TODO Dipping our toes in the pool
+:PROPERTIES:
+:orgtrello-id: 520e97a5e197f1784f0025f7
+:END:
+*** Clojure philosophy [100%]
+*** Drinking from the Clojure firehose
+*** Dipping our toes in the pool
 ** Part 2 Data Types
-*** TODO On scalars [100%]
-*** TODO Composite data types [100%]
+:PROPERTIES:
+:orgtrello-id: 520e97a662ccc3b70d00421b
+:END:
+*** On scalars [100%]
+*** Composite data types [100%]
 ** Part 3 Functional Programming
-*** TODO Being lazy and set in your ways
-*** TODO Immutability
-*** TODO Designing a persistent toy
-*** TODO Laziness
-*** TODO Putting it all together: a lazy quicksort
-*** TODO Functional programming
-*** TODO Functions in all their forms [100%]
-*** TODO Closures
-*** TODO Thinking recursively
-*** TODO Putting it all together: A* pathfinding
-*** TODO Functional programming
-*** TODO Immutability
+:PROPERTIES:
+:orgtrello-id: 520e97a7ced9726a4600479b
+:END:
+*** Being lazy and set in your ways
+:PROPERTIES:
+:orgtrello-id: 520e97a9416400f25c004dd6
+:END:
+*** Immutability
+*** Designing a persistent toy
+*** Laziness
+*** Putting it all together: a lazy quicksort
+*** Functional programming
+*** Functions in all their forms [100%]
+*** Closures
+*** Thinking recursively
+*** Putting it all together: A* pathfinding
+*** Functional programming
+*** Immutability
 ** Part 4 Large-Scale Design
-*** TODO Macros
-*** TODO Combining data and code
-*** TODO Java.next
-*** TODO Mutation
-*** TODO Java.next
+:PROPERTIES:
+:orgtrello-id: 520e97a89c05c7735a002e03
+:END:
+*** Macros
+*** Combining data and code
+*** Java.next
+*** Mutation
+*** Java.next
 ** Part 5 Tangential Considerations
-*** TODO Performance
-*** TODO Clojure changes the way you think
+:PROPERTIES:
+:orgtrello-id: 520e97a8a83907d45e00226c
+:END:
+*** Performance
+*** Clojure changes the way you think

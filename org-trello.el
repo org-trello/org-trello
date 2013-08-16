@@ -478,21 +478,13 @@ Levels:
 (defvar orgtrello-query/--app-routes '(;; proxy routine
                                        ("^localhost//proxy/\\(.*\\)" . orgtrello-proxy/--elnode-proxy)))
 
-(defun orgtrello-proxy/--response (http-con data)
-  "A response wrapper"
-  (let ((response-data (json-encode data)))
-    (orgtrello-log/msg 5 "proxy - Responding to client with data '%s'." response-data)
-    (elnode-http-start http-con 201 '("Content-type" . "application/json"))
-    (elnode-http-return http-con response-data)))
-
-(defun orgtrello-proxy/--standard-post-or-put-success-callback (http-connection buffer-metadata)
+(defun orgtrello-proxy/--standard-post-or-put-success-callback (buffer-metadata)
   "Return a callback function able to deal with the position."
-  (lexical-let ((http-con                            http-connection)
-                (orgtrello-query/--entry-position    (first buffer-metadata))
+  (lexical-let ((orgtrello-query/--entry-position    (first buffer-metadata))
                 (orgtrello-query/--entry-buffer-name (second buffer-metadata)))
     (cl-defun put-some-insignificant-name (&key data &allow-other-keys)
       "Will read the information from the response and simply return id and position."
-      (let ((orgtrello-query/--entry-new-id      (orgtrello-query/--id data)))
+      (let ((orgtrello-query/--entry-new-id (orgtrello-query/--id data)))
         (orgtrello-log/msg 5 "proxy - Updating entity '%s' in the buffer '%s' at point '%s'..." orgtrello-query/--entry-new-id orgtrello-query/--entry-buffer-name orgtrello-query/--entry-position)
         ;; switch to the right buffer
         (set-buffer orgtrello-query/--entry-buffer-name)
@@ -512,37 +504,36 @@ Levels:
                   (org-set-property *ORGTRELLO-ID* orgtrello-query/--entry-new-id)
                   (orgtrello-log/msg 3 "Newly entity '%s' synced with id '%s'" orgtrello-query/--entry-name orgtrello-query/--entry-new-id)))))))))
 
-(defun orgtrello-proxy/--standard-delete-success-callback (http-connection buffer-metadata)
+(defun orgtrello-proxy/--standard-delete-success-callback (buffer-metadata)
   "Return a callback function able to deal with the position."
-  (lexical-let ((http-con http-connection)
-                (position (first buffer-metadata))
-                (buffername (second buffer-metadata)))
+  (lexical-let ((orgtrello-query/--entry-position    (first buffer-metadata))
+                (orgtrello-query/--entry-buffer-name (second buffer-metadata)))
     (cl-defun delete-some-insignificant-name (&key data &allow-other-keys)
       "Will read the information from the response and simply return id and position."
-      (orgtrello-log/msg 5 "proxy -  Deleting entity in the buffer '%s' at point '%s'" buffername position)
-      (set-buffer buffername)
+      (orgtrello-log/msg 5 "proxy -  Deleting entity in the buffer '%s' at point '%s'" orgtrello-query/--entry-buffer-name orgtrello-query/--entry-position)
+      (set-buffer orgtrello-query/--entry-buffer-name)
       (save-excursion
-        (goto-char position)
+        (goto-char orgtrello-query/--entry-position)
         (org-back-to-heading t)
         (org-delete-property *ORGTRELLO-ID*)
         (hide-subtree)
         (beginning-of-line)
         (kill-line)
         (kill-line))
-      (orgtrello-log/msg 5 "proxy -  Deleting entity in the buffer '%s' at point '%s' done!" buffername position))))
+      (orgtrello-log/msg 5 "proxy -  Deleting entity in the buffer '%s' at point '%s' done!" orgtrello-query/--entry-buffer-name orgtrello-query/--entry-position))))
 
-(defun orgtrello-proxy/--get (http-con query-map &optional buffer-metadata standard-callback-fn sync)
+(defun orgtrello-proxy/--get (query-map &optional buffer-metadata standard-callback-fn sync)
   "GET on trello with the callback"
   (let ((buffer-name (second buffer-metadata)))
     (orgtrello-query/http-trello query-map sync (when standard-callback-fn (funcall standard-callback-fn buffer-name)))))
 
-(defun orgtrello-proxy/--post-or-put (http-con query-map &optional buffer-metadata standard-callback sync)
+(defun orgtrello-proxy/--post-or-put (query-map &optional buffer-metadata standard-callback sync)
   "POST/PUT"
-  (orgtrello-query/http-trello query-map sync (orgtrello-proxy/--standard-post-or-put-success-callback http-con buffer-metadata)))
+  (orgtrello-query/http-trello query-map sync (orgtrello-proxy/--standard-post-or-put-success-callback buffer-metadata)))
 
-(defun orgtrello-proxy/--delete (http-con query-map &optional buffer-metadata standard-callback sync)
+(defun orgtrello-proxy/--delete (query-map &optional buffer-metadata standard-callback sync)
   "DELETE"
-  (orgtrello-query/http-trello query-map sync (orgtrello-proxy/--standard-delete-success-callback http-con buffer-metadata)))
+  (orgtrello-query/http-trello query-map sync (orgtrello-proxy/--standard-delete-success-callback buffer-metadata)))
 
 (defun orgtrello-proxy/--dispatch-http-query (method)
   "Dispach query function depending on the http method input parameter."
@@ -562,6 +553,13 @@ Levels:
         (payload (assoc-default 'params query-map-wrapped)))
     (orgtrello-hash/make-hash method uri payload)))
 
+(defun orgtrello-proxy/--response (http-con data)
+  "A response wrapper"
+  (let ((response-data (json-encode data)))
+    (orgtrello-log/msg 5 "proxy - Responding to client with data '%s'." response-data)
+    (elnode-http-start http-con 201 '("Content-type" . "application/json"))
+    (elnode-http-return http-con response-data)))
+
 (defun orgtrello-proxy/--elnode-proxy (http-con)
   "A simple handler to extract the params information and make the request to trello."
   (orgtrello-log/msg 5 "Proxy: Request received. Transmitting...")
@@ -570,12 +568,12 @@ Levels:
          (buffer-name          (assoc-default 'buffername query-map-wrapped))
          (standard-callback    (assoc-default 'callback query-map-wrapped))
          (standard-callback-fn (when standard-callback (symbol-function (intern standard-callback)))) ;; the callback is passed as a string, we want it as a function when defined
-         (sync                 (trace (assoc-default 'sync query-map-wrapped) :sync))
+         (sync                 (assoc-default 'sync query-map-wrapped))
          (query-map            (orgtrello-proxy/--compute-trello-query query-map-wrapped))
          (method               (orgtrello-query/--method query-map))
          (fn-dispatch          (orgtrello-proxy/--dispatch-http-query method)))
     ;; Execute the request to trello (at the moment, synchronous)
-    (funcall fn-dispatch http-con query-map (list position buffer-name) standard-callback-fn sync)
+    (funcall fn-dispatch query-map (list position buffer-name) standard-callback-fn sync)
     ;; Answer about the update
     (orgtrello-proxy/--response http-con '((status . "ok")))))
 
