@@ -91,130 +91,6 @@
 :PROPERTIES:
 :orgtrello-id: 51e02e58daac63334f00215d
 :END:
-* DONE Joy of Clojure
-:PROPERTIES:
-:orgtrello-id: 51e02fb50bd93ea60600235b
-:END:
-** Part 4 Large-Scale Design
-:PROPERTIES:
-:orgtrello-id: 520676ce5260e17d2e0004e3
-:END:
-*** TODO Macros
-:PROPERTIES:
-:orgtrello-id: 520676cf2ba49f390d00053a
-:END:
-*** TODO Combining data and code
-:PROPERTIES:
-:orgtrello-id: 520676cf8184bc4f31000bd2
-:END:
-*** TODO Java.next
-:PROPERTIES:
-:orgtrello-id: 520676d0b2f4bf0915000bad
-:END:
-*** TODO Mutation
-:PROPERTIES:
-:orgtrello-id: 520676d157f171592e0004c4
-:END:
-*** TODO Java.next
-:PROPERTIES:
-:orgtrello-id: 520b85b3d30c6d6b0f0010a0
-:END:
-** Part 3 Functional Programming
-:PROPERTIES:
-:orgtrello-id: 520676c5b1cde2027c0001f6
-:END:
-*** TODO Being lazy and set in your ways
-:PROPERTIES:
-:orgtrello-id: 520676c61d6d442931000b6c
-:END:
-*** TODO Immutability
-:PROPERTIES:
-:orgtrello-id: 520676c66c66d08820000bf1
-:END:
-*** TODO Designing a persistent toy
-:PROPERTIES:
-:orgtrello-id: 520676c757f171592e0004c3
-:END:
-*** TODO Laziness
-:PROPERTIES:
-:orgtrello-id: 520676c8306e6e0d31000a74
-:END:
-*** TODO Putting it all together: a lazy quicksort
-:PROPERTIES:
-:orgtrello-id: 520676c975059a39310003f8
-:END:
-*** TODO Functional programming
-:PROPERTIES:
-:orgtrello-id: 520676cae46070a320000d82
-:END:
-*** TODO Functions in all their forms [100%]
-:PROPERTIES:
-:orgtrello-id: 520676cb4573217473000647
-:END:
-*** TODO Closures
-:PROPERTIES:
-:orgtrello-id: 520676cc35bc150a31000bcc
-:END:
-*** TODO Thinking recursively
-:PROPERTIES:
-:orgtrello-id: 520676cc1bdad3d43e000330
-:END:
-*** TODO Putting it all together: A* pathfinding
-:PROPERTIES:
-:orgtrello-id: 520676cdaee5c71e310004c3
-:END:
-*** TODO Functional programming
-:PROPERTIES:
-:orgtrello-id: 520b8310b2ba2cf56c0016ee
-:END:
-*** TODO Immutability
-:PROPERTIES:
-:orgtrello-id: 520b831218821cca15001532
-:END:
-** Part 5 Tangential Considerations
-:PROPERTIES:
-:orgtrello-id: 520676d2a573f12b15000c06
-:END:
-*** TODO Performance
-:PROPERTIES:
-:orgtrello-id: 520676d2b68b77c62f000560
-:END:
-*** TODO Clojure changes the way you think
-:PROPERTIES:
-:orgtrello-id: 520676d3477e9f86620003d8
-:END:
-*** TODO Clojure changes the way you think
-:PROPERTIES:
-:orgtrello-id: 520b8310f5b1607e07001579
-:END:
-** Part 2 Data Types
-:PROPERTIES:
-:orgtrello-id: 520676bf3d4830490d000d71
-:END:
-*** TODO On scalars [100%]
-:PROPERTIES:
-:orgtrello-id: 520676c0088d0e6620000478
-:END:
-*** TODO Composite data types [100%]
-:PROPERTIES:
-:orgtrello-id: 520676c3aea4261431000ace
-:END:
-** Part 1 Foundations [0%]
-:PROPERTIES:
-:orgtrello-id: 520676bbded0605131000568
-:END:
-*** TODO Clojure philosophy [100%]
-:PROPERTIES:
-:orgtrello-id: 520676bbbc23678c62000d4a
-:END:
-*** TODO Drinking from the Clojure firehose
-:PROPERTIES:
-:orgtrello-id: 520676bdf9fd5d320d000b63
-:END:
-*** TODO Dipping our toes in the pool
-:PROPERTIES:
-:orgtrello-id: 520676bee360a0f02f000b74
-:END:
 * DONE Clojure Programming
 :PROPERTIES:
 :orgtrello-id: 51e02fb663b4da66050026e3
@@ -307,3 +183,33 @@
 :PROPERTIES:
 :orgtrello-id: 520d27e97f4cfc3942000623
 :END:
+* DONE Joy of Clojure
+** Part 1 Foundations [0%]
+*** TODO Clojure philosophy [100%]
+*** TODO Drinking from the Clojure firehose
+*** TODO Dipping our toes in the pool
+** Part 2 Data Types
+*** TODO On scalars [100%]
+*** TODO Composite data types [100%]
+** Part 3 Functional Programming
+*** TODO Being lazy and set in your ways
+*** TODO Immutability
+*** TODO Designing a persistent toy
+*** TODO Laziness
+*** TODO Putting it all together: a lazy quicksort
+*** TODO Functional programming
+*** TODO Functions in all their forms [100%]
+*** TODO Closures
+*** TODO Thinking recursively
+*** TODO Putting it all together: A* pathfinding
+*** TODO Functional programming
+*** TODO Immutability
+** Part 4 Large-Scale Design
+*** TODO Macros
+*** TODO Combining data and code
+*** TODO Java.next
+*** TODO Mutation
+*** TODO Java.next
+** Part 5 Tangential Considerations
+*** TODO Performance
+*** TODO Clojure changes the way you think
