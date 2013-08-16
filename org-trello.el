@@ -567,9 +567,9 @@ Levels:
   (orgtrello-log/msg 5 "Proxy: Request received. Transmitting...")
   (let* ((query-map-wrapped    (orgtrello-proxy/--extract-trello-query http-con))
          (position             (assoc-default 'position query-map-wrapped))
-         (buffer-name          (trace (assoc-default 'buffername query-map-wrapped) :buff))
+         (buffer-name          (assoc-default 'buffername query-map-wrapped))
          (standard-callback    (assoc-default 'callback query-map-wrapped))
-         (standard-callback-fn (trace (when standard-callback (symbol-function (intern standard-callback))) :intern)) ;; the callback is passed as a string, we want it as a function when defined
+         (standard-callback-fn (when standard-callback (symbol-function (intern standard-callback)))) ;; the callback is passed as a string, we want it as a function when defined
          (query-map            (orgtrello-proxy/--compute-trello-query query-map-wrapped))
          (method               (orgtrello-query/--method query-map))
          (fn-dispatch          (orgtrello-proxy/--dispatch-http-query method)))
@@ -652,7 +652,6 @@ Levels:
 
 (defun orgtrello/--control-properties ()
   "org-trello needs the properties board-id and all list id from the trello board to be setuped on header property file. Returns :ok if everything is ok, or the error message if problems."
-  (message "listname: %S\nhmap: %S\norgfp: %S" *HMAP-ID-NAME* *LIST-NAMES* org-file-properties)
   (let ((orgtrello/--hmap-count (hash-table-count *HMAP-ID-NAME*)))
     (if (and org-file-properties
              (assoc-default *BOARD-ID* org-file-properties)
@@ -872,13 +871,22 @@ Levels:
   "Compute the board's name"
   (assoc-default *BOARD-NAME* org-file-properties))
 
+(defun orgtrello/--do-sync-entity (level &optional sync)
+  "Sync the entity if the level corresponds to level."
+  (let ((current-entry (orgtrello-data/metadata)))
+    (when (= level (orgtrello/--level current-entry))
+          (orgtrello/do-create-simple-entity sync))))
+
 (defun orgtrello/do-create-complex-entity ()
   "Do the actual full card creation - from card to task. Beware full side effects..."
   (let ((orgtrello/--board-name-to-sync (orgtrello/--board-name)))
     (orgtrello-log/msg 3 "Synchronizing full entity with its structure on board '%s'..." orgtrello/--board-name-to-sync)
-    (save-excursion
-      ;; iterate over the map of entries and sync them
-      (org-map-tree 'orgtrello/do-create-simple-entity))
+    ;; iterate over the map of entries and sync them, breadth first
+    (dolist (l '(1 2 3))
+      (lexical-let ((level l))
+        (org-map-tree (lambda ()
+                        (message "level: %d" level)
+                        (orgtrello/--do-sync-entity level (= 1 level)))))) ;; level 1 is synchronous
     (format "Synchronizing full entity with its structure on board '%s' - done" orgtrello/--board-name-to-sync)))
 
 (defun orgtrello/do-sync-full-file ()
@@ -1328,16 +1336,12 @@ Levels:
 (defun org-trello/sync-from-trello ()
   "Control first, then if ok, sync the org-mode file from the trello board."
   (interactive)
-  ;; as this action will write on the buffer, we need to remove the hook
-  (remove-hook 'after-change-functions 'org-trello/--create-entity-when-writing)
   ;; execute the action
   (org-trello/--msg-deco-control-and-do
      "Synchronizing trello board to org-mode file"
      '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties orgtrello/--control-encoding)
      'orgtrello/do-sync-full-from-trello
-     t)
-  ;; add the hook again
-  (add-hook 'after-change-functions 'org-trello/--create-entity-when-writing))
+     t))
 
 (defun org-trello/kill-entity ()
   "Control first, then if ok, delete the entity and all its arborescence."
@@ -1410,30 +1414,9 @@ C-c o k - M-x org-trello/kill-entity                 - Kill the entity (and its 
 # HELP
 C-c o h - M-x org-trello/help-describing-bindings    - This help message."))
 
-(defun org-trello/--trigger-create-p (s)
-  "A predicate function to determine if we trigger the creation/update of an entity"
-  (when (stringp s) (string-match-p "^[\*]+ .+\n$" s)))
-
-(defun org-trello/--create-entity-when-writing (beg end len)
-  (when org-trello-mode
-      (let ((org-trello/--potential-entity (thing-at-point 'line)))
-        (unless (orgtrello-data/extract-identifier (point))
-                (orgtrello-log/msg 5 "line: '%s'" org-trello/--potential-entity)
-                (when (org-trello/--trigger-create-p org-trello/--potential-entity)
-                      (save-excursion
-                        (beginning-of-line)
-                        (org-trello/create-simple-entity)))))))
-
 (defun org-trello/--prepare-org-trello-mode ()
   "Preparing org-trello mode"
-  (if org-trello-mode
-      (progn
-;;        (if auto-complete-mode (auto-complete 0))
-        (add-hook 'after-change-functions 'org-trello/--create-entity-when-writing)
-        (orgtrello-log/msg 0 "org-trello/ot is on! To begin with, hit C-c o h or M-x 'org-trello/help-describing-bindings"))
-      (progn
-        (remove-hook 'after-change-functions 'org-trello/--create-entity-when-writing)
-        (orgtrello-log/msg 0 "org-trello/ot is off!"))))
+  (orgtrello-log/msg 0 (if org-trello-mode "org-trello/ot is on! To begin with, hit C-c o h or M-x 'org-trello/help-describing-bindings" "org-trello/ot is off!")))
 
 ;;;###autoload
 (define-minor-mode org-trello-mode "Sync your org-mode and your trello together."
