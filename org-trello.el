@@ -563,15 +563,15 @@ Levels:
 (defun orgtrello-proxy/--elnode-proxy (http-con)
   "A simple handler to extract the params information and make the request to trello."
   (orgtrello-log/msg 5 "Proxy: Request received. Transmitting...")
-  (let* ((query-map-wrapped    (orgtrello-proxy/--extract-trello-query http-con))
-         (position             (assoc-default 'position query-map-wrapped))
-         (buffer-name          (assoc-default 'buffername query-map-wrapped))
-         (standard-callback    (assoc-default 'callback query-map-wrapped))
+  (let* ((query-map-wrapped    (orgtrello-proxy/--extract-trello-query http-con))                     ;; wrapped query is mandatory
+         (position             (assoc-default 'position query-map-wrapped))                           ;; position is mandatory
+         (buffer-name          (assoc-default 'buffername query-map-wrapped))                         ;; buffer-name is mandatory
+         (standard-callback    (assoc-default 'callback query-map-wrapped))                           ;; there is the possibility to transmit the callback from the client to the proxy
          (standard-callback-fn (when standard-callback (symbol-function (intern standard-callback)))) ;; the callback is passed as a string, we want it as a function when defined
-         (sync                 (assoc-default 'sync query-map-wrapped))
-         (query-map            (orgtrello-proxy/--compute-trello-query query-map-wrapped))
-         (method               (orgtrello-query/--method query-map))
-         (fn-dispatch          (orgtrello-proxy/--dispatch-http-query method)))
+         (sync                 (assoc-default 'sync query-map-wrapped))                               ;; there is a possibility to enforce the sync between proxy and client
+         (query-map            (orgtrello-proxy/--compute-trello-query query-map-wrapped))            ;; extracting the query
+         (method               (orgtrello-query/--method query-map))                                  ;; then the method
+         (fn-dispatch          (orgtrello-proxy/--dispatch-http-query method)))                       ;; from which we compute the dispatch fn
     ;; Execute the request to trello (at the moment, synchronous)
     (funcall fn-dispatch query-map (list position buffer-name) standard-callback-fn sync)
     ;; Answer about the update
