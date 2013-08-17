@@ -188,6 +188,18 @@ Levels:
           (puthash :grandparent grandparent-heading mapdata)
           mapdata))))
 
+(defun orgtrello-data/current (entry-meta)
+  "Given an entry-meta, return the current entry"
+  (gethash :current entry-meta))
+
+(defun orgtrello-data/parent (entry-meta)
+  "Given an entry-meta, return the current entry"
+  (gethash :parent entry-meta))
+
+(defun orgtrello-data/grandparent (entry-meta)
+  "Given an entry-meta, return the grandparent entry"
+  (gethash :grandparent entry-meta))
+
 (defun orgtrello-data/--get-metadata (heading-metadata)
   "Given the heading-metadata returned by the function 'org-heading-components, make it a hashmap with key :level, :keyword, :title. and their respective value"
   (cl-destructuring-bind (buffer-name point id due level _ keyword _ title &rest) heading-metadata
@@ -471,98 +483,26 @@ Levels:
 
 (defun orgtrello-proxy/http (query-map &optional sync success-callback error-callback)
   "Query the trello api asynchronously."
-  (let ((query-map-proxy (orgtrello-hash/make-hash "POST" "/" query-map)))
+  (let ((query-map-proxy (orgtrello-hash/make-hash "POST" "/trello/" query-map)))
     (orgtrello-log/msg 5 "Request to proxy wrapped: %S" query-map-proxy)
     (orgtrello-query/--http *ORGTRELLO-PROXY-URL* query-map-proxy sync success-callback error-callback)))
 
-(defvar orgtrello-query/--app-routes '(;; proxy routine
-                                       ("^localhost//proxy/\\(.*\\)" . orgtrello-proxy/--elnode-proxy)))
+(defun orgtrello-proxy/http-producer (query-map &optional sync)
+  "Query the proxy producer"
+  (let ((query-map-proxy (orgtrello-hash/make-hash "POST" "/producer/" query-map)))
+    (orgtrello-log/msg 5 "Request to proxy wrapped: %S" query-map-proxy)
+    (orgtrello-query/--http *ORGTRELLO-PROXY-URL* query-map-proxy sync)))
 
-(defun orgtrello/compute-marker (position)
-  "Compute the orgtrello marker which is composed of position"
-  (format "%s-%s" *ORGTRELLO-MARKER* position))
+(defun orgtrello-proxy/http-consume ()
+  "Query the trello proxy consumer"
+  (orgtrello-query/--http *ORGTRELLO-PROXY-URL* (orgtrello-hash/make-hash "POST" "/consumer/")))
 
-(defun orgtrello-proxy/--standard-post-or-put-success-callback (buffer-metadata)
-  "Return a callback function able to deal with the update of the buffer at a given position."
-  (lexical-let ((orgtrello-query/--entry-position    (first buffer-metadata))
-                (orgtrello-query/--entry-buffer-name (second buffer-metadata)))
-    (cl-defun put-some-insignificant-name (&key data &allow-other-keys)
-      "Will read the information from the response and simply return id and position."
-      (let ((orgtrello-query/--entry-new-id (orgtrello-query/--id data))
-            (orgtrello-query/--marker       (orgtrello/compute-marker orgtrello-query/--entry-position))
-            (orgtrello-query/--name-data    (orgtrello-query/--name data)))
-        (orgtrello-log/msg 5 "proxy - Updating entity '%s' with id '%s' in buffer '%s' at point '%s'..." orgtrello-query/--name-data orgtrello-query/--entry-new-id orgtrello-query/--entry-buffer-name orgtrello-query/--entry-position)
-        ;; switch to the right buffer
-        (set-buffer orgtrello-query/--entry-buffer-name)
-        ;; will update via tag the trello id of the new persisted data (if needed)
-        (save-excursion
-          ;; Get back to the buffer's position to update
-          (org-goto-local-search-headings orgtrello-query/--marker nil t)
-          ;; remove the marker now that we're done
-          (org-delete-property orgtrello-query/--marker)
-          ;; now we extract the data
-          (let* ((orgtrello-query/--entry-metadata (orgtrello-data/metadata))
-                 (orgtrello-query/--entry-id       (orgtrello/--id orgtrello-query/--entry-metadata))
-                 (orgtrello-query/--entry-name     (orgtrello/--label orgtrello-query/--entry-metadata) ))
-            (if orgtrello-query/--entry-id ;; id already present in the org-mode file
-                ;; no need to add another
-                (orgtrello-log/msg 3 "Entity '%s' synced with id '%s'" orgtrello-query/--entry-name orgtrello-query/--entry-id)
-                (progn
-                  ;; not present, this was just created, we add a simple property
-                  (org-set-property *ORGTRELLO-ID* orgtrello-query/--entry-new-id)
-                  (orgtrello-log/msg 3 "Newly entity '%s' synced with id '%s'" orgtrello-query/--entry-name orgtrello-query/--entry-new-id)))))))))
-
-(defun orgtrello-proxy/--standard-post-or-put-error-callback (buffer-metadata)
-  "Return a callback function able to deal with the update position."
-  (lexical-let ((orgtrello-query/--entry-position    (first buffer-metadata))
-                (orgtrello-query/--entry-buffer-name (second buffer-metadata)))
-    (cl-defun put-error-some-insignificant-name (&key data &allow-other-keys)
-      "Will delete information from the buffer."
-      (let ((orgtrello-query/--marker (orgtrello/compute-marker orgtrello-query/--entry-position)))
-        (orgtrello-log/msg 5 "proxy - Error - Removing metadata from buffer '%s' at point '%s'..." orgtrello-query/--entry-buffer-name orgtrello-query/--entry-position)
-        ;; switch to the right buffer
-        (set-buffer orgtrello-query/--entry-buffer-name)
-        ;; will update via tag the trello id of the new persisted data (if needed)
-        (save-excursion
-          ;; Get back to the buffer's position to update
-          (org-goto-local-search-headings orgtrello-query/--marker nil t)
-          ;; remove the marker now that we're done
-          (org-delete-property orgtrello-query/--marker))))))
-
-(defun orgtrello-proxy/--standard-delete-success-callback (buffer-metadata)
-  "Return a callback function able to deal with the position."
-  (lexical-let ((orgtrello-query/--entry-position    (first buffer-metadata))
-                (orgtrello-query/--entry-buffer-name (second buffer-metadata)))
-    (cl-defun delete-some-insignificant-name (&key data &allow-other-keys)
-      "Will read the information from the response and simply return id and position."
-      (orgtrello-log/msg 5 "proxy -  Deleting entity in the buffer '%s' at point '%s'" orgtrello-query/--entry-buffer-name orgtrello-query/--entry-position)
-      (set-buffer orgtrello-query/--entry-buffer-name)
-      (save-excursion
-        (goto-char orgtrello-query/--entry-position)
-        (org-back-to-heading t)
-        (org-delete-property *ORGTRELLO-ID*)
-        (hide-subtree)
-        (beginning-of-line)
-        (kill-line)
-        (kill-line))
-      (orgtrello-log/msg 5 "proxy -  Deleting entity in the buffer '%s' at point '%s' done!" orgtrello-query/--entry-buffer-name orgtrello-query/--entry-position))))
-
-(defun orgtrello-proxy/--get (query-map &optional buffer-metadata standard-callback-fn sync)
-  "GET on trello with the callback"
-  (let ((buffer-name (second buffer-metadata)))
-    (orgtrello-query/http-trello query-map sync (when standard-callback-fn (funcall standard-callback-fn buffer-name)))))
-
-(defun orgtrello-proxy/--post-or-put (query-map &optional buffer-metadata standard-callback sync)
-  "POST/PUT"
-  (orgtrello-query/http-trello
-   query-map
-   sync
-   (orgtrello-proxy/--standard-post-or-put-success-callback buffer-metadata)
-   (orgtrello-proxy/--standard-post-or-put-error-callback buffer-metadata)))
-
-(defun orgtrello-proxy/--delete (query-map &optional buffer-metadata standard-callback sync)
-  "DELETE"
-  (orgtrello-query/http-trello query-map sync (orgtrello-proxy/--standard-delete-success-callback buffer-metadata)))
+(defvar orgtrello-query/--app-routes '(;; proxy to request trello
+                                       ("^localhost//proxy/trello/\\(.*\\)" . orgtrello-proxy/--elnode-proxy)
+                                       ;; proxy producer to receive async creation request
+                                       ("^localhost//proxy/producer/\\(.*\\)" . orgtrello-proxy/--elnode-proxy-producer)
+                                       ;; proxy consumer to consumer the producer's product
+                                       ("^localhost//proxy/consumer/\\(.*\\)" . orgtrello-proxy/--elnode-proxy-consumer)))
 
 (defun orgtrello-proxy/--dispatch-http-query (method)
   "Dispach query function depending on the http method input parameter."
@@ -585,26 +525,161 @@ Levels:
 (defun orgtrello-proxy/--response (http-con data)
   "A response wrapper"
   (let ((response-data (json-encode data)))
-    (orgtrello-log/msg 5 "proxy - Responding to client with data '%s'." response-data)
+    (orgtrello-log/msg 5 "Proxy - Responding to client with data '%s'." response-data)
     (elnode-http-start http-con 201 '("Content-type" . "application/json"))
     (elnode-http-return http-con response-data)))
 
+(defun orgtrello-proxy/--compute-entity-level-dir (level)
+  "Given a level, compute the folder onto which the file will be serialized."
+  (format "%s%s/%s/" elnode-webserver-docroot "org-trello" level))
+
 (defun orgtrello-proxy/--elnode-proxy (http-con)
-  "A simple handler to extract the params information and make the request to trello."
-  (orgtrello-log/msg 5 "Proxy: Request received. Transmitting...")
+  "Deal with request to trello (for creation/sync request, use orgtrello-proxy/--elnode-proxy-producer)."
+  (orgtrello-log/msg 5 "Proxy - Request received. Transmitting...")
   (let* ((query-map-wrapped    (orgtrello-proxy/--extract-trello-query http-con))                     ;; wrapped query is mandatory
          (position             (assoc-default 'position query-map-wrapped))                           ;; position is mandatory
          (buffer-name          (assoc-default 'buffername query-map-wrapped))                         ;; buffer-name is mandatory
          (standard-callback    (assoc-default 'callback query-map-wrapped))                           ;; there is the possibility to transmit the callback from the client to the proxy
          (standard-callback-fn (when standard-callback (symbol-function (intern standard-callback)))) ;; the callback is passed as a string, we want it as a function when defined
          (sync                 (assoc-default 'sync query-map-wrapped))                               ;; there is a possibility to enforce the sync between proxy and client
-         (query-map            (orgtrello-proxy/--compute-trello-query query-map-wrapped))            ;; extracting the query
-         (method               (orgtrello-query/--method query-map))                                  ;; then the method
-         (fn-dispatch          (orgtrello-proxy/--dispatch-http-query method)))                       ;; from which we compute the dispatch fn
+         (query-map            (orgtrello-proxy/--compute-trello-query query-map-wrapped)))           ;; extracting the query
+    ;; check out the sync behaviour here
     ;; Execute the request to trello (at the moment, synchronous)
-    (funcall fn-dispatch query-map (list position buffer-name) standard-callback-fn sync)
+    (orgtrello-query/http-trello query-map sync (when standard-callback-fn (funcall standard-callback-fn buffer-name position)))
     ;; Answer about the update
     (orgtrello-proxy/--response http-con '((status . "ok")))))
+
+(defun orgtrello-proxy/--elnode-proxy-producer (http-con)
+  "A handler which is an entity informations producer on files under the docroot/level-entities/"
+  (orgtrello-log/msg 5 "Proxy-producer - Request received. Generating entity file...")
+  (let* ((query-map-wrapped    (orgtrello-proxy/--extract-trello-query http-con))                     ;; wrapped query is mandatory
+         (position             (assoc-default 'position query-map-wrapped))                           ;; position is mandatory
+         (buffer-name          (assoc-default 'buffername query-map-wrapped))                         ;; buffer-name is mandatory
+         (level                (assoc-default 'level  query-map-wrapped))
+         (dir-name             (orgtrello-proxy/--compute-entity-level-dir level)))
+    ;; compute the directory (does not break if already present)
+    (mkdir dir-name t)
+    ;; generate a file with the entity information
+    (with-temp-file (format "%s%s-%s.el" dir-name buffer-name position)
+      (insert (format "%S" query-map-wrapped)))
+    ;; notify the consumer he has some work to do
+    (orgtrello-proxy/http-consume)
+    ;; all is good
+    (orgtrello-proxy/--response http-con '((status . "ok")))))
+
+(defun orgtrello-proxy/--read-lines (fPath)
+  "Return a list of lines of a file at FPATH."
+  (with-temp-buffer
+    (insert-file-contents fPath)
+    (split-string (buffer-string) "\n" t)))
+
+(defun orgtrello/compute-marker (position)
+  "Compute the orgtrello marker which is composed of position"
+  (format "%s-%s" *ORGTRELLO-MARKER* position))
+
+(defun orgtrello-proxy/--standard-post-or-put-success-callback (buffer-name position)
+  "Return a callback function able to deal with the update of the buffer at a given position."
+  (lexical-let ((orgtrello-query/--entry-position    position)
+                (orgtrello-query/--entry-buffer-name buffer-name))
+    (cl-defun put-some-insignificant-name (&key data &allow-other-keys)
+      "Success - Will read the information from the response and simply return id and position."
+      (let ((orgtrello-query/--entry-new-id (orgtrello-query/--id data))
+            (orgtrello-query/--marker       (orgtrello/compute-marker orgtrello-query/--entry-position))
+            (orgtrello-query/--name-data    (orgtrello-query/--name data)))
+        (orgtrello-log/msg 5 "Proxy-consumer - Success - Updating entity '%s' with id '%s' in buffer '%s' at point '%s'..."
+                           orgtrello-query/--name-data orgtrello-query/--entry-new-id orgtrello-query/--entry-buffer-name orgtrello-query/--entry-position)
+        ;; switch to the right buffer
+        (set-buffer orgtrello-query/--entry-buffer-name)
+        ;; will update via tag the trello id of the new persisted data (if needed)
+        (save-excursion
+          ;; Get back to the buffer's position to update
+          (org-goto-local-search-headings orgtrello-query/--marker nil t)
+          ;; remove the marker now that we're done
+          (org-delete-property orgtrello-query/--marker)
+          ;; now we extract the data
+          (let* ((orgtrello-query/--entry-metadata (orgtrello-data/metadata))
+                 (orgtrello-query/--entry-id       (orgtrello/--id orgtrello-query/--entry-metadata))
+                 (orgtrello-query/--entry-name     (orgtrello/--label orgtrello-query/--entry-metadata) ))
+            (if orgtrello-query/--entry-id ;; id already present in the org-mode file
+                ;; no need to add another
+                (orgtrello-log/msg 3 "Entity '%s' synced with id '%s'" orgtrello-query/--entry-name orgtrello-query/--entry-id)
+                (progn
+                  ;; not present, this was just created, we add a simple property
+                  (org-set-property *ORGTRELLO-ID* orgtrello-query/--entry-new-id)
+                  (orgtrello-log/msg 3 "Newly entity '%s' synced with id '%s'" orgtrello-query/--entry-name orgtrello-query/--entry-new-id)))))
+        (orgtrello-log/msg 5 "Proxy-consumer - Success - Updating entity '%s' with id '%s' in buffer '%s' at point '%s' done!"
+                           orgtrello-query/--name-data orgtrello-query/--entry-new-id orgtrello-query/--entry-buffer-name orgtrello-query/--entry-position)))))
+
+(defun orgtrello-proxy/--standard-post-or-put-error-callback (buffer-name position)
+  "Return a callback function able to deal with the update position."
+  (lexical-let ((orgtrello-query/--entry-position    position)
+                (orgtrello-query/--entry-buffer-name buffer-name))
+    (cl-defun put-error-some-insignificant-name (&key data &allow-other-keys)
+      "Failure - Will delete metadata information from the buffer."
+      (let ((orgtrello-query/--marker (orgtrello/compute-marker orgtrello-query/--entry-position)))
+        (orgtrello-log/msg 5 "Proxy-consumer - Error - Removing metadata from buffer '%s' at point '%s'..." orgtrello-query/--entry-buffer-name orgtrello-query/--entry-position)
+        ;; switch to the right buffer
+        (set-buffer orgtrello-query/--entry-buffer-name)
+        ;; will update via tag the trello id of the new persisted data (if needed)
+        (save-excursion
+          ;; Get back to the buffer's position to update
+          (org-goto-local-search-headings orgtrello-query/--marker nil t)
+          ;; remove the marker now that we're done
+          (org-delete-property orgtrello-query/--marker))
+        (orgtrello-log/msg 5 "Proxy-consumer - Error - Removing metadata from buffer '%s' at point '%s' done!" orgtrello-query/--entry-buffer-name orgtrello-query/--entry-position)))))
+
+(defun orgtrello-proxy/--deal-with-entity-sync (entity-data)
+  "Compute the synchronization of an entity (retrieving latest information from buffer)"
+  (let* ((position                 (assoc-default 'position entity-data))  ;; position is mandatory
+         (buffer-name              (assoc-default 'buffername entity-data));; buffer-name too
+         (orgtrello-query/--marker (orgtrello/compute-marker position)))
+    (orgtrello-log/msg 5 "Proxy-consumer - Searching metadata from buffer '%s' at point '%s'..." buffer-name position)
+    ;; switch to the right buffer
+    (set-buffer buffer-name)
+    ;; will update via tag the trello id of the new persisted data (if needed)
+    (save-excursion
+      ;; Get back to the buffer's position to update
+      (org-goto-local-search-headings orgtrello-query/--marker nil t)
+      ;; sync the entity
+      (let ((orgtrello-query/--entry-metadata (orgtrello-data/entry-get-full-metadata)))
+        (orgtrello-query/http-trello
+         (orgtrello/--dispatch-create orgtrello-query/--entry-metadata)
+         t
+         (orgtrello-proxy/--standard-post-or-put-success-callback buffer-name position)
+         (orgtrello-proxy/--standard-post-or-put-error-callback buffer-name position))))
+    (orgtrello-log/msg 5 "Proxy-consumer - Searching metadata from buffer '%s' at point '%s' done!" buffer-name position)))
+
+(defun orgtrello-proxy/--deal-with-entity-file-sync (file)
+  "Given an entity file, load it and run the query through trello"
+  (when (file-exists-p (trace file :file))
+        ;; extract the entity data
+        (orgtrello-proxy/--deal-with-entity-sync (read (orgtrello-proxy/--read-lines file)))
+        ;; if the file is still there, try to remove it
+        (when (file-exists-p file) (delete-file file))))
+
+(defun orgtrello-proxy/--deal-with-level (level)
+ "Given a level, retrieve one file (which represent an entity to sync) for this level and sync it, then remove the file. Then recall the function recursively."
+ (orgtrello-log/msg 5 "Proxy-consumer - Scanning for entity with level %s" level)
+ (let ((orgtrello-proxy/--working-directory (orgtrello-proxy/--compute-entity-level-dir level)))
+   (when (file-exists-p orgtrello-proxy/--working-directory) ;; ensure the directory exists
+         (let* ((orgtrello-proxy/--files (--filter (file-regular-p it)
+                                                   (directory-files orgtrello-proxy/--working-directory t))));; need to filter out the directory . and .., we only want files here
+           (when orgtrello-proxy/--files
+                 ;; try and sync the file
+                 (orgtrello-proxy/--deal-with-entity-file-sync (car orgtrello-proxy/--files))
+                 ;; if it potentially remains files to sync, recall recursively this (function  )
+                 (when (< 1 (length orgtrello-proxy/--files)) (orgtrello-proxy/--deal-with-level level)))))))
+
+(defun orgtrello-proxy/--elnode-proxy-consumer (http-con)
+  "A handler to extract the entity informations from files (in order card, checklist, items)."
+  (orgtrello-log/msg 5 "Proxy-consumer - Request received. Scanning...")
+  ;; all is good
+  (orgtrello-proxy/--response http-con '((status . "ok")))
+  ;; now let's deal with the entities sync
+  ;; deal in order with level
+  (dolist (l '(1 2 3))
+    (orgtrello-proxy/--deal-with-level l))
+  (orgtrello-log/msg 5 "Proxy-consumer - Request received. Scanning done!"))
 
 (defun orgtrello-proxy/--proxy-handler (http-con)
   "Proxy handler."
@@ -612,8 +687,16 @@ Levels:
 
 (defun orgtrello-proxy/--start (port host)
   "Starting the proxy."
+  (orgtrello-log/msg 5 "Proxy-server starting...")
   (elnode-start 'orgtrello-proxy/--proxy-handler :port port :host host)
-  (setq elnode--do-error-logging nil))
+  (setq elnode--do-error-logging nil)
+  (orgtrello-log/msg 5 "Proxy-server started!"))
+
+(defun orgtrello-proxy/stop ()
+  "Stopping the proxy."
+  (orgtrello-log/msg 5 "Proxy-server stopping...")
+  (elnode-stop *ORGTRELLO-PROXY-PORT*)
+  (orgtrello-log/msg 5 "Proxy-server stopped!"))
 
 (defun orgtrello-proxy/reload ()
   "Reload the proxy server."
@@ -624,8 +707,6 @@ Levels:
   (setq *ORGTRELLO-PROXY-URL* (format "http://%s:%d/proxy" *ORGTRELLO-PROXY-HOST* *ORGTRELLO-PROXY-PORT*))
   ;; start the proxy
   (orgtrello-proxy/--start *ORGTRELLO-PROXY-PORT* *ORGTRELLO-PROXY-HOST*))
-
-(orgtrello-proxy/reload)
 
 (orgtrello-log/msg 4 "org-trello - orgtrello-proxy loaded!")
 
@@ -850,32 +931,32 @@ Levels:
   "Your arborescence depth is too deep. We only support up to depth 3.\nLevel 1 - card\nLevel 2 - checklist\nLevel 3 - items/tasks")
 
 (defun orgtrello/--dispatch-map-creation ()
-  "Dispatch map for the creation of card/checklist/item."
+  "Dispatch map for the creation of card/checklist/item. Key is the level of the entity, value is the create/update query map to sync such entity."
   (let* ((dispatch-map (make-hash-table :test 'equal)))
     (puthash 1 'orgtrello/--card      dispatch-map)
     (puthash 2 'orgtrello/--checklist dispatch-map)
     (puthash 3 'orgtrello/--task      dispatch-map)
     dispatch-map))
 
-(defvar *MAP-DISPATCH-CREATE-UPDATE* (orgtrello/--dispatch-map-creation) "Dispatch map for the creation/update of card/checklist/task")
+(defvar *MAP-DISPATCH-CREATE-UPDATE* (orgtrello/--dispatch-map-creation) "Dispatch map for the creation/update of card/checklist/task.")
 
-(defun orgtrello/--dispatch-create (meta &optional parent-meta grandparent-meta)
-  (let* ((level       (orgtrello/--level meta))
-         (dispatch-fn (gethash level *MAP-DISPATCH-CREATE-UPDATE* 'orgtrello/--too-deep-level)))
+(defun orgtrello/--dispatch-create (entry-metadata)
+  (let* ((current-meta        (orgtrello-data/current entry-metadata))
+         (current-entry-level (orgtrello/--level current-meta))
+         (parent-meta         (orgtrello-data/parent entry-metadata))
+         (grandparent-meta    (orgtrello-data/grandparent entry-metadata))
+         (dispatch-fn         (gethash current-entry-level *MAP-DISPATCH-CREATE-UPDATE* 'orgtrello/--too-deep-level)))
     ;; then execute the call
-    (funcall dispatch-fn meta parent-meta grandparent-meta)))
+    (funcall dispatch-fn current-meta parent-meta grandparent-meta)))
 
-(defun orgtrello/--update-query-with-org-metadata (query-map org-metadata &optional success-callback buffer-name sync)
+(defun orgtrello/--update-query-with-org-metadata (query-map position buffer-name &optional success-callback sync)
   "Given a trello api query, add some metadata needed for org-trello to work (those metadata will be exploited by the proxy)."
-  (when org-metadata
-        (puthash :position   (orgtrello/--position org-metadata)   query-map)
-        (puthash :buffername (orgtrello/--buffername org-metadata) query-map))
+  (puthash :position       position         query-map)
+  (puthash :buffername     buffer-name      query-map)
   (when success-callback
-        (puthash :callback   success-callback                      query-map))
-  (when buffer-name
-        (puthash :buffername buffer-name                           query-map))
+        (puthash :callback success-callback query-map))
   (when sync
-        (puthash :sync       sync                                  query-map))
+        (puthash :sync     sync             query-map))
   query-map)
 
 (defun orgtrello/--set-marker (position)
@@ -883,46 +964,25 @@ Levels:
   (let ((orgtrello/--set-marker--marker (orgtrello/compute-marker position)))
     (org-set-property orgtrello/--set-marker--marker orgtrello/--set-marker--marker)))
 
-(defun orgtrello/do-create-simple-entity (&optional sync)
-  "Do the actual simple creation of a card, checklist or task. Optionally, we can render the creation synchronous."
-  (let* ((entry-metadata (orgtrello-data/entry-get-full-metadata))
-         (current-entry  (gethash :current entry-metadata)))
-    (when entry-metadata
-          (let ((query-http-or-error-msg (orgtrello/--dispatch-create current-entry (gethash :parent entry-metadata) (gethash :grandparent entry-metadata))))
-            (if (hash-table-p query-http-or-error-msg)
-                ;; if it's a hash-table we can do the sync
-                (progn
-                  ;; set a marker to help the callback to do its job
-                  (orgtrello/--set-marker (orgtrello/--position current-entry))
-                  ;; we enrich the trello query with some org/org-trello metadata (the proxy will deal with them later)
-                  ;; and execute the request
-                  (orgtrello-proxy/http
-                   (orgtrello/--update-query-with-org-metadata query-http-or-error-msg current-entry nil nil sync);; we transmit the potential sync flag to the proxy
-                   sync)
-                  "Synchronizing simple entity done!")
-                ;; else it's a string to display
-                query-http-or-error-msg)))))
+(defun orgtrello/do-create-simple-entity ()
+  "Do the actual simple creation of a card."
+  (let* ((current-entry (orgtrello-data/metadata)))
+    (when (< (orgtrello/--level current-entry) 4)
+          ;; set a marker for later getting back to information
+          (orgtrello/--set-marker (orgtrello/--position current-entry))
+          ;; and send the data to the proxy
+          (orgtrello-proxy/http-producer current-entry))))
 
 (defun orgtrello/--board-name ()
   "Compute the board's name"
   (assoc-default *BOARD-NAME* org-file-properties))
-
-(defun orgtrello/--do-sync-entity (level &optional sync)
-  "Sync the entity with the right level."
-  (let ((orgtrello/--do-sync-entity--current-entry (orgtrello-data/metadata)))
-    (when (= level (orgtrello/--level orgtrello/--do-sync-entity--current-entry))
-          (orgtrello/do-create-simple-entity sync))))
 
 (defun orgtrello/do-create-complex-entity ()
   "Do the actual full card creation - from card to task. Beware full side effects..."
   (let ((orgtrello/--board-name-to-sync (orgtrello/--board-name)))
     (orgtrello-log/msg 3 "Synchronizing full entity with its structure on board '%s'..." orgtrello/--board-name-to-sync)
     ;; iterate over the map of entries and sync them, breadth first
-    (dolist (l '(1 2 3))
-      (lexical-let ((level l))
-        (org-map-tree
-         (lambda ()
-           (orgtrello/--do-sync-entity level (<= level 2)))))) ;; level 1 and 2 are synchronous
+    (org-map-tree 'orgtrello/do-create-simple-entity)
     (format "Synchronizing full entity with its structure on board '%s' - done" orgtrello/--board-name-to-sync)))
 
 (defun orgtrello/do-sync-full-file ()
@@ -1047,10 +1107,10 @@ Levels:
   ;; return the entities which has been dryed
   entities)
 
-(defun orgtrello/--sync-buffer-with-trello-data-callback (buffername)
-  "Generate a callback which knows the buffer with which it must work."
+(defun orgtrello/--sync-buffer-with-trello-data-callback (buffername position)
+  "Generate a callback which knows the buffer with which it must work. (this callback must take a buffer-name and a position)"
   (lexical-let ((buffer-name buffername))
-    (cl-defun orgtrello/--sync-buffer-with-trello-data-callback (&key data &allow-other-keys)
+    (cl-defun sync-from-trello-insignificant-callback-name (&key data &allow-other-keys)
       "Synchronize the buffer with the response data."
       (orgtrello-log/msg 5 "proxy - response data: %S" data)
       (let* ((orgtrello/--entities-hash-map  (orgtrello/--compute-full-entities-from-trello data));; data is the cards
@@ -1064,9 +1124,9 @@ Levels:
     (let ((orgtrello/--board-id (assoc-default *BOARD-ID* org-file-properties)))
       (orgtrello-proxy/http (orgtrello/--update-query-with-org-metadata
                              (orgtrello-api/get-cards orgtrello/--board-id)
-                             nil ;; no org-metadata entry as we deal with the all buffer
-                             'orgtrello/--sync-buffer-with-trello-data-callback
-                             (buffer-name))
+                             nil
+                             (buffer-name)
+                             'orgtrello/--sync-buffer-with-trello-data-callback)
                             sync))
     (format "Synchronizing the trello board '%s' to the org-mode file - done!" orgtrello/--board-name-to-sync)))
 
@@ -1101,17 +1161,38 @@ Levels:
          (dispatch-fn (gethash level *MAP-DISPATCH-DELETE* 'orgtrello/--too-deep-level)))
     (funcall dispatch-fn meta parent-meta)))
 
+(defun orgtrello-proxy/--standard-delete-success-callback (buffer-name position)
+  "Return a callback function able to deal with the position."
+  (lexical-let ((orgtrello-query/--entry-position    position)
+                (orgtrello-query/--entry-buffer-name buffer-name))
+    (cl-defun delete-some-insignificant-name (&key data &allow-other-keys)
+      "Will read the information from the response and simply return id and position."
+      (orgtrello-log/msg 5 "proxy - Deleting entity in the buffer '%s' at point '%s'..." orgtrello-query/--entry-buffer-name orgtrello-query/--entry-position)
+      (set-buffer orgtrello-query/--entry-buffer-name)
+      (save-excursion
+        (goto-char orgtrello-query/--entry-position)
+        (org-back-to-heading t)
+        (org-delete-property *ORGTRELLO-ID*)
+        (hide-subtree)
+        (beginning-of-line)
+        (kill-line)
+        (kill-line))
+      (orgtrello-log/msg 5 "proxy - Deleting entity in the buffer '%s' at point '%s' done!" orgtrello-query/--entry-buffer-name orgtrello-query/--entry-position))))
+
 (defun orgtrello/do-delete-simple (&optional sync)
   "Do the simple deletion of a card, checklist or task."
   (let* ((entry-metadata   (orgtrello-data/entry-get-full-metadata))
-         (current-metadata (gethash :current entry-metadata))
+         (current-metadata (orgtrello-data/current entry-metadata))
          (id               (orgtrello/--id current-metadata)))
     (if (and current-metadata id)
-        (let ((query-http-or-error-msg (orgtrello/--dispatch-delete current-metadata (gethash :parent entry-metadata))))
+        (let ((query-http-or-error-msg (orgtrello/--dispatch-delete current-metadata (orgtrello-data/parent entry-metadata))))
           (if (hash-table-p query-http-or-error-msg)
               (progn
                 (orgtrello-proxy/http
-                 (orgtrello/--update-query-with-org-metadata query-http-or-error-msg current-metadata)
+                 (orgtrello/--update-query-with-org-metadata query-http-or-error-msg
+                                                             (orgtrello/--position current-metadata)
+                                                             (orgtrello/--buffername current-metadata)
+                                                             'orgtrello-proxy/--standard-delete-success-callback)
                  sync)
                 "Delete entity done!")
             query-http-or-error-msg))
