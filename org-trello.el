@@ -698,7 +698,7 @@ Levels:
          (start-or-stop (assoc-default 'start query-map)))
     (if start-or-stop
         ;; start the timer
-        (setq *ORGTRELLO-TIMER* (run-with-timer 0 15 'orgtrello-proxy/--consumer-entity-files-hierarchically-and-sync))
+        (setq *ORGTRELLO-TIMER* (run-with-timer 0 5 'orgtrello-proxy/--consumer-entity-files-hierarchically-and-sync))
         ;; otherwise, stop it
         (when *ORGTRELLO-TIMER*
               (cancel-timer *ORGTRELLO-TIMER*)
