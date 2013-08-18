@@ -84,7 +84,7 @@
 
 ;; #################### orgtrello-log
 
-(defvar orgtrello/loglevel 3
+(defvar orgtrello/loglevel 5
   "Set log level.
 Levels:
 0 - no logging
@@ -590,66 +590,80 @@ Levels:
     (when (file-exists-p file-to-remove)
           (delete-file file-to-remove))))
 
-(defun orgtrello-proxy/--standard-post-or-put-success-callback (buffer-name position)
+(defun orgtrello-proxy/--standard-post-or-put-success-callback (buffer-name position level)
   "Return a callback function able to deal with the update of the buffer at a given position."
   (lexical-let ((orgtrello-query/--entry-position    position)
-                (orgtrello-query/--entry-buffer-name buffer-name))
+                (orgtrello-query/--entry-buffer-name buffer-name)
+                (orgtrello-query/--entry-level       level))
     (cl-defun put-some-insignificant-name (&key data &allow-other-keys)
       "Success - Will read the information from the response and simply return id and position."
       (let ((orgtrello-query/--entry-new-id (orgtrello-query/--id data))
             (orgtrello-query/--marker       (orgtrello/compute-marker orgtrello-query/--entry-position))
             (orgtrello-query/--name-data    (orgtrello-query/--name data)))
-        (orgtrello-log/msg 5 "Proxy-consumer - Success - Updating entity '%s' with id '%s' in buffer '%s' at point '%s'..."
+        (orgtrello-log/msg 5 "Proxy-consumer - Callback Success - Updating entity '%s' with id '%s' in buffer '%s' at point '%s'..."
                            orgtrello-query/--name-data orgtrello-query/--entry-new-id orgtrello-query/--entry-buffer-name orgtrello-query/--entry-position)
         ;; switch to the right buffer
         (set-buffer orgtrello-query/--entry-buffer-name)
         ;; will update via tag the trello id of the new persisted data (if needed)
         (save-excursion
           ;; Get back to the buffer's position to update
-          (org-goto-local-search-headings orgtrello-query/--marker nil t)
-          ;; now we extract the data
-          (let* ((orgtrello-query/--entry-metadata (orgtrello-data/metadata))
-                 (orgtrello-query/--entry-id       (orgtrello/--id orgtrello-query/--entry-metadata))
-                 (orgtrello-query/--entry-level    (orgtrello/--level orgtrello-query/--entry-metadata))
-                 (orgtrello-query/--entry-name     (orgtrello/--label orgtrello-query/--entry-metadata)))
-            (if orgtrello-query/--entry-id ;; id already present in the org-mode file
-                ;; no need to add another
-                (orgtrello-log/msg 3 "Entity '%s' synced with id '%s'" orgtrello-query/--entry-name orgtrello-query/--entry-id)
-                (progn
-                  ;; not present, this was just created, we add a simple property
-                  (org-set-property *ORGTRELLO-ID* orgtrello-query/--entry-new-id)
-                  (orgtrello-log/msg 3 "Newly entity '%s' synced with id '%s'" orgtrello-query/--entry-name orgtrello-query/--entry-new-id)))
-            ;; remove the marker now that we're done
-            (org-delete-property orgtrello-query/--marker)
-            ;; now everything is ok, we can remove the file
-            (orgtrello-proxy/--remove-metadata-file orgtrello-query/--entry-level orgtrello-query/--entry-buffer-name orgtrello-query/--entry-position)))
-        (orgtrello-log/msg 5 "Proxy-consumer - Success - Updating entity '%s' with id '%s' in buffer '%s' at point '%s' done!"
+          (when (orgtrello-proxy/--getting-back-to-marker orgtrello-query/--marker) ;; if we succeed update the buffer
+                (orgtrello-log/msg 5 "Proxy-consumer - Callback Success - Extracting metadata from entity  '%s' with id '%s' in buffer '%s' at point '%s'..."
+                                   orgtrello-query/--name-data orgtrello-query/--entry-new-id orgtrello-query/--entry-buffer-name orgtrello-query/--entry-position)
+                ;; now we extract the data
+                (let* ((orgtrello-query/--entry-metadata (orgtrello-data/metadata))
+                       (orgtrello-query/--entry-id       (orgtrello/--id orgtrello-query/--entry-metadata))
+                       (orgtrello-query/--entry-level    (orgtrello/--level orgtrello-query/--entry-metadata))
+                       (orgtrello-query/--entry-name     (orgtrello/--label orgtrello-query/--entry-metadata)))
+                  (if orgtrello-query/--entry-id ;; id already present in the org-mode file
+                      ;; no need to add another
+                      (orgtrello-log/msg 3 "Entity '%s' synced with id '%s'" orgtrello-query/--entry-name orgtrello-query/--entry-id)
+                      (progn
+                        ;; not present, this was just created, we add a simple property
+                        (org-set-property *ORGTRELLO-ID* orgtrello-query/--entry-new-id)
+                        (orgtrello-log/msg 3 "Newly entity '%s' synced with id '%s'" orgtrello-query/--entry-name orgtrello-query/--entry-new-id)))))
+          (orgtrello-log/msg 5 "Proxy-consumer - Callback Success - Cleaning up metadata from entity  '%s' with id '%s' in buffer '%s' at point '%s'..."
+                             orgtrello-query/--name-data orgtrello-query/--entry-new-id orgtrello-query/--entry-buffer-name orgtrello-query/--entry-position)
+          ;; ##### in any case,
+          ;; remove the marker
+          (org-delete-property-globally orgtrello-query/--marker)
+          ;; and we can remove the file
+          (orgtrello-proxy/--remove-metadata-file orgtrello-query/--entry-level orgtrello-query/--entry-buffer-name orgtrello-query/--entry-position))
+        (orgtrello-log/msg 5 "Proxy-consumer - Callback Success - Updating entity '%s' with id '%s' in buffer '%s' at point '%s' done!"
                            orgtrello-query/--name-data orgtrello-query/--entry-new-id orgtrello-query/--entry-buffer-name orgtrello-query/--entry-position)))))
 
-(defun orgtrello-proxy/--standard-post-or-put-error-callback (buffer-name position)
+(defun orgtrello-proxy/--standard-post-or-put-error-callback (buffer-name position level)
   "Return a callback function able to deal with the update position."
   (lexical-let ((orgtrello-query/--entry-position    position)
-                (orgtrello-query/--entry-buffer-name buffer-name))
+                (orgtrello-query/--entry-buffer-name buffer-name)
+                (orgtrello-query/--entry-level       level))
     (cl-defun put-error-some-insignificant-name (&key data &allow-other-keys)
       "Failure - Will delete metadata information from the buffer."
       (let ((orgtrello-query/--marker (orgtrello/compute-marker orgtrello-query/--entry-position)))
-        (orgtrello-log/msg 5 "Proxy-consumer - Error - Removing metadata from buffer '%s' at point '%s'..." orgtrello-query/--entry-buffer-name orgtrello-query/--entry-position)
+        (orgtrello-log/msg 5 "Proxy-consumer - Callback Error - Removing metadata from buffer '%s' at point '%s'..." orgtrello-query/--entry-buffer-name orgtrello-query/--entry-position)
         ;; switch to the right buffer
         (set-buffer orgtrello-query/--entry-buffer-name)
         ;; will update via tag the trello id of the new persisted data (if needed)
         (save-excursion
           ;; Get back to the buffer's position to update
-          (org-goto-local-search-headings orgtrello-query/--marker nil t)
+          (orgtrello-proxy/--getting-back-to-marker orgtrello-query/--marker)
           ;; remove the marker now that we're done
-          (org-delete-property orgtrello-query/--marker)
+          (org-delete-property-globally orgtrello-query/--marker)
           ;; everything is not ok but we must remove the file to avoid infinite loop
-          (orgtrello-proxy/--remove-metadata-file (orgtrello/--level (orgtrello-data/metadata)) orgtrello-query/--entry-buffer-name orgtrello-query/--entry-position))
-        (orgtrello-log/msg 5 "Proxy-consumer - Error - Removing metadata from buffer '%s' at point '%s' done!" orgtrello-query/--entry-buffer-name orgtrello-query/--entry-position)))))
+          (orgtrello-proxy/--remove-metadata-file orgtrello-query/--entry-level orgtrello-query/--entry-buffer-name orgtrello-query/--entry-position))
+        (orgtrello-log/msg 5 "Proxy-consumer - Callback Error - Removing metadata from buffer '%s' at point '%s' done!" orgtrello-query/--entry-buffer-name orgtrello-query/--entry-position)))))
+
+(defun orgtrello-proxy/--getting-back-to-marker (marker)
+  "Getting back to marker function"
+  (goto-char (point-min))
+  ;; (org-goto-local-search-headings)
+  (re-search-forward marker))
 
 (defun orgtrello-proxy/--deal-with-entity-sync (entity-data)
   "Compute the synchronization of an entity (retrieving latest information from buffer)"
   (let* ((position                 (assoc-default 'position entity-data))  ;; position is mandatory
          (buffer-name              (assoc-default 'buffername entity-data));; buffer-name too
+         (level                    (assoc-default 'level entity-data))     ;; level too
          (orgtrello-query/--marker (orgtrello/compute-marker position)))
     (orgtrello-log/msg 5 "Proxy-consumer - Searching metadata from buffer '%s' at point '%s'..." buffer-name position)
     ;; switch to the right buffer
@@ -657,14 +671,14 @@ Levels:
     ;; will update via tag the trello id of the new persisted data (if needed)
     (save-excursion
       ;; Get back to the buffer's position to update
-      (org-goto-local-search-headings orgtrello-query/--marker nil t)
-      ;; sync the entity
-      (let ((orgtrello-query/--entry-metadata (orgtrello-data/entry-get-full-metadata)))
-        (orgtrello-query/http-trello
-         (orgtrello/--dispatch-create orgtrello-query/--entry-metadata)
-         t
-         (orgtrello-proxy/--standard-post-or-put-success-callback buffer-name position)
-         (orgtrello-proxy/--standard-post-or-put-error-callback buffer-name position))))
+      (when (orgtrello-proxy/--getting-back-to-marker orgtrello-query/--marker)
+            ;; sync the entity
+            (let ((orgtrello-query/--entry-metadata (orgtrello-data/entry-get-full-metadata)))
+              (orgtrello-query/http-trello
+               (trace (orgtrello/--dispatch-create orgtrello-query/--entry-metadata) :query)
+               t
+               (orgtrello-proxy/--standard-post-or-put-success-callback buffer-name position level)
+               (orgtrello-proxy/--standard-post-or-put-error-callback buffer-name position level)))))
     (orgtrello-log/msg 5 "Proxy-consumer - Searching metadata from buffer '%s' at point '%s' done!" buffer-name position)))
 
 (defun orgtrello-proxy/--deal-with-entity-file-sync (file)
@@ -673,41 +687,43 @@ Levels:
         ;; extract the entity data
         (orgtrello-proxy/--deal-with-entity-sync (trace (read (orgtrello-proxy/--read-lines file)) :entity-file-to-sync))))
 
+(defun orgtrello-proxy/--deal-with-directory (directory)
+  (let* ((orgtrello-proxy/--files (--filter (file-regular-p it)
+                                            (directory-files directory t))));; need to filter out the directory . and .., we only want files here
+    (when orgtrello-proxy/--files
+          ;; try and sync the file
+          (orgtrello-proxy/--deal-with-entity-file-sync (car orgtrello-proxy/--files))
+          ;; if it potentially remains files to sync, recall recursively this function
+          (when (< 1 (length orgtrello-proxy/--files)) (orgtrello-proxy/--deal-with-directory directory)))))
+
 (defun orgtrello-proxy/--deal-with-level (level)
  "Given a level, retrieve one file (which represents an entity) for this level and sync it, then remove such file. Then recall the function recursively."
  (let ((orgtrello-proxy/--working-directory (orgtrello-proxy/--compute-entity-level-dir level)))
-   (when (file-exists-p orgtrello-proxy/--working-directory) ;; ensure the directory exists
-         (let* ((orgtrello-proxy/--files (--filter (file-regular-p it)
-                                                   (directory-files orgtrello-proxy/--working-directory t))));; need to filter out the directory . and .., we only want files here
-           (when orgtrello-proxy/--files
-                 ;; try and sync the file
-                 (orgtrello-proxy/--deal-with-entity-file-sync (car orgtrello-proxy/--files))
-                 ;; if it potentially remains files to sync, recall recursively this function
-                 (when (< 1 (length orgtrello-proxy/--files)) (orgtrello-proxy/--deal-with-level level)))))))
+   (when (file-exists-p orgtrello-proxy/--working-directory)
+         (orgtrello-proxy/--deal-with-directory orgtrello-proxy/--working-directory))))
+
+(defun orgtrello-proxy/--consumer-entity-files-hierarchically-and-sync ()
+  "A handler to extract the entity informations from files (in order card, checklist, items)."
+  (undo-boundary)
+  ;; now let's deal with the entities sync in order with level
+  (with-local-quit
+    (dolist (l '(1 2 3))
+      (orgtrello-proxy/--deal-with-level l)))
+  (undo-boundary))
 
 (defun orgtrello-proxy/--compute-lock-filename ()
   "Compute the name of a lock file"
   (format "%s%s/%s" elnode-webserver-docroot "org-trello" "org-trello-already-scanning.lock"))
 
-(defun orgtrello-proxy/--consumer-entity-files-hierarchically-and-sync ()
+(defun orgtrello-proxy/--consumer-lock-scan-entity-files-hierarchically-and-sync ()
   "A handler to extract the entity informations from files (in order card, checklist, items)."
   (let ((lock-file (orgtrello-proxy/--compute-lock-filename)))
-    (unless (file-exists-p lock-file)
-
-            (with-temp-file lock-file
-              (insert "Timer - Scanning entities..."))
-
-            (orgtrello-log/msg 5 "Timer - Scanning entities...")
-
-            (undo-boundary)
-            ;; now let's deal with the entities sync in order with level
-            (with-local-quit
-              (dolist (l '(1 2 3))
-                (orgtrello-proxy/--deal-with-level l)))
-            (undo-boundary)
-
-            ;; remove lock
-            (delete-file lock-file))))
+    (when (not (file-exists-p lock-file))
+          (with-temp-file lock-file
+            (insert "Timer - Scanning entities..."))
+          (orgtrello-proxy/--consumer-entity-files-hierarchically-and-sync)
+          ;; remove lock
+          (delete-file lock-file))))
 
 (defvar *ORGTRELLO-TIMER* nil "A timer run by elnode")
 
@@ -721,7 +737,7 @@ Levels:
         (let ((lock-file (orgtrello-proxy/--compute-lock-filename)))
           (if (file-exists-p lock-file) (delete-file lock-file))
           ;; start the timer
-          (setq *ORGTRELLO-TIMER* (run-with-timer 0 5 'orgtrello-proxy/--consumer-entity-files-hierarchically-and-sync)))
+          (setq *ORGTRELLO-TIMER* (run-with-timer 0 5 'orgtrello-proxy/--consumer-lock-scan-entity-files-hierarchically-and-sync)))
         ;; otherwise, stop it
         (when *ORGTRELLO-TIMER*
               (cancel-timer *ORGTRELLO-TIMER*)

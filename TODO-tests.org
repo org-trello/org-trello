@@ -126,7 +126,6 @@
 ** chapters
 :PROPERTIES:
 :orgtrello-id: 520d27c177cfb83f46000350
-:orgtrello-marker-4413: orgtrello-marker-4413
 :END:
 *** introduction
 :PROPERTIES:
@@ -195,17 +194,14 @@
 *** Clojure philosophy [100%]
 :PROPERTIES:
 :orgtrello-id: 5210ccf097332b1f5d003846
-:orgtrello-marker-6782: orgtrello-marker-6782
 :END:
 *** Drinking from the Clojure firehose
 :PROPERTIES:
 :orgtrello-id: 5210ccf1e197f1784f004c06
-:orgtrello-marker-6917: orgtrello-marker-6917
 :END:
 *** Dipping our toes in the pool
 :PROPERTIES:
 :orgtrello-id: 5210ccf2ba821fbd4c003692
-:orgtrello-marker-7061: orgtrello-marker-7061
 :END:
 ** Part 2 Data Types
 :PROPERTIES:
@@ -295,35 +291,39 @@
 :PROPERTIES:
 :orgtrello-id: 5210cd49e72cf5ee0d0039c0
 :END:
-* Joy of FP languages
+* Joy of Fun(ctional) languages
 :PROPERTIES:
-:orgtrello-id: 52111fe6ced9726a46007072
+:orgtrello-id: 521145410afe8cbb0d003e07
 :END:
-** Lisp
+** DONE LISP family
+CLOSED: [2013-08-19 lun. 00:06]
 :PROPERTIES:
-:orgtrello-id: 52111fe73cbba6d768006de1
+:orgtrello-id: 521145420a6cec864a0073e5
 :END:
-*** clojure
+*** DONE Clojure
+CLOSED: [2013-08-19 lun. 00:07]
 :PROPERTIES:
-:orgtrello-id: 52111fe92ebc043f5d003e3d
+:orgtrello-id: 521145442e0ac0565b006a12
 :END:
-*** emacs-lisp
+*** DONE Emacs-Lisp
+CLOSED: [2013-08-19 lun. 00:07]
 :PROPERTIES:
-:orgtrello-id: 52111fea0b2415ba3c00602c
+:orgtrello-id: 5211454496378df34100786f
 :END:
-*** common-lisp
+*** DONE Common-Lisp
+CLOSED: [2013-08-19 lun. 00:07]
 :PROPERTIES:
-:orgtrello-id: 52111febb7489adb1d004a7c
+:orgtrello-id: 52114545ba23a5895a003a65
 :END:
-** ml
+** ML family
 :PROPERTIES:
-:orgtrello-id: 52111fe8c2b1662246006e28
+:orgtrello-id: 521145430d4d23a26800447d
 :END:
-*** haskell
+*** Haskell
 :PROPERTIES:
-:orgtrello-id: 52111fece197f1784f0051ab
+:orgtrello-id: 52114546086656b94c0073ca
 :END:
-*** ocaml
+*** Ocaml
 :PROPERTIES:
-:orgtrello-id: 52111fed75c50f6e46002d40
+:orgtrello-id: 521145474facf9375d006cc9
 :END:
