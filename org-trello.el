@@ -675,7 +675,7 @@ Levels:
             ;; sync the entity
             (let ((orgtrello-query/--entry-metadata (orgtrello-data/entry-get-full-metadata)))
               (orgtrello-query/http-trello
-               (trace (orgtrello/--dispatch-create orgtrello-query/--entry-metadata) :query)
+               (orgtrello/--dispatch-create orgtrello-query/--entry-metadata)
                t
                (orgtrello-proxy/--standard-post-or-put-success-callback buffer-name position level)
                (orgtrello-proxy/--standard-post-or-put-error-callback buffer-name position level)))))
