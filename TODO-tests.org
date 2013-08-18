@@ -295,3 +295,11 @@
 :PROPERTIES:
 :orgtrello-id: 5210cd49e72cf5ee0d0039c0
 :END:
+* Joy of FP languages
+** Lisp
+*** clojure
+*** emacs-lisp
+*** common-lisp
+** ml
+*** haskell
+*** ocaml
