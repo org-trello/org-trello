@@ -334,10 +334,10 @@
     (should (equal (hash-table-count hashtable-result) (hash-table-count hashtable-expected)))))
 
 (expectations
-  (expect "TODO" (orgtrello/--compute-state-from-keyword ""))
-  (expect "TODO" (orgtrello/--compute-state-from-keyword *TODO*))
-  (expect 'done  (orgtrello/--compute-state-from-keyword *DONE*))
-  (expect "TODO" (orgtrello/--compute-state-from-keyword "IN")))
+  (expect 'none (orgtrello/--compute-state-from-keyword ""))
+  (expect 'none (orgtrello/--compute-state-from-keyword *TODO*))
+  (expect 'done (orgtrello/--compute-state-from-keyword *DONE*))
+  (expect 'none (orgtrello/--compute-state-from-keyword "IN")))
 
 (expectations
   (expect "complete" (orgtrello/--task-compute-state t "DONE" "DONE"))
@@ -358,19 +358,6 @@
   (expect nil (orgtrello/--task-compute-check nil "TODO" "DONE"))
   (expect t (orgtrello/--task-compute-check nil "DONE" "TODO"))
   (expect nil (orgtrello/--task-compute-check nil "TODO" "TODO")) )
-
-(expectations
-  (expect nil (org-trello/--trigger-create-p "something not triggering"))
-  (expect nil (org-trello/--trigger-create-p "something still not triggering\n"))
-  (expect nil (org-trello/--trigger-create-p "* something still not triggering"))
-  (expect nil (org-trello/--trigger-create-p "* \n")) ;; not triggering
-  (expect nil (org-trello/--trigger-create-p "*something that should not be ok\n"))
-  (expect nil (org-trello/--trigger-create-p "**something that should not be ok\n"))
-  (expect nil (org-trello/--trigger-create-p "***something that should not be ok\n"))
-  (expect 0 (org-trello/--trigger-create-p "* something that should be ok\n"))
-  (expect 0 (org-trello/--trigger-create-p "** something that should be ok\n"))
-  (expect 0 (org-trello/--trigger-create-p "*** something that should be ok\n"))
-  (expect 0 (org-trello/--trigger-create-p "**** something that should be ok\n")))
 
 (message "Tests done!")
 
