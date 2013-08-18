@@ -553,6 +553,10 @@ Levels:
     ;; Answer about the update
     (orgtrello-proxy/response-ok http-con)))
 
+(defun orgtrello-proxy/--compute-metadata-filename (root-dir buffer-name position)
+  "Compute the metadata entity filename"
+  (format "%s%s-%s.el" root-dir buffer-name position))
+
 (defun orgtrello-proxy/--elnode-proxy-producer (http-con)
   "A handler which is an entity informations producer on files under the docroot/level-entities/"
   (orgtrello-log/msg 5 "Proxy-producer - Request received. Generating entity file...")
@@ -560,11 +564,11 @@ Levels:
          (position             (assoc-default 'position query-map-wrapped))                           ;; position is mandatory
          (buffer-name          (assoc-default 'buffername query-map-wrapped))                         ;; buffer-name is mandatory
          (level                (assoc-default 'level  query-map-wrapped))
-         (dir-name             (orgtrello-proxy/--compute-entity-level-dir level)))
+         (root-dir             (orgtrello-proxy/--compute-entity-level-dir level)))
     ;; compute the directory (does not break if already present)
-    (mkdir dir-name t)
+    (mkdir root-dir t)
     ;; generate a file with the entity information
-    (with-temp-file (format "%s%s-%s.el" dir-name buffer-name position)
+    (with-temp-file (orgtrello-proxy/--compute-metadata-filename root-dir buffer-name position)
       (insert (format "%S" query-map-wrapped)))
     ;; all is good
     (orgtrello-proxy/response-ok http-con)))
@@ -578,6 +582,13 @@ Levels:
 (defun orgtrello/compute-marker (position)
   "Compute the orgtrello marker which is composed of position"
   (format "%s-%s" *ORGTRELLO-MARKER* position))
+
+(defun orgtrello-proxy/--remove-metadata-file (level buffer-name position)
+  "Remove metadata file."
+  (let* ((root-dir       (orgtrello-proxy/--compute-entity-level-dir level))
+         (file-to-remove (orgtrello-proxy/--compute-metadata-filename root-dir buffer-name position)))
+    (when (file-exists-p file-to-remove)
+          (delete-file file-to-remove))))
 
 (defun orgtrello-proxy/--standard-post-or-put-success-callback (buffer-name position)
   "Return a callback function able to deal with the update of the buffer at a given position."
@@ -601,6 +612,7 @@ Levels:
           ;; now we extract the data
           (let* ((orgtrello-query/--entry-metadata (orgtrello-data/metadata))
                  (orgtrello-query/--entry-id       (orgtrello/--id orgtrello-query/--entry-metadata))
+                 (orgtrello-query/--entry-level    (orgtrello/--level orgtrello-query/--entry-metadata))
                  (orgtrello-query/--entry-name     (orgtrello/--label orgtrello-query/--entry-metadata) ))
             (if orgtrello-query/--entry-id ;; id already present in the org-mode file
                 ;; no need to add another
@@ -608,7 +620,9 @@ Levels:
                 (progn
                   ;; not present, this was just created, we add a simple property
                   (org-set-property *ORGTRELLO-ID* orgtrello-query/--entry-new-id)
-                  (orgtrello-log/msg 3 "Newly entity '%s' synced with id '%s'" orgtrello-query/--entry-name orgtrello-query/--entry-new-id)))))
+                  (orgtrello-log/msg 3 "Newly entity '%s' synced with id '%s'" orgtrello-query/--entry-name orgtrello-query/--entry-new-id)))
+            ;; now everything is ok, we can remove the file
+            (orgtrello-proxy/--remove-metadata-file orgtrello-query/--entry-level orgtrello-query/--entry-buffer-name orgtrello-query/--entry-position)))
         (orgtrello-log/msg 5 "Proxy-consumer - Success - Updating entity '%s' with id '%s' in buffer '%s' at point '%s' done!"
                            orgtrello-query/--name-data orgtrello-query/--entry-new-id orgtrello-query/--entry-buffer-name orgtrello-query/--entry-position)))))
 
@@ -655,9 +669,7 @@ Levels:
   "Given an entity file, load it and run the query through trello"
   (when (file-exists-p file)
         ;; extract the entity data
-        (orgtrello-proxy/--deal-with-entity-sync (read (orgtrello-proxy/--read-lines file)))
-        ;; if the file is still there, try to remove it
-        (when (file-exists-p file) (delete-file file))))
+        (orgtrello-proxy/--deal-with-entity-sync (read (orgtrello-proxy/--read-lines file)))))
 
 (defun orgtrello-proxy/--deal-with-level (level)
  "Given a level, retrieve one file (which represents an entity) for this level and sync it, then remove such file. Then recall the function recursively."
