@@ -72,6 +72,10 @@
   (require 'org-trello)
   (setq *ORGTRELLO-CHECKLIST-UPDATE-ITEMS* nil)")
 
+
+
+;; #################### static setup
+
 (defvar *consumer-key*     nil "Id representing the user")
 (defvar *access-token*     nil "Read/write Access token to use trello in the user's name ")
 (defvar *ORGTRELLO-MARKER* "orgtrello-marker" "A marker used inside the org buffer to synchronize entries.")
@@ -80,7 +84,7 @@
 
 ;; #################### orgtrello-log
 
-(defvar orgtrello/loglevel 5
+(defvar orgtrello/loglevel 3
   "Set log level.
 Levels:
 0 - no logging
