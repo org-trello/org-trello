@@ -291,7 +291,7 @@
 :PROPERTIES:
 :orgtrello-id: 5210cd49e72cf5ee0d0039c0
 :END:
-* Joy of Fun(ctional) languages
+* Joy of FUN(ctional) LANGUAGES
 :PROPERTIES:
 :orgtrello-id: 521145410afe8cbb0d003e07
 :END:

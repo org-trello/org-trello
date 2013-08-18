@@ -84,7 +84,7 @@
 
 ;; #################### orgtrello-log
 
-(defvar orgtrello/loglevel 5
+(defvar orgtrello/loglevel 3
   "Set log level.
 Levels:
 0 - no logging
@@ -685,7 +685,7 @@ Levels:
   "Given an entity file, load it and run the query through trello"
   (when (file-exists-p file)
         ;; extract the entity data
-        (orgtrello-proxy/--deal-with-entity-sync (trace (read (orgtrello-proxy/--read-lines file)) :entity-file-to-sync))))
+        (orgtrello-proxy/--deal-with-entity-sync (read (orgtrello-proxy/--read-lines file)))))
 
 (defun orgtrello-proxy/--deal-with-directory (directory)
   (let* ((orgtrello-proxy/--files (--filter (file-regular-p it)
