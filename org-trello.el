@@ -498,10 +498,10 @@ Levels:
     (orgtrello-log/msg 5 "Request to proxy wrapped: %S" query-map-proxy)
     (orgtrello-query/--http *ORGTRELLO-PROXY-URL* query-map-proxy sync)))
 
-(defvar orgtrello-query/--app-routes '(;; proxy to request trello
-                                       ("^localhost//proxy/trello/\\(.*\\)" . orgtrello-proxy/--elnode-proxy)
-                                       ;; proxy producer to receive async creation request
-                                       ("^localhost//proxy/producer/\\(.*\\)" . orgtrello-proxy/--elnode-proxy-producer)))
+(defun orgtrello-proxy/http-consumer (start)
+  "Query the http-consumer process once to make it trigger a timer"
+  (let ((query-map (orgtrello-hash/make-hash "POST" "/timer/" `((start . ,start)))))
+    (orgtrello-query/--http *ORGTRELLO-PROXY-URL* query-map t)))
 
 (defun orgtrello-proxy/--dispatch-http-query (method)
   "Dispach query function depending on the http method input parameter."
@@ -532,6 +532,11 @@ Levels:
   "Given a level, compute the folder onto which the file will be serialized."
   (format "%s%s/%s/" elnode-webserver-docroot "org-trello" level))
 
+(defun orgtrello-proxy/response-ok (http-con)
+  "OK response from the proxy to the client."
+  ;; all is good
+  (orgtrello-proxy/--response http-con '((status . "ok"))))
+
 (defun orgtrello-proxy/--elnode-proxy (http-con)
   "Deal with request to trello (for creation/sync request, use orgtrello-proxy/--elnode-proxy-producer)."
   (orgtrello-log/msg 5 "Proxy - Request received. Transmitting...")
@@ -546,7 +551,7 @@ Levels:
     ;; Execute the request to trello (at the moment, synchronous)
     (orgtrello-query/http-trello query-map sync (when standard-callback-fn (funcall standard-callback-fn buffer-name position)))
     ;; Answer about the update
-    (orgtrello-proxy/--response http-con '((status . "ok")))))
+    (orgtrello-proxy/response-ok http-con)))
 
 (defun orgtrello-proxy/--elnode-proxy-producer (http-con)
   "A handler which is an entity informations producer on files under the docroot/level-entities/"
@@ -562,40 +567,7 @@ Levels:
     (with-temp-file (format "%s%s-%s.el" dir-name buffer-name position)
       (insert (format "%S" query-map-wrapped)))
     ;; all is good
-    (orgtrello-proxy/--response http-con '((status . "ok")))))
-
-(defun orgtrello-proxy/--proxy-handler (http-con)
-  "Proxy handler."
-  (elnode-hostpath-dispatcher http-con orgtrello-query/--app-routes))
-
-(defun orgtrello-proxy/--start (port host)
-  "Starting the proxy."
-  (orgtrello-log/msg 5 "Proxy-server starting...")
-  (elnode-start 'orgtrello-proxy/--proxy-handler :port port :host host)
-  (setq elnode--do-error-logging nil)
-  (orgtrello-log/msg 5 "Proxy-server started!"))
-
-(defun orgtrello-proxy/stop ()
-  "Stopping the proxy."
-  (orgtrello-log/msg 5 "Proxy-server stopping...")
-  (elnode-stop *ORGTRELLO-PROXY-PORT*)
-  (orgtrello-log/msg 5 "Proxy-server stopped!"))
-
-(defun orgtrello-proxy/reload ()
-  "Reload the proxy server."
-  (interactive)
-  ;; stop the default port
-  (elnode-stop *ORGTRELLO-PROXY-DEFAULT-PORT*)
-  ;; update with the new port the user possibly changed
-  (setq *ORGTRELLO-PROXY-URL* (format "http://%s:%d/proxy" *ORGTRELLO-PROXY-HOST* *ORGTRELLO-PROXY-PORT*))
-  ;; start the proxy
-  (orgtrello-proxy/--start *ORGTRELLO-PROXY-PORT* *ORGTRELLO-PROXY-HOST*))
-
-(orgtrello-log/msg 4 "org-trello - orgtrello-proxy loaded!")
-
-
-
-;; #################### orgtrello-timer
+    (orgtrello-proxy/response-ok http-con)))
 
 (defun orgtrello-proxy/--read-lines (fPath)
   "Return a list of lines of a file at FPATH."
@@ -681,15 +653,14 @@ Levels:
 
 (defun orgtrello-proxy/--deal-with-entity-file-sync (file)
   "Given an entity file, load it and run the query through trello"
-  (when (file-exists-p (trace file :file))
+  (when (file-exists-p file)
         ;; extract the entity data
         (orgtrello-proxy/--deal-with-entity-sync (read (orgtrello-proxy/--read-lines file)))
         ;; if the file is still there, try to remove it
         (when (file-exists-p file) (delete-file file))))
 
 (defun orgtrello-proxy/--deal-with-level (level)
- "Given a level, retrieve one file (which represent an entity to sync) for this level and sync it, then remove the file. Then recall the function recursively."
- (orgtrello-log/msg 5 "Proxy-consumer - Scanning for entity with level %s" level)
+ "Given a level, retrieve one file (which represents an entity) for this level and sync it, then remove such file. Then recall the function recursively."
  (let ((orgtrello-proxy/--working-directory (orgtrello-proxy/--compute-entity-level-dir level)))
    (when (file-exists-p orgtrello-proxy/--working-directory) ;; ensure the directory exists
          (let* ((orgtrello-proxy/--files (--filter (file-regular-p it)
@@ -697,26 +668,76 @@ Levels:
            (when orgtrello-proxy/--files
                  ;; try and sync the file
                  (orgtrello-proxy/--deal-with-entity-file-sync (car orgtrello-proxy/--files))
-                 ;; if it potentially remains files to sync, recall recursively this (function  )
+                 ;; if it potentially remains files to sync, recall recursively this function
                  (when (< 1 (length orgtrello-proxy/--files)) (orgtrello-proxy/--deal-with-level level)))))))
 
-(defun orgtrello-timer/--consumer-entity-files-hierarchically-and-sync ()
+(defun orgtrello-proxy/--consumer-entity-files-hierarchically-and-sync ()
   "A handler to extract the entity informations from files (in order card, checklist, items)."
   ;; now let's deal with the entities sync in order with level
   (dolist (l '(1 2 3))
     (orgtrello-proxy/--deal-with-level l)))
 
-(defvar *ORGTRELLO-TIMER* nil "Timer to trigger the scanning of folder.")
+(defvar *ORGTRELLO-TIMER* nil "A timer run by elnode")
+
+(defun orgtrello-proxy/--elnode-timer (http-con)
+  "A process on elnode to trigger even regularly."
+  (orgtrello-log/msg 5 "Proxy-timer - Request received. Start/stop timer.")
+  (let* ((query-map     (orgtrello-proxy/--extract-trello-query http-con))
+         (start-or-stop (assoc-default 'start query-map)))
+    (if start-or-stop
+        ;; start the timer
+        (setq *ORGTRELLO-TIMER* (run-with-timer 0 15 'orgtrello-proxy/--consumer-entity-files-hierarchically-and-sync))
+        ;; otherwise, stop it
+        (when *ORGTRELLO-TIMER*
+              (cancel-timer *ORGTRELLO-TIMER*)
+              (setq *ORGTRELLO-TIMER* nil)))
+    (orgtrello-proxy/response-ok http-con)))
 
 (defun orgtrello-timer/start ()
-  "Start the orgtrello-timer which will be in charge of scanning a specific folder to send the request to trello"
-  (setq *ORGTRELLO-TIMER* (run-with-timer 0 15 'orgtrello-timer/--consumer-entity-files-hierarchically-and-sync)))
+  (orgtrello-proxy/http-consumer t))
 
 (defun orgtrello-timer/stop ()
   "Stop the orgtrello-timer."
-  (when *ORGTRELLO-TIMER*
-        (cancel-timer *ORGTRELLO-TIMER*)
-        (setq *ORGTRELLO-TIMER* nil)))
+  (orgtrello-proxy/http-consumer nil))
+
+(defvar *ORGTRELLO-QUERY-APP-ROUTES* '(;; proxy to request trello
+                                       ("^localhost//proxy/trello/\\(.*\\)" . orgtrello-proxy/--elnode-proxy)
+                                       ;; proxy producer to receive async creation request
+                                       ("^localhost//proxy/producer/\\(.*\\)" . orgtrello-proxy/--elnode-proxy-producer)
+                                       ;; proxy to request trello
+                                       ("^localhost//proxy/timer/\\(.*\\)" . orgtrello-proxy/--elnode-timer))
+  "Org-trello dispatch routes for the webserver")
+
+(defun orgtrello-proxy/--proxy-handler (http-con)
+  "Proxy handler."
+  (elnode-hostpath-dispatcher http-con *ORGTRELLO-QUERY-APP-ROUTES*))
+
+(defun orgtrello-proxy/--start (port host)
+  "Starting the proxy."
+  (orgtrello-log/msg 5 "Proxy-server starting...")
+  (elnode-start 'orgtrello-proxy/--proxy-handler :port port :host host)
+  (setq elnode--do-error-logging nil)
+  (orgtrello-log/msg 5 "Proxy-server started!"))
+
+(defun orgtrello-proxy/stop ()
+  "Stopping the proxy."
+  (orgtrello-log/msg 5 "Proxy-server stopping...")
+  (elnode-stop *ORGTRELLO-PROXY-PORT*)
+  (orgtrello-log/msg 5 "Proxy-server stopped!"))
+
+(defun orgtrello-proxy/reload ()
+  "Reload the proxy server."
+  (interactive)
+  ;; stop the default port
+  (elnode-stop *ORGTRELLO-PROXY-DEFAULT-PORT*)
+  ;; update with the new port the user possibly changed
+  (setq *ORGTRELLO-PROXY-URL* (format "http://%s:%d/proxy" *ORGTRELLO-PROXY-HOST* *ORGTRELLO-PROXY-PORT*))
+  ;; start the proxy
+  (orgtrello-proxy/--start *ORGTRELLO-PROXY-PORT* *ORGTRELLO-PROXY-HOST*)
+  ;; and the timer
+  (orgtrello-timer/start))
+
+(orgtrello-log/msg 4 "org-trello - orgtrello-proxy loaded!")
 
 
 
@@ -1545,15 +1566,11 @@ C-c o h - M-x org-trello/help-describing-bindings    - This help message."))
       (progn
         ;; start the proxy
         (orgtrello-proxy/reload)
-        ;; and the timer
-        (orgtrello-timer/start)
         ;; a little message in the minibuffer to notify the user
         (orgtrello-log/msg 0 "org-trello/ot is on! To begin with, hit C-c o h or M-x 'org-trello/help-describing-bindings"))
       (progn
         ;; stop the proxy
         (orgtrello-proxy/stop)
-        ;; and the timer
-        (orgtrello-timer/stop)
         ;; a little message in the minibuffer to notify the user
         (orgtrello-log/msg 0 "org-trello/ot is off!"))))
 

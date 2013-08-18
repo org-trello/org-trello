@@ -296,10 +296,34 @@
 :orgtrello-id: 5210cd49e72cf5ee0d0039c0
 :END:
 * Joy of FP languages
+:PROPERTIES:
+:orgtrello-id: 52111fe6ced9726a46007072
+:END:
 ** Lisp
+:PROPERTIES:
+:orgtrello-id: 52111fe73cbba6d768006de1
+:END:
 *** clojure
+:PROPERTIES:
+:orgtrello-id: 52111fe92ebc043f5d003e3d
+:END:
 *** emacs-lisp
+:PROPERTIES:
+:orgtrello-id: 52111fea0b2415ba3c00602c
+:END:
 *** common-lisp
+:PROPERTIES:
+:orgtrello-id: 52111febb7489adb1d004a7c
+:END:
 ** ml
+:PROPERTIES:
+:orgtrello-id: 52111fe8c2b1662246006e28
+:END:
 *** haskell
+:PROPERTIES:
+:orgtrello-id: 52111fece197f1784f0051ab
+:END:
 *** ocaml
+:PROPERTIES:
+:orgtrello-id: 52111fed75c50f6e46002d40
+:END:
