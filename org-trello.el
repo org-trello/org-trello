@@ -569,7 +569,7 @@ Levels:
     (mkdir root-dir t)
     ;; generate a file with the entity information
     (with-temp-file (orgtrello-proxy/--compute-metadata-filename root-dir buffer-name position)
-      (insert (format "%S" query-map-wrapped)))
+      (insert (format "%S\n" query-map-wrapped)))
     ;; all is good
     (orgtrello-proxy/response-ok http-con)))
 
