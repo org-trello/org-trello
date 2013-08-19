@@ -791,7 +791,7 @@ Levels:
   (undo-boundary)
   ;; now let's deal with the entities sync in order with level
   (with-local-quit
-    ;; if archived file exist, get them back in the queue
+    ;; if archived file exists, get them back in the queue before anything else
     (dolist (l '(1 2 3))
       (orgtrello-proxy/--deal-with-archived-files l))
     ;; if some check regarding order fails, we catch and let the timer sleep for it the next time to get back normally to the upper level in order
@@ -1650,7 +1650,7 @@ Levels:
   (org-action/--msg-deco-control-and-do
      "Delete entities"
      '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties orgtrello/--control-encoding)
-     (lambda () (orgtrello/do-delete-entities t))
+     'orgtrello/do-delete-entities
      t))
 
 (defun org-trello/install-key-and-token ()
