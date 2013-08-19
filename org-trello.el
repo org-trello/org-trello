@@ -632,6 +632,18 @@ Levels:
   ;; ##### in any case, remove the marker
   (org-delete-property-globally marker))
 
+(defmacro safe-wrap (fn &rest clean-up)
+  "A macro to deal with intercept uncaught error when executing the fn call and cleaning up using the clean-up body."
+  `(unwind-protect
+       (let (retval)
+         (condition-case ex
+             (setq retval (progn ,fn))
+           ('error
+            (message (format "Caught exception: [%s]" ex))
+            (setq retval (cons 'exception (list ex)))))
+         retval)
+     ,@clean-up))
+
 (defun orgtrello-proxy/--standard-post-or-put-success-callback (buffer-name position file)
   "Return a callback function able to deal with the update of the buffer at a given position."
   (lexical-let ((orgtrello-query/--entry-position    position)
@@ -643,24 +655,25 @@ Levels:
             (orgtrello-query/--marker       (orgtrello/compute-marker orgtrello-query/--entry-position)))
         ;; switch to the right buffer
         (set-buffer orgtrello-query/--entry-buffer-name)
-        ;; will update via tag the trello id of the new persisted data (if needed)
-        (save-excursion
-          ;; get back to the buffer and update the id if need be
-          (let ((str-msg (when (orgtrello-proxy/--getting-back-to-marker orgtrello-query/--marker) ;; if we succeed update the buffer
-                               ;; now we extract the data
-                               (let* ((orgtrello-query/--entry-metadata (orgtrello-data/metadata))
-                                      (orgtrello-query/--entry-id       (orgtrello/--id orgtrello-query/--entry-metadata))
-                                      (orgtrello-query/--entry-name     (orgtrello/--label orgtrello-query/--entry-metadata)))
-                                 (if orgtrello-query/--entry-id ;; id already present in the org-mode file
-                                     ;; no need to add another
-                                     (format "Entity '%s' synced with id '%s'" orgtrello-query/--entry-name orgtrello-query/--entry-id)
-                                     (progn
-                                       ;; not present, this was just created, we add a simple property
-                                       (org-set-property *ORGTRELLO-ID* orgtrello-query/--entry-new-id)
-                                       (format "Newly entity '%s' synced with id '%s'" orgtrello-query/--entry-name orgtrello-query/--entry-new-id)))))))
-            (when str-msg (orgtrello-log/msg 3 str-msg)))
-          ;; in any case, we cleanup
-          (orgtrello-proxy/--cleanup-buffer-metadata orgtrello-query/--entry-file orgtrello-query/--marker))))))
+        (safe-wrap
+         ;; will update via tag the trello id of the new persisted data (if needed)
+         (save-excursion
+           ;; get back to the buffer and update the id if need be
+           (let ((str-msg (when (orgtrello-proxy/--getting-back-to-marker orgtrello-query/--marker) ;; if we succeed update the buffer
+                                ;; now we extract the data
+                                (let* ((orgtrello-query/--entry-metadata (orgtrello-data/metadata))
+                                       (orgtrello-query/--entry-id       (orgtrello/--id orgtrello-query/--entry-metadata))
+                                       (orgtrello-query/--entry-name     (orgtrello/--label orgtrello-query/--entry-metadata)))
+                                  (if orgtrello-query/--entry-id ;; id already present in the org-mode file
+                                      ;; no need to add another
+                                      (format "Entity '%s' synced with id '%s'" orgtrello-query/--entry-name orgtrello-query/--entry-id)
+                                      (progn
+                                        ;; not present, this was just created, we add a simple property
+                                        (org-set-property *ORGTRELLO-ID* orgtrello-query/--entry-new-id)
+                                        (format "Newly entity '%s' synced with id '%s'" orgtrello-query/--entry-name orgtrello-query/--entry-new-id)))))))
+             (when str-msg (orgtrello-log/msg 3 str-msg))))
+           ;; in any case, we cleanup
+           (orgtrello-proxy/--cleanup-buffer-metadata orgtrello-query/--entry-file orgtrello-query/--marker))))))
 
 (defun orgtrello-proxy/--standard-post-or-put-error-callback (buffer-name position file)
   "Return a callback function able to deal with the update position."
@@ -672,12 +685,13 @@ Levels:
       (let ((orgtrello-query/--marker (orgtrello/compute-marker orgtrello-query/--entry-position)))
         ;; switch to the right buffer
         (set-buffer orgtrello-query/--entry-buffer-name)
-        ;; will update via tag the trello id of the new persisted data (if needed)
-        (save-excursion
-          ;; Get back to the buffer's position to update
-          (orgtrello-proxy/--getting-back-to-marker orgtrello-query/--marker)
-          ;; cleanup
-          (orgtrello-proxy/--cleanup-buffer-metadata orgtrello-query/--entry-file orgtrello-query/--marker))))))
+        (safe-wrap
+         ;; will update via tag the trello id of the new persisted data (if needed)
+         (save-excursion
+           ;; Get back to the buffer's position to update
+           (orgtrello-proxy/--getting-back-to-marker orgtrello-query/--marker))
+         ;; cleanup
+         (orgtrello-proxy/--cleanup-buffer-metadata orgtrello-query/--entry-file orgtrello-query/--marker))))))
 
 (defun orgtrello-proxy/--getting-back-to-marker (marker)
   "Given a marker, getting back to marker function."
@@ -707,20 +721,22 @@ Levels:
     ;; switch to the right buffer
     (set-buffer buffer-name)
     ;; will update via tag the trello id of the new persisted data (if needed)
-    (save-excursion
-      ;; Get back to the buffer's position to update
-      (when (orgtrello-proxy/--getting-back-to-marker orgtrello-query/--marker) ;; something to do here because there are trouble sometimes, going back to marker fails!
-            ;; sync the entity
-            (let ((orgtrello-query/--entry-metadata      (orgtrello-data/entry-get-full-metadata))
-                  (orgtrello-query/--entry-file-archived (orgtrello-proxy/--archived-scanning-file file)))
-              ;; archive the scanned file
-              (orgtrello-proxy/--archive-entity-file-when-scanning file-to-archive orgtrello-query/--entry-file-archived)
-              ;; execute the request
-              (orgtrello-query/http-trello
-               (orgtrello/--dispatch-create orgtrello-query/--entry-metadata)
-               t
-               (orgtrello-proxy/--standard-post-or-put-success-callback buffer-name position orgtrello-query/--entry-file-archived)
-               (orgtrello-proxy/--standard-post-or-put-error-callback buffer-name position orgtrello-query/--entry-file-archived)))))
+    (safe-wrap
+     (save-excursion
+       ;; Get back to the buffer's position to update
+       (when (orgtrello-proxy/--getting-back-to-marker orgtrello-query/--marker) ;; something to do here because there are trouble sometimes, going back to marker fails!
+             ;; sync the entity
+             (let ((orgtrello-query/--entry-metadata      (orgtrello-data/entry-get-full-metadata))
+                   (orgtrello-query/--entry-file-archived (orgtrello-proxy/--archived-scanning-file file)))
+               ;; archive the scanned file
+               (orgtrello-proxy/--archive-entity-file-when-scanning file-to-archive orgtrello-query/--entry-file-archived)
+               ;; execute the request
+               (orgtrello-query/http-trello
+                (orgtrello/--dispatch-create orgtrello-query/--entry-metadata)
+                t
+                (orgtrello-proxy/--standard-post-or-put-success-callback buffer-name position orgtrello-query/--entry-file-archived)
+                (orgtrello-proxy/--standard-post-or-put-error-callback buffer-name position orgtrello-query/--entry-file-archived)))))
+     (message "Problem on 'orgtrello-proxy/--deal-with-entity-sync call function"))
     (orgtrello-log/msg 5 "Proxy-consumer - Searching metadata from buffer '%s' at point '%s' done!" buffer-name position)))
 
 (defun orgtrello-proxy/--deal-with-entity-file-sync (file)
