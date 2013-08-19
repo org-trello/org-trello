@@ -749,28 +749,42 @@ Levels:
         ;; extract the entity data
         (orgtrello-proxy/--deal-with-entity-sync (read (orgtrello-proxy/--read-lines file)) file)))
 
+(defun orgtrello-proxy/--list-files (directory)
+  "Compute list of regular files (no directory . and ..)"
+  (--filter (file-regular-p it) (directory-files directory t)))
+
 (defun orgtrello-proxy/--deal-with-directory (directory)
-  (let* ((orgtrello-proxy/--files (--filter (file-regular-p it)
-                                            (directory-files directory t))));; need to filter out the directory . and .., we only want files here
+  (let* ((orgtrello-proxy/--files (orgtrello-proxy/--list-files directory))) ;; need to filter out the directory . and .., we only want files here
     (when orgtrello-proxy/--files
           ;; try and sync the file
           (orgtrello-proxy/--deal-with-entity-file-sync (car orgtrello-proxy/--files))
           ;; if it potentially remains files to sync, recall recursively this function
           (when (< 1 (length orgtrello-proxy/--files)) (orgtrello-proxy/--deal-with-directory directory)))))
 
+(defun orgtrello-proxy/--level-inf-done-p (level)
+  "Ensure the synchronization of the lower level is done (except for level 1 which has no deps)!"
+  (if (= 1 level) t (-> level
+                        1-
+                        orgtrello-proxy/--compute-entity-level-dir
+                        orgtrello-proxy/--list-files
+                        null)))
+
 (defun orgtrello-proxy/--deal-with-level (level)
  "Given a level, retrieve one file (which represents an entity) for this level and sync it, then remove such file. Then recall the function recursively."
- (let ((orgtrello-proxy/--working-directory (orgtrello-proxy/--compute-entity-level-dir level)))
-   (when (file-exists-p orgtrello-proxy/--working-directory)
-         (orgtrello-proxy/--deal-with-directory orgtrello-proxy/--working-directory))))
+ (let ((orgtrello-proxy/--working-directory-current-level (orgtrello-proxy/--compute-entity-level-dir level)))
+   (if (and (orgtrello-proxy/--level-inf-done-p level) (file-exists-p orgtrello-proxy/--working-directory-current-level))
+       (orgtrello-proxy/--deal-with-directory orgtrello-proxy/--working-directory-current-level)
+       (throw 'org-trello-timer-go-to-sleep t))))
 
 (defun orgtrello-proxy/--consumer-entity-files-hierarchically-and-sync ()
   "A handler to extract the entity informations from files (in order card, checklist, items)."
   (undo-boundary)
   ;; now let's deal with the entities sync in order with level
   (with-local-quit
-    (dolist (l '(1 2 3))
-      (orgtrello-proxy/--deal-with-level l)))
+    ;; if some check regarding order fails, we catch and let the timer sleep for it the next time to get back normally to the upper level in order
+    (catch 'org-trello-timer-go-to-sleep
+      (dolist (l '(1 2 3))
+        (orgtrello-proxy/--deal-with-level l))))
   (undo-boundary))
 
 (defun orgtrello-proxy/--compute-lock-filename ()
