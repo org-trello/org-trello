@@ -726,16 +726,19 @@ Levels:
        ;; Get back to the buffer's position to update
        (when (orgtrello-proxy/--getting-back-to-marker orgtrello-query/--marker) ;; something to do here because there are trouble sometimes, going back to marker fails!
              ;; sync the entity
-             (let ((orgtrello-query/--entry-metadata      (orgtrello-data/entry-get-full-metadata))
-                   (orgtrello-query/--entry-file-archived (orgtrello-proxy/--archived-scanning-file file)))
+             (let* ((orgtrello-query/--entry-metadata      (orgtrello-data/entry-get-full-metadata))
+                    (orgtrello-query/--entry-file-archived (orgtrello-proxy/--archived-scanning-file file))
+                    (orgtrello-query/--query-map           (orgtrello/--dispatch-create orgtrello-query/--entry-metadata)))
                ;; archive the scanned file
                (orgtrello-proxy/--archive-entity-file-when-scanning file-to-archive orgtrello-query/--entry-file-archived)
-               ;; execute the request
-               (orgtrello-query/http-trello
-                (orgtrello/--dispatch-create orgtrello-query/--entry-metadata)
-                t
-                (orgtrello-proxy/--standard-post-or-put-success-callback buffer-name position orgtrello-query/--entry-file-archived)
-                (orgtrello-proxy/--standard-post-or-put-error-callback buffer-name position orgtrello-query/--entry-file-archived)))))
+               (if (hash-table-p orgtrello-query/--query-map)
+                   ;; execute the request
+                   (orgtrello-query/http-trello
+                    orgtrello-query/--query-map
+                    t
+                    (orgtrello-proxy/--standard-post-or-put-success-callback buffer-name position orgtrello-query/--entry-file-archived)
+                    (orgtrello-proxy/--standard-post-or-put-error-callback buffer-name position orgtrello-query/--entry-file-archived))
+                   (message orgtrello-query/--query-map)))))
      (message "Problem on 'orgtrello-proxy/--deal-with-entity-sync call function"))
     (orgtrello-log/msg 5 "Proxy-consumer - Searching metadata from buffer '%s' at point '%s' done!" buffer-name position)))
 
