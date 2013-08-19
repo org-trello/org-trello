@@ -28,32 +28,41 @@ CLOSED: [2013-08-19 lun. 00:06]
 :PROPERTIES:
 :orgtrello-id: 521145420a6cec864a0073e5
 :END:
-*** DONE Clojure
-CLOSED: [2013-08-19 lun. 00:07]
+*** Clojure
 :PROPERTIES:
 :orgtrello-id: 521145442e0ac0565b006a12
 :END:
-*** DONE Emacs-Lisp
-CLOSED: [2013-08-19 lun. 00:07]
+*** Emacs-Lisp
 :PROPERTIES:
 :orgtrello-id: 5211454496378df34100786f
 :END:
-*** DONE Common-Lisp
-CLOSED: [2013-08-19 lun. 00:07]
+*** Common-Lisp
 :PROPERTIES:
 :orgtrello-id: 52114545ba23a5895a003a65
+:END:
+*** Scheme
+:PROPERTIES:
+:orgtrello-id: 5211dbfd5e8e7b425d008982
 :END:
 ** ML family
 :PROPERTIES:
 :orgtrello-id: 521145430d4d23a26800447d
 :END:
-*** TODO Haskell
+*** Haskell
 :PROPERTIES:
 :orgtrello-id: 52114546086656b94c0073ca
 :END:
-*** TODO Ocaml
+*** Ocaml
 :PROPERTIES:
 :orgtrello-id: 521145474facf9375d006cc9
+:END:
+** hybrid family
+:PROPERTIES:
+:orgtrello-id: 5211d8c08e1262325a008769
+:END:
+*** Scala
+:PROPERTIES:
+:orgtrello-id: 5211d8ebe197f1784f006ab2
 :END:
 * TODO Reasoned schemer
 :PROPERTIES:

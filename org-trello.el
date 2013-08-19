@@ -498,14 +498,15 @@ Levels:
       (orgtrello-log/msg 3 org-trello/--result-action)
       (orgtrello-log/msg 3 (concat msg " - done!")))))
 
-(defun org-action/--control-and-do (control-fns fn-to-control-and-execute)
+(defun org-action/--control-and-do (control-fns fn-to-control-and-execute &optional nolog)
   "Execute the function fn if control-fns is nil or if the result of apply every function to fn is ok."
   (if control-fns
       (let* ((org-trello/--controls-done (--map (funcall it) control-fns))
              (org-trello/--error-messages (--filter (not (equal :ok it)) org-trello/--controls-done)))
         (if org-trello/--error-messages
-            ;; there are some trouble, we display all the error messages to help the user understand the problem
-            (orgtrello-log/msg 1 "List of errors:\n %s" (--mapcat (concat "- " it "\n") org-trello/--error-messages))
+            (unless nolog
+                    ;; there are some trouble, we display all the error messages to help the user understand the problem
+                    (orgtrello-log/msg 1 "List of errors:\n %s" (--mapcat (concat "- " it "\n") org-trello/--error-messages)))
           ;; ok execute the function as the controls are ok
           (funcall fn-to-control-and-execute)))
     ;; no control, we simply execute the function
@@ -742,20 +743,20 @@ Levels:
   "Compute the name of a lock file"
   (format "%s%s/%s" elnode-webserver-docroot "org-trello" "org-trello-already-scanning.lock"))
 
-(defun orgtrello-proxy/--cleanup-timer-data (&optional lock-filename)
-  "Cleanup after the timer has been triggered."
-  (let ((lock-file (if lock-filename lock-filename (orgtrello-proxy/--compute-lock-filename))))
-    (if (file-exists-p lock-file) (delete-file lock-file))))
+(defvar *ORGTRELLO-LOCK* (orgtrello-proxy/--compute-lock-filename) "Lock file to ensure one timer is running at a time.")
 
-(defun orgtrello-proxy/--consumer-lock-scan-entity-files-hierarchically-and-sync ()
+(defun orgtrello-proxy/--cleanup-timer-data ()
+  "Cleanup after the timer has been triggered."
+  (if (file-exists-p *ORGTRELLO-LOCK*) (delete-file *ORGTRELLO-LOCK*)))
+
+(defun orgtrello-proxy/--consumer-lock-and-scan-entity-files-hierarchically-and-sync ()
   "A handler to extract the entity informations from files (in order card, checklist, items)."
   ;; only one timer at a time
-  (let ((lock-file (orgtrello-proxy/--compute-lock-filename)))
-    (with-temp-file lock-file
-      (insert "Timer - Scanning entities..."))
-    (orgtrello-proxy/--consumer-entity-files-hierarchically-and-sync)
-    ;; remove lock
-    (orgtrello-proxy/--cleanup-timer-data lock-file)))
+  (with-temp-file *ORGTRELLO-LOCK*
+    (insert "Timer - Scanning entities..."))
+  (orgtrello-proxy/--consumer-entity-files-hierarchically-and-sync)
+  ;; remove lock
+  (orgtrello-proxy/--cleanup-timer-data))
 
 (defun orgtrello-proxy/--check-network-ok ()
   "Ensure there is some network running (simply check that there is more than the lo interface)."
@@ -768,7 +769,8 @@ Levels:
 (defun orgtrello-proxy/--controls-and-scan-if-ok ()
   (org-action/--control-and-do
    '(orgtrello-proxy/--check-network-ok orgtrello-proxy/--check-no-running-timer)
-   'orgtrello-proxy/--consumer-lock-scan-entity-files-hierarchically-and-sync))
+   'orgtrello-proxy/--consumer-lock-and-scan-entity-files-hierarchically-and-sync
+   t))
 
 (defvar *ORGTRELLO-TIMER* nil "A timer run by elnode")
 
@@ -783,7 +785,7 @@ Levels:
           ;; cleanup anything that the timer possibly left behind
           (orgtrello-proxy/--cleanup-timer-data)
           ;; start the timer
-          (setq *ORGTRELLO-TIMER* (run-with-timer 0 5 'orgtrello-proxy/--consumer-lock-scan-entity-files-hierarchically-and-sync)))
+          (setq *ORGTRELLO-TIMER* (run-with-timer 0 5 'orgtrello-proxy/--controls-and-scan-if-ok)))
         ;; otherwise, stop it
         (when *ORGTRELLO-TIMER*
               (cancel-timer *ORGTRELLO-TIMER*)
@@ -825,6 +827,8 @@ Levels:
 (defun orgtrello-proxy/reload ()
   "Reload the proxy server."
   (interactive)
+  ;; stop the timer
+  (orgtrello-proxy/http-consumer nil)
   ;; stop the default port
   (elnode-stop *ORGTRELLO-PROXY-DEFAULT-PORT*)
   ;; update with the new port the user possibly changed
