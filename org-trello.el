@@ -1667,20 +1667,6 @@ C-c o k - M-x org-trello/kill-entity                 - Kill the entity (and its 
 # HELP
 C-c o h - M-x org-trello/help-describing-bindings    - This help message."))
 
-(defun org-trello/--prepare-org-trello-mode ()
-  "Preparing org-trello mode"
-  (if org-trello-mode
-      (progn
-        ;; start the proxy
-        (orgtrello-proxy/reload)
-        ;; a little message in the minibuffer to notify the user
-        (orgtrello-log/msg 0 "org-trello/ot is on! To begin with, hit C-c o h or M-x 'org-trello/help-describing-bindings"))
-      (progn
-        ;; stop the proxy
-        (orgtrello-proxy/stop)
-        ;; a little message in the minibuffer to notify the user
-        (orgtrello-log/msg 0 "org-trello/ot is off!"))))
-
 ;;;###autoload
 (define-minor-mode org-trello-mode "Sync your org-mode and your trello together."
   :lighter " ot" ;; the name on the modeline
@@ -1701,8 +1687,21 @@ C-c o h - M-x org-trello/help-describing-bindings    - This help message."))
              (define-key map (kbd "C-c o C") 'org-trello/create-complex-entity)
              ;; Help
              (define-key map (kbd "C-c o h") 'org-trello/help-describing-bindings)
-             map)
-  :after-hook (org-trello/--prepare-org-trello-mode))
+             map))
+
+(add-hook 'org-trello-mode-on-hook
+          (lambda ()
+            ;; start the proxy
+            (orgtrello-proxy/reload)
+            ;; a little message in the minibuffer to notify the user
+            (orgtrello-log/msg 0 "org-trello/ot is on! To begin with, hit C-c o h or M-x 'org-trello/help-describing-bindings")))
+
+(add-hook 'org-trello-mode-off-hook
+          (lambda ()
+            ;; stop the proxy
+            (orgtrello-proxy/stop)
+            ;; a little message in the minibuffer to notify the user
+            (orgtrello-log/msg 0 "org-trello/ot is off!")))
 
 (orgtrello-log/msg 4 "org-trello loaded!")
 
