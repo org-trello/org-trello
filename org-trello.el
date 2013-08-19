@@ -486,6 +486,9 @@ Levels:
 (defun org-action/--msg-deco-control-and-do (msg control-fns fn-to-control-and-execute &optional save-buffer-p)
   "A simple decorator function to display message in mini-buffer before and after the execution of the control"
   (orgtrello-log/msg 3 (concat msg "..."))
+  ;; stop the timer
+  (orgtrello-timer/stop)
+  ;; now execute the controls and the main action
   (let ((org-trello/--result-action (org-action/--control-and-do control-fns fn-to-control-and-execute)))
     ;; do we have to save the buffer
     (when save-buffer-p
@@ -494,6 +497,8 @@ Levels:
           (save-buffer)
           ;; reload setup
           (orgtrello-action/reload-setup)))
+    ;; start the timer
+    (orgtrello-timer/start)
     (if (string-or-null-p org-trello/--result-action)
       (orgtrello-log/msg 3 org-trello/--result-action)
       (orgtrello-log/msg 3 (concat msg " - done!")))))
