@@ -788,11 +788,14 @@ Levels:
           (setq *ORGTRELLO-TIMER* (run-with-timer 0 5 'orgtrello-proxy/--controls-and-scan-if-ok)))
         ;; otherwise, stop it
         (when *ORGTRELLO-TIMER*
+              ;; stop the timer
               (cancel-timer *ORGTRELLO-TIMER*)
+              ;; nil the orgtrello reference
               (setq *ORGTRELLO-TIMER* nil)))
     (orgtrello-proxy/response-ok http-con)))
 
 (defun orgtrello-timer/start ()
+  ;; cleanup anything that the timer possibly left behind
   (orgtrello-proxy/http-consumer t))
 
 (defun orgtrello-timer/stop ()
@@ -821,15 +824,18 @@ Levels:
 (defun orgtrello-proxy/stop ()
   "Stopping the proxy."
   (orgtrello-log/msg 5 "Proxy-server stopping...")
+  ;; stop the timer
+  (orgtrello-timer/stop)
+  ;; then stop the proxy
   (elnode-stop *ORGTRELLO-PROXY-PORT*)
   (orgtrello-log/msg 5 "Proxy-server stopped!"))
 
 (defun orgtrello-proxy/reload ()
   "Reload the proxy server."
   (interactive)
-  ;; stop the timer
-  (orgtrello-proxy/http-consumer nil)
-  ;; stop the default port
+  ;; stop the proxy
+  (orgtrello-proxy/stop)
+  ;; stop the default port (only usefull if the user changed from the default port )
   (elnode-stop *ORGTRELLO-PROXY-DEFAULT-PORT*)
   ;; update with the new port the user possibly changed
   (setq *ORGTRELLO-PROXY-URL* (format "http://%s:%d/proxy" *ORGTRELLO-PROXY-HOST* *ORGTRELLO-PROXY-PORT*))
