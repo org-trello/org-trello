@@ -1342,7 +1342,16 @@ Levels:
                  sync)
                 "Delete entity done!")
             query-http-or-error-msg))
-      "Entity not synchronized on trello yet!")))
+        "Entity not synchronized on trello yet!")))
+
+(defun orgtrello/--do-delete-card (&optional sync)
+  "Delete the card."
+  (when (= 1 (orgtrello/--level (orgtrello-data/current (orgtrello-data/entry-get-full-metadata))))
+        (orgtrello/do-delete-simple sync)))
+
+(defun orgtrello/do-delete-entities (&optional sync)
+  "Launch a batch deletion of every single entities present on the buffer."
+  (org-map-entries (lambda () (orgtrello/--do-delete-card sync)) t 'file))
 
 (defun orgtrello/--do-install-config-file (*consumer-key* *access-token*)
   "Persist the file config-file with the input of the user."
@@ -1587,6 +1596,15 @@ Levels:
      'orgtrello/do-delete-simple
      t))
 
+(defun org-trello/kill-all-entities ()
+  "Control first, then if ok, delete the entity and all its arborescence."
+  (interactive)
+  (org-action/--msg-deco-control-and-do
+     "Delete entity"
+     '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties orgtrello/--control-encoding)
+     'orgtrello/do-delete-entities
+     t))
+
 (defun org-trello/install-key-and-token ()
   "No control, trigger the setup installation of the key and the read/write token."
   (interactive)
@@ -1678,6 +1696,7 @@ C-c o h - M-x org-trello/help-describing-bindings    - This help message."))
              ;; asynchronous requests (requests through proxy)
              (define-key map (kbd "C-c o c") 'org-trello/create-simple-entity)
              (define-key map (kbd "C-c o k") 'org-trello/kill-entity)
+             (define-key map (kbd "C-c o K") 'org-trello/kill-all-entities)
              (define-key map (kbd "C-c o s") 'org-trello/sync-to-trello)
              (define-key map (kbd "C-c o C") 'org-trello/create-complex-entity)
              ;; Help
