@@ -490,11 +490,11 @@ Levels:
   (let ((org-trello/--result-action (org-action/--control-and-do control-fns fn-to-control-and-execute)))
     ;; do we have to save the buffer
     (when save-buffer-p
-        (progn
-          ;; save the buffer
-          (save-buffer)
-          ;; reload setup
-          (orgtrello-action/reload-setup)))
+          (progn
+            ;; save the buffer
+            (save-buffer)
+            ;; reload setup
+            (orgtrello-action/reload-setup)))
     ;; start the timer
     (orgtrello-timer/start)
     (if (string-or-null-p org-trello/--result-action)
@@ -699,7 +699,7 @@ Levels:
 (defun orgtrello-proxy/--getting-back-to-marker (marker)
   "Given a marker, getting back to marker function."
   (goto-char (point-min))
-  ;; (org-goto-local-search-headings)
+  ;; (org-goto-local-search-headings marker nil t)
   (re-search-forward marker))
 
 (defun orgtrello-proxy/--archived-scanning-file (file)
@@ -1129,7 +1129,7 @@ Levels:
   query-map)
 
 (defun orgtrello/--set-marker (position)
-  "Set the consumer-key to make a pointer to get back to when the request is finished"
+  "Set the position to make a pointer to get back to when the request is finished"
   (let ((orgtrello/--set-marker--marker (orgtrello/compute-marker position)))
     (org-set-property orgtrello/--set-marker--marker orgtrello/--set-marker--marker)))
 
@@ -1332,40 +1332,43 @@ Levels:
 
 (defun orgtrello-proxy/--standard-delete-success-callback (buffer-name position)
   "Return a callback function able to deal with the position."
-  (lexical-let ((orgtrello-query/--entry-position    position)
-                (orgtrello-query/--entry-buffer-name buffer-name))
-    (cl-defun delete-some-insignificant-name (&key data &allow-other-keys)
-      "Will read the information from the response and simply return id and position."
+  (lexical-let* ((orgtrello-query/--entry-position    position)
+                 (orgtrello-query/--entry-buffer-name buffer-name)
+                 (orgtrello-query/--marker (orgtrello/compute-marker orgtrello-query/--entry-position)))
+    (lambda (&rest response)
       (safe-wrap
        (set-buffer orgtrello-query/--entry-buffer-name)
        (save-excursion
-         (goto-char orgtrello-query/--entry-position)
-         (org-back-to-heading t)
-         (org-delete-property *ORGTRELLO-ID*)
-         (hide-subtree)
-         (beginning-of-line)
-         (kill-line)
-         (kill-line))
-       (orgtrello-log/msg 3 "Problem during the 'orgtrello-proxy/--standard-delete-success-callback function call."))
-      (orgtrello-log/msg 5 "proxy - Deleting entity in the buffer '%s' at point '%s' done!" orgtrello-query/--entry-buffer-name orgtrello-query/--entry-position))))
+         (when (orgtrello-proxy/--getting-back-to-marker orgtrello-query/--marker)
+               (org-back-to-heading t)
+               (org-delete-property *ORGTRELLO-ID*)
+               (hide-subtree)
+               (beginning-of-line)
+               (kill-line)
+               (kill-line)))
+       (orgtrello-log/msg 3 "proxy - Deleting entity in the buffer '%s' at point '%s' done!" orgtrello-query/--entry-buffer-name orgtrello-query/--entry-position)))))
 
 (defun orgtrello/do-delete-simple (&optional sync)
   "Do the simple deletion of a card, checklist or item."
   (let* ((entry-metadata   (orgtrello-data/entry-get-full-metadata))
          (current-metadata (orgtrello-data/current entry-metadata))
-         (id               (orgtrello/--id current-metadata)))
+         (id               (orgtrello/--id current-metadata))
+         (orgtrello/--position (orgtrello/--position current-metadata)))
     (if (and current-metadata id)
-        (let ((query-http-or-error-msg (orgtrello/--dispatch-delete current-metadata (orgtrello-data/parent entry-metadata))))
-          (if (hash-table-p query-http-or-error-msg)
-              (progn
-                (orgtrello-proxy/http
-                 (orgtrello/--update-query-with-org-metadata query-http-or-error-msg
-                                                             (orgtrello/--position current-metadata)
-                                                             (orgtrello/--buffername current-metadata)
-                                                             'orgtrello-proxy/--standard-delete-success-callback)
-                 sync)
-                "Delete entity done!")
-            query-http-or-error-msg))
+        (progn
+          (orgtrello/--set-marker orgtrello/--position)
+          (let ((query-http-or-error-msg (orgtrello/--dispatch-delete current-metadata (orgtrello-data/parent entry-metadata))))
+            (if (hash-table-p query-http-or-error-msg)
+                (progn
+                  (orgtrello-proxy/http
+                   (orgtrello/--update-query-with-org-metadata query-http-or-error-msg
+                                                               orgtrello/--position
+                                                               (orgtrello/--buffername current-metadata)
+                                                               'orgtrello-proxy/--standard-delete-success-callback
+                                                               sync)
+                   sync)
+                  "Delete entity done!")
+                query-http-or-error-msg)))
         "Entity not synchronized on trello yet!")))
 
 (defun orgtrello/--do-delete-card (&optional sync)
@@ -1621,7 +1624,7 @@ Levels:
   (org-action/--msg-deco-control-and-do
      "Delete entities"
      '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties orgtrello/--control-encoding)
-     'orgtrello/do-delete-entities
+     (lambda () (orgtrello/do-delete-entities t))
      t))
 
 (defun org-trello/install-key-and-token ()
