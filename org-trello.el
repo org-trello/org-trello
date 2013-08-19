@@ -400,13 +400,11 @@ Levels:
 
 (cl-defun orgtrello-query/--standard-error-callback (&key error-thrown symbol-status response &allow-other-keys)
   "Standard error callback. Simply displays a message in the minibuffer with the error code."
-  (orgtrello-log/msg 4 "client - Problem during the request:\n
-- error-thrown: %s\nresponse: %s" error-thrown response))
+  (orgtrello-log/msg 3 "client - Problem during the request to the proxy- error-thrown: %s" error-thrown))
 
 (cl-defun orgtrello-query/--standard-success-callback (&key data &allow-other-keys)
   "Standard success callback. Simply displays a \"Success\" message in the minibuffer."
-  (when data (orgtrello-log/msg 4 "client - response data: %S" data))
-  (orgtrello-log/msg 4 "Success in transmitting the request to the proxy."))
+  (orgtrello-log/msg 3 "client - Proxy received and acknowledged the request%s" (if data (format " - response data: %S." data) ".")))
 
 (defun orgtrello-query/--authentication-params ()
   "Generates the list of http authentication parameters"
@@ -729,7 +727,7 @@ Levels:
     (safe-wrap
      (save-excursion
        ;; Get back to the buffer's position to update
-       (when (orgtrello-proxy/--getting-back-to-marker orgtrello-query/--marker) ;; something to do here because there are trouble sometimes, going back to marker fails!
+       (when (orgtrello-proxy/--getting-back-to-marker orgtrello-query/--marker)
              ;; sync the entity
              (let* ((orgtrello-query/--entry-metadata      (orgtrello-data/entry-get-full-metadata))
                     (orgtrello-query/--entry-file-archived (orgtrello-proxy/--archived-scanning-file file))
@@ -813,18 +811,19 @@ Levels:
 
 (defun orgtrello-proxy/--elnode-timer (http-con)
   "A process on elnode to trigger even regularly."
-  (orgtrello-log/msg 3 "Proxy-timer - Request received. Start/stop timer.")
   (let* ((query-map     (orgtrello-proxy/--extract-trello-query http-con))
          (start-or-stop (assoc-default 'start query-map)))
     (if start-or-stop
         ;; cleanup before starting anew
         (progn
+          (orgtrello-log/msg 3 "Proxy-timer - Request received. Start timer.")
           ;; cleanup anything that the timer possibly left behind
           (orgtrello-proxy/--cleanup-timer-data)
           ;; start the timer
           (setq *ORGTRELLO-TIMER* (run-with-timer 0 5 'orgtrello-proxy/--controls-and-scan-if-ok)))
         ;; otherwise, stop it
         (when *ORGTRELLO-TIMER*
+              (orgtrello-log/msg 3 "Proxy-timer - Request received. Stop timer.")
               ;; stop the timer
               (cancel-timer *ORGTRELLO-TIMER*)
               ;; nil the orgtrello reference
