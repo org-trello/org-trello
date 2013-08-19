@@ -7,13 +7,12 @@
 #+property: DELEGATED 51e538a89c05f1e25c0027c6
 #+property: FAIL 51e538a26f75d07902002d25
 #+property: CANCELLED 51e538e6c7a68fa0510014ee
-#+TODO: TODO IN-PROGRESS PENDING | DONE DELEGATED FAIL CANCELLED
+#+TODO: TODO IN-PROGRESS | DONE PENDING DELEGATED FAIL CANCELLED
 #+title: synced from trello
 #+author: Antoine R. Dumont
 
 * TODO Joy of FUN(ctional) LANGUAGES
 ** LISP family
-CLOSED: [2013-08-19 lun. 00:06]
 *** Clojure
 *** Emacs-Lisp
 *** Common-Lisp
