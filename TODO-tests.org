@@ -94,17 +94,17 @@ CLOSED: [2013-08-19 lun. 00:06]
 :END:
 ** Part 1 Foundations [0%]
 :PROPERTIES:
-:orgtrello-id: 5210ccee428c64944a0069c4
+:orgtrello-id: 5211ed76e53cd29c0d0056c3
 :END:
-*** TODO Clojure philosophy [100%]
+*** Clojure philosophy [100%]
 :PROPERTIES:
-:orgtrello-id: 5210ccf097332b1f5d003846
+:orgtrello-id: 5211ed78cc3a5df04a008c5d
 :END:
-*** TODO Drinking from the Clojure firehose
+*** Drinking from the Clojure firehose
 :PROPERTIES:
-:orgtrello-id: 5210ccf1e197f1784f004c06
+:orgtrello-id: 5211ed798e1262325a008c40
 :END:
-*** TODO Dipping our toes in the pool
+*** Dipping our toes in the pool
 :PROPERTIES:
 :orgtrello-id: 5210ccf2ba821fbd4c003692
 :END:
@@ -112,55 +112,55 @@ CLOSED: [2013-08-19 lun. 00:06]
 :PROPERTIES:
 :orgtrello-id: 5210cd1c2e0ac0565b006089
 :END:
-*** TODO On scalars [100%]
+*** On scalars [100%]
 :PROPERTIES:
-:orgtrello-id: 5210cd39c05bf48f51004787
+:orgtrello-id: 5211edaee489cb904a005d4a
 :END:
-*** TODO Composite data types [100%]
+*** Composite data types [100%]
 :PROPERTIES:
-:orgtrello-id: 5210cd3ad65278fd5c0067fb
+:orgtrello-id: 5211edaf530279fa6e001b39
 :END:
 ** Part 3 Functional Programming
 :PROPERTIES:
 :orgtrello-id: 5210cd1d378e961842006a9c
 :END:
-*** TODO Being lazy and set in your ways
+*** Being lazy and set in your ways
 :PROPERTIES:
 :orgtrello-id: 5210cd3b3c4a3e0542006a27
 :END:
-*** TODO Immutability
+*** Immutability
 :PROPERTIES:
 :orgtrello-id: 5210cd3cc82dc3361a006092
 :END:
-*** TODO Designing a persistent toy
+*** Designing a persistent toy
 :PROPERTIES:
 :orgtrello-id: 5210cd3d4950c2335a006401
 :END:
-*** TODO Laziness
+*** Laziness
 :PROPERTIES:
 :orgtrello-id: 5210cd3ee6ba409a68006e20
 :END:
-*** TODO Putting it all together: a lazy quicksort
+*** Putting it all together: a lazy quicksort
 :PROPERTIES:
 :orgtrello-id: 5210cd3ee197f1784f004c0b
 :END:
-*** TODO Functional programming
+*** Functional programming
 :PROPERTIES:
 :orgtrello-id: 5210cd3f7040f9875d006703
 :END:
-*** TODO Functions in all their forms [100%]
+*** Functions in all their forms [100%]
 :PROPERTIES:
-:orgtrello-id: 5210cd40edb03ce5790037b9
+:orgtrello-id: 5211edd0146e624d5d008af4
 :END:
-*** TODO Closures
+*** Closures
 :PROPERTIES:
 :orgtrello-id: 5210cd410a5c3bb44c004680
 :END:
-*** TODO Thinking recursively
+*** Thinking recursively
 :PROPERTIES:
 :orgtrello-id: 5210cd42b7489adb1d004333
 :END:
-*** TODO Putting it all together: A* pathfinding
+*** Putting it all together: A* pathfinding
 :PROPERTIES:
 :orgtrello-id: 5210cd4395d6b16e5f00549c
 :END:
@@ -168,19 +168,19 @@ CLOSED: [2013-08-19 lun. 00:06]
 :PROPERTIES:
 :orgtrello-id: 5210cd4439858ad45c006cdc
 :END:
-*** TODO Macros
+*** Macros
 :PROPERTIES:
 :orgtrello-id: 5210cd4504b629ec0f006228
 :END:
-*** TODO Combining data and code
+*** Combining data and code
 :PROPERTIES:
 :orgtrello-id: 5210cd46a1cab7d74c0037d9
 :END:
-*** TODO Java.next
+*** Java.next
 :PROPERTIES:
 :orgtrello-id: 5210cd470ffb50e65c003891
 :END:
-*** TODO Mutation
+*** Mutation
 :PROPERTIES:
 :orgtrello-id: 5210cd47e2ad20da2b00364f
 :END:
@@ -188,11 +188,11 @@ CLOSED: [2013-08-19 lun. 00:06]
 :PROPERTIES:
 :orgtrello-id: 5210cd1e05bf287b5a0067b5
 :END:
-*** TODO Performance
+*** Performance
 :PROPERTIES:
 :orgtrello-id: 5210cd480b2415ba3c0058fc
 :END:
-*** TODO Clojure changes the way you think
+*** Clojure changes the way you think
 :PROPERTIES:
 :orgtrello-id: 5210cd49e72cf5ee0d0039c0
 :END:
@@ -288,55 +288,55 @@ CLOSED: [2013-08-19 lun. 00:06]
 :PROPERTIES:
 :orgtrello-id: 520e0a64f3dc8f5c5a0028a1
 :END:
-*** DONE introduction
+*** introduction
 :PROPERTIES:
 :orgtrello-id: 520e0a6a9fd8829f4a002993
 :END:
-*** DONE Ch. 1 - A scalable language
+*** Ch. 1 - A scalable language
 :PROPERTIES:
 :orgtrello-id: 520e0a82f84e3f53290020fe
 :END:
-*** DONE Ch. 2 - First steps in scala
+*** Ch. 2 - First steps in scala
 :PROPERTIES:
 :orgtrello-id: 520e0a84470f2a335d0017ca
 :END:
-*** DONE Ch. 6 - Functional objects
+*** Ch. 6 - Functional objects
 :PROPERTIES:
 :orgtrello-id: 520e0a890f8bbc6b5a002bb1
 :END:
-*** DONE Ch. 7 - Buit-in control structures
+*** Ch. 7 - Buit-in control structures
 :PROPERTIES:
 :orgtrello-id: 520e0a8920ebcac630000ea5
 :END:
-*** DONE Ch. 8 - Functions and closures
+*** Ch. 8 - Functions and closures
 :PROPERTIES:
 :orgtrello-id: 520e0a89b6c20fe068002ee5
 :END:
-*** DONE Ch. 10 - Composition and inheritance
+*** Ch. 10 - Composition and inheritance
 :PROPERTIES:
 :orgtrello-id: 520e0a896acac9f84800060e
 :END:
-*** DONE Ch. 11 - Scala's hierarchy
+*** Ch. 11 - Scala's hierarchy
 :PROPERTIES:
 :orgtrello-id: 520e0a89545eb0295d0016e9
 :END:
-*** DONE Ch. 12 - Traits
+*** Ch. 12 - Traits
 :PROPERTIES:
 :orgtrello-id: 520e0a899bdf5b980d002b8d
 :END:
-*** DONE Ch. 3 - Next steps in scala
+*** Ch. 3 - Next steps in scala
 :PROPERTIES:
 :orgtrello-id: 520e0a8a227cb8834c00172e
 :END:
-*** DONE Ch. 9 - Control abstraction
+*** Ch. 9 - Control abstraction
 :PROPERTIES:
 :orgtrello-id: 520e0a8a3cbba6d76800281a
 :END:
-*** DONE Ch. 4 - Classes and objects
+*** Ch. 4 - Classes and objects
 :PROPERTIES:
 :orgtrello-id: 520e0a8a2ec0c1926800188d
 :END:
-*** DONE Ch. 5 - Basic types and operations
+*** Ch. 5 - Basic types and operations
 :PROPERTIES:
 :orgtrello-id: 520e0a8a4f2667e76800268c
 :END:
