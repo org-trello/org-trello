@@ -34,7 +34,6 @@
 ;; (require 'org-trello)
 ;; (add-hook 'org-mode-hook 'org-trello-mode)
 ;;
-;;
 ;; 2) Once - Install the consumer-key and the read-write token for org-trello to be able to work in your name with your trello boards (C-c o i)
 ;; M-x org-trello/install-key-and-token
 ;;
@@ -157,7 +156,7 @@ Levels:
          (orgtrello-data/metadata--id          (orgtrello-data/extract-identifier orgtrello-data/metadata--point))
          (orgtrello-data/metadata--due         (orgtrello-data/--convert-orgmode-date-to-trello-date (org-entry-get orgtrello-data/metadata--point "DEADLINE")))
          (orgtrello-data/metadata--buffer-name (buffer-name))
-         (orgtrello-data/metadata--metadata (org-heading-components)))
+         (orgtrello-data/metadata--metadata    (org-heading-components)))
     (->> orgtrello-data/metadata--metadata
          (cons orgtrello-data/metadata--due)
          (cons orgtrello-data/metadata--id)
@@ -1350,9 +1349,9 @@ Levels:
 
 (defun orgtrello/do-delete-simple (&optional sync)
   "Do the simple deletion of a card, checklist or item."
-  (let* ((entry-metadata   (orgtrello-data/entry-get-full-metadata))
-         (current-metadata (orgtrello-data/current entry-metadata))
-         (id               (orgtrello/--id current-metadata))
+  (let* ((entry-metadata       (orgtrello-data/entry-get-full-metadata))
+         (current-metadata     (orgtrello-data/current entry-metadata))
+         (id                   (orgtrello/--id current-metadata))
          (orgtrello/--position (orgtrello/--position current-metadata)))
     (if (and current-metadata id)
         (progn
