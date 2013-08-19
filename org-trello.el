@@ -301,30 +301,30 @@ Levels:
   "Delete a checklist with checklist-id"
   (orgtrello-hash/make-hash "DELETE" (format "/checklists/%s" checklist-id)))
 
-(defun orgtrello-api/add-tasks (checklist-id name &optional checked)
-  "Add todo tasks (trello items) to a checklist with id 'id'"
+(defun orgtrello-api/add-items (checklist-id name &optional checked)
+  "Add todo items (trello items) to a checklist with id 'id'"
   (let* ((payload (if checked
                       `(("name"  . ,name) ("checked" . ,checked))
                     `(("name" . ,name)))))
     (orgtrello-hash/make-hash "POST" (format "/checklists/%s/checkItems" checklist-id) payload)))
 
-(defun orgtrello-api/update-task (card-id checklist-id task-id name &optional state)
-  "Update a task"
+(defun orgtrello-api/update-item (card-id checklist-id item-id name &optional state)
+  "Update a item"
   (let* ((payload (if state
                       `(("name"  . ,name) ("state" . ,state))
                     `(("name" . ,name)))))
     (orgtrello-hash/make-hash
      "PUT"
-     (format "/cards/%s/checklist/%s/checkItem/%s" card-id checklist-id task-id)
+     (format "/cards/%s/checklist/%s/checkItem/%s" card-id checklist-id item-id)
      payload)))
 
-(defun orgtrello-api/get-tasks (checklist-id)
+(defun orgtrello-api/get-items (checklist-id)
   "List the checklist items."
     (orgtrello-hash/make-hash "GET" (format "/checklists/%s/checkItems/" checklist-id)))
 
-(defun orgtrello-api/delete-task (checklist-id task-id)
-  "Delete a task with id task-id"
-  (orgtrello-hash/make-hash "DELETE" (format "/checklists/%s/checkItems/%s" checklist-id task-id)))
+(defun orgtrello-api/delete-item (checklist-id item-id)
+  "Delete a item with id item-id"
+  (orgtrello-hash/make-hash "DELETE" (format "/checklists/%s/checkItems/%s" checklist-id item-id)))
 
 (orgtrello-log/msg 4 "org-trello - orgtrello-api loaded!")
 
@@ -1010,12 +1010,12 @@ Levels:
             (orgtrello-api/add-checklist orgtrello/--card-id orgtrello/--checklist-name)))
       checks-ok-or-error-message)))
 
-(defun orgtrello/--checks-before-sync-item (task-meta checklist-meta card-meta)
+(defun orgtrello/--checks-before-sync-item (item-meta checklist-meta card-meta)
   "Checks done before synchronizing the checklist."
-  (let ((orgtrello/--task-name    (orgtrello/--label task-meta))
+  (let ((orgtrello/--item-name    (orgtrello/--label item-meta))
         (orgtrello/--checklist-id (orgtrello/--id checklist-meta))
         (orgtrello/--card-id      (orgtrello/--id card-meta)))
-    (if orgtrello/--task-name
+    (if orgtrello/--item-name
         (if orgtrello/--checklist-id
             (if orgtrello/--card-id
                 :ok
@@ -1023,22 +1023,22 @@ Levels:
           "Cannot synchronize the item - the checklist must be synchronized first. Skip it...")
       "Cannot synchronize the item - missing mandatory label. Skip it...")))
 
-(defun orgtrello/--task-compute-state-or-check (checklist-update-items-p task-state checklist-state possible-states)
-  "Compute the task's state/check (for creation/update). The 2 possible states are in the list possible states, first position is the 'checked' one, and second the unchecked one."
-  (let* ((orgtrello/--task-checked   (first possible-states))
-         (orgtrello/--task-unchecked (second possible-states)))
-    (cond ((and checklist-update-items-p (string= *DONE* checklist-state))                      orgtrello/--task-checked)
-          ((and checklist-update-items-p (or checklist-state (string= *TODO* checklist-state))) orgtrello/--task-unchecked)
-          ((string= *DONE* task-state)                                                          orgtrello/--task-checked)
-          (t                                                                                    orgtrello/--task-unchecked))))
+(defun orgtrello/--item-compute-state-or-check (checklist-update-items-p item-state checklist-state possible-states)
+  "Compute the item's state/check (for creation/update). The 2 possible states are in the list possible states, first position is the 'checked' one, and second the unchecked one."
+  (let* ((orgtrello/--item-checked   (first possible-states))
+         (orgtrello/--item-unchecked (second possible-states)))
+    (cond ((and checklist-update-items-p (string= *DONE* checklist-state))                      orgtrello/--item-checked)
+          ((and checklist-update-items-p (or checklist-state (string= *TODO* checklist-state))) orgtrello/--item-unchecked)
+          ((string= *DONE* item-state)                                                          orgtrello/--item-checked)
+          (t                                                                                    orgtrello/--item-unchecked))))
 
-(defun orgtrello/--task-compute-state (checklist-update-items-p task-state checklist-state)
-  "Compute the task's state (for creation)."
-  (orgtrello/--task-compute-state-or-check checklist-update-items-p task-state checklist-state '("complete" "incomplete")))
+(defun orgtrello/--item-compute-state (checklist-update-items-p item-state checklist-state)
+  "Compute the item's state (for creation)."
+  (orgtrello/--item-compute-state-or-check checklist-update-items-p item-state checklist-state '("complete" "incomplete")))
 
-(defun orgtrello/--task-compute-check (checklist-update-items-p task-state checklist-state)
-  "Compute the task's check status (for update)."
-    (orgtrello/--task-compute-state-or-check checklist-update-items-p task-state checklist-state '(t nil)))
+(defun orgtrello/--item-compute-check (checklist-update-items-p item-state checklist-state)
+  "Compute the item's check status (for update)."
+    (orgtrello/--item-compute-state-or-check checklist-update-items-p item-state checklist-state '(t nil)))
 
 (defun orgtrello/--compute-state-from-keyword (state)
   "Given a state, compute the org equivalent (to use with org-todo function)"
@@ -1050,41 +1050,41 @@ Levels:
       (let ((orgtrello/--checklist-status (orgtrello/--compute-state-from-keyword (orgtrello/--keyword checklist-meta))))
         (org-todo orgtrello/--checklist-status))))
 
-(defun orgtrello/--task (task-meta &optional checklist-meta card-meta)
-  "Deal with create/update task query build. If the checks are ko, the error message is returned."
-  (let ((checks-ok-or-error-message (orgtrello/--checks-before-sync-item task-meta checklist-meta card-meta)))
+(defun orgtrello/--item (item-meta &optional checklist-meta card-meta)
+  "Deal with create/update item query build. If the checks are ko, the error message is returned."
+  (let ((checks-ok-or-error-message (orgtrello/--checks-before-sync-item item-meta checklist-meta card-meta)))
     ;; title is mandatory
     (if (equal :ok checks-ok-or-error-message)
         ;; card-meta is only usefull for the update part
-        (let* ((orgtrello/--task-id      (orgtrello/--id task-meta))
+        (let* ((orgtrello/--item-id      (orgtrello/--id item-meta))
                (orgtrello/--checklist-id (orgtrello/--id checklist-meta))
                (orgtrello/--card-id      (orgtrello/--id card-meta))
-               (orgtrello/--task-name    (orgtrello/--label task-meta))
-               (orgtrello/--task-state   (orgtrello/--keyword task-meta))
+               (orgtrello/--item-name    (orgtrello/--label item-meta))
+               (orgtrello/--item-state   (orgtrello/--keyword item-meta))
                (orgtrello/--checklist-state    (orgtrello/--keyword checklist-meta)))
 
           (orgtrello/--update-item-according-to-checklist-status *ORGTRELLO-CHECKLIST-UPDATE-ITEMS* checklist-meta)
           ;; update/create items
-          (if orgtrello/--task-id
-              ;; update - rename, check or uncheck the task
-              (orgtrello-api/update-task orgtrello/--card-id orgtrello/--checklist-id orgtrello/--task-id orgtrello/--task-name (orgtrello/--task-compute-state *ORGTRELLO-CHECKLIST-UPDATE-ITEMS* orgtrello/--task-state orgtrello/--checklist-state))
+          (if orgtrello/--item-id
+              ;; update - rename, check or uncheck the item
+              (orgtrello-api/update-item orgtrello/--card-id orgtrello/--checklist-id orgtrello/--item-id orgtrello/--item-name (orgtrello/--item-compute-state *ORGTRELLO-CHECKLIST-UPDATE-ITEMS* orgtrello/--item-state orgtrello/--checklist-state))
             ;; create
-            (orgtrello-api/add-tasks orgtrello/--checklist-id orgtrello/--task-name (orgtrello/--task-compute-check *ORGTRELLO-CHECKLIST-UPDATE-ITEMS* orgtrello/--task-state orgtrello/--checklist-state))))
+            (orgtrello-api/add-items orgtrello/--checklist-id orgtrello/--item-name (orgtrello/--item-compute-check *ORGTRELLO-CHECKLIST-UPDATE-ITEMS* orgtrello/--item-state orgtrello/--checklist-state))))
       checks-ok-or-error-message)))
 
 (defun orgtrello/--too-deep-level (meta &optional parent-meta grandparent-meta)
   "Deal with too deep level."
-  "Your arborescence depth is too deep. We only support up to depth 3.\nLevel 1 - card\nLevel 2 - checklist\nLevel 3 - items/tasks")
+  "Your arborescence depth is too deep. We only support up to depth 3.\nLevel 1 - card\nLevel 2 - checklist\nLevel 3 - items")
 
 (defun orgtrello/--dispatch-map-creation ()
   "Dispatch map for the creation of card/checklist/item. Key is the level of the entity, value is the create/update query map to sync such entity."
   (let* ((dispatch-map (make-hash-table :test 'equal)))
     (puthash 1 'orgtrello/--card      dispatch-map)
     (puthash 2 'orgtrello/--checklist dispatch-map)
-    (puthash 3 'orgtrello/--task      dispatch-map)
+    (puthash 3 'orgtrello/--item      dispatch-map)
     dispatch-map))
 
-(defvar *MAP-DISPATCH-CREATE-UPDATE* (orgtrello/--dispatch-map-creation) "Dispatch map for the creation/update of card/checklist/task.")
+(defvar *MAP-DISPATCH-CREATE-UPDATE* (orgtrello/--dispatch-map-creation) "Dispatch map for the creation/update of card/checklist/item.")
 
 (defun orgtrello/--dispatch-create (entry-metadata)
   (let* ((current-meta        (orgtrello-data/current entry-metadata))
@@ -1124,7 +1124,7 @@ Levels:
   (assoc-default *BOARD-NAME* org-file-properties))
 
 (defun orgtrello/do-create-complex-entity ()
-  "Do the actual full card creation - from card to task. Beware full side effects..."
+  "Do the actual full card creation - from card to item. Beware full side effects..."
   (let ((orgtrello/--board-name-to-sync (orgtrello/--board-name)))
     (orgtrello-log/msg 3 "Synchronizing full entity with its structure on board '%s'..." orgtrello/--board-name-to-sync)
     ;; iterate over the map of entries and sync them, breadth first
@@ -1286,21 +1286,21 @@ Levels:
   ;; parent is useless here
   (orgtrello-api/delete-checklist (orgtrello/--id checklist-meta)))
 
-(defun orgtrello/--task-delete (task-meta &optional checklist-meta)
-  "Deal with create/update task query build"
-  (let* ((orgtrello/--task-id      (orgtrello/--id task-meta))
+(defun orgtrello/--item-delete (item-meta &optional checklist-meta)
+  "Deal with create/update item query build"
+  (let* ((orgtrello/--item-id      (orgtrello/--id item-meta))
          (orgtrello/--checklist-id (orgtrello/--id checklist-meta)))
-    (orgtrello-api/delete-task orgtrello/--checklist-id orgtrello/--task-id)))
+    (orgtrello-api/delete-item orgtrello/--checklist-id orgtrello/--item-id)))
 
 (defun orgtrello/--dispatch-map-delete ()
   "Dispatch map for the deletion of card/checklist/item."
   (let* ((dispatch-map (make-hash-table :test 'equal)))
     (puthash 1 'orgtrello/--card-delete      dispatch-map)
     (puthash 2 'orgtrello/--checklist-delete dispatch-map)
-    (puthash 3 'orgtrello/--task-delete      dispatch-map)
+    (puthash 3 'orgtrello/--item-delete      dispatch-map)
     dispatch-map))
 
-(defvar *MAP-DISPATCH-DELETE* (orgtrello/--dispatch-map-delete) "Dispatch map for the deletion query of card/checklist/task.")
+(defvar *MAP-DISPATCH-DELETE* (orgtrello/--dispatch-map-delete) "Dispatch map for the deletion query of card/checklist/item.")
 
 (defun orgtrello/--dispatch-delete (meta &optional parent-meta)
   (let* ((level       (orgtrello/--level meta))
@@ -1326,7 +1326,7 @@ Levels:
       (orgtrello-log/msg 5 "proxy - Deleting entity in the buffer '%s' at point '%s' done!" orgtrello-query/--entry-buffer-name orgtrello-query/--entry-position))))
 
 (defun orgtrello/do-delete-simple (&optional sync)
-  "Do the simple deletion of a card, checklist or task."
+  "Do the simple deletion of a card, checklist or item."
   (let* ((entry-metadata   (orgtrello-data/entry-get-full-metadata))
          (current-metadata (orgtrello-data/current entry-metadata))
          (id               (orgtrello/--id current-metadata)))

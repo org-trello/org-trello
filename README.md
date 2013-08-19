@@ -364,9 +364,9 @@ For example:
 ```org-mode
 * card-identity (label mandatory)
 ** checklist (label mandatory)
-*** task1 (label mandatory)
-*** task2 (label mandatory)
-*** task3 (label mandatory)
+*** item1 (label mandatory)
+*** item2 (label mandatory)
+*** item3 (label mandatory)
 ```
 
 - Card:
@@ -379,10 +379,10 @@ For example:
   - Place yourself on the checklist `checklist`, hit the binding, this will add `checklist` as a checklist to your card `card-identity`
   - Rename your checklist and hit again the binding to update its label.
 
-- Task:
-  - Place yourself on your task and hit the binding, this will add the item to such checklist.
-  - Change the label of the task and hit the binding, this will update its label.
-  - Change the status of the task to `DONE` and hit the binding, this will check such item in trello.
+- Item:
+  - Place yourself on your item and hit the binding, this will add the item to such checklist.
+  - Change the label of the item and hit the binding, this will update its label.
+  - Change the status of the item to `DONE` and hit the binding, this will check such item in trello.
 
 ## Card and deadline/due date
 
@@ -405,7 +405,7 @@ If you do not want this, you can disable it by adding those lines to your emacs'
 ## Creation full entity
 
 You can sync all the entities and their arborescence once.
-Place yourself on the entity (card or checklist or item/task) and hit `C-c o C`.
+Place yourself on the entity (card or checklist or item) and hit `C-c o C`.
 
 ## Sync org-mode file to trello board
 

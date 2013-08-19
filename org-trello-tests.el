@@ -160,44 +160,44 @@
   (expect nil                         (gethash :params (orgtrello-api/get-checklist :checklist-id))))
 
 (expectations
-  (expect "POST"                                  (gethash :method (orgtrello-api/add-tasks :checklist-id "task-name" t)))
-  (expect "/checklists/:checklist-id/checkItems" (gethash :uri    (orgtrello-api/add-tasks :checklist-id "task-name" t)))
-  (expect '(("name"  . "task-name")
-            ("checked" . t))                     (gethash :params (orgtrello-api/add-tasks :checklist-id "task-name" t))))
+  (expect "POST"                                  (gethash :method (orgtrello-api/add-items :checklist-id "item-name" t)))
+  (expect "/checklists/:checklist-id/checkItems" (gethash :uri    (orgtrello-api/add-items :checklist-id "item-name" t)))
+  (expect '(("name"  . "item-name")
+            ("checked" . t))                     (gethash :params (orgtrello-api/add-items :checklist-id "item-name" t))))
 
 (expectations
-  (expect "POST"                                  (gethash :method (orgtrello-api/add-tasks :checklist-id "task-name")))
-  (expect "/checklists/:checklist-id/checkItems" (gethash :uri    (orgtrello-api/add-tasks :checklist-id "task-name")))
-  (expect '(("name"  . "task-name"))             (gethash :params (orgtrello-api/add-tasks :checklist-id "task-name"))))
+  (expect "POST"                                  (gethash :method (orgtrello-api/add-items :checklist-id "item-name")))
+  (expect "/checklists/:checklist-id/checkItems" (gethash :uri    (orgtrello-api/add-items :checklist-id "item-name")))
+  (expect '(("name"  . "item-name"))             (gethash :params (orgtrello-api/add-items :checklist-id "item-name"))))
 
 (expectations
-  (expect "POST"                                  (gethash :method (orgtrello-api/add-tasks :checklist-id "task-name" nil)))
-  (expect "/checklists/:checklist-id/checkItems" (gethash :uri    (orgtrello-api/add-tasks :checklist-id "task-name" nil)))
-  (expect '(("name"  . "task-name"))             (gethash :params (orgtrello-api/add-tasks :checklist-id "task-name" nil))))
+  (expect "POST"                                  (gethash :method (orgtrello-api/add-items :checklist-id "item-name" nil)))
+  (expect "/checklists/:checklist-id/checkItems" (gethash :uri    (orgtrello-api/add-items :checklist-id "item-name" nil)))
+  (expect '(("name"  . "item-name"))             (gethash :params (orgtrello-api/add-items :checklist-id "item-name" nil))))
 
 (expectations
-  (expect "PUT"                                                                                                                        (gethash :method (orgtrello-api/update-task :card-id :checklist-id :task-id :task-name "incomplete")))
-  (expect "/cards/:card-id/checklist/:checklist-id/checkItem/:task-id"                                                                (gethash :uri    (orgtrello-api/update-task :card-id :checklist-id :task-id :task-name "incomplete")))
-  (expect '(("name"  . :task-name)
-                                                                                                             ("state" ."incomplete")) (gethash :params (orgtrello-api/update-task :card-id :checklist-id :task-id :task-name "incomplete"))))
+  (expect "PUT"                                                                                                                        (gethash :method (orgtrello-api/update-item :card-id :checklist-id :item-id :item-name "incomplete")))
+  (expect "/cards/:card-id/checklist/:checklist-id/checkItem/:item-id"                                                                (gethash :uri    (orgtrello-api/update-item :card-id :checklist-id :item-id :item-name "incomplete")))
+  (expect '(("name"  . :item-name)
+                                                                                                             ("state" ."incomplete")) (gethash :params (orgtrello-api/update-item :card-id :checklist-id :item-id :item-name "incomplete"))))
 
 (expectations
-  (expect "PUT"                                                         (gethash :method (orgtrello-api/update-task :card-id :checklist-id :task-id :task-name)))
-  (expect "/cards/:card-id/checklist/:checklist-id/checkItem/:task-id" (gethash :uri    (orgtrello-api/update-task :card-id :checklist-id :task-id :task-name)))
-  (expect '(("name"  . :task-name))                                    (gethash :params (orgtrello-api/update-task :card-id :checklist-id :task-id :task-name))))
+  (expect "PUT"                                                         (gethash :method (orgtrello-api/update-item :card-id :checklist-id :item-id :item-name)))
+  (expect "/cards/:card-id/checklist/:checklist-id/checkItem/:item-id" (gethash :uri    (orgtrello-api/update-item :card-id :checklist-id :item-id :item-name)))
+  (expect '(("name"  . :item-name))                                    (gethash :params (orgtrello-api/update-item :card-id :checklist-id :item-id :item-name))))
 
 (expectations
-  (expect "PUT"                                                         (gethash :method (orgtrello-api/update-task :card-id :checklist-id :task-id :task-name nil)))
-  (expect "/cards/:card-id/checklist/:checklist-id/checkItem/:task-id" (gethash :uri    (orgtrello-api/update-task :card-id :checklist-id :task-id :task-name nil)))
-  (expect '(("name"  . :task-name))                                    (gethash :params (orgtrello-api/update-task :card-id :checklist-id :task-id :task-name nil))))
+  (expect "PUT"                                                         (gethash :method (orgtrello-api/update-item :card-id :checklist-id :item-id :item-name nil)))
+  (expect "/cards/:card-id/checklist/:checklist-id/checkItem/:item-id" (gethash :uri    (orgtrello-api/update-item :card-id :checklist-id :item-id :item-name nil)))
+  (expect '(("name"  . :item-name))                                    (gethash :params (orgtrello-api/update-item :card-id :checklist-id :item-id :item-name nil))))
 
 (expectations
-  (expect "DELETE"                                         (gethash :method (orgtrello-api/delete-task :checklist-id :task-id)))
-  (expect "/checklists/:checklist-id/checkItems/:task-id" (gethash :uri    (orgtrello-api/delete-task :checklist-id :task-id))))
+  (expect "DELETE"                                         (gethash :method (orgtrello-api/delete-item :checklist-id :item-id)))
+  (expect "/checklists/:checklist-id/checkItems/:item-id" (gethash :uri    (orgtrello-api/delete-item :checklist-id :item-id))))
 
 (expectations
-  (expect "GET"                                    (gethash :method (orgtrello-api/get-tasks :checklist-id)))
-  (expect "/checklists/:checklist-id/checkItems/" (gethash :uri    (orgtrello-api/get-tasks :checklist-id))))
+  (expect "GET"                                    (gethash :method (orgtrello-api/get-items :checklist-id)))
+  (expect "/checklists/:checklist-id/checkItems/" (gethash :uri    (orgtrello-api/get-items :checklist-id))))
 
 (expectations
   (expect '(((pos . 16384)
@@ -340,24 +340,24 @@
   (expect 'none (orgtrello/--compute-state-from-keyword "IN")))
 
 (expectations
-  (expect "complete" (orgtrello/--task-compute-state t "DONE" "DONE"))
-  (expect "complete" (orgtrello/--task-compute-state t "TODO" "DONE"))
-  (expect "incomplete" (orgtrello/--task-compute-state t "DONE" "TODO"))
-  (expect "incomplete" (orgtrello/--task-compute-state t "TODO" "TODO"))
-  (expect "complete" (orgtrello/--task-compute-state nil "DONE" "DONE"))
-  (expect "incomplete" (orgtrello/--task-compute-state nil "TODO" "DONE"))
-  (expect "complete" (orgtrello/--task-compute-state nil "DONE" "TODO"))
-  (expect "incomplete" (orgtrello/--task-compute-state nil "TODO" "TODO")) )
+  (expect "complete" (orgtrello/--item-compute-state t "DONE" "DONE"))
+  (expect "complete" (orgtrello/--item-compute-state t "TODO" "DONE"))
+  (expect "incomplete" (orgtrello/--item-compute-state t "DONE" "TODO"))
+  (expect "incomplete" (orgtrello/--item-compute-state t "TODO" "TODO"))
+  (expect "complete" (orgtrello/--item-compute-state nil "DONE" "DONE"))
+  (expect "incomplete" (orgtrello/--item-compute-state nil "TODO" "DONE"))
+  (expect "complete" (orgtrello/--item-compute-state nil "DONE" "TODO"))
+  (expect "incomplete" (orgtrello/--item-compute-state nil "TODO" "TODO")) )
 
 (expectations
-  (expect t (orgtrello/--task-compute-check t "DONE" "DONE"))
-  (expect t (orgtrello/--task-compute-check t "TODO" "DONE"))
-  (expect nil (orgtrello/--task-compute-check t "DONE" "TODO"))
-  (expect nil (orgtrello/--task-compute-check t "TODO" "TODO"))
-  (expect t (orgtrello/--task-compute-check nil "DONE" "DONE"))
-  (expect nil (orgtrello/--task-compute-check nil "TODO" "DONE"))
-  (expect t (orgtrello/--task-compute-check nil "DONE" "TODO"))
-  (expect nil (orgtrello/--task-compute-check nil "TODO" "TODO")) )
+  (expect t (orgtrello/--item-compute-check t "DONE" "DONE"))
+  (expect t (orgtrello/--item-compute-check t "TODO" "DONE"))
+  (expect nil (orgtrello/--item-compute-check t "DONE" "TODO"))
+  (expect nil (orgtrello/--item-compute-check t "TODO" "TODO"))
+  (expect t (orgtrello/--item-compute-check nil "DONE" "DONE"))
+  (expect nil (orgtrello/--item-compute-check nil "TODO" "DONE"))
+  (expect t (orgtrello/--item-compute-check nil "DONE" "TODO"))
+  (expect nil (orgtrello/--item-compute-check nil "TODO" "TODO")) )
 
 (message "Tests done!")
 
