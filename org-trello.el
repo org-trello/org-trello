@@ -706,15 +706,33 @@ Levels:
   "Compute the name of a lock file"
   (format "%s%s/%s" elnode-webserver-docroot "org-trello" "org-trello-already-scanning.lock"))
 
+(defun orgtrello-proxy/--cleanup-timer-data (&optional lock-filename)
+  "Cleanup after the timer has been triggered."
+  (let ((lock-file (if lock-filename lock-filename (orgtrello-proxy/--compute-lock-filename))))
+    (if (file-exists-p lock-file) (delete-file lock-file))))
+
 (defun orgtrello-proxy/--consumer-lock-scan-entity-files-hierarchically-and-sync ()
   "A handler to extract the entity informations from files (in order card, checklist, items)."
+  ;; only one timer at a time
   (let ((lock-file (orgtrello-proxy/--compute-lock-filename)))
-    (when (not (file-exists-p lock-file))
-          (with-temp-file lock-file
-            (insert "Timer - Scanning entities..."))
-          (orgtrello-proxy/--consumer-entity-files-hierarchically-and-sync)
-          ;; remove lock
-          (delete-file lock-file))))
+    (with-temp-file lock-file
+      (insert "Timer - Scanning entities..."))
+    (orgtrello-proxy/--consumer-entity-files-hierarchically-and-sync)
+    ;; remove lock
+    (orgtrello-proxy/--cleanup-timer-data lock-file)))
+
+(defun orgtrello-proxy/--check-network-ok ()
+  "Ensure there is some network running (simply check that there is more than the lo interface)."
+  (if (< 1 (length (network-interface-list))) :ok "No network!"))
+
+(defun orgtrello-proxy/--check-no-running-timer ()
+  "Ensure there is not another running timer already."
+  (if (file-exists-p (orgtrello-proxy/--compute-lock-filename)) "Timer already running!" :ok))
+
+(defun orgtrello-proxy/--controls-and-scan-if-ok ()
+  (org-trello/--control-and-do
+   '(orgtrello-proxy/--check-network-ok orgtrello-proxy/--check-no-running-timer)
+   'orgtrello-proxy/--consumer-lock-scan-entity-files-hierarchically-and-sync))
 
 (defvar *ORGTRELLO-TIMER* nil "A timer run by elnode")
 
@@ -725,8 +743,9 @@ Levels:
          (start-or-stop (assoc-default 'start query-map)))
     (if start-or-stop
         ;; cleanup before starting anew
-        (let ((lock-file (orgtrello-proxy/--compute-lock-filename)))
-          (if (file-exists-p lock-file) (delete-file lock-file))
+        (progn
+          ;; cleanup anything that the timer possibly left behind
+          (orgtrello-proxy/--cleanup-timer-data)
           ;; start the timer
           (setq *ORGTRELLO-TIMER* (run-with-timer 0 5 'orgtrello-proxy/--consumer-lock-scan-entity-files-hierarchically-and-sync)))
         ;; otherwise, stop it
