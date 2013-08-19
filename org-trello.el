@@ -653,9 +653,9 @@ Levels:
       "Success - Will read the information from the response and simply return id and position."
       (let ((orgtrello-query/--entry-new-id (orgtrello-query/--id data))
             (orgtrello-query/--marker       (orgtrello/compute-marker orgtrello-query/--entry-position)))
-        ;; switch to the right buffer
-        (set-buffer orgtrello-query/--entry-buffer-name)
         (safe-wrap
+         ;; switch to the right buffer
+         (set-buffer orgtrello-query/--entry-buffer-name)
          ;; will update via tag the trello id of the new persisted data (if needed)
          (save-excursion
            ;; get back to the buffer and update the id if need be
@@ -672,8 +672,8 @@ Levels:
                                         (org-set-property *ORGTRELLO-ID* orgtrello-query/--entry-new-id)
                                         (format "Newly entity '%s' synced with id '%s'" orgtrello-query/--entry-name orgtrello-query/--entry-new-id)))))))
              (when str-msg (orgtrello-log/msg 3 str-msg))))
-           ;; in any case, we cleanup
-           (orgtrello-proxy/--cleanup-buffer-metadata orgtrello-query/--entry-file orgtrello-query/--marker))))))
+         ;; in any case, we cleanup
+         (orgtrello-proxy/--cleanup-buffer-metadata orgtrello-query/--entry-file orgtrello-query/--marker))))))
 
 (defun orgtrello-proxy/--standard-post-or-put-error-callback (buffer-name position file)
   "Return a callback function able to deal with the update position."
@@ -683,9 +683,9 @@ Levels:
     (cl-defun put-error-some-insignificant-name (&key data &allow-other-keys)
       "Failure - Will delete metadata information from the buffer."
       (let ((orgtrello-query/--marker (orgtrello/compute-marker orgtrello-query/--entry-position)))
-        ;; switch to the right buffer
-        (set-buffer orgtrello-query/--entry-buffer-name)
         (safe-wrap
+         ;; switch to the right buffer
+         (set-buffer orgtrello-query/--entry-buffer-name)
          ;; will update via tag the trello id of the new persisted data (if needed)
          (save-excursion
            ;; Get back to the buffer's position to update
@@ -738,8 +738,7 @@ Levels:
                     t
                     (orgtrello-proxy/--standard-post-or-put-success-callback buffer-name position orgtrello-query/--entry-file-archived)
                     (orgtrello-proxy/--standard-post-or-put-error-callback buffer-name position orgtrello-query/--entry-file-archived))
-                   (message orgtrello-query/--query-map)))))
-     (message "Problem on 'orgtrello-proxy/--deal-with-entity-sync call function"))
+                   (orgtrello-log/msg 3 orgtrello-query/--query-map))))))
     (orgtrello-log/msg 5 "Proxy-consumer - Searching metadata from buffer '%s' at point '%s' done!" buffer-name position)))
 
 (defun orgtrello-proxy/--deal-with-entity-file-sync (file)
@@ -1332,16 +1331,17 @@ Levels:
                 (orgtrello-query/--entry-buffer-name buffer-name))
     (cl-defun delete-some-insignificant-name (&key data &allow-other-keys)
       "Will read the information from the response and simply return id and position."
-      (orgtrello-log/msg 5 "proxy - Deleting entity in the buffer '%s' at point '%s'..." orgtrello-query/--entry-buffer-name orgtrello-query/--entry-position)
-      (set-buffer orgtrello-query/--entry-buffer-name)
-      (save-excursion
-        (goto-char orgtrello-query/--entry-position)
-        (org-back-to-heading t)
-        (org-delete-property *ORGTRELLO-ID*)
-        (hide-subtree)
-        (beginning-of-line)
-        (kill-line)
-        (kill-line))
+      (safe-wrap
+       (set-buffer orgtrello-query/--entry-buffer-name)
+       (save-excursion
+         (goto-char orgtrello-query/--entry-position)
+         (org-back-to-heading t)
+         (org-delete-property *ORGTRELLO-ID*)
+         (hide-subtree)
+         (beginning-of-line)
+         (kill-line)
+         (kill-line))
+       (orgtrello-log/msg 3 "Problem during the 'orgtrello-proxy/--standard-delete-success-callback function call."))
       (orgtrello-log/msg 5 "proxy - Deleting entity in the buffer '%s' at point '%s' done!" orgtrello-query/--entry-buffer-name orgtrello-query/--entry-position))))
 
 (defun orgtrello/do-delete-simple (&optional sync)
@@ -1449,11 +1449,6 @@ Levels:
             (beginning-of-line)
             (kill-line)
             (kill-line))))))
-
-;; (defun orgtrello/remove-properties-file ()
-;;   "to debug"
-;;   (interactive)
-;;   (orgtrello/--remove-properties-file *LIST-NAMES* t))
 
 (defun orgtrello/--remove-properties-file (list-keywords &optional update-todo-keywords)
   "Remove the current org-trello properties"
@@ -1619,7 +1614,7 @@ Levels:
   "Control first, then if ok, delete the entity and all its arborescence."
   (interactive)
   (org-action/--msg-deco-control-and-do
-     "Delete entity"
+     "Delete entities"
      '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties orgtrello/--control-encoding)
      'orgtrello/do-delete-entities
      t))
