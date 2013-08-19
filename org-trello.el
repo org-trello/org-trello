@@ -652,7 +652,6 @@ Levels:
                 (orgtrello-query/--entry-buffer-name buffer-name)
                 (orgtrello-query/--entry-file        file))
     (cl-defun put-some-insignificant-name (&key data &allow-other-keys)
-      "Success - Will read the information from the response and simply return id and position."
       (let ((orgtrello-query/--entry-new-id (orgtrello-query/--id data))
             (orgtrello-query/--marker       (orgtrello/compute-marker orgtrello-query/--entry-position)))
         (safe-wrap
@@ -693,7 +692,7 @@ Levels:
            ;; Get back to the buffer's position to update
            (orgtrello-proxy/--getting-back-to-marker orgtrello-query/--marker))
          ;; cleanup
-         (orgtrello-proxy/--cleanup-buffer-metadata orgtrello-query/--entry-file orgtrello-query/--marker))))))
+         (orgtrello-proxy/--cleanup-buffer-metadata nil orgtrello-query/--marker))))))
 
 (defun orgtrello-proxy/--getting-back-to-marker (marker)
   "Given a marker, getting back to marker function."
@@ -701,9 +700,13 @@ Levels:
   ;; (org-goto-local-search-headings marker nil t)
   (re-search-forward marker))
 
+(defun orgtrello-proxy/--archived-scanning-dir (dir-name)
+  "Given a filename, return the archived scanning directory"
+  (format "%s/.scanning" dir-name))
+
 (defun orgtrello-proxy/--archived-scanning-file (file)
-  "Given an archive name, build the archive directory and return new file name"
-  (let ((dir-name (format "%s/.scanning" (file-name-directory file))))
+  "Given a filename, return its archived filename if we were to move such file."
+  (let ((dir-name (orgtrello-proxy/--archived-scanning-dir (file-name-directory file))))
     ;; ensure the archive directory is created
     (mkdir dir-name t)
     ;; return the name for the new file
@@ -776,11 +779,21 @@ Levels:
        (orgtrello-proxy/--deal-with-directory orgtrello-proxy/--working-directory-current-level)
        (throw 'org-trello-timer-go-to-sleep t))))
 
+(defun orgtrello-proxy/--deal-with-archived-files (level)
+ "Given a level, retrieve one file (which represents an entity) for this level and sync it, then remove such file. Then recall the function recursively."
+ (let ((orgtrello-proxy/--working-directory-current-level (orgtrello-proxy/--compute-entity-level-dir level)))
+   (mapc (lambda (file)
+           (rename-file file (format "../%s" (file-name-nondirectory file)) t))
+         (orgtrello-proxy/--list-files (orgtrello-proxy/--archived-scanning-dir orgtrello-proxy/--working-directory-current-level)))))
+
 (defun orgtrello-proxy/--consumer-entity-files-hierarchically-and-sync ()
   "A handler to extract the entity informations from files (in order card, checklist, items)."
   (undo-boundary)
   ;; now let's deal with the entities sync in order with level
   (with-local-quit
+    ;; if archived file exist, get them back in the queue
+    (dolist (l '(1 2 3))
+      (orgtrello-proxy/--deal-with-archived-files l))
     ;; if some check regarding order fails, we catch and let the timer sleep for it the next time to get back normally to the upper level in order
     (catch 'org-trello-timer-go-to-sleep
       (dolist (l '(1 2 3))
