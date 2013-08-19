@@ -813,7 +813,7 @@ Levels:
 
 (defun orgtrello-proxy/--elnode-timer (http-con)
   "A process on elnode to trigger even regularly."
-  (orgtrello-log/msg 5 "Proxy-timer - Request received. Start/stop timer.")
+  (orgtrello-log/msg 3 "Proxy-timer - Request received. Start/stop timer.")
   (let* ((query-map     (orgtrello-proxy/--extract-trello-query http-con))
          (start-or-stop (assoc-default 'start query-map)))
     (if start-or-stop
@@ -829,6 +829,7 @@ Levels:
               (cancel-timer *ORGTRELLO-TIMER*)
               ;; nil the orgtrello reference
               (setq *ORGTRELLO-TIMER* nil)))
+    ;; ok in any case
     (orgtrello-proxy/response-ok http-con)))
 
 (defun orgtrello-timer/start ()
