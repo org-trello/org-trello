@@ -4,339 +4,82 @@
 #+property: IN-PROGRESS 51d99bbc1e1d8988390047f4
 #+property: DONE 51d99bbc1e1d8988390047f5
 #+property: PENDING 51e53898ea3d1780690015ca
-#+property: FAIL 51e538a26f75d07902002d25
 #+property: DELEGATED 51e538a89c05f1e25c0027c6
+#+property: FAIL 51e538a26f75d07902002d25
 #+property: CANCELLED 51e538e6c7a68fa0510014ee
-#+TODO: TODO IN-PROGRESS PENDING | DONE FAIL DELEGATED CANCELLED
+#+TODO: TODO IN-PROGRESS PENDING | DONE DELEGATED FAIL CANCELLED
 #+title: synced from trello
 #+author: Antoine R. Dumont
 
-* TODO Seasoned schemer
-:PROPERTIES:
-:orgtrello-id: 520674d63ece1d1831000464
-:END:
-* TODO Clojurescript
-:PROPERTIES:
-:orgtrello-id: 5210bf8b0f5bd041460075f5
-:END:
 * TODO Joy of FUN(ctional) LANGUAGES
-:PROPERTIES:
-:orgtrello-id: 521145410afe8cbb0d003e07
-:END:
 ** LISP family
 CLOSED: [2013-08-19 lun. 00:06]
-:PROPERTIES:
-:orgtrello-id: 521145420a6cec864a0073e5
-:END:
 *** Clojure
-:PROPERTIES:
-:orgtrello-id: 521145442e0ac0565b006a12
-:END:
 *** Emacs-Lisp
-:PROPERTIES:
-:orgtrello-id: 5211454496378df34100786f
-:END:
 *** Common-Lisp
-:PROPERTIES:
-:orgtrello-id: 52114545ba23a5895a003a65
-:END:
 *** Scheme
-:PROPERTIES:
-:orgtrello-id: 5211dbfd5e8e7b425d008982
-:END:
 ** ML family
-:PROPERTIES:
-:orgtrello-id: 521145430d4d23a26800447d
-:END:
 *** Haskell
-:PROPERTIES:
-:orgtrello-id: 52114546086656b94c0073ca
-:END:
 *** Ocaml
-:PROPERTIES:
-:orgtrello-id: 521145474facf9375d006cc9
-:END:
 ** hybrid family
-:PROPERTIES:
-:orgtrello-id: 5211d8c08e1262325a008769
-:END:
 *** Scala
-:PROPERTIES:
-:orgtrello-id: 5211d8ebe197f1784f006ab2
-:END:
+* TODO Clojurescript
 * TODO Reasoned schemer
 :PROPERTIES:
-:orgtrello-id: 520e09ba0175c7d25c002d07
 :END:
 * TODO Little schemer
 :PROPERTIES:
-:orgtrello-id: 520e09bdf3dc8f5c5a002889
 :END:
 * TODO Structure and Interpretations of computer programs
 :PROPERTIES:
-:orgtrello-id: 520e09bf2b09648d4c001a18
 :END:
 * TODO Seasoned schemer
-:PROPERTIES:
-:orgtrello-id: 520e09c19664fac468002b45
-:END:
 * PENDING Questions about life, the universe and everything
 :PROPERTIES:
-:orgtrello-id: 51e559ad536240d935001d97
 :END:
 ** How to deal with promotion/demotion?
-:PROPERTIES:
-:orgtrello-id: 51e567aff8d10f7b21001fb8
-:END:
 * PENDING Joy of Clojure
-:PROPERTIES:
-:orgtrello-id: 5210ccbf4b47c25014001961
-:END:
 ** Part 1 Foundations [0%]
-:PROPERTIES:
-:orgtrello-id: 5211ed76e53cd29c0d0056c3
-:END:
 *** Clojure philosophy [100%]
-:PROPERTIES:
-:orgtrello-id: 5211ed78cc3a5df04a008c5d
-:END:
 *** Drinking from the Clojure firehose
-:PROPERTIES:
-:orgtrello-id: 5211ed798e1262325a008c40
-:END:
 *** Dipping our toes in the pool
-:PROPERTIES:
-:orgtrello-id: 5210ccf2ba821fbd4c003692
-:END:
 ** Part 2 Data Types
-:PROPERTIES:
-:orgtrello-id: 5210cd1c2e0ac0565b006089
-:END:
 *** On scalars [100%]
-:PROPERTIES:
-:orgtrello-id: 5211edaee489cb904a005d4a
-:END:
 *** Composite data types [100%]
-:PROPERTIES:
-:orgtrello-id: 5211edaf530279fa6e001b39
-:END:
 ** Part 3 Functional Programming
-:PROPERTIES:
-:orgtrello-id: 5210cd1d378e961842006a9c
-:END:
 *** Being lazy and set in your ways
-:PROPERTIES:
-:orgtrello-id: 5210cd3b3c4a3e0542006a27
-:END:
 *** Immutability
-:PROPERTIES:
-:orgtrello-id: 5210cd3cc82dc3361a006092
-:END:
 *** Designing a persistent toy
-:PROPERTIES:
-:orgtrello-id: 5210cd3d4950c2335a006401
-:END:
 *** Laziness
-:PROPERTIES:
-:orgtrello-id: 5210cd3ee6ba409a68006e20
-:END:
 *** Putting it all together: a lazy quicksort
-:PROPERTIES:
-:orgtrello-id: 5210cd3ee197f1784f004c0b
-:END:
 *** Functional programming
-:PROPERTIES:
-:orgtrello-id: 5210cd3f7040f9875d006703
-:END:
 *** Functions in all their forms [100%]
-:PROPERTIES:
-:orgtrello-id: 5211edd0146e624d5d008af4
-:END:
 *** Closures
-:PROPERTIES:
-:orgtrello-id: 5210cd410a5c3bb44c004680
-:END:
 *** Thinking recursively
-:PROPERTIES:
-:orgtrello-id: 5210cd42b7489adb1d004333
-:END:
 *** Putting it all together: A* pathfinding
-:PROPERTIES:
-:orgtrello-id: 5210cd4395d6b16e5f00549c
-:END:
 ** Part 4 Large-Scale Design
-:PROPERTIES:
-:orgtrello-id: 5210cd4439858ad45c006cdc
-:END:
 *** Macros
-:PROPERTIES:
-:orgtrello-id: 5210cd4504b629ec0f006228
-:END:
 *** Combining data and code
-:PROPERTIES:
-:orgtrello-id: 5210cd46a1cab7d74c0037d9
-:END:
 *** Java.next
-:PROPERTIES:
-:orgtrello-id: 5210cd470ffb50e65c003891
-:END:
 *** Mutation
-:PROPERTIES:
-:orgtrello-id: 5210cd47e2ad20da2b00364f
-:END:
 ** Part 5 Tangential Considerations
-:PROPERTIES:
-:orgtrello-id: 5210cd1e05bf287b5a0067b5
-:END:
 *** Performance
-:PROPERTIES:
-:orgtrello-id: 5210cd480b2415ba3c0058fc
-:END:
 *** Clojure changes the way you think
-:PROPERTIES:
-:orgtrello-id: 5210cd49e72cf5ee0d0039c0
-:END:
-* DONE Programming in scala
-:PROPERTIES:
-:orgtrello-id: 51e02e12e2e19b983f0015dc
-:END:
-** chapters
-:PROPERTIES:
-:orgtrello-id: 51e02e406fd8f8526b00397e
-:END:
-*** introduction
-:PROPERTIES:
-:orgtrello-id: 51e02e4f870e404154001eaf
-:END:
-*** Ch. 1 - A scalable language
-:PROPERTIES:
-:orgtrello-id: 51e02e504e843c9d4b001e3c
-:END:
-*** Ch. 2 - First steps in scala
-:PROPERTIES:
-:orgtrello-id: 51e02e50870e404154001eb0
-:END:
-*** Ch. 3 - Next steps in scala
-:PROPERTIES:
-:orgtrello-id: 51e02e510f5a0ed737003474
-:END:
-*** Ch. 4 - Classes and objects
-:PROPERTIES:
-:orgtrello-id: 51e02e52178c2b042b0026b9
-:END:
-*** Ch. 5 - Basic types and operations
-:PROPERTIES:
-:orgtrello-id: 51e02e536bb045e42a00375b
-:END:
-*** Ch. 6 - Functional objects
-:PROPERTIES:
-:orgtrello-id: 51e02e543d261677540038db
-:END:
-*** Ch. 7 - Buit-in control structures
-:PROPERTIES:
-:orgtrello-id: 51e02e54daac63334f00215c
-:END:
-*** Ch. 8 - Functions and closures
-:PROPERTIES:
-:orgtrello-id: 51e02e557946c71c38002424
-:END:
-*** Ch. 9 - Control abstraction
-:PROPERTIES:
-:orgtrello-id: 51e02e5610f4cc366b002140
-:END:
-*** Ch. 10 - Composition and inheritance
-:PROPERTIES:
-:orgtrello-id: 51e02e5783d8ac5a4500353a
-:END:
-*** Ch. 11 - Scala's hierarchy
-:PROPERTIES:
-:orgtrello-id: 51e02e58f286ac5c5400381d
-:END:
-*** Ch. 12 - Traits
-:PROPERTIES:
-:orgtrello-id: 51e02e58daac63334f00215d
-:END:
-* DONE Clojure Programming
-:PROPERTIES:
-:orgtrello-id: 51e02fb663b4da66050026e3
-:END:
-* DONE Functional programming in Haskell
-:PROPERTIES:
-:orgtrello-id: 51e02fb455ff94a71e002133
-:END:
 * DONE Programming in Haskell
-:PROPERTIES:
-:orgtrello-id: 51e02fb683d8ac5a4500358b
-:END:
 * DONE Clojure Programming
-:PROPERTIES:
-:orgtrello-id: 520e09c8227cb8834c0016be
-:END:
 * DONE Functional programming in Haskell
-:PROPERTIES:
-:orgtrello-id: 520e09ca0175c7d25c002d0b
-:END:
-* DONE Programming in Haskell
-:PROPERTIES:
-:orgtrello-id: 520e09cd4950c2335a00282a
-:END:
 * DONE Programming in scala
-:PROPERTIES:
-:orgtrello-id: 520e0a5bccff76a857001cda
-:END:
 ** chapters
-:PROPERTIES:
-:orgtrello-id: 520e0a64f3dc8f5c5a0028a1
-:END:
 *** introduction
-:PROPERTIES:
-:orgtrello-id: 520e0a6a9fd8829f4a002993
-:END:
 *** Ch. 1 - A scalable language
-:PROPERTIES:
-:orgtrello-id: 520e0a82f84e3f53290020fe
-:END:
 *** Ch. 2 - First steps in scala
-:PROPERTIES:
-:orgtrello-id: 520e0a84470f2a335d0017ca
-:END:
 *** Ch. 6 - Functional objects
-:PROPERTIES:
-:orgtrello-id: 520e0a890f8bbc6b5a002bb1
-:END:
 *** Ch. 7 - Buit-in control structures
-:PROPERTIES:
-:orgtrello-id: 520e0a8920ebcac630000ea5
-:END:
 *** Ch. 8 - Functions and closures
-:PROPERTIES:
-:orgtrello-id: 520e0a89b6c20fe068002ee5
-:END:
 *** Ch. 10 - Composition and inheritance
-:PROPERTIES:
-:orgtrello-id: 520e0a896acac9f84800060e
-:END:
 *** Ch. 11 - Scala's hierarchy
-:PROPERTIES:
-:orgtrello-id: 520e0a89545eb0295d0016e9
-:END:
 *** Ch. 12 - Traits
-:PROPERTIES:
-:orgtrello-id: 520e0a899bdf5b980d002b8d
-:END:
 *** Ch. 3 - Next steps in scala
-:PROPERTIES:
-:orgtrello-id: 520e0a8a227cb8834c00172e
-:END:
 *** Ch. 9 - Control abstraction
-:PROPERTIES:
-:orgtrello-id: 520e0a8a3cbba6d76800281a
-:END:
 *** Ch. 4 - Classes and objects
-:PROPERTIES:
-:orgtrello-id: 520e0a8a2ec0c1926800188d
-:END:
 *** Ch. 5 - Basic types and operations
-:PROPERTIES:
-:orgtrello-id: 520e0a8a4f2667e76800268c
-:END:
