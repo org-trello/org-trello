@@ -6,6 +6,7 @@ Minor emacs mode for org-mode - 2-way synchronization between org and trello boa
 
 - [why?](#why)
 - [Emacs version](#emacs-version)
+- [Migration](#migration)
 - [TL;DR](#tl;dr)
 	- [Fast help](#fast-help)
 	- [Demo](#demo)
@@ -64,6 +65,25 @@ Tested on:
 - GNU Emacs 24.1.1 (x86_64-pc-linux-gnu, X toolkit, Xaw3d scroll bars) of 2012-09-22 on batsu, modified by Debian (<= 0.0.9)
 - GNU Emacs 24.3.1 (x86_64-pc-linux-gnu, X toolkit, Xaw3d scroll bars) of 2013-04-14 on marid, modified by Debian (from 0.1.0)
 
+# Migration
+
+0.1.1 -> 0.1.2:
+- From the version 0.1.1, the http requests will be asynchronous (not all of them yet).
+For this, we use elnode as a proxy before requesting trello.
+elnode server is started on the port 9876.
+You can always change this port
+
+``` lisp
+(setq *ORGTRELLO-PROXY-PORT* 9876)
+```
+Then M-x orgtrello-proxy/reload
+
+- Another change in the workflow has been made.
+The creation of a new entity is triggered when you begin to type * (or more), add some text and then hit ENTER, the request is sent.
+
+A note, auto-complete when activated, generate a '\n' which triggers the requests too.
+You can always synchronize after this using the old bindings.
+
 # TL;DR
 
 ## Fast help
@@ -71,11 +91,14 @@ Tested on:
 Yank this into a scratch buffer:
 ``` lisp
 (require 'package)
-(add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/") t)
-;; or (add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
+(add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
+;; or (add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/") t)
 (package-initialize)
 (package-install 'org-trello)
 (require 'org-trello)
+;; to trigger org-trello for each org file
+(add-hook 'org-mode-hook 'org-trello-mode)
+
 ```
 then `M-x eval-buffer`
 
@@ -221,10 +244,13 @@ Add the org-trello directory to your load path and then add
 ## Emacs related
 
 Org-trello is a minor mode for org-mode to sync.
-Simply, require it somewhere in your load file (~/.emacs or ~/.emacs.d/init.el).
+Add this somewhere in your load file (~/.emacs or ~/.emacs.d/init.el).
 
 ``` lisp
 (require 'orgtrello)
+;; to have org-trello activated for all org file, uncomment this
+;; (add-hook 'org-mode-hook 'org-trello-mode)
+;; otherwise, M-x org-trello-mode
 ```
 
 For example, here is my [startup file](https://github.com/ardumont/orgmode-pack/blob/master/init.el#L3).
@@ -294,16 +320,17 @@ M-x org-trello/create-board
 # Bindings
 
 Actual bindings (not definitive, suggestions regarding those bindings are welcome):
-- C-c o i - M-x org-trello/install-key-and-token       - Install the keys and the access-token.
-- C-c o I - M-x org-trello/install-board-and-lists-ids - Select the board and attach the todo, doing and done list.
-- C-c o b - M-x org-trello/create-board                - Create interactively a board and attach the org-mode file to this trello board.
-- C-c o c - M-x org-trello/create-simple-entity        - Create/Update an entity (card/checklist/item) depending on its level and status. Do not deal with level superior to 4.
-- C-c o C - M-x org-trello/create-complex-entity       - Create/Update a complete entity card/checklist/item and its subtree (depending on its level).
-- C-c o s - M-x org-trello/sync-to-trello              - Synchronize the org-mode file to the trello board (org-mode -> trello).
-- C-c o S - M-x org-trello/sync-from-trello            - Synchronize the org-mode file from the trello board (trello -> org-mode).
-- C-c o k - M-x org-trello/kill-entity                 - Kill the entity (and its arborescence tree).
-- C-c o d - M-x org-trello/check-setup                 - Simple routine to check that the setup is ok. If everything is ok, will simply display 'Setup ok!'
-- C-c o h - M-x org-trello/help-describing-bindings    - This help message.
+C-c o i - M-x org-trello/install-key-and-token       - Install the keys and the access-token.
+C-c o I - M-x org-trello/install-board-and-lists-ids - Select the board and attach the todo, doing and done list.
+C-c o d - M-x org-trello/check-setup                 - Check that the setup is ok. If everything is ok, will simply display 'Setup ok!'
+C-c o D - M-x org-trello/delete-setup                - Clean up the org buffer from all org-trello informations
+C-c o b - M-x org-trello/create-board                - Create interactively a board and attach the org-mode file to this trello board.
+C-c o c - M-x org-trello/create-simple-entity        - Create/Update an entity (card/checklist/item) depending on its level and status. Do not deal with level superior to 4.
+C-c o C - M-x org-trello/create-complex-entity       - Create/Update a complete entity card/checklist/item and its subtree (depending on its level).
+C-c o s - M-x org-trello/sync-to-trello              - Synchronize the org-mode file to the trello board (org-mode -> trello).
+C-c o S - M-x org-trello/sync-from-trello            - Synchronize the org-mode file from the trello board (trello -> org-mode).
+C-c o k - M-x org-trello/kill-entity                 - Kill the entity (and its arborescence tree).
+C-c o h - M-x org-trello/help-describing-bindings    - This help message.
 
 # Use cases
 
@@ -338,9 +365,9 @@ For example:
 ```org-mode
 * card-identity (label mandatory)
 ** checklist (label mandatory)
-*** task1 (label mandatory)
-*** task2 (label mandatory)
-*** task3 (label mandatory)
+*** item1 (label mandatory)
+*** item2 (label mandatory)
+*** item3 (label mandatory)
 ```
 
 - Card:
@@ -353,10 +380,10 @@ For example:
   - Place yourself on the checklist `checklist`, hit the binding, this will add `checklist` as a checklist to your card `card-identity`
   - Rename your checklist and hit again the binding to update its label.
 
-- Task:
-  - Place yourself on your task and hit the binding, this will add the item to such checklist.
-  - Change the label of the task and hit the binding, this will update its label.
-  - Change the status of the task to `DONE` and hit the binding, this will check such item in trello.
+- Item:
+  - Place yourself on your item and hit the binding, this will add the item to such checklist.
+  - Change the label of the item and hit the binding, this will update its label.
+  - Change the status of the item to `DONE` and hit the binding, this will check such item in trello.
 
 ## Card and deadline/due date
 
@@ -379,7 +406,7 @@ If you do not want this, you can disable it by adding those lines to your emacs'
 ## Creation full entity
 
 You can sync all the entities and their arborescence once.
-Place yourself on the entity (card or checklist or item/task) and hit `C-c o C`.
+Place yourself on the entity (card or checklist or item) and hit `C-c o C`.
 
 ## Sync org-mode file to trello board
 
