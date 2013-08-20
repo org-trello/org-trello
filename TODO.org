@@ -1,13 +1,4 @@
-#+property: board-name    api test board
-#+property: board-id      51d99bbc1e1d8988390047f2
-#+property: TODO 51d99bbc1e1d8988390047f3
-#+property: IN-PROGRESS 51d99bbc1e1d8988390047f4
-#+property: DONE 51d99bbc1e1d8988390047f5
-#+property: PENDING 51e53898ea3d1780690015ca
-#+property: FAIL 51e538a26f75d07902002d25
-#+property: DELEGATED 51e538a89c05f1e25c0027c6
-#+property: CANCELLED 51e538e6c7a68fa0510014ee
-#+TITLE: TODO orgtrello's dev progress
+=#+TITLE: TODO orgtrello's dev progress
 #+AUTHOR: Antoine R. Dumont
 #+STYLE: <style> h1,h2,h3 {font-family: arial, helvetica, sans-serif} </style>
 
@@ -505,19 +496,9 @@ CLOSED: [2013-08-11 dim. 13:43]
 CLOSED: [2013-08-11 dim. 13:44]
 ** DONE Release
 CLOSED: [2013-08-11 dim. 13:44]
-* IN-PROGRESS 0.1.2 [88%]
-** DONE Improve the setup regarding the org-trello marker.
-CLOSED: [2013-08-11 dim. 20:49]
-** DONE Beginning end to end tests (primitive entries)
-CLOSED: [2013-08-11 dim. 20:49]
+* IN-PROGRESS 0.1.2 [94%]
 ** DONE Use an intermediary server between org and trello to permit asynchronous actions
 CLOSED: [2013-08-14 mer. 16:53]
-** DONE Make the creation asynchronous using the proxy
-CLOSED: [2013-08-14 mer. 16:54]
-** DONE Make the deletion asynchronous using the proxy
-CLOSED: [2013-08-14 mer. 16:54]
-** DONE Creation of new entity as you go
-CLOSED: [2013-08-14 mer. 16:56]
 ** DONE Change org-trello's loading policy + update the readme about it
 CLOSED: [2013-08-14 mer. 16:57]
 ** DONE Find a way to make the proxy less verbose
@@ -530,16 +511,10 @@ CLOSED: [2013-08-15 jeu. 18:39]
 CLOSED: [2013-08-15 jeu. 19:32]
 ** DONE Improve the help message to categorize the bindings
 CLOSED: [2013-08-15 jeu. 19:36]
-** DONE Make a routine to cleanup every org-trello data
-CLOSED: [2013-08-15 jeu. 19:46]
-** DONE Improve the message when starting and shutting down org-trello-mode
+** DONE Improve the starting/stopping of org-trello
 CLOSED: [2013-08-15 jeu. 19:50]
-** DONE Update version
-CLOSED: [2013-08-15 jeu. 20:00]
 ** DONE Remove end to end test as this can no longer works with asynchronous
 CLOSED: [2013-08-15 jeu. 20:03]
-** DONE Cleanup elnode servers (only the proxy is needed at the moment)
-CLOSED: [2013-08-15 jeu. 20:06]
 ** DONE Update the readme to explain the migration from 0.1.1 to 0.1.2
 CLOSED: [2013-08-15 jeu. 20:14]
 ** DONE Render the sync to trello routine asynchronous
@@ -550,13 +525,24 @@ CLOSED: [2013-08-16 ven. 11:39]
 CLOSED: [2013-08-16 ven. 12:12]
 ** DONE Fix check setup routine
 CLOSED: [2013-08-16 ven. 13:11]
-** TODO map over entities in breadth
-** TODO Release notes
+** DONE Interactive command to cleanup the org-trello data from the current buffer
+CLOSED: [2013-08-20 mar. 02:08]
+** DONE Interactive command to delete all entities from the board and the org buffer
+CLOSED: [2013-08-20 mar. 02:07]
+** DONE Update version
+CLOSED: [2013-08-15 jeu. 20:00]
+** DONE Release notes
+CLOSED: [2013-08-20 mar. 02:05]
 ** TODO Release
 * TODO 0.1.3 [0%]
-** TODO Rethink the end to end test + fake trello server
-** TODO A fake trello server to be able to test without a network
+** TODO Improve the request to the trello api to enforce the position inside trello (we can use the natural order of integer with position to determine such position)
+** TODO Leverage elnode's webserver capacity to display some basic monitoring about the synchronization
+** TODO End to middle end test to check that the bindings does generate the right files (for entity creation)
+** TODO Now that elnode is here, this may be simpler to use a fake trello server (use clojure :D)
 ** TODO Filter out directly with the api the data we do not need to avoid unnecessary network traffic
+* TODO Very Interesting propositions
+- https://github.com/ardumont/org-trello/issues/14 - Using org's native checklist functionality (Now that the proxy is here, it is simply a matter of speaking the right language -> parsing)
+- https://github.com/ardumont/org-trello/issues/33 - Another Disposition about org's buffer
 * Questions
 ** How to deal with promotion/demotion?
 We do not deal with it at the moment.

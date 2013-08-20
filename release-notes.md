@@ -1,3 +1,25 @@
+# 0.1.2
+
+- DONE Use an intermediary server between org and trello to permit asynchronous actions
+- DONE Change org-trello's loading policy + update the readme about it
+- DONE Find a way to make the proxy less verbose
+- DONE Fix the loss of todo keywords after the synchronization -> no idea what's wrong here
+- DONE Improve the attachment board routine to add the missing | keyword (hardcode with DONE for example)
+- DONE Improve the clearing of already present heading metadata
+- DONE Improve the help message to categorize the bindings
+- DONE Improve the starting/stopping of org-trello
+- DONE Remove end to end test as this can no longer works with asynchronous
+- DONE Update the readme to explain the migration from 0.1.1 to 0.1.2
+- DONE Render the sync to trello routine asynchronous
+- DONE Render the sync complex entity routine asynchronous
+- DONE Render the sync from trello asynchronous
+- DONE Fix check setup routine
+- DONE Interactive command to cleanup the org-trello data from the current buffer
+- DONE Interactive command to delete all entities from the board and the org buffer
+- DONE Update version
+- DONE Release notes
+- DONE Release
+
 # 0.1.1
 
 - DONE Literate org-trello

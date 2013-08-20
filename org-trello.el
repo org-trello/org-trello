@@ -1711,7 +1711,8 @@ C-c o c - M-x org-trello/create-simple-entity        - Create/Update an entity (
 C-c o C - M-x org-trello/create-complex-entity       - Create/Update a complete entity card/checklist/item and its subtree (depending on its level).
 C-c o s - M-x org-trello/sync-to-trello              - Synchronize the org-mode file to the trello board (org-mode -> trello).
 C-c o S - M-x org-trello/sync-from-trello            - Synchronize the org-mode file from the trello board (trello -> org-mode).
-C-c o k - M-x org-trello/kill-entity                 - Kill the entity (and its arborescence tree).
+C-c o k - M-x org-trello/kill-entity                 - Kill the entity (and its arborescence tree) from the trello board and the org buffer.
+C-c o K - M-x org-trello/kill-all-entities           - Kill all the entities (and their arborescence tree) from the trello board and the org buffer.
 # HELP
 C-c o h - M-x org-trello/help-describing-bindings    - This help message."))
 
