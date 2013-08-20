@@ -68,8 +68,8 @@ Tested on:
 # Migration
 
 0.1.1 -> 0.1.2:
-- From the version 0.1.1, the http requests will be asynchronous (not all of them yet).
-For this, we use elnode as a proxy before requesting trello.
+- From the version 0.1.1, some of the http requests will be asynchronous.
+For this, we use elnode as a proxy server before requesting trello.
 elnode server is started on the port 9876.
 You can always change this port
 
@@ -77,12 +77,6 @@ You can always change this port
 (setq *ORGTRELLO-PROXY-PORT* 9876)
 ```
 Then M-x orgtrello-proxy/reload
-
-- Another change in the workflow has been made.
-The creation of a new entity is triggered when you begin to type * (or more), add some text and then hit ENTER, the request is sent.
-
-A note, auto-complete when activated, generate a '\n' which triggers the requests too.
-You can always synchronize after this using the old bindings.
 
 # TL;DR
 
