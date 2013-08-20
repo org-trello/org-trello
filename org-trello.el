@@ -5,7 +5,7 @@
 ;; Author: Antoine R. Dumont <eniotna.t AT gmail.com>
 ;; Maintainer: Antoine R. Dumont <eniotna.t AT gmail.com>
 ;; Version: 0.1.2
-;; Package-Requires: ((org "8.0.7") (dash "1.5.0") (request "0.2.0") (cl-lib "0.3.0") (json "1.2") (elnode "0.9.9.7.6"))
+;; Package-Requires: ((org "8.0.7") (dash "1.5.0") (request "0.2.0") (cl-lib "0.3.0") (json "1.2") (elnode "0.9.9.7.6") (esxml "0.3.0"))
 ;; Keywords: org-mode trello sync org-trello
 ;; URL: https://github.com/ardumont/org-trello
 
@@ -92,6 +92,7 @@ Levels:
 3 - log info
 4 - log debug
 5 - log trace")
+;; (setq orgtrello/loglevel 5)
 
 (defun orgtrello-log/msg (level &rest args)
   "Log message."
@@ -865,13 +866,137 @@ Levels:
   "Stop the orgtrello-timer."
   (orgtrello-proxy/http-consumer nil))
 
-(defvar *ORGTRELLO-QUERY-APP-ROUTES* '(;; proxy to request trello
-                                       ("^localhost//proxy/trello/\\(.*\\)" . orgtrello-proxy/--elnode-proxy)
-                                       ;; proxy producer to receive async creation request
-                                       ("^localhost//proxy/producer/\\(.*\\)" . orgtrello-proxy/--elnode-proxy-producer)
-                                       ;; proxy to request trello
-                                       ("^localhost//proxy/timer/\\(.*\\)" . orgtrello-proxy/--elnode-timer))
+(require 'esxml)
+
+(defun org-admin/html (data-to-display)
+  (let ((project-name "org-trello/proxy-admin")
+        (author-name  "Other commiters and Antoine R. Dumont")
+        (description  "Administration the running queries to trello"))
+    (esxml-to-xml
+     `(html
+       ()
+       ,(org-admin/head project-name author-name description)
+       ,(org-admin/body project-name data-to-display)))))
+
+(defun org-admin/head (project-name author-name description)
+  "Generate html <head>"
+  (esxml-to-xml
+   `(head ()
+          (meta ((charset . "utf-8")))
+          (title () ,project-name)
+          (meta ((name . "viewport")
+                 (content . "width=device-width, initial-scale=1.0")))
+          (meta ((name . "author")
+                 (content . ,author-name)))
+          (meta ((name . "description")
+                 (content . ,description)))
+          (style ()
+                 "body { padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */ }")
+          (link ((href . "/static/css/bootstrap.css")
+                 (rel . "stylesheet")))
+          (link ((href . "/static/css/bootstrap-responsive.min.css")
+                 (rel . "stylesheet")))
+          "
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src=\"http://html5shim.googlecode.com/svn/trunk/html5.js\"></script>
+    <![endif]-->")))
+
+(defun org-admin/body (project-name data-to-display)
+  "Display the data inside the html body"
+  (esxml-to-xml
+   `(body
+     ()
+     (div ((class . "navbar navbar-inverse navbar-fixed-top"))
+          (div ((class . "navbar-inner"))
+               (div ((class . "container"))
+                    (button ((type . "button")
+                             (class . "btn btn-navbar")
+                             (data-toggle . "collapse")
+                             (data-target . "nav-collapse"))
+                            (span ((class . "icon-bar")))
+                            (span ((class . "icon-bar")))
+                            (span ((class . "icon-bar"))))
+                    (a ((class . "brand")
+                        (href . "#"))
+                       ,project-name)
+                    (div ((class . "nav-collapse collapse"))
+                         (ul ((class . "nav"))
+                             (li ((class . "active"))
+                                 (a ((href . "#"))
+                                    "Home"))
+                             (li ((class . "active"))
+                                 (a ((href . "#about"))
+                                    "About"))
+                             (li ((class . "active"))
+                                 (a ((href . "#contact"))
+                                    "Contact")))))))
+     (div ((class . "container"))
+          (h1 () "List of entities to sync")
+          ,data-to-display)
+     (script ((src . "/static/js/jquery.js")))
+     (script ((src . "/static/js/bootstrap.min.js"))))))
+
+(defun orgtrello-admin/--content-file (file)
+  "Return the content of a file (absolute name)."
+  (with-temp-buffer
+    (insert-file-contents file)
+    (buffer-string)))
+
+(defun org-admin/list-files (list-of-files)
+  "Return the list of files to send to trello"
+  (let ((fst-file   (car list-of-files))
+        (rest-files (cdr list-of-files)))
+    (org-admin/html (if list-of-files
+                        (esxml-to-xml
+                         `(table ((class . "table table-striped table-bordered table-hover")
+                                  (style . "font-size: 0.75em"))
+                                 (tr
+                                  ()
+                                  (td () (i ((class . "icon-arrow-right"))))
+                                  (td () ,(orgtrello-admin/--content-file fst-file)))
+                                 ,(loop for entry in rest-files
+                                        concat
+                                        (esxml-to-xml
+                                         `(tr
+                                           ()
+                                           (td () (i ((class . "icon-arrow-up"))))
+                                           (td () ,(orgtrello-admin/--content-file entry)))))))
+                        "Empty!"))))
+
+(defun orgtrello-proxy/--response-html (http-con data)
+  "A response wrapper"
+  (elnode-http-start http-con 201 '("Content-type" . "text/html"))
+  (elnode-http-return http-con data))
+
+(defun orgtrello-proxy/--elnode-admin (http-con)
+  "A basic display of data"
+  (orgtrello-proxy/--response-html
+   http-con
+   (org-admin/list-files
+    (--mapcat (orgtrello-proxy/--list-files (orgtrello-proxy/--compute-entity-level-dir it)) '(1 2 3)))))
+
+(defun orgtrello-proxy/--elnode-static-file (http-con)
+  "Service static files if they exist"
+  (let ((full-file (format "%s%s/%s/%s" elnode-webserver-docroot "org-trello/bootstrap" (elnode-http-mapping http-con 1) (elnode-http-mapping http-con 2))))
+    (if (file-exists-p full-file)
+        (elnode-send-file http-con full-file)
+        (elnode-send-404 http-con (format "Resource file '%s' not found!" full-file)))))
+
+(defvar *ORGTRELLO-QUERY-APP-ROUTES*
+  '(;; proxy to request trello
+    ("^localhost//proxy/admin/\\(.*\\)" . orgtrello-proxy/--elnode-admin)
+    ;; proxy to request trello
+    ("^localhost//proxy/trello/\\(.*\\)" . orgtrello-proxy/--elnode-proxy)
+    ;; proxy producer to receive async creation request
+    ("^localhost//proxy/producer/\\(.*\\)" . orgtrello-proxy/--elnode-proxy-producer)
+    ;; proxy to request trello
+    ("^localhost//proxy/timer/\\(.*\\)" . orgtrello-proxy/--elnode-timer)
+    ;; static files
+    ("^localhost//static/\\(.*\\)/\\(.*\\)" . orgtrello-proxy/--elnode-static-file))
   "Org-trello dispatch routes for the webserver")
+
+;; (orgtrello-admin/--content-file "/home/tony/.emacs.d/elnode/public_html/org-trello/bootstrap/css/bootstrap.css")
 
 (defun orgtrello-proxy/--proxy-handler (http-con)
   "Proxy handler."
