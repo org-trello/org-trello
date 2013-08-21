@@ -866,19 +866,69 @@ Levels:
   "Stop the orgtrello-timer."
   (orgtrello-proxy/http-consumer nil))
 
+
+
+;; #################### orgtrello-admin
+
 (require 'esxml)
 
-(defun org-admin/html (data-to-display)
+(defun orgtrello-admin/--compute-root-static-files ()
+  "Root files under which css and js files are installed."
+  (format "%s%s" elnode-webserver-docroot "org-trello/bootstrap"))
+
+(defun orgtrello-admin/--installation-needed-p ()
+  "Determine if the installation is needed."
+  (let ((dir (orgtrello-admin/--compute-root-static-files)))
+    (not (and (file-exists-p dir)
+              (< 3 (-> dir
+                       directory-files
+                       length)))))) ;; . and .. are returned by default
+
+(defvar *ORGTRELLO-FILES* (let ((tmp (make-hash-table :test 'equal)))
+                            ;;                    url                                                  temp file            install destination
+                            (puthash :bootstrap `("http://getbootstrap.com/2.3.2/assets/bootstrap.zip" "/tmp/bootstrap.zip" ,(orgtrello-admin/--compute-root-static-files)) tmp)
+                            (puthash :jquery    `("http://code.jquery.com/jquery-2.0.3.min.js"         "/tmp/jquery.js"     ,(format "%s/js" (orgtrello-admin/--compute-root-static-files))) tmp)
+                            tmp))
+
+(defun orgtrello-admin/--unzip-and-install (file dest)
+  "Execute the unarchive command. Dependency on unzip on the system."
+  (let ((ext (file-name-extension file)))
+    (shell-command (format "unzip -o %s -d %s" file dest))))
+
+(defun orgtrello-admin/--install-file (file file-dest)
+  "Install the file from temporary location to the final destination."
+  (when (file-exists-p file)
+        (rename-file file file-dest t)))
+
+(defun orgtrello-admin/--download-and-install-file (key-file)
+  "Download the file represented by the parameter. Also, if the archive downloaded is a zip, unzip it."
+  (let* ((url-tmp-dest (gethash key-file *ORGTRELLO-FILES*))
+         (url          (first  url-tmp-dest))
+         (tmp-dest     (second url-tmp-dest))
+         (final-dest   (third  url-tmp-dest))
+         (extension    (file-name-extension url)))
+    ;; download the file
+    (url-copy-file url tmp-dest t)
+    (if (equal "zip" extension)
+        (orgtrello-admin/--unzip-and-install tmp-dest (file-name-directory final-dest))
+        (orgtrello-admin/--install-file tmp-dest final-dest))))
+
+(defun orgtrello-admin/--install-css-js-files-once ()
+  "Install bootstrap and jquery if need be."
+  (when (orgtrello-admin/--installation-needed-p)
+        (mapc (lambda (key-file) (orgtrello-admin/--download-and-install-file key-file)) '(:bootstrap :jquery))))
+
+(defun orgtrello-admin/html (data-to-display)
   (let ((project-name "org-trello/proxy-admin")
-        (author-name  "Other commiters and Antoine R. Dumont")
+        (author-name  "Commiters")
         (description  "Administration the running queries to trello"))
     (esxml-to-xml
      `(html
        ()
-       ,(org-admin/head project-name author-name description)
-       ,(org-admin/body project-name data-to-display)))))
+       ,(orgtrello-admin/head project-name author-name description)
+       ,(orgtrello-admin/body project-name data-to-display)))))
 
-(defun org-admin/head (project-name author-name description)
+(defun orgtrello-admin/head (project-name author-name description)
   "Generate html <head>"
   (esxml-to-xml
    `(head ()
@@ -902,7 +952,7 @@ Levels:
       <script src=\"http://html5shim.googlecode.com/svn/trunk/html5.js\"></script>
     <![endif]-->")))
 
-(defun org-admin/body (project-name data-to-display)
+(defun orgtrello-admin/body (project-name data-to-display)
   "Display the data inside the html body"
   (esxml-to-xml
    `(body
@@ -943,26 +993,26 @@ Levels:
     (insert-file-contents file)
     (buffer-string)))
 
-(defun org-admin/list-files (list-of-files)
+(defun orgtrello-admin/list-files (list-of-files)
   "Return the list of files to send to trello"
   (let ((fst-file   (car list-of-files))
         (rest-files (cdr list-of-files)))
-    (org-admin/html (if list-of-files
-                        (esxml-to-xml
-                         `(table ((class . "table table-striped table-bordered table-hover")
-                                  (style . "font-size: 0.75em"))
-                                 (tr
-                                  ()
-                                  (td () (i ((class . "icon-arrow-right"))))
-                                  (td () ,(orgtrello-admin/--content-file fst-file)))
-                                 ,(loop for entry in rest-files
-                                        concat
-                                        (esxml-to-xml
-                                         `(tr
-                                           ()
-                                           (td () (i ((class . "icon-arrow-up"))))
-                                           (td () ,(orgtrello-admin/--content-file entry)))))))
-                        "Empty!"))))
+    (orgtrello-admin/html (if list-of-files
+                              (esxml-to-xml
+                               `(table ((class . "table table-striped table-bordered table-hover")
+                                        (style . "font-size: 0.75em"))
+                                       (tr
+                                        ()
+                                        (td () (i ((class . "icon-arrow-right"))))
+                                        (td () ,(orgtrello-admin/--content-file fst-file)))
+                                       ,(loop for entry in rest-files
+                                              concat
+                                              (esxml-to-xml
+                                               `(tr
+                                                 ()
+                                                 (td () (i ((class . "icon-arrow-up"))))
+                                                 (td () ,(orgtrello-admin/--content-file entry)))))))
+                              "Empty!"))))
 
 (defun orgtrello-proxy/--response-html (http-con data)
   "A response wrapper"
@@ -973,15 +1023,21 @@ Levels:
   "A basic display of data"
   (orgtrello-proxy/--response-html
    http-con
-   (org-admin/list-files
+   (orgtrello-admin/list-files
     (--mapcat (orgtrello-proxy/--list-files (orgtrello-proxy/--compute-entity-level-dir it)) '(1 2 3)))))
 
 (defun orgtrello-proxy/--elnode-static-file (http-con)
   "Service static files if they exist"
-  (let ((full-file (format "%s%s/%s/%s" elnode-webserver-docroot "org-trello/bootstrap" (elnode-http-mapping http-con 1) (elnode-http-mapping http-con 2))))
+  ;; the first request will ask for installing bootstrap and jquery
+  (orgtrello-admin/--install-css-js-files-once)
+  (let ((full-file (format "%s/%s/%s" (orgtrello-admin/--compute-root-static-files) (elnode-http-mapping http-con 1) (elnode-http-mapping http-con 2))))
     (if (file-exists-p full-file)
         (elnode-send-file http-con full-file)
         (elnode-send-404 http-con (format "Resource file '%s' not found!" full-file)))))
+
+
+
+;; #################### orgtrello-proxy installation
 
 (defvar *ORGTRELLO-QUERY-APP-ROUTES*
   '(;; proxy to request trello
