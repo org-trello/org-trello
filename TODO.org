@@ -541,7 +541,7 @@ CLOSED: [2013-08-21 mer. 10:03]
 CLOSED: [2013-08-20 mar. 17:34]
 ** DONE Install bootstrap and jquery.js directly to avoid the user's manual installation (the first query to static files install bootstrap and jquery now)
 CLOSED: [2013-08-21 mer. 10:12]
-** TODO Ensure sync-from-trello keep the order clean
+** TODO Ensure sync-from-trello keep the order of the checklists clean
 ** TODO End to middle end test to check that the bindings does generate the right files (for entity creation)
 ** TODO Now that elnode is here, this may be simpler to use a fake trello server (use clojure :D)
 ** TODO Improve the request to the trello api to enforce the position inside trello (we can use the natural order of integer with position to determine such position)
@@ -550,6 +550,7 @@ CLOSED: [2013-08-21 mer. 10:12]
 * TODO Very Interesting propositions
 - https://github.com/ardumont/org-trello/issues/14 - Using org's native checklist functionality (Now that the proxy is here, it is simply a matter of speaking the right language -> parsing)
 - https://github.com/ardumont/org-trello/issues/33 - Another Disposition about org's buffer
+- https://github.com/ardumont/org-trello/issues/37#issuecomment-23033199 - One command to sync them all
 * Questions
 ** How to deal with promotion/demotion?
 We do not deal with it at the moment.
