@@ -9,10 +9,10 @@ test:
 			-f ert-run-tests-batch-and-exit
 
 itest-clean:
-	rm -f "#*org-trello-testing-buffer*#" "*org-trello-testing-buffer*" "*org-trello-testing-buffer*~"
+	rm -f "#org-trello-tests.org#" "org-trello-tests.org" "org-trello-tests.org~"
 
 itest: itest-clean
-	cask exec ecukes --script --dbg
+	cask exec ecukes --script
 
 itest-f: itest-clean
 	cask exec ecukes --script --dbg $(FEATURE)
