@@ -499,17 +499,22 @@ Levels:
     ;; no control, we simply execute the function
     (funcall fn-to-control-and-execute)))
 
+(defun org-action/--save-last-buffer ()
+  "Save last buffer"
+  (-> (last-buffer)
+      buffer-name
+      save-buffer))
+
 (defun org-action/--msg-controls-then-do (msg control-fns fn-to-control-and-execute &optional save-buffer-p reload-setup-p nolog-p)
   "A simple decorator function to display message in mini-buffer before and after the execution of the control"
-  (orgtrello-log/msg 3 (concat msg "..."))
+  (unless nolog-p (orgtrello-log/msg 3 (concat msg "...")))
   ;; now execute the controls and the main action
   (let ((org-trello/--result-action (org-action/--controls-then-do control-fns fn-to-control-and-execute nolog-p)))
     ;; do we have to save the buffer
-    (when save-buffer-p  (save-buffer))
+    (when save-buffer-p  (org-action/--save-last-buffer))
     (when reload-setup-p (orgtrello-action/reload-setup))
-    (if (string-or-null-p org-trello/--result-action)
-      (orgtrello-log/msg 3 org-trello/--result-action)
-      (orgtrello-log/msg 3 (concat msg " - done!")))))
+    (unless nolog-p
+            (orgtrello-log/msg 3 (if (string-or-null-p org-trello/--result-action) org-trello/--result-action (concat msg " - done!"))))))
 
 (defun org-action/--message-controls-then-execute (msg control-fns fn-to-control-and-execute &optional save-buffer-p reload-setup-p nolog-p)
   "A simple decorator function to display message in mini-buffer before and after the execution of the control"
@@ -1096,6 +1101,15 @@ refresh();
   (setq elnode--do-error-logging nil)
   (orgtrello-log/msg 5 "Proxy-server started!"))
 
+(defun orgtrello-proxy/start ()
+  "Start the proxy."
+  ;; update with the new port the user possibly changed
+  (setq *ORGTRELLO-PROXY-URL* (format "http://%s:%d/proxy" *ORGTRELLO-PROXY-HOST* *ORGTRELLO-PROXY-PORT*))
+  ;; start the proxy
+  (orgtrello-proxy/--start *ORGTRELLO-PROXY-PORT* *ORGTRELLO-PROXY-HOST*)
+  ;; and the timer
+  (orgtrello-timer/start))
+
 (defun orgtrello-proxy/stop ()
   "Stopping the proxy."
   (orgtrello-log/msg 5 "Proxy-server stopping...")
@@ -1108,16 +1122,10 @@ refresh();
 (defun orgtrello-proxy/reload ()
   "Reload the proxy server."
   (interactive)
-  ;; stop the proxy
   (orgtrello-proxy/stop)
-  ;; stop the default port (only usefull if the user changed from the default port )
+  ;; stop the default port (only useful if the user changed from the default port)
   (elnode-stop *ORGTRELLO-PROXY-DEFAULT-PORT*)
-  ;; update with the new port the user possibly changed
-  (setq *ORGTRELLO-PROXY-URL* (format "http://%s:%d/proxy" *ORGTRELLO-PROXY-HOST* *ORGTRELLO-PROXY-PORT*))
-  ;; start the proxy
-  (orgtrello-proxy/--start *ORGTRELLO-PROXY-PORT* *ORGTRELLO-PROXY-HOST*)
-  ;; and the timer
-  (orgtrello-timer/start))
+  (orgtrello-proxy/start))
 
 (orgtrello-log/msg 4 "org-trello - orgtrello-proxy loaded!")
 
@@ -1955,7 +1963,7 @@ C-c o h - M-x org-trello/help-describing-bindings    - This help message."))
 (add-hook 'org-trello-mode-on-hook
           (lambda ()
             ;; start the proxy
-            (orgtrello-proxy/reload)
+            (orgtrello-proxy/start)
             ;; a little message in the minibuffer to notify the user
             (orgtrello-log/msg 0 "org-trello/ot is on! To begin with, hit C-c o h or M-x 'org-trello/help-describing-bindings")))
 
