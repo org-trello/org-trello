@@ -75,11 +75,13 @@
 
 ;; #################### static setup
 
-(defvar *consumer-key*                nil                "Id representing the user")
-(defvar *access-token*                nil                "Read/write Access token to use trello in the user's name ")
+(defvar *consumer-key*                nil                "Id representing the user.")
+(defvar *access-token*                nil                "Read/write access token to use trello on behalf of the user.")
 (defvar *ORGTRELLO-MARKER*            "orgtrello-marker" "A marker used inside the org buffer to synchronize entries.")
-(defvar *do-sync-query*               t                  "An alias to t to make the boolean more significant")
-(defvar *do-save-buffer-reload-setup* t                  "Another alias to t to make the boolean more significant")
+(defvar *do-sync-query*               t                  "An alias to t to make the boolean more significant in the given context.")
+(defvar *do-save-buffer*              t                  "Another alias to t to make the boolean more significant in the given context.")
+(defvar *do-reload-setup*             t                  "Another alias to t to make the boolean more significant in the given context.")
+(defvar *do-not-display-log*          t                  "Another alias to t to make the boolean more significant in the given context.")
 
 
 
@@ -483,39 +485,40 @@ Levels:
   "reload orgtrello setup"
   (org-set-regexps-and-options))
 
-(defun org-action/--msg-deco-control-and-do (msg control-fns fn-to-control-and-execute &optional save-buffer-p)
-  "A simple decorator function to display message in mini-buffer before and after the execution of the control"
-  (orgtrello-log/msg 3 (concat msg "..."))
-  ;; stop the timer
-  (orgtrello-timer/stop)
-  ;; now execute the controls and the main action
-  (let ((org-trello/--result-action (org-action/--control-and-do control-fns fn-to-control-and-execute)))
-    ;; do we have to save the buffer
-    (when save-buffer-p
-          (progn
-            ;; save the buffer
-            (save-buffer)
-            ;; reload setup
-            (orgtrello-action/reload-setup)))
-    ;; start the timer
-    (orgtrello-timer/start)
-    (if (string-or-null-p org-trello/--result-action)
-      (orgtrello-log/msg 3 org-trello/--result-action)
-      (orgtrello-log/msg 3 (concat msg " - done!")))))
-
-(defun org-action/--control-and-do (control-fns fn-to-control-and-execute &optional nolog)
+(defun org-action/--controls-then-do (control-fns fn-to-control-and-execute &optional nolog-p)
   "Execute the function fn if control-fns is nil or if the result of apply every function to fn is ok."
   (if control-fns
       (let* ((org-trello/--controls-done (--map (funcall it) control-fns))
              (org-trello/--error-messages (--filter (not (equal :ok it)) org-trello/--controls-done)))
         (if org-trello/--error-messages
-            (unless nolog
+            (unless nolog-p
                     ;; there are some trouble, we display all the error messages to help the user understand the problem
                     (orgtrello-log/msg 1 "List of errors:\n %s" (--mapcat (concat "- " it "\n") org-trello/--error-messages)))
           ;; ok execute the function as the controls are ok
           (funcall fn-to-control-and-execute)))
     ;; no control, we simply execute the function
     (funcall fn-to-control-and-execute)))
+
+(defun org-action/--msg-controls-then-do (msg control-fns fn-to-control-and-execute &optional save-buffer-p reload-setup-p nolog-p)
+  "A simple decorator function to display message in mini-buffer before and after the execution of the control"
+  (orgtrello-log/msg 3 (concat msg "..."))
+  ;; now execute the controls and the main action
+  (let ((org-trello/--result-action (org-action/--controls-then-do control-fns fn-to-control-and-execute nolog-p)))
+    ;; do we have to save the buffer
+    (when save-buffer-p  (save-buffer))
+    (when reload-setup-p (orgtrello-action/reload-setup))
+    (if (string-or-null-p org-trello/--result-action)
+      (orgtrello-log/msg 3 org-trello/--result-action)
+      (orgtrello-log/msg 3 (concat msg " - done!")))))
+
+(defun org-action/--message-controls-then-execute (msg control-fns fn-to-control-and-execute &optional save-buffer-p reload-setup-p nolog-p)
+  "A simple decorator function to display message in mini-buffer before and after the execution of the control"
+  ;; stop the timer
+  (orgtrello-timer/stop)
+  ;; Execute as usual
+  (org-action/--msg-controls-then-do msg control-fns fn-to-control-and-execute save-buffer-p reload-setup-p nolog-p)
+  ;; start the timer
+  (orgtrello-timer/start))
 
 
 
@@ -831,10 +834,14 @@ Levels:
   (if (file-exists-p (orgtrello-proxy/--compute-lock-filename)) "Timer already running!" :ok))
 
 (defun orgtrello-proxy/--controls-and-scan-if-ok ()
-  (org-action/--control-and-do
+  "Execution of the timer which consumes the entities and execute the sync to trello."
+  (org-action/--msg-controls-then-do
+   "Scanning entities to sync"
    '(orgtrello-proxy/--check-network-ok orgtrello-proxy/--check-no-running-timer)
    'orgtrello-proxy/--consumer-lock-and-scan-entity-files-hierarchically-and-sync
-   t))
+   *do-save-buffer*
+   nil
+   *do-not-display-log*))
 
 (defvar *ORGTRELLO-TIMER* nil "A timer run by elnode")
 
@@ -1784,92 +1791,92 @@ Levels:
 (defun org-trello/create-simple-entity ()
   "Control first, then if ok, create a simple entity."
   (interactive)
-  (org-action/--msg-deco-control-and-do
+  (org-action/--message-controls-then-execute
      "Synchronizing entity"
      '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties orgtrello/--control-encoding)
-     'orgtrello/do-create-simple-entity
-     *do-save-buffer-reload-setup*))
+     'orgtrello/do-create-simple-entity))
 
 (defun org-trello/create-complex-entity ()
   "Control first, then if ok, create an entity and all its arborescence if need be."
   (interactive)
-  (org-action/--msg-deco-control-and-do
+  (org-action/--message-controls-then-execute
      "Synchronizing complex entity"
      '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties orgtrello/--control-encoding)
-     'orgtrello/do-create-complex-entity
-     *do-save-buffer-reload-setup*))
+     'orgtrello/do-create-complex-entity))
 
 (defun org-trello/sync-to-trello ()
   "Control first, then if ok, sync the org-mode file completely to trello."
   (interactive)
-  (org-action/--msg-deco-control-and-do
+  (org-action/--message-controls-then-execute
      "Synchronizing org-mode file to trello"
      '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties orgtrello/--control-encoding)
-     'orgtrello/do-sync-full-file
-     *do-save-buffer-reload-setup*))
+     'orgtrello/do-sync-full-file))
 
 (defun org-trello/sync-from-trello ()
   "Control first, then if ok, sync the org-mode file from the trello board."
   (interactive)
   ;; execute the action
-  (org-action/--msg-deco-control-and-do
+  (org-action/--message-controls-then-execute
      "Synchronizing trello board to org-mode file"
      '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties orgtrello/--control-encoding)
      'orgtrello/do-sync-full-from-trello
-     *do-save-buffer-reload-setup*))
+     *do-save-buffer*))
 
 (defun org-trello/kill-entity ()
   "Control first, then if ok, delete the entity and all its arborescence."
   (interactive)
-  (org-action/--msg-deco-control-and-do
+  (org-action/--message-controls-then-execute
      "Delete entity"
      '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties orgtrello/--control-encoding)
      'orgtrello/do-delete-simple
-     *do-save-buffer-reload-setup*))
+     *do-save-buffer*))
 
 (defun org-trello/kill-all-entities ()
   "Control first, then if ok, delete the entity and all its arborescence."
   (interactive)
-  (org-action/--msg-deco-control-and-do
+  (org-action/--message-controls-then-execute
      "Delete entities"
      '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties orgtrello/--control-encoding)
      'orgtrello/do-delete-entities
-     *do-save-buffer-reload-setup*))
+     *do-save-buffer*))
 
 (defun org-trello/install-key-and-token ()
   "No control, trigger the setup installation of the key and the read/write token."
   (interactive)
-  (org-action/--msg-deco-control-and-do "Setup key and token" nil 'orgtrello/do-install-key-and-token t))
+  (org-action/--message-controls-then-execute "Setup key and token" nil 'orgtrello/do-install-key-and-token *do-save-buffer* *do-reload-setup*))
 
 (defun org-trello/install-board-and-lists-ids ()
   "Control first, then if ok, trigger the setup installation of the trello board to sync with."
   (interactive)
-  (org-action/--msg-deco-control-and-do
+  (org-action/--message-controls-then-execute
      "Install boards and lists"
      '(orgtrello/--setup-properties orgtrello/--control-keys)
      'orgtrello/do-install-board-and-lists
-     *do-save-buffer-reload-setup*))
+     *do-save-buffer*
+     *do-reload-setup*))
 
 (defun org-trello/create-board ()
   "Control first, then if ok, trigger the board creation."
   (interactive)
-  (org-action/--msg-deco-control-and-do
+  (org-action/--message-controls-then-execute
      "Create board and lists"
      '(orgtrello/--setup-properties orgtrello/--control-keys)
      'orgtrello/do-create-board-and-lists
-     *do-save-buffer-reload-setup*))
+     *do-save-buffer*
+     *do-reload-setup*))
 
 (defun org-trello/check-setup ()
   "Check the current setup."
   (interactive)
-  (org-action/--control-and-do
+  (org-action/--controls-then-do
      '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties orgtrello/--control-encoding)
      (lambda () (orgtrello-log/msg 0 "Setup ok!"))))
 
 (defun org-trello/delete-setup ()
   "Delete the current setup."
   (interactive)
-  (org-action/--control-and-do
+  (org-action/--message-controls-then-execute
+   "Deleting current org-trello setup"
      '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties orgtrello/--control-encoding)
      (lambda ()
        ;; remove any orgtrello relative entries
@@ -1877,7 +1884,9 @@ Levels:
        ;; remove any identifier from the buffer
        (org-delete-property-globally *ORGTRELLO-ID*)
        ;; a simple message to tell the client that the work is done!
-       (orgtrello-log/msg 0 "Cleanup done!"))))
+       (orgtrello-log/msg 0 "Cleanup done!"))
+     *do-save-buffer*
+     *do-reload-setup*))
 
 (defun org-trello/help-describing-bindings ()
   "A simple message to describe the standard bindings used."
