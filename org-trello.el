@@ -927,7 +927,8 @@ Levels:
   (when (orgtrello-admin/--installation-needed-p)
         (mapc (lambda (key-file) (orgtrello-admin/--download-and-install-file key-file)) '(:bootstrap :jquery))))
 
-(defun orgtrello-admin/html (data-to-display)
+(defun orgtrello-admin/html ()
+  "Main html page"
   (let ((project-name "org-trello/proxy-admin")
         (author-name  "Commiters")
         (description  "Administration the running queries to trello"))
@@ -935,7 +936,7 @@ Levels:
      `(html
        ()
        ,(orgtrello-admin/head project-name author-name description)
-       ,(orgtrello-admin/body project-name data-to-display)))))
+       ,(orgtrello-admin/body project-name)))))
 
 (defun orgtrello-admin/head (project-name author-name description)
   "Generate html <head>"
@@ -959,9 +960,10 @@ Levels:
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
       <script src=\"http://html5shim.googlecode.com/svn/trunk/html5.js\"></script>
-    <![endif]-->")))
+    <![endif]-->
+")))
 
-(defun orgtrello-admin/body (project-name data-to-display)
+(defun orgtrello-admin/body (project-name)
   "Display the data inside the html body"
   (esxml-to-xml
    `(body
@@ -992,9 +994,22 @@ Levels:
                                     "Contact")))))))
      (div ((class . "container"))
           (h1 () "List of entities to sync")
-          ,data-to-display)
-     (script ((src . "/static/js/jquery.js")))
-     (script ((src . "/static/js/bootstrap.min.js"))))))
+          (div ((id . "server-name"))))
+     (script ((src . "/static/js/bootstrap.min.js")) "")
+     (script ((src . "/static/js/jquery.js")) "")
+     (script ()
+             "
+function refresh () {
+    $.ajax({
+        url: \"/proxy/admin/entities/\"
+    }).done(function (data) {
+        $('#server-name').html(data);
+        setTimeout(function() { refresh(); }, 500);
+    });
+}
+
+refresh();
+"))))
 
 (defun orgtrello-admin/--content-file (file)
   "Return the content of a file (absolute name)."
@@ -1006,22 +1021,22 @@ Levels:
   "Return the list of files to send to trello"
   (let ((fst-file   (car list-of-files))
         (rest-files (cdr list-of-files)))
-    (orgtrello-admin/html (if list-of-files
-                              (esxml-to-xml
-                               `(table ((class . "table table-striped table-bordered table-hover")
-                                        (style . "font-size: 0.75em"))
-                                       (tr
-                                        ()
-                                        (td () (i ((class . "icon-arrow-right"))))
-                                        (td () ,(orgtrello-admin/--content-file fst-file)))
-                                       ,(loop for entry in rest-files
-                                              concat
-                                              (esxml-to-xml
-                                               `(tr
-                                                 ()
-                                                 (td () (i ((class . "icon-arrow-up"))))
-                                                 (td () ,(orgtrello-admin/--content-file entry)))))))
-                              "Empty!"))))
+    (if list-of-files
+        (esxml-to-xml
+         `(table ((class . "table table-striped table-bordered table-hover")
+                  (style . "font-size: 0.75em"))
+                 (tr
+                  ()
+                  (td () (i ((class . "icon-arrow-right"))))
+                  (td () ,(orgtrello-admin/--content-file fst-file)))
+                 ,(loop for entry in rest-files
+                        concat
+                        (esxml-to-xml
+                         `(tr
+                           ()
+                           (td () (i ((class . "icon-arrow-up"))))
+                           (td () ,(orgtrello-admin/--content-file entry)))))))
+        "Empty!")))
 
 (defun orgtrello-proxy/--response-html (http-con data)
   "A response wrapper"
@@ -1030,6 +1045,12 @@ Levels:
 
 (defun orgtrello-proxy/--elnode-admin (http-con)
   "A basic display of data"
+  (orgtrello-proxy/--response-html
+   http-con
+   (orgtrello-admin/html)))
+
+(defun orgtrello-proxy/--elnode-admin-scan (http-con)
+  "A basic display of the list of entities to scan"
   (orgtrello-proxy/--response-html
    http-con
    (orgtrello-admin/list-files
@@ -1050,6 +1071,7 @@ Levels:
 
 (defvar *ORGTRELLO-QUERY-APP-ROUTES*
   '(;; proxy to request trello
+    ("^localhost//proxy/admin/entities/\\(.*\\)" . orgtrello-proxy/--elnode-admin-scan)
     ("^localhost//proxy/admin/\\(.*\\)" . orgtrello-proxy/--elnode-admin)
     ;; proxy to request trello
     ("^localhost//proxy/trello/\\(.*\\)" . orgtrello-proxy/--elnode-proxy)
