@@ -75,9 +75,11 @@
 
 ;; #################### static setup
 
-(defvar *consumer-key*     nil "Id representing the user")
-(defvar *access-token*     nil "Read/write Access token to use trello in the user's name ")
-(defvar *ORGTRELLO-MARKER* "orgtrello-marker" "A marker used inside the org buffer to synchronize entries.")
+(defvar *consumer-key*                nil                "Id representing the user")
+(defvar *access-token*                nil                "Read/write Access token to use trello in the user's name ")
+(defvar *ORGTRELLO-MARKER*            "orgtrello-marker" "A marker used inside the org buffer to synchronize entries.")
+(defvar *do-sync-query*               t                  "An alias to t to make the boolean more significant")
+(defvar *do-save-buffer-reload-setup* t                  "Another alias to t to make the boolean more significant")
 
 
 
@@ -741,7 +743,7 @@ Levels:
                    ;; execute the request
                    (orgtrello-query/http-trello
                     orgtrello-query/--query-map
-                    t
+                    *do-sync-query*
                     (orgtrello-proxy/--standard-post-or-put-success-callback buffer-name position orgtrello-query/--entry-file-archived)
                     (orgtrello-proxy/--standard-post-or-put-error-callback buffer-name position orgtrello-query/--entry-file-archived))
                    (orgtrello-log/msg 3 orgtrello-query/--query-map))))))
@@ -1411,7 +1413,7 @@ Levels:
   "Given a card, return the list containing the card, the checklists from this card, and the items from the checklists. The order is guaranted."
   (cl-reduce
    (lambda (acc-list checklist-id)
-     (let ((orgtrello/--checklist (orgtrello-query/http-trello (orgtrello-api/get-checklist checklist-id) t)))
+     (let ((orgtrello/--checklist (orgtrello-query/http-trello (orgtrello-api/get-checklist checklist-id) *do-sync-query*)))
        (append (cons orgtrello/--checklist (orgtrello/--do-retrieve-checklists-and-items orgtrello/--checklist)) acc-list)))
    (orgtrello-query/--checklist-ids card)
    :initial-value nil))
@@ -1623,11 +1625,11 @@ Levels:
   "Return the map of the existing boards associated to the current account. (Synchronous request)"
   (cl-remove-if-not
    (lambda (board) (equal :json-false (orgtrello-query/--close-property board)))
-   (orgtrello-query/http-trello (orgtrello-api/get-boards) t)))
+   (orgtrello-query/http-trello (orgtrello-api/get-boards) *do-sync-query*)))
 
 (defun orgtrello/--list-board-lists (board-id)
   "Return the map of the existing list of the board with id board-id. (Synchronous request)"
-  (orgtrello-query/http-trello (orgtrello-api/get-lists board-id) t))
+  (orgtrello-query/http-trello (orgtrello-api/get-lists board-id) *do-sync-query*))
 
 (defun orgtrello/--choose-board (boards)
   "Given a map of boards, display the possible boards for the user to choose which one he wants to work with."
@@ -1734,7 +1736,7 @@ Levels:
   "Create a board with name and eventually a description."
   (progn
     (orgtrello-log/msg 3 "Creating board '%s'" board-name)
-    (let* ((board-data (orgtrello-query/http-trello (orgtrello-api/add-board board-name board-description) t)))
+    (let* ((board-data (orgtrello-query/http-trello (orgtrello-api/add-board board-name board-description) *do-sync-query*)))
       (list (orgtrello-query/--id board-data) (orgtrello-query/--name board-data)))))
 
 (defun orgtrello/--close-lists (list-ids)
@@ -1751,7 +1753,7 @@ Levels:
    (lambda (acc-hash-name-id list-name)
      (progn
        (orgtrello-log/msg 3 "Board id %s - Creating list '%s'" board-id list-name)
-       (puthash list-name (orgtrello-query/--id (orgtrello-query/http-trello (orgtrello-api/add-list list-name board-id) t)) acc-hash-name-id)
+       (puthash list-name (orgtrello-query/--id (orgtrello-query/http-trello (orgtrello-api/add-list list-name board-id) *do-sync-query*)) acc-hash-name-id)
        acc-hash-name-id))
    list-keywords
    :initial-value (make-hash-table :test 'equal)))
@@ -1786,7 +1788,7 @@ Levels:
      "Synchronizing entity"
      '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties orgtrello/--control-encoding)
      'orgtrello/do-create-simple-entity
-     t))
+     *do-save-buffer-reload-setup*))
 
 (defun org-trello/create-complex-entity ()
   "Control first, then if ok, create an entity and all its arborescence if need be."
@@ -1795,7 +1797,7 @@ Levels:
      "Synchronizing complex entity"
      '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties orgtrello/--control-encoding)
      'orgtrello/do-create-complex-entity
-     t))
+     *do-save-buffer-reload-setup*))
 
 (defun org-trello/sync-to-trello ()
   "Control first, then if ok, sync the org-mode file completely to trello."
@@ -1804,7 +1806,7 @@ Levels:
      "Synchronizing org-mode file to trello"
      '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties orgtrello/--control-encoding)
      'orgtrello/do-sync-full-file
-     t))
+     *do-save-buffer-reload-setup*))
 
 (defun org-trello/sync-from-trello ()
   "Control first, then if ok, sync the org-mode file from the trello board."
@@ -1814,7 +1816,7 @@ Levels:
      "Synchronizing trello board to org-mode file"
      '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties orgtrello/--control-encoding)
      'orgtrello/do-sync-full-from-trello
-     t))
+     *do-save-buffer-reload-setup*))
 
 (defun org-trello/kill-entity ()
   "Control first, then if ok, delete the entity and all its arborescence."
@@ -1823,7 +1825,7 @@ Levels:
      "Delete entity"
      '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties orgtrello/--control-encoding)
      'orgtrello/do-delete-simple
-     t))
+     *do-save-buffer-reload-setup*))
 
 (defun org-trello/kill-all-entities ()
   "Control first, then if ok, delete the entity and all its arborescence."
@@ -1832,7 +1834,7 @@ Levels:
      "Delete entities"
      '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties orgtrello/--control-encoding)
      'orgtrello/do-delete-entities
-     t))
+     *do-save-buffer-reload-setup*))
 
 (defun org-trello/install-key-and-token ()
   "No control, trigger the setup installation of the key and the read/write token."
@@ -1846,7 +1848,7 @@ Levels:
      "Install boards and lists"
      '(orgtrello/--setup-properties orgtrello/--control-keys)
      'orgtrello/do-install-board-and-lists
-     t))
+     *do-save-buffer-reload-setup*))
 
 (defun org-trello/create-board ()
   "Control first, then if ok, trigger the board creation."
@@ -1855,7 +1857,7 @@ Levels:
      "Create board and lists"
      '(orgtrello/--setup-properties orgtrello/--control-keys)
      'orgtrello/do-create-board-and-lists
-     t))
+     *do-save-buffer-reload-setup*))
 
 (defun org-trello/check-setup ()
   "Check the current setup."
