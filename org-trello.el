@@ -619,7 +619,7 @@ Levels:
          (condition-case ex
              (setq retval (progn ,fn))
            ('error
-            (message (format "Caught exception: [%s]" ex))
+            (message (format "### org-trello ### Caught exception: [%s]" ex))
             (setq retval (cons 'exception (list ex)))))
          retval)
      ,@clean-up))
