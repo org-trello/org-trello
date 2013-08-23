@@ -477,11 +477,13 @@ Levels:
   "A simple decorator function to display message in mini-buffer before and after the execution of the control"
   (unless nolog-p (orgtrello-log/msg 3 (concat msg "...")))
   ;; now execute the controls and the main action
-  (org-action/--controls-or-actions-then-do control-or-action-fns fn-to-execute nolog-p)
-  ;; do we have to save the buffer
-  (when save-buffer-p  (save-buffer))
-  (when reload-setup-p (orgtrello-action/reload-setup))
-  (unless nolog-p (orgtrello-log/msg 3 (concat msg " - done!"))))
+  (safe-wrap
+   (org-action/--controls-or-actions-then-do control-or-action-fns fn-to-execute nolog-p)
+   (progn
+     ;; do we have to save the buffer
+     (when save-buffer-p  (save-buffer))
+     (when reload-setup-p (orgtrello-action/reload-setup))
+     (unless nolog-p (orgtrello-log/msg 3 (concat msg " - done!"))))))
 
 (defun org-action/--deal-with-consumer-msg-controls-or-actions-then-do
   (msg control-or-action-fns fn-to-execute &optional save-buffer-p reload-setup-p nolog-p)
@@ -651,31 +653,11 @@ Levels:
              (orgtrello-proxy/--cleanup-and-save-buffer-metadata orgtrello-query/--entry-file orgtrello-query/--marker)
              (when str-msg (orgtrello-log/msg 3 str-msg)))))))))
 
-(defun orgtrello-proxy/--standard-post-or-put-error-callback (buffer-name position file)
-  "Return a callback function able to deal with the update position."
-  (lexical-let ((orgtrello-query/--entry-position    position)
-                (orgtrello-query/--entry-buffer-name buffer-name)
-                (orgtrello-query/--entry-file        file))
-    (cl-defun put-error-some-insignificant-name (&key data &allow-other-keys)
-      "Failure - Will delete metadata information from the buffer."
-      (let ((orgtrello-query/--marker (orgtrello/compute-marker orgtrello-query/--entry-position)))
-        (safe-wrap
-         (progn
-           ;; switch to the right buffer
-           (set-buffer orgtrello-query/--entry-buffer-name)
-           ;; will update via tag the trello id of the new persisted data (if needed)
-           (save-excursion
-             ;; Get back to the buffer's position to update
-             (orgtrello-proxy/--getting-back-to-marker orgtrello-query/--marker)
-             ;; cleanup
-             (orgtrello-proxy/--cleanup-and-save-buffer-metadata nil orgtrello-query/--marker)))
-         (orgtrello-log/msg 3 "Problem during request, cleanup metadata"))))))
-
 (defun orgtrello-proxy/--getting-back-to-marker (marker)
   "Given a marker, getting back to marker function."
   (goto-char (point-min))
   ;; (org-goto-local-search-headings marker nil t)
-  (re-search-forward marker))
+  (re-search-forward marker nil t))
 
 (defun orgtrello-proxy/--archived-scanning-dir (dir-name)
   "Given a filename, return the archived scanning directory"
@@ -718,8 +700,10 @@ Levels:
                     orgtrello-query/--query-map
                     *do-sync-query*
                     (orgtrello-proxy/--standard-post-or-put-success-callback buffer-name position orgtrello-query/--entry-file-archived)
-                    (orgtrello-proxy/--standard-post-or-put-error-callback buffer-name position orgtrello-query/--entry-file-archived))
-                   (orgtrello-log/msg 3 orgtrello-query/--query-map)))))
+                    (cl-defun orgtrello-proxy/--standard-post-or-put-error-callback (&allow-other-keys) (throw 'org-trello-timer-go-to-sleep t)))
+                   (progn
+                     (orgtrello-log/msg 3 orgtrello-query/--query-map)
+                     (throw 'org-trello-timer-go-to-sleep t))))))
      (orgtrello-log/msg 5 "Proxy-consumer - Searching entity metadata from buffer '%s' at point '%s' to sync done!" buffer-name position))))
 
 (defun orgtrello-proxy/--deal-with-entity-file-sync (file)
