@@ -758,13 +758,14 @@ Levels:
   "Compute list of regular files (no directory . and ..)"
   (--filter (file-regular-p it) (directory-files directory t)))
 
-(defun orgtrello-proxy/--deal-with-directory (directory)
+(defun orgtrello-proxy/--deal-with-directory-sync (directory)
+  "Given a directory, list the files and take the first one (entity) and sync it with trello. Call again if it remains other entities."
   (let* ((orgtrello-proxy/--files (orgtrello-proxy/--list-files directory))) ;; need to filter out the directory . and .., we only want files here
     (when orgtrello-proxy/--files
           ;; try and sync the file
           (orgtrello-proxy/--deal-with-entity-file-sync (car orgtrello-proxy/--files))
           ;; if it potentially remains files to sync, recall recursively this function
-          (when (< 1 (length orgtrello-proxy/--files)) (orgtrello-proxy/--deal-with-directory directory)))))
+          (when (< 1 (length orgtrello-proxy/--files)) (orgtrello-proxy/--deal-with-directory-sync directory)))))
 
 (defun orgtrello-proxy/--level-inf-done-p (level)
   "Ensure the synchronization of the lower level is done (except for level 1 which has no deps)!"
@@ -778,7 +779,7 @@ Levels:
  "Given a level, retrieve one file (which represents an entity) for this level and sync it, then remove such file. Then recall the function recursively."
  (let ((orgtrello-proxy/--working-directory-current-level (orgtrello-proxy/--compute-entity-level-dir level)))
    (if (and (orgtrello-proxy/--level-inf-done-p level) (file-exists-p orgtrello-proxy/--working-directory-current-level))
-       (orgtrello-proxy/--deal-with-directory orgtrello-proxy/--working-directory-current-level)
+       (orgtrello-proxy/--deal-with-directory-sync orgtrello-proxy/--working-directory-current-level)
        (throw 'org-trello-timer-go-to-sleep t))))
 
 (defun orgtrello-proxy/--deal-with-archived-files (level)
