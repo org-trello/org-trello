@@ -766,14 +766,15 @@ Levels:
   "A handler to extract the entity informations from files (in order card, checklist, items)."
   (undo-boundary)
   ;; now let's deal with the entities sync in order with level
-  (with-local-quit
-    ;; if archived file exists, get them back in the queue before anything else
-    (dolist (l *ORGTRELLO-LEVELS*)
-      (orgtrello-proxy/--deal-with-archived-files l))
-    ;; if some check regarding order fails, we catch and let the timer sleep for it the next time to get back normally to the upper level in order
-    (catch 'org-trello-timer-go-to-sleep
-      (dolist (l *ORGTRELLO-LEVELS*)
-        (orgtrello-proxy/--deal-with-level l))))
+  (safe-wrap
+   (with-local-quit
+     ;; if archived file exists, get them back in the queue before anything else
+     (dolist (l *ORGTRELLO-LEVELS*)
+       (orgtrello-proxy/--deal-with-archived-files l))
+     ;; if some check regarding order fails, we catch and let the timer sleep for it the next time to get back normally to the upper level in order
+     (catch 'org-trello-timer-go-to-sleep
+       (dolist (l *ORGTRELLO-LEVELS*)
+         (orgtrello-proxy/--deal-with-level l)))))
   (undo-boundary))
 
 (defun orgtrello-proxy/--compute-lock-filename ()
