@@ -606,10 +606,8 @@ Levels:
   (let* ((query-map-wrapped    (orgtrello-proxy/--extract-trello-query http-con))                     ;; wrapped query is mandatory
          (position             (assoc-default 'position query-map-wrapped))                           ;; position is mandatory
          (buffer-name          (assoc-default 'buffername query-map-wrapped))                         ;; buffer-name is mandatory
-         (level                (assoc-default 'level  query-map-wrapped))
+         (level                (assoc-default 'level query-map-wrapped))
          (root-dir             (orgtrello-proxy/--compute-entity-level-dir level)))
-    ;; compute the directory (does not break if already present)
-    (mkdir root-dir t)
     ;; generate a file with the entity information
     (with-temp-file (orgtrello-proxy/--compute-metadata-filename root-dir buffer-name position)
       (insert (format "%S\n" query-map-wrapped)))
@@ -711,8 +709,6 @@ Levels:
 (defun orgtrello-proxy/--archived-scanning-file (file)
   "Given a filename, return its archived filename if we were to move such file."
   (let ((dir-name (orgtrello-proxy/--archived-scanning-dir (file-name-directory file))))
-    ;; ensure the archive directory is created
-    (mkdir dir-name t)
     ;; return the name for the new file
     (format "%s/%s" dir-name (file-name-nondirectory file))))
 
@@ -842,6 +838,14 @@ Levels:
    nil ;; do not need to reload the org-trello setup
    *do-not-display-log*));; do no want to log
 
+(defun orgtrello-proxy/--prepare-filesystem ()
+  "Prepare the filesystem for every level."
+  (dolist (l '(1 2 3))
+    (-> l
+        orgtrello-proxy/--compute-entity-level-dir
+        orgtrello-proxy/--archived-scanning-dir
+        (mkdir t))))
+
 (defvar *ORGTRELLO-TIMER* nil "A timer run by elnode")
 
 (defun orgtrello-proxy/--elnode-timer (http-con)
@@ -854,6 +858,8 @@ Levels:
           (orgtrello-log/msg 4 "Proxy-timer - Request received. Start timer.")
           ;; cleanup anything that the timer possibly left behind
           (orgtrello-proxy/--cleanup-timer-data)
+          ;; Prepare the filesystem with the right folders
+          (orgtrello-proxy/--prepare-filesystem)
           ;; start the timer
           (setq *ORGTRELLO-TIMER* (run-with-timer 0 5 'orgtrello-proxy/--controls-and-scan-if-ok)))
         ;; otherwise, stop it
