@@ -559,7 +559,9 @@ CLOSED: [2013-08-23 ven. 10:12]
 * TODO 0.1.4
 ** DONE Prepare the hierarchy files to avoid problem like https://github.com/ardumont/org-trello/issues/37#issuecomment-23151353
 CLOSED: [2013-08-23 ven. 20:37]
-** TODO Use a temporary buffer to sync with trello, when done, merge with the user's buffer
+** DONE Adding a version interactive command (it will help for asking people the version they use).
+CLOSED: [2013-08-23 ven. 21:36]
+** TODO Use a temporary buffer to sync with trello, when done, merge with the user's buffer.
 ** TODO Ensure sync-from-trello keep the order of the checklists clean
 ** TODO Now that elnode is here, this may be simpler to use a fake trello server (use clojure :D)
 ** TODO Improve the request to the trello api to enforce the position inside trello (we can use the natural order of integer with position to determine such position)

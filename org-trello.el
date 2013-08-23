@@ -75,6 +75,7 @@
 
 ;; #################### static setup
 
+(defvar *ORGTRELLO-VERSION*           "0.1.4"            "Version")
 (defvar *consumer-key*                nil                "Id representing the user.")
 (defvar *access-token*                nil                "Read/write access token to use trello on behalf of the user.")
 (defvar *ORGTRELLO-MARKER*            "orgtrello-marker" "A marker used inside the org buffer to synchronize entries.")
@@ -83,6 +84,13 @@
 (defvar *do-reload-setup*             t                  "Another alias to t to make the boolean more significant in the given context.")
 (defvar *do-not-display-log*          t                  "Another alias to t to make the boolean more significant in the given context.")
 (defvar *ORGTRELLO-LEVELS*            '(1 2 3)           "Current levels 1 is card, 2 is checklist, 3 is item.")
+
+
+
+;; #################### orgtrello-version
+
+(defun org-trello/version () (interactive) "Version of org-trello"
+  (message "org-trello version: %s" *ORGTRELLO-VERSION*))
 
 
 
