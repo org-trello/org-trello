@@ -82,6 +82,7 @@
 (defvar *do-save-buffer*              t                  "Another alias to t to make the boolean more significant in the given context.")
 (defvar *do-reload-setup*             t                  "Another alias to t to make the boolean more significant in the given context.")
 (defvar *do-not-display-log*          t                  "Another alias to t to make the boolean more significant in the given context.")
+(defvar *ORGTRELLO-LEVELS*            '(1 2 3)           "Current levels 1 is card, 2 is checklist, 3 is item.")
 
 
 
@@ -793,11 +794,11 @@ Levels:
   ;; now let's deal with the entities sync in order with level
   (with-local-quit
     ;; if archived file exists, get them back in the queue before anything else
-    (dolist (l '(1 2 3))
+    (dolist (l *ORGTRELLO-LEVELS*)
       (orgtrello-proxy/--deal-with-archived-files l))
     ;; if some check regarding order fails, we catch and let the timer sleep for it the next time to get back normally to the upper level in order
     (catch 'org-trello-timer-go-to-sleep
-      (dolist (l '(1 2 3))
+      (dolist (l *ORGTRELLO-LEVELS*)
         (orgtrello-proxy/--deal-with-level l))))
   (undo-boundary))
 
@@ -840,7 +841,7 @@ Levels:
 
 (defun orgtrello-proxy/--prepare-filesystem ()
   "Prepare the filesystem for every level."
-  (dolist (l '(1 2 3))
+  (dolist (l *ORGTRELLO-LEVELS*)
     (-> l
         orgtrello-proxy/--compute-entity-level-dir
         orgtrello-proxy/--archived-scanning-dir
@@ -1059,7 +1060,7 @@ refresh();
   (orgtrello-proxy/--response-html
    http-con
    (orgtrello-admin/list-files
-    (--mapcat (orgtrello-proxy/--list-files (orgtrello-proxy/--compute-entity-level-dir it)) '(1 2 3)))))
+    (--mapcat (orgtrello-proxy/--list-files (orgtrello-proxy/--compute-entity-level-dir it)) *ORGTRELLO-LEVELS*))))
 
 (defun orgtrello-proxy/--elnode-static-file (http-con)
   "Service static files if they exist"
@@ -1087,8 +1088,6 @@ refresh();
     ;; static files
     ("^localhost//static/\\(.*\\)/\\(.*\\)" . orgtrello-proxy/--elnode-static-file))
   "Org-trello dispatch routes for the webserver")
-
-;; (orgtrello-admin/--content-file "/home/tony/.emacs.d/elnode/public_html/org-trello/bootstrap/css/bootstrap.css")
 
 (defun orgtrello-proxy/--proxy-handler (http-con)
   "Proxy handler."
