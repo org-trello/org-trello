@@ -726,7 +726,7 @@ Levels:
   "Given an entity file, load it and run the query through trello"
   (when (file-exists-p file)
         ;; extract the entity data
-        (orgtrello-proxy/--deal-with-entity-sync (read (orgtrello-proxy/--read-lines file)) file)))
+        (orgtrello-proxy/--deal-with-entity-sync (-> file orgtrello-proxy/--read-lines read) file)))
 
 (defun orgtrello-proxy/--list-files (directory)
   "Compute list of regular files (no directory . and ..)"
@@ -734,7 +734,7 @@ Levels:
 
 (defun orgtrello-proxy/--deal-with-directory-sync (directory)
   "Given a directory, list the files and take the first one (entity) and sync it with trello. Call again if it remains other entities."
-  (let* ((orgtrello-proxy/--files (orgtrello-proxy/--list-files directory))) ;; need to filter out the directory . and .., we only want files here
+  (let ((orgtrello-proxy/--files (orgtrello-proxy/--list-files directory)))
     (when orgtrello-proxy/--files
           ;; try and sync the file
           (orgtrello-proxy/--deal-with-entity-file-sync (car orgtrello-proxy/--files))
@@ -751,17 +751,16 @@ Levels:
 
 (defun orgtrello-proxy/--deal-with-level (level)
  "Given a level, retrieve one file (which represents an entity) for this level and sync it, then remove such file. Then recall the function recursively."
- (let ((orgtrello-proxy/--working-directory-current-level (orgtrello-proxy/--compute-entity-level-dir level)))
-   (if (and (orgtrello-proxy/--level-inf-done-p level) (file-exists-p orgtrello-proxy/--working-directory-current-level))
-       (orgtrello-proxy/--deal-with-directory-sync orgtrello-proxy/--working-directory-current-level)
-       (throw 'org-trello-timer-go-to-sleep t))))
+ (if (orgtrello-proxy/--level-inf-done-p level)
+     (orgtrello-proxy/--deal-with-directory-sync (orgtrello-proxy/--compute-entity-level-dir level))
+     (throw 'org-trello-timer-go-to-sleep t)))
 
 (defun orgtrello-proxy/--deal-with-archived-files (level)
  "Given a level, retrieve one file (which represents an entity) for this level and sync it, then remove such file. Then recall the function recursively."
- (let ((orgtrello-proxy/--working-directory-current-level (orgtrello-proxy/--compute-entity-level-dir level)))
-   (mapc (lambda (file)
-           (rename-file file (format "../%s" (file-name-nondirectory file)) t))
-         (orgtrello-proxy/--list-files (orgtrello-proxy/--archived-scanning-dir orgtrello-proxy/--working-directory-current-level)))))
+ (mapc (lambda (file) (rename-file file (format "../%s" (file-name-nondirectory file)) t)) (-> level
+                                                                                               orgtrello-proxy/--compute-entity-level-dir
+                                                                                               orgtrello-proxy/--archived-scanning-dir
+                                                                                               orgtrello-proxy/--list-files)))
 
 (defun orgtrello-proxy/--consumer-entity-files-hierarchically-and-sync ()
   "A handler to extract the entity informations from files (in order card, checklist, items)."
@@ -770,12 +769,10 @@ Levels:
   (safe-wrap
    (with-local-quit
      ;; if archived file exists, get them back in the queue before anything else
-     (dolist (l *ORGTRELLO-LEVELS*)
-       (orgtrello-proxy/--deal-with-archived-files l))
+     (dolist (l *ORGTRELLO-LEVELS*) (orgtrello-proxy/--deal-with-archived-files l))
      ;; if some check regarding order fails, we catch and let the timer sleep for it the next time to get back normally to the upper level in order
      (catch 'org-trello-timer-go-to-sleep
-       (dolist (l *ORGTRELLO-LEVELS*)
-         (orgtrello-proxy/--deal-with-level l)))))
+       (dolist (l *ORGTRELLO-LEVELS*) (orgtrello-proxy/--deal-with-level l)))))
   (undo-boundary))
 
 (defun orgtrello-proxy/--compute-lock-filename ()
@@ -1595,7 +1592,7 @@ refresh();
 
 (defun orgtrello/--do-delete-card (&optional sync)
   "Delete the card."
-  (when (= 1 (orgtrello/--level (orgtrello-data/current (orgtrello-data/entry-get-full-metadata))))
+  (when (= 1 (-> (orgtrello-data/entry-get-full-metadata) orgtrello-data/current orgtrello/--level))
         (orgtrello/do-delete-simple sync)))
 
 (defun orgtrello/do-delete-entities (&optional sync)
