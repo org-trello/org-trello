@@ -21,13 +21,12 @@
 
 ;; ######### setup function
 
-(defun setup-access-properties ()
+(defun org-trello/--setup-access ()
   "Setup the trello access properties."
   (setq *consumer-key* "60c8eed6536f2d70c8bf64c6b17cd378")
-  (setq *access-token* "44ae917559a130342ef339556f54413a079c06ebf39178c355f269df5d9f5efc")
-  (setq *ORGTRELLO-MARKER* "orgtrello-marker-60c8eed6536f2d70c8bf64c6b17cd378"))
+  (setq *access-token* "44ae917559a130342ef339556f54413a079c06ebf39178c355f269df5d9f5efc"))
 
-(defun prepare-buffer (buffer-name)
+(defun org-trello/--prepare-buffer (buffer-name)
   "Prepare the buffer with the needed metadata to discuss with a trello board."
   ;; create a buffer dedicated
   (switch-to-buffer
@@ -47,32 +46,35 @@
   (insert "#+property: IN-PROGRESS 5203a6531ec4f9d7070023eb\n")
   (insert "#+property: TODO 5203a654dd8182a83e001f32\n")
   (insert "#+TODO: TODO IN-PROGRESS PENDING | DONE FAIL DELEGATED CANCELLED\n\n")
+
   ;; restart org to take into account the setup
   (let (features)
-    (org-mode-restart)))
+    (org-mode)
+    (org-trello-mode)
+    (orgtrello-action/reload-setup)))
+
+(org-trello/--prepare-buffer "temporary-test-buffer")
 
 ;; ######### setup test
 
 ;;(require 'ecukes) ;; for debugging purposes only
 
 (Setup
- (progn
-   ;; Setup the account to use with trello
-   (setup-access-properties)
-   ;; Prepare the buffer with the needed data
-   (prepare-buffer "*org-trello-testing-buffer*")
-   ;; done
-   (message "setup done!")))
+ ;; Setup the account to use with trello
+ (org-trello/--setup-access)
+ ;; done
+ (message "setup done!"))
 
 (Before
  ;; Before each scenario is run
  ;; Prepare the buffer with the needed data
- (prepare-buffer "*org-trello-testing-buffer*"))
+ (org-trello/--prepare-buffer "org-trello-tests.org"))
 
 (After
  ;; After each scenario is run
+ ;; (org-trello/kill-all-entities)
  )
 
 (Teardown
  ;; After when everything has been run
- )
+)
