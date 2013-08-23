@@ -1819,7 +1819,7 @@ refresh();
   "Control first, then if ok, create a simple entity."
   (interactive)
   (org-action/--message-controls-then-execute
-     "Synchronizing entity"
+     "Requesting entity sync"
      '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties orgtrello/--control-encoding)
      'orgtrello/do-create-simple-entity))
 
@@ -1827,7 +1827,7 @@ refresh();
   "Control first, then if ok, create an entity and all its arborescence if need be."
   (interactive)
   (org-action/--message-controls-then-execute
-     "Synchronizing complex entity"
+     "Requesting entity and structure sync"
      '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties orgtrello/--control-encoding)
      'orgtrello/do-create-complex-entity))
 
@@ -1835,7 +1835,7 @@ refresh();
   "Control first, then if ok, sync the org-mode file completely to trello."
   (interactive)
   (org-action/--message-controls-then-execute
-     "Synchronizing org-mode file to trello"
+     "Requesting sync org buffer to trello board"
      '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties orgtrello/--control-encoding)
      'orgtrello/do-sync-full-file))
 
@@ -1844,7 +1844,7 @@ refresh();
   (interactive)
   ;; execute the action
   (org-action/--message-controls-then-execute
-     "Synchronizing trello board to org-mode file"
+     "Requesting sync org buffer from trello board"
      '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties orgtrello/--control-encoding)
      'orgtrello/do-sync-full-from-trello
      *do-save-buffer*))
@@ -1853,7 +1853,7 @@ refresh();
   "Control first, then if ok, delete the entity and all its arborescence."
   (interactive)
   (org-action/--message-controls-then-execute
-     "Delete entity"
+     "Requesting deleting entity"
      '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties orgtrello/--control-encoding)
      'orgtrello/do-delete-simple))
 
@@ -1861,7 +1861,7 @@ refresh();
   "Control first, then if ok, delete the entity and all its arborescence."
   (interactive)
   (org-action/--message-controls-then-execute
-     "Delete entities"
+     "Requesting deleting entities"
      '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties orgtrello/--control-encoding)
      'orgtrello/do-delete-entities))
 
