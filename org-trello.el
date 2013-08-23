@@ -645,11 +645,11 @@ Levels:
                                        (orgtrello-query/--entry-name     (orgtrello/--label orgtrello-query/--entry-metadata)))
                                   (if orgtrello-query/--entry-id ;; id already present in the org-mode file
                                       ;; no need to add another
-                                      (format "Entity '%s' synced with id '%s'" orgtrello-query/--entry-name orgtrello-query/--entry-id)
+                                      (format "Entity '%s' with id '%s' synced!" orgtrello-query/--entry-name orgtrello-query/--entry-id)
                                       (progn
                                         ;; not present, this was just created, we add a simple property
                                         (org-set-property *ORGTRELLO-ID* orgtrello-query/--entry-new-id)
-                                        (format "Newly entity '%s' synced with id '%s'" orgtrello-query/--entry-name orgtrello-query/--entry-new-id)))))))
+                                        (format "Newly entity '%s' with id '%s' synced!" orgtrello-query/--entry-name orgtrello-query/--entry-new-id)))))))
              (orgtrello-proxy/--cleanup-and-save-buffer-metadata orgtrello-query/--entry-file orgtrello-query/--marker)
              (when str-msg (orgtrello-log/msg 3 str-msg)))))))))
 
