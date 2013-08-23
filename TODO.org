@@ -561,6 +561,8 @@ CLOSED: [2013-08-23 ven. 10:12]
 CLOSED: [2013-08-23 ven. 20:37]
 ** DONE Adding a version interactive command (it will help for asking people the version they use).
 CLOSED: [2013-08-23 ven. 21:36]
+** DONE Upgrade version
+CLOSED: [2013-08-23 ven. 21:37]
 ** TODO Use a temporary buffer to sync with trello, when done, merge with the user's buffer.
 ** TODO Ensure sync-from-trello keep the order of the checklists clean
 ** TODO Now that elnode is here, this may be simpler to use a fake trello server (use clojure :D)
