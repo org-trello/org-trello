@@ -339,65 +339,30 @@ Levels:
 
 (defvar *TRELLO-URL* "https://api.trello.com/1" "The needed prefix url for trello")
 
-(defun orgtrello-query/--method (query-map)
-  "Retrieve the http method"
-  (gethash :method query-map))
+;; macro? defmethod?
+(defun orgtrello-query/--method (query-map) "Retrieve the http method"    (gethash :method query-map))
+(defun orgtrello-query/--uri    (query-map) "Retrieve the http uri"       (gethash :uri query-map))
+(defun orgtrello-query/--sync   (query-map) "Retrieve the http sync flag" (gethash :sync query-map))
+(defun orgtrello-query/--params (query-map) "Retrieve the http params"    (gethash :params query-map))
 
-(defun orgtrello-query/--uri (query-map)
-  "Retrieve the http uri"
-  (gethash :uri query-map))
-
-(defun orgtrello-query/--sync (query-map)
-  "Retrieve the http sync flag"
-  (gethash :sync query-map))
-
-(defun orgtrello-query/--params (query-map)
-  "Retrieve the http params"
-  (gethash :params query-map))
-
-(defun orgtrello-query/--buffername (entity-data)
-  "Extract the position of the entity from the entity-data"
-  (assoc-default 'buffername entity-data))
-
-(defun orgtrello-query/--position (entity-data)
-  "Extract the position of the entity from the entity-data"
-  (assoc-default 'position entity-data))
-
-(defun orgtrello-query/--id (entity-data)
-  "Extract the id of the entity from the entity"
-  (assoc-default 'id entity-data))
-
-(defun orgtrello-query/--name (entity-data)
-  "Extract the name of the entity from the entity"
-  (assoc-default 'name entity-data))
-
-(defun orgtrello-query/--list-id (entity-data)
-  "Extract the list identitier of the entity from the entity"
-  (assoc-default 'idList entity-data))
-
-(defun orgtrello-query/--checklist-ids (entity-data)
-  "Extract the checklist identifier of the entity from the entity"
-  (assoc-default 'idChecklists entity-data))
-
-(defun orgtrello-query/--check-items (entity-data)
-  "Extract the checklist identifier of the entity from the entity"
-  (assoc-default 'checkItems entity-data))
-
-(defun orgtrello-query/--card-id (entity-data)
-  "Extract the card identifier of the entity from the entity"
-  (assoc-default 'idCard entity-data))
-
-(defun orgtrello-query/--due (entity-data)
-  "Extract the due date of the entity from the query response"
-  (assoc-default 'due entity-data))
-
-(defun orgtrello-query/--state (entity-data)
-  "Extract the state of the entity"
-  (assoc-default 'state entity-data))
-
-(defun orgtrello-query/--close-property (entity-data)
-  "Extract the closed property of the entity"
-  (assoc-default 'closed entity-data))
+(defun orgtrello-query/--buffername     (entity-data) "Extract the position of the entity from the entity-data"        (assoc-default 'buffername entity-data))
+(defun orgtrello-query/--position       (entity-data) "Extract the position of the entity from the entity-data"        (assoc-default 'position entity-data))
+(defun orgtrello-query/--id             (entity-data) "Extract the id of the entity from the entity"                   (assoc-default 'id entity-data))
+(defun orgtrello-query/--name           (entity-data) "Extract the name of the entity from the entity"                 (assoc-default 'name entity-data))
+(defun orgtrello-query/--list-id        (entity-data) "Extract the list identitier of the entity from the entity"      (assoc-default 'idList entity-data))
+(defun orgtrello-query/--checklist-ids  (entity-data) "Extract the checklist identifier of the entity from the entity" (assoc-default 'idChecklists entity-data))
+(defun orgtrello-query/--check-items    (entity-data) "Extract the checklist identifier of the entity from the entity" (assoc-default 'checkItems entity-data))
+(defun orgtrello-query/--card-id        (entity-data) "Extract the card identifier of the entity from the entity"      (assoc-default 'idCard entity-data))
+(defun orgtrello-query/--due            (entity-data) "Extract the due date of the entity from the query response"     (assoc-default 'due entity-data))
+(defun orgtrello-query/--state          (entity-data) "Extract the state of the entity"                                (assoc-default 'state entity-data))
+(defun orgtrello-query/--close-property (entity-data) "Extract the closed property of the entity"                      (assoc-default 'closed entity-data))
+(defun orgtrello-query/--callback       (entity-data) "Extract the callback property of the entity"                    (assoc-default 'callback entity-data))
+(defun orgtrello-query/--sync-          (entity-data) "Extract the sync property of the entity"                        (assoc-default 'sync entity-data))
+(defun orgtrello-query/--level          (entity-data) "Extract the callback property of the entity"                    (assoc-default 'level entity-data))
+(defun orgtrello-query/--method-        (entity-data) "Extract the method property of the entity"                      (assoc-default 'method entity-data))
+(defun orgtrello-query/--uri-           (entity-data) "Extract the uri property of the entity"                         (assoc-default 'uri entity-data))
+(defun orgtrello-query/--params-        (entity-data) "Extract the params property of the entity"                      (assoc-default 'params entity-data))
+(defun orgtrello-query/--start          (entity-data) "Extract the start property of the entity"                       (assoc-default 'start entity-data))
 
 (defun orgtrello-query/--compute-url (server uri)
   "Compute the trello url from the given uri."
@@ -560,9 +525,9 @@ Levels:
     (json-read-from-string params-proxy-json)))
 
 (defun orgtrello-proxy/--compute-trello-query (query-map-wrapped)
-  (let ((method  (assoc-default 'method query-map-wrapped))
-        (uri     (assoc-default 'uri query-map-wrapped))
-        (payload (assoc-default 'params query-map-wrapped)))
+  (let ((method  (orgtrello-query/--method- query-map-wrapped))
+        (uri     (orgtrello-query/--uri-    query-map-wrapped))
+        (payload (orgtrello-query/--params- query-map-wrapped)))
     (orgtrello-hash/make-hash method uri payload)))
 
 (defun orgtrello-proxy/--response (http-con data)
@@ -585,11 +550,11 @@ Levels:
   "Deal with request to trello (for creation/sync request, use orgtrello-proxy/--elnode-proxy-producer)."
   (orgtrello-log/msg 5 "Proxy - Request received. Transmitting...")
   (let* ((query-map-wrapped    (orgtrello-proxy/--extract-trello-query http-con))                     ;; wrapped query is mandatory
-         (position             (assoc-default 'position query-map-wrapped))                           ;; position is mandatory
-         (buffer-name          (assoc-default 'buffername query-map-wrapped))                         ;; buffer-name is mandatory
-         (standard-callback    (assoc-default 'callback query-map-wrapped))                           ;; there is the possibility to transmit the callback from the client to the proxy
+         (position             (orgtrello-query/--position query-map-wrapped))                        ;; position is mandatory
+         (buffer-name          (orgtrello-query/--buffername query-map-wrapped))                      ;; buffer-name is mandatory
+         (standard-callback    (orgtrello-query/--callback query-map-wrapped))                        ;; there is the possibility to transmit the callback from the client to the proxy
          (standard-callback-fn (when standard-callback (symbol-function (intern standard-callback)))) ;; the callback is passed as a string, we want it as a function when defined
-         (sync                 (assoc-default 'sync query-map-wrapped))                               ;; there is a possibility to enforce the sync between proxy and client
+         (sync                 (orgtrello-query/--sync- query-map-wrapped))                           ;; there is a possibility to enforce the sync between proxy and client
          (query-map            (orgtrello-proxy/--compute-trello-query query-map-wrapped)))           ;; extracting the query
     ;; check out the sync behaviour here
     ;; Execute the request to trello (at the moment, synchronous)
@@ -605,9 +570,9 @@ Levels:
   "A handler which is an entity informations producer on files under the docroot/level-entities/"
   (orgtrello-log/msg 5 "Proxy-producer - Request received. Generating entity file...")
   (let* ((query-map-wrapped    (orgtrello-proxy/--extract-trello-query http-con))                     ;; wrapped query is mandatory
-         (position             (assoc-default 'position query-map-wrapped))                           ;; position is mandatory
-         (buffer-name          (assoc-default 'buffername query-map-wrapped))                         ;; buffer-name is mandatory
-         (level                (assoc-default 'level query-map-wrapped))
+         (position             (orgtrello-query/--position query-map-wrapped))                           ;; position is mandatory
+         (buffer-name          (orgtrello-query/--buffername query-map-wrapped))                         ;; buffer-name is mandatory
+         (level                (orgtrello-query/--level query-map-wrapped))
          (root-dir             (orgtrello-proxy/--compute-entity-level-dir level)))
     ;; generate a file with the entity information
     (with-temp-file (orgtrello-proxy/--compute-metadata-filename root-dir buffer-name position)
@@ -719,9 +684,9 @@ Levels:
 
 (defun orgtrello-proxy/--deal-with-entity-sync (entity-data file-to-archive)
   "Compute the synchronization of an entity (retrieving latest information from buffer)"
-  (let* ((position                 (assoc-default 'position entity-data))  ;; position is mandatory
-         (buffer-name              (assoc-default 'buffername entity-data));; buffer-name too
-         (level                    (assoc-default 'level entity-data))     ;; level too
+  (let* ((position                 (orgtrello-query/--position entity-data))  ;; position is mandatory
+         (buffer-name              (orgtrello-query/--buffername entity-data));; buffer-name too
+         (level                    (orgtrello-query/--level entity-data))     ;; level too
          (orgtrello-query/--marker (orgtrello/compute-marker position)))
     (orgtrello-log/msg 5 "Proxy-consumer - Searching entity metadata from buffer '%s' at point '%s' to sync..." buffer-name position)
     ;; switch to the right buffer
@@ -853,7 +818,7 @@ Levels:
 (defun orgtrello-proxy/--elnode-timer (http-con)
   "A process on elnode to trigger even regularly."
   (let* ((query-map     (orgtrello-proxy/--extract-trello-query http-con))
-         (start-or-stop (assoc-default 'start query-map)))
+         (start-or-stop (orgtrello-query/--start query-map)))
     (if start-or-stop
         ;; cleanup before starting anew
         (progn
@@ -1174,12 +1139,18 @@ refresh();
     (orgtrello-log/msg 1 "Ensure you use utf-8 encoding for your org buffer.")
     :ok))
 
+(defun orgtrello/--board-name ()
+  "Compute the board's name"
+  (assoc-default *BOARD-NAME* org-file-properties))
+
+(defun orgtrello/--board-id ()
+  "Compute the board's id"
+  (assoc-default *BOARD-ID* org-file-properties))
+
 (defun orgtrello/--control-properties ()
   "org-trello needs the properties board-id and all list id from the trello board to be setuped on header property file. Returns :ok if everything is ok, or the error message if problems."
   (let ((orgtrello/--hmap-count (hash-table-count *HMAP-ID-NAME*)))
-    (if (and org-file-properties
-             (assoc-default *BOARD-ID* org-file-properties)
-             (= (length *LIST-NAMES*) orgtrello/--hmap-count))
+    (if (and org-file-properties (orgtrello/--board-id) (= (length *LIST-NAMES*) orgtrello/--hmap-count))
         :ok
         "Setup problem.\nEither you did not connect your org-mode buffer with a trello board, to correct this:\n  * attach to a board through C-c o I or M-x org-trello/install-board-and-lists-ids\n  * or create a board from scratch with C-c o b or M-x org-trello/create-board).\nEither your org-mode's todo keyword list and your trello board lists are not named the same way (which they must).\nFor this, connect to trello and rename your board's list according to your org-mode's todo list.\nAlso, you can specify on your org-mode buffer the todo list you want to work with, for example: #+TODO: TODO DOING | DONE FAIL (hit C-c C-c to refresh the setup)")))
 
@@ -1388,14 +1359,6 @@ refresh();
           (orgtrello/--set-marker (orgtrello/--position current-entry))
           ;; and send the data to the proxy
           (orgtrello-proxy/http-producer current-entry))))
-
-(defun orgtrello/--board-name ()
-  "Compute the board's name"
-  (assoc-default *BOARD-NAME* org-file-properties))
-
-(defun orgtrello/--board-id ()
-  "Compute the board's id"
-  (assoc-default *BOARD-ID* org-file-properties))
 
 (defun orgtrello/do-create-complex-entity ()
   "Do the actual full card creation - from card to item. Beware full side effects..."
