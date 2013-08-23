@@ -1,3 +1,14 @@
+# 0.1.3
+
+- Leverage elnode's webserver capacity to display some basic monitoring about the synchronization
+- Install bootstrap and jquery.js directly to avoid the user's manual installation (the first query to static files install bootstrap and jquery now)
+- Simple end to end test - simple entity creation
+- Improve the logging policy
+- Improve the saving policy
+- Upgrade version
+- Release notes
+- Release
+
 # 0.1.2
 
 - DONE Use an intermediary server between org and trello to permit asynchronous actions
