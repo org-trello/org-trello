@@ -76,7 +76,7 @@ You can always change this port
 ``` lisp
 (setq *ORGTRELLO-PROXY-PORT* 9876)
 ```
-Then M-x orgtrello-proxy/reload
+Then `M-x orgtrello-proxy/reload`
 
 # TL;DR
 
@@ -314,17 +314,20 @@ M-x org-trello/create-board
 # Bindings
 
 Actual bindings (not definitive, suggestions regarding those bindings are welcome):
-C-c o i - M-x org-trello/install-key-and-token       - Install the keys and the access-token.
-C-c o I - M-x org-trello/install-board-and-lists-ids - Select the board and attach the todo, doing and done list.
-C-c o d - M-x org-trello/check-setup                 - Check that the setup is ok. If everything is ok, will simply display 'Setup ok!'
-C-c o D - M-x org-trello/delete-setup                - Clean up the org buffer from all org-trello informations
-C-c o b - M-x org-trello/create-board                - Create interactively a board and attach the org-mode file to this trello board.
-C-c o c - M-x org-trello/create-simple-entity        - Create/Update an entity (card/checklist/item) depending on its level and status. Do not deal with level superior to 4.
-C-c o C - M-x org-trello/create-complex-entity       - Create/Update a complete entity card/checklist/item and its subtree (depending on its level).
-C-c o s - M-x org-trello/sync-to-trello              - Synchronize the org-mode file to the trello board (org-mode -> trello).
-C-c o S - M-x org-trello/sync-from-trello            - Synchronize the org-mode file from the trello board (trello -> org-mode).
-C-c o k - M-x org-trello/kill-entity                 - Kill the entity (and its arborescence tree).
-C-c o h - M-x org-trello/help-describing-bindings    - This help message.
+
+Keybindings        | Interactive commands                         | Description
+-------------------|----------------------------------------------|-----------------------------------------------------------------------------------------------------------------------
+<kbd>C-c o i</kbd> | `M-x org-trello/install-key-and-token`       | Install the keys and the access-token.
+<kbd>C-c o I</kbd> | `M-x org-trello/install-board-and-lists-ids` | Select the board and attach the todo, doing and done list.
+<kbd>C-c o d</kbd> | `M-x org-trello/check-setup`                 | Check that the setup is ok. If everything is ok, will simply display 'Setup ok!'
+<kbd>C-c o D</kbd> | `M-x org-trello/delete-setup`                | Clean up the org buffer from all org-trello informations
+<kbd>C-c o b</kbd> | `M-x org-trello/create-board`                | Create interactively a board and attach the org-mode file to this trello board.
+<kbd>C-c o c</kbd> | `M-x org-trello/create-simple-entity`        | Create/Update an entity (card/checklist/item) depending on its level and status. Do not deal with level superior to 4.
+<kbd>C-c o C</kbd> | `M-x org-trello/create-complex-entity`       | Create/Update a complete entity card/checklist/item and its subtree (depending on its level).
+<kbd>C-c o s</kbd> | `M-x org-trello/sync-to-trello`              | Synchronize the org-mode file to the trello board (org-mode -> trello).
+<kbd>C-c o S</kbd> | `M-x org-trello/sync-from-trello`            | Synchronize the org-mode file from the trello board (trello -> org-mode).
+<kbd>C-c o k</kbd> | `M-x org-trello/kill-entity`                 | Kill the entity (and its arborescence tree).
+<kbd>C-c o h</kbd> | `M-x org-trello/help-describing-bindings`    | This help message.
 
 # Use cases
 
@@ -475,6 +478,16 @@ Cannot synchronize the checklist - the card must synchronized first. Skip it...
 ```
 Cannot synchronize the item - the checklist must be synchronized first. Skip it...
 ```
+
+# proxy-admin
+
+From the version 0.1.2 onwards, there is a proxy which is in charge of:
+- consuming the synchronization of the entities
+- requesting Trello for other actions too
+- proxy admin web page
+
+I also use it to make at disposition an admin web server - http://localhost:9876/proxy/admin/ - to be able to know which sync actions are running:
+![screenshot_2013-08-23_10-03-54](https://f.cloud.github.com/assets/718812/1014903/c208ff34-0bca-11e3-895a-432f66453208.png)
 
 # Mailing list
 
