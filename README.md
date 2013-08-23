@@ -76,7 +76,7 @@ You can always change this port
 ``` lisp
 (setq *ORGTRELLO-PROXY-PORT* 9876)
 ```
-Then M-x orgtrello-proxy/reload
+Then `M-x orgtrello-proxy/reload`
 
 # TL;DR
 
@@ -478,6 +478,16 @@ Cannot synchronize the checklist - the card must synchronized first. Skip it...
 ```
 Cannot synchronize the item - the checklist must be synchronized first. Skip it...
 ```
+
+# proxy-admin
+
+From the version 0.1.2 onwards, there is a proxy which is in charge of:
+- consuming the synchronization of the entities
+- requesting Trello for other actions too
+- proxy admin web page
+
+I also use it to make at disposition an admin web server - http://localhost:9876/proxy/admin/ - to be able to know which sync actions are running:
+![screenshot_2013-08-23_10-03-54](https://f.cloud.github.com/assets/718812/1014903/c208ff34-0bca-11e3-895a-432f66453208.png)
 
 # Mailing list
 
