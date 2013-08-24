@@ -599,3 +599,7 @@ Dependencies:
 ** How to deal with synchronizing the org-mode buffer and the trello board without a synchronized request?
 ** Is the assignment to one's card necessary?
 ** if there is no level 3 (items), can't we just create a dummy checklist with all the second level as items?
+* Notes
+(org-show-siblings)
+(org-first-headline-recenter)
+org-outline-regexp
