@@ -611,3 +611,4 @@ Dependencies:
 (org-show-siblings)
 (org-first-headline-recenter)
 org-outline-regexp
+(org-goto-local-search-headings marker nil nil)

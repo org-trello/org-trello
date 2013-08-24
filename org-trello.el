@@ -353,7 +353,8 @@ Levels:
 (defun orgtrello-query/--sync   (query-map) "Retrieve the http sync flag" (gethash :sync query-map))
 (defun orgtrello-query/--params (query-map) "Retrieve the http params"    (gethash :params query-map))
 
-(defun orgtrello-query/--buffername     (entity-data) "Extract the position of the entity from the entity-data"        (assoc-default 'buffername entity-data))
+(defun orgtrello-query/--marker         (entity-data) "Extract the marker of the entity from the entity-data"          (assoc-default 'marker entity-data))
+(defun orgtrello-query/--buffername     (entity-data) "Extract the buffername of the entity from the entity-data"      (assoc-default 'buffername entity-data))
 (defun orgtrello-query/--position       (entity-data) "Extract the position of the entity from the entity-data"        (assoc-default 'position entity-data))
 (defun orgtrello-query/--id             (entity-data) "Extract the id of the entity from the entity"                   (assoc-default 'id entity-data))
 (defun orgtrello-query/--name           (entity-data) "Extract the name of the entity from the entity"                 (assoc-default 'name entity-data))
@@ -615,7 +616,8 @@ Levels:
   (->> (list *ORGTRELLO-MARKER* buffer-name name (if (stringp position) position (int-to-string position)))
        (-interpose "-")
        (apply 'concat)
-       sha1))
+       sha1
+       (concat *ORGTRELLO-MARKER* "-")))
 
 (defun orgtrello-proxy/--remove-file (file-to-remove)
   "Remove metadata file."
@@ -643,40 +645,36 @@ Levels:
 (defun orgtrello-proxy/--getting-back-to-marker (marker)
   "Given a marker, getting back to marker function."
   (goto-char (point-min))
-;;  (org-goto-local-search-headings marker nil nil)
-  (re-search-forward marker nil t))
+  (search-forward (format ":%s:" marker) nil t))
 
 (defun orgtrello-proxy/--standard-post-or-put-success-callback (entity-to-sync file-to-cleanup)
   "Return a callback function able to deal with the update of the buffer at a given position."
-  (lexical-let ((orgtrello-query/--entry-position    (orgtrello-query/--position entity-to-sync))
-                (orgtrello-query/--entry-buffer-name (orgtrello-query/--buffername entity-to-sync))
-                (orgtrello-query/--entry-file        file-to-cleanup))
+  (lexical-let ((orgtrello-proxy/--entry-position    (orgtrello-query/--position entity-to-sync))
+                (orgtrello-proxy/--entry-buffer-name (orgtrello-query/--buffername entity-to-sync))
+                (orgtrello-proxy/--entry-file        file-to-cleanup)
+                (orgtrello-proxy/--marker            (orgtrello-query/--marker entity-to-sync)))
     (cl-defun put-some-insignificant-name (&key data &allow-other-keys)
       (orgtrello-proxy/--safe-wrap-or-throw-error
-       (let* ((orgtrello-query/--entry-new-id (orgtrello-query/--id data))
-              (orgtrello-query/--marker       (orgtrello/compute-marker
-                                               orgtrello-query/--entry-buffer-name
-                                               (orgtrello-query/--name data)
-                                               orgtrello-query/--entry-position)))
+       (let* ((orgtrello-proxy/--entry-new-id (orgtrello-query/--id data)))
          ;; switch to the right buffer
-         (set-buffer orgtrello-query/--entry-buffer-name)
+         (set-buffer orgtrello-proxy/--entry-buffer-name)
          ;; will update via tag the trello id of the new persisted data (if needed)
          (save-excursion
            ;; get back to the buffer and update the id if need be
-           (let* ((goto-ok  (orgtrello-proxy/--getting-back-to-marker orgtrello-query/--marker))
+           (let* ((goto-ok  (orgtrello-proxy/--getting-back-to-marker orgtrello-proxy/--marker))
                   (goto-ok2 (if goto-ok goto-ok (orgtrello-proxy/--getting-back-to-headline data))) ;; I don't get why some small % of time, i must do this
                   (str-msg  (when goto-ok2
                                   ;; now we extract the data
-                                  (let* ((orgtrello-query/--entry-metadata (orgtrello-data/metadata))
-                                         (orgtrello-query/--entry-id       (orgtrello/--id orgtrello-query/--entry-metadata)))
-                                    (if orgtrello-query/--entry-id ;; id already present in the org-mode file
+                                  (let* ((orgtrello-proxy/--entry-metadata (orgtrello-data/metadata))
+                                         (orgtrello-proxy/--entry-id       (orgtrello/--id orgtrello-proxy/--entry-metadata)))
+                                    (if orgtrello-proxy/--entry-id ;; id already present in the org-mode file
                                         ;; no need to add another
-                                        (concat "Entity '" (orgtrello/--name orgtrello-query/--entry-metadata) "' with id '" orgtrello-query/--entry-id "' synced!")
-                                        (let ((orgtrello-query/--entry-name (orgtrello-query/--name data)))
+                                        (concat "Entity '" (orgtrello/--name orgtrello-proxy/--entry-metadata) "' with id '" orgtrello-proxy/--entry-id "' synced!")
+                                        (let ((orgtrello-proxy/--entry-name (orgtrello-query/--name data)))
                                           ;; not present, this was just created, we add a simple property
-                                          (org-set-property *ORGTRELLO-ID* orgtrello-query/--entry-new-id)
-                                          (concat "Newly entity '" orgtrello-query/--entry-name "' with id '" orgtrello-query/--entry-new-id "' synced!")))))))
-             (orgtrello-proxy/--cleanup-and-save-buffer-metadata orgtrello-query/--entry-file orgtrello-query/--marker)
+                                          (org-set-property *ORGTRELLO-ID* orgtrello-proxy/--entry-new-id)
+                                          (concat "Newly entity '" orgtrello-proxy/--entry-name "' with id '" orgtrello-proxy/--entry-new-id "' synced!")))))))
+             (orgtrello-proxy/--cleanup-and-save-buffer-metadata orgtrello-proxy/--entry-file orgtrello-proxy/--marker)
              (when str-msg (orgtrello-log/msg 3 str-msg)))))))))
 
 (defun orgtrello-proxy/--archived-scanning-dir (dir-name)
@@ -1365,19 +1363,24 @@ refresh();
   (when name             (puthash :name     name             query-map))
   query-map)
 
-(defun orgtrello/--set-marker (buffer-name name position)
-  "Set the position to make a pointer to get back to when the request is finished"
-  (let ((orgtrello/--set-marker--marker (orgtrello/compute-marker buffer-name name position)))
-    (org-set-property orgtrello/--set-marker--marker orgtrello/--set-marker--marker)))
+(defun orgtrello/--set-marker (marker)
+  "Set a marker to get back to later."
+  (org-set-property marker marker))
 
 (defun orgtrello/do-create-simple-entity ()
   "Do the actual simple creation of a card."
-  (let* ((current-entry (orgtrello-data/metadata)))
-    (when (< (orgtrello/--level current-entry) 4)
-          ;; set a marker for later getting back to information
-          (orgtrello/--set-marker (orgtrello/--buffername current-entry) (orgtrello/--name current-entry) (orgtrello/--position current-entry))
-          ;; and send the data to the proxy
-          (orgtrello-proxy/http-producer current-entry))))
+  (let* ((orgtrello/--current-entry (orgtrello-data/metadata))
+         (orgtrello/--marker        (orgtrello/compute-marker
+                                     (orgtrello/--buffername orgtrello/--current-entry)
+                                     (orgtrello/--name orgtrello/--current-entry)
+                                     (orgtrello/--position orgtrello/--current-entry))))
+    (when (< (orgtrello/--level orgtrello/--current-entry) 4)
+           ;; set a marker for later getting back to information
+           (orgtrello/--set-marker orgtrello/--marker)
+           ;; adding the marker to the entry
+           (puthash :marker orgtrello/--marker orgtrello/--current-entry)
+           ;; and send the data to the proxy
+           (orgtrello-proxy/http-producer orgtrello/--current-entry))))
 
 (defun orgtrello/do-create-complex-entity ()
   "Do the actual full card creation - from card to item. Beware full side effects..."
@@ -1590,7 +1593,7 @@ refresh();
          (orgtrello/--name       (orgtrello/--name current-metadata)))
     (if (and current-metadata id)
         (progn
-          (orgtrello/--set-marker orgtrello/--buffername orgtrello/--name orgtrello/--position)
+          (orgtrello/--set-marker (orgtrello/compute-marker orgtrello/--buffername orgtrello/--name orgtrello/--position))
           (let ((query-http-or-error-msg (orgtrello/--dispatch-delete current-metadata (orgtrello-data/parent entry-metadata))))
             (if (hash-table-p query-http-or-error-msg)
                 (progn
