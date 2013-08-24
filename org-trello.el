@@ -726,27 +726,32 @@ Levels:
   "Compute list of regular files (no directory . and ..)"
   (--filter (file-regular-p it) (directory-files directory t)))
 
-(defun orgtrello-proxy/--deal-with-directory-sync (directory)
+(defun orgtrello-proxy/--deal-with-directory-sync (level directory)
   "Given a directory, list the files and take the first one (entity) and sync it with trello. Call again if it remains other entities."
   (let ((orgtrello-proxy/--files (orgtrello-proxy/--list-files directory)))
     (when orgtrello-proxy/--files
           ;; try and sync the file
           (orgtrello-proxy/--deal-with-entity-file-sync (car orgtrello-proxy/--files))
           ;; if it potentially remains files to sync, recall recursively this function
-          (when (< 1 (length orgtrello-proxy/--files)) (orgtrello-proxy/--deal-with-directory-sync directory)))))
+          (when (< 1 (length orgtrello-proxy/--files)) (orgtrello-proxy/--deal-with-level level directory)))))
+
+(defun orgtrello-proxy/--level-done-p (level)
+  "Is the level done"
+  (-> level
+      orgtrello-proxy/--compute-entity-level-dir
+      orgtrello-proxy/--list-files
+      null))
 
 (defun orgtrello-proxy/--level-inf-done-p (level)
   "Ensure the synchronization of the lower level is done (except for level 1 which has no deps)!"
-  (if (= 1 level) t (-> level
-                        1-
-                        orgtrello-proxy/--compute-entity-level-dir
-                        orgtrello-proxy/--list-files
-                        null)))
+  (cond ((= 1 level) t)
+        ((= 2 level) (orgtrello-proxy/--level-done-p 1))
+        ((= 3 level) (and (orgtrello-proxy/--level-done-p 2) (orgtrello-proxy/--level-done-p 1)))))
 
-(defun orgtrello-proxy/--deal-with-level (level)
+(defun orgtrello-proxy/--deal-with-level (level directory)
  "Given a level, retrieve one file (which represents an entity) for this level and sync it, then remove such file. Then recall the function recursively."
  (if (orgtrello-proxy/--level-inf-done-p level)
-     (orgtrello-proxy/--deal-with-directory-sync (orgtrello-proxy/--compute-entity-level-dir level))
+     (orgtrello-proxy/--deal-with-directory-sync level directory)
      (throw 'org-trello-timer-go-to-sleep t)))
 
 (defun orgtrello-proxy/--deal-with-archived-files (level)
@@ -764,7 +769,7 @@ Levels:
     (dolist (l *ORGTRELLO-LEVELS*) (orgtrello-proxy/--deal-with-archived-files l))
     ;; if some check regarding order fails, we catch and let the timer sleep for it the next time to get back normally to the upper level in order
     (catch 'org-trello-timer-go-to-sleep
-      (dolist (l *ORGTRELLO-LEVELS*) (orgtrello-proxy/--deal-with-level l)))))
+      (dolist (l *ORGTRELLO-LEVELS*) (orgtrello-proxy/--deal-with-level l (orgtrello-proxy/--compute-entity-level-dir l))))))
 
 (defun orgtrello-proxy/--compute-lock-filename ()
   "Compute the name of a lock file"
