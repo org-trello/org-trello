@@ -359,6 +359,26 @@
   (expect t (orgtrello/--item-compute-check nil "DONE" "TODO"))
   (expect nil (orgtrello/--item-compute-check nil "TODO" "TODO")) )
 
+(expectations
+ (expect t (and (dictionary-lessp "a" "b")
+                (null (dictionary-lessp "b" "a"))
+                (null (dictionary-lessp "a" "a"))
+                (dictionary-lessp "1" "2")
+                (null (dictionary-lessp "2" "1"))
+                (null (dictionary-lessp "1" "1"))
+                (dictionary-lessp "1" "a")
+                (null (dictionary-lessp "a" "1"))
+                (dictionary-lessp "" "a")
+                (null (dictionary-lessp "a" ""))
+
+                (dictionary-lessp "ab12" "ab34")
+                (dictionary-lessp "ab12" "ab123")
+                (dictionary-lessp "ab12" "ab12d")
+                (dictionary-lessp "ab132" "ab132z")
+
+                (dictionary-lessp "132zzzzz" "ab132z")
+                (null (dictionary-lessp "1.32" "1ab")))))
+
 (message "Tests done!")
 
 (provide 'org-trello-tests)

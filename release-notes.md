@@ -6,6 +6,11 @@
 - Refactoring - simplify code
 - Improve message labels
 - Improve failure dealing regarding the sync
+- Improve the marker computation
+- Remove the label/title notion and use the name notion (same as trello), this will reduce error reasoning.
+- Fix the format with missing argument on the callback sync success
+- Improve the test regarding the synchro completion of a level
+- Order when syncing to trello
 - Release notes
 - Release
 

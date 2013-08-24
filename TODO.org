@@ -582,6 +582,8 @@ CLOSED: [2013-08-24 sam. 14:18]
 CLOSED: [2013-08-24 sam. 15:21]
 ** DONE Improve the test regarding the synchro completion of a level
 CLOSED: [2013-08-24 sam. 15:41]
+** DONE Order when syncing to trello
+CLOSED: [2013-08-24 sam. 18:35]
 * 0.1.5 [%]
 ** TODO POC: use a temporary buffer to sync with trello, when done, merge with the user's buffer.
 ** TODO Ensure sync-from-trello keep the order of the checklists clean
