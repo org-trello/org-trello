@@ -636,6 +636,16 @@ Levels:
       (orgtrello-log/msg 1 (concat "### org-trello - consumer ### Caught exception: [" ex "]"))
       (throw 'org-trello-timer-go-to-sleep t))))
 
+(defun orgtrello-proxy/--getting-back-to-headline (data)
+  (orgtrello-proxy/--getting-back-to-marker
+   (trace (orgtrello/--compute-entity-to-org-entry data) :marker-fallback)))
+
+(defun orgtrello-proxy/--getting-back-to-marker (marker)
+  "Given a marker, getting back to marker function."
+  (goto-char (point-min))
+;;  (org-goto-local-search-headings marker nil nil)
+  (re-search-forward marker nil t))
+
 (defun orgtrello-proxy/--standard-post-or-put-success-callback (buffer-name position file)
   "Return a callback function able to deal with the update of the buffer at a given position."
   (lexical-let ((orgtrello-query/--entry-position    position)
@@ -644,31 +654,30 @@ Levels:
     (cl-defun put-some-insignificant-name (&key data &allow-other-keys)
       (orgtrello-proxy/--safe-wrap-or-throw-error
        (let* ((orgtrello-query/--entry-new-id (orgtrello-query/--id data))
-              (orgtrello-query/--marker       (orgtrello/compute-marker orgtrello-query/--entry-buffer-name (orgtrello-query/--name data) orgtrello-query/--entry-position)))
+              (orgtrello-query/--marker       (orgtrello/compute-marker
+                                               orgtrello-query/--entry-buffer-name
+                                               (orgtrello-query/--name data)
+                                               orgtrello-query/--entry-position)))
          ;; switch to the right buffer
          (set-buffer orgtrello-query/--entry-buffer-name)
          ;; will update via tag the trello id of the new persisted data (if needed)
          (save-excursion
            ;; get back to the buffer and update the id if need be
-           (let ((str-msg (when (orgtrello-proxy/--getting-back-to-marker orgtrello-query/--marker) ;; if we succeed update the buffer
-                                ;; now we extract the data
-                                (let* ((orgtrello-query/--entry-metadata (orgtrello-data/metadata))
-                                       (orgtrello-query/--entry-id       (orgtrello/--id orgtrello-query/--entry-metadata)))
-                                  (if orgtrello-query/--entry-id ;; id already present in the org-mode file
-                                      ;; no need to add another
-                                      (concat "Entity '" (orgtrello/--name orgtrello-query/--entry-metadata) "' with id '" orgtrello-query/--entry-id "' synced!")
-                                      (let ((orgtrello-query/--entry-name (orgtrello-query/--name data)))
-                                        ;; not present, this was just created, we add a simple property
-                                        (org-set-property *ORGTRELLO-ID* orgtrello-query/--entry-new-id)
-                                        (concat "Newly entity '" orgtrello-query/--entry-name "' with id '" orgtrello-query/--entry-new-id "' synced!")))))))
+           (let* ((goto-ok  (orgtrello-proxy/--getting-back-to-marker orgtrello-query/--marker))
+                  (goto-ok2 (if goto-ok goto-ok (orgtrello-proxy/--getting-back-to-headline data))) ;; I don't get why some small % of time, i must do this
+                  (str-msg  (when goto-ok2
+                                  ;; now we extract the data
+                                  (let* ((orgtrello-query/--entry-metadata (orgtrello-data/metadata))
+                                         (orgtrello-query/--entry-id       (orgtrello/--id orgtrello-query/--entry-metadata)))
+                                    (if orgtrello-query/--entry-id ;; id already present in the org-mode file
+                                        ;; no need to add another
+                                        (concat "Entity '" (orgtrello/--name orgtrello-query/--entry-metadata) "' with id '" orgtrello-query/--entry-id "' synced!")
+                                        (let ((orgtrello-query/--entry-name (orgtrello-query/--name data)))
+                                          ;; not present, this was just created, we add a simple property
+                                          (org-set-property *ORGTRELLO-ID* orgtrello-query/--entry-new-id)
+                                          (concat "Newly entity '" orgtrello-query/--entry-name "' with id '" orgtrello-query/--entry-new-id "' synced!")))))))
              (orgtrello-proxy/--cleanup-and-save-buffer-metadata orgtrello-query/--entry-file orgtrello-query/--marker)
              (when str-msg (orgtrello-log/msg 3 str-msg)))))))))
-
-(defun orgtrello-proxy/--getting-back-to-marker (marker)
-  "Given a marker, getting back to marker function."
-  (goto-char (point-min))
-;;  (org-goto-local-search-headings marker nil nil)
-  (re-search-forward marker nil))
 
 (defun orgtrello-proxy/--archived-scanning-dir (dir-name)
   "Given a filename, return the archived scanning directory"
