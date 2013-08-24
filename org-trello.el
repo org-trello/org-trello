@@ -118,14 +118,14 @@ Levels:
 
 ;; #################### orgtrello-hash
 
-(defun orgtrello-hash/make-hash-org (level keyword title id due position buffer-name)
+(defun orgtrello-hash/make-hash-org (level keyword name id due position buffer-name)
   "Utility function to ease the creation of the orgtrello-metadata"
   (let ((h (make-hash-table :test 'equal)))
     (puthash :buffername buffer-name h)
     (puthash :position   position    h)
     (puthash :level      level       h)
     (puthash :keyword    keyword     h)
-    (puthash :title      title       h)
+    (puthash :name       name        h)
     (puthash :id         id          h)
     (puthash :due        due         h)
     h))
@@ -219,9 +219,9 @@ Levels:
   (gethash :grandparent entry-meta))
 
 (defun orgtrello-data/--get-metadata (heading-metadata)
-  "Given the heading-metadata returned by the function 'org-heading-components, make it a hashmap with key :level, :keyword, :title. and their respective value"
-  (cl-destructuring-bind (buffer-name point id due level _ keyword _ title &rest) heading-metadata
-                         (orgtrello-hash/make-hash-org level keyword title id due point buffer-name)))
+  "Given the heading-metadata returned by the function 'org-heading-components, make it a hashmap with key :level, :keyword, :name. and their respective value"
+  (cl-destructuring-bind (buffer-name point id due level _ keyword _ name &rest) heading-metadata
+                         (orgtrello-hash/make-hash-org level keyword name id due point buffer-name)))
 
 (orgtrello-log/msg 4 "org-trello - orgtrello-data loaded!")
 
@@ -356,7 +356,6 @@ Levels:
 (defun orgtrello-query/--buffername     (entity-data) "Extract the position of the entity from the entity-data"        (assoc-default 'buffername entity-data))
 (defun orgtrello-query/--position       (entity-data) "Extract the position of the entity from the entity-data"        (assoc-default 'position entity-data))
 (defun orgtrello-query/--id             (entity-data) "Extract the id of the entity from the entity"                   (assoc-default 'id entity-data))
-(defun orgtrello-query/--title          (entity-data) "Extract the name of the entity from the entity"                 (assoc-default 'title entity-data))
 (defun orgtrello-query/--name           (entity-data) "Extract the name of the entity from the entity"                 (assoc-default 'name entity-data))
 (defun orgtrello-query/--list-id        (entity-data) "Extract the list identitier of the entity from the entity"      (assoc-default 'idList entity-data))
 (defun orgtrello-query/--checklist-ids  (entity-data) "Extract the checklist identifier of the entity from the entity" (assoc-default 'idChecklists entity-data))
@@ -611,9 +610,9 @@ Levels:
     (insert-file-contents fPath)
     (split-string (buffer-string) "\n" t)))
 
-(defun orgtrello/compute-marker (buffer-name title position)
-  "Compute the orgtrello marker which is composed of buffer-name, title and position"
-  (sha1 (format "%s-%s-%s-%s" *ORGTRELLO-MARKER* (trace buffer-name :buffer-name) (trace title :title) (trace position :position))))
+(defun orgtrello/compute-marker (buffer-name name position)
+  "Compute the orgtrello marker which is composed of buffer-name, name and position"
+  (sha1 (format "%s-%s-%s-%s" *ORGTRELLO-MARKER* (trace buffer-name :buffer-name) (trace name :name) (trace position :position))))
 
 (defun orgtrello-proxy/--remove-file (file-to-remove)
   "Remove metadata file."
@@ -654,7 +653,7 @@ Levels:
                                        (orgtrello-query/--entry-id       (orgtrello/--id orgtrello-query/--entry-metadata)))
                                   (if orgtrello-query/--entry-id ;; id already present in the org-mode file
                                       ;; no need to add another
-                                      (format "Entity '%s' with id '%s' synced!" (orgtrello/--label orgtrello-query/--entry-metadata) orgtrello-query/--entry-id)
+                                      (format "Entity '%s' with id '%s' synced!" (orgtrello/--name orgtrello-query/--entry-metadata) orgtrello-query/--entry-id)
                                       (let ((orgtrello-query/--entry-name (orgtrello-query/--name data)))
                                         ;; not present, this was just created, we add a simple property
                                         (org-set-property *ORGTRELLO-ID* orgtrello-query/--entry-new-id)
@@ -687,7 +686,7 @@ Levels:
   (let* ((position                 (orgtrello-query/--position entity-data))  ;; position is mandatory
          (buffer-name              (orgtrello-query/--buffername entity-data));; buffer-name too
          (level                    (orgtrello-query/--level entity-data))     ;; level too
-         (orgtrello-query/--marker (orgtrello/compute-marker buffer-name (orgtrello-query/--title entity-data) position)))
+         (orgtrello-query/--marker (orgtrello/compute-marker buffer-name (orgtrello-query/--name entity-data) position)))
     (orgtrello-log/msg 5 "Proxy-consumer - Searching entity metadata from buffer '%s' at point '%s' to sync..." buffer-name position)
     ;; switch to the right buffer
     (set-buffer buffer-name)
@@ -1174,9 +1173,9 @@ refresh();
   "Retrieve the keyword from the entity. If default-value is specified, this is the default value if no keyword is present"
   (gethash :keyword entity-meta default-value))
 
-(defun orgtrello/--label (entity-meta)
-  "Retrieve the label from the entity."
-  (gethash :title entity-meta))
+(defun orgtrello/--name (entity-meta)
+  "Retrieve the name from the entity."
+  (gethash :name entity-meta))
 
 (defun orgtrello/--id (entity-meta)
   "Retrieve the id from the entity."
@@ -1205,21 +1204,21 @@ refresh();
 
 (defun orgtrello/--checks-before-sync-card (card-meta)
   "Checks done before synchronizing the cards."
-  (let ((orgtrello/--card-name (orgtrello/--label card-meta)))
+  (let ((orgtrello/--card-name (orgtrello/--name card-meta)))
     (if orgtrello/--card-name
         :ok
-      "Cannot synchronize the card - missing mandatory label. Skip it...")))
+      "Cannot synchronize the card - missing mandatory name. Skip it...")))
 
 (defun orgtrello/--card (card-meta &optional parent-meta grandparent-meta)
   "Deal with create/update card query build. If the checks are ko, the error message is returned."
   (let ((checks-ok-or-error-message (orgtrello/--checks-before-sync-card card-meta)))
-    ;; title is mandatory
+    ;; name is mandatory
     (if (equal :ok checks-ok-or-error-message)
         ;; parent and grandparent are useless here
         (let* ((orgtrello/--card-kwd  (orgtrello/--retrieve-state-of-card card-meta))
                (orgtrello/--list-id   (assoc-default orgtrello/--card-kwd org-file-properties))
                (orgtrello/--card-id   (orgtrello/--id    card-meta))
-               (orgtrello/--card-name (orgtrello/--label card-meta))
+               (orgtrello/--card-name (orgtrello/--name card-meta))
                (orgtrello/--card-due  (orgtrello/--due   card-meta)))
           (if orgtrello/--card-id
               ;; update
@@ -1230,23 +1229,23 @@ refresh();
 
 (defun orgtrello/--checks-before-sync-checklist (checklist-meta card-meta)
   "Checks done before synchronizing the checklist."
-  (let ((orgtrello/--checklist-name (orgtrello/--label checklist-meta))
+  (let ((orgtrello/--checklist-name (orgtrello/--name checklist-meta))
         (orgtrello/--card-id        (orgtrello/--id card-meta)))
     (if orgtrello/--checklist-name
         (if orgtrello/--card-id
             :ok
           "Cannot synchronize the checklist - the card must be synchronized first. Skip it...")
-      "Cannot synchronize the checklist - missing mandatory label. Skip it...")))
+      "Cannot synchronize the checklist - missing mandatory name. Skip it...")))
 
 (defun orgtrello/--checklist (checklist-meta &optional card-meta grandparent-meta)
   "Deal with create/update checklist query build. If the checks are ko, the error message is returned."
   (let ((checks-ok-or-error-message (orgtrello/--checks-before-sync-checklist checklist-meta card-meta)))
-    ;; title is mandatory
+    ;; name is mandatory
     (if (equal :ok checks-ok-or-error-message)
         ;; grandparent is useless here
         (let* ((orgtrello/--checklist-id   (orgtrello/--id checklist-meta))
                (orgtrello/--card-id        (orgtrello/--id card-meta))
-               (orgtrello/--checklist-name (orgtrello/--label checklist-meta)))
+               (orgtrello/--checklist-name (orgtrello/--name checklist-meta)))
           (if orgtrello/--checklist-id
               ;; update
               (orgtrello-api/update-checklist orgtrello/--checklist-id orgtrello/--checklist-name)
@@ -1256,7 +1255,7 @@ refresh();
 
 (defun orgtrello/--checks-before-sync-item (item-meta checklist-meta card-meta)
   "Checks done before synchronizing the checklist."
-  (let ((orgtrello/--item-name    (orgtrello/--label item-meta))
+  (let ((orgtrello/--item-name    (orgtrello/--name item-meta))
         (orgtrello/--checklist-id (orgtrello/--id checklist-meta))
         (orgtrello/--card-id      (orgtrello/--id card-meta)))
     (if orgtrello/--item-name
@@ -1265,7 +1264,7 @@ refresh();
                 :ok
               "Cannot synchronize the item - the card must be synchronized first. Skip it...")
           "Cannot synchronize the item - the checklist must be synchronized first. Skip it...")
-      "Cannot synchronize the item - missing mandatory label. Skip it...")))
+      "Cannot synchronize the item - missing mandatory name. Skip it...")))
 
 (defun orgtrello/--item-compute-state-or-check (checklist-update-items-p item-state checklist-state possible-states)
   "Compute the item's state/check (for creation/update). The 2 possible states are in the list possible states, first position is the 'checked' one, and second the unchecked one."
@@ -1297,13 +1296,13 @@ refresh();
 (defun orgtrello/--item (item-meta &optional checklist-meta card-meta)
   "Deal with create/update item query build. If the checks are ko, the error message is returned."
   (let ((checks-ok-or-error-message (orgtrello/--checks-before-sync-item item-meta checklist-meta card-meta)))
-    ;; title is mandatory
+    ;; name is mandatory
     (if (equal :ok checks-ok-or-error-message)
         ;; card-meta is only usefull for the update part
         (let* ((orgtrello/--item-id      (orgtrello/--id item-meta))
                (orgtrello/--checklist-id (orgtrello/--id checklist-meta))
                (orgtrello/--card-id      (orgtrello/--id card-meta))
-               (orgtrello/--item-name    (orgtrello/--label item-meta))
+               (orgtrello/--item-name    (orgtrello/--name item-meta))
                (orgtrello/--item-state   (orgtrello/--keyword item-meta))
                (orgtrello/--checklist-state    (orgtrello/--keyword checklist-meta)))
 
@@ -1344,17 +1343,14 @@ refresh();
   "Given a trello api query, add some metadata needed for org-trello to work (those metadata will be exploited by the proxy)."
   (puthash :position       position         query-map)
   (puthash :buffername     buffer-name      query-map)
-  (when success-callback
-        (puthash :callback success-callback query-map))
-  (when sync
-        (puthash :sync     sync             query-map))
-  (when name
-        (puthash :name     name             query-map))
+  (when success-callback (puthash :callback success-callback query-map))
+  (when sync             (puthash :sync     sync             query-map))
+  (when name             (puthash :name     name             query-map))
   query-map)
 
-(defun orgtrello/--set-marker (buffer-name title position)
+(defun orgtrello/--set-marker (buffer-name name position)
   "Set the position to make a pointer to get back to when the request is finished"
-  (let ((orgtrello/--set-marker--marker (orgtrello/compute-marker buffer-name title position)))
+  (let ((orgtrello/--set-marker--marker (orgtrello/compute-marker buffer-name name position)))
     (org-set-property orgtrello/--set-marker--marker orgtrello/--set-marker--marker)))
 
 (defun orgtrello/do-create-simple-entity ()
@@ -1362,7 +1358,7 @@ refresh();
   (let* ((current-entry (orgtrello-data/metadata)))
     (when (< (orgtrello/--level current-entry) 4)
           ;; set a marker for later getting back to information
-          (orgtrello/--set-marker (orgtrello/--buffername current-entry) (orgtrello/--label current-entry) (orgtrello/--position current-entry))
+          (orgtrello/--set-marker (orgtrello/--buffername current-entry) (orgtrello/--name current-entry) (orgtrello/--position current-entry))
           ;; and send the data to the proxy
           (orgtrello-proxy/http-producer current-entry))))
 
@@ -1493,7 +1489,7 @@ refresh();
   ;; return the entities which has been dryed
   entities)
 
-(defun orgtrello/--sync-buffer-with-trello-data-callback (buffername position)
+(defun orgtrello/--sync-buffer-with-trello-data-callback (buffername &optional position name)
   "Generate a callback which knows the buffer with which it must work. (this callback must take a buffer-name and a position)"
   (lexical-let ((buffer-name buffername))
     (cl-defun sync-from-trello-insignificant-callback-name (&key data &allow-other-keys)
@@ -1546,7 +1542,7 @@ refresh();
          (dispatch-fn (gethash level *MAP-DISPATCH-DELETE* 'orgtrello/--too-deep-level)))
     (funcall dispatch-fn meta parent-meta)))
 
-(defun orgtrello-proxy/--standard-delete-success-callback (buffer-name position name)
+(defun orgtrello-proxy/--standard-delete-success-callback (buffer-name &optional position name)
   "Return a callback function able to deal with the position."
   (lexical-let* ((orgtrello-query/--entry-position    position)
                  (orgtrello-query/--entry-buffer-name buffer-name)
@@ -1574,7 +1570,7 @@ refresh();
          (id                     (orgtrello/--id current-metadata))
          (orgtrello/--position   (orgtrello/--position current-metadata))
          (orgtrello/--buffername (orgtrello/--buffername current-metadata))
-         (orgtrello/--name       (orgtrello/--label current-metadata)))
+         (orgtrello/--name       (orgtrello/--name current-metadata)))
     (if (and current-metadata id)
         (progn
           (orgtrello/--set-marker orgtrello/--buffername orgtrello/--name orgtrello/--position)
@@ -1585,7 +1581,7 @@ refresh();
                    (orgtrello/--update-query-with-org-metadata query-http-or-error-msg
                                                                orgtrello/--position
                                                                (orgtrello/--buffername current-metadata)
-                                                               (orgtrello/--label current-metadata)
+                                                               (orgtrello/--name current-metadata)
                                                                'orgtrello-proxy/--standard-delete-success-callback
                                                                sync)
                    sync)
