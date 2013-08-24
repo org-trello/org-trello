@@ -119,9 +119,6 @@
 *** TODO Java.next
 :PROPERTIES:
 :END:
-*** TODO Java.next
-:PROPERTIES:
-:END:
 *** TODO Mutation
 :PROPERTIES:
 :END:
