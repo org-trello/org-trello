@@ -7,7 +7,7 @@
 #+property: DELEGATED 51e538a89c05f1e25c0027c6
 #+property: FAIL 51e538a26f75d07902002d25
 #+property: CANCELLED 51e538e6c7a68fa0510014ee
-#+TODO: TODO IN-PROGRESS | DONE PENDING DELEGATED FAIL CANCELLED
+#+TODO: TODO IN-PROGRESS DONE | PENDING DELEGATED FAIL CANCELLED
 #+title: synced from trello
 #+author: Antoine R. Dumont
 
@@ -57,9 +57,6 @@
 :PROPERTIES:
 :END:
 *** TODO Ocaml
-:PROPERTIES:
-:END:
-* TODO new entity
 :PROPERTIES:
 :END:
 * PENDING Questions about life, the universe and everything
@@ -117,9 +114,6 @@
 :PROPERTIES:
 :END:
 *** TODO Macros
-:PROPERTIES:
-:END:
-*** TODO Java.next
 :PROPERTIES:
 :END:
 *** TODO Java.next
