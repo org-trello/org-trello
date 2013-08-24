@@ -624,6 +624,19 @@ Levels:
   (org-delete-property-globally marker)
   (save-buffer))
 
+(defmacro orgtrello-proxy/--safe-wrap-or-throw-error (fn &rest clean-up)
+  "A macro to deal with intercept uncaught error when executing the fn call and cleaning up using the clean-up body. If error is thrown, send the 'org-trello-timer-go-to-sleep flag."
+  `(unwind-protect
+       (let (retval)
+         (condition-case ex
+             (setq retval (progn ,fn))
+           ('error
+            (message (format "### org-trello - consumer ### Caught exception: [%s]" ex))
+            (setq retval (cons 'exception (list ex)))
+            (throw 'org-trello-timer-go-to-sleep t)))
+         retval)
+     ,@clean-up))
+
 (defun orgtrello-proxy/--standard-post-or-put-success-callback (buffer-name position file)
   "Return a callback function able to deal with the update of the buffer at a given position."
   (lexical-let ((orgtrello-query/--entry-position    position)
@@ -632,7 +645,7 @@ Levels:
     (cl-defun put-some-insignificant-name (&key data &allow-other-keys)
       (let ((orgtrello-query/--entry-new-id (orgtrello-query/--id data))
             (orgtrello-query/--marker       (orgtrello/compute-marker orgtrello-query/--entry-position)))
-        (orgtrello-action/safe-wrap
+        (orgtrello-proxy/--safe-wrap-or-throw-error
          ;; switch to the right buffer
          (set-buffer orgtrello-query/--entry-buffer-name)
          ;; will update via tag the trello id of the new persisted data (if needed)
@@ -657,7 +670,7 @@ Levels:
   "Given a marker, getting back to marker function."
   (goto-char (point-min))
   ;; (org-goto-local-search-headings marker nil t)
-  (re-search-forward marker nil t))
+  (re-search-forward marker nil))
 
 (defun orgtrello-proxy/--archived-scanning-dir (dir-name)
   "Given a filename, return the archived scanning directory"
@@ -683,7 +696,7 @@ Levels:
     ;; switch to the right buffer
     (set-buffer buffer-name)
     ;; will update via tag the trello id of the new persisted data (if needed)
-    (orgtrello-action/safe-wrap
+    (orgtrello-proxy/--safe-wrap-or-throw-error
      (save-excursion
        ;; Get back to the buffer's position to update
        (when (orgtrello-proxy/--getting-back-to-marker orgtrello-query/--marker)
