@@ -1,3 +1,19 @@
+# 0.1.4
+
+- Prepare the hierarchy files to avoid problem like https://github.com/ardumont/org-trello/issues/37#issuecomment-23151353
+- Adding a version interactive command (it will help for asking people the version they use).
+- Upgrade version
+- Refactoring - simplify code
+- Improve message labels
+- Improve failure dealing regarding the sync
+- Improve the marker computation
+- Remove the label/title notion and use the name notion (same as trello), this will reduce error reasoning.
+- Fix the format with missing argument on the callback sync success
+- Improve the test regarding the synchro completion of a level
+- Order when syncing to trello
+- Release notes
+- Release
+
 # 0.1.3
 
 - Leverage elnode's webserver capacity to display some basic monitoring about the synchronization
