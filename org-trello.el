@@ -456,8 +456,20 @@ Levels:
 ;; #################### orgtrello-action
 
 (defun orgtrello-action/reload-setup ()
-  "reload orgtrello setup"
+  "Reload orgtrello setup."
   (org-set-regexps-and-options))
+
+(defmacro orgtrello-action/safe-wrap (fn &rest clean-up)
+  "A macro to deal with intercept uncaught error when executing the fn call and cleaning up using the clean-up body."
+  `(unwind-protect
+       (let (retval)
+         (condition-case ex
+             (setq retval (progn ,fn))
+           ('error
+            (message (format "### org-trello ### Caught exception: [%s]" ex))
+            (setq retval (cons 'exception (list ex)))))
+         retval)
+     ,@clean-up))
 
 (defun org-action/--controls-or-actions-then-do (control-or-action-fns fn-to-execute &optional nolog-p)
   "Execute the function fn if control-fns is nil or if the result of apply every function to fn is ok."
@@ -477,7 +489,7 @@ Levels:
   "A simple decorator function to display message in mini-buffer before and after the execution of the control"
   (unless nolog-p (orgtrello-log/msg 3 (concat msg "...")))
   ;; now execute the controls and the main action
-  (safe-wrap
+  (orgtrello-action/safe-wrap
    (org-action/--controls-or-actions-then-do control-or-action-fns fn-to-execute nolog-p)
    (progn
      ;; do we have to save the buffer
@@ -612,18 +624,6 @@ Levels:
   (org-delete-property-globally marker)
   (save-buffer))
 
-(defmacro safe-wrap (fn &rest clean-up)
-  "A macro to deal with intercept uncaught error when executing the fn call and cleaning up using the clean-up body."
-  `(unwind-protect
-       (let (retval)
-         (condition-case ex
-             (setq retval (progn ,fn))
-           ('error
-            (message (format "### org-trello ### Caught exception: [%s]" ex))
-            (setq retval (cons 'exception (list ex)))))
-         retval)
-     ,@clean-up))
-
 (defun orgtrello-proxy/--standard-post-or-put-success-callback (buffer-name position file)
   "Return a callback function able to deal with the update of the buffer at a given position."
   (lexical-let ((orgtrello-query/--entry-position    position)
@@ -632,7 +632,7 @@ Levels:
     (cl-defun put-some-insignificant-name (&key data &allow-other-keys)
       (let ((orgtrello-query/--entry-new-id (orgtrello-query/--id data))
             (orgtrello-query/--marker       (orgtrello/compute-marker orgtrello-query/--entry-position)))
-        (safe-wrap
+        (orgtrello-action/safe-wrap
          ;; switch to the right buffer
          (set-buffer orgtrello-query/--entry-buffer-name)
          ;; will update via tag the trello id of the new persisted data (if needed)
@@ -683,7 +683,7 @@ Levels:
     ;; switch to the right buffer
     (set-buffer buffer-name)
     ;; will update via tag the trello id of the new persisted data (if needed)
-    (safe-wrap
+    (orgtrello-action/safe-wrap
      (save-excursion
        ;; Get back to the buffer's position to update
        (when (orgtrello-proxy/--getting-back-to-marker orgtrello-query/--marker)
@@ -775,7 +775,7 @@ Levels:
   "A handler to extract the entity informations from files (in order card, checklist, items)."
   (undo-boundary)
   ;; only one timer at a time
-  (safe-wrap
+  (orgtrello-action/safe-wrap
    (progn
      (orgtrello-proxy/--timer-put-lock *ORGTRELLO-LOCK*)
      (orgtrello-proxy/--consumer-entity-files-hierarchically-and-sync))
@@ -1541,7 +1541,7 @@ refresh();
                  (orgtrello-query/--entry-buffer-name buffer-name)
                  (orgtrello-query/--marker (orgtrello/compute-marker orgtrello-query/--entry-position)))
     (lambda (&rest response)
-      (safe-wrap
+      (orgtrello-action/safe-wrap
        (progn
          (set-buffer orgtrello-query/--entry-buffer-name)
          (save-excursion
