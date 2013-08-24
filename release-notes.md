@@ -1,3 +1,14 @@
+# 0.1.4
+
+- Prepare the hierarchy files to avoid problem like https://github.com/ardumont/org-trello/issues/37#issuecomment-23151353
+- Adding a version interactive command (it will help for asking people the version they use).
+- Upgrade version
+- Refactoring - simplify code
+- Improve message labels
+- Improve failure dealing regarding the sync
+- Release notes
+- Release
+
 # 0.1.3
 
 - Leverage elnode's webserver capacity to display some basic monitoring about the synchronization
