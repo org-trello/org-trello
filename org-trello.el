@@ -601,14 +601,14 @@ Levels:
   "Compute the orgtrello marker which is composed of position"
   (format "%s-%s" *ORGTRELLO-MARKER* position))
 
-(defun orgtrello-proxy/--remove-metadata-file (file-to-remove)
+(defun orgtrello-proxy/--remove-file (file-to-remove)
   "Remove metadata file."
   (when (file-exists-p file-to-remove)
         (delete-file file-to-remove)))
 
 (defun orgtrello-proxy/--cleanup-and-save-buffer-metadata (file marker)
   "To cleanup metadata after the all actions are done!"
-  (orgtrello-proxy/--remove-metadata-file file)
+  (orgtrello-proxy/--remove-file file)
   (org-delete-property-globally marker)
   (save-buffer))
 
@@ -748,16 +748,13 @@ Levels:
 
 (defun orgtrello-proxy/--consumer-entity-files-hierarchically-and-sync ()
   "A handler to extract the entity informations from files (in order card, checklist, items)."
-  (undo-boundary)
   ;; now let's deal with the entities sync in order with level
-  (safe-wrap
-   (with-local-quit
-     ;; if archived file exists, get them back in the queue before anything else
-     (dolist (l *ORGTRELLO-LEVELS*) (orgtrello-proxy/--deal-with-archived-files l))
-     ;; if some check regarding order fails, we catch and let the timer sleep for it the next time to get back normally to the upper level in order
-     (catch 'org-trello-timer-go-to-sleep
-       (dolist (l *ORGTRELLO-LEVELS*) (orgtrello-proxy/--deal-with-level l)))))
-  (undo-boundary))
+  (with-local-quit
+    ;; if archived file exists, get them back in the queue before anything else
+    (dolist (l *ORGTRELLO-LEVELS*) (orgtrello-proxy/--deal-with-archived-files l))
+    ;; if some check regarding order fails, we catch and let the timer sleep for it the next time to get back normally to the upper level in order
+    (catch 'org-trello-timer-go-to-sleep
+      (dolist (l *ORGTRELLO-LEVELS*) (orgtrello-proxy/--deal-with-level l)))))
 
 (defun orgtrello-proxy/--compute-lock-filename ()
   "Compute the name of a lock file"
@@ -765,18 +762,26 @@ Levels:
 
 (defvar *ORGTRELLO-LOCK* (orgtrello-proxy/--compute-lock-filename) "Lock file to ensure one timer is running at a time.")
 
-(defun orgtrello-proxy/--cleanup-timer-data ()
+(defun orgtrello-proxy/--timer-put-lock (lock-file)
+  "Start triggering the timer."
+  (with-temp-file lock-file
+    (insert "Timer - Scanning entities...")))
+
+(defun orgtrello-proxy/--timer-delete-lock (lock-file)
   "Cleanup after the timer has been triggered."
-  (if (file-exists-p *ORGTRELLO-LOCK*) (delete-file *ORGTRELLO-LOCK*)))
+  (orgtrello-proxy/--remove-file lock-file))
 
 (defun orgtrello-proxy/--consumer-lock-and-scan-entity-files-hierarchically-and-sync ()
   "A handler to extract the entity informations from files (in order card, checklist, items)."
+  (undo-boundary)
   ;; only one timer at a time
-  (with-temp-file *ORGTRELLO-LOCK*
-    (insert "Timer - Scanning entities..."))
-  (orgtrello-proxy/--consumer-entity-files-hierarchically-and-sync)
-  ;; remove lock
-  (orgtrello-proxy/--cleanup-timer-data))
+  (safe-wrap
+   (progn
+     (orgtrello-proxy/--timer-put-lock *ORGTRELLO-LOCK*)
+     (orgtrello-proxy/--consumer-entity-files-hierarchically-and-sync))
+   (orgtrello-proxy/--timer-delete-lock *ORGTRELLO-LOCK*))
+  ;; undo boundary, to make a unit of undo
+  (undo-boundary))
 
 (defun orgtrello-proxy/--check-network-ok ()
   "Ensure there is some network running (simply check that there is more than the lo interface)."
@@ -815,7 +820,7 @@ Levels:
         (progn
           (orgtrello-log/msg 4 "Proxy-timer - Request received. Start timer.")
           ;; cleanup anything that the timer possibly left behind
-          (orgtrello-proxy/--cleanup-timer-data)
+          (orgtrello-proxy/--timer-delete-lock *ORGTRELLO-LOCK*)
           ;; Prepare the filesystem with the right folders
           (orgtrello-proxy/--prepare-filesystem)
           ;; start the timer
