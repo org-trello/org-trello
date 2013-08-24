@@ -593,9 +593,9 @@ Levels:
 (defun orgtrello-proxy/--elnode-proxy-producer (http-con)
   "A handler which is an entity informations producer on files under the docroot/level-entities/"
   (orgtrello-log/msg 5 "Proxy-producer - Request received. Generating entity file...")
-  (let* ((query-map-wrapped    (orgtrello-proxy/--extract-trello-query http-con))                     ;; wrapped query is mandatory
-         (position             (orgtrello-query/--position query-map-wrapped))                           ;; position is mandatory
-         (buffer-name          (orgtrello-query/--buffername query-map-wrapped))                         ;; buffer-name is mandatory
+  (let* ((query-map-wrapped    (orgtrello-proxy/--extract-trello-query http-con)) ;; wrapped query is mandatory
+         (position             (orgtrello-query/--position query-map-wrapped))    ;; position is mandatory
+         (buffer-name          (orgtrello-query/--buffername query-map-wrapped))  ;; buffer-name is mandatory
          (level                (orgtrello-query/--level query-map-wrapped))
          (root-dir             (orgtrello-proxy/--compute-entity-level-dir level)))
     ;; generate a file with the entity information
@@ -612,7 +612,10 @@ Levels:
 
 (defun orgtrello/compute-marker (buffer-name name position)
   "Compute the orgtrello marker which is composed of buffer-name, name and position"
-  (sha1 (format "%s-%s-%s-%s" *ORGTRELLO-MARKER* (trace buffer-name :buffer-name) (trace name :name) (trace position :position))))
+  (->> (list *ORGTRELLO-MARKER* buffer-name name (if (stringp position) position (int-to-string position)))
+       (-interpose "-")
+       (apply 'concat)
+       sha1))
 
 (defun orgtrello-proxy/--remove-file (file-to-remove)
   "Remove metadata file."
@@ -630,7 +633,7 @@ Levels:
   `(condition-case ex
        (progn ,fn)
      ('error
-      (orgtrello-log/msg 1 (format "### org-trello - consumer ### Caught exception: [%s]" ex))
+      (orgtrello-log/msg 1 (concat "### org-trello - consumer ### Caught exception: [" ex "]"))
       (throw 'org-trello-timer-go-to-sleep t))))
 
 (defun orgtrello-proxy/--standard-post-or-put-success-callback (buffer-name position file)
@@ -653,11 +656,11 @@ Levels:
                                        (orgtrello-query/--entry-id       (orgtrello/--id orgtrello-query/--entry-metadata)))
                                   (if orgtrello-query/--entry-id ;; id already present in the org-mode file
                                       ;; no need to add another
-                                      (format "Entity '%s' with id '%s' synced!" (orgtrello/--name orgtrello-query/--entry-metadata) orgtrello-query/--entry-id)
+                                      (concat "Entity '" (orgtrello/--name orgtrello-query/--entry-metadata) "' with id '" orgtrello-query/--entry-id "' synced!")
                                       (let ((orgtrello-query/--entry-name (orgtrello-query/--name data)))
                                         ;; not present, this was just created, we add a simple property
                                         (org-set-property *ORGTRELLO-ID* orgtrello-query/--entry-new-id)
-                                        (format "Newly entity '%s' with id '%s' synced!" orgtrello-query/--entry-name orgtrello-query/--entry-new-id)))))))
+                                        (concat "Newly entity '" orgtrello-query/--entry-name "' with id '" orgtrello-query/--entry-new-id "' synced!")))))))
              (orgtrello-proxy/--cleanup-and-save-buffer-metadata orgtrello-query/--entry-file orgtrello-query/--marker)
              (when str-msg (orgtrello-log/msg 3 str-msg)))))))))
 
