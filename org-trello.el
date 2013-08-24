@@ -646,11 +646,11 @@ Levels:
 ;;  (org-goto-local-search-headings marker nil nil)
   (re-search-forward marker nil t))
 
-(defun orgtrello-proxy/--standard-post-or-put-success-callback (buffer-name position file)
+(defun orgtrello-proxy/--standard-post-or-put-success-callback (entity-to-sync file-to-cleanup)
   "Return a callback function able to deal with the update of the buffer at a given position."
-  (lexical-let ((orgtrello-query/--entry-position    position)
-                (orgtrello-query/--entry-buffer-name buffer-name)
-                (orgtrello-query/--entry-file        file))
+  (lexical-let ((orgtrello-query/--entry-position    (orgtrello-query/--position entity-to-sync))
+                (orgtrello-query/--entry-buffer-name (orgtrello-query/--buffername entity-to-sync))
+                (orgtrello-query/--entry-file        file-to-cleanup))
     (cl-defun put-some-insignificant-name (&key data &allow-other-keys)
       (orgtrello-proxy/--safe-wrap-or-throw-error
        (let* ((orgtrello-query/--entry-new-id (orgtrello-query/--id data))
@@ -719,7 +719,7 @@ Levels:
                    (orgtrello-query/http-trello
                     orgtrello-query/--query-map
                     *do-sync-query*
-                    (orgtrello-proxy/--standard-post-or-put-success-callback buffer-name position orgtrello-query/--entry-file-archived)
+                    (orgtrello-proxy/--standard-post-or-put-success-callback entity-data orgtrello-query/--entry-file-archived)
                     (cl-defun orgtrello-proxy/--standard-post-or-put-error-callback (&allow-other-keys) (throw 'org-trello-timer-go-to-sleep t)))
                    (progn
                      (orgtrello-log/msg 3 orgtrello-query/--query-map)
