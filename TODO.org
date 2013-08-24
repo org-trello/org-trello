@@ -556,7 +556,7 @@ CLOSED: [2013-08-23 ven. 10:00]
 CLOSED: [2013-08-23 ven. 10:01]
 ** DONE Update doc
 CLOSED: [2013-08-23 ven. 10:12]
-* DONE 0.1.4 [100%]
+* DONE 0.1.4 [88%]
 CLOSED: [2013-08-24 sam. 09:44]
 ** DONE Prepare the hierarchy files to avoid problem like https://github.com/ardumont/org-trello/issues/37#issuecomment-23151353
 CLOSED: [2013-08-23 ven. 20:37]
@@ -574,6 +574,9 @@ CLOSED: [2013-08-24 sam. 09:46]
 CLOSED: [2013-08-24 sam. 09:47]
 ** DONE Release
 CLOSED: [2013-08-24 sam. 09:47]
+** DONE Improve the marker computation
+CLOSED: [2013-08-24 sam. 13:47]
+** TODO Remove the label/title notion and use the name notion (same as trello), this will reduce error reasoning.
 * 0.1.5 [%]
 ** TODO POC: use a temporary buffer to sync with trello, when done, merge with the user's buffer.
 ** TODO Ensure sync-from-trello keep the order of the checklists clean
