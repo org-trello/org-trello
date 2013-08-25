@@ -2005,7 +2005,7 @@ refresh(\"/proxy/admin/current-action/\", '#current-action');
 
 ;; #################### org-trello
 
-(defun org-trello/create-simple-entity ()
+(defun org-trello/sync-entity ()
   "Control first, then if ok, create a simple entity."
   (interactive)
   (org-action/--deal-with-consumer-msg-controls-or-actions-then-do
@@ -2013,7 +2013,7 @@ refresh(\"/proxy/admin/current-action/\", '#current-action');
      '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties orgtrello/--control-encoding)
      'orgtrello/do-sync-entity))
 
-(defun org-trello/create-complex-entity ()
+(defun org-trello/sync-full-entity ()
   "Control first, then if ok, create an entity and all its arborescence if need be."
   (interactive)
   (org-action/--deal-with-consumer-msg-controls-or-actions-then-do
@@ -2119,8 +2119,8 @@ C-c o d - M-x org-trello/check-setup                 - Check that the setup is o
 C-c o D - M-x org-trello/delete-setup                - Clean up the org buffer from all org-trello informations
 # TRELLO RELATED
 C-c o b - M-x org-trello/create-board                - Create interactively a board and attach the org-mode file to this trello board.
-C-c o c - M-x org-trello/create-simple-entity        - Create/Update an entity (card/checklist/item) depending on its level and status. Do not deal with level superior to 4.
-C-c o C - M-x org-trello/create-complex-entity       - Create/Update a complete entity card/checklist/item and its subtree (depending on its level).
+C-c o c - M-x org-trello/sync-entity                 - Create/Update an entity (card/checklist/item) depending on its level and status. Do not deal with level superior to 4.
+C-c o C - M-x org-trello/sync-full-entity            - Create/Update a complete entity card/checklist/item and its subtree (depending on its level).
 C-c o s - M-x org-trello/sync-to-trello              - Synchronize the org-mode file to the trello board (org-mode -> trello).
 C-c o S - M-x org-trello/sync-from-trello            - Synchronize the org-mode file from the trello board (trello -> org-mode).
 C-c o k - M-x org-trello/kill-entity                 - Kill the entity (and its arborescence tree) from the trello board and the org buffer.
@@ -2141,8 +2141,8 @@ C-c o h - M-x org-trello/help-describing-bindings    - This help message."))
              (define-key map (kbd "C-c o b") 'org-trello/create-board)
              (define-key map (kbd "C-c o S") 'org-trello/sync-from-trello)
              ;; asynchronous requests (requests through proxy)
-             (define-key map (kbd "C-c o c") 'org-trello/create-simple-entity)
-             (define-key map (kbd "C-c o C") 'org-trello/create-complex-entity)
+             (define-key map (kbd "C-c o c") 'org-trello/sync-entity)
+             (define-key map (kbd "C-c o C") 'org-trello/sync-full-entity)
              (define-key map (kbd "C-c o k") 'org-trello/kill-entity)
              (define-key map (kbd "C-c o K") 'org-trello/kill-all-entities)
              (define-key map (kbd "C-c o s") 'org-trello/sync-to-trello)
