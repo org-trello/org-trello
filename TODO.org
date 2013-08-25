@@ -593,6 +593,8 @@ CLOSED: [2013-08-25 dim. 10:14]
 CLOSED: [2013-08-25 dim. 10:39]
 ** DONE webadmin: Add a current scanning entry in the webadmin page
 CLOSED: [2013-08-25 dim. 11:23]
+** DONE Defining log level using variable
+CLOSED: [2013-08-25 dim. 13:37]
 ** TODO Release notes
 ** TODO Release
 * TODO 0.1.6 [%]
