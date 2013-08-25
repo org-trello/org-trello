@@ -723,7 +723,7 @@ Levels:
   (let* ((op/--position                  (orgtrello-query/--position entity-data))                                   ;; position is mandatory
          (op/--buffer-name               (orgtrello-query/--buffername entity-data))                                 ;; buffer-name too
          (op/--entry-file-archived       (orgtrello-proxy/--archived-scanning-file file-to-archive))
-         (op/--action-fn                 (trace (orgtrello-proxy/--dispatch-action (orgtrello-query/--action entity-data)))) ;; what's the running action?
+         (op/--action-fn                 (orgtrello-proxy/--dispatch-action (orgtrello-query/--action entity-data))) ;; what's the running action?
          (op/--marker                    (orgtrello-query/--marker entity-data)))                                    ;; retrieve the marker
     (orgtrello-log/msg 5 "Proxy-consumer - Searching entity metadata from buffer '%s' at point '%s' to sync..." op/--buffer-name op/--position)
     ;; switch to the right buffer
@@ -1039,7 +1039,42 @@ Levels:
           (meta ((name . "description")
                  (content . ,description)))
           (style ()
-                 "body { padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */ }")
+                 "
+      body {
+        padding-top: 20px;
+        padding-bottom: 40px;
+      }
+
+      /* Custom container */
+      .container-narrow {
+        margin: 0 auto;
+        max-width: 700px;
+      }
+      .container-narrow > hr {
+        margin: 30px 0;
+      }
+
+      /* Main marketing message and sign up button */
+      .jumbotron {
+        margin: 60px 0;
+        text-align: center;
+      }
+      .jumbotron h1 {
+        font-size: 72px;
+        line-height: 1;
+      }
+      .jumbotron .btn {
+        font-size: 21px;
+        padding: 14px 24px;
+      }
+
+      /* Supporting marketing content */
+      .marketing {
+        margin: 60px 0;
+      }
+      .marketing p + h4 {
+        margin-top: 28px;
+      }")
           (link ((href . "/static/css/bootstrap.css")
                  (rel . "stylesheet")))
           (link ((href . "/static/css/bootstrap-responsive.min.css")
@@ -1081,22 +1116,29 @@ Levels:
                                  (a ((href . "#contact"))
                                     "Contact")))))))
      (div ((class . "container"))
-          (h1 () "Running actions")
-          (div ((id . "server-name"))))
+          (div ((class . "container-narrow"))
+               (div ((class . "row-fluid marketing"))
+                    (div ((class . "span6"))
+                         (h2 () "Current action")
+                         (span ((id . "current-action"))))
+                    (div ((class . "span6"))
+                         (h2 () "Next actions")
+                         (span ((id . "next-actions")))))))
      (script ((src . "/static/js/bootstrap.min.js")) "")
      (script ((src . "/static/js/jquery.js")) "")
      (script ()
              "
-function refresh () {
+function refresh (url, id) {
     $.ajax({
-        url: \"/proxy/admin/entities/\"
+        url: url
     }).done(function (data) {
-        $('#server-name').html(data);
-        setTimeout(function() { refresh(); }, 500);
+        $(id).html(data);
+        setTimeout(function() { refresh(url, id); }, 500);
     });
 }
 
-refresh();
+refresh(\"/proxy/admin/next-actions/\", '#next-actions');
+refresh(\"/proxy/admin/current-action/\", '#current-action');
 "))))
 
 (defun orgtrello-admin/--content-file (file)
@@ -1105,51 +1147,84 @@ refresh();
     (insert-file-contents file)
     (buffer-string)))
 
-(defun orgtrello-admin/list-files (list-of-files)
-  "Return the list of files to send to trello"
-  (let ((fst-file   (car list-of-files))
-        (rest-files (cdr list-of-files)))
-    (if list-of-files
-        (esxml-to-xml
-         `(table ((class . "table table-striped table-bordered table-hover")
-                  (style . "font-size: 0.75em"))
-                 (tr
+(defun orgtrello-admin/--header-table ()
+  "Generate headers"
+  (esxml-to-xml `(tr
                   ()
                   (td ())
                   (td () "Action")
-                  (td () "Entity"))
-                 (tr
-                  ()
-                  (td () (i ((class . "icon-arrow-right"))))
-                  (td () ,(orgtrello-query/--action (read (orgtrello-admin/--content-file fst-file))))
-                  (td () ,(orgtrello-admin/--content-file fst-file)))
-                 ,(loop for entry in rest-files
-                        concat
-                        (esxml-to-xml
-                         `(tr
-                           ()
-                           (td () (i ((class . "icon-arrow-up"))))
-                           (td () ,(orgtrello-query/--action (read (orgtrello-admin/--content-file entry))))
-                           (td () ,(orgtrello-admin/--content-file entry)))))))
-        "Empty!")))
+                  (td () "Entity"))))
 
-(defun orgtrello-proxy/--response-html (http-con data)
+(defun orgtrello-admin/--entity (entity-content-file icon)
+  "Compute the entity file display rendering."
+  (esxml-to-xml
+   `(tr
+     ()
+     (td () (i ((class . ,icon))))
+     (td () ,(orgtrello-query/--action entity-content-file))
+     (td () ,(format "%S" entity-content-file)))))
+
+(defun orgtrello-admin/--actions (content-files &optional icon-array-running icon-array-next)
+  "Return the list of files to send to trello"
+  (let ((fst-file       (car content-files))
+        (rest-files     (cdr content-files))
+        (icon-array-run (if icon-array-running icon-array-running "icon-arrow-right"))
+        (icon-array-nxt (if icon-array-next icon-array-next "icon-arrow-up")))
+    (if content-files
+        (esxml-to-xml
+         `(table ((class . "table table-striped table-bordered table-hover")
+                  (style . "font-size: 0.75em"))
+                 ;; header
+                 ,(orgtrello-admin/--header-table)
+                 ;; next running action
+                 ,(orgtrello-admin/--entity fst-file icon-array-run)
+                 ;; next running actions
+                 ,(loop for entry-file in rest-files
+                        concat
+                        (orgtrello-admin/--entity entry-file icon-array-nxt))))
+        "None")))
+
+(defun orgtrello-proxy/--response-html (data http-con)
   "A response wrapper"
   (elnode-http-start http-con 201 '("Content-type" . "text/html"))
   (elnode-http-return http-con data))
 
 (defun orgtrello-proxy/--elnode-admin (http-con)
   "A basic display of data"
-  (orgtrello-proxy/--response-html
-   http-con
-   (orgtrello-admin/html)))
+  (orgtrello-proxy/--response-html (orgtrello-admin/html) http-con))
 
-(defun orgtrello-proxy/--elnode-admin-scan (http-con)
+(defun compose-fn (funcs)
+  "Composes several functions into one."
+  (lexical-let ((intern-funcs funcs))
+    (lambda (arg)
+      (if intern-funcs
+          (funcall (car intern-funcs)
+                   (funcall (compose (cdr intern-funcs)) arg))
+          arg))))
+
+(defun orgtrello-proxy/--elnode-actions (levels &optional scan-flag)
+  "Compute the actions into list."
+  (let* ((list-fns '(orgtrello-proxy/--compute-entity-level-dir))
+         (scan-fns (if scan-flag (cons 'orgtrello-proxy/--archived-scanning-dir list-fns) list-fns)) ;; build the list of functions to create the composed function
+         (composed-fn (compose-fn scan-fns)))
+    (--map
+     (read (orgtrello-admin/--content-file it))
+     (--mapcat (orgtrello-proxy/--list-files (funcall composed-fn it)) levels))))
+
+(defun orgtrello-proxy/--elnode-current-action (http-con)
   "A basic display of the list of entities to scan"
-  (orgtrello-proxy/--response-html
-   http-con
-   (orgtrello-admin/list-files
-    (--mapcat (orgtrello-proxy/--list-files (orgtrello-proxy/--compute-entity-level-dir it)) *ORGTRELLO-LEVELS*))))
+  (-> *ORGTRELLO-LEVELS*
+      (orgtrello-proxy/--elnode-actions 'scan-folder)
+      nreverse
+      (orgtrello-admin/--actions "icon-play" "icon-pause")
+      (orgtrello-proxy/--response-html http-con)))
+
+(defun orgtrello-proxy/--elnode-next-actions (http-con)
+  "A basic display of the list of entities to scan"
+  (-> *ORGTRELLO-LEVELS*
+       orgtrello-proxy/--elnode-actions
+       orgtrello-admin/--actions
+       (orgtrello-proxy/--response-html http-con)))
 
 (defun orgtrello-proxy/--elnode-static-file (http-con)
   "Service static files if they exist"
@@ -1166,7 +1241,8 @@ refresh();
 
 (defvar *ORGTRELLO-QUERY-APP-ROUTES*
   '(;; proxy to request trello
-    ("^localhost//proxy/admin/entities/\\(.*\\)" . orgtrello-proxy/--elnode-admin-scan)
+    ("^localhost//proxy/admin/current-action/\\(.*\\)" . orgtrello-proxy/--elnode-current-action)
+    ("^localhost//proxy/admin/next-actions/\\(.*\\)" . orgtrello-proxy/--elnode-next-actions)
     ("^localhost//proxy/admin/\\(.*\\)" . orgtrello-proxy/--elnode-admin)
     ;; proxy to request trello
     ("^localhost//proxy/trello/\\(.*\\)" . orgtrello-proxy/--elnode-proxy)
