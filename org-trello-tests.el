@@ -424,6 +424,11 @@
       "<table class=\"table table-striped table-bordered table-hover\" style=\"font-size: 0.75em\"><tr><td/><td>Action</td><td>Entity</td></tr><tr><td><i class=\"icon-play\"/></td><td>create</td><td>((action . \"create\"))</td></tr><tr><td><i class=\"icon-pause\"/></td><td>delete</td><td>((action . \"delete\"))</td></tr></table>"
     (orgtrello-admin/--actions '(((action . "create")) ((action . "delete"))) "icon-play" "icon-pause")))
 
+(expectations
+  (expect "entity name"             (orgtrello-admin/--detail-entity 3 '((name . "entity name"))))
+  (expect '((name . "entity name")) (orgtrello-admin/--detail-entity 5 '((name . "entity name")))))
+
+
 (message "Tests done!")
 
 (provide 'org-trello-tests)

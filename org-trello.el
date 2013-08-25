@@ -98,7 +98,7 @@
 
 ;; #################### orgtrello-log
 
-(defvar orgtrello/loglevel 3
+(defvar *orgtrello-log/level* 3
   "Set log level.
 Levels:
 0 - no logging
@@ -111,7 +111,7 @@ Levels:
 
 (defun orgtrello-log/msg (level &rest args)
   "Log message."
-  (when (<= level orgtrello/loglevel)
+  (when (<= level *orgtrello-log/level*)
     (apply 'message args)))
 
 (orgtrello-log/msg 4 "org-trello - orgtrello-log loaded!")
@@ -1157,6 +1157,10 @@ refresh(\"/proxy/admin/current-action/\", '#current-action');
                   (td () "Action")
                   (td () "Entity"))))
 
+(defun orgtrello-admin/--detail-entity (log-level entity-data)
+  "Depending on the debug level, will display either the full entity data or simply its name."
+  (if (= log-level 3) (orgtrello-query/--name entity-data) entity-data))
+
 (defun orgtrello-admin/--entity (entity-content-file icon)
   "Compute the entity file display rendering."
   (esxml-to-xml
@@ -1164,7 +1168,7 @@ refresh(\"/proxy/admin/current-action/\", '#current-action');
      ()
      (td () (i ((class . ,icon))))
      (td () ,(orgtrello-query/--action entity-content-file))
-     (td () ,(format "%S" entity-content-file)))))
+     (td () ,(format "%s" (orgtrello-admin/--detail-entity *orgtrello-log/level* entity-content-file))))))
 
 (defun orgtrello-admin/--actions (content-files &optional icon-array-running icon-array-next)
   "Return the list of files to send to trello"
