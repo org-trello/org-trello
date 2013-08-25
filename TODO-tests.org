@@ -200,3 +200,12 @@
 *** TODO Ch. 12 - Traits
 :PROPERTIES:
 :END:
+
+* TODO Organize party [2/4]
+ - [-] call people [1/3]
+   - [ ] Peter
+   - [X] Sarah
+   - [ ] Sam
+ - [X] order food
+ - [ ] think about what music to play
+ - [X] talk to the neighbors

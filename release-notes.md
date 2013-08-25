@@ -1,3 +1,14 @@
+# 0.1.5
+
+- Symmetry in the architecture - the deletion must pass through the consumer too.
+- Upgrade version
+- webadmin: Improve the rendering of the webadmin page to add headers and action
+- webadmin: Add a current scanning entry in the webadmin page
+- Defining log level using variable
+- Redefine main function to sync an entity (they are badly named).
+- Release notes
+- Release
+
 # 0.1.4
 
 - Prepare the hierarchy files to avoid problem like https://github.com/ardumont/org-trello/issues/37#issuecomment-23151353
