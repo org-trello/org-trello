@@ -4,7 +4,7 @@
 
 ;; Author: Antoine R. Dumont <eniotna.t AT gmail.com>
 ;; Maintainer: Antoine R. Dumont <eniotna.t AT gmail.com>
-;; Version: 0.1.4
+;; Version: 0.1.5
 ;; Package-Requires: ((org "8.0.7") (dash "1.5.0") (request "0.2.0") (cl-lib "0.3.0") (json "1.2") (elnode "0.9.9.7.6") (esxml "0.3.0"))
 ;; Keywords: org-mode trello sync org-trello
 ;; URL: https://github.com/ardumont/org-trello
@@ -75,7 +75,7 @@
 
 ;; #################### static setup
 
-(defvar *ORGTRELLO-VERSION*           "0.1.4"            "Version")
+(defvar *ORGTRELLO-VERSION*           "0.1.5"            "Version")
 (defvar *consumer-key*                nil                "Id representing the user.")
 (defvar *access-token*                nil                "Read/write access token to use trello on behalf of the user.")
 (defvar *ORGTRELLO-MARKER*            "orgtrello-marker" "A marker used inside the org buffer to synchronize entries.")

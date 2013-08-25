@@ -584,13 +584,14 @@ CLOSED: [2013-08-24 sam. 15:21]
 CLOSED: [2013-08-24 sam. 15:41]
 ** DONE Order when syncing to trello
 CLOSED: [2013-08-24 sam. 18:35]
-* IN-PROGRESS 0.1.5 [0%]
+* IN-PROGRESS 0.1.5 [16%]
 ** DONE Symmetry in the architecture - the deletion must pass through the consumer too.
 CLOSED: [2013-08-25 dim. 10:12]
+** DONE Upgrade version
+CLOSED: [2013-08-25 dim. 10:14]
 ** TODO Improve the rendering of the webadmin page to add headers and action
 ** TODO Add a current scanning entry in the webadmin page
 ** TODO Add an action button to stop every running action
-** TODO Upgrade version
 ** TODO Release notes
 ** TODO Release
 * TODO 0.1.6 [%]
