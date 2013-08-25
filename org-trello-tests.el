@@ -430,6 +430,56 @@
   (expect "entity name"             (orgtrello-admin/--detail-entity 3 '((name . "entity name"))))
   (expect '((name . "entity name")) (orgtrello-admin/--detail-entity 5 '((name . "entity name")))))
 
+(expectations
+ (expect '("error0" "error1") (org-action/--filter-error-messages '("error0" :ok "error1")))
+ (expect nil                  (org-action/--filter-error-messages '(:ok :ok :ok))))
+
+(expectations
+  (expect '(:ok) (org-action/--execute-controls '((lambda (e) :ok))))
+  (expect '(:ok "ko") (org-action/--execute-controls '((lambda (e) :ok)
+                                                       (lambda (e) "ko"))))
+  (expect '(:ok) (org-action/--execute-controls '((lambda (a) :ok)) 'args))
+  (expect '(:ok "ko") (org-action/--execute-controls '((lambda (a) :ok)
+                                                       (lambda (a) "ko")) 'arg0)))
+
+(expectations
+  (expect   "List of errors:
+ - Level too high. Do not deal with entity other than card/checklist/items!
+"
+      (org-action/--functional-controls-then-do
+       '(orgtrello/--right-level-p)
+       (orgtrello-hash/make-hash-org 4 :kwd :name nil :due :position :buffer-name)
+       (lambda (entity s) (format "%S %s" entity s))
+       "- hello"))
+
+  (expect "#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:buffername :buffer-name :position :position :level 3 :keyword :kwd :name :name :id nil :due :due)) - hello"
+    (org-action/--functional-controls-then-do
+     '(orgtrello/--right-level-p)
+     (orgtrello-hash/make-hash-org 3 :kwd :name nil :due :position :buffer-name)
+     (lambda (entity s) (format "%S %s" entity s))
+     "- hello")))
+
+(expectations
+  (expect "List of errors:
+ - Entity must been synchronized with trello first!
+"
+    (org-action/--functional-controls-then-do
+     '(orgtrello/--right-level-p orgtrello/--already-synced-p)
+     (orgtrello-hash/make-hash-org 1 :kwd :name nil :due :position :buffer-name)
+     (lambda (entity s) (format "%S %s" entity s))
+     "- hello"))
+  (expect "#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:buffername :buffer-name :position :position :level 1 :keyword :kwd :name :name :id :some-id :due :due)) - hello"
+
+    (org-action/--functional-controls-then-do
+     '(orgtrello/--right-level-p orgtrello/--already-synced-p)
+     (orgtrello-hash/make-hash-org 1 :kwd :name :some-id :due :position :buffer-name)
+     (lambda (entity s) (format "%S %s" entity s))
+     "- hello")))
+
+
+(expectations
+  (expect "- message 1\n- message 2\n" (org-action/--compute-error-message '("message 1" "message 2"))))
+
 (message "Tests done!")
 
 (provide 'org-trello-tests)

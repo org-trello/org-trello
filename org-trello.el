@@ -483,19 +483,44 @@ Levels:
          retval)
      ,@clean-up))
 
+(defun org-action/--execute-controls (controls-or-actions-fns &optional entity)
+  "Given a series of controls, execute them and return the results."
+  (--map (funcall it entity) controls-or-actions-fns))
+
+(defun org-action/--filter-error-messages (control-or-actions)
+  "Given a list of control or actions done, filter only the error message. Return nil if no error message."
+  (--filter (not (equal :ok it)) control-or-actions))
+
+(defun org-action/--compute-error-message (error-msgs)
+  "Given a list of error messages, compute them as a string."
+  (apply 'concat (--map (concat "- " it "\n") error-msgs)))
+
 (defun org-action/--controls-or-actions-then-do (control-or-action-fns fn-to-execute &optional nolog-p)
-  "Execute the function fn if control-fns is nil or if the result of apply every function to fn is ok."
+  "Execute the function fn-to-execute if control-or-action-fns is nil or if the result of apply every function to fn-to-execute is ok."
   (if control-or-action-fns
-      (let* ((org-trello/--controls-or-actions-done (--map (funcall it) control-or-action-fns))
-             (org-trello/--error-messages (--filter (not (equal :ok it)) org-trello/--controls-or-actions-done)))
+      (let* ((org-trello/--controls-or-actions-done (org-action/--execute-controls control-or-action-fns))
+             (org-trello/--error-messages           (org-action/--filter-error-messages org-trello/--controls-or-actions-done)))
         (if org-trello/--error-messages
             (unless nolog-p
                     ;; there are some trouble, we display all the error messages to help the user understand the problem
-                    (orgtrello-log/msg *OT/ERROR* "List of errors:\n %s" (--mapcat (concat "- " it "\n") org-trello/--error-messages)))
+                    (orgtrello-log/msg *OT/ERROR* "List of errors:\n %s" (org-action/--compute-error-message org-trello/--error-messages)))
           ;; ok execute the function as the controls are ok
           (funcall fn-to-execute)))
-    ;; no control, we simply execute the function
-    (funcall fn-to-execute)))
+      ;; no control, we simply execute the function
+      (funcall fn-to-execute)))
+
+(defun org-action/--functional-controls-then-do (control-fns entity fn-to-execute args)
+  "Execute the function fn if control-fns is nil or if the result of apply every function to fn-to-execute is ok."
+  (if control-fns
+      (let* ((org-trello/--controls-done  (org-action/--execute-controls control-fns entity))
+             (org-trello/--error-messages (org-action/--filter-error-messages org-trello/--controls-done)))
+        (if org-trello/--error-messages
+            ;; there are some trouble, we display all the error messages to help the user understand the problem
+            (orgtrello-log/msg *OT/ERROR* "List of errors:\n %s" (org-action/--compute-error-message org-trello/--error-messages))
+            ;; ok execute the function as the controls are ok
+            (funcall fn-to-execute entity args)))
+      ;; no control, we simply execute the function
+      (funcall fn-to-execute entity args)))
 
 (defun org-action/--msg-controls-or-actions-then-do (msg control-or-action-fns fn-to-execute &optional save-buffer-p reload-setup-p nolog-p)
   "A simple decorator function to display message in mini-buffer before and after the execution of the control"
@@ -912,11 +937,11 @@ Levels:
   ;; undo boundary, to make a unit of undo
   (undo-boundary))
 
-(defun orgtrello-proxy/--check-network-ok ()
+(defun orgtrello-proxy/--check-network-ok (&optional args)
   "Ensure there is some network running (simply check that there is more than the lo interface)."
   (if (< 1 (length (network-interface-list))) :ok "No network!"))
 
-(defun orgtrello-proxy/--check-no-running-timer ()
+(defun orgtrello-proxy/--check-no-running-timer (&optional args)
   "Ensure there is not another running timer already."
   (if (file-exists-p (orgtrello-proxy/--compute-lock-filename)) "Timer already running!" :ok))
 
@@ -1328,7 +1353,7 @@ refresh(\"/proxy/admin/current-action/\", '#current-action');
   "org keywords used (based on org-todo-keywords-1)."
   org-todo-keywords-1)
 
-(defun orgtrello/--setup-properties ()
+(defun orgtrello/--setup-properties (&optional args)
   "Setup the properties according to the org-mode setup. Return :ok."
   ;; read the setup
   (orgtrello-action/reload-setup)
@@ -1345,7 +1370,7 @@ refresh(\"/proxy/admin/current-action/\", '#current-action');
     (setq *HMAP-ID-NAME* orgtrello/--hmap-id-name)
     :ok))
 
-(defun orgtrello/--control-encoding ()
+(defun orgtrello/--control-encoding (&optional args)
   "Use utf-8, otherwise, there will be trouble."
   (progn
     (orgtrello-log/msg *OT/ERROR* "Ensure you use utf-8 encoding for your org buffer.")
@@ -1359,14 +1384,14 @@ refresh(\"/proxy/admin/current-action/\", '#current-action');
   "Compute the board's id"
   (assoc-default *BOARD-ID* org-file-properties))
 
-(defun orgtrello/--control-properties ()
+(defun orgtrello/--control-properties (&optional args)
   "org-trello needs the properties board-id and all list id from the trello board to be setuped on header property file. Returns :ok if everything is ok, or the error message if problems."
   (let ((orgtrello/--hmap-count (hash-table-count *HMAP-ID-NAME*)))
     (if (and org-file-properties (orgtrello/--board-id) (= (length *LIST-NAMES*) orgtrello/--hmap-count))
         :ok
         "Setup problem.\nEither you did not connect your org-mode buffer with a trello board, to correct this:\n  * attach to a board through C-c o I or M-x org-trello/install-board-and-lists-ids\n  * or create a board from scratch with C-c o b or M-x org-trello/create-board).\nEither your org-mode's todo keyword list and your trello board lists are not named the same way (which they must).\nFor this, connect to trello and rename your board's list according to your org-mode's todo list.\nAlso, you can specify on your org-mode buffer the todo list you want to work with, for example: #+TODO: TODO DOING | DONE FAIL (hit C-c C-c to refresh the setup)")))
 
-(defun orgtrello/--control-keys ()
+(defun orgtrello/--control-keys (&optional args)
   "org-trello needs the *consumer-key* and the *access-token* to access the trello resources. Returns :ok if everything is ok, or the error message if problems."
   (if (or (and *consumer-key* *access-token*)
           ;; the data are not set,
@@ -1568,28 +1593,47 @@ refresh(\"/proxy/admin/current-action/\", '#current-action');
         orgtrello/--current-entry-id
         (orgtrello/compute-marker (orgtrello/--buffername entry) (orgtrello/--name entry) (orgtrello/--position entry)))))
 
-(defun orgtrello/do-create-simple-entity ()
-  "Do the actual simple creation of a card."
-  (let* ((orgtrello/--current-entry    (orgtrello-data/metadata))
-         (orgtrello/--marker           (orgtrello/--compute-marker-from-entry orgtrello/--current-entry)))
-    (when (< (orgtrello/--level orgtrello/--current-entry) 4)
-           ;; set a marker for later getting back to information
-           (orgtrello/--set-marker orgtrello/--marker)
-           (puthash :action *ORGTRELLO-ACTION-SYNC* orgtrello/--current-entry)
-           (puthash :marker orgtrello/--marker      orgtrello/--current-entry)
-           ;; and send the data to the proxy
-           (orgtrello-proxy/http-producer orgtrello/--current-entry))))
+(defun orgtrello/--right-level-p (entity)
+  "Compute if the level is correct (not higher than level 4)."
+  (if (< (orgtrello/--level entity) 4) :ok "Level too high. Do not deal with entity other than card/checklist/items!"))
 
-(defun orgtrello/do-create-complex-entity ()
+(defun orgtrello/--already-synced-p (entity)
+  "Compute if the entity has already been synchronized."
+  (if (orgtrello/--id entity) :ok "Entity must been synchronized with trello first!"))
+
+(defun orgtrello/--delegate-to-the-proxy (entity action)
+  "Execute the delegation to the consumer."
+  (let ((orgtrello/--marker (orgtrello/--compute-marker-from-entry entity)))
+    ;; set a marker for later getting back to information
+    (orgtrello/--set-marker orgtrello/--marker)
+    (puthash :action action             entity)
+    (puthash :marker orgtrello/--marker entity)
+    ;; and send the data to the proxy
+    (orgtrello-proxy/http-producer entity)))
+
+(defun orgtrello/--checks-then-delegate-action-on-entity-to-proxy (functional-controls action)
+  "Execute the functional controls then if all pass, delegate the action 'action' to the proxy."
+  (let ((orgtrello/--entity (orgtrello-data/metadata)))
+    (org-action/--functional-controls-then-do functional-controls orgtrello/--entity 'orgtrello/--delegate-to-the-proxy action)))
+
+(defun orgtrello/do-delete-simple (&optional sync)
+  "Do the deletion of an entity."
+  (orgtrello/--checks-then-delegate-action-on-entity-to-proxy '(orgtrello/--right-level-p orgtrello/--already-synced-p) *ORGTRELLO-ACTION-DELETE*))
+
+(defun orgtrello/do-sync-entity ()
+  "Do the entity synchronization (if never synchronized, will create it, update it otherwise)."
+  (orgtrello/--checks-then-delegate-action-on-entity-to-proxy '(orgtrello/--right-level-p) *ORGTRELLO-ACTION-SYNC*))
+
+(defun orgtrello/do-sync-full-entity ()
   "Do the actual full card creation - from card to item. Beware full side effects..."
   (orgtrello-log/msg *OT/INFO* "Synchronizing full entity with its structure on board '%s'..." (orgtrello/--board-name))
   ;; iterate over the map of entries and sync them, breadth first
-  (org-map-tree 'orgtrello/do-create-simple-entity))
+  (org-map-tree 'orgtrello/do-sync-entity))
 
 (defun orgtrello/do-sync-full-file ()
   "Full org-mode file synchronisation."
   (orgtrello-log/msg *OT/WARN* "Synchronizing org-mode file to the board '%s'. This may take some time, some coffee may be a good idea..." (orgtrello/--board-name))
-  (org-map-entries 'orgtrello/do-create-simple-entity t 'file))
+  (org-map-entries 'orgtrello/do-sync-entity t 'file))
 
 (defun trace (e &optional label)
   "Decorator for some inaccessible code to easily 'message'."
@@ -1759,19 +1803,6 @@ refresh(\"/proxy/admin/current-action/\", '#current-action');
   (let* ((level       (orgtrello/--level meta))
          (dispatch-fn (gethash level *MAP-DISPATCH-DELETE* 'orgtrello/--too-deep-level)))
     (funcall dispatch-fn meta parent-meta)))
-
-(defun orgtrello/do-delete-simple (&optional sync)
-  "Do the deletion of an entity."
-  (let* ((orgtrello/--current-entry    (orgtrello-data/metadata))
-         (orgtrello/--current-entry-id (orgtrello/--id orgtrello/--current-entry)))
-    (when (< (orgtrello/--level orgtrello/--current-entry) 4)
-        (if (and orgtrello/--current-entry orgtrello/--current-entry-id)
-            (progn
-              (puthash :marker orgtrello/--current-entry-id orgtrello/--current-entry)
-              (puthash :action *ORGTRELLO-ACTION-DELETE*    orgtrello/--current-entry)
-              ;; and send the data to the proxy
-              (orgtrello-proxy/http-producer orgtrello/--current-entry))
-            "Entity not synchronized on trello yet!"))))
 
 (defun orgtrello/--do-delete-card (&optional sync)
   "Delete the card."
@@ -1980,7 +2011,7 @@ refresh(\"/proxy/admin/current-action/\", '#current-action');
   (org-action/--deal-with-consumer-msg-controls-or-actions-then-do
      "Requesting entity sync"
      '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties orgtrello/--control-encoding)
-     'orgtrello/do-create-simple-entity))
+     'orgtrello/do-sync-entity))
 
 (defun org-trello/create-complex-entity ()
   "Control first, then if ok, create an entity and all its arborescence if need be."
@@ -1988,7 +2019,7 @@ refresh(\"/proxy/admin/current-action/\", '#current-action');
   (org-action/--deal-with-consumer-msg-controls-or-actions-then-do
      "Requesting entity and structure sync"
      '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties orgtrello/--control-encoding)
-     'orgtrello/do-create-complex-entity))
+     'orgtrello/do-sync-full-entity))
 
 (defun org-trello/sync-to-trello ()
   "Control first, then if ok, sync the org-mode file completely to trello."
