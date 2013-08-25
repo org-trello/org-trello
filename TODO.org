@@ -584,7 +584,16 @@ CLOSED: [2013-08-24 sam. 15:21]
 CLOSED: [2013-08-24 sam. 15:41]
 ** DONE Order when syncing to trello
 CLOSED: [2013-08-24 sam. 18:35]
-* 0.1.5 [%]
+* IN-PROGRESS 0.1.5 [0%]
+** DONE Symmetry in the architecture - the deletion must pass through the consumer too.
+CLOSED: [2013-08-25 dim. 10:12]
+** TODO Improve the rendering of the webadmin page to add headers and action
+** TODO Add a current scanning entry in the webadmin page
+** TODO Add an action button to stop every running action
+** TODO Upgrade version
+** TODO Release notes
+** TODO Release
+* TODO 0.1.6 [%]
 ** TODO POC: use a temporary buffer to sync with trello, when done, merge with the user's buffer.
 ** TODO Ensure sync-from-trello keep the order of the checklists clean
 ** TODO Now that elnode is here, this may be simpler to use a fake trello server (use clojure :D)

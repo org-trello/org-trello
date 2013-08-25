@@ -379,6 +379,24 @@
                 (dictionary-lessp "132zzzzz" "ab132z")
                 (null (dictionary-lessp "1.32" "1ab")))))
 
+(expectations
+ (expect 'orgtrello-proxy/--delete      (orgtrello-proxy/--dispatch-action "delete"))
+ (expect 'orgtrello-proxy/--sync-entity (orgtrello-proxy/--dispatch-action "sync-entity"))
+ (expect nil                            (orgtrello-proxy/--dispatch-action "nothing")))
+
+(expectations
+  (expect :id                                                         (orgtrello/--compute-marker-from-entry (orgtrello-hash/make-hash-org :level :kwd :name      :id  :due :position :buffername)))
+  (expect "orgtrello-marker-2a0b98e652ce6349a0659a7a8eeb3783ffe9a11a" (orgtrello/--compute-marker-from-entry (orgtrello-hash/make-hash-org :level :kwd "some-name" nil :due 1234      "buffername")))
+  (expect "orgtrello-marker-6c59c5dcf6c83edaeb3f4923bfd929a091504bb3" (orgtrello/--compute-marker-from-entry (orgtrello-hash/make-hash-org :level :kwd "some-name" nil :due 4321      "some-other-buffername"))))
+
+(expectations
+  (expect "orgtrello-marker-2a0b98e652ce6349a0659a7a8eeb3783ffe9a11a" (orgtrello/compute-marker "buffername" "some-name" 1234))
+  (expect "orgtrello-marker-6c59c5dcf6c83edaeb3f4923bfd929a091504bb3" (orgtrello/compute-marker "some-other-buffername" "some-name" 4321)))
+
+(expectations
+  (expect "marker" (orgtrello-proxy/--compute-pattern-search-from-marker "marker"))
+  (expect ":orgtrello-marker-tony:" (orgtrello-proxy/--compute-pattern-search-from-marker "orgtrello-marker-tony")))
+
 (message "Tests done!")
 
 (provide 'org-trello-tests)

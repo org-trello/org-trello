@@ -353,25 +353,27 @@ Levels:
 (defun orgtrello-query/--sync   (query-map) "Retrieve the http sync flag" (gethash :sync query-map))
 (defun orgtrello-query/--params (query-map) "Retrieve the http params"    (gethash :params query-map))
 
-(defun orgtrello-query/--marker         (entity-data) "Extract the marker of the entity from the entity-data"          (assoc-default 'marker entity-data))
-(defun orgtrello-query/--buffername     (entity-data) "Extract the buffername of the entity from the entity-data"      (assoc-default 'buffername entity-data))
-(defun orgtrello-query/--position       (entity-data) "Extract the position of the entity from the entity-data"        (assoc-default 'position entity-data))
-(defun orgtrello-query/--id             (entity-data) "Extract the id of the entity from the entity"                   (assoc-default 'id entity-data))
-(defun orgtrello-query/--name           (entity-data) "Extract the name of the entity from the entity"                 (assoc-default 'name entity-data))
-(defun orgtrello-query/--list-id        (entity-data) "Extract the list identitier of the entity from the entity"      (assoc-default 'idList entity-data))
-(defun orgtrello-query/--checklist-ids  (entity-data) "Extract the checklist identifier of the entity from the entity" (assoc-default 'idChecklists entity-data))
-(defun orgtrello-query/--check-items    (entity-data) "Extract the checklist identifier of the entity from the entity" (assoc-default 'checkItems entity-data))
-(defun orgtrello-query/--card-id        (entity-data) "Extract the card identifier of the entity from the entity"      (assoc-default 'idCard entity-data))
-(defun orgtrello-query/--due            (entity-data) "Extract the due date of the entity from the query response"     (assoc-default 'due entity-data))
-(defun orgtrello-query/--state          (entity-data) "Extract the state of the entity"                                (assoc-default 'state entity-data))
-(defun orgtrello-query/--close-property (entity-data) "Extract the closed property of the entity"                      (assoc-default 'closed entity-data))
-(defun orgtrello-query/--callback       (entity-data) "Extract the callback property of the entity"                    (assoc-default 'callback entity-data))
-(defun orgtrello-query/--sync-          (entity-data) "Extract the sync property of the entity"                        (assoc-default 'sync entity-data))
-(defun orgtrello-query/--level          (entity-data) "Extract the callback property of the entity"                    (assoc-default 'level entity-data))
-(defun orgtrello-query/--method-        (entity-data) "Extract the method property of the entity"                      (assoc-default 'method entity-data))
-(defun orgtrello-query/--uri-           (entity-data) "Extract the uri property of the entity"                         (assoc-default 'uri entity-data))
-(defun orgtrello-query/--params-        (entity-data) "Extract the params property of the entity"                      (assoc-default 'params entity-data))
-(defun orgtrello-query/--start          (entity-data) "Extract the start property of the entity"                       (assoc-default 'start entity-data))
+(defun orgtrello-query/--retrieve-data  (symbol entity-data) "Own generic accessor"                                    (assoc-default symbol entity-data))
+(defun orgtrello-query/--marker         (entity-data) "Extract the marker of the entity from the entity-data"          (orgtrello-query/--retrieve-data 'marker entity-data))
+(defun orgtrello-query/--buffername     (entity-data) "Extract the buffername of the entity from the entity-data"      (orgtrello-query/--retrieve-data 'buffername entity-data))
+(defun orgtrello-query/--position       (entity-data) "Extract the position of the entity from the entity-data"        (orgtrello-query/--retrieve-data 'position entity-data))
+(defun orgtrello-query/--id             (entity-data) "Extract the id of the entity from the entity"                   (orgtrello-query/--retrieve-data 'id entity-data))
+(defun orgtrello-query/--name           (entity-data) "Extract the name of the entity from the entity"                 (orgtrello-query/--retrieve-data 'name entity-data))
+(defun orgtrello-query/--list-id        (entity-data) "Extract the list identitier of the entity from the entity"      (orgtrello-query/--retrieve-data 'idList entity-data))
+(defun orgtrello-query/--checklist-ids  (entity-data) "Extract the checklist identifier of the entity from the entity" (orgtrello-query/--retrieve-data 'idChecklists entity-data))
+(defun orgtrello-query/--check-items    (entity-data) "Extract the checklist identifier of the entity from the entity" (orgtrello-query/--retrieve-data 'checkItems entity-data))
+(defun orgtrello-query/--card-id        (entity-data) "Extract the card identifier of the entity from the entity"      (orgtrello-query/--retrieve-data 'idCard entity-data))
+(defun orgtrello-query/--due            (entity-data) "Extract the due date of the entity from the query response"     (orgtrello-query/--retrieve-data 'due entity-data))
+(defun orgtrello-query/--state          (entity-data) "Extract the state of the entity"                                (orgtrello-query/--retrieve-data 'state entity-data))
+(defun orgtrello-query/--close-property (entity-data) "Extract the closed property of the entity"                      (orgtrello-query/--retrieve-data 'closed entity-data))
+(defun orgtrello-query/--callback       (entity-data) "Extract the callback property of the entity"                    (orgtrello-query/--retrieve-data 'callback entity-data))
+(defun orgtrello-query/--sync-          (entity-data) "Extract the sync property of the entity"                        (orgtrello-query/--retrieve-data 'sync entity-data))
+(defun orgtrello-query/--level          (entity-data) "Extract the callback property of the entity"                    (orgtrello-query/--retrieve-data 'level entity-data))
+(defun orgtrello-query/--method-        (entity-data) "Extract the method property of the entity"                      (orgtrello-query/--retrieve-data 'method entity-data))
+(defun orgtrello-query/--uri-           (entity-data) "Extract the uri property of the entity"                         (orgtrello-query/--retrieve-data 'uri entity-data))
+(defun orgtrello-query/--params-        (entity-data) "Extract the params property of the entity"                      (orgtrello-query/--retrieve-data 'params entity-data))
+(defun orgtrello-query/--start          (entity-data) "Extract the start property of the entity"                       (orgtrello-query/--retrieve-data 'start entity-data))
+(defun orgtrello-query/--action         (entity-data) "Extract the action property of the entity"                      (orgtrello-query/--retrieve-data 'action entity-data))
 
 (defun orgtrello-query/--compute-url (server uri)
   "Compute the trello url from the given uri."
@@ -642,10 +644,16 @@ Levels:
   (orgtrello-proxy/--getting-back-to-marker
    (orgtrello/--compute-entity-to-org-entry data)))
 
+(defun orgtrello-proxy/--compute-pattern-search-from-marker (marker)
+  "Given a marker, compute the pattern to look for in the file."
+  (if (string-match-p (format "^%s-" *ORGTRELLO-MARKER*) marker)
+      (format ":%s:" marker)
+      marker))
+
 (defun orgtrello-proxy/--getting-back-to-marker (marker)
   "Given a marker, getting back to marker function."
   (goto-char (point-min))
-  (search-forward (format ":%s:" marker) nil t))
+  (search-forward (orgtrello-proxy/--compute-pattern-search-from-marker marker) nil t))
 
 (defun orgtrello-proxy/--standard-post-or-put-success-callback (entity-to-sync file-to-cleanup)
   "Return a callback function able to deal with the update of the buffer at a given position."
@@ -691,43 +699,86 @@ Levels:
   "Move the file to the running folder to specify a sync is running."
   (rename-file file file-archive-name t))
 
-(defun orgtrello-proxy/--deal-with-entity-sync (entity-data file-to-archive)
+(defun orgtrello-proxy/--dispatch-action (action)
+  (cond ((string= "delete"     action)  'orgtrello-proxy/--delete)
+        ((string= "sync-entity" action) 'orgtrello-proxy/--sync-entity)))
+
+(defun orgtrello-proxy/--sync-entity (entity-data full-metadata entry-file-archived)
+  "Execute the entity synchronization."
+  (let ((orgtrello-query/--query-map (orgtrello/--dispatch-create full-metadata)))
+    ;; Execute the request
+    (if (hash-table-p orgtrello-query/--query-map)
+        ;; execute the request
+        (orgtrello-query/http-trello
+         orgtrello-query/--query-map
+         *do-sync-query*
+         (orgtrello-proxy/--standard-post-or-put-success-callback entity-data entry-file-archived)
+         (cl-defun orgtrello-proxy/--standard-post-or-put-error-callback (&allow-other-keys) (throw 'org-trello-timer-go-to-sleep t)))
+        (progn
+          (orgtrello-log/msg 3 orgtrello-query/--query-map)
+          (throw 'org-trello-timer-go-to-sleep t)))))
+
+(defun orgtrello-proxy/--deal-with-entity-action (entity-data file-to-archive)
   "Compute the synchronization of an entity (retrieving latest information from buffer)"
-  (let* ((position                 (orgtrello-query/--position entity-data))  ;; position is mandatory
-         (buffer-name              (orgtrello-query/--buffername entity-data));; buffer-name too
-         (level                    (orgtrello-query/--level entity-data))     ;; level too
-         (orgtrello-query/--marker (orgtrello/compute-marker buffer-name (orgtrello-query/--name entity-data) position)))
-    (orgtrello-log/msg 5 "Proxy-consumer - Searching entity metadata from buffer '%s' at point '%s' to sync..." buffer-name position)
+  (let* ((op/--position                  (orgtrello-query/--position entity-data))                                   ;; position is mandatory
+         (op/--buffer-name               (orgtrello-query/--buffername entity-data))                                 ;; buffer-name too
+         (op/--entry-file-archived       (orgtrello-proxy/--archived-scanning-file file-to-archive))
+         (op/--action-fn                 (trace (orgtrello-proxy/--dispatch-action (orgtrello-query/--action entity-data)))) ;; what's the running action?
+         (op/--marker                    (orgtrello-query/--marker entity-data)))                                    ;; retrieve the marker
+    (orgtrello-log/msg 5 "Proxy-consumer - Searching entity metadata from buffer '%s' at point '%s' to sync..." op/--buffer-name op/--position)
     ;; switch to the right buffer
-    (set-buffer buffer-name)
+    (set-buffer op/--buffer-name)
+    ;; archive the scanned file
+    (orgtrello-proxy/--archive-entity-file-when-scanning file-to-archive op/--entry-file-archived)
     ;; will update via tag the trello id of the new persisted data (if needed)
     (orgtrello-proxy/--safe-wrap-or-throw-error
      (save-excursion
        ;; Get back to the buffer's position to update
-       (when (orgtrello-proxy/--getting-back-to-marker orgtrello-query/--marker)
-             ;; sync the entity
-             (let* ((orgtrello-query/--entry-metadata      (orgtrello-data/entry-get-full-metadata))
-                    (orgtrello-query/--entry-file-archived (orgtrello-proxy/--archived-scanning-file file))
-                    (orgtrello-query/--query-map           (orgtrello/--dispatch-create orgtrello-query/--entry-metadata)))
-               ;; archive the scanned file
-               (orgtrello-proxy/--archive-entity-file-when-scanning file-to-archive orgtrello-query/--entry-file-archived)
-               ;; Execute the request
-               (if (hash-table-p orgtrello-query/--query-map)
-                   ;; execute the request
-                   (orgtrello-query/http-trello
-                    orgtrello-query/--query-map
-                    *do-sync-query*
-                    (orgtrello-proxy/--standard-post-or-put-success-callback entity-data orgtrello-query/--entry-file-archived)
-                    (cl-defun orgtrello-proxy/--standard-post-or-put-error-callback (&allow-other-keys) (throw 'org-trello-timer-go-to-sleep t)))
-                   (progn
-                     (orgtrello-log/msg 3 orgtrello-query/--query-map)
-                     (throw 'org-trello-timer-go-to-sleep t)))))))))
+       (when (orgtrello-proxy/--getting-back-to-marker op/--marker)
+             ;; do the actual action
+             (funcall op/--action-fn entity-data (orgtrello-data/entry-get-full-metadata) op/--entry-file-archived))))))
 
-(defun orgtrello-proxy/--deal-with-entity-file-sync (file)
-  "Given an entity file, load it and run the query through trello"
+(defun orgtrello-proxy/--standard-delete-success-callback (entity-to-sync file-to-cleanup)
+  "Return a callback function able to deal with the position."
+  (lexical-let ((op/--entry-position    (orgtrello-query/--position entity-to-sync))
+                (op/--entry-buffer-name (orgtrello-query/--buffername entity-to-sync))
+                (op/--entry-file        file-to-cleanup)
+                (op/--marker            (orgtrello-query/--marker entity-to-sync)))
+    (lambda (&rest response)
+      (orgtrello-action/safe-wrap
+       (progn
+         (set-buffer op/--entry-buffer-name)
+         (save-excursion
+           (when (orgtrello-proxy/--getting-back-to-marker op/--marker)
+                 (org-back-to-heading t)
+                 (org-delete-property *ORGTRELLO-ID*)
+                 (hide-subtree)
+                 (beginning-of-line)
+                 (kill-line)
+                 (kill-line))))
+       (progn
+         (save-buffer)
+         (orgtrello-log/msg 3 "Deleting entity in the buffer '%s' at point '%s' done!"
+                            op/--entry-buffer-name
+                            op/--entry-position))))))
+
+(defun orgtrello-proxy/--delete (entity-data full-metadata entry-file-archived)
+  "Execute the entity deletion."
+  (let ((orgtrello-query/--query-map (orgtrello/--dispatch-delete (orgtrello-data/current full-metadata) (orgtrello-data/parent full-metadata))))
+      (if (hash-table-p orgtrello-query/--query-map)
+          (orgtrello-query/http-trello
+           orgtrello-query/--query-map
+           *do-sync-query*
+           (orgtrello-proxy/--standard-delete-success-callback entity-data entry-file-archived))
+          (progn
+            (orgtrello-log/msg 3 orgtrello-query/--query-map)
+            (throw 'org-trello-timer-go-to-sleep t)))))
+
+(defun orgtrello-proxy/--deal-with-entity-file-action (file)
+  "Given an entity file, load it and run a query action through trello"
   (when (file-exists-p file)
         ;; extract the entity data
-        (orgtrello-proxy/--deal-with-entity-sync (-> file orgtrello-proxy/--read-lines read) file)))
+        (orgtrello-proxy/--deal-with-entity-action (-> file orgtrello-proxy/--read-lines read) file)))
 
 (defun dictionary-lessp (str1 str2)
   "return t if STR1 is < STR2 when doing a dictionary compare (splitting the string at numbers and doing numeric compare with them)"
@@ -781,13 +832,12 @@ Levels:
         orgtrello-proxy/--list-files-result
         (sort orgtrello-proxy/--list-files-result 'dictionary-lessp))))
 
-(defun orgtrello-proxy/--deal-with-directory-sync (level directory)
-  "Given a directory, list the files and take the first one (entity) and sync it with trello. Call again if it remains other entities."
+(defun orgtrello-proxy/--deal-with-directory-action (level directory)
+  "Given a directory, list the files and take the first one (entity) and do some action on it with trello. Call again if it remains other entities."
   (let ((orgtrello-proxy/--files (orgtrello-proxy/--list-files directory)))
     (when orgtrello-proxy/--files
-          ;; try and sync the file
-          (orgtrello-proxy/--deal-with-entity-file-sync (car orgtrello-proxy/--files))
-          ;; if it potentially remains files to sync, recall recursively this function
+          (orgtrello-proxy/--deal-with-entity-file-action (car orgtrello-proxy/--files))
+          ;; if it potentially remains files, recall recursively this function
           (when (< 1 (length orgtrello-proxy/--files)) (orgtrello-proxy/--deal-with-level level directory)))))
 
 (defun orgtrello-proxy/--level-done-p (level)
@@ -798,7 +848,7 @@ Levels:
       null))
 
 (defun orgtrello-proxy/--level-inf-done-p (level)
-  "Ensure the synchronization of the lower level is done (except for level 1 which has no deps)!"
+  "Ensure the actions of the lower level is done (except for level 1 which has no deps)!"
   (cond ((= 1 level) t)
         ((= 2 level) (orgtrello-proxy/--level-done-p 1))
         ((= 3 level) (and (orgtrello-proxy/--level-done-p 2) (orgtrello-proxy/--level-done-p 1)))))
@@ -806,7 +856,7 @@ Levels:
 (defun orgtrello-proxy/--deal-with-level (level directory)
  "Given a level, retrieve one file (which represents an entity) for this level and sync it, then remove such file. Then recall the function recursively."
  (if (orgtrello-proxy/--level-inf-done-p level)
-     (orgtrello-proxy/--deal-with-directory-sync level directory)
+     (orgtrello-proxy/--deal-with-directory-action level directory)
      (throw 'org-trello-timer-go-to-sleep t)))
 
 (defun orgtrello-proxy/--deal-with-archived-files (level)
@@ -816,7 +866,7 @@ Levels:
                                                                                                orgtrello-proxy/--archived-scanning-dir
                                                                                                orgtrello-proxy/--list-files)))
 
-(defun orgtrello-proxy/--consumer-entity-files-hierarchically-and-sync ()
+(defun orgtrello-proxy/--consumer-entity-files-hierarchically-and-do ()
   "A handler to extract the entity informations from files (in order card, checklist, items)."
   ;; now let's deal with the entities sync in order with level
   (with-local-quit
@@ -841,14 +891,14 @@ Levels:
   "Cleanup after the timer has been triggered."
   (orgtrello-proxy/--remove-file lock-file))
 
-(defun orgtrello-proxy/--consumer-lock-and-scan-entity-files-hierarchically-and-sync ()
+(defun orgtrello-proxy/--consumer-lock-and-scan-entity-files-hierarchically-and-do ()
   "A handler to extract the entity informations from files (in order card, checklist, items)."
   (undo-boundary)
   ;; only one timer at a time
   (orgtrello-action/safe-wrap
    (progn
      (orgtrello-proxy/--timer-put-lock *ORGTRELLO-LOCK*)
-     (orgtrello-proxy/--consumer-entity-files-hierarchically-and-sync))
+     (orgtrello-proxy/--consumer-entity-files-hierarchically-and-do))
    (orgtrello-proxy/--timer-delete-lock *ORGTRELLO-LOCK*))
   ;; undo boundary, to make a unit of undo
   (undo-boundary))
@@ -866,7 +916,7 @@ Levels:
   (org-action/--msg-controls-or-actions-then-do
    "Scanning entities to sync"
    '(orgtrello-proxy/--check-network-ok orgtrello-proxy/--check-no-running-timer)
-   'orgtrello-proxy/--consumer-lock-and-scan-entity-files-hierarchically-and-sync
+   'orgtrello-proxy/--consumer-lock-and-scan-entity-files-hierarchically-and-do
    nil ;; cannot save the buffer
    nil ;; do not need to reload the org-trello setup
    *do-not-display-log*));; do no want to log
@@ -1415,17 +1465,21 @@ refresh();
   "Set a marker to get back to later."
   (org-set-property marker marker))
 
+(defun orgtrello/--compute-marker-from-entry (entry)
+  "Compute and set the marker (either a sha1 or the id of the entry-metadata)."
+  (let ((orgtrello/--current-entry-id (orgtrello/--id entry)))
+    (if orgtrello/--current-entry-id
+        orgtrello/--current-entry-id
+        (orgtrello/compute-marker (orgtrello/--buffername entry) (orgtrello/--name entry) (orgtrello/--position entry)))))
+
 (defun orgtrello/do-create-simple-entity ()
   "Do the actual simple creation of a card."
-  (let* ((orgtrello/--current-entry (orgtrello-data/metadata))
-         (orgtrello/--marker        (orgtrello/compute-marker
-                                     (orgtrello/--buffername orgtrello/--current-entry)
-                                     (orgtrello/--name orgtrello/--current-entry)
-                                     (orgtrello/--position orgtrello/--current-entry))))
+  (let* ((orgtrello/--current-entry    (orgtrello-data/metadata))
+         (orgtrello/--marker           (orgtrello/--compute-marker-from-entry orgtrello/--current-entry)))
     (when (< (orgtrello/--level orgtrello/--current-entry) 4)
            ;; set a marker for later getting back to information
            (orgtrello/--set-marker orgtrello/--marker)
-           ;; adding the marker to the entry
+           (puthash :action "sync-entity"      orgtrello/--current-entry)
            (puthash :marker orgtrello/--marker orgtrello/--current-entry)
            ;; and send the data to the proxy
            (orgtrello-proxy/http-producer orgtrello/--current-entry))))
@@ -1610,52 +1664,18 @@ refresh();
          (dispatch-fn (gethash level *MAP-DISPATCH-DELETE* 'orgtrello/--too-deep-level)))
     (funcall dispatch-fn meta parent-meta)))
 
-(defun orgtrello-proxy/--standard-delete-success-callback (buffer-name &optional position name)
-  "Return a callback function able to deal with the position."
-  (lexical-let* ((orgtrello-query/--entry-position    position)
-                 (orgtrello-query/--entry-buffer-name buffer-name)
-                 (orgtrello-query/--marker (orgtrello/compute-marker buffer-name name position)))
-    (lambda (&rest response)
-      (orgtrello-action/safe-wrap
-       (progn
-         (set-buffer orgtrello-query/--entry-buffer-name)
-         (save-excursion
-           (when (orgtrello-proxy/--getting-back-to-marker orgtrello-query/--marker)
-                 (org-back-to-heading t)
-                 (org-delete-property *ORGTRELLO-ID*)
-                 (hide-subtree)
-                 (beginning-of-line)
-                 (kill-line)
-                 (kill-line))))
-       (progn
-         (save-buffer)
-         (orgtrello-log/msg 3 "Deleting entity in the buffer '%s' at point '%s' done!" orgtrello-query/--entry-buffer-name orgtrello-query/--entry-position))))))
-
 (defun orgtrello/do-delete-simple (&optional sync)
-  "Do the simple deletion of a card, checklist or item."
-  (let* ((entry-metadata         (orgtrello-data/entry-get-full-metadata))
-         (current-metadata       (orgtrello-data/current entry-metadata))
-         (id                     (orgtrello/--id current-metadata))
-         (orgtrello/--position   (orgtrello/--position current-metadata))
-         (orgtrello/--buffername (orgtrello/--buffername current-metadata))
-         (orgtrello/--name       (orgtrello/--name current-metadata)))
-    (if (and current-metadata id)
-        (progn
-          (orgtrello/--set-marker (orgtrello/compute-marker orgtrello/--buffername orgtrello/--name orgtrello/--position))
-          (let ((query-http-or-error-msg (orgtrello/--dispatch-delete current-metadata (orgtrello-data/parent entry-metadata))))
-            (if (hash-table-p query-http-or-error-msg)
-                (progn
-                  (orgtrello-proxy/http
-                   (orgtrello/--update-query-with-org-metadata query-http-or-error-msg
-                                                               orgtrello/--position
-                                                               (orgtrello/--buffername current-metadata)
-                                                               (orgtrello/--name current-metadata)
-                                                               'orgtrello-proxy/--standard-delete-success-callback
-                                                               sync)
-                   sync)
-                  "Delete entity done!")
-                query-http-or-error-msg)))
-        "Entity not synchronized on trello yet!")))
+  "Do the deletion of an entity."
+  (let* ((orgtrello/--current-entry    (orgtrello-data/metadata))
+         (orgtrello/--current-entry-id (orgtrello/--id orgtrello/--current-entry)))
+    (when (< (orgtrello/--level orgtrello/--current-entry) 4)
+        (if (and orgtrello/--current-entry orgtrello/--current-entry-id)
+            (progn
+              (puthash :marker orgtrello/--current-entry-id orgtrello/--current-entry)
+              (puthash :action "delete"                     orgtrello/--current-entry)
+              ;; and send the data to the proxy
+              (orgtrello-proxy/http-producer orgtrello/--current-entry))
+            "Entity not synchronized on trello yet!"))))
 
 (defun orgtrello/--do-delete-card (&optional sync)
   "Delete the card."
