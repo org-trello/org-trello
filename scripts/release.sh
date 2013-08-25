@@ -1,5 +1,7 @@
 #!/bin/bash
 
+VERSION=$1
+
 # from the current dev branch
 
 git fetch -p --all
