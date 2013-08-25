@@ -379,6 +379,107 @@
                 (dictionary-lessp "132zzzzz" "ab132z")
                 (null (dictionary-lessp "1.32" "1ab")))))
 
+(expectations
+ (expect 'orgtrello-proxy/--delete      (orgtrello-proxy/--dispatch-action "delete"))
+ (expect 'orgtrello-proxy/--sync-entity (orgtrello-proxy/--dispatch-action "sync-entity"))
+ (expect nil                            (orgtrello-proxy/--dispatch-action "nothing")))
+
+(expectations
+  (expect :id                                                         (orgtrello/--compute-marker-from-entry (orgtrello-hash/make-hash-org :level :kwd :name      :id  :due :position :buffername)))
+  (expect "orgtrello-marker-2a0b98e652ce6349a0659a7a8eeb3783ffe9a11a" (orgtrello/--compute-marker-from-entry (orgtrello-hash/make-hash-org :level :kwd "some-name" nil :due 1234      "buffername")))
+  (expect "orgtrello-marker-6c59c5dcf6c83edaeb3f4923bfd929a091504bb3" (orgtrello/--compute-marker-from-entry (orgtrello-hash/make-hash-org :level :kwd "some-name" nil :due 4321      "some-other-buffername"))))
+
+(expectations
+  (expect "orgtrello-marker-2a0b98e652ce6349a0659a7a8eeb3783ffe9a11a" (orgtrello/compute-marker "buffername" "some-name" 1234))
+  (expect "orgtrello-marker-6c59c5dcf6c83edaeb3f4923bfd929a091504bb3" (orgtrello/compute-marker "some-other-buffername" "some-name" 4321)))
+
+(expectations
+  (expect "marker" (orgtrello-proxy/--compute-pattern-search-from-marker "marker"))
+  (expect ":orgtrello-marker-tony:" (orgtrello-proxy/--compute-pattern-search-from-marker "orgtrello-marker-tony")))
+
+(expectations
+  (expect '(3 5 7) (--map (funcall (compose-fn '((lambda (it) (+ 1 it)) (lambda (it) (* 2 it)))) it) '(1 2 3))))
+
+(expectations
+  (expect "<tr><td/><td>Action</td><td>Entity</td></tr>" (orgtrello-admin/--header-table)))
+
+(expectations
+  (expect "<tr><td><i class=\"icon-play\"/></td><td>test</td><td>nil</td></tr>" (orgtrello-admin/--entity '((action . "test")) "icon-play"))
+  (expect "<tr><td><i class=\"icon-pause\"/></td><td>delete</td><td>nil</td></tr>" (orgtrello-admin/--entity '((action . "delete")) "icon-pause"))
+  (expect "<tr><td><i class=\"icon-play\"/></td><td>test</td><td>name 0</td></tr>" (orgtrello-admin/--entity '((action . "test") (name . "name 0")) "icon-play"))
+  (expect "<tr><td><i class=\"icon-pause\"/></td><td>delete</td><td>name 1</td></tr>" (orgtrello-admin/--entity '((action . "delete") (name . "name 1")) "icon-pause")))
+
+(expectations
+  (expect "None" (orgtrello-admin/--actions nil))
+  (expect "None" (orgtrello-admin/--actions nil "icon-arrow-right"))
+  (expect "None" (orgtrello-admin/--actions nil "icon-arrow-right" "icon-arrow-left"))
+    (expect
+      "<table class=\"table table-striped table-bordered table-hover\" style=\"font-size: 0.75em\"><tr><td/><td>Action</td><td>Entity</td></tr><tr><td><i class=\"icon-arrow-right\"/></td><td>create</td><td>name 0</td></tr><tr><td><i class=\"icon-arrow-up\"/></td><td>delete</td><td>name 1</td></tr></table>"
+    (orgtrello-admin/--actions '(((action . "create") (name . "name 0")) ((action . "delete") (name . "name 1")))))
+  (expect
+      "<table class=\"table table-striped table-bordered table-hover\" style=\"font-size: 0.75em\"><tr><td/><td>Action</td><td>Entity</td></tr><tr><td><i class=\"icon-arrow-right\"/></td><td>create</td><td>name 0</td></tr><tr><td><i class=\"icon-arrow-up\"/></td><td>delete</td><td>name 1</td></tr></table>"
+    (orgtrello-admin/--actions '(((action . "create") (name . "name 0")) ((action . "delete") (name . "name 1"))) "icon-arrow-right"))
+  (expect
+      "<table class=\"table table-striped table-bordered table-hover\" style=\"font-size: 0.75em\"><tr><td/><td>Action</td><td>Entity</td></tr><tr><td><i class=\"icon-arrow-right\"/></td><td>create</td><td>name 0</td></tr><tr><td><i class=\"icon-arrow-up\"/></td><td>delete</td><td>name 1</td></tr></table>"
+    (orgtrello-admin/--actions '(((action . "create") (name . "name 0")) ((action . "delete") (name . "name 1"))) nil "icon-arrow-up"))
+  (expect
+      "<table class=\"table table-striped table-bordered table-hover\" style=\"font-size: 0.75em\"><tr><td/><td>Action</td><td>Entity</td></tr><tr><td><i class=\"icon-play\"/></td><td>create</td><td>name 0</td></tr><tr><td><i class=\"icon-pause\"/></td><td>delete</td><td>name 1</td></tr></table>"
+    (orgtrello-admin/--actions '(((action . "create") (name . "name 0")) ((action . "delete") (name . "name 1"))) "icon-play" "icon-pause")))
+
+(expectations
+  (expect "entity name"             (orgtrello-admin/--detail-entity 3 '((name . "entity name"))))
+  (expect '((name . "entity name")) (orgtrello-admin/--detail-entity 5 '((name . "entity name")))))
+
+(expectations
+ (expect '("error0" "error1") (org-action/--filter-error-messages '("error0" :ok "error1")))
+ (expect nil                  (org-action/--filter-error-messages '(:ok :ok :ok))))
+
+(expectations
+  (expect '(:ok) (org-action/--execute-controls '((lambda (e) :ok))))
+  (expect '(:ok "ko") (org-action/--execute-controls '((lambda (e) :ok)
+                                                       (lambda (e) "ko"))))
+  (expect '(:ok) (org-action/--execute-controls '((lambda (a) :ok)) 'args))
+  (expect '(:ok "ko") (org-action/--execute-controls '((lambda (a) :ok)
+                                                       (lambda (a) "ko")) 'arg0)))
+
+(expectations
+  (expect   "List of errors:
+ - Level too high. Do not deal with entity other than card/checklist/items!
+"
+      (org-action/--functional-controls-then-do
+       '(orgtrello/--right-level-p)
+       (orgtrello-hash/make-hash-org 4 :kwd :name nil :due :position :buffer-name)
+       (lambda (entity s) (format "%S %s" entity s))
+       "- hello"))
+
+  (expect "#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:buffername :buffer-name :position :position :level 3 :keyword :kwd :name :name :id nil :due :due)) - hello"
+    (org-action/--functional-controls-then-do
+     '(orgtrello/--right-level-p)
+     (orgtrello-hash/make-hash-org 3 :kwd :name nil :due :position :buffer-name)
+     (lambda (entity s) (format "%S %s" entity s))
+     "- hello")))
+
+(expectations
+  (expect "List of errors:
+ - Entity must been synchronized with trello first!
+"
+    (org-action/--functional-controls-then-do
+     '(orgtrello/--right-level-p orgtrello/--already-synced-p)
+     (orgtrello-hash/make-hash-org 1 :kwd :name nil :due :position :buffer-name)
+     (lambda (entity s) (format "%S %s" entity s))
+     "- hello"))
+  (expect "#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:buffername :buffer-name :position :position :level 1 :keyword :kwd :name :name :id :some-id :due :due)) - hello"
+
+    (org-action/--functional-controls-then-do
+     '(orgtrello/--right-level-p orgtrello/--already-synced-p)
+     (orgtrello-hash/make-hash-org 1 :kwd :name :some-id :due :position :buffer-name)
+     (lambda (entity s) (format "%S %s" entity s))
+     "- hello")))
+
+
+(expectations
+  (expect "- message 1\n- message 2\n" (org-action/--compute-error-message '("message 1" "message 2"))))
+
 (message "Tests done!")
 
 (provide 'org-trello-tests)
