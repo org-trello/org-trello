@@ -84,6 +84,8 @@
 (defvar *do-reload-setup*             t                  "Another alias to t to make the boolean more significant in the given context.")
 (defvar *do-not-display-log*          t                  "Another alias to t to make the boolean more significant in the given context.")
 (defvar *ORGTRELLO-LEVELS*            '(1 2 3)           "Current levels 1 is card, 2 is checklist, 3 is item.")
+(defvar *ORGTRELLO-ACTION-SYNC*       "sync-entity"      "Possible action regarding the entity synchronization.")
+(defvar *ORGTRELLO-ACTION-DELETE*     "delete"           "Possible action regarding the entity deletion.")
 
 
 
@@ -700,8 +702,8 @@ Levels:
   (rename-file file file-archive-name t))
 
 (defun orgtrello-proxy/--dispatch-action (action)
-  (cond ((string= "delete"     action)  'orgtrello-proxy/--delete)
-        ((string= "sync-entity" action) 'orgtrello-proxy/--sync-entity)))
+  (cond ((string= *ORGTRELLO-ACTION-DELETE* action) 'orgtrello-proxy/--delete)
+        ((string= *ORGTRELLO-ACTION-SYNC*   action) 'orgtrello-proxy/--sync-entity)))
 
 (defun orgtrello-proxy/--sync-entity (entity-data full-metadata entry-file-archived)
   "Execute the entity synchronization."
@@ -1562,8 +1564,8 @@ refresh(\"/proxy/admin/current-action/\", '#current-action');
     (when (< (orgtrello/--level orgtrello/--current-entry) 4)
            ;; set a marker for later getting back to information
            (orgtrello/--set-marker orgtrello/--marker)
-           (puthash :action "sync-entity"      orgtrello/--current-entry)
-           (puthash :marker orgtrello/--marker orgtrello/--current-entry)
+           (puthash :action *ORGTRELLO-ACTION-SYNC* orgtrello/--current-entry)
+           (puthash :marker orgtrello/--marker      orgtrello/--current-entry)
            ;; and send the data to the proxy
            (orgtrello-proxy/http-producer orgtrello/--current-entry))))
 
@@ -1755,7 +1757,7 @@ refresh(\"/proxy/admin/current-action/\", '#current-action');
         (if (and orgtrello/--current-entry orgtrello/--current-entry-id)
             (progn
               (puthash :marker orgtrello/--current-entry-id orgtrello/--current-entry)
-              (puthash :action "delete"                     orgtrello/--current-entry)
+              (puthash :action *ORGTRELLO-ACTION-DELETE*    orgtrello/--current-entry)
               ;; and send the data to the proxy
               (orgtrello-proxy/http-producer orgtrello/--current-entry))
             "Entity not synchronized on trello yet!"))))
