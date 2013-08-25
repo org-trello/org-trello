@@ -1205,7 +1205,7 @@ refresh(\"/proxy/admin/current-action/\", '#current-action');
     (lambda (arg)
       (if intern-funcs
           (funcall (car intern-funcs)
-                   (funcall (compose (cdr intern-funcs)) arg))
+                   (funcall (compose-fn (cdr intern-funcs)) arg))
           arg))))
 
 (defun orgtrello-proxy/--elnode-actions (levels &optional scan-flag)
