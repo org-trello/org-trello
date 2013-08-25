@@ -404,30 +404,31 @@
   (expect "<tr><td/><td>Action</td><td>Entity</td></tr>" (orgtrello-admin/--header-table)))
 
 (expectations
-  (expect "<tr><td><i class=\"icon-play\"/></td><td>test</td><td>((action . \"test\"))</td></tr>" (orgtrello-admin/--entity '((action . "test")) "icon-play"))
-  (expect "<tr><td><i class=\"icon-pause\"/></td><td>delete</td><td>((action . \"delete\"))</td></tr>" (orgtrello-admin/--entity '((action . "delete")) "icon-pause")))
+  (expect "<tr><td><i class=\"icon-play\"/></td><td>test</td><td>nil</td></tr>" (orgtrello-admin/--entity '((action . "test")) "icon-play"))
+  (expect "<tr><td><i class=\"icon-pause\"/></td><td>delete</td><td>nil</td></tr>" (orgtrello-admin/--entity '((action . "delete")) "icon-pause"))
+  (expect "<tr><td><i class=\"icon-play\"/></td><td>test</td><td>name 0</td></tr>" (orgtrello-admin/--entity '((action . "test") (name . "name 0")) "icon-play"))
+  (expect "<tr><td><i class=\"icon-pause\"/></td><td>delete</td><td>name 1</td></tr>" (orgtrello-admin/--entity '((action . "delete") (name . "name 1")) "icon-pause")))
 
 (expectations
   (expect "None" (orgtrello-admin/--actions nil))
   (expect "None" (orgtrello-admin/--actions nil "icon-arrow-right"))
   (expect "None" (orgtrello-admin/--actions nil "icon-arrow-right" "icon-arrow-left"))
-  (expect
-      "<table class=\"table table-striped table-bordered table-hover\" style=\"font-size: 0.75em\"><tr><td/><td>Action</td><td>Entity</td></tr><tr><td><i class=\"icon-arrow-right\"/></td><td>create</td><td>((action . \"create\"))</td></tr><tr><td><i class=\"icon-arrow-up\"/></td><td>delete</td><td>((action . \"delete\"))</td></tr></table>"
-    (orgtrello-admin/--actions '(((action . "create")) ((action . "delete"))) "icon-arrow-right"))
     (expect
-      "<table class=\"table table-striped table-bordered table-hover\" style=\"font-size: 0.75em\"><tr><td/><td>Action</td><td>Entity</td></tr><tr><td><i class=\"icon-arrow-right\"/></td><td>create</td><td>((action . \"create\"))</td></tr><tr><td><i class=\"icon-arrow-up\"/></td><td>delete</td><td>((action . \"delete\"))</td></tr></table>"
-    (orgtrello-admin/--actions '(((action . "create")) ((action . "delete")))))
+      "<table class=\"table table-striped table-bordered table-hover\" style=\"font-size: 0.75em\"><tr><td/><td>Action</td><td>Entity</td></tr><tr><td><i class=\"icon-arrow-right\"/></td><td>create</td><td>name 0</td></tr><tr><td><i class=\"icon-arrow-up\"/></td><td>delete</td><td>name 1</td></tr></table>"
+    (orgtrello-admin/--actions '(((action . "create") (name . "name 0")) ((action . "delete") (name . "name 1")))))
   (expect
-      "<table class=\"table table-striped table-bordered table-hover\" style=\"font-size: 0.75em\"><tr><td/><td>Action</td><td>Entity</td></tr><tr><td><i class=\"icon-arrow-right\"/></td><td>create</td><td>((action . \"create\"))</td></tr><tr><td><i class=\"icon-arrow-up\"/></td><td>delete</td><td>((action . \"delete\"))</td></tr></table>"
-    (orgtrello-admin/--actions '(((action . "create")) ((action . "delete"))) nil "icon-arrow-up"))
+      "<table class=\"table table-striped table-bordered table-hover\" style=\"font-size: 0.75em\"><tr><td/><td>Action</td><td>Entity</td></tr><tr><td><i class=\"icon-arrow-right\"/></td><td>create</td><td>name 0</td></tr><tr><td><i class=\"icon-arrow-up\"/></td><td>delete</td><td>name 1</td></tr></table>"
+    (orgtrello-admin/--actions '(((action . "create") (name . "name 0")) ((action . "delete") (name . "name 1"))) "icon-arrow-right"))
   (expect
-      "<table class=\"table table-striped table-bordered table-hover\" style=\"font-size: 0.75em\"><tr><td/><td>Action</td><td>Entity</td></tr><tr><td><i class=\"icon-play\"/></td><td>create</td><td>((action . \"create\"))</td></tr><tr><td><i class=\"icon-pause\"/></td><td>delete</td><td>((action . \"delete\"))</td></tr></table>"
-    (orgtrello-admin/--actions '(((action . "create")) ((action . "delete"))) "icon-play" "icon-pause")))
+      "<table class=\"table table-striped table-bordered table-hover\" style=\"font-size: 0.75em\"><tr><td/><td>Action</td><td>Entity</td></tr><tr><td><i class=\"icon-arrow-right\"/></td><td>create</td><td>name 0</td></tr><tr><td><i class=\"icon-arrow-up\"/></td><td>delete</td><td>name 1</td></tr></table>"
+    (orgtrello-admin/--actions '(((action . "create") (name . "name 0")) ((action . "delete") (name . "name 1"))) nil "icon-arrow-up"))
+  (expect
+      "<table class=\"table table-striped table-bordered table-hover\" style=\"font-size: 0.75em\"><tr><td/><td>Action</td><td>Entity</td></tr><tr><td><i class=\"icon-play\"/></td><td>create</td><td>name 0</td></tr><tr><td><i class=\"icon-pause\"/></td><td>delete</td><td>name 1</td></tr></table>"
+    (orgtrello-admin/--actions '(((action . "create") (name . "name 0")) ((action . "delete") (name . "name 1"))) "icon-play" "icon-pause")))
 
 (expectations
   (expect "entity name"             (orgtrello-admin/--detail-entity 3 '((name . "entity name"))))
   (expect '((name . "entity name")) (orgtrello-admin/--detail-entity 5 '((name . "entity name")))))
-
 
 (message "Tests done!")
 
