@@ -584,7 +584,8 @@ CLOSED: [2013-08-24 sam. 15:21]
 CLOSED: [2013-08-24 sam. 15:41]
 ** DONE Order when syncing to trello
 CLOSED: [2013-08-24 sam. 18:35]
-* IN-PROGRESS 0.1.5 [71%]
+* DONE 0.1.5 [100%]
+CLOSED: [2013-08-25 dim. 15:43]
 ** DONE Symmetry in the architecture - the deletion must pass through the consumer too.
 CLOSED: [2013-08-25 dim. 10:12]
 ** DONE Upgrade version
@@ -597,8 +598,10 @@ CLOSED: [2013-08-25 dim. 11:23]
 CLOSED: [2013-08-25 dim. 13:37]
 ** DONE Redefine main function to sync an entity (they are badly named).
 CLOSED: [2013-08-25 dim. 15:35]
-** TODO Release notes
-** TODO Release
+** DONE Release notes
+CLOSED: [2013-08-25 dim. 15:43]
+** DONE Release
+CLOSED: [2013-08-25 dim. 15:43]
 * TODO 0.1.6 [%]
 ** TODO webadmin: Add an action button to stop every running action
 ** TODO POC: use a temporary buffer to sync with trello, when done, merge with the user's buffer.
