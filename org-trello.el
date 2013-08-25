@@ -1081,7 +1081,7 @@ Levels:
                                  (a ((href . "#contact"))
                                     "Contact")))))))
      (div ((class . "container"))
-          (h1 () "List of entities to sync")
+          (h1 () "Running actions")
           (div ((id . "server-name"))))
      (script ((src . "/static/js/bootstrap.min.js")) "")
      (script ((src . "/static/js/jquery.js")) "")
@@ -1115,7 +1115,13 @@ refresh();
                   (style . "font-size: 0.75em"))
                  (tr
                   ()
+                  (td ())
+                  (td () "Action")
+                  (td () "Entity"))
+                 (tr
+                  ()
                   (td () (i ((class . "icon-arrow-right"))))
+                  (td () ,(orgtrello-query/--action (read (orgtrello-admin/--content-file fst-file))))
                   (td () ,(orgtrello-admin/--content-file fst-file)))
                  ,(loop for entry in rest-files
                         concat
@@ -1123,6 +1129,7 @@ refresh();
                          `(tr
                            ()
                            (td () (i ((class . "icon-arrow-up"))))
+                           (td () ,(orgtrello-query/--action (read (orgtrello-admin/--content-file entry))))
                            (td () ,(orgtrello-admin/--content-file entry)))))))
         "Empty!")))
 
