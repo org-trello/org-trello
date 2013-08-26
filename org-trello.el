@@ -94,6 +94,11 @@
 (defvar *ORGTRELLO-ACTION-SYNC*       "sync-entity"      "Possible action regarding the entity synchronization.")
 (defvar *ORGTRELLO-ACTION-DELETE*     "delete"           "Possible action regarding the entity deletion.")
 
+(defvar *ORGTRELLO-PROPERTIES-CL*     "PROPERTIES-CL")
+(defvar *ORGTRELLO-PROPERTIES-END-CL* "PROPERTIES-END-CL")
+(defvar *ORGTRELLO-PROPERTIES-CL-MARKER*     (orgtrello-hash/key *ORGTRELLO-PROPERTIES-CL*))
+(defvar *ORGTRELLO-PROPERTIES-END-CL-MARKER* (orgtrello-hash/key *ORGTRELLO-PROPERTIES-END-CL*))
+
 
 
 ;; #################### orgtrello-version
@@ -199,18 +204,18 @@ Levels:
     (forward-line)
     (let* ((buffer      (current-buffer))
            (point-start (point))
-           (point-end   (search-forward ":END:" nil t 1))) ;; point-end could be nil, no error, will send nil later
+           (point-end   (search-forward *ORGTRELLO-PROPERTIES-END-CL-MARKER* nil t 1))) ;; point-end could be nil, no error, will send nil later
       (when point-end
             (let ((properties (orgtrello-hash/make-properties (with-temp-buffer
                                                                 (insert-buffer-substring-no-properties buffer point-start point-end)
                                                                 (orgtrello-hash/split-lines (buffer-string))))))
-              (remhash "PROPERTIES" properties)
-              (remhash "END"        properties)
+              (remhash *ORGTRELLO-PROPERTIES-CL* properties)
+              (remhash *ORGTRELLO-PROPERTIES-END-CL*        properties)
               properties)))))
 
 (defun orgtrello-cbx/--drawer-p ()
   "Determine if there is a drawer at point."
-  (string= ":PROPERTIES:\n" (thing-at-point 'line)))
+  (string-match-p *ORGTRELLO-PROPERTIES-CL-MARKER* (thing-at-point 'line)))
 
 (defun orgtrello-cbx/--entry-key-value (key value &optional ret)
   "Compute an entry in the properties entry."
@@ -233,7 +238,7 @@ Levels:
   (save-excursion
     (forward-line)
     (let ((current-point (point))
-          (max-point     (search-forward ":END:" nil t)))
+          (max-point     (search-forward *ORGTRELLO-PROPERTIES-END-CL-MARKER* nil t)))
       (maphash
        (lambda (key value)
          (goto-char current-point)
@@ -250,12 +255,12 @@ Levels:
 (defun orgtrello-cbx/--create-drawer-with-properties (point properties)
   "Create a drawer and create each entry present in properties."
   (save-excursion
-    (insert ":PROPERTIES:\n")
+    (insert (concat *ORGTRELLO-PROPERTIES-CL-MARKER* "\n"))
     (maphash
      (lambda (key value)
        (insert (orgtrello-cbx/--entry-key-value key value t)))
        properties)
-    (insert ":END:\n")))
+    (insert (concat *ORGTRELLO-PROPERTIES-END-CL-MARKER* "\n"))))
 
 (defun orgtrello-cbx/org-entry-sync-properties (point properties)
   "Given a point and a properties map, synchronize the properties on disk."
