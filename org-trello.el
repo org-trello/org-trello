@@ -1775,11 +1775,14 @@ refresh(\"/proxy/admin/current-action/\", '#current-action');
 
 (defun orgtrello/--delegate-to-the-proxy (entity action)
   "Execute the delegation to the consumer."
-  (let ((orgtrello/--marker (orgtrello/--compute-marker-from-entry entity)))
-    ;; set a marker for later getting back to information
-    (orgtrello/--set-marker orgtrello/--marker)
-    (puthash :action action             entity)
+  (let ((orgtrello/--current-entry-id (orgtrello/--id entity))
+        (orgtrello/--marker           (orgtrello/--compute-marker-from-entry entity)))
+    ;; if never created before, we need a marker to add inside the file
+    (unless (string= orgtrello/--current-entry-id orgtrello/--marker)
+            (orgtrello/--set-marker orgtrello/--marker))
+    ;; then we make the consumer aware of the marker
     (puthash :marker orgtrello/--marker entity)
+    (puthash :action action             entity)
     ;; and send the data to the proxy
     (orgtrello-proxy/http-producer entity)))
 
