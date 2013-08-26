@@ -241,7 +241,7 @@ Levels:
      current-point
      (orgtrello-cbx/--org-set-property key value (orgtrello-cbx/--read-properties-from-point current-point)))))
 
-(defun orgtrello-cbx/org-get-property (key point)
+(defun orgtrello-cbx/org-get-property (point key)
   "Retrieve the value for the key key."
   (orgtrello-cbx/--org-get-property key (orgtrello-cbx/--read-properties-from-point point)))
 
