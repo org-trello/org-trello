@@ -94,10 +94,10 @@
 (defvar *ORGTRELLO-ACTION-SYNC*       "sync-entity"      "Possible action regarding the entity synchronization.")
 (defvar *ORGTRELLO-ACTION-DELETE*     "delete"           "Possible action regarding the entity deletion.")
 
-(defvar *ORGTRELLO-PROPERTIES-CL*     "PROPERTIES-CL")
-(defvar *ORGTRELLO-PROPERTIES-END-CL* "PROPERTIES-END-CL")
-(defvar *ORGTRELLO-PROPERTIES-CL-MARKER*     (orgtrello-hash/key *ORGTRELLO-PROPERTIES-CL*))
-(defvar *ORGTRELLO-PROPERTIES-END-CL-MARKER* (orgtrello-hash/key *ORGTRELLO-PROPERTIES-END-CL*))
+;; (defvar *ORGTRELLO-PROPERTIES-CL*     "PROPERTIES-CL")
+;; (defvar *ORGTRELLO-PROPERTIES-END-CL* "PROPERTIES-END-CL")
+;; (defvar *ORGTRELLO-PROPERTIES-CL-MARKER*     (orgtrello-hash/key *ORGTRELLO-PROPERTIES-CL*))
+;; (defvar *ORGTRELLO-PROPERTIES-END-CL-MARKER* (orgtrello-hash/key *ORGTRELLO-PROPERTIES-END-CL*))
 
 
 
@@ -170,21 +170,21 @@ Levels:
    properties
    :initial-value (make-hash-table :test 'equal)))
 
-(defun orgtrello-hash/split-lines (s)
-  "Given a string, split by line and each line splitted by \space. Also remove entries key marked :%s:."
-  (--map (let ((l (split-string it " " t)))
-           (list (orgtrello-hash/remove-key-marker (first l)) (s-join " " (cdr l)))) (split-string s "\n" t)))
+;; (defun orgtrello-hash/split-lines (s)
+;;   "Given a string, split by line and each line splitted by \space. Also remove entries key marked :%s:."
+;;   (--map (let ((l (split-string it " " t)))
+;;            (list (orgtrello-hash/remove-key-marker (first l)) (s-join " " (cdr l)))) (split-string s "\n" t)))
 
 (defun orgtrello-hash/key (s)
   "Given a string, compute its key format."
   (format ":%s:" s))
 
-(defun orgtrello-hash/remove-key-marker (s)
-  "Given a string under the form :%s:, return only %s."
-  (when s
-        (let ((tmp-s (s-split ":" s)))
-          (when (= 3 (length tmp-s))
-                (second tmp-s)))))
+;; (defun orgtrello-hash/remove-key-marker (s)
+;;   "Given a string under the form :%s:, return only %s."
+;;   (when s
+;;         (let ((tmp-s (s-split ":" s)))
+;;           (when (= 3 (length tmp-s))
+;;                 (second tmp-s)))))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-hash loaded!")
 
@@ -196,88 +196,125 @@ Levels:
   "Is there a checkbox at point?"
   (and *ORGTRELLO-NATURAL-ORG-CHECKLIST* (org-at-item-checkbox-p)))
 
-(defun orgtrello-cbx/org-entry-properties (point)
-  "Extract the properties from the checkbox entry."
-  (save-excursion
-    (goto-char point)
-    (beginning-of-line)
-    (forward-line)
-    (let* ((buffer      (current-buffer))
-           (point-start (point))
-           (point-end   (search-forward *ORGTRELLO-PROPERTIES-END-CL-MARKER* nil t 1))) ;; point-end could be nil, no error, will send nil later
-      (when point-end
-            (let ((properties (orgtrello-hash/make-properties (with-temp-buffer
-                                                                (insert-buffer-substring-no-properties buffer point-start point-end)
-                                                                (orgtrello-hash/split-lines (buffer-string))))))
-              (remhash *ORGTRELLO-PROPERTIES-CL* properties)
-              (remhash *ORGTRELLO-PROPERTIES-END-CL*        properties)
-              properties)))))
+(defun orgtrello-cbx/--retrieve-buffer-content-as-strings ()
+  "Retrieve the current buffer's content as list of strings."
+  (let* ((cur-buffer (current-buffer))
+         (cur-point  (point))
+         (nxt-point  (save-excursion
+                       (org-goto-sibling)
+                       (point)))
+         (next-point (if (= nxt-point cur-point) (point-max) nxt-point)))
+    (with-temp-buffer
+      (insert-buffer-substring-no-properties cur-buffer cur-point next-point)
+      (s-lines (buffer-string)))))
 
-(defun orgtrello-cbx/--drawer-p ()
-  "Determine if there is a drawer at point."
-  (string-match-p *ORGTRELLO-PROPERTIES-CL-MARKER* (thing-at-point 'line)))
+(defun orgtrello-cbx/--list-checklists ()
+  "Retrieve the list of checklists from the buffer."
+  (--map (orgtrello-cbx/--metadata-from-checklist it)
+         (orgtrello-cbx/--retrieve-buffer-content-as-strings)))
 
-(defun orgtrello-cbx/--entry-key-value (key value &optional ret)
-  "Compute an entry in the properties entry."
-  (format "%s %s%s" (orgtrello-hash/key key) value (if ret "\n" "")))
+;; (defun orgtrello-cbx/--retrieve-buffer-content-as-checklist ()
+;;   "Retrieve the current buffer's content as list of strings."
+;;   (save-excursion
+;;     (let* ((cur-buffer (current-buffer))
+;;            (cur-point  (point))
+;;            (nxt-point  (save-excursion
+;;                          (org-goto-sibling)
+;;                          (point)))
+;;            (next-point (if (= nxt-point cur-point) (point-max) nxt-point))
+;;            (res nil))
+;;       (while (< (point) next-point)
+;;         (when (orgtrello-cbx/checkbox-p)
+;;             (push (orgtrello-cbx/org-checkbox-components) res))
+;;         (forward-line))
+;;       (nreverse res))))
+
+;; (defun orgtrello-cbx/org-entry-properties (point)
+;;   "Extract the properties from the checkbox entry."
+;;   (save-excursion
+;;     (goto-char point)
+;;     (beginning-of-line)
+;;     (forward-line)
+;;     (let* ((buffer      (current-buffer))
+;;            (point-start (point))
+;;            (point-end   (search-forward *ORGTRELLO-PROPERTIES-END-CL-MARKER* nil t 1))) ;; point-end could be nil, no error, will send nil later
+;;       (when point-end
+;;             (let ((properties (orgtrello-hash/make-properties (with-temp-buffer
+;;                                                                 (insert-buffer-substring-no-properties buffer point-start point-end)
+;;                                                                 (orgtrello-hash/split-lines (buffer-string))))))
+;;               (remhash *ORGTRELLO-PROPERTIES-CL* properties)
+;;               (remhash *ORGTRELLO-PROPERTIES-END-CL*        properties)
+;;               properties)))))
+
+;; (defun orgtrello-cbx/--drawer-p ()
+;;   "Determine if there is a drawer at point."
+;;   (string-match-p *ORGTRELLO-PROPERTIES-CL-MARKER* (thing-at-point 'line)))
+
+;; (defun orgtrello-cbx/--entry-key-value (key value &optional ret)
+;;   "Compute an entry in the properties entry."
+;;   (format "%s %s%s" (orgtrello-hash/key key) value (if ret "\n" "")))
 
 (defun orgtrello-cbx/org-set-property (key value)
   "Set the property for the checkbox."
-  (let* ((oc/--current-point      (point))
-         (oc/--current-properties (orgtrello-cbx/org-entry-properties oc/--current-point)))
-    (if oc/--current-properties
-          (puthash key value oc/--current-properties)
-          (setq oc/--current-properties
-                (orgtrello-hash/make-properties (list (list key value)))))
-    (orgtrello-cbx/org-entry-sync-properties oc/--current-point oc/--current-properties)))
-
-(require 'simple)
-
-(defun orgtrello-cbx/--update-drawer-with-properties (point properties)
-  "Start from the :PROPERTIES: entry and update each entry present in properties."
-  (save-excursion
-    (forward-line)
-    (let ((current-point (point))
-          (max-point     (search-forward *ORGTRELLO-PROPERTIES-END-CL-MARKER* nil t)))
-      (maphash
-       (lambda (key value)
-         (goto-char current-point)
-         (let ((current-key-point (search-forward (orgtrello-hash/key key) max-point t)))
-           (if current-key-point
-               ;; we found the key, we update it by removing it and adding it
-               (progn
-                 (kill-whole-line)
-                 (insert (orgtrello-cbx/--entry-key-value key value t)))
-               ;; otherwise, nil means we hit the end, we insert a new entry
-               (insert (orgtrello-cbx/--entry-key-value key value t)))))
-         properties))))
-
-(defun orgtrello-cbx/--create-drawer-with-properties (point properties)
-  "Create a drawer and create each entry present in properties."
-  (save-excursion
-    (insert (concat *ORGTRELLO-PROPERTIES-CL-MARKER* "\n"))
-    (maphash
-     (lambda (key value)
-       (insert (orgtrello-cbx/--entry-key-value key value t)))
-       properties)
-    (insert (concat *ORGTRELLO-PROPERTIES-END-CL-MARKER* "\n"))))
-
-(defun orgtrello-cbx/org-entry-sync-properties (point properties)
-  "Given a point and a properties map, synchronize the properties on disk."
-  (save-excursion
-    (org-show-subtree)
-    (beginning-of-line)
-    (forward-line)
-    (when properties
-          (if (orgtrello-cbx/--drawer-p)
-              (orgtrello-cbx/--update-drawer-with-properties point properties)
-              (orgtrello-cbx/--create-drawer-with-properties point properties)))
-    (org-cycle)))
+  (throw 'error 'not-implemented-yet)
+  ;; (let* ((oc/--current-point      (point))
+  ;;        (oc/--current-properties (orgtrello-cbx/org-entry-properties oc/--current-point)))
+  ;;   (if oc/--current-properties
+  ;;         (puthash key value oc/--current-properties)
+  ;;         (setq oc/--current-properties
+  ;;               (orgtrello-hash/make-properties (list (list key value)))))
+  ;;   (orgtrello-cbx/org-entry-sync-properties oc/--current-point oc/--current-properties))
+  )
 
 (defun orgtrello-cbx/org-entry-get (point key)
   "Extract the property key at the point for the checkbox."
-  (let ((properties (orgtrello-cbx/org-entry-properties point)))
-    (when properties (gethash (orgtrello-hash/key key) properties))))
+  (throw 'error 'not-implemented-yet)
+  ;; (let ((properties (orgtrello-cbx/org-entry-properties point)))
+  ;;   (when properties (gethash (orgtrello-hash/key key) properties)))
+  )
+
+;; (require 'simple)
+
+;; (defun orgtrello-cbx/--update-drawer-with-properties (point properties)
+;;   "Start from the :PROPERTIES: entry and update each entry present in properties."
+;;   (save-excursion
+;;     (forward-line)
+;;     (let ((current-point (point))
+;;           (max-point     (search-forward *ORGTRELLO-PROPERTIES-END-CL-MARKER* nil t)))
+;;       (maphash
+;;        (lambda (key value)
+;;          (goto-char current-point)
+;;          (let ((current-key-point (search-forward (orgtrello-hash/key key) max-point t)))
+;;            (if current-key-point
+;;                ;; we found the key, we update it by removing it and adding it
+;;                (progn
+;;                  (kill-whole-line)
+;;                  (insert (orgtrello-cbx/--entry-key-value key value t)))
+;;                ;; otherwise, nil means we hit the end, we insert a new entry
+;;                (insert (orgtrello-cbx/--entry-key-value key value t)))))
+;;          properties))))
+
+;; (defun orgtrello-cbx/--create-drawer-with-properties (point properties)
+;;   "Create a drawer and create each entry present in properties."
+;;   (save-excursion
+;;     (org-insert-drawer *ORGTRELLO-PROPERTIES-CL-MARKER*)
+;;     (forward-line)
+;;     (maphash
+;;      (lambda (key value)
+;;        (insert (orgtrello-cbx/--entry-key-value key value t)))
+;;        properties)))
+
+;; (defun orgtrello-cbx/org-entry-sync-properties (point properties)
+;;   "Given a point and a properties map, synchronize the properties on disk."
+;;   (save-excursion
+;;     (org-show-subtree)
+;;     (beginning-of-line)
+;;     (forward-line)
+;;     (when properties
+;;           (if (orgtrello-cbx/--drawer-p)
+;;               (orgtrello-cbx/--update-drawer-with-properties point properties)
+;;               (orgtrello-cbx/--create-drawer-with-properties point properties)))
+;;     (org-cycle)))
 
 (defun orgtrello-cbx/--org-split-metadata (s)
   "Split the string into meta data with -."
@@ -311,6 +348,15 @@ String look like:
        (s-chop-prefix status)
        s-trim))
 
+(defun orgtrello-cbx/--metadata-from-checklist (checklist)
+  "Given a checklist string, extract the list of metadata"
+  (let* ((oc/--meta             (orgtrello-cbx/--org-split-metadata checklist))
+         (oc/--level            (orgtrello-cbx/--level oc/--meta))
+         (oc/--status-retrieved (orgtrello-cbx/--retrieve-status oc/--meta))
+         (oc/--status           (orgtrello-cbx/--status oc/--status-retrieved))
+         (oc/--name             (orgtrello-cbx/--name checklist oc/--status-retrieved)))
+      (list oc/--level nil oc/--status nil oc/--name nil)))
+
 (defun orgtrello-cbx/org-checkbox-components ()
   "Extract the metadata about the checklist - this is the symmetrical as org-heading-components but for the checklist.
 Return the components of the current heading.
@@ -323,13 +369,8 @@ This is a list with the following elements:
 - the tags string, or nil.                                         - nil"
   (save-excursion
     (beginning-of-line)
-    (let* ((oc/--all-data (thing-at-point 'line))
-           (oc/--meta     (orgtrello-cbx/--org-split-metadata oc/--all-data))
-           (oc/--level    (orgtrello-cbx/--level oc/--meta))
-           (oc/--status-retrieved (orgtrello-cbx/--retrieve-status oc/--meta))
-           (oc/--status   (orgtrello-cbx/--status oc/--status-retrieved))
-           (oc/--name     (orgtrello-cbx/--name oc/--all-data oc/--status-retrieved)))
-      (list oc/--level nil oc/--status nil oc/--name nil))))
+    (let ((oc/--all-data (thing-at-point 'line)))
+      (orgtrello-cbx/--metadata-from-checklist oc/--all-data))))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-cbx loaded!")
 
@@ -355,7 +396,7 @@ This is a list with the following elements:
 
 (defun orgtrello-data/--extract-metadata ()
   "Extract the current metadata depending on the org-trello's checklist policy."
-  (if (orgtrello-cbx/checkbox-p)
+  (if (orgtrello-cbx/cfheckbox-p)
       ;; checklist
       (orgtrello-cbx/org-checkbox-components)
       ;; as before
@@ -2335,12 +2376,9 @@ C-c o h - M-x org-trello/help-describing-bindings    - This help message."))
 ;; (org-element-property :checkbox (trace (org-element-context)))
 ;; (org-at-item-checkbox-p) -> does help in determining if I have a checklist or not (nil on heading and list but t for checkbox! wouhou)
 ;;  (message "%s" (org-context))
-;;  (message "%s"(thing-at-point 'sentence)) -> interesting to retrieve the full checklists
-  ;; (save-excursion
-  ;;   (beginning-of-line)
-  ;;   (let ((buffer (thing-at-point 'line)))
-  ;;     (format "%s" buffer)))
-  (message "%s" (orgtrello-data/metadata)))
+  (message "%s" (orgtrello-cbx/--list-checklists))
+;;  (message "%s" (orgtrello-cbx/--retrieve-buffer-content-as-checklist))
+  )
 
 ;;;###autoload
 (define-minor-mode org-trello-mode "Sync your org-mode and your trello together."
