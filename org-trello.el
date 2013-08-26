@@ -179,13 +179,14 @@ Levels:
   "Is there a checkbox at point?"
   (and *ORGTRELLO-NATURAL-ORG-CHECKLIST* (org-at-item-checkbox-p)))
 
-(defun orgtrello-cbx/--to-properties (list)
+(defun orgtrello-cbx/--to-properties (alist)
   "Serialize an association list to json."
-  (json-encode-alist list))
+  (json-encode-alist alist))
 
 (defun orgtrello-cbx/--from-properties (string)
   "Deserialize from json to list."
-  (json-read-from-string string))
+  (if string
+      (json-read-from-string string)))
 
 (defun orgtrello-cbx/--read-properties (s)
   "Read the properties from the current string."
