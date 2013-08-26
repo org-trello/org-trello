@@ -480,7 +480,7 @@
   (expect "- message 1\n- message 2\n" (org-action/--compute-error-message '("message 1" "message 2"))))
 
 (expectations
- (expect '(("key0" "value0") ("key1" "value1") ("key2" "value2")) (orgtrello-hash/split-lines "key0 value0\nkey1 value1\nkey2 value2")))
+ (expect '(("key0" "value0") ("key1" "value1") ("key2" "value2")) (orgtrello-hash/split-lines ":key0: value0\n:key1: value1\n:key2: value2")))
 
 (expectations (lexical-let (expected-hash (make-hash-table :test 'equal))
                 (puthash "key0" "value0" expected-hash)
@@ -529,6 +529,18 @@
   (expect "call people [4/4]" (orgtrello-cbx/--name "  -[] call people [4/4]" "[]"))
   (expect "call people [4/4]" (orgtrello-cbx/--name "  -[-] call people [4/4]" "[-]"))
   (expect "call people [4/4]" (orgtrello-cbx/--name "  -[ ] call people [4/4]" "[ ]")))
+
+(expectations
+ (expect ":key: value\n" (orgtrello-cbx/--entry-key-value "key" "\"value\" \n"))
+ (expect ":key: value\n" (orgtrello-cbx/--entry-key-value "key" "\"value\"")))
+
+(expectations
+ (expect "orgtrello-id"   (orgtrello-hash/remove-key-marker ":orgtrello-id:"))
+ (expect " orgtrello-id " (orgtrello-hash/remove-key-marker ": orgtrello-id :"))
+ (expect nil              (orgtrello-hash/remove-key-marker nil))
+ (expect nil              (orgtrello-hash/remove-key-marker ""))
+ (expect nil              (orgtrello-hash/remove-key-marker ": test"))
+ (expect nil              (orgtrello-hash/remove-key-marker "test:")))
 
 (message "Tests done!")
 

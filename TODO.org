@@ -603,10 +603,10 @@ CLOSED: [2013-08-25 dim. 15:43]
 ** DONE Release
 CLOSED: [2013-08-25 dim. 15:43]
 * TODO 0.1.6 [0%]
-- [ ] Use the native org checklist to sync to trello [0/2]
-  - [ ] Extract the informations from the checklist and item and plug them in the current synchronization (org-entry-get (point) "orgtrello-id")
-  - [ ]
-
+- [-] Use the native org checklist to sync to trello [1/3]
+  - [X] Extract the informations from the checklist and item and plug them in the current synchronization (org-entry-get (point) "orgtrello-id")
+  - [ ] Set the metadata information on the checklist level (org does only the heading level)
+  - [ ] Ensure the synchronization works
 - [ ] Use the native org checklist to sync from trello
 - [-] Automate the release to marmalade
 - [-] webadmin: Add an action button to stop every running action

@@ -166,12 +166,20 @@ Levels:
    :initial-value (make-hash-table :test 'equal)))
 
 (defun orgtrello-hash/split-lines (s)
-  "Given a string, split by line and each line splitted by \space."
-  (--map (split-string it " " t) (split-string s "\n" t)))
+  "Given a string, split by line and each line splitted by \space. Also remove entries key marked :%s:."
+  (--map (let ((l (split-string it " " t)))
+           (list (orgtrello-hash/remove-key-marker (first l)) (s-join " " (cdr l)))) (split-string s "\n" t)))
 
 (defun orgtrello-hash/key (s)
   "Given a string, compute its key format."
   (format ":%s:" s))
+
+(defun orgtrello-hash/remove-key-marker (s)
+  "Given a string under the form :%s:, return only %s."
+  (when s
+        (let ((tmp-s (s-split ":" s)))
+          (when (= 3 (length tmp-s))
+                (second tmp-s)))))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-hash loaded!")
 
@@ -188,13 +196,76 @@ Levels:
   (save-excursion
     (goto-char point)
     (beginning-of-line)
+    (forward-line)
     (let* ((buffer      (current-buffer))
            (point-start (point))
            (point-end   (search-forward ":END:" nil t 1))) ;; point-end could be nil, no error, will send nil later
       (when point-end
-            (orgtrello-hash/make-properties (with-temp-buffer
-                                              (insert-buffer-substring-no-properties buffer point-start point-end)
-                                              (orgtrello-hash/split-lines (buffer-string))))))))
+            (let ((properties (orgtrello-hash/make-properties (with-temp-buffer
+                                                                (insert-buffer-substring-no-properties buffer point-start point-end)
+                                                                (orgtrello-hash/split-lines (buffer-string))))))
+              (remhash "PROPERTIES" properties)
+              (remhash "END"        properties)
+              properties)))))
+
+(defun orgtrello-cbx/--drawer-p ()
+  "Determine if there is a drawer at point."
+  (string= ":PROPERTIES:\n" (thing-at-point 'line)))
+
+(defun orgtrello-cbx/--entry-key-value (key value &optional ret)
+  "Compute an entry in the properties entry."
+  (format "%s %s%s" (orgtrello-hash/key key) value (if ret "\n" "")))
+
+(defun orgtrello-cbx/org-set-property (key value)
+  "Set the property for the checkbox."
+  (let* ((oc/--current-point      (point))
+         (oc/--current-properties (orgtrello-cbx/org-entry-properties oc/--current-point)))
+    (if oc/--current-properties
+          (puthash key value oc/--current-properties)
+          (setq oc/--current-properties
+                (orgtrello-hash/make-properties (list (list key value)))))
+    (orgtrello-cbx/org-entry-sync-properties oc/--current-point oc/--current-properties)))
+
+(require 'simple)
+
+(defun orgtrello-cbx/--update-drawer-with-properties (point properties)
+  "Start from the :PROPERTIES: entry and update each entry present in properties."
+  (save-excursion
+    (forward-line)
+    (let ((current-point (point))
+          (max-point     (search-forward ":END:" nil t)))
+      (maphash
+       (lambda (key value)
+         (goto-char current-point)
+         (let ((current-key-point (search-forward (orgtrello-hash/key key) max-point t)))
+           (if current-key-point
+               ;; we found the key, we update it by removing it and adding it
+               (progn
+                 (kill-whole-line)
+                 (insert (orgtrello-cbx/--entry-key-value key value t)))
+               ;; otherwise, nil means we hit the end, we insert a new entry
+               (insert (orgtrello-cbx/--entry-key-value key value t)))))
+         properties))))
+
+(defun orgtrello-cbx/--create-drawer-with-properties (point properties)
+  "Create a drawer and create each entry present in properties."
+  (save-excursion
+    (insert ":PROPERTIES:\n")
+    (maphash
+     (lambda (key value)
+       (insert (orgtrello-cbx/--entry-key-value key value t)))
+       properties)
+    (insert ":END:\n")))
+
+(defun orgtrello-cbx/org-entry-sync-properties (point properties)
+  "Given a point and a properties map, synchronize the properties on disk."
+  (save-excursion
+    (beginning-of-line)
+    (forward-line)
+    (when properties
+          (if (orgtrello-cbx/--drawer-p)
+              (orgtrello-cbx/--update-drawer-with-properties point properties)
+              (orgtrello-cbx/--create-drawer-with-properties point properties)))))
 
 (defun orgtrello-cbx/org-entry-get (point key)
   "Extract the property key at the point for the checkbox."
@@ -276,7 +347,7 @@ This is a list with the following elements:
       orgmode-date))
 
 (defun orgtrello-data/--extract-metadata ()
-  "Extract the current metadata depending."
+  "Extract the current metadata depending on the org-trello's checklist policy."
   (if (orgtrello-cbx/checkbox-p)
       ;; checklist
       (orgtrello-cbx/org-checkbox-components)
@@ -292,11 +363,8 @@ This is a list with the following elements:
   (funcall (if (orgtrello-cbx/checkbox-p) 'orgtrello-cbx/org-entry-get 'org-entry-get) point key))
 
 (defun orgtrello-action/set-property (key value)
-  (if (orgtrello-cbx/checkbox-p)
-      ;; for checkbox, we must implement our own
-      (throw 'error 'not-implemented-yet)
-      ;; any other we simply use the standard one
-      (org-set-property key value)))
+  "Either set the propery normally (as for entities) or specifically for checklist."
+  (funcall (if (orgtrello-cbx/checkbox-p) 'orgtrello-cbx/org-set-property 'org-set-property) key value))
 
 (defun orgtrello-data/metadata ()
   "Compute the metadata for a given entry from org but not only (now is able to deal with org checkbox).
