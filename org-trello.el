@@ -195,6 +195,14 @@ Levels:
     ;; and we insert the new value
     (insert (concat " " (orgtrello-cbx/--entry-key-value key value)))))
 
+(defun orgtrello-cbx/org-delete-property (key)
+  "Delete a given property from the entry."
+  (save-excursion
+    (let ((point-eol (point-at-eol)))
+      (if (search-forward (orgtrello-hash/key key) point-eol t)
+          ;; remove property
+          (kill-line)))))
+
 (defun orgtrello-cbx/--extract-value (s)
   "Extract the value from a string ':id: value'"
   (->> s
@@ -206,10 +214,10 @@ Levels:
 (defun orgtrello-cbx/org-entry-get (point key)
   "Extract the property key at the point for the checkbox."
   (save-excursion
-    (let* ((point-max (point-at-eol))
-           (point-key (search-forward (orgtrello-hash/key key) point-max t)))
+    (let* ((point-eol (point-at-eol))
+           (point-key (search-forward (orgtrello-hash/key key) point-eol t)))
       (when point-key ;; if we find an existing entry, we return the value associated with it
-            (orgtrello-cbx/--extract-value (buffer-substring point-key point-max))))))
+            (orgtrello-cbx/--extract-value (buffer-substring point-key point-eol))))))
 
 (defun orgtrello-cbx/--retrieve-buffer-content-as-strings ()
   "Retrieve the current buffer's content as list of strings."
@@ -246,6 +254,14 @@ String look like:
   "Given a checklist status, return the TODO/DONE for org-trello to work."
   (if (string= "[X]" s) "DONE" "TODO"))
 
+(defun orgtrello-cbx/--name-without-properties (str)
+  "Filter out the properties from the checklist name."
+  (->> str
+       (s-split (format ":%s" *ORGTRELLO-ID*))
+       first
+       (s-split (format ":%s-" *ORGTRELLO-MARKER*))
+       first))
+
 (defun orgtrello-cbx/--name (s status)
   "Retrieve the name of the checklist"
   (->> s
@@ -261,7 +277,7 @@ String look like:
          (oc/--level            (orgtrello-cbx/--level oc/--meta))
          (oc/--status-retrieved (orgtrello-cbx/--retrieve-status oc/--meta))
          (oc/--status           (orgtrello-cbx/--status oc/--status-retrieved))
-         (oc/--name             (orgtrello-cbx/--name checklist oc/--status-retrieved)))
+         (oc/--name             (orgtrello-cbx/--name-without-properties (orgtrello-cbx/--name checklist oc/--status-retrieved))))
       (list oc/--level nil oc/--status nil oc/--name nil)))
 
 (defun orgtrello-cbx/org-checkbox-metadata ()
@@ -815,8 +831,11 @@ Also add some metadata identifier/due-data/point/buffer-name."
 
 (defun orgtrello-proxy/--cleanup-and-save-buffer-metadata (file marker)
   "To cleanup metadata after the all actions are done!"
+  ;; cleanup file
   (orgtrello-proxy/--remove-file file)
-  (org-delete-property-globally marker)
+  ;; remove property
+  (funcall (if (orgtrello-cbx/checkbox-p) 'orgtrello-cbx/org-delete-property 'org-delete-property-globally) marker)
+  ;; save modifs
   (save-buffer))
 
 (defmacro orgtrello-proxy/--safe-wrap-or-throw-error (fn)
@@ -2281,17 +2300,6 @@ C-c o K - M-x org-trello/kill-all-entities           - Kill all the entities (an
 # HELP
 C-c o h - M-x org-trello/help-describing-bindings    - This help message."))
 
-(defun org-trello/debug ()
-  (interactive)
-  ;; (org-element-property :checkbox (trace (org-element-context)))
-  ;; (org-at-item-checkbox-p);; -> does help in determining if I have a checklist or not (nil on heading and list but t for checkbox! wouhou)
-  ;; (message "%s" (org-context))
-  ;; (message "%s" (orgtrello-cbx/--list-checklists))
-  ;; (message "%s" (orgtrello-cbx/--retrieve-buffer-content-as-checklist))
-  (orgtrello-action/set-property "orgtrello-marker" "value-marker")
-;;  (message "id: %s" (orgtrello-data/extract-identifier (point)))
-  )
-
 ;;;###autoload
 (define-minor-mode org-trello-mode "Sync your org-mode and your trello together."
   :lighter " ot" ;; the name on the modeline
@@ -2312,7 +2320,6 @@ C-c o h - M-x org-trello/help-describing-bindings    - This help message."))
              (define-key map (kbd "C-c o s") 'org-trello/sync-to-trello)
              ;; Help
              (define-key map (kbd "C-c o h") 'org-trello/help-describing-bindings)
-             (define-key map (kbd "C-c o z") 'org-trello/debug)
              map))
 
 (add-hook 'org-trello-mode-on-hook

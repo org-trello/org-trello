@@ -513,22 +513,22 @@
   (expect "[ ]" (orgtrello-cbx/--retrieve-status '("" "" "-" "[ ]" "Peter"))))
 
 (expectations
-  (expect "call people [4/4]" (orgtrello-cbx/--name "- [X] call people [4/4]" "[X]"))
-  (expect "call people [4/4]" (orgtrello-cbx/--name "- [] call people [4/4]" "[]"))
-  (expect "call people [4/4]" (orgtrello-cbx/--name "- [-] call people [4/4]" "[-]"))
-  (expect "call people [4/4]" (orgtrello-cbx/--name "- [ ] call people [4/4]" "[ ]"))
-  (expect "call people [4/4]" (orgtrello-cbx/--name "-[X] call people [4/4]" "[X]"))
-  (expect "call people [4/4]" (orgtrello-cbx/--name "-[] call people [4/4]" "[]"))
-  (expect "call people [4/4]" (orgtrello-cbx/--name "-[-] call people [4/4]" "[-]"))
-  (expect "call people [4/4]" (orgtrello-cbx/--name "-[ ] call people [4/4]" "[ ]"))
+  (expect "call people [4/4]" (orgtrello-cbx/--name "- [X] call people [4/4]"   "[X]"))
+  (expect "call people [4/4]" (orgtrello-cbx/--name "- [] call people [4/4]"    "[]"))
+  (expect "call people [4/4]" (orgtrello-cbx/--name "- [-] call people [4/4]"   "[-]"))
+  (expect "call people [4/4]" (orgtrello-cbx/--name "- [ ] call people [4/4]"   "[ ]"))
+  (expect "call people [4/4]" (orgtrello-cbx/--name "-[X] call people [4/4]"    "[X]"))
+  (expect "call people [4/4]" (orgtrello-cbx/--name "-[] call people [4/4]"     "[]"))
+  (expect "call people [4/4]" (orgtrello-cbx/--name "-[-] call people [4/4]"    "[-]"))
+  (expect "call people [4/4]" (orgtrello-cbx/--name "-[ ] call people [4/4]"    "[ ]"))
   (expect "call people [4/4]" (orgtrello-cbx/--name "  - [X] call people [4/4]" "[X]"))
-  (expect "call people [4/4]" (orgtrello-cbx/--name "  - [] call people [4/4]" "[]"))
+  (expect "call people [4/4]" (orgtrello-cbx/--name "  - [] call people [4/4]"  "[]"))
   (expect "call people [4/4]" (orgtrello-cbx/--name "  - [-] call people [4/4]" "[-]"))
   (expect "call people [4/4]" (orgtrello-cbx/--name "  - [ ] call people [4/4]" "[ ]"))
-  (expect "call people [4/4]" (orgtrello-cbx/--name "  -[X] call people [4/4]" "[X]"))
-  (expect "call people [4/4]" (orgtrello-cbx/--name "  -[] call people [4/4]" "[]"))
-  (expect "call people [4/4]" (orgtrello-cbx/--name "  -[-] call people [4/4]" "[-]"))
-  (expect "call people [4/4]" (orgtrello-cbx/--name "  -[ ] call people [4/4]" "[ ]")))
+  (expect "call people [4/4]" (orgtrello-cbx/--name "  -[X] call people [4/4]"  "[X]"))
+  (expect "call people [4/4]" (orgtrello-cbx/--name "  -[] call people [4/4]"   "[]"))
+  (expect "call people [4/4]" (orgtrello-cbx/--name "  -[-] call people [4/4]"  "[-]"))
+  (expect "call people [4/4]" (orgtrello-cbx/--name "  -[ ] call people [4/4]"  "[ ]")))
 
 (expectations
  (expect ":key: value\n" (orgtrello-cbx/--entry-key-value "key" "value" "\n"))
@@ -544,6 +544,14 @@
 
 (expectations
   (expect "value" (orgtrello-cbx/--extract-value ":id: value")))
+
+(expectations
+  (expect "- [-] call people [1/4] "
+    (orgtrello-cbx/--name-without-properties "- [-] call people [1/4] :orgtrello-marker-5afad87e498d152e61cb6cfccf6cb9f397aff38b: orgtrello-marker-5afad87e498d152e61cb6cfccf6cb9f397aff38b :orgtrello-id: 521bb47eaaa05f8e5a0002b4"))
+  (expect "- [-] call people [1/4] "
+    (orgtrello-cbx/--name-without-properties "- [-] call people [1/4] :orgtrello-id: 521bb47eaaa05f8e5a0002b4"))
+  (expect "- [-] call people [1/4] "
+    (orgtrello-cbx/--name-without-properties "- [-] call people [1/4] ")))
 
 (message "Tests done!")
 
