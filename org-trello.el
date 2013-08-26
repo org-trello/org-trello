@@ -5,7 +5,7 @@
 ;; Author: Antoine R. Dumont <eniotna.t AT gmail.com>
 ;; Maintainer: Antoine R. Dumont <eniotna.t AT gmail.com>
 ;; Version: 0.1.5
-;; Package-Requires: ((org "8.0.7") (dash "1.5.0") (request "0.2.0") (cl-lib "0.3.0") (json "1.2") (elnode "0.9.9.7.6") (esxml "0.3.0"))
+;; Package-Requires: ((org "8.0.7") (dash "1.5.0") (request "0.2.0") (cl-lib "0.3.0") (json "1.2") (elnode "0.9.9.7.6") (esxml "0.3.0") (s "1.7.0"))
 ;; Keywords: org-mode trello sync org-trello
 ;; URL: https://github.com/ardumont/org-trello
 
@@ -60,6 +60,7 @@
 (require 'parse-time)
 (require 'elnode)
 (require 'timer)
+(require 's)
 
 
 
@@ -153,7 +154,102 @@ Levels:
     (if params (puthash :params params h))
     h))
 
+(defun orgtrello-hash/make-properties (properties)
+  "Given a list of key value pair, return a hash table."
+  (cl-reduce
+   (lambda (map list-key-value)
+     (let ((key (first list-key-value))
+           (value (second list-key-value)))
+       (puthash key value map)
+       map))
+   properties
+   :initial-value (make-hash-table :test 'equal)))
+
+(defun orgtrello-hash/split-lines (s)
+  "Given a string, split by line and each line splitted by \space."
+  (--map (split-string it " " t) (split-string s "\n" t)))
+
+(defun orgtrello-hash/key (s)
+  "Given a string, compute its key format."
+  (format ":%s:" s))
+
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-hash loaded!")
+
+
+
+;; #################### orgtrello-cbx
+
+(defun orgtrello-cbx/checkbox-p ()
+  "Is there a checkbox at point?"
+  (and *ORGTRELLO-NATURAL-ORG-CHECKLIST* (org-at-item-checkbox-p)))
+
+(defun orgtrello-cbx/org-entry-properties (point)
+  "Extract the properties from the checkbox entry."
+  (save-excursion
+    (goto-char point)
+    (beginning-of-line)
+    (let* ((buffer      (current-buffer))
+           (point-start (point))
+           (point-end   (search-forward ":END:" nil t 1))) ;; point-end could be nil, no error, will send nil later
+      (when point-end
+            (orgtrello-hash/make-properties (with-temp-buffer
+                                              (insert-buffer-substring-no-properties buffer point-start point-end)
+                                              (orgtrello-hash/split-lines (buffer-string))))))))
+
+(defun orgtrello-cbx/org-entry-get (point key)
+  "Extract the property key at the point for the checkbox."
+  (let ((properties (orgtrello-cbx/org-entry-properties point)))
+    (when properties (gethash (orgtrello-hash/key key) properties))))
+
+(defun orgtrello-cbx/--org-split-metadata (s)
+  "Split the string into meta data with -."
+  (split-string s " "))
+
+(defun orgtrello-cbx/--level (l)
+  "Given a list of strings, compute the level (starts at 2).
+String look like:
+- ('- '[X] 'call 'people '[4/4])
+- (' '  '- '[X] 'call 'people '[4/4])"
+  (+ 2 (if (string= "-" (car l))
+           0
+           (1-  (length (--take-while (not (string= "-" it)) l))))))
+
+(defun orgtrello-cbx/--retrieve-status (l)
+  (car (--drop-while (not (or (string= "[]" it)
+                              (string= "[X]" it)
+                              (string= "[-]" it)
+                              (string= "[ ]" it))) l)))
+
+(defun orgtrello-cbx/--status (s)
+  "Given a checklist status, return the TODO/DONE for org-trello to work."
+  (if (string= "[X]" s) "DONE" "TODO"))
+
+(defun orgtrello-cbx/--name (s status)
+  "Retrieve the name of the checklist"
+  (s-trim (s-chop-prefix (concat "- " status) (s-trim-left s))))
+
+(defun orgtrello-cbx/org-checkbox-components ()
+  "Extract the metadata about the checklist - this is the symmetrical as org-heading-components but for the checklist.
+Return the components of the current heading.
+This is a list with the following elements:
+- the level as an integer                                          - (begins at 2)
+- the reduced level                                                - always nil
+- the TODO keyword, or nil                                         - [], [-] map to TODO, [X] map to DONE
+- the priority character, like ?A, or nil if no priority is given  - nil
+- the headline text itself, or the tags string if no headline text - the name of the checkbox
+- the tags string, or nil.                                         - nil"
+  (save-excursion
+    (beginning-of-line)
+    (let* ((oc/--all-data (thing-at-point 'line))
+           (oc/--meta     (orgtrello-cbx/--org-split-metadata oc/--all-data))
+           (oc/--level    (orgtrello-cbx/--level oc/--meta))
+           (oc/--status   (-> oc/--meta
+                              orgtrello-cbx/--retrieve-status
+                              orgtrello-cbx/--status))
+           (oc/--name     (orgtrello-cbx/--name oc/--all-data oc/--status)))
+      (list oc/--level nil oc/--status nil oc/--name nil))))
+
+(orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-cbx loaded!")
 
 
 
@@ -175,9 +271,13 @@ Levels:
                                (concat year-mon-day hour-min-sec ".000Z")))
       orgmode-date))
 
-(defun orgtrello-action/checkbox-p ()
-  "Is there a checkbox at point?"
-  (and *ORGTRELLO-NATURAL-ORG-CHECKLIST* (org-at-item-checkbox-p)))
+(defun orgtrello-data/--extract-metadata ()
+  "Extract the current metadata depending."
+  (if (orgtrello-cbx/checkbox-p)
+      ;; checklist
+      (orgtrello-cbx/org-checkbox-components)
+      ;; as before
+      (org-heading-components)))
 
 (defun orgtrello-data/extract-identifier (point)
   "Extract the identifier from the point."
@@ -185,56 +285,30 @@ Levels:
 
 (defun orgtrello-action/org-entry-get (point key)
   "Extract the identifier from the point."
-  (if (orgtrello-action/checkbox-p)
-      ;; implement our own for the checklist
-      (throw 'error 'not-implemented-yet)
-      ;; otherwise we simply extract as usual
-      (org-entry-get point key)))
-
-(defun orgtrello-data/original-metadata ()
-  "Compute the metadata from the org-heading-components entry, add the identifier and extract the metadata needed."
-  (let* ((orgtrello-data/metadata--point       (point))
-         (orgtrello-data/metadata--id          (orgtrello-data/extract-identifier orgtrello-data/metadata--point))
-         (orgtrello-data/metadata--due         (orgtrello-data/--convert-orgmode-date-to-trello-date (orgtrello-action/org-entry-get orgtrello-data/metadata--point "DEADLINE")))
-         (orgtrello-data/metadata--buffer-name (buffer-name))
-         (orgtrello-data/metadata--metadata    (org-heading-components)))
-    (->> orgtrello-data/metadata--metadata
-         (cons orgtrello-data/metadata--due)
-         (cons orgtrello-data/metadata--id)
-         (cons orgtrello-data/metadata--point)
-         (cons orgtrello-data/metadata--buffer-name)
-         orgtrello-data/--get-metadata)))
-
-(defun orgtrello-data/org-metadata-checklist ()
-  "Compute the metadata for the checklist."
-  (let* ((orgtrello-data/metadata--point       (point))
-         (orgtrello-data/metadata--id          (orgtrello-data/extract-identifier orgtrello-data/metadata--point))
-         (orgtrello-data/metadata--due         (orgtrello-data/--convert-orgmode-date-to-trello-date (orgtrello-action/org-entry-get orgtrello-data/metadata--point "DEADLINE")))
-         (orgtrello-data/metadata--buffer-name (buffer-name))
-         (orgtrello-data/metadata--metadata    (org-heading-components)))
-    (->> orgtrello-data/metadata--metadata
-         (cons orgtrello-data/metadata--due)
-         (cons orgtrello-data/metadata--id)
-         (cons orgtrello-data/metadata--point)
-         (cons orgtrello-data/metadata--buffer-name)
-         orgtrello-data/--get-metadata)))
-
-(defun orgtrello-data/org-metadata ()
-  "Compute the metadata from the org-heading-components entry, add the identifier and extract the metadata needed. And deal with org checkbox."
-  (if (orgtrello-action/checkbox-p) (orgtrello-data/org-metadata-checklist) (orgtrello-data/original-metadata)))
+  (funcall (if (orgtrello-cbx/checkbox-p) 'orgtrello-cbx/org-entry-get 'org-entry-get) point key))
 
 (defun orgtrello-action/set-property (key value)
-  (if (orgtrello-action/checkbox-p)
+  (if (orgtrello-cbx/checkbox-p)
       ;; for checkbox, we must implement our own
       (throw 'error 'not-implemented-yet)
       ;; any other we simply use the standard one
       (org-set-property key value)))
 
 (defun orgtrello-data/metadata ()
-  "Compute the metadata from the org-heading-components entry, add the identifier and extract the metadata needed."
-  (if *ORGTRELLO-NATURAL-ORG-CHECKLIST*
-      (orgtrello-data/org-metadata)
-      (orgtrello-data/original-metadata)))
+  "Compute the metadata for a given entry from org but not only (now is able to deal with org checkbox).
+Also add some metadata identifier/due-data/point/buffer-name."
+  (let* ((orgtrello-data/metadata--point       (point))
+         (orgtrello-data/metadata--id          (orgtrello-data/extract-identifier orgtrello-data/metadata--point))
+         (orgtrello-data/metadata--due         (orgtrello-data/--convert-orgmode-date-to-trello-date
+                                                (orgtrello-action/org-entry-get orgtrello-data/metadata--point "DEADLINE")))
+         (orgtrello-data/metadata--buffer-name (buffer-name))
+         (orgtrello-data/metadata--metadata    (orgtrello-data/--extract-metadata)))
+    (->> orgtrello-data/metadata--metadata
+         (cons orgtrello-data/metadata--due)
+         (cons orgtrello-data/metadata--id)
+         (cons orgtrello-data/metadata--point)
+         (cons orgtrello-data/metadata--buffer-name)
+         orgtrello-data/--get-metadata)))
 
 (defun orgtrello-data/--parent-metadata ()
   "Extract the metadata from the current heading's parent."
@@ -730,7 +804,7 @@ Levels:
 (defun orgtrello-proxy/--compute-pattern-search-from-marker (marker)
   "Given a marker, compute the pattern to look for in the file."
   (if (string-match-p (format "^%s-" *ORGTRELLO-MARKER*) marker)
-      (format ":%s:" marker)
+      (orgtrello-hash/key marker)
       marker))
 
 (defun orgtrello-proxy/--getting-back-to-marker (marker)
@@ -2181,7 +2255,13 @@ C-c o h - M-x org-trello/help-describing-bindings    - This help message."))
   (interactive)
 ;; (org-element-property :checkbox (trace (org-element-context)))
 ;; (org-at-item-checkbox-p) -> does help in determining if I have a checklist or not (nil on heading and list but t for checkbox! wouhou)
-  (message "%S" (org-context)))
+;;  (message "%s" (org-context))
+;;  (message "%s"(thing-at-point 'sentence)) -> interesting to retrieve the full checklists
+  ;; (save-excursion
+  ;;   (beginning-of-line)
+  ;;   (let ((buffer (thing-at-point 'line)))
+  ;;     (format "%s" buffer)))
+  (message "%s" (orgtrello-data/metadata)))
 
 ;;;###autoload
 (define-minor-mode org-trello-mode "Sync your org-mode and your trello together."

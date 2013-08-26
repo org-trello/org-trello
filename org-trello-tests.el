@@ -476,9 +476,45 @@
      (lambda (entity s) (format "%S %s" entity s))
      "- hello")))
 
-
 (expectations
   (expect "- message 1\n- message 2\n" (org-action/--compute-error-message '("message 1" "message 2"))))
+
+(expectations
+ (expect '(("key0" "value0") ("key1" "value1") ("key2" "value2")) (orgtrello-hash/split-lines "key0 value0\nkey1 value1\nkey2 value2")))
+
+(expectations (lexical-let (expected-hash (make-hash-table :test 'equal))
+                (puthash "key0" "value0" expected-hash)
+                (puthash "key1" "value1" expected-hash)
+                (expect expected-hash (orgtrello-hash/make-properties '(("key0" "value0") ("key1" "value1"))))))
+
+(expectations
+ (expect ":key:" (orgtrello-hash/key "key")))
+
+(expectations
+  (expect 2 (orgtrello-cbx/--level '("-" "[X]" "call" "people" "[4/4]")))
+  (expect 3 (orgtrello-cbx/--level '("" "" "-" "[X]" "Peter")))
+  (expect 4 (orgtrello-cbx/--level '("" "" "" "-" "[X]" "Peter"))))
+
+(expectations
+  (expect "DONE" (orgtrello-cbx/--status"[X]"))
+  (expect "TODO" (orgtrello-cbx/--status"[ ]"))
+  (expect "TODO" (orgtrello-cbx/--status"[]"))
+  (expect "TODO" (orgtrello-cbx/--status"[-]"))
+  (expect "TODO" (orgtrello-cbx/--status"")))
+
+(expectations
+  (expect '("-" "[X]" "call" "people" "[4/4]") (orgtrello-cbx/--org-split-metadata "- [X] call people [4/4]"))
+  (expect '("" "" "-" "[X]" "Peter") (orgtrello-cbx/--org-split-metadata "  - [X] Peter")))
+
+(expectations
+  (expect "[X]" (orgtrello-cbx/--retrieve-status '("" "" "-" "[X]" "Peter")))
+  (expect "[]" (orgtrello-cbx/--retrieve-status '("" "" "-" "[]" "Peter")))
+  (expect "[-]" (orgtrello-cbx/--retrieve-status '("" "" "-" "[-]" "Peter")))
+  (expect "[ ]" (orgtrello-cbx/--retrieve-status '("" "" "-" "[ ]" "Peter"))))
+
+(expectations
+  (expect "call people [4/4]" (orgtrello-cbx/--name "- [X] call people [4/4]" "[X]"))
+  (expect "call people [4/4]" (orgtrello-cbx/--name "  - [X] call people [4/4]" "[X]")) )
 
 (message "Tests done!")
 
