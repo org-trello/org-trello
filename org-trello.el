@@ -186,22 +186,25 @@ Levels:
 (defun orgtrello-cbx/org-set-property (key value)
   "Set the property for the checkbox. Beware a checkbox has no drawer so we add this unique key entry at the end of the line."
   (save-excursion
-    (let ((point-eol (point-at-eol)))
-      (if (search-forward (orgtrello-hash/key key) point-eol t)
-          ;; remove property
-          (kill-line)
-          ;; otherwise get at the eol
-          (goto-char point-eol)))
+    ;; if property already exists or not, we try to remove it
+    (orgtrello-cbx/org-delete-property key)
+    (end-of-line)
     ;; and we insert the new value
     (insert (concat " " (orgtrello-cbx/--entry-key-value key value)))))
 
-(defun orgtrello-cbx/org-delete-property (key)
+(defun orgtrello-cbx/org-delete-property (key &optional marker-flag)
   "Delete a given property from the entry."
   (save-excursion
-    (let ((point-eol (point-at-eol)))
-      (if (search-forward (orgtrello-hash/key key) point-eol t)
-          ;; remove property
-          (kill-line)))))
+    (beginning-of-line)
+    (if marker-flag (orgtrello-cbx/--entry-key-value key key)
+        (let ((full-line (buffer-substring-no-properties (point) (point-at-eol))))
+          ;; removing marker and just the marker (key,value)
+          (replace-in-string (trace full-line :full) (orgtrello-cbx/--entry-key-value key key) ""))
+        ;; otherwise, it's a standard property deletion
+        (let ((point-eol (point-at-eol)))
+          (if (search-forward (orgtrello-hash/key key) point-eol t)
+              ;; remove property and the rest of the line so if other properties, they may disappear (not the need at the moment)
+              (kill-line))))))
 
 (defun orgtrello-cbx/--extract-value (s)
   "Extract the value from a string ':id: value'"
@@ -834,7 +837,7 @@ Also add some metadata identifier/due-data/point/buffer-name."
   ;; cleanup file
   (orgtrello-proxy/--remove-file file)
   ;; remove property
-  (funcall (if (orgtrello-cbx/checkbox-p) 'orgtrello-cbx/org-delete-property 'org-delete-property-globally) marker)
+  (funcall (if (orgtrello-cbx/checkbox-p) (lambda () (orgtrello-cbx/org-delete-property 'this-is-marker-flag)) 'org-delete-property-globally) marker)
   ;; save modifs
   (save-buffer))
 
@@ -1775,8 +1778,8 @@ refresh(\"/proxy/admin/current-action/\", '#current-action');
 
 (defun orgtrello/--delegate-to-the-proxy (entity action)
   "Execute the delegation to the consumer."
-  (let ((orgtrello/--current-entry-id (orgtrello/--id entity))
-        (orgtrello/--marker           (orgtrello/--compute-marker-from-entry entity)))
+  (let ((orgtrello/--current-entry-id (trace (orgtrello/--id entity) :id))
+        (orgtrello/--marker           (trace (orgtrello/--compute-marker-from-entry entity) :marker)))
     ;; if never created before, we need a marker to add inside the file
     (unless (string= orgtrello/--current-entry-id orgtrello/--marker)
             (orgtrello/--set-marker orgtrello/--marker))
