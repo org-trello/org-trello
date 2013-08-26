@@ -66,7 +66,7 @@
 
 ;; #################### overriding setup
 
-(defvar *ORGTRELLO-NATURAL-ORG-CHECKLIST* nil
+(defvar *ORGTRELLO-NATURAL-ORG-CHECKLIST* t
   "Permit the user to choose the natural org checklists over the first org-trello one (present from the start which are more basic).
    To alter this behavior, update in your init.el:
    (require 'org-trello)
@@ -226,7 +226,12 @@ String look like:
 
 (defun orgtrello-cbx/--name (s status)
   "Retrieve the name of the checklist"
-  (s-trim (s-chop-prefix (concat "- " status) (s-trim-left s))))
+  (->> s
+       s-trim-left
+       (s-chop-prefix "-")
+       s-trim-left
+       (s-chop-prefix status)
+       s-trim))
 
 (defun orgtrello-cbx/org-checkbox-components ()
   "Extract the metadata about the checklist - this is the symmetrical as org-heading-components but for the checklist.
@@ -243,10 +248,9 @@ This is a list with the following elements:
     (let* ((oc/--all-data (thing-at-point 'line))
            (oc/--meta     (orgtrello-cbx/--org-split-metadata oc/--all-data))
            (oc/--level    (orgtrello-cbx/--level oc/--meta))
-           (oc/--status   (-> oc/--meta
-                              orgtrello-cbx/--retrieve-status
-                              orgtrello-cbx/--status))
-           (oc/--name     (orgtrello-cbx/--name oc/--all-data oc/--status)))
+           (oc/--status-retrieved (orgtrello-cbx/--retrieve-status oc/--meta))
+           (oc/--status   (orgtrello-cbx/--status oc/--status-retrieved))
+           (oc/--name     (orgtrello-cbx/--name oc/--all-data oc/--status-retrieved)))
       (list oc/--level nil oc/--status nil oc/--name nil))))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-cbx loaded!")
