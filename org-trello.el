@@ -65,11 +65,17 @@
 
 ;; #################### overriding setup
 
+(defvar *ORGTRELLO-NATURAL-ORG-CHECKLIST* nil
+  "Permit the user to choose the natural org checklists over the first org-trello one (present from the start which are more basic).
+   To alter this behavior, update in your init.el:
+   (require 'org-trello)
+   (setq *ORGTRELLO-NATURAL-ORG-CHECKLIST* nil)")
+
 (defvar *ORGTRELLO-CHECKLIST-UPDATE-ITEMS* t
   "A variable to permit the checklist's status to be pass along to its items. t, if checklist's status is DONE, the items are updated to DONE (org-mode buffer and trello board), nil only the items's status is used.
-  To deactivate such behavior, update in your init.el:
-  (require 'org-trello)
-  (setq *ORGTRELLO-CHECKLIST-UPDATE-ITEMS* nil)")
+   To let the user completely choose what status he/she wants for every level, just change in your init.el file:
+   (require 'org-trello)
+   (setq *ORGTRELLO-CHECKLIST-UPDATE-ITEMS* nil)")
 
 
 
@@ -167,17 +173,29 @@ Levels:
                              (let* ((year-mon-day (concat year "-" mon "-" day "T"))
                                     (hour-min-sec (if hour (concat hour ":" min ":" sec) "00:00:00")))
                                (concat year-mon-day hour-min-sec ".000Z")))
-    orgmode-date))
+      orgmode-date))
+
+(defun orgtrello-action/checkbox-p ()
+  "Is there a checkbox at point?"
+  (and *ORGTRELLO-NATURAL-ORG-CHECKLIST* (org-at-item-checkbox-p)))
 
 (defun orgtrello-data/extract-identifier (point)
   "Extract the identifier from the point."
-  (org-entry-get point *ORGTRELLO-ID*))
+  (orgtrello-action/org-entry-get point *ORGTRELLO-ID*))
 
-(defun orgtrello-data/metadata ()
+(defun orgtrello-action/org-entry-get (point key)
+  "Extract the identifier from the point."
+  (if (orgtrello-action/checkbox-p)
+      ;; implement our own for the checklist
+      (throw 'error 'not-implemented-yet)
+      ;; otherwise we simply extract as usual
+      (org-entry-get point key)))
+
+(defun orgtrello-data/original-metadata ()
   "Compute the metadata from the org-heading-components entry, add the identifier and extract the metadata needed."
   (let* ((orgtrello-data/metadata--point       (point))
          (orgtrello-data/metadata--id          (orgtrello-data/extract-identifier orgtrello-data/metadata--point))
-         (orgtrello-data/metadata--due         (orgtrello-data/--convert-orgmode-date-to-trello-date (org-entry-get orgtrello-data/metadata--point "DEADLINE")))
+         (orgtrello-data/metadata--due         (orgtrello-data/--convert-orgmode-date-to-trello-date (orgtrello-action/org-entry-get orgtrello-data/metadata--point "DEADLINE")))
          (orgtrello-data/metadata--buffer-name (buffer-name))
          (orgtrello-data/metadata--metadata    (org-heading-components)))
     (->> orgtrello-data/metadata--metadata
@@ -186,6 +204,37 @@ Levels:
          (cons orgtrello-data/metadata--point)
          (cons orgtrello-data/metadata--buffer-name)
          orgtrello-data/--get-metadata)))
+
+(defun orgtrello-data/org-metadata-checklist ()
+  "Compute the metadata for the checklist."
+  (let* ((orgtrello-data/metadata--point       (point))
+         (orgtrello-data/metadata--id          (orgtrello-data/extract-identifier orgtrello-data/metadata--point))
+         (orgtrello-data/metadata--due         (orgtrello-data/--convert-orgmode-date-to-trello-date (orgtrello-action/org-entry-get orgtrello-data/metadata--point "DEADLINE")))
+         (orgtrello-data/metadata--buffer-name (buffer-name))
+         (orgtrello-data/metadata--metadata    (org-heading-components)))
+    (->> orgtrello-data/metadata--metadata
+         (cons orgtrello-data/metadata--due)
+         (cons orgtrello-data/metadata--id)
+         (cons orgtrello-data/metadata--point)
+         (cons orgtrello-data/metadata--buffer-name)
+         orgtrello-data/--get-metadata)))
+
+(defun orgtrello-data/org-metadata ()
+  "Compute the metadata from the org-heading-components entry, add the identifier and extract the metadata needed. And deal with org checkbox."
+  (if (orgtrello-action/checkbox-p) (orgtrello-data/org-metadata-checklist) (orgtrello-data/original-metadata)))
+
+(defun orgtrello-action/set-property (key value)
+  (if (orgtrello-action/checkbox-p)
+      ;; for checkbox, we must implement our own
+      (throw 'error 'not-implemented-yet)
+      ;; any other we simply use the standard one
+      (org-set-property key value)))
+
+(defun orgtrello-data/metadata ()
+  "Compute the metadata from the org-heading-components entry, add the identifier and extract the metadata needed."
+  (if *ORGTRELLO-NATURAL-ORG-CHECKLIST*
+      (orgtrello-data/org-metadata)
+      (orgtrello-data/original-metadata)))
 
 (defun orgtrello-data/--parent-metadata ()
   "Extract the metadata from the current heading's parent."
@@ -714,7 +763,7 @@ Levels:
                                         (concat "Entity '" (orgtrello/--name orgtrello-proxy/--entry-metadata) "' with id '" orgtrello-proxy/--entry-id "' synced!")
                                         (let ((orgtrello-proxy/--entry-name (orgtrello-query/--name data)))
                                           ;; not present, this was just created, we add a simple property
-                                          (org-set-property *ORGTRELLO-ID* orgtrello-proxy/--entry-new-id)
+                                          (orgtrello-action/set-property *ORGTRELLO-ID* orgtrello-proxy/--entry-new-id)
                                           (concat "Newly entity '" orgtrello-proxy/--entry-name "' with id '" orgtrello-proxy/--entry-new-id "' synced!")))))))
              (orgtrello-proxy/--cleanup-and-save-buffer-metadata orgtrello-proxy/--entry-file orgtrello-proxy/--marker)
              (when str-msg (orgtrello-log/msg *OT/INFO* str-msg)))))))))
@@ -1584,7 +1633,7 @@ refresh(\"/proxy/admin/current-action/\", '#current-action');
 
 (defun orgtrello/--set-marker (marker)
   "Set a marker to get back to later."
-  (org-set-property marker marker))
+  (orgtrello-action/set-property marker marker))
 
 (defun orgtrello/--compute-marker-from-entry (entry)
   "Compute and set the marker (either a sha1 or the id of the entry-metadata)."
@@ -1716,7 +1765,7 @@ refresh(\"/proxy/admin/current-action/\", '#current-action');
            (let ((orgtrello/--entry-new-name  (orgtrello-query/--name orgtrello/--entity)))
              (orgtrello-log/msg *OT/INFO* "Synchronizing new entity '%s' with id '%s'..." orgtrello/--entry-new-name orgtrello/--entry-new-id)
              (insert (orgtrello/--compute-entity-to-org-entry orgtrello/--entity))
-             (org-set-property *ORGTRELLO-ID* orgtrello/--entry-new-id)))
+             (orgtrello-action/set-property *ORGTRELLO-ID* orgtrello/--entry-new-id)))
          entities)
         (goto-char (point-min))
         (org-sort-entries t ?o)
@@ -2128,6 +2177,12 @@ C-c o K - M-x org-trello/kill-all-entities           - Kill all the entities (an
 # HELP
 C-c o h - M-x org-trello/help-describing-bindings    - This help message."))
 
+(defun org-trello/debug ()
+  (interactive)
+;; (org-element-property :checkbox (trace (org-element-context)))
+;; (org-at-item-checkbox-p) -> does help in determining if I have a checklist or not (nil on heading and list but t for checkbox! wouhou)
+  (message "%S" (org-context)))
+
 ;;;###autoload
 (define-minor-mode org-trello-mode "Sync your org-mode and your trello together."
   :lighter " ot" ;; the name on the modeline
@@ -2148,6 +2203,7 @@ C-c o h - M-x org-trello/help-describing-bindings    - This help message."))
              (define-key map (kbd "C-c o s") 'org-trello/sync-to-trello)
              ;; Help
              (define-key map (kbd "C-c o h") 'org-trello/help-describing-bindings)
+             (define-key map (kbd "C-c o z") 'org-trello/debug)
              map))
 
 (add-hook 'org-trello-mode-on-hook
