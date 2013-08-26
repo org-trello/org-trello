@@ -553,6 +553,36 @@
   (expect "- [-] call people [1/4] "
     (orgtrello-cbx/--name-without-properties "- [-] call people [1/4] ")))
 
+(expectations
+  (expect "{\"orgtrello-id\":\"123\"}" (orgtrello-cbx/--to-properties `((,*ORGTRELLO-ID* . "123")))))
+
+(expectations
+  (expect '((orgtrello-id . "123")) (orgtrello-cbx/--from-properties "{\"orgtrello-id\":\"123\"}")))
+
+(expectations
+  (expect '((orgtrello-id . "123")) (orgtrello-cbx/--read-properties "- [X] some checkbox #PROPERTIES# {\"orgtrello-id\":\"123\"}")))
+
+(expectations
+  (expect "- [X] some checkbox #PROPERTIES# {\"orgtrello-id\":\"456\"}"
+    (orgtrello-cbx/--write-properties "- [X] some checkbox #PROPERTIES# {\"orgtrello-id\":\"123\"}" `((,*ORGTRELLO-ID* . "456")))))
+
+(expectations
+  (expect "123"    (orgtrello-cbx/--org-get-property "orgtrello-id" `((orgtrello-id . "123"))))
+  (expect nil      (orgtrello-cbx/--org-get-property "orgtrello-id" `(("orgtrello-id" . "123"))))
+  (expect nil      (orgtrello-cbx/--org-get-property 'orgtrello-id `(("orgtrello-id" . "123"))))
+  (expect "123"    (orgtrello-cbx/--org-get-property 'orgtrello-id `((orgtrello-id . "123"))))
+  (expect "marker" (orgtrello-cbx/--org-get-property "orgtrello-marker" `(("orgtrello-id" . "123") (orgtrello-marker . "marker")))))
+
+(expectations
+  (expect `(("orgtrello-id" . "10") (orgtrello-marker . "123")) (orgtrello-cbx/--org-set-property "orgtrello-id" "10" `((orgtrello-marker . "123"))))
+  (expect `(("orgtrello-toto" . "abc") (orgtrello-marker . "456")) (orgtrello-cbx/--org-set-property "orgtrello-toto" "abc" `((orgtrello-marker . "456")))))
+
+(expectations
+  (expect `(("orgtrello-id" . "123") (orgtrello-marker . "marker")) (orgtrello-cbx/--org-delete-property "orgtrello-id" `(("orgtrello-id" . "123") (orgtrello-marker . "marker"))))
+  (expect `((orgtrello-marker . "marker")) (orgtrello-cbx/--org-delete-property "orgtrello-id" `((orgtrello-id . "123") (orgtrello-marker . "marker"))))
+  (expect `((orgtrello-marker . "marker")) (orgtrello-cbx/--org-delete-property 'orgtrello-id `((orgtrello-id . "123") (orgtrello-marker . "marker"))))
+  (expect `(("orgtrello-id" . "123") (orgtrello-marker . "marker")) (orgtrello-cbx/--org-delete-property 'orgtrello-id `(("orgtrello-id" . "123") (orgtrello-marker . "marker")))))
+
 (message "Tests done!")
 
 (provide 'org-trello-tests)

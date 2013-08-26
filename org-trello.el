@@ -179,60 +179,78 @@ Levels:
   "Is there a checkbox at point?"
   (and *ORGTRELLO-NATURAL-ORG-CHECKLIST* (org-at-item-checkbox-p)))
 
-(defun orgtrello-cbx/--entry-key-value (key value &optional ret)
-  "Compute an entry in the properties entry."
-  (format "%s %s%s" (orgtrello-hash/key key) value (if ret "\n" "")))
+(defun orgtrello-cbx/--to-properties (list)
+  "Serialize an association list to json."
+  (json-encode-alist list))
+
+(defun orgtrello-cbx/--from-properties (string)
+  "Deserialize from json to list."
+  (json-read-from-string string))
+
+(defun orgtrello-cbx/--read-properties (s)
+  "Read the properties from the current string."
+  (->> s
+       (s-split "#PROPERTIES#")
+       second
+       orgtrello-cbx/--from-properties))
+
+(defun orgtrello-cbx/--read-properties-from-point (point)
+  "Read the properties from the current point."
+  (save-excursion
+    (goto-char point)
+    (orgtrello-cbx/--read-properties (buffer-substring (point-at-eol) (point-at-eol)))))
+
+;; (expectations
+;;   (expect '((orgtrello-id . "123")) (with-temp-buffer
+;;                                       (insert "- [X] some checkbox #PROPERTIES# {\"orgtrello-id\":\"123\"}")
+;;                                       (forward-line -1)
+;;                                       (orgtrello-cbx/--read-properties-from-point))))
+
+(defun orgtrello-cbx/--write-properties (checkbox-string properties)
+  "Given the current checkbox-string and the new properties, update the properties in the current entry."
+  (s-join " " `(,(->> checkbox-string (s-split "#PROPERTIES#") first s-trim)
+                "#PROPERTIES#"
+                ,(orgtrello-cbx/--to-properties properties))))
+
+(defun orgtrello-cbx/--write-properties-at-point (properties)
+  "Given the new properties, update the current entry."
+  (orgtrello-cbx/--write-properties (buffer-substring (point-at-eol) (point-at-eol)) properties))
+
+(defun orgtrello-cbx/--org-get-property (key properties)
+  "Internal accessor to the key property."
+  (let ((key-to-search (if (stringp key) (intern key) key)))
+    (assoc-default (trace key-to-search :key-get) properties)))
+
+(defun orgtrello-cbx/--org-set-property (key value properties)
+  "Internal accessor to the key property."
+  (trace key :key-set)
+  (trace value :value-set)
+  (cons `(,key . ,value) properties))
+
+(defun orgtrello-cbx/--org-delete-property (key properties)
+  "Delete the key from the properties."
+  (let ((key-to-search (if (stringp key) (intern key) key)))
+    (assq-delete-all (trace key-to-search :key-del) properties)))
 
 (defun orgtrello-cbx/org-set-property (key value)
-  "Set the property for the checkbox. Beware a checkbox has no drawer so we add this unique key entry at the end of the line."
-  (save-excursion
-    ;; if property already exists or not, we try to remove it
-    (orgtrello-cbx/org-delete-property key)
-    (end-of-line)
-    ;; and we insert the new value
-    (insert (concat " " (orgtrello-cbx/--entry-key-value key value)))))
+  "Read the properties. Add the new property key with the value value. Write the new properties."
+  (->> (point)
+       orgtrello-cbx/--read-properties-from-point
+       (orgtrello-cbx/--org-set-property key value)
+       orgtrello-cbx/--write-properties-at-point))
 
-(defun orgtrello-cbx/org-delete-property (key &optional marker-flag)
-  "Delete a given property from the entry."
-  (save-excursion
-    (beginning-of-line)
-    (if marker-flag (orgtrello-cbx/--entry-key-value key key)
-        (let ((full-line (buffer-substring-no-properties (point) (point-at-eol))))
-          ;; removing marker and just the marker (key,value)
-          (replace-in-string (trace full-line :full) (orgtrello-cbx/--entry-key-value key key) ""))
-        ;; otherwise, it's a standard property deletion
-        (let ((point-eol (point-at-eol)))
-          (if (search-forward (orgtrello-hash/key key) point-eol t)
-              ;; remove property and the rest of the line so if other properties, they may disappear (not the need at the moment)
-              (kill-line))))))
+(defun orgtrello-cbx/org-get-property (key point)
+  "Retrieve the value for the key key."
+  (->> point
+       orgtrello-cbx/--read-properties-from-point
+       (orgtrello-cbx/--org-get-property key)))
 
-(defun orgtrello-cbx/--extract-value (s)
-  "Extract the value from a string ':id: value'"
-  (->> s
-       (s-split ":")
-       last
-       first
-       s-trim))
-
-(defun orgtrello-cbx/org-entry-get (point key)
-  "Extract the property key at the point for the checkbox."
-  (save-excursion
-    (let* ((point-eol (point-at-eol))
-           (point-key (search-forward (orgtrello-hash/key key) point-eol t)))
-      (when point-key ;; if we find an existing entry, we return the value associated with it
-            (orgtrello-cbx/--extract-value (buffer-substring point-key point-eol))))))
-
-(defun orgtrello-cbx/--retrieve-buffer-content-as-strings ()
-  "Retrieve the current buffer's content as list of strings."
-  (let* ((cur-buffer (current-buffer))
-         (cur-point  (point))
-         (nxt-point  (save-excursion
-                       (org-goto-sibling)
-                       (point)))
-         (next-point (if (= nxt-point cur-point) (point-max) nxt-point)))
-    (with-temp-buffer
-      (insert-buffer-substring-no-properties cur-buffer cur-point next-point)
-      (s-lines (buffer-string)))))
+(defun orgtrello-cbx/org-delete-property (key)
+  "Delete the property key from the properties."
+  (->> (point)
+       orgtrello-cbx/--read-properties-from-point
+       (orgtrello-cbx/--org-delete-property key)
+       orgtrello-cbx/--write-properties-at-point))
 
 (defun orgtrello-cbx/--org-split-metadata (s)
   "Split the string into meta data with -."
@@ -341,7 +359,7 @@ This is a list with the following elements:
 
 (defun orgtrello-action/org-entry-get (point key)
   "Extract the identifier from the point."
-  (funcall (if (orgtrello-cbx/checkbox-p) 'orgtrello-cbx/org-entry-get 'org-entry-get) point key))
+  (funcall (if (orgtrello-cbx/checkbox-p) 'orgtrello-cbx/org-get-property 'org-entry-get) point key))
 
 (defun orgtrello-data/metadata ()
   "Compute the metadata for a given entry from org but not only (now is able to deal with org checkbox).
@@ -837,7 +855,7 @@ Also add some metadata identifier/due-data/point/buffer-name."
   ;; cleanup file
   (orgtrello-proxy/--remove-file file)
   ;; remove property
-  (funcall (if (orgtrello-cbx/checkbox-p) (lambda () (orgtrello-cbx/org-delete-property 'this-is-marker-flag)) 'org-delete-property-globally) marker)
+  (funcall (if (orgtrello-cbx/checkbox-p) 'orgtrello-cbx/org-delete-property 'org-delete-property-globally) marker)
   ;; save modifs
   (save-buffer))
 
