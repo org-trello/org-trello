@@ -313,7 +313,7 @@ This is a list with the following elements:
 - the tags string, or nil.                                         - nil"
   (save-excursion
     (beginning-of-line)
-    (orgtrello-cbx/--metadata-from-checklist (thing-at-point 'line))))
+    (orgtrello-cbx/--metadata-from-checklist (buffer-substring-no-properties (point-at-bol) (point-at-eol)))))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-cbx loaded!")
 
