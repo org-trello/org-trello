@@ -260,12 +260,14 @@ Levels:
 (defun orgtrello-cbx/org-entry-sync-properties (point properties)
   "Given a point and a properties map, synchronize the properties on disk."
   (save-excursion
+    (org-show-subtree)
     (beginning-of-line)
     (forward-line)
     (when properties
           (if (orgtrello-cbx/--drawer-p)
               (orgtrello-cbx/--update-drawer-with-properties point properties)
-              (orgtrello-cbx/--create-drawer-with-properties point properties)))))
+              (orgtrello-cbx/--create-drawer-with-properties point properties)))
+    (org-cycle)))
 
 (defun orgtrello-cbx/org-entry-get (point key)
   "Extract the property key at the point for the checkbox."
