@@ -531,8 +531,8 @@
   (expect "call people [4/4]" (orgtrello-cbx/--name "  -[ ] call people [4/4]" "[ ]")))
 
 (expectations
- (expect ":key: value\n" (orgtrello-cbx/--entry-key-value "key" "\"value\" \n"))
- (expect ":key: value\n" (orgtrello-cbx/--entry-key-value "key" "\"value\"")))
+ (expect ":key: value\n" (orgtrello-cbx/--entry-key-value "key" "value" "\n"))
+ (expect ":key: value"   (orgtrello-cbx/--entry-key-value "key" "value")))
 
 (expectations
  (expect "orgtrello-id"   (orgtrello-hash/remove-key-marker ":orgtrello-id:"))
@@ -541,6 +541,9 @@
  (expect nil              (orgtrello-hash/remove-key-marker ""))
  (expect nil              (orgtrello-hash/remove-key-marker ": test"))
  (expect nil              (orgtrello-hash/remove-key-marker "test:")))
+
+(expectations
+  (expect "value" (orgtrello-cbx/--extract-value ":id: value")))
 
 (message "Tests done!")
 
