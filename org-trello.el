@@ -1861,11 +1861,16 @@ refresh(\"/proxy/admin/current-action/\", '#current-action');
   (orgtrello-log/msg *OT/WARN* "Synchronizing org-mode file to the board '%s'. This may take some time, some coffee may be a good idea..." (orgtrello/--board-name))
   (org-map-entries 'orgtrello/do-sync-entity t 'file))
 
-(defun trace (e &optional label)
+(defun trace (label e)
+  "Decorator for some inaccessible code to easily 'message'."
+  (message "TRACE: %s: %S" label e)
+  e)
+
+(defun -trace (e &optional label)
   "Decorator for some inaccessible code to easily 'message'."
   (progn
     (if label
-        (message "TRACE: %s: %S" label e)
+        (trace label e)
         (message "TRACE: %S" e))
     e))
 
