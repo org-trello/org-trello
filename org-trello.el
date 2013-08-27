@@ -2148,30 +2148,37 @@ refresh(\"/proxy/admin/current-action/\", '#current-action');
         (org-sort-entries t ?o)
         (save-buffer))))
 
+(defun orgtrello/--update-entry-to-org-buffer (entities)
+  "Update entry to the org-buffer. Side effects on entities (entries are removed)."
+  (save-excursion
+    (-when-let (entry-metadata (orgtrello-data/entry-get-full-metadata)) ;; if level > 4, entry-metadata is not considered as this is not represented in trello board
+               ;; will search 'entities' hash table for updates (do not compute diffs, take them as is)
+               (let* ((orgtrello/--entity         (gethash :current entry-metadata))
+                      (orgtrello/--entity-id      (orgtrello/--id orgtrello/--entity))
+                      (orgtrello/--entity-updated (gethash orgtrello/--entity-id entities)))
+                 (if orgtrello/--entity-updated
+                     ;; found something, we update by squashing the current contents
+                     (let* ((orgtrello/--entry-new-id    (orgtrello-query/--id   orgtrello/--entity-updated))
+                            (orgtrello/--entity-due-date (orgtrello-query/--due  orgtrello/--entity-updated))
+                            (orgtrello/--entry-new-name  (orgtrello-query/--name orgtrello/--entity-updated)))
+                       ;; update the buffer with the new updates (there may be none but naively we will overwrite at the moment)
+                       (orgtrello-log/msg *OT/INFO* "Synchronizing entity '%s' with id '%s'..." orgtrello/--entry-new-name orgtrello/--entry-new-id)
+                       (org-show-entry)
+                       (kill-whole-line)
+                       (if orgtrello/--entity-due-date (kill-whole-line))
+                       (orgtrello/--write-entity orgtrello/--entry-new-id orgtrello/--entity-updated)
+                       ;; remove the entry from the hash-table
+                       (remhash orgtrello/--entity-id entities)))))))
+
 (defun orgtrello/--sync-buffer-with-trello-data (entities buffer-name)
   "Given all the entities, update the current buffer with those."
   (with-current-buffer buffer-name
     (org-map-entries
      (lambda ()
-       (let ((entry-metadata (orgtrello-data/entry-get-full-metadata)))
-         (if entry-metadata ;; if level > 4, entry-metadata is not considered as this is not represented in trello board
-             ;; will search 'entities' hash table for updates (do not compute diffs, take them as is)
-             (let* ((orgtrello/--entity         (gethash :current entry-metadata))
-                    (orgtrello/--entity-id      (orgtrello/--id orgtrello/--entity))
-                    (orgtrello/--entity-updated (gethash orgtrello/--entity-id entities)))
-               (if orgtrello/--entity-updated
-                   ;; found something, we update by squashing the current contents
-                   (let* ((orgtrello/--entry-new-id    (orgtrello-query/--id   orgtrello/--entity-updated))
-                          (orgtrello/--entity-due-date (orgtrello-query/--due  orgtrello/--entity-updated))
-                          (orgtrello/--entry-new-name  (orgtrello-query/--name orgtrello/--entity-updated)))
-                     ;; update the buffer with the new updates (there may be none but naively we will overwrite at the moment)
-                     (orgtrello-log/msg *OT/INFO* "Synchronizing entity '%s' with id '%s'..." orgtrello/--entry-new-name orgtrello/--entry-new-id)
-                     (org-show-entry)
-                     (kill-whole-line)
-                     (if orgtrello/--entity-due-date (kill-whole-line))
-                     (insert (orgtrello/--compute-entity-to-org-entry orgtrello/--entity-updated))
-                     ;; remove the entry from the hash-table
-                     (remhash orgtrello/--entity-id entities)))))))
+       ;; update the heading entry
+       (orgtrello/--update-entry-to-org-buffer entities)
+       ;; then the possible checkboxes
+       (when *ORGTRELLO-NATURAL-ORG-CHECKLIST* (orgtrello/map-checkboxes (lambda () (orgtrello/--update-entry-to-org-buffer entities)))))
      t
      'file))
   ;; return the entities which has been dryed

@@ -602,14 +602,14 @@ CLOSED: [2013-08-25 dim. 15:35]
 CLOSED: [2013-08-25 dim. 15:43]
 ** DONE Release
 CLOSED: [2013-08-25 dim. 15:43]
-* TODO 0.1.6 [50%]
+* TODO 0.1.6 [66%]
 - [X] Use the native org checklist to sync to trello [3/3]
   - [X] Extract the informations from the checklist and item and plug them in the current synchronization (org-entry-get (point) "orgtrello-id")
   - [X] Set the metadata information on the checklist level (org does only the heading level)
   - [X] Ensure the synchronization works
 - [X] Sync entity and arborescence tree
 - [X] Sync to trello must sync the native checklist if the flag is activated
-- [ ] Sync from trello must create native checklists if the flag is activated
+- [X] Sync from trello must create native checklists if the flag is activated
 - [ ] Delete entity must remove just entity on point
 - [ ] Automate the release to marmalade
 
