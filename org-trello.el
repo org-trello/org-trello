@@ -342,7 +342,7 @@ This is a list with the following elements:
 
 ;; #################### orgtrello-data
 
-(defvar *ORGTRELLO-ID* "orgtrello-id" "Marker used for the trello identifier")
+(defvar *ORGTRELLO-ID* "orgtrello-id" "Key entry used for the trello identifier and the trello marker (the first sync).")
 
 (defun orgtrello-data/--convert-orgmode-date-to-trello-date (orgmode-date)
   "Convert the org-mode deadline into a time adapted for trello."
@@ -875,8 +875,6 @@ Also add some metadata identifier/due-data/point/buffer-name."
   "To cleanup metadata after the all actions are done!"
   ;; cleanup file
   (orgtrello-proxy/--remove-file file)
-  ;; remove property
-  (funcall (if (orgtrello-cbx/checkbox-p) 'orgtrello-cbx/org-delete-property 'org-delete-property-globally) marker)
   ;; save modifs
   (save-buffer))
 
