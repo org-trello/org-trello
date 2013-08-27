@@ -27,38 +27,16 @@
 :PROPERTIES:
 :END:
 * TODO Joy of FUN(ctional) LANGUAGES
-:PROPERTIES:
-:END:
 ** LISP family
-:PROPERTIES:
-:END:
 *** TODO Emacs-Lisp
-:PROPERTIES:
-:END:
 *** TODO Common-Lisp
-:PROPERTIES:
-:END:
 *** TODO Scheme
-:PROPERTIES:
-:END:
 *** TODO Clojure
-:PROPERTIES:
-:END:
 ** hybrid family
-:PROPERTIES:
-:END:
 *** TODO Scala
-:PROPERTIES:
-:END:
 ** ML family
-:PROPERTIES:
-:END:
 *** TODO Haskell
-:PROPERTIES:
-:END:
 *** TODO Ocaml
-:PROPERTIES:
-:END:
 * PENDING Questions about life, the universe and everything
 :PROPERTIES:
 :END:
@@ -156,56 +134,27 @@
 :PROPERTIES:
 :END:
 * DONE Programming in scala
-:PROPERTIES:
-:END:
 ** chapters
-:PROPERTIES:
-:END:
 *** TODO introduction
-:PROPERTIES:
-:END:
 *** TODO Ch. 1 - A scalable language
-:PROPERTIES:
-:END:
 *** TODO Ch. 2 - First steps in scala
-:PROPERTIES:
-:END:
 *** TODO Ch. 3 - Next steps in scala
-:PROPERTIES:
-:END:
 *** TODO Ch. 4 - Classes and objects
-:PROPERTIES:
-:END:
 *** TODO Ch. 5 - Basic types and operations
-:PROPERTIES:
-:END:
 *** TODO Ch. 6 - Functional objects
-:PROPERTIES:
-:END:
 *** TODO Ch. 7 - Buit-in control structures
-:PROPERTIES:
-:END:
 *** TODO Ch. 8 - Functions and closures
-:PROPERTIES:
-:END:
 *** TODO Ch. 9 - Control abstraction
-:PROPERTIES:
-:END:
 *** TODO Ch. 10 - Composition and inheritance
-:PROPERTIES:
-:END:
 *** TODO Ch. 11 - Scala's hierarchy
-:PROPERTIES:
-:END:
 *** TODO Ch. 12 - Traits
-:PROPERTIES:
-:END:
 
-* TODO Organize party [2/4]
- - [-] call people [1/3]
-   - [ ] Peter
-   - [X] Sarah
-   - [ ] Sam
- - [X] order food
- - [ ] think about what music to play
- - [X] talk to the neighbors
+* PENDING Organize party [1/2]
+- [-] Call every people and let them know it will work! [2/3]
+  - [ ] Peter
+  - [X] Sarah
+  - [X] Sam
+
+- [X] order food
+  - [X] think about what music to play
+  - [X] talk to the neighbors
