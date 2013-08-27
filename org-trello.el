@@ -295,10 +295,11 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
 ;;   (goto-char (point-min))
 ;;   (orgtrello-cbx/org-set-property "temporary-key" "temporary-value"))
 
-
 (defun orgtrello-cbx/--org-split-data (s)
   "Split the string into meta data with -."
-  (s-split " " s))
+  (->> s
+       (s-replace "[ ]" "[]")
+       (s-split " ")))
 
 (defun orgtrello-cbx/--list-is-checkbox-p (l)
   "Is this a checkbox?"
@@ -327,6 +328,7 @@ To ease the computation, we consider level 4 if no - to start with, and to avoid
 (defun orgtrello-cbx/--name (s status)
   "Retrieve the name of the checklist"
   (->> s
+       (s-replace "[ ]" "[]")
        s-trim-left
        (s-chop-prefix "-")
        s-trim-left

@@ -512,7 +512,17 @@
   (expect '("-" "[X]" "call" "people" "[4/4]")                                             (orgtrello-cbx/--org-split-data "- [X] call people [4/4]"))
   (expect '("-" "[X]" "call" "people" "[4/4]" "#PROPERTIES#" "{\"orgtrello-id\":\"456\"}") (orgtrello-cbx/--org-split-data "- [X] call people [4/4] #PROPERTIES# {\"orgtrello-id\":\"456\"}"))
   (expect '("" "" "-" "[X]" "Peter")                                                       (orgtrello-cbx/--org-split-data "  - [X] Peter"))
-  (expect '("" "" "-" "[X]" "Peter" "#PROPERTIES#" "{\"orgtrello-id\":\"456\"}")           (orgtrello-cbx/--org-split-data "  - [X] Peter #PROPERTIES# {\"orgtrello-id\":\"456\"}")))
+  (expect '("" "" "-" "[X]" "Peter" "#PROPERTIES#" "{\"orgtrello-id\":\"456\"}")           (orgtrello-cbx/--org-split-data "  - [X] Peter #PROPERTIES# {\"orgtrello-id\":\"456\"}"))
+
+  (expect '("-" "[]" "call" "people" "[4/4]")                                             (orgtrello-cbx/--org-split-data "- [] call people [4/4]"))
+  (expect '("-" "[]" "call" "people" "[4/4]" "#PROPERTIES#" "{\"orgtrello-id\":\"456\"}") (orgtrello-cbx/--org-split-data "- [] call people [4/4] #PROPERTIES# {\"orgtrello-id\":\"456\"}"))
+  (expect '("" "" "-" "[]" "Peter")                                                       (orgtrello-cbx/--org-split-data "  - [] Peter"))
+  (expect '("" "" "-" "[]" "Peter" "#PROPERTIES#" "{\"orgtrello-id\":\"456\"}")           (orgtrello-cbx/--org-split-data "  - [] Peter #PROPERTIES# {\"orgtrello-id\":\"456\"}"))
+
+  (expect '("-" "[]" "call" "people" "[4/4]")                                             (orgtrello-cbx/--org-split-data "- [ ] call people [4/4]"))
+  (expect '("-" "[]" "call" "people" "[4/4]" "#PROPERTIES#" "{\"orgtrello-id\":\"456\"}") (orgtrello-cbx/--org-split-data "- [ ] call people [4/4] #PROPERTIES# {\"orgtrello-id\":\"456\"}"))
+  (expect '("" "" "-" "[]" "Peter")                                                       (orgtrello-cbx/--org-split-data "  - [ ] Peter"))
+  (expect '("" "" "-" "[]" "Peter" "#PROPERTIES#" "{\"orgtrello-id\":\"456\"}")           (orgtrello-cbx/--org-split-data "  - [ ] Peter #PROPERTIES# {\"orgtrello-id\":\"456\"}")))
 
 (expectations
   (expect "[X]" (orgtrello-cbx/--retrieve-status '("" "" "-" "[X]" "Peter")))
