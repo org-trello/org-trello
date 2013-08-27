@@ -72,11 +72,13 @@
    (require 'org-trello)
    (setq *ORGTRELLO-NATURAL-ORG-CHECKLIST* nil)")
 
-(defvar *ORGTRELLO-CHECKLIST-UPDATE-ITEMS* t
-  "A variable to permit the checklist's status to be pass along to its items. t, if checklist's status is DONE, the items are updated to DONE (org-mode buffer and trello board), nil only the items's status is used.
+(defvar *ORGTRELLO-CHECKLIST-UPDATE-ITEMS* (not *ORGTRELLO-NATURAL-ORG-CHECKLIST*)
+  "OBSOLETE: A variable to permit the checklist's status to be pass along to its items. t, if checklist's status is DONE, the items are updated to DONE (org-mode buffer and trello board), nil only the items's status is used.
    To let the user completely choose what status he/she wants for every level, just change in your init.el file:
    (require 'org-trello)
-   (setq *ORGTRELLO-CHECKLIST-UPDATE-ITEMS* nil)")
+   (setq *ORGTRELLO-CHECKLIST-UPDATE-ITEMS* nil)
+
+If you want to use this, we recommand to use the native org checklists - http://orgmode.org/manual/Checkboxes.html.")
 
 
 
