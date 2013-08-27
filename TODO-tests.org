@@ -42,10 +42,6 @@
   - [X] Ocaml
 - [X] hybrid family
   - [X] Scala
-* TODO Organize party [1/2]
-:PROPERTIES:
-:END:
-- [-] Call every people and let them know it will work! [2/3]
 * DONE Programming in scala
 :PROPERTIES:
 :END:

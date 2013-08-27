@@ -2527,6 +2527,14 @@ refresh(\"/proxy/admin/current-action/\", '#current-action');
      '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties orgtrello/--control-encoding)
      (lambda () (orgtrello-log/msg *OT/NOLOG* "Setup ok!"))))
 
+(defun orgtrello/--delete-property (property)
+  ;; remove any identifier from the buffer
+  (org-delete-property-globally *ORGTRELLO-ID*)
+  (save-excursion
+    (goto-char (point-min))
+    (while (re-search-forward "#PROPERTIES#.*" nil t)
+      (replace-match "" nil t))))
+
 (defun org-trello/delete-setup ()
   "Delete the current setup."
   (interactive)
@@ -2537,7 +2545,7 @@ refresh(\"/proxy/admin/current-action/\", '#current-action');
        ;; remove any orgtrello relative entries
        (orgtrello/--remove-properties-file *LIST-NAMES* t)
        ;; remove any identifier from the buffer
-       (org-delete-property-globally *ORGTRELLO-ID*)
+       (orgtrello/--delete-property *ORGTRELLO-ID*)
        ;; a simple message to tell the client that the work is done!
        (orgtrello-log/msg *OT/NOLOG* "Cleanup done!"))
      *do-save-buffer*
