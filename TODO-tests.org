@@ -149,7 +149,7 @@
 *** TODO Ch. 11 - Scala's hierarchy
 *** TODO Ch. 12 - Traits
 
-* PENDING Organize party [1/2]
+* TODO Organize party [1/2]
 - [-] Call every people and let them know it will work! [2/3]
   - [ ] Peter
   - [X] Sarah
