@@ -57,7 +57,9 @@ tangle:
 ttest: tangle test
 
 cleanup-data:
-	rm -rf ~/.emacs.d/elnode/public_html/org-trello/*/.scanning/* ~/.emacs.d/elnode/public_html/org-trello/{1,2,3}/*
+	rm -rvf ~/.emacs.d/elnode/public_html/org-trello/{1,2,3}/.scanning/* \
+		~/.emacs.d/elnode/public_html/org-trello/{1,2,3}/* \
+		~/.emacs.d/elnode/public_html/org-trello/*.lock
 
 release:
 	./scripts/release.sh $(VERSION)
