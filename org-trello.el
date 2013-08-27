@@ -250,7 +250,9 @@ Levels:
 
 (defun orgtrello-cbx/--org-get-property (key properties)
   "Internal accessor to the key property."
-  (assoc-default (orgtrello-cbx/--key-to-search key) properties))
+  (-> key
+      orgtrello-cbx/--key-to-search
+      (assoc-default properties)))
 
 (defun orgtrello-cbx/--org-set-property (key value properties)
   "Internal accessor to the key property."
@@ -265,20 +267,24 @@ Levels:
 (defun orgtrello-cbx/org-set-property (key value)
   "Read the properties. Add the new property key with the value value. Write the new properties."
   (let ((current-point (point)))
-    (orgtrello-cbx/--write-properties-at-point
-     current-point
-     (orgtrello-cbx/--org-set-property key value (orgtrello-cbx/--read-properties-from-point current-point)))))
+    (->> current-point
+         orgtrello-cbx/--read-properties-from-point
+         (orgtrello-cbx/--org-set-property key value)
+         (orgtrello-cbx/--write-properties-at-point current-point))))
 
 (defun orgtrello-cbx/org-get-property (point key)
   "Retrieve the value for the key key."
-  (orgtrello-cbx/--org-get-property key (orgtrello-cbx/--read-properties-from-point point)))
+  (->> point
+       orgtrello-cbx/--read-properties-from-point
+       (orgtrello-cbx/--org-get-property key)))
 
 (defun orgtrello-cbx/org-delete-property (key)
   "Delete the property key from the properties."
   (let ((current-point (point)))
-    (orgtrello-cbx/--write-properties-at-point
-     current-point
-     (orgtrello-cbx/--org-delete-property key (orgtrello-cbx/--read-properties-from-point current-point)))))
+    (->> current-point
+         orgtrello-cbx/--read-properties-from-point
+         (orgtrello-cbx/--org-delete-property key)
+         (orgtrello-cbx/--write-properties-at-point current-point))))
 
 (defun orgtrello-cbx/--org-split-data (s)
   "Split the string into meta data with -."
