@@ -231,21 +231,15 @@
   (expect (format "%s%s" *TRELLO-URL* "/uri/other")      (orgtrello-query/--compute-url *TRELLO-URL* "/uri/other"))
   (expect (format "some-server/uri/some/other")          (orgtrello-query/--compute-url "some-server" "/uri/some/other")))
 
-(defvar org-trello-tests/--query-map (make-hash-table :test 'equal))
-(puthash :method :some-get org-trello-tests/--query-map)
-(puthash :uri    :some-uri org-trello-tests/--query-map)
-(puthash :sync   :some-sync org-trello-tests/--query-map)
-(puthash :params :some-params org-trello-tests/--query-map)
+(expectations
+  (expect :some-get (orgtrello-query/--method (orgtrello-hash/make-properties `((:method . :some-get) (:uri . :some-uri) (:sync . :some-sync) (:params . :some-params)))))
+  (expect :some-uri (orgtrello-query/--uri (orgtrello-hash/make-properties `((:method . :some-get) (:uri . :some-uri) (:sync . :some-sync) (:params . :some-params)))))
+  (expect :some-sync (orgtrello-query/--sync (orgtrello-hash/make-properties `((:method . :some-get) (:uri . :some-uri) (:sync . :some-sync) (:params . :some-params)))))
+  (expect :some-params (orgtrello-query/--params (orgtrello-hash/make-properties `((:method . :some-get) (:uri . :some-uri) (:sync . :some-sync) (:params . :some-params))))))
 
 (expectations
-  (expect :some-get (orgtrello-query/--method org-trello-tests/--query-map))
-  (expect :some-uri (orgtrello-query/--uri org-trello-tests/--query-map))
-  (expect :some-sync (orgtrello-query/--sync org-trello-tests/--query-map))
-  (expect :some-params (orgtrello-query/--params org-trello-tests/--query-map)))
-
-(expectations
-  (expect :some-id (orgtrello-query/--id '((id . :some-id))))
-  (expect nil      (orgtrello-query/--id '((noid . :some-id)))))
+  (expect "some-id" (orgtrello-query/--id '((id . "some-id"))))
+  (expect nil       (orgtrello-query/--id '((noid . "some-id")))))
 
 (expectations
   (expect :some-name (orgtrello-query/--name '((name . :some-name))))
@@ -282,8 +276,8 @@
 ;; ########################## orgtrello-tests
 
 (ert-deftest testing-orgtrello/--compute-data-from-entity-meta ()
-  (let* ((entry   (orgtrello-hash/make-hash-org :some-level :some-keyword :some-name :some-id :some-due :some-point :some-buffername)))
-    (should (equal (orgtrello/--id entry)         :some-id))
+  (let* ((entry   (orgtrello-hash/make-hash-org :some-level :some-keyword :some-name "some-id" :some-due :some-point :some-buffername)))
+    (should (equal (orgtrello/--id entry)         "some-id"))
     (should (equal (orgtrello/--name entry)       :some-name))
     (should (equal (orgtrello/--keyword entry)    :some-keyword))
     (should (equal (orgtrello/--level entry)      :some-level))
@@ -385,7 +379,7 @@
  (expect nil                            (orgtrello-proxy/--dispatch-action "nothing")))
 
 (expectations
-  (expect :id                                                         (orgtrello/--compute-marker-from-entry (orgtrello-hash/make-hash-org :level :kwd :name      :id  :due :position :buffername)))
+  (expect "id"                                                        (orgtrello/--compute-marker-from-entry (orgtrello-hash/make-hash-org :level :kwd :name      "id"  :due :position :buffername)))
   (expect "orgtrello-marker-2a0b98e652ce6349a0659a7a8eeb3783ffe9a11a" (orgtrello/--compute-marker-from-entry (orgtrello-hash/make-hash-org :level :kwd "some-name" nil :due 1234      "buffername")))
   (expect "orgtrello-marker-6c59c5dcf6c83edaeb3f4923bfd929a091504bb3" (orgtrello/--compute-marker-from-entry (orgtrello-hash/make-hash-org :level :kwd "some-name" nil :due 4321      "some-other-buffername"))))
 
@@ -394,8 +388,16 @@
   (expect "orgtrello-marker-6c59c5dcf6c83edaeb3f4923bfd929a091504bb3" (orgtrello/compute-marker "some-other-buffername" "some-name" 4321)))
 
 (expectations
-  (expect "marker" (orgtrello-proxy/--compute-pattern-search-from-marker "marker"))
-  (expect ":orgtrello-marker-tony:" (orgtrello-proxy/--compute-pattern-search-from-marker "orgtrello-marker-tony")))
+  (expect "marker-is-a-trello-id" (orgtrello-proxy/--compute-pattern-search-from-marker "marker-is-a-trello-id"))
+  (expect "orgtrello-marker-tony" (orgtrello-proxy/--compute-pattern-search-from-marker "orgtrello-marker-tony")))
+
+(expectations
+  (expect t   (orgtrello/id-p "anything-that-does-not-start-with-orgtrello-marker"))
+  (expect t   (orgtrello/id-p "agfgdsfgbdfgbdfgbdfshouldbetrue"))
+  (expect t   (orgtrello/id-p "orgtrello-markeragfgdsfgbdfgbdfgbdfshouldbetrue"))
+  (expect t   (orgtrello/id-p "should-be-true-orgtrello-marker-agfgdsfgbdfgbdfgbdf"))
+  (expect nil (orgtrello/id-p "orgtrello-marker-shouldbenil"))
+  (expect nil (orgtrello/id-p nil)))
 
 (expectations
   (expect '(3 5 7) (--map (funcall (compose-fn '((lambda (it) (+ 1 it)) (lambda (it) (* 2 it)))) it) '(1 2 3))))
@@ -468,21 +470,26 @@
      (orgtrello-hash/make-hash-org 1 :kwd :name nil :due :position :buffer-name)
      (lambda (entity s) (format "%S %s" entity s))
      "- hello"))
-  (expect "#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:buffername :buffer-name :position :position :level 1 :keyword :kwd :name :name :id :some-id :due :due)) - hello"
+  (expect "#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:buffername :buffer-name :position :position :level 1 :keyword :kwd :name :name :id \"some-id\" :due :due)) - hello"
 
     (org-action/--functional-controls-then-do
      '(orgtrello/--right-level-p orgtrello/--already-synced-p)
-     (orgtrello-hash/make-hash-org 1 :kwd :name :some-id :due :position :buffer-name)
+     (orgtrello-hash/make-hash-org 1 :kwd :name "some-id" :due :position :buffer-name)
      (lambda (entity s) (format "%S %s" entity s))
      "- hello")))
 
 (expectations
   (expect "- message 1\n- message 2\n" (org-action/--compute-error-message '("message 1" "message 2"))))
 
-(expectations (lexical-let (expected-hash (make-hash-table :test 'equal))
+(expectations (lexical-let ((expected-hash (make-hash-table :test 'equal)))
+                (puthash "key0" '("value0") expected-hash)
+                (puthash "key1" '("value1") expected-hash)
+                (expect expected-hash (orgtrello-hash/make-properties '(("key0" "value0") ("key1" "value1"))))))
+
+(expectations (lexical-let ((expected-hash (make-hash-table :test 'equal)))
                 (puthash "key0" "value0" expected-hash)
                 (puthash "key1" "value1" expected-hash)
-                (expect expected-hash (orgtrello-hash/make-properties '(("key0" "value0") ("key1" "value1"))))))
+                (expect expected-hash (orgtrello-hash/make-properties '(("key0" . "value0") ("key1" . "value1"))))))
 
 (expectations
  (expect ":key:" (orgtrello-hash/key "key")))
@@ -500,10 +507,10 @@
   (expect "TODO" (orgtrello-cbx/--status"")))
 
 (expectations
-  (expect '("-" "[X]" "call" "people" "[4/4]") (orgtrello-cbx/--org-split-metadata "- [X] call people [4/4]"))
-  (expect '("-" "[X]" "call" "people" "[4/4]") (orgtrello-cbx/--org-split-metadata "- [X] call people [4/4] #PROPERTIES# {\"orgtrello-id\":\"456\"}"))
-  (expect '("" "" "-" "[X]" "Peter")           (orgtrello-cbx/--org-split-metadata "  - [X] Peter"))
-  (expect '("" "" "-" "[X]" "Peter")           (orgtrello-cbx/--org-split-metadata "  - [X] Peter #PROPERTIES# {\"orgtrello-id\":\"456\"}")))
+  (expect '("-" "[X]" "call" "people" "[4/4]")                                             (orgtrello-cbx/--org-split-data "- [X] call people [4/4]"))
+  (expect '("-" "[X]" "call" "people" "[4/4]" "#PROPERTIES#" "{\"orgtrello-id\":\"456\"}") (orgtrello-cbx/--org-split-data "- [X] call people [4/4] #PROPERTIES# {\"orgtrello-id\":\"456\"}"))
+  (expect '("" "" "-" "[X]" "Peter")                                                       (orgtrello-cbx/--org-split-data "  - [X] Peter"))
+  (expect '("" "" "-" "[X]" "Peter" "#PROPERTIES#" "{\"orgtrello-id\":\"456\"}")           (orgtrello-cbx/--org-split-data "  - [X] Peter #PROPERTIES# {\"orgtrello-id\":\"456\"}")))
 
 (expectations
   (expect "[X]" (orgtrello-cbx/--retrieve-status '("" "" "-" "[X]" "Peter")))
@@ -530,16 +537,11 @@
   (expect "call people [4/4]" (orgtrello-cbx/--name "  -[ ] call people [4/4]"  "[ ]")))
 
 (expectations
-  (expect "- [-] call people [1/4] "
-    (orgtrello-cbx/--name-without-properties "- [-] call people [1/4] :orgtrello-marker-5afad87e498d152e61cb6cfccf6cb9f397aff38b: orgtrello-marker-5afad87e498d152e61cb6cfccf6cb9f397aff38b :orgtrello-id: 521bb47eaaa05f8e5a0002b4"))
-  (expect "- [-] call people [1/4] "
-    (orgtrello-cbx/--name-without-properties "- [-] call people [1/4] :orgtrello-id: 521bb47eaaa05f8e5a0002b4"))
-  (expect "- [-] call people [1/4] "
-    (orgtrello-cbx/--name-without-properties "- [-] call people [1/4] ")))
-
-(expectations
-  (expect "{\"orgtrello-id\":\"123\"}" (orgtrello-cbx/--to-properties `((,*ORGTRELLO-ID* . "123"))))
-  (expect "{\"orgtrello-id\":\"456\"}" (orgtrello-cbx/--to-properties `((,*ORGTRELLO-ID* . "123") (,*ORGTRELLO-ID* . "456")))))
+  (expect "{\"orgtrello-id\":\"123\"}"                               (orgtrello-cbx/--to-properties `((,*ORGTRELLO-ID* . "123"))))
+  (expect "{\"orgtrello-id\":\"456\"}"                               (orgtrello-cbx/--to-properties `((,*ORGTRELLO-ID* . "123") (,*ORGTRELLO-ID* . "456"))))
+  (expect "{\"orgtrello-id\":\"def\", \"orgtrello-marker\":\"456\", \"orgtrello-id\":\"abc\"}" (orgtrello-cbx/--to-properties `(("orgtrello-id" . "abc") (orgtrello-marker . "456") (orgtrello-id . "def"))))
+  (expect "{\"orgtrello-marker\":\"456\", \"orgtrello-id\":\"def\"}" (orgtrello-cbx/--to-properties `(("orgtrello-id" . "abc") (orgtrello-marker . "456") ("orgtrello-id" . "def"))))
+  (expect "{\"orgtrello-marker\":\"456\", \"orgtrello-id\":\"def\"}" (orgtrello-cbx/--to-properties `((orgtrello-id . "abc") (orgtrello-marker . "456") (orgtrello-id . "def")))))
 
 (expectations
   (expect '((orgtrello-id . "123")) (orgtrello-cbx/--from-properties "{\"orgtrello-id\":\"123\"}")))
@@ -567,8 +569,10 @@
   (expect "marker" (orgtrello-cbx/--org-get-property "orgtrello-marker" `(("orgtrello-id" . "123") (orgtrello-marker . "marker")))))
 
 (expectations
-  (expect `(("orgtrello-id" . "10") (orgtrello-marker . "123")) (orgtrello-cbx/--org-set-property "orgtrello-id" "10" `((orgtrello-marker . "123"))))
-  (expect `(("orgtrello-toto" . "abc") (orgtrello-marker . "456")) (orgtrello-cbx/--org-set-property "orgtrello-toto" "abc" `((orgtrello-marker . "456")))))
+  (expect `(("orgtrello-id" . "10") (orgtrello-marker . "123"))                         (orgtrello-cbx/--org-set-property "orgtrello-id" "10" `((orgtrello-marker . "123"))))
+  (expect `(("orgtrello-toto" . "abc") (orgtrello-marker . "456"))                      (orgtrello-cbx/--org-set-property "orgtrello-toto" "abc" `((orgtrello-marker . "456"))))
+  (expect `(("orgtrello-id" . "abc") (orgtrello-marker . "456") (orgtrello-id . "def")) (orgtrello-cbx/--org-set-property "orgtrello-id" "abc"
+                                                                                                                          `((orgtrello-marker . "456") (orgtrello-id . "def")))))
 
 (expectations
   (expect `(("orgtrello-id" . "123") (orgtrello-marker . "marker")) (orgtrello-cbx/--org-delete-property "orgtrello-id" `(("orgtrello-id" . "123") (orgtrello-marker . "marker"))))
@@ -587,6 +591,11 @@
 
 (expectations
   (expect "  - [X] Peter" (orgtrello-cbx/--checkbox-data "  - [X] Peter #PROPERTIES# {\"orgtrello-id\":\"456\"}")))
+
+(expectations
+  (expect 'some-key (orgtrello-cbx/--key-to-search "some-key"))
+  (expect 'some-key (orgtrello-cbx/--key-to-search 'some-key))
+  (expect :some-key (orgtrello-cbx/--key-to-search :some-key)))
 
 (message "Tests done!")
 

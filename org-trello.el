@@ -158,7 +158,7 @@ Levels:
   "Given a list of key value pair, return a hash table."
   (cl-reduce
    (lambda (map list-key-value)
-     (let ((key (car list-key-value))
+     (let ((key   (car list-key-value))
            (value (cdr list-key-value)))
        (puthash key value map)
        map))
@@ -220,7 +220,7 @@ Levels:
   "Read the properties from the current point."
   (save-excursion
     (goto-char pt)
-    (trace (orgtrello-cbx/--read-properties (orgtrello-cbx/--read-checkbox!)) :properties-read)))
+    (orgtrello-cbx/--read-properties (orgtrello-cbx/--read-checkbox!))))
 
 ;; (expectations
 ;;   (expect '((orgtrello-id . "123")) (with-temp-buffer
@@ -239,33 +239,35 @@ Levels:
   (save-excursion
     (goto-char pt)
     (let* ((current-checkbox-str (orgtrello-cbx/--read-checkbox!))
-           (updated-checkbox-str (orgtrello-cbx/--update-properties current-checkbox-str (trace properties :properties-to-update))))
+           (updated-checkbox-str (orgtrello-cbx/--update-properties current-checkbox-str properties)))
       (beginning-of-line)
       (kill-line)
       (insert updated-checkbox-str))))
 
+(defun orgtrello-cbx/--key-to-search (key)
+  "Search the key key as a symbol"
+  (if (stringp key) (intern key) key))
+
 (defun orgtrello-cbx/--org-get-property (key properties)
   "Internal accessor to the key property."
-  (let ((key-to-search (if (stringp key) (intern key) key)))
-    (assoc-default (trace key-to-search :key-get) properties)))
+  (assoc-default (orgtrello-cbx/--key-to-search key) properties))
 
 (defun orgtrello-cbx/--org-set-property (key value properties)
   "Internal accessor to the key property."
-  (trace key :key-set)
-  (trace value :value-set)
   (cons `(,key . ,value) properties))
 
 (defun orgtrello-cbx/--org-delete-property (key properties)
   "Delete the key from the properties."
-  (let ((key-to-search (if (stringp key) (intern key) key)))
-    (assq-delete-all (trace key-to-search :key-del) properties)))
+  (-> key
+      orgtrello-cbx/--key-to-search
+      (assq-delete-all properties)))
 
 (defun orgtrello-cbx/org-set-property (key value)
   "Read the properties. Add the new property key with the value value. Write the new properties."
   (let ((current-point (point)))
     (orgtrello-cbx/--write-properties-at-point
-     (trace current-point :current-point)
-     (orgtrello-cbx/--org-set-property key value (trace (orgtrello-cbx/--read-properties-from-point current-point) :properties-current-point)))))
+     current-point
+     (orgtrello-cbx/--org-set-property key value (orgtrello-cbx/--read-properties-from-point current-point)))))
 
 (defun orgtrello-cbx/org-get-property (point key)
   "Retrieve the value for the key key."
@@ -278,11 +280,9 @@ Levels:
      current-point
      (orgtrello-cbx/--org-delete-property key (orgtrello-cbx/--read-properties-from-point current-point)))))
 
-(defun orgtrello-cbx/--org-split-metadata (s)
+(defun orgtrello-cbx/--org-split-data (s)
   "Split the string into meta data with -."
-  (->> s
-       orgtrello-cbx/--checkbox-data
-       (s-split " ")))
+  (s-split " " s))
 
 (defun orgtrello-cbx/--level (l)
   "Given a list of strings, compute the level (starts at 2).
@@ -303,14 +303,6 @@ String look like:
   "Given a checklist status, return the TODO/DONE for org-trello to work."
   (if (string= "[X]" s) "DONE" "TODO"))
 
-(defun orgtrello-cbx/--name-without-properties (str)
-  "Filter out the properties from the checklist name."
-  (->> str
-       (s-split (format ":%s" *ORGTRELLO-ID*))
-       first
-       (s-split (format ":%s-" *ORGTRELLO-MARKER*))
-       first))
-
 (defun orgtrello-cbx/--name (s status)
   "Retrieve the name of the checklist"
   (->> s
@@ -320,13 +312,14 @@ String look like:
        (s-chop-prefix status)
        s-trim))
 
-(defun orgtrello-cbx/--metadata-from-checklist (checklist)
+(defun orgtrello-cbx/--metadata-from-checklist (full-checklist)
   "Given a checklist string, extract the list of metadata"
-  (let* ((oc/--meta             (orgtrello-cbx/--org-split-metadata checklist))
+  (let* ((oc/--checklist-data   (orgtrello-cbx/--checkbox-data full-checklist))
+         (oc/--meta             (orgtrello-cbx/--org-split-data oc/--checklist-data))
          (oc/--level            (orgtrello-cbx/--level oc/--meta))
          (oc/--status-retrieved (orgtrello-cbx/--retrieve-status oc/--meta))
          (oc/--status           (orgtrello-cbx/--status oc/--status-retrieved))
-         (oc/--name             (orgtrello-cbx/--name-without-properties (orgtrello-cbx/--name checklist oc/--status-retrieved))))
+         (oc/--name             (orgtrello-cbx/--name oc/--checklist-data oc/--status-retrieved)))
       (list oc/--level nil oc/--status nil oc/--name nil)))
 
 (defun orgtrello-cbx/org-checkbox-metadata ()
@@ -901,14 +894,16 @@ Also add some metadata identifier/due-data/point/buffer-name."
 
 (defun orgtrello-proxy/--compute-pattern-search-from-marker (marker)
   "Given a marker, compute the pattern to look for in the file."
-  (if (string-match-p (format "^%s-" *ORGTRELLO-MARKER*) marker)
-      (orgtrello-hash/key marker)
-      marker))
+  marker)
 
 (defun orgtrello-proxy/--getting-back-to-marker (marker)
   "Given a marker, getting back to marker function."
   (goto-char (point-min))
-  (search-forward (orgtrello-proxy/--compute-pattern-search-from-marker marker) nil t))
+  (re-search-forward (orgtrello-proxy/--compute-pattern-search-from-marker marker) nil t))
+
+(defun orgtrello/id-p (id)
+  "Is the string a trello identifier?"
+  (and id (not (string-match-p (format "^%s-" *ORGTRELLO-MARKER*) id))))
 
 (defun orgtrello-proxy/--standard-post-or-put-success-callback (entity-to-sync file-to-cleanup)
   "Return a callback function able to deal with the update of the buffer at a given position."
@@ -1633,8 +1628,9 @@ refresh(\"/proxy/admin/current-action/\", '#current-action');
   (gethash :name entity-meta))
 
 (defun orgtrello/--id (entity-meta)
-  "Retrieve the id from the entity."
-  (gethash :id entity-meta))
+  "Retrieve the id from the entity (id must be a trello id, otherwise, it's not considered an id, it's the marker)."
+  (let ((id (gethash :id entity-meta)))
+    (when (orgtrello/id-p id) id)))
 
 (defun orgtrello/--level (entity-meta)
   "Retrieve the level from the entity."
@@ -1805,7 +1801,7 @@ refresh(\"/proxy/admin/current-action/\", '#current-action');
 
 (defun orgtrello/--set-marker (marker)
   "Set a marker to get back to later."
-  (orgtrello-action/set-property marker marker))
+  (orgtrello-action/set-property *ORGTRELLO-ID* marker))
 
 (defun orgtrello/--compute-marker-from-entry (entry)
   "Compute and set the marker (either a sha1 or the id of the entry-metadata)."
@@ -1824,8 +1820,8 @@ refresh(\"/proxy/admin/current-action/\", '#current-action');
 
 (defun orgtrello/--delegate-to-the-proxy (entity action)
   "Execute the delegation to the consumer."
-  (let ((orgtrello/--current-entry-id (trace (orgtrello/--id entity) :id))
-        (orgtrello/--marker           (trace (orgtrello/--compute-marker-from-entry entity) :marker)))
+  (let ((orgtrello/--current-entry-id (orgtrello/--id entity))
+        (orgtrello/--marker           (orgtrello/--compute-marker-from-entry entity)))
     ;; if never created before, we need a marker to add inside the file
     (unless (string= orgtrello/--current-entry-id orgtrello/--marker)
             (orgtrello/--set-marker orgtrello/--marker))
