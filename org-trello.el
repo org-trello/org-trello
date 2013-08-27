@@ -188,18 +188,39 @@ Levels:
   (if string
       (json-read-from-string string)))
 
+(defun orgtrello-cbx/--checkbox-split (s)
+  "Split the checkbox into the checkbox data and the checkbox metadata."
+  (s-split "#PROPERTIES#" s))
+
+(defun orgtrello-cbx/--checkbox-metadata (s)
+    "Retrieve the checkbox's metadata."
+  (-when-let (res (-> s
+                      orgtrello-cbx/--checkbox-split
+                      second))
+             (s-trim-left res)))
+
+(defun orgtrello-cbx/--checkbox-data (s)
+  "Retrieve the checkbox's data."
+    (-> s
+      orgtrello-cbx/--checkbox-split
+      first
+      s-trim-right))
+
 (defun orgtrello-cbx/--read-properties (s)
   "Read the properties from the current string."
   (->> s
-       (s-split "#PROPERTIES#")
-       second
+       orgtrello-cbx/--checkbox-metadata
        orgtrello-cbx/--from-properties))
+
+(defun orgtrello-cbx/--read-checkbox! ()
+  "Read the full checkbox's content"
+  (buffer-substring-no-properties (point-at-bol) (point-at-eol)))
 
 (defun orgtrello-cbx/--read-properties-from-point (pt)
   "Read the properties from the current point."
   (save-excursion
     (goto-char pt)
-    (orgtrello-cbx/--read-properties (buffer-substring (point-at-eol) (point-at-eol)))))
+    (trace (orgtrello-cbx/--read-properties (orgtrello-cbx/--read-checkbox!)) :properties-read)))
 
 ;; (expectations
 ;;   (expect '((orgtrello-id . "123")) (with-temp-buffer
@@ -207,17 +228,21 @@ Levels:
 ;;                                       (forward-line -1)
 ;;                                       (orgtrello-cbx/--read-properties-from-point))))
 
-(defun orgtrello-cbx/--write-properties (checkbox-string properties)
+
+(defun orgtrello-cbx/--update-properties (checkbox-string properties)
   "Given the current checkbox-string and the new properties, update the properties in the current entry."
-  (s-join " " `(,(->> checkbox-string (s-split "#PROPERTIES#") first s-trim)
-                "#PROPERTIES#"
-                ,(orgtrello-cbx/--to-properties properties))))
+  (s-join " #PROPERTIES# "  `(,(orgtrello-cbx/--checkbox-data checkbox-string)
+                              ,(orgtrello-cbx/--to-properties properties))))
 
 (defun orgtrello-cbx/--write-properties-at-point (pt properties)
   "Given the new properties, update the current entry."
   (save-excursion
     (goto-char pt)
-    (orgtrello-cbx/--write-properties (buffer-substring (point-at-eol) (point-at-eol)) properties)))
+    (let* ((current-checkbox-str (orgtrello-cbx/--read-checkbox!))
+           (updated-checkbox-str (orgtrello-cbx/--update-properties current-checkbox-str (trace properties :properties-to-update))))
+      (beginning-of-line)
+      (kill-line)
+      (insert updated-checkbox-str))))
 
 (defun orgtrello-cbx/--org-get-property (key properties)
   "Internal accessor to the key property."
@@ -239,8 +264,8 @@ Levels:
   "Read the properties. Add the new property key with the value value. Write the new properties."
   (let ((current-point (point)))
     (orgtrello-cbx/--write-properties-at-point
-     current-point
-     (orgtrello-cbx/--org-set-property key value (orgtrello-cbx/--read-properties-from-point current-point)))))
+     (trace current-point :current-point)
+     (orgtrello-cbx/--org-set-property key value (trace (orgtrello-cbx/--read-properties-from-point current-point) :properties-current-point)))))
 
 (defun orgtrello-cbx/org-get-property (point key)
   "Retrieve the value for the key key."
@@ -255,7 +280,9 @@ Levels:
 
 (defun orgtrello-cbx/--org-split-metadata (s)
   "Split the string into meta data with -."
-  (split-string s " "))
+  (->> s
+       orgtrello-cbx/--checkbox-data
+       (s-split " ")))
 
 (defun orgtrello-cbx/--level (l)
   "Given a list of strings, compute the level (starts at 2).
@@ -314,7 +341,7 @@ This is a list with the following elements:
 - the tags string, or nil.                                         - nil"
   (save-excursion
     (beginning-of-line)
-    (orgtrello-cbx/--metadata-from-checklist (buffer-substring-no-properties (point-at-bol) (point-at-eol)))))
+    (orgtrello-cbx/--metadata-from-checklist (orgtrello-cbx/--read-checkbox!))))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-cbx loaded!")
 
