@@ -254,9 +254,11 @@ Levels:
       orgtrello-cbx/--key-to-search
       (assoc-default properties)))
 
-(defun orgtrello-cbx/--org-set-property (key value properties)
+(defun orgtrello-cbx/--org-update-property (key value properties)
   "Internal accessor to the key property."
-  (cons `(,key . ,value) properties))
+  (->> properties
+       (orgtrello-cbx/--org-delete-property key)
+       (cons `(,(orgtrello-cbx/--key-to-search key) . ,value))))
 
 (defun orgtrello-cbx/--org-delete-property (key properties)
   "Delete the key from the properties."

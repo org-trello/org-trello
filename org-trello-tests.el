@@ -569,10 +569,9 @@
   (expect "marker" (orgtrello-cbx/--org-get-property "orgtrello-marker" `(("orgtrello-id" . "123") (orgtrello-marker . "marker")))))
 
 (expectations
-  (expect `(("orgtrello-id" . "10") (orgtrello-marker . "123"))                         (orgtrello-cbx/--org-set-property "orgtrello-id" "10" `((orgtrello-marker . "123"))))
-  (expect `(("orgtrello-toto" . "abc") (orgtrello-marker . "456"))                      (orgtrello-cbx/--org-set-property "orgtrello-toto" "abc" `((orgtrello-marker . "456"))))
-  (expect `(("orgtrello-id" . "abc") (orgtrello-marker . "456") (orgtrello-id . "def")) (orgtrello-cbx/--org-set-property "orgtrello-id" "abc"
-                                                                                                                          `((orgtrello-marker . "456") (orgtrello-id . "def")))))
+  (expect `((orgtrello-id . "10") (orgtrello-marker . "123"))    (orgtrello-cbx/--org-update-property "orgtrello-id" "10" `((orgtrello-marker . "123"))))
+  (expect `((orgtrello-toto . "abc") (orgtrello-marker . "456")) (orgtrello-cbx/--org-update-property "orgtrello-toto" "abc" `((orgtrello-marker . "456"))))
+  (expect `((orgtrello-id . "abc") (orgtrello-marker . "456"))   (orgtrello-cbx/--org-update-property "orgtrello-id" "abc" `((orgtrello-marker . "456") (orgtrello-id . "def")))))
 
 (expectations
   (expect `(("orgtrello-id" . "123") (orgtrello-marker . "marker")) (orgtrello-cbx/--org-delete-property "orgtrello-id" `(("orgtrello-id" . "123") (orgtrello-marker . "marker"))))
