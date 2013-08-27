@@ -2005,9 +2005,17 @@ refresh(\"/proxy/admin/current-action/\", '#current-action');
   "Given a level, compute the number of space for an org checkbox entry."
   (orgtrello/--symbol "*"  n))
 
-(defun orgtrello/--compute-status (status)
+(defun orgtrello/--compute-state-generic (state list-state)
+  "Computing generic."
+  (if (string= "complete" state) (first list-state) (second list-state)))
+
+(defun orgtrello/--compute-state-checkbox (state)
   "Compute the status of the checkbox"
-  (if (string= "complete" status) "[X]" "[-]"))
+  (orgtrello/--compute-state-generic state '("[X]" "[-]")))
+
+(defun orgtrello/--compute-state-item (state)
+  "Compute the status of the checkbox"
+  (orgtrello/--compute-state-generic state '("DONE" "TODO")))
 
 (defun orgtrello/--compute-level-into-spaces (level)
   "level 2 is 0 space, otherwise 2 spaces."
@@ -2019,31 +2027,37 @@ refresh(\"/proxy/admin/current-action/\", '#current-action');
           (-> level
               orgtrello/--compute-level-into-spaces
               orgtrello/--space)
-          (orgtrello/--compute-status status)
+          (orgtrello/--compute-state-checkbox status)
           name))
 
-(defun orgtrello/--compute-checklist-to-org-entry (checklist)
+(defun orgtrello/--compute-item-to-orgtrello-entry (name &optional level status)
+  (format "%s %s %s\n"
+          (orgtrello/--star level)
+          (orgtrello/--compute-state-item status)
+          name))
+
+(defun orgtrello/--compute-checklist-to-org-entry (orgcheckbox-p checklist)
   "Given a checklist, compute its org-mode entry equivalence."
   (let ((o/--checklist-name   (orgtrello-query/--name checklist))
         (o/--checklist-status "incomplete")) ;; improve the compute the status from the checkbox below
-    (funcall (if *ORGTRELLO-NATURAL-ORG-CHECKLIST*
+    (funcall (if orgcheckbox-p
                  'orgtrello/--compute-checklist-to-org-checkbox
-                 'orgtrello/--compute-checklist-to-orgtrello-entry)
+                 'orgtrello/--compute-item-to-orgtrello-entry)
              o/--checklist-name
              2
              o/--checklist-status)))
 
-(defun orgrello/--compute-item-status (status)
+(defun orgrello/--compute-item-status (state)
   "Compute the status of the item given its status."
-  (if (string= "complete" status) *DONE* *TODO*))
+  (if (string= "complete" state) *DONE* *TODO*))
 
-(defun orgtrello/--compute-item-to-org-entry (item)
+(defun orgtrello/--compute-item-to-org-entry (orgcheckbox-p item)
   "Given a checklist item, compute its org-mode entry equivalence."
   (let ((orgtrello/--item-name  (orgtrello-query/--name  item))
         (orgtrello/--item-state (orgtrello-query/--state item)))
-    (funcall (if *ORGTRELLO-NATURAL-ORG-CHECKLIST*
+    (funcall (if orgcheckbox-p
                  'orgtrello/--compute-checklist-to-org-checkbox
-                 'orgtrello/--compute-item-to-org)
+                 'orgtrello/--compute-item-to-orgtrello-entry)
              orgtrello/--item-name
              3
              orgtrello/--item-state)))
@@ -2054,6 +2068,7 @@ refresh(\"/proxy/admin/current-action/\", '#current-action');
    (cond ((orgtrello-query/--list-id entity) 'orgtrello/--compute-card-to-org-entry)           ;; card      (level 1)
          ((orgtrello-query/--card-id entity) 'orgtrello/--compute-checklist-to-org-entry)      ;; checklist (level 2)
          ((orgtrello-query/--state entity)   'orgtrello/--compute-item-to-org-entry))          ;; items     (level 3)
+   *ORGTRELLO-NATURAL-ORG-CHECKLIST*
    entity))
 
 (defun orgtrello/--do-retrieve-checklists-from-card (card)

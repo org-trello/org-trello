@@ -654,11 +654,6 @@ DEADLINE: <some-date>
   (expect "***" (orgtrello/--star 3)) )
 
 (expectations
-  (expect "[X]" (orgtrello/--compute-status "complete"))
-  (expect "[-]" (orgtrello/--compute-status nil))
-  (expect "[-]" (orgtrello/--compute-status "anything will render incomplete")))
-
-(expectations
   (expect 0 (orgtrello/--compute-level-into-spaces 2))
   (expect 2 (orgtrello/--compute-level-into-spaces nil))
   (expect 2 (orgtrello/--compute-level-into-spaces 'any)))
@@ -679,15 +674,33 @@ DEADLINE: <some-date>
 
 (expectations
   (expect "*** DONE name
-" (orgtrello/--compute-item-to-orgtrello "name" 3 "complete"))
+" (orgtrello/--compute-item-to-orgtrello-entry "name" 3 "complete"))
   (expect "*** TODO name
-" (orgtrello/--compute-item-to-orgtrello "name" 3 "incomplete")))
+" (orgtrello/--compute-item-to-orgtrello-entry "name" 3 "incomplete")))
+
+(expectations
+  (expect "- [-] name
+" (orgtrello/--compute-checklist-to-org-entry t `((name . "name"))))
+  (expect "- [-] name
+" (orgtrello/--compute-checklist-to-org-entry t `((name . "name")))))
+
+(expectations
+  (expect "** TODO name
+" (orgtrello/--compute-checklist-to-org-entry nil `((name . "name"))))
+  (expect "** TODO name
+" (orgtrello/--compute-checklist-to-org-entry nil `((name . "name")))))
+
+(expectations
+  (expect "  - [X] name
+" (orgtrello/--compute-item-to-org-entry t `((name . "name") (state . "complete"))))
+  (expect "  - [-] name
+" (orgtrello/--compute-item-to-org-entry t `((name . "name") (state . "incomplete")))))
 
 (expectations
   (expect "*** DONE name
-" (orgtrello/--compute-item-to-org-entry `((name . "name") (state . "complete"))))
+" (orgtrello/--compute-item-to-org-entry nil `((name . "name") (state . "complete"))))
   (expect "*** TODO name
-" (orgtrello/--compute-item-to-org-entry `((name . "name") (state . "incomplete")))))
+" (orgtrello/--compute-item-to-org-entry nil `((name . "name") (state . "incomplete")))))
 
 (expectations
   (expect "test" (orgtrello-query/--retrieve-data 'marker `((marker . "test"))))
@@ -747,6 +760,20 @@ DEADLINE: <some-date>
   (expect "some-method" (orgtrello-query/gethash-data :method (orgtrello-hash/make-properties `((:method . "some-method")))))
   (expect nil           (orgtrello-query/gethash-data :method (orgtrello-hash/make-properties `((:inexistant . "some-method"))))))
 
+(expectations
+  (expect "DONE" (orgtrello/--compute-state-generic "complete" '("DONE" "TODO")))
+  (expect "TODO" (orgtrello/--compute-state-generic "incomplete" '("DONE" "TODO")))
+
+  (expect "[X]" (orgtrello/--compute-state-generic "complete" '("[X]" "[-]")))
+  (expect "[-]" (orgtrello/--compute-state-generic "incomplete" '("[X]" "[-]"))))
+
+(expectations
+  (expect "[X]" (orgtrello/--compute-state-checkbox "complete"))
+  (expect "[-]" (orgtrello/--compute-state-checkbox "incomplete")))
+
+(expectations
+ (expect "DONE" (orgtrello/--compute-state-item "complete"))
+ (expect "TODO" (orgtrello/--compute-state-item "incomplete")))
 (message "Tests done!")
 
 (provide 'org-trello-tests)
