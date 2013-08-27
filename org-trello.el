@@ -379,6 +379,45 @@ This is a list with the following elements:
       1-
       orgtrello-cbx/--org-up!))
 
+(defun orgtrello-cbx/--private-next-checklist-point ()
+  "Compute the next checkbox's beginning of line. Beware, not for external use. Does not preserve the current position - use  orgtrello-cbx/--next-checklist-point.
+ If hitting a heading or the end of the file, return nil."
+  (if (or (org-at-heading-p) (<= (point-max) (point)))
+      nil
+      (progn
+        (if (orgtrello-cbx/checkbox-p)
+            (point)
+            (progn
+              (forward-line)
+              (orgtrello-cbx/--private-next-checklist-point))))))
+
+(defun orgtrello-cbx/--next-checklist-point ()
+  "Compute the next checkbox's beginning of line. Does preserve the current position. If hitting a heading or the end of the file, return nil."
+  (save-excursion
+    (forward-line)
+    (orgtrello-cbx/--private-next-checklist-point)))
+
+(defun orgtrello/--map-checkboxes (point-max fn-to-execute)
+  "Map over the checkboxes and execute fn when in checkbox. Does not preserve the cursor position."
+  (message "orgtrello/--map-checkboxes - %s" (orgtrello-data/metadata))
+  (let ((next-checklist (orgtrello-cbx/--next-checklist-point)))
+    (when next-checklist
+          (goto-char next-checklist)
+          (funcall fn-to-execute)
+          (orgtrello/--map-checkboxes point-max fn-to-execute))))
+
+(defun orgtrello/--compute-next-sibling-point ()
+  "Compute the next sibling point (need to called from a card level)."
+  (let* ((current-point      (point))
+         (next-heading-point (save-excursion (org-goto-sibling) (point))))
+    (if (= current-point next-heading-point) (point-max) (1- next-heading-point))))
+
+(defun orgtrello/map-checkboxes (fn-to-execute)
+  "Map over the current checkbox and sync them."
+  (save-excursion
+    ;; then map over the next checkboxes and sync them
+    (orgtrello/--map-checkboxes (orgtrello/--compute-next-sibling-point) fn-to-execute)))
+
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-cbx loaded!")
 
 
@@ -1895,7 +1934,14 @@ refresh(\"/proxy/admin/current-action/\", '#current-action');
   "Do the actual full card creation - from card to item. Beware full side effects..."
   (orgtrello-log/msg *OT/INFO* "Synchronizing full entity with its structure on board '%s'..." (orgtrello/--board-name))
   ;; iterate over the map of entries and sync them, breadth first
-  (org-map-tree 'orgtrello/do-sync-entity))
+  (if (org-at-heading-p)
+      (org-map-tree (lambda ()
+                      ;; as usual we sync the heading
+                      (orgtrello/do-sync-entity)
+                      ;; we also sync the native checklist
+                      (when *ORGTRELLO-NATURAL-ORG-CHECKLIST* (orgtrello/map-checkboxes 'orgtrello/do-sync-entity))))
+      ;; we also sync the native checklist
+      (when *ORGTRELLO-NATURAL-ORG-CHECKLIST* (orgtrello/map-checkboxes 'orgtrello/do-sync-entity))))
 
 (defun orgtrello/do-sync-full-file ()
   "Full org-mode file synchronisation."
@@ -2402,7 +2448,11 @@ C-c o h - M-x org-trello/help-describing-bindings    - This help message."))
 
 (defun org-trello/describe-current-entry ()
   (interactive)
-  (message "current-entry: %s\ncheckbox? %s" (orgtrello-data/metadata) (orgtrello-cbx/checkbox-p)))
+  (message "current-entry: %s\ncheckbox? %s\nheading? %s\nheading-or-item? %s"
+           (orgtrello-data/metadata)
+           (orgtrello-cbx/checkbox-p)
+           (org-at-heading-p)
+           (org-at-heading-or-item-p)))
 
 ;;;###autoload
 (define-minor-mode org-trello-mode "Sync your org-mode and your trello together."
