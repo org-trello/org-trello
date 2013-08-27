@@ -112,7 +112,7 @@
 (defvar *OT/DEBUG* 4)
 (defvar *OT/TRACE* 5)
 
-(defvar *orgtrello-log/level* 3
+(defvar *orgtrello-log/level* *OT/INFO*
   "Set log level.
 Levels:
 0 - no logging   (*OT/NOLOG*)
@@ -120,8 +120,8 @@ Levels:
 2 - log warnings (*OT/WARN*)
 3 - log info     (*OT/INFO*)
 4 - log debug    (*OT/DEBUG*)
-5 - log trace    (*OT/TRACE*)")
-;; (setq orgtrello/loglevel 5)
+5 - log trace    (*OT/TRACE*)
+To change such level, add this to your init.el file: (setq *orgtrello-log/level* *OT/TRACE*)")
 
 (defun orgtrello-log/msg (level &rest args)
   "Log message."
@@ -271,7 +271,7 @@ Levels:
   (let ((current-point (point)))
     (->> current-point
          orgtrello-cbx/--read-properties-from-point
-         (orgtrello-cbx/--org-set-property key value)
+         (orgtrello-cbx/--org-update-property key value)
          (orgtrello-cbx/--write-properties-at-point current-point))))
 
 (defun orgtrello-cbx/org-get-property (point key)
@@ -288,18 +288,29 @@ Levels:
          (orgtrello-cbx/--org-delete-property key)
          (orgtrello-cbx/--write-properties-at-point current-point))))
 
+;; (with-temp-buffer
+;;   (insert "- [X] call people [4/4]")
+;;   (goto-char (point-min))
+;;   (orgtrello-cbx/org-set-property "temporary-key" "temporary-value"))
+
+
 (defun orgtrello-cbx/--org-split-data (s)
   "Split the string into meta data with -."
   (s-split " " s))
+
+(defun orgtrello-cbx/--list-is-checkbox-p (l)
+  "Is this a checkbox?"
+  (string= "-" (first (--drop-while (string= "" it) l))))
 
 (defun orgtrello-cbx/--level (l)
   "Given a list of strings, compute the level (starts at 2).
 String look like:
 - ('- '[X] 'call 'people '[4/4])
-- (' '  '- '[X] 'call 'people '[4/4])"
-  (+ 2 (if (string= "-" (car l))
-           0
-           (1-  (length (--take-while (not (string= "-" it)) l))))))
+- (' '  '- '[X] 'call 'people '[4/4]).
+To ease the computation, we consider level 4 if no - to start with, and to avoid missed typing, we consider level 2 if there is no space before the - and level 3 otherwise."
+    (if (orgtrello-cbx/--list-is-checkbox-p l)
+      (if (string= "-" (car l)) 2 3)
+      4))
 
 (defun orgtrello-cbx/--retrieve-status (l)
   (car (--drop-while (not (or (string= "[]" it)
@@ -912,7 +923,7 @@ Also add some metadata identifier/due-data/point/buffer-name."
   (and id (not (string-match-p (format "^%s-" *ORGTRELLO-MARKER*) id))))
 
 (defun orgtrello-proxy/--standard-post-or-put-success-callback (entity-to-sync file-to-cleanup)
-  "Return a callback function able to deal with the update of the buffer at a given position."
+  "Return a callback function able to deal with the update of the buffer at a given position." ;;(debug)
   (lexical-let ((orgtrello-proxy/--entry-position    (orgtrello-query/--position entity-to-sync))
                 (orgtrello-proxy/--entry-buffer-name (orgtrello-query/--buffername entity-to-sync))
                 (orgtrello-proxy/--entry-file        file-to-cleanup)
@@ -960,7 +971,7 @@ Also add some metadata identifier/due-data/point/buffer-name."
         ((string= *ORGTRELLO-ACTION-SYNC*   action) 'orgtrello-proxy/--sync-entity)))
 
 (defun orgtrello-proxy/--sync-entity (entity-data full-metadata entry-file-archived)
-  "Execute the entity synchronization."
+  "Execute the entity synchronization." ;;(debug)
   (let ((orgtrello-query/--query-map (orgtrello/--dispatch-create full-metadata)))
     ;; Execute the request
     (if (hash-table-p orgtrello-query/--query-map)
@@ -969,7 +980,9 @@ Also add some metadata identifier/due-data/point/buffer-name."
          orgtrello-query/--query-map
          *do-sync-query*
          (orgtrello-proxy/--standard-post-or-put-success-callback entity-data entry-file-archived)
-         (cl-defun orgtrello-proxy/--standard-post-or-put-error-callback (&allow-other-keys) (throw 'org-trello-timer-go-to-sleep t)))
+         (cl-defun orgtrello-proxy/--standard-post-or-put-error-callback (&allow-other-keys)
+           (orgtrello-log/msg *OT/ERROR* "Problem during sync!")
+           (throw 'org-trello-timer-go-to-sleep t)))
         (progn
           (orgtrello-log/msg *OT/INFO* orgtrello-query/--query-map)
           (throw 'org-trello-timer-go-to-sleep t)))))
@@ -1123,7 +1136,7 @@ Also add some metadata identifier/due-data/point/buffer-name."
                                                                                                orgtrello-proxy/--list-files)))
 
 (defun orgtrello-proxy/--consumer-entity-files-hierarchically-and-do ()
-  "A handler to extract the entity informations from files (in order card, checklist, items)."
+  "A handler to extract the entity informations from files (in order card, checklist, items)." ;;(debug)
   ;; now let's deal with the entities sync in order with level
   (with-local-quit
     ;; if archived file exists, get them back in the queue before anything else
@@ -2359,6 +2372,10 @@ C-c o K - M-x org-trello/kill-all-entities           - Kill all the entities (an
 # HELP
 C-c o h - M-x org-trello/help-describing-bindings    - This help message."))
 
+(defun org-trello/describe-current-entry ()
+  (interactive)
+  (message "current-entry: %s\ncheckbox? %s" (orgtrello-data/metadata) (orgtrello-cbx/checkbox-p)))
+
 ;;;###autoload
 (define-minor-mode org-trello-mode "Sync your org-mode and your trello together."
   :lighter " ot" ;; the name on the modeline
@@ -2379,6 +2396,7 @@ C-c o h - M-x org-trello/help-describing-bindings    - This help message."))
              (define-key map (kbd "C-c o s") 'org-trello/sync-to-trello)
              ;; Help
              (define-key map (kbd "C-c o h") 'org-trello/help-describing-bindings)
+             (define-key map (kbd "C-c o z") 'org-trello/describe-current-entry)
              map))
 
 (add-hook 'org-trello-mode-on-hook

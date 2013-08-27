@@ -496,8 +496,10 @@
 
 (expectations
   (expect 2 (orgtrello-cbx/--level '("-" "[X]" "call" "people" "[4/4]")))
+  (expect 3 (orgtrello-cbx/--level '("" "-" "[X]" "Peter")))
   (expect 3 (orgtrello-cbx/--level '("" "" "-" "[X]" "Peter")))
-  (expect 4 (orgtrello-cbx/--level '("" "" "" "-" "[X]" "Peter"))))
+  (expect 3 (orgtrello-cbx/--level '("" "" "" "-" "[X]" "Peter")))
+  (expect 4 (orgtrello-cbx/--level '("" "" "" "" "" "Peter"))))
 
 (expectations
   (expect "DONE" (orgtrello-cbx/--status"[X]"))
@@ -595,6 +597,12 @@
   (expect 'some-key (orgtrello-cbx/--key-to-search "some-key"))
   (expect 'some-key (orgtrello-cbx/--key-to-search 'some-key))
   (expect :some-key (orgtrello-cbx/--key-to-search :some-key)))
+
+(expectations
+  (expect nil (orgtrello-cbx/--list-is-checkbox-p '("1" "2" "3")))
+  (expect nil (orgtrello-cbx/--list-is-checkbox-p '("1" "2" "3" "-")))
+  (expect t   (orgtrello-cbx/--list-is-checkbox-p '("-" "1" "2" "3")))
+  (expect t   (orgtrello-cbx/--list-is-checkbox-p '("" "" "-" "1" "2" "3"))))
 
 (message "Tests done!")
 
