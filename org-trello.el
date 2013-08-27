@@ -653,6 +653,8 @@ Also add some metadata identifier/due-data/point/buffer-name."
 (defvar *TRELLO-URL* "https://api.trello.com/1" "The needed prefix url for trello")
 
 ;; macro? defmethod?
+
+(defun orgtrello-query/gethash-data (key query-map) "Retrieve the data from some query-map" (gethash key query-map))
 (defun orgtrello-query/--method (query-map) "Retrieve the http method"    (gethash :method query-map))
 (defun orgtrello-query/--uri    (query-map) "Retrieve the http uri"       (gethash :uri query-map))
 (defun orgtrello-query/--sync   (query-map) "Retrieve the http sync flag" (gethash :sync query-map))
@@ -1970,32 +1972,89 @@ refresh(\"/proxy/admin/current-action/\", '#current-action');
   "Given a card's id, compute its status."
   (gethash card-id-list *HMAP-ID-NAME*))
 
+(defun orgtrello/--compute-due-date (due-date)
+  "Compute the format of the due date."
+  (if due-date (format "DEADLINE: <%s>\n" due-date) ""))
+
+(defun orgtrello/--private-compute-card-to-org-entry (name status due-date)
+  "Compute the org format for card."
+  (format "* %s %s\n%s" status name (orgtrello/--compute-due-date due-date)))
+
 (defun orgtrello/--compute-card-to-org-entry (card)
   "Given a card, compute its org-mode entry equivalence."
   (let* ((orgtrello/--card-name     (orgtrello-query/--name card))
          (orgtrello/--card-status   (orgtrello/--compute-card-status (orgtrello-query/--list-id card)))
          (orgtrello/--card-due-date (orgtrello-query/--due card)))
-    (format "* %s %s\n%s" orgtrello/--card-status orgtrello/--card-name
-            (if orgtrello/--card-due-date (format "DEADLINE: <%s>\n" orgtrello/--card-due-date) ""))))
+    (orgtrello/--private-compute-card-to-org-entry orgtrello/--card-name orgtrello/--card-status orgtrello/--card-due-date)))
+
+(defun orgtrello/--compute-checklist-to-orgtrello-entry (name &optional level status)
+  "Compute the orgtrello format checklist"
+  (format "** %s\n" name))
+
+(defun orgtrello/--symbol (sym n)
+  "Compute the repetition of a symbol as a string"
+  (--> n
+       (-repeat it sym)
+       (s-join "" it)))
+
+(defun orgtrello/--space (n)
+  "Given a level, compute the number of space for an org checkbox entry."
+  (orgtrello/--symbol " "  n))
+
+(defun orgtrello/--star (n)
+  "Given a level, compute the number of space for an org checkbox entry."
+  (orgtrello/--symbol "*"  n))
+
+(defun orgtrello/--compute-status (status)
+  "Compute the status of the checkbox"
+  (if (string= "complete" status) "[X]" "[-]"))
+
+(defun orgtrello/--compute-level-into-spaces (level)
+  "level 2 is 0 space, otherwise 2 spaces."
+  (if (equal level 2) 0 2))
+
+(defun orgtrello/--compute-checklist-to-org-checkbox (name &optional level status)
+  "Compute the org checkbox format"
+  (format "%s- %s %s\n"
+          (-> level
+              orgtrello/--compute-level-into-spaces
+              orgtrello/--space)
+          (orgtrello/--compute-status status)
+          name))
 
 (defun orgtrello/--compute-checklist-to-org-entry (checklist)
   "Given a checklist, compute its org-mode entry equivalence."
-  (let ((orgtrello/--checklist-name  (orgtrello-query/--name checklist)))
-    (format "** %s\n" orgtrello/--checklist-name)))
+  (let ((o/--checklist-name   (orgtrello-query/--name checklist))
+        (o/--checklist-status "incomplete")) ;; improve the compute the status from the checkbox below
+    (funcall (if *ORGTRELLO-NATURAL-ORG-CHECKLIST*
+                 'orgtrello/--compute-checklist-to-org-checkbox
+                 'orgtrello/--compute-checklist-to-orgtrello-entry)
+             o/--checklist-name
+             2
+             o/--checklist-status)))
+
+(defun orgrello/--compute-item-status (status)
+  "Compute the status of the item given its status."
+  (if (string= "complete" status) *DONE* *TODO*))
 
 (defun orgtrello/--compute-item-to-org-entry (item)
   "Given a checklist item, compute its org-mode entry equivalence."
-  (let* ((orgtrello/--item-name  (orgtrello-query/--name  item))
-         (orgtrello/--item-state (orgtrello-query/--state item)))
-    (format "*** %s %s\n"
-            (if (string= "complete" orgtrello/--item-state) *DONE* *TODO*)
-            orgtrello/--item-name)))
+  (let ((orgtrello/--item-name  (orgtrello-query/--name  item))
+        (orgtrello/--item-state (orgtrello-query/--state item)))
+    (funcall (if *ORGTRELLO-NATURAL-ORG-CHECKLIST*
+                 'orgtrello/--compute-checklist-to-org-checkbox
+                 'orgtrello/--compute-item-to-org)
+             orgtrello/--item-name
+             3
+             orgtrello/--item-state)))
 
 (defun orgtrello/--compute-entity-to-org-entry (entity)
   "Given an entity, compute its org representation."
-  (cond ((orgtrello-query/--list-id entity) (orgtrello/--compute-card-to-org-entry entity))           ;; card      (level 1)
-        ((orgtrello-query/--card-id entity) (orgtrello/--compute-checklist-to-org-entry entity))      ;; checklist (level 2)
-        ((orgtrello-query/--state entity)   (orgtrello/--compute-item-to-org-entry entity))))          ;; items     (level 3)
+  (funcall
+   (cond ((orgtrello-query/--list-id entity) 'orgtrello/--compute-card-to-org-entry)           ;; card      (level 1)
+         ((orgtrello-query/--card-id entity) 'orgtrello/--compute-checklist-to-org-entry)      ;; checklist (level 2)
+         ((orgtrello-query/--state entity)   'orgtrello/--compute-item-to-org-entry))          ;; items     (level 3)
+   entity))
 
 (defun orgtrello/--do-retrieve-checklists-from-card (card)
   "Given a card, return the list containing the card, the checklists from this card, and the items from the checklists. The order is guaranted."
@@ -2039,7 +2098,11 @@ refresh(\"/proxy/admin/current-action/\", '#current-action');
            (let ((orgtrello/--entry-new-name  (orgtrello-query/--name orgtrello/--entity)))
              (orgtrello-log/msg *OT/INFO* "Synchronizing new entity '%s' with id '%s'..." orgtrello/--entry-new-name orgtrello/--entry-new-id)
              (insert (orgtrello/--compute-entity-to-org-entry orgtrello/--entity))
-             (orgtrello-action/set-property *ORGTRELLO-ID* orgtrello/--entry-new-id)))
+             ;; need to get back one line backward for the checkboxes as their properties is at the same level (otherwise, for headings we do not care)
+             (forward-line -1)
+             (orgtrello-action/set-property *ORGTRELLO-ID* orgtrello/--entry-new-id)
+             ;; getting back normally for the rest
+             (forward-line)))
          entities)
         (goto-char (point-min))
         (org-sort-entries t ?o)

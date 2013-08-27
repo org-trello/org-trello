@@ -614,6 +614,139 @@
   (expect 1 (orgtrello-cbx/--get-level '(1 2 3)))
   (expect 2 (orgtrello-cbx/--get-level '(2 3))))
 
+(expectations
+  (expect "DEADLINE: <some-date>
+" (orgtrello/--compute-due-date "some-date"))
+  (expect "" (orgtrello/--compute-due-date nil)))
+
+(expectations
+  (expect "* name TODO
+DEADLINE: <some-date>
+" (orgtrello/--private-compute-card-to-org-entry "TODO" "name" "some-date"))
+  (expect "* name TODO
+" (orgtrello/--private-compute-card-to-org-entry "TODO" "name" nil)))
+
+(expectations
+  (expect "** name\n" (orgtrello/--compute-checklist-to-orgtrello-entry "name"))
+  (expect "** name\n" (orgtrello/--compute-checklist-to-orgtrello-entry "name" nil))
+  (expect "** name\n" (orgtrello/--compute-checklist-to-orgtrello-entry "name" 't))
+  (expect "** name\n" (orgtrello/--compute-checklist-to-orgtrello-entry "name" nil 't))
+  (expect "** name\n" (orgtrello/--compute-checklist-to-orgtrello-entry "name" 't nil))
+  (expect "** name\n" (orgtrello/--compute-checklist-to-orgtrello-entry "name" nil nil))
+  (expect "** name\n" (orgtrello/--compute-checklist-to-orgtrello-entry "name" 't 't)))
+
+(expectations
+  (expect ""      (orgtrello/--symbol " "  0))
+  (expect "*"     (orgtrello/--symbol "*"  1))
+  (expect "****"  (orgtrello/--symbol "**" 2))
+  (expect "   "   (orgtrello/--symbol " "  3)) )
+
+(expectations
+  (expect ""    (orgtrello/--space 0))
+  (expect " "   (orgtrello/--space 1))
+  (expect "  "  (orgtrello/--space 2))
+  (expect "   " (orgtrello/--space 3)) )
+
+(expectations
+  (expect ""    (orgtrello/--star 0))
+  (expect "*"   (orgtrello/--star 1))
+  (expect "**"  (orgtrello/--star 2))
+  (expect "***" (orgtrello/--star 3)) )
+
+(expectations
+  (expect "[X]" (orgtrello/--compute-status "complete"))
+  (expect "[-]" (orgtrello/--compute-status nil))
+  (expect "[-]" (orgtrello/--compute-status "anything will render incomplete")))
+
+(expectations
+  (expect 0 (orgtrello/--compute-level-into-spaces 2))
+  (expect 2 (orgtrello/--compute-level-into-spaces nil))
+  (expect 2 (orgtrello/--compute-level-into-spaces 'any)))
+
+(expectations
+  (expect "- [X] name
+" (orgtrello/--compute-checklist-to-org-checkbox "name" 2 "complete"))
+  (expect "  - [X] name
+" (orgtrello/--compute-checklist-to-org-checkbox "name" 3 "complete"))
+  (expect "- [X] name
+" (orgtrello/--compute-checklist-to-org-checkbox "name" 2 "complete"))
+  (expect "  - [-] name
+" (orgtrello/--compute-checklist-to-org-checkbox "name" 3 "incomplete")))
+
+(expectations
+  (expect "DONE" (orgrello/--compute-item-status "complete"))
+  (expect "TODO" (orgrello/--compute-item-status "anything else will render incomplete")))
+
+(expectations
+  (expect "*** DONE name
+" (orgtrello/--compute-item-to-orgtrello "name" 3 "complete"))
+  (expect "*** TODO name
+" (orgtrello/--compute-item-to-orgtrello "name" 3 "incomplete")))
+
+(expectations
+  (expect "*** DONE name
+" (orgtrello/--compute-item-to-org-entry `((name . "name") (state . "complete"))))
+  (expect "*** TODO name
+" (orgtrello/--compute-item-to-org-entry `((name . "name") (state . "incomplete")))))
+
+(expectations
+  (expect "test" (orgtrello-query/--retrieve-data 'marker `((marker . "test"))))
+  (expect nil (orgtrello-query/--retrieve-data    'other  `((marker . "test"))))
+  (expect "test" (orgtrello-query/--marker                `((marker . "test"))))
+  (expect nil (orgtrello-query/--marker                   `((inexistant . "test"))))
+  (expect "test" (orgtrello-query/--buffername            `((buffername . "test"))))
+  (expect nil (orgtrello-query/--buffername               `((inexistant . "test"))))
+  (expect "test" (orgtrello-query/--position              `((position . "test"))))
+  (expect nil (orgtrello-query/--position                 `((inexistant . "test"))))
+  (expect "test" (orgtrello-query/--id                    `((id . "test"))))
+  (expect nil (orgtrello-query/--id                       `((inexistant . "test"))))
+  (expect "test" (orgtrello-query/--name                  `((name . "test"))))
+  (expect nil (orgtrello-query/--name                     `((inexistant . "test"))))
+  (expect "test" (orgtrello-query/--list-id               `((idList . "test"))))
+  (expect nil (orgtrello-query/--list-id                  `((inexistant . "test"))))
+  (expect "test" (orgtrello-query/--checklist-ids         `((idChecklists . "test"))))
+  (expect nil (orgtrello-query/--checklist-ids            `((inexistant . "test"))))
+  (expect "test" (orgtrello-query/--check-items           `((checkItems . "test"))))
+  (expect nil (orgtrello-query/--check-items              `((inexistant . "test"))))
+  (expect "test" (orgtrello-query/--card-id               `((idCard . "test"))))
+  (expect nil (orgtrello-query/--card-id                  `((inexistant . "test"))))
+  (expect "test" (orgtrello-query/--due                   `((due . "test"))))
+  (expect nil (orgtrello-query/--due                      `((inexistant . "test"))))
+  (expect "test" (orgtrello-query/--state                 `((state . "test"))))
+  (expect nil (orgtrello-query/--state                    `((inexistant . "test"))))
+  (expect "test" (orgtrello-query/--close-property        `((closed . "test"))))
+  (expect nil (orgtrello-query/--close-property           `((inexistant . "test"))))
+  (expect "test" (orgtrello-query/--callback              `((callback . "test"))))
+  (expect nil (orgtrello-query/--callback                 `((inexistant . "test"))))
+  (expect "test" (orgtrello-query/--sync-                 `((sync . "test"))))
+  (expect nil (orgtrello-query/--sync-                    `((inexistant . "test"))))
+  (expect "test" (orgtrello-query/--level                 `((level . "test"))))
+  (expect nil (orgtrello-query/--level                    `((inexistant . "test"))))
+  (expect "test" (orgtrello-query/--method-               `((method . "test"))))
+  (expect nil (orgtrello-query/--method-                  `((inexistant . "test"))))
+  (expect "test" (orgtrello-query/--uri-                  `((uri . "test"))))
+  (expect nil (orgtrello-query/--uri-                     `((inexistant . "test"))))
+  (expect "test" (orgtrello-query/--params-               `((params . "test"))))
+  (expect nil (orgtrello-query/--params-                  `((inexistant . "test"))))
+  (expect "test" (orgtrello-query/--start                 `((start . "test"))))
+  (expect nil (orgtrello-query/--start                    `((inexistant . "test"))))
+  (expect "test" (orgtrello-query/--action                `((action . "test"))))
+  (expect nil (orgtrello-query/--action                   `((inexistant . "test")))))
+
+(expectations
+  (expect :some-method (orgtrello-query/--method (orgtrello-hash/make-properties `((:method . :some-method )))))
+  (expect nil (orgtrello-query/--method (orgtrello-hash/make-properties `((:inexistant . :some-method )))))
+  (expect :some-uri (orgtrello-query/--method (orgtrello-hash/make-properties `((:method . :some-uri )))))
+  (expect nil (orgtrello-query/--method (orgtrello-hash/make-properties `((:inexistant . :some-method )))))
+  (expect :some-sync (orgtrello-query/--method (orgtrello-hash/make-properties `((:method . :some-sync )))))
+  (expect nil (orgtrello-query/--method (orgtrello-hash/make-properties `((:inexistant . :some-method )))))
+  (expect :some-params (orgtrello-query/--method (orgtrello-hash/make-properties `((:method . :some-params )))))
+  (expect nil (orgtrello-query/--method (orgtrello-hash/make-properties `((:inexistant . :some-method ))))))
+
+(expectations
+  (expect "some-method" (orgtrello-query/gethash-data :method (orgtrello-hash/make-properties `((:method . "some-method")))))
+  (expect nil           (orgtrello-query/gethash-data :method (orgtrello-hash/make-properties `((:inexistant . "some-method"))))))
+
 (message "Tests done!")
 
 (provide 'org-trello-tests)
