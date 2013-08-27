@@ -995,9 +995,16 @@ Also add some metadata identifier/due-data/point/buffer-name."
   marker)
 
 (defun orgtrello-proxy/--getting-back-to-marker (marker)
-  "Given a marker, getting back to marker function."
+  "Given a marker, getting back to marker function. Move the cursor position."
   (goto-char (point-min))
   (re-search-forward (orgtrello-proxy/--compute-pattern-search-from-marker marker) nil t))
+
+(defun orgtrello-proxy/--get-back-to-marker (marker data)
+  "Getting back to the marker. Move the cursor position."
+  (let ((goto-ok (orgtrello-proxy/--getting-back-to-marker marker)))
+    (if goto-ok
+        goto-ok
+        (orgtrello-proxy/--getting-back-to-headline data))))
 
 (defun orgtrello/id-p (id)
   "Is the string a trello identifier?"
@@ -1017,19 +1024,17 @@ Also add some metadata identifier/due-data/point/buffer-name."
          ;; will update via tag the trello id of the new persisted data (if needed)
          (save-excursion
            ;; get back to the buffer and update the id if need be
-           (let* ((goto-ok  (orgtrello-proxy/--getting-back-to-marker orgtrello-proxy/--marker))
-                  (goto-ok2 (if goto-ok goto-ok (orgtrello-proxy/--getting-back-to-headline data))) ;; I don't get yet why some small % of time, i must do this
-                  (str-msg  (when goto-ok2
-                                  ;; now we extract the data
-                                  (let* ((orgtrello-proxy/--entry-metadata (orgtrello-data/metadata))
-                                         (orgtrello-proxy/--entry-id       (orgtrello/--id orgtrello-proxy/--entry-metadata)))
-                                    (if orgtrello-proxy/--entry-id ;; id already present in the org-mode file
-                                        ;; no need to add another
-                                        (concat "Entity '" (orgtrello/--name orgtrello-proxy/--entry-metadata) "' with id '" orgtrello-proxy/--entry-id "' synced!")
-                                        (let ((orgtrello-proxy/--entry-name (orgtrello-query/--name data)))
-                                          ;; not present, this was just created, we add a simple property
-                                          (orgtrello-action/set-property *ORGTRELLO-ID* orgtrello-proxy/--entry-new-id)
-                                          (concat "Newly entity '" orgtrello-proxy/--entry-name "' with id '" orgtrello-proxy/--entry-new-id "' synced!")))))))
+           (let ((str-msg (when (orgtrello-proxy/--get-back-to-marker orgtrello-proxy/--marker data)
+                                ;; now we extract the data
+                                (let* ((orgtrello-proxy/--entry-metadata (orgtrello-data/metadata))
+                                       (orgtrello-proxy/--entry-id       (orgtrello/--id orgtrello-proxy/--entry-metadata)))
+                                  (if orgtrello-proxy/--entry-id ;; id already present in the org-mode file
+                                      ;; no need to add another
+                                      (concat "Entity '" (orgtrello/--name orgtrello-proxy/--entry-metadata) "' with id '" orgtrello-proxy/--entry-id "' synced!")
+                                      (let ((orgtrello-proxy/--entry-name (orgtrello-query/--name data)))
+                                        ;; not present, this was just created, we add a simple property
+                                        (orgtrello-action/set-property *ORGTRELLO-ID* orgtrello-proxy/--entry-new-id)
+                                        (concat "Newly entity '" orgtrello-proxy/--entry-name "' with id '" orgtrello-proxy/--entry-new-id "' synced!")))))))
              (orgtrello-proxy/--cleanup-and-save-buffer-metadata orgtrello-proxy/--entry-file orgtrello-proxy/--marker)
              (when str-msg (orgtrello-log/msg *OT/INFO* str-msg)))))))))
 
