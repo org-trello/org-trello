@@ -481,16 +481,6 @@
 (expectations
   (expect "- message 1\n- message 2\n" (org-action/--compute-error-message '("message 1" "message 2"))))
 
-(expectations (lexical-let ((expected-hash (make-hash-table :test 'equal)))
-                (puthash "key0" '("value0") expected-hash)
-                (puthash "key1" '("value1") expected-hash)
-                (expect expected-hash (orgtrello-hash/make-properties '(("key0" "value0") ("key1" "value1"))))))
-
-(expectations (lexical-let ((expected-hash (make-hash-table :test 'equal)))
-                (puthash "key0" "value0" expected-hash)
-                (puthash "key1" "value1" expected-hash)
-                (expect expected-hash (orgtrello-hash/make-properties '(("key0" . "value0") ("key1" . "value1"))))))
-
 (expectations
  (expect ":key:" (orgtrello-hash/key "key")))
 
@@ -775,6 +765,18 @@ DEADLINE: <some-date>
  (expect "DONE" (orgtrello/--compute-state-item "complete"))
  (expect "TODO" (orgtrello/--compute-state-item "incomplete")))
 (message "Tests done!")
+
+(expectations
+  (expect "this is a card" (orgtrello/--card-p `((idList . "this is a card"))))
+  (expect nil (orgtrello/--card-p `((anything-else . "this is not a card")))))
+
+(expectations
+  (expect "this is a checklist" (orgtrello/--checklist-p `((idCard . "this is a checklist"))))
+  (expect nil (orgtrello/--checklist-p `((anything-else . "this is not a checklist")))))
+
+(expectations
+  (expect "this is an item" (orgtrello/--item-p `((state . "this is an item"))))
+  (expect nil (orgtrello/--checklist-p `((anything-else . "this is not a item")))))
 
 (provide 'org-trello-tests)
 ;;; org-trello-tests ends here

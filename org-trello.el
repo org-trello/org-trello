@@ -2062,12 +2062,25 @@ refresh(\"/proxy/admin/current-action/\", '#current-action');
              3
              orgtrello/--item-state)))
 
+(defun orgtrello/--card-p (entity)
+  "Is this a card?"
+  (orgtrello-query/--list-id entity))
+
+(defun orgtrello/--checklist-p (entity)
+  "Is this a checklist?"
+  (orgtrello-query/--card-id entity))
+
+(defun orgtrello/--item-p (entity)
+  "is this an item?"
+  (orgtrello-query/--state entity))
+
 (defun orgtrello/--compute-entity-to-org-entry (entity)
   "Given an entity, compute its org representation."
+  (trace :entity entity)
   (funcall
-   (cond ((orgtrello-query/--list-id entity) 'orgtrello/--compute-card-to-org-entry)           ;; card      (level 1)
-         ((orgtrello-query/--card-id entity) 'orgtrello/--compute-checklist-to-org-entry)      ;; checklist (level 2)
-         ((orgtrello-query/--state entity)   'orgtrello/--compute-item-to-org-entry))          ;; items     (level 3)
+   (cond ((orgtrello/--card-p entity) 'orgtrello/--compute-card-to-org-entry)             ;; card      (level 1)
+         ((orgtrello/--checklist-p entity) 'orgtrello/--compute-checklist-to-org-entry)   ;; checklist (level 2)
+         ((orgtrello/--item-p entity)   'orgtrello/--compute-item-to-org-entry))          ;; items     (level 3)
    entity
    *ORGTRELLO-NATURAL-ORG-CHECKLIST*))
 
@@ -2101,6 +2114,24 @@ refresh(\"/proxy/admin/current-action/\", '#current-action');
    cards
    :initial-value (make-hash-table :test 'equal)))
 
+(defun orgtrello/--update-property (id orgcheckbox-p)
+  "Update the property depending on the nature of thing to sync. Move the cursor position."
+  (if orgcheckbox-p
+      (progn
+        ;; need to get back one line backward for the checkboxes as their properties is at the same level (otherwise, for headings we do not care)
+        (forward-line -1)
+        (orgtrello-action/set-property *ORGTRELLO-ID* id)
+        ;; getting back normally for the rest
+        (forward-line))
+      (orgtrello-action/set-property *ORGTRELLO-ID* id)))
+
+(defun orgtrello/--write-entity (entity-id entity)
+  "Write the entity in the buffer to the current position. Move the cursor position."
+  (insert (orgtrello/--compute-entity-to-org-entry entity))
+  (orgtrello/--update-property entity-id (and *ORGTRELLO-NATURAL-ORG-CHECKLIST*
+                                              (not
+                                               (orgtrello/--card-p entity)))))
+
 (defun orgtrello/--update-buffer-with-remaining-trello-data (entities buffer-name)
   "Given a map of entities, dump those entities in the current buffer."
   (if entities ;; could be empty
@@ -2110,14 +2141,8 @@ refresh(\"/proxy/admin/current-action/\", '#current-action');
         ;; dump the remaining entities
         (maphash
          (lambda (orgtrello/--entry-new-id orgtrello/--entity)
-           (let ((orgtrello/--entry-new-name  (orgtrello-query/--name orgtrello/--entity)))
-             (orgtrello-log/msg *OT/INFO* "Synchronizing new entity '%s' with id '%s'..." orgtrello/--entry-new-name orgtrello/--entry-new-id)
-             (insert (orgtrello/--compute-entity-to-org-entry orgtrello/--entity))
-             ;; need to get back one line backward for the checkboxes as their properties is at the same level (otherwise, for headings we do not care)
-             (forward-line -1)
-             (orgtrello-action/set-property *ORGTRELLO-ID* orgtrello/--entry-new-id)
-             ;; getting back normally for the rest
-             (forward-line)))
+           (orgtrello-log/msg *OT/INFO* "Synchronizing new entity '%s' with id '%s'..." (orgtrello-query/--name orgtrello/--entity) orgtrello/--entry-new-id)
+           (orgtrello/--write-entity orgtrello/--entry-new-id orgtrello/--entity))
          entities)
         (goto-char (point-min))
         (org-sort-entries t ?o)
