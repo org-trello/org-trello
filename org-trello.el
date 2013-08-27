@@ -399,7 +399,6 @@ This is a list with the following elements:
 
 (defun orgtrello/--map-checkboxes (point-max fn-to-execute)
   "Map over the checkboxes and execute fn when in checkbox. Does not preserve the cursor position."
-  (message "orgtrello/--map-checkboxes - %s" (orgtrello-data/metadata))
   (let ((next-checklist (orgtrello-cbx/--next-checklist-point)))
     (when next-checklist
           (goto-char next-checklist)
@@ -763,6 +762,19 @@ Also add some metadata identifier/due-data/point/buffer-name."
 
 
 ;; #################### orgtrello-action
+
+(defun trace (label e)
+  "Decorator for some inaccessible code to easily 'message'."
+  (message "TRACE: %s: %S" label e)
+  e)
+
+(defun -trace (e &optional label)
+  "Decorator for some inaccessible code to easily 'message'."
+  (progn
+    (if label
+        (trace label e)
+        (message "TRACE: %S" e))
+    e))
 
 (defun orgtrello-action/reload-setup ()
   "Reload orgtrello setup."
@@ -1946,20 +1958,13 @@ refresh(\"/proxy/admin/current-action/\", '#current-action');
 (defun orgtrello/do-sync-full-file ()
   "Full org-mode file synchronisation."
   (orgtrello-log/msg *OT/WARN* "Synchronizing org-mode file to the board '%s'. This may take some time, some coffee may be a good idea..." (orgtrello/--board-name))
-  (org-map-entries 'orgtrello/do-sync-entity t 'file))
-
-(defun trace (label e)
-  "Decorator for some inaccessible code to easily 'message'."
-  (message "TRACE: %s: %S" label e)
-  e)
-
-(defun -trace (e &optional label)
-  "Decorator for some inaccessible code to easily 'message'."
-  (progn
-    (if label
-        (trace label e)
-        (message "TRACE: %S" e))
-    e))
+  (org-map-entries
+   (lambda ()
+     ;; only sync the first level, the function orgtrello/do-sync-full-entity will take care of the rest #TODO need a function that permits to filter on level
+     (when (= 1 (-> (orgtrello-data/entry-get-full-metadata) orgtrello-data/current orgtrello/--level))
+                (orgtrello/do-sync-full-entity)))
+   t
+   'file))
 
 (defun orgtrello/--compute-card-status (card-id-list)
   "Given a card's id, compute its status."
