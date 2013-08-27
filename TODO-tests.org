@@ -11,123 +11,112 @@
 #+title: synced from trello
 #+author: Antoine R. Dumont
 
-* TODO Reasoned schemer
+* TODO Reasoned schemer  (save-excursion
+    (goto-char (point-min))
+    (while (re-search-forward "
+      (replace-match "" nil t)))
 :PROPERTIES:
-:orgtrello-id: 521d291a8b9bdea45f002b93
 :END:
 * TODO Little schemer
 :PROPERTIES:
-:orgtrello-id: 521d291bd706e653250053fb
 :END:
 * TODO Structure and Interpretations of computer programs
 :PROPERTIES:
-:orgtrello-id: 521d291c5b5774fe35005514
 :END:
 * TODO Seasoned schemer
 :PROPERTIES:
-:orgtrello-id: 521d291ce5feb89d2500501f
 :END:
 * TODO Clojurescript
 :PROPERTIES:
-:orgtrello-id: 521d291df57cbc4325002b85
 :END:
 * TODO Joy of FUN(ctional) LANGUAGES
 :PROPERTIES:
-:orgtrello-id: 521d291e2961dce076005426
 :END:
-- [-] LISP family #PROPERTIES# {"orgtrello-id":"521d29263f2672c3760030b2"}
-  - [X] Emacs-Lisp #PROPERTIES# {"orgtrello-id":"521d2930976d0367250054bc"}
-  - [X] Common-Lisp #PROPERTIES# {"orgtrello-id":"521d29319c495cbc5f002d54"}
-  - [ ] Scheme #PROPERTIES# {"orgtrello-id":"521d293196268acb5f005272"}
-  - [X] Clojure #PROPERTIES# {"orgtrello-id":"521d29326f089cf23500515f"}
-- [X] ML family #PROPERTIES# {"orgtrello-id":"521d2928f57cbc4325002b87"}
-  - [X] Haskell #PROPERTIES# {"orgtrello-id":"521d2934fcf29e9d6b002bf4"}
-  - [X] Ocaml #PROPERTIES# {"orgtrello-id":"521d2935089b4ae453002ca6"}
-- [X] hybrid family #PROPERTIES# {"orgtrello-id":"521d2927511e241f54002b2a"}
-  - [X] Scala #PROPERTIES# {"orgtrello-id":"521d2933a6e7e0ca76003050"}
+- [-] LISP family
+  - [X] Emacs-Lisp
+  - [X] Common-Lisp
+  - [ ] Scheme
+  - [X] Clojure
+- [X] ML family
+  - [X] Haskell
+  - [X] Ocaml
+- [X] hybrid family
+  - [X] Scala
 * TODO Organize party [1/2]
 :PROPERTIES:
-:orgtrello-id: 521d292551840d706b0052dc
 :END:
-- [-] Call every people and let them know it will work! [2/3] #PROPERTIES# {"orgtrello-id":"521d292fb65ed9af250050e2"}
+- [-] Call every people and let them know it will work! [2/3]
 * DONE Programming in scala
 :PROPERTIES:
-:orgtrello-id: 521d151f238d0727700051da
 :END:
-- [-] chapters #PROPERTIES# {"orgtrello-id":"521d1520fc9f65be6b002d45"}
-  - [-] introduction #PROPERTIES# {"orgtrello-id":"521d1521124c9a0836004e92"}
-  - [-] Ch. 1 - A scalable language #PROPERTIES# {"orgtrello-id":"521d15228fdbd9d74700526d"}
-  - [-] Ch. 2 - First steps in scala #PROPERTIES# {"orgtrello-id":"521d15238b9bdea45f002920"}
-  - [-] Ch. 3 - Next steps in scala #PROPERTIES# {"orgtrello-id":"521d152307df7fa925002cc9"}
-  - [-] Ch. 4 - Classes and objects #PROPERTIES# {"orgtrello-id":"521d1524de1a491b36004f33"}
-  - [X] Ch. 5 - Basic types and operations #PROPERTIES# {"orgtrello-id":"521d15259958ecd776004d03"}
-  - [-] Ch. 6 - Functional objects #PROPERTIES# {"orgtrello-id":"521d15264fec6fe635002a3c"}
-  - [-] Ch. 7 - Buit-in control structures #PROPERTIES# {"orgtrello-id":"521d1527b0aaf4d053004d2f"}
-  - [X] Ch. 8 - Functions and closures #PROPERTIES# {"orgtrello-id":"521d152810e7286c590002fa"}
-  - [-] Ch. 9 - Control abstraction #PROPERTIES# {"orgtrello-id":"521d15298334ae4e210035d5"}
-  - [-] Ch. 10 - Composition and inheritance #PROPERTIES# {"orgtrello-id":"521d152aa9318bcd5f004bea"}
-  - [-] Ch. 11 - Scala's hierarchy #PROPERTIES# {"orgtrello-id":"521d152a0002be975f002dd0"}
-  - [-] Ch. 12 - Traits #PROPERTIES# {"orgtrello-id":"521d152bb0aaf4d053004d33"}
+- [-] chapters
+  - [-] introduction
+  - [-] Ch. 1 - A scalable language
+  - [-] Ch. 2 - First steps in scala
+  - [-] Ch. 3 - Next steps in scala
+  - [-] Ch. 4 - Classes and objects
+  - [X] Ch. 5 - Basic types and operations
+  - [-] Ch. 6 - Functional objects
+  - [-] Ch. 7 - Buit-in control structures
+  - [X] Ch. 8 - Functions and closures
+  - [-] Ch. 9 - Control abstraction
+  - [-] Ch. 10 - Composition and inheritance
+  - [-] Ch. 11 - Scala's hierarchy
+  - [-] Ch. 12 - Traits
 * DONE Programming in Haskell
 :PROPERTIES:
-:orgtrello-id: 521d2921f762e8875f005761
 :END:
 * DONE Clojure Programming
 :PROPERTIES:
-:orgtrello-id: 521d2922750ae1dd47002d1e
 :END:
 * DONE Functional programming in Haskell
 :PROPERTIES:
-:orgtrello-id: 521d29234ee75cd47600307c
 :END:
 * DONE Programming in scala
 :PROPERTIES:
-:orgtrello-id: 521d2924c13873ec06003ef2
 :END:
-- [-] chapters #PROPERTIES# {"orgtrello-id":"521d292e7a925442250054e1"}
+- [-] chapters
 * PENDING Questions about life, the universe and everything
 :PROPERTIES:
-:orgtrello-id: 521d291f672432d85d00287a
 :END:
-- [-] How to deal with promotion/demotion? #PROPERTIES# {"orgtrello-id":"521d292971e11e9763001af8"}
+- [-] How to deal with promotion/demotion?
 * PENDING Joy of Clojure
 :PROPERTIES:
-:orgtrello-id: 521d2920cc399f1a36003045
 :END:
-- [-] Part 1 Foundations [0%] #PROPERTIES# {"orgtrello-id":"521d292c45c7ab786b0031cd"}
-  - [-] Clojure philosophy [100%] #PROPERTIES# {"orgtrello-id":"521d2944b0aaf4d05300510a"}
-  - [-] Drinking from the Clojure firehose #PROPERTIES# {"orgtrello-id":"521d29456f089cf235005163"}
-  - [-] Dipping our toes in the pool #PROPERTIES# {"orgtrello-id":"521d2946d05020d711003f4c"}
-- [-] Part 2 Data Types #PROPERTIES# {"orgtrello-id":"521d292a0144a9b04700503c"}
-  - [-] On scalars [100%] #PROPERTIES# {"orgtrello-id":"521d293f1bdbb5d1760055a3"}
-  - [-] Composite data types [100%] #PROPERTIES# {"orgtrello-id":"521d294083e7e65f25002d18"}
-- [-] Part 3 Functional Programming #PROPERTIES# {"orgtrello-id":"521d2929be7d6d3325005578"}
-  - [-] Being lazy and set in your ways #PROPERTIES# {"orgtrello-id":"521d2936fe3d7db26b00302f"}
-  - [-] Immutability #PROPERTIES# {"orgtrello-id":"521d29364cfffe8449002429"}
-  - [-] Designing a persistent toy #PROPERTIES# {"orgtrello-id":"521d29377f9342217e001dc5"}
-  - [-] Laziness #PROPERTIES# {"orgtrello-id":"521d29383ed1d56215000e0c"}
-  - [-] Putting it all together: a lazy quicksort #PROPERTIES# {"orgtrello-id":"521d293951840d706b0052df"}
-  - [-] Functional programming #PROPERTIES# {"orgtrello-id":"521d293a50fa18ae68003e09"}
-  - [-] Functions in all their forms [100%] #PROPERTIES# {"orgtrello-id":"521d293bbaf02cf235005497"}
-  - [-] Closures #PROPERTIES# {"orgtrello-id":"521d293c8db316cc47002fa4"}
-  - [-] Thinking recursively #PROPERTIES# {"orgtrello-id":"521d293d452a710b36002d26"}
-  - [-] Putting it all together: A* pathfinding #PROPERTIES# {"orgtrello-id":"521d293ef762e8875f005766"}
-- [-] Part 4 Large-Scale Design #PROPERTIES# {"orgtrello-id":"521d292b636f1e2d36004f00"}
-  - [-] Macros #PROPERTIES# {"orgtrello-id":"521d2941b0aaf4d053005109"}
-  - [-] Java.next #PROPERTIES# {"orgtrello-id":"521d29425901180223002593"}
-  - [-] Mutation #PROPERTIES# {"orgtrello-id":"521d294367fc4e7c0300260f"}
-  - [-] Combining data and code #PROPERTIES# {"orgtrello-id":"521d2943285d5bb86b004f68"}
-- [-] Part 5 Tangential Considerations #PROPERTIES# {"orgtrello-id":"521d292df762e8875f005764"}
-  - [-] introduction #PROPERTIES# {"orgtrello-id":"521d2947a2c9b73a2500501f"}
-  - [-] Ch. 1 - A scalable language #PROPERTIES# {"orgtrello-id":"521d294869c9d18b6b004f6d"}
-  - [-] Ch. 2 - First steps in scala #PROPERTIES# {"orgtrello-id":"521d2949636f1e2d36004f04"}
-  - [-] Ch. 3 - Next steps in scala #PROPERTIES# {"orgtrello-id":"521d2949c13873ec06003ef7"}
-  - [-] Ch. 4 - Classes and objects #PROPERTIES# {"orgtrello-id":"521d294aff0e28e87600548b"}
-  - [-] Ch. 5 - Basic types and operations #PROPERTIES# {"orgtrello-id":"521d294c69e5d6b25f002de0"}
-  - [-] Ch. 6 - Functional objects #PROPERTIES# {"orgtrello-id":"521d294e5b5e49552500309f"}
-  - [-] Ch. 7 - Buit-in control structures #PROPERTIES# {"orgtrello-id":"521d294ec9909b904100261d"}
-  - [-] Ch. 8 - Functions and closures #PROPERTIES# {"orgtrello-id":"521d294f6c229aa26100444a"}
-  - [-] Ch. 9 - Control abstraction #PROPERTIES# {"orgtrello-id":"521d29505953c4521b0049be"}
-  - [-] Ch. 10 - Composition and inheritance #PROPERTIES# {"orgtrello-id":"521d29515b8d3ce376002cf9"}
-  - [-] Ch. 11 - Scala's hierarchy #PROPERTIES# {"orgtrello-id":"521d295373e75df03500341e"}
-  - [-] Ch. 12 - Traits #PROPERTIES# {"orgtrello-id":"521d2954d594d68f47005637"}
+- [-] Part 1 Foundations [0%]
+  - [-] Clojure philosophy [100%]
+  - [-] Drinking from the Clojure firehose
+  - [-] Dipping our toes in the pool
+- [-] Part 2 Data Types
+  - [-] On scalars [100%]
+  - [-] Composite data types [100%]
+- [-] Part 3 Functional Programming
+  - [-] Being lazy and set in your ways
+  - [-] Immutability
+  - [-] Designing a persistent toy
+  - [-] Laziness
+  - [-] Putting it all together: a lazy quicksort
+  - [-] Functional programming
+  - [-] Functions in all their forms [100%]
+  - [-] Closures
+  - [-] Thinking recursively
+  - [-] Putting it all together: A* pathfinding
+- [-] Part 4 Large-Scale Design
+  - [-] Macros
+  - [-] Java.next
+  - [-] Mutation
+  - [-] Combining data and code
+- [-] Part 5 Tangential Considerations
+  - [-] introduction
+  - [-] Ch. 1 - A scalable language
+  - [-] Ch. 2 - First steps in scala
+  - [-] Ch. 3 - Next steps in scala
+  - [-] Ch. 4 - Classes and objects
+  - [-] Ch. 5 - Basic types and operations
+  - [-] Ch. 6 - Functional objects
+  - [-] Ch. 7 - Buit-in control structures
+  - [-] Ch. 8 - Functions and closures
+  - [-] Ch. 9 - Control abstraction
+  - [-] Ch. 10 - Composition and inheritance
+  - [-] Ch. 11 - Scala's hierarchy
+  - [-] Ch. 12 - Traits
