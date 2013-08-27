@@ -1980,8 +1980,8 @@ refresh(\"/proxy/admin/current-action/\", '#current-action');
   "Compute the org format for card."
   (format "* %s %s\n%s" status name (orgtrello/--compute-due-date due-date)))
 
-(defun orgtrello/--compute-card-to-org-entry (card)
-  "Given a card, compute its org-mode entry equivalence."
+(defun orgtrello/--compute-card-to-org-entry (card &optional orgcheckbox-p)
+  "Given a card, compute its org-mode entry equivalence. orgcheckbox-p is nil"
   (let* ((orgtrello/--card-name     (orgtrello-query/--name card))
          (orgtrello/--card-status   (orgtrello/--compute-card-status (orgtrello-query/--list-id card)))
          (orgtrello/--card-due-date (orgtrello-query/--due card)))
@@ -2036,7 +2036,7 @@ refresh(\"/proxy/admin/current-action/\", '#current-action');
           (orgtrello/--compute-state-item status)
           name))
 
-(defun orgtrello/--compute-checklist-to-org-entry (orgcheckbox-p checklist)
+(defun orgtrello/--compute-checklist-to-org-entry (checklist &optional orgcheckbox-p)
   "Given a checklist, compute its org-mode entry equivalence."
   (let ((o/--checklist-name   (orgtrello-query/--name checklist))
         (o/--checklist-status "incomplete")) ;; improve the compute the status from the checkbox below
@@ -2051,7 +2051,7 @@ refresh(\"/proxy/admin/current-action/\", '#current-action');
   "Compute the status of the item given its status."
   (if (string= "complete" state) *DONE* *TODO*))
 
-(defun orgtrello/--compute-item-to-org-entry (orgcheckbox-p item)
+(defun orgtrello/--compute-item-to-org-entry (item &optional orgcheckbox-p)
   "Given a checklist item, compute its org-mode entry equivalence."
   (let ((orgtrello/--item-name  (orgtrello-query/--name  item))
         (orgtrello/--item-state (orgtrello-query/--state item)))
@@ -2068,8 +2068,8 @@ refresh(\"/proxy/admin/current-action/\", '#current-action');
    (cond ((orgtrello-query/--list-id entity) 'orgtrello/--compute-card-to-org-entry)           ;; card      (level 1)
          ((orgtrello-query/--card-id entity) 'orgtrello/--compute-checklist-to-org-entry)      ;; checklist (level 2)
          ((orgtrello-query/--state entity)   'orgtrello/--compute-item-to-org-entry))          ;; items     (level 3)
-   *ORGTRELLO-NATURAL-ORG-CHECKLIST*
-   entity))
+   entity
+   *ORGTRELLO-NATURAL-ORG-CHECKLIST*))
 
 (defun orgtrello/--do-retrieve-checklists-from-card (card)
   "Given a card, return the list containing the card, the checklists from this card, and the items from the checklists. The order is guaranted."
@@ -2157,11 +2157,13 @@ refresh(\"/proxy/admin/current-action/\", '#current-action');
   (lexical-let ((buffer-name buffername))
     (cl-defun sync-from-trello-insignificant-callback-name (&key data &allow-other-keys)
       "Synchronize the buffer with the response data."
-      (orgtrello-log/msg *OT/TRACE* "proxy - response data: %S" data)
-      (let* ((orgtrello/--entities-hash-map  (orgtrello/--compute-full-entities-from-trello data));; data is the cards
-             (orgtrello/--remaining-entities (orgtrello/--sync-buffer-with-trello-data orgtrello/--entities-hash-map buffer-name)))
-        (orgtrello/--update-buffer-with-remaining-trello-data orgtrello/--remaining-entities buffer-name)
-        (orgtrello-log/msg *OT/INFO* "Synchronizing the trello board from trello - done!")))))
+      (orgtrello-action/safe-wrap
+       (progn
+         (orgtrello-log/msg *OT/TRACE* "proxy - response data: %S" data)
+         (let* ((orgtrello/--entities-hash-map  (orgtrello/--compute-full-entities-from-trello data)) ;; data is the cards
+                (orgtrello/--remaining-entities (orgtrello/--sync-buffer-with-trello-data orgtrello/--entities-hash-map buffer-name)))
+           (orgtrello/--update-buffer-with-remaining-trello-data orgtrello/--remaining-entities buffer-name)
+           (orgtrello-log/msg *OT/INFO* "Synchronizing the trello board from trello - done!")))))))
 
 (defun orgtrello/do-sync-full-from-trello (&optional sync)
   "Full org-mode file synchronisation. Beware, this will block emacs as the request is synchronous."

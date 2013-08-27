@@ -680,27 +680,27 @@ DEADLINE: <some-date>
 
 (expectations
   (expect "- [-] name
-" (orgtrello/--compute-checklist-to-org-entry t `((name . "name"))))
+" (orgtrello/--compute-checklist-to-org-entry `((name . "name")) t))
   (expect "- [-] name
-" (orgtrello/--compute-checklist-to-org-entry t `((name . "name")))))
+" (orgtrello/--compute-checklist-to-org-entry `((name . "name")) t)))
 
 (expectations
   (expect "** TODO name
-" (orgtrello/--compute-checklist-to-org-entry nil `((name . "name"))))
+" (orgtrello/--compute-checklist-to-org-entry `((name . "name")) nil))
   (expect "** TODO name
-" (orgtrello/--compute-checklist-to-org-entry nil `((name . "name")))))
+" (orgtrello/--compute-checklist-to-org-entry `((name . "name")) nil)))
 
 (expectations
   (expect "  - [X] name
-" (orgtrello/--compute-item-to-org-entry t `((name . "name") (state . "complete"))))
+" (orgtrello/--compute-item-to-org-entry `((name . "name") (state . "complete")) t))
   (expect "  - [-] name
-" (orgtrello/--compute-item-to-org-entry t `((name . "name") (state . "incomplete")))))
+" (orgtrello/--compute-item-to-org-entry `((name . "name") (state . "incomplete")) t)))
 
 (expectations
   (expect "*** DONE name
-" (orgtrello/--compute-item-to-org-entry nil `((name . "name") (state . "complete"))))
+" (orgtrello/--compute-item-to-org-entry `((name . "name") (state . "complete")) nil))
   (expect "*** TODO name
-" (orgtrello/--compute-item-to-org-entry nil `((name . "name") (state . "incomplete")))))
+" (orgtrello/--compute-item-to-org-entry `((name . "name") (state . "incomplete")) nil)))
 
 (expectations
   (expect "test" (orgtrello-query/--retrieve-data 'marker `((marker . "test"))))

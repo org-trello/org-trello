@@ -610,8 +610,8 @@ CLOSED: [2013-08-25 dim. 15:43]
 - [X] Sync entity and arborescence tree
 - [X] Sync to trello must sync the native checklist if the flag is activated
 - [ ] Sync from trello must create native checklists if the flag is activated
-- [ ] Delete entity must remove the entity
-- [-] Automate the release to marmalade
+- [ ] Delete entity must remove just entity on point
+- [ ] Automate the release to marmalade
 
 * TODO 0.1.7 [%]
 - [-] webadmin: Add an action button to stop every running action
