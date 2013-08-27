@@ -604,6 +604,10 @@
   (expect t   (orgtrello-cbx/--list-is-checkbox-p '("-" "1" "2" "3")))
   (expect t   (orgtrello-cbx/--list-is-checkbox-p '("" "" "-" "1" "2" "3"))))
 
+(expectations
+  (expect 1 (orgtrello-cbx/--get-level '(1 2 3)))
+  (expect 2 (orgtrello-cbx/--get-level '(2 3))))
+
 (message "Tests done!")
 
 (provide 'org-trello-tests)

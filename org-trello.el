@@ -355,6 +355,26 @@ This is a list with the following elements:
     (beginning-of-line)
     (orgtrello-cbx/--metadata-from-checklist (orgtrello-cbx/--read-checkbox!))))
 
+(defun orgtrello-cbx/--get-level (meta)
+  "Retreve the level from the meta describing the checklist"
+  (car meta))
+
+(defun orgtrello-cbx/--org-up! (destination-level)
+  "An internal function to get back to the current entry's parent - return the level found or nil if no other level is found."
+  (let ((current-level (orgtrello-cbx/--get-level (orgtrello-cbx/org-checkbox-metadata))))
+    (cond ((= current-level destination-level) destination-level) ;; nothing to do
+          ((= 2 current-level)                 (org-up-heading-safe)) ;; level 2, then the first level is a heading
+          (t                                   (progn
+                                                 (forward-line -1)
+                                                 (orgtrello-cbx/--org-up! destination-level))))))
+
+(defun orgtrello-cbx/org-up! ()
+  "A function to get back to the current entry's parent."
+  (-> (orgtrello-cbx/org-checkbox-metadata)
+      orgtrello-cbx/--get-level
+      1-
+      orgtrello-cbx/--org-up!))
+
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-cbx loaded!")
 
 
@@ -417,32 +437,36 @@ Also add some metadata identifier/due-data/point/buffer-name."
          (cons orgtrello-data/metadata--buffer-name)
          orgtrello-data/--get-metadata)))
 
+(defun orgtrello-action/org-up-parent ()
+  "A function to get back to the current entry's parent"
+  (funcall (if (orgtrello-cbx/checkbox-p) 'orgtrello-cbx/org-up! 'org-up-heading-safe)))
+
 (defun orgtrello-data/--parent-metadata ()
   "Extract the metadata from the current heading's parent."
   (save-excursion
-    (org-up-heading-safe)
+    (orgtrello-action/org-up-parent)
     (orgtrello-data/metadata)))
 
 (defun orgtrello-data/--grandparent-metadata ()
   "Extract the metadata from the current heading's grandparent."
   (save-excursion
-    (org-up-heading-safe)
-    (org-up-heading-safe)
+    (orgtrello-action/org-up-parent)
+    (orgtrello-action/org-up-parent)
     (orgtrello-data/metadata)))
 
 (defun orgtrello-data/entry-get-full-metadata ()
   "Compute the metadata needed for one entry into a map with keys :current, :parent, :grandparent.
    Returns nil if the level is superior to 4."
-  (let* ((heading (orgtrello-data/metadata))
-         (level   (gethash :level heading)))
+  (let* ((current (orgtrello-data/metadata))
+         (level   (gethash :level current)))
     (if (< level 4)
-        (let* ((parent-heading      (orgtrello-data/--parent-metadata))
-               (grandparent-heading (orgtrello-data/--grandparent-metadata))
-               (mapdata (make-hash-table :test 'equal)))
+        (let* ((parent      (orgtrello-data/--parent-metadata))
+               (grandparent (orgtrello-data/--grandparent-metadata))
+               (mapdata     (make-hash-table :test 'equal)))
           ;; build the metadata with every important pieces
-          (puthash :current     heading             mapdata)
-          (puthash :parent      parent-heading      mapdata)
-          (puthash :grandparent grandparent-heading mapdata)
+          (puthash :current     current     mapdata)
+          (puthash :parent      parent      mapdata)
+          (puthash :grandparent grandparent mapdata)
           mapdata))))
 
 (defun orgtrello-data/current (entry-meta)
