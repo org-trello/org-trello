@@ -538,7 +538,8 @@
     (orgtrello-cbx/--name-without-properties "- [-] call people [1/4] ")))
 
 (expectations
-  (expect "{\"orgtrello-id\":\"123\"}" (orgtrello-cbx/--to-properties `((,*ORGTRELLO-ID* . "123")))))
+  (expect "{\"orgtrello-id\":\"123\"}" (orgtrello-cbx/--to-properties `((,*ORGTRELLO-ID* . "123"))))
+  (expect "{\"orgtrello-id\":\"456\"}" (orgtrello-cbx/--to-properties `((,*ORGTRELLO-ID* . "123") (,*ORGTRELLO-ID* . "456")))))
 
 (expectations
   (expect '((orgtrello-id . "123")) (orgtrello-cbx/--from-properties "{\"orgtrello-id\":\"123\"}")))

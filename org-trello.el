@@ -158,8 +158,8 @@ Levels:
   "Given a list of key value pair, return a hash table."
   (cl-reduce
    (lambda (map list-key-value)
-     (let ((key (first list-key-value))
-           (value (second list-key-value)))
+     (let ((key (car list-key-value))
+           (value (cdr list-key-value)))
        (puthash key value map)
        map))
    properties
@@ -181,7 +181,7 @@ Levels:
 
 (defun orgtrello-cbx/--to-properties (alist)
   "Serialize an association list to json."
-  (json-encode-alist alist))
+  (json-encode-hash-table (orgtrello-hash/make-properties alist)))
 
 (defun orgtrello-cbx/--from-properties (string)
   "Deserialize from json to list."
