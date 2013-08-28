@@ -4,11 +4,11 @@
 
 **Table of Contents**  *generated with [DocToc](http://doctoc.herokuapp.com/)*
 
-- [rational](#rational)
+- [rationale](#rationale)
 - [Emacs version](#emacs-version)
 - [Migration](#migration)
 - [TL;DR](#tl;dr)
-	- [Fast help](#fast-help)
+	- [Fast setup](#fast-setup)
 	- [Demo](#demo)
 		- [Synchronize one entity](#synchronize-one-entity)
 		- [Install](#install)
@@ -61,11 +61,11 @@
 - [Mailing list](#mailing-list)
 - [License](#license)
 
-# rational
+# rationale
 
 - [org-mode](http://orgmode.org/) is what I need.
 - [Trello](http://trello.com/) is what my team need.
-- [org-trello](https://github.com/ardumont/org-trello) is middle ground!
+- [org-trello](https://github.com/ardumont/org-trello) is the middle ground!
 
 This will satisfy org-modians and trelloans won't see any difference!
 
@@ -79,14 +79,14 @@ Tested on:
 
 0.1.5 -> 0.1.6
 
-Org-trello does use more natural ways of dealing with checklist using checkboxes!
+Org-trello now uses more natural ways of dealing with checklists using checkboxes!
 
 cf. [natural org format (from 0.1.6 onwards)](#natural-org-format-from-016-onwards) for more details.
 
 0.1.1 -> 0.1.2:
-- From the version 0.1.1, some of the http requests will be asynchronous.
-For this, we use elnode as a proxy server before requesting trello.
-elnode server is started on the port 9876.
+- From version 0.1.1, some http requests will be asynchronous.
+For this, we use elnode as a proxy server to make requests to trello.
+The elnode server is started on the port 9876.
 You can always change this port
 
 ``` lisp
@@ -96,7 +96,7 @@ Then `M-x orgtrello-proxy/reload`
 
 # TL;DR
 
-## Fast help
+## Fast setup
 
 Yank this into a scratch buffer:
 ``` lisp
@@ -170,7 +170,7 @@ Now open an org-mode buffer, then hit: `C-c o h`
 
 # Contributions
 
-- Pull Requests welcome (cf. [todo](./TODO.org) - better read on emacs's org-mode buffer)
+- Pull Requests welcome (cf. [todo](./TODO.org) - better read in an emacs org-mode buffer than on GitHub)
 - Appreciate any feedback
 - Open issues if you want something to be done
 - Open issues for bugs too (please describe maximum inputs, version, *Messages* buffer, stacktrace, etc...)
@@ -189,7 +189,7 @@ Add this to your emacs's init file (~/.emacs, ~/.emacs.d/init.el, or *scratch*, 
 ``` lisp
 (require 'package)
 
-(add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/") t)
+(add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
 
 (package-initialize)
 ```
@@ -203,7 +203,7 @@ Add this to your emacs's init file (~/.emacs, ~/.emacs.d/init.el, or *scratch*, 
 ``` lisp
 (require 'package)
 
-(add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
+(add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/") t)
 
 (package-initialize)
 ```
@@ -254,10 +254,10 @@ Add the org-trello directory to your load path and then add
 ## Emacs related
 
 Org-trello is a minor mode for org-mode to sync.
-Add this somewhere in your load file (~/.emacs or ~/.emacs.d/init.el).
+Add this somewhere in your load file (`~/.emacs` or `~/.emacs.d/init.el`).
 
 ``` lisp
-(require 'orgtrello)
+(require 'org-trello)
 ;; to have org-trello activated for all org file, uncomment this
 ;; (add-hook 'org-mode-hook 'org-trello-mode)
 ;; otherwise, M-x org-trello-mode
@@ -270,35 +270,19 @@ For example, here is my [startup file](https://github.com/ardumont/orgmode-pack/
 ### keys
 
 Install the consumer-key and the read-write token for org-trello to be able to work in your name with your trello boards.
+First, ensure that the web browser that emacs is configured to use is started, and you are logged in to Trello in it.
+
+Then, from an org-mode buffer:
 
 `C-c o i`
 
-or
+or in any mode:
 
 ``` lisp
 M-x org-trello/install-key-and-token
 ```
 
 ### Sync org to trello
-
-#### pre-requisite
-
-Beware, this step implicitely requires you to prepare your trello board by creating the needed list (in accordance to your org-mode keywords, cf. [org-todo-keywords](https://www.gnu.org/software/emacs/manual/html_node/org/Per_002dfile-keywords.html)).
-
-For example, you could either use the following keywords globally:
-
-```lisp
-(setq org-todo-keywords
-   '((sequence "TODO" "IN-PROGRESS" "PENDING" "|"  "DONE" "FAIL" "DELEGATED" "CANCELLED")))
-```
-
-Or, you could also setup your org-mode file locally, adding this as a org-mode header in your file (cf. [previous link](https://www.gnu.org/software/emacs/manual/html_node/org/Per_002dfile-keywords.html)):
-
-```orgmode
-#+TODO: TODO IN-PROGRESS PENDING | DONE FAIL DELEGATED CANCELLED
-```
-
-Either way, you need to create the list "TODO", "IN-PROGRESS", "PENDING", "DONE", "FAIL", "DELEGATED", and "CANCELLED" in your trello board before launching the routine to setup your org-mode buffer.
 
 #### Sync your org-mode buffer
 
@@ -353,17 +337,17 @@ Keybindings        | Interactive commands                         | Description
 1. open an org-mode file
 
 2. Install the key and the token file (`C-c o i` or `M-x org-trello/install-key-and-token`).
-This will open your browser to retrieve the needed informations (`consumer-key` then the `access-token`) and wait for your input in emacs.
+This will open your browser to retrieve the needed information (`consumer-key` then the `access-token`) and wait for your input in emacs.
 
-*Remark:* This need to be done once and for all until you revoke such token.
+*Remark:* This only needs to be done once, until you revoke the token.
 
 3. Setup your org-mode file with your trello board (`C-c o I` or `M-x org-trello/install-board-and-lists-ids`).
-This will present you a list of your actual boards. Select the one you want and hit enter.
-This will edit your org-mode file with properties needed.
+This will present you with a list of your actual boards. Select the one you want and hit enter.
+This will edit your org-mode file to add the properties needed.
 
 *Remarks:*
 - This need to be done once for each org-mode file you want to sync with a trello board.
-- You can create directly a board (`C-c o b` or `M-x orgtrello/do-create-board-and-lists`)
+- You can directly create a board (`C-c o b` or `M-x orgtrello/do-create-board-and-lists`)
 
 Now you are ready to use org-mode as usual.
 
@@ -392,7 +376,7 @@ Activated by default.
     - [ ] any entities with level superior to 4 are considered level 3
 ```
 
-For example, once sync to trello, this looks like:
+For example, once synced to trello, this looks like:
 
 ```
 * IN-PROGRESS Joy of FUN(ctional) LANGUAGES
@@ -497,7 +481,7 @@ Once synchronized, this looks like (largely prettier in emacs org buffer):
 
 #### Activate
 
-From 0.1.6 onwards, if you want to deactivate the default way, and get back to the original way, set this snippet somewhere in your init file:
+From 0.1.6 onwards, if you want to deactivate the default way, and get back to the original way, put this snippet somewhere in your init file:
 
 ```lisp
 (org-trello/deactivate-natural-org-checkboxes)
@@ -530,7 +514,7 @@ Steps:
 
 You can use [org-mode's deadline](http://orgmode.org/manual/Inserting-deadline_002fschedule.html), this is mapped to trello's due date notion during the synchronize step.
 
-## Creation full entity
+## Creation of a full entity
 
 You can sync all the entities and their arborescence once.
 Place yourself on the entity (card or checklist or item) and hit `C-c o C`.
@@ -545,7 +529,7 @@ Hit `C-c o s`.
 You can sync the content of your trello board into an org-mode file.
 Hit `C-c o S`.
 
-This will update any already present entry in the org-mode file and create the one not created yet.
+This will update any entries that were already present in the org-mode file and create any entries that were not created yet.
 
 ## Remove entity
 
@@ -564,14 +548,14 @@ This will remove any org-trello related entries in your file (headers included).
 
 # Errors
 
-Here are the possible error messages you can have if trying to sync in bad conditions:
+Here are the possible error messages you can get if trying to sync in bad conditions:
 
-- without setuping the consumer-key and the access-token:
+- without setting up the consumer-key and the access-token:
 ```
  - Setup problem - You need to install the consumer-key and the read/write access-token - C-c o i or M-x org-trello/install-board-and-lists-ids
 ```
 
-- without setuping the org-mode buffer:
+- without setting up the org-mode buffer:
 ```
  - Setup problem.
 Either you did not connect your org-mode buffer with a trello board, to correct this:
@@ -621,19 +605,19 @@ Cannot synchronize the item - the checklist must be synchronized first. Skip it.
 
 # proxy-admin
 
-From the version 0.1.2 onwards, there is a proxy which is in charge of:
+From version 0.1.2 onwards, there is a proxy which is in charge of:
 - consuming the synchronization of the entities
-- requesting Trello for other actions too
+- requesting that Trello do other actions too
 - proxy admin web page
 
-I also use it to make at disposition an admin web server - http://localhost:9876/proxy/admin/ - to be able to know which sync actions are running:
+I also used it to put at your disposal an admin web server - [http://localhost:9876/proxy/admin/](http://localhost:9876/proxy/admin/) - so that you can know which sync actions are running:
 ![screenshot_2013-08-23_10-03-54](https://f.cloud.github.com/assets/718812/1014903/c208ff34-0bca-11e3-895a-432f66453208.png)
 
 # Mailing list
 
-- subscripe: Send a mail to emacs.org.trello [AT] librelist.com to subscribe.
+- subscribe: Send a mail to emacs.org.trello [AT] librelist.com to subscribe.
 - unsubscribe: Send a mail to emacs.org.trello-unsubscribe [AT] librelist.com to unsubscribe.
 
 # License
 
-org-trello is free software under GPL v3. See COPYING file for details.
+org-trello is free software under the GPL v3. See the COPYING file for details.
