@@ -50,7 +50,6 @@ Minor emacs mode for org-mode - 2-way synchronization between org and trello boa
 			- [Activate](#activate)
 	- [Creation step-by-step](#creation-step-by-step)
 	- [Card and deadline/due date](#card-and-deadlinedue-date)
-	- [Checklist and transitivity](#checklist-and-transitivity)
 	- [Creation full entity](#creation-full-entity)
 	- [Sync org-mode file to trello board](#sync-org-mode-file-to-trello-board)
 	- [Sync org-mode file from trello board](#sync-org-mode-file-from-trello-board)
@@ -504,11 +503,12 @@ From 0.1.6 onwards, if you want to deactivate the default way, and get back to t
 
 ## Creation step-by-step
 
-The idea is this, you have 3 levels (cf. [possible format](#formats))
+Basically, you have 3 levels (cf. [possible formats](#formats))
 - level 1 - Card
 - level 2 - Checklist
 - level 3 - Item
 
+Steps:
 - Card:
   - Place yourself on the `card-identity` and hit the binding `C-c o c`, this will sync the card (create) in the `TODO` column in your trello board.
   - You can edit the label and hit `C-c o c` again, this time, this will sync the card again (update) in trello
@@ -527,20 +527,6 @@ The idea is this, you have 3 levels (cf. [possible format](#formats))
 ## Card and deadline/due date
 
 You can use [org-mode's deadline](http://orgmode.org/manual/Inserting-deadline_002fschedule.html), this is mapped to trello's due date notion during the synchronize step.
-
-## Checklist and transitivity
-
-By default now, the status of the checklist does transit to the items.
-Thus:
-- if the status of the checklist is DONE, every item will be synced to DONE and the org-mode buffer will be updated accordingly.
-- if the status of the checklist is TODO, every item will be synced to TODO and the org-mode buffer will be updated accordingly.
-
-If you do not want this, you can disable it by adding those lines to your emacs's startup file:
-
-```lisp
-(require 'org-trello)
-(setq *ORGTRELLO-CHECKLIST-UPDATE-ITEMS* nil)
-```
 
 ## Creation full entity
 
