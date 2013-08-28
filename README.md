@@ -1,6 +1,6 @@
 # org-trello [![Build Status](https://travis-ci.org/ardumont/org-trello.png?branch=master)](https://travis-ci.org/ardumont/org-trello)
 
-Minor emacs mode for org-mode - 2-way synchronization between org and trello board
+[Org](http://orgmode.org/) minor mode - 2-way sync [org](http://orgmode.org/) & [trello](http://trello.com/)
 
 **Table of Contents**  *generated with [DocToc](http://doctoc.herokuapp.com/)*
 
@@ -54,6 +54,8 @@ Minor emacs mode for org-mode - 2-way synchronization between org and trello boa
 	- [Sync org-mode file to trello board](#sync-org-mode-file-to-trello-board)
 	- [Sync org-mode file from trello board](#sync-org-mode-file-from-trello-board)
 	- [Remove entity](#remove-entity)
+	- [Remove entities](#remove-entities)
+	- [Cleanup org-trello setup](#cleanup-org-trello-setup)
 - [Errors](#errors)
 - [proxy-admin](#proxy-admin)
 - [Mailing list](#mailing-list)
@@ -547,8 +549,18 @@ This will update any already present entry in the org-mode file and create the o
 
 ## Remove entity
 
-You can remove any entity and its arborescence with `C-c o k`.
+You can remove any entity and its arborescence from the board with `C-c o k`.
 This will also remove the entry from the org-mode buffer.
+
+## Remove entities
+
+You can remove all entities from the board `C-c o K`.
+This will also remove the entries from the org-mode buffer.
+
+## Cleanup org-trello setup
+
+You remove all data from the org-mode buffer with `C-c o x`.
+This will remove any org-trello related entries in your file (headers included).
 
 # Errors
 
