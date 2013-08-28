@@ -2614,14 +2614,6 @@ C-c o K - M-x org-trello/kill-all-entities           - Kill all the entities (an
 # HELP
 C-c o h - M-x org-trello/help-describing-bindings    - This help message."))
 
-(defun org-trello/describe-current-entry ()
-  (interactive)
-  (message "current-entry: %s\ncheckbox? %s\nheading? %s\nheading-or-item? %s"
-           (orgtrello-data/metadata)
-           (orgtrello-cbx/checkbox-p)
-           (org-at-heading-p)
-           (org-at-heading-or-item-p)))
-
 ;;;###autoload
 (define-minor-mode org-trello-mode "Sync your org-mode and your trello together."
   :lighter " ot" ;; the name on the modeline
@@ -2642,7 +2634,6 @@ C-c o h - M-x org-trello/help-describing-bindings    - This help message."))
              (define-key map (kbd "C-c o s") 'org-trello/sync-to-trello)
              ;; Help
              (define-key map (kbd "C-c o h") 'org-trello/help-describing-bindings)
-             (define-key map (kbd "C-c o z") 'org-trello/describe-current-entry)
              map))
 
 (add-hook 'org-trello-mode-on-hook
