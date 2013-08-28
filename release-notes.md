@@ -11,6 +11,8 @@
 - [X] Justify the #PROPERTIES# to the left for a better rendering
 - [X] Keywordify the #PROPERTIES#
 - [X] Merge the org :PROPERTIES: and the org-trello #PROPERTIES# into one.
+- [X] Improve the activation/deactivation of the new way
+- [X] Update the readme about the new checkbox mode
 - [X] Release notes
 - [X] Release
 

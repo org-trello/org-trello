@@ -66,20 +66,6 @@
 
 ;; #################### overriding setup
 
-(defvar *ORGTRELLO-NATURAL-ORG-CHECKLIST* t
-  "Permit the user to choose the natural org checklists over the first org-trello one (present from the start which are more basic).
-   To alter this behavior, update in your init.el:
-   (require 'org-trello)
-   (setq *ORGTRELLO-NATURAL-ORG-CHECKLIST* nil)")
-
-(defvar *ORGTRELLO-CHECKLIST-UPDATE-ITEMS* (not *ORGTRELLO-NATURAL-ORG-CHECKLIST*)
-  "OBSOLETE: A variable to permit the checklist's status to be pass along to its items. t, if checklist's status is DONE, the items are updated to DONE (org-mode buffer and trello board), nil only the items's status is used.
-   To let the user completely choose what status he/she wants for every level, just change in your init.el file:
-   (require 'org-trello)
-   (setq *ORGTRELLO-CHECKLIST-UPDATE-ITEMS* nil)
-
-If you want to use this, we recommand to use the native org checklists - http://orgmode.org/manual/Checkboxes.html.")
-
 
 
 ;; #################### static setup
@@ -95,6 +81,20 @@ If you want to use this, we recommand to use the native org checklists - http://
 (defvar *ORGTRELLO-LEVELS*            '(1 2 3)           "Current levels 1 is card, 2 is checklist, 3 is item.")
 (defvar *ORGTRELLO-ACTION-SYNC*       "sync-entity"      "Possible action regarding the entity synchronization.")
 (defvar *ORGTRELLO-ACTION-DELETE*     "delete"           "Possible action regarding the entity deletion.")
+
+(defvar *ORGTRELLO-NATURAL-ORG-CHECKLIST* t
+  "Permit the user to choose the natural org checklists over the first org-trello one (present from the start which are more basic).
+   To alter this behavior, update in your init.el:
+   (require 'org-trello)
+   (org-trello/activate-natural-org-checkboxes)")
+
+(defvar *ORGTRELLO-CHECKLIST-UPDATE-ITEMS* nil
+  "OBSOLETE: A variable to permit the checklist's status to be pass along to its items. t, if checklist's status is DONE, the items are updated to DONE (org-mode buffer and trello board), nil only the items's status is used.
+   To let the user completely choose what status he/she wants for every level, just change in your init.el file:
+   (require 'org-trello)
+   (setq *ORGTRELLO-CHECKLIST-UPDATE-ITEMS* nil)
+
+If you want to use this, we recommand to use the native org checklists - http://orgmode.org/manual/Checkboxes.html.")
 
 
 
@@ -2581,6 +2581,18 @@ refresh(\"/proxy/admin/current-action/\", '#current-action');
        (orgtrello-log/msg *OT/NOLOG* "Cleanup done!"))
      *do-save-buffer*
      *do-reload-setup*))
+
+(defun org-trello/activate-natural-org-checkboxes ()
+  "Activate the natural org-checkboxes - http://orgmode.org/manual/Checkboxes.html"
+  (interactive)
+  (setq *ORGTRELLO-NATURAL-ORG-CHECKLIST* t)
+  (setq *ORGTRELLO-CHECKLIST-UPDATE-ITEMS* nil))
+
+(defun org-trello/deactivate-natural-org-checkboxes ()
+  "Activate the natural org-checkboxes - http://orgmode.org/manual/Checkboxes.html"
+  (interactive)
+  (setq *ORGTRELLO-NATURAL-ORG-CHECKLIST* nil)
+  (setq *ORGTRELLO-CHECKLIST-UPDATE-ITEMS* t))
 
 (defun org-trello/help-describing-bindings ()
   "A simple message to describe the standard bindings used."

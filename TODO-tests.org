@@ -12,9 +12,6 @@
 #+author: Antoine R. Dumont
 
 * TODO Reasoned schemer  (save-excursion
-    (goto-char (point-min))
-    (while (re-search-forward "
-      (replace-match "" nil t)))
 :PROPERTIES:
 :END:
 * TODO Little schemer

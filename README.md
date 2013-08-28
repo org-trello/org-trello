@@ -4,6 +4,7 @@ Minor emacs mode for org-mode - 2-way synchronization between org and trello boa
 
 **Table of Contents**  *generated with [DocToc](http://doctoc.herokuapp.com/)*
 
+- [org-trello [![Build Status](https://travis-ci.org/ardumont/org-trello.png?branch=master)](https://travis-ci.org/ardumont/org-trello)](#org-trello-!build-statushttpstravis-ciorgardumontorg-trellopngbranch=masterhttpstravis-ciorgardumontorg-trello)
 - [why?](#why)
 - [Emacs version](#emacs-version)
 - [Migration](#migration)
@@ -42,6 +43,13 @@ Minor emacs mode for org-mode - 2-way synchronization between org and trello boa
 - [Bindings](#bindings)
 - [Use cases](#use-cases)
 	- [Setup](#setup-1)
+	- [Formats](#formats)
+		- [natural org format (from 0.1.6 onwards)](#natural-org-format-from-016-onwards)
+			- [Reactivate](#reactivate)
+	- [Bindings](#bindings)
+		- [Original format (previous to 0.1.6)](#original-format-previous-to-016)
+			- [Activate](#activate)
+		- [Migrate to 0.1.6](#migrate-to-016)
 	- [Creation step-by-step](#creation-step-by-step)
 	- [Card and deadline/due date](#card-and-deadlinedue-date)
 	- [Checklist and transitivity](#checklist-and-transitivity)
@@ -50,6 +58,7 @@ Minor emacs mode for org-mode - 2-way synchronization between org and trello boa
 	- [Sync org-mode file from trello board](#sync-org-mode-file-from-trello-board)
 	- [Remove entity](#remove-entity)
 - [Errors](#errors)
+- [proxy-admin](#proxy-admin)
 - [Mailing list](#mailing-list)
 - [License](#license)
 
@@ -351,27 +360,153 @@ This will edit your org-mode file with properties needed.
 
 Now you are ready to use org-mode as usual.
 
+## Formats
+
+There is a new setup which is activated by default, using the natural org [checkboxes](http://orgmode.org/manual/Checkboxes.html).
+Thanks to @sw1nn [for showing me this org feature, this is awesome!](https://github.com/ardumont/org-trello/issues/14).
+
+### natural org format (from 0.1.6 onwards)
+
+Activated by default.
+
+```org-mode
+- [-] LISP
+  - [X] Emacs-Lisp
+  - [X] Common-Lisp
+  - [ ] Scheme
+  - [X] Clojure
+- [X] ML
+  - [X] Haskell
+  - [X] Ocaml
+- [X] Hybrid
+  - [X] Scala
+- [ ] little more detail, this is level 2, so checklist in trello board
+  - [ ] item 3
+    - [ ] any entities with level superior to 4 are considered level 3
+```
+
+For example, once sync to trello, this looks like:
+
+```
+* IN-PROGRESS Joy of FUN(ctional) LANGUAGES
+:PROPERTIES:
+:orgtrello-id: 521dc9f3edeabee47600401e
+:END:
+- [-] LISP                                                    :PROPERTIES: {"orgtrello-id":"521dc9f48e95d74636004107"}
+  - [X] Emacs-Lisp                                            :PROPERTIES: {"orgtrello-id":"521dc9f7487c2e9b250047a5"}
+  - [X] Common-Lisp                                           :PROPERTIES: {"orgtrello-id":"521dc9f7ae27842a36003b26"}
+  - [ ] Scheme                                                :PROPERTIES: {"orgtrello-id":"521dc9f834f52df935003b15"}
+  - [X] Clojure                                               :PROPERTIES: {"orgtrello-id":"521dc9f9c1b85c905f006b4e"}
+- [X] ML                                                      :PROPERTIES: {"orgtrello-id":"521dc9f5d49a919614000266"}
+  - [X] Haskell                                               :PROPERTIES: {"orgtrello-id":"521dc9fa5699f00b25003bd0"}
+  - [X] Ocaml                                                 :PROPERTIES: {"orgtrello-id":"521dc9fb7ef4310554003ab3"}
+- [X] Hybrid                                                  :PROPERTIES: {"orgtrello-id":"521dc9f6238d072770007217"}
+  - [X] Scala                                                 :PROPERTIES: {"orgtrello-id":"521dc9fc8e95d74636004109"}
+```
+
+#### Reactivate
+
+This is activated by default but if you change this and you want to get back:
+
+```lisp
+(org-trello/activate-natural-org-checkboxes)
+```
+
+### Original format (previous to 0.1.6)
+
+```org-mode
+* IN-PROGRESS Joy of FUN(ctional) LANGUAGES
+** TODO LISP
+*** DONE Emacs-Lisp
+*** DONE Common-Lisp
+*** Scheme
+*** TODO Clojure
+** DONE ML
+*** DONE Haskell
+*** DONE Ocaml
+** DONE Hybrid
+*** DONE Scala
+** A little more explanation, this is level 2 so checklist on trello
+*** item (level 3)
+**** Any entity superior to level 4 are not considered for sync
+```
+
+Once synchronized, this looks like (largely prettier in emacs org buffer):
+
+```org-mode
+* IN-PROGRESS Joy of FUN(ctional) LANGUAGES
+:PROPERTIES:
+:orgtrello-id: 521dc9f3edeabee47600401e
+:END:
+** TODO LISP
+:PROPERTIES:
+:orgtrello-id: 521dc9f48e95d74636004107
+:END:
+*** DONE Emacs-Lisp
+:PROPERTIES:
+:orgtrello-id: 521dc9f7487c2e9b250047a5
+:END:
+*** DONE Common-Lisp
+:PROPERTIES:
+:orgtrello-id: 521dc9f7ae27842a36003b26
+:END:
+*** TODO Scheme
+:PROPERTIES:
+:orgtrello-id: 521dc9f834f52df935003b15
+:END:
+*** DONE Clojure
+:PROPERTIES:
+:orgtrello-id: 521dc9f9c1b85c905f006b4e
+:END:
+** TODO ML
+:PROPERTIES:
+:orgtrello-id: 521dc9f5d49a919614000266
+:END:
+*** DONE Haskell
+:PROPERTIES:
+:orgtrello-id: 521dc9fa5699f00b25003bd0
+:END:
+*** DONE Ocaml
+:PROPERTIES:
+:orgtrello-id: 521dc9fb7ef4310554003ab3
+:END:
+** TODO Hybrid
+:PROPERTIES:
+:orgtrello-id: 521dc9f6238d072770007217
+:END:
+*** DONE Scala
+:PROPERTIES:
+:orgtrello-id: 521dc9fc8e95d74636004109
+:END:
+
+```
+
+#### Activate
+
+From 0.1.6 onwards, if you want to deactivate the default way, and get back to the original way, set this snippet somewhere in your init file:
+
+```lisp
+(org-trello/deactivate-natural-org-checkboxes)
+```
+
+### Migrate to 0.1.6
+
+To migrate your 0.1.6 org trello buffer to the new format:
+- simply push the content to trello (`C-c o s`)
+- Erase the content of your buffer except for the org-trello properties (`#+` entries at the beginning of the file)
+- and sync from trello again (`C-c o S`).
+
 ## Creation step-by-step
 
-The idea is this, you have 3 levels:
+The idea is this, you have 3 levels (cf. [possible format](#formats))
 - level 1 - Card
 - level 2 - Checklist
 - level 3 - Item
 
-For example:
-
-```org-mode
-* card-identity (label mandatory)
-** checklist (label mandatory)
-*** item1 (label mandatory)
-*** item2 (label mandatory)
-*** item3 (label mandatory)
-```
-
 - Card:
-  - Place yourself on the `card-identity` and hit the binding `C-c o c`, this will create the card in the `TODO` column in your trello board.
-  - You can edit the label and hit `C-c o c` again, this time, this will update the label in trello
-  - Change the status from TODO to any intermediary status, then hit the binding, this will move the card to the list `DOING`.
+  - Place yourself on the `card-identity` and hit the binding `C-c o c`, this will sync the card (create) in the `TODO` column in your trello board.
+  - You can edit the label and hit `C-c o c` again, this time, this will sync the card again (update) in trello
+  - Change the status from TODO to any intermediary status, then hit the binding, this will move the card to the list `DOING` (depending on your todo keywords list).
   - Once done, move the status of the card from anything to DONE, hit the binding, this will move the card to the list `DONE`.
 
 - Checklist:
