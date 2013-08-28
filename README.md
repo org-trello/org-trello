@@ -4,7 +4,7 @@ Minor emacs mode for org-mode - 2-way synchronization between org and trello boa
 
 **Table of Contents**  *generated with [DocToc](http://doctoc.herokuapp.com/)*
 
-- [rationale](#rationale)
+- [rational](#rational)
 - [Emacs version](#emacs-version)
 - [Migration](#migration)
 - [TL;DR](#tl;dr)
@@ -44,11 +44,10 @@ Minor emacs mode for org-mode - 2-way synchronization between org and trello boa
 	- [Setup](#setup-1)
 	- [Formats](#formats)
 		- [natural org format (from 0.1.6 onwards)](#natural-org-format-from-016-onwards)
+			- [Migrate to 0.1.6](#migrate-to-016)
 			- [Reactivate](#reactivate)
-	- [Bindings](#bindings)
 		- [Original format (previous to 0.1.6)](#original-format-previous-to-016)
 			- [Activate](#activate)
-		- [Migrate to 0.1.6](#migrate-to-016)
 	- [Creation step-by-step](#creation-step-by-step)
 	- [Card and deadline/due date](#card-and-deadlinedue-date)
 	- [Checklist and transitivity](#checklist-and-transitivity)
@@ -76,6 +75,12 @@ Tested on:
 - GNU Emacs 24.3.1 (x86_64-pc-linux-gnu, X toolkit, Xaw3d scroll bars) of 2013-04-14 on marid, modified by Debian (from 0.1.0)
 
 # Migration
+
+0.1.5 -> 0.1.6
+
+Org-trello does use more natural ways of dealing with checklist using checkboxes!
+
+cf. [natural org format (from 0.1.6 onwards)](#natural-org-format-from-016-onwards) for more details.
 
 0.1.1 -> 0.1.2:
 - From the version 0.1.1, some of the http requests will be asynchronous.
@@ -405,6 +410,13 @@ For example, once sync to trello, this looks like:
   - [X] Scala                                                 :PROPERTIES: {"orgtrello-id":"521dc9fc8e95d74636004109"}
 ```
 
+#### Migrate to 0.1.6
+
+To migrate your 0.1.6 org trello buffer to the new format:
+- simply push the content to trello (`C-c o s`)
+- Erase the content of your buffer except for the org-trello properties (`#+` entries at the beginning of the file)
+- and sync from trello again (`C-c o S`).
+
 #### Reactivate
 
 This is activated by default but if you change this and you want to get back:
@@ -489,13 +501,6 @@ From 0.1.6 onwards, if you want to deactivate the default way, and get back to t
 ```lisp
 (org-trello/deactivate-natural-org-checkboxes)
 ```
-
-### Migrate to 0.1.6
-
-To migrate your 0.1.6 org trello buffer to the new format:
-- simply push the content to trello (`C-c o s`)
-- Erase the content of your buffer except for the org-trello properties (`#+` entries at the beginning of the file)
-- and sync from trello again (`C-c o S`).
 
 ## Creation step-by-step
 
