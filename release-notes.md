@@ -10,6 +10,7 @@
 - [X] Automate the release to marmalade
 - [X] Justify the #PROPERTIES# to the left for a better rendering
 - [X] Keywordify the #PROPERTIES#
+- [X] Merge the org :PROPERTIES: and the org-trello #PROPERTIES# into one.
 - [X] Release notes
 - [X] Release
 

@@ -192,7 +192,7 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
 
 (defun orgtrello-cbx/--checkbox-split (s)
   "Split the checkbox into the checkbox data and the checkbox metadata."
-  (s-split "#PROPERTIES#" s))
+  (s-split ":PROPERTIES:" s))
 
 (defun orgtrello-cbx/--checkbox-metadata (s)
   "Retrieve the checkbox's metadata."
@@ -226,21 +226,21 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
 
 ;; (expectations
 ;;   (expect '((orgtrello-id . "123")) (with-temp-buffer
-;;                                       (insert "- [X] some checkbox #PROPERTIES# {\"orgtrello-id\":\"123\"}")
+;;                                       (insert "- [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}")
 ;;                                       (forward-line -1)
 ;;                                       (orgtrello-cbx/--read-properties-from-point))))
 
 
 (defun orgtrello-cbx/--update-properties (checkbox-string properties)
   "Given the current checkbox-string and the new properties, update the properties in the current entry."
-  (s-join " #PROPERTIES# "  `(,(orgtrello-cbx/--checkbox-data checkbox-string)
+  (s-join " :PROPERTIES: "  `(,(orgtrello-cbx/--checkbox-data checkbox-string)
                               ,(orgtrello-cbx/--to-properties properties))))
 
 (defun orgtrello-cbx/--justify-property-current-line (full-line length)
-  "Justify the properties to the left so that the line makes a length of length. For this insert whites before the #PROPERTIES# before."
+  "Justify the properties to the left so that the line makes a length of length. For this insert whites before the :PROPERTIES: before."
   (let ((nb-of-spaces (->> full-line length (- length) 1-)))
     (if (< 0 nb-of-spaces)
-        (let ((current-properties-str    (format "#PROPERTIES# %s" (orgtrello-cbx/--checkbox-metadata full-line)))
+        (let ((current-properties-str    (format ":PROPERTIES: %s" (orgtrello-cbx/--checkbox-metadata full-line)))
               (current-data-str          (orgtrello-cbx/--checkbox-data full-line)))
           (format "%s%s%s" current-data-str (orgtrello/--space nb-of-spaces) current-properties-str))
         full-line)))
@@ -2563,7 +2563,7 @@ refresh(\"/proxy/admin/current-action/\", '#current-action');
   (org-delete-property-globally *ORGTRELLO-ID*)
   (save-excursion
     (goto-char (point-min))
-    (while (re-search-forward "#PROPERTIES#.*" nil t)
+    (while (re-search-forward ":PROPERTIES:.*" nil t)
       (replace-match "" nil t))))
 
 (defun org-trello/delete-setup ()
@@ -2636,8 +2636,7 @@ C-c o h - M-x org-trello/help-describing-bindings    - This help message."))
 (add-hook 'org-trello-mode-on-hook
           (lambda ()
             ;; hightlight the properties of the checkboxes
-            (font-lock-add-keywords 'org-mode '(("#PROPERTIES#" 0 font-lock-keyword-face t)))
-            (font-lock-add-keywords 'org-mode '(("# {\"orgtrello-id\":.*}" 0 font-lock-comment-face t)))
+            (font-lock-add-keywords 'org-mode '((": {\"orgtrello-id\":.*}" 0 font-lock-comment-face t)))
             ;; start the proxy
             (orgtrello-proxy/start)
             ;; a little message in the minibuffer to notify the user
@@ -2646,8 +2645,7 @@ C-c o h - M-x org-trello/help-describing-bindings    - This help message."))
 (add-hook 'org-trello-mode-off-hook
           (lambda ()
             ;; remove the highlight
-            (font-lock-remove-keywords 'org-mode '(("#PROPERTIES#" 0 font-lock-keyword-face t)))
-            (font-lock-remove-keywords 'org-mode '(("# {\"orgtrello-id\":.*}" 0 font-lock-comment-face t)))
+            (font-lock-remove-keywords 'org-mode '((": {\"orgtrello-id\":.*}" 0 font-lock-comment-face t)))
             ;; stop the proxy
             (orgtrello-proxy/stop)
             ;; a little message in the minibuffer to notify the user

@@ -500,19 +500,19 @@
 
 (expectations
   (expect '("-" "[X]" "call" "people" "[4/4]")                                             (orgtrello-cbx/--org-split-data "- [X] call people [4/4]"))
-  (expect '("-" "[X]" "call" "people" "[4/4]" "#PROPERTIES#" "{\"orgtrello-id\":\"456\"}") (orgtrello-cbx/--org-split-data "- [X] call people [4/4] #PROPERTIES# {\"orgtrello-id\":\"456\"}"))
+  (expect '("-" "[X]" "call" "people" "[4/4]" ":PROPERTIES:" "{\"orgtrello-id\":\"456\"}") (orgtrello-cbx/--org-split-data "- [X] call people [4/4] :PROPERTIES: {\"orgtrello-id\":\"456\"}"))
   (expect '("" "" "-" "[X]" "Peter")                                                       (orgtrello-cbx/--org-split-data "  - [X] Peter"))
-  (expect '("" "" "-" "[X]" "Peter" "#PROPERTIES#" "{\"orgtrello-id\":\"456\"}")           (orgtrello-cbx/--org-split-data "  - [X] Peter #PROPERTIES# {\"orgtrello-id\":\"456\"}"))
+  (expect '("" "" "-" "[X]" "Peter" ":PROPERTIES:" "{\"orgtrello-id\":\"456\"}")           (orgtrello-cbx/--org-split-data "  - [X] Peter :PROPERTIES: {\"orgtrello-id\":\"456\"}"))
 
   (expect '("-" "[]" "call" "people" "[4/4]")                                             (orgtrello-cbx/--org-split-data "- [] call people [4/4]"))
-  (expect '("-" "[]" "call" "people" "[4/4]" "#PROPERTIES#" "{\"orgtrello-id\":\"456\"}") (orgtrello-cbx/--org-split-data "- [] call people [4/4] #PROPERTIES# {\"orgtrello-id\":\"456\"}"))
+  (expect '("-" "[]" "call" "people" "[4/4]" ":PROPERTIES:" "{\"orgtrello-id\":\"456\"}") (orgtrello-cbx/--org-split-data "- [] call people [4/4] :PROPERTIES: {\"orgtrello-id\":\"456\"}"))
   (expect '("" "" "-" "[]" "Peter")                                                       (orgtrello-cbx/--org-split-data "  - [] Peter"))
-  (expect '("" "" "-" "[]" "Peter" "#PROPERTIES#" "{\"orgtrello-id\":\"456\"}")           (orgtrello-cbx/--org-split-data "  - [] Peter #PROPERTIES# {\"orgtrello-id\":\"456\"}"))
+  (expect '("" "" "-" "[]" "Peter" ":PROPERTIES:" "{\"orgtrello-id\":\"456\"}")           (orgtrello-cbx/--org-split-data "  - [] Peter :PROPERTIES: {\"orgtrello-id\":\"456\"}"))
 
   (expect '("-" "[]" "call" "people" "[4/4]")                                             (orgtrello-cbx/--org-split-data "- [ ] call people [4/4]"))
-  (expect '("-" "[]" "call" "people" "[4/4]" "#PROPERTIES#" "{\"orgtrello-id\":\"456\"}") (orgtrello-cbx/--org-split-data "- [ ] call people [4/4] #PROPERTIES# {\"orgtrello-id\":\"456\"}"))
+  (expect '("-" "[]" "call" "people" "[4/4]" ":PROPERTIES:" "{\"orgtrello-id\":\"456\"}") (orgtrello-cbx/--org-split-data "- [ ] call people [4/4] :PROPERTIES: {\"orgtrello-id\":\"456\"}"))
   (expect '("" "" "-" "[]" "Peter")                                                       (orgtrello-cbx/--org-split-data "  - [ ] Peter"))
-  (expect '("" "" "-" "[]" "Peter" "#PROPERTIES#" "{\"orgtrello-id\":\"456\"}")           (orgtrello-cbx/--org-split-data "  - [ ] Peter #PROPERTIES# {\"orgtrello-id\":\"456\"}")))
+  (expect '("" "" "-" "[]" "Peter" ":PROPERTIES:" "{\"orgtrello-id\":\"456\"}")           (orgtrello-cbx/--org-split-data "  - [ ] Peter :PROPERTIES: {\"orgtrello-id\":\"456\"}")))
 
 (expectations
   (expect "[X]" (orgtrello-cbx/--retrieve-status '("" "" "-" "[X]" "Peter")))
@@ -545,19 +545,19 @@
   (expect '((orgtrello-id . "123")) (orgtrello-cbx/--from-properties "{\"orgtrello-id\":\"123\"}")))
 
 (expectations
-  (expect '((orgtrello-id . "123")) (orgtrello-cbx/--read-properties "- [X] some checkbox #PROPERTIES# {\"orgtrello-id\":\"123\"}")))
+  (expect '((orgtrello-id . "123")) (orgtrello-cbx/--read-properties "- [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}")))
 
 (expectations
-  (expect "- [X] some checkbox #PROPERTIES# {\"orgtrello-id\":\"123\"}"
-    (orgtrello-cbx/--update-properties "- [X] some checkbox #PROPERTIES# {\"orgtrello-id\":\"abc\"}" `((,*ORGTRELLO-ID* . "123"))))
-  (expect "- [X] some checkbox #PROPERTIES# {\"orgtrello-id\":\"456\"}"
+  (expect "- [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}"
+    (orgtrello-cbx/--update-properties "- [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"abc\"}" `((,*ORGTRELLO-ID* . "123"))))
+  (expect "- [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"456\"}"
     (orgtrello-cbx/--update-properties "- [X] some checkbox" `((,*ORGTRELLO-ID* . "456"))))
-  (expect "- [X] some checkbox #PROPERTIES# {}"
+  (expect "- [X] some checkbox :PROPERTIES: {}"
     (orgtrello-cbx/--update-properties "- [X] some checkbox" nil))
-  (expect "- [X] some checkbox #PROPERTIES# {\"orgtrello-id\":\"789\"}"
-    (orgtrello-cbx/--update-properties "- [X] some checkbox #PROPERTIES#" `((,*ORGTRELLO-ID* . "789"))))
-  (expect "- [X] some checkbox #PROPERTIES# {}"
-    (orgtrello-cbx/--update-properties "- [X] some checkbox #PROPERTIES#" nil)))
+  (expect "- [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"789\"}"
+    (orgtrello-cbx/--update-properties "- [X] some checkbox :PROPERTIES:" `((,*ORGTRELLO-ID* . "789"))))
+  (expect "- [X] some checkbox :PROPERTIES: {}"
+    (orgtrello-cbx/--update-properties "- [X] some checkbox :PROPERTIES:" nil)))
 
 (expectations
   (expect "123"    (orgtrello-cbx/--org-get-property "orgtrello-id" `((orgtrello-id . "123"))))
@@ -578,16 +578,16 @@
   (expect `(("orgtrello-id" . "123") (orgtrello-marker . "marker")) (orgtrello-cbx/--org-delete-property 'orgtrello-id `(("orgtrello-id" . "123") (orgtrello-marker . "marker")))))
 
 (expectations
-  (expect '("  - [X] Peter " " {\"orgtrello-id\":\"456\"}") (orgtrello-cbx/--checkbox-split "  - [X] Peter #PROPERTIES# {\"orgtrello-id\":\"456\"}")))
+  (expect '("  - [X] Peter " " {\"orgtrello-id\":\"456\"}") (orgtrello-cbx/--checkbox-split "  - [X] Peter :PROPERTIES: {\"orgtrello-id\":\"456\"}")))
 
 (expectations
-  (expect "{\"orgtrello-id\":\"456\"}" (orgtrello-cbx/--checkbox-metadata "  - [X] Peter #PROPERTIES# {\"orgtrello-id\":\"456\"}"))
-  (expect ""                           (orgtrello-cbx/--checkbox-metadata "  - [X] Peter #PROPERTIES#"))
-  (expect ""                           (orgtrello-cbx/--checkbox-metadata "  - [X] Peter #PROPERTIES# "))
+  (expect "{\"orgtrello-id\":\"456\"}" (orgtrello-cbx/--checkbox-metadata "  - [X] Peter :PROPERTIES: {\"orgtrello-id\":\"456\"}"))
+  (expect ""                           (orgtrello-cbx/--checkbox-metadata "  - [X] Peter :PROPERTIES:"))
+  (expect ""                           (orgtrello-cbx/--checkbox-metadata "  - [X] Peter :PROPERTIES: "))
   (expect nil                          (orgtrello-cbx/--checkbox-metadata "  - [X] Peter")))
 
 (expectations
-  (expect "  - [X] Peter" (orgtrello-cbx/--checkbox-data "  - [X] Peter #PROPERTIES# {\"orgtrello-id\":\"456\"}")))
+  (expect "  - [X] Peter" (orgtrello-cbx/--checkbox-data "  - [X] Peter :PROPERTIES: {\"orgtrello-id\":\"456\"}")))
 
 (expectations
   (expect 'some-key (orgtrello-cbx/--key-to-search "some-key"))
@@ -779,9 +779,9 @@ DEADLINE: <some-date>
   (expect nil (orgtrello/--checklist-p `((anything-else . "this is not a item")))))
 
 (expectations
- (expect "- [X] call people [4/4]                                        #PROPERTIES# {\"orgtrello-id\":\"456\"}" (orgtrello-cbx/--justify-property-current-line "- [X] call people [4/4] #PROPERTIES# {\"orgtrello-id\":\"456\"}" 100))
+ (expect "- [X] call people [4/4]                                        :PROPERTIES: {\"orgtrello-id\":\"456\"}" (orgtrello-cbx/--justify-property-current-line "- [X] call people [4/4] :PROPERTIES: {\"orgtrello-id\":\"456\"}" 100))
 
- (expect "- [X] call people [4/4]                                         #PROPERTIES# {\"orgtrello-id\":\"456\"}" (orgtrello-cbx/--justify-property-current-line "- [X] call people [4/4]                                         #PROPERTIES# {\"orgtrello-id\":\"456\"}" 100)))
+ (expect "- [X] call people [4/4]                                         :PROPERTIES: {\"orgtrello-id\":\"456\"}" (orgtrello-cbx/--justify-property-current-line "- [X] call people [4/4]                                         :PROPERTIES: {\"orgtrello-id\":\"456\"}" 100)))
 
 (provide 'org-trello-tests)
 ;;; org-trello-tests ends here
