@@ -4,8 +4,7 @@ Minor emacs mode for org-mode - 2-way synchronization between org and trello boa
 
 **Table of Contents**  *generated with [DocToc](http://doctoc.herokuapp.com/)*
 
-- [org-trello [![Build Status](https://travis-ci.org/ardumont/org-trello.png?branch=master)](https://travis-ci.org/ardumont/org-trello)](#org-trello-!build-statushttpstravis-ciorgardumontorg-trellopngbranch=masterhttpstravis-ciorgardumontorg-trello)
-- [why?](#why)
+- [rationale](#rationale)
 - [Emacs version](#emacs-version)
 - [Migration](#migration)
 - [TL;DR](#tl;dr)
@@ -62,11 +61,13 @@ Minor emacs mode for org-mode - 2-way synchronization between org and trello boa
 - [Mailing list](#mailing-list)
 - [License](#license)
 
-# why?
+# rational
 
 - [org-mode](http://orgmode.org/) is what I need.
 - [Trello](http://trello.com/) is what my team need.
-- [org-trello](https://github.com/ardumont/org-trello) may satisfy everybody.
+- [org-trello](https://github.com/ardumont/org-trello) is middle ground!
+
+This will satisfy org-modians and trelloans won't see any difference!
 
 # Emacs version
 
