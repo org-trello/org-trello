@@ -1093,21 +1093,33 @@ Also add some metadata identifier/due-data/point/buffer-name."
              ;; do the actual action
              (funcall op/--action-fn entity-data (orgtrello-data/entry-get-full-metadata) op/--entry-file-archived))))))
 
-(defun orgtrello-proxy/--standard-delete-success-callback (entity-to-sync file-to-cleanup)
+;; (defun orgtrello/--compute-last-checkbox-sibling (level)
+;;   "Compute the last checkbox sibling for the given level")
+
+;; (defun orgtrello/--hide-subtree (level)
+;;   "Hide the checklist's subtree"
+;;   (hide-region-body (point) (orgtrello/--compute-last-checkbox-sibling level)))
+
+(defun orgtrello-proxy/--standard-delete-success-callback (entity-to-del file-to-cleanup)
   "Return a callback function able to deal with the position."
-  (lexical-let ((op/--entry-position    (orgtrello-query/--position entity-to-sync))
-                (op/--entry-buffer-name (orgtrello-query/--buffername entity-to-sync))
+  (lexical-let ((op/--entry-position    (orgtrello-query/--position entity-to-del))
+                (op/--entry-buffer-name (orgtrello-query/--buffername entity-to-del))
+                (op/--entry-level       (orgtrello-query/--level entity-to-del))
                 (op/--entry-file        file-to-cleanup)
-                (op/--marker            (orgtrello-query/--marker entity-to-sync)))
+                (op/--marker            (orgtrello-query/--marker entity-to-del)))
     (lambda (&rest response)
       (orgtrello-action/safe-wrap
        (progn
          (set-buffer op/--entry-buffer-name)
          (save-excursion
            (when (orgtrello-proxy/--getting-back-to-marker op/--marker)
-                 (org-back-to-heading t)
+                 (unless (orgtrello-cbx/checkbox-p) (org-back-to-heading t))
                  (org-delete-property *ORGTRELLO-ID*)
-                 (hide-subtree)
+                 (if (org-at-heading-p)
+                     (hide-subtree)
+                     (when (orgtrello-cbx/checkbox-p)
+                           ;; (orgtrello/--hide-subtree op/--entry-level)
+                           (org-cycle 'fold)))
                  (beginning-of-line)
                  (kill-line)
                  (kill-line))))
