@@ -13,4 +13,4 @@ ARCHIVE=../org-trello-$VERSION.tar
 
 # post
 
-curl -v -F "name=ardumont" -F "token=my-token" -F "package=@$ARCHIVE" http://www.marmalade-repo.org/v1/packages
+curl -v -F "name=ardumont" -F "token=$TOKEN" -F "package=@$ARCHIVE" http://www.marmalade-repo.org/v1/packages

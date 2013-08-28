@@ -602,7 +602,7 @@ CLOSED: [2013-08-25 dim. 15:35]
 CLOSED: [2013-08-25 dim. 15:43]
 ** DONE Release
 CLOSED: [2013-08-25 dim. 15:43]
-* IN-PROGRESS 0.1.6 [70%]
+* IN-PROGRESS 0.1.6 [80%]
 - [X] Use the native org checklist to sync to trello [3/3]
   - [X] Extract the informations from the checklist and item and plug them in the current synchronization (org-entry-get (point) "orgtrello-id")
   - [X] Set the metadata information on the checklist level (org does only the heading level)
@@ -613,8 +613,8 @@ CLOSED: [2013-08-25 dim. 15:43]
 - [X] Cleanup routine must cleanup the new checklist.
 - [X] Delete entity must remove entity on point
 - [X] Upgrade version
-- [ ] Automate the release to marmalade
-- [ ] Release note
+- [X] Automate the release to marmalade
+- [ ] Release notes
 - [ ] Release
 
 * TODO 0.1.7 [%]
