@@ -64,23 +64,22 @@
 
 
 
-;; #################### overriding setup
-
-
-
 ;; #################### static setup
 
-(defvar *ORGTRELLO-VERSION*           "0.1.6"            "Version")
-(defvar *consumer-key*                nil                "Id representing the user.")
-(defvar *access-token*                nil                "Read/write access token to use trello on behalf of the user.")
-(defvar *ORGTRELLO-MARKER*            "orgtrello-marker" "A marker used inside the org buffer to synchronize entries.")
-(defvar *do-sync-query*               t                  "An alias to t to make the boolean more significant in the given context.")
-(defvar *do-save-buffer*              t                  "Another alias to t to make the boolean more significant in the given context.")
-(defvar *do-reload-setup*             t                  "Another alias to t to make the boolean more significant in the given context.")
-(defvar *do-not-display-log*          t                  "Another alias to t to make the boolean more significant in the given context.")
-(defvar *ORGTRELLO-LEVELS*            '(1 2 3)           "Current levels 1 is card, 2 is checklist, 3 is item.")
-(defvar *ORGTRELLO-ACTION-SYNC*       "sync-entity"      "Possible action regarding the entity synchronization.")
-(defvar *ORGTRELLO-ACTION-DELETE*     "delete"           "Possible action regarding the entity deletion.")
+(defvar *ORGTRELLO-VERSION*           "0.1.6"                                           "Version")
+(defvar *consumer-key*                nil                                               "Id representing the user.")
+(defvar *access-token*                nil                                               "Read/write access token to use trello on behalf of the user.")
+(defvar *ORGTRELLO-MARKER*            "orgtrello-marker"                                "A marker used inside the org buffer to synchronize entries.")
+(defvar *do-sync-query*               t                                                 "An alias to t to make the boolean more significant in the given context.")
+(defvar *do-save-buffer*              t                                                 "Another alias to t to make the boolean more significant in the given context.")
+(defvar *do-reload-setup*             t                                                 "Another alias to t to make the boolean more significant in the given context.")
+(defvar *do-not-display-log*          t                                                 "Another alias to t to make the boolean more significant in the given context.")
+(defvar *CARD-LEVEL*                  1                                                 "card level")
+(defvar *CHECKLIST-LEVEL*             2                                                 "checkbox level")
+(defvar *ITEM-LEVEL*                  3                                                 "item level")
+(defvar *ORGTRELLO-LEVELS*            `(,*CARD-LEVEL* ,*CHECKLIST-LEVEL* ,*ITEM-LEVEL*) "Current levels 1 is card, 2 is checklist, 3 is item.")
+(defvar *ORGTRELLO-ACTION-SYNC*       "sync-entity"                                     "Possible action regarding the entity synchronization.")
+(defvar *ORGTRELLO-ACTION-DELETE*     "delete"                                          "Possible action regarding the entity deletion.")
 
 (defvar *ORGTRELLO-NATURAL-ORG-CHECKLIST* t
   "Permit the user to choose the natural org checklists over the first org-trello one (present from the start which are more basic).
@@ -315,7 +314,7 @@ String look like:
 - (' '  '- '[X] 'call 'people '[4/4]).
 To ease the computation, we consider level 4 if no - to start with, and to avoid missed typing, we consider level 2 if there is no space before the - and level 3 otherwise."
     (if (orgtrello-cbx/--list-is-checkbox-p l)
-      (if (string= "-" (car l)) 2 3)
+      (if (string= "-" (car l)) *CHECKLIST-LEVEL* *ITEM-LEVEL*)
       4))
 
 (defun orgtrello-cbx/--retrieve-status (l)
@@ -370,7 +369,7 @@ This is a list with the following elements:
   "An internal function to get back to the current entry's parent - return the level found or nil if no other level is found."
   (let ((current-level (orgtrello-cbx/--get-level (orgtrello-cbx/org-checkbox-metadata))))
     (cond ((= current-level destination-level) destination-level) ;; nothing to do
-          ((= 2 current-level)                 (org-up-heading-safe)) ;; level 2, then the first level is a heading
+          ((= *CHECKLIST-LEVEL* current-level) (org-up-heading-safe)) ;; level 2, then the first level is a heading
           (t                                   (progn
                                                  (forward-line -1)
                                                  (orgtrello-cbx/--org-up! destination-level))))))
@@ -1219,9 +1218,9 @@ Also add some metadata identifier/due-data/point/buffer-name."
 
 (defun orgtrello-proxy/--level-inf-done-p (level)
   "Ensure the actions of the lower level is done (except for level 1 which has no deps)!"
-  (cond ((= 1 level) t)
-        ((= 2 level) (orgtrello-proxy/--level-done-p 1))
-        ((= 3 level) (and (orgtrello-proxy/--level-done-p 2) (orgtrello-proxy/--level-done-p 1)))))
+  (cond ((= *CARD-LEVEL*      level) t)
+        ((= *CHECKLIST-LEVEL* level) (orgtrello-proxy/--level-done-p *CARD-LEVEL*))
+        ((= *ITEM-LEVEL*      level) (and (orgtrello-proxy/--level-done-p *CHECKLIST-LEVEL*) (orgtrello-proxy/--level-done-p *ITEM-LEVEL*)))))
 
 (defun orgtrello-proxy/--deal-with-level (level directory)
  "Given a level, retrieve one file (which represents an entity) for this level and sync it, then remove such file. Then recall the function recursively."
@@ -1838,7 +1837,7 @@ refresh(\"/proxy/admin/current-action/\", '#current-action');
       "Cannot synchronize the item - missing mandatory name. Skip it...")))
 
 (defun orgtrello/--item-compute-state-or-check (checklist-update-items-p item-state checklist-state possible-states)
-  "Compute the item's state/check (for creation/update). The 2 possible states are in the list possible states, first position is the 'checked' one, and second the unchecked one."
+  "Compute the item's state/check (for creation/update). The two possible states are in the list possible states, first position is the 'checked' one, and second the unchecked one."
   (let* ((orgtrello/--item-checked   (first possible-states))
          (orgtrello/--item-unchecked (second possible-states)))
     (cond ((and checklist-update-items-p (string= *DONE* checklist-state))                      orgtrello/--item-checked)
@@ -1893,9 +1892,9 @@ refresh(\"/proxy/admin/current-action/\", '#current-action');
 (defun orgtrello/--dispatch-map-creation ()
   "Dispatch map for the creation of card/checklist/item. Key is the level of the entity, value is the create/update query map to sync such entity."
   (let* ((dispatch-map (make-hash-table :test 'equal)))
-    (puthash 1 'orgtrello/--card      dispatch-map)
-    (puthash 2 'orgtrello/--checklist dispatch-map)
-    (puthash 3 'orgtrello/--item      dispatch-map)
+    (puthash *CARD-LEVEL*      'orgtrello/--card      dispatch-map)
+    (puthash *CHECKLIST-LEVEL* 'orgtrello/--checklist dispatch-map)
+    (puthash *ITEM-LEVEL*      'orgtrello/--item      dispatch-map)
     dispatch-map))
 
 (defvar *MAP-DISPATCH-CREATE-UPDATE* (orgtrello/--dispatch-map-creation) "Dispatch map for the creation/update of card/checklist/item.")
@@ -2040,7 +2039,7 @@ refresh(\"/proxy/admin/current-action/\", '#current-action');
 
 (defun orgtrello/--compute-level-into-spaces (level)
   "level 2 is 0 space, otherwise 2 spaces."
-  (if (equal level 2) 0 2))
+  (if (equal level *CHECKLIST-LEVEL*) 0 2))
 
 (defun orgtrello/--compute-checklist-to-org-checkbox (name &optional level status)
   "Compute the org checkbox format"
@@ -2065,7 +2064,7 @@ refresh(\"/proxy/admin/current-action/\", '#current-action');
                  'orgtrello/--compute-checklist-to-org-checkbox
                  'orgtrello/--compute-item-to-orgtrello-entry)
              o/--checklist-name
-             2
+             *CHECKLIST-LEVEL*
              o/--checklist-status)))
 
 (defun orgrello/--compute-item-status (state)
@@ -2080,7 +2079,7 @@ refresh(\"/proxy/admin/current-action/\", '#current-action');
                  'orgtrello/--compute-checklist-to-org-checkbox
                  'orgtrello/--compute-item-to-orgtrello-entry)
              orgtrello/--item-name
-             3
+             *ITEM-LEVEL*
              orgtrello/--item-state)))
 
 (defun orgtrello/--card-p (entity)
@@ -2099,9 +2098,9 @@ refresh(\"/proxy/admin/current-action/\", '#current-action');
   "Given an entity, compute its org representation."
   (trace :entity entity)
   (funcall
-   (cond ((orgtrello/--card-p entity) 'orgtrello/--compute-card-to-org-entry)             ;; card      (level 1)
+   (cond ((orgtrello/--card-p entity)      'orgtrello/--compute-card-to-org-entry)        ;; card      (level 1)
          ((orgtrello/--checklist-p entity) 'orgtrello/--compute-checklist-to-org-entry)   ;; checklist (level 2)
-         ((orgtrello/--item-p entity)   'orgtrello/--compute-item-to-org-entry))          ;; items     (level 3)
+         ((orgtrello/--item-p entity)      'orgtrello/--compute-item-to-org-entry))       ;; items     (level 3)
    entity
    *ORGTRELLO-NATURAL-ORG-CHECKLIST*))
 
@@ -2248,9 +2247,9 @@ refresh(\"/proxy/admin/current-action/\", '#current-action');
 (defun orgtrello/--dispatch-map-delete ()
   "Dispatch map for the deletion of card/checklist/item."
   (let* ((dispatch-map (make-hash-table :test 'equal)))
-    (puthash 1 'orgtrello/--card-delete      dispatch-map)
-    (puthash 2 'orgtrello/--checklist-delete dispatch-map)
-    (puthash 3 'orgtrello/--item-delete      dispatch-map)
+    (puthash *CARD-LEVEL*      'orgtrello/--card-delete      dispatch-map)
+    (puthash *CHECKLIST-LEVEL* 'orgtrello/--checklist-delete dispatch-map)
+    (puthash *ITEM-LEVEL*      'orgtrello/--item-delete      dispatch-map)
     dispatch-map))
 
 (defvar *MAP-DISPATCH-DELETE* (orgtrello/--dispatch-map-delete) "Dispatch map for the deletion query of card/checklist/item.")
@@ -2262,7 +2261,9 @@ refresh(\"/proxy/admin/current-action/\", '#current-action');
 
 (defun orgtrello/--do-delete-card (&optional sync)
   "Delete the card."
-  (when (= 1 (-> (orgtrello-data/entry-get-full-metadata) orgtrello-data/current orgtrello/--level))
+  (when (= *CARD-LEVEL* (-> (orgtrello-data/entry-get-full-metadata)
+                            orgtrello-data/current
+                            orgtrello/--level))
         (orgtrello/do-delete-simple sync)))
 
 (defun orgtrello/do-delete-entities (&optional sync)
