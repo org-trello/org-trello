@@ -11,7 +11,7 @@
 #+title: synced from trello
 #+author: Antoine R. Dumont
 
-* TODO Reasoned schemer
+* TODO Reasoned schemer  (save-excursion
 :PROPERTIES:
 :END:
 * TODO Little schemer
@@ -29,123 +29,33 @@
 * TODO Joy of FUN(ctional) LANGUAGES
 :PROPERTIES:
 :END:
-** LISP family
+- [-] LISP family
+  - [X] Emacs-Lisp
+  - [X] Common-Lisp
+  - [ ] Scheme
+  - [X] Clojure
+- [X] ML family
+  - [X] Haskell
+  - [X] Ocaml
+- [X] hybrid family
+  - [X] Scala
+* DONE Programming in scala
 :PROPERTIES:
 :END:
-*** TODO Emacs-Lisp
-:PROPERTIES:
-:END:
-*** TODO Common-Lisp
-:PROPERTIES:
-:END:
-*** TODO Scheme
-:PROPERTIES:
-:END:
-*** TODO Clojure
-:PROPERTIES:
-:END:
-** hybrid family
-:PROPERTIES:
-:END:
-*** TODO Scala
-:PROPERTIES:
-:END:
-** ML family
-:PROPERTIES:
-:END:
-*** TODO Haskell
-:PROPERTIES:
-:END:
-*** TODO Ocaml
-:PROPERTIES:
-:END:
-* PENDING Questions about life, the universe and everything
-:PROPERTIES:
-:END:
-** How to deal with promotion/demotion?
-:PROPERTIES:
-:END:
-* PENDING Joy of Clojure
-:PROPERTIES:
-:END:
-** Part 3 Functional Programming
-:PROPERTIES:
-:END:
-*** TODO Being lazy and set in your ways
-:PROPERTIES:
-:END:
-*** TODO Immutability
-:PROPERTIES:
-:END:
-*** TODO Designing a persistent toy
-:PROPERTIES:
-:END:
-*** TODO Laziness
-:PROPERTIES:
-:END:
-*** TODO Putting it all together: a lazy quicksort
-:PROPERTIES:
-:END:
-*** TODO Functional programming
-:PROPERTIES:
-:END:
-*** TODO Functions in all their forms [100%]
-:PROPERTIES:
-:END:
-*** TODO Closures
-:PROPERTIES:
-:END:
-*** TODO Thinking recursively
-:PROPERTIES:
-:END:
-*** TODO Putting it all together: A* pathfinding
-:PROPERTIES:
-:END:
-** Part 2 Data Types
-:PROPERTIES:
-:END:
-*** TODO On scalars [100%]
-:PROPERTIES:
-:END:
-*** TODO Composite data types [100%]
-:PROPERTIES:
-:END:
-** Part 4 Large-Scale Design
-:PROPERTIES:
-:END:
-*** TODO Macros
-:PROPERTIES:
-:END:
-*** TODO Java.next
-:PROPERTIES:
-:END:
-*** TODO Mutation
-:PROPERTIES:
-:END:
-*** TODO Combining data and code
-:PROPERTIES:
-:END:
-** Part 1 Foundations [0%]
-:PROPERTIES:
-:END:
-*** TODO Clojure philosophy [100%]
-:PROPERTIES:
-:END:
-*** TODO Drinking from the Clojure firehose
-:PROPERTIES:
-:END:
-*** TODO Dipping our toes in the pool
-:PROPERTIES:
-:END:
-** Part 5 Tangential Considerations
-:PROPERTIES:
-:END:
-*** TODO Performance
-:PROPERTIES:
-:END:
-*** TODO Clojure changes the way you think
-:PROPERTIES:
-:END:
+- [-] chapters
+  - [-] introduction
+  - [-] Ch. 1 - A scalable language
+  - [-] Ch. 2 - First steps in scala
+  - [-] Ch. 3 - Next steps in scala
+  - [-] Ch. 4 - Classes and objects
+  - [X] Ch. 5 - Basic types and operations
+  - [-] Ch. 6 - Functional objects
+  - [-] Ch. 7 - Buit-in control structures
+  - [X] Ch. 8 - Functions and closures
+  - [-] Ch. 9 - Control abstraction
+  - [-] Ch. 10 - Composition and inheritance
+  - [-] Ch. 11 - Scala's hierarchy
+  - [-] Ch. 12 - Traits
 * DONE Programming in Haskell
 :PROPERTIES:
 :END:
@@ -158,54 +68,48 @@
 * DONE Programming in scala
 :PROPERTIES:
 :END:
-** chapters
+- [-] chapters
+* PENDING Questions about life, the universe and everything
 :PROPERTIES:
 :END:
-*** TODO introduction
+- [-] How to deal with promotion/demotion?
+* PENDING Joy of Clojure
 :PROPERTIES:
 :END:
-*** TODO Ch. 1 - A scalable language
-:PROPERTIES:
-:END:
-*** TODO Ch. 2 - First steps in scala
-:PROPERTIES:
-:END:
-*** TODO Ch. 3 - Next steps in scala
-:PROPERTIES:
-:END:
-*** TODO Ch. 4 - Classes and objects
-:PROPERTIES:
-:END:
-*** TODO Ch. 5 - Basic types and operations
-:PROPERTIES:
-:END:
-*** TODO Ch. 6 - Functional objects
-:PROPERTIES:
-:END:
-*** TODO Ch. 7 - Buit-in control structures
-:PROPERTIES:
-:END:
-*** TODO Ch. 8 - Functions and closures
-:PROPERTIES:
-:END:
-*** TODO Ch. 9 - Control abstraction
-:PROPERTIES:
-:END:
-*** TODO Ch. 10 - Composition and inheritance
-:PROPERTIES:
-:END:
-*** TODO Ch. 11 - Scala's hierarchy
-:PROPERTIES:
-:END:
-*** TODO Ch. 12 - Traits
-:PROPERTIES:
-:END:
-
-* TODO Organize party [2/4]
- - [-] call people [1/3]
-   - [ ] Peter
-   - [X] Sarah
-   - [ ] Sam
- - [X] order food
- - [ ] think about what music to play
- - [X] talk to the neighbors
+- [-] Part 1 Foundations [0%]
+  - [-] Clojure philosophy [100%]
+  - [-] Drinking from the Clojure firehose
+  - [-] Dipping our toes in the pool
+- [-] Part 2 Data Types
+  - [-] On scalars [100%]
+  - [-] Composite data types [100%]
+- [-] Part 3 Functional Programming
+  - [-] Being lazy and set in your ways
+  - [-] Immutability
+  - [-] Designing a persistent toy
+  - [-] Laziness
+  - [-] Putting it all together: a lazy quicksort
+  - [-] Functional programming
+  - [-] Functions in all their forms [100%]
+  - [-] Closures
+  - [-] Thinking recursively
+  - [-] Putting it all together: A* pathfinding
+- [-] Part 4 Large-Scale Design
+  - [-] Macros
+  - [-] Java.next
+  - [-] Mutation
+  - [-] Combining data and code
+- [-] Part 5 Tangential Considerations
+  - [-] introduction
+  - [-] Ch. 1 - A scalable language
+  - [-] Ch. 2 - First steps in scala
+  - [-] Ch. 3 - Next steps in scala
+  - [-] Ch. 4 - Classes and objects
+  - [-] Ch. 5 - Basic types and operations
+  - [-] Ch. 6 - Functional objects
+  - [-] Ch. 7 - Buit-in control structures
+  - [-] Ch. 8 - Functions and closures
+  - [-] Ch. 9 - Control abstraction
+  - [-] Ch. 10 - Composition and inheritance
+  - [-] Ch. 11 - Scala's hierarchy
+  - [-] Ch. 12 - Traits

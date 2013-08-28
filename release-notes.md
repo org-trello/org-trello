@@ -1,3 +1,21 @@
+# 0.1.6
+
+- [X] Use the native org checklist to sync to trello
+- [X] Sync entity and arborescence tree
+- [X] Sync to trello must sync the native checklist if the flag is activated
+- [X] Sync from trello must create native checklists if the flag is activated
+- [X] Cleanup routine must cleanup the new checklist.
+- [X] Delete entity must remove entity on point
+- [X] Upgrade version
+- [X] Automate the release to marmalade
+- [X] Justify the #PROPERTIES# to the left for a better rendering
+- [X] Keywordify the #PROPERTIES#
+- [X] Merge the org :PROPERTIES: and the org-trello #PROPERTIES# into one.
+- [X] Improve the activation/deactivation of the new way
+- [X] Update the readme about the new checkbox mode
+- [X] Release notes
+- [X] Release
+
 # 0.1.5
 
 - Symmetry in the architecture - the deletion must pass through the consumer too.
