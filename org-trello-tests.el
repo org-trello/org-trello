@@ -778,5 +778,10 @@ DEADLINE: <some-date>
   (expect "this is an item" (orgtrello/--item-p `((state . "this is an item"))))
   (expect nil (orgtrello/--checklist-p `((anything-else . "this is not a item")))))
 
+(expectations
+ (expect "- [X] call people [4/4]                                        #PROPERTIES# {\"orgtrello-id\":\"456\"}" (orgtrello-cbx/--justify-property-current-line "- [X] call people [4/4] #PROPERTIES# {\"orgtrello-id\":\"456\"}" 100))
+
+ (expect "- [X] call people [4/4]                                         #PROPERTIES# {\"orgtrello-id\":\"456\"}" (orgtrello-cbx/--justify-property-current-line "- [X] call people [4/4]                                         #PROPERTIES# {\"orgtrello-id\":\"456\"}" 100)))
+
 (provide 'org-trello-tests)
 ;;; org-trello-tests ends here

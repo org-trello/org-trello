@@ -602,7 +602,7 @@ CLOSED: [2013-08-25 dim. 15:35]
 CLOSED: [2013-08-25 dim. 15:43]
 ** DONE Release
 CLOSED: [2013-08-25 dim. 15:43]
-* DONE 0.1.6 [100%]
+* DONE 0.1.6 [91%]
 CLOSED: [2013-08-28 mer. 02:41]
 - [X] Use the native org checklist to sync to trello [3/3]
   - [X] Extract the informations from the checklist and item and plug them in the current synchronization (org-entry-get (point) "orgtrello-id")
@@ -615,8 +615,11 @@ CLOSED: [2013-08-28 mer. 02:41]
 - [X] Delete entity must remove entity on point
 - [X] Upgrade version
 - [X] Automate the release to marmalade
+- [X] Justify the #PROPERTIES# to the left for a better rendering
+- [ ] Keywordify the #PROPERTIES#
 - [X] Release notes
 - [X] Release
+
 * TODO 0.1.7 [%]
 - [-] webadmin: Add an action button to stop every running action
 - [-] POC: use a temporary buffer to sync with trello, when done, merge with the user's buffer.

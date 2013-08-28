@@ -195,7 +195,7 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
   (s-split "#PROPERTIES#" s))
 
 (defun orgtrello-cbx/--checkbox-metadata (s)
-    "Retrieve the checkbox's metadata."
+  "Retrieve the checkbox's metadata."
   (-when-let (res (-> s
                       orgtrello-cbx/--checkbox-split
                       second))
@@ -236,12 +236,26 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
   (s-join " #PROPERTIES# "  `(,(orgtrello-cbx/--checkbox-data checkbox-string)
                               ,(orgtrello-cbx/--to-properties properties))))
 
+(defun orgtrello-cbx/--justify-property-current-line (full-line length)
+  "Justify the properties to the left so that the line makes a length of length. For this insert whites before the #PROPERTIES# before."
+  (let ((nb-of-spaces (->> full-line length (- length) 1-)))
+    (if (< 0 nb-of-spaces)
+        (let ((current-properties-str    (format "#PROPERTIES# %s" (orgtrello-cbx/--checkbox-metadata full-line)))
+              (current-data-str          (orgtrello-cbx/--checkbox-data full-line)))
+          (format "%s%s%s" current-data-str (orgtrello/--space nb-of-spaces) current-properties-str))
+        full-line)))
+
+(defun orgtrello-cbx/--update-properties-and-justify (checkbox-string properties)
+  "Given the current checkbox-string and the new properties, update the properties in the current entry and justify."
+  (-> (orgtrello-cbx/--update-properties checkbox-string properties)
+      (orgtrello-cbx/--justify-property-current-line (current-fill-column))))
+
 (defun orgtrello-cbx/--write-properties-at-point (pt properties)
   "Given the new properties, update the current entry."
   (save-excursion
     (goto-char pt)
     (let* ((current-checkbox-str (orgtrello-cbx/--read-checkbox!))
-           (updated-checkbox-str (orgtrello-cbx/--update-properties current-checkbox-str properties)))
+           (updated-checkbox-str (orgtrello-cbx/--update-properties-and-justify current-checkbox-str properties)))
       (beginning-of-line)
       (kill-line)
       (insert updated-checkbox-str))))
@@ -987,8 +1001,8 @@ Also add some metadata identifier/due-data/point/buffer-name."
       (throw 'org-trello-timer-go-to-sleep t))))
 
 (defun orgtrello-proxy/--getting-back-to-headline (data)
-  (orgtrello-proxy/--getting-back-to-marker
-   (orgtrello/--compute-entity-to-org-entry data)))
+  "Trying another approach to getting back to header computing the normal form of an entry in the buffer."
+  (orgtrello-proxy/--getting-back-to-marker (orgtrello/--compute-entity-to-org-entry data)))
 
 (defun orgtrello-proxy/--compute-pattern-search-from-marker (marker)
   "Given a marker, compute the pattern to look for in the file."
