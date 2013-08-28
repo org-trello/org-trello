@@ -1,6 +1,7 @@
 VERSION=$$(grep "^;; Version: " org-trello.el | cut -f3 -d' ')
 PACKAGE_FOLDER=org-trello-$(VERSION)
 ARCHIVE=$(PACKAGE_FOLDER).tar
+USER=ardumont
 
 test:
 	cask exec emacs -Q -batch \
@@ -62,4 +63,4 @@ cleanup-data:
 		~/.emacs.d/elnode/public_html/org-trello/*.lock
 
 release:
-	./scripts/release.sh $(VERSION)
+	cd scripts && release.sh $(USER) $(VERSION)
