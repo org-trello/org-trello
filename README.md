@@ -1,10 +1,10 @@
 # org-trello [![Build Status](https://travis-ci.org/ardumont/org-trello.png?branch=master)](https://travis-ci.org/ardumont/org-trello)
 
-Minor emacs mode for org-mode - 2-way synchronization between org and trello board
+[Org](http://orgmode.org/) minor mode - 2-way sync [org](http://orgmode.org/) & [trello](http://trello.com/)
 
 **Table of Contents**  *generated with [DocToc](http://doctoc.herokuapp.com/)*
 
-- [why?](#why)
+- [rational](#rational)
 - [Emacs version](#emacs-version)
 - [Migration](#migration)
 - [TL;DR](#tl;dr)
@@ -42,22 +42,32 @@ Minor emacs mode for org-mode - 2-way synchronization between org and trello boa
 - [Bindings](#bindings)
 - [Use cases](#use-cases)
 	- [Setup](#setup-1)
+	- [Formats](#formats)
+		- [natural org format (from 0.1.6 onwards)](#natural-org-format-from-016-onwards)
+			- [Migrate to 0.1.6](#migrate-to-016)
+			- [Reactivate](#reactivate)
+		- [Original format (previous to 0.1.6)](#original-format-previous-to-016)
+			- [Activate](#activate)
 	- [Creation step-by-step](#creation-step-by-step)
 	- [Card and deadline/due date](#card-and-deadlinedue-date)
-	- [Checklist and transitivity](#checklist-and-transitivity)
 	- [Creation full entity](#creation-full-entity)
 	- [Sync org-mode file to trello board](#sync-org-mode-file-to-trello-board)
 	- [Sync org-mode file from trello board](#sync-org-mode-file-from-trello-board)
 	- [Remove entity](#remove-entity)
+	- [Remove entities](#remove-entities)
+	- [Cleanup org-trello setup](#cleanup-org-trello-setup)
 - [Errors](#errors)
+- [proxy-admin](#proxy-admin)
 - [Mailing list](#mailing-list)
 - [License](#license)
 
-# why?
+# rational
 
 - [org-mode](http://orgmode.org/) is what I need.
 - [Trello](http://trello.com/) is what my team need.
-- [org-trello](https://github.com/ardumont/org-trello) may satisfy everybody.
+- [org-trello](https://github.com/ardumont/org-trello) is middle ground!
+
+This will satisfy org-modians and trelloans won't see any difference!
 
 # Emacs version
 
@@ -66,6 +76,12 @@ Tested on:
 - GNU Emacs 24.3.1 (x86_64-pc-linux-gnu, X toolkit, Xaw3d scroll bars) of 2013-04-14 on marid, modified by Debian (from 0.1.0)
 
 # Migration
+
+0.1.5 -> 0.1.6
+
+Org-trello does use more natural ways of dealing with checklist using checkboxes!
+
+cf. [natural org format (from 0.1.6 onwards)](#natural-org-format-from-016-onwards) for more details.
 
 0.1.1 -> 0.1.2:
 - From the version 0.1.1, some of the http requests will be asynchronous.
@@ -320,13 +336,14 @@ Keybindings        | Interactive commands                         | Description
 <kbd>C-c o i</kbd> | `M-x org-trello/install-key-and-token`       | Install the keys and the access-token.
 <kbd>C-c o I</kbd> | `M-x org-trello/install-board-and-lists-ids` | Select the board and attach the todo, doing and done list.
 <kbd>C-c o d</kbd> | `M-x org-trello/check-setup`                 | Check that the setup is ok. If everything is ok, will simply display 'Setup ok!'
-<kbd>C-c o D</kbd> | `M-x org-trello/delete-setup`                | Clean up the org buffer from all org-trello informations
+<kbd>C-c o x</kbd> | `M-x org-trello/delete-setup`                | Clean up the org buffer from all org-trello informations
 <kbd>C-c o b</kbd> | `M-x org-trello/create-board`                | Create interactively a board and attach the org-mode file to this trello board.
 <kbd>C-c o c</kbd> | `M-x org-trello/sync-entity`                 | Create/Update an entity (card/checklist/item) depending on its level and status. Do not deal with level superior to 4.
 <kbd>C-c o C</kbd> | `M-x org-trello/sync-full-entity`            | Create/Update a complete entity card/checklist/item and its subtree (depending on its level).
 <kbd>C-c o s</kbd> | `M-x org-trello/sync-to-trello`              | Synchronize the org-mode file to the trello board (org-mode -> trello).
 <kbd>C-c o S</kbd> | `M-x org-trello/sync-from-trello`            | Synchronize the org-mode file from the trello board (trello -> org-mode).
-<kbd>C-c o k</kbd> | `M-x org-trello/kill-entity`                 | Kill the entity (and its arborescence tree).
+<kbd>C-c o k</kbd> | `M-x org-trello/kill-entity`                 | Kill the entity (and its arborescence tree) from the trello board and the org buffer.
+<kbd>C-c o K</kbd> | `M-x org-trello/kill-all-entities`           | Kill all the entities (and their arborescence tree) from the trello board and the org buffer.
 <kbd>C-c o h</kbd> | `M-x org-trello/help-describing-bindings`    | This help message.
 
 # Use cases
@@ -350,27 +367,154 @@ This will edit your org-mode file with properties needed.
 
 Now you are ready to use org-mode as usual.
 
+## Formats
+
+There is a new setup which is activated by default, using the natural org [checkboxes](http://orgmode.org/manual/Checkboxes.html).
+Thanks to @sw1nn [for showing me this org feature, this is awesome!](https://github.com/ardumont/org-trello/issues/14).
+
+### natural org format (from 0.1.6 onwards)
+
+Activated by default.
+
+```org-mode
+- [-] LISP
+  - [X] Emacs-Lisp
+  - [X] Common-Lisp
+  - [ ] Scheme
+  - [X] Clojure
+- [X] ML
+  - [X] Haskell
+  - [X] Ocaml
+- [X] Hybrid
+  - [X] Scala
+- [ ] little more detail, this is level 2, so checklist in trello board
+  - [ ] item 3
+    - [ ] any entities with level superior to 4 are considered level 3
+```
+
+For example, once sync to trello, this looks like:
+
+```
+* IN-PROGRESS Joy of FUN(ctional) LANGUAGES
+:PROPERTIES:
+:orgtrello-id: 521dc9f3edeabee47600401e
+:END:
+- [-] LISP                                                    :PROPERTIES: {"orgtrello-id":"521dc9f48e95d74636004107"}
+  - [X] Emacs-Lisp                                            :PROPERTIES: {"orgtrello-id":"521dc9f7487c2e9b250047a5"}
+  - [X] Common-Lisp                                           :PROPERTIES: {"orgtrello-id":"521dc9f7ae27842a36003b26"}
+  - [ ] Scheme                                                :PROPERTIES: {"orgtrello-id":"521dc9f834f52df935003b15"}
+  - [X] Clojure                                               :PROPERTIES: {"orgtrello-id":"521dc9f9c1b85c905f006b4e"}
+- [X] ML                                                      :PROPERTIES: {"orgtrello-id":"521dc9f5d49a919614000266"}
+  - [X] Haskell                                               :PROPERTIES: {"orgtrello-id":"521dc9fa5699f00b25003bd0"}
+  - [X] Ocaml                                                 :PROPERTIES: {"orgtrello-id":"521dc9fb7ef4310554003ab3"}
+- [X] Hybrid                                                  :PROPERTIES: {"orgtrello-id":"521dc9f6238d072770007217"}
+  - [X] Scala                                                 :PROPERTIES: {"orgtrello-id":"521dc9fc8e95d74636004109"}
+```
+
+#### Migrate to 0.1.6
+
+To migrate your 0.1.6 org trello buffer to the new format:
+- simply push the content to trello (`C-c o s`)
+- Erase the content of your buffer except for the org-trello properties (`#+` entries at the beginning of the file)
+- and sync from trello again (`C-c o S`).
+
+#### Reactivate
+
+This is activated by default but if you change this and you want to get back:
+
+```lisp
+(org-trello/activate-natural-org-checkboxes)
+```
+
+### Original format (previous to 0.1.6)
+
+```org-mode
+* IN-PROGRESS Joy of FUN(ctional) LANGUAGES
+** TODO LISP
+*** DONE Emacs-Lisp
+*** DONE Common-Lisp
+*** Scheme
+*** TODO Clojure
+** DONE ML
+*** DONE Haskell
+*** DONE Ocaml
+** DONE Hybrid
+*** DONE Scala
+** A little more explanation, this is level 2 so checklist on trello
+*** item (level 3)
+**** Any entity superior to level 4 are not considered for sync
+```
+
+Once synchronized, this looks like (largely prettier in emacs org buffer):
+
+```org-mode
+* IN-PROGRESS Joy of FUN(ctional) LANGUAGES
+:PROPERTIES:
+:orgtrello-id: 521dc9f3edeabee47600401e
+:END:
+** TODO LISP
+:PROPERTIES:
+:orgtrello-id: 521dc9f48e95d74636004107
+:END:
+*** DONE Emacs-Lisp
+:PROPERTIES:
+:orgtrello-id: 521dc9f7487c2e9b250047a5
+:END:
+*** DONE Common-Lisp
+:PROPERTIES:
+:orgtrello-id: 521dc9f7ae27842a36003b26
+:END:
+*** TODO Scheme
+:PROPERTIES:
+:orgtrello-id: 521dc9f834f52df935003b15
+:END:
+*** DONE Clojure
+:PROPERTIES:
+:orgtrello-id: 521dc9f9c1b85c905f006b4e
+:END:
+** TODO ML
+:PROPERTIES:
+:orgtrello-id: 521dc9f5d49a919614000266
+:END:
+*** DONE Haskell
+:PROPERTIES:
+:orgtrello-id: 521dc9fa5699f00b25003bd0
+:END:
+*** DONE Ocaml
+:PROPERTIES:
+:orgtrello-id: 521dc9fb7ef4310554003ab3
+:END:
+** TODO Hybrid
+:PROPERTIES:
+:orgtrello-id: 521dc9f6238d072770007217
+:END:
+*** DONE Scala
+:PROPERTIES:
+:orgtrello-id: 521dc9fc8e95d74636004109
+:END:
+
+```
+
+#### Activate
+
+From 0.1.6 onwards, if you want to deactivate the default way, and get back to the original way, set this snippet somewhere in your init file:
+
+```lisp
+(org-trello/deactivate-natural-org-checkboxes)
+```
+
 ## Creation step-by-step
 
-The idea is this, you have 3 levels:
+Basically, you have 3 levels (cf. [possible formats](#formats))
 - level 1 - Card
 - level 2 - Checklist
 - level 3 - Item
 
-For example:
-
-```org-mode
-* card-identity (label mandatory)
-** checklist (label mandatory)
-*** item1 (label mandatory)
-*** item2 (label mandatory)
-*** item3 (label mandatory)
-```
-
+Steps:
 - Card:
-  - Place yourself on the `card-identity` and hit the binding `C-c o c`, this will create the card in the `TODO` column in your trello board.
-  - You can edit the label and hit `C-c o c` again, this time, this will update the label in trello
-  - Change the status from TODO to any intermediary status, then hit the binding, this will move the card to the list `DOING`.
+  - Place yourself on the `card-identity` and hit the binding `C-c o c`, this will sync the card (create) in the `TODO` column in your trello board.
+  - You can edit the label and hit `C-c o c` again, this time, this will sync the card again (update) in trello
+  - Change the status from TODO to any intermediary status, then hit the binding, this will move the card to the list `DOING` (depending on your todo keywords list).
   - Once done, move the status of the card from anything to DONE, hit the binding, this will move the card to the list `DONE`.
 
 - Checklist:
@@ -385,20 +529,6 @@ For example:
 ## Card and deadline/due date
 
 You can use [org-mode's deadline](http://orgmode.org/manual/Inserting-deadline_002fschedule.html), this is mapped to trello's due date notion during the synchronize step.
-
-## Checklist and transitivity
-
-By default now, the status of the checklist does transit to the items.
-Thus:
-- if the status of the checklist is DONE, every item will be synced to DONE and the org-mode buffer will be updated accordingly.
-- if the status of the checklist is TODO, every item will be synced to TODO and the org-mode buffer will be updated accordingly.
-
-If you do not want this, you can disable it by adding those lines to your emacs's startup file:
-
-```lisp
-(require 'org-trello)
-(setq *ORGTRELLO-CHECKLIST-UPDATE-ITEMS* nil)
-```
 
 ## Creation full entity
 
@@ -419,8 +549,18 @@ This will update any already present entry in the org-mode file and create the o
 
 ## Remove entity
 
-You can remove any entity and its arborescence with `C-c o k`.
+You can remove any entity and its arborescence from the board with `C-c o k`.
 This will also remove the entry from the org-mode buffer.
+
+## Remove entities
+
+You can remove all entities from the board `C-c o K`.
+This will also remove the entries from the org-mode buffer.
+
+## Cleanup org-trello setup
+
+You can remove all data from the org-mode buffer with `C-c o x`.
+This will remove any org-trello related entries in your file (headers included).
 
 # Errors
 

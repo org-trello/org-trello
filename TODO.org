@@ -602,14 +602,35 @@ CLOSED: [2013-08-25 dim. 15:35]
 CLOSED: [2013-08-25 dim. 15:43]
 ** DONE Release
 CLOSED: [2013-08-25 dim. 15:43]
-* TODO 0.1.6 [%]
-** TODO webadmin: Add an action button to stop every running action
-** TODO POC: use a temporary buffer to sync with trello, when done, merge with the user's buffer.
-** TODO Ensure sync-from-trello keep the order of the checklists clean
-** TODO Now that elnode is here, this may be simpler to use a fake trello server (use clojure :D)
-** TODO Improve the request to the trello api to enforce the position inside trello (we can use the natural order of integer with position to determine such position)
-** TODO Filter out directly with the api the data we do not need to avoid unnecessary network traffic
-** TODO Update the literate org-trello.org (completely desynchronized since 0.1.2) -> code something to avoid doing manual split
+* DONE 0.1.6 [100%]
+CLOSED: [2013-08-28 mer. 02:41]
+- [X] Use the native org checklist to sync to trello [3/3]
+  - [X] Extract the informations from the checklist and item and plug them in the current synchronization (org-entry-get (point) "orgtrello-id")
+  - [X] Set the metadata information on the checklist level (org does only the heading level)
+  - [X] Ensure the synchronization works
+- [X] Sync entity and arborescence tree
+- [X] Sync to trello must sync the native checklist if the flag is activated
+- [X] Sync from trello must create native checklists if the flag is activated
+- [X] Cleanup routine must cleanup the new checklist.
+- [X] Delete entity must remove entity on point
+- [X] Upgrade version
+- [X] Automate the release to marmalade
+- [X] Justify the #PROPERTIES# to the left for a better rendering
+- [X] Keywordify the #PROPERTIES#
+- [X] Merge the org :PROPERTIES: and the org-trello #PROPERTIES# into one.
+- [X] Improve the activation/deactivation of the new way
+- [X] Update the readme about the new checkbox mode
+- [X] Release notes
+- [X] Release
+
+* TODO 0.1.7 [%]
+- [-] webadmin: Add an action button to stop every running action
+- [-] POC: use a temporary buffer to sync with trello, when done, merge with the user's buffer.
+- [-] Ensure sync-from-trello keep the order of the checklists clean
+- [-] Now that elnode is here, this may be simpler to use a fake trello server (use clojure :D)
+- [-] Improve the request to the trello api to enforce the position inside trello (we can use the natural order of integer with position to determine such position)
+- [-] Filter out directly with the api the data we do not need to avoid unnecessary network traffic
+- [-] Update the literate org-trello.org (completely desynchronized since 0.1.2) -> code something to avoid doing manual split
 * TODO Very Interesting propositions
 - https://github.com/ardumont/org-trello/issues/14 - Using org's native checklist functionality (Now that the proxy is here, it is simply a matter of speaking the right language -> parsing)
 - https://github.com/ardumont/org-trello/issues/33 - Another Disposition about org's buffer
@@ -633,3 +654,4 @@ Dependencies:
 (org-first-headline-recenter)
 org-outline-regexp
 (org-goto-local-search-headings marker nil nil)
+(orgtrello/map-checkboxes (lambda () (message "%s" (orgtrello-data/metadata))))
