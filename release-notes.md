@@ -8,6 +8,8 @@
 - [X] Delete entity must remove entity on point
 - [X] Upgrade version
 - [X] Automate the release to marmalade
+- [X] Justify the #PROPERTIES# to the left for a better rendering
+- [X] Keywordify the #PROPERTIES#
 - [X] Release notes
 - [X] Release
 

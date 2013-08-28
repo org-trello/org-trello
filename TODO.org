@@ -602,7 +602,7 @@ CLOSED: [2013-08-25 dim. 15:35]
 CLOSED: [2013-08-25 dim. 15:43]
 ** DONE Release
 CLOSED: [2013-08-25 dim. 15:43]
-* DONE 0.1.6 [91%]
+* DONE 0.1.6 [100%]
 CLOSED: [2013-08-28 mer. 02:41]
 - [X] Use the native org checklist to sync to trello [3/3]
   - [X] Extract the informations from the checklist and item and plug them in the current synchronization (org-entry-get (point) "orgtrello-id")
@@ -616,7 +616,7 @@ CLOSED: [2013-08-28 mer. 02:41]
 - [X] Upgrade version
 - [X] Automate the release to marmalade
 - [X] Justify the #PROPERTIES# to the left for a better rendering
-- [ ] Keywordify the #PROPERTIES#
+- [X] Keywordify the #PROPERTIES#
 - [X] Release notes
 - [X] Release
 
