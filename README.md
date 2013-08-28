@@ -559,7 +559,7 @@ This will also remove the entries from the org-mode buffer.
 
 ## Cleanup org-trello setup
 
-You remove all data from the org-mode buffer with `C-c o x`.
+You can remove all data from the org-mode buffer with `C-c o x`.
 This will remove any org-trello related entries in your file (headers included).
 
 # Errors
