@@ -187,8 +187,8 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
 
 (defun orgtrello-cbx/--from-properties (string)
   "Deserialize from json to list."
-  (if string
-      (json-read-from-string string)))
+  (when string
+        (json-read-from-string string)))
 
 (defun orgtrello-cbx/--checkbox-split (s)
   "Split the checkbox into the checkbox data and the checkbox metadata."
@@ -224,13 +224,6 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
     (goto-char pt)
     (orgtrello-cbx/--read-properties (orgtrello-cbx/--read-checkbox!))))
 
-;; (expectations
-;;   (expect '((orgtrello-id . "123")) (with-temp-buffer
-;;                                       (insert "- [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}")
-;;                                       (forward-line -1)
-;;                                       (orgtrello-cbx/--read-properties-from-point))))
-
-
 (defun orgtrello-cbx/--update-properties (checkbox-string properties)
   "Given the current checkbox-string and the new properties, update the properties in the current entry."
   (s-join " :PROPERTIES: "  `(,(orgtrello-cbx/--checkbox-data checkbox-string)
@@ -258,7 +251,8 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
            (updated-checkbox-str (orgtrello-cbx/--update-properties-and-justify current-checkbox-str properties)))
       (beginning-of-line)
       (kill-line)
-      (insert updated-checkbox-str))))
+      (insert updated-checkbox-str)
+      updated-checkbox-str)))
 
 (defun orgtrello-cbx/--key-to-search (key)
   "Search the key key as a symbol"
@@ -303,11 +297,6 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
          orgtrello-cbx/--read-properties-from-point
          (orgtrello-cbx/--org-delete-property key)
          (orgtrello-cbx/--write-properties-at-point current-point))))
-
-;; (with-temp-buffer
-;;   (insert "- [X] call people [4/4]")
-;;   (goto-char (point-min))
-;;   (orgtrello-cbx/org-set-property "temporary-key" "temporary-value"))
 
 (defun orgtrello-cbx/--org-split-data (s)
   "Split the string into meta data with -."
@@ -1980,12 +1969,13 @@ refresh(\"/proxy/admin/current-action/\", '#current-action');
   (orgtrello-log/msg *OT/INFO* "Synchronizing full entity with its structure on board '%s'..." (orgtrello/--board-name))
   ;; iterate over the map of entries and sync them, breadth first
   (if (org-at-heading-p)
+      ;; sync from an heading (card)
       (org-map-tree (lambda ()
                       ;; as usual we sync the heading
                       (orgtrello/do-sync-entity)
                       ;; we also sync the native checklist
                       (when *ORGTRELLO-NATURAL-ORG-CHECKLIST* (orgtrello/map-checkboxes 'orgtrello/do-sync-entity))))
-      ;; we also sync the native checklist
+      ;; otherwise, when using the natural org checkbox, we sync the checkbox
       (when *ORGTRELLO-NATURAL-ORG-CHECKLIST* (orgtrello/map-checkboxes 'orgtrello/do-sync-entity))))
 
 (defun orgtrello/do-sync-full-file ()

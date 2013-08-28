@@ -783,5 +783,66 @@ DEADLINE: <some-date>
 
  (expect "- [X] call people [4/4]                                         :PROPERTIES: {\"orgtrello-id\":\"456\"}" (orgtrello-cbx/--justify-property-current-line "- [X] call people [4/4]                                         :PROPERTIES: {\"orgtrello-id\":\"456\"}" 100)))
 
+(expectations
+  (expect '((orgtrello-id . "123")) (with-temp-buffer
+                                      (insert "- [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}")
+                                      (forward-line -1)
+                                      (orgtrello-cbx/--read-properties-from-point (point))))
+  (expect nil (with-temp-buffer
+                (insert "- [X] some checkbox :PROPERTIES: {}")
+                (forward-line -1)
+                (orgtrello-cbx/--read-properties-from-point (point))))
+  (expect nil (with-temp-buffer
+                (insert "- [X] some checkbox")
+                (forward-line -1)
+                (orgtrello-cbx/--read-properties-from-point (point)))))
+
+(expectations
+  (expect "- [X] some checkbox                                                                  :PROPERTIES: {\"orgtrello-id\":456}"
+    (with-temp-buffer
+      (insert "- [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}")
+      (forward-line -1)
+      (orgtrello-cbx/--write-properties-at-point (point) `(("orgtrello-id" . 456))))))
+
+(expectations
+  (expect "abc"
+    (with-temp-buffer
+      (insert "- [X] some checkbox                                                                :PROPERTIES: {\"orgtrello-id\":\"abc\"}")
+      (forward-line -1)
+      (orgtrello-cbx/org-get-property (point) "orgtrello-id")))
+  (expect nil
+    (with-temp-buffer
+      (insert "- [X] some checkbox                                                                :PROPERTIES: {\"orgtrello-id\":\"abc\"}")
+      (forward-line -1)
+      (orgtrello-cbx/org-get-property (point) "inexistant-id"))))
+
+(expectations
+  (expect "- [X] some checkbox                                                                :PROPERTIES: {\"orgtrello-id\":\"abc\"}"
+    (with-temp-buffer
+      (insert "- [X] some checkbox")
+      (forward-line -1)
+      (orgtrello-cbx/org-set-property "orgtrello-id" "abc")
+      (buffer-string)))
+  (expect "- [X] some checkbox                                                                :PROPERTIES: {\"orgtrello-id\":\"def\"}"
+    (with-temp-buffer
+      (insert "- [X] some checkbox                                                                :PROPERTIES: {\"orgtrello-id\":\"123\"}")
+      (forward-line -1)
+      (orgtrello-cbx/org-set-property "orgtrello-id" "def")
+      (buffer-string))))
+
+(expectations
+  (expect "- [X] some checkbox                                                                                    :PROPERTIES: {}"
+    (with-temp-buffer
+      (insert "- [X] some checkbox                                                                :PROPERTIES: {\"orgtrello-id\":\"123\"}")
+      (forward-line -1)
+      (orgtrello-cbx/org-delete-property "orgtrello-id")
+      (buffer-string)))
+  (expect "- [X] some checkbox                                                                :PROPERTIES: {\"orgtrello-id\":\"def\"}"
+    (with-temp-buffer
+      (insert "- [X] some checkbox                                                                :PROPERTIES: {\"orgtrello-id\":\"def\"}")
+      (forward-line -1)
+      (orgtrello-cbx/org-delete-property "inexistant")
+      (buffer-string))))
+
 (provide 'org-trello-tests)
 ;;; org-trello-tests ends here
