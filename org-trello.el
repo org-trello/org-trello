@@ -1445,6 +1445,18 @@ Also add some metadata identifier/due-data/point/buffer-name."
     <![endif]-->
 ")))
 
+(defun orgtrello-admin/--main-body () "Build the main body where we will display informations (without all the html boilerplate)."
+  (esxml-to-xml
+   `(div ((class . "row-fluid marketing"))
+         (div ((class . "span6"))
+              (div ((style . "font-size: 2em;margin-right: 10px;margin-bottom: 10px")) "Current action")
+              (span ((id . "current-action"))))
+         (div ((class . "span6"))
+              (div ((style . "margin-bottom:10px"))
+                   (span ((style . "font-size: 2em;margin-right: 10px")) "Next actions")
+                   (span () ,(orgtrello-admin/--input-button-html "deleteEntities('/proxy/admin/entities/delete/');" "Delete all")))
+              (span ((id . "next-actions")))))))
+
 (defun orgtrello-admin/body (project-name) "Display the data inside the html body"
   (esxml-to-xml
    `(body
@@ -1475,13 +1487,7 @@ Also add some metadata identifier/due-data/point/buffer-name."
                                     "Contact")))))))
      (div ((class . "container"))
           (div ((class . "container-narrow"))
-               (div ((class . "row-fluid marketing"))
-                    (div ((class . "span6"))
-                         (h2 () "Current action")
-                         (span ((id . "current-action"))))
-                    (div ((class . "span6"))
-                         (h2 () "Next actions")
-                         (span ((id . "next-actions")))))))
+               ,(orgtrello-admin/--main-body)))
      (script ((src . "/static/js/bootstrap.min.js")) "")
      (script ((src . "/static/js/jquery.js")) "")
      (script ()
@@ -1495,7 +1501,7 @@ function refresh (url, id) {
     });
 }
 
-function deleteEntity(url) {
+function deleteEntities(url) {
     $.ajax({
         url:  url
     }).done(function (data) {
@@ -1506,6 +1512,11 @@ function deleteEntity(url) {
 refresh(\"/proxy/admin/entities/next/\", '#next-actions');
 refresh(\"/proxy/admin/entities/current/\", '#current-action');
 "))))
+
+(esxml-to-xml
+ `(div ((class . "span6"))
+      (span () (span () (h2 () "Next actions") (span () ,(orgtrello-admin/--input-button-html "deleteEntities('/proxy/admin/entities/delete/');" "x"))))
+      (span ((id . "next-actions")))))
 
 (defun orgtrello-admin/--content-file (file) "Return the content of a file (absolute name)."
   (with-temp-buffer
@@ -1523,12 +1534,15 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 (defun orgtrello-admin/--detail-entity (log-level entity-data) "Depending on the debug level, will display either the full entity data or simply its name."
   (if (= log-level *OT/INFO*) (orgtrello-query/--name entity-data) entity-data))
 
+(defun orgtrello-admin/--input-button-html (action value) "Given a javascript action and a value, compute an html input button."
+  (esxml-to-xml
+   `(input ((type . "button")
+            (onclick . ,action)
+            (value . ,value)))))
+
 (defun orgtrello-admin/--delete-action (entity) "Generate the button to delete some action."
   (-if-let (entity-id (orgtrello-query/--id entity))
-           (esxml-to-xml
-            `(input ((type . "button")
-                     (onclick . ,(format "deleteEntity('/proxy/admin/entities/delete/%s');" entity-id))
-                     (value . "x"))))
+           (orgtrello-admin/--input-button-html (format "deleteEntities('/proxy/admin/entities/delete/%s');" entity-id) "x")
            ""))
 
 (defun orgtrello-admin/--entity (entity icon) "Compute the entity file display rendering."
@@ -1609,19 +1623,25 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
         (position   (orgtrello-query/--position entity)))
     (format "%s%s-%s.el" (orgtrello-proxy/--compute-entity-level-dir level) buffername position)))
 
-(defun orgtrello-proxy/--delete-entity-with-id (id) "Remove the file which match the id id."
-  (message "Requesting deletion of id %s" id)
+(defun orgtrello-proxy/--delete-entity-with-id (id) "Remove the entity/file which match the id id."
   (-if-let (entity-to-delete (->> *ORGTRELLO-LEVELS*
                                   orgtrello-proxy/--list-entities
                                   (--filter (string= id (orgtrello-query/--id it)))
                                   first))
            (-> entity-to-delete
                orgtrello-proxy/--compute-filename-from-entity
-               -trace
                orgtrello-proxy/--remove-file)))
 
+(defun orgtrello-proxy/--delete-entities () "Remove the entities/files."
+  (->> *ORGTRELLO-LEVELS*
+       orgtrello-proxy/--list-entities
+       (--map (-> it
+                  orgtrello-proxy/--compute-filename-from-entity
+                  orgtrello-proxy/--remove-file))))
+
 (defun orgtrello-proxy/--elnode-delete-entity (http-con) "Deal with actions to do on 'action' (entities)."
-  (-when-let (id (elnode-http-mapping http-con 1)) (orgtrello-proxy/--delete-entity-with-id id)))
+  (let ((id (elnode-http-mapping http-con 1)))
+    (if (string= "" id) (orgtrello-proxy/--delete-entities) (orgtrello-proxy/--delete-entity-with-id id))))
 
 
 

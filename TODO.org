@@ -623,9 +623,9 @@ CLOSED: [2013-08-28 mer. 02:41]
 - [X] Release notes
 - [X] Release
 
-* IN-PROGRESS 0.1.7 [10%]
+* IN-PROGRESS 0.1.7 [20%]
 - [X] webadmin: Add an action button on action to stop it
-- [-] webadmin: Add an action button to stop every running action
+- [X] webadmin: Add an action button to stop every running actions on entities
 - [ ] URLencode the data from the query - https://github.com/ardumont/org-trello/issues/46
 - [ ] Videos about org-trello
   - [ ] elnode
