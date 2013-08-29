@@ -95,6 +95,8 @@
 
 If you want to use this, we recommand to use the native org checklists - http://orgmode.org/manual/Checkboxes.html.")
 
+(defvar *ORGTRELLO-JUSTIFY-PROPERTIES* (current-fill-column) "Right margin for the justify policy")
+
 
 
 ;; #################### orgtrello-version
@@ -240,14 +242,14 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
   (let* ((current-data-str (orgtrello-cbx/--checkbox-data full-line))
          (nb-of-spaces (orgtrello-cbx/--compute-nb-of-spaces-to-justify current-data-str length)))
     (if (< 0 nb-of-spaces)
-        (let ((current-properties-str    (format ":PROPERTIES: %s" (orgtrello-cbx/--checkbox-metadata full-line))))
+        (let ((current-properties-str (format ":PROPERTIES: %s" (orgtrello-cbx/--checkbox-metadata full-line))))
           (format "%s%s%s" current-data-str (orgtrello/--space nb-of-spaces) current-properties-str))
         full-line)))
 
 (defun orgtrello-cbx/--update-properties-and-justify (checkbox-string properties)
   "Given the current checkbox-string and the new properties, update the properties in the current entry and justify."
   (-> (orgtrello-cbx/--update-properties checkbox-string properties)
-      (orgtrello-cbx/--justify-property-current-line (current-fill-column))))
+      (orgtrello-cbx/--justify-property-current-line *ORGTRELLO-JUSTIFY-PROPERTIES*)))
 
 (defun orgtrello-cbx/--write-properties-at-point (pt properties)
   "Given the new properties, update the current entry."

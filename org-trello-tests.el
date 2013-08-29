@@ -7,6 +7,11 @@
 
 (load-file "org-trello.el")
 
+;; ########################## setup for test
+
+;; justify part need
+(setq *ORGTRELLO-JUSTIFY-PROPERTIES* 120)
+
 ;; ########################## orgtrello-hash
 
 (expectations
@@ -27,7 +32,7 @@
 ;; ########################## orgtrello-data
 
 (expectations
-  (expect "some name :orgtrello-id-identifier:" (gethash :name      (orgtrello-data/--get-metadata '("buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil))))
+  (expect "some name :orgtrello-id-identifier:"  (gethash :name     (orgtrello-data/--get-metadata '("buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil))))
   (expect "IN PROGRESS"                          (gethash :keyword  (orgtrello-data/--get-metadata '("buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil))))
   (expect 0                                      (gethash :level    (orgtrello-data/--get-metadata '("buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil))))
   (expect :id                                    (gethash :id       (orgtrello-data/--get-metadata '("buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil))))
