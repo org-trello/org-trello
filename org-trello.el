@@ -1376,29 +1376,27 @@ Also add some metadata identifier/due-data/point/buffer-name."
   (when (orgtrello-admin/--installation-needed-p)
         (mapc (lambda (key-file) (orgtrello-admin/--download-and-install-file key-file)) '(:bootstrap :jquery))))
 
-(defun orgtrello-admin/html () "Main html page"
-  (let ((project-name "org-trello/proxy-admin")
-        (author-name  "Commiters")
-        (description  "Administration the running queries to trello"))
-    (esxml-to-xml
-     `(html
-       ()
-       ,(orgtrello-admin/head project-name author-name description)
-       ,(orgtrello-admin/body project-name)))))
+(defun orgtrello-admin/--render-html (data) "Render the data in html."
+  (esxml-to-xml data))
+
+(defun orgtrello-admin/html (project-name author-name description) "Main html page"
+  `(html
+    ()
+    ,(orgtrello-admin/head project-name author-name description)
+    ,(orgtrello-admin/body project-name)))
 
 (defun orgtrello-admin/head (project-name author-name description) "Generate html <head>"
-  (esxml-to-xml
-   `(head ()
-          (meta ((charset . "utf-8")))
-          (title () ,project-name)
-          (meta ((name . "viewport")
-                 (content . "width=device-width, initial-scale=1.0")))
-          (meta ((name . "author")
-                 (content . ,author-name)))
-          (meta ((name . "description")
-                 (content . ,description)))
-          (style ()
-                 "
+  `(head ()
+         (meta ((charset . "utf-8")))
+         (title () ,project-name)
+         (meta ((name . "viewport")
+                (content . "width=device-width, initial-scale=1.0")))
+         (meta ((name . "author")
+                (content . ,author-name)))
+         (meta ((name . "description")
+                (content . ,description)))
+         (style ()
+                "
       body {
         padding-top: 20px;
         padding-bottom: 40px;
@@ -1434,64 +1432,62 @@ Also add some metadata identifier/due-data/point/buffer-name."
       .marketing p + h4 {
         margin-top: 28px;
       }")
-          (link ((href . "/static/css/bootstrap.css")
-                 (rel . "stylesheet")))
-          (link ((href . "/static/css/bootstrap-responsive.min.css")
-                 (rel . "stylesheet")))
-          "
+         (link ((href . "/static/css/bootstrap.css")
+                (rel . "stylesheet")))
+         (link ((href . "/static/css/bootstrap-responsive.min.css")
+                (rel . "stylesheet")))
+         "
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
       <script src=\"http://html5shim.googlecode.com/svn/trunk/html5.js\"></script>
     <![endif]-->
-")))
+"))
 
 (defun orgtrello-admin/--main-body () "Build the main body where we will display informations (without all the html boilerplate)."
-  (esxml-to-xml
-   `(div ((class . "row-fluid marketing"))
-         (div ((class . "span6"))
-              (div ((style . "font-size: 2em;margin-right: 10px;margin-bottom: 10px")) "Current action")
-              (span ((id . "current-action"))))
-         (div ((class . "span6"))
-              (div ((style . "margin-bottom:10px"))
-                   (span ((style . "font-size: 2em;margin-right: 10px")) "Next actions")
-                   (span () ,(orgtrello-admin/--input-button-html "deleteEntities('/proxy/admin/entities/delete/');" "Delete all")))
-              (span ((id . "next-actions")))))))
+  `(div ((class . "row-fluid marketing"))
+        (div ((class . "span6"))
+             (div ((style . "font-size: 2em;margin-right: 10px;margin-bottom: 10px")) "Current action")
+             (span ((id . "current-action"))))
+        (div ((class . "span6"))
+             (div ((style . "margin-bottom:10px"))
+                  (span ((style . "font-size: 2em;margin-right: 10px")) "Next actions")
+                  (span () ,(orgtrello-admin/--input-button-html "deleteEntities('/proxy/admin/entities/delete/');" "Delete all")))
+             (span ((id . "next-actions"))))))
 
 (defun orgtrello-admin/body (project-name) "Display the data inside the html body"
-  (esxml-to-xml
-   `(body
-     ()
-     (div ((class . "navbar navbar-inverse navbar-fixed-top"))
-          (div ((class . "navbar-inner"))
-               (div ((class . "container"))
-                    (button ((type . "button")
-                             (class . "btn btn-navbar")
-                             (data-toggle . "collapse")
-                             (data-target . "nav-collapse"))
-                            (span ((class . "icon-bar")))
-                            (span ((class . "icon-bar")))
-                            (span ((class . "icon-bar"))))
-                    (a ((class . "brand")
-                        (href . "#"))
-                       ,project-name)
-                    (div ((class . "nav-collapse collapse"))
-                         (ul ((class . "nav"))
-                             (li ((class . "active"))
-                                 (a ((href . "#"))
-                                    "Home"))
-                             (li ((class . "active"))
-                                 (a ((href . "#about"))
-                                    "About"))
-                             (li ((class . "active"))
-                                 (a ((href . "#contact"))
-                                    "Contact")))))))
-     (div ((class . "container"))
-          (div ((class . "container-narrow"))
-               ,(orgtrello-admin/--main-body)))
-     (script ((src . "/static/js/bootstrap.min.js")) "")
-     (script ((src . "/static/js/jquery.js")) "")
-     (script ()
-             "
+  `(body
+    ()
+    (div ((class . "navbar navbar-inverse navbar-fixed-top"))
+         (div ((class . "navbar-inner"))
+              (div ((class . "container"))
+                   (button ((type . "button")
+                            (class . "btn btn-navbar")
+                            (data-toggle . "collapse")
+                            (data-target . "nav-collapse"))
+                           (span ((class . "icon-bar")))
+                           (span ((class . "icon-bar")))
+                           (span ((class . "icon-bar"))))
+                   (a ((class . "brand")
+                       (href . "#"))
+                      ,project-name)
+                   (div ((class . "nav-collapse collapse"))
+                        (ul ((class . "nav"))
+                            (li ((class . "active"))
+                                (a ((href . "#"))
+                                   "Home"))
+                            (li ((class . "active"))
+                                (a ((href . "#about"))
+                                   "About"))
+                            (li ((class . "active"))
+                                (a ((href . "#contact"))
+                                   "Contact")))))))
+    (div ((class . "container"))
+         (div ((class . "container-narrow"))
+              ,(orgtrello-admin/--main-body)))
+    (script ((src . "/static/js/bootstrap.min.js")) "")
+    (script ((src . "/static/js/jquery.js")) "")
+    (script ()
+            "
 function refresh (url, id) {
     $.ajax({
         url: url
@@ -1511,12 +1507,7 @@ function deleteEntities(url) {
 
 refresh(\"/proxy/admin/entities/next/\", '#next-actions');
 refresh(\"/proxy/admin/entities/current/\", '#current-action');
-"))))
-
-(esxml-to-xml
- `(div ((class . "span6"))
-      (span () (span () (h2 () "Next actions") (span () ,(orgtrello-admin/--input-button-html "deleteEntities('/proxy/admin/entities/delete/');" "x"))))
-      (span ((id . "next-actions")))))
+")))
 
 (defun orgtrello-admin/--content-file (file) "Return the content of a file (absolute name)."
   (with-temp-buffer
@@ -1524,21 +1515,13 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
     (buffer-string)))
 
 (defun orgtrello-admin/--header-table () "Generate headers."
-  (esxml-to-xml `(tr
-                  ()
-                  (td ())
-                  (td () "Action")
-                  (td () "Entity")
-                  (td () "Delete"))))
+  `(tr () (td ()) (td () "Action") (td () "Entity") (td () "Delete")))
 
 (defun orgtrello-admin/--detail-entity (log-level entity-data) "Depending on the debug level, will display either the full entity data or simply its name."
   (if (= log-level *OT/INFO*) (orgtrello-query/--name entity-data) entity-data))
 
 (defun orgtrello-admin/--input-button-html (action value) "Given a javascript action and a value, compute an html input button."
-  (esxml-to-xml
-   `(input ((type . "button")
-            (onclick . ,action)
-            (value . ,value)))))
+  `(input ((type . "button") (onclick . ,action) (value . ,value))))
 
 (defun orgtrello-admin/--delete-action (entity) "Generate the button to delete some action."
   (-if-let (entity-id (orgtrello-query/--id entity))
@@ -1546,39 +1529,39 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
            ""))
 
 (defun orgtrello-admin/--entity (entity icon) "Compute the entity file display rendering."
-  (esxml-to-xml
-   `(tr
-     ()
-     (td () (i ((class . ,icon))))
-     (td () ,(orgtrello-query/--action entity))
-     (td () ,(format "%s" (orgtrello-admin/--detail-entity *orgtrello-log/level* entity)))
-     (td () ,(orgtrello-admin/--delete-action entity)))))
+  `(tr
+    ()
+    (td () (i ((class . ,icon))))
+    (td () ,(orgtrello-query/--action entity))
+    (td () ,(format "%s" (orgtrello-admin/--detail-entity *orgtrello-log/level* entity)))
+    (td () ,(orgtrello-admin/--delete-action entity))))
 
-(defun orgtrello-admin/--entities-as-html (content-files &optional icon-array-running icon-array-next) "Return the list of files to send to trello"
-  (let ((fst-file       (car content-files))
-        (rest-files     (cdr content-files))
+(defun orgtrello-admin/--list-entities-as-html (entities icon-array-nxt) "Given a list of entities, return as html data."
+  (--map (orgtrello-admin/--entity it icon-array-nxt) entities))
+
+(defun orgtrello-admin/--entities-as-html (entities &optional icon-array-running icon-array-next) "Return the list of files to send to trello"
+  (let ((fst-file       (car entities))
+        (rest-files     (cdr entities))
         (icon-array-run (if icon-array-running icon-array-running "icon-arrow-right"))
         (icon-array-nxt (if icon-array-next icon-array-next "icon-arrow-up")))
-    (if content-files
-        (esxml-to-xml
-         `(table ((class . "table table-striped table-bordered table-hover")
-                  (style . "font-size: 0.75em"))
-                 ;; header
-                 ,(orgtrello-admin/--header-table)
-                 ;; next running action
-                 ,(orgtrello-admin/--entity fst-file icon-array-run)
-                 ;; next running actions
-                 ,(loop for entry-file in rest-files
-                        concat
-                        (orgtrello-admin/--entity entry-file icon-array-nxt))))
+    (if entities
+        `(table ((class . "table table-striped table-bordered table-hover")
+                 (style . "font-size: 0.75em"))
+                ;; header
+                ,(orgtrello-admin/--header-table)
+                ;; first next running action
+                ,(orgtrello-admin/--entity fst-file icon-array-run)
+                ;; next running actions
+                ,@(orgtrello-admin/--list-entities-as-html rest-files icon-array-nxt))
         "None")))
 
 (defun orgtrello-proxy/--response-html (data http-con) "A response wrapper."
   (elnode-http-start http-con 201 '("Content-type" . "text/html"))
-  (elnode-http-return http-con data))
+  (elnode-http-return http-con (orgtrello-admin/--render-html data)))
 
 (defun orgtrello-proxy/--elnode-admin (http-con) "A basic display of data"
-  (orgtrello-proxy/--response-html (orgtrello-admin/html) http-con))
+  (-> (orgtrello-admin/html "org-trello/proxy-admin" "Commiters" "Administration the running queries to trello")
+      (orgtrello-proxy/--response-html  http-con)))
 
 (defun compose-fn (funcs) "Composes several functions into one."
   (lexical-let ((intern-funcs funcs))
