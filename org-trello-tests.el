@@ -11,7 +11,7 @@
 
 (expectations
 ;;  (desc "testing orgtrello-hash/make-hash-org")
-  (expect "some name"       (gethash :name      (orgtrello-hash/make-hash-org 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org")))
+  (expect "some name"       (gethash :name       (orgtrello-hash/make-hash-org 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org")))
   (expect "IN PROGRESS"     (gethash :keyword    (orgtrello-hash/make-hash-org 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org")))
   (expect 0                 (gethash :level      (orgtrello-hash/make-hash-org 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org")))
   (expect "some id"         (gethash :id         (orgtrello-hash/make-hash-org 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org")))

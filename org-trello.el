@@ -238,7 +238,7 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
 (defun orgtrello-cbx/--justify-property-current-line (full-line length)
   "Justify the properties to the left so that the line makes a length of length. For this insert whites before the :PROPERTIES: before."
   (let* ((current-data-str (orgtrello-cbx/--checkbox-data full-line))
-        (nb-of-spaces (orgtrello-cbx/--compute-nb-of-spaces-to-justify current-data-str length)))
+         (nb-of-spaces (orgtrello-cbx/--compute-nb-of-spaces-to-justify current-data-str length)))
     (if (< 0 nb-of-spaces)
         (let ((current-properties-str    (format ":PROPERTIES: %s" (orgtrello-cbx/--checkbox-metadata full-line))))
           (format "%s%s%s" current-data-str (orgtrello/--space nb-of-spaces) current-properties-str))
