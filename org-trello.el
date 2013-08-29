@@ -1512,8 +1512,8 @@ function deleteEntity(url) {
     });
 }
 
-refresh(\"/proxy/admin/next-actions/\", '#next-actions');
-refresh(\"/proxy/admin/current-action/\", '#current-action');
+refresh(\"/proxy/admin/actions/next/\", '#next-actions');
+refresh(\"/proxy/admin/actions/current/\", '#current-action');
 "))))
 
 (defun orgtrello-admin/--content-file (file)
@@ -1651,8 +1651,8 @@ refresh(\"/proxy/admin/current-action/\", '#current-action');
 
 (defvar *ORGTRELLO-QUERY-APP-ROUTES*
   '(;; proxy to request trello
-    ("^localhost//proxy/admin/current-action/\\(.*\\)" . orgtrello-proxy/--elnode-current-action)
-    ("^localhost//proxy/admin/next-actions/\\(.*\\)" . orgtrello-proxy/--elnode-next-actions)
+    ("^localhost//proxy/admin/actions/current/\\(.*\\)" . orgtrello-proxy/--elnode-current-action)
+    ("^localhost//proxy/admin/actions/next/\\(.*\\)" . orgtrello-proxy/--elnode-next-actions)
     ("^localhost//proxy/admin/actions/delete/\\(.*\\)" . orgtrello-proxy/--entity-delete)
     ("^localhost//proxy/admin/\\(.*\\)" . orgtrello-proxy/--elnode-admin)
     ;; proxy to request trello
