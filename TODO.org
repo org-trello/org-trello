@@ -623,16 +623,21 @@ CLOSED: [2013-08-28 mer. 02:41]
 - [X] Release notes
 - [X] Release
 
-* TODO 0.1.7 [%]
+* IN-PROGRESS 0.1.7 [10%]
+- [X] webadmin: Add an action button on action to stop it
 - [-] webadmin: Add an action button to stop every running action
-- [-] POC: use a temporary buffer to sync with trello, when done, merge with the user's buffer.
+- [ ] URLencode the data from the query - https://github.com/ardumont/org-trello/issues/46
+- [ ] Videos about org-trello
+  - [ ] elnode
+  - [ ] webadmin
+  - [ ] checkbox
 - [-] Ensure sync-from-trello keep the order of the checklists clean
-- [-] Now that elnode is here, this may be simpler to use a fake trello server (use clojure :D)
+- [-] Filter only the data we use with the trello api
 - [-] Improve the request to the trello api to enforce the position inside trello (we can use the natural order of integer with position to determine such position)
-- [-] Filter out directly with the api the data we do not need to avoid unnecessary network traffic
+- [-] Now that elnode is here, this may be simpler to use a fake trello server (use clojure :D)
 - [-] Update the literate org-trello.org (completely desynchronized since 0.1.2) -> code something to avoid doing manual split
+- [-] POC: use a temporary buffer to sync with trello, when done, merge with the user's buffer.
 * TODO Very Interesting propositions
-- https://github.com/ardumont/org-trello/issues/14 - Using org's native checklist functionality (Now that the proxy is here, it is simply a matter of speaking the right language -> parsing)
 - https://github.com/ardumont/org-trello/issues/33 - Another Disposition about org's buffer
 - https://github.com/ardumont/org-trello/issues/37#issuecomment-23033199 - One command to sync them all
 * Questions

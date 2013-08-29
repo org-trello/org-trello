@@ -818,39 +818,39 @@ DEADLINE: <some-date>
       (orgtrello-cbx/org-delete-property "inexistant")
       (buffer-string))))
 
-(expectations
-  (expect (format "%sorg-trello/3/test.org-123.el" elnode-webserver-docroot) (orgtrello-proxy/--compute-filename-from-entry '((level . 3) (buffername . "test.org") (position . "123")))))
 
+(expectations
+  (expect (format "%sorg-trello/3/test.org-123.el" elnode-webserver-docroot) (orgtrello-proxy/--compute-filename-from-entity '((level . 3) (buffername . "test.org") (position . "123")))))
 
 (expectations
   (expect "<tr><td/><td>Action</td><td>Entity</td><td>Delete</td></tr>" (orgtrello-admin/--header-table)))
 
 (expectations
- (expect "<input type=\"button\" onclick=\"deleteEntity('/proxy/admin/actions/delete/id');\" value=\"x\"/>" (orgtrello-admin/--delete-action '((id . "id"))))
+  (expect "<input type=\"button\" onclick=\"deleteEntity('/proxy/admin/entities/delete/id');\" value=\"x\"/>" (orgtrello-admin/--delete-action '((id . "id"))))
  (expect ""                                          (orgtrello-admin/--delete-action '((name . "name")))))
 
 (expectations
-  (expect "<tr><td><i class=\"icon-play\"/></td><td>test</td><td>name</td><td><input type=\"button\" onclick=\"deleteEntity('/proxy/admin/actions/delete/id');\" value=\"x\"/></td></tr>"      (orgtrello-admin/--entity '((action . "test") (id . "id") (name . "name")) "icon-play"))
-  (expect "<tr><td><i class=\"icon-pause\"/></td><td>delete</td><td>name</td><td><input type=\"button\" onclick=\"deleteEntity('/proxy/admin/actions/delete/id');\" value=\"x\"/></td></tr>"   (orgtrello-admin/--entity '((action . "delete") (id . "id") (name . "name")) "icon-pause"))
-  (expect "<tr><td><i class=\"icon-play\"/></td><td>test</td><td>name 0</td><td><input type=\"button\" onclick=\"deleteEntity('/proxy/admin/actions/delete/id');\" value=\"x\"/></td></tr>"    (orgtrello-admin/--entity '((action . "test") (name . "name 0") (id . "id")) "icon-play"))
-  (expect "<tr><td><i class=\"icon-pause\"/></td><td>delete</td><td>name 1</td><td><input type=\"button\" onclick=\"deleteEntity('/proxy/admin/actions/delete/id');\" value=\"x\"/></td></tr>" (orgtrello-admin/--entity '((action . "delete") (name . "name 1") (id . "id")) "icon-pause")))
+  (expect "<tr><td><i class=\"icon-play\"/></td><td>test</td><td>name</td><td><input type=\"button\" onclick=\"deleteEntity('/proxy/admin/entities/delete/id');\" value=\"x\"/></td></tr>"      (orgtrello-admin/--entity '((action . "test") (id . "id") (name . "name")) "icon-play"))
+  (expect "<tr><td><i class=\"icon-pause\"/></td><td>delete</td><td>name</td><td><input type=\"button\" onclick=\"deleteEntity('/proxy/admin/entities/delete/id');\" value=\"x\"/></td></tr>"   (orgtrello-admin/--entity '((action . "delete") (id . "id") (name . "name")) "icon-pause"))
+  (expect "<tr><td><i class=\"icon-play\"/></td><td>test</td><td>name 0</td><td><input type=\"button\" onclick=\"deleteEntity('/proxy/admin/entities/delete/id');\" value=\"x\"/></td></tr>"    (orgtrello-admin/--entity '((action . "test") (name . "name 0") (id . "id")) "icon-play"))
+  (expect "<tr><td><i class=\"icon-pause\"/></td><td>delete</td><td>name 1</td><td><input type=\"button\" onclick=\"deleteEntity('/proxy/admin/entities/delete/id');\" value=\"x\"/></td></tr>" (orgtrello-admin/--entity '((action . "delete") (name . "name 1") (id . "id")) "icon-pause")))
 
 (expectations
-  (expect "None" (orgtrello-admin/--actions nil))
-  (expect "None" (orgtrello-admin/--actions nil "icon-arrow-right"))
-  (expect "None" (orgtrello-admin/--actions nil "icon-arrow-right" "icon-arrow-left"))
+  (expect "None" (orgtrello-admin/--entities-as-html nil))
+  (expect "None" (orgtrello-admin/--entities-as-html nil "icon-arrow-right"))
+  (expect "None" (orgtrello-admin/--entities-as-html nil "icon-arrow-right" "icon-arrow-left"))
     (expect
-      "<table class=\"table table-striped table-bordered table-hover\" style=\"font-size: 0.75em\"><tr><td/><td>Action</td><td>Entity</td><td>Delete</td></tr><tr><td><i class=\"icon-arrow-right\"/></td><td>create</td><td>name 0</td><td><input type=\"button\" onclick=\"deleteEntity('/proxy/admin/actions/delete/id 0');\" value=\"x\"/></td></tr><tr><td><i class=\"icon-arrow-up\"/></td><td>delete</td><td>name 1</td><td></td></tr></table>"
-    (orgtrello-admin/--actions '(((action . "create") (name . "name 0") (id . "id 0")) ((action . "delete") (name . "name 1")))))
+      "<table class=\"table table-striped table-bordered table-hover\" style=\"font-size: 0.75em\"><tr><td/><td>Action</td><td>Entity</td><td>Delete</td></tr><tr><td><i class=\"icon-arrow-right\"/></td><td>create</td><td>name 0</td><td><input type=\"button\" onclick=\"deleteEntity('/proxy/admin/entities/delete/id 0');\" value=\"x\"/></td></tr><tr><td><i class=\"icon-arrow-up\"/></td><td>delete</td><td>name 1</td><td></td></tr></table>"
+    (orgtrello-admin/--entities-as-html '(((action . "create") (name . "name 0") (id . "id 0")) ((action . "delete") (name . "name 1")))))
   (expect
       "<table class=\"table table-striped table-bordered table-hover\" style=\"font-size: 0.75em\"><tr><td/><td>Action</td><td>Entity</td><td>Delete</td></tr><tr><td><i class=\"icon-arrow-right\"/></td><td>create</td><td>name 0</td><td></td></tr><tr><td><i class=\"icon-arrow-up\"/></td><td>delete</td><td>name 1</td><td></td></tr></table>"
-    (orgtrello-admin/--actions '(((action . "create") (name . "name 0")) ((action . "delete") (name . "name 1"))) "icon-arrow-right"))
+    (orgtrello-admin/--entities-as-html '(((action . "create") (name . "name 0")) ((action . "delete") (name . "name 1"))) "icon-arrow-right"))
   (expect
       "<table class=\"table table-striped table-bordered table-hover\" style=\"font-size: 0.75em\"><tr><td/><td>Action</td><td>Entity</td><td>Delete</td></tr><tr><td><i class=\"icon-arrow-right\"/></td><td>create</td><td>name 0</td><td></td></tr><tr><td><i class=\"icon-arrow-up\"/></td><td>delete</td><td>name 1</td><td></td></tr></table>"
-    (orgtrello-admin/--actions '(((action . "create") (name . "name 0")) ((action . "delete") (name . "name 1"))) nil "icon-arrow-up"))
+    (orgtrello-admin/--entities-as-html '(((action . "create") (name . "name 0")) ((action . "delete") (name . "name 1"))) nil "icon-arrow-up"))
   (expect
       "<table class=\"table table-striped table-bordered table-hover\" style=\"font-size: 0.75em\"><tr><td/><td>Action</td><td>Entity</td><td>Delete</td></tr><tr><td><i class=\"icon-play\"/></td><td>create</td><td>name 0</td><td></td></tr><tr><td><i class=\"icon-pause\"/></td><td>delete</td><td>name 1</td><td></td></tr></table>"
-    (orgtrello-admin/--actions '(((action . "create") (name . "name 0")) ((action . "delete") (name . "name 1"))) "icon-play" "icon-pause")))
+    (orgtrello-admin/--entities-as-html '(((action . "create") (name . "name 0")) ((action . "delete") (name . "name 1"))) "icon-play" "icon-pause")))
 
 (provide 'org-trello-tests)
 ;;; org-trello-tests ends here

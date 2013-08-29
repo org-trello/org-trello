@@ -1336,12 +1336,10 @@ Also add some metadata identifier/due-data/point/buffer-name."
 
 (require 'esxml)
 
-(defun orgtrello-admin/--compute-root-static-files ()
-  "Root files under which css and js files are installed."
+(defun orgtrello-admin/--compute-root-static-files () "Root files under which css and js files are installed."
   (format "%s%s" elnode-webserver-docroot "org-trello/bootstrap"))
 
-(defun orgtrello-admin/--installation-needed-p ()
-  "Determine if the installation is needed."
+(defun orgtrello-admin/--installation-needed-p () "Determine if the installation is needed."
   (let ((dir (orgtrello-admin/--compute-root-static-files)))
     (not (and (file-exists-p dir)
               (< 3 (-> dir
@@ -1354,18 +1352,15 @@ Also add some metadata identifier/due-data/point/buffer-name."
                             (puthash :jquery    `("http://code.jquery.com/jquery-2.0.3.min.js"         "/tmp/jquery.js"     ,(format "%s/js" (orgtrello-admin/--compute-root-static-files))) tmp)
                             tmp))
 
-(defun orgtrello-admin/--unzip-and-install (file dest)
-  "Execute the unarchive command. Dependency on unzip on the system."
+(defun orgtrello-admin/--unzip-and-install (file dest) "Execute the unarchive command. Dependency on unzip on the system."
   (let ((ext (file-name-extension file)))
     (shell-command (format "unzip -o %s -d %s" file dest))))
 
-(defun orgtrello-admin/--install-file (file file-dest)
-  "Install the file from temporary location to the final destination."
+(defun orgtrello-admin/--install-file (file file-dest) "Install the file from temporary location to the final destination."
   (when (file-exists-p file)
         (rename-file file file-dest t)))
 
-(defun orgtrello-admin/--download-and-install-file (key-file)
-  "Download the file represented by the parameter. Also, if the archive downloaded is a zip, unzip it."
+(defun orgtrello-admin/--download-and-install-file (key-file) "Download the file represented by the parameter. Also, if the archive downloaded is a zip, unzip it."
   (let* ((url-tmp-dest (gethash key-file *ORGTRELLO-FILES*))
          (url          (first  url-tmp-dest))
          (tmp-dest     (second url-tmp-dest))
@@ -1377,13 +1372,11 @@ Also add some metadata identifier/due-data/point/buffer-name."
         (orgtrello-admin/--unzip-and-install tmp-dest (file-name-directory final-dest))
         (orgtrello-admin/--install-file tmp-dest final-dest))))
 
-(defun orgtrello-admin/--install-css-js-files-once ()
-  "Install bootstrap and jquery if need be."
+(defun orgtrello-admin/--install-css-js-files-once () "Install bootstrap and jquery if need be."
   (when (orgtrello-admin/--installation-needed-p)
         (mapc (lambda (key-file) (orgtrello-admin/--download-and-install-file key-file)) '(:bootstrap :jquery))))
 
-(defun orgtrello-admin/html ()
-  "Main html page"
+(defun orgtrello-admin/html () "Main html page"
   (let ((project-name "org-trello/proxy-admin")
         (author-name  "Commiters")
         (description  "Administration the running queries to trello"))
@@ -1393,8 +1386,7 @@ Also add some metadata identifier/due-data/point/buffer-name."
        ,(orgtrello-admin/head project-name author-name description)
        ,(orgtrello-admin/body project-name)))))
 
-(defun orgtrello-admin/head (project-name author-name description)
-  "Generate html <head>"
+(defun orgtrello-admin/head (project-name author-name description) "Generate html <head>"
   (esxml-to-xml
    `(head ()
           (meta ((charset . "utf-8")))
@@ -1453,8 +1445,7 @@ Also add some metadata identifier/due-data/point/buffer-name."
     <![endif]-->
 ")))
 
-(defun orgtrello-admin/body (project-name)
-  "Display the data inside the html body"
+(defun orgtrello-admin/body (project-name) "Display the data inside the html body"
   (esxml-to-xml
    `(body
      ()
@@ -1512,18 +1503,16 @@ function deleteEntity(url) {
     });
 }
 
-refresh(\"/proxy/admin/actions/next/\", '#next-actions');
-refresh(\"/proxy/admin/actions/current/\", '#current-action');
+refresh(\"/proxy/admin/entities/next/\", '#next-actions');
+refresh(\"/proxy/admin/entities/current/\", '#current-action');
 "))))
 
-(defun orgtrello-admin/--content-file (file)
-  "Return the content of a file (absolute name)."
+(defun orgtrello-admin/--content-file (file) "Return the content of a file (absolute name)."
   (with-temp-buffer
     (insert-file-contents file)
     (buffer-string)))
 
-(defun orgtrello-admin/--header-table ()
-  "Generate headers."
+(defun orgtrello-admin/--header-table () "Generate headers."
   (esxml-to-xml `(tr
                   ()
                   (td ())
@@ -1531,21 +1520,18 @@ refresh(\"/proxy/admin/actions/current/\", '#current-action');
                   (td () "Entity")
                   (td () "Delete"))))
 
-(defun orgtrello-admin/--detail-entity (log-level entity-data)
-  "Depending on the debug level, will display either the full entity data or simply its name."
+(defun orgtrello-admin/--detail-entity (log-level entity-data) "Depending on the debug level, will display either the full entity data or simply its name."
   (if (= log-level *OT/INFO*) (orgtrello-query/--name entity-data) entity-data))
 
-(defun orgtrello-admin/--delete-action (entity)
-  "Generate the button to delete some action."
+(defun orgtrello-admin/--delete-action (entity) "Generate the button to delete some action."
   (-if-let (entity-id (orgtrello-query/--id entity))
            (esxml-to-xml
             `(input ((type . "button")
-                     (onclick . ,(format "deleteEntity('/proxy/admin/actions/delete/%s');" entity-id))
+                     (onclick . ,(format "deleteEntity('/proxy/admin/entities/delete/%s');" entity-id))
                      (value . "x"))))
            ""))
 
-(defun orgtrello-admin/--entity (entity icon)
-  "Compute the entity file display rendering."
+(defun orgtrello-admin/--entity (entity icon) "Compute the entity file display rendering."
   (esxml-to-xml
    `(tr
      ()
@@ -1554,8 +1540,7 @@ refresh(\"/proxy/admin/actions/current/\", '#current-action');
      (td () ,(format "%s" (orgtrello-admin/--detail-entity *orgtrello-log/level* entity)))
      (td () ,(orgtrello-admin/--delete-action entity)))))
 
-(defun orgtrello-admin/--actions (content-files &optional icon-array-running icon-array-next)
-  "Return the list of files to send to trello"
+(defun orgtrello-admin/--entities-as-html (content-files &optional icon-array-running icon-array-next) "Return the list of files to send to trello"
   (let ((fst-file       (car content-files))
         (rest-files     (cdr content-files))
         (icon-array-run (if icon-array-running icon-array-running "icon-arrow-right"))
@@ -1574,17 +1559,14 @@ refresh(\"/proxy/admin/actions/current/\", '#current-action');
                         (orgtrello-admin/--entity entry-file icon-array-nxt))))
         "None")))
 
-(defun orgtrello-proxy/--response-html (data http-con)
-  "A response wrapper"
+(defun orgtrello-proxy/--response-html (data http-con) "A response wrapper."
   (elnode-http-start http-con 201 '("Content-type" . "text/html"))
   (elnode-http-return http-con data))
 
-(defun orgtrello-proxy/--elnode-admin (http-con)
-  "A basic display of data"
+(defun orgtrello-proxy/--elnode-admin (http-con) "A basic display of data"
   (orgtrello-proxy/--response-html (orgtrello-admin/html) http-con))
 
-(defun compose-fn (funcs)
-  "Composes several functions into one."
+(defun compose-fn (funcs) "Composes several functions into one."
   (lexical-let ((intern-funcs funcs))
     (lambda (arg)
       (if intern-funcs
@@ -1592,8 +1574,7 @@ refresh(\"/proxy/admin/actions/current/\", '#current-action');
                    (funcall (compose-fn (cdr intern-funcs)) arg))
           arg))))
 
-(defun orgtrello-proxy/--list-entities (levels &optional scan-flag)
-  "Compute the actions into list."
+(defun orgtrello-proxy/--list-entities (levels &optional scan-flag) "Compute the actions into list."
   (let* ((list-fns '(orgtrello-proxy/--compute-entity-level-dir))
          (scan-fns (if scan-flag (cons 'orgtrello-proxy/--archived-scanning-dir list-fns) list-fns)) ;; build the list of functions to create the composed function
          (composed-fn (compose-fn scan-fns)))
@@ -1601,23 +1582,20 @@ refresh(\"/proxy/admin/actions/current/\", '#current-action');
      (read (orgtrello-admin/--content-file it))
      (--mapcat (orgtrello-proxy/--list-files (funcall composed-fn it)) levels))))
 
-(defun orgtrello-proxy/--elnode-current-action (http-con)
-  "A basic display of the list of entities to scan"
+(defun orgtrello-proxy/--elnode-current-entity (http-con) "A basic display of the list of entities to scan."
   (-> *ORGTRELLO-LEVELS*
       (orgtrello-proxy/--list-entities 'scan-folder)
       nreverse
-      (orgtrello-admin/--actions "icon-play" "icon-pause")
+      (orgtrello-admin/--entities-as-html "icon-play" "icon-pause")
       (orgtrello-proxy/--response-html http-con)))
 
-(defun orgtrello-proxy/--elnode-next-actions (http-con)
-  "A basic display of the list of entities to scan"
+(defun orgtrello-proxy/--elnode-next-entities (http-con) "A basic display of the list of entities to scan."
   (-> *ORGTRELLO-LEVELS*
        orgtrello-proxy/--list-entities
-       orgtrello-admin/--actions
+       orgtrello-admin/--entities-as-html
        (orgtrello-proxy/--response-html http-con)))
 
-(defun orgtrello-proxy/--elnode-static-file (http-con)
-  "Serve static files if they exist. Throw 404 if it does not exists. Also, install bootstrap and jquery the first time round."
+(defun orgtrello-proxy/--elnode-static-file (http-con) "Serve static files if they exist. Throw 404 if it does not exists. Also, install bootstrap and jquery the first time round."
   ;; the first request will ask for installing bootstrap and jquery
   (orgtrello-admin/--install-css-js-files-once)
   (let ((full-file (format "%s/%s/%s" (orgtrello-admin/--compute-root-static-files) (elnode-http-mapping http-con 1) (elnode-http-mapping http-con 2))))
@@ -1625,25 +1603,25 @@ refresh(\"/proxy/admin/actions/current/\", '#current-action');
         (elnode-send-file http-con full-file)
         (elnode-send-404 http-con (format "Resource file '%s' not found!" full-file)))))
 
-(defun orgtrello-proxy/--compute-filename-from-entry (entity) "Compute the filename of a file given an entity."
-  (let ((level      (orgtrello-query/--level (trace :entity entity)))
+(defun orgtrello-proxy/--compute-filename-from-entity (entity) "Compute the filename of a file given an entity."
+  (let ((level      (orgtrello-query/--level entity))
         (buffername (orgtrello-query/--buffername entity))
         (position   (orgtrello-query/--position entity)))
     (format "%s%s-%s.el" (orgtrello-proxy/--compute-entity-level-dir level) buffername position)))
 
-(defun orgtrello-proxy/--delete-file-with-id (id) "Remove the file which match the id id."
+(defun orgtrello-proxy/--delete-entity-with-id (id) "Remove the file which match the id id."
   (message "Requesting deletion of id %s" id)
-  (-if-let (entry-to-delete (->> *ORGTRELLO-LEVELS*
-                                 orgtrello-proxy/--list-entities
-                                 (--filter (string= id (orgtrello-query/--id it)))
-                                 first))
-           (-> entry-to-delete
-               orgtrello-proxy/--compute-filename-from-entry
+  (-if-let (entity-to-delete (->> *ORGTRELLO-LEVELS*
+                                  orgtrello-proxy/--list-entities
+                                  (--filter (string= id (orgtrello-query/--id it)))
+                                  first))
+           (-> entity-to-delete
+               orgtrello-proxy/--compute-filename-from-entity
                -trace
                orgtrello-proxy/--remove-file)))
 
-(defun orgtrello-proxy/--entity-delete (http-con) "Deal with actions to do on 'action' (entities)."
-  (-when-let (id (elnode-http-mapping http-con 1)) (orgtrello-proxy/--delete-file-with-id id)))
+(defun orgtrello-proxy/--elnode-delete-entity (http-con) "Deal with actions to do on 'action' (entities)."
+  (-when-let (id (elnode-http-mapping http-con 1)) (orgtrello-proxy/--delete-entity-with-id id)))
 
 
 
@@ -1651,9 +1629,9 @@ refresh(\"/proxy/admin/actions/current/\", '#current-action');
 
 (defvar *ORGTRELLO-QUERY-APP-ROUTES*
   '(;; proxy to request trello
-    ("^localhost//proxy/admin/actions/current/\\(.*\\)" . orgtrello-proxy/--elnode-current-action)
-    ("^localhost//proxy/admin/actions/next/\\(.*\\)" . orgtrello-proxy/--elnode-next-actions)
-    ("^localhost//proxy/admin/actions/delete/\\(.*\\)" . orgtrello-proxy/--entity-delete)
+    ("^localhost//proxy/admin/entities/current/\\(.*\\)" . orgtrello-proxy/--elnode-current-entity)
+    ("^localhost//proxy/admin/entities/next/\\(.*\\)" . orgtrello-proxy/--elnode-next-entities)
+    ("^localhost//proxy/admin/entities/delete/\\(.*\\)" . orgtrello-proxy/--elnode-delete-entity)
     ("^localhost//proxy/admin/\\(.*\\)" . orgtrello-proxy/--elnode-admin)
     ;; proxy to request trello
     ("^localhost//proxy/trello/\\(.*\\)" . orgtrello-proxy/--elnode-proxy)
