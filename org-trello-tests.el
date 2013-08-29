@@ -403,32 +403,6 @@
   (expect '(3 5 7) (--map (funcall (compose-fn '((lambda (it) (+ 1 it)) (lambda (it) (* 2 it)))) it) '(1 2 3))))
 
 (expectations
-  (expect "<tr><td/><td>Action</td><td>Entity</td></tr>" (orgtrello-admin/--header-table)))
-
-(expectations
-  (expect "<tr><td><i class=\"icon-play\"/></td><td>test</td><td>nil</td></tr>" (orgtrello-admin/--entity '((action . "test")) "icon-play"))
-  (expect "<tr><td><i class=\"icon-pause\"/></td><td>delete</td><td>nil</td></tr>" (orgtrello-admin/--entity '((action . "delete")) "icon-pause"))
-  (expect "<tr><td><i class=\"icon-play\"/></td><td>test</td><td>name 0</td></tr>" (orgtrello-admin/--entity '((action . "test") (name . "name 0")) "icon-play"))
-  (expect "<tr><td><i class=\"icon-pause\"/></td><td>delete</td><td>name 1</td></tr>" (orgtrello-admin/--entity '((action . "delete") (name . "name 1")) "icon-pause")))
-
-(expectations
-  (expect "None" (orgtrello-admin/--actions nil))
-  (expect "None" (orgtrello-admin/--actions nil "icon-arrow-right"))
-  (expect "None" (orgtrello-admin/--actions nil "icon-arrow-right" "icon-arrow-left"))
-    (expect
-      "<table class=\"table table-striped table-bordered table-hover\" style=\"font-size: 0.75em\"><tr><td/><td>Action</td><td>Entity</td></tr><tr><td><i class=\"icon-arrow-right\"/></td><td>create</td><td>name 0</td></tr><tr><td><i class=\"icon-arrow-up\"/></td><td>delete</td><td>name 1</td></tr></table>"
-    (orgtrello-admin/--actions '(((action . "create") (name . "name 0")) ((action . "delete") (name . "name 1")))))
-  (expect
-      "<table class=\"table table-striped table-bordered table-hover\" style=\"font-size: 0.75em\"><tr><td/><td>Action</td><td>Entity</td></tr><tr><td><i class=\"icon-arrow-right\"/></td><td>create</td><td>name 0</td></tr><tr><td><i class=\"icon-arrow-up\"/></td><td>delete</td><td>name 1</td></tr></table>"
-    (orgtrello-admin/--actions '(((action . "create") (name . "name 0")) ((action . "delete") (name . "name 1"))) "icon-arrow-right"))
-  (expect
-      "<table class=\"table table-striped table-bordered table-hover\" style=\"font-size: 0.75em\"><tr><td/><td>Action</td><td>Entity</td></tr><tr><td><i class=\"icon-arrow-right\"/></td><td>create</td><td>name 0</td></tr><tr><td><i class=\"icon-arrow-up\"/></td><td>delete</td><td>name 1</td></tr></table>"
-    (orgtrello-admin/--actions '(((action . "create") (name . "name 0")) ((action . "delete") (name . "name 1"))) nil "icon-arrow-up"))
-  (expect
-      "<table class=\"table table-striped table-bordered table-hover\" style=\"font-size: 0.75em\"><tr><td/><td>Action</td><td>Entity</td></tr><tr><td><i class=\"icon-play\"/></td><td>create</td><td>name 0</td></tr><tr><td><i class=\"icon-pause\"/></td><td>delete</td><td>name 1</td></tr></table>"
-    (orgtrello-admin/--actions '(((action . "create") (name . "name 0")) ((action . "delete") (name . "name 1"))) "icon-play" "icon-pause")))
-
-(expectations
   (expect "entity name"             (orgtrello-admin/--detail-entity 3 '((name . "entity name"))))
   (expect '((name . "entity name")) (orgtrello-admin/--detail-entity 5 '((name . "entity name")))))
 
@@ -843,6 +817,40 @@ DEADLINE: <some-date>
       (forward-line -1)
       (orgtrello-cbx/org-delete-property "inexistant")
       (buffer-string))))
+
+(expectations
+  (expect (format "%sorg-trello/3/test.org-123.el" elnode-webserver-docroot) (orgtrello-proxy/--compute-filename-from-entry '((level . 3) (buffername . "test.org") (position . "123")))))
+
+
+(expectations
+  (expect "<tr><td/><td>Action</td><td>Entity</td><td>Delete</td></tr>" (orgtrello-admin/--header-table)))
+
+(expectations
+ (expect "<input type=\"button\" onclick=\"deleteEntity('/proxy/admin/actions/delete/id');\" value=\"x\"/>" (orgtrello-admin/--delete-action '((id . "id"))))
+ (expect ""                                          (orgtrello-admin/--delete-action '((name . "name")))))
+
+(expectations
+  (expect "<tr><td><i class=\"icon-play\"/></td><td>test</td><td>name</td><td><input type=\"button\" onclick=\"deleteEntity('/proxy/admin/actions/delete/id');\" value=\"x\"/></td></tr>"      (orgtrello-admin/--entity '((action . "test") (id . "id") (name . "name")) "icon-play"))
+  (expect "<tr><td><i class=\"icon-pause\"/></td><td>delete</td><td>name</td><td><input type=\"button\" onclick=\"deleteEntity('/proxy/admin/actions/delete/id');\" value=\"x\"/></td></tr>"   (orgtrello-admin/--entity '((action . "delete") (id . "id") (name . "name")) "icon-pause"))
+  (expect "<tr><td><i class=\"icon-play\"/></td><td>test</td><td>name 0</td><td><input type=\"button\" onclick=\"deleteEntity('/proxy/admin/actions/delete/id');\" value=\"x\"/></td></tr>"    (orgtrello-admin/--entity '((action . "test") (name . "name 0") (id . "id")) "icon-play"))
+  (expect "<tr><td><i class=\"icon-pause\"/></td><td>delete</td><td>name 1</td><td><input type=\"button\" onclick=\"deleteEntity('/proxy/admin/actions/delete/id');\" value=\"x\"/></td></tr>" (orgtrello-admin/--entity '((action . "delete") (name . "name 1") (id . "id")) "icon-pause")))
+
+(expectations
+  (expect "None" (orgtrello-admin/--actions nil))
+  (expect "None" (orgtrello-admin/--actions nil "icon-arrow-right"))
+  (expect "None" (orgtrello-admin/--actions nil "icon-arrow-right" "icon-arrow-left"))
+    (expect
+      "<table class=\"table table-striped table-bordered table-hover\" style=\"font-size: 0.75em\"><tr><td/><td>Action</td><td>Entity</td><td>Delete</td></tr><tr><td><i class=\"icon-arrow-right\"/></td><td>create</td><td>name 0</td><td><input type=\"button\" onclick=\"deleteEntity('/proxy/admin/actions/delete/id 0');\" value=\"x\"/></td></tr><tr><td><i class=\"icon-arrow-up\"/></td><td>delete</td><td>name 1</td><td></td></tr></table>"
+    (orgtrello-admin/--actions '(((action . "create") (name . "name 0") (id . "id 0")) ((action . "delete") (name . "name 1")))))
+  (expect
+      "<table class=\"table table-striped table-bordered table-hover\" style=\"font-size: 0.75em\"><tr><td/><td>Action</td><td>Entity</td><td>Delete</td></tr><tr><td><i class=\"icon-arrow-right\"/></td><td>create</td><td>name 0</td><td></td></tr><tr><td><i class=\"icon-arrow-up\"/></td><td>delete</td><td>name 1</td><td></td></tr></table>"
+    (orgtrello-admin/--actions '(((action . "create") (name . "name 0")) ((action . "delete") (name . "name 1"))) "icon-arrow-right"))
+  (expect
+      "<table class=\"table table-striped table-bordered table-hover\" style=\"font-size: 0.75em\"><tr><td/><td>Action</td><td>Entity</td><td>Delete</td></tr><tr><td><i class=\"icon-arrow-right\"/></td><td>create</td><td>name 0</td><td></td></tr><tr><td><i class=\"icon-arrow-up\"/></td><td>delete</td><td>name 1</td><td></td></tr></table>"
+    (orgtrello-admin/--actions '(((action . "create") (name . "name 0")) ((action . "delete") (name . "name 1"))) nil "icon-arrow-up"))
+  (expect
+      "<table class=\"table table-striped table-bordered table-hover\" style=\"font-size: 0.75em\"><tr><td/><td>Action</td><td>Entity</td><td>Delete</td></tr><tr><td><i class=\"icon-play\"/></td><td>create</td><td>name 0</td><td></td></tr><tr><td><i class=\"icon-pause\"/></td><td>delete</td><td>name 1</td><td></td></tr></table>"
+    (orgtrello-admin/--actions '(((action . "create") (name . "name 0")) ((action . "delete") (name . "name 1"))) "icon-play" "icon-pause")))
 
 (provide 'org-trello-tests)
 ;;; org-trello-tests ends here
