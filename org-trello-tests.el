@@ -1149,5 +1149,15 @@ DEADLINE: <some-date>
   (expect "/cards/"                                                             (gethash :uri    (orgtrello-api/add-card "card-name" "list-id" "due-date")))
   (expect '(("due" . "due-date") ("name" . "card-name") ("idList" . "list-id")) (gethash :params (orgtrello-api/add-card "card-name" "list-id" "due-date"))))
 
+(expectations
+  (expect 'orgtrello/--card      (gethash *CARD-LEVEL* *MAP-DISPATCH-CREATE-UPDATE*))
+  (expect 'orgtrello/--checklist (gethash *CHECKLIST-LEVEL* *MAP-DISPATCH-CREATE-UPDATE*))
+  (expect 'orgtrello/--item      (gethash *ITEM-LEVEL* *MAP-DISPATCH-CREATE-UPDATE*)))
+
+(expectations
+  (expect 'orgtrello/--card-delete      (gethash *CARD-LEVEL* *MAP-DISPATCH-DELETE*))
+  (expect 'orgtrello/--checklist-delete (gethash *CHECKLIST-LEVEL* *MAP-DISPATCH-DELETE*))
+  (expect 'orgtrello/--item-delete      (gethash *ITEM-LEVEL* *MAP-DISPATCH-DELETE*)))
+
 (provide 'org-trello-tests)
 ;;; org-trello-tests ends here
