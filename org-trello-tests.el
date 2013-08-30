@@ -1159,5 +1159,10 @@ DEADLINE: <some-date>
   (expect 'orgtrello/--checklist-delete (gethash *CHECKLIST-LEVEL* *MAP-DISPATCH-DELETE*))
   (expect 'orgtrello/--item-delete      (gethash *ITEM-LEVEL* *MAP-DISPATCH-DELETE*)))
 
+(expectations
+ (expect (format "%sorg-trello/1/" elnode-webserver-docroot) (orgtrello-proxy/--compute-entity-level-dir *CARD-LEVEL*))
+ (expect (format "%sorg-trello/2/" elnode-webserver-docroot) (orgtrello-proxy/--compute-entity-level-dir *CHECKLIST-LEVEL*))
+ (expect (format "%sorg-trello/3/" elnode-webserver-docroot) (orgtrello-proxy/--compute-entity-level-dir *ITEM-LEVEL*)))
+
 (provide 'org-trello-tests)
 ;;; org-trello-tests ends here

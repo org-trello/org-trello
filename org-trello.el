@@ -1041,18 +1041,18 @@ This is a list with the following elements:
 (defun orgtrello-proxy/--level-inf-done-p (level) "Ensure the actions of the lower level is done (except for level 1 which has no deps)!"
   (cond ((= *CARD-LEVEL*      level) t)
         ((= *CHECKLIST-LEVEL* level) (orgtrello-proxy/--level-done-p *CARD-LEVEL*))
-        ((= *ITEM-LEVEL*      level) (and (orgtrello-proxy/--level-done-p *CHECKLIST-LEVEL*) (orgtrello-proxy/--level-done-p *ITEM-LEVEL*)))))
+        ((= *ITEM-LEVEL*      level) (and (orgtrello-proxy/--level-done-p *CARD-LEVEL*) (orgtrello-proxy/--level-done-p *CHECKLIST-LEVEL*)))))
 
 (defun orgtrello-proxy/--deal-with-level (level directory)"Given a level, retrieve one file (which represents an entity) for this level and sync it, then remove such file. Then recall the function recursively."
- (if (orgtrello-proxy/--level-inf-done-p level)
+  (if (orgtrello-proxy/--level-inf-done-p level)
      (orgtrello-proxy/--deal-with-directory-action level directory)
      (throw 'org-trello-timer-go-to-sleep t)))
 
 (defun orgtrello-proxy/--deal-with-archived-files (level)"Given a level, retrieve one file (which represents an entity) for this level and sync it, then remove such file. Then recall the function recursively."
- (mapc (lambda (file) (rename-file file (format "../%s" (file-name-nondirectory file)) t)) (-> level
-                                                                                               orgtrello-proxy/--compute-entity-level-dir
-                                                                                               orgtrello-proxy/--archived-scanning-dir
-                                                                                               orgtrello-proxy/--list-files)))
+  (mapc (lambda (file) (rename-file file (format "../%s" (file-name-nondirectory file)) t)) (-> level
+                                                                                                orgtrello-proxy/--compute-entity-level-dir
+                                                                                                orgtrello-proxy/--archived-scanning-dir
+                                                                                                orgtrello-proxy/--list-files)))
 
 (defun orgtrello-proxy/--consumer-entity-files-hierarchically-and-do () "A handler to extract the entity informations from files (in order card, checklist, items)." ;;(debug)
   ;; now let's deal with the entities sync in order with level

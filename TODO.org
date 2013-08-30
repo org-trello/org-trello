@@ -623,7 +623,7 @@ CLOSED: [2013-08-28 mer. 02:41]
 - [X] Release notes
 - [X] Release
 
-* IN-PROGRESS 0.1.7 [41%]
+* IN-PROGRESS 0.1.7 [85%]
 - [X] webadmin: Add an action button on action to stop it
 - [X] webadmin: Add an action button to stop every running actions on entities
 - [X] Improve the justify policy (trim the content before computing the justifying)
@@ -633,11 +633,14 @@ CLOSED: [2013-08-28 mer. 02:41]
   - [X] Simplification of cond statement
   - [X] Adding some missing tests
   - [X] Simplifying some code function (removing let when not needed)
+- [X] Check the scan problem with level 3 (must have been introduced with the refactoring from number to variable level)
+- [ ] Improve map-checkbox
+* TODO 0.1.8 [%]
+- [-] Ensure sync-from-trello keep the order of the checklists clean
 - [ ] Videos about org-trello
   - [ ] elnode
   - [ ] webadmin
   - [ ] checkbox
-- [-] Ensure sync-from-trello keep the order of the checklists clean
 - [-] Filter only the data we use with the trello api
 - [-] Improve the request to the trello api to enforce the position inside trello (we can use the natural order of integer with position to determine such position)
 - [-] Now that elnode is here, this may be simpler to use a fake trello server (use clojure :D)
