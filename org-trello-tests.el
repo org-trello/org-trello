@@ -1111,5 +1111,11 @@ DEADLINE: <some-date>
         json-encode
         (orgtrello-proxy/--unhexify-data t))))
 
+(expectations
+  (expect 'orgtrello-query/--get         (orgtrello-query/--dispatch-http-query "GET"))
+  (expect 'orgtrello-query/--post-or-put (orgtrello-query/--dispatch-http-query "POST"))
+  (expect 'orgtrello-query/--post-or-put (orgtrello-query/--dispatch-http-query "PUT"))
+  (expect 'orgtrello-query/--delete      (orgtrello-query/--dispatch-http-query "DELETE")))
+
 (provide 'org-trello-tests)
 ;;; org-trello-tests ends here
