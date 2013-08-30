@@ -126,8 +126,7 @@ Levels:
 5 - log trace    (*OT/TRACE*)
 To change such level, add this to your init.el file: (setq *orgtrello-log/level* *OT/TRACE*)")
 
-(defun orgtrello-log/msg (level &rest args)
-  "Log message."
+(defun orgtrello-log/msg (level &rest args) "Log message."
   (when (<= level *orgtrello-log/level*)
     (apply 'message args)))
 
@@ -137,8 +136,7 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
 
 ;; #################### orgtrello-hash
 
-(defun orgtrello-hash/make-hash-org (level keyword name id due position buffer-name)
-  "Utility function to ease the creation of the orgtrello-metadata"
+(defun orgtrello-hash/make-hash-org (level keyword name id due position buffer-name) "Utility function to ease the creation of the orgtrello-metadata"
   (let ((h (make-hash-table :test 'equal)))
     (puthash :buffername buffer-name h)
     (puthash :position   position    h)
@@ -149,27 +147,22 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
     (puthash :due        due         h)
     h))
 
-(defun orgtrello-hash/make-hash (method uri &optional params)
-  "Utility function to ease the creation of the map - wait, where are my clojure data again!?"
+(defun orgtrello-hash/make-hash (method uri &optional params) "Utility function to ease the creation of the map - wait, where are my clojure data again!?"
   (let ((h (make-hash-table :test 'equal)))
     (puthash :method method h)
     (puthash :uri    uri    h)
     (if params (puthash :params params h))
     h))
 
-(defun orgtrello-hash/make-properties (properties)
-  "Given a list of key value pair, return a hash table."
+(defun orgtrello-hash/make-properties (properties) "Given a list of key value pair, return a hash table."
   (cl-reduce
    (lambda (map list-key-value)
-     (let ((key   (car list-key-value))
-           (value (cdr list-key-value)))
-       (puthash key value map)
-       map))
+     (puthash (car list-key-value) (cdr list-key-value) map)
+     map)
    properties
    :initial-value (make-hash-table :test 'equal)))
 
-(defun orgtrello-hash/key (s)
-  "Given a string, compute its key format."
+(defun orgtrello-hash/key (s) "Given a string, compute its key format."
   (format ":%s:" s))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-hash loaded!")
@@ -185,8 +178,7 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
   (json-encode-hash-table (orgtrello-hash/make-properties alist)))
 
 (defun orgtrello-cbx/--from-properties (string) "Deserialize from json to list."
-  (when string
-        (json-read-from-string string)))
+  (when string (json-read-from-string string)))
 
 (defun orgtrello-cbx/--checkbox-split (s) "Split the checkbox into the checkbox data and the checkbox metadata."
   (s-split ":PROPERTIES:" s))
@@ -229,10 +221,9 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
 
 (defun orgtrello-cbx/--justify-property-current-line (full-line length) "Justify the properties to the left so that the line makes a length of length. For this insert whites before the :PROPERTIES: before."
   (let* ((current-data-str (orgtrello-cbx/--checkbox-data full-line))
-         (nb-of-spaces (orgtrello-cbx/--compute-nb-of-spaces-to-justify current-data-str length)))
+         (nb-of-spaces     (orgtrello-cbx/--compute-nb-of-spaces-to-justify current-data-str length)))
     (if (< 0 nb-of-spaces)
-        (let ((current-properties-str (format ":PROPERTIES: %s" (orgtrello-cbx/--checkbox-metadata full-line))))
-          (format "%s%s%s" current-data-str (orgtrello/--space nb-of-spaces) current-properties-str))
+        (format "%s%s%s" current-data-str (orgtrello/--space nb-of-spaces) (format ":PROPERTIES: %s" (orgtrello-cbx/--checkbox-metadata full-line)))
         full-line)))
 
 (defun orgtrello-cbx/--update-properties-and-justify (checkbox-string properties) "Given the current checkbox-string and the new properties, update the properties in the current entry and justify."
@@ -242,8 +233,7 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
 (defun orgtrello-cbx/--write-properties-at-point (pt properties) "Given the new properties, update the current entry."
   (save-excursion
     (goto-char pt)
-    (let* ((current-checkbox-str (orgtrello-cbx/--read-checkbox!))
-           (updated-checkbox-str (orgtrello-cbx/--update-properties-and-justify current-checkbox-str properties)))
+    (let ((updated-checkbox-str (orgtrello-cbx/--update-properties-and-justify (orgtrello-cbx/--read-checkbox!) properties)))
       (beginning-of-line)
       (kill-line)
       (insert updated-checkbox-str)
@@ -325,11 +315,8 @@ To ease the computation, we consider level 4 if no - to start with, and to avoid
 (defun orgtrello-cbx/--metadata-from-checklist (full-checklist) "Given a checklist string, extract the list of metadata"
   (let* ((oc/--checklist-data   (orgtrello-cbx/--checkbox-data full-checklist))
          (oc/--meta             (orgtrello-cbx/--org-split-data oc/--checklist-data))
-         (oc/--level            (orgtrello-cbx/--level oc/--meta))
-         (oc/--status-retrieved (orgtrello-cbx/--retrieve-status oc/--meta))
-         (oc/--status           (orgtrello-cbx/--status oc/--status-retrieved))
-         (oc/--name             (orgtrello-cbx/--name oc/--checklist-data oc/--status-retrieved)))
-      (list oc/--level nil oc/--status nil oc/--name nil)))
+         (oc/--status-retrieved (orgtrello-cbx/--retrieve-status oc/--meta)))
+      (list (orgtrello-cbx/--level oc/--meta) nil (orgtrello-cbx/--status oc/--status-retrieved) nil (orgtrello-cbx/--name oc/--checklist-data oc/--status-retrieved) nil)))
 
 (defun orgtrello-cbx/org-checkbox-metadata ()
   "Extract the metadata about the checklist - this is the symmetrical as org-heading-components but for the checklist.
@@ -405,14 +392,9 @@ This is a list with the following elements:
 (defun orgtrello-data/--convert-orgmode-date-to-trello-date (orgmode-date) "Convert the org-mode deadline into a time adapted for trello."
   (if (and orgmode-date (not (string-match-p "T*Z" orgmode-date)))
       (cl-destructuring-bind (sec min hour day mon year dow dst tz)
-                             (--map (if it
-                                        (if (< it 10)
-                                            (concat "0" (int-to-string it))
-                                          (int-to-string it)))
+                             (--map (if it (if (< it 10) (concat "0" (int-to-string it)) (int-to-string it)))
                                     (parse-time-string orgmode-date))
-                             (let* ((year-mon-day (concat year "-" mon "-" day "T"))
-                                    (hour-min-sec (if hour (concat hour ":" min ":" sec) "00:00:00")))
-                               (concat year-mon-day hour-min-sec ".000Z")))
+        (concat (concat year "-" mon "-" day "T") (if hour (concat hour ":" min ":" sec) "00:00:00") ".000Z"))
       orgmode-date))
 
 (defun orgtrello-data/org-entity-metadata () "Compute the metadata the org-mode way."
@@ -435,17 +417,12 @@ This is a list with the following elements:
   (funcall (if (orgtrello-cbx/checkbox-p) 'orgtrello-cbx/org-get-property 'org-entry-get) point key))
 
 (defun orgtrello-data/metadata () "Compute the metadata for a given org entry. Also add some metadata identifier/due-data/point/buffer-name/etc..."
-  (let* ((orgtrello-data/metadata--point       (point))
-         (orgtrello-data/metadata--metadata    (orgtrello-data/--extract-metadata))
-         (orgtrello-data/metadata--id          (orgtrello-data/extract-identifier orgtrello-data/metadata--point))
-         (orgtrello-data/metadata--due         (orgtrello-data/--convert-orgmode-date-to-trello-date
-                                                (orgtrello-action/org-entry-get orgtrello-data/metadata--point "DEADLINE")))
-         (orgtrello-data/metadata--buffer-name (buffer-name)))
-    (->> orgtrello-data/metadata--metadata
-         (cons orgtrello-data/metadata--due)
-         (cons orgtrello-data/metadata--id)
+  (let ((orgtrello-data/metadata--point  (point)))
+    (->> (orgtrello-data/--extract-metadata)
+         (cons (orgtrello-data/--convert-orgmode-date-to-trello-date (orgtrello-action/org-entry-get orgtrello-data/metadata--point "DEADLINE")))
+         (cons (orgtrello-data/extract-identifier orgtrello-data/metadata--point))
          (cons orgtrello-data/metadata--point)
-         (cons orgtrello-data/metadata--buffer-name)
+         (cons (buffer-name))
          orgtrello-data/--get-metadata)))
 
 (defun orgtrello-action/org-up-parent () "A function to get back to the current entry's parent"
@@ -465,7 +442,7 @@ This is a list with the following elements:
 (defun orgtrello-data/entry-get-full-metadata () "Compute the metadata needed for one entry into a map with keys :current, :parent, :grandparent.
    Returns nil if the level is superior to 4."
   (let* ((current (orgtrello-data/metadata))
-         (level   (gethash :level current)))
+         (level   (orgtrello/--level current)))
     (if (< level 4)
         (let* ((parent      (orgtrello-data/--parent-metadata))
                (grandparent (orgtrello-data/--grandparent-metadata))
@@ -495,12 +472,18 @@ This is a list with the following elements:
 
 ;; #################### orgtrello-api
 
+(defun orgtrello-api/--deal-with-optional-value (optional-entry value entries) "Add the optional value depending on the entry. Return entries updated with value if entry, entries untouched otherwise."
+  (if optional-entry (cons value entries) entries))
+
+(defun orgtrello-api/--deal-with-optional-values (optional-entries-values entries) "Add the optional entry/value depending on their entry. Return entries updated with value if entry, entries untouched otherwise."
+  (cl-reduce
+   (lambda (l entry-value)
+     (orgtrello-api/--deal-with-optional-value (car entry-value) (cdr entry-value) l))
+   optional-entries-values
+   :initial-value entries))
+
 (defun orgtrello-api/add-board (name &optional description) "Create a board."
-  (let* ((payload (if description
-                      `(("name" . ,name)
-                        ("desc" . ,description))
-                    `(("name" . ,name)))))
-    (orgtrello-hash/make-hash "POST" "/boards" payload)))
+  (orgtrello-hash/make-hash "POST" "/boards" (orgtrello-api/--deal-with-optional-value description `("desc" . ,description) `(("name" . ,name)))))
 
 (defun orgtrello-api/get-boards () "Retrieve the boards of the current user."
   (orgtrello-hash/make-hash "GET" "/members/me/boards"))
@@ -530,28 +513,20 @@ This is a list with the following elements:
   (orgtrello-hash/make-hash "POST" "/lists/" `(("name" . ,name) ("idBoard" . ,idBoard))))
 
 (defun orgtrello-api/add-card (name idList &optional due) "Add a card to a board"
-  (let* ((orgtrello-api/add-card--default-params `(("name" . ,name) ("idList" . ,idList)))
-         (orgtrello-api/add-card--params (if due (cons `("due" . ,due) orgtrello-api/add-card--default-params) orgtrello-api/add-card--default-params)))
-    (orgtrello-hash/make-hash "POST" "/cards/" orgtrello-api/add-card--params)))
+  (orgtrello-hash/make-hash "POST" "/cards/" (orgtrello-api/--deal-with-optional-value due `("due" . ,due) `(("name" . ,name) ("idList" . ,idList)))))
 
 (defun orgtrello-api/get-cards-from-list (list-id) "List all the cards"
   (orgtrello-hash/make-hash "GET" (format "/lists/%s/cards" list-id)))
 
 (defun orgtrello-api/move-card (card-id idList &optional name due) "Move a card to another list"
-  (let* ((orgtrello-api/move-card--default-params `(("idList" . ,idList)))
-         (orgtrello-api/move-card--params-name (if name (cons `("name" . ,name) orgtrello-api/move-card--default-params) orgtrello-api/move-card--default-params))
-         (orgtrello-api/move-card--params-due  (if due (cons `("due" . ,due) orgtrello-api/move-card--params-name) orgtrello-api/move-card--params-name)))
-    (orgtrello-hash/make-hash "PUT" (format "/cards/%s" card-id) orgtrello-api/move-card--params-due)))
+  (->> (orgtrello-api/--deal-with-optional-values `((,name . ("name" . ,name)) (,due . ("due" . ,due))) `(("idList" . ,idList)))
+       (orgtrello-hash/make-hash "PUT" (format "/cards/%s" card-id))))
 
 (defun orgtrello-api/add-checklist (card-id name) "Add a checklist to a card"
-  (orgtrello-hash/make-hash "POST"
-             (format "/cards/%s/checklists" card-id)
-             `(("name" . ,name))))
+  (orgtrello-hash/make-hash "POST" (format "/cards/%s/checklists" card-id) `(("name" . ,name))))
 
 (defun orgtrello-api/update-checklist (checklist-id name) "Update the checklist's name"
-  (orgtrello-hash/make-hash "PUT"
-             (format "/checklists/%s" checklist-id)
-             `(("name" . ,name))))
+  (orgtrello-hash/make-hash "PUT" (format "/checklists/%s" checklist-id) `(("name" . ,name))))
 
 (defun orgtrello-api/get-checklists (card-id) "List the checklists of a card"
   (orgtrello-hash/make-hash "GET" (format "/cards/%s/checklists" card-id)))
@@ -563,22 +538,15 @@ This is a list with the following elements:
   (orgtrello-hash/make-hash "DELETE" (format "/checklists/%s" checklist-id)))
 
 (defun orgtrello-api/add-items (checklist-id name &optional checked) "Add todo items (trello items) to a checklist with id 'id'"
-  (let* ((payload (if checked
-                      `(("name"  . ,name) ("checked" . ,checked))
-                    `(("name" . ,name)))))
-    (orgtrello-hash/make-hash "POST" (format "/checklists/%s/checkItems" checklist-id) payload)))
+  (->> (orgtrello-api/--deal-with-optional-value checked `("checked" . ,checked) `(("name" . ,name)))
+       (orgtrello-hash/make-hash "POST" (format "/checklists/%s/checkItems" checklist-id) )))
 
 (defun orgtrello-api/update-item (card-id checklist-id item-id name &optional state) "Update a item"
-  (let* ((payload (if state
-                      `(("name"  . ,name) ("state" . ,state))
-                    `(("name" . ,name)))))
-    (orgtrello-hash/make-hash
-     "PUT"
-     (format "/cards/%s/checklist/%s/checkItem/%s" card-id checklist-id item-id)
-     payload)))
+  (->> (orgtrello-api/--deal-with-optional-value state `("state" . ,state) `(("name" . ,name)))
+       (orgtrello-hash/make-hash "PUT" (format "/cards/%s/checklist/%s/checkItem/%s" card-id checklist-id item-id))))
 
 (defun orgtrello-api/get-items (checklist-id) "List the checklist items."
-    (orgtrello-hash/make-hash "GET" (format "/checklists/%s/checkItems/" checklist-id)))
+  (orgtrello-hash/make-hash "GET" (format "/checklists/%s/checkItems/" checklist-id)))
 
 (defun orgtrello-api/delete-item (checklist-id item-id) "Delete a item with id item-id"
   (orgtrello-hash/make-hash "DELETE" (format "/checklists/%s/checkItems/%s" checklist-id item-id)))
@@ -634,42 +602,32 @@ This is a list with the following elements:
   `((key . ,*consumer-key*) (token . ,*access-token*)))
 
 (defun orgtrello-query/--get (server query-map &optional success-callback error-callback authentication-p) "GET"
-  (let* ((method (orgtrello-query/--method query-map))
-         (uri    (orgtrello-query/--uri    query-map))
-         (sync   (orgtrello-query/--sync   query-map)))
-    (request (orgtrello-query/--compute-url server uri)
-             :sync    sync
-             :type    method
-             :params  (if authentication-p (orgtrello-query/--authentication-params))
-             :parser  'json-read
-             :success (if success-callback success-callback 'orgtrello-query/--standard-success-callback)
-             :error   (if error-callback error-callback 'orgtrello-query/--standard-error-callback))))
+  (request (->> query-map orgtrello-query/--uri (orgtrello-query/--compute-url server))
+           :sync    (orgtrello-query/--sync   query-map)
+           :type    (orgtrello-query/--method query-map)
+           :params  (when authentication-p (orgtrello-query/--authentication-params))
+           :parser  'json-read
+           :success (if success-callback success-callback 'orgtrello-query/--standard-success-callback)
+           :error   (if error-callback error-callback 'orgtrello-query/--standard-error-callback)))
 
 (defun orgtrello-query/--post-or-put (server query-map &optional success-callback error-callback authentication-p) "POST or PUT"
-  (let* ((method  (orgtrello-query/--method query-map))
-         (uri     (orgtrello-query/--uri    query-map))
-         (payload (orgtrello-query/--params query-map))
-         (sync    (orgtrello-query/--sync   query-map)))
-    (request (orgtrello-query/--compute-url server uri)
-             :sync    sync
-             :type    method
-             :params  (if authentication-p (orgtrello-query/--authentication-params))
-             :headers '(("Content-type" . "application/json"))
-             :data    (json-encode payload)
-             :parser  'json-read
-             :success (if success-callback success-callback 'orgtrello-query/--standard-success-callback)
-             :error   (if error-callback error-callback 'orgtrello-query/--standard-error-callback))))
+  (request (->> query-map orgtrello-query/--uri (orgtrello-query/--compute-url server))
+           :sync    (orgtrello-query/--sync   query-map)
+           :type    (orgtrello-query/--method query-map)
+           :params  (when authentication-p (orgtrello-query/--authentication-params))
+           :headers '(("Content-type" . "application/json"))
+           :data    (->> query-map orgtrello-query/--params json-encode)
+           :parser  'json-read
+           :success (if success-callback success-callback 'orgtrello-query/--standard-success-callback)
+           :error   (if error-callback error-callback 'orgtrello-query/--standard-error-callback)))
 
 (defun orgtrello-query/--delete (server query-map &optional success-callback error-callback authentication-p) "DELETE"
-  (let* ((method (orgtrello-query/--method query-map))
-         (uri    (orgtrello-query/--uri    query-map))
-         (sync   (orgtrello-query/--sync   query-map)))
-    (request (orgtrello-query/--compute-url server uri)
-             :sync    sync
-             :type    method
-             :params  (if authentication-p (orgtrello-query/--authentication-params))
-             :success (if success-callback success-callback 'orgtrello-query/--standard-success-callback)
-             :error   (if error-callback error-callback 'orgtrello-query/--standard-error-callback))))
+  (request (->> query-map orgtrello-query/--uri (orgtrello-query/--compute-url server))
+           :sync    (orgtrello-query/--sync   query-map)
+           :type    (orgtrello-query/--method query-map)
+           :params  (when authentication-p (orgtrello-query/--authentication-params))
+           :success (if success-callback success-callback 'orgtrello-query/--standard-success-callback)
+           :error   (if error-callback error-callback 'orgtrello-query/--standard-error-callback)))
 
 (defun orgtrello-query/--dispatch-http-query (method) "Dispatch the function to call depending on the method key."
   (cond ((string= "GET" method)                              'orgtrello-query/--get)
@@ -743,21 +701,19 @@ This is a list with the following elements:
 
 (defun org-action/--controls-or-actions-then-do (control-or-action-fns fn-to-execute &optional nolog-p) "Execute the function fn-to-execute if control-or-action-fns is nil or display the error message if problems."
   (if control-or-action-fns
-      (let* ((org-trello/--controls-or-actions-done (org-action/--execute-controls control-or-action-fns))
-             (org-trello/--error-messages           (org-action/--filter-error-messages org-trello/--controls-or-actions-done)))
+      (let ((org-trello/--error-messages (-> control-or-action-fns org-action/--execute-controls org-action/--filter-error-messages)))
         (if org-trello/--error-messages
             (unless nolog-p
                     ;; there are some trouble, we display all the error messages to help the user understand the problem
                     (orgtrello-log/msg *OT/ERROR* "List of errors:\n %s" (org-action/--compute-error-message org-trello/--error-messages)))
-          ;; ok execute the function as the controls are ok
-          (funcall fn-to-execute)))
+            ;; ok execute the function as the controls are ok
+            (funcall fn-to-execute)))
       ;; no control, we simply execute the function
       (funcall fn-to-execute)))
 
 (defun org-action/--functional-controls-then-do (control-fns entity fn-to-execute args) "Execute the function fn if control-fns is nil or if the result of apply every function to fn-to-execute is ok."
   (if control-fns
-      (let* ((org-trello/--controls-done  (org-action/--execute-controls control-fns entity))
-             (org-trello/--error-messages (org-action/--filter-error-messages org-trello/--controls-done)))
+      (let ((org-trello/--error-messages (-> control-fns (org-action/--execute-controls entity) org-action/--filter-error-messages)))
         (if org-trello/--error-messages
             ;; there are some trouble, we display all the error messages to help the user understand the problem
             (orgtrello-log/msg *OT/ERROR* "List of errors:\n %s" (org-action/--compute-error-message org-trello/--error-messages))
