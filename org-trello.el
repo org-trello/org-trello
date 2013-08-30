@@ -568,7 +568,6 @@ This is a list with the following elements:
 (defun orgtrello-query/--params (query-map) "Retrieve the http params"    (gethash :params query-map))
 
 (defun orgtrello-query/--retrieve-data  (symbol entity-data) "Own generic accessor"                                    (assoc-default symbol entity-data))
-(defun orgtrello-query/--marker         (entity-data) "Extract the marker of the entity from the entity-data"          (orgtrello-query/--retrieve-data 'marker entity-data))
 (defun orgtrello-query/--buffername     (entity-data) "Extract the buffername of the entity from the entity-data"      (orgtrello-query/--retrieve-data 'buffername entity-data))
 (defun orgtrello-query/--position       (entity-data) "Extract the position of the entity from the entity-data"        (orgtrello-query/--retrieve-data 'position entity-data))
 (defun orgtrello-query/--id             (entity-data) "Extract the id of the entity from the entity"                   (orgtrello-query/--retrieve-data 'id entity-data))
@@ -868,7 +867,7 @@ This is a list with the following elements:
   (lexical-let ((orgtrello-proxy/--entry-position    (orgtrello-query/--position entity-to-sync))
                 (orgtrello-proxy/--entry-buffer-name (orgtrello-query/--buffername entity-to-sync))
                 (orgtrello-proxy/--entry-file        file-to-cleanup)
-                (orgtrello-proxy/--marker            (orgtrello-query/--marker entity-to-sync)))
+                (orgtrello-proxy/--marker            (orgtrello-query/--id entity-to-sync)))
     (cl-defun put-some-insignificant-name (&key data &allow-other-keys)
       (orgtrello-proxy/--safe-wrap-or-throw-error
        (let* ((orgtrello-proxy/--entry-new-id (orgtrello-query/--id data)))
@@ -922,23 +921,21 @@ This is a list with the following elements:
           (throw 'org-trello-timer-go-to-sleep t)))))
 
 (defun orgtrello-proxy/--deal-with-entity-action (entity-data file-to-archive) "Compute the synchronization of an entity (retrieving latest information from buffer)"
-  (let* ((op/--position                  (orgtrello-query/--position entity-data))                                   ;; position is mandatory
-         (op/--buffer-name               (orgtrello-query/--buffername entity-data))                                 ;; buffer-name too
-         (op/--entry-file-archived       (orgtrello-proxy/--archived-scanning-file file-to-archive))
-         (op/--action-fn                 (orgtrello-proxy/--dispatch-action (orgtrello-query/--action entity-data))) ;; what's the running action?
-         (op/--marker                    (orgtrello-query/--marker entity-data)))                                    ;; retrieve the marker
+  (let* ((op/--position            (orgtrello-query/--position entity-data))                       ;; position is mandatory
+         (op/--buffer-name         (orgtrello-query/--buffername entity-data))                     ;; buffer-name too
+         (op/--entry-file-archived (orgtrello-proxy/--archived-scanning-file file-to-archive))
+         (op/--marker              (orgtrello-query/--id entity-data)))                            ;; retrieve the id (which serves as a marker too)
     (orgtrello-log/msg *OT/TRACE* "Proxy-consumer - Searching entity metadata from buffer '%s' at point '%s' to sync..." op/--buffer-name op/--position)
-    ;; switch to the right buffer
-    (set-buffer op/--buffer-name)
-    ;; archive the scanned file
-    (orgtrello-proxy/--archive-entity-file-when-scanning file-to-archive op/--entry-file-archived)
-    ;; will update via tag the trello id of the new persisted data (if needed)
-    (orgtrello-proxy/--safe-wrap-or-throw-error
+    (set-buffer op/--buffer-name)                                                                  ;; switch to the right buffer
+    (orgtrello-proxy/--safe-wrap-or-throw-error                                                    ;; will update via tag the trello id of the new persisted data (if needed)
      (save-excursion
        ;; Get back to the buffer's position to update
-       (when (orgtrello-proxy/--getting-back-to-marker op/--marker)
-             ;; do the actual action
-             (funcall op/--action-fn entity-data (orgtrello-data/entry-get-full-metadata) op/--entry-file-archived))))))
+       (when (orgtrello-proxy/--get-back-to-marker op/--marker entity-data)
+             (orgtrello-proxy/--archive-entity-file-when-scanning file-to-archive op/--entry-file-archived) ;; archive the scanned file
+             (-> entity-data
+                 orgtrello-query/--action
+                 orgtrello-proxy/--dispatch-action
+                 (funcall entity-data (orgtrello-data/entry-get-full-metadata) op/--entry-file-archived)))))))
 
 ;; (defun orgtrello/--compute-last-checkbox-sibling (level)
 ;;   "Compute the last checkbox sibling for the given level")
@@ -952,7 +949,7 @@ This is a list with the following elements:
                 (op/--entry-buffer-name (orgtrello-query/--buffername entity-to-del))
                 (op/--entry-level       (orgtrello-query/--level entity-to-del))
                 (op/--entry-file        file-to-cleanup)
-                (op/--marker            (orgtrello-query/--marker entity-to-del)))
+                (op/--marker            (orgtrello-query/--id entity-to-del)))
     (lambda (&rest response)
       (orgtrello-action/safe-wrap
        (progn
@@ -1026,11 +1023,10 @@ This is a list with the following elements:
         (sort orgtrello-proxy/--list-files-result 'dictionary-lessp))))
 
 (defun orgtrello-proxy/--deal-with-directory-action (level directory) "Given a directory, list the files and take the first one (entity) and do some action on it with trello. Call again if it remains other entities."
-  (let ((orgtrello-proxy/--files (orgtrello-proxy/--list-files directory)))
-    (when orgtrello-proxy/--files
-          (orgtrello-proxy/--deal-with-entity-file-action (car orgtrello-proxy/--files))
-          ;; if it potentially remains files, recall recursively this function
-          (when (< 1 (length orgtrello-proxy/--files)) (orgtrello-proxy/--deal-with-level level directory)))))
+  (when-let (orgtrello-proxy/--files (orgtrello-proxy/--list-files directory))
+            (orgtrello-proxy/--deal-with-entity-file-action (car orgtrello-proxy/--files))
+            ;; if it potentially remains files, recall recursively this function
+            (when (< 1 (length orgtrello-proxy/--files)) (orgtrello-proxy/--deal-with-level level directory))))
 
 (defun orgtrello-proxy/--level-done-p (level) "Does all the entities for the level are their actions done?"
   (-> level
@@ -1718,9 +1714,8 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
     ;; if never created before, we need a marker to add inside the file
     (unless (string= orgtrello/--current-entry-id orgtrello/--marker)
             (orgtrello/--set-marker orgtrello/--marker))
-    ;; then we make the consumer aware of the marker
-    (puthash :marker orgtrello/--marker entity)
-    (puthash :action action             entity)
+    (puthash :id orgtrello/--marker entity) ;; we use the id as the marker or the marker as an id to get back to later
+    (puthash :action action         entity)
     ;; and send the data to the proxy
     (orgtrello-proxy/http-producer entity)))
 
