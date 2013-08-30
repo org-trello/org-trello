@@ -623,15 +623,16 @@ CLOSED: [2013-08-28 mer. 02:41]
 - [X] Release notes
 - [X] Release
 
-* IN-PROGRESS 0.1.7 [33%]
+* IN-PROGRESS 0.1.7 [41%]
 - [X] webadmin: Add an action button on action to stop it
 - [X] webadmin: Add an action button to stop every running actions on entities
 - [X] Improve the justify policy (trim the content before computing the justifying)
 - [X] URLencode/Protect the data from the query before executing the query - https://github.com/ardumont/org-trello/issues/46
-- [-] Some refactoring about
-  - [X] docstring position (same level as function definition, this way, when toggling sexp, we see the docstring too)
-  - [ ] simplification of cond statement
-  - [ ] adding some missing tests
+- [X] Some refactoring about:
+  - [X] Docstring position (same level as function definition, this way, when toggling sexp, we see the docstring too)
+  - [X] Simplification of cond statement
+  - [X] Adding some missing tests
+  - [X] Simplifying some code function (removing let when not needed)
 - [ ] Videos about org-trello
   - [ ] elnode
   - [ ] webadmin
