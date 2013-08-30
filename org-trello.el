@@ -2306,6 +2306,7 @@ C-c o h - M-x org-trello/help-describing-bindings    - This help message."))
 (add-hook 'org-trello-mode-on-hook
           (lambda ()
             ;; hightlight the properties of the checkboxes
+            (font-lock-add-keywords 'org-mode '((":PROPERTIES:" 0 font-lock-keyword-face t)))
             (font-lock-add-keywords 'org-mode '((": {\"orgtrello-id\":.*}" 0 font-lock-comment-face t)))
             ;; start the proxy
             (orgtrello-proxy/start)
@@ -2315,6 +2316,7 @@ C-c o h - M-x org-trello/help-describing-bindings    - This help message."))
 (add-hook 'org-trello-mode-off-hook
           (lambda ()
             ;; remove the highlight
+            (font-lock-remove-keywords 'org-mode '((":PROPERTIES:" 0 font-lock-keyword-face t)))
             (font-lock-remove-keywords 'org-mode '((": {\"orgtrello-id\":.*}" 0 font-lock-comment-face t)))
             ;; stop the proxy
             (orgtrello-proxy/stop)
