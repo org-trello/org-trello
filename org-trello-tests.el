@@ -976,8 +976,75 @@ DEADLINE: <some-date>
     (orgtrello-admin/--list-entities-as-html '(((action . "action") (id . "id") (marker . "marker"))
                                                ((action . "action") (id . "id2") (marker . "marker2"))) "next")))
 
+(with-temp-buffer
+  (insert "- [X] call people [4/4] :PROPERTIES: {\"orgtrello-id\":\"456\"}")
+  (forward-line -1))
+
 (expectations
- (expect "- [X] call people [4/4]                                                                            :PROPERTIES: {\"orgtrello-id\":\"456\"}" (orgtrello-cbx/--justify-property-current-line "- [X] call people [4/4] :PROPERTIES: {\"orgtrello-id\":\"456\"}" 100)))
+  (expect 1
+    (with-temp-buffer
+      (insert "* heading\n")
+      (insert "- [ ] some checklist\n")
+      (insert "  - [ ] some item\n")
+      (orgtrello-cbx/--point-at-beg-of-region-for-justify)))
+  (expect 21
+    (with-temp-buffer
+      (insert "#+TODO: TODO | DONE\n")
+      (insert "* heading\n")
+      (insert "- [ ] some checklist\n")
+      (insert "  - [ ] some item\n")
+      (orgtrello-cbx/--point-at-beg-of-region-for-justify))))
+
+(expectations
+  (expect 50
+    (with-temp-buffer
+      (insert "* heading\n")
+      (insert "- [ ] some checklist\n")
+      (insert "  - [ ] some item\n")
+      (orgtrello-cbx/--point-at-end-of-region-for-justify)))
+  (expect 70
+    (with-temp-buffer
+      (insert "#+TODO: TODO | DONE\n")
+      (insert "* heading\n")
+      (insert "- [ ] some checklist\n")
+      (insert "  - [ ] some item\n")
+      (forward-line -2)
+      (orgtrello-cbx/--point-at-end-of-region-for-justify)))
+  (expect 65
+    (with-temp-buffer
+      (insert "* heading\n")
+      (insert "- [ ] some checklist\n")
+      (insert "  - [ ] some item\n")
+      (insert "* next heading\n")
+      (forward-line -2)
+      (orgtrello-cbx/--point-at-end-of-region-for-justify)))
+  (expect 85
+    (with-temp-buffer
+      (insert "#+TODO: TODO | DONE\n")
+      (insert "* heading\n")
+      (insert "- [ ] some checklist\n")
+      (insert "  - [ ] some item\n")
+      (insert "* next heading\n")
+      (forward-line -2)
+      (orgtrello-cbx/--point-at-end-of-region-for-justify)))
+  (expect 85
+    (with-temp-buffer
+      (insert "#+TODO: TODO | DONE\n")
+      (insert "* heading\n")
+      (insert "- [ ] some checklist\n")
+      (insert "  - [ ] some item\n")
+      (insert "* next heading\n")
+      (forward-line -3)
+      (orgtrello-cbx/--point-at-end-of-region-for-justify)))
+  (expect 85
+    (with-temp-buffer
+      (insert "#+TODO: TODO | DONE\n")
+      (insert "* heading\n")
+      (insert "- [ ] some checklist\n")
+      (insert "  - [ ] some item\n")
+      (insert "* next heading\n")
+      (forward-line -4)
+      (orgtrello-cbx/--point-at-end-of-region-for-justify))))
 
 (expectations
   (expect '((orgtrello-id . "123")) (with-temp-buffer
@@ -994,7 +1061,7 @@ DEADLINE: <some-date>
                 (orgtrello-cbx/--read-properties-from-point (point)))))
 
 (expectations
-  (expect "- [X] some checkbox                                                                                                    :PROPERTIES: {\"orgtrello-id\":456}"
+  (expect "- [X] some checkbox :PROPERTIES: {\"orgtrello-id\":456}"
     (with-temp-buffer
       (insert "- [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}")
       (forward-line -1)
@@ -1013,19 +1080,19 @@ DEADLINE: <some-date>
       (orgtrello-cbx/org-get-property (point) "inexistant-id"))))
 
 (expectations
-  (expect "- [X] some checkbox                                                                                                    :PROPERTIES: {\"orgtrello-id\":\"abc\"}"
+  (expect "- [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"abc\"}"
     (with-temp-buffer
       (insert "- [X] some checkbox")
       (forward-line -1)
       (orgtrello-cbx/org-set-property "orgtrello-id" "abc")
       (buffer-string)))
-  (expect "- [X] some checkbox                                                                                                    :PROPERTIES: {\"orgtrello-id\":\"abc\"}"
+  (expect "- [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"abc\"}"
     (with-temp-buffer
       (insert "- [X] some checkbox :PROPERTIES: {}")
       (forward-line -1)
       (orgtrello-cbx/org-set-property "orgtrello-id" "abc")
       (buffer-string)))
-  (expect "- [X] some checkbox                                                                                                    :PROPERTIES: {\"orgtrello-id\":\"def\"}"
+  (expect "- [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"def\"}"
     (with-temp-buffer
       (insert "- [X] some checkbox                                                                                                    :PROPERTIES: {\"orgtrello-id\":\"abc\"}")
       (forward-line -1)
@@ -1033,19 +1100,19 @@ DEADLINE: <some-date>
       (buffer-string))))
 
 (expectations
-  (expect "- [X] some checkbox                                                                                                    :PROPERTIES: {}"
+  (expect "- [X] some checkbox :PROPERTIES: {}"
     (with-temp-buffer
       (insert "- [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}")
       (forward-line -1)
       (orgtrello-cbx/org-delete-property "orgtrello-id")
       (buffer-string)))
-  (expect "- [X] some checkbox                                                                                                    :PROPERTIES: {\"orgtrello-id\":\"def\"}"
+  (expect "- [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"def\"}"
     (with-temp-buffer
       (insert "- [X] some checkbox                                                                                         :PROPERTIES: {\"orgtrello-id\":\"def\"}")
       (forward-line -1)
       (orgtrello-cbx/org-delete-property "inexistant")
       (buffer-string)))
-  (expect "- [X] some checkbox                                                                                                    :PROPERTIES: {}"
+  (expect "- [X] some checkbox :PROPERTIES: {}"
     (with-temp-buffer
       (insert "- [X] some checkbox")
       (forward-line -1)

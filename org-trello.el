@@ -212,28 +212,36 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
   (s-join " :PROPERTIES: "  `(,(orgtrello-cbx/--checkbox-data checkbox-string)
                               ,(orgtrello-cbx/--to-properties properties))))
 
-(defun orgtrello-cbx/--compute-nb-of-spaces-to-justify (s max-length) "Compute the possible number of spaces to inject for the justification. length is the max number of characters."
-  (->> s
-       s-trim-right
-       length
-       (- max-length)
-       1-))
+(defvar orgtrello/--rules-to-align-checkbox-properties
+  `((orgtrello-rules
+     (regexp   . "^[ ]*-\\{1\\}.*\\(:PROPERTIES: .*\\)$")
+     (group    . 1)
+     (justify  . t)))
+  "Rules to use with align-region to justify")
 
-(defun orgtrello-cbx/--justify-property-current-line (full-line length) "Justify the properties to the left so that the line makes a length of length. For this insert whites before the :PROPERTIES: before."
-  (let* ((current-data-str (orgtrello-cbx/--checkbox-data full-line))
-         (nb-of-spaces     (orgtrello-cbx/--compute-nb-of-spaces-to-justify current-data-str length)))
-    (if (< 0 nb-of-spaces)
-        (format "%s%s%s" current-data-str (orgtrello/--space nb-of-spaces) (format ":PROPERTIES: %s" (orgtrello-cbx/--checkbox-metadata full-line)))
-        full-line)))
+(defun orgtrello-cbx/--point-at-beg-of-region-for-justify () "Compute the beginning of region - marked by a headline."
+  (save-excursion
+    (org-back-to-heading)
+    (point-at-bol)))
 
-(defun orgtrello-cbx/--update-properties-and-justify (checkbox-string properties) "Given the current checkbox-string and the new properties, update the properties in the current entry and justify."
-  (-> (orgtrello-cbx/--update-properties checkbox-string properties)
-      (orgtrello-cbx/--justify-property-current-line *ORGTRELLO-JUSTIFY-PROPERTIES*)))
+(defun orgtrello-cbx/--point-at-end-of-region-for-justify () "Compute the end of the region from the current position."
+  (save-excursion
+    (org-back-to-heading)
+    (if (org-goto-sibling) (point-at-bol) (point-max))))
+
+(require 'align)
+
+(defun orgtrello-cbx/--justify-property-current-line () "Justify the content of the current region."
+  (align-region (orgtrello-cbx/--point-at-beg-of-region-for-justify)
+                (orgtrello-cbx/--point-at-end-of-region-for-justify)
+                'entire
+                orgtrello/--rules-to-align-checkbox-properties
+                nil))
 
 (defun orgtrello-cbx/--write-properties-at-point (pt properties) "Given the new properties, update the current entry."
   (save-excursion
     (goto-char pt)
-    (let ((updated-checkbox-str (orgtrello-cbx/--update-properties-and-justify (orgtrello-cbx/--read-checkbox!) properties)))
+    (let ((updated-checkbox-str (orgtrello-cbx/--update-properties (orgtrello-cbx/--read-checkbox!) properties)))
       (beginning-of-line)
       (kill-line)
       (insert updated-checkbox-str)
@@ -727,18 +735,19 @@ This is a list with the following elements:
   (orgtrello-action/safe-wrap
    (org-action/--controls-or-actions-then-do control-or-action-fns fn-to-execute nolog-p)
    (progn
-     ;; do we have to save the buffer
      (when save-buffer-p  (save-buffer))
      (when reload-setup-p (orgtrello-action/reload-setup))
      (unless nolog-p (orgtrello-log/msg *OT/INFO* (concat msg " - done!"))))))
 
 (defun org-action/--deal-with-consumer-msg-controls-or-actions-then-do (msg control-or-action-fns fn-to-execute &optional save-buffer-p reload-setup-p nolog-p) "A decorator fn to execute some action before/after the controls."
   ;; stop the timer
- (orgtrello-timer/stop)
+  (orgtrello-timer/stop)
   ;; Execute as usual
   (org-action/--msg-controls-or-actions-then-do msg control-or-action-fns fn-to-execute save-buffer-p reload-setup-p nolog-p)
   ;; start the timer
-  (orgtrello-timer/start))
+  (orgtrello-timer/start)
+  ;; justify the checkbox properties if any
+  (orgtrello-cbx/--justify-property-current-line))
 
 
 
