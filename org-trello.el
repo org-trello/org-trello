@@ -755,15 +755,26 @@ Also add some metadata identifier/due-data/point/buffer-name."
         ((or (string= "POST" method) (string= "PUT" method)) 'orgtrello-query/--post-or-put)
         ((string= "DELETE" method)                           'orgtrello-query/--delete)))
 
-(defun orgtrello-query/--http (server query-map &optional sync success-callback error-callback authentication-p)
-  "HTTP query the server with the query-map."
-  (let ((fn-dispatch (orgtrello-query/--dispatch-http-query (orgtrello-query/--method query-map))))
+;; url-insert-entities-in-string
+(defun orgtrello-query/--prepare-params-assoc! (params) "Prepare params as association list."
+  (--map (let ((value (cdr it))) (if (and value (stringp value)) `(,(car it) . ,(url-hexify-string value)) it)) params))
+
+(defun orgtrello-query/--read-data (data) "Prepare params as association list."
+  (--map (let ((value (cdr it))) (if (and value (stringp value)) `(,(car it) . ,(url-unhex-string value)) it)) data))
+
+(defun orgtrello-query/--prepare-query-params! (params) "Given an association list of data, prepare the values of the params."
+  (-> params
+      json-encode                               ;; hashtable and association list renders the same result in json
+      json-read-from-string                     ;; now getting back an association list
+      orgtrello-query/--prepare-params-assoc!))
+
+(defun orgtrello-query/--http (server query-map &optional sync success-callback error-callback authentication-p) "HTTP query the server with the query-map."
+  (let* ((oq/--fn-dispatch (-> query-map orgtrello-query/--method orgtrello-query/--dispatch-http-query)))
     (if sync
         (progn ;; synchronous request
           (puthash :sync t query-map)
-          (let ((request-response (funcall fn-dispatch server query-map success-callback error-callback authentication-p)))
-            (request-response-data request-response)))
-      (funcall fn-dispatch server query-map success-callback error-callback authentication-p))))
+          (request-response-data (funcall oq/--fn-dispatch server query-map success-callback error-callback authentication-p)))
+        (funcall oq/--fn-dispatch server query-map success-callback error-callback authentication-p))))
 
 (defun orgtrello-query/http-trello (query-map &optional sync success-callback error-callback)
   "Query the trello api."
@@ -860,7 +871,7 @@ Also add some metadata identifier/due-data/point/buffer-name."
   (msg control-or-action-fns fn-to-execute &optional save-buffer-p reload-setup-p nolog-p)
   "A simple decorator function to display message in mini-buffer before and after the execution of the control"
   ;; stop the timer
-  (orgtrello-timer/stop)
+ (orgtrello-timer/stop)
   ;; Execute as usual
   (org-action/--msg-controls-or-actions-then-do msg control-or-action-fns fn-to-execute save-buffer-p reload-setup-p nolog-p)
   ;; start the timer
@@ -874,37 +885,36 @@ Also add some metadata identifier/due-data/point/buffer-name."
 (defvar *ORGTRELLO-PROXY-PORT* nil         "proxy port")
 (defvar *ORGTRELLO-PROXY-URL*  nil         "proxy url")
 
-(defvar *ORGTRELLO-PROXY-DEFAULT-PORT* 9876 "Default proxy port")
-(setq *ORGTRELLO-PROXY-PORT* *ORGTRELLO-PROXY-DEFAULT-PORT*)
+(defvar *ORGTRELLO-PROXY-DEFAULT-PORT* 9876 "Default proxy port") (setq *ORGTRELLO-PROXY-PORT* *ORGTRELLO-PROXY-DEFAULT-PORT*)
 
-(defun orgtrello-proxy/http (query-map &optional sync success-callback error-callback)
-  "Query the trello api asynchronously."
+(defun orgtrello-proxy/http (query-map &optional sync success-callback error-callback) "Query the proxy for the trello api."
   (let ((query-map-proxy (orgtrello-hash/make-hash "POST" "/trello/" query-map)))
     (orgtrello-log/msg *OT/TRACE* "Request to proxy wrapped: %S" query-map-proxy)
     (orgtrello-query/--http *ORGTRELLO-PROXY-URL* query-map-proxy sync success-callback error-callback)))
 
-(defun orgtrello-proxy/http-producer (query-map &optional sync)
-  "Query the proxy producer"
-  (let ((query-map-proxy (orgtrello-hash/make-hash "POST" "/producer/" query-map)))
+(defun orgtrello-proxy/http-producer (query-map &optional sync) "Query the proxy producer"
+  (let ((query-map-proxy (->> query-map orgtrello-query/--prepare-query-params! (orgtrello-hash/make-hash "POST" "/producer/"))))
     (orgtrello-log/msg *OT/TRACE* "Request to proxy wrapped: %S" query-map-proxy)
     (orgtrello-query/--http *ORGTRELLO-PROXY-URL* query-map-proxy sync)))
 
-(defun orgtrello-proxy/http-consumer (start)
-  "Query the http-consumer process once to make it trigger a timer"
+(defun orgtrello-proxy/http-consumer (start) "Query the http-consumer process once to make it trigger a timer"
   (let ((query-map (orgtrello-hash/make-hash "POST" "/timer/" `((start . ,start)))))
     (orgtrello-query/--http *ORGTRELLO-PROXY-URL* query-map t)))
 
-(defun orgtrello-proxy/--dispatch-http-query (method)
-  "Dispach query function depending on the http method input parameter."
+(defun orgtrello-proxy/--dispatch-http-query (method) "Dispach query function depending on the http method input parameter."
   (cond ((string= "GET" method)      'orgtrello-proxy/--get)
         ((or (string= "POST" method)
              (string= "PUT" method)) 'orgtrello-proxy/--post-or-put)
         ((string= "DELETE" method)   'orgtrello-proxy/--delete)))
 
-(defun orgtrello-proxy/--extract-trello-query (http-con)
-  "Given an httpcon object, extract the params entry which corresponds to the real trello query."
-  (let ((params-proxy-json (caar (elnode-http-params http-con))))
-    (json-read-from-string params-proxy-json)))
+(defun orgtrello-proxy/--json-read-from-string (data) "Read the json data and unhexify them."
+  (-> data json-read-from-string orgtrello-query/--read-data))
+
+(defun orgtrello-proxy/--unhexify-data (params &optional unhexify-flag) "Given a params object, unhexify the content if need be."
+  (funcall (if unhexify-flag 'orgtrello-proxy/--json-read-from-string 'json-read-from-string) params))
+
+(defun orgtrello-proxy/--extract-trello-query (http-con &optional unhexify-flag) "Given an httpcon object, extract the params entry which corresponds to the real trello query."
+  (-> http-con elnode-http-params caar (orgtrello-proxy/--unhexify-data unhexify-flag)))
 
 (defun orgtrello-proxy/--compute-trello-query (query-map-wrapped)
   (let ((method  (orgtrello-query/--method- query-map-wrapped))
@@ -928,8 +938,7 @@ Also add some metadata identifier/due-data/point/buffer-name."
   ;; all is good
   (orgtrello-proxy/--response http-con '((status . "ok"))))
 
-(defun orgtrello-proxy/--elnode-proxy (http-con)
-  "Deal with request to trello (for creation/sync request, use orgtrello-proxy/--elnode-proxy-producer)."
+(defun orgtrello-proxy/--elnode-proxy (http-con) "Deal with request to trello (for creation/sync request, use orgtrello-proxy/--elnode-proxy-producer)."
   (orgtrello-log/msg *OT/TRACE* "Proxy - Request received. Transmitting...")
   (let* ((query-map-wrapped    (orgtrello-proxy/--extract-trello-query http-con))                     ;; wrapped query is mandatory
          (position             (orgtrello-query/--position query-map-wrapped))                        ;; position is mandatory
@@ -938,7 +947,7 @@ Also add some metadata identifier/due-data/point/buffer-name."
          (standard-callback-fn (when standard-callback (symbol-function (intern standard-callback)))) ;; the callback is passed as a string, we want it as a function when defined
          (sync                 (orgtrello-query/--sync- query-map-wrapped))                           ;; there is a possibility to enforce the sync between proxy and client
          (query-map            (orgtrello-proxy/--compute-trello-query query-map-wrapped))            ;; extracting the query
-         (name                 (orgtrello-query/--name query-map-wrapped)))                       ;; extracting the name of the entity (optional)
+         (name                 (orgtrello-query/--name query-map-wrapped)))                           ;; extracting the name of the entity (optional)
     ;; check out the sync behaviour here
     ;; Execute the request to trello (at the moment, synchronous)
     (orgtrello-query/http-trello query-map sync (when standard-callback-fn (funcall standard-callback-fn buffer-name position name)))
@@ -949,12 +958,11 @@ Also add some metadata identifier/due-data/point/buffer-name."
   "Compute the metadata entity filename"
   (format "%s%s-%s.el" root-dir buffer-name position))
 
-(defun orgtrello-proxy/--elnode-proxy-producer (http-con)
-  "A handler which is an entity informations producer on files under the docroot/level-entities/"
+(defun orgtrello-proxy/--elnode-proxy-producer (http-con) "A handler which is an entity informations producer on files under the docroot/level-entities/"
   (orgtrello-log/msg *OT/TRACE* "Proxy-producer - Request received. Generating entity file...")
-  (let* ((query-map-wrapped    (orgtrello-proxy/--extract-trello-query http-con)) ;; wrapped query is mandatory
-         (position             (orgtrello-query/--position query-map-wrapped))    ;; position is mandatory
-         (buffer-name          (orgtrello-query/--buffername query-map-wrapped))  ;; buffer-name is mandatory
+  (let* ((query-map-wrapped    (orgtrello-proxy/--extract-trello-query http-con 'unhexify)) ;; wrapped query is mandatory
+         (position             (orgtrello-query/--position query-map-wrapped))              ;; position is mandatory
+         (buffer-name          (orgtrello-query/--buffername query-map-wrapped))            ;; buffer-name is mandatory
          (level                (orgtrello-query/--level query-map-wrapped))
          (root-dir             (orgtrello-proxy/--compute-entity-level-dir level)))
     ;; generate a file with the entity information
@@ -1655,8 +1663,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
     ("^localhost//static/\\(.*\\)/\\(.*\\)" . orgtrello-proxy/--elnode-static-file))
   "Org-trello dispatch routes for the webserver")
 
-(defun orgtrello-proxy/--proxy-handler (http-con)
-  "Proxy handler."
+(defun orgtrello-proxy/--proxy-handler (http-con) "Proxy handler." ;;(debug)
   (elnode-hostpath-dispatcher http-con *ORGTRELLO-QUERY-APP-ROUTES*))
 
 (defun orgtrello-proxy/--start (port host)
@@ -2124,7 +2131,6 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun orgtrello/--compute-entity-to-org-entry (entity)
   "Given an entity, compute its org representation."
-  (trace :entity entity)
   (funcall
    (cond ((orgtrello/--card-p entity)      'orgtrello/--compute-card-to-org-entry)        ;; card      (level 1)
          ((orgtrello/--checklist-p entity) 'orgtrello/--compute-checklist-to-org-entry)   ;; checklist (level 2)
@@ -2633,6 +2639,10 @@ C-c o K - M-x org-trello/kill-all-entities           - Kill all the entities (an
 # HELP
 C-c o h - M-x org-trello/help-describing-bindings    - This help message."))
 
+(defun org-trello/describe-entry ()
+  (inte'ractive)
+  (message "%s" (orgtrello-data/metadata)))
+
 ;;;###autoload
 (define-minor-mode org-trello-mode "Sync your org-mode and your trello together."
   :lighter " ot" ;; the name on the modeline
@@ -2653,6 +2663,7 @@ C-c o h - M-x org-trello/help-describing-bindings    - This help message."))
              (define-key map (kbd "C-c o s") 'org-trello/sync-to-trello)
              ;; Help
              (define-key map (kbd "C-c o h") 'org-trello/help-describing-bindings)
+             (define-key map (kbd "C-c o e") 'org-trello/describe-entry)
              map))
 
 (add-hook 'org-trello-mode-on-hook
