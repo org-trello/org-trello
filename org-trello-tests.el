@@ -7,11 +7,6 @@
 
 (load-file "org-trello.el")
 
-;; ########################## setup for test
-
-;; justify part need
-(setq *ORGTRELLO-JUSTIFY-PROPERTIES* 120)
-
 ;; ########################## orgtrello-hash
 
 (expectations
@@ -996,57 +991,6 @@ DEADLINE: <some-date>
       (orgtrello-cbx/--point-at-beg-of-region-for-justify))))
 
 (expectations
-  (expect 50
-    (with-temp-buffer
-      (insert "* heading\n")
-      (insert "- [ ] some checklist\n")
-      (insert "  - [ ] some item\n")
-      (orgtrello-cbx/--point-at-end-of-region-for-justify)))
-  (expect 70
-    (with-temp-buffer
-      (insert "#+TODO: TODO | DONE\n")
-      (insert "* heading\n")
-      (insert "- [ ] some checklist\n")
-      (insert "  - [ ] some item\n")
-      (forward-line -2)
-      (orgtrello-cbx/--point-at-end-of-region-for-justify)))
-  (expect 65
-    (with-temp-buffer
-      (insert "* heading\n")
-      (insert "- [ ] some checklist\n")
-      (insert "  - [ ] some item\n")
-      (insert "* next heading\n")
-      (forward-line -2)
-      (orgtrello-cbx/--point-at-end-of-region-for-justify)))
-  (expect 85
-    (with-temp-buffer
-      (insert "#+TODO: TODO | DONE\n")
-      (insert "* heading\n")
-      (insert "- [ ] some checklist\n")
-      (insert "  - [ ] some item\n")
-      (insert "* next heading\n")
-      (forward-line -2)
-      (orgtrello-cbx/--point-at-end-of-region-for-justify)))
-  (expect 85
-    (with-temp-buffer
-      (insert "#+TODO: TODO | DONE\n")
-      (insert "* heading\n")
-      (insert "- [ ] some checklist\n")
-      (insert "  - [ ] some item\n")
-      (insert "* next heading\n")
-      (forward-line -3)
-      (orgtrello-cbx/--point-at-end-of-region-for-justify)))
-  (expect 85
-    (with-temp-buffer
-      (insert "#+TODO: TODO | DONE\n")
-      (insert "* heading\n")
-      (insert "- [ ] some checklist\n")
-      (insert "  - [ ] some item\n")
-      (insert "* next heading\n")
-      (forward-line -4)
-      (orgtrello-cbx/--point-at-end-of-region-for-justify))))
-
-(expectations
   (expect '((orgtrello-id . "123")) (with-temp-buffer
                                       (insert "- [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}")
                                       (forward-line -1)
@@ -1228,6 +1172,57 @@ DEADLINE: <some-date>
  (expect (format "%sorg-trello/1/" elnode-webserver-docroot) (orgtrello-proxy/--compute-entity-level-dir *CARD-LEVEL*))
  (expect (format "%sorg-trello/2/" elnode-webserver-docroot) (orgtrello-proxy/--compute-entity-level-dir *CHECKLIST-LEVEL*))
  (expect (format "%sorg-trello/3/" elnode-webserver-docroot) (orgtrello-proxy/--compute-entity-level-dir *ITEM-LEVEL*)))
+
+(expectations
+  (expect 50
+    (with-temp-buffer
+      (insert "* heading\n")
+      (insert "- [ ] some checklist\n")
+      (insert "  - [ ] some item\n")
+      (orgtrello/--compute-next-card-point)))
+  (expect 70
+    (with-temp-buffer
+      (insert "#+TODO: TODO | DONE\n")
+      (insert "* heading\n")
+      (insert "- [ ] some checklist\n")
+      (insert "  - [ ] some item\n")
+      (forward-line -2)
+      (orgtrello/--compute-next-card-point)))
+  (expect 65
+    (with-temp-buffer
+      (insert "* heading\n")
+      (insert "- [ ] some checklist\n")
+      (insert "  - [ ] some item\n")
+      (insert "* next heading\n")
+      (forward-line -2)
+      (orgtrello/--compute-next-card-point)))
+  (expect 85
+    (with-temp-buffer
+      (insert "#+TODO: TODO | DONE\n")
+      (insert "* heading\n")
+      (insert "- [ ] some checklist\n")
+      (insert "  - [ ] some item\n")
+      (insert "* next heading\n")
+      (forward-line -2)
+      (orgtrello/--compute-next-card-point)))
+  (expect 85
+    (with-temp-buffer
+      (insert "#+TODO: TODO | DONE\n")
+      (insert "* heading\n")
+      (insert "- [ ] some checklist\n")
+      (insert "  - [ ] some item\n")
+      (insert "* next heading\n")
+      (forward-line -3)
+      (orgtrello/--compute-next-card-point)))
+  (expect 85
+    (with-temp-buffer
+      (insert "#+TODO: TODO | DONE\n")
+      (insert "* heading\n")
+      (insert "- [ ] some checklist\n")
+      (insert "  - [ ] some item\n")
+      (insert "* next heading\n")
+      (forward-line -4)
+      (orgtrello/--compute-next-card-point))))
 
 (provide 'org-trello-tests)
 ;;; org-trello-tests ends here

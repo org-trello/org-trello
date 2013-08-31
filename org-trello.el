@@ -95,8 +95,6 @@
 
 If you want to use this, we recommand to use the native org checklists - http://orgmode.org/manual/Checkboxes.html.")
 
-(defvar *ORGTRELLO-JUSTIFY-PROPERTIES* (current-fill-column) "Right margin for the justify policy")
-
 
 
 ;; #################### orgtrello-version
@@ -224,16 +222,11 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
     (org-back-to-heading)
     (point-at-bol)))
 
-(defun orgtrello-cbx/--point-at-end-of-region-for-justify () "Compute the end of the region from the current position."
-  (save-excursion
-    (org-back-to-heading)
-    (if (org-goto-sibling) (point-at-bol) (point-max))))
-
 (require 'align)
 
 (defun orgtrello-cbx/--justify-property-current-line () "Justify the content of the current region."
   (align-region (orgtrello-cbx/--point-at-beg-of-region-for-justify)
-                (orgtrello-cbx/--point-at-end-of-region-for-justify)
+                (orgtrello/--compute-next-card-point)
                 'entire
                 orgtrello/--rules-to-align-checkbox-properties
                 nil))
@@ -379,10 +372,31 @@ This is a list with the following elements:
           (funcall fn-to-execute)
           (orgtrello/--map-checkboxes point-max fn-to-execute))))
 
-(defun orgtrello/--compute-next-sibling-point () "Compute the next sibling point (need to called from a card level)."
-  (let* ((current-point      (point))
-         (next-heading-point (save-excursion (org-goto-sibling) (point))))
-    (if (= current-point next-heading-point) (point-max) (1- next-heading-point))))
+(defun orgtrello/--compute-next-card-point () "Compute the next card's position."
+  (save-excursion
+    (org-back-to-heading)
+    (if (org-goto-sibling) (point-at-bol) (point-max))))
+
+(defun orgtrello/----compute-next-entity-with-level-point (level) "Compute the next checkbox position with level level. If hitting a headline or the end of file, return such point."
+  (let ((current-point (point))
+        (current-level (-> (orgtrello-data/metadata) orgtrello/--level)))
+    (cond ((or (<= current-level level) (<= (point-max) current-point)) current-point)
+          (t                                                            (forward-line) (orgtrello/----compute-next-entity-with-level-point level)))))
+
+(defun orgtrello/--compute-next-entity-with-level-point (level) "Given a level, compute the next sibling for this same level. Does not preserve the position."
+  (forward-line)
+  (orgtrello/----compute-next-entity-with-level-point level))
+
+(defun orgtrello/--compute-next-entity-with-same-level (level)
+  (save-excursion
+    (if (= *CARD-LEVEL* level)
+        (orgtrello/--compute-next-card-point)
+        (orgtrello/--compute-next-entity-with-level-point level))))
+
+(defun orgtrello/--compute-next-sibling-point () "Compute the next sibling point (need to be called from a card level)."
+  (-> (orgtrello-data/metadata)
+      orgtrello/--level
+      orgtrello/--compute-next-entity-with-same-level))
 
 (defun orgtrello/map-checkboxes (fn-to-execute) "Map over the current checkbox and sync them."
   (save-excursion
@@ -425,11 +439,11 @@ This is a list with the following elements:
   (funcall (if (orgtrello-cbx/checkbox-p) 'orgtrello-cbx/org-get-property 'org-entry-get) point key))
 
 (defun orgtrello-data/metadata () "Compute the metadata for a given org entry. Also add some metadata identifier/due-data/point/buffer-name/etc..."
-  (let ((orgtrello-data/metadata--point  (point)))
+  (let ((od/--point (point)))
     (->> (orgtrello-data/--extract-metadata)
-         (cons (orgtrello-data/--convert-orgmode-date-to-trello-date (orgtrello-action/org-entry-get orgtrello-data/metadata--point "DEADLINE")))
-         (cons (orgtrello-data/extract-identifier orgtrello-data/metadata--point))
-         (cons orgtrello-data/metadata--point)
+         (cons (-> od/--point (orgtrello-action/org-entry-get "DEADLINE") orgtrello-data/--convert-orgmode-date-to-trello-date))
+         (cons (orgtrello-data/extract-identifier od/--point))
+         (cons od/--point)
          (cons (buffer-name))
          orgtrello-data/--get-metadata)))
 
@@ -739,15 +753,13 @@ This is a list with the following elements:
      (when reload-setup-p (orgtrello-action/reload-setup))
      (unless nolog-p (orgtrello-log/msg *OT/INFO* (concat msg " - done!"))))))
 
-(defun org-action/--deal-with-consumer-msg-controls-or-actions-then-do (msg control-or-action-fns fn-to-execute &optional save-buffer-p reload-setup-p nolog-p) "A decorator fn to execute some action before/after the controls."
+(defun org-action/--deal-with-consumer-msg-controls-or-actions-then-do (msg control-or-action-fns fn-to-execute &optional save-buffer-p reload-setup-p nolog-p) "Decorator fn to execute actions before/after the controls."
   ;; stop the timer
   (orgtrello-timer/stop)
   ;; Execute as usual
   (org-action/--msg-controls-or-actions-then-do msg control-or-action-fns fn-to-execute save-buffer-p reload-setup-p nolog-p)
   ;; start the timer
-  (orgtrello-timer/start)
-  ;; justify the checkbox properties if any
-  (orgtrello-cbx/--justify-property-current-line))
+  (orgtrello-timer/start))
 
 
 
@@ -845,7 +857,9 @@ This is a list with the following elements:
   ;; cleanup file
   (orgtrello-proxy/--remove-file file)
   ;; save modifs
-  (save-buffer))
+  (save-buffer)
+  ;; justify
+  (orgtrello-cbx/--justify-property-current-line))
 
 (defmacro orgtrello-proxy/--safe-wrap-or-throw-error (fn) "A specific macro to deal with interception of uncaught error when executing the fn call. If error is thrown, send the 'org-trello-timer-go-to-sleep flag."
   `(condition-case ex
@@ -969,9 +983,7 @@ This is a list with the following elements:
                  (org-delete-property *ORGTRELLO-ID*)
                  (if (org-at-heading-p)
                      (hide-subtree)
-                     (when (orgtrello-cbx/checkbox-p)
-                           ;; (orgtrello/--hide-subtree op/--entry-level)
-                           (org-cycle 'fold)))
+                     (when (orgtrello-cbx/checkbox-p) (org-cycle 'fold)))
                  (beginning-of-line)
                  (kill-line)
                  (kill-line))))
