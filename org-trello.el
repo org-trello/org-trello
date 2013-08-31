@@ -382,7 +382,7 @@ This is a list with the following elements:
         (orgtrello/----map-checkboxes level fn-to-execute)))
 
 (defun orgtrello/--map-checkboxes (level fn-to-execute) "Map over the checkboxes and execute fn when in checkbox. Does not preserve the cursor position. Do not exceed the point-max."
-  (funcall fn-to-execute)
+  (when (= level *CHECKLIST-LEVEL*) (funcall fn-to-execute))
   (orgtrello/----map-checkboxes level fn-to-execute))
 
 (defun orgtrello/--current-level () "Compute the current level's position."
@@ -920,8 +920,11 @@ This is a list with the following elements:
          (cl-defun orgtrello-proxy/--standard-post-or-put-error-callback (&allow-other-keys)
            (orgtrello-log/msg *OT/ERROR* "Problem during sync!")
            (throw 'org-trello-timer-go-to-sleep t)))
-        (progn
+        (let ((id (-> full-metadata orgtrello-data/current orgtrello/--id))) ;; removing orgtrello-id
           (orgtrello-log/msg *OT/INFO* orgtrello-query/--query-map)
+          (unless id
+                  (orgtrello-cbx/org-delete-property *ORGTRELLO-ID*)
+                  (orgtrello-cbx/--justify-property-current-line))
           (throw 'org-trello-timer-go-to-sleep t)))))
 
 (defun orgtrello-proxy/--deal-with-entity-action (entity-data file-to-archive) "Compute the synchronization of an entity (retrieving latest information from buffer)"
@@ -940,13 +943,6 @@ This is a list with the following elements:
                  orgtrello-query/--action
                  orgtrello-proxy/--dispatch-action
                  (funcall entity-data (orgtrello-data/entry-get-full-metadata) op/--entry-file-archived)))))))
-
-;; (defun orgtrello/--compute-last-checkbox-sibling (level)
-;;   "Compute the last checkbox sibling for the given level")
-
-;; (defun orgtrello/--hide-subtree (level)
-;;   "Hide the checklist's subtree"
-;;   (hide-region-body (point) (orgtrello/--compute-last-checkbox-sibling level)))
 
 (defun orgtrello-proxy/--standard-delete-success-callback (entity-to-del file-to-cleanup) "Return a callback function able to deal with the position."
   (lexical-let ((op/--entry-position    (orgtrello-query/--position entity-to-del))
@@ -1751,7 +1747,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   (orgtrello/--checks-then-delegate-action-on-entity-to-proxy '(orgtrello/--right-level-p orgtrello/--already-synced-p) *ORGTRELLO-ACTION-DELETE*))
 
 (defun orgtrello/do-sync-entity () "Do the entity synchronization (if never synchronized, will create it, update it otherwise)."
-  (orgtrello/--checks-then-delegate-action-on-entity-to-proxy '(orgtrello/--right-level-p orgtrello/--can-be-synced-p orgtrello/--mandatory-name-ok-p) *ORGTRELLO-ACTION-SYNC*))
+  (orgtrello/--checks-then-delegate-action-on-entity-to-proxy '(orgtrello/--right-level-p orgtrello/--mandatory-name-ok-p) *ORGTRELLO-ACTION-SYNC*))
 
 (defun orgtrello/do-sync-full-entity () "Do the actual full card creation - from card to item. Beware full side effects..."
   (orgtrello-log/msg *OT/INFO* "Synchronizing full entity with its structure on board '%s'..." (orgtrello/--board-name))
