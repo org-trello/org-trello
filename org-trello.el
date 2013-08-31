@@ -1319,16 +1319,24 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   (if (= log-level *OT/INFO*) (orgtrello-query/--name entity-data) entity-data))
 
 (defun orgtrello-admin/--input-button-html (action value) "Given a javascript action and a value, compute an html input button."
-  `(input ((type . "button") (onclick . ,action) (value . ,value))))
+  `(input ((class . "btn btn-danger btn-mini")
+           (type . "button")
+           (onclick . ,action)
+           (value . ,value))))
 
 (defun orgtrello-admin/--delete-action (entity) "Generate the button to delete some action."
   (-if-let (entity-id (orgtrello-query/--id entity))
            (orgtrello-admin/--input-button-html (format "deleteEntities('/proxy/admin/entities/delete/%s');" entity-id) "x")
            ""))
 
-(defun orgtrello-admin/--entity (entity icon) "Compute the entity file display rendering."
+(defun orgtrello-admin/--compute-class (tr-class) "Compute the tr-class"
+  `(class . ,(cond ((string= tr-class "icon-play")  "success")
+                   ((string= tr-class "icon-pause") "warning")
+                   (t                               ""))))
+
+(defun orgtrello-admin/--entity (entity icon &optional tr-class) "Compute the entity file display rendering."
   `(tr
-    ()
+    (,(orgtrello-admin/--compute-class icon))
     (td () (i ((class . ,icon))))
     (td () ,(orgtrello-query/--action entity))
     (td () ,(format "%s" (orgtrello-admin/--detail-entity *orgtrello-log/level* entity)))
