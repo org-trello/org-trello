@@ -1,5 +1,7 @@
 language: emacs-lisp
 before_install:
+  - mv Cask Cask.origin
+  - grep -v "marmalade" Cask.origin > Cask
   - if [ "$EMACS" = 'emacs-snapshot' ]; then
       sudo add-apt-repository -y ppa:cassou/emacs &&
       sudo apt-get update -qq &&
@@ -18,6 +20,6 @@ before_install:
 env:
   #- EMACS=emacs
   - EMACS=emacs24
-  #- EMACS=emacs-snapshot
+  # - EMACS=emacs-snapshot
 script:
   ./run-travis-ci.sh

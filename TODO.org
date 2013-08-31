@@ -623,7 +623,8 @@ CLOSED: [2013-08-28 mer. 02:41]
 - [X] Release notes
 - [X] Release
 
-* IN-PROGRESS 0.1.7 [83%]
+* DONE 0.1.7 [100%]
+CLOSED: [2013-08-31 sam. 10:55]
 - [X] webadmin: Add an action button on action to stop it
 - [X] webadmin: Add an action button to stop every running actions on entities
 - [X] URLencode/Protect the data from the query before executing the query - https://github.com/ardumont/org-trello/issues/46
@@ -638,8 +639,7 @@ CLOSED: [2013-08-28 mer. 02:41]
 - [X] Improve the justify policy (trim the content before computing the justifying) -> There remains erratic behaviour
 - [X] Improve map-checkbox to deal with limit (map over checkbox inferior to current level, at the moment, we scan all checkboxes)
 - [X] Version
-- [ ] Release notes
-- [ ] Release
+- [X] Release notes
 * TODO 0.1.8 [%]
 - [-] Ensure sync-from-trello keep the order of the checklists clean
 - [ ] Videos about org-trello
