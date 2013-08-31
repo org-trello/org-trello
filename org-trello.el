@@ -1734,26 +1734,16 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun orgtrello/do-sync-full-entity () "Do the actual full card creation - from card to item. Beware full side effects..."
   (orgtrello-log/msg *OT/INFO* "Synchronizing full entity with its structure on board '%s'..." (orgtrello/--board-name))
-  ;; iterate over the map of entries and sync them, breadth first
   (if (org-at-heading-p)
-      ;; sync from an heading (card)
-      (org-map-tree (lambda ()
-                      ;; as usual we sync the heading
-                      (orgtrello/do-sync-entity)
-                      ;; we also sync the native checklist
-                      (when *ORGTRELLO-NATURAL-ORG-CHECKLIST* (orgtrello/map-checkboxes 'orgtrello/do-sync-entity))))
-      ;; otherwise, when using the natural org checkbox, we sync the checkbox
-      (when *ORGTRELLO-NATURAL-ORG-CHECKLIST* (orgtrello/map-checkboxes 'orgtrello/do-sync-entity))))
+      (org-map-tree (lambda () (orgtrello/do-sync-entity) (orgtrello/map-sync-checkboxes)))
+      (orgtrello/map-sync-checkboxes)))
+
+(defun orgtrello/map-sync-checkboxes () "Map the sync to checkboxes."
+  (when *ORGTRELLO-NATURAL-ORG-CHECKLIST* (orgtrello/map-checkboxes 'orgtrello/do-sync-entity)))
 
 (defun orgtrello/do-sync-full-file () "Full org-mode file synchronisation."
   (orgtrello-log/msg *OT/WARN* "Synchronizing org-mode file to the board '%s'. This may take some time, some coffee may be a good idea..." (orgtrello/--board-name))
-  (org-map-entries
-   (lambda ()
-     ;; only sync the first level, the function orgtrello/do-sync-full-entity will take care of the rest #TODO need a function that permits to filter on level
-     (when (= 1 (-> (orgtrello-data/entry-get-full-metadata) orgtrello-data/current orgtrello/--level))
-                (orgtrello/do-sync-full-entity)))
-   t
-   'file))
+  (org-map-entries (lambda () (when (= *CARD-LEVEL* (orgtrello/--current-level)) (orgtrello/do-sync-full-entity))) t 'file))
 
 (defun orgtrello/--compute-card-status (card-id-list) "Given a card's id, compute its status."
   (gethash card-id-list *HMAP-ID-NAME*))
