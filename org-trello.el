@@ -350,27 +350,24 @@ This is a list with the following elements:
       1-
       orgtrello-cbx/--org-up!))
 
-(defun orgtrello-cbx/--private-next-checklist-point () "Compute the next checkbox's beginning of line. Does not preserve current position. Return nil If hitting a heading or end of file."
-  (if (or (org-at-heading-p) (<= (point-max) (point)))
-      nil
-      (progn
-        (if (orgtrello-cbx/checkbox-p)
-            (point)
-            (progn
-              (forward-line)
-              (orgtrello-cbx/--private-next-checklist-point))))))
+(defun orgtrello-cbx/----next-checklist-point (point-max) "Compute the next checkbox's beginning of line. Does not preserve current position. Return nil If hitting a heading or end of file."
+  (unless (< (point) point-max)
+          (if (orgtrello-cbx/checkbox-p)
+              (point)
+              (progn
+                (forward-line)
+                (orgtrello-cbx/----next-checklist-point point-max)))))
 
-(defun orgtrello-cbx/--next-checklist-point () "Compute the next checkbox's beginning of line. Does preserve the current position. If hitting a heading or the end of the file, return nil."
+(defun orgtrello-cbx/--next-checklist-point (point-max) "Compute the next checkbox's beginning of line. Does preserve the current position. If hitting a heading or the end of the file, return nil."
   (save-excursion
     (forward-line)
-    (orgtrello-cbx/--private-next-checklist-point)))
+    (orgtrello-cbx/----next-checklist-point point-max)))
 
-(defun orgtrello/--map-checkboxes (point-max fn-to-execute) "Map over the checkboxes and execute fn when in checkbox. Does not preserve the cursor position."
-  (let ((next-checklist (orgtrello-cbx/--next-checklist-point)))
-    (when next-checklist
-          (goto-char next-checklist)
-          (funcall fn-to-execute)
-          (orgtrello/--map-checkboxes point-max fn-to-execute))))
+(defun orgtrello/--map-checkboxes (point-max fn-to-execute) "Map over the checkboxes and execute fn when in checkbox. Does not preserve the cursor position. Do not exceed the point-max."
+  (funcall fn-to-execute)
+  (-when-let (next-checklist (orgtrello-cbx/--next-checklist-point point-max))
+             (goto-char next-checklist)
+             (orgtrello/--map-checkboxes point-max fn-to-execute)))
 
 (defun orgtrello/--compute-next-card-point () "Compute the next card's position."
   (save-excursion
@@ -380,8 +377,11 @@ This is a list with the following elements:
 (defun orgtrello/----compute-next-entity-with-level-point (level) "Compute the next checkbox position with level level. If hitting a headline or the end of file, return such point."
   (let ((current-point (point))
         (current-level (-> (orgtrello-data/metadata) orgtrello/--level)))
-    (cond ((or (<= current-level level) (<= (point-max) current-point)) current-point)
-          (t                                                            (forward-line) (orgtrello/----compute-next-entity-with-level-point level)))))
+    (if (or (<= current-level level) (<= (point-max) current-point))
+        current-point
+        (progn
+          (forward-line)
+          (orgtrello/----compute-next-entity-with-level-point level)))))
 
 (defun orgtrello/--compute-next-entity-with-level-point (level) "Given a level, compute the next sibling for this same level. Does not preserve the position."
   (forward-line)
