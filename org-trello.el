@@ -78,6 +78,7 @@
 (defvar *CARD-LEVEL*                  1                                                 "card level")
 (defvar *CHECKLIST-LEVEL*             2                                                 "checkbox level")
 (defvar *ITEM-LEVEL*                  3                                                 "item level")
+(defvar *OUTOFBOUNDS-LEVEL*           4                                                 "Out of bounds level")
 (defvar *ORGTRELLO-LEVELS*            `(,*CARD-LEVEL* ,*CHECKLIST-LEVEL* ,*ITEM-LEVEL*) "Current levels 1 is card, 2 is checklist, 3 is item.")
 (defvar *ORGTRELLO-ACTION-SYNC*       "sync-entity"                                     "Possible action regarding the entity synchronization.")
 (defvar *ORGTRELLO-ACTION-DELETE*     "delete"                                          "Possible action regarding the entity deletion.")
@@ -95,6 +96,14 @@
    (setq *ORGTRELLO-CHECKLIST-UPDATE-ITEMS* nil)
 
 If you want to use this, we recommand to use the native org checklists - http://orgmode.org/manual/Checkboxes.html.")
+
+(defvar *ERROR-SYNC-CARD-MISSING-NAME* "Cannot synchronize the card - missing mandatory name. Skip it...")
+(defvar *ERROR-SYNC-CHECKLIST-SYNC-CARD-FIRST* "Cannot synchronize the checklist - the card must be synchronized first. Skip it...")
+(defvar *ERROR-SYNC-CHECKLIST-MISSING-NAME* "Cannot synchronize the checklist - missing mandatory name. Skip it...")
+(defvar *ERROR-SYNC-ITEM-SYNC-CARD-FIRST* "Cannot synchronize the item - the card must be synchronized first. Skip it...")
+(defvar *ERROR-SYNC-ITEM-SYNC-CHECKLIST-FIRST* "Cannot synchronize the item - the checklist must be synchronized first. Skip it...")
+(defvar *ERROR-SYNC-ITEM-MISSING-NAME* "Cannot synchronize the item - missing mandatory name. Skip it...")
+(defvar *ERROR-SYNC-ITEM-SYNC-UPPER-LAYER-FIRST* "The card and the checklist must be synced before syncing the item. Skip it...")
 
 
 
@@ -160,6 +169,11 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
      map)
    properties
    :initial-value (make-hash-table :test 'equal)))
+
+(defun orgtrello-hash/make-hierarchy (current &optional parent grandparent) "Helper constructor for the hashmap holding the full metadata about the current-entry."
+  (orgtrello-hash/make-properties `((:current . ,current)
+                                    (:parent . ,parent)
+                                    (:grandparent . ,grandparent))))
 
 (defun orgtrello-hash/key (s) "Given a string, compute its key format."
   (format ":%s:" s))
@@ -294,7 +308,7 @@ String look like:
 To ease the computation, we consider level 4 if no - to start with, and to avoid missed typing, we consider level 2 if there is no space before the - and level 3 otherwise."
   (if (orgtrello-cbx/--list-is-checkbox-p l)
       (if (string= "-" (car l)) *CHECKLIST-LEVEL* *ITEM-LEVEL*)
-      4))
+      *OUTOFBOUNDS-LEVEL*))
 
 (defun orgtrello-cbx/--retrieve-status (l) "Given a list of metadata, return the status"
   (car (--drop-while (not (or (string= "[]" it)
@@ -368,7 +382,7 @@ This is a list with the following elements:
         (orgtrello/----map-checkboxes level fn-to-execute)))
 
 (defun orgtrello/--map-checkboxes (level fn-to-execute) "Map over the checkboxes and execute fn when in checkbox. Does not preserve the cursor position. Do not exceed the point-max."
-  (when (= level *CHECKLIST-LEVEL*) (funcall fn-to-execute))
+  (funcall fn-to-execute)
   (orgtrello/----map-checkboxes level fn-to-execute))
 
 (defun orgtrello/--current-level () "Compute the current level's position."
@@ -438,17 +452,9 @@ This is a list with the following elements:
 
 (defun orgtrello-data/entry-get-full-metadata () "Compute the metadata needed for one entry into a map with keys :current, :parent, :grandparent.
    Returns nil if the level is superior to 4."
-  (let* ((current (orgtrello-data/metadata))
-         (level   (orgtrello/--level current)))
-    (if (< level 4)
-        (let* ((parent      (orgtrello-data/--parent-metadata))
-               (grandparent (orgtrello-data/--grandparent-metadata))
-               (mapdata     (make-hash-table :test 'equal)))
-          ;; build the metadata with every important pieces
-          (puthash :current     current     mapdata)
-          (puthash :parent      parent      mapdata)
-          (puthash :grandparent grandparent mapdata)
-          mapdata))))
+  (let ((current (orgtrello-data/metadata)))
+    (when (< (orgtrello/--level current) *OUTOFBOUNDS-LEVEL*)
+          (orgtrello-hash/make-hierarchy current (orgtrello-data/--parent-metadata) (orgtrello-data/--grandparent-metadata)))))
 
 (defun orgtrello-data/current (entry-meta) "Given an entry-meta, return the current entry"
   (gethash :current entry-meta))
@@ -1574,9 +1580,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
            *TODO*))
 
 (defun orgtrello/--checks-before-sync-card (card-meta) "Checks done before synchronizing the cards."
-  (-if-let (orgtrello/--card-name (orgtrello/--name card-meta))
-           :ok
-           "Cannot synchronize the card - missing mandatory name. Skip it..."))
+  (-if-let (orgtrello/--card-name (orgtrello/--name card-meta)) :ok *ERROR-SYNC-CARD-MISSING-NAME*))
 
 (defun orgtrello/--card (card-meta &optional parent-meta grandparent-meta) "Deal with create/update card query build. If the checks are ko, the error message is returned."
   (let ((checks-ok-or-error-message (orgtrello/--checks-before-sync-card card-meta)))
@@ -1601,8 +1605,8 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
     (if orgtrello/--checklist-name
         (if orgtrello/--card-id
             :ok
-          "Cannot synchronize the checklist - the card must be synchronized first. Skip it...")
-      "Cannot synchronize the checklist - missing mandatory name. Skip it...")))
+          *ERROR-SYNC-CHECKLIST-SYNC-CARD-FIRST*)
+      *ERROR-SYNC-CHECKLIST-MISSING-NAME*)))
 
 (defun orgtrello/--checklist (checklist-meta &optional card-meta grandparent-meta) "Deal with create/update checklist query build. If the checks are ko, the error message is returned."
   (let ((checks-ok-or-error-message (orgtrello/--checks-before-sync-checklist checklist-meta card-meta)))
@@ -1625,11 +1629,9 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
         (orgtrello/--card-id      (orgtrello/--id card-meta)))
     (if orgtrello/--item-name
         (if orgtrello/--checklist-id
-            (if orgtrello/--card-id
-                :ok
-              "Cannot synchronize the item - the card must be synchronized first. Skip it...")
-          "Cannot synchronize the item - the checklist must be synchronized first. Skip it...")
-      "Cannot synchronize the item - missing mandatory name. Skip it...")))
+            (if orgtrello/--card-id :ok *ERROR-SYNC-ITEM-SYNC-CARD-FIRST*)
+          *ERROR-SYNC-ITEM-SYNC-CHECKLIST-FIRST*)
+      *ERROR-SYNC-ITEM-MISSING-NAME*)))
 
 (defun orgtrello/--item-compute-state-or-check (checklist-update-items-p item-state checklist-state possible-states) "Compute the item's state/check (for creation/update)."
   (let* ((orgtrello/--item-checked   (first possible-states))
@@ -1707,30 +1709,49 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
            (orgtrello/compute-marker (orgtrello/--buffername entry) (orgtrello/--name entry) (orgtrello/--position entry))))
 
 (defun orgtrello/--right-level-p (entity) "Compute if the level is correct (not higher than level 4)."
-  (if (< (orgtrello/--level entity) 4) :ok "Level too high. Do not deal with entity other than card/checklist/items!"))
+  (if (< (-> entity orgtrello-data/current orgtrello/--level) *OUTOFBOUNDS-LEVEL*) :ok "Level too high. Do not deal with entity other than card/checklist/items!"))
 
 (defun orgtrello/--already-synced-p (entity) "Compute if the entity has already been synchronized."
-  (if (orgtrello/--id entity) :ok "Entity must been synchronized with trello first!"))
+  (if (-> entity orgtrello-data/current orgtrello/--id) :ok "Entity must been synchronized with trello first!"))
 
-(defun orgtrello/--delegate-to-the-proxy (entity action) "Execute the delegation to the consumer."
-  (let ((orgtrello/--current-entry-id (orgtrello/--id entity))
-        (orgtrello/--marker           (orgtrello/--compute-marker-from-entry entity)))
-    ;; if never created before, we need a marker to add inside the file
-    (unless (string= orgtrello/--current-entry-id orgtrello/--marker)
+(defun orgtrello/--can-be-synced-p (entity) "Ensure entity can be synced regarding the dependency on its level.!"
+  (let* ((current     (orgtrello-data/current entity))
+         (parent      (orgtrello-data/parent entity))
+         (grandparent (orgtrello-data/grandparent entity))
+         (level       (orgtrello/--level current)))
+    (cond ((= level *CARD-LEVEL*)      :ok)
+          ((= level *CHECKLIST-LEVEL*) (if (orgtrello/--id parent) :ok *ERROR-SYNC-CHECKLIST-SYNC-CARD-FIRST*))
+          ((= level *ITEM-LEVEL*)      (if (and (orgtrello/--id parent) (orgtrello/--id grandparent)) :ok *ERROR-SYNC-ITEM-SYNC-UPPER-LAYER-FIRST*)))))
+
+(defun orgtrello/--mandatory-name-ok-p (entity) "Ensure entity can be synced regarding the mandatory data."
+  (let* ((current (orgtrello-data/current entity))
+         (level   (orgtrello/--level current))
+         (name    (orgtrello/--name current)))
+    (if (and name (< 0 (length name)))
+        :ok
+        (cond ((= level *CARD-LEVEL*)      *ERROR-SYNC-CARD-MISSING-NAME*)
+              ((= level *CHECKLIST-LEVEL*) *ERROR-SYNC-CHECKLIST-MISSING-NAME*)
+              ((= level *ITEM-LEVEL*)      *ERROR-SYNC-ITEM-MISSING-NAME*)))))
+
+(defun orgtrello/--delegate-to-the-proxy (full-meta action) "Execute the delegation to the consumer."
+  (let* ((orgtrello/--current          (orgtrello-data/current full-meta))
+         (orgtrello/--current-entry-id (orgtrello/--id orgtrello/--current))
+         (orgtrello/--marker           (orgtrello/--compute-marker-from-entry orgtrello/--current)))
+    (unless (string= orgtrello/--current-entry-id orgtrello/--marker)     ;; if never created before, we need a marker to add inside the file
             (orgtrello/--set-marker orgtrello/--marker))
-    (puthash :id orgtrello/--marker entity) ;; we use the id as the marker or the marker as an id to get back to later
-    (puthash :action action         entity)
+    (puthash :id orgtrello/--marker orgtrello/--current)
+    (puthash :action action         orgtrello/--current)
     ;; and send the data to the proxy
-    (orgtrello-proxy/http-producer entity)))
+    (orgtrello-proxy/http-producer orgtrello/--current)))
 
 (defun orgtrello/--checks-then-delegate-action-on-entity-to-proxy (functional-controls action) "Execute the functional controls then if all pass, delegate the action 'action' to the proxy."
-  (org-action/--functional-controls-then-do functional-controls (orgtrello-data/metadata) 'orgtrello/--delegate-to-the-proxy action))
+  (org-action/--functional-controls-then-do functional-controls (orgtrello-data/entry-get-full-metadata) 'orgtrello/--delegate-to-the-proxy action))
 
 (defun orgtrello/do-delete-simple (&optional sync) "Do the deletion of an entity."
   (orgtrello/--checks-then-delegate-action-on-entity-to-proxy '(orgtrello/--right-level-p orgtrello/--already-synced-p) *ORGTRELLO-ACTION-DELETE*))
 
 (defun orgtrello/do-sync-entity () "Do the entity synchronization (if never synchronized, will create it, update it otherwise)."
-  (orgtrello/--checks-then-delegate-action-on-entity-to-proxy '(orgtrello/--right-level-p) *ORGTRELLO-ACTION-SYNC*))
+  (orgtrello/--checks-then-delegate-action-on-entity-to-proxy '(orgtrello/--right-level-p orgtrello/--can-be-synced-p orgtrello/--mandatory-name-ok-p) *ORGTRELLO-ACTION-SYNC*))
 
 (defun orgtrello/do-sync-full-entity () "Do the actual full card creation - from card to item. Beware full side effects..."
   (orgtrello-log/msg *OT/INFO* "Synchronizing full entity with its structure on board '%s'..." (orgtrello/--board-name))
