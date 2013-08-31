@@ -11,7 +11,7 @@
 #+title: synced from trello
 #+author: Antoine R. Dumont
 
-* TODO Reasoned schemer  (save-excursion
+* TODO Reasoned schemer
 :PROPERTIES:
 :END:
 * TODO Little schemer
