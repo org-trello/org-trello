@@ -3,16 +3,16 @@
 if [ $# -ne 2 ]; then
     cat <<EOF
 Use: $0 <VERSION> <USER>"
-- USER       your marmalade login
 - VERSION    version to release (0.1.6 for example)
+- USER       your marmalade login
 
 To install the token, execute the install-marmalade-token.sh.
 EOF
     exit 1;
 fi
 
-USER=$1
-VERSION=$2
+VERSION=$1
+USER=$2
 
 # from the current dev branch
 
