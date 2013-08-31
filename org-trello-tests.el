@@ -11,7 +11,7 @@
 
 (expectations
 ;;  (desc "testing orgtrello-hash/make-hash-org")
-  (expect "some name"       (gethash :name      (orgtrello-hash/make-hash-org 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org")))
+  (expect "some name"       (gethash :name       (orgtrello-hash/make-hash-org 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org")))
   (expect "IN PROGRESS"     (gethash :keyword    (orgtrello-hash/make-hash-org 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org")))
   (expect 0                 (gethash :level      (orgtrello-hash/make-hash-org 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org")))
   (expect "some id"         (gethash :id         (orgtrello-hash/make-hash-org 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org")))
@@ -27,7 +27,7 @@
 ;; ########################## orgtrello-data
 
 (expectations
-  (expect "some name :orgtrello-id-identifier:" (gethash :name      (orgtrello-data/--get-metadata '("buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil))))
+  (expect "some name :orgtrello-id-identifier:"  (gethash :name     (orgtrello-data/--get-metadata '("buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil))))
   (expect "IN PROGRESS"                          (gethash :keyword  (orgtrello-data/--get-metadata '("buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil))))
   (expect 0                                      (gethash :level    (orgtrello-data/--get-metadata '("buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil))))
   (expect :id                                    (gethash :id       (orgtrello-data/--get-metadata '("buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil))))
@@ -41,17 +41,6 @@
   (expect nil                        (orgtrello-data/--convert-orgmode-date-to-trello-date nil)))
 
 ;; ########################## orgtrello-api
-
-(expectations
-  (expect "POST"                       (gethash :method (orgtrello-api/add-board ":some-board")))
-  (expect "/boards"                   (gethash :uri    (orgtrello-api/add-board ":some-board")))
-  (expect '(("name" . ":some-board")) (gethash :params (orgtrello-api/add-board ":some-board"))))
-
-(expectations
-  (expect "POST"                            (gethash :method (orgtrello-api/add-board "some-board" "some-description")))
-  (expect "/boards"                        (gethash :uri    (orgtrello-api/add-board "some-board" "some-description")))
-  (expect '(("name" . "some-board")
-            ("desc" . "some-description")) (gethash :params (orgtrello-api/add-board "some-board" "some-description"))))
 
 (expectations
   (expect "GET"                 (gethash :method (orgtrello-api/get-boards)))
@@ -94,45 +83,40 @@
   (expect '((value . t))           (gethash :params (orgtrello-api/close-list :list-id))))
 
 (expectations
-  (expect "POST"                       (gethash :method (orgtrello-api/add-list "list-name" "board-id")))
+  (expect "POST"                      (gethash :method (orgtrello-api/add-list "list-name" "board-id")))
   (expect "/lists/"                   (gethash :uri    (orgtrello-api/add-list "list-name" "board-id")))
   (expect '(("name" . "list-name")
             ("idBoard" . "board-id")) (gethash :params (orgtrello-api/add-list "list-name" "board-id"))))
 
 (expectations
-  (expect "POST"                                            (gethash :method (orgtrello-api/add-card "card-name" "list-id")))
-  (expect "/cards/"                                        (gethash :uri    (orgtrello-api/add-card "card-name" "list-id")))
-  (expect '(("name" . "card-name") ("idList" . "list-id")) (gethash :params (orgtrello-api/add-card "card-name" "list-id"))))
+  (expect "PUT"                                             (gethash :method (orgtrello-api/move-card :id-card :id-list "name-card")))
+  (expect "/cards/:id-card"                                 (gethash :uri    (orgtrello-api/move-card :id-card :id-list "name-card")))
+  (expect '(("name"   . "name-card") ("idList" . :id-list)) (gethash :params (orgtrello-api/move-card :id-card :id-list "name-card"))))
 
 (expectations
-  (expect "POST"                                                                 (gethash :method (orgtrello-api/add-card "card-name" "list-id" "due-date")))
-  (expect "/cards/"                                                             (gethash :uri    (orgtrello-api/add-card "card-name" "list-id" "due-date")))
-  (expect '(("due" . "due-date") ("name" . "card-name") ("idList" . "list-id")) (gethash :params (orgtrello-api/add-card "card-name" "list-id" "due-date"))))
+  (expect "PUT"                    (gethash :method (orgtrello-api/move-card :id-card :id-list)))
+  (expect "/cards/:id-card"        (gethash :uri    (orgtrello-api/move-card :id-card :id-list)))
+  (expect '(("idList" . :id-list)) (gethash :params (orgtrello-api/move-card :id-card :id-list))))
+
+(expectations
+  (expect "PUT"                                     (gethash :method (orgtrello-api/move-card :id-card :id-list :name)))
+  (expect "/cards/:id-card"                         (gethash :uri    (orgtrello-api/move-card :id-card :id-list :name)))
+  (expect '(("name" . :name) ("idList" . :id-list)) (gethash :params (orgtrello-api/move-card :id-card :id-list :name))))
+
+(expectations
+  (expect "PUT"                                        (gethash :method (orgtrello-api/move-card :id-card :id-list nil :due-date)))
+  (expect "/cards/:id-card"                            (gethash :uri    (orgtrello-api/move-card :id-card :id-list nil :due-date)))
+  (expect '(("due" . :due-date) ("idList" . :id-list)) (gethash :params (orgtrello-api/move-card :id-card :id-list nil :due-date))))
+
+(expectations
+  (expect "PUT"                                                         (gethash :method (orgtrello-api/move-card :id-card :id-list :name :due-date)))
+  (expect "/cards/:id-card"                                             (gethash :uri    (orgtrello-api/move-card :id-card :id-list :name :due-date)))
+  (expect '(("due" . :due-date) ("name" . :name) ("idList" . :id-list)) (gethash :params (orgtrello-api/move-card :id-card :id-list :name :due-date))))
 
 (expectations
   (expect "GET"                    (gethash :method (orgtrello-api/get-cards-from-list :list-id)))
   (expect "/lists/:list-id/cards" (gethash :uri    (orgtrello-api/get-cards-from-list :list-id)))
   (expect nil                     (gethash :params (orgtrello-api/get-cards-from-list :list-id))))
-
-(expectations
-  (expect "PUT"                                                                                          (gethash :method (orgtrello-api/move-card :id-card :id-list "name-card")))
-  (expect "/cards/:id-card"                                                                             (gethash :uri    (orgtrello-api/move-card :id-card :id-list "name-card")))
-  (expect '(("name"   . "name-card")
-                                                                                 ("idList" . :id-list)) (gethash :params (orgtrello-api/move-card :id-card :id-list "name-card"))))
-(expectations
-  (expect "PUT"                     (gethash :method (orgtrello-api/move-card :id-card :id-list)))
-  (expect "/cards/:id-card"        (gethash :uri    (orgtrello-api/move-card :id-card :id-list)))
-  (expect '(("idList" . :id-list)) (gethash :params (orgtrello-api/move-card :id-card :id-list))))
-
-(expectations
-  (expect "PUT"                                         (gethash :method (orgtrello-api/move-card :id-card :id-list nil :due-date)))
-  (expect "/cards/:id-card"                            (gethash :uri    (orgtrello-api/move-card :id-card :id-list nil :due-date)))
-  (expect '(("due" . :due-date) ("idList" . :id-list)) (gethash :params (orgtrello-api/move-card :id-card :id-list nil :due-date))))
-
-(expectations
-  (expect "PUT"                                                          (gethash :method (orgtrello-api/move-card :id-card :id-list :name :due-date)))
-  (expect "/cards/:id-card"                                             (gethash :uri    (orgtrello-api/move-card :id-card :id-list :name :due-date)))
-  (expect '(("due" . :due-date) ("name" . :name) ("idList" . :id-list)) (gethash :params (orgtrello-api/move-card :id-card :id-list :name :due-date))))
 
 (expectations
   (expect "POST"                          (gethash :method (orgtrello-api/add-checklist "id-card" "name-checklist")))
@@ -160,26 +144,24 @@
   (expect nil                         (gethash :params (orgtrello-api/get-checklist :checklist-id))))
 
 (expectations
-  (expect "POST"                                  (gethash :method (orgtrello-api/add-items :checklist-id "item-name" t)))
-  (expect "/checklists/:checklist-id/checkItems" (gethash :uri    (orgtrello-api/add-items :checklist-id "item-name" t)))
-  (expect '(("name"  . "item-name")
-            ("checked" . t))                     (gethash :params (orgtrello-api/add-items :checklist-id "item-name" t))))
+  (expect "POST"                                     (gethash :method (orgtrello-api/add-items :checklist-id "item-name" t)))
+  (expect "/checklists/:checklist-id/checkItems"     (gethash :uri    (orgtrello-api/add-items :checklist-id "item-name" t)))
+  (expect '(("checked" . t) ("name"  . "item-name")) (gethash :params (orgtrello-api/add-items :checklist-id "item-name" t))))
 
 (expectations
-  (expect "POST"                                  (gethash :method (orgtrello-api/add-items :checklist-id "item-name")))
+  (expect "POST"                                 (gethash :method (orgtrello-api/add-items :checklist-id "item-name")))
   (expect "/checklists/:checklist-id/checkItems" (gethash :uri    (orgtrello-api/add-items :checklist-id "item-name")))
   (expect '(("name"  . "item-name"))             (gethash :params (orgtrello-api/add-items :checklist-id "item-name"))))
 
 (expectations
-  (expect "POST"                                  (gethash :method (orgtrello-api/add-items :checklist-id "item-name" nil)))
+  (expect "POST"                                 (gethash :method (orgtrello-api/add-items :checklist-id "item-name" nil)))
   (expect "/checklists/:checklist-id/checkItems" (gethash :uri    (orgtrello-api/add-items :checklist-id "item-name" nil)))
   (expect '(("name"  . "item-name"))             (gethash :params (orgtrello-api/add-items :checklist-id "item-name" nil))))
 
 (expectations
-  (expect "PUT"                                                                                                                        (gethash :method (orgtrello-api/update-item :card-id :checklist-id :item-id :item-name "incomplete")))
-  (expect "/cards/:card-id/checklist/:checklist-id/checkItem/:item-id"                                                                (gethash :uri    (orgtrello-api/update-item :card-id :checklist-id :item-id :item-name "incomplete")))
-  (expect '(("name"  . :item-name)
-                                                                                                             ("state" ."incomplete")) (gethash :params (orgtrello-api/update-item :card-id :checklist-id :item-id :item-name "incomplete"))))
+  (expect "PUT"                                                        (gethash :method (orgtrello-api/update-item :card-id :checklist-id :item-id :item-name "incomplete")))
+  (expect "/cards/:card-id/checklist/:checklist-id/checkItem/:item-id" (gethash :uri    (orgtrello-api/update-item :card-id :checklist-id :item-id :item-name "incomplete")))
+  (expect '(("state" ."incomplete") ("name"  . :item-name))            (gethash :params (orgtrello-api/update-item :card-id :checklist-id :item-id :item-name "incomplete"))))
 
 (expectations
   (expect "PUT"                                                         (gethash :method (orgtrello-api/update-item :card-id :checklist-id :item-id :item-name)))
@@ -401,32 +383,6 @@
 
 (expectations
   (expect '(3 5 7) (--map (funcall (compose-fn '((lambda (it) (+ 1 it)) (lambda (it) (* 2 it)))) it) '(1 2 3))))
-
-(expectations
-  (expect "<tr><td/><td>Action</td><td>Entity</td></tr>" (orgtrello-admin/--header-table)))
-
-(expectations
-  (expect "<tr><td><i class=\"icon-play\"/></td><td>test</td><td>nil</td></tr>" (orgtrello-admin/--entity '((action . "test")) "icon-play"))
-  (expect "<tr><td><i class=\"icon-pause\"/></td><td>delete</td><td>nil</td></tr>" (orgtrello-admin/--entity '((action . "delete")) "icon-pause"))
-  (expect "<tr><td><i class=\"icon-play\"/></td><td>test</td><td>name 0</td></tr>" (orgtrello-admin/--entity '((action . "test") (name . "name 0")) "icon-play"))
-  (expect "<tr><td><i class=\"icon-pause\"/></td><td>delete</td><td>name 1</td></tr>" (orgtrello-admin/--entity '((action . "delete") (name . "name 1")) "icon-pause")))
-
-(expectations
-  (expect "None" (orgtrello-admin/--actions nil))
-  (expect "None" (orgtrello-admin/--actions nil "icon-arrow-right"))
-  (expect "None" (orgtrello-admin/--actions nil "icon-arrow-right" "icon-arrow-left"))
-    (expect
-      "<table class=\"table table-striped table-bordered table-hover\" style=\"font-size: 0.75em\"><tr><td/><td>Action</td><td>Entity</td></tr><tr><td><i class=\"icon-arrow-right\"/></td><td>create</td><td>name 0</td></tr><tr><td><i class=\"icon-arrow-up\"/></td><td>delete</td><td>name 1</td></tr></table>"
-    (orgtrello-admin/--actions '(((action . "create") (name . "name 0")) ((action . "delete") (name . "name 1")))))
-  (expect
-      "<table class=\"table table-striped table-bordered table-hover\" style=\"font-size: 0.75em\"><tr><td/><td>Action</td><td>Entity</td></tr><tr><td><i class=\"icon-arrow-right\"/></td><td>create</td><td>name 0</td></tr><tr><td><i class=\"icon-arrow-up\"/></td><td>delete</td><td>name 1</td></tr></table>"
-    (orgtrello-admin/--actions '(((action . "create") (name . "name 0")) ((action . "delete") (name . "name 1"))) "icon-arrow-right"))
-  (expect
-      "<table class=\"table table-striped table-bordered table-hover\" style=\"font-size: 0.75em\"><tr><td/><td>Action</td><td>Entity</td></tr><tr><td><i class=\"icon-arrow-right\"/></td><td>create</td><td>name 0</td></tr><tr><td><i class=\"icon-arrow-up\"/></td><td>delete</td><td>name 1</td></tr></table>"
-    (orgtrello-admin/--actions '(((action . "create") (name . "name 0")) ((action . "delete") (name . "name 1"))) nil "icon-arrow-up"))
-  (expect
-      "<table class=\"table table-striped table-bordered table-hover\" style=\"font-size: 0.75em\"><tr><td/><td>Action</td><td>Entity</td></tr><tr><td><i class=\"icon-play\"/></td><td>create</td><td>name 0</td></tr><tr><td><i class=\"icon-pause\"/></td><td>delete</td><td>name 1</td></tr></table>"
-    (orgtrello-admin/--actions '(((action . "create") (name . "name 0")) ((action . "delete") (name . "name 1"))) "icon-play" "icon-pause")))
 
 (expectations
   (expect "entity name"             (orgtrello-admin/--detail-entity 3 '((name . "entity name"))))
@@ -695,8 +651,6 @@ DEADLINE: <some-date>
 (expectations
   (expect "test" (orgtrello-query/--retrieve-data 'marker `((marker . "test"))))
   (expect nil (orgtrello-query/--retrieve-data    'other  `((marker . "test"))))
-  (expect "test" (orgtrello-query/--marker                `((marker . "test"))))
-  (expect nil (orgtrello-query/--marker                   `((inexistant . "test"))))
   (expect "test" (orgtrello-query/--buffername            `((buffername . "test"))))
   (expect nil (orgtrello-query/--buffername               `((inexistant . "test"))))
   (expect "test" (orgtrello-query/--position              `((position . "test"))))
@@ -779,9 +733,496 @@ DEADLINE: <some-date>
   (expect nil (orgtrello/--checklist-p `((anything-else . "this is not a item")))))
 
 (expectations
- (expect "- [X] call people [4/4]                                        :PROPERTIES: {\"orgtrello-id\":\"456\"}" (orgtrello-cbx/--justify-property-current-line "- [X] call people [4/4] :PROPERTIES: {\"orgtrello-id\":\"456\"}" 100))
+  (expect (format "%sorg-trello/3/test.org-123.el" elnode-webserver-docroot) (orgtrello-proxy/--compute-filename-from-entity '((level . 3) (buffername . "test.org") (position . "123")))))
 
- (expect "- [X] call people [4/4]                                         :PROPERTIES: {\"orgtrello-id\":\"456\"}" (orgtrello-cbx/--justify-property-current-line "- [X] call people [4/4]                                         :PROPERTIES: {\"orgtrello-id\":\"456\"}" 100)))
+(expectations
+  (expect '(tr nil (td nil) (td nil "Action") (td nil "Entity") (td nil "Delete")) (orgtrello-admin/--header-table)))
+
+(expectations
+  (expect '(input ((type . "button") (onclick . "deleteEntities('/proxy/admin/entities/delete/id');") (value . "x"))) (orgtrello-admin/--delete-action '((id . "id"))))
+  (expect ""                                          (orgtrello-admin/--delete-action '((name . "name")))))
+
+(expectations
+  (expect
+      '(tr nil
+           (td nil
+               (i
+                ((class . "icon-play"))))
+           (td nil "test")
+           (td nil "name")
+           (td nil
+               (input
+                ((type . "button")
+                 (onclick . "deleteEntities('/proxy/admin/entities/delete/id');")
+                 (value . "x")))))
+    (orgtrello-admin/--entity '((action . "test") (id . "id") (name . "name")) "icon-play"))
+
+  (expect
+      '(tr nil
+           (td nil
+               (i
+                ((class . "icon-pause"))))
+           (td nil "delete")
+           (td nil "name")
+           (td nil
+               (input
+                ((type . "button")
+                 (onclick . "deleteEntities('/proxy/admin/entities/delete/id');")
+                 (value . "x")))))
+    (orgtrello-admin/--entity '((action . "delete") (id . "id") (name . "name")) "icon-pause"))
+
+  (expect
+      '(tr nil
+           (td nil
+               (i
+                ((class . "icon-play"))))
+           (td nil "test")
+           (td nil "name 0")
+           (td nil
+               (input
+                ((type . "button")
+                 (onclick . "deleteEntities('/proxy/admin/entities/delete/id');")
+                 (value . "x")))))
+    (orgtrello-admin/--entity '((action . "test") (name . "name 0") (id . "id")) "icon-play"))
+
+  (expect
+      '(tr nil
+           (td nil
+               (i
+                ((class . "icon-pause"))))
+           (td nil "delete")
+           (td nil "name 1")
+           (td nil
+               (input
+                ((type . "button")
+                 (onclick . "deleteEntities('/proxy/admin/entities/delete/id');")
+                 (value . "x")))))
+    (orgtrello-admin/--entity '((action . "delete") (name . "name 1") (id . "id")) "icon-pause")))
+
+(expectations
+  (expect
+      '(input ((type . "button") (onclick . "deleteEntities('/proxy/admin/entities/delete/');") (value . "x")))
+    (orgtrello-admin/--input-button-html "deleteEntities('/proxy/admin/entities/delete/');" "x")))
+
+(expectations
+  (expect
+      '(div
+        ((class . "row-fluid marketing"))
+        (div
+         ((class . "span6"))
+         (div
+          ((style . "font-size: 2em;margin-right: 10px;margin-bottom: 10px"))
+          "Current action")
+         (span
+          ((id . "current-action"))))
+        (div
+         ((class . "span6"))
+         (div
+          ((style . "margin-bottom:10px"))
+          (span
+           ((style . "font-size: 2em;margin-right: 10px"))
+           "Next actions")
+          (span nil
+                (input
+                 ((type . "button")
+                  (onclick . "deleteEntities('/proxy/admin/entities/delete/');")
+                  (value . "Delete all")))))
+         (span
+          ((id . "next-actions")))))
+    (orgtrello-admin/--main-body)))
+
+(expectations
+  (expect
+      (esxml-to-xml `(div ((class . "hello")) "world"))
+    (orgtrello-admin/--render-html `(div ((class . "hello")) "world"))))
+
+(expectations
+  (expect "None" (orgtrello-admin/--entities-as-html nil))
+  (expect "None" (orgtrello-admin/--entities-as-html nil "icon-arrow-right"))
+  (expect "None" (orgtrello-admin/--entities-as-html nil "icon-arrow-right" "icon-arrow-left"))
+  (expect
+      '(table
+        ((class . "table table-striped table-bordered table-hover")
+         (style . "font-size: 0.75em"))
+        (tr nil
+            (td nil)
+            (td nil "Action")
+            (td nil "Entity")
+            (td nil "Delete"))
+        (tr nil
+            (td nil
+                (i
+                 ((class . "icon-arrow-right"))))
+            (td nil "create")
+            (td nil "name 0")
+            (td nil
+                (input
+                 ((type . "button")
+                  (onclick . "deleteEntities('/proxy/admin/entities/delete/id 0');")
+                  (value . "x")))))
+        (tr nil
+            (td nil
+                (i
+                 ((class . "icon-arrow-up"))))
+            (td nil "delete")
+            (td nil "name 1")
+            (td nil "")))
+    (orgtrello-admin/--entities-as-html '(((action . "create") (name . "name 0") (id . "id 0")) ((action . "delete") (name . "name 1")))))
+
+  (expect
+      '(table
+        ((class . "table table-striped table-bordered table-hover")
+         (style . "font-size: 0.75em"))
+        (tr nil
+            (td nil)
+            (td nil "Action")
+            (td nil "Entity")
+            (td nil "Delete"))
+        (tr nil
+            (td nil
+                (i
+                 ((class . "icon-arrow-right"))))
+            (td nil "create")
+            (td nil "name 0")
+            (td nil ""))
+        (tr nil
+            (td nil
+                (i
+                 ((class . "icon-arrow-up"))))
+            (td nil "delete")
+            (td nil "name 1")
+            (td nil "")))
+    (orgtrello-admin/--entities-as-html '(((action . "create") (name . "name 0")) ((action . "delete") (name . "name 1"))) "icon-arrow-right"))
+
+  (expect
+      '(table
+        ((class . "table table-striped table-bordered table-hover")
+         (style . "font-size: 0.75em"))
+        (tr nil
+            (td nil)
+            (td nil "Action")
+            (td nil "Entity")
+            (td nil "Delete"))
+        (tr nil
+            (td nil
+                (i
+                 ((class . "icon-arrow-right"))))
+            (td nil "create")
+            (td nil "name 0")
+            (td nil ""))
+        (tr nil
+            (td nil
+                (i
+                 ((class . "icon-arrow-up"))))
+            (td nil "delete")
+            (td nil "name 1")
+            (td nil "")))
+    (orgtrello-admin/--entities-as-html '(((action . "create") (name . "name 0")) ((action . "delete") (name . "name 1"))) nil "icon-arrow-up"))
+
+  (expect
+      '(table
+        ((class . "table table-striped table-bordered table-hover")
+         (style . "font-size: 0.75em"))
+        (tr nil
+            (td nil)
+            (td nil "Action")
+            (td nil "Entity")
+            (td nil "Delete"))
+        (tr nil
+            (td nil
+                (i
+                 ((class . "icon-play"))))
+            (td nil "create")
+            (td nil "name 0")
+            (td nil ""))
+        (tr nil
+            (td nil
+                (i
+                 ((class . "icon-pause"))))
+            (td nil "delete")
+            (td nil "name 1")
+            (td nil "")))
+    (orgtrello-admin/--entities-as-html '(((action . "create") (name . "name 0")) ((action . "delete") (name . "name 1"))) "icon-play" "icon-pause")))
+
+(expectations
+  (expect
+      '((tr nil
+            (td nil
+                (i
+                 ((class . "next"))))
+            (td nil "action")
+            (td nil "nil")
+            (td nil
+                (input
+                 ((type . "button")
+                  (onclick . "deleteEntities('/proxy/admin/entities/delete/id');")
+                  (value . "x")))))
+        (tr nil
+            (td nil
+                (i
+                 ((class . "next"))))
+            (td nil "action")
+            (td nil "nil")
+            (td nil
+                (input
+                 ((type . "button")
+                  (onclick . "deleteEntities('/proxy/admin/entities/delete/id2');")
+                  (value . "x"))))))
+    (orgtrello-admin/--list-entities-as-html '(((action . "action") (id . "id") (marker . "marker"))
+                                               ((action . "action") (id . "id2") (marker . "marker2"))) "next")))
+
+(with-temp-buffer
+  (insert "- [X] call people [4/4] :PROPERTIES: {\"orgtrello-id\":\"456\"}")
+  (forward-line -1))
+
+(expectations
+  (expect 1
+    (with-temp-buffer
+      (insert "* heading\n")
+      (insert "- [ ] some checklist\n")
+      (insert "  - [ ] some item\n")
+      (orgtrello-cbx/--point-at-beg-of-region-for-justify)))
+  (expect 21
+    (with-temp-buffer
+      (insert "#+TODO: TODO | DONE\n")
+      (insert "* heading\n")
+      (insert "- [ ] some checklist\n")
+      (insert "  - [ ] some item\n")
+      (orgtrello-cbx/--point-at-beg-of-region-for-justify))))
+
+(expectations
+  (expect '((orgtrello-id . "123")) (with-temp-buffer
+                                      (insert "- [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}")
+                                      (forward-line -1)
+                                      (orgtrello-cbx/--read-properties-from-point (point))))
+  (expect nil (with-temp-buffer
+                (insert "- [X] some checkbox :PROPERTIES: {}")
+                (forward-line -1)
+                (orgtrello-cbx/--read-properties-from-point (point))))
+  (expect nil (with-temp-buffer
+                (insert "- [X] some checkbox")
+                (forward-line -1)
+                (orgtrello-cbx/--read-properties-from-point (point)))))
+
+(expectations
+  (expect "- [X] some checkbox :PROPERTIES: {\"orgtrello-id\":456}"
+    (with-temp-buffer
+      (insert "- [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}")
+      (forward-line -1)
+      (orgtrello-cbx/--write-properties-at-point (point) `(("orgtrello-id" . 456))))))
+
+(expectations
+  (expect "abc"
+    (with-temp-buffer
+      (insert "- [X] some checkbox                                                                :PROPERTIES: {\"orgtrello-id\":\"abc\"}")
+      (forward-line -1)
+      (orgtrello-cbx/org-get-property (point) "orgtrello-id")))
+  (expect nil
+    (with-temp-buffer
+      (insert "- [X] some checkbox                                                                :PROPERTIES: {\"orgtrello-id\":\"abc\"}")
+      (forward-line -1)
+      (orgtrello-cbx/org-get-property (point) "inexistant-id"))))
+
+(expectations
+  (expect "- [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"abc\"}"
+    (with-temp-buffer
+      (insert "- [X] some checkbox")
+      (forward-line -1)
+      (orgtrello-cbx/org-set-property "orgtrello-id" "abc")
+      (buffer-string)))
+  (expect "- [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"abc\"}"
+    (with-temp-buffer
+      (insert "- [X] some checkbox :PROPERTIES: {}")
+      (forward-line -1)
+      (orgtrello-cbx/org-set-property "orgtrello-id" "abc")
+      (buffer-string)))
+  (expect "- [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"def\"}"
+    (with-temp-buffer
+      (insert "- [X] some checkbox                                                                                                    :PROPERTIES: {\"orgtrello-id\":\"abc\"}")
+      (forward-line -1)
+      (orgtrello-cbx/org-set-property "orgtrello-id" "def")
+      (buffer-string))))
+
+(expectations
+  (expect "- [X] some checkbox :PROPERTIES: {}"
+    (with-temp-buffer
+      (insert "- [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}")
+      (forward-line -1)
+      (orgtrello-cbx/org-delete-property "orgtrello-id")
+      (buffer-string)))
+  (expect "- [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"def\"}"
+    (with-temp-buffer
+      (insert "- [X] some checkbox                                                                                         :PROPERTIES: {\"orgtrello-id\":\"def\"}")
+      (forward-line -1)
+      (orgtrello-cbx/org-delete-property "inexistant")
+      (buffer-string)))
+  (expect "- [X] some checkbox :PROPERTIES: {}"
+    (with-temp-buffer
+      (insert "- [X] some checkbox")
+      (forward-line -1)
+      (orgtrello-cbx/org-delete-property "inexistant")
+      (buffer-string))))
+
+(expectations
+  (expect '((id . "id") (name . "some%20content%20to%20escape%20%26%20voila%21"))
+    (orgtrello-query/--prepare-params-assoc! '((id . "id") (name . "some content to escape & voila!"))))
+  (expect '((id . "id") (name . "some%20content%20to%20escape%20%26%20voila%21") (any . "content%20is%20escaped%20%26%20%3E%20this%20is%20fun%21"))
+    (orgtrello-query/--prepare-params-assoc! '((id . "id") (name . "some content to escape & voila!") (any . "content is escaped & > this is fun!"))))
+  (expect '((id) (name . "some%20content%20to%20escape%20%26%20voila%21") (any . "content%20is%20escaped%20%26%20%3E%20this%20is%20fun%21"))
+    (orgtrello-query/--prepare-params-assoc! '((id) (name . "some content to escape & voila!") (any . "content is escaped & > this is fun!"))))
+  (expect '((ok . t) (name . "some%20content%20to%20escape%20%26%20voila%21") (any . "content%20is%20escaped%20%26%20%3E%20this%20is%20fun%21"))
+    (orgtrello-query/--prepare-params-assoc! '((ok . t) (name . "some content to escape & voila!") (any . "content is escaped & > this is fun!")))))
+
+(expectations
+  (expect '((name . "some%20content%20to%20escape%20%26%20voila%21") (id . "id"))
+    (orgtrello-query/--prepare-query-params! '((id . "id") (name . "some content to escape & voila!"))))
+  (expect '((any . "content%20is%20escaped%20%26%20%3E%20this%20is%20fun%21") (name . "some%20content%20to%20escape%20%26%20voila%21") (id . "id"))
+    (orgtrello-query/--prepare-query-params! '((id . "id") (name . "some content to escape & voila!") (any . "content is escaped & > this is fun!"))))
+  (expect '((any . "content%20is%20escaped%20%26%20%3E%20this%20is%20fun%21") (name . "some%20content%20to%20escape%20%26%20voila%21") (id))
+    (orgtrello-query/--prepare-query-params! '((id) (name . "some content to escape & voila!") (any . "content is escaped & > this is fun!"))))
+  (expect '((any . "content%20is%20escaped%20%26%20%3E%20this%20is%20fun%21") (name . "some%20content%20to%20escape%20%26%20voila%21") (ok . t))
+    (orgtrello-query/--prepare-query-params! '((ok . t) (name . "some content to escape & voila!") (any . "content is escaped & > this is fun!")))))
+
+(expectations
+  (expect '((name . "some data with & keywords hexified") (id . "abc") (other-field . "hexified string"))
+    (->> '((other-field . "hexified string") (id . "abc") (name . "some data with & keywords hexified"))
+         orgtrello-query/--prepare-params-assoc!
+         json-encode
+         orgtrello-proxy/--json-read-from-string)))
+
+(expectations
+  (expect '((name . "some%20data%20with%20%26%20keywords%20hexified") (id . "abc") (other-field . "hexified%20string"))
+    (-> '((other-field . "hexified string") (id . "abc") (name . "some data with & keywords hexified"))
+        orgtrello-query/--prepare-params-assoc!
+        json-encode
+        orgtrello-proxy/--unhexify-data))
+  (expect '((name . "some data with & keywords hexified") (id . "abc") (other-field . "hexified string"))
+    (-> '((other-field . "hexified string") (id . "abc") (name . "some data with & keywords hexified"))
+        orgtrello-query/--prepare-params-assoc!
+        json-encode
+        (orgtrello-proxy/--unhexify-data t))))
+
+(expectations
+  (expect 'orgtrello-query/--get         (orgtrello-query/--dispatch-http-query "GET"))
+  (expect 'orgtrello-query/--post-or-put (orgtrello-query/--dispatch-http-query "POST"))
+  (expect 'orgtrello-query/--post-or-put (orgtrello-query/--dispatch-http-query "PUT"))
+  (expect 'orgtrello-query/--delete      (orgtrello-query/--dispatch-http-query "DELETE")))
+
+(expectations
+  (expect nil                    (orgtrello-api/--deal-with-optional-value nil nil nil))
+  (expect nil                    (orgtrello-api/--deal-with-optional-value nil :a nil))
+  (expect :existing-list         (orgtrello-api/--deal-with-optional-value nil :a :existing-list))
+  (expect :existing-list         (orgtrello-api/--deal-with-optional-value nil nil :existing-list))
+  (expect '(:value-a)            (orgtrello-api/--deal-with-optional-value :a :value-a nil))
+  (expect '(:value-a :value-b)   (orgtrello-api/--deal-with-optional-value :a :value-a '(:value-b)))
+  (expect '(nil :value-b) (orgtrello-api/--deal-with-optional-value :a nil '(:value-b))))
+
+(expectations
+  (expect nil                    (orgtrello-api/--deal-with-optional-values '((nil . nil)) nil))
+  (expect nil                    (orgtrello-api/--deal-with-optional-values '((nil . :a)) nil))
+  (expect :existing-list         (orgtrello-api/--deal-with-optional-values '((nil . :a)) :existing-list))
+  (expect :existing-list         (orgtrello-api/--deal-with-optional-values '((nil . nil)) :existing-list))
+
+  (expect '(:value-a)            (orgtrello-api/--deal-with-optional-values '((:a . :value-a)) nil))
+  (expect '(:value-a :value-b)   (orgtrello-api/--deal-with-optional-values '((:a . :value-a)) '(:value-b)))
+  (expect '(nil :value-b)        (orgtrello-api/--deal-with-optional-values '((:a . nil)) '(:value-b))))
+
+(expectations
+  (expect nil                           (orgtrello-api/--deal-with-optional-values '((nil . nil) (nil . nil)) nil))
+  (expect nil                           (orgtrello-api/--deal-with-optional-values '((nil . :a)  (nil . :a)) nil))
+  (expect :existing-list                (orgtrello-api/--deal-with-optional-values '((nil . :a) (nil . :a)) :existing-list))
+  (expect :existing-list                (orgtrello-api/--deal-with-optional-values '((nil . nil) (nil . nil)) :existing-list))
+
+  (expect '(:value-c :value-a)          (orgtrello-api/--deal-with-optional-values '((:a . :value-a) (:c . :value-c)) nil))
+  (expect '(:value-c :value-a :value-b) (orgtrello-api/--deal-with-optional-values '((:a . :value-a) (:c . :value-c)) '(:value-b)))
+  (expect '(nil nil :value-b)           (orgtrello-api/--deal-with-optional-values '((:a . nil) (:c . nil)) '(:value-b))))
+
+(expectations
+  (expect "POST"                      (gethash :method (orgtrello-api/add-board ":some-board")))
+  (expect "/boards"                   (gethash :uri    (orgtrello-api/add-board ":some-board")))
+  (expect '(("name" . ":some-board")) (gethash :params (orgtrello-api/add-board ":some-board"))))
+
+(expectations
+  (expect "POST"                           (gethash :method (orgtrello-api/add-board "some-board" "some-description")))
+  (expect "/boards"                        (gethash :uri    (orgtrello-api/add-board "some-board" "some-description")))
+  (expect '(("desc" . "some-description")
+            ("name" . "some-board")) (gethash :params (orgtrello-api/add-board "some-board" "some-description"))))
+
+(expectations
+  (expect "POST"                                           (gethash :method (orgtrello-api/add-card "card-name" "list-id")))
+  (expect "/cards/"                                        (gethash :uri    (orgtrello-api/add-card "card-name" "list-id")))
+  (expect '(("name" . "card-name") ("idList" . "list-id")) (gethash :params (orgtrello-api/add-card "card-name" "list-id"))))
+
+(expectations
+  (expect "POST"                                                                (gethash :method (orgtrello-api/add-card "card-name" "list-id" "due-date")))
+  (expect "/cards/"                                                             (gethash :uri    (orgtrello-api/add-card "card-name" "list-id" "due-date")))
+  (expect '(("due" . "due-date") ("name" . "card-name") ("idList" . "list-id")) (gethash :params (orgtrello-api/add-card "card-name" "list-id" "due-date"))))
+
+(expectations
+  (expect 'orgtrello/--card      (gethash *CARD-LEVEL* *MAP-DISPATCH-CREATE-UPDATE*))
+  (expect 'orgtrello/--checklist (gethash *CHECKLIST-LEVEL* *MAP-DISPATCH-CREATE-UPDATE*))
+  (expect 'orgtrello/--item      (gethash *ITEM-LEVEL* *MAP-DISPATCH-CREATE-UPDATE*)))
+
+(expectations
+  (expect 'orgtrello/--card-delete      (gethash *CARD-LEVEL* *MAP-DISPATCH-DELETE*))
+  (expect 'orgtrello/--checklist-delete (gethash *CHECKLIST-LEVEL* *MAP-DISPATCH-DELETE*))
+  (expect 'orgtrello/--item-delete      (gethash *ITEM-LEVEL* *MAP-DISPATCH-DELETE*)))
+
+(expectations
+ (expect (format "%sorg-trello/1/" elnode-webserver-docroot) (orgtrello-proxy/--compute-entity-level-dir *CARD-LEVEL*))
+ (expect (format "%sorg-trello/2/" elnode-webserver-docroot) (orgtrello-proxy/--compute-entity-level-dir *CHECKLIST-LEVEL*))
+ (expect (format "%sorg-trello/3/" elnode-webserver-docroot) (orgtrello-proxy/--compute-entity-level-dir *ITEM-LEVEL*)))
+
+(expectations
+  (expect 50
+    (with-temp-buffer
+      (insert "* heading\n")
+      (insert "- [ ] some checklist\n")
+      (insert "  - [ ] some item\n")
+      (orgtrello/--compute-next-card-point)))
+  (expect 70
+    (with-temp-buffer
+      (insert "#+TODO: TODO | DONE\n")
+      (insert "* heading\n")
+      (insert "- [ ] some checklist\n")
+      (insert "  - [ ] some item\n")
+      (forward-line -2)
+      (orgtrello/--compute-next-card-point)))
+  (expect 65
+    (with-temp-buffer
+      (insert "* heading\n")
+      (insert "- [ ] some checklist\n")
+      (insert "  - [ ] some item\n")
+      (insert "* next heading\n")
+      (forward-line -2)
+      (orgtrello/--compute-next-card-point)))
+  (expect 85
+    (with-temp-buffer
+      (insert "#+TODO: TODO | DONE\n")
+      (insert "* heading\n")
+      (insert "- [ ] some checklist\n")
+      (insert "  - [ ] some item\n")
+      (insert "* next heading\n")
+      (forward-line -2)
+      (orgtrello/--compute-next-card-point)))
+  (expect 85
+    (with-temp-buffer
+      (insert "#+TODO: TODO | DONE\n")
+      (insert "* heading\n")
+      (insert "- [ ] some checklist\n")
+      (insert "  - [ ] some item\n")
+      (insert "* next heading\n")
+      (forward-line -3)
+      (orgtrello/--compute-next-card-point)))
+  (expect 85
+    (with-temp-buffer
+      (insert "#+TODO: TODO | DONE\n")
+      (insert "* heading\n")
+      (insert "- [ ] some checklist\n")
+      (insert "  - [ ] some item\n")
+      (insert "* next heading\n")
+      (forward-line -4)
+      (orgtrello/--compute-next-card-point))))
 
 (provide 'org-trello-tests)
 ;;; org-trello-tests ends here

@@ -1,3 +1,21 @@
+# 0.1.7
+
+- [X] webadmin: Add an action button on action to stop it
+- [X] webadmin: Add an action button to stop every running actions on entities
+- [X] URLencode/Protect the data from the query before executing the query - https://github.com/ardumont/org-trello/issues/46
+- [X] Some refactoring about:
+  - [X] Docstring position (same level as function definition, this way, when toggling sexp, we see the docstring too)
+  - [X] Simplification of cond statement
+  - [X] Adding some missing tests
+  - [X] Simplifying some code function (removing let when not needed)
+- [X] Fix the scan problem with level 3 (must have been introduced with the refactoring from number to variable level)
+- [X] Remove the marker notion and use the identifier in its place (we already use it as marker)
+- [X] Fix the :PROPERTIES: font lock (which is not painted as keyword)
+- [X] Improve the justify policy (trim the content before computing the justifying) -> There remains erratic behaviour
+- [X] Improve map-checkbox to deal with limit (map over checkbox inferior to current level, at the moment, we scan all checkboxes)
+- [X] Version
+- [X] Release notes
+
 # 0.1.6
 
 - [X] Use the native org checklist to sync to trello
