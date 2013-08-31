@@ -1,8 +1,5 @@
 #!/bin/bash -xe
 
-# static setup
-WDIR=$(dirname $0)
-
 if [ $# -ne 2 ]; then
     cat <<EOF
 Use: $0 <VERSION> <USER>"
@@ -14,6 +11,7 @@ EOF
     exit 1;
 fi
 
+WDIR=$(dirname $0)
 VERSION=$1
 USER=$2
 
