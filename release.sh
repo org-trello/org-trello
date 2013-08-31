@@ -11,10 +11,11 @@ EOF
     exit 1;
 fi
 
+WDIR=$(dirname $0)
 VERSION=$1
 USER=$2
 
-# from the current dev branch
+# launched from the current dev branch
 
 git fetch -p --all
 

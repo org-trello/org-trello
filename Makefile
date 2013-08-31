@@ -63,4 +63,4 @@ cleanup-data:
 		~/.emacs.d/elnode/public_html/org-trello/*.lock
 
 release:
-	cd scripts && release.sh $(VERSION) $(USER)
+	./release.sh $(VERSION) $(USER)
