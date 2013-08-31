@@ -1,8 +1,5 @@
 #!/bin/bash -xe
 
-# static setup
-WDIR=$(dirname $0)
-
 if [ $# -ne 2 ]; then
     cat <<EOF
 Use: $0 <VERSION> <USER>"
@@ -17,7 +14,7 @@ fi
 VERSION=$1
 USER=$2
 
-# launched from the current dev branch
+# from the current dev branch
 
 git fetch -p --all
 
