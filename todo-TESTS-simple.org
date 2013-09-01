@@ -8,24 +8,9 @@
 #+property: FAIL 51e538a26f75d07902002d25
 #+property: CANCELLED 51e538e6c7a68fa0510014ee
 #+TODO: TODO IN-PROGRESS DONE | PENDING DELEGATED FAIL CANCELLED
-#+title: synced from trello
+#+title: dummy sample to sync with trello
 #+author: Antoine R. Dumont
 
-* TODO Reasoned schemer
-:PROPERTIES:
-:END:
-* TODO Little schemer
-:PROPERTIES:
-:END:
-* TODO Structure and Interpretations of computer programs
-:PROPERTIES:
-:END:
-* TODO Seasoned schemer
-:PROPERTIES:
-:END:
-* TODO Clojurescript
-:PROPERTIES:
-:END:
 * TODO Joy of FUN(ctional) LANGUAGES
 :PROPERTIES:
 :END:
@@ -56,12 +41,6 @@
   - [-] Ch. 10 - Composition and inheritance
   - [-] Ch. 11 - Scala's hierarchy
   - [-] Ch. 12 - Traits
-* DONE Programming in Haskell
-:PROPERTIES:
-:END:
-* DONE Clojure Programming
-:PROPERTIES:
-:END:
 * DONE Functional programming in Haskell
 :PROPERTIES:
 :END:
@@ -70,28 +49,3 @@
 :orgtrello-id: 52230106255d47b85100306c
 :END:
 - [-] How to deal with promotion/demotion?  :PROPERTIES: {"orgtrello-id":"522301077c781e867c0060d3"}
-* PENDING Joy of Clojure
-- [-] Part 1 Foundations [0%]
-  - [-] Clojure philosophy [100%]
-  - [-] Drinking from the Clojure firehose
-  - [-] Dipping our toes in the pool
-- [-] Part 2 Data Types
-  - [-] On scalars [100%]
-  - [-] Composite data types [100%]
-- [-] Part 3 Functional Programming
-  - [-] Being lazy and set in your ways
-  - [-] Immutability
-  - [-] Designing a persistent toy
-  - [-] Laziness
-  - [-] Putting it all together: a lazy quicksort
-  - [-] Functional programming
-  - [-] Functions in all their forms [100%]
-  - [-] Closures
-  - [-] Thinking recursively
-  - [-] Putting it all together: A* pathfinding
-- [-] Part 4 Large-Scale Design
-  - [-] Macros
-  - [-] Java.next
-  - [-] Mutation
-  - [-] Combining data and code
-- [-] Part 5 Tangential Considerations
