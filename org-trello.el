@@ -376,22 +376,19 @@ This is a list with the following elements:
   (when (and (not (org-at-heading-p)) (< (point) (point-max)) (not (orgtrello-cbx/checkbox-p)))
         (orgtrello-cbx/--goto-next-checkbox)))
 
-(defun orgtrello/----map-checkboxes (level fn-to-execute) "Map over the checkboxes and execute fn when in checkbox. Does not preserve the cursor position. Do not exceed the point-max."
+(defun orgtrello/--map-checkboxes (level fn-to-execute) "Map over the checkboxes and execute fn when in checkbox. Does not preserve the cursor position. Do not exceed the point-max."
   (orgtrello-cbx/--goto-next-checkbox)
   (when (< level (orgtrello/--current-level))
         (funcall fn-to-execute)
-        (orgtrello/----map-checkboxes level fn-to-execute)))
-
-(defun orgtrello/--map-checkboxes (level fn-to-execute) "Map over the checkboxes and execute fn when in checkbox. Does not preserve the cursor position. Do not exceed the point-max."
-  (when (= level *CHECKLIST-LEVEL*) (funcall fn-to-execute))
-  (orgtrello/----map-checkboxes level fn-to-execute))
+        (orgtrello/--map-checkboxes level fn-to-execute)))
 
 (defun orgtrello/--current-level () "Compute the current level's position."
   (-> (orgtrello-data/metadata) orgtrello/--level))
 
 (defun orgtrello/map-checkboxes (fn-to-execute) "Map over the current checkbox and sync them."
-  (save-excursion
-    (orgtrello/--map-checkboxes (orgtrello/--current-level) fn-to-execute))) ;; then map over the next checkboxes and sync them
+  (let ((level (orgtrello/--current-level)))
+    (when (= level *CHECKLIST-LEVEL*) (funcall fn-to-execute))
+    (save-excursion (orgtrello/--map-checkboxes level fn-to-execute)))) ;; then map over the next checkboxes and sync them
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-cbx loaded!")
 
