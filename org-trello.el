@@ -57,6 +57,7 @@
 (require 'dash)
 (require 'request)
 (eval-when-compile (require 'cl-lib))
+(require 'cl-lib)
 (require 'parse-time)
 (require 'elnode)
 (require 'timer)
