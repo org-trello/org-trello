@@ -1750,6 +1750,8 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun orgtrello/do-sync-full-entity () "Do the actual full card creation - from card to item. Beware full side effects..."
   (orgtrello-log/msg *OT/INFO* "Synchronizing full entity with its structure on board '%s'..." (orgtrello/--board-name))
+  ;; in any case, we need to show the subtree, otherwise https://github.com/ardumont/org-trello/issues/53
+  (org-show-subtree)
   (if (org-at-heading-p)
       (org-map-tree (lambda () (orgtrello/do-sync-entity) (orgtrello/map-sync-checkboxes)))
       (orgtrello/map-sync-checkboxes)))

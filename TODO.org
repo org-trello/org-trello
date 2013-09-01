@@ -647,14 +647,14 @@ CLOSED: [2013-08-31 sam. 10:55]
 - [X] Version
 - [X] Release notes
 
-* TODO 0.1.8 [25%]
+* TODO 0.1.8 [33%]
 - [X] Simplify Cask file
 - [X] webadmin: Improve rendering [2/2]
   - [X] Better display for the delete buttons.
   - [X] Use css for the play/pause entities
 - [X] Ensure checks before sync request to the proxy.
-- [ ] Fix sync to trello (related to map-checkbox)
-- [ ] Again improve the justify policy, it is irritating at the moment!
+- [X] Fix sync full entity (related to map-checkbox) - https://github.com/ardumont/org-trello/issues/53
+- [ ] Again improve the justify policy, it is irritating at the moment (this moves to every align command executed and moving forward every time, this blinks...)!
 - [ ] Ensure sync-from-trello keep the order of the checklists clean
 - [ ] Videos about org-trello
   - [ ] elnode
