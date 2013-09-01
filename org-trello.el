@@ -1047,11 +1047,11 @@ This is a list with the following elements:
      (orgtrello-proxy/--deal-with-directory-action level directory)
      (throw 'org-trello-timer-go-to-sleep t)))
 
-(defun orgtrello-proxy/--deal-with-archived-files (level)"Given a level, retrieve one file (which represents an entity) for this level and sync it, then remove such file. Then recall the function recursively."
-  (mapc (lambda (file) (rename-file file (format "../%s" (file-name-nondirectory file)) t)) (-> level
-                                                                                                orgtrello-proxy/--compute-entity-level-dir
-                                                                                                orgtrello-proxy/--archived-scanning-dir
-                                                                                                orgtrello-proxy/--list-files)))
+(defun orgtrello-proxy/--deal-with-archived-files (level) "Given a level, move all the remaining archived files into the scan folder from the same level."
+  (let ((level-dir (orgtrello-proxy/--compute-entity-level-dir level)))
+    (mapc (lambda (file) (rename-file file (format "%s%s" level-dir (file-name-nondirectory file)) t)) (-> level-dir
+                                                                                                           orgtrello-proxy/--archived-scanning-dir
+                                                                                                           orgtrello-proxy/--list-files))))
 
 (defun orgtrello-proxy/--consumer-entity-files-hierarchically-and-do () "A handler to extract the entity informations from files (in order card, checklist, items)." ;;(debug)
   (with-local-quit
