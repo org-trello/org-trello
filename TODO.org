@@ -647,7 +647,7 @@ CLOSED: [2013-08-31 sam. 10:55]
 - [X] Version
 - [X] Release notes
 
-* TODO 0.1.8 [75%]
+* IN-PROGRESS 0.1.8 [77%]
 - [X] Simplify Cask file
 - [X] webadmin: Improve rendering [2/2]
   - [X] Better display for the delete buttons.
@@ -656,7 +656,8 @@ CLOSED: [2013-08-31 sam. 10:55]
 - [X] Fix sync full entity (related to map-checkbox) - https://github.com/ardumont/org-trello/issues/53
 - [X] Improve the justify policy once and for all (this blinks at the moment!)
 - [X] Version
-- [ ] Fix problem with archive/unarchive file
+- [ ] Fix problem with archive/unarchive file routine
+- [X] Fix problem with delete file routine (does not take place)
 - [ ] Release notes
 * TODO 0.1.9 [%]
 - [ ] Ensure sync-from-trello keep the order of the checklists clean

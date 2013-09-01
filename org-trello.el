@@ -939,13 +939,15 @@ This is a list with the following elements:
     (set-buffer op/--buffer-name)                                                                  ;; switch to the right buffer
     (orgtrello-proxy/--safe-wrap-or-throw-error                                                    ;; will update via tag the trello id of the new persisted data (if needed)
      (save-excursion
-       ;; Get back to the buffer's position to update
        (when (orgtrello-proxy/--get-back-to-marker op/--marker entity-data)
              (orgtrello-proxy/--archive-entity-file-when-scanning file-to-archive op/--entry-file-archived) ;; archive the scanned file
              (-> entity-data
                  orgtrello-query/--action
                  orgtrello-proxy/--dispatch-action
                  (funcall entity-data (orgtrello-data/entry-get-full-metadata) op/--entry-file-archived)))))))
+
+(defun orgtrello-action/org-delete-property (key) "Delete a property depending on the nature of the current entry (org heading or checkbox)."
+  (funcall (if (orgtrello-cbx/checkbox-p) 'orgtrello-cbx/org-delete-property 'org-delete-property) key))
 
 (defun orgtrello-proxy/--standard-delete-success-callback (entity-to-del file-to-cleanup) "Return a callback function able to deal with the position."
   (lexical-let ((op/--entry-position    (orgtrello-query/--position entity-to-del))
@@ -959,19 +961,19 @@ This is a list with the following elements:
          (set-buffer op/--entry-buffer-name)
          (save-excursion
            (when (orgtrello-proxy/--getting-back-to-marker op/--marker)
-                 (unless (orgtrello-cbx/checkbox-p) (org-back-to-heading t))
-                 (org-delete-property *ORGTRELLO-ID*)
+                 (unless (orgtrello-cbx/checkbox-p) (org-back-to-heading t)) ;; get back to the top level if on heading
+                 (orgtrello-action/org-delete-property *ORGTRELLO-ID*)       ;; delete the property
                  (if (org-at-heading-p)
                      (hide-subtree)
                      (when (orgtrello-cbx/checkbox-p) (org-cycle 'fold)))
                  (beginning-of-line)
                  (kill-line)
                  (kill-line))))
+       ;; FIXME, this behaviour is redundant with the sync callback, need to improve this to avoid behaviour code duplication
        (progn
          (save-buffer)
-         (orgtrello-log/msg *OT/INFO* "Deleting entity in the buffer '%s' at point '%s' done!"
-                            op/--entry-buffer-name
-                            op/--entry-position))))))
+         ;; cleanup file
+         (orgtrello-proxy/--remove-file op/--entry-file))))))
 
 (defun orgtrello-proxy/--delete (entity-data full-metadata entry-file-archived) "Execute the entity deletion."
   (let ((orgtrello-query/--query-map (orgtrello/--dispatch-delete (orgtrello-data/current full-metadata) (orgtrello-data/parent full-metadata))))
