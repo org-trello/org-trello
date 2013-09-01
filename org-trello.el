@@ -1053,12 +1053,9 @@ This is a list with the following elements:
                                                                                                 orgtrello-proxy/--list-files)))
 
 (defun orgtrello-proxy/--consumer-entity-files-hierarchically-and-do () "A handler to extract the entity informations from files (in order card, checklist, items)." ;;(debug)
-  ;; now let's deal with the entities sync in order with level
   (with-local-quit
-    ;; if archived file exists, get them back in the queue before anything else
-    (dolist (l *ORGTRELLO-LEVELS*) (orgtrello-proxy/--deal-with-archived-files l))
-    ;; if some check regarding order fails, we catch and let the timer sleep for it the next time to get back normally to the upper level in order
-    (catch 'org-trello-timer-go-to-sleep
+    (dolist (l *ORGTRELLO-LEVELS*) (orgtrello-proxy/--deal-with-archived-files l))  ;; if archived file exists, get them back in the queue before anything else
+    (catch 'org-trello-timer-go-to-sleep     ;; if some check regarding order fails, we catch and let the timer sleep. The next time, the trigger will get back normally to the upper level in order
       (dolist (l *ORGTRELLO-LEVELS*) (orgtrello-proxy/--deal-with-level l (orgtrello-proxy/--compute-entity-level-dir l))))))
 
 (defun orgtrello-proxy/--compute-lock-filename () "Compute the name of a lock file"
