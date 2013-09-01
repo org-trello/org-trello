@@ -351,10 +351,11 @@ This is a list with the following elements:
 (defun orgtrello-cbx/--get-level (meta) "Retreve the level from the meta describing the checklist"
   (car meta))
 
-(defun orgtrello-cbx/--org-up! (destination-level) "An internal function to get back to the current entry's parent - return the level found or nil if no other level is found."
+(defun orgtrello-cbx/--org-up! (destination-level) "An internal function to get back to the current entry's parent - return the level found or nil if the level found is a card."
   (let ((current-level (orgtrello-cbx/--get-level (orgtrello-cbx/org-checkbox-metadata))))
-    (cond ((= current-level destination-level) destination-level) ;; nothing to do
-          ((= *CHECKLIST-LEVEL* current-level) (org-up-heading-safe)) ;; level 2, then the first level is a heading
+    (cond ((= *CARD-LEVEL*      current-level) nil)
+          ((= destination-level current-level) destination-level)
+          ((= *CHECKLIST-LEVEL* current-level) (org-up-heading-safe))
           (t                                   (progn
                                                  (forward-line -1)
                                                  (orgtrello-cbx/--org-up! destination-level))))))
