@@ -1018,10 +1018,10 @@ This is a list with the following elements:
         (sort orgtrello-proxy/--list-files-result 'dictionary-lessp))))
 
 (defun orgtrello-proxy/--deal-with-directory-action (level directory) "Given a directory, list the files and take the first one (entity) and do some action on it with trello. Call again if it remains other entities."
-  (when-let (orgtrello-proxy/--files (orgtrello-proxy/--list-files directory))
-            (orgtrello-proxy/--deal-with-entity-file-action (car orgtrello-proxy/--files))
-            ;; if it potentially remains files, recall recursively this function
-            (when (< 1 (length orgtrello-proxy/--files)) (orgtrello-proxy/--deal-with-level level directory))))
+  (-when-let (orgtrello-proxy/--files (orgtrello-proxy/--list-files directory))
+             (orgtrello-proxy/--deal-with-entity-file-action (car orgtrello-proxy/--files))
+             ;; if it potentially remains files, recall recursively this function
+             (when (< 1 (length orgtrello-proxy/--files)) (orgtrello-proxy/--deal-with-level level directory))))
 
 (defun orgtrello-proxy/--level-done-p (level) "Does all the entities for the level are their actions done?"
   (-> level
