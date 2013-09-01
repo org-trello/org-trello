@@ -1431,5 +1431,12 @@ DEADLINE: <some-date>
                 (orgtrello-proxy/--cleanup-meta (orgtrello-data/entry-get-full-metadata))
                 (orgtrello-cbx/--read-properties-from-point (point)))))
 
+(expectations
+  (expect "tests/.scanning" (orgtrello-proxy/--archived-scanning-dir "tests"))
+  (expect "nil/.scanning" (orgtrello-proxy/--archived-scanning-dir nil)))
+
+(expectations
+  (expect "test/folder/.scanning/filename" (orgtrello-proxy/--archived-scanning-file "test/folder/filename")))
+
 (provide 'org-trello-tests)
 ;;; org-trello-tests ends here

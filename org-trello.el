@@ -896,10 +896,9 @@ This is a list with the following elements:
              (when str-msg (orgtrello-log/msg *OT/INFO* str-msg)))))))))
 
 (defun orgtrello-proxy/--archived-scanning-dir (dir-name) "Given a filename, return the archived scanning directory"
-  (format "%s/.scanning" dir-name))
+  (format "%s.scanning" dir-name))
 
 (defun orgtrello-proxy/--archived-scanning-file (file) "Given a filename, return its archived filename if we were to move such file."
-  ;; return the name for the new file
   (format "%s/%s" (orgtrello-proxy/--archived-scanning-dir (file-name-directory file)) (file-name-nondirectory file)))
 
 (defun orgtrello-proxy/--archive-entity-file-when-scanning (file-to-archive file-archive-name) "Move the file to the running folder to specify a sync is running."
