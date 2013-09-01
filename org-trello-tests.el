@@ -1265,47 +1265,47 @@ DEADLINE: <some-date>
  (expect nil (gethash :parent (orgtrello-hash/make-hierarchy :current nil :grandparent)))
  (expect :grandparent (gethash :grandparent (orgtrello-hash/make-hierarchy nil :parent :grandparent))))
 
-(expectations
-  (expect :ok                                      (-> (orgtrello-hash/make-hash-org 1 :keyword :name :id :due :position :buffer-name)
-                                                       orgtrello-hash/make-hierarchy
-                                                       orgtrello/--can-be-synced-p))
-  (expect :ok                                      (-> (orgtrello-hash/make-hash-org 2 :keyword :name :id :due :position :buffer-name)
-                                                       (orgtrello-hash/make-hierarchy (orgtrello-hash/make-hash-org 1 :keyword :name "some-id" :due :position :buffer-name))
-                                                       orgtrello/--can-be-synced-p))
-  (expect *ERROR-SYNC-CHECKLIST-SYNC-CARD-FIRST*   (-> (orgtrello-hash/make-hash-org 2 :keyword :name :id :due :position :buffer-name)
-                                                       (orgtrello-hash/make-hierarchy (orgtrello-hash/make-hash-org 1 :keyword :name nil :due :position :buffer-name))
-                                                       orgtrello/--can-be-synced-p))
-  (expect *ERROR-SYNC-CHECKLIST-SYNC-CARD-FIRST*   (-> (orgtrello-hash/make-hash-org 2 :keyword :name :id :due :position :buffer-name)
-                                                       (orgtrello-hash/make-hierarchy (orgtrello-hash/make-hash-org 1 :keyword :name "orgtrello-marker-bad-id-equiv-nil" :due :position :buffer-name))
-                                                       orgtrello/--can-be-synced-p))
-  (expect :ok                                      (-> (orgtrello-hash/make-hash-org 3 :keyword :name :id :due :position :buffer-name)
-                                                       (orgtrello-hash/make-hierarchy (orgtrello-hash/make-hash-org 1 :keyword :name "some-id" :due :position :buffer-name)
-                                                                                      (orgtrello-hash/make-hash-org 2 :keyword :name "some-id" :due :position :buffer-name))
-                                                       orgtrello/--can-be-synced-p))
-  (expect *ERROR-SYNC-ITEM-SYNC-UPPER-LAYER-FIRST* (-> (orgtrello-hash/make-hash-org 3 :keyword :name :id :due :position :buffer-name)
-                                                       (orgtrello-hash/make-hierarchy (orgtrello-hash/make-hash-org 1 :keyword :name nil :due :position :buffer-name)
-                                                                                      (orgtrello-hash/make-hash-org 2 :keyword :name "some-id" :due :position :buffer-name))
-                                                       orgtrello/--can-be-synced-p))
-  (expect *ERROR-SYNC-ITEM-SYNC-UPPER-LAYER-FIRST* (-> (orgtrello-hash/make-hash-org 3 :keyword :name :id :due :position :buffer-name)
-                                                       (orgtrello-hash/make-hierarchy (orgtrello-hash/make-hash-org 1 :keyword :name "orgtrello-marker-nil" :due :position :buffer-name)
-                                                                                      (orgtrello-hash/make-hash-org 2 :keyword :name "some-id" :due :position :buffer-name))
-                                                       orgtrello/--can-be-synced-p))
-  (expect *ERROR-SYNC-ITEM-SYNC-UPPER-LAYER-FIRST* (-> (orgtrello-hash/make-hash-org 3 :keyword :name :id :due :position :buffer-name)
-                                                       (orgtrello-hash/make-hierarchy (orgtrello-hash/make-hash-org 1 :keyword :name "some-id" :due :position :buffer-name)
-                                                                                      (orgtrello-hash/make-hash-org 2 :keyword :name nil :due :position :buffer-name))
-                                                       orgtrello/--can-be-synced-p))
-  (expect *ERROR-SYNC-ITEM-SYNC-UPPER-LAYER-FIRST* (-> (orgtrello-hash/make-hash-org 3 :keyword :name :id :due :position :buffer-name)
-                                                       (orgtrello-hash/make-hierarchy (orgtrello-hash/make-hash-org 1 :keyword :name "some-id" :due :position :buffer-name)
-                                                                                      (orgtrello-hash/make-hash-org 2 :keyword :name "orgtrello-marker-nil" :due :position :buffer-name))
-                                                       orgtrello/--can-be-synced-p))
-  (expect *ERROR-SYNC-ITEM-SYNC-UPPER-LAYER-FIRST* (-> (orgtrello-hash/make-hash-org 3 :keyword :name :id :due :position :buffer-name)
-                                                       (orgtrello-hash/make-hierarchy (orgtrello-hash/make-hash-org 1 :keyword :name nil :due :position :buffer-name)
-                                                                                      (orgtrello-hash/make-hash-org 2 :keyword :name nil :due :position :buffer-name))
-                                                       orgtrello/--can-be-synced-p))
-  (expect *ERROR-SYNC-ITEM-SYNC-UPPER-LAYER-FIRST* (-> (orgtrello-hash/make-hash-org 3 :keyword :name :id :due :position :buffer-name)
-                                                       (orgtrello-hash/make-hierarchy (orgtrello-hash/make-hash-org 1 :keyword :name "orgtrello-marker-nil" :due :position :buffer-name)
-                                                                                      (orgtrello-hash/make-hash-org 2 :keyword :name "orgtrello-marker-nil" :due :position :buffer-name))
-                                                       orgtrello/--can-be-synced-p)))
+;; (expectations
+;;   (expect :ok                                      (-> (orgtrello-hash/make-hash-org 1 :keyword :name :id :due :position :buffer-name)
+;;                                                        orgtrello-hash/make-hierarchy
+;;                                                        orgtrello/--can-be-synced-p))
+;;   (expect :ok                                      (-> (orgtrello-hash/make-hash-org 2 :keyword :name :id :due :position :buffer-name)
+;;                                                        (orgtrello-hash/make-hierarchy (orgtrello-hash/make-hash-org 1 :keyword :name "some-id" :due :position :buffer-name))
+;;                                                        orgtrello/--can-be-synced-p))
+;;   (expect *ERROR-SYNC-CHECKLIST-SYNC-CARD-FIRST*   (-> (orgtrello-hash/make-hash-org 2 :keyword :name :id :due :position :buffer-name)
+;;                                                        (orgtrello-hash/make-hierarchy (orgtrello-hash/make-hash-org 1 :keyword :name nil :due :position :buffer-name))
+;;                                                        orgtrello/--can-be-synced-p))
+;;   (expect *ERROR-SYNC-CHECKLIST-SYNC-CARD-FIRST*   (-> (orgtrello-hash/make-hash-org 2 :keyword :name :id :due :position :buffer-name)
+;;                                                        (orgtrello-hash/make-hierarchy (orgtrello-hash/make-hash-org 1 :keyword :name "orgtrello-marker-bad-id-equiv-nil" :due :position :buffer-name))
+;;                                                        orgtrello/--can-be-synced-p))
+;;   (expect :ok                                      (-> (orgtrello-hash/make-hash-org 3 :keyword :name :id :due :position :buffer-name)
+;;                                                        (orgtrello-hash/make-hierarchy (orgtrello-hash/make-hash-org 1 :keyword :name "some-id" :due :position :buffer-name)
+;;                                                                                       (orgtrello-hash/make-hash-org 2 :keyword :name "some-id" :due :position :buffer-name))
+;;                                                        orgtrello/--can-be-synced-p))
+;;   (expect *ERROR-SYNC-ITEM-SYNC-UPPER-LAYER-FIRST* (-> (orgtrello-hash/make-hash-org 3 :keyword :name :id :due :position :buffer-name)
+;;                                                        (orgtrello-hash/make-hierarchy (orgtrello-hash/make-hash-org 1 :keyword :name nil :due :position :buffer-name)
+;;                                                                                       (orgtrello-hash/make-hash-org 2 :keyword :name "some-id" :due :position :buffer-name))
+;;                                                        orgtrello/--can-be-synced-p))
+;;   (expect *ERROR-SYNC-ITEM-SYNC-UPPER-LAYER-FIRST* (-> (orgtrello-hash/make-hash-org 3 :keyword :name :id :due :position :buffer-name)
+;;                                                        (orgtrello-hash/make-hierarchy (orgtrello-hash/make-hash-org 1 :keyword :name "orgtrello-marker-nil" :due :position :buffer-name)
+;;                                                                                       (orgtrello-hash/make-hash-org 2 :keyword :name "some-id" :due :position :buffer-name))
+;;                                                        orgtrello/--can-be-synced-p))
+;;   (expect *ERROR-SYNC-ITEM-SYNC-UPPER-LAYER-FIRST* (-> (orgtrello-hash/make-hash-org 3 :keyword :name :id :due :position :buffer-name)
+;;                                                        (orgtrello-hash/make-hierarchy (orgtrello-hash/make-hash-org 1 :keyword :name "some-id" :due :position :buffer-name)
+;;                                                                                       (orgtrello-hash/make-hash-org 2 :keyword :name nil :due :position :buffer-name))
+;;                                                        orgtrello/--can-be-synced-p))
+;;   (expect *ERROR-SYNC-ITEM-SYNC-UPPER-LAYER-FIRST* (-> (orgtrello-hash/make-hash-org 3 :keyword :name :id :due :position :buffer-name)
+;;                                                        (orgtrello-hash/make-hierarchy (orgtrello-hash/make-hash-org 1 :keyword :name "some-id" :due :position :buffer-name)
+;;                                                                                       (orgtrello-hash/make-hash-org 2 :keyword :name "orgtrello-marker-nil" :due :position :buffer-name))
+;;                                                        orgtrello/--can-be-synced-p))
+;;   (expect *ERROR-SYNC-ITEM-SYNC-UPPER-LAYER-FIRST* (-> (orgtrello-hash/make-hash-org 3 :keyword :name :id :due :position :buffer-name)
+;;                                                        (orgtrello-hash/make-hierarchy (orgtrello-hash/make-hash-org 1 :keyword :name nil :due :position :buffer-name)
+;;                                                                                       (orgtrello-hash/make-hash-org 2 :keyword :name nil :due :position :buffer-name))
+;;                                                        orgtrello/--can-be-synced-p))
+;;   (expect *ERROR-SYNC-ITEM-SYNC-UPPER-LAYER-FIRST* (-> (orgtrello-hash/make-hash-org 3 :keyword :name :id :due :position :buffer-name)
+;;                                                        (orgtrello-hash/make-hierarchy (orgtrello-hash/make-hash-org 1 :keyword :name "orgtrello-marker-nil" :due :position :buffer-name)
+;;                                                                                       (orgtrello-hash/make-hash-org 2 :keyword :name "orgtrello-marker-nil" :due :position :buffer-name))
+;;                                                        orgtrello/--can-be-synced-p)))
 
 (expectations
   (expect :ok                                 (-> (orgtrello-hash/make-hash-org 1 :keyword "some name" :id :due :position :buffer-name)
@@ -1335,6 +1335,124 @@ DEADLINE: <some-date>
   (expect *ERROR-SYNC-ITEM-MISSING-NAME*      (-> (orgtrello-hash/make-hash-org 3 :keyword nil :id :due :position :buffer-name)
                                                   orgtrello-hash/make-hierarchy
                                                   orgtrello/--mandatory-name-ok-p)))
+
+(expectations
+  (expect nil    (->> (with-temp-buffer
+                        (org-mode)
+                        (insert "* card")
+                        (orgtrello-data/entry-get-full-metadata))
+                      (orgtrello-data/parent)))
+  (expect nil    (->> (with-temp-buffer
+                        (org-mode)
+                        (insert "* card")
+                        (orgtrello-data/entry-get-full-metadata))
+                      (orgtrello-data/grandparent)))
+  (expect "card" (->> (with-temp-buffer
+                        (org-mode)
+                        (insert "* card")
+                        (orgtrello-data/entry-get-full-metadata))
+                      (orgtrello-data/current)
+                      orgtrello/--name)))
+
+(expectations
+  (expect "card"      (->> (with-temp-buffer
+                             (org-mode)
+                             (insert "* card\n")
+                             (insert "- [ ] checklist")
+                             (orgtrello-data/entry-get-full-metadata))
+                           (orgtrello-data/parent)
+                           orgtrello/--name))
+  (expect nil         (->> (with-temp-buffer
+                             (org-mode)
+                             (insert "* card\n")
+                             (insert "- [ ] checklist")
+                             (orgtrello-data/entry-get-full-metadata))
+                           (orgtrello-data/grandparent)))
+  (expect "checklist" (->> (with-temp-buffer
+                             (org-mode)
+                             (insert "* card\n")
+                             (insert "- [ ] checklist")
+                             (orgtrello-data/entry-get-full-metadata))
+                           (orgtrello-data/current)
+                           orgtrello/--name)))
+
+(expectations
+  (expect "checklist" (->> (with-temp-buffer
+                             (org-mode)
+                             (insert "* card\n")
+                             (insert "- [ ] checklist\n")
+                             (insert "  - [ ] item")
+                             (orgtrello-data/entry-get-full-metadata))
+                           (orgtrello-data/parent)
+                           orgtrello/--name))
+  (expect "card"      (->> (with-temp-buffer
+                             (org-mode)
+                             (insert "* card\n")
+                             (insert "- [ ] checklist\n")
+                             (insert "  - [ ] item")
+                             (orgtrello-data/entry-get-full-metadata))
+                           (orgtrello-data/grandparent)
+                           orgtrello/--name))
+  (expect "item"      (->> (with-temp-buffer
+                             (org-mode)
+                             (insert "* card\n")
+                             (insert "- [ ] checklist\n")
+                             (insert "  - [ ] item")
+                             (orgtrello-data/entry-get-full-metadata))
+                           (orgtrello-data/current)
+                           orgtrello/--name)))
+
+(expectations
+  (expect "* card
+- [X] hello :PROPERTIES: {\"orgtrello-id\":\"123\"}" (with-temp-buffer
+                                                       (org-mode)
+                                                       (insert "* card\n")
+                                                       (insert "- [X] hello :PROPERTIES: {\"orgtrello-id\":\"123\"}")
+                                                       (orgtrello-proxy/--cleanup-meta (orgtrello-data/entry-get-full-metadata))
+                                                       (buffer-substring-no-properties (point-min) (point-max))))
+  (expect "* card
+- [X] hello :PROPERTIES: {\"orgtrello-id\":\"123\"}" (with-temp-buffer
+                                                       (org-mode)
+                                                       (insert "* card\n")
+                                                       (insert "- [X] hello :PROPERTIES: {\"orgtrello-id\":\"123\"}")
+                                                       (orgtrello-proxy/--cleanup-meta (orgtrello-data/entry-get-full-metadata))
+                                                       (buffer-substring-no-properties (point-min) (point-max))))
+
+  (expect "* card
+- [X] cl :PROPERTIES: {\"orgtrello-id\":\"abc\"}
+  - [X] item :PROPERTIES: {\"orgtrello-id\":\"123\"}" (with-temp-buffer
+                                                        (org-mode)
+                                                        (insert "* card\n")
+                                                        (insert "- [X] cl :PROPERTIES: {\"orgtrello-id\":\"abc\"}\n")
+                                                        (insert "  - [X] item :PROPERTIES: {\"orgtrello-id\":\"123\"}")
+                                                        (orgtrello-data/entry-get-full-metadata)
+                                                        (buffer-substring-no-properties (point-min) (point-max)))))
+
+(expectations
+  (expect "* card
+- [X] hello  :PROPERTIES: {}" (with-temp-buffer
+                               (org-mode)
+                               (insert "* card\n")
+                               (insert "- [X] hello :PROPERTIES: {\"orgtrello-id\":\"orgtrello-marker-123\"}")
+                               (orgtrello-proxy/--cleanup-meta (orgtrello-data/entry-get-full-metadata))
+                               (buffer-substring-no-properties (point-min) (point-max))))
+  (expect "* card
+- [X] hello  :PROPERTIES: {}" (with-temp-buffer
+                               (org-mode)
+                               (insert "* card\n")
+                               (insert "- [X] hello :PROPERTIES: {\"orgtrello-id\":\"orgtrello-marker-123\"}")
+                               (orgtrello-proxy/--cleanup-meta (orgtrello-data/entry-get-full-metadata))
+                               (buffer-substring-no-properties (point-min) (point-max))))
+
+  (expect "* card
+- [X] cl      :PROPERTIES: {\"orgtrello-id\":\"abc\"}
+  - [X] item                      :PROPERTIES: {}" (with-temp-buffer
+                                (org-mode)
+                                (insert "* card\n")
+                                (insert "- [X] cl :PROPERTIES: {\"orgtrello-id\":\"abc\"}\n")
+                                (insert "  - [X] item :PROPERTIES: {\"orgtrello-id\":\"orgtrello-marker-123\"}")
+                                (orgtrello-proxy/--cleanup-meta (orgtrello-data/entry-get-full-metadata))
+                                (buffer-substring-no-properties (point-min) (point-max)))))
 
 (provide 'org-trello-tests)
 ;;; org-trello-tests ends here

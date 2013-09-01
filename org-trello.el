@@ -451,11 +451,14 @@ This is a list with the following elements:
     (orgtrello-action/org-up-parent)
     (orgtrello-data/metadata)))
 
-(defun orgtrello-data/entry-get-full-metadata () "Compute the metadata needed for one entry into a map with keys :current, :parent, :grandparent.
-   Returns nil if the level is superior to 4."
-  (let ((current (orgtrello-data/metadata)))
-    (when (< (orgtrello/--level current) *OUTOFBOUNDS-LEVEL*)
-          (orgtrello-hash/make-hierarchy current (orgtrello-data/--parent-metadata) (orgtrello-data/--grandparent-metadata)))))
+(defun orgtrello-data/entry-get-full-metadata () "Compute metadata needed for entry into a map with keys :current, :parent, :grandparent. Returns nil if the level is superior to 4."
+  (let* ((current   (orgtrello-data/metadata))
+         (level     (orgtrello/--level current)))
+    (when (< level *OUTOFBOUNDS-LEVEL*)
+          (let ((ancestors (cond ((= level *CARD-LEVEL*)      '(nil nil))
+                                 ((= level *CHECKLIST-LEVEL*) `(,(orgtrello-data/--parent-metadata) nil))
+                                 ((= level *ITEM-LEVEL*)      `(,(orgtrello-data/--parent-metadata) ,(orgtrello-data/--grandparent-metadata))))))
+            (orgtrello-hash/make-hierarchy current (first ancestors) (second ancestors))))))
 
 (defun orgtrello-data/current (entry-meta) "Given an entry-meta, return the current entry"
   (gethash :current entry-meta))
@@ -909,23 +912,26 @@ This is a list with the following elements:
   (cond ((string= *ORGTRELLO-ACTION-DELETE* action) 'orgtrello-proxy/--delete)
         ((string= *ORGTRELLO-ACTION-SYNC*   action) 'orgtrello-proxy/--sync-entity)))
 
-(defun orgtrello-proxy/--sync-entity (entity-data full-metadata entry-file-archived) "Execute the entity synchronization." ;;(debug)
-  (let ((orgtrello-query/--query-map (orgtrello/--dispatch-create full-metadata)))
-    ;; Execute the request
+(defun orgtrello-proxy/--cleanup-meta (entity-full-metadata)
+  (unless (-> entity-full-metadata orgtrello-data/current orgtrello/--id)
+          (orgtrello-cbx/org-delete-property *ORGTRELLO-ID*)
+          (orgtrello-cbx/--justify-property-current-line)))
+
+(defun orgtrello-proxy/--sync-entity (entity-data entity-full-metadata entry-file-archived) "Execute the entity synchronization." ;;(debug)
+  (lexical-let ((orgtrello-query/--query-map (orgtrello/--dispatch-create entity-full-metadata))
+                (oq/--entity-full-meta       entity-full-metadata))
     (if (hash-table-p orgtrello-query/--query-map)
         ;; execute the request
-        (orgtrello-query/http-trello
-         orgtrello-query/--query-map
-         *do-sync-query*
-         (orgtrello-proxy/--standard-post-or-put-success-callback entity-data entry-file-archived)
-         (cl-defun orgtrello-proxy/--standard-post-or-put-error-callback (&allow-other-keys)
-           (orgtrello-log/msg *OT/ERROR* "Problem during sync!")
-           (throw 'org-trello-timer-go-to-sleep t)))
-        (let ((id (-> full-metadata orgtrello-data/current orgtrello/--id))) ;; removing orgtrello-id
+        (orgtrello-query/http-trello orgtrello-query/--query-map *do-sync-query*
+                                     (orgtrello-proxy/--standard-post-or-put-success-callback entity-data entry-file-archived)
+                                     (cl-defun orgtrello-proxy/--standard-post-or-put-error-callback (&allow-other-keys)
+                                       (orgtrello-log/msg *OT/ERROR* "Problem during sync!")
+                                       (orgtrello-proxy/--cleanup-meta oq/--entity-full-meta)
+                                       (throw 'org-trello-timer-go-to-sleep t)))
+        ;; cannot execute the request
+        (progn
           (orgtrello-log/msg *OT/INFO* orgtrello-query/--query-map)
-          (unless id
-                  (orgtrello-cbx/org-delete-property *ORGTRELLO-ID*)
-                  (orgtrello-cbx/--justify-property-current-line))
+          (orgtrello-proxy/--cleanup-meta entity-full-metadata)
           (throw 'org-trello-timer-go-to-sleep t)))))
 
 (defun orgtrello-proxy/--deal-with-entity-action (entity-data file-to-archive) "Compute the synchronization of an entity (retrieving latest information from buffer)"
@@ -1711,14 +1717,14 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 (defun orgtrello/--already-synced-p (entity) "Compute if the entity has already been synchronized."
   (if (-> entity orgtrello-data/current orgtrello/--id) :ok "Entity must been synchronized with trello first!"))
 
-(defun orgtrello/--can-be-synced-p (entity) "Ensure entity can be synced regarding the dependency on its level.!"
-  (let* ((current     (orgtrello-data/current entity))
-         (parent      (orgtrello-data/parent entity))
-         (grandparent (orgtrello-data/grandparent entity))
-         (level       (orgtrello/--level current)))
-    (cond ((= level *CARD-LEVEL*)      :ok)
-          ((= level *CHECKLIST-LEVEL*) (if (orgtrello/--id parent) :ok *ERROR-SYNC-CHECKLIST-SYNC-CARD-FIRST*))
-          ((= level *ITEM-LEVEL*)      (if (and (orgtrello/--id parent) (orgtrello/--id grandparent)) :ok *ERROR-SYNC-ITEM-SYNC-UPPER-LAYER-FIRST*)))))
+;; (defun orgtrello/--can-be-synced-p (entity) "Ensure entity can be synced regarding the dependency on its level.!"
+;;   (let* ((current     (orgtrello-data/current entity))
+;;          (parent      (orgtrello-data/parent entity))
+;;          (grandparent (orgtrello-data/grandparent entity))
+;;          (level       (orgtrello/--level current)))
+;;     (cond ((= level *CARD-LEVEL*)      :ok)
+;;           ((= level *CHECKLIST-LEVEL*) (if (orgtrello/--id parent) :ok *ERROR-SYNC-CHECKLIST-SYNC-CARD-FIRST*))
+;;           ((= level *ITEM-LEVEL*)      (if (and (orgtrello/--id parent) (orgtrello/--id grandparent)) :ok *ERROR-SYNC-ITEM-SYNC-UPPER-LAYER-FIRST*)))))
 
 (defun orgtrello/--mandatory-name-ok-p (entity) "Ensure entity can be synced regarding the mandatory data."
   (let* ((current (orgtrello-data/current entity))
@@ -1732,13 +1738,11 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun orgtrello/--delegate-to-the-proxy (full-meta action) "Execute the delegation to the consumer."
   (let* ((orgtrello/--current          (orgtrello-data/current full-meta))
-         (orgtrello/--current-entry-id (orgtrello/--id orgtrello/--current))
          (orgtrello/--marker           (orgtrello/--compute-marker-from-entry orgtrello/--current)))
-    (unless (string= orgtrello/--current-entry-id orgtrello/--marker)     ;; if never created before, we need a marker to add inside the file
+    (unless (string= (orgtrello/--id orgtrello/--current) orgtrello/--marker) ;; if never created before, we need a marker to add inside the file
             (orgtrello/--set-marker orgtrello/--marker))
     (puthash :id orgtrello/--marker orgtrello/--current)
     (puthash :action action         orgtrello/--current)
-    ;; and send the data to the proxy
     (orgtrello-proxy/http-producer orgtrello/--current)))
 
 (defun orgtrello/--checks-then-delegate-action-on-entity-to-proxy (functional-controls action) "Execute the functional controls then if all pass, delegate the action 'action' to the proxy."
