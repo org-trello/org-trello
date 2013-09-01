@@ -640,6 +640,13 @@ CLOSED: [2013-08-31 sam. 10:55]
 - [X] Improve map-checkbox to deal with limit (map over checkbox inferior to current level, at the moment, we scan all checkboxes)
 - [X] Version
 - [X] Release notes
+
+* DONE 0.1.7.1 [100%]
+- [X] Fix problem requiring cl-lib
+- [X] Fix error on when-let
+- [X] Version
+- [X] Release notes
+
 * TODO 0.1.8 [%]
 - [-] Ensure sync-from-trello keep the order of the checklists clean
 - [ ] Videos about org-trello
