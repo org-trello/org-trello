@@ -1403,56 +1403,33 @@ DEADLINE: <some-date>
                            orgtrello/--name)))
 
 (expectations
-  (expect "* card
-- [X] hello :PROPERTIES: {\"orgtrello-id\":\"123\"}" (with-temp-buffer
+  (expect '((orgtrello-id . "orgtrello-marker-123")) (with-temp-buffer
                                                        (org-mode)
                                                        (insert "* card\n")
-                                                       (insert "- [X] hello :PROPERTIES: {\"orgtrello-id\":\"123\"}")
-                                                       (orgtrello-proxy/--cleanup-meta (orgtrello-data/entry-get-full-metadata))
-                                                       (buffer-substring-no-properties (point-min) (point-max))))
-  (expect "* card
-- [X] hello :PROPERTIES: {\"orgtrello-id\":\"123\"}" (with-temp-buffer
-                                                       (org-mode)
-                                                       (insert "* card\n")
-                                                       (insert "- [X] hello :PROPERTIES: {\"orgtrello-id\":\"123\"}")
-                                                       (orgtrello-proxy/--cleanup-meta (orgtrello-data/entry-get-full-metadata))
-                                                       (buffer-substring-no-properties (point-min) (point-max))))
+                                                       (insert "- [X] hello :PROPERTIES: {\"orgtrello-id\":\"orgtrello-marker-123\"}")
+                                                       (orgtrello-cbx/--read-properties-from-point (point))))
 
-  (expect "* card
-- [X] cl :PROPERTIES: {\"orgtrello-id\":\"abc\"}
-  - [X] item :PROPERTIES: {\"orgtrello-id\":\"123\"}" (with-temp-buffer
-                                                        (org-mode)
-                                                        (insert "* card\n")
-                                                        (insert "- [X] cl :PROPERTIES: {\"orgtrello-id\":\"abc\"}\n")
-                                                        (insert "  - [X] item :PROPERTIES: {\"orgtrello-id\":\"123\"}")
-                                                        (orgtrello-data/entry-get-full-metadata)
-                                                        (buffer-substring-no-properties (point-min) (point-max)))))
+  (expect nil (with-temp-buffer
+                (org-mode)
+                (insert "* card\n")
+                (insert "- [X] hello :PROPERTIES: {\"orgtrello-id\":\"orgtrello-marker-123\"}")
+                (orgtrello-proxy/--cleanup-meta (orgtrello-data/entry-get-full-metadata))
+                (orgtrello-cbx/--read-properties-from-point (point))))
 
-(expectations
-  (expect "* card
-- [X] hello  :PROPERTIES: {}" (with-temp-buffer
-                               (org-mode)
-                               (insert "* card\n")
-                               (insert "- [X] hello :PROPERTIES: {\"orgtrello-id\":\"orgtrello-marker-123\"}")
-                               (orgtrello-proxy/--cleanup-meta (orgtrello-data/entry-get-full-metadata))
-                               (buffer-substring-no-properties (point-min) (point-max))))
-  (expect "* card
-- [X] hello  :PROPERTIES: {}" (with-temp-buffer
-                               (org-mode)
-                               (insert "* card\n")
-                               (insert "- [X] hello :PROPERTIES: {\"orgtrello-id\":\"orgtrello-marker-123\"}")
-                               (orgtrello-proxy/--cleanup-meta (orgtrello-data/entry-get-full-metadata))
-                               (buffer-substring-no-properties (point-min) (point-max))))
+  (expect nil (with-temp-buffer
+                (org-mode)
+                (insert "* card\n")
+                (insert "- [X] hello :PROPERTIES: {\"orgtrello-id\":\"orgtrello-marker-123\"}")
+                (orgtrello-proxy/--cleanup-meta (orgtrello-data/entry-get-full-metadata))
+                (orgtrello-cbx/--read-properties-from-point (point))))
 
-  (expect "* card
-- [X] cl      :PROPERTIES: {\"orgtrello-id\":\"abc\"}
-  - [X] item                      :PROPERTIES: {}" (with-temp-buffer
-                                (org-mode)
-                                (insert "* card\n")
-                                (insert "- [X] cl :PROPERTIES: {\"orgtrello-id\":\"abc\"}\n")
-                                (insert "  - [X] item :PROPERTIES: {\"orgtrello-id\":\"orgtrello-marker-123\"}")
-                                (orgtrello-proxy/--cleanup-meta (orgtrello-data/entry-get-full-metadata))
-                                (buffer-substring-no-properties (point-min) (point-max)))))
+  (expect nil (with-temp-buffer
+                (org-mode)
+                (insert "* card\n")
+                (insert "- [X] cl :PROPERTIES: {\"orgtrello-id\":\"abc\"}\n")
+                (insert "  - [X] item :PROPERTIES: {\"orgtrello-id\":\"orgtrello-marker-123\"}")
+                (orgtrello-proxy/--cleanup-meta (orgtrello-data/entry-get-full-metadata))
+                (orgtrello-cbx/--read-properties-from-point (point)))))
 
 (provide 'org-trello-tests)
 ;;; org-trello-tests ends here

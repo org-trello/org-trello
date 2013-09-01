@@ -227,7 +227,7 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
 
 (defvar orgtrello/--rules-to-align-checkbox-properties
   `((orgtrello-rules
-     (regexp   . "^[ ]*-\\{1\\}.*\\(:PROPERTIES: .*\\)$")
+     (regexp   . "^[ ]*-\\{1\\}.*\\( :PROPERTIES: \\).*$")
      (group    . 1)
      (justify  . t)))
   "Rules to use with align-region to justify")
