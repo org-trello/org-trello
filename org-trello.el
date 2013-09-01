@@ -4,7 +4,7 @@
 
 ;; Author: Antoine R. Dumont <eniotna.t AT gmail.com>
 ;; Maintainer: Antoine R. Dumont <eniotna.t AT gmail.com>
-;; Version: 0.1.7
+;; Version: 0.1.7.1
 ;; Package-Requires: ((org "8.0.7") (dash "1.5.0") (request "0.2.0") (cl-lib "0.3.0") (json "1.2") (elnode "0.9.9.7.6") (esxml "0.3.0") (s "1.7.0"))
 ;; Keywords: org-mode trello sync org-trello
 ;; URL: https://github.com/ardumont/org-trello
@@ -57,6 +57,7 @@
 (require 'dash)
 (require 'request)
 (eval-when-compile (require 'cl-lib))
+(require 'cl-lib)
 (require 'parse-time)
 (require 'elnode)
 (require 'timer)
@@ -66,7 +67,7 @@
 
 ;; #################### static setup
 
-(defvar *ORGTRELLO-VERSION*           "0.1.7"                                           "Version")
+(defvar *ORGTRELLO-VERSION*           "0.1.7.1"                                         "Version")
 (defvar *consumer-key*                nil                                               "Id representing the user.")
 (defvar *access-token*                nil                                               "Read/write access token to use trello on behalf of the user.")
 (defvar *ORGTRELLO-MARKER*            "orgtrello-marker"                                "A marker used inside the org buffer to synchronize entries.")
@@ -1018,10 +1019,10 @@ This is a list with the following elements:
         (sort orgtrello-proxy/--list-files-result 'dictionary-lessp))))
 
 (defun orgtrello-proxy/--deal-with-directory-action (level directory) "Given a directory, list the files and take the first one (entity) and do some action on it with trello. Call again if it remains other entities."
-  (when-let (orgtrello-proxy/--files (orgtrello-proxy/--list-files directory))
-            (orgtrello-proxy/--deal-with-entity-file-action (car orgtrello-proxy/--files))
-            ;; if it potentially remains files, recall recursively this function
-            (when (< 1 (length orgtrello-proxy/--files)) (orgtrello-proxy/--deal-with-level level directory))))
+  (-when-let (orgtrello-proxy/--files (orgtrello-proxy/--list-files directory))
+             (orgtrello-proxy/--deal-with-entity-file-action (car orgtrello-proxy/--files))
+             ;; if it potentially remains files, recall recursively this function
+             (when (< 1 (length orgtrello-proxy/--files)) (orgtrello-proxy/--deal-with-level level directory))))
 
 (defun orgtrello-proxy/--level-done-p (level) "Does all the entities for the level are their actions done?"
   (-> level

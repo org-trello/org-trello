@@ -1,3 +1,10 @@
+# 0.1.7.1
+
+- [X] Fix problem requiring cl-lib - https://github.com/ardumont/org-trello/issues/51
+- [X] Fix error on when-let - https://github.com/ardumont/org-trello/issues/54
+- [X] Version
+- [X] release notes
+
 # 0.1.7
 
 - [X] webadmin: Add an action button on action to stop it
