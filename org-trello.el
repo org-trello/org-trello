@@ -915,15 +915,17 @@ This is a list with the following elements:
 
 (defun orgtrello-proxy/--sync-entity (entity-data entity-full-metadata entry-file-archived) "Execute the entity synchronization." ;;(debug)
   (lexical-let ((orgtrello-query/--query-map (orgtrello/--dispatch-create entity-full-metadata))
-                (oq/--entity-full-meta       entity-full-metadata))
+                (oq/--entity-full-meta       entity-full-metadata)
+                (oq/--entry-file-archived    entry-file-archived))
     (if (hash-table-p orgtrello-query/--query-map)
         ;; execute the request
         (orgtrello-query/http-trello orgtrello-query/--query-map *do-sync-query*
                                      (orgtrello-proxy/--standard-post-or-put-success-callback entity-data entry-file-archived)
-                                     (cl-defun orgtrello-proxy/--standard-post-or-put-error-callback (&allow-other-keys)
-                                       (orgtrello-log/msg *OT/ERROR* "Problem during sync!")
-                                       (orgtrello-proxy/--cleanup-meta oq/--entity-full-meta)
-                                       (throw 'org-trello-timer-go-to-sleep t)))
+                                     (function* (lambda (&allow-other-keys)
+                                                  (orgtrello-log/msg *OT/ERROR* "Problem during sync!")
+                                                  (orgtrello-proxy/--cleanup-meta oq/--entity-full-meta)
+                                                  (orgtrello-proxy/--remove-file oq/--entry-file-archived)
+                                                  (throw 'org-trello-timer-go-to-sleep t))))
         ;; cannot execute the request
         (progn
           (orgtrello-log/msg *OT/INFO* orgtrello-query/--query-map)
@@ -975,16 +977,21 @@ This is a list with the following elements:
          ;; cleanup file
          (orgtrello-proxy/--remove-file op/--entry-file))))))
 
-(defun orgtrello-proxy/--delete (entity-data full-metadata entry-file-archived) "Execute the entity deletion."
-  (let ((orgtrello-query/--query-map (orgtrello/--dispatch-delete (orgtrello-data/current full-metadata) (orgtrello-data/parent full-metadata))))
-      (if (hash-table-p orgtrello-query/--query-map)
-          (orgtrello-query/http-trello
-           orgtrello-query/--query-map
-           *do-sync-query*
-           (orgtrello-proxy/--standard-delete-success-callback entity-data entry-file-archived))
-          (progn
-            (orgtrello-log/msg *OT/INFO* orgtrello-query/--query-map)
-            (throw 'org-trello-timer-go-to-sleep t)))))
+(defun orgtrello-proxy/--delete (entity-data entity-full-metadata entry-file-archived) "Execute the entity deletion."
+  (lexical-let ((orgtrello-query/--query-map (orgtrello/--dispatch-delete (orgtrello-data/current entity-full-metadata) (orgtrello-data/parent entity-full-metadata)))
+                (oq/--entity-full-meta       entity-full-metadata)
+                (oq/--entry-file-archived    entry-file-archived))
+    (if (hash-table-p orgtrello-query/--query-map)
+        (orgtrello-query/http-trello orgtrello-query/--query-map *do-sync-query*
+         (orgtrello-proxy/--standard-delete-success-callback entity-data entry-file-archived)
+         (function* (lambda (&allow-other-keys)
+                      (orgtrello-log/msg *OT/ERROR* "Problem during 'delete' action!")
+                      (orgtrello-proxy/--cleanup-meta oq/--entity-full-meta)
+                      (orgtrello-proxy/--remove-file oq/--entry-file-archived)
+                      (throw 'org-trello-timer-go-to-sleep t))))
+        (progn
+          (orgtrello-log/msg *OT/INFO* orgtrello-query/--query-map)
+          (throw 'org-trello-timer-go-to-sleep t)))))
 
 (defun orgtrello-proxy/--deal-with-entity-file-action (file) "Given an entity file, load it and run a query action through trello"
   (when (file-exists-p file)
