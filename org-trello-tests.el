@@ -406,14 +406,14 @@
 "
       (org-action/--functional-controls-then-do
        '(orgtrello/--right-level-p)
-       (orgtrello-hash/make-hash-org 4 :kwd :name nil :due :position :buffer-name)
+       (orgtrello-hash/make-hierarchy (orgtrello-hash/make-hash-org 4 :kwd :name nil :due :position :buffer-name))
        (lambda (entity s) (format "%S %s" entity s))
        "- hello"))
 
-  (expect "#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:buffername :buffer-name :position :position :level 3 :keyword :kwd :name :name :id nil :due :due)) - hello"
+  (expect "#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:current #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:buffername :buffer-name :position :position :level 3 :keyword :kwd :name :name :id nil :due :due)) :parent nil :grandparent nil)) - hello"
     (org-action/--functional-controls-then-do
      '(orgtrello/--right-level-p)
-     (orgtrello-hash/make-hash-org 3 :kwd :name nil :due :position :buffer-name)
+     (orgtrello-hash/make-hierarchy (orgtrello-hash/make-hash-org 3 :kwd :name nil :due :position :buffer-name))
      (lambda (entity s) (format "%S %s" entity s))
      "- hello")))
 
@@ -423,14 +423,14 @@
 "
     (org-action/--functional-controls-then-do
      '(orgtrello/--right-level-p orgtrello/--already-synced-p)
-     (orgtrello-hash/make-hash-org 1 :kwd :name nil :due :position :buffer-name)
+     (orgtrello-hash/make-hierarchy (orgtrello-hash/make-hash-org 1 :kwd :name nil :due :position :buffer-name))
      (lambda (entity s) (format "%S %s" entity s))
      "- hello"))
-  (expect "#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:buffername :buffer-name :position :position :level 1 :keyword :kwd :name :name :id \"some-id\" :due :due)) - hello"
+  (expect "#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:current #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:buffername :buffer-name :position :position :level 1 :keyword :kwd :name :name :id \"some-id\" :due :due)) :parent nil :grandparent nil)) - hello"
 
     (org-action/--functional-controls-then-do
      '(orgtrello/--right-level-p orgtrello/--already-synced-p)
-     (orgtrello-hash/make-hash-org 1 :kwd :name "some-id" :due :position :buffer-name)
+     (orgtrello-hash/make-hierarchy (orgtrello-hash/make-hash-org 1 :kwd :name "some-id" :due :position :buffer-name))
      (lambda (entity s) (format "%S %s" entity s))
      "- hello")))
 
@@ -735,242 +735,6 @@ DEADLINE: <some-date>
 (expectations
   (expect (format "%sorg-trello/3/test.org-123.el" elnode-webserver-docroot) (orgtrello-proxy/--compute-filename-from-entity '((level . 3) (buffername . "test.org") (position . "123")))))
 
-(expectations
-  (expect '(tr nil (td nil) (td nil "Action") (td nil "Entity") (td nil "Delete")) (orgtrello-admin/--header-table)))
-
-(expectations
-  (expect '(input ((type . "button") (onclick . "deleteEntities('/proxy/admin/entities/delete/id');") (value . "x"))) (orgtrello-admin/--delete-action '((id . "id"))))
-  (expect ""                                          (orgtrello-admin/--delete-action '((name . "name")))))
-
-(expectations
-  (expect
-      '(tr nil
-           (td nil
-               (i
-                ((class . "icon-play"))))
-           (td nil "test")
-           (td nil "name")
-           (td nil
-               (input
-                ((type . "button")
-                 (onclick . "deleteEntities('/proxy/admin/entities/delete/id');")
-                 (value . "x")))))
-    (orgtrello-admin/--entity '((action . "test") (id . "id") (name . "name")) "icon-play"))
-
-  (expect
-      '(tr nil
-           (td nil
-               (i
-                ((class . "icon-pause"))))
-           (td nil "delete")
-           (td nil "name")
-           (td nil
-               (input
-                ((type . "button")
-                 (onclick . "deleteEntities('/proxy/admin/entities/delete/id');")
-                 (value . "x")))))
-    (orgtrello-admin/--entity '((action . "delete") (id . "id") (name . "name")) "icon-pause"))
-
-  (expect
-      '(tr nil
-           (td nil
-               (i
-                ((class . "icon-play"))))
-           (td nil "test")
-           (td nil "name 0")
-           (td nil
-               (input
-                ((type . "button")
-                 (onclick . "deleteEntities('/proxy/admin/entities/delete/id');")
-                 (value . "x")))))
-    (orgtrello-admin/--entity '((action . "test") (name . "name 0") (id . "id")) "icon-play"))
-
-  (expect
-      '(tr nil
-           (td nil
-               (i
-                ((class . "icon-pause"))))
-           (td nil "delete")
-           (td nil "name 1")
-           (td nil
-               (input
-                ((type . "button")
-                 (onclick . "deleteEntities('/proxy/admin/entities/delete/id');")
-                 (value . "x")))))
-    (orgtrello-admin/--entity '((action . "delete") (name . "name 1") (id . "id")) "icon-pause")))
-
-(expectations
-  (expect
-      '(input ((type . "button") (onclick . "deleteEntities('/proxy/admin/entities/delete/');") (value . "x")))
-    (orgtrello-admin/--input-button-html "deleteEntities('/proxy/admin/entities/delete/');" "x")))
-
-(expectations
-  (expect
-      '(div
-        ((class . "row-fluid marketing"))
-        (div
-         ((class . "span6"))
-         (div
-          ((style . "font-size: 2em;margin-right: 10px;margin-bottom: 10px"))
-          "Current action")
-         (span
-          ((id . "current-action"))))
-        (div
-         ((class . "span6"))
-         (div
-          ((style . "margin-bottom:10px"))
-          (span
-           ((style . "font-size: 2em;margin-right: 10px"))
-           "Next actions")
-          (span nil
-                (input
-                 ((type . "button")
-                  (onclick . "deleteEntities('/proxy/admin/entities/delete/');")
-                  (value . "Delete all")))))
-         (span
-          ((id . "next-actions")))))
-    (orgtrello-admin/--main-body)))
-
-(expectations
-  (expect
-      (esxml-to-xml `(div ((class . "hello")) "world"))
-    (orgtrello-admin/--render-html `(div ((class . "hello")) "world"))))
-
-(expectations
-  (expect "None" (orgtrello-admin/--entities-as-html nil))
-  (expect "None" (orgtrello-admin/--entities-as-html nil "icon-arrow-right"))
-  (expect "None" (orgtrello-admin/--entities-as-html nil "icon-arrow-right" "icon-arrow-left"))
-  (expect
-      '(table
-        ((class . "table table-striped table-bordered table-hover")
-         (style . "font-size: 0.75em"))
-        (tr nil
-            (td nil)
-            (td nil "Action")
-            (td nil "Entity")
-            (td nil "Delete"))
-        (tr nil
-            (td nil
-                (i
-                 ((class . "icon-arrow-right"))))
-            (td nil "create")
-            (td nil "name 0")
-            (td nil
-                (input
-                 ((type . "button")
-                  (onclick . "deleteEntities('/proxy/admin/entities/delete/id 0');")
-                  (value . "x")))))
-        (tr nil
-            (td nil
-                (i
-                 ((class . "icon-arrow-up"))))
-            (td nil "delete")
-            (td nil "name 1")
-            (td nil "")))
-    (orgtrello-admin/--entities-as-html '(((action . "create") (name . "name 0") (id . "id 0")) ((action . "delete") (name . "name 1")))))
-
-  (expect
-      '(table
-        ((class . "table table-striped table-bordered table-hover")
-         (style . "font-size: 0.75em"))
-        (tr nil
-            (td nil)
-            (td nil "Action")
-            (td nil "Entity")
-            (td nil "Delete"))
-        (tr nil
-            (td nil
-                (i
-                 ((class . "icon-arrow-right"))))
-            (td nil "create")
-            (td nil "name 0")
-            (td nil ""))
-        (tr nil
-            (td nil
-                (i
-                 ((class . "icon-arrow-up"))))
-            (td nil "delete")
-            (td nil "name 1")
-            (td nil "")))
-    (orgtrello-admin/--entities-as-html '(((action . "create") (name . "name 0")) ((action . "delete") (name . "name 1"))) "icon-arrow-right"))
-
-  (expect
-      '(table
-        ((class . "table table-striped table-bordered table-hover")
-         (style . "font-size: 0.75em"))
-        (tr nil
-            (td nil)
-            (td nil "Action")
-            (td nil "Entity")
-            (td nil "Delete"))
-        (tr nil
-            (td nil
-                (i
-                 ((class . "icon-arrow-right"))))
-            (td nil "create")
-            (td nil "name 0")
-            (td nil ""))
-        (tr nil
-            (td nil
-                (i
-                 ((class . "icon-arrow-up"))))
-            (td nil "delete")
-            (td nil "name 1")
-            (td nil "")))
-    (orgtrello-admin/--entities-as-html '(((action . "create") (name . "name 0")) ((action . "delete") (name . "name 1"))) nil "icon-arrow-up"))
-
-  (expect
-      '(table
-        ((class . "table table-striped table-bordered table-hover")
-         (style . "font-size: 0.75em"))
-        (tr nil
-            (td nil)
-            (td nil "Action")
-            (td nil "Entity")
-            (td nil "Delete"))
-        (tr nil
-            (td nil
-                (i
-                 ((class . "icon-play"))))
-            (td nil "create")
-            (td nil "name 0")
-            (td nil ""))
-        (tr nil
-            (td nil
-                (i
-                 ((class . "icon-pause"))))
-            (td nil "delete")
-            (td nil "name 1")
-            (td nil "")))
-    (orgtrello-admin/--entities-as-html '(((action . "create") (name . "name 0")) ((action . "delete") (name . "name 1"))) "icon-play" "icon-pause")))
-
-(expectations
-  (expect
-      '((tr nil
-            (td nil
-                (i
-                 ((class . "next"))))
-            (td nil "action")
-            (td nil "nil")
-            (td nil
-                (input
-                 ((type . "button")
-                  (onclick . "deleteEntities('/proxy/admin/entities/delete/id');")
-                  (value . "x")))))
-        (tr nil
-            (td nil
-                (i
-                 ((class . "next"))))
-            (td nil "action")
-            (td nil "nil")
-            (td nil
-                (input
-                 ((type . "button")
-                  (onclick . "deleteEntities('/proxy/admin/entities/delete/id2');")
-                  (value . "x"))))))
-    (orgtrello-admin/--list-entities-as-html '(((action . "action") (id . "id") (marker . "marker"))
-                                               ((action . "action") (id . "id2") (marker . "marker2"))) "next")))
-
 (with-temp-buffer
   (insert "- [X] call people [4/4] :PROPERTIES: {\"orgtrello-id\":\"456\"}")
   (forward-line -1))
@@ -1223,6 +987,467 @@ DEADLINE: <some-date>
       (insert "* next heading\n")
       (forward-line -4)
       (orgtrello/--compute-next-card-point))))
+
+(expectations
+  (expect '(tr nil (td nil) (td nil "Action") (td nil "Entity") (td nil "Delete")) (orgtrello-admin/--header-table)))
+
+(expectations
+  (expect '(input ((class . "btn btn-danger btn-mini") (type . "button") (onclick . "deleteEntities('/proxy/admin/entities/delete/id');") (value . "x"))) (orgtrello-admin/--delete-action '((id . "id"))))
+  (expect ""                                          (orgtrello-admin/--delete-action '((name . "name")))))
+
+(expectations
+  (expect '(tr
+            ((class . "success"))
+            (td nil
+                (i
+                 ((class . "icon-play"))))
+            (td nil "test")
+            (td nil "name")
+            (td nil
+                (input
+                 ((class . "btn btn-danger btn-mini")
+                  (type . "button")
+                  (onclick . "deleteEntities('/proxy/admin/entities/delete/id');")
+                  (value . "x")))))
+    (orgtrello-admin/--entity '((action . "test") (id . "id") (name . "name")) "icon-play"))
+
+  (expect '(tr
+            ((class . "warning"))
+            (td nil
+                (i
+                 ((class . "icon-pause"))))
+            (td nil "delete")
+            (td nil "name")
+            (td nil
+                (input
+                 ((class . "btn btn-danger btn-mini")
+                  (type . "button")
+                  (onclick . "deleteEntities('/proxy/admin/entities/delete/id');")
+                  (value . "x")))))
+    (orgtrello-admin/--entity '((action . "delete") (id . "id") (name . "name")) "icon-pause"))
+
+  (expect '(tr
+            ((class . "success"))
+            (td nil
+                (i
+                 ((class . "icon-play"))))
+            (td nil "test")
+            (td nil "name 0")
+            (td nil
+                (input
+                 ((class . "btn btn-danger btn-mini")
+                  (type . "button")
+                  (onclick . "deleteEntities('/proxy/admin/entities/delete/id');")
+                  (value . "x")))))
+    (orgtrello-admin/--entity '((action . "test") (name . "name 0") (id . "id")) "icon-play"))
+
+  (expect '(tr
+            ((class . "warning"))
+            (td nil
+                (i
+                 ((class . "icon-pause"))))
+            (td nil "delete")
+            (td nil "name 1")
+            (td nil
+                (input
+                 ((class . "btn btn-danger btn-mini")
+                  (type . "button")
+                  (onclick . "deleteEntities('/proxy/admin/entities/delete/id');")
+                  (value . "x")))))
+    (orgtrello-admin/--entity '((action . "delete") (name . "name 1") (id . "id")) "icon-pause")))
+
+(expectations
+  (expect '(input
+            ((class . "btn btn-danger btn-mini")
+             (type . "button")
+             (onclick . "deleteEntities('/proxy/admin/entities/delete/');")
+             (value . "x")))
+    (orgtrello-admin/--input-button-html "deleteEntities('/proxy/admin/entities/delete/');" "x")))
+
+(expectations
+  (expect '(div
+            ((class . "row-fluid marketing"))
+            (div
+             ((class . "span6"))
+             (div
+              ((style . "font-size: 2em;margin-right: 10px;margin-bottom: 10px"))
+              "Current action")
+             (span
+              ((id . "current-action"))))
+            (div
+             ((class . "span6"))
+             (div
+              ((style . "margin-bottom:10px"))
+              (span
+               ((style . "font-size: 2em;margin-right: 10px"))
+               "Next actions")
+              (span nil
+                    (input
+                     ((class . "btn btn-danger btn-mini")
+                      (type . "button")
+                      (onclick . "deleteEntities('/proxy/admin/entities/delete/');")
+                      (value . "Delete all")))))
+             (span
+              ((id . "next-actions")))))
+    (orgtrello-admin/--main-body)))
+
+(expectations
+  (expect
+      (esxml-to-xml `(div ((class . "hello")) "world"))
+    (orgtrello-admin/--render-html `(div ((class . "hello")) "world"))))
+
+(expectations
+  (expect "None" (orgtrello-admin/--entities-as-html nil))
+  (expect "None" (orgtrello-admin/--entities-as-html nil "icon-arrow-right"))
+  (expect "None" (orgtrello-admin/--entities-as-html nil "icon-arrow-right" "icon-arrow-left"))
+  (expect '(table
+            ((class . "table table-striped table-bordered table-hover")
+             (style . "font-size: 0.75em"))
+            (tr nil
+                (td nil)
+                (td nil "Action")
+                (td nil "Entity")
+                (td nil "Delete"))
+            (tr
+             ((class . ""))
+             (td nil
+                 (i
+                  ((class . "icon-arrow-right"))))
+             (td nil "create")
+             (td nil "name 0")
+             (td nil
+                 (input
+                  ((class . "btn btn-danger btn-mini")
+                   (type . "button")
+                   (onclick . "deleteEntities('/proxy/admin/entities/delete/id 0');")
+                   (value . "x")))))
+            (tr
+             ((class . ""))
+             (td nil
+                 (i
+                  ((class . "icon-arrow-up"))))
+             (td nil "delete")
+             (td nil "name 1")
+             (td nil "")))
+    (orgtrello-admin/--entities-as-html '(((action . "create") (name . "name 0") (id . "id 0")) ((action . "delete") (name . "name 1")))))
+
+  (expect '(table
+            ((class . "table table-striped table-bordered table-hover")
+             (style . "font-size: 0.75em"))
+            (tr nil
+                (td nil)
+                (td nil "Action")
+                (td nil "Entity")
+                (td nil "Delete"))
+            (tr
+             ((class . ""))
+             (td nil
+                 (i
+                  ((class . "icon-arrow-right"))))
+             (td nil "create")
+             (td nil "name 0")
+             (td nil ""))
+            (tr
+             ((class . ""))
+             (td nil
+                 (i
+                  ((class . "icon-arrow-up"))))
+             (td nil "delete")
+             (td nil "name 1")
+             (td nil "")))
+    (orgtrello-admin/--entities-as-html '(((action . "create") (name . "name 0")) ((action . "delete") (name . "name 1"))) "icon-arrow-right"))
+
+  (expect '(table
+            ((class . "table table-striped table-bordered table-hover")
+             (style . "font-size: 0.75em"))
+            (tr nil
+                (td nil)
+                (td nil "Action")
+                (td nil "Entity")
+                (td nil "Delete"))
+            (tr
+             ((class . ""))
+             (td nil
+                 (i
+                  ((class . "icon-arrow-right"))))
+             (td nil "create")
+             (td nil "name 0")
+             (td nil ""))
+            (tr
+             ((class . ""))
+             (td nil
+                 (i
+                  ((class . "icon-arrow-up"))))
+             (td nil "delete")
+             (td nil "name 1")
+             (td nil "")))
+    (orgtrello-admin/--entities-as-html '(((action . "create") (name . "name 0")) ((action . "delete") (name . "name 1"))) nil "icon-arrow-up"))
+
+  (expect '(table
+            ((class . "table table-striped table-bordered table-hover")
+             (style . "font-size: 0.75em"))
+            (tr nil
+                (td nil)
+                (td nil "Action")
+                (td nil "Entity")
+                (td nil "Delete"))
+            (tr
+             ((class . "success"))
+             (td nil
+                 (i
+                  ((class . "icon-play"))))
+             (td nil "create")
+             (td nil "name 0")
+             (td nil ""))
+            (tr
+             ((class . "warning"))
+             (td nil
+                 (i
+                  ((class . "icon-pause"))))
+             (td nil "delete")
+             (td nil "name 1")
+             (td nil "")))
+    (orgtrello-admin/--entities-as-html '(((action . "create") (name . "name 0")) ((action . "delete") (name . "name 1"))) "icon-play" "icon-pause")))
+
+(expectations
+  (expect '((tr
+             ((class . ""))
+             (td nil
+                 (i
+                  ((class . "next"))))
+             (td nil "action")
+             (td nil "nil")
+             (td nil
+                 (input
+                  ((class . "btn btn-danger btn-mini")
+                   (type . "button")
+                   (onclick . "deleteEntities('/proxy/admin/entities/delete/id');")
+                   (value . "x")))))
+            (tr
+             ((class . ""))
+             (td nil
+                 (i
+                  ((class . "next"))))
+             (td nil "action")
+             (td nil "nil")
+             (td nil
+                 (input
+                  ((class . "btn btn-danger btn-mini")
+                   (type . "button")
+                   (onclick . "deleteEntities('/proxy/admin/entities/delete/id2');")
+                   (value . "x"))))))
+    (orgtrello-admin/--list-entities-as-html '(((action . "action") (id . "id") (marker . "marker"))
+                                               ((action . "action") (id . "id2") (marker . "marker2"))) "next")))
+
+(expectations
+  (expect '(class . "success") (orgtrello-admin/--compute-class "icon-play"))
+  (expect '(class . "warning") (orgtrello-admin/--compute-class "icon-pause"))
+  (expect '(class . "")        (orgtrello-admin/--compute-class nil))
+  (expect '(class . "")        (orgtrello-admin/--compute-class "any")))
+
+(expectations
+ (expect :current (gethash :current (orgtrello-hash/make-hierarchy :current)))
+ (expect nil (gethash :parent (orgtrello-hash/make-hierarchy :current)))
+ (expect nil (gethash :grandparent (orgtrello-hash/make-hierarchy :current))))
+
+(expectations
+ (expect :current (gethash :current (orgtrello-hash/make-hierarchy :current :parent)))
+ (expect :parent (gethash :parent (orgtrello-hash/make-hierarchy :current :parent)))
+ (expect nil (gethash :grandparent (orgtrello-hash/make-hierarchy :current :parent))))
+
+(expectations
+ (expect :current (gethash :current (orgtrello-hash/make-hierarchy :current :parent :grandparent)))
+ (expect :parent (gethash :parent (orgtrello-hash/make-hierarchy :current :parent :grandparent)))
+ (expect :grandparent (gethash :grandparent (orgtrello-hash/make-hierarchy :current :parent :grandparent))))
+
+(expectations
+ (expect :current (gethash :current (orgtrello-hash/make-hierarchy :current nil :grandparent)))
+ (expect nil (gethash :parent (orgtrello-hash/make-hierarchy :current nil :grandparent)))
+ (expect :grandparent (gethash :grandparent (orgtrello-hash/make-hierarchy nil :parent :grandparent))))
+
+;; (expectations
+;;   (expect :ok                                      (-> (orgtrello-hash/make-hash-org 1 :keyword :name :id :due :position :buffer-name)
+;;                                                        orgtrello-hash/make-hierarchy
+;;                                                        orgtrello/--can-be-synced-p))
+;;   (expect :ok                                      (-> (orgtrello-hash/make-hash-org 2 :keyword :name :id :due :position :buffer-name)
+;;                                                        (orgtrello-hash/make-hierarchy (orgtrello-hash/make-hash-org 1 :keyword :name "some-id" :due :position :buffer-name))
+;;                                                        orgtrello/--can-be-synced-p))
+;;   (expect *ERROR-SYNC-CHECKLIST-SYNC-CARD-FIRST*   (-> (orgtrello-hash/make-hash-org 2 :keyword :name :id :due :position :buffer-name)
+;;                                                        (orgtrello-hash/make-hierarchy (orgtrello-hash/make-hash-org 1 :keyword :name nil :due :position :buffer-name))
+;;                                                        orgtrello/--can-be-synced-p))
+;;   (expect *ERROR-SYNC-CHECKLIST-SYNC-CARD-FIRST*   (-> (orgtrello-hash/make-hash-org 2 :keyword :name :id :due :position :buffer-name)
+;;                                                        (orgtrello-hash/make-hierarchy (orgtrello-hash/make-hash-org 1 :keyword :name "orgtrello-marker-bad-id-equiv-nil" :due :position :buffer-name))
+;;                                                        orgtrello/--can-be-synced-p))
+;;   (expect :ok                                      (-> (orgtrello-hash/make-hash-org 3 :keyword :name :id :due :position :buffer-name)
+;;                                                        (orgtrello-hash/make-hierarchy (orgtrello-hash/make-hash-org 1 :keyword :name "some-id" :due :position :buffer-name)
+;;                                                                                       (orgtrello-hash/make-hash-org 2 :keyword :name "some-id" :due :position :buffer-name))
+;;                                                        orgtrello/--can-be-synced-p))
+;;   (expect *ERROR-SYNC-ITEM-SYNC-UPPER-LAYER-FIRST* (-> (orgtrello-hash/make-hash-org 3 :keyword :name :id :due :position :buffer-name)
+;;                                                        (orgtrello-hash/make-hierarchy (orgtrello-hash/make-hash-org 1 :keyword :name nil :due :position :buffer-name)
+;;                                                                                       (orgtrello-hash/make-hash-org 2 :keyword :name "some-id" :due :position :buffer-name))
+;;                                                        orgtrello/--can-be-synced-p))
+;;   (expect *ERROR-SYNC-ITEM-SYNC-UPPER-LAYER-FIRST* (-> (orgtrello-hash/make-hash-org 3 :keyword :name :id :due :position :buffer-name)
+;;                                                        (orgtrello-hash/make-hierarchy (orgtrello-hash/make-hash-org 1 :keyword :name "orgtrello-marker-nil" :due :position :buffer-name)
+;;                                                                                       (orgtrello-hash/make-hash-org 2 :keyword :name "some-id" :due :position :buffer-name))
+;;                                                        orgtrello/--can-be-synced-p))
+;;   (expect *ERROR-SYNC-ITEM-SYNC-UPPER-LAYER-FIRST* (-> (orgtrello-hash/make-hash-org 3 :keyword :name :id :due :position :buffer-name)
+;;                                                        (orgtrello-hash/make-hierarchy (orgtrello-hash/make-hash-org 1 :keyword :name "some-id" :due :position :buffer-name)
+;;                                                                                       (orgtrello-hash/make-hash-org 2 :keyword :name nil :due :position :buffer-name))
+;;                                                        orgtrello/--can-be-synced-p))
+;;   (expect *ERROR-SYNC-ITEM-SYNC-UPPER-LAYER-FIRST* (-> (orgtrello-hash/make-hash-org 3 :keyword :name :id :due :position :buffer-name)
+;;                                                        (orgtrello-hash/make-hierarchy (orgtrello-hash/make-hash-org 1 :keyword :name "some-id" :due :position :buffer-name)
+;;                                                                                       (orgtrello-hash/make-hash-org 2 :keyword :name "orgtrello-marker-nil" :due :position :buffer-name))
+;;                                                        orgtrello/--can-be-synced-p))
+;;   (expect *ERROR-SYNC-ITEM-SYNC-UPPER-LAYER-FIRST* (-> (orgtrello-hash/make-hash-org 3 :keyword :name :id :due :position :buffer-name)
+;;                                                        (orgtrello-hash/make-hierarchy (orgtrello-hash/make-hash-org 1 :keyword :name nil :due :position :buffer-name)
+;;                                                                                       (orgtrello-hash/make-hash-org 2 :keyword :name nil :due :position :buffer-name))
+;;                                                        orgtrello/--can-be-synced-p))
+;;   (expect *ERROR-SYNC-ITEM-SYNC-UPPER-LAYER-FIRST* (-> (orgtrello-hash/make-hash-org 3 :keyword :name :id :due :position :buffer-name)
+;;                                                        (orgtrello-hash/make-hierarchy (orgtrello-hash/make-hash-org 1 :keyword :name "orgtrello-marker-nil" :due :position :buffer-name)
+;;                                                                                       (orgtrello-hash/make-hash-org 2 :keyword :name "orgtrello-marker-nil" :due :position :buffer-name))
+;;                                                        orgtrello/--can-be-synced-p)))
+
+(expectations
+  (expect :ok                                 (-> (orgtrello-hash/make-hash-org 1 :keyword "some name" :id :due :position :buffer-name)
+                                                  orgtrello-hash/make-hierarchy
+                                                  orgtrello/--mandatory-name-ok-p))
+  (expect *ERROR-SYNC-CARD-MISSING-NAME*      (-> (orgtrello-hash/make-hash-org 1 :keyword "" :id :due :position :buffer-name)
+                                                  orgtrello-hash/make-hierarchy
+                                                  orgtrello/--mandatory-name-ok-p))
+  (expect *ERROR-SYNC-CARD-MISSING-NAME*      (-> (orgtrello-hash/make-hash-org 1 :keyword nil :id :due :position :buffer-name)
+                                                  orgtrello-hash/make-hierarchy
+                                                  orgtrello/--mandatory-name-ok-p))
+  (expect :ok                                 (-> (orgtrello-hash/make-hash-org 2 :keyword "some name" :id :due :position :buffer-name)
+                                                  orgtrello-hash/make-hierarchy
+                                                  orgtrello/--mandatory-name-ok-p))
+  (expect *ERROR-SYNC-CHECKLIST-MISSING-NAME* (-> (orgtrello-hash/make-hash-org 2 :keyword "" :id :due :position :buffer-name)
+                                                  orgtrello-hash/make-hierarchy
+                                                  orgtrello/--mandatory-name-ok-p))
+  (expect *ERROR-SYNC-CHECKLIST-MISSING-NAME* (-> (orgtrello-hash/make-hash-org 2 :keyword nil :id :due :position :buffer-name)
+                                                  orgtrello-hash/make-hierarchy
+                                                  orgtrello/--mandatory-name-ok-p))
+  (expect :ok                                 (-> (orgtrello-hash/make-hash-org 3 :keyword "some name" :id :due :position :buffer-name)
+                                                  orgtrello-hash/make-hierarchy
+                                                  orgtrello/--mandatory-name-ok-p))
+  (expect *ERROR-SYNC-ITEM-MISSING-NAME*      (-> (orgtrello-hash/make-hash-org 3 :keyword "" :id :due :position :buffer-name)
+                                                  orgtrello-hash/make-hierarchy
+                                                  orgtrello/--mandatory-name-ok-p))
+  (expect *ERROR-SYNC-ITEM-MISSING-NAME*      (-> (orgtrello-hash/make-hash-org 3 :keyword nil :id :due :position :buffer-name)
+                                                  orgtrello-hash/make-hierarchy
+                                                  orgtrello/--mandatory-name-ok-p)))
+
+(expectations
+  (expect nil    (->> (with-temp-buffer
+                        (org-mode)
+                        (insert "* card")
+                        (orgtrello-data/entry-get-full-metadata))
+                      (orgtrello-data/parent)))
+  (expect nil    (->> (with-temp-buffer
+                        (org-mode)
+                        (insert "* card")
+                        (orgtrello-data/entry-get-full-metadata))
+                      (orgtrello-data/grandparent)))
+  (expect "card" (->> (with-temp-buffer
+                        (org-mode)
+                        (insert "* card")
+                        (orgtrello-data/entry-get-full-metadata))
+                      (orgtrello-data/current)
+                      orgtrello/--name)))
+
+(expectations
+  (expect "card"      (->> (with-temp-buffer
+                             (org-mode)
+                             (insert "* card\n")
+                             (insert "- [ ] checklist")
+                             (orgtrello-data/entry-get-full-metadata))
+                           (orgtrello-data/parent)
+                           orgtrello/--name))
+  (expect nil         (->> (with-temp-buffer
+                             (org-mode)
+                             (insert "* card\n")
+                             (insert "- [ ] checklist")
+                             (orgtrello-data/entry-get-full-metadata))
+                           (orgtrello-data/grandparent)))
+  (expect "checklist" (->> (with-temp-buffer
+                             (org-mode)
+                             (insert "* card\n")
+                             (insert "- [ ] checklist")
+                             (orgtrello-data/entry-get-full-metadata))
+                           (orgtrello-data/current)
+                           orgtrello/--name)))
+
+(expectations
+  (expect "checklist" (->> (with-temp-buffer
+                             (org-mode)
+                             (insert "* card\n")
+                             (insert "- [ ] checklist\n")
+                             (insert "  - [ ] item")
+                             (orgtrello-data/entry-get-full-metadata))
+                           (orgtrello-data/parent)
+                           orgtrello/--name))
+  (expect "card"      (->> (with-temp-buffer
+                             (org-mode)
+                             (insert "* card\n")
+                             (insert "- [ ] checklist\n")
+                             (insert "  - [ ] item")
+                             (orgtrello-data/entry-get-full-metadata))
+                           (orgtrello-data/grandparent)
+                           orgtrello/--name))
+  (expect "item"      (->> (with-temp-buffer
+                             (org-mode)
+                             (insert "* card\n")
+                             (insert "- [ ] checklist\n")
+                             (insert "  - [ ] item")
+                             (orgtrello-data/entry-get-full-metadata))
+                           (orgtrello-data/current)
+                           orgtrello/--name)))
+
+(expectations
+  (expect '((orgtrello-id . "orgtrello-marker-123")) (with-temp-buffer
+                                                       (org-mode)
+                                                       (insert "* card\n")
+                                                       (insert "- [X] hello :PROPERTIES: {\"orgtrello-id\":\"orgtrello-marker-123\"}")
+                                                       (orgtrello-cbx/--read-properties-from-point (point))))
+
+  (expect nil (with-temp-buffer
+                (org-mode)
+                (insert "* card\n")
+                (insert "- [X] hello :PROPERTIES: {\"orgtrello-id\":\"orgtrello-marker-123\"}")
+                (orgtrello-proxy/--cleanup-meta (orgtrello-data/entry-get-full-metadata))
+                (orgtrello-cbx/--read-properties-from-point (point))))
+
+  (expect nil (with-temp-buffer
+                (org-mode)
+                (insert "* card\n")
+                (insert "- [X] hello :PROPERTIES: {\"orgtrello-id\":\"orgtrello-marker-123\"}")
+                (orgtrello-proxy/--cleanup-meta (orgtrello-data/entry-get-full-metadata))
+                (orgtrello-cbx/--read-properties-from-point (point))))
+
+  (expect nil (with-temp-buffer
+                (org-mode)
+                (insert "* card\n")
+                (insert "- [X] cl :PROPERTIES: {\"orgtrello-id\":\"abc\"}\n")
+                (insert "  - [X] item :PROPERTIES: {\"orgtrello-id\":\"orgtrello-marker-123\"}")
+                (orgtrello-proxy/--cleanup-meta (orgtrello-data/entry-get-full-metadata))
+                (orgtrello-cbx/--read-properties-from-point (point)))))
+
+(expectations
+  (expect "tests.scanning" (orgtrello-proxy/--archived-scanning-dir "tests"))
+  (expect "nil.scanning" (orgtrello-proxy/--archived-scanning-dir nil)))
+
+(expectations
+  (expect "test/folder/.scanning/filename" (orgtrello-proxy/--archived-scanning-file "test/folder/filename")))
+
+(expectations
+ (expect '(:a) (orgtrello-proxy/--update-buffer-to-save :a nil))
+ (expect '(:a) (orgtrello-proxy/--update-buffer-to-save :a '(:a)))
+ (expect '(:a :b) (orgtrello-proxy/--update-buffer-to-save :a '(:b))))
+
+(expectations
+ (setq *ORGTRELLO-LIST-BUFFERS-TO-SAVE* nil)
+ (expect '(:a) (orgtrello-proxy/update-buffer-to-save! :a))
+ (expect '(:a) (orgtrello-proxy/update-buffer-to-save! :a))
+ (expect '(:b :a) (orgtrello-proxy/update-buffer-to-save! :b)))
 
 (provide 'org-trello-tests)
 ;;; org-trello-tests ends here

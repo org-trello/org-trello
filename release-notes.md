@@ -1,3 +1,21 @@
+# 0.1.8
+
+- [X] Simplify Cask file
+- [X] webadmin: Improve rendering [2/2]
+  - [X] Better display for the delete buttons.
+  - [X] Use css for the play/pause entities
+- [X] Ensure checks before sync request to the proxy.
+- [X] Fix sync full entity (related to map-checkbox) - https://github.com/ardumont/org-trello/issues/53
+- [X] Improve the justify policy once and for all (this blinks at the moment!)
+- [X] Version
+- [X] Fix problem with archive/unarchive file routine
+- [X] Fix problem with delete file routine (does not take place)
+- [X] Add missing callback for the delete action
+- [X] Improve the post-actions
+  - [X] Justify once
+  - [X] Saving once
+  - [X] Unify the saving behaviour with the delete action
+
 # 0.1.7.1
 
 - [X] Fix problem requiring cl-lib - https://github.com/ardumont/org-trello/issues/51
