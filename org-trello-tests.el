@@ -1438,5 +1438,16 @@ DEADLINE: <some-date>
 (expectations
   (expect "test/folder/.scanning/filename" (orgtrello-proxy/--archived-scanning-file "test/folder/filename")))
 
+(expectations
+ (expect '(:a) (orgtrello-proxy/--update-buffer-to-save :a nil))
+ (expect '(:a) (orgtrello-proxy/--update-buffer-to-save :a '(:a)))
+ (expect '(:a :b) (orgtrello-proxy/--update-buffer-to-save :a '(:b))))
+
+(expectations
+ (setq *ORGTRELLO-LIST-BUFFERS-TO-SAVE* nil)
+ (expect '(:a) (orgtrello-proxy/update-buffer-to-save! :a))
+ (expect '(:a) (orgtrello-proxy/update-buffer-to-save! :a))
+ (expect '(:b :a) (orgtrello-proxy/update-buffer-to-save! :b)))
+
 (provide 'org-trello-tests)
 ;;; org-trello-tests ends here
