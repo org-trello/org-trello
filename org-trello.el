@@ -839,9 +839,7 @@ This is a list with the following elements:
   ;; cleanup file
   (orgtrello-proxy/--remove-file file)
   ;; save modifs
-  (save-buffer)
-  ;; justify
-  (orgtrello-cbx/--justify-property-current-line))
+  (save-buffer))
 
 (defmacro orgtrello-proxy/--safe-wrap-or-throw-error (fn) "A specific macro to deal with interception of uncaught error when executing the fn call. If error is thrown, send the 'org-trello-timer-go-to-sleep flag."
   `(condition-case ex
@@ -910,8 +908,7 @@ This is a list with the following elements:
 
 (defun orgtrello-proxy/--cleanup-meta (entity-full-metadata)
   (unless (-> entity-full-metadata orgtrello-data/current orgtrello/--id)
-          (orgtrello-cbx/org-delete-property *ORGTRELLO-ID*)
-          (orgtrello-cbx/--justify-property-current-line)))
+          (orgtrello-cbx/org-delete-property *ORGTRELLO-ID*)))
 
 (defun orgtrello-proxy/--sync-entity (entity-data entity-full-metadata entry-file-archived) "Execute the entity synchronization." ;;(debug)
   (lexical-let ((orgtrello-query/--query-map (orgtrello/--dispatch-create entity-full-metadata))
@@ -1771,6 +1768,9 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   (orgtrello-log/msg *OT/WARN* "Synchronizing org-mode file to the board '%s'. This may take some time, some coffee may be a good idea..." (orgtrello/--board-name))
   (org-map-entries (lambda () (when (= *CARD-LEVEL* (orgtrello/--current-level)) (orgtrello/do-sync-full-entity))) t 'file))
 
+(defun orgtrello/justify-file () "Map over the file and justify entries with checkbox."
+  (org-map-entries (lambda () (when (= *CARD-LEVEL* (orgtrello/--current-level)) (orgtrello-cbx/--justify-property-current-line)))))
+
 (defun orgtrello/--compute-card-status (card-id-list) "Given a card's id, compute its status."
   (gethash card-id-list *HMAP-ID-NAME*))
 
@@ -2323,6 +2323,9 @@ C-c o h - M-x org-trello/help-describing-bindings    - This help message."))
              (define-key map (kbd "C-c o e") 'org-trello/describe-entry)
              map))
 
+(defun org-trello/justify-on-save () "Justify the properties checkbox."
+  (if org-trello-mode (orgtrello/justify-file)))
+
 (add-hook 'org-trello-mode-on-hook
           (lambda ()
             ;; hightlight the properties of the checkboxes
@@ -2330,6 +2333,8 @@ C-c o h - M-x org-trello/help-describing-bindings    - This help message."))
             (font-lock-add-keywords 'org-mode '((": {\"orgtrello-id\":.*}" 0 font-lock-comment-face t)))
             ;; start the proxy
             (orgtrello-proxy/start)
+            ;; installing hooks
+            (add-hook 'before-save-hook 'org-trello/justify-on-save)
             ;; a little message in the minibuffer to notify the user
             (orgtrello-log/msg *OT/NOLOG* "org-trello/ot is on! To begin with, hit C-c o h or M-x 'org-trello/help-describing-bindings")))
 
@@ -2340,6 +2345,8 @@ C-c o h - M-x org-trello/help-describing-bindings    - This help message."))
             (font-lock-remove-keywords 'org-mode '((": {\"orgtrello-id\":.*}" 0 font-lock-comment-face t)))
             ;; stop the proxy
             (orgtrello-proxy/stop)
+            ;; uninstalling hooks
+            (remove-hook 'before-save-hook 'org-trello/justify-on-save)
             ;; a little message in the minibuffer to notify the user
             (orgtrello-log/msg *OT/NOLOG* "org-trello/ot is off!")))
 
