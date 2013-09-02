@@ -982,11 +982,7 @@ This is a list with the following elements:
                  (beginning-of-line)
                  (kill-line)
                  (kill-line))))
-       ;; FIXME, this behaviour is redundant with the sync callback, need to improve this to avoid behaviour code duplication
-       (progn
-         (save-buffer)
-         ;; cleanup file
-         (orgtrello-proxy/--remove-file op/--entry-file))))))
+       (orgtrello-proxy/--cleanup-and-save-buffer-metadata op/--entry-file op/--entry-buffer-name)))))
 
 (defun orgtrello-proxy/--delete (entity-data entity-full-metadata entry-file-archived) "Execute the entity deletion."
   (lexical-let ((orgtrello-query/--query-map (orgtrello/--dispatch-delete (orgtrello-data/current entity-full-metadata) (orgtrello-data/parent entity-full-metadata)))
