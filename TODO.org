@@ -647,7 +647,7 @@ CLOSED: [2013-08-31 sam. 10:55]
 - [X] Version
 - [X] Release notes
 
-* IN-PROGRESS 0.1.8 [90%]
+* IN-PROGRESS 0.1.8 [81%]
 - [X] Simplify Cask file
 - [X] webadmin: Improve rendering [2/2]
   - [X] Better display for the delete buttons.
@@ -659,6 +659,10 @@ CLOSED: [2013-08-31 sam. 10:55]
 - [X] Fix problem with archive/unarchive file routine
 - [X] Fix problem with delete file routine (does not take place)
 - [X] Add missing callback for the delete action
+- [-] Improve the post-actions
+  - [X] Justify once
+  - [X] Saving once
+  - [ ] Unify the saving behaviour with the delete action
 - [ ] Release notes
 * TODO 0.1.9 [%]
 - [ ] Ensure sync-from-trello keep the order of the checklists clean
