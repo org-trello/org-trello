@@ -45,7 +45,4 @@
 :PROPERTIES:
 :END:
 * PENDING Questions about life, the universe and everything
-:PROPERTIES:
-:orgtrello-id: 52230106255d47b85100306c
-:END:
 - [-] How to deal with promotion/demotion?
