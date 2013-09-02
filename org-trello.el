@@ -921,8 +921,8 @@ This is a list with the following elements:
         ;; execute the request
         (orgtrello-query/http-trello orgtrello-query/--query-map *do-sync-query*
                                      (orgtrello-proxy/--standard-post-or-put-success-callback entity-data entry-file-archived)
-                                     (function* (lambda (&allow-other-keys)
-                                                  (orgtrello-log/msg *OT/ERROR* "Problem during sync!")
+                                     (function* (lambda (&key error-thrown &allow-other-keys)
+                                                  (orgtrello-log/msg *OT/ERROR* "client - Problem during the sync request to the proxy- error-thrown: %s" error-thrown)
                                                   (orgtrello-proxy/--cleanup-meta oq/--entity-full-meta)
                                                   (orgtrello-proxy/--remove-file oq/--entry-file-archived)
                                                   (throw 'org-trello-timer-go-to-sleep t))))
@@ -984,8 +984,8 @@ This is a list with the following elements:
     (if (hash-table-p orgtrello-query/--query-map)
         (orgtrello-query/http-trello orgtrello-query/--query-map *do-sync-query*
          (orgtrello-proxy/--standard-delete-success-callback entity-data entry-file-archived)
-         (function* (lambda (&allow-other-keys)
-                      (orgtrello-log/msg *OT/ERROR* "Problem during 'delete' action!")
+         (function* (lambda (&key error-thrown &allow-other-keys)
+                      (orgtrello-log/msg *OT/ERROR* "client - Problem during the deletion request to the proxy- error-thrown: %s" error-thrown)
                       (orgtrello-proxy/--cleanup-meta oq/--entity-full-meta)
                       (orgtrello-proxy/--remove-file oq/--entry-file-archived)
                       (throw 'org-trello-timer-go-to-sleep t))))

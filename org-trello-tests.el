@@ -1432,8 +1432,8 @@ DEADLINE: <some-date>
                 (orgtrello-cbx/--read-properties-from-point (point)))))
 
 (expectations
-  (expect "tests/.scanning" (orgtrello-proxy/--archived-scanning-dir "tests"))
-  (expect "nil/.scanning" (orgtrello-proxy/--archived-scanning-dir nil)))
+  (expect "tests.scanning" (orgtrello-proxy/--archived-scanning-dir "tests"))
+  (expect "nil.scanning" (orgtrello-proxy/--archived-scanning-dir nil)))
 
 (expectations
   (expect "test/folder/.scanning/filename" (orgtrello-proxy/--archived-scanning-file "test/folder/filename")))
