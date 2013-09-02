@@ -48,4 +48,4 @@
 :PROPERTIES:
 :orgtrello-id: 52230106255d47b85100306c
 :END:
-- [-] How to deal with promotion/demotion?  :PROPERTIES: {"orgtrello-id":"522301077c781e867c0060d3"}
+- [-] How to deal with promotion/demotion?
