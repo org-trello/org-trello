@@ -666,6 +666,7 @@ CLOSED: [2013-09-03 mar. 22:31]
   - [X] Unify the saving behaviour with the delete action
 - [X] Release notes
 * IN-PROGRESS 0.1.9 [0%]
+- [ ] Clean install org-trello
 - [ ] Ensure sync-from-trello keep the order of the checklists clean
 - [ ] Improve sync request policy - https://github.com/ardumont/org-trello/issues/58
 - [ ] Test multiple emacs version - https://github.com/ardumont/org-trello/issues/52
