@@ -1,3 +1,10 @@
+# 0.1.9
+
+- [X] Clean install org-trello
+- [X] Ensure sync-from-trello keep the order of the checklists clean
+- [X] Version
+- [X] Release notes
+
 # 0.1.8
 
 - [X] Simplify Cask file

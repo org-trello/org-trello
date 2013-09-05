@@ -114,6 +114,12 @@ then `M-x eval-buffer`
 
 Now open an org-mode buffer, then hit: `C-c o h`
 
+*Note* If for some reason, the installation fails, force the installation again
+
+```lisp
+(package-install 'org-trello)
+```
+
 ## Demo
 
 ### Synchronize one entity
@@ -242,6 +248,12 @@ Add the org-trello directory to your load path and then add
 ``` lisp
 (add-to-list 'load-path "/path/to/org-trello/"))
 (require 'org-trello)
+```
+
+*Note* If for some reason, the installation fails, force the installation again
+
+```lisp
+(package-install 'org-trello)
 ```
 
 ## Example
