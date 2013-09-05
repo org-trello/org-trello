@@ -4,7 +4,7 @@
 
 ;; Author: Antoine R. Dumont <eniotna.t AT gmail.com>
 ;; Maintainer: Antoine R. Dumont <eniotna.t AT gmail.com>
-;; Version: 0.1.8
+;; Version: 0.1.9
 ;; Package-Requires: ((org "8.0.7") (dash "1.5.0") (request "0.2.0") (cl-lib "0.3.0") (json "1.2") (elnode "0.9.9.7.6") (esxml "0.3.0") (s "1.7.0"))
 ;; Keywords: org-mode trello sync org-trello
 ;; URL: https://github.com/ardumont/org-trello
@@ -67,7 +67,7 @@
 
 ;; #################### static setup
 
-(defvar *ORGTRELLO-VERSION*           "0.1.8"                                           "Version")
+(defvar *ORGTRELLO-VERSION*           "0.1.9"                                           "Version")
 (defvar *consumer-key*                nil                                               "Id representing the user.")
 (defvar *access-token*                nil                                               "Read/write access token to use trello on behalf of the user.")
 (defvar *ORGTRELLO-MARKER*            "orgtrello-marker"                                "A marker used inside the org buffer to synchronize entries.")
@@ -1867,12 +1867,20 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
    *ORGTRELLO-NATURAL-ORG-CHECKLIST*))
 
 (defun orgtrello/--do-retrieve-checklists-from-card (card) "Given a card, return the list containing the card, the checklists from this card, and the items from the checklists. The order is guaranted."
-  (cl-reduce
-   (lambda (acc-list checklist-id)
-     (let ((orgtrello/--checklist (orgtrello-query/http-trello (orgtrello-api/get-checklist checklist-id) *do-sync-query*)))
-       (append (cons orgtrello/--checklist (orgtrello/--do-retrieve-checklists-and-items orgtrello/--checklist)) acc-list)))
-   (orgtrello-query/--checklist-ids card)
-   :initial-value nil))
+  (--> card
+       (orgtrello-query/--checklist-ids it)                                                            ;; retrieve checklist ids
+       (cl-reduce
+        (lambda (acc-list checklist-id)
+          (cons (-> checklist-id
+                    orgtrello-api/get-checklist
+                    (orgtrello-query/http-trello *do-sync-query*)) acc-list))
+        it :initial-value nil)                                                                         ;; retrieve the real checklist
+       (sort it (lambda (a b) (when (<= (assoc-default 'pos a) (assoc-default 'pos b)) 1)))            ;; sort them by pos
+       (reverse it)
+       (cl-reduce
+        (lambda (acc-list checklist)
+          (append (cons checklist (orgtrello/--do-retrieve-checklists-and-items checklist)) acc-list)) ;; retrieve the task
+        it :initial-value nil)))
 
 (defun orgtrello/--do-retrieve-checklists-and-items (checklist) "Given a checklist id, retrieve all the items from the checklist and return a list containing first the checklist, then the items."
   (--map it (orgtrello-query/--check-items checklist)))

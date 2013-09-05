@@ -1,4 +1,4 @@
-=#+TITLE: TODO orgtrello's dev progress
+#+TITLE: orgtrello development progression
 #+AUTHOR: Antoine R. Dumont
 #+STYLE: <style> h1,h2,h3 {font-family: arial, helvetica, sans-serif} </style>
 
@@ -647,7 +647,8 @@ CLOSED: [2013-08-31 sam. 10:55]
 - [X] Version
 - [X] Release notes
 
-* IN-PROGRESS 0.1.8 [100%]
+* DONE 0.1.8 [100%]
+CLOSED: [2013-09-03 mar. 22:31]
 - [X] Simplify Cask file
 - [X] webadmin: Improve rendering [2/2]
   - [X] Better display for the delete buttons.
@@ -664,22 +665,28 @@ CLOSED: [2013-08-31 sam. 10:55]
   - [X] Saving once
   - [X] Unify the saving behaviour with the delete action
 - [X] Release notes
-* TODO 0.1.9 [%]
-- [ ] Ensure sync-from-trello keep the order of the checklists clean
-- [ ] Test multiple emacs version
-- [ ] Improve the saving policy (this saves every time we update the properties so for card with lots of commands, this makes a lot of i/o)
+* DONE 0.1.9 [100%]
+CLOSED: [2013-09-05 jeu. 21:33]
+- [X] Clean install org-trello
+- [X] Ensure sync-from-trello keep the order of the checklists clean
+- [X] Version
+- [X] Release notes
+* TODO 0.2.0 [%]
+- [ ] Improve sync request policy - https://github.com/ardumont/org-trello/issues/58
+- [ ] Test multiple emacs version - https://github.com/ardumont/org-trello/issues/52
 - [ ] Videos about org-trello
   - [ ] elnode
   - [ ] webadmin
   - [ ] checkbox
+* TODO 0.2.1 [%]
+- [ ] One command to sync them all - https://github.com/ardumont/org-trello/issues/59
 - [-] Filter only the data we use with the trello api
 - [-] Improve the request to the trello api to enforce the position inside trello (we may use the natural order of integer with position to determine such position)
 - [-] Now that elnode is here, this may be simpler to use a fake trello server (use clojure :D)
 - [-] Update the literate org-trello.org (completely desynchronized since 0.1.2) -> coding it to avoid doing manual split (I see the irony)
 - [-] POC: use a temporary buffer to sync with trello, when done, merge with the user's buffer.
-* TODO Very Interesting propositions
+* Very Interesting propositions
 - https://github.com/ardumont/org-trello/issues/33 - Another Disposition about org's buffer
-- https://github.com/ardumont/org-trello/issues/37#issuecomment-23033199 - One command to sync them all
 * Questions
 ** How to deal with promotion/demotion?
 We do not deal with it at the moment.
