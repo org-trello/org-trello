@@ -20,4 +20,4 @@ EOF
 
 # execute
 
-HOME=$CLEAN_INSTALL_FOLDER emacs -Q --batch -nw -l $CLEAN_INSTALL_FOLDER/default.el
+HOME=$CLEAN_INSTALL_FOLDER emacs --batch -nw -l $CLEAN_INSTALL_FOLDER/default.el
