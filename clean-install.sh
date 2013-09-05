@@ -16,6 +16,8 @@ cat <<EOF > $CLEAN_INSTALL_FOLDER/default.el
 (package-initialize)
 (package-refresh-contents)
 (package-install '$PACKAGE)
+(package-install '$PACKAGE)
+
 EOF
 
 # execute
