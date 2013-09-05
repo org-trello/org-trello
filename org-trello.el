@@ -1867,12 +1867,20 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
    *ORGTRELLO-NATURAL-ORG-CHECKLIST*))
 
 (defun orgtrello/--do-retrieve-checklists-from-card (card) "Given a card, return the list containing the card, the checklists from this card, and the items from the checklists. The order is guaranted."
-  (cl-reduce
-   (lambda (acc-list checklist-id)
-     (let ((orgtrello/--checklist (orgtrello-query/http-trello (orgtrello-api/get-checklist checklist-id) *do-sync-query*)))
-       (append (cons orgtrello/--checklist (orgtrello/--do-retrieve-checklists-and-items orgtrello/--checklist)) acc-list)))
-   (orgtrello-query/--checklist-ids card)
-   :initial-value nil))
+  (--> card
+       (orgtrello-query/--checklist-ids it)                                                            ;; retrieve checklist ids
+       (cl-reduce
+        (lambda (acc-list checklist-id)
+          (cons (-> checklist-id
+                    orgtrello-api/get-checklist
+                    (orgtrello-query/http-trello *do-sync-query*)) acc-list))
+        it :initial-value nil)                                                                         ;; retrieve the real checklist
+       (sort it (lambda (a b) (when (<= (assoc-default 'pos a) (assoc-default 'pos b)) 1)))            ;; sort them by pos
+       (reverse it)
+       (cl-reduce
+        (lambda (acc-list checklist)
+          (append (cons checklist (orgtrello/--do-retrieve-checklists-and-items checklist)) acc-list)) ;; retrieve the task
+        it :initial-value nil)))
 
 (defun orgtrello/--do-retrieve-checklists-and-items (checklist) "Given a checklist id, retrieve all the items from the checklist and return a list containing first the checklist, then the items."
   (--map it (orgtrello-query/--check-items checklist)))
