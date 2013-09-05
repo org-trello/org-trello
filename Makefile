@@ -43,6 +43,9 @@ package: clean pkg-el prepare
 info:
 	cask info
 
+clean-install:
+	./clean-install.sh
+
 install-package: package
 	cask exec emacs --batch -l ./build.el -- org-trello-$(VERSION).tar
 
