@@ -671,20 +671,21 @@ CLOSED: [2013-09-05 jeu. 21:33]
 - [X] Ensure sync-from-trello keep the order of the checklists clean
 - [X] Version
 - [X] Release notes
-* TODO 0.2.0 [%]
+* IN-PROGRESS 0.2.0 [20%]
+- [X] Version
 - [ ] Improve sync request policy - https://github.com/ardumont/org-trello/issues/58
 - [ ] Test multiple emacs version - https://github.com/ardumont/org-trello/issues/52
 - [ ] Videos about org-trello
-  - [ ] elnode
-  - [ ] webadmin
-  - [ ] checkbox
-* TODO 0.2.1 [%]
+  - [ ] Webadmin
+  - [ ] Checkbox
+- [ ] Release notes
+* TODO 0.2.1 [0%]
 - [ ] One command to sync them all - https://github.com/ardumont/org-trello/issues/59
-- [-] Filter only the data we use with the trello api
-- [-] Improve the request to the trello api to enforce the position inside trello (we may use the natural order of integer with position to determine such position)
-- [-] Now that elnode is here, this may be simpler to use a fake trello server (use clojure :D)
-- [-] Update the literate org-trello.org (completely desynchronized since 0.1.2) -> coding it to avoid doing manual split (I see the irony)
-- [-] POC: use a temporary buffer to sync with trello, when done, merge with the user's buffer.
+- [ ] Filter only the data we use with the trello api
+- [ ] Improve the request to the trello api to enforce the position inside trello (we may use the natural order of integer with position to determine such position)
+- [ ] Now that elnode is here, this may be simpler to use a fake trello server (use clojure :D)
+- [ ] Update the literate org-trello.org (completely desynchronized since 0.1.2) -> coding it to avoid doing manual split (I see the irony)
+- [ ] POC: use a temporary buffer to sync with trello, when done, merge with the user's buffer.
 * Very Interesting propositions
 - https://github.com/ardumont/org-trello/issues/33 - Another Disposition about org's buffer
 * Questions
