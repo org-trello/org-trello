@@ -102,8 +102,8 @@ Yank this into a scratch buffer:
 ``` lisp
 (require 'package)
 (add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
-;; or (add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/") t)
 (package-initialize)
+(package-install 'elnode) ;; for some obscure reason, letting org-trello install elnode's dependencies makes it fail!
 (package-install 'org-trello)
 (require 'org-trello)
 ;; to trigger org-trello for each org file
@@ -113,12 +113,6 @@ Yank this into a scratch buffer:
 then `M-x eval-buffer`
 
 Now open an org-mode buffer, then hit: `C-c o h`
-
-*Note* If for some reason, the installation fails, force the installation again
-
-```lisp
-(package-install 'org-trello)
-```
 
 ## Demo
 
@@ -218,14 +212,13 @@ Then hit `M-x eval-buffer` to evaluate the buffer's contents.
 
 ## org-trello
 
-To install org-trello:
+To install org-trello, use this:
 
 ``` lisp
 (when (not package-archive-contents)
   (package-refresh-contents))
 
-;; Add in your own as you wish:
-(defvar my-packages '(org-trello)
+(defvar my-packages '(elnode org-trello)
   "A list of packages to ensure are installed at launch.")
 
 (dolist (p my-packages)
@@ -248,12 +241,6 @@ Add the org-trello directory to your load path and then add
 ``` lisp
 (add-to-list 'load-path "/path/to/org-trello/"))
 (require 'org-trello)
-```
-
-*Note* If for some reason, the installation fails, force the installation again
-
-```lisp
-(package-install 'org-trello)
 ```
 
 ## Example

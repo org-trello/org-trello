@@ -15,7 +15,7 @@ cat <<EOF > $CLEAN_INSTALL_FOLDER/default.el
 (add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/") t)
 (package-initialize)
 (package-refresh-contents)
-(package-install '$PACKAGE)
+(package-install 'elnode)
 (package-install '$PACKAGE)
 
 EOF
