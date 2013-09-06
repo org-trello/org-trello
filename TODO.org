@@ -682,26 +682,11 @@ CLOSED: [2013-09-05 jeu. 21:33]
 * TODO 0.2.1 [0%]
 - [ ] One command to sync them all - https://github.com/ardumont/org-trello/issues/59
 - [ ] Filter only the data we use with the trello api
-- [ ] Improve the request to the trello api to enforce the position inside trello (we may use the natural order of integer with position to determine such position)
 - [ ] Now that elnode is here, this may be simpler to use a fake trello server (use clojure :D)
 - [ ] Update the literate org-trello.org (completely desynchronized since 0.1.2) -> coding it to avoid doing manual split (I see the irony)
 - [ ] POC: use a temporary buffer to sync with trello, when done, merge with the user's buffer.
-* Very Interesting propositions
+* Interesting propositions
 - https://github.com/ardumont/org-trello/issues/33 - Another Disposition about org's buffer
-* Questions
-** How to deal with promotion/demotion?
-We do not deal with it at the moment.
-Idea: - demotion: remove the card and add the checklist or the task to the card if need be
-      - promotion: remove the checklist and create the card if need be
-      - promotion: the item and create the checklist if need be
-???
-
-Dependencies:
-- Delete must be implemented.
-- Create with full arborescence from the current level must also be implemented.
-** How to deal with synchronizing the org-mode buffer and the trello board without a synchronized request?
-** Is the assignment to one's card necessary?
-** if there is no level 3 (items), can't we just create a dummy checklist with all the second level as items?
 * Notes
 (org-show-siblings)
 (org-first-headline-recenter)
