@@ -671,14 +671,20 @@ CLOSED: [2013-09-05 jeu. 21:33]
 - [X] Ensure sync-from-trello keep the order of the checklists clean
 - [X] Version
 - [X] Release notes
-* IN-PROGRESS 0.2.0 [33%]
+* IN-PROGRESS 0.2.0 [37%]
 - [X] Version
 - [X] Improve cleanup of the org-trello metadata
+- [X] Videos about org-trello
+  - [X] Webadmin
+  - [X] Checkbox
+  - [X] Sync from trello
+  - [X] Cleanup trello board
+  - [X] Cleanup org-trello buffe
+- [ ] Reference videos to README
+- [ ] Improve sync from trello
+In case of new item/checklist, the entry will be added at the end of the buffer instead of at its rightful place.
 - [ ] Improve sync request policy - https://github.com/ardumont/org-trello/issues/58
 - [ ] Test multiple emacs version - https://github.com/ardumont/org-trello/issues/52
-- [ ] Videos about org-trello
-  - [ ] Webadmin
-  - [ ] Checkbox
 - [ ] Release notes
 * TODO 0.2.1 [0%]
 - [ ] One command to sync them all - https://github.com/ardumont/org-trello/issues/59
