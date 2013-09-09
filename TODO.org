@@ -671,8 +671,9 @@ CLOSED: [2013-09-05 jeu. 21:33]
 - [X] Ensure sync-from-trello keep the order of the checklists clean
 - [X] Version
 - [X] Release notes
-* IN-PROGRESS 0.2.0 [20%]
+* IN-PROGRESS 0.2.0 [33%]
 - [X] Version
+- [X] Improve cleanup of the org-trello metadata
 - [ ] Improve sync request policy - https://github.com/ardumont/org-trello/issues/58
 - [ ] Test multiple emacs version - https://github.com/ardumont/org-trello/issues/52
 - [ ] Videos about org-trello

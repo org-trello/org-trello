@@ -2268,7 +2268,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   (org-delete-property-globally *ORGTRELLO-ID*)
   (save-excursion
     (goto-char (point-min))
-    (while (re-search-forward ":PROPERTIES:.*" nil t)
+    (while (re-search-forward ":PROPERTIES: {.*" nil t)
       (replace-match "" nil t))))
 
 (defun org-trello/delete-setup () "Delete the current setup."
