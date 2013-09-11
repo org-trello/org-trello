@@ -1,3 +1,17 @@
+# 0.2.0
+
+- [X] Version
+- [X] Improve cleanup of the org-trello metadata
+- [X] Videos about org-trello
+  - [X] Webadmin
+  - [X] Checkbox
+  - [X] Sync from trello
+  - [X] Cleanup trello board
+  - [X] Cleanup org-trello buffe
+- [X] Reference videos to README
+- [X] Improve sync to trello
+- [X] Release notes
+
 # 0.1.9
 
 - [X] Clean install org-trello

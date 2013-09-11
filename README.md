@@ -16,11 +16,14 @@
 		- [Attach org file to trello board](#attach-org-file-to-trello-board)
 		- [Synchronize one complete entity](#synchronize-one-complete-entity)
 		- [Synchronize from org to trello](#synchronize-from-org-to-trello)
-		- [Synchronize from trello to org](#synchronize-from-trello-to-org)
+		- [Sync from trello to org (new format)](#sync-from-trello-to-org-new-format)
+		- [Synchronize from trello to org (old format)](#synchronize-from-trello-to-org-old-format)
 		- [Create board and sync](#create-board-and-sync)
 		- [Create board with your keywords](#create-board-with-your-keywords)
-		- [Use the checklist Luke!](#use-the-checklist-luke!)
+		- [Use the checkbox Luke](#use-the-checkbox-luke)
 		- [Kill entities](#kill-entities)
+		- [Cleanup routine](#cleanup-routine)
+		- [org-trello - webadmin](#org-trello---webadmin)
 		- [Simple help routine](#simple-help-routine)
 		- [Check your Setup](#check-your-setup)
 - [Contributions](#contributions)
@@ -36,7 +39,6 @@
 	- [Trello related](#trello-related)
 		- [keys](#keys)
 		- [Sync org to trello](#sync-org-to-trello)
-			- [pre-requisite](#pre-requisite)
 			- [Sync your org-mode buffer](#sync-your-org-mode-buffer)
 		- [Create a board](#create-a-board)
 - [Bindings](#bindings)
@@ -44,13 +46,14 @@
 	- [Setup](#setup-1)
 	- [Formats](#formats)
 		- [natural org format (from 0.1.6 onwards)](#natural-org-format-from-016-onwards)
+	- [Keybindings        | Interactive commands                         | Description](#keybindings--------|-interactive-commands-------------------------|-description)
 			- [Migrate to 0.1.6](#migrate-to-016)
 			- [Reactivate](#reactivate)
 		- [Original format (previous to 0.1.6)](#original-format-previous-to-016)
 			- [Activate](#activate)
 	- [Creation step-by-step](#creation-step-by-step)
 	- [Card and deadline/due date](#card-and-deadlinedue-date)
-	- [Creation full entity](#creation-full-entity)
+	- [Creation of a full entity](#creation-of-a-full-entity)
 	- [Sync org-mode file to trello board](#sync-org-mode-file-to-trello-board)
 	- [Sync org-mode file from trello board](#sync-org-mode-file-from-trello-board)
 	- [Remove entity](#remove-entity)
@@ -102,8 +105,8 @@ Yank this into a scratch buffer:
 ``` lisp
 (require 'package)
 (add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
-;; or (add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/") t)
 (package-initialize)
+(package-install 'elnode) ;; for some obscure reason, letting org-trello install elnode's dependencies makes it fail!
 (package-install 'org-trello)
 (require 'org-trello)
 ;; to trigger org-trello for each org file
@@ -113,12 +116,6 @@ Yank this into a scratch buffer:
 then `M-x eval-buffer`
 
 Now open an org-mode buffer, then hit: `C-c o h`
-
-*Note* If for some reason, the installation fails, force the installation again
-
-```lisp
-(package-install 'org-trello)
-```
 
 ## Demo
 
@@ -146,7 +143,11 @@ Now open an org-mode buffer, then hit: `C-c o h`
 
 [<img src="https://i1.ytimg.com/vi/d6SATWzhQhs/0.jpg" />](http://youtu.be/d6SATWzhQhs)
 
-### Synchronize from trello to org
+### Sync from trello to org (new format)
+
+[<img src="https://i1.ytimg.com/vi/taIiWD-_zKY/0.jpg" />](http://youtu.be/taIiWD-_zKY)
+
+### Synchronize from trello to org (old format)
 
 [<img src="https://i1.ytimg.com/vi/-ldo8gvhaTY/0.jpg" />](http://youtu.be/-ldo8gvhaTY)
 
@@ -158,13 +159,21 @@ Now open an org-mode buffer, then hit: `C-c o h`
 
 [<img src="https://i1.ytimg.com/vi/1UYYXjCwshs/0.jpg" />](http://youtu.be/1UYYXjCwshs)
 
-### Use the checklist Luke!
+### Use the checkbox Luke
 
-[<img src="https://i1.ytimg.com/vi/M9xAvO3m_mU/0.jpg" />](http://youtu.be/M9xAvO3m_mU)
+[<img src="https://i1.ytimg.com/vi/Sc9EUW67I7A/0.jpg" />](http://youtu.be/Sc9EUW67I7A)
 
 ### Kill entities
 
-[<img src="https://i1.ytimg.com/vi/C1c_m9LHyC0/0.jpg" />](http://youtu.be/C1c_m9LHyC0)
+[<img src="https://i1.ytimg.com/vi/Cz0JikxKx4I/0.jpg" />](http://youtu.be/Cz0JikxKx4I)
+
+### Cleanup routine
+
+[<img src="https://i1.ytimg.com/vi/Wp7BXF3m9rA/0.jpg" />](http://youtu.be/Wp7BXF3m9rA)
+
+### org-trello - webadmin
+
+[<img src="https://i1.ytimg.com/vi/dp8S7VTwHCc/0.jpg" />](http://youtu.be/dp8S7VTwHCc)
 
 ### Simple help routine
 
@@ -218,14 +227,13 @@ Then hit `M-x eval-buffer` to evaluate the buffer's contents.
 
 ## org-trello
 
-To install org-trello:
+To install org-trello, use this:
 
 ``` lisp
 (when (not package-archive-contents)
   (package-refresh-contents))
 
-;; Add in your own as you wish:
-(defvar my-packages '(org-trello)
+(defvar my-packages '(elnode org-trello)
   "A list of packages to ensure are installed at launch.")
 
 (dolist (p my-packages)
@@ -248,12 +256,6 @@ Add the org-trello directory to your load path and then add
 ``` lisp
 (add-to-list 'load-path "/path/to/org-trello/"))
 (require 'org-trello)
-```
-
-*Note* If for some reason, the installation fails, force the installation again
-
-```lisp
-(package-install 'org-trello)
 ```
 
 ## Example
