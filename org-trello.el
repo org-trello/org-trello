@@ -1827,7 +1827,8 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
           (orgtrello/--compute-state-checkbox status)
           name))
 
-(defun orgtrello/--compute-item-to-orgtrello-entry (name &optional level status) (format "%s %s %s\n"
+(defun orgtrello/--compute-item-to-orgtrello-entry (name &optional level status)
+  (format "%s %s %s\n"
           (orgtrello/--star level)
           (orgtrello/--compute-state-item status)
           name))
@@ -1885,12 +1886,10 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   (--map it (orgtrello-query/--check-items checklist)))
 
 (defun orgtrello/--compute-full-entities-from-trello (cards) "Given a list of cards, compute the full cards data from the trello boards. The order from the trello board is now kept."
-  ;; will compute the hash-table of entities (id, entity)
   (cl-reduce
    (lambda (orgtrello/--acc-hash orgtrello/--entity-card)
      (orgtrello-log/msg *OT/INFO* "Computing card '%s' data..." (orgtrello-query/--name orgtrello/--entity-card))
-     ;; adding the entity card
-     (puthash (orgtrello-query/--id orgtrello/--entity-card) orgtrello/--entity-card orgtrello/--acc-hash)
+     (puthash (orgtrello-query/--id orgtrello/--entity-card) orgtrello/--entity-card orgtrello/--acc-hash);; adding the entity card
      ;; fill in the other remaining entities (checklist/items)
      (mapc (lambda (it) (puthash (orgtrello-query/--id it) it orgtrello/--acc-hash)) (orgtrello/--do-retrieve-checklists-from-card orgtrello/--entity-card))
      orgtrello/--acc-hash)
@@ -1909,24 +1908,20 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun orgtrello/--write-entity (entity-id entity) "Write the entity in the buffer to the current position. Move the cursor position."
   (insert (orgtrello/--compute-entity-to-org-entry entity))
-  (orgtrello/--update-property entity-id (and *ORGTRELLO-NATURAL-ORG-CHECKLIST*
-                                              (not
-                                               (orgtrello/--card-p entity)))))
+  (orgtrello/--update-property entity-id (and *ORGTRELLO-NATURAL-ORG-CHECKLIST* (not (orgtrello/--card-p entity)))))
 
 (defun orgtrello/--update-buffer-with-remaining-trello-data (entities buffer-name) "Given a map of entities, dump those entities in the current buffer."
-  (if entities ;; could be empty
-      (with-current-buffer buffer-name
-        ;; go at the end of the file
-        (goto-char (point-max))
-        ;; dump the remaining entities
-        (maphash
-         (lambda (orgtrello/--entry-new-id orgtrello/--entity)
-           (orgtrello-log/msg *OT/INFO* "Synchronizing new entity '%s' with id '%s'..." (orgtrello-query/--name orgtrello/--entity) orgtrello/--entry-new-id)
-           (orgtrello/--write-entity orgtrello/--entry-new-id orgtrello/--entity))
-         entities)
-        (goto-char (point-min))
-        (org-sort-entries t ?o)
-        (save-buffer))))
+  (when entities
+        (with-current-buffer buffer-name
+          (goto-char (point-max)) ;; go at the end of the file
+          (maphash                ;; dump the remaining entities
+           (lambda (orgtrello/--entry-new-id orgtrello/--entity)
+             (orgtrello-log/msg *OT/INFO* "Synchronizing new entity '%s' with id '%s'..." (orgtrello-query/--name orgtrello/--entity) orgtrello/--entry-new-id)
+             (orgtrello/--write-entity orgtrello/--entry-new-id orgtrello/--entity))
+           entities)
+          (goto-char (point-min)) ;; go back to the beginning of file
+          (org-sort-entries t ?o) ;; sort the entries on their keywords
+          (save-buffer))))
 
 (defun orgtrello/--update-entry-to-org-buffer (entities) "Update entry to the org-buffer. Side effects on entities (entries are removed)."
   (save-excursion
