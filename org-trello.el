@@ -4,7 +4,7 @@
 
 ;; Author: Antoine R. Dumont <eniotna.t AT gmail.com>
 ;; Maintainer: Antoine R. Dumont <eniotna.t AT gmail.com>
-;; Version: 0.1.9
+;; Version: 0.2.0
 ;; Package-Requires: ((org "8.0.7") (dash "1.5.0") (request "0.2.0") (cl-lib "0.3.0") (json "1.2") (elnode "0.9.9.7.6") (esxml "0.3.0") (s "1.7.0"))
 ;; Keywords: org-mode trello sync org-trello
 ;; URL: https://github.com/ardumont/org-trello
@@ -67,7 +67,7 @@
 
 ;; #################### static setup
 
-(defvar *ORGTRELLO-VERSION*           "0.1.9"                                           "Version")
+(defvar *ORGTRELLO-VERSION*           "0.2.0"                                           "Version")
 (defvar *consumer-key*                nil                                               "Id representing the user.")
 (defvar *access-token*                nil                                               "Read/write access token to use trello on behalf of the user.")
 (defvar *ORGTRELLO-MARKER*            "orgtrello-marker"                                "A marker used inside the org buffer to synchronize entries.")
@@ -884,28 +884,27 @@ This is a list with the following elements:
   (lexical-let ((orgtrello-proxy/--entry-position    (orgtrello-query/--position entity-to-sync))
                 (orgtrello-proxy/--entry-buffer-name (orgtrello-query/--buffername entity-to-sync))
                 (orgtrello-proxy/--entry-file        file-to-cleanup)
-                (orgtrello-proxy/--marker            (orgtrello-query/--id entity-to-sync)))
-    (cl-defun put-some-insignificant-name (&key data &allow-other-keys)
-      (orgtrello-proxy/--safe-wrap-or-throw-error
-       (let* ((orgtrello-proxy/--entry-new-id (orgtrello-query/--id data)))
-         ;; switch to the right buffer
-         (set-buffer orgtrello-proxy/--entry-buffer-name)
-         ;; will update via tag the trello id of the new persisted data (if needed)
-         (save-excursion
-           ;; get back to the buffer and update the id if need be
-           (let ((str-msg (when (orgtrello-proxy/--get-back-to-marker orgtrello-proxy/--marker data)
-                                ;; now we extract the data
-                                (let* ((orgtrello-proxy/--entry-metadata (orgtrello-data/metadata))
-                                       (orgtrello-proxy/--entry-id       (orgtrello/--id orgtrello-proxy/--entry-metadata)))
-                                  (if orgtrello-proxy/--entry-id ;; id already present in the org-mode file
-                                      ;; no need to add another
-                                      (concat "Entity '" (orgtrello/--name orgtrello-proxy/--entry-metadata) "' with id '" orgtrello-proxy/--entry-id "' synced!")
-                                      (let ((orgtrello-proxy/--entry-name (orgtrello-query/--name data)))
-                                        ;; not present, this was just created, we add a simple property
-                                        (orgtrello-action/set-property *ORGTRELLO-ID* orgtrello-proxy/--entry-new-id)
-                                        (concat "Newly entity '" orgtrello-proxy/--entry-name "' with id '" orgtrello-proxy/--entry-new-id "' synced!")))))))
-             (orgtrello-proxy/--cleanup-and-save-buffer-metadata orgtrello-proxy/--entry-file orgtrello-proxy/--entry-buffer-name)
-             (when str-msg (orgtrello-log/msg *OT/INFO* str-msg)))))))))
+                (orgtrello-proxy/--marker-id         (orgtrello-query/--id entity-to-sync))
+                (orgtrello-proxy/--entity-name       (orgtrello-query/--name entity-to-sync)))
+    (function* (lambda (&key data &allow-other-keys)
+                 (orgtrello-action/safe-wrap
+                  (let* ((orgtrello-proxy/--entry-new-id (orgtrello-query/--id data)))
+                    (set-buffer orgtrello-proxy/--entry-buffer-name) ;; switch to the right buffer
+                    ;; will update via tag the trello id of the new persisted data (if needed)
+                    (save-excursion
+                      ;; get back to the buffer and update the id if need be
+                      (let ((str-msg (when (orgtrello-proxy/--get-back-to-marker orgtrello-proxy/--marker-id data)
+                                           ;; now we extract the data
+                                           (let ((orgtrello-proxy/--entry-id (when (orgtrello/id-p orgtrello-proxy/--marker-id) orgtrello-proxy/--marker-id)))
+                                             (if orgtrello-proxy/--entry-id ;; id already present in the org-mode file
+                                                 ;; no need to add another
+                                                 (concat "Entity '" orgtrello-proxy/--entity-name "' with id '" orgtrello-proxy/--entry-id "' synced!")
+                                                 (let ((orgtrello-proxy/--entry-name (orgtrello-query/--name data)))
+                                                   ;; not present, this was just created, we add a simple property
+                                                   (orgtrello-action/set-property *ORGTRELLO-ID* orgtrello-proxy/--entry-new-id)
+                                                   (concat "Newly entity '" orgtrello-proxy/--entry-name "' with id '" orgtrello-proxy/--entry-new-id "' synced!")))))))
+                        (when str-msg (orgtrello-log/msg *OT/INFO* str-msg)))))
+                  (orgtrello-proxy/--cleanup-and-save-buffer-metadata orgtrello-proxy/--entry-file orgtrello-proxy/--entry-buffer-name))))))
 
 (defun orgtrello-proxy/--archived-scanning-dir (dir-name) "Given a filename, return the archived scanning directory"
   (format "%s.scanning" dir-name))
@@ -1828,7 +1827,8 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
           (orgtrello/--compute-state-checkbox status)
           name))
 
-(defun orgtrello/--compute-item-to-orgtrello-entry (name &optional level status) (format "%s %s %s\n"
+(defun orgtrello/--compute-item-to-orgtrello-entry (name &optional level status)
+  (format "%s %s %s\n"
           (orgtrello/--star level)
           (orgtrello/--compute-state-item status)
           name))
@@ -1886,17 +1886,12 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   (--map it (orgtrello-query/--check-items checklist)))
 
 (defun orgtrello/--compute-full-entities-from-trello (cards) "Given a list of cards, compute the full cards data from the trello boards. The order from the trello board is now kept."
-  ;; will compute the hash-table of entities (id, entity)
   (cl-reduce
    (lambda (orgtrello/--acc-hash orgtrello/--entity-card)
      (orgtrello-log/msg *OT/INFO* "Computing card '%s' data..." (orgtrello-query/--name orgtrello/--entity-card))
-     ;; adding the entity card
-     (puthash (orgtrello-query/--id orgtrello/--entity-card) orgtrello/--entity-card orgtrello/--acc-hash)
+     (puthash (orgtrello-query/--id orgtrello/--entity-card) orgtrello/--entity-card orgtrello/--acc-hash);; adding the entity card
      ;; fill in the other remaining entities (checklist/items)
-     (mapc
-      (lambda (it)
-        (puthash (orgtrello-query/--id it) it orgtrello/--acc-hash))
-      (orgtrello/--do-retrieve-checklists-from-card orgtrello/--entity-card))
+     (mapc (lambda (it) (puthash (orgtrello-query/--id it) it orgtrello/--acc-hash)) (orgtrello/--do-retrieve-checklists-from-card orgtrello/--entity-card))
      orgtrello/--acc-hash)
    cards
    :initial-value (make-hash-table :test 'equal)))
@@ -1913,24 +1908,20 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun orgtrello/--write-entity (entity-id entity) "Write the entity in the buffer to the current position. Move the cursor position."
   (insert (orgtrello/--compute-entity-to-org-entry entity))
-  (orgtrello/--update-property entity-id (and *ORGTRELLO-NATURAL-ORG-CHECKLIST*
-                                              (not
-                                               (orgtrello/--card-p entity)))))
+  (orgtrello/--update-property entity-id (and *ORGTRELLO-NATURAL-ORG-CHECKLIST* (not (orgtrello/--card-p entity)))))
 
 (defun orgtrello/--update-buffer-with-remaining-trello-data (entities buffer-name) "Given a map of entities, dump those entities in the current buffer."
-  (if entities ;; could be empty
-      (with-current-buffer buffer-name
-        ;; go at the end of the file
-        (goto-char (point-max))
-        ;; dump the remaining entities
-        (maphash
-         (lambda (orgtrello/--entry-new-id orgtrello/--entity)
-           (orgtrello-log/msg *OT/INFO* "Synchronizing new entity '%s' with id '%s'..." (orgtrello-query/--name orgtrello/--entity) orgtrello/--entry-new-id)
-           (orgtrello/--write-entity orgtrello/--entry-new-id orgtrello/--entity))
-         entities)
-        (goto-char (point-min))
-        (org-sort-entries t ?o)
-        (save-buffer))))
+  (when entities
+        (with-current-buffer buffer-name
+          (goto-char (point-max)) ;; go at the end of the file
+          (maphash                ;; dump the remaining entities
+           (lambda (orgtrello/--entry-new-id orgtrello/--entity)
+             (orgtrello-log/msg *OT/INFO* "Synchronizing new entity '%s' with id '%s'..." (orgtrello-query/--name orgtrello/--entity) orgtrello/--entry-new-id)
+             (orgtrello/--write-entity orgtrello/--entry-new-id orgtrello/--entity))
+           entities)
+          (goto-char (point-min)) ;; go back to the beginning of file
+          (org-sort-entries t ?o) ;; sort the entries on their keywords
+          (save-buffer))))
 
 (defun orgtrello/--update-entry-to-org-buffer (entities) "Update entry to the org-buffer. Side effects on entities (entries are removed)."
   (save-excursion
@@ -1968,24 +1959,22 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun orgtrello/--sync-buffer-with-trello-data-callback (buffername &optional position name) "Generate a callback which knows the buffer with which it must work. (this callback must take a buffer-name and a position)"
   (lexical-let ((buffer-name buffername))
-    (cl-defun sync-from-trello-insignificant-callback-name (&key data &allow-other-keys)
-      "Synchronize the buffer with the response data."
-      (orgtrello-log/msg *OT/TRACE* "proxy - response data: %S" data)
-      (orgtrello-action/safe-wrap (-> data
-                                      orgtrello/--compute-full-entities-from-trello
-                                      (orgtrello/--sync-buffer-with-trello-data buffer-name)
-                                      (orgtrello/--update-buffer-with-remaining-trello-data buffer-name))
-                                  (orgtrello-log/msg *OT/INFO* "Synchronizing the trello board from trello - done!")))))
+    (function*
+     (lambda (&key data &allow-other-keys)
+       "Synchronize the buffer with the response data."
+       (orgtrello-log/msg *OT/TRACE* "proxy - response data: %S" data)
+       (-> data
+           orgtrello/--compute-full-entities-from-trello
+           (orgtrello/--sync-buffer-with-trello-data buffer-name)
+           (orgtrello/--update-buffer-with-remaining-trello-data buffer-name)
+           (orgtrello-action/safe-wrap (orgtrello-log/msg *OT/INFO* "Synchronizing the trello board from trello - done!")))))))
 
 (defun orgtrello/do-sync-full-from-trello (&optional sync) "Full org-mode file synchronisation. Beware, this will block emacs as the request is synchronous."
   (orgtrello-log/msg *OT/INFO* "Synchronizing the trello board '%s' to the org-mode file. This may take a moment, some coffee may be a good idea..." (orgtrello/--board-name))
-  (orgtrello-proxy/http (orgtrello/--update-query-with-org-metadata
-                         (orgtrello-api/get-cards (orgtrello/--board-id))
-                         nil
-                         (buffer-name)
-                         nil
-                         'orgtrello/--sync-buffer-with-trello-data-callback)
-                        sync))
+  (--> (orgtrello/--board-id)
+       (orgtrello-api/get-cards it)
+       (orgtrello/--update-query-with-org-metadata it nil (buffer-name) nil 'orgtrello/--sync-buffer-with-trello-data-callback)
+       (orgtrello-proxy/http it sync)))
 
 (defun orgtrello/--card-delete (card-meta &optional parent-meta) "Deal with the deletion query of a card"
   ;; parent is useless here
@@ -2268,7 +2257,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   (org-delete-property-globally *ORGTRELLO-ID*)
   (save-excursion
     (goto-char (point-min))
-    (while (re-search-forward ":PROPERTIES:.*" nil t)
+    (while (re-search-forward ":PROPERTIES: {.*" nil t)
       (replace-match "" nil t))))
 
 (defun org-trello/delete-setup () "Delete the current setup."
