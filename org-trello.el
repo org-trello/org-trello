@@ -1970,21 +1970,18 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
     (cl-defun sync-from-trello-insignificant-callback-name (&key data &allow-other-keys)
       "Synchronize the buffer with the response data."
       (orgtrello-log/msg *OT/TRACE* "proxy - response data: %S" data)
-      (orgtrello-action/safe-wrap (-> data
-                                      orgtrello/--compute-full-entities-from-trello
-                                      (orgtrello/--sync-buffer-with-trello-data buffer-name)
-                                      (orgtrello/--update-buffer-with-remaining-trello-data buffer-name))
-                                  (orgtrello-log/msg *OT/INFO* "Synchronizing the trello board from trello - done!")))))
+      (-> data
+          orgtrello/--compute-full-entities-from-trello
+          (orgtrello/--sync-buffer-with-trello-data buffer-name)
+          (orgtrello/--update-buffer-with-remaining-trello-data buffer-name)
+          (orgtrello-action/safe-wrap (orgtrello-log/msg *OT/INFO* "Synchronizing the trello board from trello - done!"))))))
 
 (defun orgtrello/do-sync-full-from-trello (&optional sync) "Full org-mode file synchronisation. Beware, this will block emacs as the request is synchronous."
   (orgtrello-log/msg *OT/INFO* "Synchronizing the trello board '%s' to the org-mode file. This may take a moment, some coffee may be a good idea..." (orgtrello/--board-name))
-  (orgtrello-proxy/http (orgtrello/--update-query-with-org-metadata
-                         (orgtrello-api/get-cards (orgtrello/--board-id))
-                         nil
-                         (buffer-name)
-                         nil
-                         'orgtrello/--sync-buffer-with-trello-data-callback)
-                        sync))
+  (--> (orgtrello/--board-id)
+       (orgtrello-api/get-cards it)
+       (orgtrello/--update-query-with-org-metadata it nil (buffer-name) nil 'orgtrello/--sync-buffer-with-trello-data-callback)
+       (orgtrello-proxy/http it sync)))
 
 (defun orgtrello/--card-delete (card-meta &optional parent-meta) "Deal with the deletion query of a card"
   ;; parent is useless here
