@@ -1892,10 +1892,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
      ;; adding the entity card
      (puthash (orgtrello-query/--id orgtrello/--entity-card) orgtrello/--entity-card orgtrello/--acc-hash)
      ;; fill in the other remaining entities (checklist/items)
-     (mapc
-      (lambda (it)
-        (puthash (orgtrello-query/--id it) it orgtrello/--acc-hash))
-      (orgtrello/--do-retrieve-checklists-from-card orgtrello/--entity-card))
+     (mapc (lambda (it) (puthash (orgtrello-query/--id it) it orgtrello/--acc-hash)) (orgtrello/--do-retrieve-checklists-from-card orgtrello/--entity-card))
      orgtrello/--acc-hash)
    cards
    :initial-value (make-hash-table :test 'equal)))
