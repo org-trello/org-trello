@@ -1774,12 +1774,15 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 (defun orgtrello/map-sync-checkboxes () "Map the sync to checkboxes."
   (when *ORGTRELLO-NATURAL-ORG-CHECKLIST* (orgtrello/map-checkboxes 'orgtrello/do-sync-entity)))
 
+(defun orgtrello/org-map-entries (level fn-to-execute) "Map fn-to-execute to a given entities with level level. fn-to-execute is a function without any parameter."
+  (org-map-entries (lambda () (when (= level (orgtrello/--current-level)) (funcall fn-to-execute)))))
+
 (defun orgtrello/do-sync-full-file () "Full org-mode file synchronisation."
   (orgtrello-log/msg *OT/WARN* "Synchronizing org-mode file to the board '%s'. This may take some time, some coffee may be a good idea..." (orgtrello/--board-name))
-  (org-map-entries (lambda () (when (= *CARD-LEVEL* (orgtrello/--current-level)) (orgtrello/do-sync-full-entity))) t 'file))
+  (orgtrello/org-map-entries *CARD-LEVEL* 'orgtrello/do-sync-full-entity))
 
 (defun orgtrello/justify-file () "Map over the file and justify entries with checkbox."
-  (org-map-entries (lambda () (when (= *CARD-LEVEL* (orgtrello/--current-level)) (orgtrello-cbx/--justify-property-current-line)))))
+  (orgtrello/org-map-entries *CARD-LEVEL* 'orgtrello-cbx/--justify-property-current-line))
 
 (defun orgtrello/--compute-card-status (card-id-list) "Given a card's id, compute its status."
   (gethash card-id-list *HMAP-ID-NAME*))
