@@ -1947,17 +1947,16 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
                        ;; remove the entry from the hash-table
                        (remhash orgtrello/--entity-id entities)))))))
 
+(defun orgtrello/org-map-entities! (fn-to-execute &optional entities) "Compute the fn-to-execute function for all entities from buffer."
+  (org-map-entries
+     (lambda ()
+       (funcall fn-to-execute entities) ;; execute on heading entry
+       (when *ORGTRELLO-NATURAL-ORG-CHECKLIST*
+             (orgtrello/map-checkboxes (lambda () (funcall fn-to-execute entities))))) t 'file)) ;; execute the same function for each org-checkboxes entry
+
 (defun orgtrello/--sync-buffer-with-trello-data (entities buffer-name) "Given all the entities, update the current buffer with those."
   (with-current-buffer buffer-name
-    (org-map-entries
-     (lambda ()
-       ;; update the heading entry
-       (orgtrello/--update-entry-to-org-buffer entities)
-       ;; then the possible checkboxes
-       (when *ORGTRELLO-NATURAL-ORG-CHECKLIST* (orgtrello/map-checkboxes (lambda () (orgtrello/--update-entry-to-org-buffer entities)))))
-     t
-     'file))
-  ;; return the entities which has been dryed
+    (orgtrello/org-map-entities! 'orgtrello/--update-entry-to-org-buffer entities))
   entities)
 
 (defun orgtrello/--sync-buffer-with-trello-data-callback (buffername &optional position name) "Generate a callback which knows the buffer with which it must work. (this callback must take a buffer-name and a position)"
