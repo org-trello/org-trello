@@ -1960,6 +1960,47 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
                                                     (funcall (orgtrello/--dispatch-create-map current-entity) full-entities current-meta current-entity))))
     full-entities))
 
+(defun orgtrello/--init-map-from (data) "Init a map from a given data. If data is nil, return an empty hash table."
+  (if data data (make-hash-table :test 'equal)))
+
+(defun orgtrello/--merge-item (trello-item org-item) "Merge trello and org item together."
+  (let ((org-item-to-merge (orgtrello/--init-map-from org-item)))
+    (puthash :id      (orgtrello-query/--id trello-item) org-item-to-merge)
+    (puthash :name    (orgtrello-query/--name trello-item) org-item-to-merge)
+    (puthash :keyword (orgtrello/--compute-state-generic (orgtrello-query/--state trello-item) '("DONE" "TODO")) org-item-to-merge)
+    org-item-to-merge))
+
+(defun orgtrello/--merge-checklist (trello-checklist org-checklist) "Merge trello and org checklist together."
+  (let ((org-checklist-to-merge (orgtrello/--init-map-from org-checklist)))
+    (puthash :name (orgtrello-query/--name trello-checklist) org-checklist-to-merge)
+    (puthash :id   (orgtrello-query/--id trello-checklist)   org-checklist-to-merge)
+    org-checklist-to-merge))
+
+(defun orgtrello/--merge-card (trello-card org-card) "Merge trello and org card together."
+  (let ((org-card-to-merge (orgtrello/--init-map-from org-card)))
+    (puthash :id      (orgtrello-query/--id trello-card)                                         org-card-to-merge)
+    (puthash :name    (orgtrello-query/--name trello-card)                                       org-card-to-merge)
+    (puthash :keyword (-> trello-card orgtrello-query/--list-id orgtrello/--compute-card-status) org-card-to-merge)
+    org-card-to-merge))
+
+(defun orgtrello/--merge-full-checklists (trello-checklists org-checklists)
+  (mapcar
+   (lambda (trello-checklist)
+     (orgtrello/--merge-checklist trello-checklist nil)) ;; HERE still need to complete the merge between checklists
+   trello-checklists))
+
+(defun orgtrello/--merge-full-card (trello-entities org-entities) "Merge trello and org card together. Return a list of merged card as car and merged checklist as cdr."
+  (list (orgtrello/--merge-card (car trello-entities) (car org-entities))
+        (orgtrello/--merge-full-checklists (cdr trello-entities) (cdr org-entities))))
+
+(defun orgtrello/--merge-data (trello-entities org-entities) "Merge the data between org-entities and trello-entities. Trello entities are of higher priorities."
+  (cl-reduce
+   (lambda (hash-result card-id)
+     (puthash card-id (orgtrello/--merge-full-card (orgtrello/--get-card trello-entities card-id) (orgtrello/--get-card org-entities card-id)) hash-result)
+     hash-result)
+   trello-entities
+   :initial-value org-entities))
+
 (defun orgtrello/--update-property (id orgcheckbox-p) "Update the property depending on the nature of thing to sync. Move the cursor position."
   (if orgcheckbox-p
       (progn
