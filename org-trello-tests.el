@@ -1449,5 +1449,135 @@ DEADLINE: <some-date>
  (expect '(:a) (orgtrello-proxy/update-buffer-to-save! :a))
  (expect '(:b :a) (orgtrello-proxy/update-buffer-to-save! :b)))
 
+(expectations
+ (expect '((:a 1) (:b 2))
+         (orgtrello/--checklists (orgtrello-hash/make-properties `(("10" . (:card . ((:a 1) (:b 2)))))) (orgtrello-hash/make-hash-org nil nil nil "10" nil nil nil)))
+  (expect nil
+    (orgtrello/--checklists (orgtrello-hash/make-properties `((10 . (:card . ((:a 1) (:b 2)))))) (orgtrello-hash/make-hash-org nil nil nil "10" nil nil nil))))
+
+(expectations
+  (expect "11"
+          (--> `(("10" . (:card . ((:a 1) (:b 2)))))
+               (orgtrello-hash/make-properties it)
+               (orgtrello/--update-checklists it (orgtrello-hash/make-hash-org nil nil nil "10" nil nil nil) (orgtrello-hash/make-hash-org nil nil nil "11" nil nil nil))
+              (orgtrello/--checklists it (orgtrello-hash/make-hash-org nil nil nil "10" nil nil nil))
+              (first it)
+              (last it)
+              (first it)
+              (orgtrello/--id it)))
+
+    (expect "11"
+          (--> `(("10" . (:card)))
+               (orgtrello-hash/make-properties it)
+               (orgtrello/--update-checklists it (orgtrello-hash/make-hash-org nil nil nil "10" nil nil nil) (orgtrello-hash/make-hash-org nil nil nil "11" nil nil nil))
+              (orgtrello/--checklists it (orgtrello-hash/make-hash-org nil nil nil "10" nil nil nil))
+              (first it)
+              (last it)
+              (first it)
+              (orgtrello/--id it)))
+    (expect "11"
+          (--> `(("10"))
+               (orgtrello-hash/make-properties it)
+               (orgtrello/--update-checklists it (orgtrello-hash/make-hash-org nil nil nil "10" nil nil nil) (orgtrello-hash/make-hash-org nil nil nil "11" nil nil nil))
+              (orgtrello/--checklists it (orgtrello-hash/make-hash-org nil nil nil "10" nil nil nil))
+              (first it)
+              (last it)
+              (first it)
+              (orgtrello/--id it)))
+        (expect "11"
+          (--> `(("12"))
+               (orgtrello-hash/make-properties it)
+               (orgtrello/--update-checklists it (orgtrello-hash/make-hash-org nil nil nil "10" nil nil nil) (orgtrello-hash/make-hash-org nil nil nil "11" nil nil nil))
+              (orgtrello/--checklists it (orgtrello-hash/make-hash-org nil nil nil "10" nil nil nil))
+              (first it)
+              (last it)
+              (first it)
+              (orgtrello/--id it))))
+
+(expectations
+ (expect '((:a 1) (:b 2))
+         (orgtrello/--items (orgtrello-hash/make-properties `(("10" . (:checklist . ((:a 1) (:b 2)))))) (orgtrello-hash/make-hash-org nil nil nil "10" nil nil nil)))
+  (expect nil
+    (orgtrello/--items (orgtrello-hash/make-properties `((10 . (:checklist . ((:a 1) (:b 2)))))) (orgtrello-hash/make-hash-org nil nil nil "10" nil nil nil))))
+
+(expectations
+  (expect "11"
+          (--> `(("10" . (:checklist . ((:a 1) (:b 2)))))
+               (orgtrello-hash/make-properties it)
+               (orgtrello/--update-items it (orgtrello-hash/make-hash-org nil nil nil "10" nil nil nil) (orgtrello-hash/make-hash-org nil nil nil "11" nil nil nil))
+              (orgtrello/--items it (orgtrello-hash/make-hash-org nil nil nil "10" nil nil nil))
+              (first it)
+              (last it)
+              (first it)
+              (orgtrello/--id it)))
+
+    (expect "11"
+          (--> `(("10" . (:checklist)))
+               (orgtrello-hash/make-properties it)
+               (orgtrello/--update-items it (orgtrello-hash/make-hash-org nil nil nil "10" nil nil nil) (orgtrello-hash/make-hash-org nil nil nil "11" nil nil nil))
+              (orgtrello/--items it (orgtrello-hash/make-hash-org nil nil nil "10" nil nil nil))
+              (first it)
+              (last it)
+              (first it)
+              (orgtrello/--id it)))
+    (expect "11"
+          (--> `(("10"))
+               (orgtrello-hash/make-properties it)
+               (orgtrello/--update-items it (orgtrello-hash/make-hash-org nil nil nil "10" nil nil nil) (orgtrello-hash/make-hash-org nil nil nil "11" nil nil nil))
+              (orgtrello/--items it (orgtrello-hash/make-hash-org nil nil nil "10" nil nil nil))
+              (first it)
+              (last it)
+              (first it)
+              (orgtrello/--id it)))
+        (expect "11"
+          (--> `(("12"))
+               (orgtrello-hash/make-properties it)
+               (orgtrello/--update-items it (orgtrello-hash/make-hash-org nil nil nil "10" nil nil nil) (orgtrello-hash/make-hash-org nil nil nil "11" nil nil nil))
+              (orgtrello/--items it (orgtrello-hash/make-hash-org nil nil nil "10" nil nil nil))
+              (first it)
+              (last it)
+              (first it)
+              (orgtrello/--id it))))
+
+(expectations
+  (expect "10"
+    (--> `(("10" . (:checklist . ((:a 1) (:b 2)))))
+         (orgtrello-hash/make-properties it)
+         (orgtrello/--update-card it (orgtrello-hash/make-hash-org nil nil nil "10" nil nil nil))
+         (orgtrello/--get-card it "10")
+         (first it)
+         (gethash :id it)))
+    (expect "10"
+    (--> (orgtrello/--update-card nil (orgtrello-hash/make-hash-org nil nil nil "10" nil nil nil))
+         (orgtrello/--get-card it "10")
+         (first it)
+         (gethash :id it))))
+
+(expectations
+  (expect "test" (orgtrello/--get-card (orgtrello-hash/make-properties `(("10" . "test"))) "10"))
+  (expect nil (orgtrello/--get-card (orgtrello-hash/make-properties `(("10" . "test"))) "11")))
+
+(expectations
+  (expect "10" (--> (orgtrello-hash/make-hash-org nil nil nil "10" nil nil nil)
+                    (orgtrello/--update-card nil it)
+                    (orgtrello/--get-card it "10")
+                    (first it)
+                    (orgtrello/--id it)))
+  (expect "10" (--> (orgtrello-hash/make-hash-org nil nil nil "10" nil nil nil)
+                    (orgtrello/--update-card (orgtrello-hash/make-properties `(("10" . (:checklist . ((:a 1) (:b 2)))))) it)
+                    (orgtrello/--get-card it "10")
+                    (first it)
+                    (orgtrello/--id it)))
+  (expect "10" (--> (orgtrello-hash/make-hash-org nil nil nil "10" nil nil nil)
+                    (orgtrello/--update-card (orgtrello-hash/make-properties `(("11" . (:checklist . ((:a 1) (:b 2)))))) it)
+                    (orgtrello/--get-card it "10")
+                    (first it)
+                    (orgtrello/--id it))))
+
+(expectations
+  (expect 'orgtrello/--put-card      (orgtrello/--dispatch-create-map (orgtrello-hash/make-hash-org *CARD-LEVEL* nil nil nil nil nil nil)))
+  (expect 'orgtrello/--put-checklist (orgtrello/--dispatch-create-map (orgtrello-hash/make-hash-org *CHECKLIST-LEVEL* nil nil nil nil nil nil)))
+  (expect 'orgtrello/--put-item      (orgtrello/--dispatch-create-map (orgtrello-hash/make-hash-org *ITEM-LEVEL* nil nil nil nil nil nil))))
+
 (provide 'org-trello-tests)
 ;;; org-trello-tests ends here

@@ -684,9 +684,10 @@ CLOSED: [2013-09-11 mer. 21:45]
 - [X] Reference videos to README
 - [X] Improve sync to trello
 - [X] Release notes
-* IN-PROGRESS 0.2.1 [10%]
+* IN-PROGRESS 0.2.1 [9%]
 - [X] Version
 - [ ] Improve sync from trello - In case of new item/checklist, the entry will be added at the end of the buffer instead of its rightful place.
+- [ ] Another Disposition about org's buffer - https://github.com/ardumont/org-trello/issues/33
 - [ ] Improve sync request policy - https://github.com/ardumont/org-trello/issues/58
 - [ ] Test multiple emacs version - https://github.com/ardumont/org-trello/issues/52
 - [ ] One command to sync them all - https://github.com/ardumont/org-trello/issues/59
@@ -696,7 +697,6 @@ CLOSED: [2013-09-11 mer. 21:45]
 - [ ] POC: use a temporary buffer to sync with trello, when done, merge with the user's buffer.
 - [ ] Release notes
 * Interesting propositions
-- https://github.com/ardumont/org-trello/issues/33 - Another Disposition about org's buffer
 * Notes
 (org-show-siblings)
 (org-first-headline-recenter)

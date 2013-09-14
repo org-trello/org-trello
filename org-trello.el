@@ -1889,7 +1889,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
           acc-hash)
         it :initial-value (make-hash-table :test 'equal))))                                            ;; at last complete checklist with item
 
-(defun orgtrello/--compute-full-entities-from-trello (cards) "Given a list of cards, compute the full cards data from the trello boards. The order from the trello board is now kept."
+(defun orgtrello/--compute-full-entities-from-trello (cards) "Given a list of cards, compute the full cards data from the trello boards. The order from the trello board is now kept. hash result is of the form: {entity-id '(entity-card {checklist-id (checklist (item))})}"
   (cl-reduce
    (lambda (acc-hash entity-card)
      (orgtrello-log/msg *OT/INFO* "Computing card '%s' data..." (orgtrello-query/--name entity-card))
@@ -1898,12 +1898,66 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
    cards
    :initial-value (make-hash-table :test 'equal)))
 
-(defun orgtrello/--compute-full-entities-from-buffer () "Compute the current entities hash from the buffer."
+(defun orgtrello/--get-card (entities-hash id) "Update the card entry inside the hash."
+  (gethash id entities-hash))
+
+(defun orgtrello/--update-card (entities card) "Update the card entry inside the hash."
+  (let ((entities-hash (if entities entities (make-hash-table :test 'equal))))
+      (puthash (orgtrello/--id card) (list card) entities-hash)
+      entities-hash))
+
+(defun orgtrello/--checklists (entities-hash card) "Retrieve the checklists from the card representation."
+  (cdr (gethash (orgtrello/--id card) entities-hash)))
+
+(defun orgtrello/--update-checklists (entities-hash card new-checklist) "Update the checklist with new entry."
+  (--> card
+       (orgtrello/--checklists entities-hash it)
+       (reverse it)
+       (cons new-checklist it)
+       (reverse it)
+       (list card it)
+       (puthash (orgtrello/--id card) it entities-hash))
+  entities-hash)
+
+(defun orgtrello/--items (entities-hash checklist) "Retrieve the items from the checklist representation."
+  (cdr (gethash (orgtrello/--id checklist) entities-hash)))
+
+(defun orgtrello/--update-items (entities-hash checklist new-item) "Update the items list with new item."
+  (--> checklist
+       (orgtrello/--items entities-hash it)
+       (reverse it)
+       (cons new-item it)
+       (reverse it)
+       (list checklist it)
+       (puthash (orgtrello/--id checklist) it entities-hash))
+  entities-hash)
+
+(defun orgtrello/--put-card (entities current-meta card-entity) "Deal with adding card to entities."
+  (orgtrello/--update-card entities card-entity))
+
+(defun orgtrello/--put-checklist (entities current-meta checklist-entity) "Deal with adding a new checklist to entities."
+  (--> current-meta
+      (orgtrello-data/parent it)
+      (orgtrello/--update-checklists entities it checklist-entity)))
+
+(defun orgtrello/--put-item (entities current-meta item-entity) "Deal with adding a new item to entities."
+  (--> current-meta
+       (orgtrello-data/parent it)
+       (orgtrello/--update-items entities it item-entity)
+       (orgtrello/--put-checklist entities current-meta it)))
+
+(defun orgtrello/--dispatch-create-map (entity) "Dispatch the function to update map depending on the entity level."
+  (let ((level (orgtrello/--level entity)))
+    (cond ((= *CARD-LEVEL*      level) 'orgtrello/--put-card)
+          ((= *CHECKLIST-LEVEL* level) 'orgtrello/--put-checklist)
+          ((= *ITEM-LEVEL*      level) 'orgtrello/--put-item))))
+
+(defun orgtrello/--compute-full-entities-from-buffer () "Compute the current entities hash from the buffer in the same format as the sync-from-trello routine. {entity-id '(entity-card {checklist-id (checklist (item))})}"
   (let ((full-entities (make-hash-table :test 'equal)))
     (orgtrello/org-map-entities-without-params! (lambda ()
-                                                  (let ((current-entity (-> (orgtrello-data/entry-get-full-metadata)
-                                                                            orgtrello-data/current)))
-                                                    (puthash (orgtrello/--id current-entity) current-entity full-entities))))
+                                                  (let* ((current-meta   (orgtrello-data/entry-get-full-metadata))
+                                                         (current-entity (-> current-meta orgtrello-data/current)))
+                                                    (funcall (orgtrello/--dispatch-create-map current-entity) full-entities current-meta current-entity))))
     full-entities))
 
 (defun orgtrello/--update-property (id orgcheckbox-p) "Update the property depending on the nature of thing to sync. Move the cursor position."
@@ -1974,7 +2028,8 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   entities)
 
 (defun orgtrello/--sync-buffer-with-trello-data-callback (buffername &optional position name) "Generate a callback which knows the buffer with which it must work. (this callback must take a buffer-name and a position)"
-  (lexical-let ((buffer-name buffername))
+  (lexical-let ((buffer-name               buffername)
+                (full-entities-from-buffer (orgtrello/--compute-full-entities-from-buffer)))
     (function*
      (lambda (&key data &allow-other-keys)
        "Synchronize the buffer with the response data."
