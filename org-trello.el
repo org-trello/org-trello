@@ -1869,10 +1869,10 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
    entity
    *ORGTRELLO-NATURAL-ORG-CHECKLIST*))
 
-(defun orgtrello/--do-retrieve-checklists-and-items (checklist) "Given a checklist id, retrieve all the items from the checklist and return a list containing first the checklist, then the items."
+(defun orgtrello/--do-retrieve-items-from-checklist (checklist) "Given a checklist, retrieve its items as a list a list."
   (--map it (orgtrello-query/--check-items checklist)))
 
-(defun orgtrello/--do-retrieve-checklists-from-card (card) "Given a card, return the list containing the card, the checklists from this card, and the items from the checklists. The order is guaranted."
+(defun orgtrello/--do-retrieve-checklists-from-card (card) "Given a card, retrieve its checklists (with their items) in the right order."
   (--> card
        (orgtrello-query/--checklist-ids it)                                                            ;; retrieve checklist ids
        (cl-reduce
@@ -1885,11 +1885,11 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
        (reverse it)                                                                                    ;; reversing order to have the right order
        (cl-reduce
         (lambda (acc-hash checklist)
-          (puthash (orgtrello-query/--id checklist) `(,checklist . ,(orgtrello/--do-retrieve-checklists-and-items checklist)) acc-hash)
+          (puthash (orgtrello-query/--id checklist) `(,checklist . ,(orgtrello/--do-retrieve-items-from-checklist checklist)) acc-hash)
           acc-hash)
         it :initial-value (make-hash-table :test 'equal))))                                            ;; at last complete checklist with item
 
-(defun orgtrello/--compute-full-entities-from-trello (cards) "Given a list of cards, compute the full cards data from the trello boards. The order from the trello board is now kept. hash result is of the form: {entity-id '(entity-card {checklist-id (checklist (item))})}"
+(defun orgtrello/--compute-full-entities-from-trello (cards) "Given a list of cards, compute the full cards data from the trello board. The order from the trello board is kept. Hash result is of the form: {entity-id '(entity-card {checklist-id (checklist (item))})}"
   (cl-reduce
    (lambda (acc-hash entity-card)
      (orgtrello-log/msg *OT/INFO* "Computing card '%s' data..." (orgtrello-query/--name entity-card))
@@ -1898,7 +1898,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
    cards
    :initial-value (make-hash-table :test 'equal)))
 
-(defun orgtrello/--get-card (entities-hash id) "Update the card entry inside the hash."
+(defun orgtrello/--get-entity (entities-hash id) "Update the card entry inside the hash."
   (gethash id entities-hash))
 
 (defun orgtrello/--update-card (entities card) "Update the card entry inside the hash."
@@ -1906,8 +1906,14 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
       (puthash (orgtrello/--id card) (list card) entities-hash)
       entities-hash))
 
+(defun orgtrello/--retrieve-entities (entities-hash entity) "Given an entity, retrieve its subentity list (card -> checklists, checklist -> items)."
+  (cdr (gethash (orgtrello/--id entity) entities-hash)))
+
 (defun orgtrello/--checklists (entities-hash card) "Retrieve the checklists from the card representation."
-  (cdr (gethash (orgtrello/--id card) entities-hash)))
+  (orgtrello/--retrieve-entities entities-hash card))
+
+(defun orgtrello/--items (entities-hash checklist) "Retrieve the items from the checklist representation."
+  (orgtrello/--retrieve-entities entities-hash checklist))
 
 (defun orgtrello/--update-checklists (entities-hash card new-checklist) "Update the checklist with new entry."
   (--> card
@@ -1918,9 +1924,6 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
        (list card it)
        (puthash (orgtrello/--id card) it entities-hash))
   entities-hash)
-
-(defun orgtrello/--items (entities-hash checklist) "Retrieve the items from the checklist representation."
-  (cdr (gethash (orgtrello/--id checklist) entities-hash)))
 
 (defun orgtrello/--update-items (entities-hash checklist new-item) "Update the items list with new item."
   (--> checklist
@@ -1983,20 +1986,35 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
     (puthash :keyword (-> trello-card orgtrello-query/--list-id orgtrello/--compute-card-status) org-card-to-merge)
     org-card-to-merge))
 
-(defun orgtrello/--merge-full-checklists (trello-checklists org-checklists)
-  (mapcar
-   (lambda (trello-checklist)
-     (orgtrello/--merge-checklist trello-checklist nil)) ;; HERE still need to complete the merge between checklists
-   trello-checklists))
+(defun orgtrello/--merge-items (trello-items org-items) "Merge trello items with org-items."
+  (cl-reduce
+   (lambda (hash-result item-id)
+     (puthash item-id (orgtrello/--merge-item (orgtrello/--get-entity trello-items item-id) (orgtrello/--get-entity org-items item-id)) hash-result)
+     hash-result)
+   trello-items
+   :initial-value org-items))
+
+(defun orgtrello/--merge-full-checklist (trello-checklist org-checklist) "Merge trello checklist with org checklist."
+  (list
+   (orgtrello/--merge-checklist (car trello-checklist) (car org-checklist))
+   (orgtrello/--merge-items (cdr trello-checklist) (cdr org-checklist))))
+
+(defun orgtrello/--merge-checklists (trello-checklists org-checklists) "Merge "
+  (cl-reduce
+   (lambda (hash-result checklist-id)
+     (puthash checklist-id (orgtrello/--merge-full-checklist (orgtrello/--get-entity trello-checklists checklist-id) (orgtrello/--get-entity org-checklists checklist-id)) hash-result)
+     hash-result)
+   trello-checklists
+   :initial-value org-checklists))
 
 (defun orgtrello/--merge-full-card (trello-entities org-entities) "Merge trello and org card together. Return a list of merged card as car and merged checklist as cdr."
   (list (orgtrello/--merge-card (car trello-entities) (car org-entities))
-        (orgtrello/--merge-full-checklists (cdr trello-entities) (cdr org-entities))))
+        (orgtrello/--merge-checklists (cdr trello-entities) (cdr org-entities))))
 
-(defun orgtrello/--merge-data (trello-entities org-entities) "Merge the data between org-entities and trello-entities. Trello entities are of higher priorities."
+(defun orgtrello/--merge-cards (trello-entities org-entities) "Merge the data between org-entities and trello-entities. Trello entities are of higher priorities."
   (cl-reduce
    (lambda (hash-result card-id)
-     (puthash card-id (orgtrello/--merge-full-card (orgtrello/--get-card trello-entities card-id) (orgtrello/--get-card org-entities card-id)) hash-result)
+     (puthash card-id (orgtrello/--merge-full-card (orgtrello/--get-entity trello-entities card-id) (orgtrello/--get-entity org-entities card-id)) hash-result)
      hash-result)
    trello-entities
    :initial-value org-entities))
