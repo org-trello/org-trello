@@ -1907,7 +1907,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
       entities-hash))
 
 (defun orgtrello/--retrieve-entities (entities-hash entity) "Given an entity, retrieve its subentity list (card -> checklists, checklist -> items)."
-  (cdr (gethash (orgtrello/--id entity) entities-hash)))
+  (second (gethash (orgtrello/--id entity) entities-hash)))
 
 (defun orgtrello/--checklists (entities-hash card) "Retrieve the checklists from the card representation."
   (orgtrello/--retrieve-entities entities-hash card))
