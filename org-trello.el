@@ -1996,8 +1996,8 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun orgtrello/--merge-full-checklist (trello-checklist org-checklist) "Merge trello checklist with org checklist."
   (list
-   (orgtrello/--merge-checklist (car trello-checklist) (car org-checklist))
-   (orgtrello/--merge-items (cdr trello-checklist) (cdr org-checklist))))
+   (orgtrello/--merge-checklist (first trello-checklist) (first org-checklist))
+   (orgtrello/--merge-items (second trello-checklist) (second org-checklist))))
 
 (defun orgtrello/--merge-checklists (trello-checklists org-checklists) "Merge "
   (cl-reduce
@@ -2007,9 +2007,9 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
    trello-checklists
    :initial-value org-checklists))
 
-(defun orgtrello/--merge-full-card (trello-entities org-entities) "Merge trello and org card together. Return a list of merged card as car and merged checklist as cdr."
-  (list (orgtrello/--merge-card (car trello-entities) (car org-entities))
-        (orgtrello/--merge-checklists (cdr trello-entities) (cdr org-entities))))
+(defun orgtrello/--merge-full-card (trello-entities org-entities) "Merge trello and org card together. Return a list of merged card as first and merged checklist as second."
+  (list (orgtrello/--merge-card (first trello-entities) (first org-entities))
+        (orgtrello/--merge-checklists (second trello-entities) (second org-entities))))
 
 (defun orgtrello/--merge-cards (trello-entities org-entities) "Merge the data between org-entities and trello-entities. Trello entities are of higher priorities."
   (cl-reduce
