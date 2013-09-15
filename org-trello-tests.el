@@ -1652,5 +1652,9 @@ DEADLINE: <some-date>
                         (orgtrello/--merge-card `((id . 1) (name . "some name") (id . 1) (idList . 1)) (orgtrello-hash/make-properties `((:name . "some other name"))))))
     (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "TODO" :id 1))
                         (orgtrello/--merge-card `((id . 1) (name . "some name") (idList . 1)) nil)))))
+
+(expectations
+ (expect '(1 2 3 4) (orgtrello/--add-to-last-pos 4 '(1 2 3))))
+
 (provide 'org-trello-tests)
 ;;; org-trello-tests ends here
