@@ -1953,9 +1953,10 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   (let ((level (orgtrello/--level entity)))
     (cond ((= *CARD-LEVEL*      level) 'orgtrello/--put-card)
           ((= *CHECKLIST-LEVEL* level) 'orgtrello/--put-checklist)
+
           ((= *ITEM-LEVEL*      level) 'orgtrello/--put-item))))
 
-(defun orgtrello/--compute-full-entities-from-buffer () "Compute the current entities hash from the buffer in the same format as the sync-from-trello routine. {entity-id '(entity-card {checklist-id (checklist (item))})}"
+(defun orgtrello/--compute-full-entities-from-org () "Compute the current entities hash from the buffer in the same format as the sync-from-trello routine. {entity-id '(entity-card {checklist-id (checklist (item))})}"
   (let ((full-entities (make-hash-table :test 'equal)))
     (orgtrello/org-map-entities-without-params! (lambda ()
                                                   (let* ((current-meta   (orgtrello-data/entry-get-full-metadata))
@@ -2088,7 +2089,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun orgtrello/--sync-buffer-with-trello-data-callback (buffername &optional position name) "Generate a callback which knows the buffer with which it must work. (this callback must take a buffer-name and a position)"
   (lexical-let ((buffer-name               buffername)
-                (full-entities-from-buffer (orgtrello/--compute-full-entities-from-buffer)))
+                (full-entities-from-buffer (orgtrello/--compute-full-entities-from-org)))
     (function*
      (lambda (&key data &allow-other-keys)
        "Synchronize the buffer with the response data."
@@ -2438,7 +2439,7 @@ C-c o h - M-x org-trello/help-describing-bindings    - This help message."))
 
 (defun org-trello/describe-entry () "An helper command to describe org-trello entry."
   (interactive)
-  (message "%s" (orgtrello/--compute-full-entities-from-buffer)))
+  (message "%s" (orgtrello/--compute-full-entities-from-org)))
 
 ;;;###autoload
 (define-minor-mode org-trello-mode "Sync your org-mode and your trello together."
