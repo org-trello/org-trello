@@ -1935,6 +1935,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   (puthash (orgtrello-data/id entity) entity entities)
   entities)
 
+;; FIXME find an already existing implementation.
 (defun orgtrello/--add-to-last-pos (value list) "Adding the value to the list in last position."
   (--> list
        (reverse it)
@@ -1944,7 +1945,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 (defun orgtrello/--add-entity-to-adjacency (current-entity parent-entity adjacency) "Adding entity to the adjacency entry."
   (let ((current-id (orgtrello-data/id current-entity))
         (parent-id (orgtrello-data/id parent-entity)))
-    (puthash parent-id (orgtrello/--add-to-last-pos current-id (gethash parent-id adjacency)) adjacency) ;; FIXME will need to improve this to add at the end of the buffer
+    (puthash parent-id (orgtrello/--add-to-last-pos current-id (gethash parent-id adjacency)) adjacency)
     adjacency))
 
 (defun orgtrello/--put-entities (current-meta entities adjacency) "Deal with adding a new item to entities."
@@ -1992,15 +1993,16 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
     (puthash :keyword (-> trello-card orgtrello-query/--list-id orgtrello/--compute-card-status) org-card-to-merge)
     org-card-to-merge))
 
+;; FIXME hide the dispatch implementation inside another function (checklist-p, item-p, card-p, etc...)
 (defun orgtrello/--dispatch-merge-fn (entity) "Dispatch the function fn to merge the entity."
   (let ((level (orgtrello/--level entity)))
     (cond ((= *CARD-LEVEL*      level) 'orgtrello/--merge-card)
           ((= *CHECKLIST-LEVEL* level) 'orgtrello/--merge-checklist)
-          ((= *ITEM-LEVEL*      level) 'orgtrello/--put-item))))
+          ((= *ITEM-LEVEL*      level) 'orgtrello/--merge-item))))
 
 (defun orgtrello/--merge-entities (trello-entities org-entities) "Merge the trello entities inside the org-entities."
   (maphash (lambda (id entity)
-             (puthash id (funcall (orgtrello/--dispatch-merge-fn entity) entity (orgtrello/--get-entity id org-entities)) trello-entities))
+             (puthash id (funcall (orgtrello/--dispatch-merge-fn entity) entity (orgtrello/--get-entity id org-entities)) trello-entities));; FIXME how to update the adjacency entries?
            trello-entities)
   org-entities)
 
