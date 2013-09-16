@@ -473,6 +473,9 @@ This is a list with the following elements:
   (cl-destructuring-bind (buffer-name point id due level _ keyword _ name &rest) heading-metadata
                          (orgtrello-hash/make-hash-org level keyword name id due point buffer-name)))
 
+(defun orgtrello-data/--card-p (entity) "Main predicate to determine if an entity is a card or not."
+  (funcall (if (hash-table-p entity) 'orgtrello/--hcard-p 'orgtrello/--card-p) entity))
+
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-data loaded!")
 
 
@@ -1729,15 +1732,6 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 (defun orgtrello/--already-synced-p (entity) "Compute if the entity has already been synchronized."
   (if (-> entity orgtrello-data/current orgtrello/--id) :ok "Entity must been synchronized with trello first!"))
 
-;; (defun orgtrello/--can-be-synced-p (entity) "Ensure entity can be synced regarding the dependency on its level.!"
-;;   (let* ((current     (orgtrello-data/current entity))
-;;          (parent      (orgtrello-data/parent entity))
-;;          (grandparent (orgtrello-data/grandparent entity))
-;;          (level       (orgtrello/--level current)))
-;;     (cond ((= level *CARD-LEVEL*)      :ok)
-;;           ((= level *CHECKLIST-LEVEL*) (if (orgtrello/--id parent) :ok *ERROR-SYNC-CHECKLIST-SYNC-CARD-FIRST*))
-;;           ((= level *ITEM-LEVEL*)      (if (and (orgtrello/--id parent) (orgtrello/--id grandparent)) :ok *ERROR-SYNC-ITEM-SYNC-UPPER-LAYER-FIRST*)))))
-
 (defun orgtrello/--mandatory-name-ok-p (entity) "Ensure entity can be synced regarding the mandatory data."
   (let* ((current (orgtrello-data/current entity))
          (level   (orgtrello/--level current))
@@ -1859,6 +1853,8 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
            (orgtrello-query/--state item)))
 
 (defun orgtrello/--card-p (entity) "Is this a card?" (orgtrello-query/--list-id entity))
+
+(defun orgtrello/--hcard-p (entity) "Is this a card?" (-> entity orgtrello/--level (= *CARD-LEVEL*)))
 
 (defun orgtrello/--checklist-p (entity) "Is this a checklist?" (orgtrello-query/--card-id entity))
 
@@ -2000,44 +1996,21 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
           ((= *CHECKLIST-LEVEL* level) 'orgtrello/--merge-checklist)
           ((= *ITEM-LEVEL*      level) 'orgtrello/--merge-item))))
 
-(defun orgtrello/--merge-entities (trello-entities org-entities) "Merge the trello entities inside the org-entities."
-  (maphash (lambda (id entity)
-             (puthash id (funcall (orgtrello/--dispatch-merge-fn entity) entity (orgtrello/--get-entity id org-entities)) trello-entities));; FIXME how to update the adjacency entries?
-           trello-entities)
-  org-entities)
+(defun orgtrello/--merge-list (a-list b-list) "Merge 2 lists together (no duplicates)."
+  (-> a-list
+      (append b-list)
+      (delete-dups)))
 
-(defun orgtrello/--merge-items (trello-items org-items) "Merge trello items with org-items."
-  (cl-reduce
-   (lambda (hash-result item-id)
-     (puthash item-id (orgtrello/--merge-item (orgtrello/--get-entity trello-items item-id) (orgtrello/--get-entity org-items item-id)) hash-result)
-     hash-result)
-   trello-items
-   :initial-value org-items))
-
-(defun orgtrello/--merge-full-checklist (trello-checklist org-checklist) "Merge trello checklist with org checklist."
-  (list
-   (orgtrello/--merge-checklist (first trello-checklist) (first org-checklist))
-   (orgtrello/--merge-items (second trello-checklist) (second org-checklist))))
-
-(defun orgtrello/--merge-checklists (trello-checklists org-checklists) "Merge "
-  (cl-reduce
-   (lambda (hash-result checklist-id)
-     (puthash checklist-id (orgtrello/--merge-full-checklist (orgtrello/--get-entity trello-checklists checklist-id) (orgtrello/--get-entity org-checklists checklist-id)) hash-result)
-     hash-result)
-   trello-checklists
-   :initial-value org-checklists))
-
-(defun orgtrello/--merge-full-card (trello-entities org-entities) "Merge trello and org card together. Return a list of merged card as first and merged checklist as second."
-  (list (orgtrello/--merge-card (first trello-entities) (first org-entities))
-        (orgtrello/--merge-checklists (second trello-entities) (second org-entities))))
-
-(defun orgtrello/--merge-cards (trello-entities org-entities) "Merge the data between org-entities and trello-entities. Trello entities are of higher priorities."
-  (cl-reduce
-   (lambda (hash-result card-id)
-     (puthash card-id (orgtrello/--merge-full-card (orgtrello/--get-entity trello-entities card-id) (orgtrello/--get-entity org-entities card-id)) hash-result)
-     hash-result)
-   trello-entities
-   :initial-value org-entities))
+(defun orgtrello/--merge-entities (trello-data org-data) "Merge the trello entities inside the org-entities."
+  (let ((trello-entities  (first trello-data))
+        (trello-adjacency (second trello-data))
+        (org-entities     (first org-data))
+        (org-adjacency    (second org-data)))
+    (maphash (lambda (id entity)
+               (puthash id (funcall (orgtrello/--dispatch-merge-fn entity) entity (orgtrello/--get-entity id org-entities)) trello-entities)   ;; updating entity to trello
+               (puthash id (orgtrello/--merge-list (gethash id trello-adjacency) (gethash id org-adjacency))                trello-adjacency)) ;; update entity adjacency to trello
+             trello-entities)
+    (list trello-entities trello-adjacency)))
 
 (defun orgtrello/--update-property (id orgcheckbox-p) "Update the property depending on the nature of thing to sync. Move the cursor position."
   (if orgcheckbox-p
@@ -2049,43 +2022,10 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
         (forward-line))
       (orgtrello-action/set-property *ORGTRELLO-ID* id)))
 
-(defun orgtrello/--write-entity (entity-id entity) "Write the entity in the buffer to the current position. Move the cursor position."
+(defun orgtrello/--write-entity! (entity-id entity) "Write the entity in the buffer to the current position. Move the cursor position."
+  (orgtrello-log/msg *OT/INFO* "Synchronizing entity '%s' with id '%s'..." (orgtrello-query/--name entity) entity-id)
   (insert (orgtrello/--compute-entity-to-org-entry entity))
   (orgtrello/--update-property entity-id (and *ORGTRELLO-NATURAL-ORG-CHECKLIST* (not (orgtrello/--card-p entity)))))
-
-(defun orgtrello/--update-buffer-with-remaining-trello-data (entities buffer-name) "Given a map of entities, dump those entities in the current buffer."
-  (when entities
-        (with-current-buffer buffer-name
-          (goto-char (point-max)) ;; go at the end of the file
-          (maphash                ;; dump the remaining entities
-           (lambda (orgtrello/--entry-new-id orgtrello/--entity)
-             (orgtrello-log/msg *OT/INFO* "Synchronizing new entity '%s' with id '%s'..." (orgtrello-query/--name orgtrello/--entity) orgtrello/--entry-new-id)
-             (orgtrello/--write-entity orgtrello/--entry-new-id orgtrello/--entity))
-           entities)
-          (goto-char (point-min)) ;; go back to the beginning of file
-          (org-sort-entries t ?o) ;; sort the entries on their keywords
-          (save-buffer))))
-
-(defun orgtrello/--update-entry-to-org-buffer (entities) "Update entry to the org-buffer. Side effects on entities (entries are removed)."
-  (save-excursion
-    (-when-let (entry-metadata (orgtrello-data/entry-get-full-metadata)) ;; if level > 4, entry-metadata is not considered as this is not represented in trello board
-               ;; will search 'entities' hash table for updates (do not compute diffs, take them as is)
-               (let* ((orgtrello/--entity         (orgtrello-data/current entry-metadata))
-                      (orgtrello/--entity-id      (orgtrello/--id orgtrello/--entity))
-                      (orgtrello/--entity-updated (gethash orgtrello/--entity-id entities)))
-                 (if orgtrello/--entity-updated
-                     ;; found something, we update by squashing the current contents
-                     (let* ((orgtrello/--entry-new-id    (orgtrello-query/--id   orgtrello/--entity-updated))
-                            (orgtrello/--entity-due-date (orgtrello-query/--due  orgtrello/--entity-updated))
-                            (orgtrello/--entry-new-name  (orgtrello-query/--name orgtrello/--entity-updated)))
-                       ;; update the buffer with the new updates (there may be none but naively we will overwrite at the moment)
-                       (orgtrello-log/msg *OT/INFO* "Synchronizing entity '%s' with id '%s'..." orgtrello/--entry-new-name orgtrello/--entry-new-id)
-                       (org-show-entry)
-                       (kill-whole-line)
-                       (if orgtrello/--entity-due-date (kill-whole-line))
-                       (orgtrello/--write-entity orgtrello/--entry-new-id orgtrello/--entity-updated)
-                       ;; remove the entry from the hash-table
-                       (remhash orgtrello/--entity-id entities)))))))
 
 (defun orgtrello/org-map-entities! (fn-to-execute &optional entities) "Execute fn-to-execute function for all entities from buffer."
   (org-map-entries
@@ -2101,10 +2041,37 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
        (when *ORGTRELLO-NATURAL-ORG-CHECKLIST*
              (orgtrello/map-checkboxes fn-to-execute))) t 'file))
 
-(defun orgtrello/--sync-buffer-with-trello-data (entities buffer-name) "Given all the entities, update the current buffer with those."
-  (with-current-buffer buffer-name
-    (orgtrello/org-map-entities! 'orgtrello/--update-entry-to-org-buffer entities))
-  entities)
+(defun orgtrello/--write-item! (entity-id entities) "Write the item to the org buffer."
+  (->> entities
+       (gethash entity-id)
+       (orgtrello/--write-entity! entity-id)))
+
+(defun orgtrello/--write-checklist! (entity-id entities adjacency) "Write the checklist inside the org buffer."
+  (orgtrello/--write-entity! entity-id (gethash entity-id entities))
+  (--map (orgtrello/--write-item! it entities) (gethash entity-id adjacency)))
+
+(defun orgtrello/--write-card! (entity-id entity entities adjacency) "Write the card inside the org buffer."
+  (orgtrello/--write-entity! entity-id entity)
+  (--map (orgtrello/--write-checklist! it entities adjacency) (gethash entity-id adjacency)))
+
+(defun orgtrello/--sync-buffer-with-trello-data (data buffer-name) "Given all the entities, update the current buffer with those."
+  (let ((entities (first data))
+        (adjacency (second data)))
+    (with-current-buffer buffer-name
+      (goto-char (point-max)) ;; go at the end of the file
+      (maphash
+       (lambda (new-id entity)
+         (when (orgtrello-data/--card-p entity)
+               (orgtrello/--write-card! new-id entity entities adjacency)))
+       entities)
+      (goto-char (point-min)) ;; go back to the beginning of file
+      (org-sort-entries t ?o) ;; sort the entries on their keywords
+      (save-buffer))))
+
+(defun orgtrello/--cleanup-org-entries () "Cleanup org-entries."
+  (goto-char (point-min))
+  (outline-next-heading)
+  (kill-region (point-at-bol) (point-max)))
 
 (defun orgtrello/--sync-buffer-with-trello-data-callback (buffername &optional position name) "Generate a callback which knows the buffer with which it must work. (this callback must take a buffer-name and a position)"
   (lexical-let ((buffer-name               buffername)
@@ -2113,13 +2080,14 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
      (lambda (&key data &allow-other-keys)
        "Synchronize the buffer with the response data."
        (orgtrello-log/msg *OT/TRACE* "proxy - response data: %S" data)
+       ;; remove org-entries
+       (orgtrello/--cleanup-org-entries)
+       ;; then compute new entries
        (-> data
            orgtrello/--compute-full-entities-from-trello
-
-           ;; (orgtrello/--sync-buffer-with-trello-data buffer-name)
-           ;; (orgtrello/--update-buffer-with-remaining-trello-data buffer-name)
-           ;; (orgtrello-action/safe-wrap (orgtrello-log/msg *OT/INFO* "Synchronizing the trello board from trello - done!"))
-           )))))
+           (orgtrello/--merge-entities full-entities-from-buffer)
+           (orgtrello/--sync-buffer-with-trello-data buffer-name)
+           (orgtrello-action/safe-wrap (orgtrello-log/msg *OT/INFO* "Synchronizing the trello board from trello - done!")))))))
 
 (defun orgtrello/do-sync-full-from-trello (&optional sync) "Full org-mode file synchronisation. Beware, this will block emacs as the request is synchronous."
   (orgtrello-log/msg *OT/INFO* "Synchronizing the trello board '%s' to the org-mode file. This may take a moment, some coffee may be a good idea..." (orgtrello/--board-name))
@@ -2458,7 +2426,7 @@ C-c o h - M-x org-trello/help-describing-bindings    - This help message."))
 
 (defun org-trello/describe-entry () "An helper command to describe org-trello entry."
   (interactive)
-  (message "%s" (orgtrello/--compute-full-entities-from-org)))
+  (orgtrello/--cleanup-org-entries))
 
 ;;;###autoload
 (define-minor-mode org-trello-mode "Sync your org-mode and your trello together."

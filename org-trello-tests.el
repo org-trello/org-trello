@@ -1656,5 +1656,21 @@ DEADLINE: <some-date>
 (expectations
  (expect '(1 2 3 4) (orgtrello/--add-to-last-pos 4 '(1 2 3))))
 
+(expectations
+  (expect '(1 2 3 4) (orgtrello/--merge-list '(1 2 3) '(4 1 2)))
+  (expect '(4 1 2)   (orgtrello/--merge-list nil '(4 1 2)))
+  (expect '(4 1 2)   (orgtrello/--merge-list '(4 1 2) nil))
+  (expect nil        (orgtrello/--merge-list nil nil)))
+
+(expectactions
+ (expect t (orgtrello/--hcard-p (orgtrello-hash/make-properties `((:level . ,*CARD-LEVEL*)))))
+ (expect nil (orgtrello/--hcard-p (orgtrello-hash/make-properties `((:level . ,*CHECKLIST-LEVEL*))))))
+
+(expectactions
+ (expect t (orgtrello-data/--card-p (orgtrello-hash/make-properties `((:level . ,*CARD-LEVEL*)))))
+ (expect nil (orgtrello-data/--card-p (orgtrello-hash/make-properties `((:level . ,*CHECKLIST-LEVEL*)))))
+ (expect 1 (orgtrello-data/--card-p `((idList . 1))))
+ (expect nil (orgtrello-data/--card-p `((id . 1)))))
+
 (provide 'org-trello-tests)
 ;;; org-trello-tests ends here
