@@ -194,30 +194,6 @@
   (expect "GET"                                    (gethash :method (orgtrello-api/get-items :checklist-id)))
   (expect "/checklists/:checklist-id/checkItems/" (gethash :uri    (orgtrello-api/get-items :checklist-id))))
 
-(expectations
-  (expect '(((pos . 16384)
-             (name . "yes")
-             (id . "51da82abf4deb8010b003850")
-             (state . "incomplete"))
-            ((pos . 32768)
-             (name . "empty")
-             (id . "51da82abc2b917772100240e")
-             (state . "incomplete"))
-            ((pos . 49152)
-             (name . "no")
-             (id . "51da82ac6054b8c35300ba98")
-             (state . "incomplete")))  (orgtrello/--do-retrieve-checklists-and-items '((checkItems . [((pos . 16384)
-                                                                                                       (name . "yes")
-                                                                                                       (id . "51da82abf4deb8010b003850")
-                                                                                                       (state . "incomplete"))
-                                                                                                      ((pos . 32768)
-                                                                                                       (name . "empty")
-                                                                                                       (id . "51da82abc2b917772100240e")
-                                                                                                       (state . "incomplete"))
-                                                                                                      ((pos . 49152)
-                                                                                                       (name . "no")
-                                                                                                       (id . "51da82ac6054b8c35300ba98")
-                                                                                                       (state . "incomplete"))])))))
 
 ;; ########################## orgtrello-query
 
@@ -1553,24 +1529,6 @@ DEADLINE: <some-date>
               (orgtrello/--id it))))
 
 (expectations
-  (expect "10"
-    (--> `(("10" . (:checklist . ((:a 1) (:b 2)))))
-         (orgtrello-hash/make-properties it)
-         (orgtrello/--update-card it (orgtrello-hash/make-hash-org nil nil nil "10" nil nil nil))
-         (orgtrello/--get-card it "10")
-         (first it)
-         (gethash :id it)))
-    (expect "10"
-    (--> (orgtrello/--update-card nil (orgtrello-hash/make-hash-org nil nil nil "10" nil nil nil))
-         (orgtrello/--get-card it "10")
-         (first it)
-         (gethash :id it))))
-
-(expectations
-  (expect "test" (orgtrello/--get-card (orgtrello-hash/make-properties `(("10" . "test"))) "10"))
-  (expect nil (orgtrello/--get-card (orgtrello-hash/make-properties `(("10" . "test"))) "11")))
-
-(expectations
   (expect "10" (--> (orgtrello-hash/make-hash-org nil nil nil "10" nil nil nil)
                     (orgtrello/--update-card nil it)
                     (orgtrello/--get-entity it "10")
@@ -1662,15 +1620,31 @@ DEADLINE: <some-date>
   (expect '(4 1 2)   (orgtrello/--merge-list '(4 1 2) nil))
   (expect nil        (orgtrello/--merge-list nil nil)))
 
-(expectactions
+(expectations
  (expect t (orgtrello/--hcard-p (orgtrello-hash/make-properties `((:level . ,*CARD-LEVEL*)))))
  (expect nil (orgtrello/--hcard-p (orgtrello-hash/make-properties `((:level . ,*CHECKLIST-LEVEL*))))))
 
-(expectactions
+(expectations
+ (expect t (orgtrello/--entity-with-level-p (orgtrello-hash/make-properties `((:level . ,*CARD-LEVEL*))) *CARD-LEVEL*))
+ (expect nil (orgtrello/--entity-with-level-p (orgtrello-hash/make-properties `((:level . ,*CHECKLIST-LEVEL*))) *CARD-LEVEL*)))
+
+(expectations
  (expect t (orgtrello-data/--card-p (orgtrello-hash/make-properties `((:level . ,*CARD-LEVEL*)))))
  (expect nil (orgtrello-data/--card-p (orgtrello-hash/make-properties `((:level . ,*CHECKLIST-LEVEL*)))))
  (expect 1 (orgtrello-data/--card-p `((idList . 1))))
  (expect nil (orgtrello-data/--card-p `((id . 1)))))
+
+(expectations
+ (expect t (orgtrello-data/--checklist-p (orgtrello-hash/make-properties `((:level . ,*CHECKLIST-LEVEL*)))))
+ (expect nil (orgtrello-data/--checklist-p (orgtrello-hash/make-properties `((:level . ,*ITEM-LEVEL*)))))
+ (expect 1 (orgtrello-data/--checklist-p `((idCard . 1))))
+ (expect nil (orgtrello-data/--checklist-p `((id . 1)))))
+
+(expectations
+ (expect t (orgtrello-data/--item-p (orgtrello-hash/make-properties `((:level . ,*ITEM-LEVEL*)))))
+ (expect nil (orgtrello-data/--item-p (orgtrello-hash/make-properties `((:level . ,*CARD-LEVEL*)))))
+ (expect 1 (orgtrello-data/--item-p `((state . 1))))
+ (expect nil (orgtrello-data/--item-p `((id . 1)))))
 
 (provide 'org-trello-tests)
 ;;; org-trello-tests ends here

@@ -476,6 +476,12 @@ This is a list with the following elements:
 (defun orgtrello-data/--card-p (entity) "Main predicate to determine if an entity is a card or not."
   (funcall (if (hash-table-p entity) 'orgtrello/--hcard-p 'orgtrello/--card-p) entity))
 
+(defun orgtrello-data/--checklist-p (entity) "Main predicate to determine if an entity is a checklist or not."
+  (funcall (if (hash-table-p entity) 'orgtrello/--hchecklist-p 'orgtrello/--checklist-p) entity))
+
+(defun orgtrello-data/--item-p (entity) "Main predicate to determine if an entity is a item or not."
+  (funcall (if (hash-table-p entity) 'orgtrello/--hitem-p 'orgtrello/--item-p) entity))
+
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-data loaded!")
 
 
@@ -1791,7 +1797,8 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   (format "* %s %s\n%s" status name (orgtrello/--compute-due-date due-date)))
 
 (defun orgtrello/--compute-card-to-org-entry (card &optional orgcheckbox-p) "Given a card, compute its org-mode entry equivalence. orgcheckbox-p is nil"
-  (orgtrello/--private-compute-card-to-org-entry (orgtrello-query/--name card) (-> card orgtrello-query/--list-id orgtrello/--compute-card-status) (orgtrello-query/--due card)))
+  (orgtrello/--private-compute-card-to-org-entry (orgtrello-query/--name card)
+                                                 (-> card orgtrello-query/--list-id orgtrello/--compute-card-status) (orgtrello-query/--due card)))
 
 (defun orgtrello/--compute-checklist-to-orgtrello-entry (name &optional level status) "Compute the orgtrello format checklist"
   (format "** %s\n" name))
@@ -1853,18 +1860,19 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
            (orgtrello-query/--state item)))
 
 (defun orgtrello/--card-p (entity) "Is this a card?" (orgtrello-query/--list-id entity))
-
-(defun orgtrello/--hcard-p (entity) "Is this a card?" (-> entity orgtrello/--level (= *CARD-LEVEL*)))
-
 (defun orgtrello/--checklist-p (entity) "Is this a checklist?" (orgtrello-query/--card-id entity))
-
 (defun orgtrello/--item-p (entity) "is this an item?" (orgtrello-query/--state entity))
+
+(defun orgtrello/--entity-with-level-p (entity level) "Is the entity with level level?" (-> entity orgtrello/--level (= level)))
+(defun orgtrello/--hcard-p (entity) "Is this a card?" (orgtrello/--entity-with-level-p entity *CARD-LEVEL*))
+(defun orgtrello/--hchecklist-p (entity) "Is this a checklist?" (orgtrello/--entity-with-level-p entity *CHECKLIST-LEVEL*))
+(defun orgtrello/--hitem-p (entity) "Is this an item?" (orgtrello/--entity-with-level-p entity *ITEM-LEVEL*))
 
 (defun orgtrello/--compute-entity-to-org-entry (entity) "Given an entity, compute its org representation."
   (funcall
-   (cond ((orgtrello/--card-p entity)      'orgtrello/--compute-card-to-org-entry)        ;; card      (level 1)
-         ((orgtrello/--checklist-p entity) 'orgtrello/--compute-checklist-to-org-entry)   ;; checklist (level 2)
-         ((orgtrello/--item-p entity)      'orgtrello/--compute-item-to-org-entry))       ;; items     (level 3)
+   (cond ((orgtrello-data/--card-p entity)      'orgtrello/--compute-card-to-org-entry)        ;; card      (level 1)
+         ((orgtrello-data/--checklist-p entity) 'orgtrello/--compute-checklist-to-org-entry)   ;; checklist (level 2)
+         ((orgtrello-data/--item-p entity)      'orgtrello/--compute-item-to-org-entry))       ;; items     (level 3)
    entity
    *ORGTRELLO-NATURAL-ORG-CHECKLIST*))
 
