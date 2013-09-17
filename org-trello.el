@@ -474,7 +474,7 @@ This is a list with the following elements:
   (funcall (if (hash-table-p entity) (first list-dispatch-fn) (second list-dispatch-fn)) entity))
 
 (defun orgtrello-data/id (entity) "Dispatch to the rightfull function to get the id"
-  (orgtrello-data/--compute-fn entity '(orgtrello/--id 'orgtrello-query/--id)))
+  (orgtrello-data/--compute-fn entity '(orgtrello/--id orgtrello-query/--id)))
 
 (defun orgtrello-data/--card-p (entity) "Is an entity a card?" (orgtrello-data/--compute-fn entity '(orgtrello/--hcard-p orgtrello/--card-p)))
 (defun orgtrello-data/--checklist-p (entity) "Is an entity a checklist?" (orgtrello-data/--compute-fn entity '(orgtrello/--hchecklist-p orgtrello/--checklist-p)))
@@ -1927,7 +1927,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
    cards
    :initial-value (list (make-hash-table :test 'equal) (make-hash-table :test 'equal))))
 
-(defun orgtrello/--get-entity (entities-hash id) "Update the card entry inside the hash."
+(defun orgtrello/--get-entity (id entities-hash) "Update the card entry inside the hash."
   (gethash id entities-hash))
 
 (defun orgtrello/--put-card (current-meta entities adjacency) "Deal with adding card to entities."
@@ -1959,10 +1959,9 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
     (list (orgtrello/--add-entity-to-entities current-entity entities) (orgtrello/--add-entity-to-adjacency current-entity parent-entity adjacency))))
 
 (defun orgtrello/--dispatch-create-map (entity) "Dispatch the function to update map depending on the entity level."
-  (let ((level (orgtrello/--level entity)))
-    (cond ((= *CARD-LEVEL*      level) 'orgtrello/--put-card)
-          ((= *CHECKLIST-LEVEL* level) 'orgtrello/--put-entities)
-          ((= *ITEM-LEVEL*      level) 'orgtrello/--put-entities))))
+  (cond ((orgtrello-data/--card-p entity)      'orgtrello/--put-card)
+        ((orgtrello-data/--checklist-p entity) 'orgtrello/--put-entities)
+        ((orgtrello-data/--item-p entity)      'orgtrello/--put-entities)))
 
 (defun orgtrello/--compute-full-entities-from-org () "Compute the current entities hash from the buffer in the same format as the sync-from-trello routine. {entity-id '(entity-card {checklist-id (checklist (item))})}"
   (let ((entities  (make-hash-table :test 'equal))
@@ -2034,12 +2033,13 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   (insert (orgtrello/--compute-entity-to-org-entry entity))
   (orgtrello/--update-property entity-id (and *ORGTRELLO-NATURAL-ORG-CHECKLIST* (not (orgtrello-data/--card-p entity)))))
 
-(defun orgtrello/org-map-entities! (fn-to-execute &optional entities) "Execute fn-to-execute function for all entities from buffer."
-  (org-map-entries
-     (lambda ()
-       (funcall fn-to-execute entities) ;; execute on heading entry
-       (when *ORGTRELLO-NATURAL-ORG-CHECKLIST*
-             (orgtrello/map-checkboxes (lambda () (funcall fn-to-execute entities))))) t 'file)) ;; execute the same function for each org-checkboxes entry
+;; (defun orgtrello/org-map-entities! (fn-to-execute &optional entities) "Execute fn-to-execute function for all entities from buffer."
+;;   (org-map-entries
+;;      (lambda ()
+;;        (funcall fn-to-execute entities) ;; execute on heading entry
+;;        (when *ORGTRELLO-NATURAL-ORG-CHECKLIST*
+;;              (orgtrello/map-checkboxes (lambda () (funcall fn-to-execute entities))))) t 'file))
+;; execute the same function for each org-checkboxes entry
 
 (defun orgtrello/org-map-entities-without-params! (fn-to-execute) "Execute fn-to-execute function for all entities from buffer - fn-to-execute is a function without any parameters."
   (org-map-entries
@@ -2061,7 +2061,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   (orgtrello/--write-entity! entity-id entity)
   (--map (orgtrello/--write-checklist! it entities adjacency) (gethash entity-id adjacency)))
 
-(defun orgtrello/--sync-buffer-with-trello-data (data buffer-name) "Given all the entities, update the current buffer with those."
+(defun orgtrello/--sync-buffer-with-trello-data (data buffer-name) "Given all the entities, update the current buffer with those." (debug)
   (let ((entities (first data))
         (adjacency (second data)))
     (with-current-buffer buffer-name
@@ -2089,7 +2089,6 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
        (orgtrello-log/msg *OT/TRACE* "proxy - response data: %S" data)
        ;; remove org-entries
        (orgtrello/--cleanup-org-entries)
-       (debug)
        ;; then compute new entries
        (-> data
            orgtrello/--compute-full-entities-from-trello
@@ -2434,7 +2433,7 @@ C-c o h - M-x org-trello/help-describing-bindings    - This help message."))
 
 (defun org-trello/describe-entry () "An helper command to describe org-trello entry."
   (interactive)
-  (orgtrello/--cleanup-org-entries))
+  (message "entities: %S" (orgtrello/--compute-full-entities-from-org)))
 
 ;;;###autoload
 (define-minor-mode org-trello-mode "Sync your org-mode and your trello together."
