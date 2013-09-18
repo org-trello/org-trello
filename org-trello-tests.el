@@ -7,6 +7,19 @@
 
 (load-file "org-trello.el")
 
+;; ########################## util test function
+
+(defun hash-equal (hash1 hash2) "Compare two hash tables to see whether they are equal."
+  (and (= (hash-table-count hash1) (hash-table-count hash2))
+       (catch 'flag (maphash (lambda (x y) (or (equal (gethash x hash2) y) (throw 'flag nil))) hash1)
+              (throw 'flag t))))
+
+(ert-deftest testing-hash-equal ()
+  (should (hash-equal (orgtrello-hash/make-properties `((:name . "some other name") (:keyword "TODO")))
+                      (orgtrello-hash/make-properties `((:name . "some other name") (:keyword "TODO")))))
+  (should (not (hash-equal (orgtrello-hash/make-properties `((:name . "some other name") (:keyword "TODO")))
+                           (orgtrello-hash/make-properties `((:name . "some other name") (:keyword "DONE")))))))
+
 ;; ########################## orgtrello-hash
 
 (expectations
@@ -181,30 +194,6 @@
   (expect "GET"                                    (gethash :method (orgtrello-api/get-items :checklist-id)))
   (expect "/checklists/:checklist-id/checkItems/" (gethash :uri    (orgtrello-api/get-items :checklist-id))))
 
-(expectations
-  (expect '(((pos . 16384)
-             (name . "yes")
-             (id . "51da82abf4deb8010b003850")
-             (state . "incomplete"))
-            ((pos . 32768)
-             (name . "empty")
-             (id . "51da82abc2b917772100240e")
-             (state . "incomplete"))
-            ((pos . 49152)
-             (name . "no")
-             (id . "51da82ac6054b8c35300ba98")
-             (state . "incomplete")))  (orgtrello/--do-retrieve-checklists-and-items '((checkItems . [((pos . 16384)
-                                                                                                       (name . "yes")
-                                                                                                       (id . "51da82abf4deb8010b003850")
-                                                                                                       (state . "incomplete"))
-                                                                                                      ((pos . 32768)
-                                                                                                       (name . "empty")
-                                                                                                       (id . "51da82abc2b917772100240e")
-                                                                                                       (state . "incomplete"))
-                                                                                                      ((pos . 49152)
-                                                                                                       (name . "no")
-                                                                                                       (id . "51da82ac6054b8c35300ba98")
-                                                                                                       (state . "incomplete"))])))))
 
 ;; ########################## orgtrello-query
 
@@ -615,10 +604,6 @@ DEADLINE: <some-date>
 " (orgtrello/--compute-checklist-to-org-checkbox "name" 3 "incomplete")))
 
 (expectations
-  (expect "DONE" (orgrello/--compute-item-status "complete"))
-  (expect "TODO" (orgrello/--compute-item-status "anything else will render incomplete")))
-
-(expectations
   (expect "*** DONE name
 " (orgtrello/--compute-item-to-orgtrello-entry "name" 3 "complete"))
   (expect "*** TODO name
@@ -707,9 +692,11 @@ DEADLINE: <some-date>
 (expectations
   (expect "DONE" (orgtrello/--compute-state-generic "complete" '("DONE" "TODO")))
   (expect "TODO" (orgtrello/--compute-state-generic "incomplete" '("DONE" "TODO")))
+  (expect "DONE" (orgtrello/--compute-state-generic "DONE" '("DONE" "TODO")))
 
   (expect "[X]" (orgtrello/--compute-state-generic "complete" '("[X]" "[-]")))
-  (expect "[-]" (orgtrello/--compute-state-generic "incomplete" '("[X]" "[-]"))))
+  (expect "[-]" (orgtrello/--compute-state-generic "incomplete" '("[X]" "[-]")))
+  (expect "[X]" (orgtrello/--compute-state-generic "DONE" '("[X]" "[-]"))))
 
 (expectations
   (expect "[X]" (orgtrello/--compute-state-checkbox "complete"))
@@ -1448,6 +1435,107 @@ DEADLINE: <some-date>
  (expect '(:a) (orgtrello-proxy/update-buffer-to-save! :a))
  (expect '(:a) (orgtrello-proxy/update-buffer-to-save! :a))
  (expect '(:b :a) (orgtrello-proxy/update-buffer-to-save! :b)))
+
+(expectations
+  (expect 'orgtrello/--put-card      (orgtrello/--dispatch-create-map (orgtrello-hash/make-hash-org *CARD-LEVEL* nil nil nil nil nil nil)))
+  (expect 'orgtrello/--put-entities (orgtrello/--dispatch-create-map (orgtrello-hash/make-hash-org *CHECKLIST-LEVEL* nil nil nil nil nil nil)))
+  (expect 'orgtrello/--put-entities (orgtrello/--dispatch-create-map (orgtrello-hash/make-hash-org *ITEM-LEVEL* nil nil nil nil nil nil))))
+
+(ert-deftest testing-orgtrello/--init-map-from ()
+  (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data ()) (orgtrello/--init-map-from nil))))
+
+(expectations
+  (expect :data (orgtrello/--init-map-from :data)))
+
+(ert-deftest testing-orgtrello/--merge-item ()
+  (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "TODO" :id nil :level 3))
+                      (orgtrello/--merge-item `((state . "anything") (name . "some name")) (orgtrello-hash/make-properties `((:name . "some other name") (:keyword "TODO"))))))
+  (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "TODO" :id nil :level 3))
+                      (orgtrello/--merge-item `((state . "anything") (name . "some name")) (orgtrello-hash/make-properties `((:name . "some other name") (:keyword "TODO"))))))
+  (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "DONE" :id nil :level 3))
+                      (orgtrello/--merge-item `((state . "complete") (name . "some name")) nil)))
+  (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "TODO" :id nil :level 3))
+                      (orgtrello/--merge-item `((state . "anything") (name . "some name")) (orgtrello-hash/make-properties `((:name . "some other name") (:keyword "TODO") (:id 1))))))
+  (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "TODO" :id 1 :level 3))
+                      (orgtrello/--merge-item `((state . "anything") (name . "some name") (id . 1)) (orgtrello-hash/make-properties `((:name . "some other name") (:keyword "TODO"))))))
+  (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "TODO" :id 1 :level 3))
+                      (orgtrello/--merge-item `((state . "anything") (name . "some name") (id . 1)) (orgtrello-hash/make-properties `((:name . "some other name") (:keyword "TODO") (:id 2))))))
+  (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "TODO" :id 1 :level 3))
+                      (orgtrello/--merge-item `((state . "anything") (name . "some name") (id . 1)) (orgtrello-hash/make-properties `((:name . "some other name") (:keyword "TODO"))))))
+  (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "DONE" :id 1 :level 3))
+                      (orgtrello/--merge-item `((state . "complete") (name . "some name") (id . 1)) nil))))
+
+(ert-deftest testing-orgtrello/--merge-checklist ()
+  (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :id nil :level 2))
+                      (orgtrello/--merge-checklist `((id . nil) (name . "some name")) (orgtrello-hash/make-properties `((:name . "some other name"))))))
+  (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :id nil :level 2))
+                      (orgtrello/--merge-checklist `((id . nil) (name . "some name")) (orgtrello-hash/make-properties `((:name . "some other name"))))))
+  (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :id nil :level 2))
+                      (orgtrello/--merge-checklist `((id . nil) (name . "some name")) nil)))
+  (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :id nil :level 2))
+                      (orgtrello/--merge-checklist `((id . nil) (name . "some name")) (orgtrello-hash/make-properties `((:name . "some other name") (:id 1))))))
+  (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :id 1 :level 2))
+                      (orgtrello/--merge-checklist `((id . 1) (name . "some name") (id . 1)) (orgtrello-hash/make-properties `((:name . "some other name"))))))
+  (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :id 1 :level 2))
+                      (orgtrello/--merge-checklist `((id . 1) (name . "some name") (id . 1)) (orgtrello-hash/make-properties `((:name . "some other name") (:id 2))))))
+  (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :id 1 :level 2))
+                      (orgtrello/--merge-checklist `((id . 1) (name . "some name") (id . 1)) (orgtrello-hash/make-properties `((:name . "some other name"))))))
+  (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :id 1 :level 2))
+                      (orgtrello/--merge-checklist `((id . 1) (name . "some name")) nil))))
+
+(ert-deftest testing-orgtrello/--merge-checklist ()
+  (let ((*HMAP-ID-NAME* (orgtrello-hash/make-properties `((1 . "TODO") (2 . "DONE") (3 . "IN-PROGRESS")))))
+    (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "TODO" :id nil :level 1))
+                        (orgtrello/--merge-card `((id . nil) (name . "some name") (idList . 1)) (orgtrello-hash/make-properties `((:name . "some other name"))))))
+    (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "DONE" :id nil :level 1))
+                        (orgtrello/--merge-card `((id . nil) (name . "some name") (idList . 2)) (orgtrello-hash/make-properties `((:name . "some other name"))))))
+    (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "TODO" :id nil :level 1))
+                        (orgtrello/--merge-card `((id . nil) (name . "some name") (idList . 1)) nil)))
+    (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "TODO" :id nil :level 1))
+                        (orgtrello/--merge-card `((id . nil) (name . "some name") (idList . 1)) (orgtrello-hash/make-properties `((:name . "some other name") (:id 1))))))
+    (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "TODO" :id 1 :level 1))
+                        (orgtrello/--merge-card `((id . 1) (name . "some name") (id . 1) (idList . 1)) (orgtrello-hash/make-properties `((:name . "some other name"))))))
+    (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "TODO" :id 1 :level 1))
+                        (orgtrello/--merge-card `((id . 1) (name . "some name") (id . 1) (idList . 1)) (orgtrello-hash/make-properties `((:name . "some other name") (:id 2))))))
+    (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "TODO" :id 1 :level 1))
+                        (orgtrello/--merge-card `((id . 1) (name . "some name") (id . 1) (idList . 1)) (orgtrello-hash/make-properties `((:name . "some other name"))))))
+    (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "TODO" :id 1 :level 1))
+                        (orgtrello/--merge-card `((id . 1) (name . "some name") (idList . 1)) nil)))))
+
+(expectations
+ (expect '(1 2 3 4) (orgtrello/--add-to-last-pos 4 '(1 2 3))))
+
+(expectations
+  (expect '(1 2 3 4) (orgtrello/--merge-list '(1 2 3) '(4 1 2)))
+  (expect '(4 1 2)   (orgtrello/--merge-list nil '(4 1 2)))
+  (expect '(4 1 2)   (orgtrello/--merge-list '(4 1 2) nil))
+  (expect nil        (orgtrello/--merge-list nil nil)))
+
+(expectations
+ (expect t (orgtrello/--hcard-p (orgtrello-hash/make-properties `((:level . ,*CARD-LEVEL*)))))
+ (expect nil (orgtrello/--hcard-p (orgtrello-hash/make-properties `((:level . ,*CHECKLIST-LEVEL*))))))
+
+(expectations
+ (expect t (orgtrello/--entity-with-level-p (orgtrello-hash/make-properties `((:level . ,*CARD-LEVEL*))) *CARD-LEVEL*))
+ (expect nil (orgtrello/--entity-with-level-p (orgtrello-hash/make-properties `((:level . ,*CHECKLIST-LEVEL*))) *CARD-LEVEL*)))
+
+(expectations
+ (expect t (orgtrello-data/--card-p (orgtrello-hash/make-properties `((:level . ,*CARD-LEVEL*)))))
+ (expect nil (orgtrello-data/--card-p (orgtrello-hash/make-properties `((:level . ,*CHECKLIST-LEVEL*)))))
+ (expect 1 (orgtrello-data/--card-p `((idList . 1))))
+ (expect nil (orgtrello-data/--card-p `((id . 1)))))
+
+(expectations
+ (expect t (orgtrello-data/--checklist-p (orgtrello-hash/make-properties `((:level . ,*CHECKLIST-LEVEL*)))))
+ (expect nil (orgtrello-data/--checklist-p (orgtrello-hash/make-properties `((:level . ,*ITEM-LEVEL*)))))
+ (expect 1 (orgtrello-data/--checklist-p `((idCard . 1))))
+ (expect nil (orgtrello-data/--checklist-p `((id . 1)))))
+
+(expectations
+ (expect t (orgtrello-data/--item-p (orgtrello-hash/make-properties `((:level . ,*ITEM-LEVEL*)))))
+ (expect nil (orgtrello-data/--item-p (orgtrello-hash/make-properties `((:level . ,*CARD-LEVEL*)))))
+ (expect 1 (orgtrello-data/--item-p `((state . 1))))
+ (expect nil (orgtrello-data/--item-p `((id . 1)))))
 
 (provide 'org-trello-tests)
 ;;; org-trello-tests ends here
