@@ -1972,10 +1972,13 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun orgtrello/--merge-item (trello-item org-item) "Merge trello and org item together."
   (let ((org-item-to-merge (orgtrello/--init-map-from org-item)))
-    (puthash :level   *ITEM-LEVEL*                                                                               org-item-to-merge)
-    (puthash :id      (orgtrello-query/--id trello-item)                                                         org-item-to-merge)
-    (puthash :name    (orgtrello-query/--name trello-item)                                                       org-item-to-merge)
-    (puthash :keyword (orgtrello/--compute-state-generic (orgtrello-query/--state trello-item) '("DONE" "TODO")) org-item-to-merge)
+    (puthash :level *ITEM-LEVEL*                         org-item-to-merge)
+    (puthash :id    (orgtrello-query/--id trello-item)   org-item-to-merge)
+    (puthash :name  (orgtrello-query/--name trello-item) org-item-to-merge)
+    (--> trello-item
+        (orgtrello-query/--state it)
+        (orgtrello/--compute-state-item it)
+        (puthash :keyword it org-item-to-merge))
     org-item-to-merge))
 
 (defun orgtrello/--merge-checklist (trello-checklist org-checklist) "Merge trello and org checklist together."
