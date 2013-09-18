@@ -1,3 +1,10 @@
+# 0.2.1
+
+- [X] Version
+- [X] Improve sync from trello - In case of new item/checklist, the entry will be added at the end of the buffer instead of its rightful place.
+- [X] Problem regarding some function on windows system - https://github.com/ardumont/org-trello/issues/62
+- [X] Release notes
+
 # 0.2.0
 
 - [X] Version
