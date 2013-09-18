@@ -1871,9 +1871,9 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun orgtrello/--compute-entity-to-org-entry (entity) "Given an entity, compute its org representation."
   (funcall
-   (cond ((orgtrello-data/--card-p entity)      'orgtrello/--compute-card-to-org-entry)        ;; card      (level 1)
-         ((orgtrello-data/--checklist-p entity) 'orgtrello/--compute-checklist-to-org-entry)   ;; checklist (level 2)
-         ((orgtrello-data/--item-p entity)      'orgtrello/--compute-item-to-org-entry))       ;; items     (level 3)
+   (cond ((orgtrello-data/--card-p entity)      'orgtrello/--compute-card-to-org-entry)
+         ((orgtrello-data/--checklist-p entity) 'orgtrello/--compute-checklist-to-org-entry)
+         ((orgtrello-data/--item-p entity)      'orgtrello/--compute-item-to-org-entry))
    entity
    *ORGTRELLO-NATURAL-ORG-CHECKLIST*))
 
