@@ -1110,8 +1110,12 @@ This is a list with the following elements:
   ;; undo boundary, to make a unit of undo
   (undo-boundary))
 
-(defun orgtrello-proxy/--check-network-ok (&optional args) "Ensure there is some network running (simply check that there is more than the lo interface)."
-  (if (< 1 (length (network-interface-list))) :ok "No network!"))
+(defun orgtrello-proxy/--windows-system-considered-always-with-network () "function 'network-interface-list is not defined on windows system, so we avoid checking this and always return ok." :ok)
+
+(defun orgtrello-proxy/--check-network-ok () "Ensure network exists!" (if (< 1 (length (network-interface-list))) :ok "No network!"))
+
+(defun orgtrello-proxy/--check-network-connection (&optional args) "Ensure there is some network running (simply check that there is more than the lo interface)."
+  (funcall (if (string-equal system-type "window-nt") 'orgtrello-proxy/--windows-system-considered-always-with-network 'orgtrello-proxy/--check-network-ok)))
 
 (defun orgtrello-proxy/--check-no-running-timer (&optional args) "Ensure there is not another running timer already."
   (if (file-exists-p (orgtrello-proxy/--compute-lock-filename)) "Timer already running!" :ok))
@@ -1119,7 +1123,7 @@ This is a list with the following elements:
 (defun orgtrello-proxy/--controls-and-scan-if-ok () "Execution of the timer which consumes the entities and execute the sync to trello."
   (org-action/--msg-controls-or-actions-then-do
    "Scanning entities to sync"
-   '(orgtrello-proxy/--check-network-ok orgtrello-proxy/--check-no-running-timer)
+   '(orgtrello-proxy/--check-network-connection orgtrello-proxy/--check-no-running-timer)
    'orgtrello-proxy/--consumer-lock-and-scan-entity-files-hierarchically-and-do
    nil ;; cannot save the buffer
    nil ;; do not need to reload the org-trello setup
