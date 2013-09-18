@@ -1881,8 +1881,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   (let ((checklist-id (orgtrello-query/--id checklist)))
     (cl-reduce
      (lambda (acc-entities-hash item)
-       (let ((entities  (first acc-entities-hash))
-             (adjacency (second acc-entities-hash)))
+       (cl-destructuring-bind (entities adjacency) acc-entities-hash
          (list (orgtrello/--add-entity-to-entities item entities) (orgtrello/--add-entity-to-adjacency item checklist adjacency))))
      (orgtrello-query/--check-items checklist)
      :initial-value (list entities adjacency))))
@@ -1896,8 +1895,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
                     orgtrello-api/get-checklist
                     (orgtrello-query/http-trello *do-sync-query*)) acc-list))
         it :initial-value nil)                                                                         ;; retrieve the trello checklist
-       (sort it (lambda (a b) (when (<= (assoc-default 'pos a) (assoc-default 'pos b)) 1)))            ;; sort them by pos to get back to the right order (reversed)
-       (reverse it)))                                                                                  ;; reversing order to have the right order
+       (sort it (lambda (a b) (when (<= (assoc-default 'pos a) (assoc-default 'pos b)) 1)))))          ;; sort them by pos to get back to the right order (reversed)
 
 (defun orgtrello/--compute-checklist-entities-from-card (card entities adjacency) "Given a card, retrieve its checklists (with their items) in the right order."
   (let ((card-id (orgtrello-query/--id card)))
@@ -1905,11 +1903,8 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
          (orgtrello/--retrieve-checklist-from-card it)
          (cl-reduce
           (lambda (acc-entities-hash checklist)
-            (let ((entities  (first acc-entities-hash))
-                  (adjacency (second acc-entities-hash)))
-              (orgtrello/--compute-items-from-checklist checklist
-                                                        (orgtrello/--add-entity-to-entities checklist entities)
-                                                        (orgtrello/--add-entity-to-adjacency card checklist adjacency))))
+            (cl-destructuring-bind (entities adjacency) acc-entities-hash
+              (orgtrello/--compute-items-from-checklist checklist (orgtrello/--add-entity-to-entities checklist entities) (orgtrello/--add-entity-to-adjacency checklist card adjacency))))
           it :initial-value (list entities adjacency)))))                               ;; at last complete checklist with item
 
 ;; one map for each complete entity: {entity-id entity} (entity in {card, checklist, item}
@@ -1919,11 +1914,9 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 (defun orgtrello/--compute-full-entities-from-trello (cards) "Given a list of cards, compute the full cards data from the trello board. The order from the trello board is kept. Hash result is of the form: {entity-id '(entity-card {checklist-id (checklist (item))})}"
   (cl-reduce
    (lambda (acc-entities-hash entity-card)
-     (let ((entities  (first acc-entities-hash))
-           (adjacency (second acc-entities-hash)))
-       (orgtrello-log/msg *OT/INFO* "Computing card '%s' data..." (orgtrello-query/--name entity-card))
-       (orgtrello/--add-entity-to-entities entity-card entities)                           ;; adding card to the entities
-       (orgtrello/--compute-checklist-entities-from-card entity-card entities adjacency))) ;; compute and return the list of entities and adjacency updated
+     (orgtrello-log/msg *OT/INFO* "Computing card '%s' data..." (orgtrello-query/--name entity-card))
+     (cl-destructuring-bind (entities adjacency) acc-entities-hash
+       (orgtrello/--compute-checklist-entities-from-card entity-card (orgtrello/--add-entity-to-entities entity-card entities) adjacency)))
    cards
    :initial-value (list (make-hash-table :test 'equal) (make-hash-table :test 'equal))))
 

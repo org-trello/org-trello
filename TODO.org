@@ -686,7 +686,13 @@ CLOSED: [2013-09-11 mer. 21:45]
 - [X] Release notes
 * IN-PROGRESS 0.2.1 [9%]
 - [X] Version
-- [ ] Improve sync from trello - In case of new item/checklist, the entry will be added at the end of the buffer instead of its rightful place.
+- [X] Improve sync from trello - In case of new item/checklist, the entry will be added at the end of the buffer instead of its rightful place.
+  - [X] Change the trello representation
+  - [X] Compute the org buffer representation
+  - [X] Merge the 2 representations
+  - [X] Compute from the new representation into org buffer
+- [ ] Problem regarding some function on windows system - https://github.com/ardumont/org-trello/issues/62
+* 0.2.2 [%]
 - [ ] Another Disposition about org's buffer - https://github.com/ardumont/org-trello/issues/33
 - [ ] Improve sync request policy - https://github.com/ardumont/org-trello/issues/58
 - [ ] Test multiple emacs version - https://github.com/ardumont/org-trello/issues/52
