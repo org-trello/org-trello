@@ -1983,7 +1983,6 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
     (puthash :level *CHECKLIST-LEVEL*                        org-checklist-to-merge)
     (puthash :name (orgtrello-query/--name trello-checklist) org-checklist-to-merge)
     (puthash :id   (orgtrello-query/--id trello-checklist)   org-checklist-to-merge)
-    (puthash :keyword "TODO"                                 org-checklist-to-merge)
     org-checklist-to-merge))
 
 (defun orgtrello/--merge-card (trello-card org-card) "Merge trello and org card together."
