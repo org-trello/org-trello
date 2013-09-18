@@ -684,17 +684,26 @@ CLOSED: [2013-09-11 mer. 21:45]
 - [X] Reference videos to README
 - [X] Improve sync to trello
 - [X] Release notes
-* TODO 0.2.1 [0%]
-- [ ] Improve sync from trello - In case of new item/checklist, the entry will be added at the end of the buffer instead of its rightful place.
-- [ ] Release notes- [ ] Improve sync request policy - https://github.com/ardumont/org-trello/issues/58
+* DONE 0.2.1 [100%]
+CLOSED: [2013-09-18 mer. 21:26]
+- [X] Version
+- [X] Improve sync from trello - In case of new item/checklist, the entry will be added at the end of the buffer instead of its rightful place.
+  - [X] Change the trello representation
+  - [X] Compute the org buffer representation
+  - [X] Merge the 2 representations
+  - [X] Compute from the new representation into org buffer
+- [X] Problem regarding some function on windows system - https://github.com/ardumont/org-trello/issues/62
+- [X] Release notes
+* TODO 0.2.2 [%]
+- [ ] Another Disposition about org's buffer - https://github.com/ardumont/org-trello/issues/33
+- [ ] Improve sync request policy - https://github.com/ardumont/org-trello/issues/58
 - [ ] Test multiple emacs version - https://github.com/ardumont/org-trello/issues/52
 - [ ] One command to sync them all - https://github.com/ardumont/org-trello/issues/59
 - [ ] Filter only the data we use with the trello api
 - [ ] Now that elnode is here, this may be simpler to use a fake trello server (use clojure :D)
 - [ ] Update the literate org-trello.org (completely desynchronized since 0.1.2) -> coding it to avoid doing manual split (I see the irony)
 - [ ] POC: use a temporary buffer to sync with trello, when done, merge with the user's buffer.
-* Interesting propositions
-- https://github.com/ardumont/org-trello/issues/33 - Another Disposition about org's buffer
+- [ ] Release notes
 * Notes
 (org-show-siblings)
 (org-first-headline-recenter)
