@@ -1979,19 +1979,23 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun orgtrello/--merge-item (trello-item org-item) "Merge trello and org item together."
   (let ((org-item-to-merge (orgtrello/--init-map-from org-item)))
-    (puthash :id      (orgtrello-query/--id trello-item) org-item-to-merge)
-    (puthash :name    (orgtrello-query/--name trello-item) org-item-to-merge)
+    (puthash :level   *ITEM-LEVEL*                                                                               org-item-to-merge)
+    (puthash :id      (orgtrello-query/--id trello-item)                                                         org-item-to-merge)
+    (puthash :name    (orgtrello-query/--name trello-item)                                                       org-item-to-merge)
     (puthash :keyword (orgtrello/--compute-state-generic (orgtrello-query/--state trello-item) '("DONE" "TODO")) org-item-to-merge)
     org-item-to-merge))
 
 (defun orgtrello/--merge-checklist (trello-checklist org-checklist) "Merge trello and org checklist together."
   (let ((org-checklist-to-merge (orgtrello/--init-map-from org-checklist)))
+    (puthash :level *CHECKLIST-LEVEL*                        org-checklist-to-merge)
     (puthash :name (orgtrello-query/--name trello-checklist) org-checklist-to-merge)
     (puthash :id   (orgtrello-query/--id trello-checklist)   org-checklist-to-merge)
+    (puthash :keyword "TODO"                                 org-checklist-to-merge)
     org-checklist-to-merge))
 
 (defun orgtrello/--merge-card (trello-card org-card) "Merge trello and org card together."
   (let ((org-card-to-merge (orgtrello/--init-map-from org-card)))
+    (puthash :level   *CARD-LEVEL*                                                               org-card-to-merge)
     (puthash :id      (orgtrello-query/--id trello-card)                                         org-card-to-merge)
     (puthash :name    (orgtrello-query/--name trello-card)                                       org-card-to-merge)
     (puthash :keyword (-> trello-card orgtrello-query/--list-id orgtrello/--compute-card-status) org-card-to-merge)
@@ -2061,7 +2065,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   (orgtrello/--write-entity! entity-id entity)
   (--map (orgtrello/--write-checklist! it entities adjacency) (gethash entity-id adjacency)))
 
-(defun orgtrello/--sync-buffer-with-trello-data (data buffer-name) "Given all the entities, update the current buffer with those." (debug)
+(defun orgtrello/--sync-buffer-with-trello-data (data buffer-name) "Given all the entities, update the current buffer with those."
   (let ((entities (first data))
         (adjacency (second data)))
     (with-current-buffer buffer-name
