@@ -1,3 +1,8 @@
+# 0.2.1.1
+
+- [X] Version
+- [X] Fix error in packaging manipulation
+
 # 0.2.1
 
 - [X] Version
