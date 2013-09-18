@@ -604,10 +604,6 @@ DEADLINE: <some-date>
 " (orgtrello/--compute-checklist-to-org-checkbox "name" 3 "incomplete")))
 
 (expectations
-  (expect "DONE" (orgrello/--compute-item-status "complete"))
-  (expect "TODO" (orgrello/--compute-item-status "anything else will render incomplete")))
-
-(expectations
   (expect "*** DONE name
 " (orgtrello/--compute-item-to-orgtrello-entry "name" 3 "complete"))
   (expect "*** TODO name
@@ -696,9 +692,11 @@ DEADLINE: <some-date>
 (expectations
   (expect "DONE" (orgtrello/--compute-state-generic "complete" '("DONE" "TODO")))
   (expect "TODO" (orgtrello/--compute-state-generic "incomplete" '("DONE" "TODO")))
+  (expect "DONE" (orgtrello/--compute-state-generic "DONE" '("DONE" "TODO")))
 
   (expect "[X]" (orgtrello/--compute-state-generic "complete" '("[X]" "[-]")))
-  (expect "[-]" (orgtrello/--compute-state-generic "incomplete" '("[X]" "[-]"))))
+  (expect "[-]" (orgtrello/--compute-state-generic "incomplete" '("[X]" "[-]")))
+  (expect "[X]" (orgtrello/--compute-state-generic "DONE" '("[X]" "[-]"))))
 
 (expectations
   (expect "[X]" (orgtrello/--compute-state-checkbox "complete"))

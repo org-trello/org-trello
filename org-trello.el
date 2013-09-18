@@ -1816,13 +1816,14 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   (orgtrello/--symbol "*"  n))
 
 (defun orgtrello/--compute-state-generic (state list-state) "Computing generic."
-  (if (string= "complete" state) (first list-state) (second list-state)))
+  (if (or (string= "complete" state)
+          (string= *DONE* state)) (first list-state) (second list-state)))
 
 (defun orgtrello/--compute-state-checkbox (state) "Compute the status of the checkbox"
   (orgtrello/--compute-state-generic state '("[X]" "[-]")))
 
 (defun orgtrello/--compute-state-item (state) "Compute the status of the checkbox"
-  (orgtrello/--compute-state-generic state '("DONE" "TODO")))
+  (orgtrello/--compute-state-generic state `(,*DONE* ,*TODO*)))
 
 (defun orgtrello/--compute-level-into-spaces (level) "level 2 is 0 space, otherwise 2 spaces."
   (if (equal level *CHECKLIST-LEVEL*) 0 2))
@@ -1848,9 +1849,6 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
            (orgtrello-data/--name checklist)
            *CHECKLIST-LEVEL*
            "incomplete"))
-
-(defun orgrello/--compute-item-status (state) "Compute the status of the item given its status."
-  (if (string= "complete" state) *DONE* *TODO*))
 
 (defun orgtrello/--compute-item-to-org-entry (item &optional orgcheckbox-p) "Given a checklist item, compute its org-mode entry equivalence."
   (funcall (if orgcheckbox-p
