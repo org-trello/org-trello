@@ -4,7 +4,7 @@
 
 ;; Author: Antoine R. Dumont <eniotna.t AT gmail.com>
 ;; Maintainer: Antoine R. Dumont <eniotna.t AT gmail.com>
-;; Version: 0.2.1.1
+;; Version: 0.2.1.2
 ;; Package-Requires: ((org "8.0.7") (dash "1.5.0") (request "0.2.0") (cl-lib "0.3.0") (json "1.2") (elnode "0.9.9.7.6") (esxml "0.3.0") (s "1.7.0"))
 ;; Keywords: org-mode trello sync org-trello
 ;; URL: https://github.com/ardumont/org-trello
@@ -67,7 +67,7 @@
 
 ;; #################### static setup
 
-(defvar *ORGTRELLO-VERSION*           "0.2.1.1"                                         "Version")
+(defvar *ORGTRELLO-VERSION*           "0.2.1.2"                                         "Version")
 (defvar *consumer-key*                nil                                               "Id representing the user.")
 (defvar *access-token*                nil                                               "Read/write access token to use trello on behalf of the user.")
 (defvar *ORGTRELLO-MARKER*            "orgtrello-marker"                                "A marker used inside the org buffer to synchronize entries.")
@@ -1115,7 +1115,7 @@ This is a list with the following elements:
 (defun orgtrello-proxy/--check-network-ok () "Ensure network exists!" (if (< 1 (length (network-interface-list))) :ok "No network!"))
 
 (defun orgtrello-proxy/--check-network-connection (&optional args) "Ensure there is some network running (simply check that there is more than the lo interface)."
-  (funcall (if (string-equal system-type "window-nt") 'orgtrello-proxy/--windows-system-considered-always-with-network 'orgtrello-proxy/--check-network-ok)))
+  (funcall (if (string-equal system-type "windows-nt") 'orgtrello-proxy/--windows-system-considered-always-with-network 'orgtrello-proxy/--check-network-ok)))
 
 (defun orgtrello-proxy/--check-no-running-timer (&optional args) "Ensure there is not another running timer already."
   (if (file-exists-p (orgtrello-proxy/--compute-lock-filename)) "Timer already running!" :ok))
