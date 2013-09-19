@@ -694,10 +694,15 @@ CLOSED: [2013-09-18 mer. 21:26]
   - [X] Compute from the new representation into org buffer
 - [X] Problem regarding some function on windows system - https://github.com/ardumont/org-trello/issues/62
 - [X] Release notes
-* DONE 0.2.2.1 [%]
+* DONE 0.2.1.1 [%]
 CLOSED: [2013-09-18 mer. 21:37]
 - [X] Version
-
+- [X] Release notes
+* DONE 0.2.1.2 [100%]
+CLOSED: [2013-09-19 jeu. 19:05]
+- [X] Version
+- [X] Release notes
+- [X] Fix typography in naming windows-nt system - https://github.com/ardumont/org-trello/issues/62#issuecomment-24735681
 * TODO 0.2.2 [%]
 - [ ] Another Disposition about org's buffer - https://github.com/ardumont/org-trello/issues/33
 - [ ] Improve sync request policy - https://github.com/ardumont/org-trello/issues/58
