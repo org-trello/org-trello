@@ -493,7 +493,7 @@ This is a list with the following elements:
 (defun orgtrello-data/retrieve-data  (symbol entity-data) "Own generic accessor"                                    (assoc-default symbol entity-data))
 (defun orgtrello-data/buffername     (entity-data) "Extract the buffername of the entity from the entity-data"      (orgtrello-data/retrieve-data 'buffername entity-data))
 (defun orgtrello-data/position       (entity-data) "Extract the position of the entity from the entity-data"        (orgtrello-data/retrieve-data 'position entity-data))
-(defun orgtrello-query/--id             (entity-data) "Extract the id of the entity from the entity"                   (orgtrello-data/retrieve-data 'id entity-data))
+(defun orgtrello-data/id             (entity-data) "Extract the id of the entity from the entity"                   (orgtrello-data/retrieve-data 'id entity-data))
 (defun orgtrello-query/--name           (entity-data) "Extract the name of the entity from the entity"                 (orgtrello-data/retrieve-data 'name entity-data))
 (defun orgtrello-query/--list-id        (entity-data) "Extract the list identitier of the entity from the entity"      (orgtrello-data/retrieve-data 'idList entity-data))
 (defun orgtrello-query/--checklist-ids  (entity-data) "Extract the checklist identifier of the entity from the entity" (orgtrello-data/retrieve-data 'idChecklists entity-data))
@@ -897,11 +897,11 @@ This is a list with the following elements:
   (lexical-let ((orgtrello-proxy/--entry-position    (orgtrello-data/position entity-to-sync))
                 (orgtrello-proxy/--entry-buffer-name (orgtrello-data/buffername entity-to-sync))
                 (orgtrello-proxy/--entry-file        file-to-cleanup)
-                (orgtrello-proxy/--marker-id         (orgtrello-query/--id entity-to-sync))
+                (orgtrello-proxy/--marker-id         (orgtrello-data/id entity-to-sync))
                 (orgtrello-proxy/--entity-name       (orgtrello-query/--name entity-to-sync)))
     (function* (lambda (&key data &allow-other-keys)
                  (orgtrello-action/safe-wrap
-                  (let* ((orgtrello-proxy/--entry-new-id (orgtrello-query/--id data)))
+                  (let* ((orgtrello-proxy/--entry-new-id (orgtrello-data/id data)))
                     (set-buffer orgtrello-proxy/--entry-buffer-name) ;; switch to the right buffer
                     ;; will update via tag the trello id of the new persisted data (if needed)
                     (save-excursion
@@ -959,7 +959,7 @@ This is a list with the following elements:
   (let* ((op/--position            (orgtrello-data/position entity-data))                       ;; position is mandatory
          (op/--buffer-name         (orgtrello-data/buffername entity-data))                     ;; buffer-name too
          (op/--entry-file-archived (orgtrello-proxy/--archived-scanning-file file-to-archive))
-         (op/--marker              (orgtrello-query/--id entity-data)))                            ;; retrieve the id (which serves as a marker too)
+         (op/--marker              (orgtrello-data/id entity-data)))                            ;; retrieve the id (which serves as a marker too)
     (orgtrello-log/msg *OT/TRACE* "Proxy-consumer - Searching entity metadata from buffer '%s' at point '%s' to sync..." op/--buffer-name op/--position)
     (set-buffer op/--buffer-name)                                                                  ;; switch to the right buffer
     (orgtrello-proxy/--safe-wrap-or-throw-error                                                    ;; will update via tag the trello id of the new persisted data (if needed)
@@ -979,7 +979,7 @@ This is a list with the following elements:
                 (op/--entry-buffer-name (orgtrello-data/buffername entity-to-del))
                 (op/--entry-level       (orgtrello-query/--level entity-to-del))
                 (op/--entry-file        file-to-cleanup)
-                (op/--marker            (orgtrello-query/--id entity-to-del)))
+                (op/--marker            (orgtrello-data/id entity-to-del)))
     (lambda (&rest response)
       (orgtrello-action/safe-wrap
        (progn
@@ -1360,7 +1360,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
            (value . ,value))))
 
 (defun orgtrello-admin/--delete-action (entity) "Generate the button to delete some action."
-  (-if-let (entity-id (orgtrello-query/--id entity))
+  (-if-let (entity-id (orgtrello-data/id entity))
            (orgtrello-admin/--input-button-html (format "deleteEntities('/proxy/admin/entities/delete/%s');" entity-id) "x")
            ""))
 
@@ -1445,7 +1445,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 (defun orgtrello-proxy/--delete-entity-with-id (id) "Remove the entity/file which match the id id."
   (-if-let (entity-to-delete (->> *ORGTRELLO-LEVELS*
                                   orgtrello-proxy/--list-entities
-                                  (--filter (string= id (orgtrello-query/--id it)))
+                                  (--filter (string= id (orgtrello-data/id it)))
                                   first))
            (-> entity-to-delete
                orgtrello-proxy/--compute-filename-from-entity
@@ -1879,7 +1879,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
    *ORGTRELLO-NATURAL-ORG-CHECKLIST*))
 
 (defun orgtrello/--compute-items-from-checklist (checklist entities adjacency) "Given a checklist, retrieve its items and update the entities hash and the adjacency list."
-  (let ((checklist-id (orgtrello-query/--id checklist)))
+  (let ((checklist-id (orgtrello-data/id checklist)))
     (cl-reduce
      (lambda (acc-entities-hash item)
        (cl-destructuring-bind (entities adjacency) acc-entities-hash
@@ -1899,7 +1899,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
        (sort it (lambda (a b) (when (<= (assoc-default 'pos a) (assoc-default 'pos b)) 1)))))          ;; sort them by pos to get back to the right order (reversed)
 
 (defun orgtrello/--compute-checklist-entities-from-card (card entities adjacency) "Given a card, retrieve its checklists (with their items) in the right order."
-  (let ((card-id (orgtrello-query/--id card)))
+  (let ((card-id (orgtrello-data/id card)))
     (--> card
          (orgtrello/--retrieve-checklist-from-card it)
          (cl-reduce
@@ -1974,7 +1974,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 (defun orgtrello/--merge-item (trello-item org-item) "Merge trello and org item together."
   (let ((org-item-to-merge (orgtrello/--init-map-from org-item)))
     (puthash :level *ITEM-LEVEL*                         org-item-to-merge)
-    (puthash :id    (orgtrello-query/--id trello-item)   org-item-to-merge)
+    (puthash :id    (orgtrello-data/id trello-item)   org-item-to-merge)
     (puthash :name  (orgtrello-query/--name trello-item) org-item-to-merge)
     (--> trello-item
         (orgtrello-query/--state it)
@@ -1986,13 +1986,13 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   (let ((org-checklist-to-merge (orgtrello/--init-map-from org-checklist)))
     (puthash :level *CHECKLIST-LEVEL*                        org-checklist-to-merge)
     (puthash :name (orgtrello-query/--name trello-checklist) org-checklist-to-merge)
-    (puthash :id   (orgtrello-query/--id trello-checklist)   org-checklist-to-merge)
+    (puthash :id   (orgtrello-data/id trello-checklist)   org-checklist-to-merge)
     org-checklist-to-merge))
 
 (defun orgtrello/--merge-card (trello-card org-card) "Merge trello and org card together."
   (let ((org-card-to-merge (orgtrello/--init-map-from org-card)))
     (puthash :level   *CARD-LEVEL*                                                               org-card-to-merge)
-    (puthash :id      (orgtrello-query/--id trello-card)                                         org-card-to-merge)
+    (puthash :id      (orgtrello-data/id trello-card)                                         org-card-to-merge)
     (puthash :name    (orgtrello-query/--name trello-card)                                       org-card-to-merge)
     (puthash :keyword (-> trello-card orgtrello-query/--list-id orgtrello/--compute-card-status) org-card-to-merge)
     org-card-to-merge))
@@ -2153,12 +2153,12 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun orgtrello/--id-name (entities) "Given a list of entities, return a map of (id, name)."
   (let ((id-name (make-hash-table :test 'equal)))
-    (mapc (lambda (it) (puthash (orgtrello-query/--id it) (orgtrello-query/--name it) id-name)) entities)
+    (mapc (lambda (it) (puthash (orgtrello-data/id it) (orgtrello-query/--name it) id-name)) entities)
     id-name))
 
 (defun orgtrello/--name-id (entities) "Given a list of entities, return a map of (id, name)."
   (let ((name-id (make-hash-table :test 'equal)))
-    (mapc (lambda (it) (puthash (orgtrello-query/--name it) (orgtrello-query/--id it) name-id)) entities)
+    (mapc (lambda (it) (puthash (orgtrello-query/--name it) (orgtrello-data/id it) name-id)) entities)
     name-id))
 
 (defun orgtrello/--list-boards () "Return the map of the existing boards associated to the current account. (Synchronous request)"
@@ -2263,7 +2263,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 (defun orgtrello/--create-board (board-name &optional board-description) "Create a board with name and eventually a description."
   (orgtrello-log/msg *OT/INFO* "Creating board '%s'" board-name)
   (let ((board-data (orgtrello-query/http-trello (orgtrello-api/add-board board-name board-description) *do-sync-query*)))
-    (list (orgtrello-query/--id board-data) (orgtrello-query/--name board-data))))
+    (list (orgtrello-data/id board-data) (orgtrello-query/--name board-data))))
 
 (defun orgtrello/--close-lists (list-ids) "Given a list of ids, close those lists."
   (mapc (lambda (list-id)
@@ -2276,7 +2276,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
    (lambda (acc-hash-name-id list-name)
      (progn
        (orgtrello-log/msg *OT/INFO* "Board id %s - Creating list '%s'" board-id list-name)
-       (puthash list-name (orgtrello-query/--id (orgtrello-query/http-trello (orgtrello-api/add-list list-name board-id) *do-sync-query*)) acc-hash-name-id)
+       (puthash list-name (orgtrello-data/id (orgtrello-query/http-trello (orgtrello-api/add-list list-name board-id) *do-sync-query*)) acc-hash-name-id)
        acc-hash-name-id))
    list-keywords
    :initial-value (make-hash-table :test 'equal)))
@@ -2288,7 +2288,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   (while (not orgtrello/--board-name) (setq orgtrello/--board-name (read-string "Please, input the desired board name: ")))
   (setq orgtrello/--board-description (read-string "Please, input the board description (empty for none): "))
   (cl-destructuring-bind (orgtrello/--board-id orgtrello/--board-name) (orgtrello/--create-board orgtrello/--board-name orgtrello/--board-description)
-                         (let* ((orgtrello/--board-list-ids       (--map (orgtrello-query/--id it) (orgtrello/--list-board-lists orgtrello/--board-id)))  ;; first retrieve the existing lists (created by default on trello)
+                         (let* ((orgtrello/--board-list-ids       (--map (orgtrello-data/id it) (orgtrello/--list-board-lists orgtrello/--board-id)))  ;; first retrieve the existing lists (created by default on trello)
                                 (orgtrello/--lists-to-close       (orgtrello/--close-lists orgtrello/--board-list-ids))                                   ;; close those lists (they may surely not match the name we want)
                                 (orgtrello/--board-lists-hname-id (orgtrello/--create-lists-according-to-keywords orgtrello/--board-id *LIST-NAMES*)))    ;; create the list, this returns the ids list
                            ;; remove eventual already present entry

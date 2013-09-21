@@ -209,8 +209,8 @@
   (expect :some-params (orgtrello-data/params (orgtrello-hash/make-properties `((:method . :some-get) (:uri . :some-uri) (:sync . :some-sync) (:params . :some-params))))))
 
 (expectations
-  (expect "some-id" (orgtrello-query/--id '((id . "some-id"))))
-  (expect nil       (orgtrello-query/--id '((noid . "some-id")))))
+  (expect "some-id" (orgtrello-data/id '((id . "some-id"))))
+  (expect nil       (orgtrello-data/id '((noid . "some-id")))))
 
 (expectations
   (expect :some-name (orgtrello-query/--name '((name . :some-name))))
@@ -640,8 +640,8 @@ DEADLINE: <some-date>
   (expect nil (orgtrello-data/buffername               `((inexistant . "test"))))
   (expect "test" (orgtrello-data/position              `((position . "test"))))
   (expect nil (orgtrello-data/position                 `((inexistant . "test"))))
-  (expect "test" (orgtrello-query/--id                    `((id . "test"))))
-  (expect nil (orgtrello-query/--id                       `((inexistant . "test"))))
+  (expect "test" (orgtrello-data/id                    `((id . "test"))))
+  (expect nil (orgtrello-data/id                       `((inexistant . "test"))))
   (expect "test" (orgtrello-query/--name                  `((name . "test"))))
   (expect nil (orgtrello-query/--name                     `((inexistant . "test"))))
   (expect "test" (orgtrello-query/--list-id               `((idList . "test"))))
