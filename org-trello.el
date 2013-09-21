@@ -497,7 +497,7 @@ This is a list with the following elements:
 (defun orgtrello-data/name           (entity-data) "Extract the name of the entity from the entity"                 (orgtrello-data/retrieve-data 'name entity-data))
 (defun orgtrello-data/list-id        (entity-data) "Extract the list identitier of the entity from the entity"      (orgtrello-data/retrieve-data 'idList entity-data))
 (defun orgtrello-data/checklist-ids  (entity-data) "Extract the checklist identifier of the entity from the entity" (orgtrello-data/retrieve-data 'idChecklists entity-data))
-(defun orgtrello-query/--check-items    (entity-data) "Extract the checklist identifier of the entity from the entity" (orgtrello-data/retrieve-data 'checkItems entity-data))
+(defun orgtrello-data/check-items    (entity-data) "Extract the checklist identifier of the entity from the entity" (orgtrello-data/retrieve-data 'checkItems entity-data))
 (defun orgtrello-query/--card-id        (entity-data) "Extract the card identifier of the entity from the entity"      (orgtrello-data/retrieve-data 'idCard entity-data))
 (defun orgtrello-query/--due            (entity-data) "Extract the due date of the entity from the query response"     (orgtrello-data/retrieve-data 'due entity-data))
 (defun orgtrello-query/--state          (entity-data) "Extract the state of the entity"                                (orgtrello-data/retrieve-data 'state entity-data))
@@ -1884,7 +1884,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
      (lambda (acc-entities-hash item)
        (cl-destructuring-bind (entities adjacency) acc-entities-hash
          (list (orgtrello/--add-entity-to-entities item entities) (orgtrello/--add-entity-to-adjacency item checklist adjacency))))
-     (orgtrello-query/--check-items checklist)
+     (orgtrello-data/check-items checklist)
      :initial-value (list entities adjacency))))
 
 (defun orgtrello/--retrieve-checklist-from-card (card) "Given a card, retrieve the checklist of the card (using trello). This gives a list of checklist in the trello order."
