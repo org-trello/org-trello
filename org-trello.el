@@ -489,7 +489,7 @@ This is a list with the following elements:
 (defun orgtrello-data/gethash-data (key query-map) "Retrieve the data from some query-map" (gethash key query-map))
 (defun orgtrello-data/method (query-map) "Retrieve the http method"     (orgtrello-data/gethash-data :method query-map))
 (defun orgtrello-data/uri    (query-map) "Retrieve the http uri"       (orgtrello-data/gethash-data :uri query-map))
-(defun orgtrello-query/--sync   (query-map) "Retrieve the http sync flag" (orgtrello-data/gethash-data :sync query-map))
+(defun orgtrello-data/sync   (query-map) "Retrieve the http sync flag" (orgtrello-data/gethash-data :sync query-map))
 (defun orgtrello-query/--params (query-map) "Retrieve the http params"    (orgtrello-data/gethash-data :params query-map))
 
 (defun orgtrello-query/--retrieve-data  (symbol entity-data) "Own generic accessor"                                    (assoc-default symbol entity-data))
@@ -505,7 +505,7 @@ This is a list with the following elements:
 (defun orgtrello-query/--state          (entity-data) "Extract the state of the entity"                                (orgtrello-query/--retrieve-data 'state entity-data))
 (defun orgtrello-query/--close-property (entity-data) "Extract the closed property of the entity"                      (orgtrello-query/--retrieve-data 'closed entity-data))
 (defun orgtrello-query/--callback       (entity-data) "Extract the callback property of the entity"                    (orgtrello-query/--retrieve-data 'callback entity-data))
-(defun orgtrello-query/--sync-          (entity-data) "Extract the sync property of the entity"                        (orgtrello-query/--retrieve-data 'sync entity-data))
+(defun orgtrello-data/sync-          (entity-data) "Extract the sync property of the entity"                        (orgtrello-query/--retrieve-data 'sync entity-data))
 (defun orgtrello-query/--level          (entity-data) "Extract the callback property of the entity"                    (orgtrello-query/--retrieve-data 'level entity-data))
 (defun orgtrello-data/method-        (entity-data) "Extract the method property of the entity"                      (orgtrello-query/--retrieve-data 'method entity-data))
 (defun orgtrello-data/uri-           (entity-data) "Extract the uri property of the entity"                         (orgtrello-query/--retrieve-data 'uri entity-data))
@@ -620,7 +620,7 @@ This is a list with the following elements:
 
 (defun orgtrello-query/--get (server query-map &optional success-callback error-callback authentication-p) "GET"
   (request (->> query-map orgtrello-data/uri (orgtrello-query/--compute-url server))
-           :sync    (orgtrello-query/--sync   query-map)
+           :sync    (orgtrello-data/sync   query-map)
            :type    (orgtrello-data/method query-map)
            :params  (when authentication-p (orgtrello-query/--authentication-params))
            :parser  'json-read
@@ -629,7 +629,7 @@ This is a list with the following elements:
 
 (defun orgtrello-query/--post-or-put (server query-map &optional success-callback error-callback authentication-p) "POST or PUT"
   (request (->> query-map orgtrello-data/uri (orgtrello-query/--compute-url server))
-           :sync    (orgtrello-query/--sync   query-map)
+           :sync    (orgtrello-data/sync   query-map)
            :type    (orgtrello-data/method query-map)
            :params  (when authentication-p (orgtrello-query/--authentication-params))
            :headers '(("Content-type" . "application/json"))
@@ -640,7 +640,7 @@ This is a list with the following elements:
 
 (defun orgtrello-query/--delete (server query-map &optional success-callback error-callback authentication-p) "DELETE"
   (request (->> query-map orgtrello-data/uri (orgtrello-query/--compute-url server))
-           :sync    (orgtrello-query/--sync   query-map)
+           :sync    (orgtrello-data/sync   query-map)
            :type    (orgtrello-data/method query-map)
            :params  (when authentication-p (orgtrello-query/--authentication-params))
            :success (if success-callback success-callback 'orgtrello-query/--standard-success-callback)
@@ -813,7 +813,7 @@ This is a list with the following elements:
          (buffer-name          (orgtrello-query/--buffername query-map-wrapped))                      ;; buffer-name is mandatory
          (standard-callback    (orgtrello-query/--callback query-map-wrapped))                        ;; there is the possibility to transmit the callback from the client to the proxy
          (standard-callback-fn (when standard-callback (symbol-function (intern standard-callback)))) ;; the callback is passed as a string, we want it as a function when defined
-         (sync                 (orgtrello-query/--sync- query-map-wrapped))                           ;; there is a possibility to enforce the sync between proxy and client
+         (sync                 (orgtrello-data/sync- query-map-wrapped))                           ;; there is a possibility to enforce the sync between proxy and client
          (query-map            (orgtrello-proxy/--compute-trello-query query-map-wrapped))            ;; extracting the query
          (name                 (orgtrello-query/--name query-map-wrapped)))                           ;; extracting the name of the entity (optional)
     (orgtrello-query/http-trello query-map sync (when standard-callback-fn (funcall standard-callback-fn buffer-name position name)))
