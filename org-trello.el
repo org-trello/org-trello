@@ -475,7 +475,7 @@ This is a list with the following elements:
 
 ;; macro? defmethod?
 
-(defun orgtrello-data/gethash-data (key query-map) "Retrieve the data from some query-map" (gethash key query-map))
+(defun orgtrello-data/gethash-data (key query-map &optional default-value) "Retrieve the data from some query-map" (gethash key query-map default-value))
 (defun orgtrello-data/method (query-map) "Retrieve the http method"    (orgtrello-data/gethash-data :method query-map))
 (defun orgtrello-data/uri    (query-map) "Retrieve the http uri"       (orgtrello-data/gethash-data :uri query-map))
 (defun orgtrello-data/sync   (query-map) "Retrieve the http sync flag" (orgtrello-data/gethash-data :sync query-map))
@@ -486,26 +486,25 @@ This is a list with the following elements:
 (defun orgtrello-data/grandparent (entry-meta) "Given an entry-meta, return the grandparent entry" (orgtrello-data/gethash-data :grandparent entry-meta))
 
 (defun orgtrello/--keyword (entity-meta &optional default-value) "Retrieve the keyword from the entity. If default-value is specified, this is the default value if no keyword is present"
-  (gethash :keyword entity-meta default-value))
+  (orgtrello-data/gethash-data :keyword entity-meta default-value))
 
 (defun orgtrello/--name (entity-meta) "Retrieve the name from the entity."
-  (gethash :name entity-meta))
+  (orgtrello-data/gethash-data :name entity-meta))
 
 (defun orgtrello/--id (entity-meta) "Retrieve the id from the entity (id must be a trello id, otherwise, it's not considered an id, it's the marker)."
-  (let ((id (gethash :id entity-meta))) (when (orgtrello/id-p id) id)))
+  (let ((id (orgtrello-data/gethash-data :id entity-meta))) (when (orgtrello/id-p id) id)))
 
 (defun orgtrello/--level (entity-meta) "Retrieve the level from the entity."
-  (gethash :level entity-meta))
+  (orgtrello-data/gethash-data :level entity-meta))
 
 (defun orgtrello/--due (entity-meta) "Retrieve the due date from the entity."
-  (gethash :due entity-meta))
+  (orgtrello-data/gethash-data :due entity-meta))
 
 (defun orgtrello/--buffername (entity-meta) "Retrieve the point from the entity."
-  (gethash :buffername entity-meta))
+  (orgtrello-data/gethash-data :buffername entity-meta))
 
 (defun orgtrello/--position (entity-meta) "Retrieve the point from the entity."
-  (gethash :position entity-meta))
-
+  (orgtrello-data/gethash-data :position entity-meta))
 
 (defun orgtrello-data/retrieve-data  (symbol entity-data) "Own generic accessor"                                    (assoc-default symbol entity-data))
 (defun orgtrello-data/buffername     (entity-data) "Extract the buffername of the entity from the entity-data"      (orgtrello-data/retrieve-data 'buffername entity-data))
