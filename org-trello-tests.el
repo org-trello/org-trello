@@ -221,8 +221,8 @@
   (expect nil           (orgtrello-data/list-id '((noIdList . :some-list-id)))))
 
 (expectations
-  (expect :some-clist-ids (orgtrello-query/--checklist-ids '((idChecklists . :some-clist-ids))))
-  (expect nil             (orgtrello-query/--checklist-ids '((no . :some-clist-ids)))))
+  (expect :some-clist-ids (orgtrello-data/checklist-ids '((idChecklists . :some-clist-ids))))
+  (expect nil             (orgtrello-data/checklist-ids '((no . :some-clist-ids)))))
 
 (expectations
   (expect :some-check-items (orgtrello-query/--check-items '((checkItems . :some-check-items))))
@@ -646,8 +646,8 @@ DEADLINE: <some-date>
   (expect nil (orgtrello-data/name                     `((inexistant . "test"))))
   (expect "test" (orgtrello-data/list-id               `((idList . "test"))))
   (expect nil (orgtrello-data/list-id                  `((inexistant . "test"))))
-  (expect "test" (orgtrello-query/--checklist-ids         `((idChecklists . "test"))))
-  (expect nil (orgtrello-query/--checklist-ids            `((inexistant . "test"))))
+  (expect "test" (orgtrello-data/checklist-ids         `((idChecklists . "test"))))
+  (expect nil (orgtrello-data/checklist-ids            `((inexistant . "test"))))
   (expect "test" (orgtrello-query/--check-items           `((checkItems . "test"))))
   (expect nil (orgtrello-query/--check-items              `((inexistant . "test"))))
   (expect "test" (orgtrello-query/--card-id               `((idCard . "test"))))
