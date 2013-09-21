@@ -484,6 +484,35 @@ This is a list with the following elements:
 (defun orgtrello-data/--due (entity) "Retrieve the due date" (orgtrello-data/--compute-fn entity '(orgtrello/--due orgtrello-query/--due)))
 (defun orgtrello-data/--state (entity) "Retrieve the status date" (orgtrello-data/--compute-fn entity '(orgtrello/--keyword orgtrello-query/--state)))
 
+;; macro? defmethod?
+
+(defun orgtrello-query/gethash-data (key query-map) "Retrieve the data from some query-map" (gethash key query-map))
+(defun orgtrello-data/--method (query-map) "Retrieve the http method"     (orgtrello-query/gethash-data :method query-map))
+(defun orgtrello-query/--uri    (query-map) "Retrieve the http uri"       (orgtrello-query/gethash-data :uri query-map))
+(defun orgtrello-query/--sync   (query-map) "Retrieve the http sync flag" (orgtrello-query/gethash-data :sync query-map))
+(defun orgtrello-query/--params (query-map) "Retrieve the http params"    (orgtrello-query/gethash-data :params query-map))
+
+(defun orgtrello-query/--retrieve-data  (symbol entity-data) "Own generic accessor"                                    (assoc-default symbol entity-data))
+(defun orgtrello-query/--buffername     (entity-data) "Extract the buffername of the entity from the entity-data"      (orgtrello-query/--retrieve-data 'buffername entity-data))
+(defun orgtrello-query/--position       (entity-data) "Extract the position of the entity from the entity-data"        (orgtrello-query/--retrieve-data 'position entity-data))
+(defun orgtrello-query/--id             (entity-data) "Extract the id of the entity from the entity"                   (orgtrello-query/--retrieve-data 'id entity-data))
+(defun orgtrello-query/--name           (entity-data) "Extract the name of the entity from the entity"                 (orgtrello-query/--retrieve-data 'name entity-data))
+(defun orgtrello-query/--list-id        (entity-data) "Extract the list identitier of the entity from the entity"      (orgtrello-query/--retrieve-data 'idList entity-data))
+(defun orgtrello-query/--checklist-ids  (entity-data) "Extract the checklist identifier of the entity from the entity" (orgtrello-query/--retrieve-data 'idChecklists entity-data))
+(defun orgtrello-query/--check-items    (entity-data) "Extract the checklist identifier of the entity from the entity" (orgtrello-query/--retrieve-data 'checkItems entity-data))
+(defun orgtrello-query/--card-id        (entity-data) "Extract the card identifier of the entity from the entity"      (orgtrello-query/--retrieve-data 'idCard entity-data))
+(defun orgtrello-query/--due            (entity-data) "Extract the due date of the entity from the query response"     (orgtrello-query/--retrieve-data 'due entity-data))
+(defun orgtrello-query/--state          (entity-data) "Extract the state of the entity"                                (orgtrello-query/--retrieve-data 'state entity-data))
+(defun orgtrello-query/--close-property (entity-data) "Extract the closed property of the entity"                      (orgtrello-query/--retrieve-data 'closed entity-data))
+(defun orgtrello-query/--callback       (entity-data) "Extract the callback property of the entity"                    (orgtrello-query/--retrieve-data 'callback entity-data))
+(defun orgtrello-query/--sync-          (entity-data) "Extract the sync property of the entity"                        (orgtrello-query/--retrieve-data 'sync entity-data))
+(defun orgtrello-query/--level          (entity-data) "Extract the callback property of the entity"                    (orgtrello-query/--retrieve-data 'level entity-data))
+(defun orgtrello-data/--method-        (entity-data) "Extract the method property of the entity"                      (orgtrello-query/--retrieve-data 'method entity-data))
+(defun orgtrello-query/--uri-           (entity-data) "Extract the uri property of the entity"                         (orgtrello-query/--retrieve-data 'uri entity-data))
+(defun orgtrello-query/--params-        (entity-data) "Extract the params property of the entity"                      (orgtrello-query/--retrieve-data 'params entity-data))
+(defun orgtrello-query/--start          (entity-data) "Extract the start property of the entity"                       (orgtrello-query/--retrieve-data 'start entity-data))
+(defun orgtrello-query/--action         (entity-data) "Extract the action property of the entity"                      (orgtrello-query/--retrieve-data 'action entity-data))
+
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-data loaded!")
 
 
@@ -577,35 +606,6 @@ This is a list with the following elements:
 
 (defvar *TRELLO-URL* "https://api.trello.com/1" "The needed prefix url for trello")
 
-;; macro? defmethod?
-
-(defun orgtrello-query/gethash-data (key query-map) "Retrieve the data from some query-map" (gethash key query-map))
-(defun orgtrello-query/--method (query-map) "Retrieve the http method"    (gethash :method query-map))
-(defun orgtrello-query/--uri    (query-map) "Retrieve the http uri"       (gethash :uri query-map))
-(defun orgtrello-query/--sync   (query-map) "Retrieve the http sync flag" (gethash :sync query-map))
-(defun orgtrello-query/--params (query-map) "Retrieve the http params"    (gethash :params query-map))
-
-(defun orgtrello-query/--retrieve-data  (symbol entity-data) "Own generic accessor"                                    (assoc-default symbol entity-data))
-(defun orgtrello-query/--buffername     (entity-data) "Extract the buffername of the entity from the entity-data"      (orgtrello-query/--retrieve-data 'buffername entity-data))
-(defun orgtrello-query/--position       (entity-data) "Extract the position of the entity from the entity-data"        (orgtrello-query/--retrieve-data 'position entity-data))
-(defun orgtrello-query/--id             (entity-data) "Extract the id of the entity from the entity"                   (orgtrello-query/--retrieve-data 'id entity-data))
-(defun orgtrello-query/--name           (entity-data) "Extract the name of the entity from the entity"                 (orgtrello-query/--retrieve-data 'name entity-data))
-(defun orgtrello-query/--list-id        (entity-data) "Extract the list identitier of the entity from the entity"      (orgtrello-query/--retrieve-data 'idList entity-data))
-(defun orgtrello-query/--checklist-ids  (entity-data) "Extract the checklist identifier of the entity from the entity" (orgtrello-query/--retrieve-data 'idChecklists entity-data))
-(defun orgtrello-query/--check-items    (entity-data) "Extract the checklist identifier of the entity from the entity" (orgtrello-query/--retrieve-data 'checkItems entity-data))
-(defun orgtrello-query/--card-id        (entity-data) "Extract the card identifier of the entity from the entity"      (orgtrello-query/--retrieve-data 'idCard entity-data))
-(defun orgtrello-query/--due            (entity-data) "Extract the due date of the entity from the query response"     (orgtrello-query/--retrieve-data 'due entity-data))
-(defun orgtrello-query/--state          (entity-data) "Extract the state of the entity"                                (orgtrello-query/--retrieve-data 'state entity-data))
-(defun orgtrello-query/--close-property (entity-data) "Extract the closed property of the entity"                      (orgtrello-query/--retrieve-data 'closed entity-data))
-(defun orgtrello-query/--callback       (entity-data) "Extract the callback property of the entity"                    (orgtrello-query/--retrieve-data 'callback entity-data))
-(defun orgtrello-query/--sync-          (entity-data) "Extract the sync property of the entity"                        (orgtrello-query/--retrieve-data 'sync entity-data))
-(defun orgtrello-query/--level          (entity-data) "Extract the callback property of the entity"                    (orgtrello-query/--retrieve-data 'level entity-data))
-(defun orgtrello-query/--method-        (entity-data) "Extract the method property of the entity"                      (orgtrello-query/--retrieve-data 'method entity-data))
-(defun orgtrello-query/--uri-           (entity-data) "Extract the uri property of the entity"                         (orgtrello-query/--retrieve-data 'uri entity-data))
-(defun orgtrello-query/--params-        (entity-data) "Extract the params property of the entity"                      (orgtrello-query/--retrieve-data 'params entity-data))
-(defun orgtrello-query/--start          (entity-data) "Extract the start property of the entity"                       (orgtrello-query/--retrieve-data 'start entity-data))
-(defun orgtrello-query/--action         (entity-data) "Extract the action property of the entity"                      (orgtrello-query/--retrieve-data 'action entity-data))
-
 (defun orgtrello-query/--compute-url (server uri) "Compute the trello url from the given uri."
   (format "%s%s" server uri))
 
@@ -621,7 +621,7 @@ This is a list with the following elements:
 (defun orgtrello-query/--get (server query-map &optional success-callback error-callback authentication-p) "GET"
   (request (->> query-map orgtrello-query/--uri (orgtrello-query/--compute-url server))
            :sync    (orgtrello-query/--sync   query-map)
-           :type    (orgtrello-query/--method query-map)
+           :type    (orgtrello-data/--method query-map)
            :params  (when authentication-p (orgtrello-query/--authentication-params))
            :parser  'json-read
            :success (if success-callback success-callback 'orgtrello-query/--standard-success-callback)
@@ -630,7 +630,7 @@ This is a list with the following elements:
 (defun orgtrello-query/--post-or-put (server query-map &optional success-callback error-callback authentication-p) "POST or PUT"
   (request (->> query-map orgtrello-query/--uri (orgtrello-query/--compute-url server))
            :sync    (orgtrello-query/--sync   query-map)
-           :type    (orgtrello-query/--method query-map)
+           :type    (orgtrello-data/--method query-map)
            :params  (when authentication-p (orgtrello-query/--authentication-params))
            :headers '(("Content-type" . "application/json"))
            :data    (->> query-map orgtrello-query/--params json-encode)
@@ -641,7 +641,7 @@ This is a list with the following elements:
 (defun orgtrello-query/--delete (server query-map &optional success-callback error-callback authentication-p) "DELETE"
   (request (->> query-map orgtrello-query/--uri (orgtrello-query/--compute-url server))
            :sync    (orgtrello-query/--sync   query-map)
-           :type    (orgtrello-query/--method query-map)
+           :type    (orgtrello-data/--method query-map)
            :params  (when authentication-p (orgtrello-query/--authentication-params))
            :success (if success-callback success-callback 'orgtrello-query/--standard-success-callback)
            :error   (if error-callback error-callback 'orgtrello-query/--standard-error-callback)))
@@ -665,7 +665,7 @@ This is a list with the following elements:
       orgtrello-query/--prepare-params-assoc!))
 
 (defun orgtrello-query/--http (server query-map &optional sync success-callback error-callback authentication-p) "HTTP query the server with the query-map."
-  (let* ((oq/--fn-dispatch (-> query-map orgtrello-query/--method orgtrello-query/--dispatch-http-query)))
+  (let* ((oq/--fn-dispatch (-> query-map orgtrello-data/--method orgtrello-query/--dispatch-http-query)))
     (if sync
         (progn ;; synchronous request
           (puthash :sync t query-map)
@@ -793,7 +793,7 @@ This is a list with the following elements:
   (-> http-con elnode-http-params caar (orgtrello-proxy/--unhexify-data unhexify-flag)))
 
 (defun orgtrello-proxy/--compute-trello-query (query-map-wrapped) "Build a trello query from the control of query-map-wrapped."
-  (orgtrello-hash/make-hash (orgtrello-query/--method- query-map-wrapped) (orgtrello-query/--uri- query-map-wrapped) (orgtrello-query/--params- query-map-wrapped)))
+  (orgtrello-hash/make-hash (orgtrello-data/--method- query-map-wrapped) (orgtrello-query/--uri- query-map-wrapped) (orgtrello-query/--params- query-map-wrapped)))
 
 (defun orgtrello-proxy/--response (http-con data) "A response wrapper"
   (elnode-http-start http-con 201 '("Content-type" . "application/json"))
