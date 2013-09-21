@@ -485,7 +485,7 @@ This is a list with the following elements:
 ;; macro? defmethod?
 
 (defun orgtrello-data/gethash-data (key query-map) "Retrieve the data from some query-map" (gethash key query-map))
-(defun orgtrello-data/method (query-map) "Retrieve the http method"     (orgtrello-data/gethash-data :method query-map))
+(defun orgtrello-data/method (query-map) "Retrieve the http method"    (orgtrello-data/gethash-data :method query-map))
 (defun orgtrello-data/uri    (query-map) "Retrieve the http uri"       (orgtrello-data/gethash-data :uri query-map))
 (defun orgtrello-data/sync   (query-map) "Retrieve the http sync flag" (orgtrello-data/gethash-data :sync query-map))
 (defun orgtrello-data/params (query-map) "Retrieve the http params"    (orgtrello-data/gethash-data :params query-map))
