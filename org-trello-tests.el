@@ -204,7 +204,7 @@
 
 (expectations
   (expect :some-get (orgtrello-data/method (orgtrello-hash/make-properties `((:method . :some-get) (:uri . :some-uri) (:sync . :some-sync) (:params . :some-params)))))
-  (expect :some-uri (orgtrello-query/--uri (orgtrello-hash/make-properties `((:method . :some-get) (:uri . :some-uri) (:sync . :some-sync) (:params . :some-params)))))
+  (expect :some-uri (orgtrello-data/uri (orgtrello-hash/make-properties `((:method . :some-get) (:uri . :some-uri) (:sync . :some-sync) (:params . :some-params)))))
   (expect :some-sync (orgtrello-query/--sync (orgtrello-hash/make-properties `((:method . :some-get) (:uri . :some-uri) (:sync . :some-sync) (:params . :some-params)))))
   (expect :some-params (orgtrello-query/--params (orgtrello-hash/make-properties `((:method . :some-get) (:uri . :some-uri) (:sync . :some-sync) (:params . :some-params))))))
 
@@ -666,8 +666,8 @@ DEADLINE: <some-date>
   (expect nil (orgtrello-query/--level                    `((inexistant . "test"))))
   (expect "test" (orgtrello-data/method-               `((method . "test"))))
   (expect nil (orgtrello-data/method-                  `((inexistant . "test"))))
-  (expect "test" (orgtrello-query/--uri-                  `((uri . "test"))))
-  (expect nil (orgtrello-query/--uri-                     `((inexistant . "test"))))
+  (expect "test" (orgtrello-data/uri-                  `((uri . "test"))))
+  (expect nil (orgtrello-data/uri-                     `((inexistant . "test"))))
   (expect "test" (orgtrello-query/--params-               `((params . "test"))))
   (expect nil (orgtrello-query/--params-                  `((inexistant . "test"))))
   (expect "test" (orgtrello-query/--start                 `((start . "test"))))

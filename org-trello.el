@@ -488,7 +488,7 @@ This is a list with the following elements:
 
 (defun orgtrello-data/gethash-data (key query-map) "Retrieve the data from some query-map" (gethash key query-map))
 (defun orgtrello-data/method (query-map) "Retrieve the http method"     (orgtrello-data/gethash-data :method query-map))
-(defun orgtrello-query/--uri    (query-map) "Retrieve the http uri"       (orgtrello-data/gethash-data :uri query-map))
+(defun orgtrello-data/uri    (query-map) "Retrieve the http uri"       (orgtrello-data/gethash-data :uri query-map))
 (defun orgtrello-query/--sync   (query-map) "Retrieve the http sync flag" (orgtrello-data/gethash-data :sync query-map))
 (defun orgtrello-query/--params (query-map) "Retrieve the http params"    (orgtrello-data/gethash-data :params query-map))
 
@@ -508,7 +508,7 @@ This is a list with the following elements:
 (defun orgtrello-query/--sync-          (entity-data) "Extract the sync property of the entity"                        (orgtrello-query/--retrieve-data 'sync entity-data))
 (defun orgtrello-query/--level          (entity-data) "Extract the callback property of the entity"                    (orgtrello-query/--retrieve-data 'level entity-data))
 (defun orgtrello-data/method-        (entity-data) "Extract the method property of the entity"                      (orgtrello-query/--retrieve-data 'method entity-data))
-(defun orgtrello-query/--uri-           (entity-data) "Extract the uri property of the entity"                         (orgtrello-query/--retrieve-data 'uri entity-data))
+(defun orgtrello-data/uri-           (entity-data) "Extract the uri property of the entity"                         (orgtrello-query/--retrieve-data 'uri entity-data))
 (defun orgtrello-query/--params-        (entity-data) "Extract the params property of the entity"                      (orgtrello-query/--retrieve-data 'params entity-data))
 (defun orgtrello-query/--start          (entity-data) "Extract the start property of the entity"                       (orgtrello-query/--retrieve-data 'start entity-data))
 (defun orgtrello-query/--action         (entity-data) "Extract the action property of the entity"                      (orgtrello-query/--retrieve-data 'action entity-data))
@@ -619,7 +619,7 @@ This is a list with the following elements:
   `((key . ,*consumer-key*) (token . ,*access-token*)))
 
 (defun orgtrello-query/--get (server query-map &optional success-callback error-callback authentication-p) "GET"
-  (request (->> query-map orgtrello-query/--uri (orgtrello-query/--compute-url server))
+  (request (->> query-map orgtrello-data/uri (orgtrello-query/--compute-url server))
            :sync    (orgtrello-query/--sync   query-map)
            :type    (orgtrello-data/method query-map)
            :params  (when authentication-p (orgtrello-query/--authentication-params))
@@ -628,7 +628,7 @@ This is a list with the following elements:
            :error   (if error-callback error-callback 'orgtrello-query/--standard-error-callback)))
 
 (defun orgtrello-query/--post-or-put (server query-map &optional success-callback error-callback authentication-p) "POST or PUT"
-  (request (->> query-map orgtrello-query/--uri (orgtrello-query/--compute-url server))
+  (request (->> query-map orgtrello-data/uri (orgtrello-query/--compute-url server))
            :sync    (orgtrello-query/--sync   query-map)
            :type    (orgtrello-data/method query-map)
            :params  (when authentication-p (orgtrello-query/--authentication-params))
@@ -639,7 +639,7 @@ This is a list with the following elements:
            :error   (if error-callback error-callback 'orgtrello-query/--standard-error-callback)))
 
 (defun orgtrello-query/--delete (server query-map &optional success-callback error-callback authentication-p) "DELETE"
-  (request (->> query-map orgtrello-query/--uri (orgtrello-query/--compute-url server))
+  (request (->> query-map orgtrello-data/uri (orgtrello-query/--compute-url server))
            :sync    (orgtrello-query/--sync   query-map)
            :type    (orgtrello-data/method query-map)
            :params  (when authentication-p (orgtrello-query/--authentication-params))
@@ -793,7 +793,7 @@ This is a list with the following elements:
   (-> http-con elnode-http-params caar (orgtrello-proxy/--unhexify-data unhexify-flag)))
 
 (defun orgtrello-proxy/--compute-trello-query (query-map-wrapped) "Build a trello query from the control of query-map-wrapped."
-  (orgtrello-hash/make-hash (orgtrello-data/method- query-map-wrapped) (orgtrello-query/--uri- query-map-wrapped) (orgtrello-query/--params- query-map-wrapped)))
+  (orgtrello-hash/make-hash (orgtrello-data/method query-map-wrapped) (orgtrello-data/uri- query-map-wrapped) (orgtrello-query/--params- query-map-wrapped)))
 
 (defun orgtrello-proxy/--response (http-con data) "A response wrapper"
   (elnode-http-start http-con 201 '("Content-type" . "application/json"))
