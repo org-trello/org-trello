@@ -465,25 +465,25 @@ This is a list with the following elements:
 
 (defun orgtrello-data/entity-id (entity) "Dispatch to the rightfull function to get the id" (orgtrello-data/--compute-fn entity '(orgtrello/--id orgtrello-data/id)))
 
-(defun orgtrello-data/entity-card-p (entity) "Is an entity a card?" (orgtrello-data/--compute-fn entity '(orgtrello/--hcard-p orgtrello/--card-p)))
+(defun orgtrello-data/entity-card-p (entity) "Is an entity a card?"           (orgtrello-data/--compute-fn entity '(orgtrello/--hcard-p orgtrello/--card-p)))
 (defun orgtrello-data/entity-checklist-p (entity) "Is an entity a checklist?" (orgtrello-data/--compute-fn entity '(orgtrello/--hchecklist-p orgtrello/--checklist-p)))
-(defun orgtrello-data/entity-item-p (entity) "Is an entity an item?" (orgtrello-data/--compute-fn entity '(orgtrello/--hitem-p orgtrello/--item-p)))
+(defun orgtrello-data/entity-item-p (entity) "Is an entity an item?"          (orgtrello-data/--compute-fn entity '(orgtrello/--hitem-p orgtrello/--item-p)))
 
-(defun orgtrello-data/entity-name (entity) "Retrieve the entity name" (orgtrello-data/--compute-fn entity '(orgtrello/--name orgtrello-data/name)))
-(defun orgtrello-data/entity-due (entity) "Retrieve the entity due date" (orgtrello-data/--compute-fn entity '(orgtrello/--due orgtrello-data/due)))
-(defun orgtrello-data/entity-state (entity) "Retrieve the entity status" (orgtrello-data/--compute-fn entity '(orgtrello/--keyword orgtrello-data/state)))
+(defun orgtrello-data/entity-name (entity) "Retrieve the entity name"     (orgtrello-data/--compute-fn entity '(orgtrello/--name orgtrello-data/name)))
+(defun orgtrello-data/entity-due (entity) "Retrieve the entity due date"  (orgtrello-data/--compute-fn entity '(orgtrello/--due orgtrello-data/due)))
+(defun orgtrello-data/entity-state (entity) "Retrieve the entity status"  (orgtrello-data/--compute-fn entity '(orgtrello/--keyword orgtrello-data/state)))
 (defun orgtrello-data/entity-method (entity) "Retrieve the entity method" (orgtrello-data/--compute-fn entity '(orgtrello-data/method orgtrello-data/method-)))
-(defun orgtrello-data/entity-uri (entity) "Retrieve the entity uri" (orgtrello-data/--compute-fn entity '(orgtrello-data/uri orgtrello-data/uri-)))
+(defun orgtrello-data/entity-uri (entity) "Retrieve the entity uri"       (orgtrello-data/--compute-fn entity '(orgtrello-data/uri orgtrello-data/uri-)))
 (defun orgtrello-data/entity-params (entity) "Retrieve the entity params" (orgtrello-data/--compute-fn entity '(orgtrello-data/params orgtrello-data/params-)))
 
-(defun orgtrello/--card-p (entity) "Is this a card?" (orgtrello-data/list-id entity))
+(defun orgtrello/--card-p (entity) "Is this a card?"           (orgtrello-data/list-id entity))
 (defun orgtrello/--checklist-p (entity) "Is this a checklist?" (orgtrello-data/card-id entity))
-(defun orgtrello/--item-p (entity) "is this an item?" (orgtrello-data/state entity))
+(defun orgtrello/--item-p (entity) "is this an item?"          (orgtrello-data/state entity))
 
 (defun orgtrello/--entity-with-level-p (entity level) "Is the entity with level level?" (-> entity orgtrello/--level (= level)))
-(defun orgtrello/--hcard-p (entity) "Is this a card?" (orgtrello/--entity-with-level-p entity *CARD-LEVEL*))
+(defun orgtrello/--hcard-p (entity) "Is this a card?"           (orgtrello/--entity-with-level-p entity *CARD-LEVEL*))
 (defun orgtrello/--hchecklist-p (entity) "Is this a checklist?" (orgtrello/--entity-with-level-p entity *CHECKLIST-LEVEL*))
-(defun orgtrello/--hitem-p (entity) "Is this an item?" (orgtrello/--entity-with-level-p entity *ITEM-LEVEL*))
+(defun orgtrello/--hitem-p (entity) "Is this an item?"          (orgtrello/--entity-with-level-p entity *ITEM-LEVEL*))
 
 ;; macro? defmethod?
 
