@@ -495,7 +495,7 @@ This is a list with the following elements:
 (defun orgtrello-data/position       (entity-data) "Extract the position of the entity from the entity-data"        (orgtrello-data/retrieve-data 'position entity-data))
 (defun orgtrello-data/id             (entity-data) "Extract the id of the entity from the entity"                   (orgtrello-data/retrieve-data 'id entity-data))
 (defun orgtrello-data/name           (entity-data) "Extract the name of the entity from the entity"                 (orgtrello-data/retrieve-data 'name entity-data))
-(defun orgtrello-query/--list-id        (entity-data) "Extract the list identitier of the entity from the entity"      (orgtrello-data/retrieve-data 'idList entity-data))
+(defun orgtrello-data/list-id        (entity-data) "Extract the list identitier of the entity from the entity"      (orgtrello-data/retrieve-data 'idList entity-data))
 (defun orgtrello-query/--checklist-ids  (entity-data) "Extract the checklist identifier of the entity from the entity" (orgtrello-data/retrieve-data 'idChecklists entity-data))
 (defun orgtrello-query/--check-items    (entity-data) "Extract the checklist identifier of the entity from the entity" (orgtrello-data/retrieve-data 'checkItems entity-data))
 (defun orgtrello-query/--card-id        (entity-data) "Extract the card identifier of the entity from the entity"      (orgtrello-data/retrieve-data 'idCard entity-data))
@@ -1861,7 +1861,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
            *ITEM-LEVEL*
            (orgtrello-data/entity-state item)))
 
-(defun orgtrello/--card-p (entity) "Is this a card?" (orgtrello-query/--list-id entity))
+(defun orgtrello/--card-p (entity) "Is this a card?" (orgtrello-data/list-id entity))
 (defun orgtrello/--checklist-p (entity) "Is this a checklist?" (orgtrello-query/--card-id entity))
 (defun orgtrello/--item-p (entity) "is this an item?" (orgtrello-query/--state entity))
 
@@ -1994,7 +1994,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
     (puthash :level   *CARD-LEVEL*                                                               org-card-to-merge)
     (puthash :id      (orgtrello-data/id trello-card)                                         org-card-to-merge)
     (puthash :name    (orgtrello-data/name trello-card)                                       org-card-to-merge)
-    (puthash :keyword (-> trello-card orgtrello-query/--list-id orgtrello/--compute-card-status) org-card-to-merge)
+    (puthash :keyword (-> trello-card orgtrello-data/list-id orgtrello/--compute-card-status) org-card-to-merge)
     org-card-to-merge))
 
 (defun orgtrello/--dispatch-merge-fn (entity) "Dispatch the function fn to merge the entity."
