@@ -686,8 +686,8 @@ DEADLINE: <some-date>
   (expect nil (orgtrello-data/--method (orgtrello-hash/make-properties `((:inexistant . :some-method ))))))
 
 (expectations
-  (expect "some-method" (orgtrello-query/gethash-data :method (orgtrello-hash/make-properties `((:method . "some-method")))))
-  (expect nil           (orgtrello-query/gethash-data :method (orgtrello-hash/make-properties `((:inexistant . "some-method"))))))
+  (expect "some-method" (orgtrello-data/gethash-data :method (orgtrello-hash/make-properties `((:method . "some-method")))))
+  (expect nil           (orgtrello-data/gethash-data :method (orgtrello-hash/make-properties `((:inexistant . "some-method"))))))
 
 (expectations
   (expect "DONE" (orgtrello/--compute-state-generic "complete" '("DONE" "TODO")))
