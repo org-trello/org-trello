@@ -480,7 +480,7 @@ This is a list with the following elements:
 (defun orgtrello-data/entity-checklist-p (entity) "Is an entity a checklist?" (orgtrello-data/--compute-fn entity '(orgtrello/--hchecklist-p orgtrello/--checklist-p)))
 (defun orgtrello-data/entity-item-p (entity) "Is an entity an item?" (orgtrello-data/--compute-fn entity '(orgtrello/--hitem-p orgtrello/--item-p)))
 
-(defun orgtrello-data/--name (entity) "Retrieve the entity name" (orgtrello-data/--compute-fn entity '(orgtrello/--name orgtrello-query/--name)))
+(defun orgtrello-data/entity-name (entity) "Retrieve the entity name" (orgtrello-data/--compute-fn entity '(orgtrello/--name orgtrello-query/--name)))
 (defun orgtrello-data/--due (entity) "Retrieve the due date" (orgtrello-data/--compute-fn entity '(orgtrello/--due orgtrello-query/--due)))
 (defun orgtrello-data/--state (entity) "Retrieve the status date" (orgtrello-data/--compute-fn entity '(orgtrello/--keyword orgtrello-query/--state)))
 
@@ -1804,7 +1804,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   (format "* %s %s\n%s" status name (orgtrello/--compute-due-date due-date)))
 
 (defun orgtrello/--compute-card-to-org-entry (card &optional orgcheckbox-p) "Given a card, compute its org-mode entry equivalence. orgcheckbox-p is nil"
-  (orgtrello/--private-compute-card-to-org-entry (orgtrello-data/--name card) (orgtrello-data/--state card) (orgtrello-data/--due card)))
+  (orgtrello/--private-compute-card-to-org-entry (orgtrello-data/entity-name card) (orgtrello-data/--state card) (orgtrello-data/--due card)))
 
 (defun orgtrello/--compute-checklist-to-orgtrello-entry (name &optional level status) "Compute the orgtrello format checklist"
   (format "** %s\n" name))
@@ -1851,7 +1851,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   (funcall (if orgcheckbox-p
                'orgtrello/--compute-checklist-to-org-checkbox
                'orgtrello/--compute-item-to-orgtrello-entry)
-           (orgtrello-data/--name checklist)
+           (orgtrello-data/entity-name checklist)
            *CHECKLIST-LEVEL*
            "incomplete"))
 
@@ -1859,7 +1859,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   (funcall (if orgcheckbox-p
                'orgtrello/--compute-checklist-to-org-checkbox
                'orgtrello/--compute-item-to-orgtrello-entry)
-           (orgtrello-data/--name item)
+           (orgtrello-data/entity-name item)
            *ITEM-LEVEL*
            (orgtrello-data/--state item)))
 
@@ -2031,7 +2031,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
       (orgtrello-action/set-property *ORGTRELLO-ID* id)))
 
 (defun orgtrello/--write-entity! (entity-id entity) "Write the entity in the buffer to the current position. Move the cursor position."
-  (orgtrello-log/msg *OT/INFO* "Synchronizing entity '%s' with id '%s'..." (orgtrello-data/--name entity) entity-id)
+  (orgtrello-log/msg *OT/INFO* "Synchronizing entity '%s' with id '%s'..." (orgtrello-data/entity-name entity) entity-id)
   (insert (orgtrello/--compute-entity-to-org-entry entity))
   (orgtrello/--update-property entity-id (and *ORGTRELLO-NATURAL-ORG-CHECKLIST* (not (orgtrello-data/entity-card-p entity)))))
 
