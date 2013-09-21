@@ -636,8 +636,8 @@ DEADLINE: <some-date>
 (expectations
   (expect "test" (orgtrello-data/retrieve-data 'marker `((marker . "test"))))
   (expect nil (orgtrello-data/retrieve-data    'other  `((marker . "test"))))
-  (expect "test" (orgtrello-query/--buffername            `((buffername . "test"))))
-  (expect nil (orgtrello-query/--buffername               `((inexistant . "test"))))
+  (expect "test" (orgtrello-data/buffername            `((buffername . "test"))))
+  (expect nil (orgtrello-data/buffername               `((inexistant . "test"))))
   (expect "test" (orgtrello-query/--position              `((position . "test"))))
   (expect nil (orgtrello-query/--position                 `((inexistant . "test"))))
   (expect "test" (orgtrello-query/--id                    `((id . "test"))))
