@@ -634,8 +634,8 @@ DEADLINE: <some-date>
 " (orgtrello/--compute-item-to-org-entry `((name . "name") (state . "incomplete")) nil)))
 
 (expectations
-  (expect "test" (orgtrello-query/--retrieve-data 'marker `((marker . "test"))))
-  (expect nil (orgtrello-query/--retrieve-data    'other  `((marker . "test"))))
+  (expect "test" (orgtrello-data/retrieve-data 'marker `((marker . "test"))))
+  (expect nil (orgtrello-data/retrieve-data    'other  `((marker . "test"))))
   (expect "test" (orgtrello-query/--buffername            `((buffername . "test"))))
   (expect nil (orgtrello-query/--buffername               `((inexistant . "test"))))
   (expect "test" (orgtrello-query/--position              `((position . "test"))))
