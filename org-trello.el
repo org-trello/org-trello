@@ -480,7 +480,7 @@ This is a list with the following elements:
 
 (defun orgtrello-data/entity-name (entity) "Retrieve the entity name" (orgtrello-data/--compute-fn entity '(orgtrello/--name orgtrello-data/name)))
 (defun orgtrello-data/entity-due (entity) "Retrieve the due date" (orgtrello-data/--compute-fn entity '(orgtrello/--due orgtrello-data/due)))
-(defun orgtrello-data/entity-state (entity) "Retrieve the status date" (orgtrello-data/--compute-fn entity '(orgtrello/--keyword orgtrello-query/--state)))
+(defun orgtrello-data/entity-state (entity) "Retrieve the status date" (orgtrello-data/--compute-fn entity '(orgtrello/--keyword orgtrello-data/state)))
 
 ;; macro? defmethod?
 
@@ -500,12 +500,12 @@ This is a list with the following elements:
 (defun orgtrello-data/check-items    (entity-data) "Extract the checklist identifier of the entity from the entity" (orgtrello-data/retrieve-data 'checkItems entity-data))
 (defun orgtrello-data/card-id        (entity-data) "Extract the card identifier of the entity from the entity"      (orgtrello-data/retrieve-data 'idCard entity-data))
 (defun orgtrello-data/due            (entity-data) "Extract the due date of the entity from the query response"     (orgtrello-data/retrieve-data 'due entity-data))
-(defun orgtrello-query/--state          (entity-data) "Extract the state of the entity"                                (orgtrello-data/retrieve-data 'state entity-data))
-(defun orgtrello-query/--close-property (entity-data) "Extract the closed property of the entity"                      (orgtrello-data/retrieve-data 'closed entity-data))
-(defun orgtrello-query/--callback       (entity-data) "Extract the callback property of the entity"                    (orgtrello-data/retrieve-data 'callback entity-data))
-(defun orgtrello-query/--level          (entity-data) "Extract the callback property of the entity"                    (orgtrello-data/retrieve-data 'level entity-data))
-(defun orgtrello-query/--start          (entity-data) "Extract the start property of the entity"                       (orgtrello-data/retrieve-data 'start entity-data))
-(defun orgtrello-query/--action         (entity-data) "Extract the action property of the entity"                      (orgtrello-data/retrieve-data 'action entity-data))
+(defun orgtrello-data/state          (entity-data) "Extract the state of the entity"                                (orgtrello-data/retrieve-data 'state entity-data))
+(defun orgtrello-data/close-property (entity-data) "Extract the closed property of the entity"                      (orgtrello-data/retrieve-data 'closed entity-data))
+(defun orgtrello-data/callback       (entity-data) "Extract the callback property of the entity"                    (orgtrello-data/retrieve-data 'callback entity-data))
+(defun orgtrello-data/level          (entity-data) "Extract the callback property of the entity"                    (orgtrello-data/retrieve-data 'level entity-data))
+(defun orgtrello-data/start          (entity-data) "Extract the start property of the entity"                       (orgtrello-data/retrieve-data 'start entity-data))
+(defun orgtrello-data/action         (entity-data) "Extract the action property of the entity"                      (orgtrello-data/retrieve-data 'action entity-data))
 
 (defun orgtrello-data/sync-          (entity-data) "Extract the sync property of the entity"                        (orgtrello-data/retrieve-data 'sync entity-data))
 (defun orgtrello-data/method-        (entity-data) "Extract the method property of the entity"                      (orgtrello-data/retrieve-data 'method entity-data))
@@ -810,7 +810,7 @@ This is a list with the following elements:
   (let* ((query-map-wrapped    (orgtrello-proxy/--extract-trello-query http-con))                     ;; wrapped query is mandatory
          (position             (orgtrello-data/position query-map-wrapped))                        ;; position is mandatory
          (buffer-name          (orgtrello-data/buffername query-map-wrapped))                      ;; buffer-name is mandatory
-         (standard-callback    (orgtrello-query/--callback query-map-wrapped))                        ;; there is the possibility to transmit the callback from the client to the proxy
+         (standard-callback    (orgtrello-data/callback query-map-wrapped))                        ;; there is the possibility to transmit the callback from the client to the proxy
          (standard-callback-fn (when standard-callback (symbol-function (intern standard-callback)))) ;; the callback is passed as a string, we want it as a function when defined
          (sync                 (orgtrello-data/sync- query-map-wrapped))                           ;; there is a possibility to enforce the sync between proxy and client
          (query-map            (orgtrello-proxy/--compute-trello-query query-map-wrapped))            ;; extracting the query
@@ -826,7 +826,7 @@ This is a list with the following elements:
   (let* ((query-map-wrapped    (orgtrello-proxy/--extract-trello-query http-con 'unhexify)) ;; wrapped query is mandatory
          (position             (orgtrello-data/position query-map-wrapped))              ;; position is mandatory
          (buffer-name          (orgtrello-data/buffername query-map-wrapped))            ;; buffer-name is mandatory
-         (level                (orgtrello-query/--level query-map-wrapped))
+         (level                (orgtrello-data/level query-map-wrapped))
          (root-dir             (orgtrello-proxy/--compute-entity-level-dir level)))
     ;; generate a file with the entity information
     (with-temp-file (orgtrello-proxy/--compute-metadata-filename root-dir buffer-name position)
@@ -967,7 +967,7 @@ This is a list with the following elements:
        (when (orgtrello-proxy/--get-back-to-marker op/--marker entity-data)
              (orgtrello-proxy/--archive-entity-file-when-scanning file-to-archive op/--entry-file-archived) ;; archive the scanned file
              (-> entity-data
-                 orgtrello-query/--action
+                 orgtrello-data/action
                  orgtrello-proxy/--dispatch-action
                  (funcall entity-data (orgtrello-data/entry-get-full-metadata) op/--entry-file-archived)))))))
 
@@ -977,7 +977,7 @@ This is a list with the following elements:
 (defun orgtrello-proxy/--standard-delete-success-callback (entity-to-del file-to-cleanup) "Return a callback function able to deal with the position."
   (lexical-let ((op/--entry-position    (orgtrello-data/position entity-to-del))
                 (op/--entry-buffer-name (orgtrello-data/buffername entity-to-del))
-                (op/--entry-level       (orgtrello-query/--level entity-to-del))
+                (op/--entry-level       (orgtrello-data/level entity-to-del))
                 (op/--entry-file        file-to-cleanup)
                 (op/--marker            (orgtrello-data/id entity-to-del)))
     (lambda (&rest response)
@@ -1139,7 +1139,7 @@ This is a list with the following elements:
 
 (defun orgtrello-proxy/--elnode-timer (http-con) "A process on elnode to trigger even regularly."
   (let* ((query-map     (orgtrello-proxy/--extract-trello-query http-con))
-         (start-or-stop (orgtrello-query/--start query-map)))
+         (start-or-stop (orgtrello-data/start query-map)))
     (if start-or-stop
         ;; cleanup before starting anew
         (progn
@@ -1373,7 +1373,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   `(tr
     (,(orgtrello-admin/--compute-class icon))
     (td () (i ((class . ,icon))))
-    (td () ,(orgtrello-query/--action entity))
+    (td () ,(orgtrello-data/action entity))
     (td () ,(format "%s" (orgtrello-admin/--detail-entity *orgtrello-log/level* entity)))
     (td () ,(orgtrello-admin/--delete-action entity))))
 
@@ -1440,7 +1440,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
         (elnode-send-404 http-con (format "Resource file '%s' not found!" full-file)))))
 
 (defun orgtrello-proxy/--compute-filename-from-entity (entity) "Compute the filename of a file given an entity."
-  (format "%s%s-%s.el" (orgtrello-proxy/--compute-entity-level-dir (orgtrello-query/--level entity)) (orgtrello-data/buffername entity) (orgtrello-data/position entity)))
+  (format "%s%s-%s.el" (orgtrello-proxy/--compute-entity-level-dir (orgtrello-data/level entity)) (orgtrello-data/buffername entity) (orgtrello-data/position entity)))
 
 (defun orgtrello-proxy/--delete-entity-with-id (id) "Remove the entity/file which match the id id."
   (-if-let (entity-to-delete (->> *ORGTRELLO-LEVELS*
@@ -1863,7 +1863,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun orgtrello/--card-p (entity) "Is this a card?" (orgtrello-data/list-id entity))
 (defun orgtrello/--checklist-p (entity) "Is this a checklist?" (orgtrello-data/card-id entity))
-(defun orgtrello/--item-p (entity) "is this an item?" (orgtrello-query/--state entity))
+(defun orgtrello/--item-p (entity) "is this an item?" (orgtrello-data/state entity))
 
 (defun orgtrello/--entity-with-level-p (entity level) "Is the entity with level level?" (-> entity orgtrello/--level (= level)))
 (defun orgtrello/--hcard-p (entity) "Is this a card?" (orgtrello/--entity-with-level-p entity *CARD-LEVEL*))
@@ -1977,7 +1977,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
     (puthash :id    (orgtrello-data/id trello-item)   org-item-to-merge)
     (puthash :name  (orgtrello-data/name trello-item) org-item-to-merge)
     (--> trello-item
-        (orgtrello-query/--state it)
+        (orgtrello-data/state it)
         (orgtrello/--compute-state-item it)
         (puthash :keyword it org-item-to-merge))
     org-item-to-merge))
@@ -2163,7 +2163,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun orgtrello/--list-boards () "Return the map of the existing boards associated to the current account. (Synchronous request)"
   (cl-remove-if-not
-   (lambda (board) (equal :json-false (orgtrello-query/--close-property board)))
+   (lambda (board) (equal :json-false (orgtrello-data/close-property board)))
    (orgtrello-query/http-trello (orgtrello-api/get-boards) *do-sync-query*)))
 
 (defun orgtrello/--list-board-lists (board-id) "Return the map of the existing list of the board with id board-id. (Synchronous request)"

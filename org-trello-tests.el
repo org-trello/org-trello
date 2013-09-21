@@ -237,12 +237,12 @@
   (expect nil       (orgtrello-data/due '((no . :some-due)))))
 
 (expectations
-  (expect :some-state (orgtrello-query/--state '((state . :some-state))))
-  (expect nil         (orgtrello-query/--state '((no . :some-state)))))
+  (expect :some-state (orgtrello-data/state '((state . :some-state))))
+  (expect nil         (orgtrello-data/state '((no . :some-state)))))
 
 (expectations
-  (expect :closed (orgtrello-query/--close-property '((closed . :closed))))
-  (expect nil     (orgtrello-query/--close-property '((no . :some-state)))))
+  (expect :closed (orgtrello-data/close-property '((closed . :closed))))
+  (expect nil     (orgtrello-data/close-property '((no . :some-state)))))
 
 ;; ########################## orgtrello-tests
 
@@ -654,26 +654,26 @@ DEADLINE: <some-date>
   (expect nil (orgtrello-data/card-id                  `((inexistant . "test"))))
   (expect "test" (orgtrello-data/due                   `((due . "test"))))
   (expect nil (orgtrello-data/due                      `((inexistant . "test"))))
-  (expect "test" (orgtrello-query/--state                 `((state . "test"))))
-  (expect nil (orgtrello-query/--state                    `((inexistant . "test"))))
-  (expect "test" (orgtrello-query/--close-property        `((closed . "test"))))
-  (expect nil (orgtrello-query/--close-property           `((inexistant . "test"))))
-  (expect "test" (orgtrello-query/--callback              `((callback . "test"))))
-  (expect nil (orgtrello-query/--callback                 `((inexistant . "test"))))
+  (expect "test" (orgtrello-data/state                 `((state . "test"))))
+  (expect nil (orgtrello-data/state                    `((inexistant . "test"))))
+  (expect "test" (orgtrello-data/close-property        `((closed . "test"))))
+  (expect nil (orgtrello-data/close-property           `((inexistant . "test"))))
+  (expect "test" (orgtrello-data/callback              `((callback . "test"))))
+  (expect nil (orgtrello-data/callback                 `((inexistant . "test"))))
   (expect "test" (orgtrello-data/sync-                 `((sync . "test"))))
   (expect nil (orgtrello-data/sync-                    `((inexistant . "test"))))
-  (expect "test" (orgtrello-query/--level                 `((level . "test"))))
-  (expect nil (orgtrello-query/--level                    `((inexistant . "test"))))
+  (expect "test" (orgtrello-data/level                 `((level . "test"))))
+  (expect nil (orgtrello-data/level                    `((inexistant . "test"))))
   (expect "test" (orgtrello-data/method-               `((method . "test"))))
   (expect nil (orgtrello-data/method-                  `((inexistant . "test"))))
   (expect "test" (orgtrello-data/uri-                  `((uri . "test"))))
   (expect nil (orgtrello-data/uri-                     `((inexistant . "test"))))
   (expect "test" (orgtrello-data/params-               `((params . "test"))))
   (expect nil (orgtrello-data/params-                  `((inexistant . "test"))))
-  (expect "test" (orgtrello-query/--start                 `((start . "test"))))
-  (expect nil (orgtrello-query/--start                    `((inexistant . "test"))))
-  (expect "test" (orgtrello-query/--action                `((action . "test"))))
-  (expect nil (orgtrello-query/--action                   `((inexistant . "test")))))
+  (expect "test" (orgtrello-data/start                 `((start . "test"))))
+  (expect nil (orgtrello-data/start                    `((inexistant . "test"))))
+  (expect "test" (orgtrello-data/action                `((action . "test"))))
+  (expect nil (orgtrello-data/action                   `((inexistant . "test")))))
 
 (expectations
   (expect :some-method (orgtrello-data/method (orgtrello-hash/make-properties `((:method . :some-method )))))
