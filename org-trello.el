@@ -485,6 +485,28 @@ This is a list with the following elements:
 (defun orgtrello-data/parent (entry-meta) "Given an entry-meta, return the current entry" (orgtrello-data/gethash-data :parent entry-meta))
 (defun orgtrello-data/grandparent (entry-meta) "Given an entry-meta, return the grandparent entry" (orgtrello-data/gethash-data :grandparent entry-meta))
 
+(defun orgtrello/--keyword (entity-meta &optional default-value) "Retrieve the keyword from the entity. If default-value is specified, this is the default value if no keyword is present"
+  (gethash :keyword entity-meta default-value))
+
+(defun orgtrello/--name (entity-meta) "Retrieve the name from the entity."
+  (gethash :name entity-meta))
+
+(defun orgtrello/--id (entity-meta) "Retrieve the id from the entity (id must be a trello id, otherwise, it's not considered an id, it's the marker)."
+  (let ((id (gethash :id entity-meta))) (when (orgtrello/id-p id) id)))
+
+(defun orgtrello/--level (entity-meta) "Retrieve the level from the entity."
+  (gethash :level entity-meta))
+
+(defun orgtrello/--due (entity-meta) "Retrieve the due date from the entity."
+  (gethash :due entity-meta))
+
+(defun orgtrello/--buffername (entity-meta) "Retrieve the point from the entity."
+  (gethash :buffername entity-meta))
+
+(defun orgtrello/--position (entity-meta) "Retrieve the point from the entity."
+  (gethash :position entity-meta))
+
+
 (defun orgtrello-data/retrieve-data  (symbol entity-data) "Own generic accessor"                                    (assoc-default symbol entity-data))
 (defun orgtrello-data/buffername     (entity-data) "Extract the buffername of the entity from the entity-data"      (orgtrello-data/retrieve-data 'buffername entity-data))
 (defun orgtrello-data/position       (entity-data) "Extract the position of the entity from the entity-data"        (orgtrello-data/retrieve-data 'position entity-data))
@@ -1572,28 +1594,6 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
                (and *consumer-key* *access-token*)))
       :ok
     "Setup problem - You need to install the consumer-key and the read/write access-token - C-c o i or M-x org-trello/install-board-and-lists-ids"))
-
-(defun orgtrello/--keyword (entity-meta &optional default-value) "Retrieve the keyword from the entity. If default-value is specified, this is the default value if no keyword is present"
-  (gethash :keyword entity-meta default-value))
-
-(defun orgtrello/--name (entity-meta) "Retrieve the name from the entity."
-  (gethash :name entity-meta))
-
-(defun orgtrello/--id (entity-meta) "Retrieve the id from the entity (id must be a trello id, otherwise, it's not considered an id, it's the marker)."
-  (let ((id (gethash :id entity-meta)))
-    (when (orgtrello/id-p id) id)))
-
-(defun orgtrello/--level (entity-meta) "Retrieve the level from the entity."
-  (gethash :level entity-meta))
-
-(defun orgtrello/--due (entity-meta) "Retrieve the due date from the entity."
-  (gethash :due entity-meta))
-
-(defun orgtrello/--buffername (entity-meta) "Retrieve the point from the entity."
-  (gethash :buffername entity-meta))
-
-(defun orgtrello/--position (entity-meta) "Retrieve the point from the entity."
-  (gethash :position entity-meta))
 
 (defun orgtrello/--retrieve-state-of-card (card-meta) "Given a card, retrieve its state depending on its :keyword metadata. If empty or no keyword then, its equivalence is *TODO*, otherwise, return its current state."
   (-if-let (orgtrello/--card-kwd (orgtrello/--keyword card-meta *TODO*))
