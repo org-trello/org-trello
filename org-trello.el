@@ -1553,11 +1553,8 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
     (orgtrello-log/msg *OT/ERROR* "Ensure you use utf-8 encoding for your org buffer.")
     :ok))
 
-(defun orgtrello/--board-name () "Compute the board's name"
-  (assoc-default *BOARD-NAME* org-file-properties))
-
-(defun orgtrello/--board-id () "Compute the board's id"
-  (assoc-default *BOARD-ID* org-file-properties))
+(defun orgtrello/--board-name () "Compute the board's name" (assoc-default *BOARD-NAME* org-file-properties))
+(defun orgtrello/--board-id () "Compute the board's id" (assoc-default *BOARD-ID* org-file-properties))
 
 (defun orgtrello/--control-properties (&optional args) "org-trello needs the properties board-id and all list id from the trello board to be setuped on header property file. :ok if ok, or the error message if problems."
   (let ((orgtrello/--hmap-count (hash-table-count *HMAP-ID-NAME*)))
