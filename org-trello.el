@@ -476,7 +476,7 @@ This is a list with the following elements:
 (defun orgtrello-data/entity-id (entity) "Dispatch to the rightfull function to get the id"
   (orgtrello-data/--compute-fn entity '(orgtrello/--id orgtrello-query/--id)))
 
-(defun orgtrello-data/--card-p (entity) "Is an entity a card?" (orgtrello-data/--compute-fn entity '(orgtrello/--hcard-p orgtrello/--card-p)))
+(defun orgtrello-data/entity-card-p (entity) "Is an entity a card?" (orgtrello-data/--compute-fn entity '(orgtrello/--hcard-p orgtrello/--card-p)))
 (defun orgtrello-data/--checklist-p (entity) "Is an entity a checklist?" (orgtrello-data/--compute-fn entity '(orgtrello/--hchecklist-p orgtrello/--checklist-p)))
 (defun orgtrello-data/--item-p (entity) "Is an entity an item?" (orgtrello-data/--compute-fn entity '(orgtrello/--hitem-p orgtrello/--item-p)))
 
@@ -1874,7 +1874,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun orgtrello/--compute-entity-to-org-entry (entity) "Given an entity, compute its org representation."
   (funcall
-   (cond ((orgtrello-data/--card-p entity)      'orgtrello/--compute-card-to-org-entry)
+   (cond ((orgtrello-data/entity-card-p entity)      'orgtrello/--compute-card-to-org-entry)
          ((orgtrello-data/--checklist-p entity) 'orgtrello/--compute-checklist-to-org-entry)
          ((orgtrello-data/--item-p entity)      'orgtrello/--compute-item-to-org-entry))
    entity
@@ -1955,7 +1955,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
     (list (orgtrello/--add-entity-to-entities current-entity entities) (orgtrello/--add-entity-to-adjacency current-entity parent-entity adjacency))))
 
 (defun orgtrello/--dispatch-create-map (entity) "Dispatch the function to update map depending on the entity level."
-  (cond ((orgtrello-data/--card-p entity)      'orgtrello/--put-card)
+  (cond ((orgtrello-data/entity-card-p entity)      'orgtrello/--put-card)
         ((orgtrello-data/--checklist-p entity) 'orgtrello/--put-entities)
         ((orgtrello-data/--item-p entity)      'orgtrello/--put-entities)))
 
@@ -2000,7 +2000,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
     org-card-to-merge))
 
 (defun orgtrello/--dispatch-merge-fn (entity) "Dispatch the function fn to merge the entity."
-  (cond ((orgtrello-data/--card-p entity)      'orgtrello/--merge-card)
+  (cond ((orgtrello-data/entity-card-p entity)      'orgtrello/--merge-card)
         ((orgtrello-data/--checklist-p entity) 'orgtrello/--merge-checklist)
         ((orgtrello-data/--item-p entity)      'orgtrello/--merge-item)))
 
@@ -2033,7 +2033,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 (defun orgtrello/--write-entity! (entity-id entity) "Write the entity in the buffer to the current position. Move the cursor position."
   (orgtrello-log/msg *OT/INFO* "Synchronizing entity '%s' with id '%s'..." (orgtrello-data/--name entity) entity-id)
   (insert (orgtrello/--compute-entity-to-org-entry entity))
-  (orgtrello/--update-property entity-id (and *ORGTRELLO-NATURAL-ORG-CHECKLIST* (not (orgtrello-data/--card-p entity)))))
+  (orgtrello/--update-property entity-id (and *ORGTRELLO-NATURAL-ORG-CHECKLIST* (not (orgtrello-data/entity-card-p entity)))))
 
 ;; (defun orgtrello/org-map-entities! (fn-to-execute &optional entities) "Execute fn-to-execute function for all entities from buffer."
 ;;   (org-map-entries
@@ -2070,7 +2070,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
       (goto-char (point-max)) ;; go at the end of the file
       (maphash
        (lambda (new-id entity)
-         (when (orgtrello-data/--card-p entity)
+         (when (orgtrello-data/entity-card-p entity)
                (orgtrello/--write-card! new-id entity entities adjacency)))
        entities)
       (goto-char (point-min)) ;; go back to the beginning of file

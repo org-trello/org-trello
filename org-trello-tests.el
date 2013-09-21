@@ -1520,10 +1520,10 @@ DEADLINE: <some-date>
  (expect nil (orgtrello/--entity-with-level-p (orgtrello-hash/make-properties `((:level . ,*CHECKLIST-LEVEL*))) *CARD-LEVEL*)))
 
 (expectations
- (expect t (orgtrello-data/--card-p (orgtrello-hash/make-properties `((:level . ,*CARD-LEVEL*)))))
- (expect nil (orgtrello-data/--card-p (orgtrello-hash/make-properties `((:level . ,*CHECKLIST-LEVEL*)))))
- (expect 1 (orgtrello-data/--card-p `((idList . 1))))
- (expect nil (orgtrello-data/--card-p `((id . 1)))))
+ (expect t (orgtrello-data/entity-card-p (orgtrello-hash/make-properties `((:level . ,*CARD-LEVEL*)))))
+ (expect nil (orgtrello-data/entity-card-p (orgtrello-hash/make-properties `((:level . ,*CHECKLIST-LEVEL*)))))
+ (expect 1 (orgtrello-data/entity-card-p `((idList . 1))))
+ (expect nil (orgtrello-data/entity-card-p `((id . 1)))))
 
 (expectations
  (expect t (orgtrello-data/--checklist-p (orgtrello-hash/make-properties `((:level . ,*CHECKLIST-LEVEL*)))))
