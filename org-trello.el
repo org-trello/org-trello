@@ -473,7 +473,7 @@ This is a list with the following elements:
 (defun orgtrello-data/--compute-fn (entity list-dispatch-fn) "Given an entity, compute the result"
   (funcall (if (hash-table-p entity) (first list-dispatch-fn) (second list-dispatch-fn)) entity))
 
-(defun orgtrello-data/id (entity) "Dispatch to the rightfull function to get the id"
+(defun orgtrello-data/entity-id (entity) "Dispatch to the rightfull function to get the id"
   (orgtrello-data/--compute-fn entity '(orgtrello/--id orgtrello-query/--id)))
 
 (defun orgtrello-data/--card-p (entity) "Is an entity a card?" (orgtrello-data/--compute-fn entity '(orgtrello/--hcard-p orgtrello/--card-p)))
@@ -1933,7 +1933,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
       (list adjacency)))
 
 (defun orgtrello/--add-entity-to-entities (entity entities) "Adding entity to the hash entities."
-  (puthash (orgtrello-data/id entity) entity entities)
+  (puthash (orgtrello-data/entity-id entity) entity entities)
   entities)
 
 ;; FIXME find an already existing implementation.
@@ -1944,8 +1944,8 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
        (reverse it)))
 
 (defun orgtrello/--add-entity-to-adjacency (current-entity parent-entity adjacency) "Adding entity to the adjacency entry."
-  (let ((current-id (orgtrello-data/id current-entity))
-        (parent-id (orgtrello-data/id parent-entity)))
+  (let ((current-id (orgtrello-data/entity-id current-entity))
+        (parent-id (orgtrello-data/entity-id parent-entity)))
     (puthash parent-id (orgtrello/--add-to-last-pos current-id (gethash parent-id adjacency)) adjacency)
     adjacency))
 
