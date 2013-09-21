@@ -457,15 +457,6 @@ This is a list with the following elements:
                                  ((= level *ITEM-LEVEL*)      `(,(orgtrello-data/--parent-metadata) ,(orgtrello-data/--grandparent-metadata))))))
             (orgtrello-hash/make-hierarchy current (first ancestors) (second ancestors))))))
 
-(defun orgtrello-data/current (entry-meta) "Given an entry-meta, return the current entry"
-  (gethash :current entry-meta))
-
-(defun orgtrello-data/parent (entry-meta) "Given an entry-meta, return the current entry"
-  (gethash :parent entry-meta))
-
-(defun orgtrello-data/grandparent (entry-meta) "Given an entry-meta, return the grandparent entry"
-  (gethash :grandparent entry-meta))
-
 (defun orgtrello-data/--get-metadata (heading-metadata) "Given the heading-metadata returned by the function 'org-heading-components, make it a hashmap with key :level, :keyword, :name. and their respective value"
   (cl-destructuring-bind (buffer-name point id due level _ keyword _ name &rest) heading-metadata
                          (orgtrello-hash/make-hash-org level keyword name id due point buffer-name)))
@@ -489,6 +480,10 @@ This is a list with the following elements:
 (defun orgtrello-data/uri    (query-map) "Retrieve the http uri"       (orgtrello-data/gethash-data :uri query-map))
 (defun orgtrello-data/sync   (query-map) "Retrieve the http sync flag" (orgtrello-data/gethash-data :sync query-map))
 (defun orgtrello-data/params (query-map) "Retrieve the http params"    (orgtrello-data/gethash-data :params query-map))
+
+(defun orgtrello-data/current (entry-meta) "Given an entry-meta, return the current entry" (orgtrello-data/gethash-data :current entry-meta))
+(defun orgtrello-data/parent (entry-meta) "Given an entry-meta, return the current entry" (orgtrello-data/gethash-data :parent entry-meta))
+(defun orgtrello-data/grandparent (entry-meta) "Given an entry-meta, return the grandparent entry" (orgtrello-data/gethash-data :grandparent entry-meta))
 
 (defun orgtrello-data/retrieve-data  (symbol entity-data) "Own generic accessor"                                    (assoc-default symbol entity-data))
 (defun orgtrello-data/buffername     (entity-data) "Extract the buffername of the entity from the entity-data"      (orgtrello-data/retrieve-data 'buffername entity-data))
