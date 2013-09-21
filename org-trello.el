@@ -478,7 +478,7 @@ This is a list with the following elements:
 
 (defun orgtrello-data/entity-card-p (entity) "Is an entity a card?" (orgtrello-data/--compute-fn entity '(orgtrello/--hcard-p orgtrello/--card-p)))
 (defun orgtrello-data/entity-checklist-p (entity) "Is an entity a checklist?" (orgtrello-data/--compute-fn entity '(orgtrello/--hchecklist-p orgtrello/--checklist-p)))
-(defun orgtrello-data/--item-p (entity) "Is an entity an item?" (orgtrello-data/--compute-fn entity '(orgtrello/--hitem-p orgtrello/--item-p)))
+(defun orgtrello-data/entity-item-p (entity) "Is an entity an item?" (orgtrello-data/--compute-fn entity '(orgtrello/--hitem-p orgtrello/--item-p)))
 
 (defun orgtrello-data/--name (entity) "Retrieve the entity name" (orgtrello-data/--compute-fn entity '(orgtrello/--name orgtrello-query/--name)))
 (defun orgtrello-data/--due (entity) "Retrieve the due date" (orgtrello-data/--compute-fn entity '(orgtrello/--due orgtrello-query/--due)))
@@ -1876,7 +1876,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   (funcall
    (cond ((orgtrello-data/entity-card-p entity)      'orgtrello/--compute-card-to-org-entry)
          ((orgtrello-data/entity-checklist-p entity) 'orgtrello/--compute-checklist-to-org-entry)
-         ((orgtrello-data/--item-p entity)      'orgtrello/--compute-item-to-org-entry))
+         ((orgtrello-data/entity-item-p entity)      'orgtrello/--compute-item-to-org-entry))
    entity
    *ORGTRELLO-NATURAL-ORG-CHECKLIST*))
 
@@ -1957,7 +1957,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 (defun orgtrello/--dispatch-create-map (entity) "Dispatch the function to update map depending on the entity level."
   (cond ((orgtrello-data/entity-card-p entity)      'orgtrello/--put-card)
         ((orgtrello-data/entity-checklist-p entity) 'orgtrello/--put-entities)
-        ((orgtrello-data/--item-p entity)      'orgtrello/--put-entities)))
+        ((orgtrello-data/entity-item-p entity)      'orgtrello/--put-entities)))
 
 (defun orgtrello/--compute-full-entities-from-org () "Compute the current entities hash from the buffer in the same format as the sync-from-trello routine. {entity-id '(entity-card {checklist-id (checklist (item))})}"
   (let ((entities  (make-hash-table :test 'equal))
@@ -2002,7 +2002,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 (defun orgtrello/--dispatch-merge-fn (entity) "Dispatch the function fn to merge the entity."
   (cond ((orgtrello-data/entity-card-p entity)      'orgtrello/--merge-card)
         ((orgtrello-data/entity-checklist-p entity) 'orgtrello/--merge-checklist)
-        ((orgtrello-data/--item-p entity)      'orgtrello/--merge-item)))
+        ((orgtrello-data/entity-item-p entity)      'orgtrello/--merge-item)))
 
 (defun orgtrello/--merge-list (a-list b-list) "Merge 2 lists together (no duplicates)."
   (-> a-list
