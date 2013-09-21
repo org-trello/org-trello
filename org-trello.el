@@ -498,7 +498,7 @@ This is a list with the following elements:
 (defun orgtrello-data/list-id        (entity-data) "Extract the list identitier of the entity from the entity"      (orgtrello-data/retrieve-data 'idList entity-data))
 (defun orgtrello-data/checklist-ids  (entity-data) "Extract the checklist identifier of the entity from the entity" (orgtrello-data/retrieve-data 'idChecklists entity-data))
 (defun orgtrello-data/check-items    (entity-data) "Extract the checklist identifier of the entity from the entity" (orgtrello-data/retrieve-data 'checkItems entity-data))
-(defun orgtrello-query/--card-id        (entity-data) "Extract the card identifier of the entity from the entity"      (orgtrello-data/retrieve-data 'idCard entity-data))
+(defun orgtrello-data/card-id        (entity-data) "Extract the card identifier of the entity from the entity"      (orgtrello-data/retrieve-data 'idCard entity-data))
 (defun orgtrello-query/--due            (entity-data) "Extract the due date of the entity from the query response"     (orgtrello-data/retrieve-data 'due entity-data))
 (defun orgtrello-query/--state          (entity-data) "Extract the state of the entity"                                (orgtrello-data/retrieve-data 'state entity-data))
 (defun orgtrello-query/--close-property (entity-data) "Extract the closed property of the entity"                      (orgtrello-data/retrieve-data 'closed entity-data))
@@ -1862,7 +1862,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
            (orgtrello-data/entity-state item)))
 
 (defun orgtrello/--card-p (entity) "Is this a card?" (orgtrello-data/list-id entity))
-(defun orgtrello/--checklist-p (entity) "Is this a checklist?" (orgtrello-query/--card-id entity))
+(defun orgtrello/--checklist-p (entity) "Is this a checklist?" (orgtrello-data/card-id entity))
 (defun orgtrello/--item-p (entity) "is this an item?" (orgtrello-query/--state entity))
 
 (defun orgtrello/--entity-with-level-p (entity level) "Is the entity with level level?" (-> entity orgtrello/--level (= level)))
