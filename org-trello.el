@@ -470,8 +470,11 @@ This is a list with the following elements:
 (defun orgtrello-data/entity-item-p (entity) "Is an entity an item?" (orgtrello-data/--compute-fn entity '(orgtrello/--hitem-p orgtrello/--item-p)))
 
 (defun orgtrello-data/entity-name (entity) "Retrieve the entity name" (orgtrello-data/--compute-fn entity '(orgtrello/--name orgtrello-data/name)))
-(defun orgtrello-data/entity-due (entity) "Retrieve the due date" (orgtrello-data/--compute-fn entity '(orgtrello/--due orgtrello-data/due)))
-(defun orgtrello-data/entity-state (entity) "Retrieve the status date" (orgtrello-data/--compute-fn entity '(orgtrello/--keyword orgtrello-data/state)))
+(defun orgtrello-data/entity-due (entity) "Retrieve the entity due date" (orgtrello-data/--compute-fn entity '(orgtrello/--due orgtrello-data/due)))
+(defun orgtrello-data/entity-state (entity) "Retrieve the entity status" (orgtrello-data/--compute-fn entity '(orgtrello/--keyword orgtrello-data/state)))
+(defun orgtrello-data/entity-method (entity) "Retrieve the entity method" (orgtrello-data/--compute-fn entity '(orgtrello-data/method orgtrello-data/method-)))
+(defun orgtrello-data/entity-uri (entity) "Retrieve the entity uri" (orgtrello-data/--compute-fn entity '(orgtrello-data/uri orgtrello-data/uri-)))
+(defun orgtrello-data/entity-params (entity) "Retrieve the entity params" (orgtrello-data/--compute-fn entity '(orgtrello-data/params orgtrello-data/params-)))
 
 (defun orgtrello/--card-p (entity) "Is this a card?" (orgtrello-data/list-id entity))
 (defun orgtrello/--checklist-p (entity) "Is this a checklist?" (orgtrello-data/card-id entity))
@@ -804,7 +807,7 @@ This is a list with the following elements:
   (-> http-con elnode-http-params caar (orgtrello-proxy/--unhexify-data unhexify-flag)))
 
 (defun orgtrello-proxy/--compute-trello-query (query-map-wrapped) "Build a trello query from the control of query-map-wrapped."
-  (orgtrello-hash/make-hash (orgtrello-data/method query-map-wrapped) (orgtrello-data/uri- query-map-wrapped) (orgtrello-data/params- query-map-wrapped)))
+  (orgtrello-hash/make-hash (orgtrello-data/entity-method query-map-wrapped) (orgtrello-data/entity-uri query-map-wrapped) (orgtrello-data/entity-params query-map-wrapped)))
 
 (defun orgtrello-proxy/--response (http-con data) "A response wrapper"
   (elnode-http-start http-con 201 '("Content-type" . "application/json"))
