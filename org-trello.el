@@ -482,7 +482,7 @@ This is a list with the following elements:
 
 (defun orgtrello-data/entity-name (entity) "Retrieve the entity name" (orgtrello-data/--compute-fn entity '(orgtrello/--name orgtrello-query/--name)))
 (defun orgtrello-data/entity-due (entity) "Retrieve the due date" (orgtrello-data/--compute-fn entity '(orgtrello/--due orgtrello-query/--due)))
-(defun orgtrello-data/--state (entity) "Retrieve the status date" (orgtrello-data/--compute-fn entity '(orgtrello/--keyword orgtrello-query/--state)))
+(defun orgtrello-data/entity-state (entity) "Retrieve the status date" (orgtrello-data/--compute-fn entity '(orgtrello/--keyword orgtrello-query/--state)))
 
 ;; macro? defmethod?
 
@@ -1804,7 +1804,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   (format "* %s %s\n%s" status name (orgtrello/--compute-due-date due-date)))
 
 (defun orgtrello/--compute-card-to-org-entry (card &optional orgcheckbox-p) "Given a card, compute its org-mode entry equivalence. orgcheckbox-p is nil"
-  (orgtrello/--private-compute-card-to-org-entry (orgtrello-data/entity-name card) (orgtrello-data/--state card) (orgtrello-data/entity-due card)))
+  (orgtrello/--private-compute-card-to-org-entry (orgtrello-data/entity-name card) (orgtrello-data/entity-state card) (orgtrello-data/entity-due card)))
 
 (defun orgtrello/--compute-checklist-to-orgtrello-entry (name &optional level status) "Compute the orgtrello format checklist"
   (format "** %s\n" name))
@@ -1861,7 +1861,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
                'orgtrello/--compute-item-to-orgtrello-entry)
            (orgtrello-data/entity-name item)
            *ITEM-LEVEL*
-           (orgtrello-data/--state item)))
+           (orgtrello-data/entity-state item)))
 
 (defun orgtrello/--card-p (entity) "Is this a card?" (orgtrello-query/--list-id entity))
 (defun orgtrello/--checklist-p (entity) "Is this a checklist?" (orgtrello-query/--card-id entity))
