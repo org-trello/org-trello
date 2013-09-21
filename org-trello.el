@@ -473,6 +473,15 @@ This is a list with the following elements:
 (defun orgtrello-data/entity-due (entity) "Retrieve the due date" (orgtrello-data/--compute-fn entity '(orgtrello/--due orgtrello-data/due)))
 (defun orgtrello-data/entity-state (entity) "Retrieve the status date" (orgtrello-data/--compute-fn entity '(orgtrello/--keyword orgtrello-data/state)))
 
+(defun orgtrello/--card-p (entity) "Is this a card?" (orgtrello-data/list-id entity))
+(defun orgtrello/--checklist-p (entity) "Is this a checklist?" (orgtrello-data/card-id entity))
+(defun orgtrello/--item-p (entity) "is this an item?" (orgtrello-data/state entity))
+
+(defun orgtrello/--entity-with-level-p (entity level) "Is the entity with level level?" (-> entity orgtrello/--level (= level)))
+(defun orgtrello/--hcard-p (entity) "Is this a card?" (orgtrello/--entity-with-level-p entity *CARD-LEVEL*))
+(defun orgtrello/--hchecklist-p (entity) "Is this a checklist?" (orgtrello/--entity-with-level-p entity *CHECKLIST-LEVEL*))
+(defun orgtrello/--hitem-p (entity) "Is this an item?" (orgtrello/--entity-with-level-p entity *ITEM-LEVEL*))
+
 ;; macro? defmethod?
 
 (defun orgtrello-data/gethash-data (key query-map &optional default-value) "Retrieve the data from some query-map" (gethash key query-map default-value))
@@ -1838,15 +1847,6 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
            (orgtrello-data/entity-name item)
            *ITEM-LEVEL*
            (orgtrello-data/entity-state item)))
-
-(defun orgtrello/--card-p (entity) "Is this a card?" (orgtrello-data/list-id entity))
-(defun orgtrello/--checklist-p (entity) "Is this a checklist?" (orgtrello-data/card-id entity))
-(defun orgtrello/--item-p (entity) "is this an item?" (orgtrello-data/state entity))
-
-(defun orgtrello/--entity-with-level-p (entity level) "Is the entity with level level?" (-> entity orgtrello/--level (= level)))
-(defun orgtrello/--hcard-p (entity) "Is this a card?" (orgtrello/--entity-with-level-p entity *CARD-LEVEL*))
-(defun orgtrello/--hchecklist-p (entity) "Is this a checklist?" (orgtrello/--entity-with-level-p entity *CHECKLIST-LEVEL*))
-(defun orgtrello/--hitem-p (entity) "Is this an item?" (orgtrello/--entity-with-level-p entity *ITEM-LEVEL*))
 
 (defun orgtrello/--compute-entity-to-org-entry (entity) "Given an entity, compute its org representation."
   (funcall
