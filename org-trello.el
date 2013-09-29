@@ -2247,6 +2247,11 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
        t))
     "Install board and list ids done!"))
 
+(defun orgtrello/do-install-users-from-current-board () "Install the board's users."
+  (let* ((board-id   (orgtrello/--board-id))
+         (board-info (orgtrello-query/http-trello (orgtrello-api/get-board board-id) *do-sync-query*)))
+    (message "board: %S" board-info)))
+
 (defun orgtrello/--create-board (board-name &optional board-description) "Create a board with name and eventually a description."
   (orgtrello-log/msg *OT/INFO* "Creating board '%s'" board-name)
   (let ((board-data (orgtrello-query/http-trello (orgtrello-api/add-board board-name board-description) *do-sync-query*)))
@@ -2343,6 +2348,15 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
    *do-save-buffer*
    *do-reload-setup*))
 
+(defun org-trello/install-users-from-current-board () "Control first, then if ok, trigger the setup installation of the trello board's users inside the current buffer."
+  (interactive)
+  (org-action/--deal-with-consumer-msg-controls-or-actions-then-do
+     "Install users from the current boards"
+     '(orgtrello/--setup-properties orgtrello/--control-keys)
+     'orgtrello/do-install-users-from-current-board
+     *do-save-buffer*
+     *do-reload-setup*))
+
 (defun org-trello/install-board-and-lists-ids () "Control first, then if ok, trigger the setup installation of the trello board to sync with."
   (interactive)
   (org-action/--deal-with-consumer-msg-controls-or-actions-then-do
@@ -2429,6 +2443,7 @@ C-c o h - M-x org-trello/help-describing-bindings    - This help message."))
              ;; setup relative
              (define-key map (kbd "C-c o i") 'org-trello/install-key-and-token)
              (define-key map (kbd "C-c o I") 'org-trello/install-board-and-lists-ids)
+             (define-key map (kbd "C-c o a") 'org-trello/install-users-from-current-board)
              (define-key map (kbd "C-c o d") 'org-trello/check-setup)
              (define-key map (kbd "C-c o x") 'org-trello/delete-setup)
              ;; synchronous request (direct to trello)
