@@ -1778,12 +1778,19 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
               ((= level *CHECKLIST-LEVEL*) *ERROR-SYNC-CHECKLIST-MISSING-NAME*)
               ((= level *ITEM-LEVEL*)      *ERROR-SYNC-ITEM-MISSING-NAME*)))))
 
+(defun orgtrello/--user-ids () "Compute the user ids in the card."
+  (--> *ORGTRELLO-USERS-ENTRY*
+       (org-entry-get nil it)
+       (orgtrello/--users-from it)
+       (--map (gethash (format "%s%s" *ORGTRELLO-USER-PREFIX* it) *HMAP-USERS-NAME-ID*) it)))
+
 (defun orgtrello/--delegate-to-the-proxy (full-meta action) "Execute the delegation to the consumer."
   (let* ((orgtrello/--current          (orgtrello-data/current full-meta))
          (orgtrello/--marker           (orgtrello/--compute-marker-from-entry orgtrello/--current)))
     (unless (string= (orgtrello/--id orgtrello/--current) orgtrello/--marker) ;; if never created before, we need a marker to add inside the file
             (orgtrello/--set-marker orgtrello/--marker))
-    (puthash :id orgtrello/--marker orgtrello/--current)
+    (puthash :users  (orgtrello/--user-ids) orgtrello/--current)
+    (puthash :id     orgtrello/--marker orgtrello/--current)
     (puthash :action action         orgtrello/--current)
     (orgtrello-proxy/http-producer orgtrello/--current)))
 

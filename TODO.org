@@ -703,7 +703,7 @@ CLOSED: [2013-09-19 jeu. 19:05]
 - [X] Version
 - [X] Release notes
 - [X] Fix typography in naming windows-nt system - https://github.com/ardumont/org-trello/issues/62#issuecomment-24735681
-* IN-PROGRESS 0.2.2 [40%]
+* IN-PROGRESS 0.2.2 [33%]
 - [X] Version
 - [X] Improve abstraction around data from trello (not complete yet)
 - [-] Show people assigned to card
@@ -717,6 +717,7 @@ CLOSED: [2013-09-19 jeu. 19:05]
   - [ ] sync-to-trello also assign users
   - [ ] sync-from-trello also retrieve user informations
 - [ ] More fined grained use of the trello api (retrieve only data we use)
+- [ ] Update README about new command
 - [ ] Release notes
 * TODO 0.2.3 [0%]
 - [ ] Another Disposition about org's buffer - https://github.com/ardumont/org-trello/issues/33
