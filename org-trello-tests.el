@@ -1544,5 +1544,75 @@ DEADLINE: <some-date>
  (expect 1 (orgtrello-data/entity-item-p `((state . 1))))
  (expect nil (orgtrello-data/entity-item-p `((id . 1)))))
 
+(expectations
+  (expect '(((username . "ardumont") (fullName . "Antoine R. Dumont") (id . "4f2baa2f72b7c1293501cad3"))
+            ((username . "orgmode") (fullName . "org trello") (id . "5203a0c833fc36360800177f")))
+    (orgtrello/--compute-user-properties '(((member
+                                             (username . "ardumont")
+                                             (fullName . "Antoine R. Dumont")
+                                             (id . "4f2baa2f72b7c1293501cad3"))
+                                            (unconfirmed . :json-false)
+                                            (deactivated . :json-false)
+                                            (memberType . "admin")
+                                            (idMember . "4f2baa2f72b7c1293501cad3")
+                                            (id . "51d99bbc1e1d8988390047f6"))
+                                           ((member
+                                             (username . "orgmode")
+                                             (fullName . "org trello")
+                                             (id . "5203a0c833fc36360800177f"))
+                                            (unconfirmed . :json-false)
+                                            (deactivated . :json-false)
+                                            (memberType . "normal")
+                                            (idMember . "5203a0c833fc36360800177f")
+                                            (id . "524855ff8193aec160002cfa"))))))
+
+(ert-deftest testing-orgtrello/--compute-user-properties-hash ()
+  (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
+                                   ("ardumont"
+                                    ((username . "ardumont")
+                                     (fullName . "Antoine R. Dumont")
+                                     (id . "4f2baa2f72b7c1293501cad3"))
+                                    "orgmode"
+                                    ((username . "orgmode")
+                                     (fullName . "org trello")
+                                     (id . "5203a0c833fc36360800177f"))))
+
+                      (orgtrello/--compute-user-properties-hash '(((username . "ardumont") (fullName . "Antoine R. Dumont") (id . "4f2baa2f72b7c1293501cad3"))
+                                                                   ((username . "orgmode") (fullName . "org trello") (id . "5203a0c833fc36360800177f")))))))
+
+(ert-deftest testing-orgtrello/--compute-user-properties-hash ()
+  (should (hash-equal
+           #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
+              ("ardumont"
+               ((username . "ardumont")
+                (fullName . "Antoine R. Dumont")
+                (id . "4f2baa2f72b7c1293501cad3"))
+               "orgmode"
+               ((username . "orgmode")
+                (fullName . "org trello")
+                (id . "5203a0c833fc36360800177f"))))
+           (orgtrello/--compute-user-properties-hash-from-board '((closed . :json-false)
+                                                                  (memberships .
+                                                                               [((member
+                                                                                  (username . "ardumont")
+                                                                                  (fullName . "Antoine R. Dumont")
+                                                                                  (id . "4f2baa2f72b7c1293501cad3"))
+                                                                                 (unconfirmed . :json-false)
+                                                                                 (deactivated . :json-false)
+                                                                                 (memberType . "admin")
+                                                                                 (idMember . "4f2baa2f72b7c1293501cad3")
+                                                                                 (id . "51d99bbc1e1d8988390047f6"))
+                                                                                ((member
+                                                                                  (username . "orgmode")
+                                                                                  (fullName . "org trello")
+                                                                                  (id . "5203a0c833fc36360800177f"))
+                                                                                 (unconfirmed . :json-false)
+                                                                                 (deactivated . :json-false)
+                                                                                 (memberType . "normal")
+                                                                                 (idMember . "5203a0c833fc36360800177f")
+                                                                                 (id . "524855ff8193aec160002cfa"))])
+                                                                  (name . "api test board")
+                                                                  (id . "51d99bbc1e1d8988390047f2"))))))
+
 (provide 'org-trello-tests)
 ;;; org-trello-tests ends here

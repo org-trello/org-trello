@@ -2248,10 +2248,25 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
        t))
     "Install board and list ids done!"))
 
+(defun orgtrello/--compute-user-properties (memberships-map) "Given a map, extract the map of user informations."
+  (map 'list (lambda (x) (assoc-default 'member x)) memberships-map))
+
+(defun orgtrello/--compute-user-properties-hash (user-properties)
+  (-reduce-from (lambda (acc user) (puthash (assoc-default 'username user) user acc) acc) (make-hash-table :test 'equal) user-properties))
+
+(defun orgtrello/--compute-user-properties-hash-from-board (board-info) "Compute user properties given board's informations."
+  (->> board-info
+       kvalist->hash
+       (gethash 'memberships)
+       orgtrello/--compute-user-properties
+       orgtrello/--compute-user-properties-hash))
+
 (defun orgtrello/do-install-users-from-current-board () "Install the board's users."
-  (let* ((board-id   (orgtrello/--board-id))
-         (board-info (orgtrello-query/http-trello (orgtrello-api/get-board board-id) *do-sync-query*)))
-    (message "board: %S" (kvalist->hash board-info))))
+  (let ((board-user-properties-hash (--> (orgtrello/--board-id)
+                                         (orgtrello-api/get-board it)
+                                         (orgtrello-query/http-trello it *do-sync-query*)
+                                         (orgtrello/--compute-user-properties-hash-from-board it))))
+    (message "board: %S" board-user-properties-hash)))
 
 (defun orgtrello/--create-board (board-name &optional board-description) "Create a board with name and eventually a description."
   (orgtrello-log/msg *OT/INFO* "Creating board '%s'" board-name)
