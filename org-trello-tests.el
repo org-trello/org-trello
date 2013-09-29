@@ -1568,29 +1568,16 @@ DEADLINE: <some-date>
 
 (ert-deftest testing-orgtrello/--compute-user-properties-hash ()
   (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
-                                   ("ardumont"
-                                    ((username . "ardumont")
-                                     (fullName . "Antoine R. Dumont")
-                                     (id . "4f2baa2f72b7c1293501cad3"))
-                                    "orgmode"
-                                    ((username . "orgmode")
-                                     (fullName . "org trello")
-                                     (id . "5203a0c833fc36360800177f"))))
-
+                                    ("ardumont" "4f2baa2f72b7c1293501cad3"
+                                     "orgmode" "5203a0c833fc36360800177f"))
                       (orgtrello/--compute-user-properties-hash '(((username . "ardumont") (fullName . "Antoine R. Dumont") (id . "4f2baa2f72b7c1293501cad3"))
                                                                    ((username . "orgmode") (fullName . "org trello") (id . "5203a0c833fc36360800177f")))))))
 
 (ert-deftest testing-orgtrello/--compute-user-properties-hash ()
   (should (hash-equal
            #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
-              ("ardumont"
-               ((username . "ardumont")
-                (fullName . "Antoine R. Dumont")
-                (id . "4f2baa2f72b7c1293501cad3"))
-               "orgmode"
-               ((username . "orgmode")
-                (fullName . "org trello")
-                (id . "5203a0c833fc36360800177f"))))
+                         ("ardumont" "4f2baa2f72b7c1293501cad3"
+                          "orgmode" "5203a0c833fc36360800177f"))
            (orgtrello/--compute-user-properties-hash-from-board '((closed . :json-false)
                                                                   (memberships .
                                                                                [((member

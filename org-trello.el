@@ -2252,7 +2252,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   (map 'list (lambda (x) (assoc-default 'member x)) memberships-map))
 
 (defun orgtrello/--compute-user-properties-hash (user-properties)
-  (-reduce-from (lambda (acc user) (puthash (assoc-default 'username user) user acc) acc) (make-hash-table :test 'equal) user-properties))
+  (-reduce-from (lambda (acc user) (puthash (assoc-default 'username user) (assoc-default 'id user) acc) acc) (make-hash-table :test 'equal) user-properties))
 
 (defun orgtrello/--compute-user-properties-hash-from-board (board-info) "Compute user properties given board's informations."
   (->> board-info
