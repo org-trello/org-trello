@@ -83,6 +83,7 @@
 (defvar *ORGTRELLO-LEVELS*            `(,*CARD-LEVEL* ,*CHECKLIST-LEVEL* ,*ITEM-LEVEL*) "Current levels 1 is card, 2 is checklist, 3 is item.")
 (defvar *ORGTRELLO-ACTION-SYNC*       "sync-entity"                                     "Possible action regarding the entity synchronization.")
 (defvar *ORGTRELLO-ACTION-DELETE*     "delete"                                          "Possible action regarding the entity deletion.")
+(defvar *ORGTRELLO-USER-PREFIX*       "orgtrello-user-"                                 "orgtrello prefix to define user to a org-mode level.")
 
 (defvar *ORGTRELLO-NATURAL-ORG-CHECKLIST* t
   "Permit the user to choose the natural org checklists over the first org-trello one (present from the start which are more basic).
@@ -170,6 +171,14 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
      map)
    properties
    :initial-value (make-hash-table :test 'equal)))
+
+(defun orgtrello-hash/make-transpose-properties (properties) "Given a list of key value pair, return a hash table with key/value transposed."
+  (-reduce-from
+   (lambda (map list-key-value)
+     (puthash (cdr list-key-value) (car list-key-value) map)
+     map)
+   (make-hash-table :test 'equal)
+   properties))
 
 (defun orgtrello-hash/make-hierarchy (current &optional parent grandparent) "Helper constructor for the hashmap holding the full metadata about the current-entry."
   (orgtrello-hash/make-properties `((:current . ,current)
@@ -1555,14 +1564,19 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 (defvar *BOARD-ID*   "board-id" "orgtrello property board-id entry")
 (defvar *BOARD-NAME* "board-name" "orgtrello property board-name entry")
 
-(defvar *LIST-NAMES*   nil "orgtrello property names of the different lists. This use the standard 'org-todo-keywords property from org-mode.")
-(defvar *HMAP-ID-NAME* nil "orgtrello hash map containing for each id, the associated name (or org keyword).")
+(defvar *LIST-NAMES*         nil "orgtrello property names of the different lists. This use the standard 'org-todo-keywords property from org-mode.")
+(defvar *HMAP-ID-NAME*       nil "orgtrello hash map containing for each id, the associated name (or org keyword).")
+(defvar *HMAP-USERS-ID-NAME* nil "orgtrello hash map containing for each user name, the associated id.")
+(defvar *HMAP-USERS-NAME-ID* nil "orgtrello hash map containing for each user id, the associated name.")
 
 (defvar *CONFIG-DIR*  (concat (getenv "HOME") "/" ".trello"))
 (defvar *CONFIG-FILE* (concat *CONFIG-DIR* "/config.el"))
 
 (defun orgtrello/filtered-kwds () "org keywords used (based on org-todo-keywords-1)."
   org-todo-keywords-1)
+
+(defun orgtrello/--list-user-entries (properties) "List the users entries."
+  (--filter (string-match-p *ORGTRELLO-USER-PREFIX* (car it)) properties))
 
 (defun orgtrello/--setup-properties (&optional args) "Setup the properties according to the org-mode setup. Return :ok."
   ;; read the setup
@@ -1575,9 +1589,14 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
                                         (puthash (assoc-default name org-file-properties) name hmap)
                                         hmap))
                                     orgtrello/--list-keywords
-                                    :initial-value (make-hash-table :test 'equal))))
+                                    :initial-value (make-hash-table :test 'equal)))
+         (orgtrello/--list-users (orgtrello/--list-user-entries org-file-properties))
+         (orgtrello/--hmap-user-id-name (orgtrello-hash/make-transpose-properties orgtrello/--list-users))
+         (orgtrello/--hmap-user-name-id (orgtrello-hash/make-properties orgtrello/--list-users)))
     (setq *LIST-NAMES*   orgtrello/--list-keywords)
     (setq *HMAP-ID-NAME* orgtrello/--hmap-id-name)
+    (setq *HMAP-USERS-ID-NAME* orgtrello/--hmap-user-id-name)
+    (setq *HMAP-USERS-NAME-ID* orgtrello/--hmap-user-name-id)
     :ok))
 
 (defun orgtrello/--control-encoding (&optional args) "Use utf-8, otherwise, there will be trouble."
@@ -2193,7 +2212,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
     (orgtrello/--delete-buffer-property (format "#+property: %s" *BOARD-ID*)) ;; remove board-id
     (orgtrello/--delete-buffer-property (format "#+property: %s" *BOARD-NAME*));; and board-name
     (mapc (lambda (name) (orgtrello/--delete-buffer-property (format "#+property: %s" (orgtrello/--convention-property-name name)))) list-keywords) ;; remove data regarding keywords
-    (maphash (lambda (name id) (orgtrello/--delete-buffer-property (format "#+property: %s %s" name id))) users-hash-name-id) ;; remove data regarding users
+    (maphash (lambda (name id) (orgtrello/--delete-buffer-property (format "#+property: %s%s %s" *ORGTRELLO-USER-PREFIX* name id))) users-hash-name-id) ;; remove data regarding users
     (if update-todo-keywords (orgtrello/--delete-buffer-property "#+TODO: "))));; at last remove entry regarding todo keywords
 
 (defun orgtrello/--compute-keyword-separation (name) "Given a keyword done (case insensitive) return a string '| done' or directly the keyword"
@@ -2211,7 +2230,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
           (insert "#+TODO: ") ;; install the todo list
           (maphash (lambda (name _) (insert (concat (orgtrello/--compute-keyword-separation (orgtrello/--convention-property-name name)) " "))) board-lists-hash-name-id)
           (insert "\n")))
-    (maphash (lambda (user-name user-id) (insert (format "#+property: %s %s\n" user-name user-id))) board-users-hash-name-id)    ;; install user-properties
+    (maphash (lambda (name id) (insert (format "#+property: %s%s %s\n" *ORGTRELLO-USER-PREFIX* name id))) board-users-hash-name-id)    ;; install user-properties
     (save-buffer)
     (orgtrello-action/reload-setup)))
 

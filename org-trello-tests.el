@@ -20,6 +20,10 @@
   (should (not (hash-equal (orgtrello-hash/make-properties `((:name . "some other name") (:keyword "TODO")))
                            (orgtrello-hash/make-properties `((:name . "some other name") (:keyword "DONE")))))))
 
+(ert-deftest testing-hash-transpose-properties ()
+  (should (hash-equal (orgtrello-hash/make-properties `(("some other name" . :name) ("TODO" . :keyword)))
+                      (orgtrello-hash/make-transpose-properties `((:name . "some other name") (:keyword . "TODO"))))))
+
 ;; ########################## orgtrello-hash
 
 (expectations
@@ -1600,6 +1604,11 @@ DEADLINE: <some-date>
                                                                                  (id . "524855ff8193aec160002cfa"))])
                                                                   (name . "api test board")
                                                                   (id . "51d99bbc1e1d8988390047f2"))))))
+
+(expectations
+ (expect
+  '(("orgtrello-user-ardumont" . "4f2baa2f72b7c1293501cad3") ("orgtrello-user-orgmode" . "5203a0c833fc36360800177f"))
+  (orgtrello/--list-user-entries '(("board-name" . "api test board") ("board-id" . "51d99bbc1e1d8988390047f2") ("TODO" . "51d99bbc1e1d8988390047f3") ("IN-PROGRESS" . "51d99bbc1e1d8988390047f4") ("DONE" . "51d99bbc1e1d8988390047f5") ("PENDING" . "51e53898ea3d1780690015ca") ("DELEGATED" . "51e538a89c05f1e25c0027c6") ("FAIL" . "51e538a26f75d07902002d25") ("CANCELLED" . "51e538e6c7a68fa0510014ee") ("orgtrello-user-ardumont" . "4f2baa2f72b7c1293501cad3") ("orgtrello-user-orgmode" . "5203a0c833fc36360800177f")))))
 
 (provide 'org-trello-tests)
 ;;; org-trello-tests ends here
