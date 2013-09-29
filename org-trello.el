@@ -2227,7 +2227,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
     (maphash (lambda (k v) (push k keys)) hash-table)
     keys))
 
-(defun orgtrello/do-install-board-and-lists () "Interactive command to install the list boards"
+(defun orgtrello/do-install-board-and-lists () "Command to install the list boards."
   (interactive)
   (cl-destructuring-bind
       (orgtrello/--chosen-board-id orgtrello/--chosen-board-name) (-> (orgtrello/--list-boards)
