@@ -398,6 +398,11 @@ This is a list with the following elements:
 
 (defvar *ORGTRELLO-ID* "orgtrello-id" "Key entry used for the trello identifier and the trello marker (the first sync).")
 
+(defun orgtrello-data/merge-2-lists-without-duplicates (a-list b-list) "Merge 2 lists together (no duplicates)."
+  (-> a-list
+      (append b-list)
+      (delete-dups)))
+
 (defun orgtrello-data/--convert-orgmode-date-to-trello-date (orgmode-date) "Convert the org-mode deadline into a time adapted for trello."
   (if (and orgmode-date (not (string-match-p "T*Z" orgmode-date)))
       (cl-destructuring-bind (sec min hour day mon year dow dst tz)
@@ -642,7 +647,7 @@ This is a list with the following elements:
   (request (->> query-map orgtrello-data/uri (orgtrello-query/--compute-url server))
            :sync    (orgtrello-data/sync   query-map)
            :type    (orgtrello-data/method query-map)
-           :params  (orgtrello/--merge-list (when authentication-p (orgtrello-query/--authentication-params)) (orgtrello-data/params query-map))
+           :params  (orgtrello-data/merge-2-lists-without-duplicates (when authentication-p (orgtrello-query/--authentication-params)) (orgtrello-data/params query-map))
            :parser  'json-read
            :success (if success-callback success-callback 'orgtrello-query/--standard-success-callback)
            :error   (if error-callback error-callback 'orgtrello-query/--standard-error-callback)))
@@ -1989,11 +1994,6 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
         ((orgtrello-data/entity-checklist-p entity) 'orgtrello/--merge-checklist)
         ((orgtrello-data/entity-item-p entity)      'orgtrello/--merge-item)))
 
-(defun orgtrello/--merge-list (a-list b-list) "Merge 2 lists together (no duplicates)."
-  (-> a-list
-      (append b-list)
-      (delete-dups)))
-
 (defun orgtrello/--merge-entities (trello-data org-data) "Merge the trello entities inside the org-entities."
   (let ((trello-entities  (first trello-data))
         (trello-adjacency (second trello-data))
@@ -2001,7 +2001,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
         (org-adjacency    (second org-data)))
     (maphash (lambda (id entity)
                (puthash id (funcall (orgtrello/--dispatch-merge-fn entity) entity (orgtrello/--get-entity id org-entities)) trello-entities)   ;; updating entity to trello
-               (puthash id (orgtrello/--merge-list (gethash id trello-adjacency) (gethash id org-adjacency))                trello-adjacency)) ;; update entity adjacency to trello
+               (puthash id (orgtrello-data/merge-2-lists-without-duplicates (gethash id trello-adjacency) (gethash id org-adjacency))                trello-adjacency)) ;; update entity adjacency to trello
              trello-entities)
     (list trello-entities trello-adjacency)))
 

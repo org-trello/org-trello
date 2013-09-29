@@ -1513,10 +1513,10 @@ DEADLINE: <some-date>
  (expect '(1 2 3 4) (orgtrello/--add-to-last-pos 4 '(1 2 3))))
 
 (expectations
-  (expect '(1 2 3 4) (orgtrello/--merge-list '(1 2 3) '(4 1 2)))
-  (expect '(4 1 2)   (orgtrello/--merge-list nil '(4 1 2)))
-  (expect '(4 1 2)   (orgtrello/--merge-list '(4 1 2) nil))
-  (expect nil        (orgtrello/--merge-list nil nil)))
+  (expect '(1 2 3 4) (orgtrello-data/merge-2-lists-without-duplicates '(1 2 3) '(4 1 2)))
+  (expect '(4 1 2)   (orgtrello-data/merge-2-lists-without-duplicates nil '(4 1 2)))
+  (expect '(4 1 2)   (orgtrello-data/merge-2-lists-without-duplicates '(4 1 2) nil))
+  (expect nil        (orgtrello-data/merge-2-lists-without-duplicates nil nil)))
 
 (expectations
  (expect t (orgtrello/--hcard-p (orgtrello-hash/make-properties `((:level . ,*CARD-LEVEL*)))))
