@@ -550,7 +550,7 @@ This is a list with the following elements:
   (orgtrello-hash/make-hash "GET" "/members/me/boards"))
 
 (defun orgtrello-api/get-board (id) "Retrieve the boards of the current user."
-  (orgtrello-hash/make-hash "GET" (format "/boards/%s" id)))
+  (orgtrello-hash/make-hash "GET" (format "/boards/%s?memberships=active&memberships_member=true" id)))
 
 (defun orgtrello-api/get-cards (board-id) "cards of a board"
   (orgtrello-hash/make-hash "GET" (format "/boards/%s/cards" board-id)))
