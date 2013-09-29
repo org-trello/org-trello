@@ -642,7 +642,7 @@ This is a list with the following elements:
   (request (->> query-map orgtrello-data/uri (orgtrello-query/--compute-url server))
            :sync    (orgtrello-data/sync   query-map)
            :type    (orgtrello-data/method query-map)
-           :params  (when authentication-p (orgtrello-query/--authentication-params))
+           :params  (orgtrello/--merge-list (when authentication-p (orgtrello-query/--authentication-params)) (orgtrello-data/params query-map))
            :parser  'json-read
            :success (if success-callback success-callback 'orgtrello-query/--standard-success-callback)
            :error   (if error-callback error-callback 'orgtrello-query/--standard-error-callback)))
