@@ -5,7 +5,7 @@
 ;; Author: Antoine R. Dumont <eniotna.t AT gmail.com>
 ;; Maintainer: Antoine R. Dumont <eniotna.t AT gmail.com>
 ;; Version: 0.2.2
-;; Package-Requires: ((org "8.0.7") (dash "1.5.0") (request "0.2.0") (cl-lib "0.3.0") (json "1.2") (elnode "0.9.9.7.6") (esxml "0.3.0") (s "1.7.0"))
+;; Package-Requires: ((org "8.0.7") (dash "1.5.0") (request "0.2.0") (cl-lib "0.3.0") (json "1.2") (elnode "0.9.9.7.6") (esxml "0.3.0") (s "1.7.0") (kv "0.0.17"))
 ;; Keywords: org-mode trello sync org-trello
 ;; URL: https://github.com/ardumont/org-trello
 
@@ -62,6 +62,7 @@
 (require 'elnode)
 (require 'timer)
 (require 's)
+(require 'kv)
 
 
 
@@ -2250,7 +2251,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 (defun orgtrello/do-install-users-from-current-board () "Install the board's users."
   (let* ((board-id   (orgtrello/--board-id))
          (board-info (orgtrello-query/http-trello (orgtrello-api/get-board board-id) *do-sync-query*)))
-    (message "board: %S" board-info)))
+    (message "board: %S" (kvalist->hash board-info))))
 
 (defun orgtrello/--create-board (board-name &optional board-description) "Create a board with name and eventually a description."
   (orgtrello-log/msg *OT/INFO* "Creating board '%s'" board-name)
