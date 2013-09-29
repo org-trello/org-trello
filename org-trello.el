@@ -2338,7 +2338,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   (if (member user users) users (cons user users)))
 
 (defun orgtrello/--users-to (users) "Given a list of users, compute the comma separated users."
-  (if users (join-string users ",") ""))
+  (if users (mapconcat 'identity users ",") ""))
 
 (defun orgtrello/--me ()
   (assoc-default *ORGTRELLO-USER-ME* org-file-properties))
