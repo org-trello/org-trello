@@ -2188,39 +2188,31 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
                (kill-line)
                (kill-line))))
 
-(defun orgtrello/--remove-properties-file (list-keywords &optional update-todo-keywords) "Remove the current org-trello properties"
+(defun orgtrello/--remove-properties-file (list-keywords users-hash-name-id &optional update-todo-keywords) "Remove the current org-trello properties"
   (with-current-buffer (current-buffer)
-    (orgtrello/--delete-buffer-property (format "#+property: %s" *BOARD-ID*))
-    (orgtrello/--delete-buffer-property (format "#+property: %s" *BOARD-NAME*))
-    (mapc (lambda (name) (orgtrello/--delete-buffer-property (format "#+property: %s" (orgtrello/--convention-property-name name)))) list-keywords)
-    (if update-todo-keywords
-        (orgtrello/--delete-buffer-property "#+TODO: "))))
+    (orgtrello/--delete-buffer-property (format "#+property: %s" *BOARD-ID*)) ;; remove board-id
+    (orgtrello/--delete-buffer-property (format "#+property: %s" *BOARD-NAME*));; and board-name
+    (mapc (lambda (name) (orgtrello/--delete-buffer-property (format "#+property: %s" (orgtrello/--convention-property-name name)))) list-keywords) ;; remove data regarding keywords
+    (maphash (lambda (name id) (orgtrello/--delete-buffer-property (format "#+property: %s %s" name id))) users-hash-name-id) ;; remove data regarding users
+    (if update-todo-keywords (orgtrello/--delete-buffer-property "#+TODO: "))));; at last remove entry regarding todo keywords
 
 (defun orgtrello/--compute-keyword-separation (name) "Given a keyword done (case insensitive) return a string '| done' or directly the keyword"
   (if (string= "done" (downcase name)) (format "| %s" name) name))
 
-(defun orgtrello/--update-orgmode-file-with-properties (board-name board-id board-lists-hash-name-id &optional update-todo-keywords) "Update the orgmode file with the needed headers for org-trello to work."
+(defun orgtrello/--update-orgmode-file-with-properties (board-name board-id board-lists-hash-name-id board-users-hash-name-id &optional update-todo-keywords) "Update the orgmode file with the needed headers for org-trello to work."
   (with-current-buffer (current-buffer)
     (goto-char (point-min))
-    ;; force utf-8
-    (set-buffer-file-coding-system 'utf-8-auto)
-    ;; install board-name and board-id
-    (insert (format "#+property: %s    %s\n" *BOARD-NAME* board-name))
-    (insert (format "#+property: %s      %s\n" *BOARD-ID* board-id))
-    ;; install the other properties regarding the org keywords
-    (maphash
-     (lambda (name id)
-       (insert (format "#+property: %s %s\n" (orgtrello/--convention-property-name name) id)))
-     board-lists-hash-name-id)
-    (if update-todo-keywords
+    (set-buffer-file-coding-system 'utf-8-auto) ;; force utf-8
+    (insert (format "#+property: %s    %s\n" *BOARD-NAME* board-name)) ;; install board-name
+    (insert (format "#+property: %s      %s\n" *BOARD-ID* board-id))   ;; and board-id
+    (maphash (lambda (name id) (insert (format "#+property: %s %s\n" (orgtrello/--convention-property-name name) id))) board-lists-hash-name-id) ;; install the other properties regarding the org keywords
+    (if update-todo-keywords ;; install todo keywords
         (progn
-          ;; install the todo list
-          (insert "#+TODO: ")
+          (insert "#+TODO: ") ;; install the todo list
           (maphash (lambda (name _) (insert (concat (orgtrello/--compute-keyword-separation (orgtrello/--convention-property-name name)) " "))) board-lists-hash-name-id)
           (insert "\n")))
-    ;; save the buffer
+    (maphash (lambda (user-name user-id) (insert (format "#+property: %s %s\n" user-name user-id))) board-users-hash-name-id)    ;; install user-properties
     (save-buffer)
-    ;; restart org to make org-trello aware of the new setup
     (orgtrello-action/reload-setup)))
 
 (defun orgtrello/--hash-table-keys (hash-table) "Extract the keys from the hash table."
@@ -2237,14 +2229,16 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
     (let* ((orgtrello/--board-lists-hname-id (-> orgtrello/--chosen-board-id
                                                  orgtrello/--list-board-lists
                                                  orgtrello/--name-id))
-           (orgtrello/--board-list-keywords (orgtrello/--hash-table-keys orgtrello/--board-lists-hname-id)))
+           (orgtrello/--board-list-keywords (orgtrello/--hash-table-keys orgtrello/--board-lists-hname-id))
+           (orgtrello/--board-users-name-id (orgtrello/--board-users-information-from-board-id! orgtrello/--chosen-board-id)))
       ;; remove any eventual present entry
-      (orgtrello/--remove-properties-file orgtrello/--board-list-keywords t)
+      (orgtrello/--remove-properties-file orgtrello/--board-list-keywords orgtrello/--board-users-name-id t)
       ;; update with new ones
       (orgtrello/--update-orgmode-file-with-properties
        orgtrello/--chosen-board-name
        orgtrello/--chosen-board-id
        orgtrello/--board-lists-hname-id
+       orgtrello/--board-users-name-id
        t))
     "Install board and list ids done!"))
 
@@ -2261,12 +2255,11 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
        orgtrello/--compute-user-properties
        orgtrello/--compute-user-properties-hash))
 
-(defun orgtrello/do-install-users-from-current-board () "Install the board's users."
-  (let ((board-user-properties-hash (--> (orgtrello/--board-id)
-                                         (orgtrello-api/get-board it)
-                                         (orgtrello-query/http-trello it *do-sync-query*)
-                                         (orgtrello/--compute-user-properties-hash-from-board it))))
-    (message "board: %S" board-user-properties-hash)))
+(defun orgtrello/--board-users-information-from-board-id! (board-id) "Compute board users' informations."
+  (--> (orgtrello/--board-id)
+       (orgtrello-api/get-board it)
+       (orgtrello-query/http-trello it *do-sync-query*)
+       (orgtrello/--compute-user-properties-hash-from-board it)))
 
 (defun orgtrello/--create-board (board-name &optional board-description) "Create a board with name and eventually a description."
   (orgtrello-log/msg *OT/INFO* "Creating board '%s'" board-name)
@@ -2297,12 +2290,13 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   (setq orgtrello/--board-description (read-string "Please, input the board description (empty for none): "))
   (cl-destructuring-bind (orgtrello/--board-id orgtrello/--board-name) (orgtrello/--create-board orgtrello/--board-name orgtrello/--board-description)
                          (let* ((orgtrello/--board-list-ids       (--map (orgtrello-data/id it) (orgtrello/--list-board-lists orgtrello/--board-id)))  ;; first retrieve the existing lists (created by default on trello)
-                                (orgtrello/--lists-to-close       (orgtrello/--close-lists orgtrello/--board-list-ids))                                   ;; close those lists (they may surely not match the name we want)
-                                (orgtrello/--board-lists-hname-id (orgtrello/--create-lists-according-to-keywords orgtrello/--board-id *LIST-NAMES*)))    ;; create the list, this returns the ids list
+                                (orgtrello/--lists-to-close       (orgtrello/--close-lists orgtrello/--board-list-ids))                                ;; close those lists (they may surely not match the name we want)
+                                (orgtrello/--board-lists-hname-id (orgtrello/--create-lists-according-to-keywords orgtrello/--board-id *LIST-NAMES*))  ;; create the list, this returns the ids list
+                                (orgtrello/--board-users-name-id  (orgtrello/--board-users-information-from-board-id! orgtrello/--board-id)))          ;; retrieve user informations
                            ;; remove eventual already present entry
-                           (orgtrello/--remove-properties-file *LIST-NAMES*)
+                           (orgtrello/--remove-properties-file *LIST-NAMES* orgtrello/--board-users-name-id)
                            ;; update org buffer with new ones
-                           (orgtrello/--update-orgmode-file-with-properties orgtrello/--board-name orgtrello/--board-id orgtrello/--board-lists-hname-id)))
+                           (orgtrello/--update-orgmode-file-with-properties orgtrello/--board-name orgtrello/--board-id orgtrello/--board-lists-hname-id orgtrello/--board-users-name-id)))
   "Create board and lists done!")
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello loaded!")
@@ -2363,15 +2357,6 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
    'orgtrello/do-install-key-and-token
    *do-save-buffer*
    *do-reload-setup*))
-
-(defun org-trello/install-users-from-current-board () "Control first, then if ok, trigger the setup installation of the trello board's users inside the current buffer."
-  (interactive)
-  (org-action/--deal-with-consumer-msg-controls-or-actions-then-do
-     "Install users from the current boards"
-     '(orgtrello/--setup-properties orgtrello/--control-keys)
-     'orgtrello/do-install-users-from-current-board
-     *do-save-buffer*
-     *do-reload-setup*))
 
 (defun org-trello/install-board-and-lists-ids () "Control first, then if ok, trigger the setup installation of the trello board to sync with."
   (interactive)
@@ -2459,7 +2444,6 @@ C-c o h - M-x org-trello/help-describing-bindings    - This help message."))
              ;; setup relative
              (define-key map (kbd "C-c o i") 'org-trello/install-key-and-token)
              (define-key map (kbd "C-c o I") 'org-trello/install-board-and-lists-ids)
-             (define-key map (kbd "C-c o a") 'org-trello/install-users-from-current-board)
              (define-key map (kbd "C-c o d") 'org-trello/check-setup)
              (define-key map (kbd "C-c o x") 'org-trello/delete-setup)
              ;; synchronous request (direct to trello)

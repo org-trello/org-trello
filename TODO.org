@@ -708,8 +708,9 @@ CLOSED: [2013-09-19 jeu. 19:05]
 - [X] Improve abstraction around data from trello (not complete yet)
 - [-] Show people assigned to card
   - [X] Compute user properties part from the board's informations
-  - [ ] Install board setup routine (C-c o I) also install board users
-  - [ ] Create board routine (C-c o i) should also install user boards (only the current user should then appear)
+  - [X] Install board setup routine (C-c o I) also install board users
+  - [X] Create board routine (C-c o i) should also install user boards (only the current user should then appear)
+  - [ ] Cleanup routine should also remove user properties
   - [ ] User assigns oneself to the card
   - [ ] sync-to-trello also assign users
   - [ ] sync-from-trello also retrieve user informations
