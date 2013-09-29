@@ -2337,6 +2337,9 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 (defun orgtrello/--add-user (user users) "Add the user to the users list"
   (if (member user users) users (cons user users)))
 
+(defun orgtrello/--remove-user (user users) "Add the user to the users list"
+  (if (member user users) (remove user users) users users))
+
 (defun orgtrello/--users-to (users) "Given a list of users, compute the comma separated users."
   (if users (mapconcat 'identity users ",") ""))
 
@@ -2348,6 +2351,14 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
        (org-entry-get nil it)
        (orgtrello/--users-from it)
        (orgtrello/--add-user *ORGTRELLO-USER-LOGGED-IN* it)
+       (orgtrello/--users-to it)
+       (org-entry-put nil *ORGTRELLO-USERS-ENTRY* it)))
+
+(defun orgtrello/do-unassign-me () "Command to unassign oneself of the card."
+  (--> *ORGTRELLO-USERS-ENTRY*
+       (org-entry-get nil it)
+       (orgtrello/--users-from it)
+       (orgtrello/--remove-user *ORGTRELLO-USER-LOGGED-IN* it)
        (orgtrello/--users-to it)
        (org-entry-put nil *ORGTRELLO-USERS-ENTRY* it)))
 
@@ -2428,12 +2439,21 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
      *do-save-buffer*
      *do-reload-setup*))
 
-(defun org-trello/assign-me () "Assign myself to the card."
+(defun org-trello/assign-me () "Assign oneself to the card."
   (interactive)
   (org-action/--deal-with-consumer-msg-controls-or-actions-then-do
      "Create board and lists"
      '(orgtrello/--setup-properties orgtrello/--control-keys)
      'orgtrello/do-assign-me
+     *do-save-buffer*
+     *do-reload-setup*))
+
+(defun org-trello/unassign-me () "Unassign oneself of the card."
+  (interactive)
+  (org-action/--deal-with-consumer-msg-controls-or-actions-then-do
+     "Create board and lists"
+     '(orgtrello/--setup-properties orgtrello/--control-keys)
+     'orgtrello/do-unassign-me
      *do-save-buffer*
      *do-reload-setup*))
 
@@ -2483,6 +2503,8 @@ C-c o i - M-x org-trello/install-key-and-token       - Install the keys and the 
 C-c o I - M-x org-trello/install-board-and-lists-ids - Select the board and attach the todo, doing and done list.
 C-c o d - M-x org-trello/check-setup                 - Check that the setup is ok. If everything is ok, will simply display 'Setup ok!'
 C-c o D - M-x org-trello/delete-setup                - Clean up the org buffer from all org-trello informations
+C-c o a - M-x org-trello/assign-me                   - Assign oneself to the card
+C-c o u - M-x org-trello/unassign-me                 - Unassign oneself of the card
 # TRELLO RELATED
 C-c o b - M-x org-trello/create-board                - Create interactively a board and attach the org-mode file to this trello board.
 C-c o c - M-x org-trello/sync-entity                 - Create/Update an entity (card/checklist/item) depending on its level and status. Do not deal with level superior to 4.
@@ -2507,6 +2529,7 @@ C-c o h - M-x org-trello/help-describing-bindings    - This help message."))
              (define-key map (kbd "C-c o I") 'org-trello/install-board-and-lists-ids)
              (define-key map (kbd "C-c o d") 'org-trello/check-setup)
              (define-key map (kbd "C-c o a") 'org-trello/assign-me)
+             (define-key map (kbd "C-c o u") 'org-trello/unassign-me)
              (define-key map (kbd "C-c o x") 'org-trello/delete-setup)
              ;; synchronous request (direct to trello)
              (define-key map (kbd "C-c o b") 'org-trello/create-board)

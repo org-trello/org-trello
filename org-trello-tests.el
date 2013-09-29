@@ -1624,5 +1624,12 @@ DEADLINE: <some-date>
   (expect '("a" "b" "c") (orgtrello/--add-user "a" '("a" "b" "c")))
   (expect '("a" "b" "c") (orgtrello/--add-user "a" '("b" "c"))))
 
+(expectations
+  (expect '("b")     (orgtrello/--remove-user "a" '("a" "b")))
+  (expect '("a" "b") (orgtrello/--remove-user "c" '("a" "b")))
+  (expect nil        (orgtrello/--remove-user "c" nil))
+  (expect nil        (orgtrello/--remove-user nil nil))
+  (expect '("a")     (orgtrello/--remove-user nil '("a"))))
+
 (provide 'org-trello-tests)
 ;;; org-trello-tests ends here
