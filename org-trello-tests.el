@@ -1610,5 +1610,19 @@ DEADLINE: <some-date>
   '(("orgtrello-user-ardumont" . "4f2baa2f72b7c1293501cad3") ("orgtrello-user-orgmode" . "5203a0c833fc36360800177f"))
   (orgtrello/--list-user-entries '(("board-name" . "api test board") ("board-id" . "51d99bbc1e1d8988390047f2") ("TODO" . "51d99bbc1e1d8988390047f3") ("IN-PROGRESS" . "51d99bbc1e1d8988390047f4") ("DONE" . "51d99bbc1e1d8988390047f5") ("PENDING" . "51e53898ea3d1780690015ca") ("DELEGATED" . "51e538a89c05f1e25c0027c6") ("FAIL" . "51e538a26f75d07902002d25") ("CANCELLED" . "51e538e6c7a68fa0510014ee") ("orgtrello-user-ardumont" . "4f2baa2f72b7c1293501cad3") ("orgtrello-user-orgmode" . "5203a0c833fc36360800177f")))))
 
+(expectations
+  (expect '("a" "b" "c") (orgtrello/--users-from "a,b,c,,"))
+  (expect '() (orgtrello/--users-from ",,,"))
+  (expect '() (orgtrello/--users-from ""))
+  (expect '() (orgtrello/--users-from nil)))
+
+(expectations
+  (expect "" (orgtrello/--users-to nil))
+  (expect "a,b,c," (orgtrello/--users-to '("a" "b" "c" ""))))
+
+(expectations
+  (expect '("a" "b" "c") (orgtrello/--add-user "a" '("a" "b" "c")))
+  (expect '("a" "b" "c") (orgtrello/--add-user "a" '("b" "c"))))
+
 (provide 'org-trello-tests)
 ;;; org-trello-tests ends here

@@ -712,7 +712,8 @@ CLOSED: [2013-09-19 jeu. 19:05]
   - [X] Create board routine (C-c o i) should also install user boards (only the current user should then appear)
   - [X] Setuping properties before doing any actions
   - [X] Cleanup routine should also remove user properties
-  - [ ] User assigns oneself to the card
+  - [X] User assigns oneself to the card
+  - [ ] User unassigns oneself to the card
   - [ ] sync-to-trello also assign users
   - [ ] sync-from-trello also retrieve user informations
 - [ ] More fined grained use of the trello api (retrieve only data we use)
