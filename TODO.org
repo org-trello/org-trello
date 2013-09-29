@@ -706,7 +706,13 @@ CLOSED: [2013-09-19 jeu. 19:05]
 * IN-PROGRESS 0.2.2 [40%]
 - [X] Version
 - [X] Improve abstraction around data from trello (not complete yet)
-- [ ] Show people assigned to card
+- [-] Show people assigned to card
+  - [X] Compute user properties part from the board's informations
+  - [ ] Install board setup routine (C-c o I) also install board users
+  - [ ] Create board routine (C-c o i) should also install user boards (only the current user should then appear)
+  - [ ] User assigns oneself to the card
+  - [ ] sync-to-trello also assign users
+  - [ ] sync-from-trello also retrieve user informations
 - [ ] More fined grained use of the trello api (retrieve only data we use)
 - [ ] Release notes
 * TODO 0.2.3 [0%]
