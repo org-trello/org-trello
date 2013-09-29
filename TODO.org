@@ -706,10 +706,10 @@ CLOSED: [2013-09-19 jeu. 19:05]
 * IN-PROGRESS 0.2.2 [40%]
 - [X] Version
 - [X] Improve abstraction around data from trello (not complete yet)
-- [ ] Show which people are assigned to card
+- [ ] Show people assigned to card
+- [ ] More fined grained use of the trello api (retrieve only data we use)
 - [ ] Release notes
 * TODO 0.2.3 [0%]
-- [ ] Filter only the data we use with the trello api
 - [ ] Another Disposition about org's buffer - https://github.com/ardumont/org-trello/issues/33
 - [ ] Improve sync request policy - https://github.com/ardumont/org-trello/issues/58
 - [ ] Test multiple emacs version - https://github.com/ardumont/org-trello/issues/52

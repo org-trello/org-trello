@@ -61,9 +61,9 @@
   (expect nil                  (gethash :params (orgtrello-api/get-boards))))
 
 (expectations
-  (expect "GET"                                                         (gethash :method (orgtrello-api/get-board :id)))
-  (expect "/boards/:id"                                                 (gethash :uri    (orgtrello-api/get-board :id)))
-  (expect '(("memberships" . "active") ("memberships_member" . "true")) (gethash :params (orgtrello-api/get-board :id))))
+  (expect "GET"                                                                                                (gethash :method (orgtrello-api/get-board :id)))
+  (expect "/boards/:id"                                                                                        (gethash :uri    (orgtrello-api/get-board :id)))
+  (expect '(("memberships" . "active") ("memberships_member" . "true") ("fields" . "name,memberships,closed")) (gethash :params (orgtrello-api/get-board :id))))
 
 (expectations
   (expect "GET"                      (gethash :method (orgtrello-api/get-cards :board-id)))
