@@ -194,6 +194,13 @@
   (expect "GET"                                    (gethash :method (orgtrello-api/get-items :checklist-id)))
   (expect "/checklists/:checklist-id/checkItems/" (gethash :uri    (orgtrello-api/get-items :checklist-id))))
 
+(expectations
+  (expect "GET"          (gethash :method (orgtrello-api/get-member :id)))
+  (expect "/members/:id" (gethash :uri (orgtrello-api/get-member :id))))
+
+(expectations
+  (expect "GET"         (gethash :method (orgtrello-api/get-me)))
+  (expect "/members/me" (gethash :uri (orgtrello-api/get-me))))
 
 ;; ########################## orgtrello-query
 

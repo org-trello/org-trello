@@ -612,6 +612,12 @@ This is a list with the following elements:
 (defun orgtrello-api/delete-item (checklist-id item-id) "Delete a item with id item-id"
   (orgtrello-hash/make-hash "DELETE" (format "/checklists/%s/checkItems/%s" checklist-id item-id)))
 
+(defun orgtrello-api/get-member (member-id) "Retrieve the member by its identifier."
+  (orgtrello-hash/make-hash "GET" (format "/members/%s" member-id)))
+
+(defun orgtrello-api/get-me () "Retrieve the current user's member informations."
+  (orgtrello-hash/make-hash "GET" "/members/me"))
+
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-api loaded!")
 
 
