@@ -2212,7 +2212,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
     (orgtrello/--delete-buffer-property (format "#+property: %s" *BOARD-ID*)) ;; remove board-id
     (orgtrello/--delete-buffer-property (format "#+property: %s" *BOARD-NAME*));; and board-name
     (mapc (lambda (name) (orgtrello/--delete-buffer-property (format "#+property: %s" (orgtrello/--convention-property-name name)))) list-keywords) ;; remove data regarding keywords
-    (maphash (lambda (name id) (orgtrello/--delete-buffer-property (format "#+property: %s%s %s" *ORGTRELLO-USER-PREFIX* name id))) users-hash-name-id) ;; remove data regarding users
+    (maphash (lambda (name id) (orgtrello/--delete-buffer-property (format "#+property: %s%s %s" *ORGTRELLO-USER-PREFIX* (replace-regexp-in-string *ORGTRELLO-USER-PREFIX* "" name) id))) users-hash-name-id) ;; remove data regarding users
     (if update-todo-keywords (orgtrello/--delete-buffer-property "#+TODO: "))));; at last remove entry regarding todo keywords
 
 (defun orgtrello/--compute-keyword-separation (name) "Given a keyword done (case insensitive) return a string '| done' or directly the keyword"
@@ -2415,7 +2415,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
      '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties orgtrello/--control-encoding)
      (lambda ()
        ;; remove any orgtrello relative entries
-       (orgtrello/--remove-properties-file *LIST-NAMES* t)
+       (orgtrello/--remove-properties-file *LIST-NAMES* *HMAP-USERS-NAME-ID* t)
        ;; remove any identifier from the buffer
        (orgtrello/--delete-property *ORGTRELLO-ID*)
        ;; a simple message to tell the client that the work is done!
