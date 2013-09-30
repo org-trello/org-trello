@@ -721,6 +721,7 @@ CLOSED: [2013-09-30 lun. 22:32]
   - [X] cleanup routine must cleanup card properties regarding user assigned
 - [X] Update README about new command
 - [X] Update README TOC
+- [X] Fix error during initialization org-trello setup buffer
 - [X] Release notes
 * TODO 0.2.3 [0%]
 - [ ] More fined grained use of the trello api (retrieve only data we use)
