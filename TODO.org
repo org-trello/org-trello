@@ -703,7 +703,8 @@ CLOSED: [2013-09-19 jeu. 19:05]
 - [X] Version
 - [X] Release notes
 - [X] Fix typography in naming windows-nt system - https://github.com/ardumont/org-trello/issues/62#issuecomment-24735681
-* IN-PROGRESS 0.2.2 [83%]
+* DONE 0.2.2 [100%]
+CLOSED: [2013-09-30 lun. 22:32]
 - [X] Version
 - [X] Improve abstraction around data from trello (not complete yet)
 - [X] Show people assigned to card - https://github.com/ardumont/org-trello/issues/67
@@ -720,7 +721,7 @@ CLOSED: [2013-09-19 jeu. 19:05]
   - [X] cleanup routine must cleanup card properties regarding user assigned
 - [X] Update README about new command
 - [X] Update README TOC
-- [ ] Release notes
+- [X] Release notes
 * TODO 0.2.3 [0%]
 - [ ] More fined grained use of the trello api (retrieve only data we use)
 - [ ] Expose a public trello board showing the status of org-trello and reference it inside the release notes

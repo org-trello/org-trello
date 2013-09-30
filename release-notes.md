@@ -1,3 +1,23 @@
+# 0.2.2
+
+- [X] Version
+- [X] Improve abstraction around data from trello (not complete yet)
+- [X] Show people assigned to card - https://github.com/ardumont/org-trello/issues/67
+  - [X] Compute user properties part from the board's informations
+  - [X] Install board setup routine (C-c o I) also install board users
+  - [X] Create board routine (C-c o i) should also install user boards (only the current user should then appear)
+  - [X] Setuping properties before doing any actions
+  - [X] Cleanup routine should also remove user global properties
+  - [X] User assigns oneself to the card
+  - [X] User unassigns oneself to the card
+  - [X] sync-to-trello also assign users
+  - [X] sync-to-trello also unassign users
+  - [X] sync-from-trello also retrieve user informations and update the org buffer
+  - [X] cleanup routine must cleanup card properties regarding user assigned
+- [X] Update README about new command
+- [X] Update README TOC
+- [X] Release notes
+
 # 0.2.1.2
 
 - [X] Version
