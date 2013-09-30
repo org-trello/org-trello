@@ -2495,7 +2495,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
      (lambda () (orgtrello-log/msg *OT/NOLOG* "Setup ok!"))))
 
 (defun orgtrello/--delete-property (property) "Given a property name (checkbox), if found, delete it from the buffer."
-  (org-delete-property-globally *ORGTRELLO-ID*)
+  (org-delete-property-globally property)
   (save-excursion
     (goto-char (point-min))
     (while (re-search-forward ":PROPERTIES: {.*" nil t)
@@ -2507,12 +2507,10 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
    "Deleting current org-trello setup"
      '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties orgtrello/--control-encoding)
      (lambda ()
-       ;; remove any orgtrello relative entries
-       (orgtrello/--remove-properties-file *LIST-NAMES* *HMAP-USERS-NAME-ID* *ORGTRELLO-USER-LOGGED-IN* t)
-       ;; remove any identifier from the buffer
-       (orgtrello/--delete-property *ORGTRELLO-ID*)
-       ;; a simple message to tell the client that the work is done!
-       (orgtrello-log/msg *OT/NOLOG* "Cleanup done!"))
+       (orgtrello/--remove-properties-file *LIST-NAMES* *HMAP-USERS-NAME-ID* *ORGTRELLO-USER-LOGGED-IN* t) ;; remove any orgtrello relative entries
+       (orgtrello/--delete-property *ORGTRELLO-ID*)          ;; remove all properties orgtrello-id from the buffer
+       (orgtrello/--delete-property *ORGTRELLO-USERS-ENTRY*) ;; remove all properties users-assigned
+       (orgtrello-log/msg *OT/NOLOG* "Cleanup done!")) ;; a simple message to tell the user that the work is done!
      *do-save-buffer*
      *do-reload-setup*))
 
