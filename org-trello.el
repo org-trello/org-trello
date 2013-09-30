@@ -2229,14 +2229,26 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 (defun orgtrello/compute-property (property-name &optional property-value) "Compute a formatted entry in org buffer"
   (format "#+property: %s %s" property-name (if property-value property-value "")))
 
-(defun orgtrello/--remove-properties-file (list-keywords users-hash-name-id user-me &optional update-todo-keywords) "Remove the current org-trello properties"
+(defun orgtrello/--compute-hash-name-id-to-list (users-hash-name-id)
+  (let ((res-list nil))
+    (maphash (lambda (name id) (--> name
+                                    (replace-regexp-in-string *ORGTRELLO-USER-PREFIX* "" it)
+                                    (format "%s%s" *ORGTRELLO-USER-PREFIX* it)
+                                    (orgtrello/compute-property it id)
+                                    (push it res-list)))
+             users-hash-name-id)
+    res-list))
+
+(defun orgtrello/--remove-properties-file! (list-keywords users-hash-name-id user-me &optional update-todo-keywords) "Remove the current org-trello properties"
   (with-current-buffer (current-buffer)
-    (orgtrello/--delete-buffer-property (orgtrello/compute-property *BOARD-ID*)) ;; remove board-id
-    (orgtrello/--delete-buffer-property (orgtrello/compute-property *BOARD-NAME*));; and board-name
-    (mapc (lambda (name) (orgtrello/--delete-buffer-property (orgtrello/compute-property (orgtrello/--convention-property-name name)))) list-keywords) ;; remove data regarding keywords
-    (maphash (lambda (name id) (orgtrello/--delete-buffer-property (orgtrello/compute-property (format "%s%s" *ORGTRELLO-USER-PREFIX* (replace-regexp-in-string *ORGTRELLO-USER-PREFIX* "" name)) id))) users-hash-name-id) ;; remove data regarding users
-    (orgtrello/--delete-buffer-property (orgtrello/compute-property *ORGTRELLO-USER-ME* user-me));; and board-name
-    (if update-todo-keywords (orgtrello/--delete-buffer-property "#+TODO: "))));; at last remove entry regarding todo keywords
+    ;; compute the list of properties to purge
+    (->> `(,(orgtrello/compute-property *BOARD-ID*)
+           ,(orgtrello/compute-property *BOARD-NAME*)
+           ,@(--map (orgtrello/compute-property (orgtrello/--convention-property-name it)) list-keywords)
+           ,@(orgtrello/--compute-hash-name-id-to-list users-hash-name-id)
+           ,(orgtrello/compute-property *ORGTRELLO-USER-ME* user-me)
+           ,(if update-todo-keywords "#+TODO: "))
+         (mapc (lambda (property-to-remove) (orgtrello/--delete-buffer-property property-to-remove))))))
 
 (defun orgtrello/--compute-keyword-separation (name) "Given a keyword done (case insensitive) return a string '| done' or directly the keyword"
   (if (string= "done" (downcase name)) (format "| %s" name) name))
@@ -2281,7 +2293,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
            (orgtrello/--board-users-name-id (orgtrello/--board-users-information-from-board-id! orgtrello/--chosen-board-id))
            (user-logged-in                  (orgtrello/--user-logged-in)))
       ;; remove any eventual present entry
-      (orgtrello/--remove-properties-file orgtrello/--board-list-keywords orgtrello/--board-users-name-id user-logged-in t)
+      (orgtrello/--remove-properties-file! orgtrello/--board-list-keywords orgtrello/--board-users-name-id user-logged-in t)
       ;; update with new ones
       (orgtrello/--update-orgmode-file-with-properties
        orgtrello/--chosen-board-name
@@ -2343,7 +2355,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
                                 (orgtrello/--board-lists-hname-id (orgtrello/--create-lists-according-to-keywords orgtrello/--board-id *LIST-NAMES*))  ;; create the list, this returns the ids list
                                 (orgtrello/--board-users-name-id  (orgtrello/--board-users-information-from-board-id! orgtrello/--board-id))           ;; retrieve user informations
                                 (user-logged-in                   (orgtrello/--user-logged-in)))
-                           (orgtrello/--remove-properties-file *LIST-NAMES* orgtrello/--board-users-name-id user-logged-in) ;; remove eventual already present entry
+                           (orgtrello/--remove-properties-file! *LIST-NAMES* orgtrello/--board-users-name-id user-logged-in) ;; remove eventual already present entry
                            (orgtrello/--update-orgmode-file-with-properties orgtrello/--board-name orgtrello/--board-id orgtrello/--board-lists-hname-id orgtrello/--board-users-name-id user-logged-in))) ;; update org buffer with new ones
   "Create board and lists done!")
 
@@ -2508,7 +2520,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
    "Deleting current org-trello setup"
      '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties orgtrello/--control-encoding)
      (lambda ()
-       (orgtrello/--remove-properties-file *LIST-NAMES* *HMAP-USERS-NAME-ID* *ORGTRELLO-USER-LOGGED-IN* t) ;; remove any orgtrello relative entries
+       (orgtrello/--remove-properties-file! *LIST-NAMES* *HMAP-USERS-NAME-ID* *ORGTRELLO-USER-LOGGED-IN* t) ;; remove any orgtrello relative entries
        (orgtrello/--delete-property *ORGTRELLO-ID*)          ;; remove all properties orgtrello-id from the buffer
        (orgtrello/--delete-property *ORGTRELLO-USERS-ENTRY*) ;; remove all properties users-assigned
        (orgtrello-log/msg *OT/NOLOG* "Cleanup done!")) ;; a simple message to tell the user that the work is done!
