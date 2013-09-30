@@ -2342,7 +2342,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
        orgtrello/--compute-user-properties-hash))
 
 (defun orgtrello/--board-users-information-from-board-id! (board-id) "Compute board users' informations."
-  (--> (orgtrello/--board-id)
+  (--> board-id
        (orgtrello-api/get-board it)
        (orgtrello-query/http-trello it *do-sync-query*)
        (orgtrello/--compute-user-properties-hash-from-board it)))
