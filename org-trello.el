@@ -591,14 +591,14 @@ This is a list with the following elements:
 (defun orgtrello-api/add-list (name idBoard) "Add a list - the name and the board id are mandatory (so i say!)."
   (orgtrello-hash/make-hash "POST" "/lists/" `(("name" . ,name) ("idBoard" . ,idBoard))))
 
-(defun orgtrello-api/add-card (name idList &optional due) "Add a card to a board"
-  (orgtrello-hash/make-hash "POST" "/cards/" (orgtrello-api/--deal-with-optional-value due `("due" . ,due) `(("name" . ,name) ("idList" . ,idList)))))
+(defun orgtrello-api/add-card (name idList &optional due id-members) "Add a card to a board, optional due date (formatted string date) and id-members (csv id members)."
+  (orgtrello-hash/make-hash "POST" "/cards/" (orgtrello-api/--deal-with-optional-values `((,id-members . ("idMembers" . ,id-members)) (,due . ("due" . ,due))) `(("name" . ,name) ("idList" . ,idList)))))
 
 (defun orgtrello-api/get-cards-from-list (list-id) "List all the cards"
   (orgtrello-hash/make-hash "GET" (format "/lists/%s/cards" list-id)))
 
-(defun orgtrello-api/move-card (card-id idList &optional name due) "Move a card to another list"
-  (->> (orgtrello-api/--deal-with-optional-values `((,name . ("name" . ,name)) (,due . ("due" . ,due))) `(("idList" . ,idList)))
+(defun orgtrello-api/move-card (card-id idList &optional name due id-members) "Move a card to another list - optional entries (name, due date, id-members)"
+  (->> (orgtrello-api/--deal-with-optional-values `((,name . ("name" . ,name)) (,id-members . ("idMembers" . ,id-members)) (,due . ("due" . ,due))) `(("idList" . ,idList)))
        (orgtrello-hash/make-hash "PUT" (format "/cards/%s" card-id))))
 
 (defun orgtrello-api/add-checklist (card-id name) "Add a checklist to a card"

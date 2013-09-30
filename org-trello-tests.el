@@ -105,6 +105,17 @@
   (expect '(("name" . "list-name")
             ("idBoard" . "board-id")) (gethash :params (orgtrello-api/add-list "list-name" "board-id"))))
 
+
+(expectations
+  (expect "POST"                                                              (gethash :method (orgtrello-api/add-card :name-card :id-list "due-date")))
+  (expect "/cards/"                                                           (gethash :uri    (orgtrello-api/add-card :name-card :id-list "due-date")))
+  (expect '(("due" . "due-date") ("name" . :name-card) ("idList" . :id-list)) (gethash :params (orgtrello-api/add-card :name-card :id-list "due-date"))))
+
+(expectations
+  (expect "POST"                                                                                                    (gethash :method (orgtrello-api/add-card :name-card :id-list "due-date" "idmember0,idmember1")))
+  (expect "/cards/"                                                                                                 (gethash :uri    (orgtrello-api/add-card :name-card :id-list "due-date" "idmember0,idmember1")))
+  (expect '(("due" . "due-date") ("idMembers" . "idmember0,idmember1") ("name" . :name-card) ("idList" . :id-list)) (gethash :params (orgtrello-api/add-card :name-card :id-list "due-date" "idmember0,idmember1"))))
+
 (expectations
   (expect "PUT"                                             (gethash :method (orgtrello-api/move-card :id-card :id-list "name-card")))
   (expect "/cards/:id-card"                                 (gethash :uri    (orgtrello-api/move-card :id-card :id-list "name-card")))
@@ -124,6 +135,11 @@
   (expect "PUT"                                        (gethash :method (orgtrello-api/move-card :id-card :id-list nil :due-date)))
   (expect "/cards/:id-card"                            (gethash :uri    (orgtrello-api/move-card :id-card :id-list nil :due-date)))
   (expect '(("due" . :due-date) ("idList" . :id-list)) (gethash :params (orgtrello-api/move-card :id-card :id-list nil :due-date))))
+
+(expectations
+  (expect "PUT"                                                                                 (gethash :method (orgtrello-api/move-card :id-card :id-list "name-card" nil "idmember0,idmember1")))
+  (expect "/cards/:id-card"                                                                     (gethash :uri    (orgtrello-api/move-card :id-card :id-list "name-card" nil "idmember0,idmember1")))
+  (expect '(("idMembers" . "idmember0,idmember1") ("name" . "name-card") ("idList" . :id-list)) (gethash :params (orgtrello-api/move-card :id-card :id-list "name-card" nil "idmember0,idmember1"))))
 
 (expectations
   (expect "PUT"                                                         (gethash :method (orgtrello-api/move-card :id-card :id-list :name :due-date)))
