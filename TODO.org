@@ -703,10 +703,10 @@ CLOSED: [2013-09-19 jeu. 19:05]
 - [X] Version
 - [X] Release notes
 - [X] Fix typography in naming windows-nt system - https://github.com/ardumont/org-trello/issues/62#issuecomment-24735681
-* IN-PROGRESS 0.2.2 [60%]
+* IN-PROGRESS 0.2.2 [66%]
 - [X] Version
 - [X] Improve abstraction around data from trello (not complete yet)
-- [X] Show people assigned to card
+- [X] Show people assigned to card - https://github.com/ardumont/org-trello/issues/67
   - [X] Compute user properties part from the board's informations
   - [X] Install board setup routine (C-c o I) also install board users
   - [X] Create board routine (C-c o i) should also install user boards (only the current user should then appear)
@@ -718,7 +718,8 @@ CLOSED: [2013-09-19 jeu. 19:05]
   - [X] sync-to-trello also unassign users
   - [X] sync-from-trello also retrieve user informations and update the org buffer
   - [X] cleanup routine must cleanup card properties regarding user assigned
-- [ ] Update README about new command
+- [X] Update README about new command
+- [ ] Update README TOC
 - [ ] Release notes
 * TODO 0.2.3 [0%]
 - [ ] More fined grained use of the trello api (retrieve only data we use)

@@ -80,13 +80,21 @@ Tested on:
 
 # Migration
 
-0.1.5 -> 0.1.6
+## 0.2.1 -> 0.2.2
+
+From the 0.2.2 version onward, we can assign people to card.
+As a pre-requisite, we need to re-install the board (C-c o I), so that new properties will be installed (users currently assigned to the board we attach to).
+
+This way, you will be able to use the assign (C-c o a) / unassign (C-c o u) yourself to the card.
+
+## 0.1.5 -> 0.1.6
 
 Org-trello now uses more natural ways of dealing with checklists using checkboxes!
 
 cf. [natural org format (from 0.1.6 onwards)](#natural-org-format-from-016-onwards) for more details.
 
-0.1.1 -> 0.1.2:
+## 0.1.1 -> 0.1.2
+
 - From version 0.1.1, some http requests will be asynchronous.
 For this, we use elnode as a proxy server to make requests to trello.
 The elnode server is started on the port 9876.
@@ -106,7 +114,7 @@ Yank this into a scratch buffer:
 (require 'package)
 (add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
 (package-initialize)
-(package-install 'elnode) ;; for some obscure reason, letting org-trello install elnode's dependencies makes it fail!
+(package-install 'elnode) ;; for some obscure reason, letting org-trello install elnode's dependencies fail!
 (package-install 'org-trello)
 (require 'org-trello)
 ;; to trigger org-trello for each org file
@@ -183,12 +191,16 @@ Now open an org-mode buffer, then hit: `C-c o h`
 
 [<img src="https://i1.ytimg.com/vi/1UYYXjCwshs/0.jpg" />](http://youtu.be/2OlmPMwtCAs)
 
+### Assign oneself to the card
+
+TODO
+
 # Contributions
 
-- Pull Requests welcome (cf. [todo](./TODO.org) - better read in an emacs org-mode buffer than on GitHub)
+- Pull Requests welcome (cf. [todo](./TODO.org) - use emacs org-mode buffer to read it
 - Appreciate any feedback
 - Open issues if you want something to be done
-- Open issues for bugs too (please describe maximum inputs, version, *Messages* buffer, stacktrace, etc...)
+- Open issues for bugs too (please describe maximum inputs, emacs version, org-trello version, *Messages* buffer, stacktrace, etc...)
 - [What has been done and remains to be done](./TODO.org)
 
 # Release notes
@@ -331,6 +343,7 @@ Actual bindings (not definitive, suggestions regarding those bindings are welcom
 
 Keybindings        | Interactive commands                         | Description
 -------------------|----------------------------------------------|-----------------------------------------------------------------------------------------------------------------------
+                   | `M-x org-trello/version`                     | org-trello's current version
 <kbd>C-c o i</kbd> | `M-x org-trello/install-key-and-token`       | Install the keys and the access-token.
 <kbd>C-c o I</kbd> | `M-x org-trello/install-board-and-lists-ids` | Select the board and attach the todo, doing and done list.
 <kbd>C-c o d</kbd> | `M-x org-trello/check-setup`                 | Check that the setup is ok. If everything is ok, will simply display 'Setup ok!'
@@ -342,6 +355,8 @@ Keybindings        | Interactive commands                         | Description
 <kbd>C-c o S</kbd> | `M-x org-trello/sync-from-trello`            | Synchronize the org-mode file from the trello board (trello -> org-mode).
 <kbd>C-c o k</kbd> | `M-x org-trello/kill-entity`                 | Kill the entity (and its arborescence tree) from the trello board and the org buffer.
 <kbd>C-c o K</kbd> | `M-x org-trello/kill-all-entities`           | Kill all the entities (and their arborescence tree) from the trello board and the org buffer.
+<kbd>C-c o a</kbd> | `M-x org-trello/assign-me`                   | Assign one-self to the current card
+<kbd>C-c o u</kbd> | `M-x org-trello/unassign-me`                 | Unassign one-self from the current card
 <kbd>C-c o h</kbd> | `M-x org-trello/help-describing-bindings`    | This help message.
 
 # Use cases
