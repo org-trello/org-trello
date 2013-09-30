@@ -703,7 +703,7 @@ CLOSED: [2013-09-19 jeu. 19:05]
 - [X] Version
 - [X] Release notes
 - [X] Fix typography in naming windows-nt system - https://github.com/ardumont/org-trello/issues/62#issuecomment-24735681
-* IN-PROGRESS 0.2.2 [33%]
+* IN-PROGRESS 0.2.2 [40%]
 - [X] Version
 - [X] Improve abstraction around data from trello (not complete yet)
 - [-] Show people assigned to card
@@ -716,7 +716,7 @@ CLOSED: [2013-09-19 jeu. 19:05]
   - [X] User unassigns oneself to the card
   - [X] sync-to-trello also assign users
   - [X] sync-to-trello also unassign users
-  - [ ] sync-from-trello also retrieve user informations and update the org buffer
+  - [X] sync-from-trello also retrieve user informations and update the org buffer
   - [ ] cleanup routine must cleanup card properties regarding user assigned
 - [ ] Update README about new command
 - [ ] Release notes
