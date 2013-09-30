@@ -2075,13 +2075,16 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   (orgtrello/--write-entity! entity-id (gethash entity-id entities))
   (--map (orgtrello/--write-item! it entities) (gethash entity-id adjacency)))
 
+(defun orgtrello/--update-users-assigned-property! (entity) "Update the users assigned property card entry."
+  (--> entity
+       (orgtrello/--user-assigned-ids it)
+       (orgtrello/--csv-user-ids-to-csv-user-names it *HMAP-USERS-ID-NAME*)
+       (replace-regexp-in-string *ORGTRELLO-USER-PREFIX* "" it)
+       (orgtrello/set-usernames-assigned-property! it)))
+
 (defun orgtrello/--write-card! (entity-id entity entities adjacency) "Write the card inside the org buffer."
   (orgtrello/--write-entity! entity-id entity)
-  (-> entity
-      orgtrello/--user-assigned-ids
-      -trace
-      (orgtrello/--csv-user-ids-to-csv-user-names *HMAP-USERS-ID-NAME*) ;; fixme
-      orgtrello/set-usernames-assigned-property!)
+  (orgtrello/--update-users-assigned-property! entity)
   (--map (orgtrello/--write-checklist! it entities adjacency) (gethash entity-id adjacency)))
 
 (defun orgtrello/--sync-buffer-with-trello-data (data buffer-name) "Given all the entities, update the current buffer with those."
