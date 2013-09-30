@@ -2226,13 +2226,16 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
                (kill-line)
                (kill-line))))
 
+(defun orgtrello/compute-property (property-name &optional property-value) "Compute a formatted entry in org buffer"
+  (format "#+property: %s %s" property-name (if property-value property-value "")))
+
 (defun orgtrello/--remove-properties-file (list-keywords users-hash-name-id user-me &optional update-todo-keywords) "Remove the current org-trello properties"
   (with-current-buffer (current-buffer)
-    (orgtrello/--delete-buffer-property (format "#+property: %s" *BOARD-ID*)) ;; remove board-id
-    (orgtrello/--delete-buffer-property (format "#+property: %s" *BOARD-NAME*));; and board-name
-    (mapc (lambda (name) (orgtrello/--delete-buffer-property (format "#+property: %s" (orgtrello/--convention-property-name name)))) list-keywords) ;; remove data regarding keywords
-    (maphash (lambda (name id) (orgtrello/--delete-buffer-property (format "#+property: %s%s %s" *ORGTRELLO-USER-PREFIX* (replace-regexp-in-string *ORGTRELLO-USER-PREFIX* "" name) id))) users-hash-name-id) ;; remove data regarding users
-    (orgtrello/--delete-buffer-property (format "#+property: %s %s" *ORGTRELLO-USER-ME* user-me));; and board-name
+    (orgtrello/--delete-buffer-property (orgtrello/compute-property *BOARD-ID*)) ;; remove board-id
+    (orgtrello/--delete-buffer-property (orgtrello/compute-property *BOARD-NAME*));; and board-name
+    (mapc (lambda (name) (orgtrello/--delete-buffer-property (orgtrello/compute-property (orgtrello/--convention-property-name name)))) list-keywords) ;; remove data regarding keywords
+    (maphash (lambda (name id) (orgtrello/--delete-buffer-property (orgtrello/compute-property (format "%s%s" *ORGTRELLO-USER-PREFIX* (replace-regexp-in-string *ORGTRELLO-USER-PREFIX* "" name)) id))) users-hash-name-id) ;; remove data regarding users
+    (orgtrello/--delete-buffer-property (orgtrello/compute-property *ORGTRELLO-USER-ME* user-me));; and board-name
     (if update-todo-keywords (orgtrello/--delete-buffer-property "#+TODO: "))));; at last remove entry regarding todo keywords
 
 (defun orgtrello/--compute-keyword-separation (name) "Given a keyword done (case insensitive) return a string '| done' or directly the keyword"

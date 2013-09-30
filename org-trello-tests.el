@@ -1657,5 +1657,9 @@ DEADLINE: <some-date>
   (expect "user0,user1," (orgtrello/--csv-user-ids-to-csv-user-names "id0,id1,id2" (orgtrello-hash/make-properties '(("id0". "user0") ("id1". "user1")))))
   (expect "user0" (orgtrello/--csv-user-ids-to-csv-user-names "id0" (orgtrello-hash/make-properties '(("id0". "user0"))))))
 
+(expectations
+ (expect "#+property: test "      (orgtrello/compute-property "test"))
+ (expect "#+property: test value" (orgtrello/compute-property "test" "value")))
+
 (provide 'org-trello-tests)
 ;;; org-trello-tests ends here
