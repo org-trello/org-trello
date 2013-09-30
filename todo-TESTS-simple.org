@@ -1,13 +1,16 @@
 #+property: board-name    api test board
 #+property: board-id      51d99bbc1e1d8988390047f2
-#+property: TODO 51d99bbc1e1d8988390047f3
-#+property: IN-PROGRESS 51d99bbc1e1d8988390047f4
-#+property: DONE 51d99bbc1e1d8988390047f5
-#+property: PENDING 51e53898ea3d1780690015ca
-#+property: DELEGATED 51e538a89c05f1e25c0027c6
-#+property: FAIL 51e538a26f75d07902002d25
 #+property: CANCELLED 51e538e6c7a68fa0510014ee
-#+TODO: TODO IN-PROGRESS DONE | PENDING DELEGATED FAIL CANCELLED
+#+property: FAIL 51e538a26f75d07902002d25
+#+property: DELEGATED 51e538a89c05f1e25c0027c6
+#+property: PENDING 51e53898ea3d1780690015ca
+#+property: DONE 51d99bbc1e1d8988390047f5
+#+property: IN-PROGRESS 51d99bbc1e1d8988390047f4
+#+property: TODO 51d99bbc1e1d8988390047f3
+#+TODO: TODO IN-PROGRESS | DONE PENDING DELEGATED FAIL CANCELLED
+#+property: orgtrello-user-orgmode 5203a0c833fc36360800177f
+#+property: orgtrello-user-ardumont 4f2baa2f72b7c1293501cad3
+#+property: orgtrello-user-me ardumont
 #+title: dummy sample to sync with trello
 #+author: Antoine R. Dumont
 
