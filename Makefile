@@ -67,3 +67,6 @@ cleanup-data:
 
 release:
 	./release.sh $(VERSION) $(USER)
+
+install-cask:
+	curl -fsSkL https://raw.github.com/rejeep/cask.el/master/go | sh
