@@ -20,17 +20,22 @@
   (should (not (hash-equal (orgtrello-hash/make-properties `((:name . "some other name") (:keyword "TODO")))
                            (orgtrello-hash/make-properties `((:name . "some other name") (:keyword "DONE")))))))
 
+(ert-deftest testing-hash-transpose-properties ()
+  (should (hash-equal (orgtrello-hash/make-properties `(("some other name" . :name) ("TODO" . :keyword)))
+                      (orgtrello-hash/make-transpose-properties `((:name . "some other name") (:keyword . "TODO"))))))
+
 ;; ########################## orgtrello-hash
 
 (expectations
 ;;  (desc "testing orgtrello-hash/make-hash-org")
-  (expect "some name"       (gethash :name       (orgtrello-hash/make-hash-org 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org")))
-  (expect "IN PROGRESS"     (gethash :keyword    (orgtrello-hash/make-hash-org 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org")))
-  (expect 0                 (gethash :level      (orgtrello-hash/make-hash-org 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org")))
-  (expect "some id"         (gethash :id         (orgtrello-hash/make-hash-org 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org")))
-  (expect "due-date"        (gethash :due        (orgtrello-hash/make-hash-org 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org")))
-  (expect :point            (gethash :position   (orgtrello-hash/make-hash-org 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org")))
-  (expect "buffer-name.org" (gethash :buffername (orgtrello-hash/make-hash-org 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org"))))
+  (expect "some name"       (gethash :name           (orgtrello-hash/make-hash-org "" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org")))
+  (expect "IN PROGRESS"     (gethash :keyword        (orgtrello-hash/make-hash-org "" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org")))
+  (expect 0                 (gethash :level          (orgtrello-hash/make-hash-org "" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org")))
+  (expect "some id"         (gethash :id             (orgtrello-hash/make-hash-org "" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org")))
+  (expect "due-date"        (gethash :due            (orgtrello-hash/make-hash-org "" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org")))
+  (expect :point            (gethash :position       (orgtrello-hash/make-hash-org "" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org")))
+  (expect "buffer-name.org" (gethash :buffername     (orgtrello-hash/make-hash-org "" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org")))
+  (expect "1,2,3"           (gethash :users-assigned (orgtrello-hash/make-hash-org "1,2,3" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org"))))
 
 (expectations
   (expect :some-method (gethash :method (orgtrello-hash/make-hash :some-method :some-uri)))
@@ -40,12 +45,13 @@
 ;; ########################## orgtrello-data
 
 (expectations
-  (expect "some name :orgtrello-id-identifier:"  (gethash :name     (orgtrello-data/--get-metadata '("buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil))))
-  (expect "IN PROGRESS"                          (gethash :keyword  (orgtrello-data/--get-metadata '("buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil))))
-  (expect 0                                      (gethash :level    (orgtrello-data/--get-metadata '("buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil))))
-  (expect :id                                    (gethash :id       (orgtrello-data/--get-metadata '("buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil))))
-  (expect :due                                   (gethash :due      (orgtrello-data/--get-metadata '("buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil))))
-  (expect :point                                 (gethash :position (orgtrello-data/--get-metadata '("buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil)))))
+  (expect "some name :orgtrello-id-identifier:"  (gethash :name     (orgtrello-data/--get-metadata '("" "buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil))))
+  (expect "IN PROGRESS"                          (gethash :keyword  (orgtrello-data/--get-metadata '("" "buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil))))
+  (expect 0                                      (gethash :level    (orgtrello-data/--get-metadata '("" "buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil))))
+  (expect :id                                    (gethash :id       (orgtrello-data/--get-metadata '("" "buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil))))
+  (expect :due                                   (gethash :due      (orgtrello-data/--get-metadata '("" "buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil))))
+  (expect :point                                 (gethash :position (orgtrello-data/--get-metadata '("" "buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil))))
+  (expect "1,2,3"                                (gethash :users-assigned (orgtrello-data/--get-metadata '("1,2,3" "buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil)))))
 
 (expectations
   (expect "2013-07-18T02:00:00.000Z" (orgtrello-data/--convert-orgmode-date-to-trello-date "2013-07-18T02:00:00.000Z"))
@@ -61,9 +67,9 @@
   (expect nil                  (gethash :params (orgtrello-api/get-boards))))
 
 (expectations
-  (expect "GET"          (gethash :method (orgtrello-api/get-board :id)))
-  (expect "/boards/:id" (gethash :uri    (orgtrello-api/get-board :id)))
-  (expect nil           (gethash :params (orgtrello-api/get-board :id))))
+  (expect "GET"                                                                                                (gethash :method (orgtrello-api/get-board :id)))
+  (expect "/boards/:id"                                                                                        (gethash :uri    (orgtrello-api/get-board :id)))
+  (expect '(("memberships" . "active") ("memberships_member" . "true") ("fields" . "name,memberships,closed")) (gethash :params (orgtrello-api/get-board :id))))
 
 (expectations
   (expect "GET"                      (gethash :method (orgtrello-api/get-cards :board-id)))
@@ -101,6 +107,17 @@
   (expect '(("name" . "list-name")
             ("idBoard" . "board-id")) (gethash :params (orgtrello-api/add-list "list-name" "board-id"))))
 
+
+(expectations
+  (expect "POST"                                                              (gethash :method (orgtrello-api/add-card :name-card :id-list "due-date")))
+  (expect "/cards/"                                                           (gethash :uri    (orgtrello-api/add-card :name-card :id-list "due-date")))
+  (expect '(("due" . "due-date") ("name" . :name-card) ("idList" . :id-list)) (gethash :params (orgtrello-api/add-card :name-card :id-list "due-date"))))
+
+(expectations
+  (expect "POST"                                                                                                    (gethash :method (orgtrello-api/add-card :name-card :id-list "due-date" "idmember0,idmember1")))
+  (expect "/cards/"                                                                                                 (gethash :uri    (orgtrello-api/add-card :name-card :id-list "due-date" "idmember0,idmember1")))
+  (expect '(("due" . "due-date") ("idMembers" . "idmember0,idmember1") ("name" . :name-card) ("idList" . :id-list)) (gethash :params (orgtrello-api/add-card :name-card :id-list "due-date" "idmember0,idmember1"))))
+
 (expectations
   (expect "PUT"                                             (gethash :method (orgtrello-api/move-card :id-card :id-list "name-card")))
   (expect "/cards/:id-card"                                 (gethash :uri    (orgtrello-api/move-card :id-card :id-list "name-card")))
@@ -120,6 +137,11 @@
   (expect "PUT"                                        (gethash :method (orgtrello-api/move-card :id-card :id-list nil :due-date)))
   (expect "/cards/:id-card"                            (gethash :uri    (orgtrello-api/move-card :id-card :id-list nil :due-date)))
   (expect '(("due" . :due-date) ("idList" . :id-list)) (gethash :params (orgtrello-api/move-card :id-card :id-list nil :due-date))))
+
+(expectations
+  (expect "PUT"                                                                                 (gethash :method (orgtrello-api/move-card :id-card :id-list "name-card" nil "idmember0,idmember1")))
+  (expect "/cards/:id-card"                                                                     (gethash :uri    (orgtrello-api/move-card :id-card :id-list "name-card" nil "idmember0,idmember1")))
+  (expect '(("idMembers" . "idmember0,idmember1") ("name" . "name-card") ("idList" . :id-list)) (gethash :params (orgtrello-api/move-card :id-card :id-list "name-card" nil "idmember0,idmember1"))))
 
 (expectations
   (expect "PUT"                                                         (gethash :method (orgtrello-api/move-card :id-card :id-list :name :due-date)))
@@ -194,6 +216,13 @@
   (expect "GET"                                    (gethash :method (orgtrello-api/get-items :checklist-id)))
   (expect "/checklists/:checklist-id/checkItems/" (gethash :uri    (orgtrello-api/get-items :checklist-id))))
 
+(expectations
+  (expect "GET"          (gethash :method (orgtrello-api/get-member :id)))
+  (expect "/members/:id" (gethash :uri (orgtrello-api/get-member :id))))
+
+(expectations
+  (expect "GET"         (gethash :method (orgtrello-api/get-me)))
+  (expect "/members/me" (gethash :uri (orgtrello-api/get-me))))
 
 ;; ########################## orgtrello-query
 
@@ -203,58 +232,59 @@
   (expect (format "some-server/uri/some/other")          (orgtrello-query/--compute-url "some-server" "/uri/some/other")))
 
 (expectations
-  (expect :some-get (orgtrello-query/--method (orgtrello-hash/make-properties `((:method . :some-get) (:uri . :some-uri) (:sync . :some-sync) (:params . :some-params)))))
-  (expect :some-uri (orgtrello-query/--uri (orgtrello-hash/make-properties `((:method . :some-get) (:uri . :some-uri) (:sync . :some-sync) (:params . :some-params)))))
-  (expect :some-sync (orgtrello-query/--sync (orgtrello-hash/make-properties `((:method . :some-get) (:uri . :some-uri) (:sync . :some-sync) (:params . :some-params)))))
-  (expect :some-params (orgtrello-query/--params (orgtrello-hash/make-properties `((:method . :some-get) (:uri . :some-uri) (:sync . :some-sync) (:params . :some-params))))))
+  (expect :some-get (orgtrello-data/method (orgtrello-hash/make-properties `((:method . :some-get) (:uri . :some-uri) (:sync . :some-sync) (:params . :some-params)))))
+  (expect :some-uri (orgtrello-data/uri (orgtrello-hash/make-properties `((:method . :some-get) (:uri . :some-uri) (:sync . :some-sync) (:params . :some-params)))))
+  (expect :some-sync (orgtrello-data/sync (orgtrello-hash/make-properties `((:method . :some-get) (:uri . :some-uri) (:sync . :some-sync) (:params . :some-params)))))
+  (expect :some-params (orgtrello-data/params (orgtrello-hash/make-properties `((:method . :some-get) (:uri . :some-uri) (:sync . :some-sync) (:params . :some-params))))))
 
 (expectations
-  (expect "some-id" (orgtrello-query/--id '((id . "some-id"))))
-  (expect nil       (orgtrello-query/--id '((noid . "some-id")))))
+  (expect "some-id" (orgtrello-data/id '((id . "some-id"))))
+  (expect nil       (orgtrello-data/id '((noid . "some-id")))))
 
 (expectations
-  (expect :some-name (orgtrello-query/--name '((name . :some-name))))
-  (expect nil        (orgtrello-query/--name '((noname . :some-name)))))
+  (expect :some-name (orgtrello-data/name '((name . :some-name))))
+  (expect nil        (orgtrello-data/name '((noname . :some-name)))))
 
 (expectations
-  (expect :some-list-id (orgtrello-query/--list-id '((idList . :some-list-id))))
-  (expect nil           (orgtrello-query/--list-id '((noIdList . :some-list-id)))))
+  (expect :some-list-id (orgtrello-data/list-id '((idList . :some-list-id))))
+  (expect nil           (orgtrello-data/list-id '((noIdList . :some-list-id)))))
 
 (expectations
-  (expect :some-clist-ids (orgtrello-query/--checklist-ids '((idChecklists . :some-clist-ids))))
-  (expect nil             (orgtrello-query/--checklist-ids '((no . :some-clist-ids)))))
+  (expect :some-clist-ids (orgtrello-data/checklist-ids '((idChecklists . :some-clist-ids))))
+  (expect nil             (orgtrello-data/checklist-ids '((no . :some-clist-ids)))))
 
 (expectations
-  (expect :some-check-items (orgtrello-query/--check-items '((checkItems . :some-check-items))))
-  (expect nil               (orgtrello-query/--check-items '((no . :some-check-items)))))
+  (expect :some-check-items (orgtrello-data/check-items '((checkItems . :some-check-items))))
+  (expect nil               (orgtrello-data/check-items '((no . :some-check-items)))))
 
 (expectations
-  (expect :some-card-id (orgtrello-query/--card-id '((idCard . :some-card-id))))
-  (expect nil           (orgtrello-query/--card-id '((no . :some-card-id)))))
+  (expect :some-card-id (orgtrello-data/card-id '((idCard . :some-card-id))))
+  (expect nil           (orgtrello-data/card-id '((no . :some-card-id)))))
 
 (expectations
-  (expect :some-due (orgtrello-query/--due '((due . :some-due))))
-  (expect nil       (orgtrello-query/--due '((no . :some-due)))))
+  (expect :some-due (orgtrello-data/due '((due . :some-due))))
+  (expect nil       (orgtrello-data/due '((no . :some-due)))))
 
 (expectations
-  (expect :some-state (orgtrello-query/--state '((state . :some-state))))
-  (expect nil         (orgtrello-query/--state '((no . :some-state)))))
+  (expect :some-state (orgtrello-data/state '((state . :some-state))))
+  (expect nil         (orgtrello-data/state '((no . :some-state)))))
 
 (expectations
-  (expect :closed (orgtrello-query/--close-property '((closed . :closed))))
-  (expect nil     (orgtrello-query/--close-property '((no . :some-state)))))
+  (expect :closed (orgtrello-data/close-property '((closed . :closed))))
+  (expect nil     (orgtrello-data/close-property '((no . :some-state)))))
 
 ;; ########################## orgtrello-tests
 
 (ert-deftest testing-orgtrello/--compute-data-from-entity-meta ()
-  (let* ((entry   (orgtrello-hash/make-hash-org :some-level :some-keyword :some-name "some-id" :some-due :some-point :some-buffername)))
+  (let* ((entry   (orgtrello-hash/make-hash-org :users-assigned :some-level :some-keyword :some-name "some-id" :some-due :some-point :some-buffername)))
     (should (equal (orgtrello/--id entry)         "some-id"))
     (should (equal (orgtrello/--name entry)       :some-name))
     (should (equal (orgtrello/--keyword entry)    :some-keyword))
     (should (equal (orgtrello/--level entry)      :some-level))
     (should (equal (orgtrello/--due entry)        :some-due))
     (should (equal (orgtrello/--position entry)   :some-point))
-    (should (equal (orgtrello/--buffername entry) :some-buffername))))
+    (should (equal (orgtrello/--buffername entry) :some-buffername))
+    (should (equal (orgtrello/--user-assigned-ids entry) :users-assigned))))
 
 (ert-deftest testing-orgtrello/--id-name ()
   (let* ((entities [((id . "id")
@@ -350,9 +380,9 @@
  (expect nil                            (orgtrello-proxy/--dispatch-action "nothing")))
 
 (expectations
-  (expect "id"                                                        (orgtrello/--compute-marker-from-entry (orgtrello-hash/make-hash-org :level :kwd :name      "id"  :due :position :buffername)))
-  (expect "orgtrello-marker-2a0b98e652ce6349a0659a7a8eeb3783ffe9a11a" (orgtrello/--compute-marker-from-entry (orgtrello-hash/make-hash-org :level :kwd "some-name" nil :due 1234      "buffername")))
-  (expect "orgtrello-marker-6c59c5dcf6c83edaeb3f4923bfd929a091504bb3" (orgtrello/--compute-marker-from-entry (orgtrello-hash/make-hash-org :level :kwd "some-name" nil :due 4321      "some-other-buffername"))))
+  (expect "id"                                                        (orgtrello/--compute-marker-from-entry (orgtrello-hash/make-hash-org :users :level :kwd :name      "id"  :due :position :buffername)))
+  (expect "orgtrello-marker-2a0b98e652ce6349a0659a7a8eeb3783ffe9a11a" (orgtrello/--compute-marker-from-entry (orgtrello-hash/make-hash-org :users :level :kwd "some-name" nil :due 1234      "buffername")))
+  (expect "orgtrello-marker-6c59c5dcf6c83edaeb3f4923bfd929a091504bb3" (orgtrello/--compute-marker-from-entry (orgtrello-hash/make-hash-org :users :level :kwd "some-name" nil :due 4321      "some-other-buffername"))))
 
 (expectations
   (expect "orgtrello-marker-2a0b98e652ce6349a0659a7a8eeb3783ffe9a11a" (orgtrello/compute-marker "buffername" "some-name" 1234))
@@ -395,14 +425,14 @@
 "
       (org-action/--functional-controls-then-do
        '(orgtrello/--right-level-p)
-       (orgtrello-hash/make-hierarchy (orgtrello-hash/make-hash-org 4 :kwd :name nil :due :position :buffer-name))
+       (orgtrello-hash/make-hierarchy (orgtrello-hash/make-hash-org :users 4 :kwd :name nil :due :position :buffer-name))
        (lambda (entity s) (format "%S %s" entity s))
        "- hello"))
 
-  (expect "#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:current #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:buffername :buffer-name :position :position :level 3 :keyword :kwd :name :name :id nil :due :due)) :parent nil :grandparent nil)) - hello"
+  (expect "#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:current #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:buffername :buffer-name :position :position :level 3 :keyword :kwd :name :name :id nil :due :due :users-assigned :users)) :parent nil :grandparent nil)) - hello"
     (org-action/--functional-controls-then-do
      '(orgtrello/--right-level-p)
-     (orgtrello-hash/make-hierarchy (orgtrello-hash/make-hash-org 3 :kwd :name nil :due :position :buffer-name))
+     (orgtrello-hash/make-hierarchy (orgtrello-hash/make-hash-org :users 3 :kwd :name nil :due :position :buffer-name))
      (lambda (entity s) (format "%S %s" entity s))
      "- hello")))
 
@@ -412,14 +442,14 @@
 "
     (org-action/--functional-controls-then-do
      '(orgtrello/--right-level-p orgtrello/--already-synced-p)
-     (orgtrello-hash/make-hierarchy (orgtrello-hash/make-hash-org 1 :kwd :name nil :due :position :buffer-name))
+     (orgtrello-hash/make-hierarchy (orgtrello-hash/make-hash-org :users 1 :kwd :name nil :due :position :buffer-name))
      (lambda (entity s) (format "%S %s" entity s))
      "- hello"))
-  (expect "#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:current #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:buffername :buffer-name :position :position :level 1 :keyword :kwd :name :name :id \"some-id\" :due :due)) :parent nil :grandparent nil)) - hello"
+  (expect "#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:current #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:buffername :buffer-name :position :position :level 1 :keyword :kwd :name :name :id \"some-id\" :due :due :users-assigned :users)) :parent nil :grandparent nil)) - hello"
 
     (org-action/--functional-controls-then-do
      '(orgtrello/--right-level-p orgtrello/--already-synced-p)
-     (orgtrello-hash/make-hierarchy (orgtrello-hash/make-hash-org 1 :kwd :name "some-id" :due :position :buffer-name))
+     (orgtrello-hash/make-hierarchy (orgtrello-hash/make-hash-org :users 1 :kwd :name "some-id" :due :position :buffer-name))
      (lambda (entity s) (format "%S %s" entity s))
      "- hello")))
 
@@ -634,60 +664,60 @@ DEADLINE: <some-date>
 " (orgtrello/--compute-item-to-org-entry `((name . "name") (state . "incomplete")) nil)))
 
 (expectations
-  (expect "test" (orgtrello-query/--retrieve-data 'marker `((marker . "test"))))
-  (expect nil (orgtrello-query/--retrieve-data    'other  `((marker . "test"))))
-  (expect "test" (orgtrello-query/--buffername            `((buffername . "test"))))
-  (expect nil (orgtrello-query/--buffername               `((inexistant . "test"))))
-  (expect "test" (orgtrello-query/--position              `((position . "test"))))
-  (expect nil (orgtrello-query/--position                 `((inexistant . "test"))))
-  (expect "test" (orgtrello-query/--id                    `((id . "test"))))
-  (expect nil (orgtrello-query/--id                       `((inexistant . "test"))))
-  (expect "test" (orgtrello-query/--name                  `((name . "test"))))
-  (expect nil (orgtrello-query/--name                     `((inexistant . "test"))))
-  (expect "test" (orgtrello-query/--list-id               `((idList . "test"))))
-  (expect nil (orgtrello-query/--list-id                  `((inexistant . "test"))))
-  (expect "test" (orgtrello-query/--checklist-ids         `((idChecklists . "test"))))
-  (expect nil (orgtrello-query/--checklist-ids            `((inexistant . "test"))))
-  (expect "test" (orgtrello-query/--check-items           `((checkItems . "test"))))
-  (expect nil (orgtrello-query/--check-items              `((inexistant . "test"))))
-  (expect "test" (orgtrello-query/--card-id               `((idCard . "test"))))
-  (expect nil (orgtrello-query/--card-id                  `((inexistant . "test"))))
-  (expect "test" (orgtrello-query/--due                   `((due . "test"))))
-  (expect nil (orgtrello-query/--due                      `((inexistant . "test"))))
-  (expect "test" (orgtrello-query/--state                 `((state . "test"))))
-  (expect nil (orgtrello-query/--state                    `((inexistant . "test"))))
-  (expect "test" (orgtrello-query/--close-property        `((closed . "test"))))
-  (expect nil (orgtrello-query/--close-property           `((inexistant . "test"))))
-  (expect "test" (orgtrello-query/--callback              `((callback . "test"))))
-  (expect nil (orgtrello-query/--callback                 `((inexistant . "test"))))
-  (expect "test" (orgtrello-query/--sync-                 `((sync . "test"))))
-  (expect nil (orgtrello-query/--sync-                    `((inexistant . "test"))))
-  (expect "test" (orgtrello-query/--level                 `((level . "test"))))
-  (expect nil (orgtrello-query/--level                    `((inexistant . "test"))))
-  (expect "test" (orgtrello-query/--method-               `((method . "test"))))
-  (expect nil (orgtrello-query/--method-                  `((inexistant . "test"))))
-  (expect "test" (orgtrello-query/--uri-                  `((uri . "test"))))
-  (expect nil (orgtrello-query/--uri-                     `((inexistant . "test"))))
-  (expect "test" (orgtrello-query/--params-               `((params . "test"))))
-  (expect nil (orgtrello-query/--params-                  `((inexistant . "test"))))
-  (expect "test" (orgtrello-query/--start                 `((start . "test"))))
-  (expect nil (orgtrello-query/--start                    `((inexistant . "test"))))
-  (expect "test" (orgtrello-query/--action                `((action . "test"))))
-  (expect nil (orgtrello-query/--action                   `((inexistant . "test")))))
+  (expect "test" (orgtrello-data/retrieve-data 'marker `((marker . "test"))))
+  (expect nil (orgtrello-data/retrieve-data    'other  `((marker . "test"))))
+  (expect "test" (orgtrello-data/buffername            `((buffername . "test"))))
+  (expect nil (orgtrello-data/buffername               `((inexistant . "test"))))
+  (expect "test" (orgtrello-data/position              `((position . "test"))))
+  (expect nil (orgtrello-data/position                 `((inexistant . "test"))))
+  (expect "test" (orgtrello-data/id                    `((id . "test"))))
+  (expect nil (orgtrello-data/id                       `((inexistant . "test"))))
+  (expect "test" (orgtrello-data/name                  `((name . "test"))))
+  (expect nil (orgtrello-data/name                     `((inexistant . "test"))))
+  (expect "test" (orgtrello-data/list-id               `((idList . "test"))))
+  (expect nil (orgtrello-data/list-id                  `((inexistant . "test"))))
+  (expect "test" (orgtrello-data/checklist-ids         `((idChecklists . "test"))))
+  (expect nil (orgtrello-data/checklist-ids            `((inexistant . "test"))))
+  (expect "test" (orgtrello-data/check-items           `((checkItems . "test"))))
+  (expect nil (orgtrello-data/check-items              `((inexistant . "test"))))
+  (expect "test" (orgtrello-data/card-id               `((idCard . "test"))))
+  (expect nil (orgtrello-data/card-id                  `((inexistant . "test"))))
+  (expect "test" (orgtrello-data/due                   `((due . "test"))))
+  (expect nil (orgtrello-data/due                      `((inexistant . "test"))))
+  (expect "test" (orgtrello-data/state                 `((state . "test"))))
+  (expect nil (orgtrello-data/state                    `((inexistant . "test"))))
+  (expect "test" (orgtrello-data/close-property        `((closed . "test"))))
+  (expect nil (orgtrello-data/close-property           `((inexistant . "test"))))
+  (expect "test" (orgtrello-data/callback              `((callback . "test"))))
+  (expect nil (orgtrello-data/callback                 `((inexistant . "test"))))
+  (expect "test" (orgtrello-data/sync-                 `((sync . "test"))))
+  (expect nil (orgtrello-data/sync-                    `((inexistant . "test"))))
+  (expect "test" (orgtrello-data/level                 `((level . "test"))))
+  (expect nil (orgtrello-data/level                    `((inexistant . "test"))))
+  (expect "test" (orgtrello-data/method-               `((method . "test"))))
+  (expect nil (orgtrello-data/method-                  `((inexistant . "test"))))
+  (expect "test" (orgtrello-data/uri-                  `((uri . "test"))))
+  (expect nil (orgtrello-data/uri-                     `((inexistant . "test"))))
+  (expect "test" (orgtrello-data/params-               `((params . "test"))))
+  (expect nil (orgtrello-data/params-                  `((inexistant . "test"))))
+  (expect "test" (orgtrello-data/start                 `((start . "test"))))
+  (expect nil (orgtrello-data/start                    `((inexistant . "test"))))
+  (expect "test" (orgtrello-data/action                `((action . "test"))))
+  (expect nil (orgtrello-data/action                   `((inexistant . "test")))))
 
 (expectations
-  (expect :some-method (orgtrello-query/--method (orgtrello-hash/make-properties `((:method . :some-method )))))
-  (expect nil (orgtrello-query/--method (orgtrello-hash/make-properties `((:inexistant . :some-method )))))
-  (expect :some-uri (orgtrello-query/--method (orgtrello-hash/make-properties `((:method . :some-uri )))))
-  (expect nil (orgtrello-query/--method (orgtrello-hash/make-properties `((:inexistant . :some-method )))))
-  (expect :some-sync (orgtrello-query/--method (orgtrello-hash/make-properties `((:method . :some-sync )))))
-  (expect nil (orgtrello-query/--method (orgtrello-hash/make-properties `((:inexistant . :some-method )))))
-  (expect :some-params (orgtrello-query/--method (orgtrello-hash/make-properties `((:method . :some-params )))))
-  (expect nil (orgtrello-query/--method (orgtrello-hash/make-properties `((:inexistant . :some-method ))))))
+  (expect :some-method (orgtrello-data/method (orgtrello-hash/make-properties `((:method . :some-method )))))
+  (expect nil (orgtrello-data/method (orgtrello-hash/make-properties `((:inexistant . :some-method )))))
+  (expect :some-uri (orgtrello-data/method (orgtrello-hash/make-properties `((:method . :some-uri )))))
+  (expect nil (orgtrello-data/method (orgtrello-hash/make-properties `((:inexistant . :some-method )))))
+  (expect :some-sync (orgtrello-data/method (orgtrello-hash/make-properties `((:method . :some-sync )))))
+  (expect nil (orgtrello-data/method (orgtrello-hash/make-properties `((:inexistant . :some-method )))))
+  (expect :some-params (orgtrello-data/method (orgtrello-hash/make-properties `((:method . :some-params )))))
+  (expect nil (orgtrello-data/method (orgtrello-hash/make-properties `((:inexistant . :some-method ))))))
 
 (expectations
-  (expect "some-method" (orgtrello-query/gethash-data :method (orgtrello-hash/make-properties `((:method . "some-method")))))
-  (expect nil           (orgtrello-query/gethash-data :method (orgtrello-hash/make-properties `((:inexistant . "some-method"))))))
+  (expect "some-method" (orgtrello-data/gethash-data :method (orgtrello-hash/make-properties `((:method . "some-method")))))
+  (expect nil           (orgtrello-data/gethash-data :method (orgtrello-hash/make-properties `((:inexistant . "some-method"))))))
 
 (expectations
   (expect "DONE" (orgtrello/--compute-state-generic "complete" '("DONE" "TODO")))
@@ -1295,31 +1325,31 @@ DEADLINE: <some-date>
 ;;                                                        orgtrello/--can-be-synced-p)))
 
 (expectations
-  (expect :ok                                 (-> (orgtrello-hash/make-hash-org 1 :keyword "some name" :id :due :position :buffer-name)
+  (expect :ok                                 (-> (orgtrello-hash/make-hash-org :users 1 :keyword "some name" :id :due :position :buffer-name)
                                                   orgtrello-hash/make-hierarchy
                                                   orgtrello/--mandatory-name-ok-p))
-  (expect *ERROR-SYNC-CARD-MISSING-NAME*      (-> (orgtrello-hash/make-hash-org 1 :keyword "" :id :due :position :buffer-name)
+  (expect *ERROR-SYNC-CARD-MISSING-NAME*      (-> (orgtrello-hash/make-hash-org :users 1 :keyword "" :id :due :position :buffer-name)
                                                   orgtrello-hash/make-hierarchy
                                                   orgtrello/--mandatory-name-ok-p))
-  (expect *ERROR-SYNC-CARD-MISSING-NAME*      (-> (orgtrello-hash/make-hash-org 1 :keyword nil :id :due :position :buffer-name)
+  (expect *ERROR-SYNC-CARD-MISSING-NAME*      (-> (orgtrello-hash/make-hash-org :users 1 :keyword nil :id :due :position :buffer-name)
                                                   orgtrello-hash/make-hierarchy
                                                   orgtrello/--mandatory-name-ok-p))
-  (expect :ok                                 (-> (orgtrello-hash/make-hash-org 2 :keyword "some name" :id :due :position :buffer-name)
+  (expect :ok                                 (-> (orgtrello-hash/make-hash-org :users 2 :keyword "some name" :id :due :position :buffer-name)
                                                   orgtrello-hash/make-hierarchy
                                                   orgtrello/--mandatory-name-ok-p))
-  (expect *ERROR-SYNC-CHECKLIST-MISSING-NAME* (-> (orgtrello-hash/make-hash-org 2 :keyword "" :id :due :position :buffer-name)
+  (expect *ERROR-SYNC-CHECKLIST-MISSING-NAME* (-> (orgtrello-hash/make-hash-org :users 2 :keyword "" :id :due :position :buffer-name)
                                                   orgtrello-hash/make-hierarchy
                                                   orgtrello/--mandatory-name-ok-p))
-  (expect *ERROR-SYNC-CHECKLIST-MISSING-NAME* (-> (orgtrello-hash/make-hash-org 2 :keyword nil :id :due :position :buffer-name)
+  (expect *ERROR-SYNC-CHECKLIST-MISSING-NAME* (-> (orgtrello-hash/make-hash-org :users 2 :keyword nil :id :due :position :buffer-name)
                                                   orgtrello-hash/make-hierarchy
                                                   orgtrello/--mandatory-name-ok-p))
-  (expect :ok                                 (-> (orgtrello-hash/make-hash-org 3 :keyword "some name" :id :due :position :buffer-name)
+  (expect :ok                                 (-> (orgtrello-hash/make-hash-org :users 3 :keyword "some name" :id :due :position :buffer-name)
                                                   orgtrello-hash/make-hierarchy
                                                   orgtrello/--mandatory-name-ok-p))
-  (expect *ERROR-SYNC-ITEM-MISSING-NAME*      (-> (orgtrello-hash/make-hash-org 3 :keyword "" :id :due :position :buffer-name)
+  (expect *ERROR-SYNC-ITEM-MISSING-NAME*      (-> (orgtrello-hash/make-hash-org :users 3 :keyword "" :id :due :position :buffer-name)
                                                   orgtrello-hash/make-hierarchy
                                                   orgtrello/--mandatory-name-ok-p))
-  (expect *ERROR-SYNC-ITEM-MISSING-NAME*      (-> (orgtrello-hash/make-hash-org 3 :keyword nil :id :due :position :buffer-name)
+  (expect *ERROR-SYNC-ITEM-MISSING-NAME*      (-> (orgtrello-hash/make-hash-org :users 3 :keyword nil :id :due :position :buffer-name)
                                                   orgtrello-hash/make-hierarchy
                                                   orgtrello/--mandatory-name-ok-p)))
 
@@ -1437,9 +1467,9 @@ DEADLINE: <some-date>
  (expect '(:b :a) (orgtrello-proxy/update-buffer-to-save! :b)))
 
 (expectations
-  (expect 'orgtrello/--put-card      (orgtrello/--dispatch-create-map (orgtrello-hash/make-hash-org *CARD-LEVEL* nil nil nil nil nil nil)))
-  (expect 'orgtrello/--put-entities (orgtrello/--dispatch-create-map (orgtrello-hash/make-hash-org *CHECKLIST-LEVEL* nil nil nil nil nil nil)))
-  (expect 'orgtrello/--put-entities (orgtrello/--dispatch-create-map (orgtrello-hash/make-hash-org *ITEM-LEVEL* nil nil nil nil nil nil))))
+  (expect 'orgtrello/--put-card      (orgtrello/--dispatch-create-map (orgtrello-hash/make-hash-org :users *CARD-LEVEL* nil nil nil nil nil nil)))
+  (expect 'orgtrello/--put-entities (orgtrello/--dispatch-create-map (orgtrello-hash/make-hash-org :users *CHECKLIST-LEVEL* nil nil nil nil nil nil)))
+  (expect 'orgtrello/--put-entities (orgtrello/--dispatch-create-map (orgtrello-hash/make-hash-org :users *ITEM-LEVEL* nil nil nil nil nil nil))))
 
 (ert-deftest testing-orgtrello/--init-map-from ()
   (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data ()) (orgtrello/--init-map-from nil))))
@@ -1483,33 +1513,35 @@ DEADLINE: <some-date>
   (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :id 1 :level 2))
                       (orgtrello/--merge-checklist `((id . 1) (name . "some name")) nil))))
 
-(ert-deftest testing-orgtrello/--merge-checklist ()
+(ert-deftest testing-orgtrello/--merge-card ()
   (let ((*HMAP-ID-NAME* (orgtrello-hash/make-properties `((1 . "TODO") (2 . "DONE") (3 . "IN-PROGRESS")))))
-    (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "TODO" :id nil :level 1))
+    (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "TODO" :id nil :level 1 :users-assigned ""))
                         (orgtrello/--merge-card `((id . nil) (name . "some name") (idList . 1)) (orgtrello-hash/make-properties `((:name . "some other name"))))))
-    (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "DONE" :id nil :level 1))
+    (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "DONE" :id nil :level 1 :users-assigned ""))
                         (orgtrello/--merge-card `((id . nil) (name . "some name") (idList . 2)) (orgtrello-hash/make-properties `((:name . "some other name"))))))
-    (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "TODO" :id nil :level 1))
+    (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "TODO" :id nil :level 1 :users-assigned ""))
                         (orgtrello/--merge-card `((id . nil) (name . "some name") (idList . 1)) nil)))
-    (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "TODO" :id nil :level 1))
+    (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "TODO" :id nil :level 1 :users-assigned ""))
                         (orgtrello/--merge-card `((id . nil) (name . "some name") (idList . 1)) (orgtrello-hash/make-properties `((:name . "some other name") (:id 1))))))
-    (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "TODO" :id 1 :level 1))
+    (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "TODO" :id 1 :level 1 :users-assigned ""))
                         (orgtrello/--merge-card `((id . 1) (name . "some name") (id . 1) (idList . 1)) (orgtrello-hash/make-properties `((:name . "some other name"))))))
-    (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "TODO" :id 1 :level 1))
+    (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "TODO" :id 1 :level 1 :users-assigned ""))
                         (orgtrello/--merge-card `((id . 1) (name . "some name") (id . 1) (idList . 1)) (orgtrello-hash/make-properties `((:name . "some other name") (:id 2))))))
-    (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "TODO" :id 1 :level 1))
+    (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "TODO" :id 1 :level 1 :users-assigned ""))
                         (orgtrello/--merge-card `((id . 1) (name . "some name") (id . 1) (idList . 1)) (orgtrello-hash/make-properties `((:name . "some other name"))))))
-    (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "TODO" :id 1 :level 1))
-                        (orgtrello/--merge-card `((id . 1) (name . "some name") (idList . 1)) nil)))))
+    (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "TODO" :id 1 :level 1 :users-assigned ""))
+                        (orgtrello/--merge-card `((id . 1) (name . "some name") (idList . 1)) nil)))
+    (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "TODO" :id 1 :level 1 :users-assigned "1,2,3"))
+                        (orgtrello/--merge-card `((id . 1) (name . "some name") (idList . 1) (idMembers . ["1" "2" "3"])) nil)))))
 
 (expectations
  (expect '(1 2 3 4) (orgtrello/--add-to-last-pos 4 '(1 2 3))))
 
 (expectations
-  (expect '(1 2 3 4) (orgtrello/--merge-list '(1 2 3) '(4 1 2)))
-  (expect '(4 1 2)   (orgtrello/--merge-list nil '(4 1 2)))
-  (expect '(4 1 2)   (orgtrello/--merge-list '(4 1 2) nil))
-  (expect nil        (orgtrello/--merge-list nil nil)))
+  (expect '(1 2 3 4) (orgtrello-data/merge-2-lists-without-duplicates '(1 2 3) '(4 1 2)))
+  (expect '(4 1 2)   (orgtrello-data/merge-2-lists-without-duplicates nil '(4 1 2)))
+  (expect '(4 1 2)   (orgtrello-data/merge-2-lists-without-duplicates '(4 1 2) nil))
+  (expect nil        (orgtrello-data/merge-2-lists-without-duplicates nil nil)))
 
 (expectations
  (expect t (orgtrello/--hcard-p (orgtrello-hash/make-properties `((:level . ,*CARD-LEVEL*)))))
@@ -1520,22 +1552,114 @@ DEADLINE: <some-date>
  (expect nil (orgtrello/--entity-with-level-p (orgtrello-hash/make-properties `((:level . ,*CHECKLIST-LEVEL*))) *CARD-LEVEL*)))
 
 (expectations
- (expect t (orgtrello-data/--card-p (orgtrello-hash/make-properties `((:level . ,*CARD-LEVEL*)))))
- (expect nil (orgtrello-data/--card-p (orgtrello-hash/make-properties `((:level . ,*CHECKLIST-LEVEL*)))))
- (expect 1 (orgtrello-data/--card-p `((idList . 1))))
- (expect nil (orgtrello-data/--card-p `((id . 1)))))
+ (expect t (orgtrello-data/entity-card-p (orgtrello-hash/make-properties `((:level . ,*CARD-LEVEL*)))))
+ (expect nil (orgtrello-data/entity-card-p (orgtrello-hash/make-properties `((:level . ,*CHECKLIST-LEVEL*)))))
+ (expect 1 (orgtrello-data/entity-card-p `((idList . 1))))
+ (expect nil (orgtrello-data/entity-card-p `((id . 1)))))
 
 (expectations
- (expect t (orgtrello-data/--checklist-p (orgtrello-hash/make-properties `((:level . ,*CHECKLIST-LEVEL*)))))
- (expect nil (orgtrello-data/--checklist-p (orgtrello-hash/make-properties `((:level . ,*ITEM-LEVEL*)))))
- (expect 1 (orgtrello-data/--checklist-p `((idCard . 1))))
- (expect nil (orgtrello-data/--checklist-p `((id . 1)))))
+ (expect t (orgtrello-data/entity-checklist-p (orgtrello-hash/make-properties `((:level . ,*CHECKLIST-LEVEL*)))))
+ (expect nil (orgtrello-data/entity-checklist-p (orgtrello-hash/make-properties `((:level . ,*ITEM-LEVEL*)))))
+ (expect 1 (orgtrello-data/entity-checklist-p `((idCard . 1))))
+ (expect nil (orgtrello-data/entity-checklist-p `((id . 1)))))
 
 (expectations
- (expect t (orgtrello-data/--item-p (orgtrello-hash/make-properties `((:level . ,*ITEM-LEVEL*)))))
- (expect nil (orgtrello-data/--item-p (orgtrello-hash/make-properties `((:level . ,*CARD-LEVEL*)))))
- (expect 1 (orgtrello-data/--item-p `((state . 1))))
- (expect nil (orgtrello-data/--item-p `((id . 1)))))
+ (expect t (orgtrello-data/entity-item-p (orgtrello-hash/make-properties `((:level . ,*ITEM-LEVEL*)))))
+ (expect nil (orgtrello-data/entity-item-p (orgtrello-hash/make-properties `((:level . ,*CARD-LEVEL*)))))
+ (expect 1 (orgtrello-data/entity-item-p `((state . 1))))
+ (expect nil (orgtrello-data/entity-item-p `((id . 1)))))
+
+(expectations
+  (expect '(((username . "ardumont") (fullName . "Antoine R. Dumont") (id . "4f2baa2f72b7c1293501cad3"))
+            ((username . "orgmode") (fullName . "org trello") (id . "5203a0c833fc36360800177f")))
+    (orgtrello/--compute-user-properties '(((member
+                                             (username . "ardumont")
+                                             (fullName . "Antoine R. Dumont")
+                                             (id . "4f2baa2f72b7c1293501cad3"))
+                                            (unconfirmed . :json-false)
+                                            (deactivated . :json-false)
+                                            (memberType . "admin")
+                                            (idMember . "4f2baa2f72b7c1293501cad3")
+                                            (id . "51d99bbc1e1d8988390047f6"))
+                                           ((member
+                                             (username . "orgmode")
+                                             (fullName . "org trello")
+                                             (id . "5203a0c833fc36360800177f"))
+                                            (unconfirmed . :json-false)
+                                            (deactivated . :json-false)
+                                            (memberType . "normal")
+                                            (idMember . "5203a0c833fc36360800177f")
+                                            (id . "524855ff8193aec160002cfa"))))))
+
+(ert-deftest testing-orgtrello/--compute-user-properties-hash ()
+  (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
+                                    ("ardumont" "4f2baa2f72b7c1293501cad3"
+                                     "orgmode" "5203a0c833fc36360800177f"))
+                      (orgtrello/--compute-user-properties-hash '(((username . "ardumont") (fullName . "Antoine R. Dumont") (id . "4f2baa2f72b7c1293501cad3"))
+                                                                   ((username . "orgmode") (fullName . "org trello") (id . "5203a0c833fc36360800177f")))))))
+
+(ert-deftest testing-orgtrello/--compute-user-properties-hash ()
+  (should (hash-equal
+           #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
+                         ("ardumont" "4f2baa2f72b7c1293501cad3"
+                          "orgmode" "5203a0c833fc36360800177f"))
+           (orgtrello/--compute-user-properties-hash-from-board '((closed . :json-false)
+                                                                  (memberships .
+                                                                               [((member
+                                                                                  (username . "ardumont")
+                                                                                  (fullName . "Antoine R. Dumont")
+                                                                                  (id . "4f2baa2f72b7c1293501cad3"))
+                                                                                 (unconfirmed . :json-false)
+                                                                                 (deactivated . :json-false)
+                                                                                 (memberType . "admin")
+                                                                                 (idMember . "4f2baa2f72b7c1293501cad3")
+                                                                                 (id . "51d99bbc1e1d8988390047f6"))
+                                                                                ((member
+                                                                                  (username . "orgmode")
+                                                                                  (fullName . "org trello")
+                                                                                  (id . "5203a0c833fc36360800177f"))
+                                                                                 (unconfirmed . :json-false)
+                                                                                 (deactivated . :json-false)
+                                                                                 (memberType . "normal")
+                                                                                 (idMember . "5203a0c833fc36360800177f")
+                                                                                 (id . "524855ff8193aec160002cfa"))])
+                                                                  (name . "api test board")
+                                                                  (id . "51d99bbc1e1d8988390047f2"))))))
+
+(expectations
+ (expect
+  '(("orgtrello-user-ardumont" . "4f2baa2f72b7c1293501cad3") ("orgtrello-user-orgmode" . "5203a0c833fc36360800177f"))
+  (orgtrello/--list-user-entries '(("board-name" . "api test board") ("board-id" . "51d99bbc1e1d8988390047f2") ("TODO" . "51d99bbc1e1d8988390047f3") ("IN-PROGRESS" . "51d99bbc1e1d8988390047f4") ("DONE" . "51d99bbc1e1d8988390047f5") ("PENDING" . "51e53898ea3d1780690015ca") ("DELEGATED" . "51e538a89c05f1e25c0027c6") ("FAIL" . "51e538a26f75d07902002d25") ("CANCELLED" . "51e538e6c7a68fa0510014ee") ("orgtrello-user-ardumont" . "4f2baa2f72b7c1293501cad3") ("orgtrello-user-orgmode" . "5203a0c833fc36360800177f")))))
+
+(expectations
+  (expect '("a" "b" "c") (orgtrello/--users-from "a,b,c,,"))
+  (expect '() (orgtrello/--users-from ",,,"))
+  (expect '() (orgtrello/--users-from ""))
+  (expect '() (orgtrello/--users-from nil)))
+
+(expectations
+  (expect "" (orgtrello/--users-to nil))
+  (expect "a,b,c," (orgtrello/--users-to '("a" "b" "c" ""))))
+
+(expectations
+  (expect '("a" "b" "c") (orgtrello/--add-user "a" '("a" "b" "c")))
+  (expect '("a" "b" "c") (orgtrello/--add-user "a" '("b" "c"))))
+
+(expectations
+  (expect '("b")     (orgtrello/--remove-user "a" '("a" "b")))
+  (expect '("a" "b") (orgtrello/--remove-user "c" '("a" "b")))
+  (expect nil        (orgtrello/--remove-user "c" nil))
+  (expect nil        (orgtrello/--remove-user nil nil))
+  (expect '("a")     (orgtrello/--remove-user nil '("a"))))
+
+(expectations
+  (expect "user0,user1,user2" (orgtrello/--csv-user-ids-to-csv-user-names "id0,id1,id2" (orgtrello-hash/make-properties '(("id0". "user0") ("id1". "user1") ("id2". "user2")))))
+  (expect "user0,user1," (orgtrello/--csv-user-ids-to-csv-user-names "id0,id1,id2" (orgtrello-hash/make-properties '(("id0". "user0") ("id1". "user1")))))
+  (expect "user0" (orgtrello/--csv-user-ids-to-csv-user-names "id0" (orgtrello-hash/make-properties '(("id0". "user0"))))))
+
+(expectations
+ (expect "#+property: test "      (orgtrello/compute-property "test"))
+ (expect "#+property: test value" (orgtrello/compute-property "test" "value")))
 
 (provide 'org-trello-tests)
 ;;; org-trello-tests ends here

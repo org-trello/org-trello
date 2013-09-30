@@ -703,12 +703,33 @@ CLOSED: [2013-09-19 jeu. 19:05]
 - [X] Version
 - [X] Release notes
 - [X] Fix typography in naming windows-nt system - https://github.com/ardumont/org-trello/issues/62#issuecomment-24735681
-* TODO 0.2.2 [%]
+* DONE 0.2.2 [100%]
+CLOSED: [2013-09-30 lun. 22:32]
+- [X] Version
+- [X] Improve abstraction around data from trello (not complete yet)
+- [X] Show people assigned to card - https://github.com/ardumont/org-trello/issues/67
+  - [X] Compute user properties part from the board's informations
+  - [X] Install board setup routine (C-c o I) also install board users
+  - [X] Create board routine (C-c o i) should also install user boards (only the current user should then appear)
+  - [X] Setuping properties before doing any actions
+  - [X] Cleanup routine should also remove user global properties
+  - [X] User assigns oneself to the card
+  - [X] User unassigns oneself to the card
+  - [X] sync-to-trello also assign users
+  - [X] sync-to-trello also unassign users
+  - [X] sync-from-trello also retrieve user informations and update the org buffer
+  - [X] cleanup routine must cleanup card properties regarding user assigned
+- [X] Update README about new command
+- [X] Update README TOC
+- [X] Fix error during initialization org-trello setup buffer
+- [X] Release notes
+* TODO 0.2.3 [0%]
+- [ ] More fined grained use of the trello api (retrieve only data we use)
+- [ ] Expose a public trello board showing the status of org-trello and reference it inside the release notes
 - [ ] Another Disposition about org's buffer - https://github.com/ardumont/org-trello/issues/33
 - [ ] Improve sync request policy - https://github.com/ardumont/org-trello/issues/58
 - [ ] Test multiple emacs version - https://github.com/ardumont/org-trello/issues/52
 - [ ] One command to sync them all - https://github.com/ardumont/org-trello/issues/59
-- [ ] Filter only the data we use with the trello api
 - [ ] Now that elnode is here, this may be simpler to use a fake trello server (use clojure :D)
 - [ ] Update the literate org-trello.org (completely desynchronized since 0.1.2) -> coding it to avoid doing manual split (I see the irony)
 - [ ] POC: use a temporary buffer to sync with trello, when done, merge with the user's buffer.
@@ -719,3 +740,8 @@ CLOSED: [2013-09-19 jeu. 19:05]
 org-outline-regexp
 (org-goto-local-search-headings marker nil nil)
 (orgtrello/map-checkboxes (lambda () (message "%s" (orgtrello-data/metadata))))
+** Adding member
+- during the card creation (POST request), idMembers request is a request param (list of comma-separated list of member id)
+- during the card update (PUT request), idMembers is a request param (list of comma-separated list of member id)
+- update directly the card with member via PUT /cards/id/idMembers=1,2,3
+- GET -> idMembers in a card is a list of member ids
