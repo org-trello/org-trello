@@ -2528,6 +2528,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   (interactive)
   (orgtrello-log/msg 0
 "# SETUP RELATED
+        - M-x org-trello/version                     - Display the current version installed
 C-c o i - M-x org-trello/install-key-and-token       - Install the keys and the access-token.
 C-c o I - M-x org-trello/install-board-and-lists-ids - Select the board and attach the todo, doing and done list.
 C-c o d - M-x org-trello/check-setup                 - Check that the setup is ok. If everything is ok, will simply display 'Setup ok!'
