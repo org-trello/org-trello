@@ -28,13 +28,14 @@
 
 (expectations
 ;;  (desc "testing orgtrello-hash/make-hash-org")
-  (expect "some name"       (gethash :name       (orgtrello-hash/make-hash-org 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org")))
-  (expect "IN PROGRESS"     (gethash :keyword    (orgtrello-hash/make-hash-org 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org")))
-  (expect 0                 (gethash :level      (orgtrello-hash/make-hash-org 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org")))
-  (expect "some id"         (gethash :id         (orgtrello-hash/make-hash-org 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org")))
-  (expect "due-date"        (gethash :due        (orgtrello-hash/make-hash-org 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org")))
-  (expect :point            (gethash :position   (orgtrello-hash/make-hash-org 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org")))
-  (expect "buffer-name.org" (gethash :buffername (orgtrello-hash/make-hash-org 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org"))))
+  (expect "some name"       (gethash :name           (orgtrello-hash/make-hash-org "" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org")))
+  (expect "IN PROGRESS"     (gethash :keyword        (orgtrello-hash/make-hash-org "" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org")))
+  (expect 0                 (gethash :level          (orgtrello-hash/make-hash-org "" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org")))
+  (expect "some id"         (gethash :id             (orgtrello-hash/make-hash-org "" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org")))
+  (expect "due-date"        (gethash :due            (orgtrello-hash/make-hash-org "" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org")))
+  (expect :point            (gethash :position       (orgtrello-hash/make-hash-org "" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org")))
+  (expect "buffer-name.org" (gethash :buffername     (orgtrello-hash/make-hash-org "" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org")))
+  (expect "1,2,3"           (gethash :users-assigned (orgtrello-hash/make-hash-org "1,2,3" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org"))))
 
 (expectations
   (expect :some-method (gethash :method (orgtrello-hash/make-hash :some-method :some-uri)))
@@ -44,12 +45,13 @@
 ;; ########################## orgtrello-data
 
 (expectations
-  (expect "some name :orgtrello-id-identifier:"  (gethash :name     (orgtrello-data/--get-metadata '("buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil))))
-  (expect "IN PROGRESS"                          (gethash :keyword  (orgtrello-data/--get-metadata '("buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil))))
-  (expect 0                                      (gethash :level    (orgtrello-data/--get-metadata '("buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil))))
-  (expect :id                                    (gethash :id       (orgtrello-data/--get-metadata '("buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil))))
-  (expect :due                                   (gethash :due      (orgtrello-data/--get-metadata '("buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil))))
-  (expect :point                                 (gethash :position (orgtrello-data/--get-metadata '("buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil)))))
+  (expect "some name :orgtrello-id-identifier:"  (gethash :name     (orgtrello-data/--get-metadata '("" "buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil))))
+  (expect "IN PROGRESS"                          (gethash :keyword  (orgtrello-data/--get-metadata '("" "buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil))))
+  (expect 0                                      (gethash :level    (orgtrello-data/--get-metadata '("" "buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil))))
+  (expect :id                                    (gethash :id       (orgtrello-data/--get-metadata '("" "buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil))))
+  (expect :due                                   (gethash :due      (orgtrello-data/--get-metadata '("" "buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil))))
+  (expect :point                                 (gethash :position (orgtrello-data/--get-metadata '("" "buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil))))
+  (expect "1,2,3"                                (gethash :users-assigned (orgtrello-data/--get-metadata '("1,2,3" "buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil)))))
 
 (expectations
   (expect "2013-07-18T02:00:00.000Z" (orgtrello-data/--convert-orgmode-date-to-trello-date "2013-07-18T02:00:00.000Z"))
@@ -274,14 +276,15 @@
 ;; ########################## orgtrello-tests
 
 (ert-deftest testing-orgtrello/--compute-data-from-entity-meta ()
-  (let* ((entry   (orgtrello-hash/make-hash-org :some-level :some-keyword :some-name "some-id" :some-due :some-point :some-buffername)))
+  (let* ((entry   (orgtrello-hash/make-hash-org :users-assigned :some-level :some-keyword :some-name "some-id" :some-due :some-point :some-buffername)))
     (should (equal (orgtrello/--id entry)         "some-id"))
     (should (equal (orgtrello/--name entry)       :some-name))
     (should (equal (orgtrello/--keyword entry)    :some-keyword))
     (should (equal (orgtrello/--level entry)      :some-level))
     (should (equal (orgtrello/--due entry)        :some-due))
     (should (equal (orgtrello/--position entry)   :some-point))
-    (should (equal (orgtrello/--buffername entry) :some-buffername))))
+    (should (equal (orgtrello/--buffername entry) :some-buffername))
+    (should (equal (orgtrello/--user-assigned-ids entry) :users-assigned))))
 
 (ert-deftest testing-orgtrello/--id-name ()
   (let* ((entities [((id . "id")
@@ -377,9 +380,9 @@
  (expect nil                            (orgtrello-proxy/--dispatch-action "nothing")))
 
 (expectations
-  (expect "id"                                                        (orgtrello/--compute-marker-from-entry (orgtrello-hash/make-hash-org :level :kwd :name      "id"  :due :position :buffername)))
-  (expect "orgtrello-marker-2a0b98e652ce6349a0659a7a8eeb3783ffe9a11a" (orgtrello/--compute-marker-from-entry (orgtrello-hash/make-hash-org :level :kwd "some-name" nil :due 1234      "buffername")))
-  (expect "orgtrello-marker-6c59c5dcf6c83edaeb3f4923bfd929a091504bb3" (orgtrello/--compute-marker-from-entry (orgtrello-hash/make-hash-org :level :kwd "some-name" nil :due 4321      "some-other-buffername"))))
+  (expect "id"                                                        (orgtrello/--compute-marker-from-entry (orgtrello-hash/make-hash-org :users :level :kwd :name      "id"  :due :position :buffername)))
+  (expect "orgtrello-marker-2a0b98e652ce6349a0659a7a8eeb3783ffe9a11a" (orgtrello/--compute-marker-from-entry (orgtrello-hash/make-hash-org :users :level :kwd "some-name" nil :due 1234      "buffername")))
+  (expect "orgtrello-marker-6c59c5dcf6c83edaeb3f4923bfd929a091504bb3" (orgtrello/--compute-marker-from-entry (orgtrello-hash/make-hash-org :users :level :kwd "some-name" nil :due 4321      "some-other-buffername"))))
 
 (expectations
   (expect "orgtrello-marker-2a0b98e652ce6349a0659a7a8eeb3783ffe9a11a" (orgtrello/compute-marker "buffername" "some-name" 1234))
@@ -422,14 +425,14 @@
 "
       (org-action/--functional-controls-then-do
        '(orgtrello/--right-level-p)
-       (orgtrello-hash/make-hierarchy (orgtrello-hash/make-hash-org 4 :kwd :name nil :due :position :buffer-name))
+       (orgtrello-hash/make-hierarchy (orgtrello-hash/make-hash-org :users 4 :kwd :name nil :due :position :buffer-name))
        (lambda (entity s) (format "%S %s" entity s))
        "- hello"))
 
-  (expect "#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:current #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:buffername :buffer-name :position :position :level 3 :keyword :kwd :name :name :id nil :due :due)) :parent nil :grandparent nil)) - hello"
+  (expect "#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:current #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:buffername :buffer-name :position :position :level 3 :keyword :kwd :name :name :id nil :due :due :users-assigned :users)) :parent nil :grandparent nil)) - hello"
     (org-action/--functional-controls-then-do
      '(orgtrello/--right-level-p)
-     (orgtrello-hash/make-hierarchy (orgtrello-hash/make-hash-org 3 :kwd :name nil :due :position :buffer-name))
+     (orgtrello-hash/make-hierarchy (orgtrello-hash/make-hash-org :users 3 :kwd :name nil :due :position :buffer-name))
      (lambda (entity s) (format "%S %s" entity s))
      "- hello")))
 
@@ -439,14 +442,14 @@
 "
     (org-action/--functional-controls-then-do
      '(orgtrello/--right-level-p orgtrello/--already-synced-p)
-     (orgtrello-hash/make-hierarchy (orgtrello-hash/make-hash-org 1 :kwd :name nil :due :position :buffer-name))
+     (orgtrello-hash/make-hierarchy (orgtrello-hash/make-hash-org :users 1 :kwd :name nil :due :position :buffer-name))
      (lambda (entity s) (format "%S %s" entity s))
      "- hello"))
-  (expect "#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:current #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:buffername :buffer-name :position :position :level 1 :keyword :kwd :name :name :id \"some-id\" :due :due)) :parent nil :grandparent nil)) - hello"
+  (expect "#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:current #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:buffername :buffer-name :position :position :level 1 :keyword :kwd :name :name :id \"some-id\" :due :due :users-assigned :users)) :parent nil :grandparent nil)) - hello"
 
     (org-action/--functional-controls-then-do
      '(orgtrello/--right-level-p orgtrello/--already-synced-p)
-     (orgtrello-hash/make-hierarchy (orgtrello-hash/make-hash-org 1 :kwd :name "some-id" :due :position :buffer-name))
+     (orgtrello-hash/make-hierarchy (orgtrello-hash/make-hash-org :users 1 :kwd :name "some-id" :due :position :buffer-name))
      (lambda (entity s) (format "%S %s" entity s))
      "- hello")))
 
@@ -1322,31 +1325,31 @@ DEADLINE: <some-date>
 ;;                                                        orgtrello/--can-be-synced-p)))
 
 (expectations
-  (expect :ok                                 (-> (orgtrello-hash/make-hash-org 1 :keyword "some name" :id :due :position :buffer-name)
+  (expect :ok                                 (-> (orgtrello-hash/make-hash-org :users 1 :keyword "some name" :id :due :position :buffer-name)
                                                   orgtrello-hash/make-hierarchy
                                                   orgtrello/--mandatory-name-ok-p))
-  (expect *ERROR-SYNC-CARD-MISSING-NAME*      (-> (orgtrello-hash/make-hash-org 1 :keyword "" :id :due :position :buffer-name)
+  (expect *ERROR-SYNC-CARD-MISSING-NAME*      (-> (orgtrello-hash/make-hash-org :users 1 :keyword "" :id :due :position :buffer-name)
                                                   orgtrello-hash/make-hierarchy
                                                   orgtrello/--mandatory-name-ok-p))
-  (expect *ERROR-SYNC-CARD-MISSING-NAME*      (-> (orgtrello-hash/make-hash-org 1 :keyword nil :id :due :position :buffer-name)
+  (expect *ERROR-SYNC-CARD-MISSING-NAME*      (-> (orgtrello-hash/make-hash-org :users 1 :keyword nil :id :due :position :buffer-name)
                                                   orgtrello-hash/make-hierarchy
                                                   orgtrello/--mandatory-name-ok-p))
-  (expect :ok                                 (-> (orgtrello-hash/make-hash-org 2 :keyword "some name" :id :due :position :buffer-name)
+  (expect :ok                                 (-> (orgtrello-hash/make-hash-org :users 2 :keyword "some name" :id :due :position :buffer-name)
                                                   orgtrello-hash/make-hierarchy
                                                   orgtrello/--mandatory-name-ok-p))
-  (expect *ERROR-SYNC-CHECKLIST-MISSING-NAME* (-> (orgtrello-hash/make-hash-org 2 :keyword "" :id :due :position :buffer-name)
+  (expect *ERROR-SYNC-CHECKLIST-MISSING-NAME* (-> (orgtrello-hash/make-hash-org :users 2 :keyword "" :id :due :position :buffer-name)
                                                   orgtrello-hash/make-hierarchy
                                                   orgtrello/--mandatory-name-ok-p))
-  (expect *ERROR-SYNC-CHECKLIST-MISSING-NAME* (-> (orgtrello-hash/make-hash-org 2 :keyword nil :id :due :position :buffer-name)
+  (expect *ERROR-SYNC-CHECKLIST-MISSING-NAME* (-> (orgtrello-hash/make-hash-org :users 2 :keyword nil :id :due :position :buffer-name)
                                                   orgtrello-hash/make-hierarchy
                                                   orgtrello/--mandatory-name-ok-p))
-  (expect :ok                                 (-> (orgtrello-hash/make-hash-org 3 :keyword "some name" :id :due :position :buffer-name)
+  (expect :ok                                 (-> (orgtrello-hash/make-hash-org :users 3 :keyword "some name" :id :due :position :buffer-name)
                                                   orgtrello-hash/make-hierarchy
                                                   orgtrello/--mandatory-name-ok-p))
-  (expect *ERROR-SYNC-ITEM-MISSING-NAME*      (-> (orgtrello-hash/make-hash-org 3 :keyword "" :id :due :position :buffer-name)
+  (expect *ERROR-SYNC-ITEM-MISSING-NAME*      (-> (orgtrello-hash/make-hash-org :users 3 :keyword "" :id :due :position :buffer-name)
                                                   orgtrello-hash/make-hierarchy
                                                   orgtrello/--mandatory-name-ok-p))
-  (expect *ERROR-SYNC-ITEM-MISSING-NAME*      (-> (orgtrello-hash/make-hash-org 3 :keyword nil :id :due :position :buffer-name)
+  (expect *ERROR-SYNC-ITEM-MISSING-NAME*      (-> (orgtrello-hash/make-hash-org :users 3 :keyword nil :id :due :position :buffer-name)
                                                   orgtrello-hash/make-hierarchy
                                                   orgtrello/--mandatory-name-ok-p)))
 
@@ -1464,9 +1467,9 @@ DEADLINE: <some-date>
  (expect '(:b :a) (orgtrello-proxy/update-buffer-to-save! :b)))
 
 (expectations
-  (expect 'orgtrello/--put-card      (orgtrello/--dispatch-create-map (orgtrello-hash/make-hash-org *CARD-LEVEL* nil nil nil nil nil nil)))
-  (expect 'orgtrello/--put-entities (orgtrello/--dispatch-create-map (orgtrello-hash/make-hash-org *CHECKLIST-LEVEL* nil nil nil nil nil nil)))
-  (expect 'orgtrello/--put-entities (orgtrello/--dispatch-create-map (orgtrello-hash/make-hash-org *ITEM-LEVEL* nil nil nil nil nil nil))))
+  (expect 'orgtrello/--put-card      (orgtrello/--dispatch-create-map (orgtrello-hash/make-hash-org :users *CARD-LEVEL* nil nil nil nil nil nil)))
+  (expect 'orgtrello/--put-entities (orgtrello/--dispatch-create-map (orgtrello-hash/make-hash-org :users *CHECKLIST-LEVEL* nil nil nil nil nil nil)))
+  (expect 'orgtrello/--put-entities (orgtrello/--dispatch-create-map (orgtrello-hash/make-hash-org :users *ITEM-LEVEL* nil nil nil nil nil nil))))
 
 (ert-deftest testing-orgtrello/--init-map-from ()
   (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data ()) (orgtrello/--init-map-from nil))))

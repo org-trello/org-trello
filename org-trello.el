@@ -149,15 +149,16 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
 
 ;; #################### orgtrello-hash
 
-(defun orgtrello-hash/make-hash-org (level keyword name id due position buffer-name) "Utility function to ease the creation of the orgtrello-metadata"
+(defun orgtrello-hash/make-hash-org (users-assigned level keyword name id due position buffer-name) "Utility function to ease the creation of the orgtrello-metadata"
   (let ((h (make-hash-table :test 'equal)))
-    (puthash :buffername buffer-name h)
-    (puthash :position   position    h)
-    (puthash :level      level       h)
-    (puthash :keyword    keyword     h)
-    (puthash :name       name        h)
-    (puthash :id         id          h)
-    (puthash :due        due         h)
+    (puthash :buffername     buffer-name     h)
+    (puthash :position       position        h)
+    (puthash :level          level           h)
+    (puthash :keyword        keyword         h)
+    (puthash :name           name            h)
+    (puthash :id             id              h)
+    (puthash :due            due             h)
+    (puthash :users-assigned users-assigned  h)
     h))
 
 (defun orgtrello-hash/make-hash (method uri &optional params) "Utility function to ease the creation of the map - wait, where are my clojure data again!?"
@@ -450,6 +451,7 @@ This is a list with the following elements:
          (cons (orgtrello-data/extract-identifier od/--point))
          (cons od/--point)
          (cons (buffer-name))
+         (cons (orgtrello/--user-ids-assigned-to-current-card))
          orgtrello-data/--get-metadata)))
 
 (defun orgtrello-action/org-up-parent () "A function to get back to the current entry's parent"
@@ -476,8 +478,8 @@ This is a list with the following elements:
             (orgtrello-hash/make-hierarchy current (first ancestors) (second ancestors))))))
 
 (defun orgtrello-data/--get-metadata (heading-metadata) "Given the heading-metadata returned by the function 'org-heading-components, make it a hashmap with key :level, :keyword, :name. and their respective value"
-  (cl-destructuring-bind (buffer-name point id due level _ keyword _ name &rest) heading-metadata
-                         (orgtrello-hash/make-hash-org level keyword name id due point buffer-name)))
+  (cl-destructuring-bind (users-assigned buffer-name point id due level _ keyword _ name &rest) heading-metadata
+                         (orgtrello-hash/make-hash-org users-assigned level keyword name id due point buffer-name)))
 
 (defun orgtrello-data/--compute-fn (entity list-dispatch-fn) "Given an entity, compute the result" (funcall (if (hash-table-p entity) (first list-dispatch-fn) (second list-dispatch-fn)) entity))
 
@@ -520,6 +522,7 @@ This is a list with the following elements:
 (defun orgtrello/--id (entity-meta) "Retrieve the id from the entity (id must be a trello id, otherwise, it's the marker)." (let ((id (orgtrello-data/gethash-data :id entity-meta))) (when (orgtrello/id-p id) id)))
 (defun orgtrello/--level (entity-meta) "Retrieve the level from the entity."                                                (orgtrello-data/gethash-data :level entity-meta))
 (defun orgtrello/--due (entity-meta) "Retrieve the due date from the entity."                                               (orgtrello-data/gethash-data :due entity-meta))
+(defun orgtrello/--user-assigned-ids (entity-meta) "Retrieve the users assigned to the entity."                             (orgtrello-data/gethash-data :users-assigned entity-meta))
 (defun orgtrello/--buffername (entity-meta) "Retrieve the point from the entity."                                           (orgtrello-data/gethash-data :buffername entity-meta))
 (defun orgtrello/--position (entity-meta) "Retrieve the point from the entity."                                             (orgtrello-data/gethash-data :position entity-meta))
 
@@ -1645,12 +1648,13 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
                (orgtrello/--list-id   (assoc-default orgtrello/--card-kwd org-file-properties))
                (orgtrello/--card-id   (orgtrello/--id    card-meta))
                (orgtrello/--card-name (orgtrello/--name card-meta))
-               (orgtrello/--card-due  (orgtrello/--due   card-meta)))
+               (orgtrello/--card-due  (orgtrello/--due   card-meta))
+               (orgtrello/--user-ids-assigned  (orgtrello/--user-assigned-ids card-meta)))
           (if orgtrello/--card-id
               ;; update
-              (orgtrello-api/move-card orgtrello/--card-id orgtrello/--list-id orgtrello/--card-name orgtrello/--card-due)
+              (orgtrello-api/move-card orgtrello/--card-id orgtrello/--list-id orgtrello/--card-name orgtrello/--card-due orgtrello/--user-ids-assigned)
             ;; create
-            (orgtrello-api/add-card orgtrello/--card-name orgtrello/--list-id orgtrello/--card-due)))
+            (orgtrello-api/add-card orgtrello/--card-name orgtrello/--list-id orgtrello/--card-due orgtrello/--user-ids-assigned)))
       checks-ok-or-error-message)))
 
 (defun orgtrello/--checks-before-sync-checklist (checklist-meta card-meta) "Checks done before synchronizing the checklist."
@@ -1782,14 +1786,15 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   (--> *ORGTRELLO-USERS-ENTRY*
        (org-entry-get nil it)
        (orgtrello/--users-from it)
-       (--map (gethash (format "%s%s" *ORGTRELLO-USER-PREFIX* it) *HMAP-USERS-NAME-ID*) it)))
+       (--map (gethash (format "%s%s" *ORGTRELLO-USER-PREFIX* it) *HMAP-USERS-NAME-ID*) it)
+       (orgtrello/--users-to it)))
 
 (defun orgtrello/--delegate-to-the-proxy (full-meta action) "Execute the delegation to the consumer."
   (let* ((orgtrello/--current          (orgtrello-data/current full-meta))
          (orgtrello/--marker           (orgtrello/--compute-marker-from-entry orgtrello/--current)))
     (unless (string= (orgtrello/--id orgtrello/--current) orgtrello/--marker) ;; if never created before, we need a marker to add inside the file
             (orgtrello/--set-marker orgtrello/--marker))
-    (puthash :user-ids  (orgtrello/--user-ids-assigned-to-current-card) orgtrello/--current)
+;;    (puthash :user-ids  (orgtrello/--user-ids-assigned-to-current-card) orgtrello/--current)
     (puthash :id        orgtrello/--marker                              orgtrello/--current)
     (puthash :action    action                                          orgtrello/--current)
     (orgtrello-proxy/http-producer orgtrello/--current)))
