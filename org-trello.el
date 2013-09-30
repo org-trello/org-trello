@@ -542,6 +542,7 @@ This is a list with the following elements:
 (defun orgtrello-data/level          (entity-data) "Extract the callback property of the entity"                    (orgtrello-data/retrieve-data 'level entity-data))
 (defun orgtrello-data/start          (entity-data) "Extract the start property of the entity"                       (orgtrello-data/retrieve-data 'start entity-data))
 (defun orgtrello-data/action         (entity-data) "Extract the action property of the entity"                      (orgtrello-data/retrieve-data 'action entity-data))
+(defun orgtrello-data/member-ids     (entity-data) "Extract the member ids of the entity"                           (orgtrello-data/retrieve-data 'idMembers entity-data))
 
 (defun orgtrello-data/sync-          (entity-data) "Extract the sync property of the entity"                        (orgtrello-data/retrieve-data 'sync entity-data))
 (defun orgtrello-data/method-        (entity-data) "Extract the method property of the entity"                      (orgtrello-data/retrieve-data 'method entity-data))
@@ -1782,13 +1783,6 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
               ((= level *CHECKLIST-LEVEL*) *ERROR-SYNC-CHECKLIST-MISSING-NAME*)
               ((= level *ITEM-LEVEL*)      *ERROR-SYNC-ITEM-MISSING-NAME*)))))
 
-(defun orgtrello/--user-ids-assigned-to-current-card () "Compute the user ids assigned to the current card."
-  (--> *ORGTRELLO-USERS-ENTRY*
-       (org-entry-get nil it)
-       (orgtrello/--users-from it)
-       (--map (gethash (format "%s%s" *ORGTRELLO-USER-PREFIX* it) *HMAP-USERS-NAME-ID*) it)
-       (orgtrello/--users-to it)))
-
 (defun orgtrello/--delegate-to-the-proxy (full-meta action) "Execute the delegation to the consumer."
   (let* ((orgtrello/--current          (orgtrello-data/current full-meta))
          (orgtrello/--marker           (orgtrello/--compute-marker-from-entry orgtrello/--current)))
@@ -2019,10 +2013,11 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun orgtrello/--merge-card (trello-card org-card) "Merge trello and org card together."
   (let ((org-card-to-merge (orgtrello/--init-map-from org-card)))
-    (puthash :level   *CARD-LEVEL*                                                               org-card-to-merge)
+    (puthash :level   *CARD-LEVEL*                                                            org-card-to-merge)
     (puthash :id      (orgtrello-data/id trello-card)                                         org-card-to-merge)
     (puthash :name    (orgtrello-data/name trello-card)                                       org-card-to-merge)
     (puthash :keyword (-> trello-card orgtrello-data/list-id orgtrello/--compute-card-status) org-card-to-merge)
+    (puthash :users-assigned (orgtrello-data/member-ids trello-card)                          org-card-to-merge)
     org-card-to-merge))
 
 (defun orgtrello/--dispatch-merge-fn (entity) "Dispatch the function fn to merge the entity."
@@ -2082,6 +2077,11 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun orgtrello/--write-card! (entity-id entity entities adjacency) "Write the card inside the org buffer."
   (orgtrello/--write-entity! entity-id entity)
+  (-> entity
+      orgtrello/--user-assigned-ids
+      -trace
+      (orgtrello/--csv-user-ids-to-csv-user-names *HMAP-USERS-ID-NAME*) ;; fixme
+      orgtrello/set-usernames-assigned-property!)
   (--map (orgtrello/--write-checklist! it entities adjacency) (gethash entity-id adjacency)))
 
 (defun orgtrello/--sync-buffer-with-trello-data (data buffer-name) "Given all the entities, update the current buffer with those."
@@ -2358,21 +2358,37 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 (defun orgtrello/--me ()
   (assoc-default *ORGTRELLO-USER-ME* org-file-properties))
 
+(defun orgtrello/--user-ids-assigned-to-current-card () "Compute the user ids assigned to the current card."
+  (--> (orgtrello/get-usernames-assigned-property!)
+       (orgtrello/--users-from it)
+       (--map (gethash (format "%s%s" *ORGTRELLO-USER-PREFIX* it) *HMAP-USERS-NAME-ID*) it)
+       (orgtrello/--users-to it)))
+
+(defun orgtrello/--csv-user-ids-to-csv-user-names (csv-users-id users-id-name) "Given a comma separated list of user id and a map, return a comma separated list of username."
+  (->> csv-users-id
+       orgtrello/--users-from
+       (--map (gethash it users-id-name))
+       orgtrello/--users-to))
+
+(defun orgtrello/get-usernames-assigned-property! () "Read the org users property from the current entry."
+  (org-entry-get nil *ORGTRELLO-USERS-ENTRY*))
+
+(defun orgtrello/set-usernames-assigned-property! (csv-users) "Update users org property."
+  (org-entry-put nil *ORGTRELLO-USERS-ENTRY* csv-users))
+
 (defun orgtrello/do-assign-me () "Command to assign oneself to the card."
-  (--> *ORGTRELLO-USERS-ENTRY*
-       (org-entry-get nil it)
+  (--> (orgtrello/get-usernames-assigned-property!)
        (orgtrello/--users-from it)
        (orgtrello/--add-user *ORGTRELLO-USER-LOGGED-IN* it)
        (orgtrello/--users-to it)
-       (org-entry-put nil *ORGTRELLO-USERS-ENTRY* it)))
+       (orgtrello/set-usernames-assigned-property! it)))
 
 (defun orgtrello/do-unassign-me () "Command to unassign oneself of the card."
-  (--> *ORGTRELLO-USERS-ENTRY*
-       (org-entry-get nil it)
+  (--> (orgtrello/get-usernames-assigned-property!)
        (orgtrello/--users-from it)
        (orgtrello/--remove-user *ORGTRELLO-USER-LOGGED-IN* it)
        (orgtrello/--users-to it)
-       (org-entry-put nil *ORGTRELLO-USERS-ENTRY* it)))
+       (orgtrello/set-usernames-assigned-property! it)))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello loaded!")
 
