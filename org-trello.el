@@ -1778,7 +1778,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
               ((= level *CHECKLIST-LEVEL*) *ERROR-SYNC-CHECKLIST-MISSING-NAME*)
               ((= level *ITEM-LEVEL*)      *ERROR-SYNC-ITEM-MISSING-NAME*)))))
 
-(defun orgtrello/--user-ids () "Compute the user ids in the card."
+(defun orgtrello/--user-ids-assigned-to-current-card () "Compute the user ids assigned to the current card."
   (--> *ORGTRELLO-USERS-ENTRY*
        (org-entry-get nil it)
        (orgtrello/--users-from it)
@@ -1789,7 +1789,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
          (orgtrello/--marker           (orgtrello/--compute-marker-from-entry orgtrello/--current)))
     (unless (string= (orgtrello/--id orgtrello/--current) orgtrello/--marker) ;; if never created before, we need a marker to add inside the file
             (orgtrello/--set-marker orgtrello/--marker))
-    (puthash :users  (orgtrello/--user-ids) orgtrello/--current)
+    (puthash :user-ids  (orgtrello/--user-ids-assigned-to-current-card) orgtrello/--current)
     (puthash :id     orgtrello/--marker orgtrello/--current)
     (puthash :action action         orgtrello/--current)
     (orgtrello-proxy/http-producer orgtrello/--current)))
