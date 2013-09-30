@@ -137,7 +137,7 @@ Levels:
 3 - log info     (*OT/INFO*)
 4 - log debug    (*OT/DEBUG*)
 5 - log trace    (*OT/TRACE*)
-To change such level, add this to your init.el file: (setq *orgtrello-log/level* *OT/TRACE*)")
+To change such level, add this to your init.el file: (setq *orgtrello-log/level* *OT/TRACE*)") ;;(setq *orgtrello-log/level* *OT/TRACE*)
 
 (defun orgtrello-log/msg (level &rest args) "Log message."
   (when (<= level *orgtrello-log/level*)
