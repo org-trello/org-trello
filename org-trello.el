@@ -2253,20 +2253,44 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 (defun orgtrello/--compute-keyword-separation (name) "Given a keyword done (case insensitive) return a string '| done' or directly the keyword"
   (if (string= "done" (downcase name)) (format "| %s" name) name))
 
+(defun orgtrello/--compute-board-lists-hash-name-id (board-lists-hash-name-id) ""
+  (let ((res-list))
+    (maphash (lambda (name id) (--> (orgtrello/--convention-property-name name)
+                                    (format "#+property: %s %s" it id)
+                                    (push it res-list)))
+             board-lists-hash-name-id)
+    res-list))
+
+(defun orgtrello/--properties-compute-todo-keywords-as-string (board-lists-hash-name-id)
+  (mapconcat 'identity `("#+TODO: "
+                         ,@(let ((res-list))
+                           (maphash (lambda (name _) (--> name
+                                                          (orgtrello/--convention-property-name it)
+                                                          (orgtrello/--compute-keyword-separation it)
+                                                          (format "%s " it)
+                                                          (push it res-list)))
+                                    board-lists-hash-name-id)
+                           (nreverse res-list))) ""))
+
+(defun orgtrello/--properties-compute-users-ids (board-users-hash-name-id)
+  (let ((res-list))
+    (maphash (lambda (name id) (--> name
+                                    (format "#+property: %s%s %s" *ORGTRELLO-USER-PREFIX* it id)
+                                    (push it res-list)))
+             board-users-hash-name-id)
+    res-list))
+
 (defun orgtrello/--update-orgmode-file-with-properties (board-name board-id board-lists-hash-name-id board-users-hash-name-id user-me &optional update-todo-keywords) "Update the orgmode file with the needed headers for org-trello to work."
   (with-current-buffer (current-buffer)
     (goto-char (point-min))
     (set-buffer-file-coding-system 'utf-8-auto) ;; force utf-8
-    (insert (format "#+property: %s    %s\n" *BOARD-NAME* board-name)) ;; install board-name
-    (insert (format "#+property: %s      %s\n" *BOARD-ID* board-id))   ;; and board-id
-    (maphash (lambda (name id) (insert (format "#+property: %s %s\n" (orgtrello/--convention-property-name name) id))) board-lists-hash-name-id) ;; install the other properties regarding the org keywords
-    (if update-todo-keywords ;; install todo keywords
-        (progn
-          (insert "#+TODO: ") ;; install the todo list
-          (maphash (lambda (name _) (insert (concat (orgtrello/--compute-keyword-separation (orgtrello/--convention-property-name name)) " "))) board-lists-hash-name-id)
-          (insert "\n")))
-    (maphash (lambda (name id) (insert (format "#+property: %s%s %s\n" *ORGTRELLO-USER-PREFIX* name id))) board-users-hash-name-id)    ;; install user-properties
-    (insert (format "#+property: %s %s\n" *ORGTRELLO-USER-ME* user-me))
+    (->> `(,(format "#+property: %s    %s" *BOARD-NAME* board-name)
+            ,(format "#+property: %s      %s" *BOARD-ID* board-id)
+            ,@(orgtrello/--compute-board-lists-hash-name-id board-lists-hash-name-id)
+            ,(if update-todo-keywords (orgtrello/--properties-compute-todo-keywords-as-string board-lists-hash-name-id))
+            ,@(orgtrello/--properties-compute-users-ids board-users-hash-name-id)
+            ,(format "#+property: %s %s" *ORGTRELLO-USER-ME* user-me))
+         (mapc (lambda (property-to-insert) (insert property-to-insert "\n"))))
     (save-buffer)
     (orgtrello-action/reload-setup)))
 
