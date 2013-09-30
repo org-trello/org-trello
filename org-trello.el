@@ -2017,7 +2017,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
     (puthash :id      (orgtrello-data/id trello-card)                                         org-card-to-merge)
     (puthash :name    (orgtrello-data/name trello-card)                                       org-card-to-merge)
     (puthash :keyword (-> trello-card orgtrello-data/list-id orgtrello/--compute-card-status) org-card-to-merge)
-    (puthash :users-assigned (orgtrello-data/member-ids trello-card)                          org-card-to-merge)
+    (puthash :users-assigned (->> trello-card orgtrello-data/member-ids (--map it) orgtrello/--users-to) org-card-to-merge)
     org-card-to-merge))
 
 (defun orgtrello/--dispatch-merge-fn (entity) "Dispatch the function fn to merge the entity."
