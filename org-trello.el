@@ -1790,8 +1790,8 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
     (unless (string= (orgtrello/--id orgtrello/--current) orgtrello/--marker) ;; if never created before, we need a marker to add inside the file
             (orgtrello/--set-marker orgtrello/--marker))
     (puthash :user-ids  (orgtrello/--user-ids-assigned-to-current-card) orgtrello/--current)
-    (puthash :id     orgtrello/--marker orgtrello/--current)
-    (puthash :action action         orgtrello/--current)
+    (puthash :id        orgtrello/--marker                              orgtrello/--current)
+    (puthash :action    action                                          orgtrello/--current)
     (orgtrello-proxy/http-producer orgtrello/--current)))
 
 (defun orgtrello/--checks-then-delegate-action-on-entity-to-proxy (functional-controls action) "Execute the functional controls then if all pass, delegate the action 'action' to the proxy."
