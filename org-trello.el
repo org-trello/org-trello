@@ -2343,10 +2343,8 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
                                 (orgtrello/--board-lists-hname-id (orgtrello/--create-lists-according-to-keywords orgtrello/--board-id *LIST-NAMES*))  ;; create the list, this returns the ids list
                                 (orgtrello/--board-users-name-id  (orgtrello/--board-users-information-from-board-id! orgtrello/--board-id))           ;; retrieve user informations
                                 (user-logged-in                   (orgtrello/--user-logged-in)))
-                           ;; remove eventual already present entry
-                           (orgtrello/--remove-properties-file *LIST-NAMES* orgtrello/--board-users-name-id user-logged-in)
-                           ;; update org buffer with new ones
-                           (orgtrello/--update-orgmode-file-with-properties orgtrello/--board-name orgtrello/--board-id orgtrello/--board-lists-hname-id orgtrello/--board-users-name-id user-logged-in)))
+                           (orgtrello/--remove-properties-file *LIST-NAMES* orgtrello/--board-users-name-id user-logged-in) ;; remove eventual already present entry
+                           (orgtrello/--update-orgmode-file-with-properties orgtrello/--board-name orgtrello/--board-id orgtrello/--board-lists-hname-id orgtrello/--board-users-name-id user-logged-in))) ;; update org buffer with new ones
   "Create board and lists done!")
 
 (defun orgtrello/--users-from (string-users) "Compute the users name from the comma separated value in string."
