@@ -1979,9 +1979,8 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
         ((orgtrello-data/entity-checklist-p entity) 'orgtrello/--put-entities)
         ((orgtrello-data/entity-item-p entity)      'orgtrello/--put-entities)))
 
-(defun orgtrello/--compute-full-entities-from-org (buffername) "Compute the current entities hash from the buffer in the same format as the sync-from-trello routine. {entity-id '(entity-card {checklist-id (checklist (item))})}"
-  (set-buffer buffername)
-  (let ((entities  (make-hash-table :test 'equal))
+(defun orgtrello/--compute-full-entities-from-org! ()
+  (let ((entities (make-hash-table :test 'equal))
         (adjacency (make-hash-table :test 'equal)))
     (orgtrello/org-map-entities-without-params! (lambda ()
                                                   (let ((current-meta (orgtrello-data/entry-get-full-metadata)))
@@ -1990,6 +1989,12 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
                                                         orgtrello/--dispatch-create-map
                                                         (funcall current-meta entities adjacency)))))
     (list entities adjacency)))
+
+(defun orgtrello/--compute-full-entities-from-org-buffer! (buffername) "Compute the current entities hash from the buffer in the same format as the sync-from-trello routine. {entity-id '(entity-card {checklist-id (checklist (item))})}"
+  (set-buffer buffername)
+  (save-excursion
+    (goto-char (point-min))
+    (orgtrello/--compute-full-entities-from-org!)))
 
 (defun orgtrello/--init-map-from (data) "Init a map from a given data. If data is nil, return an empty hash table."
   (if data data (make-hash-table :test 'equal)))
@@ -2113,7 +2118,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun orgtrello/--sync-buffer-with-trello-data-callback (buffername &optional position name) "Generate a callback which knows the buffer with which it must work. (this callback must take a buffer-name and a position)"
   (lexical-let ((buffer-name               buffername)
-                (full-entities-from-buffer (orgtrello/--compute-full-entities-from-org buffername)))
+                (full-entities-from-buffer (orgtrello/--compute-full-entities-from-org-buffer! buffername)))
     (function*
      (lambda (&key data &allow-other-keys)
        "Synchronize the buffer with the response data."
