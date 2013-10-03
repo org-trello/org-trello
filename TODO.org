@@ -723,12 +723,14 @@ CLOSED: [2013-09-30 lun. 22:32]
 - [X] Update README TOC
 - [X] Fix error during initialization org-trello setup buffer
 - [X] Release notes
-* TODO 0.2.3 [20%]
+* TODO 0.2.3 [40%]
 - [X] Spring backlog
-- [ ] Some refactoring + tests coverage
+- [X] Some refactoring + tests coverage
 - [ ] Upgrade version
 ~ [ ] More fined grained use of the trello api (retrieve only data we use) - reference github issue
-- [ ] Fix sync-from-trello - if new entities are referenced but not yet sync on trello, they will disappear from the buffer when sync-from-trello - reference github issue
+- [-] Fix sync-from-trello
+  - [X] Merge org card's users assigned list and the trello one - reference github issue
+  - [ ] if new entities are referenced but not yet sync'ed on trello, they will disappear from the buffer when sync-from-trello (they should not) - reference github issue
 - [ ] Release notes
 * TODO 0.2.4 [0%]
 - [ ] More fined grained use of the trello api (retrieve only data we use)
