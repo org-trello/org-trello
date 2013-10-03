@@ -723,9 +723,17 @@ CLOSED: [2013-09-30 lun. 22:32]
 - [X] Update README TOC
 - [X] Fix error during initialization org-trello setup buffer
 - [X] Release notes
-* TODO 0.2.3 [0%]
+* TODO 0.2.3 [20%]
+- [X] Spring backlog
+- [ ] Some refactoring + tests coverage
+- [ ] Upgrade version
+~ [ ] More fined grained use of the trello api (retrieve only data we use) - reference github issue
+- [ ] Fix sync-from-trello - if new entities are referenced but not yet sync on trello, they will disappear from the buffer when sync-from-trello - reference github issue
+- [ ] Release notes
+* TODO 0.2.4 [0%]
 - [ ] More fined grained use of the trello api (retrieve only data we use)
 - [ ] Expose a public trello board showing the status of org-trello and reference it inside the release notes
+- [ ] Use trello labels and org tags as one - https://github.com/ardumont/org-trello/issues/70
 - [ ] Another Disposition about org's buffer - https://github.com/ardumont/org-trello/issues/33
 - [ ] Improve sync request policy - https://github.com/ardumont/org-trello/issues/58
 - [ ] Test multiple emacs version - https://github.com/ardumont/org-trello/issues/52
@@ -733,6 +741,7 @@ CLOSED: [2013-09-30 lun. 22:32]
 - [ ] Now that elnode is here, this may be simpler to use a fake trello server (use clojure :D)
 - [ ] Update the literate org-trello.org (completely desynchronized since 0.1.2) -> coding it to avoid doing manual split (I see the irony)
 - [ ] POC: use a temporary buffer to sync with trello, when done, merge with the user's buffer.
+- [ ] Improve tests coverage - some major and important functionalities are not covered (due at time of ignorance on how to do it, there is only so much one can do!
 - [ ] Release notes
 * DONE 0.2.3 [100%]
 CLOSED: [2013-11-18 lun. 18:57]
@@ -740,8 +749,7 @@ CLOSED: [2013-11-18 lun. 18:57]
 - [X] Fix discrepancy between docstring and binding to delete the setup - https://github.com/ardumont/org-trello/issues/74
 - [X] Use a prefix binding which does not override the emacs's default user prefix (keep the original for the moment to avoid disturbing people which already use it) - https://github.com/ardumont/org-trello/issues/72
 - [X] Update documentation about the possibility to change the default prefix key
-- [X] Fix ci-travis build due to change in cask installation command
-- [X] Release notes
+- [ ] Release
 * Notes
 (org-show-siblings)
 (org-first-headline-recenter)
