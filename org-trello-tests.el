@@ -1467,9 +1467,9 @@ DEADLINE: <some-date>
  (expect '(:b :a) (orgtrello-proxy/update-buffer-to-save! :b)))
 
 (expectations
-  (expect 'orgtrello/--put-card      (orgtrello/--dispatch-create-map (orgtrello-hash/make-hash-org :users *CARD-LEVEL* nil nil nil nil nil nil)))
-  (expect 'orgtrello/--put-entities (orgtrello/--dispatch-create-map (orgtrello-hash/make-hash-org :users *CHECKLIST-LEVEL* nil nil nil nil nil nil)))
-  (expect 'orgtrello/--put-entities (orgtrello/--dispatch-create-map (orgtrello-hash/make-hash-org :users *ITEM-LEVEL* nil nil nil nil nil nil))))
+  (expect 'orgtrello/--put-card-with-adjacency     (orgtrello/--dispatch-create-entities-map-with-adjacency (orgtrello-hash/make-hash-org :users *CARD-LEVEL* nil nil nil nil nil nil)))
+  (expect 'orgtrello/--put-entities-with-adjacency (orgtrello/--dispatch-create-entities-map-with-adjacency (orgtrello-hash/make-hash-org :users *CHECKLIST-LEVEL* nil nil nil nil nil nil)))
+  (expect 'orgtrello/--put-entities-with-adjacency (orgtrello/--dispatch-create-entities-map-with-adjacency (orgtrello-hash/make-hash-org :users *ITEM-LEVEL* nil nil nil nil nil nil))))
 
 (ert-deftest testing-orgtrello/--init-map-from ()
   (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data ()) (orgtrello/--init-map-from nil))))
@@ -1798,7 +1798,7 @@ C-c o h - M-x org-trello/help-describing-bindings    - This help message." (org-
 ;; )
 ;;         (goto-char (point-min))
 ;;         (goto-char (point-at-eol))
-;;         (orgtrello/--compute-full-entities-from-org!))))))
+;;         (orgtrello/--compute-full-entities-already-synced-from-org!))))))
 
 (expectations
  (expect "1,5,2,3,4"
