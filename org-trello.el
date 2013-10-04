@@ -2017,7 +2017,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun orgtrello/--merge-checklist (trello-checklist org-checklist) "Merge trello and org checklist together."
   (let ((org-checklist-to-merge (orgtrello/--init-map-from org-checklist)))
-    (puthash :level *CHECKLIST-LEVEL*                        org-checklist-to-merge)
+    (puthash :level *CHECKLIST-LEVEL*                     org-checklist-to-merge)
     (puthash :name (orgtrello-data/name trello-checklist) org-checklist-to-merge)
     (puthash :id   (orgtrello-data/id trello-checklist)   org-checklist-to-merge)
     org-checklist-to-merge))
