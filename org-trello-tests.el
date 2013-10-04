@@ -1532,7 +1532,9 @@ DEADLINE: <some-date>
     (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "TODO" :id 1 :level 1 :users-assigned ""))
                         (orgtrello/--merge-card `((id . 1) (name . "some name") (idList . 1)) nil)))
     (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "TODO" :id 1 :level 1 :users-assigned "1,2,3"))
-                        (orgtrello/--merge-card `((id . 1) (name . "some name") (idList . 1) (idMembers . ["1" "2" "3"])) nil)))))
+                        (orgtrello/--merge-card `((id . 1) (name . "some name") (idList . 1) (idMembers . ["1" "2" "3"])) nil)))
+    (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :users-assigned "1,2,3,4,5" :level 1 :id 1 :keyword nil))
+                        (orgtrello/--merge-card `((id . 1) (name . "some name") (idList . 1) (idMembers . ["1" "2" "3"])) (orgtrello-hash/make-properties `((:name . "some other name") (:users-assigned . "4,5,3"))))))))
 
 (expectations
  (expect '(1 2 3 4) (orgtrello/--add-to-last-pos 4 '(1 2 3))))
