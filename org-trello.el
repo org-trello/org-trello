@@ -523,6 +523,9 @@ This is a list with the following elements:
 (defun orgtrello/--level (entity-meta) "Retrieve the level from the entity."                                                (orgtrello-data/gethash-data :level entity-meta))
 (defun orgtrello/--due (entity-meta) "Retrieve the due date from the entity."                                               (orgtrello-data/gethash-data :due entity-meta))
 (defun orgtrello/--user-assigned-ids (entity-meta) "Retrieve the users assigned to the entity."                             (orgtrello-data/gethash-data :users-assigned entity-meta))
+(defun orgtrello/--user-assigned-ids-as-list (entity-meta) "Retrieve the users assigned to the entity."                     (-> entity-meta
+                                                                                                                                orgtrello/--user-assigned-ids
+                                                                                                                                orgtrello/--users-from))
 (defun orgtrello/--buffername (entity-meta) "Retrieve the point from the entity."                                           (orgtrello-data/gethash-data :buffername entity-meta))
 (defun orgtrello/--position (entity-meta) "Retrieve the point from the entity."                                             (orgtrello-data/gethash-data :position entity-meta))
 
@@ -542,7 +545,9 @@ This is a list with the following elements:
 (defun orgtrello-data/level          (entity-data) "Extract the callback property of the entity"                    (orgtrello-data/retrieve-data 'level entity-data))
 (defun orgtrello-data/start          (entity-data) "Extract the start property of the entity"                       (orgtrello-data/retrieve-data 'start entity-data))
 (defun orgtrello-data/action         (entity-data) "Extract the action property of the entity"                      (orgtrello-data/retrieve-data 'action entity-data))
-(defun orgtrello-data/member-ids     (entity-data) "Extract the member ids of the entity"                           (orgtrello-data/retrieve-data 'idMembers entity-data))
+(defun orgtrello-data/member-ids     (entity-data) "Extract the member ids of the entity"                           (--> 'idMembers
+                                                                                                                         (orgtrello-data/retrieve-data it entity-data)
+                                                                                                                        (-map (lambda (i) i) it)))
 
 (defun orgtrello-data/sync-          (entity-data) "Extract the sync property of the entity"                        (orgtrello-data/retrieve-data 'sync entity-data))
 (defun orgtrello-data/method-        (entity-data) "Extract the method property of the entity"                      (orgtrello-data/retrieve-data 'method entity-data))
@@ -2017,17 +2022,19 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
     (puthash :id   (orgtrello-data/id trello-checklist)   org-checklist-to-merge)
     org-checklist-to-merge))
 
+(defun orgtrello/--merge-users-assigned (trello-card org-card) "Merge users assigned from trello and org."
+  (--> trello-card
+       (orgtrello-data/member-ids it)
+       (orgtrello-data/merge-2-lists-without-duplicates it (orgtrello/--user-assigned-ids-as-list org-card))
+       (orgtrello/--users-to it)))
+
 (defun orgtrello/--merge-card (trello-card org-card) "Merge trello and org card together."
   (let ((org-card-to-merge (orgtrello/--init-map-from org-card)))
     (puthash :level   *CARD-LEVEL*                                                            org-card-to-merge)
     (puthash :id      (orgtrello-data/id trello-card)                                         org-card-to-merge)
     (puthash :name    (orgtrello-data/name trello-card)                                       org-card-to-merge)
     (puthash :keyword (-> trello-card orgtrello-data/list-id orgtrello/--compute-card-status) org-card-to-merge)
-    (puthash :users-assigned (--> trello-card
-                                  (orgtrello-data/member-ids it)
-                                  (-map (lambda (i) i) it)
-                                  (orgtrello-data/merge-2-lists-without-duplicates it (-> org-card-to-merge orgtrello/--user-assigned-ids orgtrello/--users-from))
-                                  (orgtrello/--users-to it)) org-card-to-merge)
+    (puthash :users-assigned (orgtrello/--merge-users-assigned trello-card org-card-to-merge) org-card-to-merge)
     org-card-to-merge))
 
 (defun orgtrello/--dispatch-merge-fn (entity) "Dispatch the function fn to merge the entity."

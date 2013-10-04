@@ -1798,5 +1798,11 @@ C-c o h - M-x org-trello/help-describing-bindings    - This help message." (org-
 ;;         (goto-char (point-at-eol))
 ;;         (orgtrello/--compute-full-entities-from-org!))))))
 
+(expectations
+ (expect "1,5,2,3,4"
+   (orgtrello/--merge-users-assigned `((idMembers . ["1" "5"]))
+                                     (orgtrello-hash/make-properties `((:users-assigned . "2,3,4"))))))
+
+
 (provide 'org-trello-tests)
 ;;; org-trello-tests ends here
