@@ -83,6 +83,24 @@ Tested on:
 
 # Migration
 
+## 0.2.2 -> 0.2.3
+
+If you are rightly not happy with "C-c o" as prefix, you can now specify your default prefix keybinding.
+For this, you need to install the following hook specifying the <prefix-key>:
+
+```elisp
+(require 'org-trello)
+
+(add-hook 'org-trello-mode-hook (lambda () (org-trello/install-default-prefix-mode-keybinding <prefix-key>)))
+```
+
+For example, installing using the "C-c x" as prefix key:
+```elisp
+(require 'org-trello)
+
+(add-hook 'org-trello-mode-hook (lambda () (org-trello/install-default-prefix-mode-keybinding "C-c x")))
+```
+
 ## 0.2.1 -> 0.2.2
 
 From the 0.2.2 version onward, we can assign people to card.

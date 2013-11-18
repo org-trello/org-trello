@@ -734,11 +734,11 @@ CLOSED: [2013-09-30 lun. 22:32]
 - [ ] Update the literate org-trello.org (completely desynchronized since 0.1.2) -> coding it to avoid doing manual split (I see the irony)
 - [ ] POC: use a temporary buffer to sync with trello, when done, merge with the user's buffer.
 - [ ] Release notes
-* IN-PROGRESS 0.2.3 [60%]
+* IN-PROGRESS 0.2.3 [80%]
 - [X] Version
 - [X] Fix discrepancy between docstring and binding to delete the setup.
 - [X] Use a prefix binding which does not override the emacs's default user prefix (keep the original for the moment to avoid disturbing people which already use it)
-- [ ] Update documentation about the possibility to change the default prefix key
+- [X] Update documentation about the possibility to change the default prefix key
 - [ ] Release
 * Notes
 (org-show-siblings)
