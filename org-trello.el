@@ -2615,32 +2615,29 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
     (org-trello/describe-entry              . "e"))
   "List of command and default binding without the prefix key.")
 
-(defun org-trello/--install-keybinding-map (org-trello-mode-prefix-keybinding interactive-command-binding-to-install)
-  "Install the default map with the prefix binding of org-trello-mode-prefix-keybinding."
-  (let ((map (make-sparse-keymap)))
-    (mapc (lambda (command-and-binding)
-            (let ((command (car command-and-binding))
-                  (binding (cdr command-and-binding)))
-              (define-key map (kbd (concat org-trello-mode-prefix-keybinding binding)) command)))
-          interactive-command-binding-to-install)
-    map))
+(defun org-trello/--install-local-keybinding-map! (previous-org-trello-mode-prefix-keybinding org-trello-mode-prefix-keybinding interactive-command-binding-to-install)
+  "Install locally the default binding map with the prefix binding of org-trello-mode-prefix-keybinding."
+  (mapc (lambda (command-and-binding)
+          (let ((command (car command-and-binding))
+                (binding (cdr command-and-binding)))
+            ;; unset previous binding
+            (local-unset-key (kbd (concat previous-org-trello-mode-prefix-keybinding binding)))
+            ;; set new binding
+            (local-set-key (kbd (concat org-trello-mode-prefix-keybinding binding)) command)))
+        interactive-command-binding-to-install))
 
-(defun org-trello/--install-local-keybinding-map! (org-trello-mode-prefix-keybinding interactive-command-binding-to-install)
-  "Reinstall the bindings for the user using the prefix key passed as parameter "
-  (--> org-trello-mode-prefix-keybinding
-       (org-trello/--install-keybinding-map it interactive-command-binding-to-install)
-       (setq org-trello-mode-map it)))
+(defvar *ORGTRELLO-MODE-PREFIX-KEYBINDING*          "C-c o" "The default prefix keybinding.")
+(defvar *PREVIOUS-ORGTRELLO-MODE-PREFIX-KEYBINDING* "C-c o" "The memory default prefix keybinding.")
 
-(defvar *ORGTRELLO-MODE-PREFIX-KEYBINDING* "C-c o" "The default prefix keybinding.")
-
-(defun org-trello/install-local-prefix-mode-keybinding (keybinding) "Install the new default org-trello mode keybinding."
+(defun org-trello/install-local-prefix-mode-keybinding! (keybinding) "Install the new default org-trello mode keybinding."
+  (setq *PREVIOUS-ORGTRELLO-MODE-PREFIX-KEYBINDING* *ORGTRELLO-MODE-PREFIX-KEYBINDING*)
   (setq *ORGTRELLO-MODE-PREFIX-KEYBINDING* keybinding)
-  (org-trello/--install-local-keybinding-map! *ORGTRELLO-MODE-PREFIX-KEYBINDING* org-trello/--list-of-interactive-command-binding-couples))
+  (org-trello/--install-local-keybinding-map! *PREVIOUS-ORGTRELLO-MODE-PREFIX-KEYBINDING* *ORGTRELLO-MODE-PREFIX-KEYBINDING* org-trello/--list-of-interactive-command-binding-couples))
 
 ;;;###autoload
 (define-minor-mode org-trello-mode "Sync your org-mode and your trello together."
-  :lighter " ot" ;; the name on the modeline
-  :keymap  (org-trello/--install-keybinding-map "C-c o" org-trello/--list-of-interactive-command-binding-couples))
+  :lighter    " ot"
+  :after-hook (org-trello/install-local-prefix-mode-keybinding! *ORGTRELLO-MODE-PREFIX-KEYBINDING*))
 
 (defun org-trello/justify-on-save () "Justify the properties checkbox."
   (if org-trello-mode (orgtrello/justify-file)))

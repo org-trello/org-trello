@@ -88,17 +88,17 @@ Tested on:
 If you are rightly not happy with "C-c o" as prefix, you can now specify your default prefix keybinding.
 For this, you need to install the following hook specifying the <prefix-key>:
 
-```elisp
+``` lisp
 (require 'org-trello)
 
-(add-hook 'org-trello-mode-hook (lambda () (org-trello/install-default-prefix-mode-keybinding <prefix-key>)))
+(add-hook 'org-trello-mode-hook (lambda () (org-trello/install-local-prefix-mode-keybinding! <prefix-key>)))
 ```
 
 For example, installing using the "C-c x" as prefix key:
-```elisp
+``` lisp
 (require 'org-trello)
 
-(add-hook 'org-trello-mode-hook (lambda () (org-trello/install-default-prefix-mode-keybinding "C-c x")))
+(add-hook 'org-trello-mode-hook (lambda () (org-trello/install-local-prefix-mode-keybinding! "C-c x")))
 ```
 
 *Note* If org-trello was already running. You need to relaunch the mode (`M-x org-trello-mode` twice).

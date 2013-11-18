@@ -1687,9 +1687,5 @@ C-c o h - M-x org-trello/help-describing-bindings    - This help message." (org-
 (expectations
  (expect "org-trello/ot is on! To begin with, hit C-c o h or M-x 'org-trello/help-describing-bindings" (org-trello/--startup-message "C-c o")))
 
-(expectations
- (expect '(keymap (3 keymap (120 keymap (101 . org-trello/describe-entry) (104 . org-trello/help-describing-bindings) (115 . org-trello/sync-to-trello) (75 . org-trello/kill-all-entities) (107 . org-trello/kill-entity) (67 . org-trello/sync-full-entity) (99 . org-trello/sync-entity) (83 . org-trello/sync-from-trello) (98 . org-trello/create-board) (68 . org-trello/delete-setup) (117 . org-trello/unassign-me) (97 . org-trello/assign-me) (100 . org-trello/check-setup) (73 . org-trello/install-board-and-lists-ids) (105 . org-trello/install-key-and-token))))
-         (org-trello/--install-keybinding-map "C-c x" org-trello/--list-of-interactive-command-binding-couples)))
-
 (provide 'org-trello-tests)
 ;;; org-trello-tests ends here
