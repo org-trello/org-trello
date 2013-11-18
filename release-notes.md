@@ -1,3 +1,12 @@
+# 0.2.3
+
+- [X] Version
+- [X] Fix discrepancy between docstring and binding to delete the setup - https://github.com/ardumont/org-trello/issues/74
+- [X] Use a prefix binding which does not override the emacs's default user prefix (keep the original for the moment to avoid disturbing people which already use it) - https://github.com/ardumont/org-trello/issues/72
+- [X] Update documentation about the possibility to change the default prefix key
+- [X] Fix ci-travis build due to change in cask installation command
+- [X] Release notes
+
 # 0.2.2
 
 - [X] Version
