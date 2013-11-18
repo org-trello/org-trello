@@ -734,6 +734,9 @@ CLOSED: [2013-09-30 lun. 22:32]
 - [ ] Update the literate org-trello.org (completely desynchronized since 0.1.2) -> coding it to avoid doing manual split (I see the irony)
 - [ ] POC: use a temporary buffer to sync with trello, when done, merge with the user's buffer.
 - [ ] Release notes
+* TODO 0.2.3 [50%]
+- [X] Fix discrepancy between docstring and binding to delete the setup.
+- [ ] Use a prefix binding which does not override the emacs's default user prefix
 * Notes
 (org-show-siblings)
 (org-first-headline-recenter)
