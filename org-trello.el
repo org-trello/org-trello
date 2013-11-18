@@ -4,7 +4,7 @@
 
 ;; Author: Antoine R. Dumont <eniotna.t AT gmail.com>
 ;; Maintainer: Antoine R. Dumont <eniotna.t AT gmail.com>
-;; Version: 0.2.2
+;; Version: 0.2.3
 ;; Package-Requires: ((org "8.0.7") (dash "1.5.0") (request "0.2.0") (cl-lib "0.3.0") (json "1.2") (elnode "0.9.9.7.6") (esxml "0.3.0") (s "1.7.0") (kv "0.0.17"))
 ;; Keywords: org-mode trello sync org-trello
 ;; URL: https://github.com/ardumont/org-trello
@@ -68,7 +68,7 @@
 
 ;; #################### static setup
 
-(defvar *ORGTRELLO-VERSION*           "0.2.2"                                           "Version")
+(defvar *ORGTRELLO-VERSION*           "0.2.3"                                           "Version")
 (defvar *consumer-key*                nil                                               "Id representing the user.")
 (defvar *access-token*                nil                                               "Read/write access token to use trello on behalf of the user.")
 (defvar *ORGTRELLO-MARKER*            "orgtrello-marker"                                "A marker used inside the org buffer to synchronize entries.")
@@ -2561,56 +2561,83 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   (setq *ORGTRELLO-NATURAL-ORG-CHECKLIST* nil)
   (setq *ORGTRELLO-CHECKLIST-UPDATE-ITEMS* t))
 
+(defun org-trello/--replace-string-prefix-in-string (keybinding string-to-replace)
+  (replace-regexp-in-string "#PREFIX#" keybinding string-to-replace t))
+
+(defun org-trello/--startup-message (keybinding)
+  (let ((template-string "org-trello/ot is on! To begin with, hit #PREFIX# h or M-x 'org-trello/help-describing-bindings"))
+    (replace-regexp-in-string "#PREFIX#" keybinding template-string t)))
+
+(defun org-trello/--help-describing-bindings-template (keybinding) "Standard Help message template"
+  (let ((template-string "# SETUP RELATED
+        - M-x org-trello/version                     - Display the current version installed
+#PREFIX# i - M-x org-trello/install-key-and-token       - Install the keys and the access-token.
+#PREFIX# I - M-x org-trello/install-board-and-lists-ids - Select the board and attach the todo, doing and done list.
+#PREFIX# d - M-x org-trello/check-setup                 - Check that the setup is ok. If everything is ok, will simply display 'Setup ok!'
+#PREFIX# D - M-x org-trello/delete-setup                - Clean up the org buffer from all org-trello informations
+#PREFIX# a - M-x org-trello/assign-me                   - Assign oneself to the card
+#PREFIX# u - M-x org-trello/unassign-me                 - Unassign oneself of the card
+# TRELLO RELATED
+#PREFIX# b - M-x org-trello/create-board                - Create interactively a board and attach the org-mode file to this trello board.
+#PREFIX# c - M-x org-trello/sync-entity                 - Create/Update an entity (card/checklist/item) depending on its level and status. Do not deal with level superior to 4.
+#PREFIX# C - M-x org-trello/sync-full-entity            - Create/Update a complete entity card/checklist/item and its subtree (depending on its level).
+#PREFIX# s - M-x org-trello/sync-to-trello              - Synchronize the org-mode file to the trello board (org-mode -> trello).
+#PREFIX# S - M-x org-trello/sync-from-trello            - Synchronize the org-mode file from the trello board (trello -> org-mode).
+#PREFIX# k - M-x org-trello/kill-entity                 - Kill the entity (and its arborescence tree) from the trello board and the org buffer.
+#PREFIX# K - M-x org-trello/kill-all-entities           - Kill all the entities (and their arborescence tree) from the trello board and the org buffer.
+# HELP
+#PREFIX# h - M-x org-trello/help-describing-bindings    - This help message."))
+    (replace-regexp-in-string "#PREFIX#" keybinding template-string t)))
+
 (defun org-trello/help-describing-bindings () "A simple message to describe the standard bindings used."
   (interactive)
-  (orgtrello-log/msg 0
-"# SETUP RELATED
-        - M-x org-trello/version                     - Display the current version installed
-C-c o i - M-x org-trello/install-key-and-token       - Install the keys and the access-token.
-C-c o I - M-x org-trello/install-board-and-lists-ids - Select the board and attach the todo, doing and done list.
-C-c o d - M-x org-trello/check-setup                 - Check that the setup is ok. If everything is ok, will simply display 'Setup ok!'
-C-c o D - M-x org-trello/delete-setup                - Clean up the org buffer from all org-trello informations
-C-c o a - M-x org-trello/assign-me                   - Assign oneself to the card
-C-c o u - M-x org-trello/unassign-me                 - Unassign oneself of the card
-# TRELLO RELATED
-C-c o b - M-x org-trello/create-board                - Create interactively a board and attach the org-mode file to this trello board.
-C-c o c - M-x org-trello/sync-entity                 - Create/Update an entity (card/checklist/item) depending on its level and status. Do not deal with level superior to 4.
-C-c o C - M-x org-trello/sync-full-entity            - Create/Update a complete entity card/checklist/item and its subtree (depending on its level).
-C-c o s - M-x org-trello/sync-to-trello              - Synchronize the org-mode file to the trello board (org-mode -> trello).
-C-c o S - M-x org-trello/sync-from-trello            - Synchronize the org-mode file from the trello board (trello -> org-mode).
-C-c o k - M-x org-trello/kill-entity                 - Kill the entity (and its arborescence tree) from the trello board and the org buffer.
-C-c o K - M-x org-trello/kill-all-entities           - Kill all the entities (and their arborescence tree) from the trello board and the org buffer.
-# HELP
-C-c o h - M-x org-trello/help-describing-bindings    - This help message."))
+  (orgtrello-log/msg 0 (org-trello/--help-describing-bindings-template *ORGTRELLO-MODE-PREFIX-KEYBINDING*)))
 
 (defun org-trello/describe-entry () "An helper command to describe org-trello entry."
   (interactive)
   (message "entities: %S" (orgtrello/--compute-full-entities-from-org)))
 
+(defvar org-trello/--list-of-interactive-command-binding-couples
+  '((org-trello/install-key-and-token       . "i")
+    (org-trello/install-board-and-lists-ids . "I")
+    (org-trello/check-setup                 . "d")
+    (org-trello/assign-me                   . "a")
+    (org-trello/unassign-me                 . "u")
+    (org-trello/delete-setup                . "D")
+    (org-trello/create-board                . "b")
+    (org-trello/sync-from-trello            . "S")
+    (org-trello/sync-entity                 . "c")
+    (org-trello/sync-full-entity            . "C")
+    (org-trello/kill-entity                 . "k")
+    (org-trello/kill-all-entities           . "K")
+    (org-trello/sync-to-trello              . "s")
+    (org-trello/help-describing-bindings    . "h")
+    (org-trello/describe-entry              . "e"))
+  "List of command and default binding without the prefix key.")
+
+(defun org-trello/--install-local-keybinding-map! (previous-org-trello-mode-prefix-keybinding org-trello-mode-prefix-keybinding interactive-command-binding-to-install)
+  "Install locally the default binding map with the prefix binding of org-trello-mode-prefix-keybinding."
+  (mapc (lambda (command-and-binding)
+          (let ((command (car command-and-binding))
+                (binding (cdr command-and-binding)))
+            ;; unset previous binding
+            (local-unset-key (kbd (concat previous-org-trello-mode-prefix-keybinding binding)))
+            ;; set new binding
+            (local-set-key (kbd (concat org-trello-mode-prefix-keybinding binding)) command)))
+        interactive-command-binding-to-install))
+
+(defvar *ORGTRELLO-MODE-PREFIX-KEYBINDING*          "C-c o" "The default prefix keybinding.")
+(defvar *PREVIOUS-ORGTRELLO-MODE-PREFIX-KEYBINDING* "C-c o" "The memory default prefix keybinding.")
+
+(defun org-trello/install-local-prefix-mode-keybinding! (keybinding) "Install the new default org-trello mode keybinding."
+  (setq *PREVIOUS-ORGTRELLO-MODE-PREFIX-KEYBINDING* *ORGTRELLO-MODE-PREFIX-KEYBINDING*)
+  (setq *ORGTRELLO-MODE-PREFIX-KEYBINDING* keybinding)
+  (org-trello/--install-local-keybinding-map! *PREVIOUS-ORGTRELLO-MODE-PREFIX-KEYBINDING* *ORGTRELLO-MODE-PREFIX-KEYBINDING* org-trello/--list-of-interactive-command-binding-couples))
+
 ;;;###autoload
 (define-minor-mode org-trello-mode "Sync your org-mode and your trello together."
-  :lighter " ot" ;; the name on the modeline
-  :keymap  (let ((map (make-sparse-keymap)))
-             ;; setup relative
-             (define-key map (kbd "C-c o i") 'org-trello/install-key-and-token)
-             (define-key map (kbd "C-c o I") 'org-trello/install-board-and-lists-ids)
-             (define-key map (kbd "C-c o d") 'org-trello/check-setup)
-             (define-key map (kbd "C-c o a") 'org-trello/assign-me)
-             (define-key map (kbd "C-c o u") 'org-trello/unassign-me)
-             (define-key map (kbd "C-c o x") 'org-trello/delete-setup)
-             ;; synchronous request (direct to trello)
-             (define-key map (kbd "C-c o b") 'org-trello/create-board)
-             (define-key map (kbd "C-c o S") 'org-trello/sync-from-trello)
-             ;; asynchronous requests (requests through proxy)
-             (define-key map (kbd "C-c o c") 'org-trello/sync-entity)
-             (define-key map (kbd "C-c o C") 'org-trello/sync-full-entity)
-             (define-key map (kbd "C-c o k") 'org-trello/kill-entity)
-             (define-key map (kbd "C-c o K") 'org-trello/kill-all-entities)
-             (define-key map (kbd "C-c o s") 'org-trello/sync-to-trello)
-             ;; Help
-             (define-key map (kbd "C-c o h") 'org-trello/help-describing-bindings)
-             (define-key map (kbd "C-c o e") 'org-trello/describe-entry)
-             map))
+  :lighter    " ot"
+  :after-hook (org-trello/install-local-prefix-mode-keybinding! *ORGTRELLO-MODE-PREFIX-KEYBINDING*))
 
 (defun org-trello/justify-on-save () "Justify the properties checkbox."
   (if org-trello-mode (orgtrello/justify-file)))
@@ -2625,7 +2652,7 @@ C-c o h - M-x org-trello/help-describing-bindings    - This help message."))
             ;; installing hooks
             (add-hook 'before-save-hook 'org-trello/justify-on-save)
             ;; a little message in the minibuffer to notify the user
-            (orgtrello-log/msg *OT/NOLOG* "org-trello/ot is on! To begin with, hit C-c o h or M-x 'org-trello/help-describing-bindings")))
+            (orgtrello-log/msg *OT/NOLOG* (org-trello/--startup-message *ORGTRELLO-MODE-PREFIX-KEYBINDING*))))
 
 (add-hook 'org-trello-mode-off-hook
           (lambda ()
