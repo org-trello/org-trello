@@ -2587,30 +2587,39 @@ C-c o h - M-x org-trello/help-describing-bindings    - This help message."))
   (interactive)
   (message "entities: %S" (orgtrello/--compute-full-entities-from-org)))
 
+(defvar *ORGTRELLO-MODE-PREFIX-KEYBINDING* "C-c o" "The default prefix keybinding.")
+
+(defun org-trello/install-default-prefix-mode-keybinding (keybinding) "Install the new default org-trello mode keybinding."
+  (interactive  "command:")
+  (setq *ORGTRELLO-MODE-PREFIX-KEYBINDING* keybinding)
+  (define-org-trello-mode *ORGTRELLO-MODE-PREFIX-KEYBINDING*))
+
+(defmacro define-org-trello-mode (org-trello-mode-prefix-keybinding) "Define org-trello with the possibility to override the default binding."
+  `(define-minor-mode org-trello-mode "Sync your org-mode and your trello together."
+     :lighter " ot" ;; the name on the modeline
+     :keymap  (let ((map (make-sparse-keymap)))
+                ;; setup relative
+                (define-key map (kbd (concat ,org-trello-mode-prefix-keybinding "i")) 'org-trello/install-key-and-token)
+                (define-key map (kbd (concat ,org-trello-mode-prefix-keybinding "I")) 'org-trello/install-board-and-lists-ids)
+                (define-key map (kbd (concat ,org-trello-mode-prefix-keybinding "d")) 'org-trello/check-setup)
+                (define-key map (kbd (concat ,org-trello-mode-prefix-keybinding "a")) 'org-trello/assign-me)
+                (define-key map (kbd (concat ,org-trello-mode-prefix-keybinding "u")) 'org-trello/unassign-me)
+                (define-key map (kbd (concat ,org-trello-mode-prefix-keybinding "D")) 'org-trello/delete-setup)
+                ;; synchronous request (direct to trello)
+                (define-key map (kbd (concat ,org-trello-mode-prefix-keybinding "b")) 'org-trello/create-board)
+                (define-key map (kbd (concat ,org-trello-mode-prefix-keybinding "S")) 'org-trello/sync-from-trello)
+                ;; asynchronous requests (requests through proxy)
+                (define-key map (kbd (concat ,org-trello-mode-prefix-keybinding "c")) 'org-trello/sync-entity)
+                (define-key map (kbd (concat ,org-trello-mode-prefix-keybinding "C")) 'org-trello/sync-full-entity)
+                (define-key map (kbd (concat ,org-trello-mode-prefix-keybinding "k")) 'org-trello/kill-entity)
+                (define-key map (kbd (concat ,org-trello-mode-prefix-keybinding "K")) 'org-trello/kill-all-entities)
+                (define-key map (kbd (concat ,org-trello-mode-prefix-keybinding "s")) 'org-trello/sync-to-trello)
+                ;; Help
+                (define-key map (kbd (concat ,org-trello-mode-prefix-keybinding "h")) 'org-trello/help-describing-bindings)
+                (define-key map (kbd (concat ,org-trello-mode-prefix-keybinding "e")) 'org-trello/describe-entry)
+                map)))
 ;;;###autoload
-(define-minor-mode org-trello-mode "Sync your org-mode and your trello together."
-  :lighter " ot" ;; the name on the modeline
-  :keymap  (let ((map (make-sparse-keymap)))
-             ;; setup relative
-             (define-key map (kbd "C-c o i") 'org-trello/install-key-and-token)
-             (define-key map (kbd "C-c o I") 'org-trello/install-board-and-lists-ids)
-             (define-key map (kbd "C-c o d") 'org-trello/check-setup)
-             (define-key map (kbd "C-c o a") 'org-trello/assign-me)
-             (define-key map (kbd "C-c o u") 'org-trello/unassign-me)
-             (define-key map (kbd "C-c o D") 'org-trello/delete-setup)
-             ;; synchronous request (direct to trello)
-             (define-key map (kbd "C-c o b") 'org-trello/create-board)
-             (define-key map (kbd "C-c o S") 'org-trello/sync-from-trello)
-             ;; asynchronous requests (requests through proxy)
-             (define-key map (kbd "C-c o c") 'org-trello/sync-entity)
-             (define-key map (kbd "C-c o C") 'org-trello/sync-full-entity)
-             (define-key map (kbd "C-c o k") 'org-trello/kill-entity)
-             (define-key map (kbd "C-c o K") 'org-trello/kill-all-entities)
-             (define-key map (kbd "C-c o s") 'org-trello/sync-to-trello)
-             ;; Help
-             (define-key map (kbd "C-c o h") 'org-trello/help-describing-bindings)
-             (define-key map (kbd "C-c o e") 'org-trello/describe-entry)
-             map))
+(org-trello/install-default-prefix-mode-keybinding *ORGTRELLO-MODE-PREFIX-KEYBINDING*)
 
 (defun org-trello/justify-on-save () "Justify the properties checkbox."
   (if org-trello-mode (orgtrello/justify-file)))
