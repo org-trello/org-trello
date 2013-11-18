@@ -101,6 +101,8 @@ For example, installing using the "C-c x" as prefix key:
 (add-hook 'org-trello-mode-hook (lambda () (org-trello/install-default-prefix-mode-keybinding "C-c x")))
 ```
 
+*Note* If org-trello was already running. You need to relaunch the mode (`M-x org-trello-mode` twice).
+
 ## 0.2.1 -> 0.2.2
 
 From the 0.2.2 version onward, we can assign people to card.

@@ -736,8 +736,8 @@ CLOSED: [2013-09-30 lun. 22:32]
 - [ ] Release notes
 * IN-PROGRESS 0.2.3 [80%]
 - [X] Version
-- [X] Fix discrepancy between docstring and binding to delete the setup.
-- [X] Use a prefix binding which does not override the emacs's default user prefix (keep the original for the moment to avoid disturbing people which already use it)
+- [X] Fix discrepancy between docstring and binding to delete the setup - https://github.com/ardumont/org-trello/issues/74
+- [X] Use a prefix binding which does not override the emacs's default user prefix (keep the original for the moment to avoid disturbing people which already use it) - https://github.com/ardumont/org-trello/issues/72
 - [X] Update documentation about the possibility to change the default prefix key
 - [ ] Release
 * Notes
