@@ -1979,9 +1979,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
     (list (orgtrello/--add-entity-to-entities current-entity entities) (orgtrello/--add-entity-to-adjacency current-entity parent-entity adjacency))))
 
 (defun orgtrello/--dispatch-create-entities-map-with-adjacency (entity) "Dispatch the function to update map depending on the entity level."
-  (cond ((orgtrello-data/entity-card-p entity)      'orgtrello/--put-card-with-adjacency)
-        ((orgtrello-data/entity-checklist-p entity) 'orgtrello/--put-entities-with-adjacency)
-        ((orgtrello-data/entity-item-p entity)      'orgtrello/--put-entities-with-adjacency)))
+  (if (orgtrello-data/entity-card-p entity) 'orgtrello/--put-card-with-adjacency 'orgtrello/--put-entities-with-adjacency))
 
 (defun orgtrello/--compute-full-entities-already-synced-from-org! () "Compute the full entities present in the org buffer which already had been sync'ed previously."
   (let ((entities (make-hash-table :test 'equal))
