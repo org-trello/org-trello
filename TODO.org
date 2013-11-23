@@ -723,7 +723,14 @@ CLOSED: [2013-09-30 lun. 22:32]
 - [X] Update README TOC
 - [X] Fix error during initialization org-trello setup buffer
 - [X] Release notes
-* TODO 0.2.3 [57%]
+* DONE 0.2.3 [100%]
+CLOSED: [2013-11-18 lun. 18:57]
+- [X] Version
+- [X] Fix discrepancy between docstring and binding to delete the setup - https://github.com/ardumont/org-trello/issues/74
+- [X] Use a prefix binding which does not override the emacs's default user prefix (keep the original for the moment to avoid disturbing people which already use it) - https://github.com/ardumont/org-trello/issues/72
+- [X] Update documentation about the possibility to change the default prefix key
+- [ ] Release
+* TODO 0.2.4 [57%]
 - [X] Spring backlog
 - [X] Some refactoring + tests coverage
 - [X] Fix sync-from-trello - Merge org card's users assigned list and the trello one
@@ -733,7 +740,7 @@ CLOSED: [2013-09-30 lun. 22:32]
 - [X] Upgrade version
 - [ ] More fined grained use of the trello api (retrieve only data we use) - https://github.com/ardumont/org-trello/issues/69
 - [ ] Release notes
-* TODO 0.2.4 [0%]
+* TODO 0.2.5 [0%]
 - [ ] Expose a public trello board showing the status of org-trello and reference it inside the release notes
 - [ ] Use trello labels and org tags as one - https://github.com/ardumont/org-trello/issues/70
 - [ ] Another Disposition about org's buffer - https://github.com/ardumont/org-trello/issues/33
@@ -745,13 +752,6 @@ CLOSED: [2013-09-30 lun. 22:32]
 - [ ] POC: use a temporary buffer to sync with trello, when done, merge with the user's buffer.
 - [ ] Improve tests coverage - some major and important functionalities are not covered (due at time of ignorance on how to do it, there is only so much one can do!
 - [ ] Release notes
-* DONE 0.2.3 [100%]
-CLOSED: [2013-11-18 lun. 18:57]
-- [X] Version
-- [X] Fix discrepancy between docstring and binding to delete the setup - https://github.com/ardumont/org-trello/issues/74
-- [X] Use a prefix binding which does not override the emacs's default user prefix (keep the original for the moment to avoid disturbing people which already use it) - https://github.com/ardumont/org-trello/issues/72
-- [X] Update documentation about the possibility to change the default prefix key
-- [ ] Release
 * Notes
 (org-show-siblings)
 (org-first-headline-recenter)
