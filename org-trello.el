@@ -2337,7 +2337,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 (defun orgtrello/--compute-board-lists-hash-name-id (board-lists-hash-name-id) ""
   (let ((res-list))
     (maphash (lambda (name id) (--> (orgtrello/--convention-property-name name)
-                                    (format "#+property: %s %s" it id)
+                                    (format "#+PROPERTY: %s %s" it id)
                                     (push it res-list)))
              board-lists-hash-name-id)
     res-list))
@@ -2356,7 +2356,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 (defun orgtrello/--properties-compute-users-ids (board-users-hash-name-id)
   (let ((res-list))
     (maphash (lambda (name id) (--> name
-                                    (format "#+property: %s%s %s" *ORGTRELLO-USER-PREFIX* it id)
+                                    (format "#+PROPERTY: %s%s %s" *ORGTRELLO-USER-PREFIX* it id)
                                     (push it res-list)))
              board-users-hash-name-id)
     res-list))
@@ -2365,12 +2365,12 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   (with-current-buffer (current-buffer)
     (goto-char (point-min))
     (set-buffer-file-coding-system 'utf-8-auto) ;; force utf-8
-    (->> `(,(format "#+property: %s    %s" *BOARD-NAME* board-name)
-            ,(format "#+property: %s      %s" *BOARD-ID* board-id)
+    (->> `(,(format "#+PROPERTY: %s    %s" *BOARD-NAME* board-name)
+            ,(format "#+PROPERTY: %s      %s" *BOARD-ID* board-id)
             ,@(orgtrello/--compute-board-lists-hash-name-id board-lists-hash-name-id)
             ,(if update-todo-keywords (orgtrello/--properties-compute-todo-keywords-as-string board-lists-hash-name-id))
             ,@(orgtrello/--properties-compute-users-ids board-users-hash-name-id)
-            ,(format "#+property: %s %s" *ORGTRELLO-USER-ME* user-me))
+            ,(format "#+PROPERTY: %s %s" *ORGTRELLO-USER-ME* user-me))
          (mapc (lambda (property-to-insert) (insert property-to-insert "\n"))))
     (save-buffer)
     (orgtrello-action/reload-setup)))
