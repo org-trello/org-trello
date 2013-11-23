@@ -2670,59 +2670,46 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   (let ((template-string "org-trello/ot is on! To begin with, hit #PREFIX# h or M-x 'org-trello/help-describing-bindings"))
     (replace-regexp-in-string "#PREFIX#" keybinding template-string t)))
 
-(defun org-trello/--help-describing-bindings-template (keybinding) "Standard Help message template"
-  (let ((template-string "# SETUP RELATED
-        - M-x org-trello/version                     - Display the current version installed
-#PREFIX# i - M-x org-trello/install-key-and-token       - Install the keys and the access-token.
-#PREFIX# I - M-x org-trello/install-board-and-lists-ids - Select the board and attach the todo, doing and done list.
-#PREFIX# d - M-x org-trello/check-setup                 - Check that the setup is ok. If everything is ok, will simply display 'Setup ok!'
-#PREFIX# D - M-x org-trello/delete-setup                - Clean up the org buffer from all org-trello informations
-#PREFIX# a - M-x org-trello/assign-me                   - Assign oneself to the card
-#PREFIX# u - M-x org-trello/unassign-me                 - Unassign oneself of the card
-# TRELLO RELATED
-#PREFIX# b - M-x org-trello/create-board                - Create interactively a board and attach the org-mode file to this trello board.
-#PREFIX# c - M-x org-trello/sync-entity                 - Create/Update an entity (card/checklist/item) depending on its level and status. Do not deal with level superior to 4.
-#PREFIX# C - M-x org-trello/sync-full-entity            - Create/Update a complete entity card/checklist/item and its subtree (depending on its level).
-#PREFIX# s - M-x org-trello/sync-to-trello              - Synchronize the org-mode file to the trello board (org-mode -> trello).
-#PREFIX# S - M-x org-trello/sync-from-trello            - Synchronize the org-mode file from the trello board (trello -> org-mode).
-#PREFIX# k - M-x org-trello/kill-entity                 - Kill the entity (and its arborescence tree) from the trello board and the org buffer.
-#PREFIX# K - M-x org-trello/kill-all-entities           - Kill all the entities (and their arborescence tree) from the trello board and the org buffer.
-#PREFIX# g - M-x org-trello/go-to-trello-board          - Open the browser to your current trello board
-# HELP
-#PREFIX# h - M-x org-trello/help-describing-bindings    - This help message."))
-    (replace-regexp-in-string "#PREFIX#" keybinding template-string t)))
+(defun org-trello/--help-describing-bindings-template (keybinding list-command-binding-description) "Standard Help message template"
+  (->> list-command-binding-description
+       (--map (let ((command        (first it))
+                    (prefix-binding (second it))
+                    (help-msg       (third it)))
+                (concat keybinding " " prefix-binding " - M-x " (symbol-name command) " - " help-msg)))
+       (s-join "\n")))
 
 (defun org-trello/help-describing-bindings () "A simple message to describe the standard bindings used."
   (interactive)
-  (orgtrello-log/msg 0 (org-trello/--help-describing-bindings-template *ORGTRELLO-MODE-PREFIX-KEYBINDING*)))
+  (orgtrello-log/msg 0 (org-trello/--help-describing-bindings-template *ORGTRELLO-MODE-PREFIX-KEYBINDING* org-trello/--list-of-interactive-command-binding-couples)))
 
 (defun org-trello/describe-entry () "An helper command to describe org-trello entry."
   (interactive)
   (message "entities: %S" (orgtrello/--compute-full-entities-from-org)))
 
 (defvar org-trello/--list-of-interactive-command-binding-couples
-  '((org-trello/install-key-and-token       . "i")
-    (org-trello/install-board-and-lists-ids . "I")
-    (org-trello/check-setup                 . "d")
-    (org-trello/assign-me                   . "a")
-    (org-trello/unassign-me                 . "u")
-    (org-trello/delete-setup                . "D")
-    (org-trello/create-board                . "b")
-    (org-trello/sync-from-trello            . "S")
-    (org-trello/sync-entity                 . "c")
-    (org-trello/sync-full-entity            . "C")
-    (org-trello/kill-entity                 . "k")
-    (org-trello/kill-all-entities           . "K")
-    (org-trello/sync-to-trello              . "s")
-    (org-trello/go-to-trello-board          . "g")
-    (org-trello/help-describing-bindings    . "h"))
+  '((org-trello/version                     "v" "Display the current version installed.")
+    (org-trello/install-key-and-token       "i" "Install the keys and the access-token.")
+    (org-trello/install-board-and-lists-ids "I" "Select the board and attach the todo, doing and done list.")
+    (org-trello/check-setup                 "d" "Check that the setup is ok. If everything is ok, will simply display 'Setup ok!'.")
+    (org-trello/assign-me                   "a" "Assign oneself to the card.")
+    (org-trello/unassign-me                 "u" "Unassign oneself of the card")
+    (org-trello/delete-setup                "D" "Clean up the org buffer from all org-trello informations.")
+    (org-trello/create-board                "b" "Create interactively a board and attach the org-mode file to this trello board.")
+    (org-trello/sync-from-trello            "S" "Synchronize the org-mode file from the trello board (trello -> org-mode).")
+    (org-trello/sync-entity                 "c" "Create/Update an entity (card/checklist/item) depending on its level and status. Do not deal with level superior to 4.")
+    (org-trello/sync-full-entity            "C" "Create/Update a complete entity card/checklist/item and its subtree (depending on its level).")
+    (org-trello/kill-entity                 "k" "Kill the entity (and its arborescence tree) from the trello board and the org buffer.")
+    (org-trello/kill-all-entities           "K" "Kill all the entities (and their arborescence tree) from the trello board and the org buffer.")
+    (org-trello/sync-to-trello              "s" "Synchronize the org-mode file to the trello board (org-mode -> trello).")
+    (org-trello/go-to-trello-board          "g" "Open the browser to your current trello board.")
+    (org-trello/help-describing-bindings    "h" "This help message."))
   "List of command and default binding without the prefix key.")
 
 (defun org-trello/--install-local-keybinding-map! (previous-org-trello-mode-prefix-keybinding org-trello-mode-prefix-keybinding interactive-command-binding-to-install)
   "Install locally the default binding map with the prefix binding of org-trello-mode-prefix-keybinding."
   (mapc (lambda (command-and-binding)
-          (let ((command (car command-and-binding))
-                (binding (cdr command-and-binding)))
+          (let ((command (first command-and-binding))
+                (binding (second command-and-binding)))
             ;; unset previous binding
             (local-unset-key (kbd (concat previous-org-trello-mode-prefix-keybinding binding)))
             ;; set new binding

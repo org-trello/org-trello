@@ -1679,25 +1679,29 @@ DEADLINE: <some-date>
  (expect "#+property: test value" (orgtrello/compute-property "test" "value")))
 
 (expectations
- (expect "# SETUP RELATED
-        - M-x org-trello/version                     - Display the current version installed
-C-c o i - M-x org-trello/install-key-and-token       - Install the keys and the access-token.
+ (expect "C-c o a - M-x some-action - some-description
+C-c o 2 - M-x action2 - some other description" (org-trello/--help-describing-bindings-template "C-c o" '((some-action "a" "some-description")
+                                                                                                          (action2 "2" "some other description")))))
+
+(expectations
+  (expect
+      "C-c o v - M-x org-trello/version - Display the current version installed.
+C-c o i - M-x org-trello/install-key-and-token - Install the keys and the access-token.
 C-c o I - M-x org-trello/install-board-and-lists-ids - Select the board and attach the todo, doing and done list.
-C-c o d - M-x org-trello/check-setup                 - Check that the setup is ok. If everything is ok, will simply display 'Setup ok!'
-C-c o D - M-x org-trello/delete-setup                - Clean up the org buffer from all org-trello informations
-C-c o a - M-x org-trello/assign-me                   - Assign oneself to the card
-C-c o u - M-x org-trello/unassign-me                 - Unassign oneself of the card
-# TRELLO RELATED
-C-c o b - M-x org-trello/create-board                - Create interactively a board and attach the org-mode file to this trello board.
-C-c o c - M-x org-trello/sync-entity                 - Create/Update an entity (card/checklist/item) depending on its level and status. Do not deal with level superior to 4.
-C-c o C - M-x org-trello/sync-full-entity            - Create/Update a complete entity card/checklist/item and its subtree (depending on its level).
-C-c o s - M-x org-trello/sync-to-trello              - Synchronize the org-mode file to the trello board (org-mode -> trello).
-C-c o S - M-x org-trello/sync-from-trello            - Synchronize the org-mode file from the trello board (trello -> org-mode).
-C-c o k - M-x org-trello/kill-entity                 - Kill the entity (and its arborescence tree) from the trello board and the org buffer.
-C-c o K - M-x org-trello/kill-all-entities           - Kill all the entities (and their arborescence tree) from the trello board and the org buffer.
-C-c o g - M-x org-trello/go-to-trello-board          - Open the browser to your current trello board
-# HELP
-C-c o h - M-x org-trello/help-describing-bindings    - This help message." (org-trello/--help-describing-bindings-template "C-c o")))
+C-c o d - M-x org-trello/check-setup - Check that the setup is ok. If everything is ok, will simply display 'Setup ok!'.
+C-c o a - M-x org-trello/assign-me - Assign oneself to the card.
+C-c o u - M-x org-trello/unassign-me - Unassign oneself of the card
+C-c o D - M-x org-trello/delete-setup - Clean up the org buffer from all org-trello informations.
+C-c o b - M-x org-trello/create-board - Create interactively a board and attach the org-mode file to this trello board.
+C-c o S - M-x org-trello/sync-from-trello - Synchronize the org-mode file from the trello board (trello -> org-mode).
+C-c o c - M-x org-trello/sync-entity - Create/Update an entity (card/checklist/item) depending on its level and status. Do not deal with level superior to 4.
+C-c o C - M-x org-trello/sync-full-entity - Create/Update a complete entity card/checklist/item and its subtree (depending on its level).
+C-c o k - M-x org-trello/kill-entity - Kill the entity (and its arborescence tree) from the trello board and the org buffer.
+C-c o K - M-x org-trello/kill-all-entities - Kill all the entities (and their arborescence tree) from the trello board and the org buffer.
+C-c o s - M-x org-trello/sync-to-trello - Synchronize the org-mode file to the trello board (org-mode -> trello).
+C-c o g - M-x org-trello/go-to-trello-board - Open the browser to your current trello board.
+C-c o h - M-x org-trello/help-describing-bindings - This help message."
+      (org-trello/--help-describing-bindings-template *ORGTRELLO-MODE-PREFIX-KEYBINDING* org-trello/--list-of-interactive-command-binding-couples)))
 
 (expectations
   (expect "'some-keybinding' is fun 'some-keybinding'" (org-trello/--replace-string-prefix-in-string "some-keybinding" "'#PREFIX#' is fun '#PREFIX#'")))
