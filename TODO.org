@@ -741,12 +741,12 @@ CLOSED: [2013-11-23 sam. 15:27]
 - [X] Upgrade version
 - [X] Release notes
 
-* IN-PROGRESS 0.2.5 [15%]
+* IN-PROGRESS 0.2.5 [21%]
 - [X] Backlog updates
 - [X] Global properties in upper case - https://github.com/ardumont/org-trello/issues/83
 - [X] Hide the global properties - https://github.com/ardumont/org-trello/issues/77
+- [X] Use of checkbox convention - https://github.com/ardumont/org-trello/issues/78
 - [ ] Jumping from emacs to the browser - https://github.com/ardumont/org-trello/issues/76
-- [ ] Use of checkbox convention - https://github.com/ardumont/org-trello/issues/78
 - [ ] Synchronize description - https://github.com/ardumont/org-trello/issues/80
 - [ ] Synchronize user comments - https://github.com/ardumont/org-trello/issues/86
 - [ ] More fined grained use of the trello api (retrieve only data we use) - https://github.com/ardumont/org-trello/issues/69

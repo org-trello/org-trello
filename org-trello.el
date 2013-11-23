@@ -1875,18 +1875,29 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 (defun orgtrello/--compute-state-checkbox (state) "Compute the status of the checkbox"
   (orgtrello/--compute-state-generic state '("[X]" "[-]")))
 
+(defun orgtrello/--compute-state-item-checkbox (state) "Compute the status of the item checkbox"
+  (orgtrello/--compute-state-generic state '("[X]" "[ ]")))
+
 (defun orgtrello/--compute-state-item (state) "Compute the status of the checkbox"
   (orgtrello/--compute-state-generic state `(,*DONE* ,*TODO*)))
 
 (defun orgtrello/--compute-level-into-spaces (level) "level 2 is 0 space, otherwise 2 spaces."
   (if (equal level *CHECKLIST-LEVEL*) 0 2))
 
-(defun orgtrello/--compute-checklist-to-org-checkbox (name &optional level status) "Compute the org checkbox format"
+(defun orgtrello/--compute-checklist-to-org-checkbox (name &optional level status) "Compute checklist to the org checkbox format"
   (format "%s- %s %s\n"
           (-> level
               orgtrello/--compute-level-into-spaces
               orgtrello/--space)
           (orgtrello/--compute-state-checkbox status)
+          name))
+
+(defun orgtrello/--compute-item-to-org-checkbox (name &optional level status) "Compute item to the org checkbox format"
+  (format "%s- %s %s\n"
+          (-> level
+              orgtrello/--compute-level-into-spaces
+              orgtrello/--space)
+          (orgtrello/--compute-state-item-checkbox status)
           name))
 
 (defun orgtrello/--compute-item-to-orgtrello-entry (name &optional level status)
@@ -1905,7 +1916,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun orgtrello/--compute-item-to-org-entry (item &optional orgcheckbox-p) "Given a checklist item, compute its org-mode entry equivalence."
   (funcall (if orgcheckbox-p
-               'orgtrello/--compute-checklist-to-org-checkbox
+               'orgtrello/--compute-item-to-org-checkbox
                'orgtrello/--compute-item-to-orgtrello-entry)
            (orgtrello-data/entity-name item)
            *ITEM-LEVEL*
