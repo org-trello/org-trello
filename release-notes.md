@@ -1,3 +1,14 @@
+# 0.2.4
+
+- [X] Sprint backlog
+- [X] Some refactoring + tests coverage
+- [X] Fix sync-from-trello - Merge org card's users assigned list and the trello one
+- [X] Fix sync-from-trello - if new entities are referenced but not yet sync'ed on trello, they will disappear from the buffer when sync-from-trello (they should not) - https://github.com/ardumont/org-trello/issues/71
+  - [X] Compute the entities without sync'ed properties
+  - [X] Write them silly at the end of the computation of the sync'ed data (trello and org merge) to the org buffer
+- [X] Upgrade version
+- [X] Release notes
+
 # 0.2.3
 
 - [X] Version
