@@ -2651,8 +2651,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
     (org-trello/kill-entity                 . "k")
     (org-trello/kill-all-entities           . "K")
     (org-trello/sync-to-trello              . "s")
-    (org-trello/help-describing-bindings    . "h")
-    (org-trello/describe-entry              . "e"))
+    (org-trello/help-describing-bindings    . "h"))
   "List of command and default binding without the prefix key.")
 
 (defun org-trello/--install-local-keybinding-map! (previous-org-trello-mode-prefix-keybinding org-trello-mode-prefix-keybinding interactive-command-binding-to-install)
