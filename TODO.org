@@ -730,7 +730,7 @@ CLOSED: [2013-11-18 lun. 18:57]
 - [X] Use a prefix binding which does not override the emacs's default user prefix (keep the original for the moment to avoid disturbing people which already use it) - https://github.com/ardumont/org-trello/issues/72
 - [X] Update documentation about the possibility to change the default prefix key
 - [ ] Release
-* TODO 0.2.4 [57%]
+* IN-PROGRESS 0.2.4 [57%]
 - [X] Spring backlog
 - [X] Some refactoring + tests coverage
 - [X] Fix sync-from-trello - Merge org card's users assigned list and the trello one
@@ -738,9 +738,10 @@ CLOSED: [2013-11-18 lun. 18:57]
   - [X] Compute the entities without sync'ed properties
   - [ ] Write them silly at the end of the computation of the sync'ed data (trello and org merge) to the org buffer
 - [X] Upgrade version
-- [ ] More fined grained use of the trello api (retrieve only data we use) - https://github.com/ardumont/org-trello/issues/69
 - [ ] Release notes
+
 * TODO 0.2.5 [0%]
+- [ ] More fined grained use of the trello api (retrieve only data we use) - https://github.com/ardumont/org-trello/issues/69
 - [ ] Expose a public trello board showing the status of org-trello and reference it inside the release notes
 - [ ] Use trello labels and org tags as one - https://github.com/ardumont/org-trello/issues/70
 - [ ] Another Disposition about org's buffer - https://github.com/ardumont/org-trello/issues/33
