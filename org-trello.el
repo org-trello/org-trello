@@ -2151,9 +2151,9 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
        (-> data
            orgtrello/--compute-full-entities-from-trello                                          ;; slow computation with network access
            (orgtrello/--merge-entities full-entities-synced-from-buffer)                          ;; slow merge computation
-           ((lambda (merge-result) ;; hack to clean the org entries just before synchronizing the buffer
+           ((lambda (entry) ;; hack to clean the org entries just before synchronizing the buffer
               (orgtrello/--cleanup-org-entries)
-              merge-result))
+              entry))
            (orgtrello/--sync-buffer-with-trello-data buffer-name)
            (orgtrello-action/safe-wrap (orgtrello-log/msg *OT/INFO* "Synchronizing the merge of trello data and org data - done!")))
        ;; write back the data without prior sync activity
