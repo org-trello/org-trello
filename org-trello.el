@@ -497,7 +497,7 @@ This is a list with the following elements:
 (defun orgtrello-data/entity-uri (entity) "Retrieve the entity uri"       (orgtrello-data/--compute-fn entity '(orgtrello-data/uri orgtrello-data/uri-)))
 (defun orgtrello-data/entity-params (entity) "Retrieve the entity params" (orgtrello-data/--compute-fn entity '(orgtrello-data/params orgtrello-data/params-)))
 (defun orgtrello-data/entity-list-id (entity) "Extract the list identitier of the entity from the entity" (orgtrello-data/--compute-fn entity '(orgtrello-data/hlist-id orgtrello-data/list-id)))
-(defun orgtrello-data/entity-member-ids (entity) "Extract the member ids of the entity" (orgtrello-data/--compute-fn entity '(orgtrello-data/hmember-ids orgtrello-data/list-id)))
+(defun orgtrello-data/entity-member-ids (entity) "Extract the member ids of the entity" (orgtrello-data/--compute-fn entity '(orgtrello-data/hmember-ids orgtrello-data/member-ids)))
 
 (defun orgtrello/--card-p (entity) "Is this a card?"           (orgtrello-data/list-id entity))
 (defun orgtrello/--checklist-p (entity) "Is this a checklist?" (orgtrello-data/card-id entity))
@@ -2070,7 +2070,9 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun orgtrello/--merge-users-assigned (trello-card org-card) "Merge users assigned from trello and org."
   (--> trello-card
+       (-trace it :member-ids)
        (orgtrello-data/entity-member-ids it)
+       (-trace it :member-ids)
        (orgtrello-data/merge-2-lists-without-duplicates it (orgtrello/--user-assigned-ids-as-list org-card))
        (orgtrello/--users-to it)))
 

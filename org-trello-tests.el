@@ -1694,6 +1694,10 @@ C-c o h - M-x org-trello/help-describing-bindings    - This help message." (org-
     (orgtrello/--merge-users-assigned `((idMembers . ["1" "5"]))
                                       (orgtrello-hash/make-properties `((:users-assigned . "2,3,4"))))))
 
+(expectations
+  (expect "1,5,2,3,4"
+    (orgtrello/--merge-users-assigned (orgtrello-hash/make-properties `((idMembers . ["1" "5"])))
+                                      (orgtrello-hash/make-properties `((:users-assigned . "2,3,4"))))))
 
 (provide 'org-trello-tests)
 ;;; org-trello-tests ends here
