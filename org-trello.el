@@ -484,6 +484,7 @@ This is a list with the following elements:
 (defun orgtrello-data/--compute-fn (entity list-dispatch-fn) "Given an entity, compute the result" (funcall (if (hash-table-p entity) (first list-dispatch-fn) (second list-dispatch-fn)) entity))
 
 (defun orgtrello-data/entity-id (entity) "Dispatch to the rightfull function to get the id" (orgtrello-data/--compute-fn entity '(orgtrello/--id orgtrello-data/id)))
+(defun orgtrello-data/entity-id-or-marker (entity) "Dispatch to the rightful function to get the id" (orgtrello-data/--compute-fn entity '(orgtrello/--id-or-marker orgtrello-data/id)))
 
 (defun orgtrello-data/entity-card-p (entity) "Is an entity a card?"           (orgtrello-data/--compute-fn entity '(orgtrello/--hcard-p orgtrello/--card-p)))
 (defun orgtrello-data/entity-checklist-p (entity) "Is an entity a checklist?" (orgtrello-data/--compute-fn entity '(orgtrello/--hchecklist-p orgtrello/--checklist-p)))
@@ -495,6 +496,8 @@ This is a list with the following elements:
 (defun orgtrello-data/entity-method (entity) "Retrieve the entity method" (orgtrello-data/--compute-fn entity '(orgtrello-data/method orgtrello-data/method-)))
 (defun orgtrello-data/entity-uri (entity) "Retrieve the entity uri"       (orgtrello-data/--compute-fn entity '(orgtrello-data/uri orgtrello-data/uri-)))
 (defun orgtrello-data/entity-params (entity) "Retrieve the entity params" (orgtrello-data/--compute-fn entity '(orgtrello-data/params orgtrello-data/params-)))
+(defun orgtrello-data/entity-list-id (entity) "Extract the list identitier of the entity from the entity" (orgtrello-data/--compute-fn entity '(orgtrello-data/hlist-id orgtrello-data/list-id)))
+(defun orgtrello-data/entity-member-ids (entity) "Extract the member ids of the entity" (orgtrello-data/--compute-fn entity '(orgtrello-data/hmember-ids orgtrello-data/list-id)))
 
 (defun orgtrello/--card-p (entity) "Is this a card?"           (orgtrello-data/list-id entity))
 (defun orgtrello/--checklist-p (entity) "Is this a checklist?" (orgtrello-data/card-id entity))
@@ -518,9 +521,12 @@ This is a list with the following elements:
 (defun orgtrello-data/grandparent (entry-meta) "Given an entry-meta, return the grandparent entry" (orgtrello-data/gethash-data :grandparent entry-meta))
 
 (defun orgtrello/--keyword (entity-meta &optional default-value) "Retrieve the keyword from the entity."                    (orgtrello-data/gethash-data :keyword entity-meta default-value))
-(defun orgtrello/--name (entity-meta) "Retrieve the name from the entity."                                                  (orgtrello-data/gethash-data :name entity-meta))
+(defun orgtrello/--name (entity-meta) "Retrieve the name from the entity."                                                  (orgtrello-data/gethash-data :name entity-meta (orgtrello-data/gethash-data 'name entity-meta))) ;; hack
 (defun orgtrello/--marker (entity-meta) "Retrieve the marker from the entity (id must be a trello id, otherwise, it's the marker)." (orgtrello-data/gethash-data :id entity-meta))
 (defun orgtrello/--id (entity-meta) "Retrieve the id from the entity (id must be a trello id, otherwise, it's the marker)." (let ((id (orgtrello/--marker entity-meta))) (when (orgtrello/id-p id) id)))
+
+(defun orgtrello/--id-or-marker (entity-meta) "Retrieve the id or the marker property." (orgtrello/--marker entity-meta))
+
 (defun orgtrello/--level (entity-meta) "Retrieve the level from the entity."                                                (orgtrello-data/gethash-data :level entity-meta))
 (defun orgtrello/--due (entity-meta) "Retrieve the due date from the entity."                                               (orgtrello-data/gethash-data :due entity-meta))
 (defun orgtrello/--user-assigned-ids (entity-meta) "Retrieve the users assigned to the entity."                             (orgtrello-data/gethash-data :users-assigned entity-meta))
@@ -529,6 +535,10 @@ This is a list with the following elements:
                                                                                                                                 orgtrello/--users-from))
 (defun orgtrello/--buffername (entity-meta) "Retrieve the point from the entity."                                           (orgtrello-data/gethash-data :buffername entity-meta))
 (defun orgtrello/--position (entity-meta) "Retrieve the point from the entity."                                             (orgtrello-data/gethash-data :position entity-meta))
+(defun orgtrello-data/hlist-id (entity-meta)                                                                                (orgtrello-data/gethash-data 'idList entity-meta))
+(defun orgtrello-data/hmember-ids (entity-meta)                                                                             (--> 'idMembers
+                                                                                                                                 (orgtrello-data/gethash-data it entity-meta)
+                                                                                                                                 (-map (lambda (i) i) it)))
 
 (defun orgtrello-data/retrieve-data  (symbol entity-data) "Own generic accessor"                                    (assoc-default symbol entity-data))
 (defun orgtrello-data/buffername     (entity-data) "Extract the buffername of the entity from the entity-data"      (orgtrello-data/retrieve-data 'buffername entity-data))
@@ -1961,8 +1971,8 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
       (list adjacency)))
 
 (defun orgtrello/--add-entity-to-entities (entity entities) "Adding entity to the hash entities."
-  (let ((entity-id (orgtrello-data/entity-id entity)))
-    (puthash (if entity-id entity-id (orgtrello/--marker entity)) entity entities)
+  (let ((entity-id (orgtrello-data/entity-id-or-marker entity)))
+    (puthash entity-id entity entities)
     entities))
 
 ;; FIXME find an already existing implementation.
@@ -1973,11 +1983,9 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
        (reverse it)))
 
 (defun orgtrello/--add-entity-to-adjacency (current-entity parent-entity adjacency) "Adding entity to the adjacency entry."
-  (let* ((current-id           (orgtrello-data/entity-id current-entity))
-         (current-id-or-marker (if current-id current-id (orgtrello/--marker current-entity)))
-         (parent-id            (orgtrello-data/entity-id parent-entity))
-         (parent-id-or-maker   (if parent-id parent-id (orgtrello/--marker parent-entity))))
-    (puthash parent-id-or-maker (orgtrello/--add-to-last-pos current-id-or-marker (gethash parent-id-or-maker adjacency)) adjacency)
+  (let* ((current-id (orgtrello-data/entity-id-or-marker current-entity))
+         (parent-id  (orgtrello-data/entity-id-or-marker parent-entity)))
+    (puthash parent-id (orgtrello/--add-to-last-pos current-id (gethash parent-id adjacency)) adjacency)
     adjacency))
 
 (defun orgtrello/--put-entities-with-adjacency (current-meta entities adjacency) "Deal with adding a new item to entities."
@@ -2019,7 +2027,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
                                                   (let* ((full-meta      (orgtrello-data/entry-get-full-metadata))
                                                          (current-entity (orgtrello-data/current full-meta))
                                                          (current-marker (orgtrello/--compute-marker-from-entry current-entity)))
-                                                    (unless (string= (orgtrello/--id current-entity) current-marker);; deal with not synced data
+                                                    (unless (orgtrello/id-p (orgtrello/--id current-entity))
                                                             (orgtrello/--set-marker current-marker)
                                                             (let ((current-meta (orgtrello-data/entry-get-full-metadata)))
                                                               ;; now add the entities to the global list
@@ -2039,52 +2047,66 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   (if data data (make-hash-table :test 'equal)))
 
 (defun orgtrello/--merge-item (trello-item org-item) "Merge trello and org item together."
-  (let ((org-item-to-merge (orgtrello/--init-map-from org-item)))
-    (puthash :level *ITEM-LEVEL*                         org-item-to-merge)
-    (puthash :id    (orgtrello-data/id trello-item)   org-item-to-merge)
-    (puthash :name  (orgtrello-data/name trello-item) org-item-to-merge)
-    (--> trello-item
-        (orgtrello-data/state it)
-        (orgtrello/--compute-state-item it)
-        (puthash :keyword it org-item-to-merge))
-    org-item-to-merge))
+  (if (null trello-item)
+      org-item
+      (let ((org-item-to-merge (orgtrello/--init-map-from       org-item)))
+        (puthash :level *ITEM-LEVEL*                             org-item-to-merge)
+        (puthash :id    (orgtrello-data/entity-id trello-item)   org-item-to-merge)
+        (puthash :name  (orgtrello-data/entity-name trello-item) org-item-to-merge)
+        (--> trello-item
+             (orgtrello-data/entity-state it)
+             (orgtrello/--compute-state-item it)
+             (puthash :keyword it org-item-to-merge))
+        org-item-to-merge)))
 
 (defun orgtrello/--merge-checklist (trello-checklist org-checklist) "Merge trello and org checklist together."
-  (let ((org-checklist-to-merge (orgtrello/--init-map-from org-checklist)))
-    (puthash :level *CHECKLIST-LEVEL*                     org-checklist-to-merge)
-    (puthash :name (orgtrello-data/name trello-checklist) org-checklist-to-merge)
-    (puthash :id   (orgtrello-data/id trello-checklist)   org-checklist-to-merge)
-    org-checklist-to-merge))
+  (if (null trello-checklist)
+      org-checklist
+      (let ((org-checklist-to-merge (orgtrello/--init-map-from org-checklist)))
+        (puthash :level *CHECKLIST-LEVEL*                            org-checklist-to-merge)
+        (puthash :name (orgtrello-data/entity-name trello-checklist) org-checklist-to-merge)
+        (puthash :id   (orgtrello-data/entity-id trello-checklist)   org-checklist-to-merge)
+        org-checklist-to-merge)))
 
 (defun orgtrello/--merge-users-assigned (trello-card org-card) "Merge users assigned from trello and org."
   (--> trello-card
-       (orgtrello-data/member-ids it)
+       (orgtrello-data/entity-member-ids it)
        (orgtrello-data/merge-2-lists-without-duplicates it (orgtrello/--user-assigned-ids-as-list org-card))
        (orgtrello/--users-to it)))
 
 (defun orgtrello/--merge-card (trello-card org-card) "Merge trello and org card together."
-  (let ((org-card-to-merge (orgtrello/--init-map-from org-card)))
-    (puthash :level   *CARD-LEVEL*                                                            org-card-to-merge)
-    (puthash :id      (orgtrello-data/id trello-card)                                         org-card-to-merge)
-    (puthash :name    (orgtrello-data/name trello-card)                                       org-card-to-merge)
-    (puthash :keyword (-> trello-card orgtrello-data/list-id orgtrello/--compute-card-status) org-card-to-merge)
-    (puthash :users-assigned (orgtrello/--merge-users-assigned trello-card org-card-to-merge) org-card-to-merge)
-    org-card-to-merge))
+  (if (null trello-card)
+      org-card
+      (let ((org-card-to-merge (orgtrello/--init-map-from org-card))
+            (htrello-card (if (hash-table-p trello-card) trello-card (orgtrello-hash/make-properties trello-card))))
+        (puthash :level   *CARD-LEVEL*                                                             org-card-to-merge)
+        (puthash :id      (orgtrello-data/entity-id htrello-card)                                  org-card-to-merge)
+        (puthash :name    (orgtrello-data/entity-name htrello-card)                                org-card-to-merge)
+        (puthash :keyword (-> htrello-card orgtrello-data/entity-list-id orgtrello/--compute-card-status) org-card-to-merge)
+        (puthash :users-assigned (orgtrello/--merge-users-assigned htrello-card org-card-to-merge) org-card-to-merge)
+        org-card-to-merge)))
 
 (defun orgtrello/--dispatch-merge-fn (entity) "Dispatch the function fn to merge the entity."
   (cond ((orgtrello-data/entity-card-p entity)      'orgtrello/--merge-card)
         ((orgtrello-data/entity-checklist-p entity) 'orgtrello/--merge-checklist)
         ((orgtrello-data/entity-item-p entity)      'orgtrello/--merge-item)))
 
-(defun orgtrello/--merge-entities (trello-data org-data) "Merge the trello entities inside the org-entities."
+(defun orgtrello/--merge-entities-trello-and-org (trello-data org-data) "Merge the org-entity entities inside the trello-entities."
   (let ((trello-entities  (first trello-data))
         (trello-adjacency (second trello-data))
         (org-entities     (first org-data))
         (org-adjacency    (second org-data)))
-    (maphash (lambda (id entity)
-               (puthash id (funcall (orgtrello/--dispatch-merge-fn entity) entity (orgtrello/--get-entity id org-entities))           trello-entities)   ;; updating entity to trello
-               (puthash id (orgtrello-data/merge-2-lists-without-duplicates (gethash id trello-adjacency) (gethash id org-adjacency)) trello-adjacency)) ;; update entity adjacency to trello
+
+    (maphash (lambda (id trello-entity)
+               (puthash id (funcall (orgtrello/--dispatch-merge-fn trello-entity) trello-entity (orgtrello/--get-entity id org-entities)) trello-entities) ;; updating entity to trello
+               (puthash id (orgtrello-data/merge-2-lists-without-duplicates (gethash id trello-adjacency) (gethash id org-adjacency))     trello-adjacency)) ;; update entity adjacency to trello
              trello-entities)
+
+    (maphash (lambda (id org-entity)
+               (puthash id (funcall (orgtrello/--dispatch-merge-fn org-entity) (-trace (orgtrello/--get-entity id trello-entities) :trello-entity) org-entity)    trello-entities) ;; updating entity to trello
+               (puthash id (orgtrello-data/merge-2-lists-without-duplicates (gethash id trello-adjacency) (gethash id org-adjacency))     trello-adjacency)) ;; update entity adjacency to trello
+             org-entities)
+
     (list trello-entities trello-adjacency)))
 
 (defun orgtrello/--update-property (id orgcheckbox-p) "Update the property depending on the nature of thing to sync. Move the cursor position."
@@ -2168,7 +2190,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
        ;; compute merge between already sync'ed entries and the trello data
        (-> data
            orgtrello/--compute-full-entities-from-trello                                          ;; slow computation with network access
-           (orgtrello/--merge-entities full-entities-synced-from-buffer)                          ;; slow merge computation
+           (orgtrello/--merge-entities-trello-and-org full-entities-synced-from-buffer)                          ;; slow merge computation
            ((lambda (entry) ;; hack to clean the org entries just before synchronizing the buffer
               (orgtrello/--cleanup-org-entries)
               entry))
