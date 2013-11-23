@@ -2323,12 +2323,14 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 (defun orgtrello/--remove-properties-file! (list-keywords users-hash-name-id user-me &optional update-todo-keywords) "Remove the current org-trello properties"
   (with-current-buffer (current-buffer)
     ;; compute the list of properties to purge
-    (->> `(,(orgtrello/compute-property *BOARD-ID*)
+    (->> `(":PROPERTIES"
+           ,(orgtrello/compute-property *BOARD-ID*)
            ,(orgtrello/compute-property *BOARD-NAME*)
            ,@(--map (orgtrello/compute-property (orgtrello/--convention-property-name it)) list-keywords)
            ,@(orgtrello/--compute-hash-name-id-to-list users-hash-name-id)
            ,(orgtrello/compute-property *ORGTRELLO-USER-ME* user-me)
-           ,(if update-todo-keywords "#+TODO: "))
+           ,(if update-todo-keywords "#+TODO: ")
+           ":END:")
          (mapc (lambda (property-to-remove) (orgtrello/--delete-buffer-property property-to-remove))))))
 
 (defun orgtrello/--compute-keyword-separation (name) "Given a keyword done (case insensitive) return a string '| done' or directly the keyword"
@@ -2365,13 +2367,17 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   (with-current-buffer (current-buffer)
     (goto-char (point-min))
     (set-buffer-file-coding-system 'utf-8-auto) ;; force utf-8
-    (->> `(,(format "#+PROPERTY: %s    %s" *BOARD-NAME* board-name)
+    (->> `(":PROPERTIES:"
+           ,(format "#+PROPERTY: %s    %s" *BOARD-NAME* board-name)
             ,(format "#+PROPERTY: %s      %s" *BOARD-ID* board-id)
             ,@(orgtrello/--compute-board-lists-hash-name-id board-lists-hash-name-id)
             ,(if update-todo-keywords (orgtrello/--properties-compute-todo-keywords-as-string board-lists-hash-name-id))
             ,@(orgtrello/--properties-compute-users-ids board-users-hash-name-id)
-            ,(format "#+PROPERTY: %s %s" *ORGTRELLO-USER-ME* user-me))
+            ,(format "#+PROPERTY: %s %s" *ORGTRELLO-USER-ME* user-me)
+            ":END:")
          (mapc (lambda (property-to-insert) (insert property-to-insert "\n"))))
+    (goto-char (point-min))
+    (org-cycle)
     (save-buffer)
     (orgtrello-action/reload-setup)))
 

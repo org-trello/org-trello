@@ -1,3 +1,4 @@
+:PROPERTIES:
 #+PROPERTY: board-name    api test board
 #+PROPERTY: board-id      51d99bbc1e1d8988390047f2
 #+PROPERTY: CANCELLED 51e538e6c7a68fa0510014ee
@@ -11,12 +12,11 @@
 #+PROPERTY: orgtrello-user-orgmode 5203a0c833fc36360800177f
 #+PROPERTY: orgtrello-user-ardumont 4f2baa2f72b7c1293501cad3
 #+PROPERTY: orgtrello-user-me ardumont
+:END:
 #+title: dummy sample to sync with trello
 #+author: Antoine R. Dumont
 
 * TODO Joy of FUN(ctional) LANGUAGES
-:PROPERTIES:
-:END:
 - [-] LISP family
   - [X] Emacs-Lisp
   - [X] Common-Lisp
@@ -29,7 +29,6 @@
   - [X] Scala
 * DONE Programming in scala
 :PROPERTIES:
-:END:
 - [-] chapters
   - [-] introduction
   - [-] Ch. 1 - A scalable language
@@ -46,6 +45,5 @@
   - [-] Ch. 12 - Traits
 * DONE Functional programming in Haskell
 :PROPERTIES:
-:END:
 * PENDING Questions about life, the universe and everything
 - [-] How to deal with promotion/demotion?
