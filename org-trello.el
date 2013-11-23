@@ -2066,8 +2066,8 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
         (org-entities     (first org-data))
         (org-adjacency    (second org-data)))
     (maphash (lambda (id entity)
-               (puthash id (funcall (orgtrello/--dispatch-merge-fn entity) entity (orgtrello/--get-entity id org-entities)) trello-entities)   ;; updating entity to trello
-               (puthash id (orgtrello-data/merge-2-lists-without-duplicates (gethash id trello-adjacency) (gethash id org-adjacency))                trello-adjacency)) ;; update entity adjacency to trello
+               (puthash id (funcall (orgtrello/--dispatch-merge-fn entity) entity (orgtrello/--get-entity id org-entities))           trello-entities)   ;; updating entity to trello
+               (puthash id (orgtrello-data/merge-2-lists-without-duplicates (gethash id trello-adjacency) (gethash id org-adjacency)) trello-adjacency)) ;; update entity adjacency to trello
              trello-entities)
     (list trello-entities trello-adjacency)))
 
