@@ -1,3 +1,15 @@
+# 0.2.5
+
+- [X] Backlog updates
+- [X] Global properties in upper case - https://github.com/ardumont/org-trello/issues/83
+- [X] Hide the global properties - https://github.com/ardumont/org-trello/issues/77
+- [X] Use of checkbox convention - https://github.com/ardumont/org-trello/issues/78
+- [X] Jumping from emacs to the current trello board - https://github.com/ardumont/org-trello/issues/76
+- [X] Simplify the update of the help menu to avoid possible desynchronisation with code
+- [X] Update documentation + TOC
+- [X] Version
+- [X] Release notes
+
 # 0.2.4
 
 - [X] Sprint backlog
