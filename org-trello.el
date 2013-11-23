@@ -2070,9 +2070,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun orgtrello/--merge-users-assigned (trello-card org-card) "Merge users assigned from trello and org."
   (--> trello-card
-       (-trace it :member-ids)
        (orgtrello-data/entity-member-ids it)
-       (-trace it :member-ids)
        (orgtrello-data/merge-2-lists-without-duplicates it (orgtrello/--user-assigned-ids-as-list org-card))
        (orgtrello/--users-to it)))
 
