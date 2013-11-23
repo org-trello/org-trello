@@ -12,6 +12,7 @@
 	- [0.1.1 -> 0.1.2](#011-->-012)
 - [TL;DR](#tl;dr)
 	- [Fast setup](#fast-setup)
+	- [Prefix binding override in one shot](#prefix-binding-override-in-one-shot)
 	- [Demo](#demo)
 		- [Synchronize one entity](#synchronize-one-entity)
 		- [Install](#install)
@@ -78,30 +79,9 @@ This will satisfy org-modians and trelloans won't see any difference!
 # Emacs version
 
 Tested on:
-- GNU Emacs 24.1.1 (x86_64-pc-linux-gnu, X toolkit, Xaw3d scroll bars) of 2012-09-22 on batsu, modified by Debian (<= 0.0.9)
 - GNU Emacs 24.3.1 (x86_64-pc-linux-gnu, X toolkit, Xaw3d scroll bars) of 2013-04-14 on marid, modified by Debian (from 0.1.0)
 
 # Migration
-
-## 0.2.2 -> 0.2.3
-
-If you are rightly not happy with "C-c o" as prefix, you can now specify your default prefix keybinding.
-For this, you need to install the following hook specifying the <prefix-key>:
-
-``` lisp
-(require 'org-trello)
-
-(add-hook 'org-trello-mode-hook (lambda () (org-trello/install-local-prefix-mode-keybinding! <prefix-key>)))
-```
-
-For example, installing using the "C-c x" as prefix key:
-``` lisp
-(require 'org-trello)
-
-(add-hook 'org-trello-mode-hook (lambda () (org-trello/install-local-prefix-mode-keybinding! "C-c x")))
-```
-
-*Note* If org-trello was already running. You need to relaunch the mode (`M-x org-trello-mode` twice).
 
 ## 0.2.1 -> 0.2.2
 
@@ -147,6 +127,26 @@ Yank this into a scratch buffer:
 then `M-x eval-buffer`
 
 Now open an org-mode buffer, then hit: `C-c o h`
+
+## Prefix binding override in one shot
+
+If you are not happy with "C-c o" as default prefix, you can now override your default prefix keybinding.
+For this, you need to install the following hook specifying the <prefix-key>:
+
+``` lisp
+(require 'org-trello)
+
+(add-hook 'org-trello-mode-hook (lambda () (org-trello/install-local-prefix-mode-keybinding! <prefix-key>)))
+```
+
+For example, installing using the "C-c x" as prefix key:
+``` lisp
+(require 'org-trello)
+
+(add-hook 'org-trello-mode-hook (lambda () (org-trello/install-local-prefix-mode-keybinding! "C-c x")))
+```
+
+*Note* If org-trello was already running, you will need to relaunch the mode (`M-x org-trello-mode` twice).
 
 ## Demo
 
@@ -220,7 +220,7 @@ TODO
 
 # Contributions
 
-- Pull Requests welcome (cf. [todo](./TODO.org) - use emacs org-mode buffer to read it
+- Pull Requests surely welcome (cf. [todo](./TODO.org) - use emacs org-mode buffer to read it)
 - Appreciate any feedback
 - Open issues if you want something to be done
 - Open issues for bugs too (please describe maximum inputs, emacs version, org-trello version, *Messages* buffer, stacktrace, etc...)
@@ -231,6 +231,8 @@ TODO
 [Release notes](./release-notes.md)
 
 # Install
+
+Marmalade one is recommended.
 
 ## marmalade - Stable version
 
@@ -260,6 +262,10 @@ Add this to your emacs's init file (~/.emacs, ~/.emacs.d/init.el, or *scratch*, 
 
 Then hit `M-x eval-buffer` to evaluate the buffer's contents.
 
+*Note*
+Melpa and Marmalade repositories package the same org-trello code (I try to only merge in master through PR and both release comes from the master branch).
+The divergence comes from the org-trello dependencies which are not the same version. So surely, the most stable remains marmalade.
+
 ## org-trello
 
 To install org-trello, use this:
@@ -269,7 +275,7 @@ To install org-trello, use this:
   (package-refresh-contents))
 
 (defvar my-packages '(elnode org-trello)
-  "A list of packages to ensure are installed at launch.")
+  "A list of packages installed once at launch.")
 
 (dolist (p my-packages)
   (when (not (package-installed-p p))
@@ -370,7 +376,7 @@ Keybindings        | Interactive commands                         | Description
 <kbd>C-c o i</kbd> | `M-x org-trello/install-key-and-token`       | Install the keys and the access-token.
 <kbd>C-c o I</kbd> | `M-x org-trello/install-board-and-lists-ids` | Select the board and attach the todo, doing and done list.
 <kbd>C-c o d</kbd> | `M-x org-trello/check-setup`                 | Check that the setup is ok. If everything is ok, will simply display 'Setup ok!'
-<kbd>C-c o x</kbd> | `M-x org-trello/delete-setup`                | Clean up the org buffer from all org-trello informations
+<kbd>C-c o D</kbd> | `M-x org-trello/delete-setup`                | Clean up the org buffer from all org-trello informations
 <kbd>C-c o b</kbd> | `M-x org-trello/create-board`                | Create interactively a board and attach the org-mode file to this trello board.
 <kbd>C-c o c</kbd> | `M-x org-trello/sync-entity`                 | Create/Update an entity (card/checklist/item) depending on its level and status. Do not deal with level superior to 4.
 <kbd>C-c o C</kbd> | `M-x org-trello/sync-full-entity`            | Create/Update a complete entity card/checklist/item and its subtree (depending on its level).
@@ -380,6 +386,7 @@ Keybindings        | Interactive commands                         | Description
 <kbd>C-c o K</kbd> | `M-x org-trello/kill-all-entities`           | Kill all the entities (and their arborescence tree) from the trello board and the org buffer.
 <kbd>C-c o a</kbd> | `M-x org-trello/assign-me`                   | Assign one-self to the current card
 <kbd>C-c o u</kbd> | `M-x org-trello/unassign-me`                 | Unassign one-self from the current card
+<kbd>C-c o g</kbd> | `M-x org-trello/go-to-trello-board`          | Browse to trello board
 <kbd>C-c o h</kbd> | `M-x org-trello/help-describing-bindings`    | This help message.
 
 # Use cases
