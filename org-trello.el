@@ -2594,6 +2594,12 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
      *do-save-buffer*
      *do-reload-setup*))
 
+(defun org-trello/go-to-trello-board () "Open the browser to the trello board"
+  (interactive)
+  (org-action/--controls-or-actions-then-do
+     '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties orgtrello/--control-encoding)
+     (lambda () (browse-url (concat "https://trello.com/b/" (orgtrello/--board-id))))))
+
 (defun org-trello/create-board () "Control first, then if ok, trigger the board creation."
   (interactive)
   (org-action/--deal-with-consumer-msg-controls-or-actions-then-do
@@ -2681,6 +2687,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 #PREFIX# S - M-x org-trello/sync-from-trello            - Synchronize the org-mode file from the trello board (trello -> org-mode).
 #PREFIX# k - M-x org-trello/kill-entity                 - Kill the entity (and its arborescence tree) from the trello board and the org buffer.
 #PREFIX# K - M-x org-trello/kill-all-entities           - Kill all the entities (and their arborescence tree) from the trello board and the org buffer.
+#PREFIX# g - M-x org-trello/go-to-trello-board          - Open the browser to your current trello board
 # HELP
 #PREFIX# h - M-x org-trello/help-describing-bindings    - This help message."))
     (replace-regexp-in-string "#PREFIX#" keybinding template-string t)))
@@ -2707,6 +2714,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
     (org-trello/kill-entity                 . "k")
     (org-trello/kill-all-entities           . "K")
     (org-trello/sync-to-trello              . "s")
+    (org-trello/go-to-trello-board          . "g")
     (org-trello/help-describing-bindings    . "h"))
   "List of command and default binding without the prefix key.")
 

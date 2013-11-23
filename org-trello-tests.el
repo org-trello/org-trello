@@ -1695,6 +1695,7 @@ C-c o s - M-x org-trello/sync-to-trello              - Synchronize the org-mode 
 C-c o S - M-x org-trello/sync-from-trello            - Synchronize the org-mode file from the trello board (trello -> org-mode).
 C-c o k - M-x org-trello/kill-entity                 - Kill the entity (and its arborescence tree) from the trello board and the org buffer.
 C-c o K - M-x org-trello/kill-all-entities           - Kill all the entities (and their arborescence tree) from the trello board and the org buffer.
+C-c o g - M-x org-trello/go-to-trello-board          - Open the browser to your current trello board
 # HELP
 C-c o h - M-x org-trello/help-describing-bindings    - This help message." (org-trello/--help-describing-bindings-template "C-c o")))
 
