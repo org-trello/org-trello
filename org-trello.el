@@ -1839,7 +1839,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   (if due-date (format "DEADLINE: <%s>\n" due-date) ""))
 
 (defun orgtrello/--private-compute-card-to-org-entry (name status due-date) "Compute the org format for card."
-  (format "* %s %s\n%s" status name (orgtrello/--compute-due-date due-date)))
+  (format "* %s %s\n%s" (if status status *TODO*) name (orgtrello/--compute-due-date due-date)))
 
 (defun orgtrello/--compute-card-to-org-entry (card &optional orgcheckbox-p) "Given a card, compute its org-mode entry equivalence. orgcheckbox-p is nil"
   (orgtrello/--private-compute-card-to-org-entry (orgtrello-data/entity-name card) (orgtrello-data/entity-state card) (orgtrello-data/entity-due card)))
