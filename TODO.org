@@ -752,10 +752,10 @@ CLOSED: [2013-11-24 dim. 00:18]
 - [X] Update documentation + TOC
 - [X] Version
 - [X] Release notes
-* TODO 0.2.6 [40%]
+* IN-PROGRESS 0.2.6 [60%]
 - [X] Jump to card - https://github.com/ardumont/org-trello/issues/88
 - [X] Rewrite convention for the "goto board" action into "jump to board"
-- [ ] Update Readme
+- [X] Update README.md
 - [ ] Version
 - [ ] Release Note
 * TODO 0.2.7 [%]
