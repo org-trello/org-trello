@@ -752,7 +752,13 @@ CLOSED: [2013-11-24 dim. 00:18]
 - [X] Update documentation + TOC
 - [X] Version
 - [X] Release notes
-* TODO 0.2.6 [%]
+* TODO 0.2.6 [0%]
+- [ ] jump to card - https://github.com/ardumont/org-trello/issues/88
+- [ ] Update Readme
+- [ ] Version
+- [ ] Release Note
+
+* TODO 0.2.7 [%]
 - [ ] Synchronize description - https://github.com/ardumont/org-trello/issues/80
 - [ ] Synchronize user comments - https://github.com/ardumont/org-trello/issues/86
 - [ ] More fined grained use of the trello api (retrieve only data we use) - https://github.com/ardumont/org-trello/issues/69
