@@ -4,7 +4,7 @@
 
 ;; Author: Antoine R. Dumont <eniotna.t AT gmail.com>
 ;; Maintainer: Antoine R. Dumont <eniotna.t AT gmail.com>
-;; Version: 0.2.5
+;; Version: 0.2.6
 ;; Package-Requires: ((org "8.0.7") (dash "1.5.0") (request "0.2.0") (cl-lib "0.3.0") (json "1.2") (elnode "0.9.9.7.6") (esxml "0.3.0") (s "1.7.0") (kv "0.0.17"))
 ;; Keywords: org-mode trello sync org-trello
 ;; URL: https://github.com/ardumont/org-trello
@@ -68,7 +68,7 @@
 
 ;; #################### static setup
 
-(defvar *ORGTRELLO-VERSION*           "0.2.5"                                           "Version")
+(defvar *ORGTRELLO-VERSION*           "0.2.6"                                           "Version")
 (defvar *consumer-key*                nil                                               "Id representing the user.")
 (defvar *access-token*                nil                                               "Read/write access token to use trello on behalf of the user.")
 (defvar *ORGTRELLO-MARKER*            "orgtrello-marker"                                "A marker used inside the org buffer to synchronize entries.")
@@ -88,6 +88,7 @@
 (defvar *ORGTRELLO-USER-ME*           "orgtrello-user-me"                               "Current user's property id.")
 (defvar *ORGTRELLO-USER-LOGGED-IN*    nil                                               "Current user logged in.")
 
+(defvar *ORGTRELLO-HTTPS*               "https://trello.com"                            "URL https to help in browsing")
 (defvar *ORGTRELLO-NATURAL-ORG-CHECKLIST* t
   "Permit the user to choose the natural org checklists over the first org-trello one (present from the start which are more basic).
    To alter this behavior, update in your init.el:
@@ -109,6 +110,9 @@ If you want to use this, we recommand to use the native org checklists - http://
 (defvar *ERROR-SYNC-ITEM-SYNC-CHECKLIST-FIRST* "Cannot synchronize the item - the checklist must be synchronized first. Skip it...")
 (defvar *ERROR-SYNC-ITEM-MISSING-NAME* "Cannot synchronize the item - missing mandatory name. Skip it...")
 (defvar *ERROR-SYNC-ITEM-SYNC-UPPER-LAYER-FIRST* "The card and the checklist must be synced before syncing the item. Skip it...")
+
+(defun org-trello/https-trello (url-without-base-uri) "An helper method to compute the uri to trello"
+  (concat *ORGTRELLO-HTTPS* url-without-base-uri))
 
 
 
@@ -2260,9 +2264,9 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun orgtrello/do-install-key-and-token () "Procedure to install the *consumer-key* and the token for the user in the config-file."
   (interactive)
-  (browse-url "https://trello.com/1/appKey/generate")
+  (browse-url (org-trello/https-trello "/1/appKey/generate"))
   (let ((orgtrello/--*consumer-key* (read-string "*consumer-key*: ")))
-    (browse-url (format "https://trello.com/1/authorize?response_type=token&name=org-trello&scope=read,write&expiration=never&key=%s" orgtrello/--*consumer-key*))
+    (browse-url (org-trello/https-trello (format "/1/authorize?response_type=token&name=org-trello&scope=read,write&expiration=never&key=%s" orgtrello/--*consumer-key*)))
     (let ((orgtrello/--access-token (read-string "Access-token: ")))
       (orgtrello/--do-install-config-file orgtrello/--*consumer-key* orgtrello/--access-token)
       "Install key and read/write access token done!")))
@@ -2594,11 +2598,24 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
      *do-save-buffer*
      *do-reload-setup*))
 
-(defun org-trello/go-to-trello-board () "Open the browser to the trello board"
+(defun org-trello/jump-to-card () "Jump to current card in browser."
   (interactive)
   (org-action/--controls-or-actions-then-do
      '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties orgtrello/--control-encoding)
-     (lambda () (browse-url (concat "https://trello.com/b/" (orgtrello/--board-id))))))
+     (lambda ()
+       (let* ((full-meta       (orgtrello-data/entry-get-full-metadata))
+              (entity          (orgtrello-data/current full-meta))
+              (right-entity-fn (cond ((orgtrello-data/entity-item-p entity)      'orgtrello-data/grandparent)
+                                     ((orgtrello-data/entity-checklist-p entity) 'orgtrello-data/parent)
+                                     ((orgtrello-data/entity-card-p entity)      'orgtrello-data/current))))
+         (-if-let (card-id (->> full-meta (funcall right-entity-fn) orgtrello-data/entity-id))
+                  (browse-url (org-trello/https-trello (format "/c/%s" card-id))))))))
+
+(defun org-trello/jump-to-trello-board () "Jump to current trello board."
+  (interactive)
+  (org-action/--controls-or-actions-then-do
+     '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties orgtrello/--control-encoding)
+     (lambda () (browse-url (org-trello/https-trello (format "/b/%s" (orgtrello/--board-id)))))))
 
 (defun org-trello/create-board () "Control first, then if ok, trigger the board creation."
   (interactive)
@@ -2701,7 +2718,8 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
     (org-trello/kill-entity                 "k" "Kill the entity (and its arborescence tree) from the trello board and the org buffer.")
     (org-trello/kill-all-entities           "K" "Kill all the entities (and their arborescence tree) from the trello board and the org buffer.")
     (org-trello/sync-to-trello              "s" "Synchronize the org-mode file to the trello board (org-mode -> trello).")
-    (org-trello/go-to-trello-board          "g" "Open the browser to your current trello board.")
+    (org-trello/jump-to-card                "j" "Jump to card in browser.")
+    (org-trello/jump-to-trello-board        "J" "Open the browser to your current trello board.")
     (org-trello/help-describing-bindings    "h" "This help message."))
   "List of command and default binding without the prefix key.")
 

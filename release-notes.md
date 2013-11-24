@@ -1,3 +1,11 @@
+# 0.2.6
+
+- [X] Jump to card - https://github.com/ardumont/org-trello/issues/88
+- [X] Rewrite convention for the "goto board" action into "jump to board"
+- [X] Update README.md
+- [X] Version
+- [X] Release Note
+
 # 0.2.5
 
 - [X] Backlog updates
