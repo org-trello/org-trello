@@ -111,6 +111,9 @@ If you want to use this, we recommand to use the native org checklists - http://
 (defvar *ERROR-SYNC-ITEM-MISSING-NAME* "Cannot synchronize the item - missing mandatory name. Skip it...")
 (defvar *ERROR-SYNC-ITEM-SYNC-UPPER-LAYER-FIRST* "The card and the checklist must be synced before syncing the item. Skip it...")
 
+(defun org-trello/https-trello (url-without-base-uri) "An helper method to compute the uri to trello"
+  (concat *ORGTRELLO-HTTPS* url-without-base-uri))
+
 
 
 ;; #################### orgtrello-version
@@ -2261,9 +2264,9 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun orgtrello/do-install-key-and-token () "Procedure to install the *consumer-key* and the token for the user in the config-file."
   (interactive)
-  (browse-url (format "%s/1/appKey/generate" *ORGTRELLO-HTTPS*))
+  (browse-url (org-trello/https-trello "/1/appKey/generate"))
   (let ((orgtrello/--*consumer-key* (read-string "*consumer-key*: ")))
-    (browse-url (format "%s/1/authorize?response_type=token&name=org-trello&scope=read,write&expiration=never&key=%s" *ORGTRELLO-HTTPS* orgtrello/--*consumer-key*))
+    (browse-url (org-trello/https-trello (format "/1/authorize?response_type=token&name=org-trello&scope=read,write&expiration=never&key=%s" orgtrello/--*consumer-key*)))
     (let ((orgtrello/--access-token (read-string "Access-token: ")))
       (orgtrello/--do-install-config-file orgtrello/--*consumer-key* orgtrello/--access-token)
       "Install key and read/write access token done!")))
@@ -2606,13 +2609,13 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
                                      ((orgtrello-data/entity-checklist-p entity) 'orgtrello-data/parent)
                                      ((orgtrello-data/entity-card-p entity)      'orgtrello-data/current))))
          (-if-let (card-id (->> full-meta (funcall right-entity-fn) orgtrello-data/entity-id))
-                  (browse-url (format "%s/c/%s" *ORGTRELLO-HTTPS* card-id)))))))
+                  (browse-url (org-trello/https-trello (format "/c/%s" card-id))))))))
 
 (defun org-trello/go-to-trello-board () "Open the browser to the trello board"
   (interactive)
   (org-action/--controls-or-actions-then-do
      '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties orgtrello/--control-encoding)
-     (lambda () (browse-url (format "%s/b/%s" *ORGTRELLO-HTTPS* (orgtrello/--board-id))))))
+     (lambda () (browse-url (org-trello/https-trello (format "/b/%s" (orgtrello/--board-id)))))))
 
 (defun org-trello/create-board () "Control first, then if ok, trigger the board creation."
   (interactive)
