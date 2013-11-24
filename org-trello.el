@@ -2594,6 +2594,19 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
      *do-save-buffer*
      *do-reload-setup*))
 
+(defun org-trello/jump-to-card () "Jump to current card in browser."
+  (interactive)
+  (org-action/--controls-or-actions-then-do
+     '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties orgtrello/--control-encoding)
+     (lambda ()
+       (let* ((full-meta       (orgtrello-data/entry-get-full-metadata))
+              (entity          (orgtrello-data/current full-meta))
+              (right-entity-fn (cond ((orgtrello-data/entity-item-p entity)      'orgtrello-data/grandparent)
+                                     ((orgtrello-data/entity-checklist-p entity) 'orgtrello-data/parent)
+                                     ((orgtrello-data/entity-card-p entity)      'orgtrello-data/current))))
+         (-if-let (card-id (->> full-meta (funcall right-entity-fn) orgtrello-data/entity-id))
+                  (browse-url (concat "https://trello.com/c/" card-id)))))))
+
 (defun org-trello/go-to-trello-board () "Open the browser to the trello board"
   (interactive)
   (org-action/--controls-or-actions-then-do
@@ -2702,6 +2715,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
     (org-trello/kill-all-entities           "K" "Kill all the entities (and their arborescence tree) from the trello board and the org buffer.")
     (org-trello/sync-to-trello              "s" "Synchronize the org-mode file to the trello board (org-mode -> trello).")
     (org-trello/go-to-trello-board          "g" "Open the browser to your current trello board.")
+    (org-trello/jump-to-card                "j" "Jump to card in browser.")
     (org-trello/help-describing-bindings    "h" "This help message."))
   "List of command and default binding without the prefix key.")
 
