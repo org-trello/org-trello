@@ -752,15 +752,23 @@ CLOSED: [2013-11-24 dim. 00:18]
 - [X] Update documentation + TOC
 - [X] Version
 - [X] Release notes
-* IN-PROGRESS 0.2.6 [100%]
+* DONE 0.2.6 [100%]
+CLOSED: [2013-12-01 dim. 16:40]
 - [X] Jump to card - https://github.com/ardumont/org-trello/issues/88
 - [X] Rewrite convention for the "goto board" action into "jump to board"
 - [X] Update README.md
 - [X] Version
 - [X] Release Note
-* TODO 0.2.7 [%]
+* TODO 0.2.7 [12%]
+- [X] Backlog
+- [ ] Create TODO template for the backlog start
+- [ ] Clean obsolete files (org-trello.org is no longer maintained, TODO-tests.org is no longer used)
 - [ ] Synchronize description - https://github.com/ardumont/org-trello/issues/80
 - [ ] Synchronize user comments - https://github.com/ardumont/org-trello/issues/86
+- [ ] Version
+- [ ] Update doc
+- [ ] Release notes
+* TODO 0.2.8
 - [ ] More fined grained use of the trello api (retrieve only data we use) - https://github.com/ardumont/org-trello/issues/69
 - [ ] Use trello labels and org tags as one - https://github.com/ardumont/org-trello/issues/70
 - [ ] Another Disposition about org's buffer - https://github.com/ardumont/org-trello/issues/33
