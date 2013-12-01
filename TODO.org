@@ -759,10 +759,10 @@ CLOSED: [2013-12-01 dim. 16:40]
 - [X] Update README.md
 - [X] Version
 - [X] Release Note
-* TODO 0.2.7 [25%]
+* IN-PROGRESS 0.2.7 [37%]
 - [X] Backlog
 - [X] Create TODO template for the backlog start
-- [ ] Clean obsolete files (org-trello.org is no longer maintained, TODO-tests.org is no longer used)
+- [X] Clean obsolete files (org-trello.org is no longer maintained, TODO-tests.org is no longer used)
 - [ ] Synchronize description - https://github.com/ardumont/org-trello/issues/80
 - [ ] Synchronize user comments - https://github.com/ardumont/org-trello/issues/86
 - [ ] Version
