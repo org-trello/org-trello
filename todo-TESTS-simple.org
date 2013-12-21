@@ -28,7 +28,6 @@
 - [X] hybrid family
   - [X] Scala
 * DONE Programming in scala
-:PROPERTIES:
 - [-] chapters
   - [-] introduction
   - [-] Ch. 1 - A scalable language
@@ -44,6 +43,5 @@
   - [-] Ch. 11 - Scala's hierarchy
   - [-] Ch. 12 - Traits
 * DONE Functional programming in Haskell
-:PROPERTIES:
 * PENDING Questions about life, the universe and everything
 - [-] How to deal with promotion/demotion?
