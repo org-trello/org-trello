@@ -759,13 +759,14 @@ CLOSED: [2013-12-01 dim. 16:40]
 - [X] Update README.md
 - [X] Version
 - [X] Release Note
-* IN-PROGRESS 0.2.7 [50%]
+* IN-PROGRESS 0.2.7 [40%]
 - [X] Backlog
 - [X] Create TODO template for the backlog start
 - [X] Clean obsolete files (org-trello.org is no longer maintained, TODO-tests.org is no longer used)
-- [X] Split into `namespace` files
-- [X] Ensure packaging is generated and ok for marmalade
-- [X] Ensure packaging is generated and ok for melpa - yes, ensure that the root `org-trello.el` is generated before pushing on master.
+- [X] Retry to split into `namespace` files - https://github.com/ardumont/org-trello/issues/93
+  - [X] Split into `namespace` files
+  - [X] Ensure packaging is generated and ok for marmalade
+  - [X] Ensure packaging is generated and ok for melpa - yes, ensure that the root `org-trello.el` is generated before pushing on master.
 - [ ] Rewrite the abstraction around fetched result to unify the `data model` (in and out identical)
 - [ ] Synchronize description - https://github.com/ardumont/org-trello/issues/80
 - [ ] Synchronize user comments - https://github.com/ardumont/org-trello/issues/86
