@@ -36,7 +36,10 @@ prepare:
 	mkdir -p $(PACKAGE_FOLDER)
 	cp -r org-trello.el org-trello-pkg.el $(PACKAGE_FOLDER)
 
-package: clean pkg-el prepare
+generate:
+	cask exec emacs -Q --batch -l ./package.el
+
+package: clean generate pkg-el prepare
 	tar cvf $(ARCHIVE) $(PACKAGE_FOLDER)
 	rm -rf $(PACKAGE_FOLDER)
 

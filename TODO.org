@@ -759,12 +759,14 @@ CLOSED: [2013-12-01 dim. 16:40]
 - [X] Update README.md
 - [X] Version
 - [X] Release Note
-* IN-PROGRESS 0.2.7 [36%]
+* IN-PROGRESS 0.2.7 [38%]
 - [X] Backlog
 - [X] Create TODO template for the backlog start
 - [X] Clean obsolete files (org-trello.org is no longer maintained, TODO-tests.org is no longer used)
 - [X] Split into `namespace` files
-- [ ] Ensure the packaging is still ok
+- [X] Ensure packaging is generated and ok for marmalade
+- [ ] Ensure packaging is generated and ok for melpa (is this possible?)
+  - [ ] Remove org-trello from Melpa? (too much deps interference + no hand on packaging)
 - [ ] Rewrite the abstraction around fetched result to unify the `data model` (in and out identical)
 - [ ] Synchronize description - https://github.com/ardumont/org-trello/issues/80
 - [ ] Synchronize user comments - https://github.com/ardumont/org-trello/issues/86
