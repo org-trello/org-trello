@@ -1,5 +1,7 @@
 
 
+(require 'org-trello-header)
+
 ;; #################### orgtrello-setup
 
 (defvar *ORGTRELLO-VERSION*           "0.2.6"                                           "Version")
@@ -52,3 +54,5 @@ If you want to use this, we recommand to use the native org checklists - http://
 
 (defun org-trello/version () (interactive) "Version of org-trello"
   (message "org-trello version: %s" *ORGTRELLO-VERSION*))
+
+(provide 'org-trello-setup)
