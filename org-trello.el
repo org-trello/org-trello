@@ -63,7 +63,12 @@
 (require 'timer)
 (require 's)
 (require 'kv)
+(require 'esxml)
+
+(provide 'org-trello-header)
 
+
+(require 'org-trello-header)
 
 ;; #################### orgtrello-setup
 
@@ -117,6 +122,8 @@ If you want to use this, we recommand to use the native org checklists - http://
 
 (defun org-trello/version () (interactive) "Version of org-trello"
   (message "org-trello version: %s" *ORGTRELLO-VERSION*))
+
+(provide 'org-trello-setup)
 
 
 ;; #################### orgtrello-log
@@ -144,6 +151,8 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
     (apply 'message args)))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-log loaded!")
+
+(provide 'org-trello-log)
 
 
 ;; #################### orgtrello-hash
@@ -192,6 +201,8 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
   (format ":%s:" s))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-hash loaded!")
+
+(provide 'org-trello-hash)
 
 
 ;; #################### orgtrello-cbx
@@ -403,6 +414,8 @@ This is a list with the following elements:
     (save-excursion (orgtrello/--map-checkboxes level fn-to-execute)))) ;; then map over the next checkboxes and sync them
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-cbx loaded!")
+
+(provide 'org-trello-cbx)
 
 
 ;; #################### orgtrello-data
@@ -563,6 +576,8 @@ This is a list with the following elements:
 (defun orgtrello-data/params-        (entity-data) "Extract the params property of the entity"                      (orgtrello-data/retrieve-data 'params entity-data))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-data loaded!")
+
+(provide 'org-trello-data)
 
 
 ;; #################### orgtrello-api
@@ -653,6 +668,8 @@ This is a list with the following elements:
   (orgtrello-hash/make-hash "GET" "/members/me"))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-api loaded!")
+
+(provide 'org-trello-api)
 
 
 ;; #################### orgtrello-query
@@ -730,6 +747,8 @@ This is a list with the following elements:
   (orgtrello-query/--http *TRELLO-URL* query-map sync success-callback error-callback t))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-query loaded!")
+
+(provide 'org-trello-query)
 
 
 ;; #################### orgtrello-action
@@ -810,6 +829,8 @@ This is a list with the following elements:
   (orgtrello-timer/start))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-action loaded!")
+
+(provide 'org-trello-action)
 
 
 ;; #################### orgtrello-proxy
@@ -1219,11 +1240,11 @@ This is a list with the following elements:
 (defun orgtrello-timer/stop () "Stop the orgtrello-timer." (orgtrello-proxy/http-consumer nil))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-proxy loaded!")
+
+(provide 'org-trello-proxy)
 
 
 ;; #################### orgtrello-admin
-
-(require 'esxml)
 
 (defun orgtrello-admin/--compute-root-static-files () "Root files under which css and js files are installed."
   (format "%s%s" elnode-webserver-docroot "org-trello/bootstrap"))
@@ -1518,6 +1539,8 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
     (if (string= "" id) (orgtrello-proxy/--delete-entities) (orgtrello-proxy/--delete-entity-with-id id))))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-admin loaded!")
+
+(provide 'org-trello-webadmin)
 
 
 ;; #################### orgtrello-proxy installation
@@ -1571,6 +1594,8 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   (orgtrello-proxy/start))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-proxy-install loaded!")
+
+(provide 'org-trello-install)
 
 
 ;; #################### org-trello

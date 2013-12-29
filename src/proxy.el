@@ -2,6 +2,11 @@
 
 (require 'org-trello-log)
 (require 'org-trello-setup)
+(require 'org-trello-hash)
+(require 'org-trello-query)
+(require 'org-trello-data)
+(require 'org-trello-action)
+(require 'org-trello-cbx)
 
 ;; #################### orgtrello-proxy
 
@@ -405,9 +410,9 @@
     ;; ok in any case
     (orgtrello-proxy/response-ok http-con)))
 
-(defun orgtrello-timer/start () "Start the orgtrello-timer." (orgtrello-proxy/http-consumer t))
+(defun orgtrello-proxy/timer-start () "Start the orgtrello-timer." (orgtrello-proxy/http-consumer t))
 
-(defun orgtrello-timer/stop () "Stop the orgtrello-timer." (orgtrello-proxy/http-consumer nil))
+(defun orgtrello-proxy/timer-stop () "Stop the orgtrello-timer." (orgtrello-proxy/http-consumer nil))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-proxy loaded!")
 

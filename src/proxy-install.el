@@ -2,6 +2,7 @@
 
 (require 'org-trello-log)
 (require 'org-trello-setup)
+(require 'org-trello-proxy)
 
 ;; #################### orgtrello-proxy installation
 
@@ -36,12 +37,12 @@
   ;; start the proxy
   (orgtrello-proxy/--start *ORGTRELLO-PROXY-PORT* *ORGTRELLO-PROXY-HOST*)
   ;; and the timer
-  (orgtrello-timer/start))
+  (orgtrello-proxy/timer-start))
 
 (defun orgtrello-proxy/stop () "Stopping the proxy."
   (orgtrello-log/msg *OT/TRACE* "Proxy-server stopping...")
   ;; stop the timer
-  (orgtrello-timer/stop)
+  (orgtrello-proxy/timer-stop)
   ;; then stop the proxy
   (elnode-stop *ORGTRELLO-PROXY-PORT*)
   (orgtrello-log/msg *OT/TRACE* "Proxy-server stopped!"))
@@ -55,4 +56,4 @@
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-proxy-install loaded!")
 
-(provide 'org-trello-install)
+(provide 'org-trello-proxy-install)

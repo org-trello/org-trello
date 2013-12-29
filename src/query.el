@@ -2,6 +2,7 @@
 
 (require 'org-trello-log)
 (require 'org-trello-setup)
+(require 'org-trello-data)
 
 ;; #################### orgtrello-query
 

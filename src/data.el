@@ -2,6 +2,9 @@
 
 (require 'org-trello-log)
 (require 'org-trello-setup)
+(require 'org-trello-cbx)
+(require 'org-trello-hash)
+(require 'org-trello-action)
 
 ;; #################### orgtrello-data
 
