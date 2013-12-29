@@ -65,8 +65,6 @@
 (require 'kv)
 (require 'esxml)
 
-(add-to-list 'load-path (expand-file-name "."))
-
 (provide 'org-trello-header)
 
 
@@ -455,6 +453,44 @@ If you want to use this, we recommand to use the native org checklists - http://
 (defun orgtrello/--current-level () "Compute the current level's position."
   (-> (orgtrello-data/metadata) orgtrello/--level))
 
+(defun orgtrello-data/--deal-with-value (values) "Deal with possible values "
+  (cond ((stringp values)        values)
+        ((arrayp values)         (mapcar (lambda (e) e) values))
+        ((eq :json-false values) nil)
+        ((eq 'complete values)   t)
+        ((eq 'incomplete values) nil)
+        (t                       values)))
+
+(defun orgtrello-data/--compute-level (entity-map) "Given a map, compute the entity level"
+  (cond ((gethash :list-id entity-map) *CARD-LEVEL*)
+        ((gethash :card-id entity-map) *CHECKLIST-LEVEL*)
+        ((gethash :checked entity-map) *ITEM-LEVEL*)))
+
+(defun orgtrello-data/from-trello (entity-alist) "Given a trello entity, convert into org-trello entity"
+  (let* ((map-keywords (orgtrello-hash/make-properties `((url . :url)
+                                                         (id . :id)
+                                                         (name . :name)
+                                                         (idMembers . :users-assigned)
+                                                         (idList . :list-id)
+                                                         (idChecklists . :checklists)
+                                                         (idBoard . :board-id)
+                                                         (due . :due)
+                                                         (desc . :description)
+                                                         (closed . :closed)
+                                                         (idCard . :card-id)
+                                                         (checkItems . :items)
+                                                         (state . :checked))))
+         (hmap         (--reduce-from (let ((key (car it))
+                                            (val (cdr it)))
+                                        (-when-let (new-key (gethash key map-keywords))
+                                                   (puthash new-key (orgtrello-data/--deal-with-value val) acc))
+                                        acc)
+                                      (make-hash-table :test 'equal)
+                                      entity-alist)))
+    ;; udpate the level
+    (puthash :level (orgtrello-data/--compute-level hmap) hmap)
+    hmap))
+
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-data loaded!")
 
 (provide 'org-trello-data)
@@ -796,7 +832,7 @@ This is a list with the following elements:
            :sync    (orgtrello-data/sync   query-map)
            :type    (orgtrello-data/method query-map)
            :params  (orgtrello-data/merge-2-lists-without-duplicates (when authentication-p (orgtrello-query/--authentication-params)) (orgtrello-data/params query-map))
-           :parser  'json-read
+           :parser  (lambda () (let ((result (json-read))) (message "%s" result) result))
            :success (if success-callback success-callback 'orgtrello-query/--standard-success-callback)
            :error   (if error-callback error-callback 'orgtrello-query/--standard-error-callback)))
 
@@ -807,7 +843,7 @@ This is a list with the following elements:
            :params  (when authentication-p (orgtrello-query/--authentication-params))
            :headers '(("Content-type" . "application/json"))
            :data    (->> query-map orgtrello-data/params json-encode)
-           :parser  'json-read
+           :parser  (lambda () (let ((result (json-read))) (message "%s" result) result))
            :success (if success-callback success-callback 'orgtrello-query/--standard-success-callback)
            :error   (if error-callback error-callback 'orgtrello-query/--standard-error-callback)))
 
@@ -894,7 +930,7 @@ This is a list with the following elements:
   (let ((orgtrello-elnode/--list-files-result (--filter (file-regular-p it) (directory-files directory t))))
     (unless sort-lexicographically
             orgtrello-elnode/--list-files-result
-            (sort orgtrello-elnode/list-files-result 'orgtrello-elnode/--dictionary-lessp))))
+            (sort orgtrello-elnode/--list-files-result 'orgtrello-elnode/--dictionary-lessp))))
 
 (defun orgtrello-elnode/remove-file (file-to-remove) "Remove metadata file."
   (when (file-exists-p file-to-remove) (delete-file file-to-remove)))
@@ -2277,7 +2313,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
        ;; compute merge between already sync'ed entries and the trello data
        (-> data
            orgtrello/--compute-full-entities-from-trello                                          ;; slow computation with network access
-           (orgtrello/--merge-entities-trello-and-org full-entities-synced-from-buffer)                          ;; slow merge computation
+           (orgtrello/--merge-entities-trello-and-org full-entities-synced-from-buffer)           ;; slow merge computation
            ((lambda (entry) ;; hack to clean the org entries just before synchronizing the buffer
               (orgtrello/--cleanup-org-entries)
               entry))

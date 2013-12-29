@@ -23,7 +23,7 @@
            :sync    (orgtrello-data/sync   query-map)
            :type    (orgtrello-data/method query-map)
            :params  (orgtrello-data/merge-2-lists-without-duplicates (when authentication-p (orgtrello-query/--authentication-params)) (orgtrello-data/params query-map))
-           :parser  'json-read
+           :parser  (lambda () (let ((result (json-read))) (message "%s" result) result))
            :success (if success-callback success-callback 'orgtrello-query/--standard-success-callback)
            :error   (if error-callback error-callback 'orgtrello-query/--standard-error-callback)))
 
@@ -34,7 +34,7 @@
            :params  (when authentication-p (orgtrello-query/--authentication-params))
            :headers '(("Content-type" . "application/json"))
            :data    (->> query-map orgtrello-data/params json-encode)
-           :parser  'json-read
+           :parser  (lambda () (let ((result (json-read))) (message "%s" result) result))
            :success (if success-callback success-callback 'orgtrello-query/--standard-success-callback)
            :error   (if error-callback error-callback 'orgtrello-query/--standard-error-callback)))
 

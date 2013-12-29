@@ -163,6 +163,44 @@
 (defun orgtrello/--current-level () "Compute the current level's position."
   (-> (orgtrello-data/metadata) orgtrello/--level))
 
+(defun orgtrello-data/--deal-with-value (values) "Deal with possible values "
+  (cond ((stringp values)        values)
+        ((arrayp values)         (mapcar (lambda (e) e) values))
+        ((eq :json-false values) nil)
+        ((eq 'complete values)   t)
+        ((eq 'incomplete values) nil)
+        (t                       values)))
+
+(defun orgtrello-data/--compute-level (entity-map) "Given a map, compute the entity level"
+  (cond ((gethash :list-id entity-map) *CARD-LEVEL*)
+        ((gethash :card-id entity-map) *CHECKLIST-LEVEL*)
+        ((gethash :checked entity-map) *ITEM-LEVEL*)))
+
+(defun orgtrello-data/from-trello (entity-alist) "Given a trello entity, convert into org-trello entity"
+  (let* ((map-keywords (orgtrello-hash/make-properties `((url . :url)
+                                                         (id . :id)
+                                                         (name . :name)
+                                                         (idMembers . :users-assigned)
+                                                         (idList . :list-id)
+                                                         (idChecklists . :checklists)
+                                                         (idBoard . :board-id)
+                                                         (due . :due)
+                                                         (desc . :description)
+                                                         (closed . :closed)
+                                                         (idCard . :card-id)
+                                                         (checkItems . :items)
+                                                         (state . :checked))))
+         (hmap         (--reduce-from (let ((key (car it))
+                                            (val (cdr it)))
+                                        (-when-let (new-key (gethash key map-keywords))
+                                                   (puthash new-key (orgtrello-data/--deal-with-value val) acc))
+                                        acc)
+                                      (make-hash-table :test 'equal)
+                                      entity-alist)))
+    ;; udpate the level
+    (puthash :level (orgtrello-data/--compute-level hmap) hmap)
+    hmap))
+
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-data loaded!")
 
 (provide 'org-trello-data)

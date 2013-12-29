@@ -631,7 +631,7 @@
        ;; compute merge between already sync'ed entries and the trello data
        (-> data
            orgtrello/--compute-full-entities-from-trello                                          ;; slow computation with network access
-           (orgtrello/--merge-entities-trello-and-org full-entities-synced-from-buffer)                          ;; slow merge computation
+           (orgtrello/--merge-entities-trello-and-org full-entities-synced-from-buffer)           ;; slow merge computation
            ((lambda (entry) ;; hack to clean the org entries just before synchronizing the buffer
               (orgtrello/--cleanup-org-entries)
               entry))
