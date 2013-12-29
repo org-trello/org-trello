@@ -1,5 +1,3 @@
-
-
 (require 'org-trello-log)
 (require 'org-trello-setup)
 (require 'org-trello-proxy)
@@ -57,3 +55,5 @@
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-proxy-install loaded!")
 
 (provide 'org-trello-proxy-install)
+
+

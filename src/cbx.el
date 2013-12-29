@@ -1,5 +1,3 @@
-
-
 (require 'org-trello-log)
 (require 'org-trello-setup)
 (require 'org-trello-hash)
@@ -205,9 +203,6 @@ This is a list with the following elements:
         (funcall fn-to-execute)
         (orgtrello/--map-checkboxes level fn-to-execute)))
 
-(defun orgtrello/--current-level () "Compute the current level's position."
-  (-> (orgtrello-data/metadata) orgtrello/--level))
-
 (defun orgtrello/map-checkboxes (fn-to-execute) "Map over the current checkbox and sync them."
   (let ((level (orgtrello/--current-level)))
     (when (= level *CHECKLIST-LEVEL*) (funcall fn-to-execute))
@@ -216,3 +211,5 @@ This is a list with the following elements:
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-cbx loaded!")
 
 (provide 'org-trello-cbx)
+
+

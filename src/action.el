@@ -1,8 +1,5 @@
-
-
 (require 'org-trello-log)
 (require 'org-trello-setup)
-(require 'org-trello-proxy)
 
 ;; #################### orgtrello-action
 
@@ -73,14 +70,8 @@
      (when reload-setup-p (orgtrello-action/reload-setup))
      (unless nolog-p (orgtrello-log/msg *OT/INFO* (concat msg " - done!"))))))
 
-(defun org-action/--deal-with-consumer-msg-controls-or-actions-then-do (msg control-or-action-fns fn-to-execute &optional save-buffer-p reload-setup-p nolog-p) "Decorator fn to execute actions before/after the controls."
-  ;; stop the timer
-  (orgtrello-proxy/timer-stop)
-  ;; Execute as usual
-  (org-action/--msg-controls-or-actions-then-do msg control-or-action-fns fn-to-execute save-buffer-p reload-setup-p nolog-p)
-  ;; start the timer
-  (orgtrello-proxy/timer-start))
-
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-action loaded!")
 
 (provide 'org-trello-action)
+
+

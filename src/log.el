@@ -1,5 +1,3 @@
-
-
 ;; #################### orgtrello-log
 
 (defvar *OT/NOLOG* 0)
@@ -20,6 +18,8 @@ Levels:
 5 - log trace    (*OT/TRACE*)
 To change such level, add this to your init.el file: (setq *orgtrello-log/level* *OT/TRACE*)") ;;(setq *orgtrello-log/level* *OT/TRACE*)
 
+(setq *orgtrello-log/level* *OT/TRACE*)
+
 (defun orgtrello-log/msg (level &rest args) "Log message."
   (when (<= level *orgtrello-log/level*)
     (apply 'message args)))
@@ -27,3 +27,5 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-log loaded!")
 
 (provide 'org-trello-log)
+
+

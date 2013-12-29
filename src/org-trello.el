@@ -1,5 +1,3 @@
-
-
 (require 'org-trello-log)
 (require 'org-trello-setup)
 (require 'org-trello-action)
@@ -1206,3 +1204,5 @@
 (orgtrello-log/msg *OT/DEBUG* "org-trello loaded!")
 
 (provide 'org-trello)
+
+

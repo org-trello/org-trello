@@ -1,11 +1,9 @@
-
-
 (require 'org-trello-log)
 (require 'org-trello-setup)
 (require 'org-trello-proxy)
 (require 'org-trello-data)
 
-;; #################### orgtrello-admin
+;; #################### orgtrello-webadmin
 
 (defun orgtrello-admin/--compute-root-static-files () "Root files under which css and js files are installed."
   (format "%s%s" elnode-webserver-docroot "org-trello/bootstrap"))
@@ -302,3 +300,5 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-admin loaded!")
 
 (provide 'org-trello-webadmin)
+
+

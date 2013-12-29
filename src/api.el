@@ -1,5 +1,3 @@
-
-
 (require 'org-trello-log)
 (require 'org-trello-setup)
 (require 'org-trello-hash)
@@ -94,3 +92,5 @@
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-api loaded!")
 
 (provide 'org-trello-api)
+
+

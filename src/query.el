@@ -1,5 +1,3 @@
-
-
 (require 'org-trello-log)
 (require 'org-trello-setup)
 (require 'org-trello-data)
@@ -81,3 +79,5 @@
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-query loaded!")
 
 (provide 'org-trello-query)
+
+

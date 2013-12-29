@@ -1,14 +1,14 @@
 ;; Just to reference the org-trello `namespaces`
 
 (defvar *ORG-TRELLO-FILES* '("src/header.el"
-                             "src/setup.el"
                              "src/log.el"
+                             "src/setup.el"
                              "src/hash.el"
-                             "src/cbx.el"
+                             "src/action.el"
                              "src/data.el"
+                             "src/cbx.el"
                              "src/api.el"
                              "src/query.el"
-                             "src/action.el"
                              "src/proxy.el"
                              "src/webadmin.el"
                              "src/proxy-install.el"

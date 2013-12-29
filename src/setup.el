@@ -1,7 +1,5 @@
-
-
 (require 'org-trello-header)
-(require 'org-trello-setup)
+(require 'org-trello-log)
 
 ;; #################### orgtrello-setup
 
@@ -56,4 +54,8 @@ If you want to use this, we recommand to use the native org checklists - http://
 (defun org-trello/version () (interactive) "Version of org-trello"
   (message "org-trello version: %s" *ORGTRELLO-VERSION*))
 
+(orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-setup loaded!")
+
 (provide 'org-trello-setup)
+
+

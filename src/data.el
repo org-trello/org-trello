@@ -1,8 +1,5 @@
-
-
 (require 'org-trello-log)
 (require 'org-trello-setup)
-(require 'org-trello-cbx)
 (require 'org-trello-hash)
 (require 'org-trello-action)
 
@@ -163,6 +160,11 @@
 (defun orgtrello-data/uri-           (entity-data) "Extract the uri property of the entity"                         (orgtrello-data/retrieve-data 'uri entity-data))
 (defun orgtrello-data/params-        (entity-data) "Extract the params property of the entity"                      (orgtrello-data/retrieve-data 'params entity-data))
 
+(defun orgtrello/--current-level () "Compute the current level's position."
+  (-> (orgtrello-data/metadata) orgtrello/--level))
+
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-data loaded!")
 
 (provide 'org-trello-data)
+
+
