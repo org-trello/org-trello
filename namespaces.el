@@ -11,7 +11,6 @@
                              "src/query.el"
                              "src/proxy.el"
                              "src/webadmin.el"
-                             "src/proxy-install.el"
                              "src/org-trello.el"
                              "src/footer.el") "Splitted org-trello files.")
 

@@ -4,7 +4,6 @@
 (require 'org-trello-hash)
 (require 'org-trello-api)
 (require 'org-trello-data)
-(require 'org-trello-proxy-install)
 (require 'org-trello-cbx)
 (require 'org-trello-query)
 
