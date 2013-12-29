@@ -63,5 +63,6 @@
 (require 'timer)
 (require 's)
 (require 'kv)
+(require 'esxml)
 
 (provide 'org-trello-header)

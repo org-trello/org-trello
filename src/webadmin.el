@@ -2,8 +2,6 @@
 
 ;; #################### orgtrello-admin
 
-(require 'esxml)
-
 (defun orgtrello-admin/--compute-root-static-files () "Root files under which css and js files are installed."
   (format "%s%s" elnode-webserver-docroot "org-trello/bootstrap"))
 
