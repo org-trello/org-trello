@@ -209,3 +209,5 @@ This is a list with the following elements:
     (save-excursion (orgtrello/--map-checkboxes level fn-to-execute)))) ;; then map over the next checkboxes and sync them
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-cbx loaded!")
+
+(provide 'org-trello-cbx)

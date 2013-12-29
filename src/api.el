@@ -88,3 +88,5 @@
   (orgtrello-hash/make-hash "GET" "/members/me"))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-api loaded!")
+
+(provide 'org-trello-api)

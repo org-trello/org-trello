@@ -51,3 +51,5 @@
   (orgtrello-proxy/start))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-proxy-install loaded!")
+
+(provide 'org-trello-install)

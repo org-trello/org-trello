@@ -75,3 +75,5 @@
   (orgtrello-query/--http *TRELLO-URL* query-map sync success-callback error-callback t))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-query loaded!")
+
+(provide 'org-trello-query)

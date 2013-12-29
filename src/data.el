@@ -158,3 +158,5 @@
 (defun orgtrello-data/params-        (entity-data) "Extract the params property of the entity"                      (orgtrello-data/retrieve-data 'params entity-data))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-data loaded!")
+
+(provide 'org-trello-data)

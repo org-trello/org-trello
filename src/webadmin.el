@@ -297,3 +297,5 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
     (if (string= "" id) (orgtrello-proxy/--delete-entities) (orgtrello-proxy/--delete-entity-with-id id))))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-admin loaded!")
+
+(provide 'org-trello-webadmin)
