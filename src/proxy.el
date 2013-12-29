@@ -5,6 +5,8 @@
 (require 'org-trello-data)
 (require 'org-trello-action)
 (require 'org-trello-cbx)
+(require 'org-trello-elnode)
+(require 'org-trello-webadmin)
 
 ;; #################### orgtrello-proxy
 
@@ -46,9 +48,6 @@
   (elnode-http-start http-con 201 '("Content-type" . "application/json"))
   (elnode-http-return http-con (json-encode data)))
 
-(defun orgtrello-proxy/--compute-entity-level-dir (level) "Given a level, compute the folder onto which the file will be serialized."
-  (format "%s%s/%s/" elnode-webserver-docroot "org-trello" level))
-
 (defun orgtrello-proxy/response-ok (http-con) "OK response from the proxy to the client."
   ;; all is good
   (orgtrello-proxy/--response http-con '((status . "ok"))))
@@ -75,7 +74,7 @@
          (position             (orgtrello-data/position query-map-wrapped))              ;; position is mandatory
          (buffer-name          (orgtrello-data/buffername query-map-wrapped))            ;; buffer-name is mandatory
          (level                (orgtrello-data/level query-map-wrapped))
-         (root-dir             (orgtrello-proxy/--compute-entity-level-dir level)))
+         (root-dir             (orgtrello-elnode/compute-entity-level-dir level)))
     ;; generate a file with the entity information
     (with-temp-file (orgtrello-proxy/--compute-metadata-filename root-dir buffer-name position)
       (insert (format "%S\n" query-map-wrapped)))
@@ -93,9 +92,6 @@
        sha1
        (concat *ORGTRELLO-MARKER* "-")))
 
-(defun orgtrello-proxy/--remove-file (file-to-remove) "Remove metadata file."
-  (when (file-exists-p file-to-remove) (delete-file file-to-remove)))
-
 (defun orgtrello-proxy/--update-buffer-to-save (buffer-name buffers-to-save) "Add the buffer-name to the list if not already present"
   (if (member buffer-name buffers-to-save)
       buffers-to-save
@@ -107,7 +103,7 @@
   (setq *ORGTRELLO-LIST-BUFFERS-TO-SAVE* (orgtrello-proxy/--update-buffer-to-save buffer-name *ORGTRELLO-LIST-BUFFERS-TO-SAVE*)))
 
 (defun orgtrello-proxy/--cleanup-and-save-buffer-metadata (archive-file buffer-name) "To cleanup metadata after the all actions are done!"
-  (orgtrello-proxy/--remove-file archive-file) ;; cleanup archive file
+  (orgtrello-elnode/remove-file archive-file) ;; cleanup archive file
   (orgtrello-proxy/update-buffer-to-save! buffer-name)) ;; register the buffer for later saving
 
 (defun orgtrello-proxy/batch-save (buffers) "Save sequentially a list of buffers."
@@ -167,11 +163,8 @@
                         (when str-msg (orgtrello-log/msg *OT/INFO* str-msg)))))
                   (orgtrello-proxy/--cleanup-and-save-buffer-metadata orgtrello-proxy/--entry-file orgtrello-proxy/--entry-buffer-name))))))
 
-(defun orgtrello-proxy/--archived-scanning-dir (dir-name) "Given a filename, return the archived scanning directory"
-  (format "%s.scanning" dir-name))
-
 (defun orgtrello-proxy/--archived-scanning-file (file) "Given a filename, return its archived filename if we were to move such file."
-  (format "%s/%s" (orgtrello-proxy/--archived-scanning-dir (file-name-directory file)) (file-name-nondirectory file)))
+  (format "%s/%s" (orgtrello-elnode/archived-scanning-dir (file-name-directory file)) (file-name-nondirectory file)))
 
 (defun orgtrello-proxy/--archive-entity-file-when-scanning (file-to-archive file-archive-name) "Move the file to the running folder to specify a sync is running."
   (rename-file file file-archive-name t))
@@ -195,7 +188,7 @@
                                      (function* (lambda (&key error-thrown &allow-other-keys)
                                                   (orgtrello-log/msg *OT/ERROR* "client - Problem during the sync request to the proxy- error-thrown: %s" error-thrown)
                                                   (orgtrello-proxy/--cleanup-meta oq/--entity-full-meta)
-                                                  (orgtrello-proxy/--remove-file oq/--entry-file-archived)
+                                                  (orgtrello-elnode/remove-file oq/--entry-file-archived)
                                                   (throw 'org-trello-timer-go-to-sleep t))))
         ;; cannot execute the request
         (progn
@@ -254,7 +247,7 @@
          (function* (lambda (&key error-thrown &allow-other-keys)
                       (orgtrello-log/msg *OT/ERROR* "client - Problem during the deletion request to the proxy- error-thrown: %s" error-thrown)
                       (orgtrello-proxy/--cleanup-meta oq/--entity-full-meta)
-                      (orgtrello-proxy/--remove-file oq/--entry-file-archived)
+                      (orgtrello-elnode/remove-file oq/--entry-file-archived)
                       (throw 'org-trello-timer-go-to-sleep t))))
         (progn
           (orgtrello-log/msg *OT/INFO* orgtrello-query/--query-map)
@@ -265,50 +258,16 @@
         ;; extract the entity data
         (orgtrello-proxy/--deal-with-entity-action (-> file orgtrello-proxy/--read-lines read) file)))
 
-(defun dictionary-lessp (str1 str2) "return t if STR1 is < STR2 when doing a dictionary compare (splitting the string at numbers and doing numeric compare with them)"
-  (dict-lessp (dict-split str1) (dict-split str2)))
-
-(defun dict-lessp (slist1 slist2) "compare the two lists of strings & numbers"
-  (cond ((null slist1)                                       (not (null slist2)))
-        ((null slist2)                                       nil)
-        ((and (numberp (car slist1)) (stringp (car slist2))) t)
-        ((and (numberp (car slist2)) (stringp (car slist1))) nil)
-        ((and (numberp (car slist1)) (numberp (car slist2))) (or (< (car slist1) (car slist2))
-                                                                 (and (= (car slist1) (car slist2))
-                                                                      (dict-lessp (cdr slist1) (cdr slist2)))))
-        (t                                                   (or (string-lessp (car slist1) (car slist2))
-                                                                 (and (string-equal (car slist1) (car slist2))
-                                                                      (dict-lessp (cdr slist1) (cdr slist2)))))))
-
-(defun dict-split (str) "split a string into a list of number and non-number components"
-  (save-match-data
-    (let ((res nil))
-      (while (and str (not (string-equal "" str)))
-        (let ((p (string-match "[0-9]*\\.?[0-9]+" str)))
-          (cond ((null p) (setq res (cons str res))
-                          (setq str nil))
-                ((= p 0)  (setq res (cons (string-to-number (match-string 0 str)) res))
-                          (setq str (substring str (match-end 0))))
-                (t        (setq res (cons (substring str 0 (match-beginning 0)) res))
-                          (setq str (substring str (match-beginning 0)))))))
-      (reverse res))))
-
-(defun orgtrello-proxy/--list-files (directory &optional sort-lexicographically) "Compute list of regular files (no directory . and ..). List is sorted lexicographically if sort-flag-lexicographically is set, naturally otherwise."
-  (let ((orgtrello-proxy/--list-files-result (--filter (file-regular-p it) (directory-files directory t))))
-    (unless sort-lexicographically
-        orgtrello-proxy/--list-files-result
-        (sort orgtrello-proxy/--list-files-result 'dictionary-lessp))))
-
 (defun orgtrello-proxy/--deal-with-directory-action (level directory) "Given a directory, list the files and take the first one (entity) and do some action on it with trello. Call again if it remains other entities."
-  (-when-let (orgtrello-proxy/--files (orgtrello-proxy/--list-files directory))
+  (-when-let (orgtrello-proxy/--files (orgtrello-elnode/list-files directory))
              (orgtrello-proxy/--deal-with-entity-file-action (car orgtrello-proxy/--files))
              ;; if it potentially remains files, recall recursively this function
              (when (< 1 (length orgtrello-proxy/--files)) (orgtrello-proxy/--deal-with-level level directory))))
 
 (defun orgtrello-proxy/--level-done-p (level) "Does all the entities for the level are their actions done?"
   (-> level
-      orgtrello-proxy/--compute-entity-level-dir
-      orgtrello-proxy/--list-files
+      orgtrello-elnode/compute-entity-level-dir
+      orgtrello-elnode/list-files
       null))
 
 (defun orgtrello-proxy/--level-inf-done-p (level) "Ensure the actions of the lower level is done (except for level 1 which has no deps)!"
@@ -322,16 +281,16 @@
      (throw 'org-trello-timer-go-to-sleep t)))
 
 (defun orgtrello-proxy/--deal-with-archived-files (level) "Given a level, move all the remaining archived files into the scan folder from the same level."
-  (let ((level-dir (orgtrello-proxy/--compute-entity-level-dir level)))
+  (let ((level-dir (orgtrello-elnode/compute-entity-level-dir level)))
     (mapc (lambda (file) (rename-file file (format "%s%s" level-dir (file-name-nondirectory file)) t)) (-> level-dir
-                                                                                                           orgtrello-proxy/--archived-scanning-dir
-                                                                                                           orgtrello-proxy/--list-files))))
+                                                                                                           orgtrello-elnode/archived-scanning-dir
+                                                                                                           orgtrello-elnode/list-files))))
 
 (defun orgtrello-proxy/--consumer-entity-files-hierarchically-and-do () "A handler to extract the entity informations from files (in order card, checklist, items)."
   (with-local-quit
     (dolist (l *ORGTRELLO-LEVELS*) (orgtrello-proxy/--deal-with-archived-files l))  ;; if archived file exists, get them back in the queue before anything else
     (catch 'org-trello-timer-go-to-sleep     ;; if some check regarding order fails, we catch and let the timer sleep. The next time, the trigger will get back normally to the upper level in order
-      (dolist (l *ORGTRELLO-LEVELS*) (orgtrello-proxy/--deal-with-level l (orgtrello-proxy/--compute-entity-level-dir l))))
+      (dolist (l *ORGTRELLO-LEVELS*) (orgtrello-proxy/--deal-with-level l (orgtrello-elnode/compute-entity-level-dir l))))
     (orgtrello-proxy/batch-save!))) ;; we need to save the modified buffers
 
 (defun orgtrello-proxy/--compute-lock-filename () "Compute the name of a lock file"
@@ -344,7 +303,7 @@
     (insert "Timer - Scanning entities...")))
 
 (defun orgtrello-proxy/--timer-delete-lock (lock-file) "Cleanup after the timer has been triggered."
-  (orgtrello-proxy/--remove-file lock-file))
+  (orgtrello-elnode/remove-file lock-file))
 
 (defun orgtrello-proxy/--consumer-lock-and-scan-entity-files-hierarchically-and-do () "A handler to extract the entity informations from files (in order card, checklist, items)."
   (undo-boundary)
@@ -379,8 +338,8 @@
 (defun orgtrello-proxy/--prepare-filesystem () "Prepare the filesystem for every level."
   (dolist (l *ORGTRELLO-LEVELS*)
     (-> l
-        orgtrello-proxy/--compute-entity-level-dir
-        orgtrello-proxy/--archived-scanning-dir
+        orgtrello-elnode/compute-entity-level-dir
+        orgtrello-elnode/archived-scanning-dir
         (mkdir t))))
 
 (defvar *ORGTRELLO-TIMER* nil "A timer run by elnode")
@@ -426,10 +385,10 @@
 
 (defvar *ORGTRELLO-QUERY-APP-ROUTES*
   '(;; proxy to request trello
-    ("^localhost//proxy/admin/entities/current/\\(.*\\)" . orgtrello-proxy/--elnode-current-entity)
-    ("^localhost//proxy/admin/entities/next/\\(.*\\)" . orgtrello-proxy/--elnode-next-entities)
-    ("^localhost//proxy/admin/entities/delete/\\(.*\\)" . orgtrello-proxy/--elnode-delete-entity)
-    ("^localhost//proxy/admin/\\(.*\\)" . orgtrello-proxy/--elnode-admin)
+    ("^localhost//proxy/admin/entities/current/\\(.*\\)" . orgtrello-webadmin/elnode-current-entity)
+    ("^localhost//proxy/admin/entities/next/\\(.*\\)" . orgtrello-webadmin/elnode-next-entities)
+    ("^localhost//proxy/admin/entities/delete/\\(.*\\)" . orgtrello-webadmin/elnode-delete-entity)
+    ("^localhost//proxy/admin/\\(.*\\)" . orgtrello-webadmin/--elnode-admin)
     ;; proxy to request trello
     ("^localhost//proxy/trello/\\(.*\\)" . orgtrello-proxy/--elnode-proxy)
     ;; proxy producer to receive async creation request
@@ -437,7 +396,7 @@
     ;; proxy to request trello
     ("^localhost//proxy/timer/\\(.*\\)" . orgtrello-proxy/--elnode-timer)
     ;; static files
-    ("^localhost//static/\\(.*\\)/\\(.*\\)" . orgtrello-proxy/--elnode-static-file))
+    ("^localhost//static/\\(.*\\)/\\(.*\\)" . orgtrello-webadmin/elnode-static-file))
   "Org-trello dispatch routes for the webserver")
 
 (defun orgtrello-proxy/--proxy-handler (http-con) "Proxy handler."

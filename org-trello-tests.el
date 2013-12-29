@@ -355,24 +355,24 @@
   (expect nil (orgtrello/--item-compute-check nil "TODO" "TODO")) )
 
 (expectations
- (expect t (and (dictionary-lessp "a" "b")
-                (null (dictionary-lessp "b" "a"))
-                (null (dictionary-lessp "a" "a"))
-                (dictionary-lessp "1" "2")
-                (null (dictionary-lessp "2" "1"))
-                (null (dictionary-lessp "1" "1"))
-                (dictionary-lessp "1" "a")
-                (null (dictionary-lessp "a" "1"))
-                (dictionary-lessp "" "a")
-                (null (dictionary-lessp "a" ""))
+ (expect t (and (orgtrello-elnode/--dictionary-lessp "a" "b")
+                (null (orgtrello-elnode/--dictionary-lessp "b" "a"))
+                (null (orgtrello-elnode/--dictionary-lessp "a" "a"))
+                (orgtrello-elnode/--dictionary-lessp "1" "2")
+                (null (orgtrello-elnode/--dictionary-lessp "2" "1"))
+                (null (orgtrello-elnode/--dictionary-lessp "1" "1"))
+                (orgtrello-elnode/--dictionary-lessp "1" "a")
+                (null (orgtrello-elnode/--dictionary-lessp "a" "1"))
+                (orgtrello-elnode/--dictionary-lessp "" "a")
+                (null (orgtrello-elnode/--dictionary-lessp "a" ""))
 
-                (dictionary-lessp "ab12" "ab34")
-                (dictionary-lessp "ab12" "ab123")
-                (dictionary-lessp "ab12" "ab12d")
-                (dictionary-lessp "ab132" "ab132z")
+                (orgtrello-elnode/--dictionary-lessp "ab12" "ab34")
+                (orgtrello-elnode/--dictionary-lessp "ab12" "ab123")
+                (orgtrello-elnode/--dictionary-lessp "ab12" "ab12d")
+                (orgtrello-elnode/--dictionary-lessp "ab132" "ab132z")
 
-                (dictionary-lessp "132zzzzz" "ab132z")
-                (null (dictionary-lessp "1.32" "1ab")))))
+                (orgtrello-elnode/--dictionary-lessp "132zzzzz" "ab132z")
+                (null (orgtrello-elnode/--dictionary-lessp "1.32" "1ab")))))
 
 (expectations
  (expect 'orgtrello-proxy/--delete      (orgtrello-proxy/--dispatch-action "delete"))
@@ -404,8 +404,8 @@
   (expect '(3 5 7) (--map (funcall (compose-fn '((lambda (it) (+ 1 it)) (lambda (it) (* 2 it)))) it) '(1 2 3))))
 
 (expectations
-  (expect "entity name"             (orgtrello-admin/--detail-entity 3 '((name . "entity name"))))
-  (expect '((name . "entity name")) (orgtrello-admin/--detail-entity 5 '((name . "entity name")))))
+  (expect "entity name"             (orgtrello-webadmin/--detail-entity 3 '((name . "entity name"))))
+  (expect '((name . "entity name")) (orgtrello-webadmin/--detail-entity 5 '((name . "entity name")))))
 
 (expectations
  (expect '("error0" "error1") (org-action/--filter-error-messages '("error0" :ok "error1")))
@@ -765,7 +765,7 @@ DEADLINE: <some-date>
   (expect nil (orgtrello/--checklist-p `((anything-else . "this is not a item")))))
 
 (expectations
-  (expect (format "%sorg-trello/3/test.org-123.el" elnode-webserver-docroot) (orgtrello-proxy/--compute-filename-from-entity '((level . 3) (buffername . "test.org") (position . "123")))))
+  (expect (format "%sorg-trello/3/test.org-123.el" elnode-webserver-docroot) (orgtrello-webadmin/--compute-filename-from-entity '((level . 3) (buffername . "test.org") (position . "123")))))
 
 (with-temp-buffer
   (insert "- [X] call people [4/4] :PROPERTIES: {\"orgtrello-id\":\"456\"}")
@@ -965,9 +965,9 @@ DEADLINE: <some-date>
   (expect 'orgtrello/--item-delete      (gethash *ITEM-LEVEL* *MAP-DISPATCH-DELETE*)))
 
 (expectations
- (expect (format "%sorg-trello/1/" elnode-webserver-docroot) (orgtrello-proxy/--compute-entity-level-dir *CARD-LEVEL*))
- (expect (format "%sorg-trello/2/" elnode-webserver-docroot) (orgtrello-proxy/--compute-entity-level-dir *CHECKLIST-LEVEL*))
- (expect (format "%sorg-trello/3/" elnode-webserver-docroot) (orgtrello-proxy/--compute-entity-level-dir *ITEM-LEVEL*)))
+ (expect (format "%sorg-trello/1/" elnode-webserver-docroot) (orgtrello-elnode/compute-entity-level-dir *CARD-LEVEL*))
+ (expect (format "%sorg-trello/2/" elnode-webserver-docroot) (orgtrello-elnode/compute-entity-level-dir *CHECKLIST-LEVEL*))
+ (expect (format "%sorg-trello/3/" elnode-webserver-docroot) (orgtrello-elnode/compute-entity-level-dir *ITEM-LEVEL*)))
 
 (expectations
   (expect 50
@@ -1021,11 +1021,11 @@ DEADLINE: <some-date>
       (orgtrello/--compute-next-card-point))))
 
 (expectations
-  (expect '(tr nil (td nil) (td nil "Action") (td nil "Entity") (td nil "Delete")) (orgtrello-admin/--header-table)))
+  (expect '(tr nil (td nil) (td nil "Action") (td nil "Entity") (td nil "Delete")) (orgtrello-webadmin/--header-table)))
 
 (expectations
-  (expect '(input ((class . "btn btn-danger btn-mini") (type . "button") (onclick . "deleteEntities('/proxy/admin/entities/delete/id');") (value . "x"))) (orgtrello-admin/--delete-action '((id . "id"))))
-  (expect ""                                          (orgtrello-admin/--delete-action '((name . "name")))))
+  (expect '(input ((class . "btn btn-danger btn-mini") (type . "button") (onclick . "deleteEntities('/proxy/admin/entities/delete/id');") (value . "x"))) (orgtrello-webadmin/--delete-action '((id . "id"))))
+  (expect ""                                          (orgtrello-webadmin/--delete-action '((name . "name")))))
 
 (expectations
   (expect '(tr
@@ -1041,7 +1041,7 @@ DEADLINE: <some-date>
                   (type . "button")
                   (onclick . "deleteEntities('/proxy/admin/entities/delete/id');")
                   (value . "x")))))
-    (orgtrello-admin/--entity '((action . "test") (id . "id") (name . "name")) "icon-play"))
+    (orgtrello-webadmin/--entity '((action . "test") (id . "id") (name . "name")) "icon-play"))
 
   (expect '(tr
             ((class . "warning"))
@@ -1056,7 +1056,7 @@ DEADLINE: <some-date>
                   (type . "button")
                   (onclick . "deleteEntities('/proxy/admin/entities/delete/id');")
                   (value . "x")))))
-    (orgtrello-admin/--entity '((action . "delete") (id . "id") (name . "name")) "icon-pause"))
+    (orgtrello-webadmin/--entity '((action . "delete") (id . "id") (name . "name")) "icon-pause"))
 
   (expect '(tr
             ((class . "success"))
@@ -1071,7 +1071,7 @@ DEADLINE: <some-date>
                   (type . "button")
                   (onclick . "deleteEntities('/proxy/admin/entities/delete/id');")
                   (value . "x")))))
-    (orgtrello-admin/--entity '((action . "test") (name . "name 0") (id . "id")) "icon-play"))
+    (orgtrello-webadmin/--entity '((action . "test") (name . "name 0") (id . "id")) "icon-play"))
 
   (expect '(tr
             ((class . "warning"))
@@ -1086,7 +1086,7 @@ DEADLINE: <some-date>
                   (type . "button")
                   (onclick . "deleteEntities('/proxy/admin/entities/delete/id');")
                   (value . "x")))))
-    (orgtrello-admin/--entity '((action . "delete") (name . "name 1") (id . "id")) "icon-pause")))
+    (orgtrello-webadmin/--entity '((action . "delete") (name . "name 1") (id . "id")) "icon-pause")))
 
 (expectations
   (expect '(input
@@ -1094,7 +1094,7 @@ DEADLINE: <some-date>
              (type . "button")
              (onclick . "deleteEntities('/proxy/admin/entities/delete/');")
              (value . "x")))
-    (orgtrello-admin/--input-button-html "deleteEntities('/proxy/admin/entities/delete/');" "x")))
+    (orgtrello-webadmin/--input-button-html "deleteEntities('/proxy/admin/entities/delete/');" "x")))
 
 (expectations
   (expect '(div
@@ -1121,17 +1121,17 @@ DEADLINE: <some-date>
                       (value . "Delete all")))))
              (span
               ((id . "next-actions")))))
-    (orgtrello-admin/--main-body)))
+    (orgtrello-webadmin/--main-body)))
 
 (expectations
   (expect
       (esxml-to-xml `(div ((class . "hello")) "world"))
-    (orgtrello-admin/--render-html `(div ((class . "hello")) "world"))))
+    (orgtrello-webadmin/--render-html `(div ((class . "hello")) "world"))))
 
 (expectations
-  (expect "None" (orgtrello-admin/--entities-as-html nil))
-  (expect "None" (orgtrello-admin/--entities-as-html nil "icon-arrow-right"))
-  (expect "None" (orgtrello-admin/--entities-as-html nil "icon-arrow-right" "icon-arrow-left"))
+  (expect "None" (orgtrello-webadmin/--entities-as-html nil))
+  (expect "None" (orgtrello-webadmin/--entities-as-html nil "icon-arrow-right"))
+  (expect "None" (orgtrello-webadmin/--entities-as-html nil "icon-arrow-right" "icon-arrow-left"))
   (expect '(table
             ((class . "table table-striped table-bordered table-hover")
              (style . "font-size: 0.75em"))
@@ -1161,7 +1161,7 @@ DEADLINE: <some-date>
              (td nil "delete")
              (td nil "name 1")
              (td nil "")))
-    (orgtrello-admin/--entities-as-html '(((action . "create") (name . "name 0") (id . "id 0")) ((action . "delete") (name . "name 1")))))
+    (orgtrello-webadmin/--entities-as-html '(((action . "create") (name . "name 0") (id . "id 0")) ((action . "delete") (name . "name 1")))))
 
   (expect '(table
             ((class . "table table-striped table-bordered table-hover")
@@ -1187,7 +1187,7 @@ DEADLINE: <some-date>
              (td nil "delete")
              (td nil "name 1")
              (td nil "")))
-    (orgtrello-admin/--entities-as-html '(((action . "create") (name . "name 0")) ((action . "delete") (name . "name 1"))) "icon-arrow-right"))
+    (orgtrello-webadmin/--entities-as-html '(((action . "create") (name . "name 0")) ((action . "delete") (name . "name 1"))) "icon-arrow-right"))
 
   (expect '(table
             ((class . "table table-striped table-bordered table-hover")
@@ -1213,7 +1213,7 @@ DEADLINE: <some-date>
              (td nil "delete")
              (td nil "name 1")
              (td nil "")))
-    (orgtrello-admin/--entities-as-html '(((action . "create") (name . "name 0")) ((action . "delete") (name . "name 1"))) nil "icon-arrow-up"))
+    (orgtrello-webadmin/--entities-as-html '(((action . "create") (name . "name 0")) ((action . "delete") (name . "name 1"))) nil "icon-arrow-up"))
 
   (expect '(table
             ((class . "table table-striped table-bordered table-hover")
@@ -1239,7 +1239,7 @@ DEADLINE: <some-date>
              (td nil "delete")
              (td nil "name 1")
              (td nil "")))
-    (orgtrello-admin/--entities-as-html '(((action . "create") (name . "name 0")) ((action . "delete") (name . "name 1"))) "icon-play" "icon-pause")))
+    (orgtrello-webadmin/--entities-as-html '(((action . "create") (name . "name 0")) ((action . "delete") (name . "name 1"))) "icon-play" "icon-pause")))
 
 (expectations
   (expect '((tr
@@ -1268,14 +1268,14 @@ DEADLINE: <some-date>
                    (type . "button")
                    (onclick . "deleteEntities('/proxy/admin/entities/delete/id2');")
                    (value . "x"))))))
-    (orgtrello-admin/--list-entities-as-html '(((action . "action") (id . "id") (marker . "marker"))
-                                               ((action . "action") (id . "id2") (marker . "marker2"))) "next")))
+    (orgtrello-webadmin/--list-entities-as-html '(((action . "action") (id . "id") (marker . "marker"))
+                                                  ((action . "action") (id . "id2") (marker . "marker2"))) "next")))
 
 (expectations
-  (expect '(class . "success") (orgtrello-admin/--compute-class "icon-play"))
-  (expect '(class . "warning") (orgtrello-admin/--compute-class "icon-pause"))
-  (expect '(class . "")        (orgtrello-admin/--compute-class nil))
-  (expect '(class . "")        (orgtrello-admin/--compute-class "any")))
+  (expect '(class . "success") (orgtrello-webadmin/--compute-class "icon-play"))
+  (expect '(class . "warning") (orgtrello-webadmin/--compute-class "icon-pause"))
+  (expect '(class . "")        (orgtrello-webadmin/--compute-class nil))
+  (expect '(class . "")        (orgtrello-webadmin/--compute-class "any")))
 
 (expectations
  (expect :current (gethash :current (orgtrello-hash/make-hierarchy :current)))
@@ -1464,8 +1464,8 @@ DEADLINE: <some-date>
                 (orgtrello-cbx/--read-properties-from-point (point)))))
 
 (expectations
-  (expect "tests.scanning" (orgtrello-proxy/--archived-scanning-dir "tests"))
-  (expect "nil.scanning" (orgtrello-proxy/--archived-scanning-dir nil)))
+  (expect "tests.scanning" (orgtrello-elnode/archived-scanning-dir "tests"))
+  (expect "nil.scanning" (orgtrello-elnode/archived-scanning-dir nil)))
 
 (expectations
   (expect "test/folder/.scanning/filename" (orgtrello-proxy/--archived-scanning-file "test/folder/filename")))

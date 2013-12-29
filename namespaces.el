@@ -9,8 +9,9 @@
                              "src/cbx.el"
                              "src/api.el"
                              "src/query.el"
-                             "src/proxy.el"
+                             "src/elnode.el"
                              "src/webadmin.el"
+                             "src/proxy.el"
                              "src/org-trello.el"
                              "src/footer.el") "Splitted org-trello files.")
 
