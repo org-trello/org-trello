@@ -1,5 +1,8 @@
 
 
+(require 'org-trello-log)
+(require 'org-trello-setup)
+
 ;; #################### org-trello
 
 ;; Specific state - FIXME check if they do not already exist on org-mode to avoid potential collisions

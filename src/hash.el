@@ -1,5 +1,8 @@
 
 
+(require 'org-trello-log)
+(require 'org-trello-setup)
+
 ;; #################### orgtrello-hash
 
 (defun orgtrello-hash/make-hash-org (users-assigned level keyword name id due position buffer-name) "Utility function to ease the creation of the orgtrello-metadata"

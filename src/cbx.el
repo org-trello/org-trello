@@ -1,5 +1,8 @@
 
 
+(require 'org-trello-log)
+(require 'org-trello-setup)
+
 ;; #################### orgtrello-cbx
 
 (defun orgtrello-cbx/checkbox-p () "Is there a checkbox at point?"

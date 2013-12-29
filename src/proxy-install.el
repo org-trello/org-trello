@@ -1,5 +1,8 @@
 
 
+(require 'org-trello-log)
+(require 'org-trello-setup)
+
 ;; #################### orgtrello-proxy installation
 
 (defvar *ORGTRELLO-QUERY-APP-ROUTES*

@@ -1,5 +1,8 @@
 
 
+(require 'org-trello-log)
+(require 'org-trello-setup)
+
 ;; #################### orgtrello-action
 
 (defun trace (label e) "Decorator for some inaccessible code to easily 'message'."

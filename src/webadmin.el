@@ -1,5 +1,8 @@
 
 
+(require 'org-trello-log)
+(require 'org-trello-setup)
+
 ;; #################### orgtrello-admin
 
 (defun orgtrello-admin/--compute-root-static-files () "Root files under which css and js files are installed."

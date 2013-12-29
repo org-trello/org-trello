@@ -1,5 +1,8 @@
 
 
+(require 'org-trello-log)
+(require 'org-trello-setup)
+
 ;; #################### orgtrello-api
 
 (defun orgtrello-api/--deal-with-optional-value (optional-entry value entries) "Add the optional value depending on the entry. Return entries updated with value if entry, entries untouched otherwise."

@@ -1,5 +1,8 @@
 
 
+(require 'org-trello-log)
+(require 'org-trello-setup)
+
 ;; #################### orgtrello-query
 
 (defvar *TRELLO-URL* "https://api.trello.com/1" "The needed prefix url for trello")

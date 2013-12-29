@@ -1,5 +1,8 @@
 
 
+(require 'org-trello-log)
+(require 'org-trello-setup)
+
 ;; #################### orgtrello-proxy
 
 (defvar *ORGTRELLO-PROXY-HOST* "localhost" "proxy host")

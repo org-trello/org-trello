@@ -1,6 +1,7 @@
 
 
 (require 'org-trello-header)
+(require 'org-trello-setup)
 
 ;; #################### orgtrello-setup
 
