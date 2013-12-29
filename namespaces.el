@@ -1,5 +1,7 @@
 ;; Just to reference the org-trello `namespaces`
 
+(add-to-list 'load-path (expand-file-name "."))
+
 (defvar *ORG-TRELLO-FILES* '("src/header.el"
                              "src/log.el"
                              "src/setup.el"

@@ -65,6 +65,8 @@
 (require 'kv)
 (require 'esxml)
 
+(add-to-list 'load-path (expand-file-name "."))
+
 (provide 'org-trello-header)
 
 
