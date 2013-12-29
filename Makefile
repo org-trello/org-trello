@@ -3,10 +3,10 @@ PACKAGE_FOLDER=org-trello-$(VERSION)
 ARCHIVE=$(PACKAGE_FOLDER).tar
 USER=ardumont
 
-test:
+test: clean generate
 	cask exec emacs -Q -batch \
 			-l ert \
-			-l ./org-trello-tests.el \
+			-l ./launch-tests.el \
 			-f ert-run-tests-batch-and-exit
 
 itest-clean:

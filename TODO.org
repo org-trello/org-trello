@@ -767,7 +767,8 @@ CLOSED: [2013-12-01 dim. 16:40]
   - [X] Split into `namespace` files
   - [X] Ensure packaging is generated and ok for marmalade
   - [X] Ensure packaging is generated and ok for melpa - yes, ensure that the root `org-trello.el` is generated before pushing on master.
-- [ ] Rewrite the abstraction around fetched result to unify the `data model` (in and out identical)
+  - [X] Ensure the tests are still ok
+- [ ] Rewrite the abstraction around fetched results to unify the `data model` (in and out identical)
 - [ ] Synchronize description - https://github.com/ardumont/org-trello/issues/80
 - [ ] Synchronize user comments - https://github.com/ardumont/org-trello/issues/86
 - [ ] Version
