@@ -55,12 +55,6 @@ install-package: package
 install-package-and-tests: install-package
 	cask exec emacs -Q --batch -l ./launch-tests.el
 
-tangle:
-	time cask exec emacs -Q -batch \
-	    		     -l org \
-			     ./org-trello.org \
-			     -e org-babel-tangle
-
 ttest: tangle test
 
 cleanup-data:
