@@ -167,8 +167,6 @@
   (cond ((stringp values)        values)
         ((arrayp values)         (mapcar (lambda (e) e) values))
         ((eq :json-false values) nil)
-        ((eq 'complete values)   t)
-        ((eq 'incomplete values) nil)
         (t                       values)))
 
 (defun orgtrello-data/--compute-level (entity-map) "Given a map, compute the entity level"
@@ -199,7 +197,8 @@
                                                                         (action . :action)
                                                                         (start . :start)
                                                                         (position . :position)
-                                                                        (callback . :callback))))
+                                                                        (callback . :callback)
+                                                                        (pos . :position))))
 
 (defun orgtrello-data/from-trello (entity-alist) "Given a trello entity, convert into org-trello entity"
   (let ((hmap (--reduce-from (let ((key (car it))
