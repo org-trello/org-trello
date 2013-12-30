@@ -361,27 +361,27 @@
    *ORGTRELLO-NATURAL-ORG-CHECKLIST*))
 
 (defun orgtrello/--compute-items-from-checklist (checklist entities adjacency) "Given a checklist, retrieve its items and update the entities hash and the adjacency list."
-  (let ((checklist-id (orgtrello-data/id checklist)))
+  (let ((checklist-id (orgtrello-data/entity-id checklist)))
     (cl-reduce
      (lambda (acc-entities-hash item)
        (cl-destructuring-bind (entities adjacency) acc-entities-hash
          (list (orgtrello/--add-entity-to-entities item entities) (orgtrello/--add-entity-to-adjacency item checklist adjacency))))
-     (orgtrello-data/check-items checklist)
+     (orgtrello-data/entity-items checklist)
      :initial-value (list entities adjacency))))
 
 (defun orgtrello/--retrieve-checklist-from-card (card) "Given a card, retrieve the checklist of the card (using trello). This gives a list of checklist in the trello order."
   (--> card
-       (orgtrello-data/checklist-ids it)                                                            ;; retrieve checklist ids
+       (orgtrello-data/entity-checklists it)                                                            ;; retrieve checklist ids
        (cl-reduce
         (lambda (acc-list checklist-id)
           (cons (-> checklist-id
                     orgtrello-api/get-checklist
                     (orgtrello-query/http-trello *do-sync-query*)) acc-list))
         it :initial-value nil)                                                                         ;; retrieve the trello checklist
-       (sort it (lambda (a b) (when (<= (assoc-default 'pos a) (assoc-default 'pos b)) 1)))))          ;; sort them by pos to get back to the right order (reversed)
+       (sort it (lambda (a b) (when (<= (orgtrello-data/entity-position a) (orgtrello-data/entity-position b)) 1)))))          ;; sort them by pos to get back to the right order (reversed)
 
 (defun orgtrello/--compute-checklist-entities-from-card (card entities adjacency) "Given a card, retrieve its checklists (with their items) in the right order."
-  (let ((card-id (orgtrello-data/id card)))
+  (let ((card-id (orgtrello-data/entity-id card)))
     (--> card
          (orgtrello/--retrieve-checklist-from-card it)
          (cl-reduce
@@ -397,7 +397,7 @@
 (defun orgtrello/--compute-full-entities-from-trello (cards) "Given a list of cards, compute the full cards data from the trello board. The order from the trello board is kept. Hash result is of the form: {entity-id '(entity-card {checklist-id (checklist (item))})}"
   (cl-reduce
    (lambda (acc-entities-hash entity-card)
-     (orgtrello-log/msg *OT/INFO* "Computing card '%s' data..." (orgtrello-data/name entity-card))
+     (orgtrello-log/msg *OT/INFO* "Computing card '%s' data..." (orgtrello-data/entity-name entity-card))
      (cl-destructuring-bind (entities adjacency) acc-entities-hash
        (orgtrello/--compute-checklist-entities-from-card entity-card (orgtrello/--add-entity-to-entities entity-card entities) adjacency)))
    cards
@@ -490,12 +490,13 @@
 (defun orgtrello/--merge-item (trello-item org-item) "Merge trello and org item together."
   (if (null trello-item)
       org-item
-      (let ((org-item-to-merge (orgtrello/--init-map-from       org-item)))
+      (let ((org-item-to-merge (orgtrello/--init-map-from org-item)))
         (puthash :level *ITEM-LEVEL*                             org-item-to-merge)
         (puthash :id    (orgtrello-data/entity-id trello-item)   org-item-to-merge)
         (puthash :name  (orgtrello-data/entity-name trello-item) org-item-to-merge)
+        ;; FIXME find how to populate keyword
         (--> trello-item
-             (orgtrello-data/entity-state it)
+             (orgtrello-data/entity-checked it)
              (orgtrello/--compute-state-item it)
              (puthash :keyword it org-item-to-merge))
         org-item-to-merge)))
@@ -518,13 +519,14 @@
 (defun orgtrello/--merge-card (trello-card org-card) "Merge trello and org card together."
   (if (null trello-card)
       org-card
-      (let ((org-card-to-merge (orgtrello/--init-map-from org-card))
-            (htrello-card (if (hash-table-p trello-card) trello-card (orgtrello-hash/make-properties trello-card))))
+      (let ((org-card-to-merge (orgtrello/--init-map-from org-card)))
         (puthash :level   *CARD-LEVEL*                                                             org-card-to-merge)
-        (puthash :id      (orgtrello-data/entity-id htrello-card)                                  org-card-to-merge)
-        (puthash :name    (orgtrello-data/entity-name htrello-card)                                org-card-to-merge)
-        (puthash :keyword (-> htrello-card orgtrello-data/entity-list-id orgtrello/--compute-card-status) org-card-to-merge)
-        (puthash :users-assigned (orgtrello/--merge-users-assigned htrello-card org-card-to-merge) org-card-to-merge)
+        (puthash :id      (orgtrello-data/entity-id trello-card)                                   org-card-to-merge)
+        (puthash :name    (orgtrello-data/entity-name trello-card)                                 org-card-to-merge)
+        (puthash :keyword (-> trello-card
+                              orgtrello-data/entity-list-id
+                              orgtrello/--compute-card-status)                                     org-card-to-merge)
+        (puthash :users-assigned (orgtrello/--merge-users-assigned trello-card org-card-to-merge)  org-card-to-merge)
         org-card-to-merge)))
 
 (defun orgtrello/--dispatch-merge-fn (entity) "Dispatch the function fn to merge the entity."
@@ -544,7 +546,7 @@
              trello-entities)
 
     (maphash (lambda (id org-entity)
-               (puthash id (funcall (orgtrello/--dispatch-merge-fn org-entity) (-trace (orgtrello/--get-entity id trello-entities) :trello-entity) org-entity)    trello-entities) ;; updating entity to trello
+               (puthash id (funcall (orgtrello/--dispatch-merge-fn org-entity) (orgtrello/--get-entity id trello-entities) org-entity)    trello-entities) ;; updating entity to trello
                (puthash id (orgtrello-data/merge-2-lists-without-duplicates (gethash id trello-adjacency) (gethash id org-adjacency))     trello-adjacency)) ;; update entity adjacency to trello
              org-entities)
 
