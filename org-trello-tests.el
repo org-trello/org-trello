@@ -1864,13 +1864,12 @@ C-c o h - M-x org-trello/help-describing-bindings - This help message."
 
 (ert-deftest testing-orgtrello-data/from-trello-http-response ()
   (should (hash-equal
-           (orgtrello-hash/make-properties `((:ok . t)))
-           (orgtrello-data/from-trello '((ok . t))))))
+           (orgtrello-hash/make-properties `((:status . ok)))
+           (orgtrello-data/from-trello '((status . ok))))))
 
 (ert-deftest testing-orgtrello-data/from-trello-remaining-possible-inputs ()
   (should (hash-equal
-           (orgtrello-hash/make-properties `((:ok . ":ok")
-                                             (:buffername . ":buffername")
+           (orgtrello-hash/make-properties `((:buffername . ":buffername")
                                              (:sync . ":sync")
                                              (:uri . ":uri")
                                              (:method . ":method")
@@ -1878,9 +1877,9 @@ C-c o h - M-x org-trello/help-describing-bindings - This help message."
                                              (:action . ":action")
                                              (:start . ":start")
                                              (:position . ":position")
+                                             (:keyword . ":keyword")
                                              (:callback . (lambda (id) id))))
-           (orgtrello-data/from-trello '((ok . ":ok")
-                                         (buffername . ":buffername")
+           (orgtrello-data/from-trello '((buffername . ":buffername")
                                          (sync . ":sync")
                                          (uri . ":uri")
                                          (method . ":method")
@@ -1888,6 +1887,7 @@ C-c o h - M-x org-trello/help-describing-bindings - This help message."
                                          (action . ":action")
                                          (start . ":start")
                                          (position . ":position")
+                                         (:keyword . ":keyword")
                                          (callback . (lambda (id) id)))))))
 
 (ert-deftest testing-orgtrello-data/from-trello-with-list-of-results ()
@@ -2092,19 +2092,17 @@ C-c o h - M-x org-trello/help-describing-bindings - This help message."
                                       (:url "https://trello.com/b/xzOJmxzy/demandes-infra" :closed t :description "" :name "Demandes Infra" :id "50aa59502ddab2fc1100115b"))
                         (second list-hash)))))
 
-
-
-(ert-deftest testing-orgtrello-data/from-trello-http-recur ()
-  (should (hash-equal
-           (orgtrello-hash/make-properties `((:ok . t)))
-           (orgtrello-data/from-trello '((checkItems . [((pos . 16384) (nameData) (name . "introduction") (id . "52c0b537ad469b9d6d044fa1") (state . "incomplete"))
-                                                        ((pos . 32768) (nameData) (name . "Ch. 1 - A scalable language") (id . "52c0b5386548fde20105ea4e") (state . "incomplete"))
-                                                        ((pos . 49152) (nameData) (name . "Ch. 2 - First steps in scala") (id . "52c0b5396a5b853501059af3") (state . "complete"))])
-                                         (pos . 16384)
-                                         (idCard . "52c0b529bdbf2ab3770570b7")
-                                         (idBoard . "51d99bbc1e1d8988390047f2")
-                                         (name . "chapters")
-                                          (id . "52c0b52ece09f28f6801fe5e"))))))
+;; (ert-deftest testing-orgtrello-data/from-trello-http-recur ()
+;;   (should (hash-equal
+;;            (orgtrello-hash/make-properties `((:status . t)))
+;;            (orgtrello-data/from-trello '((checkItems . [((pos . 16384) (nameData) (name . "introduction") (id . "52c0b537ad469b9d6d044fa1") (state . "incomplete"))
+;;                                                         ((pos . 32768) (nameData) (name . "Ch. 1 - A scalable language") (id . "52c0b5386548fde20105ea4e") (state . "incomplete"))
+;;                                                         ((pos . 49152) (nameData) (name . "Ch. 2 - First steps in scala") (id . "52c0b5396a5b853501059af3") (state . "complete"))])
+;;                                          (pos . 16384)
+;;                                          (idCard . "52c0b529bdbf2ab3770570b7")
+;;                                          (idBoard . "51d99bbc1e1d8988390047f2")
+;;                                          (name . "chapters")
+;;                                           (id . "52c0b52ece09f28f6801fe5e"))))))
 
 ;; #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
 ;;               (:items (((pos . 16384)

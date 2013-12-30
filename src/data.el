@@ -96,6 +96,7 @@
 (defun orgtrello-data/entity-checklists (entity) "Extract the checklists params" (orgtrello-data/gethash-data :checklists entity))
 (defun orgtrello-data/entity-items (entity) "Extract the checklists params" (orgtrello-data/gethash-data :items entity))
 (defun orgtrello-data/entity-position (entity) "Extract the position params" (orgtrello-data/gethash-data :position entity))
+(defun orgtrello-data/entity-buffername (entity) "Extract the buffername params" (orgtrello-data/gethash-data :buffername entity))
 (defun orgtrello-data/entity-listid (entity) "Extract the list id entry"    (orgtrello-data/gethash-data :list-id entity))
 (defun orgtrello-data/entity-memberids (entity) "Extract the users-assigned/members ids from the entity" (orgtrello-data/gethash-data :users-assigned entity))
 (defun orgtrello-data/entity-checked (entity) "Extract the checked param from the entity" (orgtrello-data/gethash-data :checked entity))
@@ -194,7 +195,7 @@
                                                                         (idCard . :card-id)
                                                                         (checkItems . :items)
                                                                         (state . :checked)
-                                                                        (ok . :ok)
+                                                                        (status . :status)
                                                                         (buffername . :buffername)
                                                                         (sync . :sync)
                                                                         (uri . :uri)
@@ -204,7 +205,9 @@
                                                                         (start . :start)
                                                                         (position . :position)
                                                                         (callback . :callback)
-                                                                        (pos . :position))))
+                                                                        (pos . :position)
+                                                                        (keyword . :keyword)
+                                                                        (:keyword . :keyword))))
 
 (defun orgtrello-data/from-trello (entity-alist) "Given a trello entity, convert into org-trello entity"
   (cond ((arrayp entity-alist) (mapcar 'orgtrello-data/from-trello entity-alist))
