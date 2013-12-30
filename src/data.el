@@ -207,16 +207,17 @@
                                                                         (pos . :position))))
 
 (defun orgtrello-data/from-trello (entity-alist) "Given a trello entity, convert into org-trello entity"
-  (let ((hmap (--reduce-from (let ((key (car it))
-                                   (val (cdr it)))
-                               (-when-let (new-key (gethash key *ORGTRELLO-DATA-MAP-KEYWORDS*))
-                                          (puthash new-key (orgtrello-data/--deal-with-value val) acc))
-                               acc)
-                             (make-hash-table :test 'equal)
-                             entity-alist)))
-    (-when-let (level (orgtrello-data/--compute-level hmap))
-               (puthash :level level hmap))
-    hmap))
+  (cond ((arrayp entity-alist) (mapcar 'orgtrello-data/from-trello entity-alist))
+        (t                     (let ((hmap (--reduce-from (let ((key (car it))
+                                                                (val (cdr it)))
+                                                            (-when-let (new-key (gethash key *ORGTRELLO-DATA-MAP-KEYWORDS*))
+                                                                       (puthash new-key (orgtrello-data/--deal-with-value val) acc))
+                                                            acc)
+                                                          (make-hash-table :test 'equal)
+                                                          entity-alist)))
+                                 (-when-let (level (orgtrello-data/--compute-level hmap))
+                                            (puthash :level level hmap))
+                                 hmap))))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-data loaded!")
 
