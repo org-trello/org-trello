@@ -186,7 +186,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   `(tr () (td ()) (td () "Action") (td () "Entity") (td () "Delete")))
 
 (defun orgtrello-webadmin/--detail-entity (log-level entity-data) "Depending on the debug level, will display either the full entity data or simply its name."
-  (if (= log-level *OT/INFO*) (orgtrello-data/name entity-data) entity-data))
+  (if (= log-level *OT/INFO*) (orgtrello-data/entity-name entity-data) entity-data))
 
 (defun orgtrello-webadmin/--input-button-html (action value) "Given a javascript action and a value, compute an html input button."
   `(input ((class . "btn btn-danger btn-mini")
@@ -195,7 +195,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
            (value . ,value))))
 
 (defun orgtrello-webadmin/--delete-action (entity) "Generate the button to delete some action."
-  (-if-let (entity-id (orgtrello-data/id entity))
+  (-if-let (entity-id (orgtrello-data/entity-id entity))
            (orgtrello-webadmin/--input-button-html (format "deleteEntities('/proxy/admin/entities/delete/%s');" entity-id) "x")
            ""))
 
@@ -208,7 +208,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   `(tr
     (,(orgtrello-webadmin/--compute-class icon))
     (td () (i ((class . ,icon))))
-    (td () ,(orgtrello-data/action entity))
+    (td () ,(orgtrello-data/entity-action entity))
     (td () ,(format "%s" (orgtrello-webadmin/--detail-entity *orgtrello-log/level* entity)))
     (td () ,(orgtrello-webadmin/--delete-action entity))))
 
@@ -275,12 +275,12 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
         (elnode-send-404 http-con (format "Resource file '%s' not found!" full-file)))))
 
 (defun orgtrello-webadmin/--compute-filename-from-entity (entity) "Compute the filename of a file given an entity."
-  (format "%s%s-%s.el" (orgtrello-elnode/compute-entity-level-dir (orgtrello-data/level entity)) (orgtrello-data/buffername entity) (orgtrello-data/position entity)))
+  (format "%s%s-%s.el" (orgtrello-elnode/compute-entity-level-dir (orgtrello-data/entity-level entity)) (orgtrello-data/entity-buffername entity) (orgtrello-data/entity-position entity)))
 
 (defun orgtrello-webadmin/--delete-entity-with-id (id) "Remove the entity/file which match the id id."
   (-if-let (entity-to-delete (->> *ORGTRELLO-LEVELS*
                                   orgtrello-webadmin/--list-entities
-                                  (--filter (string= id (orgtrello-data/id it)))
+                                  (--filter (string= id (orgtrello-data/entity-id it)))
                                   first))
            (-> entity-to-delete
                orgtrello-webadmin/--compute-filename-from-entity

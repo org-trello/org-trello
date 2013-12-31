@@ -18,30 +18,35 @@
 (defun orgtrello-query/--authentication-params () "Generates the list of http authentication parameters"
   `((key . ,*consumer-key*) (token . ,*access-token*)))
 
+(defun orgtrello-query/--http-parse () "Parse the http response into an org-trello entity."
+  (->> (json-read)
+       orgtrello-data/from-trello
+       (trace :from-trello)))
+
 (defun orgtrello-query/--get (server query-map &optional success-callback error-callback authentication-p) "GET"
-  (request (->> query-map orgtrello-data/uri (orgtrello-query/--compute-url server))
-           :sync    (orgtrello-data/sync   query-map)
-           :type    (orgtrello-data/method query-map)
-           :params  (orgtrello-data/merge-2-lists-without-duplicates (when authentication-p (orgtrello-query/--authentication-params)) (orgtrello-data/params query-map))
-           :parser  (lambda () (let ((result (json-read))) (message "%s" result) result))
+  (request (->> query-map orgtrello-data/entity-uri (orgtrello-query/--compute-url server))
+           :sync    (orgtrello-data/entity-sync   query-map)
+           :type    (orgtrello-data/entity-method query-map)
+           :params  (orgtrello-data/merge-2-lists-without-duplicates (when authentication-p (orgtrello-query/--authentication-params)) (orgtrello-data/entity-params query-map))
+           :parser  'orgtrello-query/--http-parse
            :success (if success-callback success-callback 'orgtrello-query/--standard-success-callback)
            :error   (if error-callback error-callback 'orgtrello-query/--standard-error-callback)))
 
 (defun orgtrello-query/--post-or-put (server query-map &optional success-callback error-callback authentication-p) "POST or PUT"
-  (request (->> query-map orgtrello-data/uri (orgtrello-query/--compute-url server))
-           :sync    (orgtrello-data/sync   query-map)
-           :type    (orgtrello-data/method query-map)
+  (request (->> query-map orgtrello-data/entity-uri (orgtrello-query/--compute-url server))
+           :sync    (orgtrello-data/entity-sync   query-map)
+           :type    (orgtrello-data/entity-method query-map)
            :params  (when authentication-p (orgtrello-query/--authentication-params))
            :headers '(("Content-type" . "application/json"))
-           :data    (->> query-map orgtrello-data/params json-encode)
-           :parser  (lambda () (let ((result (json-read))) (message "%s" result) result))
+           :data    (->> query-map orgtrello-data/entity-params json-encode)
+           :parser  'orgtrello-query/--http-parse
            :success (if success-callback success-callback 'orgtrello-query/--standard-success-callback)
            :error   (if error-callback error-callback 'orgtrello-query/--standard-error-callback)))
 
 (defun orgtrello-query/--delete (server query-map &optional success-callback error-callback authentication-p) "DELETE"
-  (request (->> query-map orgtrello-data/uri (orgtrello-query/--compute-url server))
-           :sync    (orgtrello-data/sync   query-map)
-           :type    (orgtrello-data/method query-map)
+  (request (->> query-map orgtrello-data/entity-uri (orgtrello-query/--compute-url server))
+           :sync    (orgtrello-data/entity-sync   query-map)
+           :type    (orgtrello-data/entity-method query-map)
            :params  (when authentication-p (orgtrello-query/--authentication-params))
            :success (if success-callback success-callback 'orgtrello-query/--standard-success-callback)
            :error   (if error-callback error-callback 'orgtrello-query/--standard-error-callback)))
@@ -65,7 +70,7 @@
       orgtrello-query/--prepare-params-assoc!))
 
 (defun orgtrello-query/--http (server query-map &optional sync success-callback error-callback authentication-p) "HTTP query the server with the query-map."
-  (let* ((oq/--fn-dispatch (-> query-map orgtrello-data/method orgtrello-query/--dispatch-http-query)))
+  (let* ((oq/--fn-dispatch (-> query-map orgtrello-data/entity-method orgtrello-query/--dispatch-http-query)))
     (if sync
         (progn ;; synchronous request
           (puthash :sync t query-map)
@@ -73,8 +78,7 @@
         (funcall oq/--fn-dispatch server query-map success-callback error-callback authentication-p))))
 
 (defun orgtrello-query/http-trello (query-map &optional sync success-callback error-callback) "Query the trello api."
-  ;; request to trello with authentication
-  (orgtrello-query/--http *TRELLO-URL* query-map sync success-callback error-callback t))
+  (orgtrello-query/--http *TRELLO-URL* query-map sync (trace :success-callback success-callback) error-callback t))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-query loaded!")
 

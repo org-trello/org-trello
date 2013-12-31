@@ -79,12 +79,12 @@
     "Setup problem - You need to install the consumer-key and the read/write access-token - C-c o i or M-x org-trello/install-board-and-lists-ids"))
 
 (defun orgtrello/--retrieve-state-of-card (card-meta) "Given a card, retrieve its state depending on its :keyword metadata. If empty or no keyword then, its equivalence is *TODO*, otherwise, return its current state."
-  (-if-let (orgtrello/--card-kwd (orgtrello/--keyword card-meta *TODO*))
+  (-if-let (orgtrello/--card-kwd (orgtrello-data/entity-keyword card-meta *TODO*))
            orgtrello/--card-kwd
            *TODO*))
 
 (defun orgtrello/--checks-before-sync-card (card-meta) "Checks done before synchronizing the cards."
-  (-if-let (orgtrello/--card-name (orgtrello/--name card-meta)) :ok *ERROR-SYNC-CARD-MISSING-NAME*))
+  (-if-let (orgtrello/--card-name (orgtrello-data/entity-name card-meta)) :ok *ERROR-SYNC-CARD-MISSING-NAME*))
 
 (defun orgtrello/--card (card-meta &optional parent-meta grandparent-meta) "Deal with create/update card query build. If the checks are ko, the error message is returned."
   (let ((checks-ok-or-error-message (orgtrello/--checks-before-sync-card card-meta)))
@@ -93,10 +93,10 @@
         ;; parent and grandparent are useless here
         (let* ((orgtrello/--card-kwd  (orgtrello/--retrieve-state-of-card card-meta))
                (orgtrello/--list-id   (assoc-default orgtrello/--card-kwd org-file-properties))
-               (orgtrello/--card-id   (orgtrello/--id    card-meta))
-               (orgtrello/--card-name (orgtrello/--name card-meta))
-               (orgtrello/--card-due  (orgtrello/--due   card-meta))
-               (orgtrello/--user-ids-assigned  (orgtrello/--user-assigned-ids card-meta)))
+               (orgtrello/--card-id   (orgtrello-data/entity-id    card-meta))
+               (orgtrello/--card-name (orgtrello-data/entity-name card-meta))
+               (orgtrello/--card-due  (orgtrello-data/entity-due   card-meta))
+               (orgtrello/--user-ids-assigned  (orgtrello-data/entity-member-ids card-meta)))
           (if orgtrello/--card-id
               ;; update
               (orgtrello-api/move-card orgtrello/--card-id orgtrello/--list-id orgtrello/--card-name orgtrello/--card-due orgtrello/--user-ids-assigned)
@@ -105,8 +105,8 @@
       checks-ok-or-error-message)))
 
 (defun orgtrello/--checks-before-sync-checklist (checklist-meta card-meta) "Checks done before synchronizing the checklist."
-  (let ((orgtrello/--checklist-name (orgtrello/--name checklist-meta))
-        (orgtrello/--card-id        (orgtrello/--id card-meta)))
+  (let ((orgtrello/--checklist-name (orgtrello-data/entity-name checklist-meta))
+        (orgtrello/--card-id        (orgtrello-data/entity-id card-meta)))
     (if orgtrello/--checklist-name
         (if orgtrello/--card-id
             :ok
@@ -118,9 +118,9 @@
     ;; name is mandatory
     (if (equal :ok checks-ok-or-error-message)
         ;; grandparent is useless here
-        (let* ((orgtrello/--checklist-id   (orgtrello/--id checklist-meta))
-               (orgtrello/--card-id        (orgtrello/--id card-meta))
-               (orgtrello/--checklist-name (orgtrello/--name checklist-meta)))
+        (let* ((orgtrello/--checklist-id   (orgtrello-data/entity-id checklist-meta))
+               (orgtrello/--card-id        (orgtrello-data/entity-id card-meta))
+               (orgtrello/--checklist-name (orgtrello-data/entity-name checklist-meta)))
           (if orgtrello/--checklist-id
               ;; update
               (orgtrello-api/update-checklist orgtrello/--checklist-id orgtrello/--checklist-name)
@@ -129,9 +129,9 @@
       checks-ok-or-error-message)))
 
 (defun orgtrello/--checks-before-sync-item (item-meta checklist-meta card-meta) "Checks done before synchronizing the checklist."
-  (let ((orgtrello/--item-name    (orgtrello/--name item-meta))
-        (orgtrello/--checklist-id (orgtrello/--id checklist-meta))
-        (orgtrello/--card-id      (orgtrello/--id card-meta)))
+  (let ((orgtrello/--item-name    (orgtrello-data/entity-name item-meta))
+        (orgtrello/--checklist-id (orgtrello-data/entity-id checklist-meta))
+        (orgtrello/--card-id      (orgtrello-data/entity-id card-meta)))
     (if orgtrello/--item-name
         (if orgtrello/--checklist-id
             (if orgtrello/--card-id :ok *ERROR-SYNC-ITEM-SYNC-CARD-FIRST*)
@@ -158,7 +158,7 @@
 (defun orgtrello/--update-item-according-to-checklist-status (checklist-update-items-p checklist-meta) "Update the item of the checklist according to the status of the checklist."
   (if checklist-update-items-p
       (-> checklist-meta
-          orgtrello/--keyword
+          orgtrello-data/entity-keyword
           orgtrello/--compute-state-from-keyword
           org-todo)))
 
@@ -167,12 +167,12 @@
     ;; name is mandatory
     (if (equal :ok checks-ok-or-error-message)
         ;; card-meta is only usefull for the update part
-        (let* ((orgtrello/--item-id      (orgtrello/--id item-meta))
-               (orgtrello/--checklist-id (orgtrello/--id checklist-meta))
-               (orgtrello/--card-id      (orgtrello/--id card-meta))
-               (orgtrello/--item-name    (orgtrello/--name item-meta))
-               (orgtrello/--item-state   (orgtrello/--keyword item-meta))
-               (orgtrello/--checklist-state    (orgtrello/--keyword checklist-meta)))
+        (let* ((orgtrello/--item-id      (orgtrello-data/entity-id item-meta))
+               (orgtrello/--checklist-id (orgtrello-data/entity-id checklist-meta))
+               (orgtrello/--card-id      (orgtrello-data/entity-id card-meta))
+               (orgtrello/--item-name    (orgtrello-data/entity-name item-meta))
+               (orgtrello/--item-state   (orgtrello-data/entity-keyword item-meta))
+               (orgtrello/--checklist-state    (orgtrello-data/entity-keyword checklist-meta)))
 
           (orgtrello/--update-item-according-to-checklist-status *ORGTRELLO-CHECKLIST-UPDATE-ITEMS* checklist-meta)
           ;; update/create items
@@ -193,7 +193,7 @@
 (defun orgtrello/--dispatch-create (entry-metadata) "Dispatch the creation depending on the nature of the entry."
   (let ((current-meta        (orgtrello-data/current entry-metadata)))
     (-> current-meta
-        orgtrello/--level
+        orgtrello-data/entity-level
         (gethash *MAP-DISPATCH-CREATE-UPDATE* 'orgtrello/--too-deep-level)
         (funcall current-meta (orgtrello-data/parent entry-metadata) (orgtrello-data/grandparent entry-metadata)))))
 
@@ -209,20 +209,20 @@
   (orgtrello-action/set-property *ORGTRELLO-ID* marker))
 
 (defun orgtrello/--compute-marker-from-entry (entry) "Compute and set the marker (either a sha1 or the id of the entry-metadata)."
-  (-if-let (orgtrello/--current-entry-id (orgtrello/--id entry))
+  (-if-let (orgtrello/--current-entry-id (orgtrello-data/entity-id entry))
            orgtrello/--current-entry-id
-           (orgtrello/compute-marker (orgtrello/--buffername entry) (orgtrello/--name entry) (orgtrello/--position entry))))
+           (orgtrello/compute-marker (orgtrello-data/entity-buffername entry) (orgtrello-data/entity-name entry) (orgtrello-data/entity-position entry))))
 
 (defun orgtrello/--right-level-p (entity) "Compute if the level is correct (not higher than level 4)."
-  (if (< (-> entity orgtrello-data/current orgtrello/--level) *OUTOFBOUNDS-LEVEL*) :ok "Level too high. Do not deal with entity other than card/checklist/items!"))
+  (if (< (-> entity orgtrello-data/current orgtrello-data/entity-level) *OUTOFBOUNDS-LEVEL*) :ok "Level too high. Do not deal with entity other than card/checklist/items!"))
 
 (defun orgtrello/--already-synced-p (entity) "Compute if the entity has already been synchronized."
-  (if (-> entity orgtrello-data/current orgtrello/--id) :ok "Entity must been synchronized with trello first!"))
+  (if (-> entity orgtrello-data/current orgtrello-data/entity-id) :ok "Entity must been synchronized with trello first!"))
 
 (defun orgtrello/--mandatory-name-ok-p (entity) "Ensure entity can be synced regarding the mandatory data."
   (let* ((current (orgtrello-data/current entity))
-         (level   (orgtrello/--level current))
-         (name    (orgtrello/--name current)))
+         (level   (orgtrello-data/entity-level current))
+         (name    (orgtrello-data/entity-name current)))
     (if (and name (< 0 (length name)))
         :ok
         (cond ((= level *CARD-LEVEL*)      *ERROR-SYNC-CARD-MISSING-NAME*)
@@ -230,7 +230,7 @@
               ((= level *ITEM-LEVEL*)      *ERROR-SYNC-ITEM-MISSING-NAME*)))))
 
 (defun orgtrello/--set-marker-if-not-present (current-entity marker) "Set the marker to the entry if we never did."
-  (unless (string= (orgtrello/--id current-entity) marker) ;; if never created before, we need a marker to add inside the file
+  (unless (string= (orgtrello-data/entity-id current-entity) marker) ;; if never created before, we need a marker to add inside the file
           (orgtrello/--set-marker marker)))
 
 (defun orgtrello/--delegate-to-the-proxy (full-meta action) "Execute the delegation to the consumer."
@@ -263,7 +263,7 @@
   (when *ORGTRELLO-NATURAL-ORG-CHECKLIST* (orgtrello/map-checkboxes 'orgtrello/do-sync-entity)))
 
 (defun orgtrello/org-map-entries (level fn-to-execute) "Map fn-to-execute to a given entities with level level. fn-to-execute is a function without any parameter."
-  (org-map-entries (lambda () (when (= level (orgtrello/--current-level)) (funcall fn-to-execute)))))
+  (org-map-entries (lambda () (when (= level (orgtrello-data/current-level)) (funcall fn-to-execute)))))
 
 (defun orgtrello/do-sync-full-file () "Full org-mode file synchronisation."
   (orgtrello-log/msg *OT/WARN* "Synchronizing org-mode file to the board '%s'. This may take some time, some coffee may be a good idea..." (orgtrello/--board-name))
@@ -468,7 +468,7 @@
                                                   (let* ((full-meta      (orgtrello-data/entry-get-full-metadata))
                                                          (current-entity (orgtrello-data/current full-meta))
                                                          (current-marker (orgtrello/--compute-marker-from-entry current-entity)))
-                                                    (unless (orgtrello/id-p (orgtrello/--id current-entity))
+                                                    (unless (orgtrello/id-p (orgtrello-data/entity-id current-entity))
                                                             (orgtrello/--set-marker current-marker)
                                                             (let ((current-meta (orgtrello-data/entry-get-full-metadata)))
                                                               ;; now add the entities to the global list
@@ -513,7 +513,7 @@
 (defun orgtrello/--merge-users-assigned (trello-card org-card) "Merge users assigned from trello and org."
   (--> trello-card
        (orgtrello-data/entity-member-ids it)
-       (orgtrello-data/merge-2-lists-without-duplicates it (orgtrello/--user-assigned-ids-as-list org-card))
+       (orgtrello-data/merge-2-lists-without-duplicates it (orgtrello-data/entity-member-ids-as-list org-card))
        (orgtrello/--users-to it)))
 
 (defun orgtrello/--merge-card (trello-card org-card) "Merge trello and org card together."
@@ -593,7 +593,7 @@
 
 (defun orgtrello/--update-users-assigned-property! (entity) "Update the users assigned property card entry."
   (--> entity
-       (orgtrello/--user-assigned-ids it)
+       (orgtrello-data/entity-member-ids it)
        (orgtrello/--csv-user-ids-to-csv-user-names it *HMAP-USERS-ID-NAME*)
        (replace-regexp-in-string *ORGTRELLO-USER-PREFIX* "" it)
        (orgtrello/set-usernames-assigned-property! it)))
@@ -653,14 +653,14 @@
 
 (defun orgtrello/--card-delete (card-meta &optional parent-meta) "Deal with the deletion query of a card"
   ;; parent is useless here
-  (orgtrello-api/delete-card (orgtrello/--id card-meta)))
+  (orgtrello-api/delete-card (orgtrello-data/entity-id card-meta)))
 
 (defun orgtrello/--checklist-delete (checklist-meta &optional parent-meta) "Deal with the deletion query of a checklist"
   ;; parent is useless here
-  (orgtrello-api/delete-checklist (orgtrello/--id checklist-meta)))
+  (orgtrello-api/delete-checklist (orgtrello-data/entity-id checklist-meta)))
 
 (defun orgtrello/--item-delete (item-meta &optional checklist-meta) "Deal with create/update item query build"
-  (orgtrello-api/delete-item (orgtrello/--id checklist-meta) (orgtrello/--id item-meta)))
+  (orgtrello-api/delete-item (orgtrello-data/entity-id checklist-meta) (orgtrello-data/entity-id item-meta)))
 
 (defvar *MAP-DISPATCH-DELETE* (orgtrello-hash/make-properties `((,*CARD-LEVEL*      . orgtrello/--card-delete)
                                                                 (,*CHECKLIST-LEVEL* . orgtrello/--checklist-delete)
@@ -668,14 +668,14 @@
 
 (defun orgtrello/--dispatch-delete (meta &optional parent-meta) "Dispatch the delete function to call depending on the level information."
   (-> meta
-      orgtrello/--level
+      orgtrello-data/entity-level
       (gethash *MAP-DISPATCH-DELETE* 'orgtrello/--too-deep-level)
       (funcall meta parent-meta)))
 
 (defun orgtrello/--do-delete-card (&optional sync) "Delete the card."
   (when (= *CARD-LEVEL* (-> (orgtrello-data/entry-get-full-metadata)
                             orgtrello-data/current
-                            orgtrello/--level))
+                            orgtrello-data/entity-level))
         (orgtrello/do-delete-simple sync)))
 
 (defun orgtrello/do-delete-entities (&optional sync) "Launch a batch deletion of every single entities present on the buffer."
@@ -701,17 +701,17 @@
 
 (defun orgtrello/--id-name (entities) "Given a list of entities, return a map of (id, name)."
   (let ((id-name (make-hash-table :test 'equal)))
-    (mapc (lambda (it) (puthash (orgtrello-data/id it) (orgtrello-data/name it) id-name)) entities)
+    (mapc (lambda (it) (puthash (orgtrello-data/entity-id it) (orgtrello-data/entity-name it) id-name)) entities)
     id-name))
 
 (defun orgtrello/--name-id (entities) "Given a list of entities, return a map of (id, name)."
   (let ((name-id (make-hash-table :test 'equal)))
-    (mapc (lambda (it) (puthash (orgtrello-data/name it) (orgtrello-data/id it) name-id)) entities)
+    (mapc (lambda (it) (puthash (orgtrello-data/entity-name it) (orgtrello-data/entity-id it) name-id)) entities)
     name-id))
 
 (defun orgtrello/--list-boards () "Return the map of the existing boards associated to the current account. (Synchronous request)"
   (cl-remove-if-not
-   (lambda (board) (equal :json-false (orgtrello-data/close-property board)))
+   (lambda (board) (equal :json-false (orgtrello-data/entity-closed board)))
    (orgtrello-query/http-trello (orgtrello-api/get-boards) *do-sync-query*)))
 
 (defun orgtrello/--list-board-lists (board-id) "Return the map of the existing list of the board with id board-id. (Synchronous request)"
@@ -878,7 +878,7 @@
 (defun orgtrello/--create-board (board-name &optional board-description) "Create a board with name and eventually a description."
   (orgtrello-log/msg *OT/INFO* "Creating board '%s'" board-name)
   (let ((board-data (orgtrello-query/http-trello (orgtrello-api/add-board board-name board-description) *do-sync-query*)))
-    (list (orgtrello-data/id board-data) (orgtrello-data/name board-data))))
+    (list (orgtrello-data/entity-id board-data) (orgtrello-data/entity-name board-data))))
 
 (defun orgtrello/--close-lists (list-ids) "Given a list of ids, close those lists."
   (mapc (lambda (list-id)
@@ -891,7 +891,7 @@
    (lambda (acc-hash-name-id list-name)
      (progn
        (orgtrello-log/msg *OT/INFO* "Board id %s - Creating list '%s'" board-id list-name)
-       (puthash list-name (orgtrello-data/id (orgtrello-query/http-trello (orgtrello-api/add-list list-name board-id) *do-sync-query*)) acc-hash-name-id)
+       (puthash list-name (orgtrello-data/entity-id (orgtrello-query/http-trello (orgtrello-api/add-list list-name board-id) *do-sync-query*)) acc-hash-name-id)
        acc-hash-name-id))
    list-keywords
    :initial-value (make-hash-table :test 'equal)))
@@ -902,7 +902,7 @@
   (while (not orgtrello/--board-name) (setq orgtrello/--board-name (read-string "Please, input the desired board name: ")))
   (setq orgtrello/--board-description (read-string "Please, input the board description (empty for none): "))
   (cl-destructuring-bind (orgtrello/--board-id orgtrello/--board-name) (orgtrello/--create-board orgtrello/--board-name orgtrello/--board-description)
-                         (let* ((orgtrello/--board-list-ids       (--map (orgtrello-data/id it) (orgtrello/--list-board-lists orgtrello/--board-id)))  ;; first retrieve the existing lists (created by default on trello)
+                         (let* ((orgtrello/--board-list-ids       (--map (orgtrello-data/entity-id it) (orgtrello/--list-board-lists orgtrello/--board-id)))  ;; first retrieve the existing lists (created by default on trello)
                                 (orgtrello/--lists-to-close       (orgtrello/--close-lists orgtrello/--board-list-ids))                                ;; close those lists (they may surely not match the name we want)
                                 (orgtrello/--board-lists-hname-id (orgtrello/--create-lists-according-to-keywords orgtrello/--board-id *LIST-NAMES*))  ;; create the list, this returns the ids list
                                 (orgtrello/--board-users-name-id  (orgtrello/--board-users-information-from-board-id! orgtrello/--board-id))           ;; retrieve user informations
