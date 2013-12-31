@@ -70,7 +70,9 @@
       orgtrello-query/--prepare-params-assoc!))
 
 (defun orgtrello-query/--http (server query-map &optional sync success-callback error-callback authentication-p) "HTTP query the server with the query-map."
-  (let* ((oq/--fn-dispatch (-> query-map orgtrello-data/entity-method orgtrello-query/--dispatch-http-query)))
+  (let* ((oq/--fn-dispatch (-> query-map
+                               orgtrello-data/entity-method
+                               orgtrello-query/--dispatch-http-query)))
     (if sync
         (progn ;; synchronous request
           (puthash :sync t query-map)

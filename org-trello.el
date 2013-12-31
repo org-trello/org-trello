@@ -447,12 +447,14 @@ If you want to use this, we recommand to use the native org checklists - http://
                                                                         (params . :params)
                                                                         (action . :action)
                                                                         (start . :start)
-                                                                        (position . :position)
                                                                         (callback . :callback)
                                                                         (pos . :position)
+                                                                        (position . :position)
                                                                         (keyword . :keyword)
                                                                         (:keyword . :keyword)
-                                                                        (start . :start))))
+                                                                        (start . :start)
+                                                                        (level . :level)
+                                                                        (users-assigned . :users-assigned))))
 
 (defun orgtrello-data/from-trello (entity-alist) "Given a trello entity, convert into org-trello entity"
   (cond ((arrayp entity-alist) (mapcar 'orgtrello-data/from-trello entity-alist))
@@ -855,7 +857,9 @@ This is a list with the following elements:
       orgtrello-query/--prepare-params-assoc!))
 
 (defun orgtrello-query/--http (server query-map &optional sync success-callback error-callback authentication-p) "HTTP query the server with the query-map."
-  (let* ((oq/--fn-dispatch (-> query-map orgtrello-data/entity-method orgtrello-query/--dispatch-http-query)))
+  (let* ((oq/--fn-dispatch (-> query-map
+                               orgtrello-data/entity-method
+                               orgtrello-query/--dispatch-http-query)))
     (if sync
         (progn ;; synchronous request
           (puthash :sync t query-map)
@@ -1170,7 +1174,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
          (scan-fns (if scan-flag (cons 'orgtrello-elnode/archived-scanning-dir list-fns) list-fns)) ;; build the list of functions to create the composed function
          (composed-fn (compose-fn scan-fns)))
     (--map
-     (read (orgtrello-webadmin/--content-file it))
+     (orgtrello-data/from-trello (read (orgtrello-webadmin/--content-file it)))
      (--mapcat (orgtrello-elnode/list-files (funcall composed-fn it)) levels))))
 
 (defun orgtrello-webadmin/elnode-current-entity (http-con) "A basic display of the list of entities to scan."
@@ -1263,7 +1267,10 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   (funcall (if unhexify-flag 'orgtrello-proxy/--json-read-from-string 'json-read-from-string) params))
 
 (defun orgtrello-proxy/--extract-trello-query (http-con &optional unhexify-flag) "Given an httpcon object, extract the params entry which corresponds to the real trello query."
-  (-> http-con elnode-http-params caar (orgtrello-proxy/--unhexify-data unhexify-flag)))
+  (-> http-con
+      elnode-http-params
+      caar
+      (orgtrello-proxy/--unhexify-data unhexify-flag)))
 
 (defun orgtrello-proxy/--compute-trello-query (query-map-wrapped) "Build a trello query from the control of query-map-wrapped."
   (orgtrello-hash/make-hash (orgtrello-data/entity-method query-map-wrapped) (orgtrello-data/entity-uri query-map-wrapped) (orgtrello-data/entity-params query-map-wrapped)))
@@ -1272,20 +1279,20 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   (elnode-http-start http-con 201 '("Content-type" . "application/json"))
   (elnode-http-return http-con (json-encode data)))
 
-(defun orgtrello-proxy/response-ok (http-con) "OK response from the proxy to the client."
-  ;; all is good
+(defun orgtrello-proxy/response-ok (http-con) "OK response from the proxy to the client." ;; all is good
   (orgtrello-proxy/--response http-con '((status . "ok"))))
 
 (defun orgtrello-proxy/--elnode-proxy (http-con) "Deal with request to trello (for creation/sync request, use orgtrello-proxy/--elnode-proxy-producer)."
   (orgtrello-log/msg *OT/TRACE* "Proxy - Request received. Transmitting...")
-  (let* ((query-map-wrapped    (orgtrello-proxy/--extract-trello-query http-con))                     ;; wrapped query is mandatory
-         (position             (orgtrello-data/entity-position query-map-wrapped))                        ;; position is mandatory
-         (buffer-name          (orgtrello-data/entity-buffername query-map-wrapped))                      ;; buffer-name is mandatory
-         (standard-callback    (orgtrello-data/entity-callback query-map-wrapped))                        ;; there is the possibility to transmit the callback from the client to the proxy
+  (let* ((query-map-wrapped    (trace :trello-query-map-wrapped (orgtrello-proxy/--extract-trello-query http-con))) ;; wrapped query is mandatory
+         (query-map-data       (trace :trello-query-map-data (orgtrello-data/from-trello query-map-wrapped)))
+         (position             (orgtrello-data/entity-position query-map-data))                       ;; position is mandatory
+         (buffer-name          (orgtrello-data/entity-buffername query-map-data))                     ;; buffer-name is mandatory
+         (standard-callback    (orgtrello-data/entity-callback query-map-data))                       ;; there is the possibility to transmit the callback from the client to the proxy
          (standard-callback-fn (when standard-callback (symbol-function (intern standard-callback)))) ;; the callback is passed as a string, we want it as a function when defined
-         (sync                 (orgtrello-data/entity-sync query-map-wrapped))                           ;; there is a possibility to enforce the sync between proxy and client
-         (query-map            (orgtrello-proxy/--compute-trello-query query-map-wrapped))            ;; extracting the query
-         (name                 (orgtrello-data/entity-name query-map-wrapped)))                           ;; extracting the name of the entity (optional)
+         (sync                 (orgtrello-data/entity-sync query-map-data))                           ;; there is a possibility to enforce the sync between proxy and client
+         (query-map            (orgtrello-proxy/--compute-trello-query query-map-data))               ;; extracting the query
+         (name                 (orgtrello-data/entity-name query-map-data)))                          ;; extracting the name of the entity (optional)
     (orgtrello-query/http-trello query-map sync (when standard-callback-fn (funcall standard-callback-fn buffer-name position name)))
     (orgtrello-proxy/response-ok http-con)))
 
@@ -1294,10 +1301,11 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun orgtrello-proxy/--elnode-proxy-producer (http-con) "A handler which is an entity informations producer on files under the docroot/level-entities/"
   (orgtrello-log/msg *OT/TRACE* "Proxy-producer - Request received. Generating entity file...")
-  (let* ((query-map-wrapped    (orgtrello-proxy/--extract-trello-query http-con 'unhexify)) ;; wrapped query is mandatory
-         (position             (orgtrello-data/entity-position query-map-wrapped))              ;; position is mandatory
-         (buffer-name          (orgtrello-data/entity-buffername query-map-wrapped))            ;; buffer-name is mandatory
-         (level                (orgtrello-data/entity-level query-map-wrapped))
+  (let* ((query-map-wrapped    (trace :producer-query-map-wrapped (orgtrello-proxy/--extract-trello-query http-con 'unhexify))) ;; wrapped query is mandatory ;; FIXME need to recurse the all result
+         (query-map-data       (trace :producer-query-map-data (orgtrello-data/from-trello query-map-wrapped)))
+         (position             (orgtrello-data/entity-position query-map-data))          ;; position is mandatory
+         (buffer-name          (orgtrello-data/entity-buffername query-map-data))        ;; buffer-name is mandatory
+         (level                (orgtrello-data/entity-level query-map-data))
          (root-dir             (orgtrello-elnode/compute-entity-level-dir level)))
     ;; generate a file with the entity information
     (with-temp-file (orgtrello-proxy/--compute-metadata-filename root-dir buffer-name position)
@@ -1486,9 +1494,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
         (orgtrello-proxy/--deal-with-entity-action (-> file
                                                        orgtrello-proxy/--read-lines
                                                        read
-                                                       (trace :read-lines)
-                                                       orgtrello-data/from-trello
-                                                       (trace :from-trello-line)) file)))
+                                                       orgtrello-data/from-trello) file)))
 
 (defun orgtrello-proxy/--deal-with-directory-action (level directory) "Given a directory, list the files and take the first one (entity) and do some action on it with trello. Call again if it remains other entities."
   (-when-let (orgtrello-proxy/--files (orgtrello-elnode/list-files directory))
@@ -1577,7 +1583,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 (defvar *ORGTRELLO-TIMER* nil "A timer run by elnode")
 
 (defun orgtrello-proxy/--elnode-timer (http-con) "A process on elnode to trigger even regularly."
-  (let* ((query-map     (orgtrello-proxy/--extract-trello-query http-con))
+  (let* ((query-map     (-> http-con orgtrello-proxy/--extract-trello-query orgtrello-data/from-trello))
          (start-or-stop (orgtrello-data/entity-start query-map)))
     (if start-or-stop
         ;; cleanup before starting anew
@@ -1904,12 +1910,11 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
           (orgtrello/--set-marker marker)))
 
 (defun orgtrello/--delegate-to-the-proxy (full-meta action) "Execute the delegation to the consumer."
-  (let* ((orgtrello/--current          (orgtrello-data/current full-meta))
-         (orgtrello/--marker           (orgtrello/--compute-marker-from-entry orgtrello/--current)))
+  (let* ((orgtrello/--current (orgtrello-data/current full-meta))
+         (orgtrello/--marker  (orgtrello/--compute-marker-from-entry orgtrello/--current)))
     (orgtrello/--set-marker-if-not-present orgtrello/--current orgtrello/--marker)
-;;    (puthash :user-ids  (orgtrello/--user-ids-assigned-to-current-card) orgtrello/--current)
-    (puthash :id        orgtrello/--marker                              orgtrello/--current)
-    (puthash :action    action                                          orgtrello/--current)
+    (puthash :id      orgtrello/--marker orgtrello/--current)
+    (puthash :action  action             orgtrello/--current)
     (orgtrello-proxy/http-producer orgtrello/--current)))
 
 (defun orgtrello/--checks-then-delegate-action-on-entity-to-proxy (functional-controls action) "Execute the functional controls then if all pass, delegate the action 'action' to the proxy."

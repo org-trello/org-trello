@@ -157,12 +157,14 @@
                                                                         (params . :params)
                                                                         (action . :action)
                                                                         (start . :start)
-                                                                        (position . :position)
                                                                         (callback . :callback)
                                                                         (pos . :position)
+                                                                        (position . :position)
                                                                         (keyword . :keyword)
                                                                         (:keyword . :keyword)
-                                                                        (start . :start))))
+                                                                        (start . :start)
+                                                                        (level . :level)
+                                                                        (users-assigned . :users-assigned))))
 
 (defun orgtrello-data/from-trello (entity-alist) "Given a trello entity, convert into org-trello entity"
   (cond ((arrayp entity-alist) (mapcar 'orgtrello-data/from-trello entity-alist))

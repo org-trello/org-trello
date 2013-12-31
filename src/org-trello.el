@@ -234,12 +234,11 @@
           (orgtrello/--set-marker marker)))
 
 (defun orgtrello/--delegate-to-the-proxy (full-meta action) "Execute the delegation to the consumer."
-  (let* ((orgtrello/--current          (orgtrello-data/current full-meta))
-         (orgtrello/--marker           (orgtrello/--compute-marker-from-entry orgtrello/--current)))
+  (let* ((orgtrello/--current (orgtrello-data/current full-meta))
+         (orgtrello/--marker  (orgtrello/--compute-marker-from-entry orgtrello/--current)))
     (orgtrello/--set-marker-if-not-present orgtrello/--current orgtrello/--marker)
-;;    (puthash :user-ids  (orgtrello/--user-ids-assigned-to-current-card) orgtrello/--current)
-    (puthash :id        orgtrello/--marker                              orgtrello/--current)
-    (puthash :action    action                                          orgtrello/--current)
+    (puthash :id      orgtrello/--marker orgtrello/--current)
+    (puthash :action  action             orgtrello/--current)
     (orgtrello-proxy/http-producer orgtrello/--current)))
 
 (defun orgtrello/--checks-then-delegate-action-on-entity-to-proxy (functional-controls action) "Execute the functional controls then if all pass, delegate the action 'action' to the proxy."
