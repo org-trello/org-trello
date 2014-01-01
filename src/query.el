@@ -80,7 +80,7 @@
         (funcall oq/--fn-dispatch server query-map success-callback error-callback authentication-p))))
 
 (defun orgtrello-query/http-trello (query-map &optional sync success-callback error-callback) "Query the trello api."
-  (orgtrello-query/--http *TRELLO-URL* query-map sync (trace :success-callback success-callback) error-callback t))
+  (orgtrello-query/--http *TRELLO-URL* query-map sync success-callback error-callback t))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-query loaded!")
 
