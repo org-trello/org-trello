@@ -856,15 +856,14 @@
     "Install board and list ids done!"))
 
 (defun orgtrello/--compute-user-properties (memberships-map) "Given a map, extract the map of user informations."
-  (map 'list (lambda (x) (assoc-default 'member x)) memberships-map))
+  (mapcar 'orgtrello-data/entity-member memberships-map))
 
 (defun orgtrello/--compute-user-properties-hash (user-properties)
-  (-reduce-from (lambda (acc user) (puthash (assoc-default 'username user) (assoc-default 'id user) acc) acc) (make-hash-table :test 'equal) user-properties))
+  (--reduce-from (progn (puthash (orgtrello-data/entity-username it) (orgtrello-data/entity-id it) acc) acc) (make-hash-table :test 'equal) user-properties))
 
 (defun orgtrello/--compute-user-properties-hash-from-board (board-info) "Compute user properties given board's informations."
   (->> board-info
-       kvalist->hash
-       (gethash 'memberships)
+       orgtrello-data/entity-memberships
        orgtrello/--compute-user-properties
        orgtrello/--compute-user-properties-hash))
 

@@ -89,6 +89,9 @@
 (defun orgtrello-data/gethash-data (key query-map &optional default-value) "Retrieve the data from some query-map" (when query-map (gethash key query-map default-value)))
 
 (defun orgtrello-data/entity-name (entity) "Retrieve the entity name"     (orgtrello-data/gethash-data :name entity))
+(defun orgtrello-data/entity-memberships (entity) "Retrieve the entity memberships"     (orgtrello-data/gethash-data :memberships entity))
+(defun orgtrello-data/entity-member (entity) "Retrieve the entity member"     (orgtrello-data/gethash-data :member entity))
+(defun orgtrello-data/entity-username (entity) "Retrieve the entity member"     (orgtrello-data/gethash-data :username entity))
 (defun orgtrello-data/entity-action (entity) "Retrieve the entity name"     (orgtrello-data/gethash-data :action entity))
 (defun orgtrello-data/entity-due (entity) "Retrieve the entity due date"  (orgtrello-data/gethash-data :due entity))
 (defun orgtrello-data/entity-state (entity) "Retrieve the entity status"  (orgtrello-data/entity-keyword entity))
@@ -159,7 +162,11 @@
                                                                         (:keyword . :keyword)
                                                                         (start . :start)
                                                                         (level . :level)
-                                                                        (users-assigned . :users-assigned))))
+                                                                        (users-assigned . :users-assigned)
+                                                                        (member . :member)
+                                                                        (memberships . :memberships)
+                                                                        (username . :username)
+                                                                        (fullName . :full-name))))
 
 (defun orgtrello-data/parse-data (entities) "Given a trello entity, convert into org-trello entity"
   (cond ((eq :json-false entities)             nil)
