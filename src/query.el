@@ -20,6 +20,7 @@
 
 (defun orgtrello-query/--http-parse () "Parse the http response into an org-trello entity."
   (->> (json-read)
+       (trace :json-read)
        orgtrello-data/from-trello
        (trace :from-trello)))
 

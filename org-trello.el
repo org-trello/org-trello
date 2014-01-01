@@ -415,13 +415,6 @@ If you want to use this, we recommand to use the native org checklists - http://
 (defun orgtrello-data/current-level () "Compute the current level's position."
   (-> (orgtrello-data/metadata) orgtrello-data/entity-level))
 
-(defun orgtrello-data/--deal-with-value (values) "Deal with possible values "
-  (cond ((stringp values)                                     values)
-        ((arrayp values)                                      (mapcar (lambda (e) e) values))
-        ((and (listp values) (not (eq 'lambda (car values)))) (mapcar 'orgtrello-data/from-trello values))
-        ((eq :json-false values)                              nil)
-        (t                                                    values)))
-
 (defun orgtrello-data/--compute-level (entity-map) "Given a map, compute the entity level"
   (cond ((gethash :list-id entity-map) *CARD-LEVEL*)
         ((gethash :card-id entity-map) *CHECKLIST-LEVEL*)
@@ -458,18 +451,22 @@ If you want to use this, we recommand to use the native org checklists - http://
                                                                         (level . :level)
                                                                         (users-assigned . :users-assigned))))
 
-(defun orgtrello-data/from-trello (entity-alist) "Given a trello entity, convert into org-trello entity"
-  (cond ((arrayp entity-alist) (mapcar 'orgtrello-data/from-trello entity-alist))
-        (t                     (let ((hmap (--reduce-from (let ((key (car it))
-                                                                (val (cdr it)))
-                                                            (-when-let (new-key (gethash key *ORGTRELLO-DATA-MAP-KEYWORDS*))
-                                                                       (puthash new-key (orgtrello-data/--deal-with-value val) acc))
-                                                            acc)
-                                                          (make-hash-table :test 'equal)
-                                                          entity-alist)))
-                                 (-when-let (level (orgtrello-data/--compute-level hmap))
-                                            (puthash :level level hmap))
-                                 hmap))))
+(defun orgtrello-data/from-trello (entities) "Given a trello entity, convert into org-trello entity"
+  (cond ((eq :json-false entities)             nil)
+        ((stringp entities)                    entities)
+        ((symbolp entities)                    entities)
+        ((numberp entities)                    entities)
+        ((functionp entities)                  entities)
+        ((arrayp entities)                    (mapcar 'orgtrello-data/from-trello entities))
+        (t                                    (let ((hmap (--reduce-from (let ((key (car it))
+                                                                               (val (cdr it)))
+                                                                           (-when-let (new-key (gethash key *ORGTRELLO-DATA-MAP-KEYWORDS*))
+                                                                                      (puthash new-key (orgtrello-data/from-trello val) acc))
+                                                                           acc)
+                                                                         (make-hash-table :test 'equal)
+                                                                         entities)))
+                                                (-when-let (level (orgtrello-data/--compute-level hmap)) (puthash :level level hmap))
+                                                hmap))))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-data loaded!")
 
@@ -809,6 +806,7 @@ This is a list with the following elements:
 
 (defun orgtrello-query/--http-parse () "Parse the http response into an org-trello entity."
   (->> (json-read)
+       (trace :json-read)
        orgtrello-data/from-trello
        (trace :from-trello)))
 
