@@ -92,7 +92,8 @@
 (defun orgtrello-data/entity-action (entity) "Retrieve the entity name"     (orgtrello-data/gethash-data :action entity))
 (defun orgtrello-data/entity-due (entity) "Retrieve the entity due date"  (orgtrello-data/gethash-data :due entity))
 (defun orgtrello-data/entity-state (entity) "Retrieve the entity status"  (orgtrello-data/entity-keyword entity))
-(defun orgtrello-data/entity-card-id (entity) "Extract the list identitier of the entity from the entity" (orgtrello-data/gethash-data :card-id entity))
+(defun orgtrello-data/entity-board-id (entity) "Extract the board identitier of the entity from the entity" (orgtrello-data/gethash-data :board-id entity))
+(defun orgtrello-data/entity-card-id (entity) "Extract the card identitier of the entity from the entity" (orgtrello-data/gethash-data :card-id entity))
 (defun orgtrello-data/entity-list-id (entity) "Extract the list identitier of the entity from the entity" (orgtrello-data/gethash-data :list-id entity))
 (defun orgtrello-data/entity-member-ids (entity) "Extract the member ids of the entity" (orgtrello-data/gethash-data :users-assigned entity))
 (defun orgtrello-data/entity-checklists (entity) "Extract the checklists params" (orgtrello-data/gethash-data :checklists entity))
@@ -125,10 +126,11 @@
   (-> (orgtrello-data/metadata) orgtrello-data/entity-level))
 
 (defun orgtrello-data/--deal-with-value (values) "Deal with possible values "
-  (cond ((stringp values)        values)
-        ((arrayp values)         (mapcar (lambda (e) e) values))
-        ((eq :json-false values) nil)
-        (t                       values)))
+  (cond ((stringp values)                                     values)
+        ((arrayp values)                                      (mapcar (lambda (e) e) values))
+        ((and (listp values) (not (eq 'lambda (car values)))) (mapcar 'orgtrello-data/from-trello values))
+        ((eq :json-false values)                              nil)
+        (t                                                    values)))
 
 (defun orgtrello-data/--compute-level (entity-map) "Given a map, compute the entity level"
   (cond ((gethash :list-id entity-map) *CARD-LEVEL*)

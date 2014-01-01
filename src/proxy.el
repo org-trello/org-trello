@@ -56,15 +56,15 @@
 
 (defun orgtrello-proxy/--elnode-proxy (http-con) "Deal with request to trello (for creation/sync request, use orgtrello-proxy/--elnode-proxy-producer)."
   (orgtrello-log/msg *OT/TRACE* "Proxy - Request received. Transmitting...")
-  (let* ((query-map-wrapped    (trace :elnode-proxy-producer-query-map-wrapped (orgtrello-proxy/--extract-trello-query http-con))) ;; wrapped query is mandatory
-         (query-map-data       (trace :elnode-proxy-producer-query-data (orgtrello-data/from-trello query-map-wrapped)))
-         (position             (trace :elnode-proxy-position (orgtrello-data/entity-position query-map-data))) ;; position is mandatory
-         (buffer-name          (trace :elnode-proxy-buffername (orgtrello-data/entity-buffername query-map-data))) ;; buffer-name is mandatory
-         (standard-callback    (trace :elnode-proxy-standard-callback (orgtrello-data/entity-callback query-map-data))) ;; there is the possibility to transmit the callback from the client to the proxy
-         (standard-callback-fn (trace :elnode-proxy-standard-callback-fn (when standard-callback (symbol-function (intern standard-callback))))) ;; the callback is passed as a string, we want it as a function when defined
-         (sync                 (trace :elnode-proxy-sync (orgtrello-data/entity-sync query-map-data))) ;; there is a possibility to enforce the sync between proxy and client
-         (query-map            (trace :elnode-proxy-query-map (orgtrello-proxy/--compute-trello-query query-map-data))) ;; extracting the query
-         (name                 (trace :elnode-proxy-name (orgtrello-data/entity-name query-map-data)))) ;; extracting the name of the entity (optional)
+  (let* ((query-map-wrapped    (orgtrello-proxy/--extract-trello-query http-con)) ;; wrapped query is mandatory
+         (query-map-data       (orgtrello-data/from-trello query-map-wrapped))
+         (position             (orgtrello-data/entity-position query-map-data)) ;; position is mandatory
+         (buffer-name          (orgtrello-data/entity-buffername query-map-data)) ;; buffer-name is mandatory
+         (standard-callback    (orgtrello-data/entity-callback query-map-data)) ;; there is the possibility to transmit the callback from the client to the proxy
+         (standard-callback-fn (when standard-callback (symbol-function (intern standard-callback)))) ;; the callback is passed as a string, we want it as a function when defined
+         (sync                 (orgtrello-data/entity-sync query-map-data)) ;; there is a possibility to enforce the sync between proxy and client
+         (query-map            (orgtrello-proxy/--compute-trello-query query-map-data)) ;; extracting the query
+         (name                 (orgtrello-data/entity-name query-map-data))) ;; extracting the name of the entity (optional)
     (orgtrello-query/http-trello query-map sync (when standard-callback-fn (funcall standard-callback-fn buffer-name position name)))
     (orgtrello-proxy/response-ok http-con)))
 
