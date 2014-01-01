@@ -2380,14 +2380,10 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
       "Install key and read/write access token done!")))
 
 (defun orgtrello/--id-name (entities) "Given a list of entities, return a map of (id, name)."
-  (let ((id-name (make-hash-table :test 'equal)))
-    (mapc (lambda (it) (puthash (orgtrello-data/entity-id it) (orgtrello-data/entity-name it) id-name)) entities)
-    id-name))
+  (--reduce-from (progn (puthash (orgtrello-data/entity-id it) (orgtrello-data/entity-name it) acc) acc) (make-hash-table :test 'equal) entities))
 
 (defun orgtrello/--name-id (entities) "Given a list of entities, return a map of (id, name)."
-  (let ((name-id (make-hash-table :test 'equal)))
-    (mapc (lambda (it) (puthash (orgtrello-data/entity-name it) (orgtrello-data/entity-id it) name-id)) entities)
-    name-id))
+  (--reduce-from (progn (puthash (orgtrello-data/entity-name it) (orgtrello-data/entity-id it) acc) acc) (make-hash-table :test 'equal) entities))
 
 (defun orgtrello/--list-boards () "Return the map of the existing boards associated to the current account. (Synchronous request)"
   (cl-remove-if-not

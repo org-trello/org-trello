@@ -654,8 +654,7 @@
   ;; parent is useless here
   (orgtrello-api/delete-card (orgtrello-data/entity-id card-meta)))
 
-(defun orgtrello/--checklist-delete (checklist-meta &optional parent-meta) "Deal with the deletion query of a checklist"
-  ;; parent is useless here
+(defun orgtrello/--checklist-delete (checklist-meta &optional parent-meta) "Deal with the deletion query of a checklist" ;; parent is useless here
   (orgtrello-api/delete-checklist (orgtrello-data/entity-id checklist-meta)))
 
 (defun orgtrello/--item-delete (item-meta &optional checklist-meta) "Deal with create/update item query build"
@@ -699,25 +698,18 @@
       "Install key and read/write access token done!")))
 
 (defun orgtrello/--id-name (entities) "Given a list of entities, return a map of (id, name)."
-  (let ((id-name (make-hash-table :test 'equal)))
-    (mapc (lambda (it) (puthash (orgtrello-data/entity-id it) (orgtrello-data/entity-name it) id-name)) entities)
-    id-name))
+  (--reduce-from (progn (puthash (orgtrello-data/entity-id it) (orgtrello-data/entity-name it) acc) acc) (make-hash-table :test 'equal) entities))
 
 (defun orgtrello/--name-id (entities) "Given a list of entities, return a map of (id, name)."
-  (let ((name-id (make-hash-table :test 'equal)))
-    (mapc (lambda (it) (puthash (orgtrello-data/entity-name it) (orgtrello-data/entity-id it) name-id)) entities)
-    name-id))
+  (--reduce-from (progn (puthash (orgtrello-data/entity-name it) (orgtrello-data/entity-id it) acc) acc) (make-hash-table :test 'equal) entities))
 
 (defun orgtrello/--list-boards () "Return the map of the existing boards associated to the current account. (Synchronous request)"
-  (cl-remove-if-not
-   (lambda (board) (equal :json-false (orgtrello-data/entity-closed board)))
-   (orgtrello-query/http-trello (orgtrello-api/get-boards) *do-sync-query*)))
+  (--remove (orgtrello-data/entity-closed it) (orgtrello-query/http-trello (orgtrello-api/get-boards) *do-sync-query*)))
 
 (defun orgtrello/--list-board-lists (board-id) "Return the map of the existing list of the board with id board-id. (Synchronous request)"
   (orgtrello-query/http-trello (orgtrello-api/get-lists board-id) *do-sync-query*))
 
-(defun orgtrello/--choose-board (boards) "Given a map of boards, display the possible boards for the user to choose which one he wants to work with."
-  ;; ugliest ever
+(defun orgtrello/--choose-board (boards) "Given a map of boards, display the possible boards for the user to choose which one he wants to work with."  ;; ugliest ever
   (defvar orgtrello/--board-chosen nil)
   (setq orgtrello/--board-chosen nil)
   (let* ((str-key-val  "")
@@ -829,7 +821,7 @@
 (defun orgtrello/--user-logged-in () "Compute the current user."
   (--> (orgtrello-api/get-me)
        (orgtrello-query/http-trello it *do-sync-query*)
-       (assoc-default 'username it)))
+       (orgtrello-data/entity-username it)))
 
 (defun orgtrello/do-install-board-and-lists () "Command to install the list boards."
   (interactive)
