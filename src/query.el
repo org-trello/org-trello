@@ -20,9 +20,7 @@
 
 (defun orgtrello-query/--http-parse () "Parse the http response into an org-trello entity."
   (->> (json-read)
-       (trace :json-read)
-       orgtrello-data/parse-data
-       (trace :from-trello)))
+       orgtrello-data/parse-data))
 
 (defun orgtrello-query/--get (server query-map &optional success-callback error-callback authentication-p) "GET"
   (request (->> query-map orgtrello-data/entity-uri (orgtrello-query/--compute-url server))
