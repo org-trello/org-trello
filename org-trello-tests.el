@@ -286,7 +286,7 @@
     (should (equal (orgtrello-data/entity-member-ids entry) :users-assigned))))
 
 (ert-deftest testing-orgtrello/--id-name ()
-  (let* ((entities (orgtrello-data/from-trello [((id . "id")
+  (let* ((entities (orgtrello-data/parse-data [((id . "id")
                                                  (shortUrl . "https://trello.com/b/ePrdEnzC")
                                                  (url . "https://trello.com/board/devops/4f96a984dbb00d733b04d8b5")
                                                  (name . "testing board"))
@@ -309,7 +309,7 @@
     (should (equal (hash-table-count hashtable-result) (hash-table-count hashtable-expected)))))
 
 (ert-deftest testing-orgtrello/--name-id ()
-  (let* ((entities (orgtrello-data/from-trello [((id . "id")
+  (let* ((entities (orgtrello-data/parse-data [((id . "id")
                                                  (shortUrl . "https://trello.com/b/ePrdEnzC")
                                                  (name . "testing board"))
                                                 ((id . "another-id")
@@ -1745,7 +1745,7 @@ C-c o h - M-x org-trello/help-describing-bindings - This help message."
   (expect *ITEM-LEVEL*      (orgtrello-data/--compute-level (orgtrello-hash/make-properties '((:checked . 0)))))
   (expect nil               (orgtrello-data/--compute-level (orgtrello-hash/make-properties '()))))
 
-(ert-deftest testing-orgtrello-data/from-trello-card ()
+(ert-deftest testing-orgtrello-data/parse-data-card ()
   ;; check card
   (should (hash-equal (orgtrello-hash/make-properties `((:url . "https://trello.com/c/9XPLuJhi/2515-joy-of-fun-ctional-languages")
                                                         (:name . "Joy of FUN(ctional) LANGUAGES")
@@ -1760,7 +1760,7 @@ C-c o h - M-x org-trello/help-describing-bindings - This help message."
                                                         (:due . "some-due-date")
                                                         (:position . "98304")))
 
-                      (orgtrello-data/from-trello '((url . "https://trello.com/c/9XPLuJhi/2515-joy-of-fun-ctional-languages")
+                      (orgtrello-data/parse-data '((url . "https://trello.com/c/9XPLuJhi/2515-joy-of-fun-ctional-languages")
                                                     (shortUrl . "https://trello.com/c/9XPLuJhi")
                                                     (pos . "98304")
                                                     (name . "Joy of FUN(ctional) LANGUAGES")
@@ -1790,7 +1790,7 @@ C-c o h - M-x org-trello/help-describing-bindings - This help message."
                                                             (votes . 0))
                                                     (id . "52c09056d84eeca156001a24"))))))
 
-(ert-deftest testing-orgtrello-data/from-trello-checklist ()
+(ert-deftest testing-orgtrello-data/parse-data-checklist ()
   ;; check checklist
   (should (hash-equal (orgtrello-hash/make-properties `((:items . ())
                                                         (:name . "LISP family")
@@ -1800,21 +1800,21 @@ C-c o h - M-x org-trello/help-describing-bindings - This help message."
                                                         (:board-id . "51d99bbc1e1d8988390047f2")
                                                         (:id . "52c0a36886b7bdd67c008cf1")
                                                         (:position . 16384)))
-                      (orgtrello-data/from-trello '((checkItems . [])
+                      (orgtrello-data/parse-data '((checkItems . [])
                                                     (pos . 16384)
                                                     (idCard . "52c09056d84eeca156001a24")
                                                     (idBoard . "51d99bbc1e1d8988390047f2")
                                                     (name . "LISP family")
                                                     (id . "52c0a36886b7bdd67c008cf1"))))))
 
-(ert-deftest testing-orgtrello-data/from-trello-item ()
+(ert-deftest testing-orgtrello-data/parse-data-item ()
   (should (hash-equal
            (orgtrello-hash/make-properties `((:name . "Emacs-Lisp")
                                              (:level . 3)
                                              (:id . "52c0a64cfb34123369015393")
                                              (:checked . "complete")
                                              (:position . 16384)))
-           (orgtrello-data/from-trello '((pos . 16384)
+           (orgtrello-data/parse-data '((pos . 16384)
                                          (nameData (emoji))
                                          (name . "Emacs-Lisp")
                                          (id . "52c0a64cfb34123369015393")
@@ -1825,18 +1825,18 @@ C-c o h - M-x org-trello/help-describing-bindings - This help message."
                                              (:id . "52c0a64cfb34123369015393")
                                              (:checked . "incomplete")
                                              (:position . 16384)))
-           (orgtrello-data/from-trello '((pos . 16384)
+           (orgtrello-data/parse-data '((pos . 16384)
                                          (nameData (emoji))
                                          (name . "Emacs-Lisp")
                                          (id . "52c0a64cfb34123369015393")
                                          (state . "incomplete"))))))
 
-(ert-deftest testing-orgtrello-data/from-trello-http-response ()
+(ert-deftest testing-orgtrello-data/parse-data-http-response ()
   (should (hash-equal
            (orgtrello-hash/make-properties `((:status . ok)))
-           (orgtrello-data/from-trello '((status . ok))))))
+           (orgtrello-data/parse-data '((status . ok))))))
 
-(ert-deftest testing-orgtrello-data/from-trello-remaining-possible-inputs ()
+(ert-deftest testing-orgtrello-data/parse-data-remaining-possible-inputs ()
   (should (hash-equal
            (orgtrello-hash/make-properties `((:buffername . ":buffername")
                                              (:sync . ":sync")
@@ -1848,7 +1848,7 @@ C-c o h - M-x org-trello/help-describing-bindings - This help message."
                                              (:position . ":position")
                                              (:keyword . ":keyword")
                                              (:callback . (lambda (id) id))))
-           (orgtrello-data/from-trello '((buffername . ":buffername")
+           (orgtrello-data/parse-data '((buffername . ":buffername")
                                          (sync . ":sync")
                                          (uri . ":uri")
                                          (method . ":method")
@@ -1859,8 +1859,8 @@ C-c o h - M-x org-trello/help-describing-bindings - This help message."
                                          (:keyword . ":keyword")
                                          (callback . (lambda (id) id)))))))
 
-(ert-deftest testing-orgtrello-data/from-trello-with-list-of-results ()
-  (let ((list-hash (orgtrello-data/from-trello '[((shortUrl . "https://trello.com/b/o9oY3NlQ")
+(ert-deftest testing-orgtrello-data/parse-data-with-list-of-results ()
+  (let ((list-hash (orgtrello-data/parse-data '[((shortUrl . "https://trello.com/b/o9oY3NlQ")
                                                   (dateLastView . "2013-08-08T14:07:03.382Z")
                                                   (dateLastActivity)
                                                   (powerUps . [])
@@ -1964,9 +1964,9 @@ C-c o h - M-x org-trello/help-describing-bindings - This help message."
                                       (:url "https://trello.com/b/xzOJmxzy/demandes-infra" :closed t :description "" :name "Demandes Infra" :id "50aa59502ddab2fc1100115b"))
                         (second list-hash)))))
 
-(expectations (desc "orgtrello-data/from-trello - with nested assoc list.")
+(expectations (desc "orgtrello-data/parse-data - with nested assoc list.")
               (defvar actual-result)
-              (setq actual-result (orgtrello-data/from-trello '((checkItems . [((pos . 16384)
+              (setq actual-result (orgtrello-data/parse-data '((checkItems . [((pos . 16384)
                                                                                 (nameData)
                                                                                 (name . "introduction")
                                                                                 (id . "52c0b537ad469b9d6d044fa1")

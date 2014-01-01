@@ -161,17 +161,17 @@
                                                                         (level . :level)
                                                                         (users-assigned . :users-assigned))))
 
-(defun orgtrello-data/from-trello (entities) "Given a trello entity, convert into org-trello entity"
+(defun orgtrello-data/parse-data (entities) "Given a trello entity, convert into org-trello entity"
   (cond ((eq :json-false entities)             nil)
         ((stringp entities)                    entities)
         ((symbolp entities)                    entities)
         ((numberp entities)                    entities)
         ((functionp entities)                  entities)
-        ((arrayp entities)                    (mapcar 'orgtrello-data/from-trello entities))
+        ((arrayp entities)                    (mapcar 'orgtrello-data/parse-data entities))
         (t                                    (let ((hmap (--reduce-from (let ((key (car it))
                                                                                (val (cdr it)))
                                                                            (-when-let (new-key (gethash key *ORGTRELLO-DATA-MAP-KEYWORDS*))
-                                                                                      (puthash new-key (orgtrello-data/from-trello val) acc))
+                                                                                      (puthash new-key (orgtrello-data/parse-data val) acc))
                                                                            acc)
                                                                          (make-hash-table :test 'equal)
                                                                          entities)))

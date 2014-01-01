@@ -451,17 +451,17 @@ If you want to use this, we recommand to use the native org checklists - http://
                                                                         (level . :level)
                                                                         (users-assigned . :users-assigned))))
 
-(defun orgtrello-data/from-trello (entities) "Given a trello entity, convert into org-trello entity"
+(defun orgtrello-data/parse-data (entities) "Given a trello entity, convert into org-trello entity"
   (cond ((eq :json-false entities)             nil)
         ((stringp entities)                    entities)
         ((symbolp entities)                    entities)
         ((numberp entities)                    entities)
         ((functionp entities)                  entities)
-        ((arrayp entities)                    (mapcar 'orgtrello-data/from-trello entities))
+        ((arrayp entities)                    (mapcar 'orgtrello-data/parse-data entities))
         (t                                    (let ((hmap (--reduce-from (let ((key (car it))
                                                                                (val (cdr it)))
                                                                            (-when-let (new-key (gethash key *ORGTRELLO-DATA-MAP-KEYWORDS*))
-                                                                                      (puthash new-key (orgtrello-data/from-trello val) acc))
+                                                                                      (puthash new-key (orgtrello-data/parse-data val) acc))
                                                                            acc)
                                                                          (make-hash-table :test 'equal)
                                                                          entities)))
@@ -807,7 +807,7 @@ This is a list with the following elements:
 (defun orgtrello-query/--http-parse () "Parse the http response into an org-trello entity."
   (->> (json-read)
        (trace :json-read)
-       orgtrello-data/from-trello
+       orgtrello-data/parse-data
        (trace :from-trello)))
 
 (defun orgtrello-query/--get (server query-map &optional success-callback error-callback authentication-p) "GET"
@@ -1174,7 +1174,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
          (scan-fns (if scan-flag (cons 'orgtrello-elnode/archived-scanning-dir list-fns) list-fns)) ;; build the list of functions to create the composed function
          (composed-fn (compose-fn scan-fns)))
     (--map
-     (orgtrello-data/from-trello (read (orgtrello-webadmin/--content-file it)))
+     (orgtrello-data/parse-data (read (orgtrello-webadmin/--content-file it)))
      (--mapcat (orgtrello-elnode/list-files (funcall composed-fn it)) levels))))
 
 (defun orgtrello-webadmin/elnode-current-entity (http-con) "A basic display of the list of entities to scan."
@@ -1285,7 +1285,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 (defun orgtrello-proxy/--elnode-proxy (http-con) "Deal with request to trello (for creation/sync request, use orgtrello-proxy/--elnode-proxy-producer)."
   (orgtrello-log/msg *OT/TRACE* "Proxy - Request received. Transmitting...")
   (let* ((query-map-wrapped    (orgtrello-proxy/--extract-trello-query http-con)) ;; wrapped query is mandatory
-         (query-map-data       (orgtrello-data/from-trello query-map-wrapped))
+         (query-map-data       (orgtrello-data/parse-data query-map-wrapped))
          (position             (orgtrello-data/entity-position query-map-data)) ;; position is mandatory
          (buffer-name          (orgtrello-data/entity-buffername query-map-data)) ;; buffer-name is mandatory
          (standard-callback    (orgtrello-data/entity-callback query-map-data)) ;; there is the possibility to transmit the callback from the client to the proxy
@@ -1302,7 +1302,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 (defun orgtrello-proxy/--elnode-proxy-producer (http-con) "A handler which is an entity informations producer on files under the docroot/level-entities/"
   (orgtrello-log/msg *OT/TRACE* "Proxy-producer - Request received. Generating entity file...")
   (let* ((query-map-wrapped    (orgtrello-proxy/--extract-trello-query http-con 'unhexify)) ;; wrapped query is mandatory ;; FIXME need to recurse the all result
-         (query-map-data       (orgtrello-data/from-trello query-map-wrapped))
+         (query-map-data       (orgtrello-data/parse-data query-map-wrapped))
          (position             (orgtrello-data/entity-position query-map-data))          ;; position is mandatory
          (buffer-name          (orgtrello-data/entity-buffername query-map-data))        ;; buffer-name is mandatory
          (level                (orgtrello-data/entity-level query-map-data))
@@ -1492,7 +1492,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
         (orgtrello-proxy/--deal-with-entity-action (-> file
                                                        orgtrello-proxy/--read-lines
                                                        read
-                                                       orgtrello-data/from-trello) file)))
+                                                       orgtrello-data/parse-data) file)))
 
 (defun orgtrello-proxy/--deal-with-directory-action (level directory) "Given a directory, list the files and take the first one (entity) and do some action on it with trello. Call again if it remains other entities."
   (-when-let (orgtrello-proxy/--files (orgtrello-elnode/list-files directory))
@@ -1581,7 +1581,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 (defvar *ORGTRELLO-TIMER* nil "A timer run by elnode")
 
 (defun orgtrello-proxy/--elnode-timer (http-con) "A process on elnode to trigger even regularly."
-  (let* ((query-map     (-> http-con orgtrello-proxy/--extract-trello-query orgtrello-data/from-trello))
+  (let* ((query-map     (-> http-con orgtrello-proxy/--extract-trello-query orgtrello-data/parse-data))
          (start-or-stop (orgtrello-data/entity-start query-map)))
     (if start-or-stop
         ;; cleanup before starting anew
