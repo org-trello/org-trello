@@ -407,54 +407,54 @@
   (expect "entity name" (orgtrello-webadmin/--detail-entity 3 (orgtrello-hash/make-properties '((:name . "entity name")))))
   (expect "entity name" (gethash :name (orgtrello-webadmin/--detail-entity 5 (orgtrello-hash/make-properties '((:name . "entity name")))))))
 
-(expectations (desc "org-action/--filter-error-message")
- (expect '("error0" "error1") (org-action/--filter-error-messages '("error0" :ok "error1")))
- (expect nil                  (org-action/--filter-error-messages '(:ok :ok :ok))))
+(expectations (desc "orgtrello-action/--filter-error-message")
+ (expect '("error0" "error1") (orgtrello-action/--filter-error-messages '("error0" :ok "error1")))
+ (expect nil                  (orgtrello-action/--filter-error-messages '(:ok :ok :ok))))
 
 (expectations
-  (expect '(:ok) (org-action/--execute-controls '((lambda (e) :ok))))
-  (expect '(:ok "ko") (org-action/--execute-controls '((lambda (e) :ok)
+  (expect '(:ok) (orgtrello-action/--execute-controls '((lambda (e) :ok))))
+  (expect '(:ok "ko") (orgtrello-action/--execute-controls '((lambda (e) :ok)
                                                        (lambda (e) "ko"))))
-  (expect '(:ok) (org-action/--execute-controls '((lambda (a) :ok)) 'args))
-  (expect '(:ok "ko") (org-action/--execute-controls '((lambda (a) :ok)
+  (expect '(:ok) (orgtrello-action/--execute-controls '((lambda (a) :ok)) 'args))
+  (expect '(:ok "ko") (orgtrello-action/--execute-controls '((lambda (a) :ok)
                                                        (lambda (a) "ko")) 'arg0)))
 
-(expectations  (desc "org-action/--function-controls-then-do - 1")
+(expectations  (desc "orgtrello-action/--function-controls-then-do - 1")
   (expect   "List of errors:
  - Level too high. Do not deal with entity other than card/checklist/items!
 "
-      (org-action/--functional-controls-then-do
+      (orgtrello-action/--functional-controls-then-do
        '(orgtrello/--right-level-p)
        (orgtrello-hash/make-hierarchy (orgtrello-hash/make-hash-org :users 4 :kwd :name nil :due :position :buffer-name))
        (lambda (entity s) (format "%S %s" entity s))
        "- hello"))
 
   (expect "#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:current #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:buffername :buffer-name :position :position :level 3 :keyword :kwd :name :name :id nil :due :due :users-assigned :users)) :parent nil :grandparent nil)) - hello"
-    (org-action/--functional-controls-then-do
+    (orgtrello-action/--functional-controls-then-do
      '(orgtrello/--right-level-p)
      (orgtrello-hash/make-hierarchy (orgtrello-hash/make-hash-org :users 3 :kwd :name nil :due :position :buffer-name))
      (lambda (entity s) (format "%S %s" entity s))
      "- hello")))
 
-(expectations (desc "org-action/--function-controls-then-do - 2")
+(expectations (desc "orgtrello-action/--function-controls-then-do - 2")
   (expect "List of errors:
  - Entity must been synchronized with trello first!
 "
-    (org-action/--functional-controls-then-do
+    (orgtrello-action/--functional-controls-then-do
      '(orgtrello/--right-level-p orgtrello/--already-synced-p)
      (orgtrello-hash/make-hierarchy (orgtrello-hash/make-hash-org :users 1 :kwd :name nil :due :position :buffer-name))
      (lambda (entity s) (format "%S %s" entity s))
      "- hello"))
   (expect "#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:current #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:buffername :buffer-name :position :position :level 1 :keyword :kwd :name :name :id \"some-id\" :due :due :users-assigned :users)) :parent nil :grandparent nil)) - hello"
 
-    (org-action/--functional-controls-then-do
+    (orgtrello-action/--functional-controls-then-do
      '(orgtrello/--right-level-p orgtrello/--already-synced-p)
      (orgtrello-hash/make-hierarchy (orgtrello-hash/make-hash-org :users 1 :kwd :name "some-id" :due :position :buffer-name))
      (lambda (entity s) (format "%S %s" entity s))
      "- hello")))
 
-(expectations (desc "org-action/--compute-error-message")
-  (expect "- message 1\n- message 2\n" (org-action/--compute-error-message '("message 1" "message 2"))))
+(expectations (desc "orgtrello-action/--compute-error-message")
+  (expect "- message 1\n- message 2\n" (orgtrello-action/--compute-error-message '("message 1" "message 2"))))
 
 (expectations (desc "orgtrello-hash/key")
  (expect ":key:" (orgtrello-hash/key "key")))

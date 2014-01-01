@@ -241,43 +241,43 @@ If you want to use this, we recommand to use the native org checklists - http://
          retval)
      ,@clean-up))
 
-(defun org-action/--execute-controls (controls-or-actions-fns &optional entity) "Given a series of controls, execute them and return the results."
+(defun orgtrello-action/--execute-controls (controls-or-actions-fns &optional entity) "Given a series of controls, execute them and return the results."
   (--map (funcall it entity) controls-or-actions-fns))
 
-(defun org-action/--filter-error-messages (control-or-actions) "Given a list of control or actions done, filter only the error message. Return nil if no error message."
+(defun orgtrello-action/--filter-error-messages (control-or-actions) "Given a list of control or actions done, filter only the error message. Return nil if no error message."
   (--filter (not (equal :ok it)) control-or-actions))
 
-(defun org-action/--compute-error-message (error-msgs) "Given a list of error messages, compute them as a string."
+(defun orgtrello-action/--compute-error-message (error-msgs) "Given a list of error messages, compute them as a string."
   (apply 'concat (--map (concat "- " it "\n") error-msgs)))
 
-(defun org-action/--controls-or-actions-then-do (control-or-action-fns fn-to-execute &optional nolog-p) "Execute the function fn-to-execute if control-or-action-fns is nil or display the error message if problems."
+(defun orgtrello-action/--controls-or-actions-then-do (control-or-action-fns fn-to-execute &optional nolog-p) "Execute the function fn-to-execute if control-or-action-fns is nil or display the error message if problems."
   (if control-or-action-fns
-      (let ((org-trello/--error-messages (-> control-or-action-fns org-action/--execute-controls org-action/--filter-error-messages)))
+      (let ((org-trello/--error-messages (-> control-or-action-fns orgtrello-action/--execute-controls orgtrello-action/--filter-error-messages)))
         (if org-trello/--error-messages
             (unless nolog-p
                     ;; there are some trouble, we display all the error messages to help the user understand the problem
-                    (orgtrello-log/msg *OT/ERROR* "List of errors:\n %s" (org-action/--compute-error-message org-trello/--error-messages)))
+                    (orgtrello-log/msg *OT/ERROR* "List of errors:\n %s" (orgtrello-action/--compute-error-message org-trello/--error-messages)))
             ;; ok execute the function as the controls are ok
             (funcall fn-to-execute)))
       ;; no control, we simply execute the function
       (funcall fn-to-execute)))
 
-(defun org-action/--functional-controls-then-do (control-fns entity fn-to-execute args) "Execute the function fn if control-fns is nil or if the result of apply every function to fn-to-execute is ok."
+(defun orgtrello-action/--functional-controls-then-do (control-fns entity fn-to-execute args) "Execute the function fn if control-fns is nil or if the result of apply every function to fn-to-execute is ok."
   (if control-fns
-      (let ((org-trello/--error-messages (-> control-fns (org-action/--execute-controls entity) org-action/--filter-error-messages)))
+      (let ((org-trello/--error-messages (-> control-fns (orgtrello-action/--execute-controls entity) orgtrello-action/--filter-error-messages)))
         (if org-trello/--error-messages
             ;; there are some trouble, we display all the error messages to help the user understand the problem
-            (orgtrello-log/msg *OT/ERROR* "List of errors:\n %s" (org-action/--compute-error-message org-trello/--error-messages))
+            (orgtrello-log/msg *OT/ERROR* "List of errors:\n %s" (orgtrello-action/--compute-error-message org-trello/--error-messages))
             ;; ok execute the function as the controls are ok
             (funcall fn-to-execute entity args)))
       ;; no control, we simply execute the function
       (funcall fn-to-execute entity args)))
 
-(defun org-action/--msg-controls-or-actions-then-do (msg control-or-action-fns fn-to-execute &optional save-buffer-p reload-setup-p nolog-p) "A decorator fn to execute some action before/after the controls."
+(defun orgtrello-action/--msg-controls-or-actions-then-do (msg control-or-action-fns fn-to-execute &optional save-buffer-p reload-setup-p nolog-p) "A decorator fn to execute some action before/after the controls."
   (unless nolog-p (orgtrello-log/msg *OT/INFO* (concat msg "...")))
   ;; now execute the controls and the main action
   (orgtrello-action/safe-wrap
-   (org-action/--controls-or-actions-then-do control-or-action-fns fn-to-execute nolog-p)
+   (orgtrello-action/--controls-or-actions-then-do control-or-action-fns fn-to-execute nolog-p)
    (progn
      (when save-buffer-p  (save-buffer))
      (when reload-setup-p (orgtrello-action/reload-setup))
@@ -1561,7 +1561,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   (if (file-exists-p (orgtrello-proxy/--compute-lock-filename)) "Timer already running!" :ok))
 
 (defun orgtrello-proxy/--controls-and-scan-if-ok () "Execution of the timer which consumes the entities and execute the sync to trello."
-  (org-action/--msg-controls-or-actions-then-do
+  (orgtrello-action/--msg-controls-or-actions-then-do
    "Scanning entities to sync"
    '(orgtrello-proxy/--check-network-connection orgtrello-proxy/--check-no-running-timer)
    'orgtrello-proxy/--consumer-lock-and-scan-entity-files-hierarchically-and-do
@@ -1605,11 +1605,11 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun orgtrello-proxy/timer-stop () "Stop the orgtrello-timer." (orgtrello-proxy/http-consumer nil))
 
-(defun org-action/--deal-with-consumer-msg-controls-or-actions-then-do (msg control-or-action-fns fn-to-execute &optional save-buffer-p reload-setup-p nolog-p) "Decorator fn to execute actions before/after the controls."
+(defun orgtrello-action/--deal-with-consumer-msg-controls-or-actions-then-do (msg control-or-action-fns fn-to-execute &optional save-buffer-p reload-setup-p nolog-p) "Decorator fn to execute actions before/after the controls."
   ;; stop the timer
   (orgtrello-proxy/timer-stop)
   ;; Execute as usual
-  (org-action/--msg-controls-or-actions-then-do msg control-or-action-fns fn-to-execute save-buffer-p reload-setup-p nolog-p)
+  (orgtrello-action/--msg-controls-or-actions-then-do msg control-or-action-fns fn-to-execute save-buffer-p reload-setup-p nolog-p)
   ;; start the timer
   (orgtrello-proxy/timer-start))
 
@@ -1914,7 +1914,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
     (orgtrello-proxy/http-producer orgtrello/--current)))
 
 (defun orgtrello/--checks-then-delegate-action-on-entity-to-proxy (functional-controls action) "Execute the functional controls then if all pass, delegate the action 'action' to the proxy."
-  (org-action/--functional-controls-then-do functional-controls (orgtrello-data/entry-get-full-metadata) 'orgtrello/--delegate-to-the-proxy action))
+  (orgtrello-action/--functional-controls-then-do functional-controls (orgtrello-data/entry-get-full-metadata) 'orgtrello/--delegate-to-the-proxy action))
 
 (defun orgtrello/do-delete-simple (&optional sync) "Do the deletion of an entity."
   (orgtrello/--checks-then-delegate-action-on-entity-to-proxy '(orgtrello/--right-level-p orgtrello/--already-synced-p) *ORGTRELLO-ACTION-DELETE*))
@@ -2637,21 +2637,21 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun org-trello/sync-entity () "Control first, then if ok, create a simple entity."
   (interactive)
-  (org-action/--deal-with-consumer-msg-controls-or-actions-then-do
+  (orgtrello-action/--deal-with-consumer-msg-controls-or-actions-then-do
      "Requesting entity sync"
      '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties orgtrello/--control-encoding)
      'orgtrello/do-sync-entity))
 
 (defun org-trello/sync-full-entity () "Control first, then if ok, create an entity and all its arborescence if need be."
   (interactive)
-  (org-action/--deal-with-consumer-msg-controls-or-actions-then-do
+  (orgtrello-action/--deal-with-consumer-msg-controls-or-actions-then-do
      "Requesting entity and structure sync"
      '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties orgtrello/--control-encoding)
      'orgtrello/do-sync-full-entity))
 
 (defun org-trello/sync-to-trello () "Control first, then if ok, sync the org-mode file completely to trello."
   (interactive)
-  (org-action/--deal-with-consumer-msg-controls-or-actions-then-do
+  (orgtrello-action/--deal-with-consumer-msg-controls-or-actions-then-do
      "Requesting sync org buffer to trello board"
      '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties orgtrello/--control-encoding)
      'orgtrello/do-sync-full-file))
@@ -2659,7 +2659,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 (defun org-trello/sync-from-trello () "Control first, then if ok, sync the org-mode file from the trello board."
   (interactive)
   ;; execute the action
-  (org-action/--deal-with-consumer-msg-controls-or-actions-then-do
+  (orgtrello-action/--deal-with-consumer-msg-controls-or-actions-then-do
      "Requesting sync org buffer from trello board"
      '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties orgtrello/--control-encoding)
      'orgtrello/do-sync-full-from-trello
@@ -2667,21 +2667,21 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun org-trello/kill-entity () "Control first, then if ok, delete the entity and all its arborescence."
   (interactive)
-  (org-action/--deal-with-consumer-msg-controls-or-actions-then-do
+  (orgtrello-action/--deal-with-consumer-msg-controls-or-actions-then-do
      "Requesting deleting entity"
      '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties orgtrello/--control-encoding)
      'orgtrello/do-delete-simple))
 
 (defun org-trello/kill-all-entities () "Control first, then if ok, delete the entity and all its arborescence."
   (interactive)
-  (org-action/--deal-with-consumer-msg-controls-or-actions-then-do
+  (orgtrello-action/--deal-with-consumer-msg-controls-or-actions-then-do
      "Requesting deleting entities"
      '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties orgtrello/--control-encoding)
      'orgtrello/do-delete-entities))
 
 (defun org-trello/install-key-and-token () "No control, trigger the setup installation of the key and the read/write token."
   (interactive)
-  (org-action/--deal-with-consumer-msg-controls-or-actions-then-do
+  (orgtrello-action/--deal-with-consumer-msg-controls-or-actions-then-do
    "Setup key and token"
    nil
    'orgtrello/do-install-key-and-token
@@ -2690,7 +2690,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun org-trello/install-board-and-lists-ids () "Control first, then if ok, trigger the setup installation of the trello board to sync with."
   (interactive)
-  (org-action/--deal-with-consumer-msg-controls-or-actions-then-do
+  (orgtrello-action/--deal-with-consumer-msg-controls-or-actions-then-do
      "Install boards and lists"
      '(orgtrello/--setup-properties orgtrello/--control-keys)
      'orgtrello/do-install-board-and-lists
@@ -2699,7 +2699,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun org-trello/jump-to-card () "Jump to current card in browser."
   (interactive)
-  (org-action/--controls-or-actions-then-do
+  (orgtrello-action/--controls-or-actions-then-do
      '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties orgtrello/--control-encoding)
      (lambda ()
        (let* ((full-meta       (orgtrello-data/entry-get-full-metadata))
@@ -2712,13 +2712,13 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun org-trello/jump-to-trello-board () "Jump to current trello board."
   (interactive)
-  (org-action/--controls-or-actions-then-do
+  (orgtrello-action/--controls-or-actions-then-do
      '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties orgtrello/--control-encoding)
      (lambda () (browse-url (org-trello/https-trello (format "/b/%s" (orgtrello/--board-id)))))))
 
 (defun org-trello/create-board () "Control first, then if ok, trigger the board creation."
   (interactive)
-  (org-action/--deal-with-consumer-msg-controls-or-actions-then-do
+  (orgtrello-action/--deal-with-consumer-msg-controls-or-actions-then-do
      "Create board and lists"
      '(orgtrello/--setup-properties orgtrello/--control-keys)
      'orgtrello/do-create-board-and-lists
@@ -2727,7 +2727,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun org-trello/assign-me () "Assign oneself to the card."
   (interactive)
-  (org-action/--deal-with-consumer-msg-controls-or-actions-then-do
+  (orgtrello-action/--deal-with-consumer-msg-controls-or-actions-then-do
      "Create board and lists"
      '(orgtrello/--setup-properties orgtrello/--control-keys)
      'orgtrello/do-assign-me
@@ -2736,7 +2736,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun org-trello/unassign-me () "Unassign oneself of the card."
   (interactive)
-  (org-action/--deal-with-consumer-msg-controls-or-actions-then-do
+  (orgtrello-action/--deal-with-consumer-msg-controls-or-actions-then-do
      "Create board and lists"
      '(orgtrello/--setup-properties orgtrello/--control-keys)
      'orgtrello/do-unassign-me
@@ -2745,7 +2745,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun org-trello/check-setup () "Check the current setup."
   (interactive)
-  (org-action/--controls-or-actions-then-do
+  (orgtrello-action/--controls-or-actions-then-do
      '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties orgtrello/--control-encoding)
      (lambda () (orgtrello-log/msg *OT/NOLOG* "Setup ok!"))))
 
@@ -2758,7 +2758,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun org-trello/delete-setup () "Delete the current setup."
   (interactive)
-  (org-action/--deal-with-consumer-msg-controls-or-actions-then-do
+  (orgtrello-action/--deal-with-consumer-msg-controls-or-actions-then-do
    "Deleting current org-trello setup"
      '(orgtrello/--setup-properties orgtrello/--control-keys orgtrello/--control-properties orgtrello/--control-encoding)
      (lambda ()
