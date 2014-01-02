@@ -2286,17 +2286,12 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 (defun orgtrello/--sync-buffer-with-trello-data-callback (buffername &optional position name) "Generate a callback which knows the buffer with which it must work. (this callback must take a buffer-name and a position)"
   (lexical-let ((buffer-name              buffername)
                 (entities-from-org-buffer (orgtrello/--compute-entities-from-org-buffer! buffername)))
-    (function*
-     (lambda (&key data &allow-other-keys)
-       "Synchronize the buffer with the response data."
+    (function* (lambda (&key data &allow-other-keys) "Synchronize the buffer with the response data."
        (orgtrello-log/msg *OT/TRACE* "proxy - response data: %S" data)
-       ;; compute merge between already sync'ed entries and the trello data
-       (-> data
-           orgtrello/--compute-full-entities-from-trello                                          ;; slow computation with network access
-           (orgtrello/--merge-entities-trello-and-org entities-from-org-buffer)           ;; slow merge computation
-           ((lambda (entry) ;; hack to clean the org entries just before synchronizing the buffer
-              (orgtrello/--cleanup-org-entries)
-              entry))
+       (-> data                                                                 ;; compute merge between already sync'ed entries and the trello data
+           orgtrello/--compute-full-entities-from-trello                        ;; slow computation with network access
+           (orgtrello/--merge-entities-trello-and-org entities-from-org-buffer) ;; slow merge computation
+           ((lambda (entry) (orgtrello/--cleanup-org-entries) entry))           ;; hack to clean the org entries just before synchronizing the buffer
            (orgtrello/--sync-buffer-with-trello-data buffer-name)
            (orgtrello-action/safe-wrap (orgtrello-log/msg *OT/INFO* "Synchronizing the trello and org data merge - done!")))))))
 
@@ -2307,8 +2302,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
        (orgtrello/--update-query-with-org-metadata it nil (buffer-name) nil 'orgtrello/--sync-buffer-with-trello-data-callback)
        (orgtrello-proxy/http it sync)))
 
-(defun orgtrello/--card-delete (card-meta &optional parent-meta) "Deal with the deletion query of a card"
-  ;; parent is useless here
+(defun orgtrello/--card-delete (card-meta &optional parent-meta) "Deal with the deletion query of a card" ;; parent is useless here
   (orgtrello-api/delete-card (orgtrello-data/entity-id card-meta)))
 
 (defun orgtrello/--checklist-delete (checklist-meta &optional parent-meta) "Deal with the deletion query of a checklist" ;; parent is useless here
