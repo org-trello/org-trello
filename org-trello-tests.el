@@ -14,15 +14,19 @@
        (catch 'flag (maphash (lambda (x y) (or (equal (gethash x hash2) y) (throw 'flag nil))) hash1)
               (throw 'flag t))))
 
-(ert-deftest testing-hash-equal ()
-  (should (hash-equal (orgtrello-hash/make-properties `((:name . "some other name") (:keyword "TODO")))
-                      (orgtrello-hash/make-properties `((:name . "some other name") (:keyword "TODO")))))
-  (should (not (hash-equal (orgtrello-hash/make-properties `((:name . "some other name") (:keyword "TODO")))
-                           (orgtrello-hash/make-properties `((:name . "some other name") (:keyword "DONE")))))))
+(expectations (desc "hash-equal")
+ (expect t (hash-equal (orgtrello-hash/make-properties `((:name . "some other name") (:keyword "TODO")))
+                       (orgtrello-hash/make-properties `((:name . "some other name") (:keyword "TODO")))))
+ (expect nil (hash-equal (orgtrello-hash/make-properties `((:name . "some other name") (:keyword "TODO")))
+                         (orgtrello-hash/make-properties `((:name . "some other name") (:keyword "DONE"))))))
 
-(ert-deftest testing-hash-transpose-properties ()
-  (should (hash-equal (orgtrello-hash/make-properties `(("some other name" . :name) ("TODO" . :keyword)))
-                      (orgtrello-hash/make-transpose-properties `((:name . "some other name") (:keyword . "TODO"))))))
+(expectations (desc "orgtrello-hash/make-transpose-properties")
+  (expect t (hash-equal (orgtrello-hash/make-properties `(("some other name" . :name) ("TODO" . :keyword)))
+                        (orgtrello-hash/make-transpose-properties `((:name . "some other name") (:keyword . "TODO"))))))
+
+(expectations (desc "orgtrello-hash/empty-hash")
+ (expect t (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data ())
+                       (orgtrello-hash/empty-hash))))
 
 ;; ########################## orgtrello-hash
 

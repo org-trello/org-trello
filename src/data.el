@@ -183,7 +183,7 @@
                                                                            (-when-let (new-key (orgtrello-data/--deal-with-key key))
                                                                                       (puthash new-key (orgtrello-data/parse-data val) acc))
                                                                            acc)
-                                                                         (make-hash-table :test 'equal)
+                                                                         (orgtrello-hash/empty-hash)
                                                                          entities)))
                                                 (-when-let (level (orgtrello-data/--compute-level hmap)) (puthash :level level hmap))
                                                 hmap))))

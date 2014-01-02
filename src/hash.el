@@ -3,8 +3,11 @@
 
 ;; #################### orgtrello-hash
 
+(defun orgtrello-hash/empty-hash () "Empty hash table with test 'equal"
+  (make-hash-table :test 'equal))
+
 (defun orgtrello-hash/make-hash-org (users-assigned level keyword name id due position buffer-name) "Utility function to ease the creation of the orgtrello-metadata"
-  (let ((h (make-hash-table :test 'equal)))
+  (let ((h (orgtrello-hash/empty-hash)))
     (puthash :buffername     buffer-name     h)
     (puthash :position       position        h)
     (puthash :level          level           h)
@@ -16,7 +19,7 @@
     h))
 
 (defun orgtrello-hash/make-hash (method uri &optional params) "Utility function to ease the creation of the map - wait, where are my clojure data again!?"
-  (let ((h (make-hash-table :test 'equal)))
+  (let ((h (orgtrello-hash/empty-hash)))
     (puthash :method method h)
     (puthash :uri    uri    h)
     (if params (puthash :params params h))
@@ -28,14 +31,14 @@
      (puthash (car list-key-value) (cdr list-key-value) map)
      map)
    properties
-   :initial-value (make-hash-table :test 'equal)))
+   :initial-value (orgtrello-hash/empty-hash)))
 
 (defun orgtrello-hash/make-transpose-properties (properties) "Given a list of key value pair, return a hash table with key/value transposed."
   (-reduce-from
    (lambda (map list-key-value)
      (puthash (cdr list-key-value) (car list-key-value) map)
      map)
-   (make-hash-table :test 'equal)
+   (orgtrello-hash/empty-hash)
    properties))
 
 (defun orgtrello-hash/make-hierarchy (current &optional parent grandparent) "Helper constructor for the hashmap holding the full metadata about the current-entry."

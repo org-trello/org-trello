@@ -42,7 +42,7 @@
                                         (puthash (assoc-default name org-file-properties) name hmap)
                                         hmap))
                                     orgtrello/--list-keywords
-                                    :initial-value (make-hash-table :test 'equal)))
+                                    :initial-value (orgtrello-hash/empty-hash)))
          (orgtrello/--list-users (orgtrello/--list-user-entries org-file-properties))
          (orgtrello/--hmap-user-id-name (orgtrello-hash/make-transpose-properties orgtrello/--list-users))
          (orgtrello/--hmap-user-name-id (orgtrello-hash/make-properties orgtrello/--list-users)))
@@ -400,7 +400,7 @@
      (cl-destructuring-bind (entities adjacency) acc-entities-hash
        (orgtrello/--compute-checklist-entities-from-card entity-card (orgtrello/--add-entity-to-entities entity-card entities) adjacency)))
    cards
-   :initial-value (list (make-hash-table :test 'equal) (make-hash-table :test 'equal))))
+   :initial-value (list (orgtrello-hash/empty-hash) (orgtrello-hash/empty-hash))))
 
 (defun orgtrello/--get-entity (id entities-hash) "Update the card entry inside the hash."
   (gethash id entities-hash))
@@ -424,7 +424,7 @@
 
 (defun orgtrello/--add-entity-to-adjacency (current-entity parent-entity adjacency) "Adding entity to the adjacency entry."
   (let* ((current-id (orgtrello-data/entity-id-or-marker current-entity))
-         (parent-id  (orgtrello-data/entity-id-or-marker parent-entity)))
+         (parent-id  (gorgtrello-data/entity-id-or-marker parent-entity)))
     (puthash parent-id (orgtrello/--add-to-last-pos current-id (gethash parent-id adjacency)) adjacency)
     adjacency))
 
@@ -437,8 +437,8 @@
   (if (orgtrello-data/entity-card-p entity) 'orgtrello/--put-card-with-adjacency 'orgtrello/--put-entities-with-adjacency))
 
 (defun orgtrello/--compute-entities-from-org! () "Compute the full entities present in the org buffer which already had been sync'ed previously. Return the list of entities map and adjacency map in this order."
-  (let ((entities (make-hash-table :test 'equal))
-        (adjacency (make-hash-table :test 'equal)))
+  (let ((entities (orgtrello-hash/empty-hash))
+        (adjacency (orgtrello-hash/empty-hash)))
     (orgtrello/org-map-entities-without-params! (lambda ()
                                                   (let ((current-entity (-> (orgtrello-data/entry-get-full-metadata) orgtrello-data/current)))
                                                     (unless (-> current-entity orgtrello-data/entity-id orgtrello/id-p) ;; if no id, we set one
@@ -464,7 +464,7 @@
       (orgtrello/--add-entity-to-entities entities)))
 
 (defun orgtrello/--init-map-from (data) "Init a map from a given data. If data is nil, return an empty hash table."
-  (if data data (make-hash-table :test 'equal)))
+  (if data data (orgtrello-hash/empty-hash)))
 
 (defun orgtrello/--merge-item (trello-item org-item) "Merge trello and org item together."
   (if (null trello-item)
@@ -667,10 +667,10 @@
       "Install key and read/write access token done!")))
 
 (defun orgtrello/--id-name (entities) "Given a list of entities, return a map of (id, name)."
-  (--reduce-from (progn (puthash (orgtrello-data/entity-id it) (orgtrello-data/entity-name it) acc) acc) (make-hash-table :test 'equal) entities))
+  (--reduce-from (progn (puthash (orgtrello-data/entity-id it) (orgtrello-data/entity-name it) acc) acc) (orgtrello-hash/empty-hash) entities))
 
 (defun orgtrello/--name-id (entities) "Given a list of entities, return a map of (id, name)."
-  (--reduce-from (progn (puthash (orgtrello-data/entity-name it) (orgtrello-data/entity-id it) acc) acc) (make-hash-table :test 'equal) entities))
+  (--reduce-from (progn (puthash (orgtrello-data/entity-name it) (orgtrello-data/entity-id it) acc) acc) (orgtrello-hash/empty-hash) entities))
 
 (defun orgtrello/--list-boards () "Return the map of the existing boards associated to the current account. (Synchronous request)"
   (--remove (orgtrello-data/entity-closed it) (orgtrello-query/http-trello (orgtrello-api/get-boards) *do-sync-query*)))
@@ -683,7 +683,7 @@
   (setq orgtrello/--board-chosen nil)
   (let* ((str-key-val  "")
          (i            0)
-         (i-id (make-hash-table :test 'equal)))
+         (i-id (orgtrello-hash/empty-hash)))
     (maphash (lambda (id name)
                (setq str-key-val (format "%s%d: %s\n" str-key-val i name))
                (puthash (format "%d" i) id i-id)
@@ -820,7 +820,7 @@
   (mapcar 'orgtrello-data/entity-member memberships-map))
 
 (defun orgtrello/--compute-user-properties-hash (user-properties)
-  (--reduce-from (progn (puthash (orgtrello-data/entity-username it) (orgtrello-data/entity-id it) acc) acc) (make-hash-table :test 'equal) user-properties))
+  (--reduce-from (progn (puthash (orgtrello-data/entity-username it) (orgtrello-data/entity-id it) acc) acc) (orgtrello-hash/empty-hash) user-properties))
 
 (defun orgtrello/--compute-user-properties-hash-from-board (board-info) "Compute user properties given board's informations."
   (->> board-info
@@ -853,7 +853,7 @@
        (puthash list-name (orgtrello-data/entity-id (orgtrello-query/http-trello (orgtrello-api/add-list list-name board-id) *do-sync-query*)) acc-hash-name-id)
        acc-hash-name-id))
    list-keywords
-   :initial-value (make-hash-table :test 'equal)))
+   :initial-value (orgtrello-hash/empty-hash)))
 
 (defun orgtrello/do-create-board-and-lists () "Command to create a board and the lists."
   (defvar orgtrello/--board-name nil)        (setq orgtrello/--board-name nil)
