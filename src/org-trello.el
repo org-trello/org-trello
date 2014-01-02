@@ -281,7 +281,7 @@
   (format "* %s %s\n%s" (if status status *TODO*) name (orgtrello/--compute-due-date due-date)))
 
 (defun orgtrello/--compute-card-to-org-entry (card &optional orgcheckbox-p) "Given a card, compute its org-mode entry equivalence. orgcheckbox-p is nil"
-  (orgtrello/--private-compute-card-to-org-entry (orgtrello-data/entity-name card) (orgtrello-data/entity-state card) (orgtrello-data/entity-due card)))
+  (orgtrello/--private-compute-card-to-org-entry (orgtrello-data/entity-name card) (orgtrello-data/entity-keyword card) (orgtrello-data/entity-due card)))
 
 (defun orgtrello/--compute-checklist-to-orgtrello-entry (name &optional level status) "Compute the orgtrello format checklist"
   (format "** %s\n" name))
@@ -349,7 +349,7 @@
                'orgtrello/--compute-item-to-orgtrello-entry)
            (orgtrello-data/entity-name item)
            *ITEM-LEVEL*
-           (orgtrello-data/entity-state item)))
+           (orgtrello-data/entity-keyword item)))
 
 (defun orgtrello/--compute-entity-to-org-entry (entity) "Given an entity, compute its org representation."
   (funcall

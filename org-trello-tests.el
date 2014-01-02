@@ -269,8 +269,8 @@
   (expect nil       (orgtrello-data/entity-due (orgtrello-hash/make-properties '((no . :some-due))))))
 
 (expectations (desc "orgtrello-data/entity-* - 9")
-  (expect :some-state (orgtrello-data/entity-state (orgtrello-hash/make-properties '((:keyword . :some-state)))))
-  (expect nil         (orgtrello-data/entity-state (orgtrello-hash/make-properties '((no . :some-state))))))
+  (expect :some-state (orgtrello-data/entity-keyword (orgtrello-hash/make-properties '((:keyword . :some-state)))))
+  (expect nil         (orgtrello-data/entity-keyword (orgtrello-hash/make-properties '((no . :some-state))))))
 
 (expectations (desc "orgtrello-data/entity-* - 10")
   (expect :closed (orgtrello-data/entity-closed (orgtrello-hash/make-properties '((:closed . :closed)))))
@@ -696,8 +696,8 @@ DEADLINE: <some-date>
   (expect nil (orgtrello-data/entity-card-id                  (orgtrello-hash/make-properties `((inexistant . "test")))))
   (expect "test" (orgtrello-data/entity-due                   (orgtrello-hash/make-properties `((:due . "test")))))
   (expect nil (orgtrello-data/entity-due                      (orgtrello-hash/make-properties `((inexistant . "test")))))
-  (expect "test" (orgtrello-data/entity-state                 (orgtrello-hash/make-properties `((:keyword . "test")))))
-  (expect nil (orgtrello-data/entity-state                    (orgtrello-hash/make-properties `((inexistant . "test")))))
+  (expect "test" (orgtrello-data/entity-keyword                 (orgtrello-hash/make-properties `((:keyword . "test")))))
+  (expect nil (orgtrello-data/entity-keyword                    (orgtrello-hash/make-properties `((inexistant . "test")))))
   (expect "test" (orgtrello-data/entity-closed        (orgtrello-hash/make-properties `((:closed . "test")))))
   (expect nil (orgtrello-data/entity-closed           (orgtrello-hash/make-properties `((inexistant . "test")))))
   (expect "test" (orgtrello-data/entity-callback              (orgtrello-hash/make-properties `((:callback . "test")))))
