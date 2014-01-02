@@ -424,7 +424,7 @@
 
 (defun orgtrello/--add-entity-to-adjacency (current-entity parent-entity adjacency) "Adding entity to the adjacency entry."
   (let* ((current-id (orgtrello-data/entity-id-or-marker current-entity))
-         (parent-id  (gorgtrello-data/entity-id-or-marker parent-entity)))
+         (parent-id  (orgtrello-data/entity-id-or-marker parent-entity)))
     (puthash parent-id (orgtrello/--add-to-last-pos current-id (gethash parent-id adjacency)) adjacency)
     adjacency))
 
