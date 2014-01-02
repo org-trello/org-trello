@@ -1967,5 +1967,10 @@ C-c o h - M-x org-trello/help-describing-bindings - This help message."
               (expect t (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:position 32768 :name "Ch. 1 - A scalable language" :id "52c0b5386548fde20105ea4e" :checked "incomplete" :level 3))
                                     (second (orgtrello-data/entity-items actual-result)))))
 
+(expectations
+ (expect :keyword (orgtrello-data/--deal-with-key :keyword))
+ (expect :name    (orgtrello-data/--deal-with-key 'name))
+ (expect nil      (orgtrello-data/--deal-with-key 'something-that-does-not-exist)))
+
 (provide 'org-trello-tests)
 ;;; org-trello-tests ends here

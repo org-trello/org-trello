@@ -449,7 +449,6 @@ If you want to use this, we recommand to use the native org checklists - http://
                                                                         (pos . :position)
                                                                         (position . :position)
                                                                         (keyword . :keyword)
-                                                                        (:keyword . :keyword)
                                                                         (start . :start)
                                                                         (level . :level)
                                                                         (users-assigned . :users-assigned)
@@ -457,6 +456,10 @@ If you want to use this, we recommand to use the native org checklists - http://
                                                                         (memberships . :memberships)
                                                                         (username . :username)
                                                                         (fullName . :full-name))))
+
+(defun orgtrello-data/--deal-with-key (key) "Given a key, return it as is if it's a keyword or return its mapped version from *ORGTRELLO-DATA-MAP-KEYWORDS*"
+  (cond ((keywordp key) key)
+        (t             (gethash key *ORGTRELLO-DATA-MAP-KEYWORDS*))))
 
 (defun orgtrello-data/parse-data (entities) "Given a trello entity, convert into org-trello entity"
   (cond ((eq :json-false entities)             nil)
@@ -467,7 +470,7 @@ If you want to use this, we recommand to use the native org checklists - http://
         ((arrayp entities)                    (mapcar 'orgtrello-data/parse-data entities))
         (t                                    (let ((hmap (--reduce-from (let ((key (car it))
                                                                                (val (cdr it)))
-                                                                           (-when-let (new-key (gethash key *ORGTRELLO-DATA-MAP-KEYWORDS*))
+                                                                           (-when-let (new-key (orgtrello-data/--deal-with-key key))
                                                                                       (puthash new-key (orgtrello-data/parse-data val) acc))
                                                                            acc)
                                                                          (make-hash-table :test 'equal)
