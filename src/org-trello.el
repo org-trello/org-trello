@@ -440,11 +440,14 @@
   (let ((entities (make-hash-table :test 'equal))
         (adjacency (make-hash-table :test 'equal)))
     (orgtrello/org-map-entities-without-params! (lambda ()
-                                                  (let ((current-meta (orgtrello-data/entry-get-full-metadata)))
-                                                    (-> current-meta
-                                                        orgtrello-data/current
-                                                        orgtrello/--dispatch-create-entities-map-with-adjacency
-                                                        (funcall current-meta entities adjacency)))))
+                                                  (let ((current-entity (-> (orgtrello-data/entry-get-full-metadata) orgtrello-data/current)))
+                                                    (unless (-> current-entity orgtrello-data/entity-id orgtrello/id-p) ;; if no id, we set one
+                                                            (orgtrello/--set-marker (orgtrello/--compute-marker-from-entry current-entity)))
+                                                    (let ((current-meta (orgtrello-data/entry-get-full-metadata)))
+                                                      (-> current-meta ;; we recompute the metadata because they may have changed
+                                                          orgtrello-data/current
+                                                          orgtrello/--dispatch-create-entities-map-with-adjacency
+                                                          (funcall current-meta entities adjacency))))))
     (list entities adjacency)))
 
 ;; entities of the form: {entity-id '(entity-card {checklist-id (checklist (item))})}
@@ -459,29 +462,6 @@
   (-> current-meta
       orgtrello-data/current
       (orgtrello/--add-entity-to-entities entities)))
-
-(defun orgtrello/--compute-entities-not-synced-from-org! () "Compute the org-buffer entities with no prior sync'ed activity. Return the list of entities map and the adjacency map."
-  (let ((entities  (make-hash-table :test 'equal))
-        (adjacency (make-hash-table :test 'equal)))
-    (orgtrello/org-map-entities-without-params! (lambda ()
-                                                  (let* ((full-meta      (orgtrello-data/entry-get-full-metadata))
-                                                         (current-entity (orgtrello-data/current full-meta))
-                                                         (current-marker (orgtrello/--compute-marker-from-entry current-entity)))
-                                                    (unless (orgtrello/id-p (orgtrello-data/entity-id current-entity))
-                                                            (orgtrello/--set-marker current-marker)
-                                                            (let ((current-meta (orgtrello-data/entry-get-full-metadata)))
-                                                              ;; now add the entities to the global list
-                                                              (-> current-meta
-                                                                  orgtrello-data/current
-                                                                  orgtrello/--dispatch-create-entities-map-with-adjacency
-                                                                  (funcall current-meta entities adjacency)))))))
-    (list entities adjacency)))
-
-(defun orgtrello/--compute-entities-not-synced-from-org-buffer! (buffername) "Compute the list of entities with no prior sync'ed activity from the buffer buffername. Return the list of entities map and the adjacency map."
-  (set-buffer buffername)
-  (save-excursion
-    (goto-char (point-min))
-    (orgtrello/--compute-entities-not-synced-from-org!)))
 
 (defun orgtrello/--init-map-from (data) "Init a map from a given data. If data is nil, return an empty hash table."
   (if data data (make-hash-table :test 'equal)))
@@ -623,8 +603,7 @@
 
 (defun orgtrello/--sync-buffer-with-trello-data-callback (buffername &optional position name) "Generate a callback which knows the buffer with which it must work. (this callback must take a buffer-name and a position)"
   (lexical-let ((buffer-name                              buffername)
-                (full-entities-synced-from-buffer         (orgtrello/--compute-full-entities-already-synced-from-org-buffer! buffername))
-                (full-entities-not-yet-synced-from-buffer (orgtrello/--compute-entities-not-synced-from-org-buffer! buffername)))
+                (full-entities-synced-from-buffer         (orgtrello/--compute-full-entities-already-synced-from-org-buffer! buffername)))
     (function*
      (lambda (&key data &allow-other-keys)
        "Synchronize the buffer with the response data."
@@ -637,11 +616,7 @@
               (orgtrello/--cleanup-org-entries)
               entry))
            (orgtrello/--sync-buffer-with-trello-data buffer-name)
-           (orgtrello-action/safe-wrap (orgtrello-log/msg *OT/INFO* "Synchronizing the merge of trello data and org data - done!")))
-       ;; write back the data without prior sync activity
-       (-> full-entities-not-yet-synced-from-buffer
-           (orgtrello/--sync-buffer-with-trello-data buffer-name)
-           (orgtrello-action/safe-wrap (orgtrello-log/msg *OT/INFO* "Simple org data dump  - done!")))))))
+           (orgtrello-action/safe-wrap (orgtrello-log/msg *OT/INFO* "Synchronizing the trello and org data merge - done!")))))))
 
 (defun orgtrello/do-sync-full-from-trello (&optional sync) "Full org-mode file synchronisation. Beware, this will block emacs as the request is synchronous."
   (orgtrello-log/msg *OT/INFO* "Synchronizing the trello board '%s' to the org-mode file. This may take a moment, some coffee may be a good idea..." (orgtrello/--board-name))
