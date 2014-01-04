@@ -124,13 +124,6 @@
      '(orgtrello-controller/--setup-properties orgtrello-controller/--control-keys orgtrello-controller/--control-properties orgtrello-controller/--control-encoding)
      (lambda () (orgtrello-log/msg *OT/NOLOG* "Setup ok!"))))
 
-(defun orgtrello-controller/--delete-property (property) "Given a property name (checkbox), if found, delete it from the buffer."
-  (org-delete-property-globally property)
-  (save-excursion
-    (goto-char (point-min))
-    (while (re-search-forward ":PROPERTIES: {.*" nil t)
-      (replace-match "" nil t))))
-
 (defun org-trello/delete-setup () "Delete the current setup."
   (interactive)
   (orgtrello-action/--deal-with-consumer-msg-controls-or-actions-then-do

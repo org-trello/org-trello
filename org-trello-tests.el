@@ -750,10 +750,10 @@ DEADLINE: <some-date>
  (expect "TODO" (orgtrello-controller/--compute-state-item "incomplete")))
 (message "Tests done!")
 
-(expectations (desc "orgtrello-controller/--entity-with-level-p")
- (expect nil (orgtrello-controller/--entity-with-level-p nil 1))
- (expect t   (orgtrello-controller/--entity-with-level-p (orgtrello-hash/make-properties `((:level . ,*CARD-LEVEL*))) *CARD-LEVEL*))
- (expect nil (orgtrello-controller/--entity-with-level-p (orgtrello-hash/make-properties `((:level . ,*CHECKLIST-LEVEL*))) *CARD-LEVEL*)))
+(expectations (desc "orgtrello-data/--entity-with-level-p")
+ (expect nil (orgtrello-data/--entity-with-level-p nil 1))
+ (expect t   (orgtrello-data/--entity-with-level-p (orgtrello-hash/make-properties `((:level . ,*CARD-LEVEL*))) *CARD-LEVEL*))
+ (expect nil (orgtrello-data/--entity-with-level-p (orgtrello-hash/make-properties `((:level . ,*CHECKLIST-LEVEL*))) *CARD-LEVEL*)))
 
 (expectations (desc "orgtrello-data/entity-card-p")
  (expect t   (orgtrello-data/entity-card-p (orgtrello-hash/make-properties `((:level . ,*CARD-LEVEL*)))))
@@ -984,13 +984,13 @@ DEADLINE: <some-date>
  (expect (format "%sorg-trello/2/" elnode-webserver-docroot) (orgtrello-elnode/compute-entity-level-dir *CHECKLIST-LEVEL*))
  (expect (format "%sorg-trello/3/" elnode-webserver-docroot) (orgtrello-elnode/compute-entity-level-dir *ITEM-LEVEL*)))
 
-(expectations (desc "orgtrello-controller/--compute-next-card-point")
+(expectations (desc "orgtrello-cbx/--compute-next-card-point")
   (expect 50
     (with-temp-buffer
       (insert "* heading\n")
       (insert "- [ ] some checklist\n")
       (insert "  - [ ] some item\n")
-      (orgtrello-controller/--compute-next-card-point)))
+      (orgtrello-cbx/--compute-next-card-point)))
   (expect 70
     (with-temp-buffer
       (insert "#+TODO: TODO | DONE\n")
@@ -998,7 +998,7 @@ DEADLINE: <some-date>
       (insert "- [ ] some checklist\n")
       (insert "  - [ ] some item\n")
       (forward-line -2)
-      (orgtrello-controller/--compute-next-card-point)))
+      (orgtrello-cbx/--compute-next-card-point)))
   (expect 65
     (with-temp-buffer
       (insert "* heading\n")
@@ -1006,7 +1006,7 @@ DEADLINE: <some-date>
       (insert "  - [ ] some item\n")
       (insert "* next heading\n")
       (forward-line -2)
-      (orgtrello-controller/--compute-next-card-point)))
+      (orgtrello-cbx/--compute-next-card-point)))
   (expect 85
     (with-temp-buffer
       (insert "#+TODO: TODO | DONE\n")
@@ -1015,7 +1015,7 @@ DEADLINE: <some-date>
       (insert "  - [ ] some item\n")
       (insert "* next heading\n")
       (forward-line -2)
-      (orgtrello-controller/--compute-next-card-point)))
+      (orgtrello-cbx/--compute-next-card-point)))
   (expect 85
     (with-temp-buffer
       (insert "#+TODO: TODO | DONE\n")
@@ -1024,7 +1024,7 @@ DEADLINE: <some-date>
       (insert "  - [ ] some item\n")
       (insert "* next heading\n")
       (forward-line -3)
-      (orgtrello-controller/--compute-next-card-point)))
+      (orgtrello-cbx/--compute-next-card-point)))
   (expect 85
     (with-temp-buffer
       (insert "#+TODO: TODO | DONE\n")
@@ -1033,7 +1033,7 @@ DEADLINE: <some-date>
       (insert "  - [ ] some item\n")
       (insert "* next heading\n")
       (forward-line -4)
-      (orgtrello-controller/--compute-next-card-point))))
+      (orgtrello-cbx/--compute-next-card-point))))
 
 (expectations (desc "orgtrello-webadmin/--header-table")
   (expect '(tr nil (td nil) (td nil "Action") (td nil "Entity") (td nil "Delete")) (orgtrello-webadmin/--header-table)))

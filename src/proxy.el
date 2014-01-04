@@ -89,13 +89,6 @@
     (insert-file-contents fPath)
     (split-string (buffer-string) "\n" t)))
 
-(defun orgtrello-controller/compute-marker (buffer-name name position) "Compute the orgtrello marker which is composed of buffer-name, name and position"
-  (->> (list *ORGTRELLO-MARKER* buffer-name name (if (stringp position) position (int-to-string position)))
-       (-interpose "-")
-       (apply 'concat)
-       sha1
-       (concat *ORGTRELLO-MARKER* "-")))
-
 (defun orgtrello-proxy/--update-buffer-to-save (buffer-name buffers-to-save) "Add the buffer-name to the list if not already present"
   (if (member buffer-name buffers-to-save)
       buffers-to-save
@@ -137,9 +130,6 @@
   (-if-let (goto-ok (orgtrello-proxy/--getting-back-to-marker marker))
            goto-ok
            (orgtrello-proxy/--getting-back-to-headline data)))
-
-(defun orgtrello-controller/id-p (id) "Is the string a trello identifier?"
-  (and id (not (string-match-p (format "^%s-" *ORGTRELLO-MARKER*) id))))
 
 (defun orgtrello-proxy/--standard-post-or-put-success-callback (entity-to-sync file-to-cleanup) "Return a callback function able to deal with the update of the buffer at a given position."
   (lexical-let ((orgtrello-proxy/--entry-position    (orgtrello-data/entity-position entity-to-sync))

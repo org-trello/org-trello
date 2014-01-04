@@ -371,10 +371,10 @@ If you want to use this, we recommand to use the native org checklists - http://
 
 (defun orgtrello-data/--compute-fn (entity list-dispatch-fn) "Given an entity, compute the result" (funcall (if (hash-table-p entity) (first list-dispatch-fn) (second list-dispatch-fn)) entity))
 
-(defun orgtrello-controller/--entity-with-level-p (entity level) "Is the entity with level level?" (-> entity orgtrello-data/entity-level (eq level)))
-(defun orgtrello-data/entity-card-p      (entity) "Is this a card?"      (orgtrello-controller/--entity-with-level-p entity *CARD-LEVEL*))
-(defun orgtrello-data/entity-checklist-p (entity) "Is this a checklist?" (orgtrello-controller/--entity-with-level-p entity *CHECKLIST-LEVEL*))
-(defun orgtrello-data/entity-item-p      (entity) "Is this an item?"     (orgtrello-controller/--entity-with-level-p entity *ITEM-LEVEL*))
+(defun orgtrello-data/--entity-with-level-p (entity level) "Is the entity with level level?" (-> entity orgtrello-data/entity-level (eq level)))
+(defun orgtrello-data/entity-card-p      (entity) "Is this a card?"      (orgtrello-data/--entity-with-level-p entity *CARD-LEVEL*))
+(defun orgtrello-data/entity-checklist-p (entity) "Is this a checklist?" (orgtrello-data/--entity-with-level-p entity *CHECKLIST-LEVEL*))
+(defun orgtrello-data/entity-item-p      (entity) "Is this an item?"     (orgtrello-data/--entity-with-level-p entity *ITEM-LEVEL*))
 
 (defun orgtrello-data/gethash-data (key map &optional default-value) "Retrieve the map from some query-map" (when map (gethash key map default-value)))
 (defun orgtrello-data/puthash-data (key value map)                   "Update the map at key with value"     (when map (puthash key value map)))
@@ -525,7 +525,7 @@ If you want to use this, we recommand to use the native org checklists - http://
   (s-join " :PROPERTIES: "  `(,(orgtrello-cbx/--checkbox-data checkbox-string)
                               ,(orgtrello-cbx/--to-properties properties))))
 
-(defvar orgtrello-controller/--rules-to-align-checkbox-properties
+(defvar orgtrello-cbx/--rules-to-align-checkbox-properties
   `((orgtrello-rules
      (regexp   . "^[ ]*-\\{1\\}.*\\( :PROPERTIES: \\).*$")
      (group    . 1)
@@ -541,9 +541,9 @@ If you want to use this, we recommand to use the native org checklists - http://
 
 (defun orgtrello-cbx/--justify-property-current-line () "Justify the content of the current region."
   (align-region (orgtrello-cbx/--point-at-beg-of-region-for-justify)
-                (orgtrello-controller/--compute-next-card-point)
+                (orgtrello-cbx/--compute-next-card-point)
                 'entire
-                orgtrello-controller/--rules-to-align-checkbox-properties
+                orgtrello-cbx/--rules-to-align-checkbox-properties
                 nil))
 
 (defun orgtrello-cbx/--write-properties-at-point (pt properties) "Given the new properties, update the current entry."
@@ -666,7 +666,7 @@ This is a list with the following elements:
       1-
       orgtrello-cbx/--org-up!))
 
-(defun orgtrello-controller/--compute-next-card-point () "Compute the next card's position."
+(defun orgtrello-cbx/--compute-next-card-point () "Compute the next card's position."
   (save-excursion
     (org-back-to-heading)
     (if (org-goto-sibling) (point-at-bol) (point-max))))
@@ -676,16 +676,16 @@ This is a list with the following elements:
   (when (and (not (org-at-heading-p)) (< (point) (point-max)) (not (orgtrello-cbx/checkbox-p)))
         (orgtrello-cbx/--goto-next-checkbox)))
 
-(defun orgtrello-controller/--map-checkboxes (level fn-to-execute) "Map over the checkboxes and execute fn when in checkbox. Does not preserve the cursor position. Do not exceed the point-max."
+(defun orgtrello-cbx/--map-checkboxes (level fn-to-execute) "Map over the checkboxes and execute fn when in checkbox. Does not preserve the cursor position. Do not exceed the point-max."
   (orgtrello-cbx/--goto-next-checkbox)
   (when (< level (orgtrello-data/current-level))
         (funcall fn-to-execute)
-        (orgtrello-controller/--map-checkboxes level fn-to-execute)))
+        (orgtrello-cbx/--map-checkboxes level fn-to-execute)))
 
-(defun orgtrello-controller/map-checkboxes (fn-to-execute) "Map over the current checkbox and sync them."
+(defun orgtrello-cbx/map-checkboxes (fn-to-execute) "Map over the current checkbox and sync them."
   (let ((level (orgtrello-data/current-level)))
     (when (= level *CHECKLIST-LEVEL*) (funcall fn-to-execute))
-    (save-excursion (orgtrello-controller/--map-checkboxes level fn-to-execute)))) ;; then map over the next checkboxes and sync them
+    (save-excursion (orgtrello-cbx/--map-checkboxes level fn-to-execute)))) ;; then map over the next checkboxes and sync them
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-cbx loaded!")
 
@@ -1319,13 +1319,6 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
     (insert-file-contents fPath)
     (split-string (buffer-string) "\n" t)))
 
-(defun orgtrello-controller/compute-marker (buffer-name name position) "Compute the orgtrello marker which is composed of buffer-name, name and position"
-  (->> (list *ORGTRELLO-MARKER* buffer-name name (if (stringp position) position (int-to-string position)))
-       (-interpose "-")
-       (apply 'concat)
-       sha1
-       (concat *ORGTRELLO-MARKER* "-")))
-
 (defun orgtrello-proxy/--update-buffer-to-save (buffer-name buffers-to-save) "Add the buffer-name to the list if not already present"
   (if (member buffer-name buffers-to-save)
       buffers-to-save
@@ -1367,9 +1360,6 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   (-if-let (goto-ok (orgtrello-proxy/--getting-back-to-marker marker))
            goto-ok
            (orgtrello-proxy/--getting-back-to-headline data)))
-
-(defun orgtrello-controller/id-p (id) "Is the string a trello identifier?"
-  (and id (not (string-match-p (format "^%s-" *ORGTRELLO-MARKER*) id))))
 
 (defun orgtrello-proxy/--standard-post-or-put-success-callback (entity-to-sync file-to-cleanup) "Return a callback function able to deal with the update of the buffer at a given position."
   (lexical-let ((orgtrello-proxy/--entry-position    (orgtrello-data/entity-position entity-to-sync))
@@ -1701,6 +1691,16 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 (defvar *CONFIG-DIR*  (concat (getenv "HOME") "/" ".trello"))
 (defvar *CONFIG-FILE* (concat *CONFIG-DIR* "/config.el"))
 
+(defun orgtrello-controller/compute-marker (buffer-name name position) "Compute the orgtrello marker which is composed of buffer-name, name and position"
+  (->> (list *ORGTRELLO-MARKER* buffer-name name (if (stringp position) position (int-to-string position)))
+       (-interpose "-")
+       (apply 'concat)
+       sha1
+       (concat *ORGTRELLO-MARKER* "-")))
+
+(defun orgtrello-controller/id-p (id) "Is the string a trello identifier?"
+  (and id (not (string-match-p (format "^%s-" *ORGTRELLO-MARKER*) id))))
+
 (defun orgtrello-controller/filtered-kwds () "org keywords used (based on org-todo-keywords-1)."
   org-todo-keywords-1)
 
@@ -1935,7 +1935,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
       (orgtrello-controller/map-sync-checkboxes)))
 
 (defun orgtrello-controller/map-sync-checkboxes () "Map the sync to checkboxes."
-  (when *ORGTRELLO-NATURAL-ORG-CHECKLIST* (orgtrello-controller/map-checkboxes 'orgtrello-controller/do-sync-entity)))
+  (when *ORGTRELLO-NATURAL-ORG-CHECKLIST* (orgtrello-cbx/map-checkboxes 'orgtrello-controller/do-sync-entity)))
 
 (defun orgtrello-controller/org-map-entries (level fn-to-execute) "Map fn-to-execute to a given entities with level level. fn-to-execute is a function without any parameter."
   (org-map-entries (lambda () (when (= level (orgtrello-data/current-level)) (funcall fn-to-execute)))))
@@ -2227,7 +2227,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 ;;      (lambda ()
 ;;        (funcall fn-to-execute entities) ;; execute on heading entry
 ;;        (when *ORGTRELLO-NATURAL-ORG-CHECKLIST*
-;;              (orgtrello-controller/map-checkboxes (lambda () (funcall fn-to-execute entities))))) t 'file))
+;;              (orgtrello-cbx/map-checkboxes (lambda () (funcall fn-to-execute entities))))) t 'file))
 ;; execute the same function for each org-checkboxes entry
 
 (defun orgtrello-controller/org-map-entities-without-params! (fn-to-execute) "Execute fn-to-execute function for all entities from buffer - fn-to-execute is a function without any parameters."
@@ -2235,7 +2235,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
      (lambda ()
        (funcall fn-to-execute) ;; execute on heading entry
        (when *ORGTRELLO-NATURAL-ORG-CHECKLIST*
-             (orgtrello-controller/map-checkboxes fn-to-execute))) t 'file))
+             (orgtrello-cbx/map-checkboxes fn-to-execute))) t 'file))
 
 (defun orgtrello-controller/--write-item! (entity-id entities) "Write the item to the org buffer."
   (->> entities
@@ -2597,6 +2597,13 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
        (orgtrello-controller/--users-to it)
        (orgtrello-controller/set-usernames-assigned-property! it)))
 
+(defun orgtrello-controller/--delete-property (property) "Given a property name (checkbox), if found, delete it from the buffer."
+  (org-delete-property-globally property)
+  (save-excursion
+    (goto-char (point-min))
+    (while (re-search-forward ":PROPERTIES: {.*" nil t)
+      (replace-match "" nil t))))
+
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-controller loaded!")
 
 (provide 'org-trello-controller)
@@ -2727,13 +2734,6 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   (orgtrello-action/--controls-or-actions-then-do
      '(orgtrello-controller/--setup-properties orgtrello-controller/--control-keys orgtrello-controller/--control-properties orgtrello-controller/--control-encoding)
      (lambda () (orgtrello-log/msg *OT/NOLOG* "Setup ok!"))))
-
-(defun orgtrello-controller/--delete-property (property) "Given a property name (checkbox), if found, delete it from the buffer."
-  (org-delete-property-globally property)
-  (save-excursion
-    (goto-char (point-min))
-    (while (re-search-forward ":PROPERTIES: {.*" nil t)
-      (replace-match "" nil t))))
 
 (defun org-trello/delete-setup () "Delete the current setup."
   (interactive)

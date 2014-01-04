@@ -17,92 +17,31 @@
 #+author: Antoine R. Dumont
 
 * TODO Joy of FUN(ctional) LANGUAGES
-:PROPERTIES:
-:orgtrello-id: 52c74544b0e7d58f7c0038e4
-:orgtrello-users: ardumont
-:END:
-- [-] LISP family :PROPERTIES: {"orgtrello-id":"52c745486982085d7c001a57"}
-  - [X] Emacs-Lisp :PROPERTIES: {"orgtrello-id":"52c7454d74dbd2437c003c0b"}
-  - [X] Common-Lisp :PROPERTIES: {"orgtrello-id":"52c7454ec19766cf360038dd"}
-  - [ ] Scheme :PROPERTIES: {"orgtrello-id":"52c7454fc70f16a66d001a67"}
-  - [X] Clojure :PROPERTIES: {"orgtrello-id":"52c74550d0e5d7741a003b22"}
-- [-] ML family :PROPERTIES: {"orgtrello-id":"52c74549625f9a507c001a9a"}
-  - [X] Haskell :PROPERTIES: {"orgtrello-id":"52c745510093d1680f003b42"}
-  - [X] Ocaml :PROPERTIES: {"orgtrello-id":"52c745525b7260f07b0017f7"}
-- [-] hybrid family :PROPERTIES: {"orgtrello-id":"52c7454ab43278b86d00378e"}
-  - [X] Scala :PROPERTIES: {"orgtrello-id":"52c74553d08b9bd97b003720"}
-* TODO Joy of FUN(ctional) LANGUAGES
-:PROPERTIES:
-:orgtrello-id: 52c837db2074a7c73100a949
-:orgtrello-users:
-:END:
-- [-] LISP family :PROPERTIES: {"orgtrello-id":"52c837e02655cd610f00b332"}
-  - [ ] Emacs-Lisp :PROPERTIES: {"orgtrello-id":"52c837e6e176fd6b0f00c657"}
-  - [ ] Common-Lisp :PROPERTIES: {"orgtrello-id":"52c837e72074a7c73100a952"}
-  - [ ] Scheme :PROPERTIES: {"orgtrello-id":"52c837e9580bddfe6d00afe2"}
-  - [ ] Clojure :PROPERTIES: {"orgtrello-id":"52c837ea3004d4617c00ad58"}
-- [-] ML family :PROPERTIES: {"orgtrello-id":"52c837e12f45c91e3a003a54"}
-  - [ ] Haskell :PROPERTIES: {"orgtrello-id":"52c837eb4c92100e3700ac96"}
-  - [ ] Ocaml :PROPERTIES: {"orgtrello-id":"52c837ec1f9e9e4d0f0042c6"}
-- [-] hybrid family :PROPERTIES: {"orgtrello-id":"52c837e34d4aaf9c1a00a2b1"}
-  - [ ] Scala :PROPERTIES: {"orgtrello-id":"52c837edb26b6cc76d00412f"}
+- [-] LISP family
+  - [X] Emacs-Lisp
+  - [X] Common-Lisp
+  - [ ] Scheme
+  - [X] Clojure
+- [-] ML family
+  - [X] Haskell
+  - [X] Ocaml
+- [-] hybrid family
+  - [X] Scala
 * TODO Programming in scala
-:PROPERTIES:
-:orgtrello-id: 52c837dd3616972f3200af36
-:orgtrello-users:
-:END:
-- [-] chapters :PROPERTIES: {"orgtrello-id":"52c837e452fbc5e63600b764"}
-  - [ ] introduction :PROPERTIES: {"orgtrello-id":"52c837ee3616972f3200af3f"}
-  - [ ] Ch. 1 - A scalable language :PROPERTIES: {"orgtrello-id":"52c837ef91d66ddb36003bf6"}
-  - [ ] Ch. 2 - First steps in scala :PROPERTIES: {"orgtrello-id":"52c837f08ebe19630f00a99d"}
-  - [ ] Ch. 3 - Next steps in scala :PROPERTIES: {"orgtrello-id":"52c837f2dea686ca3600ad29"}
-  - [ ] Ch. 4 - Classes and objects :PROPERTIES: {"orgtrello-id":"52c837f33004d4617c00ad5b"}
-  - [ ] Ch. 5 - Basic types and operations :PROPERTIES: {"orgtrello-id":"52c837f4a19486b46d0039b0"}
-  - [ ] Ch. 6 - Functional objects :PROPERTIES: {"orgtrello-id":"52c837f5eaed887e7c00b10b"}
-  - [ ] Ch. 7 - Buit-in control structures :PROPERTIES: {"orgtrello-id":"52c837f6b7d8df0c3a0036f8"}
-  - [ ] Ch. 8 - Functions and closures :PROPERTIES: {"orgtrello-id":"52c837f7dea686ca3600ad30"}
-  - [ ] Ch. 9 - Control abstraction :PROPERTIES: {"orgtrello-id":"52c837f8f9320e9b1a00b2eb"}
-  - [ ] Ch. 10 - Composition and inheritance :PROPERTIES: {"orgtrello-id":"52c837f954cdad0c2600af92"}
-  - [ ] Ch. 11 - Scala's hierarchy :PROPERTIES: {"orgtrello-id":"52c837fa8a178e831a00acc6"}
-  - [ ] Ch. 12 - Traits :PROPERTIES: {"orgtrello-id":"52c837fc2e7f701526003954"}
+- [-] chapters
+  - [ ] introduction
+  - [ ] Ch. 1 - A scalable language
+  - [ ] Ch. 2 - First steps in scala
+  - [ ] Ch. 3 - Next steps in scala
+  - [ ] Ch. 4 - Classes and objects
+  - [ ] Ch. 5 - Basic types and operations
+  - [ ] Ch. 6 - Functional objects
+  - [ ] Ch. 7 - Buit-in control structures
+  - [ ] Ch. 8 - Functions and closures
+  - [ ] Ch. 9 - Control abstraction
+  - [ ] Ch. 10 - Composition and inheritance
+  - [ ] Ch. 11 - Scala's hierarchy
+  - [ ] Ch. 12 - Traits
 * TODO Functional programming in Haskell
-:PROPERTIES:
-:orgtrello-id: 52c837de8315cdb13100a79f
-:orgtrello-users:
-:END:
-* TODO Questions about life, the universe and everything
-:PROPERTIES:
-:orgtrello-id: 52c837dfe8910e0a3a00b73c
-:orgtrello-users:
-:END:
-- [-] How to deal with promotion/demotion? :PROPERTIES: {"orgtrello-id":"52c837e5c095bdd13600b18d"}
-* DONE Functional programming in Haskell
-:PROPERTIES:
-:orgtrello-id: 52c745459f9a98cc7b0018c9
-:orgtrello-users:
-:END:
-* DONE Programming in scala
-:PROPERTIES:
-:orgtrello-id: 52c7454630ddd4bd310018fa
-:orgtrello-users:
-:END:
-- [-] chapters :PROPERTIES: {"orgtrello-id":"52c7454b381101711a003a27"}
-  - [ ] introduction :PROPERTIES: {"orgtrello-id":"52c745536f211ec36d003512"}
-  - [ ] Ch. 1 - A scalable language :PROPERTIES: {"orgtrello-id":"52c745546f211ec36d003515"}
-  - [ ] Ch. 2 - First steps in scala :PROPERTIES: {"orgtrello-id":"52c74555c377d2277c001a68"}
-  - [ ] Ch. 3 - Next steps in scala :PROPERTIES: {"orgtrello-id":"52c745562655cd610f003d8a"}
-  - [ ] Ch. 4 - Classes and objects :PROPERTIES: {"orgtrello-id":"52c74557b0e7d58f7c0038ef"}
-  - [X] Ch. 5 - Basic types and operations :PROPERTIES: {"orgtrello-id":"52c74558d393406332003934"}
-  - [ ] Ch. 6 - Functional objects :PROPERTIES: {"orgtrello-id":"52c74559924788163a0017ba"}
-  - [ ] Ch. 7 - Buit-in control structures :PROPERTIES: {"orgtrello-id":"52c7455ad43c66263a00451f"}
-  - [X] Ch. 8 - Functions and closures :PROPERTIES: {"orgtrello-id":"52c7455bf6d05f166e0017b7"}
-  - [ ] Ch. 9 - Control abstraction :PROPERTIES: {"orgtrello-id":"52c7455c0803b9297c003a9c"}
-  - [ ] Ch. 10 - Composition and inheritance :PROPERTIES: {"orgtrello-id":"52c7455dfe70eaae6d00376e"}
-  - [ ] Ch. 11 - Scala's hierarchy :PROPERTIES: {"orgtrello-id":"52c7455e836edb6c1a001b03"}
-  - [ ] Ch. 12 - Traits :PROPERTIES: {"orgtrello-id":"52c7455f706e5cc626003afb"}
 * PENDING Questions about life, the universe and everything
-:PROPERTIES:
-:orgtrello-id: 52c7454722a0ef2626003966
-:orgtrello-users:
-:END:
-- [-] How to deal with promotion/demotion? :PROPERTIES: {"orgtrello-id":"52c7454ce2d2bbaf6d0037b5"}
+- [-] How to deal with promotion/demotion?
