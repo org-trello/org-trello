@@ -166,10 +166,6 @@
   (interactive)
   (orgtrello-log/msg 0 (org-trello/--help-describing-bindings-template *ORGTRELLO-MODE-PREFIX-KEYBINDING* org-trello/--list-of-interactive-command-binding-couples)))
 
-(defun org-trello/describe-entry () "An helper command to describe org-trello entry."
-  (interactive)
-  (message "entities: %S" (orgtrello-controller/--compute-full-entities-from-org)))
-
 (defvar org-trello/--list-of-interactive-command-binding-couples
   '((org-trello/version                     "v" "Display the current version installed.")
     (org-trello/install-key-and-token       "i" "Install the keys and the access-token.")
