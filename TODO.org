@@ -759,7 +759,7 @@ CLOSED: [2013-12-01 dim. 16:40]
 - [X] Update README.md
 - [X] Version
 - [X] Release Note
-* IN-PROGRESS 0.2.7 [57%]
+* IN-PROGRESS 0.2.7 [64%]
 - [X] Backlog
 - [X] Create TODO template for the backlog start
 - [X] Clean obsolete files (org-trello.org is no longer maintained, TODO-tests.org is no longer used)
@@ -769,10 +769,10 @@ CLOSED: [2013-12-01 dim. 16:40]
   - [X] Ensure packaging is generated and ok for melpa - yes, ensure that the root `org-trello.el` is generated before pushing on master.
   - [X] Ensure the tests are still ok
 - [X] README-dev - https://github.com/ardumont/org-trello/issues/99
+- [X] Rewrite the abstraction around fetched results to unify the `data model` (in and out identical) - https://github.com/ardumont/org-trello/issues/100
 - [X] Unify the terms around users-assigned (org-trello) and members (trello)
 - [X] Split the last org-trello namespace into 2 (`controller` for the orchestration function call triggered by interactive commands and `org-trello` for the interactive commands)
 - [X] Unfold every entries before triggering the sync from trello to avoid problems similar as https://github.com/ardumont/org-trello/issues/53
-- [ ] Rewrite the abstraction around fetched results to unify the `data model` (in and out identical)
 - [ ] Synchronize description - https://github.com/ardumont/org-trello/issues/80
 - [ ] Synchronize user comments - https://github.com/ardumont/org-trello/issues/86
 - [ ] Version
