@@ -89,7 +89,7 @@
     (insert-file-contents fPath)
     (split-string (buffer-string) "\n" t)))
 
-(defun orgtrello/compute-marker (buffer-name name position) "Compute the orgtrello marker which is composed of buffer-name, name and position"
+(defun orgtrello-controller/compute-marker (buffer-name name position) "Compute the orgtrello marker which is composed of buffer-name, name and position"
   (->> (list *ORGTRELLO-MARKER* buffer-name name (if (stringp position) position (int-to-string position)))
        (-interpose "-")
        (apply 'concat)
@@ -124,7 +124,7 @@
       (throw 'org-trello-timer-go-to-sleep t))))
 
 (defun orgtrello-proxy/--getting-back-to-headline (data) "Trying another approach to getting back to header computing the normal form of an entry in the buffer."
-  (orgtrello-proxy/--getting-back-to-marker (orgtrello/--compute-entity-to-org-entry data)))
+  (orgtrello-proxy/--getting-back-to-marker (orgtrello-controller/--compute-entity-to-org-entry data)))
 
 (defun orgtrello-proxy/--compute-pattern-search-from-marker (marker) "Given a marker, compute the pattern to look for in the file."
   marker)
@@ -138,7 +138,7 @@
            goto-ok
            (orgtrello-proxy/--getting-back-to-headline data)))
 
-(defun orgtrello/id-p (id) "Is the string a trello identifier?"
+(defun orgtrello-controller/id-p (id) "Is the string a trello identifier?"
   (and id (not (string-match-p (format "^%s-" *ORGTRELLO-MARKER*) id))))
 
 (defun orgtrello-proxy/--standard-post-or-put-success-callback (entity-to-sync file-to-cleanup) "Return a callback function able to deal with the update of the buffer at a given position."
@@ -156,7 +156,7 @@
                       ;; get back to the buffer and update the id if need be
                       (let ((str-msg (when (orgtrello-proxy/--get-back-to-marker orgtrello-proxy/--marker-id data)
                                            ;; now we extract the data
-                                           (let ((orgtrello-proxy/--entry-id (when (orgtrello/id-p orgtrello-proxy/--marker-id) orgtrello-proxy/--marker-id)))
+                                           (let ((orgtrello-proxy/--entry-id (when (orgtrello-controller/id-p orgtrello-proxy/--marker-id) orgtrello-proxy/--marker-id)))
                                              (if orgtrello-proxy/--entry-id ;; id already present in the org-mode file
                                                  ;; no need to add another
                                                  (concat "Entity '" orgtrello-proxy/--entity-name "' with id '" orgtrello-proxy/--entry-id "' synced!")
@@ -184,7 +184,7 @@
           (orgtrello-cbx/org-delete-property *ORGTRELLO-ID*)))
 
 (defun orgtrello-proxy/--sync-entity (entity-data entity-full-metadata entry-file-archived) "Execute the entity synchronization."
-  (lexical-let ((orgtrello-query/--query-map (orgtrello/--dispatch-create entity-full-metadata))
+  (lexical-let ((orgtrello-query/--query-map (orgtrello-controller/--dispatch-create entity-full-metadata))
                 (oq/--entity-full-meta       entity-full-metadata)
                 (oq/--entry-file-archived    entry-file-archived))
     (if (hash-table-p orgtrello-query/--query-map)
@@ -244,7 +244,7 @@
        (orgtrello-proxy/--cleanup-and-save-buffer-metadata op/--entry-file op/--entry-buffer-name)))))
 
 (defun orgtrello-proxy/--delete (entity-data entity-full-metadata entry-file-archived) "Execute the entity deletion."
-  (lexical-let ((orgtrello-query/--query-map (orgtrello/--dispatch-delete (orgtrello-data/current entity-full-metadata) (orgtrello-data/parent entity-full-metadata)))
+  (lexical-let ((orgtrello-query/--query-map (orgtrello-controller/--dispatch-delete (orgtrello-data/current entity-full-metadata) (orgtrello-data/parent entity-full-metadata)))
                 (oq/--entity-full-meta       entity-full-metadata)
                 (oq/--entry-file-archived    entry-file-archived))
     (if (hash-table-p orgtrello-query/--query-map)

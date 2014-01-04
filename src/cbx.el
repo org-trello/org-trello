@@ -46,7 +46,7 @@
   (s-join " :PROPERTIES: "  `(,(orgtrello-cbx/--checkbox-data checkbox-string)
                               ,(orgtrello-cbx/--to-properties properties))))
 
-(defvar orgtrello/--rules-to-align-checkbox-properties
+(defvar orgtrello-controller/--rules-to-align-checkbox-properties
   `((orgtrello-rules
      (regexp   . "^[ ]*-\\{1\\}.*\\( :PROPERTIES: \\).*$")
      (group    . 1)
@@ -62,9 +62,9 @@
 
 (defun orgtrello-cbx/--justify-property-current-line () "Justify the content of the current region."
   (align-region (orgtrello-cbx/--point-at-beg-of-region-for-justify)
-                (orgtrello/--compute-next-card-point)
+                (orgtrello-controller/--compute-next-card-point)
                 'entire
-                orgtrello/--rules-to-align-checkbox-properties
+                orgtrello-controller/--rules-to-align-checkbox-properties
                 nil))
 
 (defun orgtrello-cbx/--write-properties-at-point (pt properties) "Given the new properties, update the current entry."
@@ -187,7 +187,7 @@ This is a list with the following elements:
       1-
       orgtrello-cbx/--org-up!))
 
-(defun orgtrello/--compute-next-card-point () "Compute the next card's position."
+(defun orgtrello-controller/--compute-next-card-point () "Compute the next card's position."
   (save-excursion
     (org-back-to-heading)
     (if (org-goto-sibling) (point-at-bol) (point-max))))
@@ -197,16 +197,16 @@ This is a list with the following elements:
   (when (and (not (org-at-heading-p)) (< (point) (point-max)) (not (orgtrello-cbx/checkbox-p)))
         (orgtrello-cbx/--goto-next-checkbox)))
 
-(defun orgtrello/--map-checkboxes (level fn-to-execute) "Map over the checkboxes and execute fn when in checkbox. Does not preserve the cursor position. Do not exceed the point-max."
+(defun orgtrello-controller/--map-checkboxes (level fn-to-execute) "Map over the checkboxes and execute fn when in checkbox. Does not preserve the cursor position. Do not exceed the point-max."
   (orgtrello-cbx/--goto-next-checkbox)
   (when (< level (orgtrello-data/current-level))
         (funcall fn-to-execute)
-        (orgtrello/--map-checkboxes level fn-to-execute)))
+        (orgtrello-controller/--map-checkboxes level fn-to-execute)))
 
-(defun orgtrello/map-checkboxes (fn-to-execute) "Map over the current checkbox and sync them."
+(defun orgtrello-controller/map-checkboxes (fn-to-execute) "Map over the current checkbox and sync them."
   (let ((level (orgtrello-data/current-level)))
     (when (= level *CHECKLIST-LEVEL*) (funcall fn-to-execute))
-    (save-excursion (orgtrello/--map-checkboxes level fn-to-execute)))) ;; then map over the next checkboxes and sync them
+    (save-excursion (orgtrello-controller/--map-checkboxes level fn-to-execute)))) ;; then map over the next checkboxes and sync them
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-cbx loaded!")
 

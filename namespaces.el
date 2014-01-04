@@ -14,6 +14,7 @@
                              "src/elnode.el"
                              "src/webadmin.el"
                              "src/proxy.el"
+                             "src/controller.el"
                              "src/org-trello.el"
                              "src/footer.el") "Splitted org-trello files.")
 

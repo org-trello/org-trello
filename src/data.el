@@ -46,7 +46,7 @@
          (cons (orgtrello-data/extract-identifier od/--point))
          (cons od/--point)
          (cons (buffer-name))
-         (cons (orgtrello/--user-ids-assigned-to-current-card))
+         (cons (orgtrello-controller/--user-ids-assigned-to-current-card))
          orgtrello-data/--get-metadata)))
 
 (defun orgtrello-action/org-up-parent () "A function to get back to the current entry's parent"
@@ -78,17 +78,17 @@
 
 (defun orgtrello-data/--compute-fn (entity list-dispatch-fn) "Given an entity, compute the result" (funcall (if (hash-table-p entity) (first list-dispatch-fn) (second list-dispatch-fn)) entity))
 
-(defun orgtrello/--entity-with-level-p (entity level) "Is the entity with level level?" (-> entity orgtrello-data/entity-level (eq level)))
-(defun orgtrello-data/entity-card-p      (entity) "Is this a card?"      (orgtrello/--entity-with-level-p entity *CARD-LEVEL*))
-(defun orgtrello-data/entity-checklist-p (entity) "Is this a checklist?" (orgtrello/--entity-with-level-p entity *CHECKLIST-LEVEL*))
-(defun orgtrello-data/entity-item-p      (entity) "Is this an item?"     (orgtrello/--entity-with-level-p entity *ITEM-LEVEL*))
+(defun orgtrello-controller/--entity-with-level-p (entity level) "Is the entity with level level?" (-> entity orgtrello-data/entity-level (eq level)))
+(defun orgtrello-data/entity-card-p      (entity) "Is this a card?"      (orgtrello-controller/--entity-with-level-p entity *CARD-LEVEL*))
+(defun orgtrello-data/entity-checklist-p (entity) "Is this a checklist?" (orgtrello-controller/--entity-with-level-p entity *CHECKLIST-LEVEL*))
+(defun orgtrello-data/entity-item-p      (entity) "Is this an item?"     (orgtrello-controller/--entity-with-level-p entity *ITEM-LEVEL*))
 
 (defun orgtrello-data/gethash-data (key map &optional default-value) "Retrieve the map from some query-map" (when map (gethash key map default-value)))
 (defun orgtrello-data/puthash-data (key value map)                   "Update the map at key with value"     (when map (puthash key value map)))
 
-(defun orgtrello-data/entity-id                 (entity)                         "Dispatch to the rightful function to get the id" (let ((id (orgtrello-data/entity-id-or-marker entity))) (when (orgtrello/id-p id) id)))
+(defun orgtrello-data/entity-id                 (entity)                         "Dispatch to the rightful function to get the id" (let ((id (orgtrello-data/entity-id-or-marker entity))) (when (orgtrello-controller/id-p id) id)))
 (defun orgtrello-data/entity-keyword            (entity &optional default-value) "Retrieve the keyword from the entity."           (orgtrello-data/gethash-data :keyword entity default-value))
-(defun orgtrello-data/entity-member-ids-as-list (entity)                         "Retrieve the users assigned to the entity."      (-> entity orgtrello-data/entity-member-ids orgtrello/--users-from))
+(defun orgtrello-data/entity-member-ids-as-list (entity)                         "Retrieve the users assigned to the entity."      (-> entity orgtrello-data/entity-member-ids orgtrello-controller/--users-from))
 
 (defun orgtrello-data/entity-name         (entity) "Retrieve the entity name"                                                                  (orgtrello-data/gethash-data :name           entity))
 (defun orgtrello-data/entity-memberships  (entity) "Retrieve the entity memberships"                                                           (orgtrello-data/gethash-data :memberships    entity))
