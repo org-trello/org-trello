@@ -3,7 +3,6 @@
 
 ;; #################### orgtrello-setup
 
-(defvar *ORGTRELLO-VERSION*           "0.2.6"                                           "Version")
 (defvar *consumer-key*                nil                                               "Id representing the user.")
 (defvar *access-token*                nil                                               "Read/write access token to use trello on behalf of the user.")
 (defvar *ORGTRELLO-MARKER*            "orgtrello-marker"                                "A marker used inside the org buffer to synchronize entries.")

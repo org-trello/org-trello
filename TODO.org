@@ -759,7 +759,7 @@ CLOSED: [2013-12-01 dim. 16:40]
 - [X] Update README.md
 - [X] Version
 - [X] Release Note
-* IN-PROGRESS 0.2.7 [64%]
+* IN-PROGRESS 0.2.7 [83%]
 - [X] Backlog
 - [X] Create TODO template for the backlog start
 - [X] Clean obsolete files (org-trello.org is no longer maintained, TODO-tests.org is no longer used)
@@ -773,12 +773,12 @@ CLOSED: [2013-12-01 dim. 16:40]
 - [X] Unify the terms around users-assigned (org-trello) and members (trello)
 - [X] Split the last org-trello namespace into 2 (`controller` for the orchestration function call triggered by interactive commands and `org-trello` for the interactive commands)
 - [X] Unfold every entries before triggering the sync from trello to avoid problems similar as https://github.com/ardumont/org-trello/issues/53
-- [ ] Synchronize description - https://github.com/ardumont/org-trello/issues/80
-- [ ] Synchronize user comments - https://github.com/ardumont/org-trello/issues/86
-- [ ] Version
+- [X] Version
 - [ ] Update doc
 - [ ] Release notes
 * TODO 0.2.8
+- [ ] Synchronize description - https://github.com/ardumont/org-trello/issues/80
+- [ ] Synchronize user comments - https://github.com/ardumont/org-trello/issues/86
 - [ ] More fined grained use of the trello api (retrieve only data we use) - https://github.com/ardumont/org-trello/issues/69
 - [ ] Use trello labels and org tags as one - https://github.com/ardumont/org-trello/issues/70
 - [ ] Another Disposition about org's buffer - https://github.com/ardumont/org-trello/issues/33

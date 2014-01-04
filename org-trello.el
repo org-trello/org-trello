@@ -4,7 +4,7 @@
 
 ;; Author: Antoine R. Dumont <eniotna.t AT gmail.com>
 ;; Maintainer: Antoine R. Dumont <eniotna.t AT gmail.com>
-;; Version: 0.2.6
+;; Version: 0.2.7
 ;; Package-Requires: ((org "8.0.7") (dash "1.5.0") (request "0.2.0") (cl-lib "0.3.0") (json "1.2") (elnode "0.9.9.7.6") (esxml "0.3.0") (s "1.7.0") (kv "0.0.17"))
 ;; Keywords: org-mode trello sync org-trello
 ;; URL: https://github.com/ardumont/org-trello
@@ -65,6 +65,8 @@
 (require 'kv)
 (require 'esxml)
 
+(defvar *ORGTRELLO-VERSION* "0.2.7" "org-trello version")
+
 (provide 'org-trello-header)
 
 
@@ -102,7 +104,6 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
 
 ;; #################### orgtrello-setup
 
-(defvar *ORGTRELLO-VERSION*           "0.2.6"                                           "Version")
 (defvar *consumer-key*                nil                                               "Id representing the user.")
 (defvar *access-token*                nil                                               "Read/write access token to use trello on behalf of the user.")
 (defvar *ORGTRELLO-MARKER*            "orgtrello-marker"                                "A marker used inside the org buffer to synchronize entries.")
