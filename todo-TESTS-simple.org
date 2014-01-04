@@ -22,28 +22,26 @@
   - [X] Common-Lisp
   - [ ] Scheme
   - [X] Clojure
-- [X] ML family
+- [-] ML family
   - [X] Haskell
   - [X] Ocaml
-- [X] hybrid family
+- [-] hybrid family
   - [X] Scala
-* DONE Programming in scala
-:PROPERTIES:
+* TODO Programming in scala
 - [-] chapters
-  - [-] introduction
-  - [-] Ch. 1 - A scalable language
-  - [-] Ch. 2 - First steps in scala
-  - [-] Ch. 3 - Next steps in scala
-  - [-] Ch. 4 - Classes and objects
-  - [X] Ch. 5 - Basic types and operations
-  - [-] Ch. 6 - Functional objects
-  - [-] Ch. 7 - Buit-in control structures
-  - [X] Ch. 8 - Functions and closures
-  - [-] Ch. 9 - Control abstraction
-  - [-] Ch. 10 - Composition and inheritance
-  - [-] Ch. 11 - Scala's hierarchy
-  - [-] Ch. 12 - Traits
-* DONE Functional programming in Haskell
-:PROPERTIES:
+  - [ ] introduction
+  - [ ] Ch. 1 - A scalable language
+  - [ ] Ch. 2 - First steps in scala
+  - [ ] Ch. 3 - Next steps in scala
+  - [ ] Ch. 4 - Classes and objects
+  - [ ] Ch. 5 - Basic types and operations
+  - [ ] Ch. 6 - Functional objects
+  - [ ] Ch. 7 - Buit-in control structures
+  - [ ] Ch. 8 - Functions and closures
+  - [ ] Ch. 9 - Control abstraction
+  - [ ] Ch. 10 - Composition and inheritance
+  - [ ] Ch. 11 - Scala's hierarchy
+  - [ ] Ch. 12 - Traits
+* TODO Functional programming in Haskell
 * PENDING Questions about life, the universe and everything
 - [-] How to deal with promotion/demotion?

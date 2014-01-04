@@ -2,7 +2,7 @@
 #+AUTHOR: Antoine R. Dumont
 #+STYLE: <style> h1,h2,h3 {font-family: arial, helvetica, sans-serif} </style>
 
-* DONE v0.0.1 [100%]
+* DONE 0.0.1 [100%]
 CLOSED: [2013-07-04 jeu. 20:19]
 ** DONE emacs-lisp HTTP Client
 CLOSED: [2013-06-29 sam. 15:29]
@@ -243,7 +243,7 @@ http://www.marmalade-repo.org/packages
 https://github.com/milkypostman/melpa
 http://nic.ferrier.me.uk/blog/2012_07/emacs-packages-for-programmers
 
-* DONE v0.0.2 [100%]
+* DONE 0.0.2 [100%]
 CLOSED: [2013-07-07 dim. 10:54]
 ** DONE Technical release fixing technical details
 CLOSED: [2013-07-07 dim. 10:54]
@@ -254,7 +254,7 @@ CLOSED: [2013-07-07 dim. 10:54]
 ** DONE Local packaging to help testing
 CLOSED: [2013-07-07 dim. 10:54]
 
-* DONE v0.0.3 [100%]
+* DONE 0.0.3 [100%]
 CLOSED: [2013-07-08 lun. 14:07]
 ** DONE Syncing complex entities
 CLOSED: [2013-07-07 dim. 10:55]
@@ -284,7 +284,7 @@ CLOSED: [2013-07-07 dim. 23:03]
 ** DONE Given a trello board, sync into a org-mode file
 CLOSED: [2013-07-08 lun. 14:07]
 
-* DONE v0.0.4 [100%]
+* DONE 0.0.4 [100%]
 CLOSED: [2013-07-16 mar. 16:16]
 ** DONE Deploy on marmalade the stable version (and update the readme about it)
 CLOSED: [2013-07-11 jeu. 18:42]
@@ -312,7 +312,7 @@ CLOSED: [2013-07-16 mar. 16:10]
 CLOSED: [2013-07-16 mar. 16:03]
 ** DONE Update documentation
 CLOSED: [2013-07-16 mar. 16:16]
-* DONE v0.0.4.1 [100%]
+* DONE 0.0.4.1 [100%]
 CLOSED: [2013-07-16 mar. 20:28]
 ** DONE Fix the creation board routine regarding the org-mode keywords (dynamic typing hell!)
 CLOSED: [2013-07-16 mar. 20:03]
@@ -322,7 +322,7 @@ CLOSED: [2013-07-16 mar. 20:04]
 CLOSED: [2013-07-16 mar. 20:03]
 ** DONE Release on github
 CLOSED: [2013-07-16 mar. 20:04]
-* DONE v0.0.5 [100%]
+* DONE 0.0.5 [100%]
 CLOSED: [2013-07-18 jeu. 16:06]
 ** DONE Synchronizing from the trello board must simply computes and add/remove what's changed [100%]
 CLOSED: [2013-07-18 jeu. 15:30]
@@ -342,7 +342,7 @@ CLOSED: [2013-07-18 jeu. 15:59]
 CLOSED: [2013-07-18 jeu. 16:04]
 ** DONE Release on github, marmalade, melpa
 CLOSED: [2013-07-18 jeu. 16:06]
-* DONE v0.0.6 [100%]
+* DONE 0.0.6 [100%]
 CLOSED: [2013-07-24 mer. 21:22]
 ** DONE Test that the title/label of the entity is set when syncing to avoid a 400 error
 CLOSED: [2013-07-24 mer. 19:46]
@@ -364,7 +364,7 @@ CLOSED: [2013-07-24 mer. 21:22]
 CLOSED: [2013-07-24 mer. 21:26]
 ** DONE Make a release
 CLOSED: [2013-07-24 mer. 21:22]
-* DONE v0.0.6.1 [100%]
+* DONE 0.0.6.1 [100%]
 CLOSED: [2013-07-25 jeu. 10:44]
 ** DONE Fix the json-1.3 dependency, sometimes only 1.2 is available
 CLOSED: [2013-07-25 jeu. 10:43]
@@ -372,7 +372,7 @@ CLOSED: [2013-07-25 jeu. 10:43]
 CLOSED: [2013-07-25 jeu. 10:44]
 ** DONE Release
 CLOSED: [2013-07-25 jeu. 10:44]
-* DONE v0.0.7 [100%]
+* DONE 0.0.7 [100%]
 CLOSED: [2013-07-25 jeu. 20:40]
 ** DONE Reference missing bindings in documentation
 CLOSED: [2013-07-25 jeu. 19:44]
@@ -384,7 +384,7 @@ CLOSED: [2013-07-25 jeu. 20:05]
 CLOSED: [2013-07-25 jeu. 20:40]
 ** DONE Release
 CLOSED: [2013-07-25 jeu. 20:40]
-* DONE v0.0.8 [100%]
+* DONE 0.0.8 [100%]
 CLOSED: [2013-07-31 mer. 01:42] DEADLINE: <2013-07-30 mar.>
 ** DONE Fix the cl-lib dependency
 CLOSED: [2013-07-30 mar. 17:13]
@@ -408,7 +408,7 @@ CLOSED: [2013-07-31 mer. 01:42]
 CLOSED: [2013-07-31 mer. 02:06]
 ** DONE Cleanup the debugging functions
 CLOSED: [2013-07-31 mer. 02:06]
-* DONE v0.0.9 [100%]
+* DONE 0.0.9 [100%]
 CLOSED: [2013-08-06 mar. 16:44]
 ** DONE Update videos with the new features in the readme
 CLOSED: [2013-08-06 mar. 16:25]
@@ -426,7 +426,7 @@ CLOSED: [2013-08-06 mar. 16:23]
 CLOSED: [2013-08-06 mar. 16:24]
 ** DONE Release on marmalade/melpa
 CLOSED: [2013-08-06 mar. 16:44]
-* DONE v0.1.0 [100%]
+* DONE 0.1.0 [100%]
 CLOSED: [2013-08-07 mer. 13:19]
 ** DONE Fix importing of cards with due date - https://github.com/ardumont/org-trello/pull/22
 Thanks @wordempire
@@ -752,13 +752,32 @@ CLOSED: [2013-11-24 dim. 00:18]
 - [X] Update documentation + TOC
 - [X] Version
 - [X] Release notes
-* IN-PROGRESS 0.2.6 [100%]
+* DONE 0.2.6 [100%]
+CLOSED: [2013-12-01 dim. 16:40]
 - [X] Jump to card - https://github.com/ardumont/org-trello/issues/88
 - [X] Rewrite convention for the "goto board" action into "jump to board"
 - [X] Update README.md
 - [X] Version
 - [X] Release Note
-* TODO 0.2.7 [%]
+* DONE 0.2.7 [100%]
+CLOSED: [2014-01-04 sam. 19:26]
+- [X] Backlog
+- [X] Create TODO template for the backlog start
+- [X] Clean obsolete files (org-trello.org is no longer maintained, TODO-tests.org is no longer used)
+- [X] Retry to split into `namespace` files - https://github.com/ardumont/org-trello/issues/93
+  - [X] Split into `namespace` files
+  - [X] Ensure packaging is generated and ok for marmalade
+  - [X] Ensure packaging is generated and ok for melpa - yes, ensure that the root `org-trello.el` is generated before pushing on master.
+  - [X] Ensure the tests are still ok
+- [X] README-dev - https://github.com/ardumont/org-trello/issues/99
+- [X] Rewrite the abstraction around fetched results to unify the `data model` (in and out identical) - https://github.com/ardumont/org-trello/issues/100
+- [X] Unify the terms around users-assigned (org-trello) and members (trello)
+- [X] Split the last org-trello namespace into 2 (`controller` for the orchestration function call triggered by interactive commands and `org-trello` for the interactive commands)
+- [X] Unfold every entries before triggering the sync from trello to avoid problems similar as https://github.com/ardumont/org-trello/issues/53
+- [X] Version
+- [X] Release notes
+* TODO 0.2.8
+- [ ] Improve the upgrading version way (writed at 2 places, 1 is better to avoid duplication)
 - [ ] Synchronize description - https://github.com/ardumont/org-trello/issues/80
 - [ ] Synchronize user comments - https://github.com/ardumont/org-trello/issues/86
 - [ ] More fined grained use of the trello api (retrieve only data we use) - https://github.com/ardumont/org-trello/issues/69
@@ -772,6 +791,11 @@ CLOSED: [2013-11-24 dim. 00:18]
 - [ ] Update the literate org-trello.org (completely desynchronized since 0.1.2) -> coding it to avoid doing manual split (I see the irony)
 - [ ] POC: use a temporary buffer to sync with trello, when done, merge with the user's buffer.
 - [ ] Improve tests coverage - some major and important functionalities are not covered (due at time of ignorance on how to do it, there is only so much one can do!
+- [ ] Release notes
+* TODO Template [0%]
+- [ ] Backlog
+- [ ] Version
+- [ ] Update doc
 - [ ] Release notes
 * Notes
 (org-show-siblings)

@@ -3,10 +3,10 @@ PACKAGE_FOLDER=org-trello-$(VERSION)
 ARCHIVE=$(PACKAGE_FOLDER).tar
 USER=ardumont
 
-test:
+test: clean generate
 	cask exec emacs -Q -batch \
 			-l ert \
-			-l ./org-trello-tests.el \
+			-l ./launch-tests.el \
 			-f ert-run-tests-batch-and-exit
 
 itest-clean:
@@ -36,7 +36,10 @@ prepare:
 	mkdir -p $(PACKAGE_FOLDER)
 	cp -r org-trello.el org-trello-pkg.el $(PACKAGE_FOLDER)
 
-package: clean pkg-el prepare
+generate:
+	cask exec emacs -Q --batch -l ./package.el
+
+package: clean generate pkg-el prepare
 	tar cvf $(ARCHIVE) $(PACKAGE_FOLDER)
 	rm -rf $(PACKAGE_FOLDER)
 
@@ -52,12 +55,6 @@ install-package: package
 install-package-and-tests: install-package
 	cask exec emacs -Q --batch -l ./launch-tests.el
 
-tangle:
-	time cask exec emacs -Q -batch \
-	    		     -l org \
-			     ./org-trello.org \
-			     -e org-babel-tangle
-
 ttest: tangle test
 
 cleanup-data:
@@ -69,4 +66,4 @@ release:
 	./release.sh $(VERSION) $(USER)
 
 install-cask:
-	curl -fsSkL https://raw.github.com/rejeep/cask.el/master/go | sh
+	curl -fsSkL https://raw.github.com/cask/cask/master/go | python

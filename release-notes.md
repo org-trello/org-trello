@@ -1,3 +1,21 @@
+# 0.2.7
+
+- [X] Backlog
+- [X] Create TODO template for the backlog start
+- [X] Clean obsolete files (org-trello.org is no longer maintained, TODO-tests.org is no longer used)
+- [X] Retry to split into `namespace` files - https://github.com/ardumont/org-trello/issues/93
+  - [X] Split into `namespace` files
+  - [X] Ensure packaging is generated and ok for marmalade
+  - [X] Ensure packaging is generated and ok for melpa - yes, ensure that the root `org-trello.el` is generated before pushing on master.
+  - [X] Ensure the tests are still ok
+- [X] README-dev - https://github.com/ardumont/org-trello/issues/99
+- [X] Rewrite the abstraction around fetched results to unify the `data model` (in and out identical) - https://github.com/ardumont/org-trello/issues/100
+- [X] Unify the terms around users-assigned (org-trello) and members (trello)
+- [X] Split the last org-trello namespace into 2 (`controller` for the orchestration function call triggered by interactive commands and `org-trello` for the interactive commands)
+- [X] Unfold every entries before triggering the sync from trello to avoid problems similar as https://github.com/ardumont/org-trello/issues/53
+- [X] Version
+- [X] Release notes
+
 # 0.2.6
 
 - [X] Jump to card - https://github.com/ardumont/org-trello/issues/88
