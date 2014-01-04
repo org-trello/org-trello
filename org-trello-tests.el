@@ -38,7 +38,7 @@
   (expect "due-date"        (gethash :due            (orgtrello-hash/make-hash-org "" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org")))
   (expect :point            (gethash :position       (orgtrello-hash/make-hash-org "" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org")))
   (expect "buffer-name.org" (gethash :buffername     (orgtrello-hash/make-hash-org "" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org")))
-  (expect "1,2,3"           (gethash :users-assigned (orgtrello-hash/make-hash-org "1,2,3" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org"))))
+  (expect "1,2,3"           (gethash :member-ids (orgtrello-hash/make-hash-org "1,2,3" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org"))))
 
 (expectations (desc "testing orgtrello-hash/make-hash")
   (expect :some-method (gethash :method (orgtrello-hash/make-hash :some-method :some-uri)))
@@ -54,7 +54,7 @@
   (expect :id                                    (gethash :id       (orgtrello-data/--get-metadata '("" "buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil))))
   (expect :due                                   (gethash :due      (orgtrello-data/--get-metadata '("" "buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil))))
   (expect :point                                 (gethash :position (orgtrello-data/--get-metadata '("" "buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil))))
-  (expect "1,2,3"                                (gethash :users-assigned (orgtrello-data/--get-metadata '("1,2,3" "buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil)))))
+  (expect "1,2,3"                                (gethash :member-ids (orgtrello-data/--get-metadata '("1,2,3" "buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil)))))
 
 (expectations (desc "testing orgtrello-data/--convert-orgmode-date-to-trello-date")
   (expect "2013-07-18T02:00:00.000Z" (orgtrello-data/--convert-orgmode-date-to-trello-date "2013-07-18T02:00:00.000Z"))
@@ -279,7 +279,7 @@
 ;; ########################## orgtrello-tests
 
 (ert-deftest testing-orgtrello/--compute-data-from-entity-meta ()
-  (let* ((entry   (orgtrello-hash/make-hash-org :users-assigned :some-level :some-keyword :some-name "some-id" :some-due :some-point :some-buffername)))
+  (let* ((entry   (orgtrello-hash/make-hash-org :member-ids :some-level :some-keyword :some-name "some-id" :some-due :some-point :some-buffername)))
     (should (equal (orgtrello-data/entity-id entry)         "some-id"))
     (should (equal (orgtrello-data/entity-name entry)       :some-name))
     (should (equal (orgtrello-data/entity-keyword entry)    :some-keyword))
@@ -287,7 +287,7 @@
     (should (equal (orgtrello-data/entity-due entry)        :some-due))
     (should (equal (orgtrello-data/entity-position entry)   :some-point))
     (should (equal (orgtrello-data/entity-buffername entry) :some-buffername))
-    (should (equal (orgtrello-data/entity-member-ids entry) :users-assigned))))
+    (should (equal (orgtrello-data/entity-member-ids entry) :member-ids))))
 
 (ert-deftest testing-orgtrello/--id-name ()
   (let* ((entities (orgtrello-data/parse-data [((id . "id")
@@ -433,7 +433,7 @@
        (lambda (entity s) (format "%S %s" entity s))
        "- hello"))
 
-  (expect "#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:current #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:buffername :buffer-name :position :position :level 3 :keyword :kwd :name :name :id nil :due :due :users-assigned :users)) :parent nil :grandparent nil)) - hello"
+  (expect "#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:current #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:buffername :buffer-name :position :position :level 3 :keyword :kwd :name :name :id nil :due :due :member-ids :users)) :parent nil :grandparent nil)) - hello"
     (orgtrello-action/--functional-controls-then-do
      '(orgtrello/--right-level-p)
      (orgtrello-hash/make-hierarchy (orgtrello-hash/make-hash-org :users 3 :kwd :name nil :due :position :buffer-name))
@@ -449,7 +449,7 @@
      (orgtrello-hash/make-hierarchy (orgtrello-hash/make-hash-org :users 1 :kwd :name nil :due :position :buffer-name))
      (lambda (entity s) (format "%S %s" entity s))
      "- hello"))
-  (expect "#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:current #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:buffername :buffer-name :position :position :level 1 :keyword :kwd :name :name :id \"some-id\" :due :due :users-assigned :users)) :parent nil :grandparent nil)) - hello"
+  (expect "#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:current #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:buffername :buffer-name :position :position :level 1 :keyword :kwd :name :name :id \"some-id\" :due :due :member-ids :users)) :parent nil :grandparent nil)) - hello"
 
     (orgtrello-action/--functional-controls-then-do
      '(orgtrello/--right-level-p orgtrello/--already-synced-p)
@@ -1567,26 +1567,26 @@ DEADLINE: <some-date>
 
 ;; (ert-deftest testing-orgtrello/--merge-card ()
 ;;   (let ((*HMAP-ID-NAME* (orgtrello-hash/make-properties `((1 . "TODO") (2 . "DONE") (3 . "IN-PROGRESS")))))
-;;     (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "TODO" :id nil :level 1 :users-assigned ""))
+;;     (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "TODO" :id nil :level 1 :member-ids ""))
 ;;                         (orgtrello/--merge-card `((id . nil) (name . "some name") (idList . 1)) (orgtrello-hash/make-properties `((:name . "some other name"))))))
-;;     (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "DONE" :id nil :level 1 :users-assigned ""))
+;;     (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "DONE" :id nil :level 1 :member-ids ""))
 ;;                         (orgtrello/--merge-card `((id . nil) (name . "some name") (idList . 2)) (orgtrello-hash/make-properties `((:name . "some other name"))))))
-;;     (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "TODO" :id nil :level 1 :users-assigned ""))
+;;     (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "TODO" :id nil :level 1 :member-ids ""))
 ;;                         (orgtrello/--merge-card `((id . nil) (name . "some name") (idList . 1)) nil)))
-;;     (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "TODO" :id nil :level 1 :users-assigned ""))
+;;     (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "TODO" :id nil :level 1 :member-ids ""))
 ;;                         (orgtrello/--merge-card `((id . nil) (name . "some name") (idList . 1)) (orgtrello-hash/make-properties `((:name . "some other name") (:id 1))))))
-;;     (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "TODO" :id 1 :level 1 :users-assigned ""))
+;;     (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "TODO" :id 1 :level 1 :member-ids ""))
 ;;                         (orgtrello/--merge-card `((id . 1) (name . "some name") (id . 1) (idList . 1)) (orgtrello-hash/make-properties `((:name . "some other name"))))))
-;;     (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "TODO" :id 1 :level 1 :users-assigned ""))
+;;     (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "TODO" :id 1 :level 1 :member-ids ""))
 ;;                         (orgtrello/--merge-card `((id . 1) (name . "some name") (id . 1) (idList . 1)) (orgtrello-hash/make-properties `((:name . "some other name") (:id 2))))))
-;;     (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "TODO" :id 1 :level 1 :users-assigned ""))
+;;     (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "TODO" :id 1 :level 1 :member-ids ""))
 ;;                         (orgtrello/--merge-card `((id . 1) (name . "some name") (id . 1) (idList . 1)) (orgtrello-hash/make-properties `((:name . "some other name"))))))
-;;     (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "TODO" :id 1 :level 1 :users-assigned ""))
+;;     (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "TODO" :id 1 :level 1 :member-ids ""))
 ;;                         (orgtrello/--merge-card `((id . 1) (name . "some name") (idList . 1)) nil)))
-;;     (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "TODO" :id 1 :level 1 :users-assigned "1,2,3"))
+;;     (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "TODO" :id 1 :level 1 :member-ids "1,2,3"))
 ;;                         (orgtrello/--merge-card `((id . 1) (name . "some name") (idList . 1) (idMembers . ["1" "2" "3"])) nil)))
-;;     (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :users-assigned "1,2,3,4,5" :level 1 :id 1 :keyword nil))
-;;                         (orgtrello/--merge-card `((id . 1) (name . "some name") (idList . 1) (idMembers . ["1" "2" "3"])) (orgtrello-hash/make-properties `((:name . "some other name") (:users-assigned . "4,5,3"))))))))
+;;     (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :member-ids "1,2,3,4,5" :level 1 :id 1 :keyword nil))
+;;                         (orgtrello/--merge-card `((id . 1) (name . "some name") (idList . 1) (idMembers . ["1" "2" "3"])) (orgtrello-hash/make-properties `((:name . "some other name") (:member-ids . "4,5,3"))))))))
 
 (expectations (desc "orgtrello/--add-to-last-pos")
  (expect '(1 2 3 4) (orgtrello/--add-to-last-pos 4 '(1 2 3))))
@@ -1726,13 +1726,13 @@ C-c o h - M-x org-trello/help-describing-bindings - This help message."
 
 (expectations (desc "orgtrello/--merge-users-assigned")
   (expect "1,5,2,3,4"
-    (orgtrello/--merge-users-assigned (orgtrello-hash/make-properties `((:users-assigned . ("1" "5"))))
-                                      (orgtrello-hash/make-properties `((:users-assigned . "2,3,4"))))))
+    (orgtrello/--merge-users-assigned (orgtrello-hash/make-properties `((:member-ids . ("1" "5"))))
+                                      (orgtrello-hash/make-properties `((:member-ids . "2,3,4"))))))
 
 (expectations (desc "orgtrello/--merge-users-assigned")
   (expect "1,5,2,3,4"
-    (orgtrello/--merge-users-assigned (orgtrello-hash/make-properties `((:users-assigned . ["1" "5"])))
-                                      (orgtrello-hash/make-properties `((:users-assigned . "2,3,4"))))))
+    (orgtrello/--merge-users-assigned (orgtrello-hash/make-properties `((:member-ids . ["1" "5"])))
+                                      (orgtrello-hash/make-properties `((:member-ids . "2,3,4"))))))
 
 (expectations (desc "orgtrello-data/--compute-level")
   (expect *CARD-LEVEL*      (orgtrello-data/--compute-level (orgtrello-hash/make-properties '((:list-id . 0)))))
@@ -1745,7 +1745,7 @@ C-c o h - M-x org-trello/help-describing-bindings - This help message."
   (should (hash-equal (orgtrello-hash/make-properties `((:url . "https://trello.com/c/9XPLuJhi/2515-joy-of-fun-ctional-languages")
                                                         (:name . "Joy of FUN(ctional) LANGUAGES")
                                                         (:level . 1)
-                                                        (:users-assigned . (1 2 3))
+                                                        (:member-ids . (1 2 3))
                                                         (:checklists . (4 5 6))
                                                         (:list-id . "51d99bbc1e1d8988390047f3")
                                                         (:description . "some-desc")

@@ -15,7 +15,7 @@
     (puthash :name           name            h)
     (puthash :id             id              h)
     (puthash :due            due             h)
-    (puthash :users-assigned users-assigned  h)
+    (puthash :member-ids users-assigned  h)
     h))
 
 (defun orgtrello-hash/make-hash (method uri &optional params) "Utility function to ease the creation of the map - wait, where are my clojure data again!?"

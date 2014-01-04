@@ -175,7 +175,7 @@ If you want to use this, we recommand to use the native org checklists - http://
     (puthash :name           name            h)
     (puthash :id             id              h)
     (puthash :due            due             h)
-    (puthash :users-assigned users-assigned  h)
+    (puthash :member-ids users-assigned  h)
     h))
 
 (defun orgtrello-hash/make-hash (method uri &optional params) "Utility function to ease the creation of the map - wait, where are my clojure data again!?"
@@ -391,7 +391,7 @@ If you want to use this, we recommand to use the native org checklists - http://
 (defun orgtrello-data/entity-board-id     (entity) "Extract the board identitier of the entity from the entity"                                (orgtrello-data/gethash-data :board-id       entity))
 (defun orgtrello-data/entity-card-id      (entity) "Extract the card identitier of the entity from the entity"                                 (orgtrello-data/gethash-data :card-id        entity))
 (defun orgtrello-data/entity-list-id      (entity) "Extract the list identitier of the entity from the entity"                                 (orgtrello-data/gethash-data :list-id        entity))
-(defun orgtrello-data/entity-member-ids   (entity) "Extract the member ids of the entity"                                                      (orgtrello-data/gethash-data :users-assigned entity))
+(defun orgtrello-data/entity-member-ids   (entity) "Extract the member ids of the entity"                                                      (orgtrello-data/gethash-data :member-ids entity))
 (defun orgtrello-data/entity-checklists   (entity) "Extract the checklists params"                                                             (orgtrello-data/gethash-data :checklists     entity))
 (defun orgtrello-data/entity-items        (entity) "Extract the checklists params"                                                             (orgtrello-data/gethash-data :items          entity))
 (defun orgtrello-data/entity-position     (entity) "Extract the position params"                                                               (orgtrello-data/gethash-data :position       entity))
@@ -424,7 +424,7 @@ If you want to use this, we recommand to use the native org checklists - http://
 (defvar *ORGTRELLO-DATA-MAP-KEYWORDS* (orgtrello-hash/make-properties `((url            . :url)
                                                                         (id             . :id)
                                                                         (name           . :name)
-                                                                        (idMembers      . :users-assigned)
+                                                                        (idMembers      . :member-ids)
                                                                         (idList         . :list-id)
                                                                         (idChecklists   . :checklists)
                                                                         (idBoard        . :board-id)
@@ -448,7 +448,7 @@ If you want to use this, we recommand to use the native org checklists - http://
                                                                         (keyword        . :keyword)
                                                                         (start          . :start)
                                                                         (level          . :level)
-                                                                        (users-assigned . :users-assigned)
+                                                                        (member-ids     . :member-ids)
                                                                         (member         . :member)
                                                                         (memberships    . :memberships)
                                                                         (username       . :username)
@@ -2181,7 +2181,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
         (puthash :keyword (-> trello-card
                               orgtrello-data/entity-list-id
                               orgtrello/--compute-card-status)                                     org-card-to-merge)
-        (puthash :users-assigned (orgtrello/--merge-users-assigned trello-card org-card-to-merge)  org-card-to-merge)
+        (puthash :member-ids (orgtrello/--merge-users-assigned trello-card org-card-to-merge)  org-card-to-merge)
         org-card-to-merge)))
 
 (defun orgtrello/--dispatch-merge-fn (entity) "Dispatch the function fn to merge the entity."
@@ -2262,7 +2262,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   (let ((entities (first data))
         (adjacency (second data)))
     (with-current-buffer buffer-name
-      (goto-char (point-max)) ;; go at the end of the file
+      (goto-char (point-max))n ;; go at the end of the file
       (maphash
        (lambda (new-id entity)
          (when (orgtrello-data/entity-card-p entity)
@@ -2291,6 +2291,10 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun orgtrello/do-sync-full-from-trello (&optional sync) "Full org-mode file synchronisation. Beware, this will block emacs as the request is synchronous."
   (orgtrello-log/msg *OT/INFO* "Synchronizing the trello board '%s' to the org-mode file. This may take a moment, some coffee may be a good idea..." (orgtrello/--board-name))
+  ;; first will unfold every entries
+
+
+  ;; then start the sync computations
   (--> (orgtrello/--board-id)
        (orgtrello-api/get-cards it)
        (orgtrello/--update-query-with-org-metadata it nil (buffer-name) nil 'orgtrello/--sync-buffer-with-trello-data-callback)

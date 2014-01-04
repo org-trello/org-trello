@@ -505,7 +505,7 @@
         (puthash :keyword (-> trello-card
                               orgtrello-data/entity-list-id
                               orgtrello/--compute-card-status)                                     org-card-to-merge)
-        (puthash :users-assigned (orgtrello/--merge-users-assigned trello-card org-card-to-merge)  org-card-to-merge)
+        (puthash :member-ids (orgtrello/--merge-users-assigned trello-card org-card-to-merge)  org-card-to-merge)
         org-card-to-merge)))
 
 (defun orgtrello/--dispatch-merge-fn (entity) "Dispatch the function fn to merge the entity."
@@ -586,7 +586,7 @@
   (let ((entities (first data))
         (adjacency (second data)))
     (with-current-buffer buffer-name
-      (goto-char (point-max)) ;; go at the end of the file
+      (goto-char (point-max))n ;; go at the end of the file
       (maphash
        (lambda (new-id entity)
          (when (orgtrello-data/entity-card-p entity)
@@ -615,6 +615,10 @@
 
 (defun orgtrello/do-sync-full-from-trello (&optional sync) "Full org-mode file synchronisation. Beware, this will block emacs as the request is synchronous."
   (orgtrello-log/msg *OT/INFO* "Synchronizing the trello board '%s' to the org-mode file. This may take a moment, some coffee may be a good idea..." (orgtrello/--board-name))
+  ;; first will unfold every entries
+
+
+  ;; then start the sync computations
   (--> (orgtrello/--board-id)
        (orgtrello-api/get-cards it)
        (orgtrello/--update-query-with-org-metadata it nil (buffer-name) nil 'orgtrello/--sync-buffer-with-trello-data-callback)
