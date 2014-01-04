@@ -450,14 +450,16 @@
   (let ((entities (orgtrello-hash/empty-hash))
         (adjacency (orgtrello-hash/empty-hash)))
     (orgtrello-controller/org-map-entities-without-params! (lambda ()
-                                                  (let ((current-entity (-> (orgtrello-data/entry-get-full-metadata) orgtrello-data/current)))
-                                                    (unless (-> current-entity orgtrello-data/entity-id orgtrello-controller/id-p) ;; if no id, we set one
-                                                            (orgtrello-controller/--set-marker (orgtrello-controller/--compute-marker-from-entry current-entity)))
-                                                    (let ((current-meta (orgtrello-data/entry-get-full-metadata)))
-                                                      (-> current-meta ;; we recompute the metadata because they may have changed
-                                                          orgtrello-data/current
-                                                          orgtrello-controller/--dispatch-create-entities-map-with-adjacency
-                                                          (funcall current-meta entities adjacency))))))
+                                                             ;; first will unfold every entries, otherwise https://github.com/ardumont/org-trello/issues/53
+                                                             (org-show-subtree)
+                                                             (let ((current-entity (-> (orgtrello-data/entry-get-full-metadata) orgtrello-data/current)))
+                                                               (unless (-> current-entity orgtrello-data/entity-id orgtrello-controller/id-p) ;; if no id, we set one
+                                                                       (orgtrello-controller/--set-marker (orgtrello-controller/--compute-marker-from-entry current-entity)))
+                                                               (let ((current-meta (orgtrello-data/entry-get-full-metadata)))
+                                                                 (-> current-meta ;; we recompute the metadata because they may have changed
+                                                                     orgtrello-data/current
+                                                                     orgtrello-controller/--dispatch-create-entities-map-with-adjacency
+                                                                     (funcall current-meta entities adjacency))))))
     (list entities adjacency)))
 
 ;; entities of the form: {entity-id '(entity-card {checklist-id (checklist (item))})}
@@ -625,9 +627,6 @@
 
 (defun orgtrello-controller/do-sync-full-from-trello (&optional sync) "Full org-mode file synchronisation. Beware, this will block emacs as the request is synchronous."
   (orgtrello-log/msg *OT/INFO* "Synchronizing the trello board '%s' to the org-mode file. This may take a moment, some coffee may be a good idea..." (orgtrello-controller/--board-name))
-  ;; first will unfold every entries
-
-
   ;; then start the sync computations
   (--> (orgtrello-controller/--board-id)
        (orgtrello-api/get-cards it)
