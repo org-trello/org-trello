@@ -1,3 +1,12 @@
+# 0.2.8
+
+- [X] Backlog
+- [X] Synchronize description - https://github.com/ardumont/org-trello/issues/80
+- [X] Use --reduce-from from dash instead of cl-reduce to reduce the cl deps
+- [X] Version
+- [X] Update doc
+- [X] Release notes
+
 # 0.2.7
 
 - [X] Backlog
