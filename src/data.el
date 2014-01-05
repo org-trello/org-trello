@@ -134,7 +134,7 @@
                                                                         (idChecklists   . :checklists)
                                                                         (idBoard        . :board-id)
                                                                         (due            . :due)
-                                                                        (desc           . :description)
+                                                                        (desc           . :desc)
                                                                         (closed         . :closed)
                                                                         (idCard         . :card-id)
                                                                         (checkItems     . :items)

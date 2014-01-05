@@ -513,13 +513,14 @@
   (if (null trello-card)
       org-card
       (let ((org-card-to-merge (orgtrello-controller/--init-map-from org-card)))
-        (puthash :level   *CARD-LEVEL*                                                             org-card-to-merge)
-        (puthash :id      (orgtrello-data/entity-id trello-card)                                   org-card-to-merge)
-        (puthash :name    (orgtrello-data/entity-name trello-card)                                 org-card-to-merge)
+        (puthash :level   *CARD-LEVEL*                                                               org-card-to-merge)
+        (puthash :id      (orgtrello-data/entity-id trello-card)                                     org-card-to-merge)
+        (puthash :name    (orgtrello-data/entity-name trello-card)                                   org-card-to-merge)
         (puthash :keyword (-> trello-card
                               orgtrello-data/entity-list-id
-                              orgtrello-controller/--compute-card-status)                                     org-card-to-merge)
-        (puthash :member-ids (orgtrello-controller/--merge-member-ids trello-card org-card-to-merge)  org-card-to-merge)
+                              orgtrello-controller/--compute-card-status)                            org-card-to-merge)
+        (puthash :member-ids (orgtrello-controller/--merge-member-ids trello-card org-card-to-merge) org-card-to-merge)
+        (puthash :desc    (orgtrello-data/entity-description trello-card)                            org-card-to-merge)
         org-card-to-merge)))
 
 (defun orgtrello-controller/--dispatch-merge-fn (entity) "Dispatch the function fn to merge the entity."
@@ -558,7 +559,7 @@
 (defun orgtrello-controller/--write-entity! (entity-id entity) "Write the entity in the buffer to the current position. Move the cursor position."
   (orgtrello-log/msg *OT/INFO* "Synchronizing entity '%s' with id '%s'..." (orgtrello-data/entity-name entity) entity-id)
   (insert (orgtrello-controller/--compute-entity-to-org-entry entity))
-  (if entity-id (orgtrello-controller/--update-property entity-id (and *ORGTRELLO-NATURAL-ORG-CHECKLIST* (not (orgtrello-data/entity-card-p entity))))))
+  (when entity-id (orgtrello-controller/--update-property entity-id (and *ORGTRELLO-NATURAL-ORG-CHECKLIST* (not (orgtrello-data/entity-card-p entity))))))
 
 ;; (defun orgtrello-controller/org-map-entities! (fn-to-execute &optional entities) "Execute fn-to-execute function for all entities from buffer."
 ;;   (org-map-entries
@@ -594,6 +595,8 @@
 (defun orgtrello-controller/--write-card! (entity-id entity entities adjacency) "Write the card inside the org buffer."
   (orgtrello-controller/--write-entity! entity-id entity)
   (orgtrello-controller/--update-member-ids-property! entity)
+  (-when-let (entity-desc (orgtrello-data/entity-description entity))
+             (insert (format "%s\n" entity-desc)))
   (--map (orgtrello-controller/--write-checklist! it entities adjacency) (gethash entity-id adjacency)))
 
 (defun orgtrello-controller/--sync-buffer-with-trello-data (data buffer-name) "Given all the entities, update the current buffer with those."

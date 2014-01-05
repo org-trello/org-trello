@@ -1761,7 +1761,7 @@ C-c o h - M-x org-trello/help-describing-bindings - This help message."
                                                         (:member-ids . (1 2 3))
                                                         (:checklists . (4 5 6))
                                                         (:list-id . "51d99bbc1e1d8988390047f3")
-                                                        (:description . "some-desc")
+                                                        (:desc . "some-desc")
                                                         (:board-id . "51d99bbc1e1d8988390047f2")
                                                         (:closed . nil)
                                                         (:id . "52c09056d84eeca156001a24")
@@ -1950,10 +1950,10 @@ C-c o h - M-x org-trello/help-describing-bindings - This help message."
                                                  (name . "Demandes Infra")
                                                  (id . "50aa59502ddab2fc1100115b"))])))
     (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
-                                      (:url "https://trello.com/b/o9oY3NlQ/1-board-to-rule-them-all" :closed t :description "" :name "1-board-to-rule-them-all" :id "5203a4fd0ac2f5b75c001d1d"))
+                                      (:url "https://trello.com/b/o9oY3NlQ/1-board-to-rule-them-all" :closed t :desc "" :name "1-board-to-rule-them-all" :id "5203a4fd0ac2f5b75c001d1d"))
                         (first list-hash)))
     (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
-                                      (:url "https://trello.com/b/xzOJmxzy/demandes-infra" :closed t :description "" :name "Demandes Infra" :id "50aa59502ddab2fc1100115b"))
+                                      (:url "https://trello.com/b/xzOJmxzy/demandes-infra" :closed t :desc "" :name "Demandes Infra" :id "50aa59502ddab2fc1100115b"))
                         (second list-hash)))))
 
 (expectations (desc "orgtrello-data/parse-data - with nested assoc list.")
@@ -2021,8 +2021,21 @@ hello there
 - [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}
   - [X] Emacs-Lisp  :PROPERTIES: {\"orgtrello-id\":\"52c9451784251e1b260127f8\"}
   - [X] Common-Lisp :PROPERTIES: {\"orgtrello-id\":\"52c94518b2c5b28e37012ba4\"}")
-       (orgtrello-buffer/extract-description-from-current-position))))
+       (orgtrello-buffer/extract-description-from-current-position)))
 
+    (expect "hello there\n"
+     (with-temp-buffer
+       (insert "* TODO Joy of FUN(ctional) LANGUAGES
+:PROPERTIES:
+:orgtrello-id: 52c945143004d4617c012528
+:END:
+
+hello there
+
+- [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}
+  - [X] Emacs-Lisp  :PROPERTIES: {\"orgtrello-id\":\"52c9451784251e1b260127f8\"}
+  - [X] Common-Lisp :PROPERTIES: {\"orgtrello-id\":\"52c94518b2c5b28e37012ba4\"}")
+       (orgtrello-buffer/extract-description-from-current-position))))
 
 (provide 'org-trello-tests)
 ;;; org-trello-tests ends here
