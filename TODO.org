@@ -1,5 +1,5 @@
-#+TITLE: orgtrello development progression
-#+AUTHOR: Antoine R. Dumont
+#+TITLE: org-trello development progression
+#+AUTHOR: ardumont
 #+STYLE: <style> h1,h2,h3 {font-family: arial, helvetica, sans-serif} </style>
 
 * DONE 0.0.1 [100%]
@@ -776,9 +776,14 @@ CLOSED: [2014-01-04 sam. 19:26]
 - [X] Unfold every entries before triggering the sync from trello to avoid problems similar as https://github.com/ardumont/org-trello/issues/53
 - [X] Version
 - [X] Release notes
-* TODO 0.2.8
-- [ ] Improve the upgrading version way (writed at 2 places, 1 is better to avoid duplication)
+* TODO 0.2.8 [20%]
+- [X] Backlog
 - [ ] Synchronize description - https://github.com/ardumont/org-trello/issues/80
+- [ ] Version
+- [ ] Update doc
+- [ ] Release notes
+* TODO 0.2.9 [%]
+- [ ] Improve the upgrading version way (writed at 2 places, 1 is better to avoid duplication)
 - [ ] Synchronize user comments - https://github.com/ardumont/org-trello/issues/86
 - [ ] More fined grained use of the trello api (retrieve only data we use) - https://github.com/ardumont/org-trello/issues/69
 - [ ] Use trello labels and org tags as one - https://github.com/ardumont/org-trello/issues/70
