@@ -502,7 +502,7 @@
         (puthash :id   (orgtrello-data/entity-id trello-checklist)   org-checklist-to-merge)
         org-checklist-to-merge)))
 
-(defun orgtrello-controller/--merge-users-assigned (trello-card org-card) "Merge users assigned from trello and org."
+(defun orgtrello-controller/--merge-member-ids (trello-card org-card) "Merge users assigned from trello and org."
   (--> trello-card
        (orgtrello-data/entity-member-ids it)
        (orgtrello-data/merge-2-lists-without-duplicates it (orgtrello-data/entity-member-ids-as-list org-card))
@@ -518,7 +518,7 @@
         (puthash :keyword (-> trello-card
                               orgtrello-data/entity-list-id
                               orgtrello-controller/--compute-card-status)                                     org-card-to-merge)
-        (puthash :member-ids (orgtrello-controller/--merge-users-assigned trello-card org-card-to-merge)  org-card-to-merge)
+        (puthash :member-ids (orgtrello-controller/--merge-member-ids trello-card org-card-to-merge)  org-card-to-merge)
         org-card-to-merge)))
 
 (defun orgtrello-controller/--dispatch-merge-fn (entity) "Dispatch the function fn to merge the entity."
@@ -583,7 +583,7 @@
   (orgtrello-controller/--write-entity! entity-id (gethash entity-id entities))
   (--map (orgtrello-controller/--write-item! it entities) (gethash entity-id adjacency)))
 
-(defun orgtrello-controller/--update-users-assigned-property! (entity) "Update the users assigned property card entry."
+(defun orgtrello-controller/--update-member-ids-property! (entity) "Update the users assigned property card entry."
   (--> entity
        (orgtrello-data/entity-member-ids it)
        (orgtrello-controller/--csv-user-ids-to-csv-user-names it *HMAP-USERS-ID-NAME*)
@@ -592,7 +592,7 @@
 
 (defun orgtrello-controller/--write-card! (entity-id entity entities adjacency) "Write the card inside the org buffer."
   (orgtrello-controller/--write-entity! entity-id entity)
-  (orgtrello-controller/--update-users-assigned-property! entity)
+  (orgtrello-controller/--update-member-ids-property! entity)
   (--map (orgtrello-controller/--write-checklist! it entities adjacency) (gethash entity-id adjacency)))
 
 (defun orgtrello-controller/--sync-buffer-with-trello-data (data buffer-name) "Given all the entities, update the current buffer with those."

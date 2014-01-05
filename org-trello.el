@@ -167,16 +167,16 @@ If you want to use this, we recommand to use the native org checklists - http://
 (defun orgtrello-hash/empty-hash () "Empty hash table with test 'equal"
   (make-hash-table :test 'equal))
 
-(defun orgtrello-hash/make-hash-org (users-assigned level keyword name id due position buffer-name) "Utility function to ease the creation of the orgtrello-metadata"
+(defun orgtrello-hash/make-hash-org (member-ids level keyword name id due position buffer-name) "Utility function to ease the creation of the orgtrello-metadata"
   (let ((h (orgtrello-hash/empty-hash)))
-    (puthash :buffername     buffer-name     h)
-    (puthash :position       position        h)
-    (puthash :level          level           h)
-    (puthash :keyword        keyword         h)
-    (puthash :name           name            h)
-    (puthash :id             id              h)
-    (puthash :due            due             h)
-    (puthash :member-ids users-assigned  h)
+    (puthash :buffername     buffer-name h)
+    (puthash :position       position    h)
+    (puthash :level          level       h)
+    (puthash :keyword        keyword     h)
+    (puthash :name           name        h)
+    (puthash :id             id          h)
+    (puthash :due            due         h)
+    (puthash :member-ids     member-ids  h)
     h))
 
 (defun orgtrello-hash/make-hash (method uri &optional params) "Utility function to ease the creation of the map - wait, where are my clojure data again!?"
@@ -367,8 +367,8 @@ If you want to use this, we recommand to use the native org checklists - http://
             (orgtrello-hash/make-hierarchy current (first ancestors) (second ancestors))))))
 
 (defun orgtrello-data/--get-metadata (heading-metadata) "Given the heading-metadata returned by the function 'org-heading-components, make it a hashmap with key :level, :keyword, :name. and their respective value"
-  (cl-destructuring-bind (users-assigned buffer-name point id due level _ keyword _ name &rest) heading-metadata
-                         (orgtrello-hash/make-hash-org users-assigned level keyword name id due point buffer-name)))
+  (cl-destructuring-bind (member-ids buffer-name point id due level _ keyword _ name &rest) heading-metadata
+                         (orgtrello-hash/make-hash-org member-ids level keyword name id due point buffer-name)))
 
 (defun orgtrello-data/--compute-fn (entity list-dispatch-fn) "Given an entity, compute the result" (funcall (if (hash-table-p entity) (first list-dispatch-fn) (second list-dispatch-fn)) entity))
 
@@ -2202,7 +2202,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
         (puthash :id   (orgtrello-data/entity-id trello-checklist)   org-checklist-to-merge)
         org-checklist-to-merge)))
 
-(defun orgtrello-controller/--merge-users-assigned (trello-card org-card) "Merge users assigned from trello and org."
+(defun orgtrello-controller/--merge-member-ids (trello-card org-card) "Merge users assigned from trello and org."
   (--> trello-card
        (orgtrello-data/entity-member-ids it)
        (orgtrello-data/merge-2-lists-without-duplicates it (orgtrello-data/entity-member-ids-as-list org-card))
@@ -2218,7 +2218,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
         (puthash :keyword (-> trello-card
                               orgtrello-data/entity-list-id
                               orgtrello-controller/--compute-card-status)                                     org-card-to-merge)
-        (puthash :member-ids (orgtrello-controller/--merge-users-assigned trello-card org-card-to-merge)  org-card-to-merge)
+        (puthash :member-ids (orgtrello-controller/--merge-member-ids trello-card org-card-to-merge)  org-card-to-merge)
         org-card-to-merge)))
 
 (defun orgtrello-controller/--dispatch-merge-fn (entity) "Dispatch the function fn to merge the entity."
@@ -2283,7 +2283,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   (orgtrello-controller/--write-entity! entity-id (gethash entity-id entities))
   (--map (orgtrello-controller/--write-item! it entities) (gethash entity-id adjacency)))
 
-(defun orgtrello-controller/--update-users-assigned-property! (entity) "Update the users assigned property card entry."
+(defun orgtrello-controller/--update-member-ids-property! (entity) "Update the users assigned property card entry."
   (--> entity
        (orgtrello-data/entity-member-ids it)
        (orgtrello-controller/--csv-user-ids-to-csv-user-names it *HMAP-USERS-ID-NAME*)
@@ -2292,7 +2292,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun orgtrello-controller/--write-card! (entity-id entity entities adjacency) "Write the card inside the org buffer."
   (orgtrello-controller/--write-entity! entity-id entity)
-  (orgtrello-controller/--update-users-assigned-property! entity)
+  (orgtrello-controller/--update-member-ids-property! entity)
   (--map (orgtrello-controller/--write-checklist! it entities adjacency) (gethash entity-id adjacency)))
 
 (defun orgtrello-controller/--sync-buffer-with-trello-data (data buffer-name) "Given all the entities, update the current buffer with those."
@@ -2777,7 +2777,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
      (lambda ()
        (orgtrello-controller/--remove-properties-file! *LIST-NAMES* *HMAP-USERS-NAME-ID* *ORGTRELLO-USER-LOGGED-IN* t) ;; remove any orgtrello relative entries
        (orgtrello-controller/--delete-property *ORGTRELLO-ID*)          ;; remove all properties orgtrello-id from the buffer
-       (orgtrello-controller/--delete-property *ORGTRELLO-USERS-ENTRY*) ;; remove all properties users-assigned
+       (orgtrello-controller/--delete-property *ORGTRELLO-USERS-ENTRY*) ;; remove all properties users-assigned/member-ids
        (orgtrello-log/msg *OT/NOLOG* "Cleanup done!")) ;; a simple message to tell the user that the work is done!
      *do-save-buffer*
      *do-reload-setup*))

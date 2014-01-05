@@ -1728,20 +1728,20 @@ C-c o J - M-x org-trello/jump-to-trello-board - Open the browser to your current
 C-c o h - M-x org-trello/help-describing-bindings - This help message."
       (org-trello/--help-describing-bindings-template *ORGTRELLO-MODE-PREFIX-KEYBINDING* org-trello/--list-of-interactive-command-binding-couples)))
 
-(expectations (desc "orgtrello-controller/--merge-users-assigned")
+(expectations (desc "orgtrello-controller/--merge-member-ids")
   (expect "'some-keybinding' is fun 'some-keybinding'" (org-trello/--replace-string-prefix-in-string "some-keybinding" "'#PREFIX#' is fun '#PREFIX#'")))
 
-(expectations (desc "orgtrello-controller/--merge-users-assigned")
+(expectations (desc "orgtrello-controller/--merge-member-ids")
  (expect "org-trello/ot is on! To begin with, hit C-c o h or M-x 'org-trello/help-describing-bindings" (org-trello/--startup-message "C-c o")))
 
-(expectations (desc "orgtrello-controller/--merge-users-assigned")
+(expectations (desc "orgtrello-controller/--merge-member-ids")
   (expect "1,5,2,3,4"
-    (orgtrello-controller/--merge-users-assigned (orgtrello-hash/make-properties `((:member-ids . ("1" "5"))))
+    (orgtrello-controller/--merge-member-ids (orgtrello-hash/make-properties `((:member-ids . ("1" "5"))))
                                       (orgtrello-hash/make-properties `((:member-ids . "2,3,4"))))))
 
-(expectations (desc "orgtrello-controller/--merge-users-assigned")
+(expectations (desc "orgtrello-controller/--merge-member-ids")
   (expect "1,5,2,3,4"
-    (orgtrello-controller/--merge-users-assigned (orgtrello-hash/make-properties `((:member-ids . ["1" "5"])))
+    (orgtrello-controller/--merge-member-ids (orgtrello-hash/make-properties `((:member-ids . ["1" "5"])))
                                       (orgtrello-hash/make-properties `((:member-ids . "2,3,4"))))))
 
 (expectations (desc "orgtrello-data/--compute-level")
