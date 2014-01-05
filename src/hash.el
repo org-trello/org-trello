@@ -6,16 +6,17 @@
 (defun orgtrello-hash/empty-hash () "Empty hash table with test 'equal"
   (make-hash-table :test 'equal))
 
-(defun orgtrello-hash/make-hash-org (users-assigned level keyword name id due position buffer-name) "Utility function to ease the creation of the orgtrello-metadata"
+(defun orgtrello-hash/make-hash-org (member-ids level keyword name id due position buffer-name desc) "Utility function to ease the orgtrello-metadata creation"
   (let ((h (orgtrello-hash/empty-hash)))
-    (puthash :buffername     buffer-name     h)
-    (puthash :position       position        h)
-    (puthash :level          level           h)
-    (puthash :keyword        keyword         h)
-    (puthash :name           name            h)
-    (puthash :id             id              h)
-    (puthash :due            due             h)
-    (puthash :member-ids users-assigned  h)
+    (puthash :buffername     buffer-name h)
+    (puthash :position       position    h)
+    (puthash :level          level       h)
+    (puthash :keyword        keyword     h)
+    (puthash :name           name        h)
+    (puthash :id             id          h)
+    (puthash :due            due         h)
+    (puthash :member-ids     member-ids  h)
+    (puthash :desc           desc        h)
     h))
 
 (defun orgtrello-hash/make-hash (method uri &optional params) "Utility function to ease the creation of the map - wait, where are my clojure data again!?"
@@ -26,20 +27,18 @@
     h))
 
 (defun orgtrello-hash/make-properties (properties) "Given a list of key value pair, return a hash table."
-  (cl-reduce
-   (lambda (map list-key-value)
-     (puthash (car list-key-value) (cdr list-key-value) map)
-     map)
-   properties
-   :initial-value (orgtrello-hash/empty-hash)))
+  (--reduce-from (progn
+                   (puthash (car it) (cdr it) acc)
+                   acc)
+                 (orgtrello-hash/empty-hash)
+                 properties))
 
 (defun orgtrello-hash/make-transpose-properties (properties) "Given a list of key value pair, return a hash table with key/value transposed."
-  (-reduce-from
-   (lambda (map list-key-value)
-     (puthash (cdr list-key-value) (car list-key-value) map)
-     map)
-   (orgtrello-hash/empty-hash)
-   properties))
+  (--reduce-from (progn
+                  (puthash (cdr it) (car it) acc)
+                  acc)
+                 (orgtrello-hash/empty-hash)
+                 properties))
 
 (defun orgtrello-hash/make-hierarchy (current &optional parent grandparent) "Helper constructor for the hashmap holding the full metadata about the current-entry."
   (orgtrello-hash/make-properties `((:current . ,current)

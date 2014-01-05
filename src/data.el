@@ -24,11 +24,7 @@
   (org-heading-components))
 
 (defun orgtrello-data/--extract-metadata () "Extract the current metadata depending on the org-trello's checklist policy."
-  (if (orgtrello-cbx/checkbox-p)
-      ;; checklist
-      (orgtrello-cbx/org-checkbox-metadata)
-      ;; as before, return the heading meta
-      (orgtrello-data/org-entity-metadata)))
+  (funcall (if (orgtrello-cbx/checkbox-p) 'orgtrello-cbx/org-checkbox-metadata 'orgtrello-data/org-entity-metadata)))
 
 (defun orgtrello-data/extract-identifier (point) "Extract the identifier from the point."
   (orgtrello-action/org-entry-get point *ORGTRELLO-ID*))
@@ -47,7 +43,8 @@
          (cons od/--point)
          (cons (buffer-name))
          (cons (orgtrello-controller/--user-ids-assigned-to-current-card))
-         orgtrello-data/--get-metadata)))
+         (cons (orgtrello-buffer/extract-description-from-current-position))
+         orgtrello-data/--convert-to-orgtrello-metadata)))
 
 (defun orgtrello-action/org-up-parent () "A function to get back to the current entry's parent"
   (funcall (if (orgtrello-cbx/checkbox-p) 'orgtrello-cbx/org-up! 'org-up-heading-safe)))
@@ -72,9 +69,9 @@
                                  ((= level *ITEM-LEVEL*)      `(,(orgtrello-data/--parent-metadata) ,(orgtrello-data/--grandparent-metadata))))))
             (orgtrello-hash/make-hierarchy current (first ancestors) (second ancestors))))))
 
-(defun orgtrello-data/--get-metadata (heading-metadata) "Given the heading-metadata returned by the function 'org-heading-components, make it a hashmap with key :level, :keyword, :name. and their respective value"
-  (cl-destructuring-bind (users-assigned buffer-name point id due level _ keyword _ name &rest) heading-metadata
-                         (orgtrello-hash/make-hash-org users-assigned level keyword name id due point buffer-name)))
+(defun orgtrello-data/--convert-to-orgtrello-metadata (heading-metadata) "Given the heading-metadata returned by the function 'org-heading-components, make it a hashmap with key :level, :keyword, :name. and their respective value"
+  (cl-destructuring-bind (description member-ids buffer-name point id due level _ keyword _ name &rest) heading-metadata
+                         (orgtrello-hash/make-hash-org member-ids level keyword name id due point buffer-name description)))
 
 (defun orgtrello-data/--compute-fn (entity list-dispatch-fn) "Given an entity, compute the result" (funcall (if (hash-table-p entity) (first list-dispatch-fn) (second list-dispatch-fn)) entity))
 
@@ -98,7 +95,8 @@
 (defun orgtrello-data/entity-board-id     (entity) "Extract the board identitier of the entity from the entity"                                (orgtrello-data/gethash-data :board-id       entity))
 (defun orgtrello-data/entity-card-id      (entity) "Extract the card identitier of the entity from the entity"                                 (orgtrello-data/gethash-data :card-id        entity))
 (defun orgtrello-data/entity-list-id      (entity) "Extract the list identitier of the entity from the entity"                                 (orgtrello-data/gethash-data :list-id        entity))
-(defun orgtrello-data/entity-member-ids   (entity) "Extract the member ids of the entity"                                                      (orgtrello-data/gethash-data :member-ids entity))
+(defun orgtrello-data/entity-member-ids   (entity) "Extract the member ids of the entity"                                                      (orgtrello-data/gethash-data :member-ids     entity))
+(defun orgtrello-data/entity-description  (entity) "Extract the entity description"                                                            (orgtrello-data/gethash-data :desc           entity))
 (defun orgtrello-data/entity-checklists   (entity) "Extract the checklists params"                                                             (orgtrello-data/gethash-data :checklists     entity))
 (defun orgtrello-data/entity-items        (entity) "Extract the checklists params"                                                             (orgtrello-data/gethash-data :items          entity))
 (defun orgtrello-data/entity-position     (entity) "Extract the position params"                                                               (orgtrello-data/gethash-data :position       entity))
@@ -136,7 +134,7 @@
                                                                         (idChecklists   . :checklists)
                                                                         (idBoard        . :board-id)
                                                                         (due            . :due)
-                                                                        (desc           . :description)
+                                                                        (desc           . :desc)
                                                                         (closed         . :closed)
                                                                         (idCard         . :card-id)
                                                                         (checkItems     . :items)

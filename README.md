@@ -7,6 +7,7 @@
 - [rationale](#rationale)
 - [Emacs version](#emacs-version)
 - [Migration](#migration)
+	- [0.2.1 -> 0.2.2](#028)
 	- [0.2.1 -> 0.2.2](#021-->-022)
 	- [0.1.5 -> 0.1.6](#015-->-016)
 	- [0.1.1 -> 0.1.2](#011-->-012)
@@ -82,6 +83,10 @@ Tested on:
 - GNU Emacs 24.3.1 (x86_64-pc-linux-gnu, X toolkit, Xaw3d scroll bars) of 2013-04-14 on marid, modified by Debian (from 0.1.0)
 
 # Migration
+
+## 0.2.8
+
+From now on, the card description can be synchronized too.
 
 ## 0.2.1 -> 0.2.2
 

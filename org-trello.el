@@ -4,7 +4,7 @@
 
 ;; Author: Antoine R. Dumont <eniotna.t AT gmail.com>
 ;; Maintainer: Antoine R. Dumont <eniotna.t AT gmail.com>
-;; Version: 0.2.7
+;; Version: 0.2.8
 ;; Package-Requires: ((org "8.0.7") (dash "1.5.0") (request "0.2.0") (cl-lib "0.3.0") (json "1.2") (elnode "0.9.9.7.6") (esxml "0.3.0") (s "1.7.0") (kv "0.0.17"))
 ;; Keywords: org-mode trello sync org-trello
 ;; URL: https://github.com/ardumont/org-trello
@@ -65,7 +65,7 @@
 (require 'kv)
 (require 'esxml)
 
-(defvar *ORGTRELLO-VERSION* "0.2.7" "org-trello version")
+(defvar *ORGTRELLO-VERSION* "0.2.8" "org-trello version")
 
 (provide 'org-trello-header)
 
@@ -167,16 +167,17 @@ If you want to use this, we recommand to use the native org checklists - http://
 (defun orgtrello-hash/empty-hash () "Empty hash table with test 'equal"
   (make-hash-table :test 'equal))
 
-(defun orgtrello-hash/make-hash-org (users-assigned level keyword name id due position buffer-name) "Utility function to ease the creation of the orgtrello-metadata"
+(defun orgtrello-hash/make-hash-org (member-ids level keyword name id due position buffer-name desc) "Utility function to ease the orgtrello-metadata creation"
   (let ((h (orgtrello-hash/empty-hash)))
-    (puthash :buffername     buffer-name     h)
-    (puthash :position       position        h)
-    (puthash :level          level           h)
-    (puthash :keyword        keyword         h)
-    (puthash :name           name            h)
-    (puthash :id             id              h)
-    (puthash :due            due             h)
-    (puthash :member-ids users-assigned  h)
+    (puthash :buffername     buffer-name h)
+    (puthash :position       position    h)
+    (puthash :level          level       h)
+    (puthash :keyword        keyword     h)
+    (puthash :name           name        h)
+    (puthash :id             id          h)
+    (puthash :due            due         h)
+    (puthash :member-ids     member-ids  h)
+    (puthash :desc           desc        h)
     h))
 
 (defun orgtrello-hash/make-hash (method uri &optional params) "Utility function to ease the creation of the map - wait, where are my clojure data again!?"
@@ -187,20 +188,18 @@ If you want to use this, we recommand to use the native org checklists - http://
     h))
 
 (defun orgtrello-hash/make-properties (properties) "Given a list of key value pair, return a hash table."
-  (cl-reduce
-   (lambda (map list-key-value)
-     (puthash (car list-key-value) (cdr list-key-value) map)
-     map)
-   properties
-   :initial-value (orgtrello-hash/empty-hash)))
+  (--reduce-from (progn
+                   (puthash (car it) (cdr it) acc)
+                   acc)
+                 (orgtrello-hash/empty-hash)
+                 properties))
 
 (defun orgtrello-hash/make-transpose-properties (properties) "Given a list of key value pair, return a hash table with key/value transposed."
-  (-reduce-from
-   (lambda (map list-key-value)
-     (puthash (cdr list-key-value) (car list-key-value) map)
-     map)
-   (orgtrello-hash/empty-hash)
-   properties))
+  (--reduce-from (progn
+                  (puthash (cdr it) (car it) acc)
+                  acc)
+                 (orgtrello-hash/empty-hash)
+                 properties))
 
 (defun orgtrello-hash/make-hierarchy (current &optional parent grandparent) "Helper constructor for the hashmap holding the full metadata about the current-entry."
   (orgtrello-hash/make-properties `((:current . ,current)
@@ -318,11 +317,7 @@ If you want to use this, we recommand to use the native org checklists - http://
   (org-heading-components))
 
 (defun orgtrello-data/--extract-metadata () "Extract the current metadata depending on the org-trello's checklist policy."
-  (if (orgtrello-cbx/checkbox-p)
-      ;; checklist
-      (orgtrello-cbx/org-checkbox-metadata)
-      ;; as before, return the heading meta
-      (orgtrello-data/org-entity-metadata)))
+  (funcall (if (orgtrello-cbx/checkbox-p) 'orgtrello-cbx/org-checkbox-metadata 'orgtrello-data/org-entity-metadata)))
 
 (defun orgtrello-data/extract-identifier (point) "Extract the identifier from the point."
   (orgtrello-action/org-entry-get point *ORGTRELLO-ID*))
@@ -341,7 +336,8 @@ If you want to use this, we recommand to use the native org checklists - http://
          (cons od/--point)
          (cons (buffer-name))
          (cons (orgtrello-controller/--user-ids-assigned-to-current-card))
-         orgtrello-data/--get-metadata)))
+         (cons (orgtrello-buffer/extract-description-from-current-position))
+         orgtrello-data/--convert-to-orgtrello-metadata)))
 
 (defun orgtrello-action/org-up-parent () "A function to get back to the current entry's parent"
   (funcall (if (orgtrello-cbx/checkbox-p) 'orgtrello-cbx/org-up! 'org-up-heading-safe)))
@@ -366,9 +362,9 @@ If you want to use this, we recommand to use the native org checklists - http://
                                  ((= level *ITEM-LEVEL*)      `(,(orgtrello-data/--parent-metadata) ,(orgtrello-data/--grandparent-metadata))))))
             (orgtrello-hash/make-hierarchy current (first ancestors) (second ancestors))))))
 
-(defun orgtrello-data/--get-metadata (heading-metadata) "Given the heading-metadata returned by the function 'org-heading-components, make it a hashmap with key :level, :keyword, :name. and their respective value"
-  (cl-destructuring-bind (users-assigned buffer-name point id due level _ keyword _ name &rest) heading-metadata
-                         (orgtrello-hash/make-hash-org users-assigned level keyword name id due point buffer-name)))
+(defun orgtrello-data/--convert-to-orgtrello-metadata (heading-metadata) "Given the heading-metadata returned by the function 'org-heading-components, make it a hashmap with key :level, :keyword, :name. and their respective value"
+  (cl-destructuring-bind (description member-ids buffer-name point id due level _ keyword _ name &rest) heading-metadata
+                         (orgtrello-hash/make-hash-org member-ids level keyword name id due point buffer-name description)))
 
 (defun orgtrello-data/--compute-fn (entity list-dispatch-fn) "Given an entity, compute the result" (funcall (if (hash-table-p entity) (first list-dispatch-fn) (second list-dispatch-fn)) entity))
 
@@ -392,7 +388,8 @@ If you want to use this, we recommand to use the native org checklists - http://
 (defun orgtrello-data/entity-board-id     (entity) "Extract the board identitier of the entity from the entity"                                (orgtrello-data/gethash-data :board-id       entity))
 (defun orgtrello-data/entity-card-id      (entity) "Extract the card identitier of the entity from the entity"                                 (orgtrello-data/gethash-data :card-id        entity))
 (defun orgtrello-data/entity-list-id      (entity) "Extract the list identitier of the entity from the entity"                                 (orgtrello-data/gethash-data :list-id        entity))
-(defun orgtrello-data/entity-member-ids   (entity) "Extract the member ids of the entity"                                                      (orgtrello-data/gethash-data :member-ids entity))
+(defun orgtrello-data/entity-member-ids   (entity) "Extract the member ids of the entity"                                                      (orgtrello-data/gethash-data :member-ids     entity))
+(defun orgtrello-data/entity-description  (entity) "Extract the entity description"                                                            (orgtrello-data/gethash-data :desc           entity))
 (defun orgtrello-data/entity-checklists   (entity) "Extract the checklists params"                                                             (orgtrello-data/gethash-data :checklists     entity))
 (defun orgtrello-data/entity-items        (entity) "Extract the checklists params"                                                             (orgtrello-data/gethash-data :items          entity))
 (defun orgtrello-data/entity-position     (entity) "Extract the position params"                                                               (orgtrello-data/gethash-data :position       entity))
@@ -430,7 +427,7 @@ If you want to use this, we recommand to use the native org checklists - http://
                                                                         (idChecklists   . :checklists)
                                                                         (idBoard        . :board-id)
                                                                         (due            . :due)
-                                                                        (desc           . :description)
+                                                                        (desc           . :desc)
                                                                         (closed         . :closed)
                                                                         (idCard         . :card-id)
                                                                         (checkItems     . :items)
@@ -703,11 +700,9 @@ This is a list with the following elements:
   (if optional-entry (cons value entries) entries))
 
 (defun orgtrello-api/--deal-with-optional-values (optional-entries-values entries) "Add the optional entry/value depending on their entry. Return entries updated with value if entry, entries untouched otherwise."
-  (cl-reduce
-   (lambda (l entry-value)
-     (orgtrello-api/--deal-with-optional-value (car entry-value) (cdr entry-value) l))
-   optional-entries-values
-   :initial-value entries))
+  (--reduce-from (orgtrello-api/--deal-with-optional-value (car it) (cdr it) acc)
+                  entries
+                  optional-entries-values))
 
 (defun orgtrello-api/add-board (name &optional description) "Create a board."
   (orgtrello-hash/make-hash "POST" "/boards" (orgtrello-api/--deal-with-optional-value description `("desc" . ,description) `(("name" . ,name)))))
@@ -739,14 +734,14 @@ This is a list with the following elements:
 (defun orgtrello-api/add-list (name idBoard) "Add a list - the name and the board id are mandatory (so i say!)."
   (orgtrello-hash/make-hash "POST" "/lists/" `(("name" . ,name) ("idBoard" . ,idBoard))))
 
-(defun orgtrello-api/add-card (name idList &optional due id-members) "Add a card to a board, optional due date (formatted string date) and id-members (csv id members)."
-  (orgtrello-hash/make-hash "POST" "/cards/" (orgtrello-api/--deal-with-optional-values `((,id-members . ("idMembers" . ,id-members)) (,due . ("due" . ,due))) `(("name" . ,name) ("idList" . ,idList)))))
+(defun orgtrello-api/add-card (name idList &optional due id-members desc) "Add a card to a board, optional due date (formatted string date), id-members (csv id members) and description desc."
+  (orgtrello-hash/make-hash "POST" "/cards/" (orgtrello-api/--deal-with-optional-values `((,id-members . ("idMembers" . ,id-members)) (,due . ("due" . ,due)) (,desc . ("desc" . ,desc))) `(("name" . ,name) ("idList" . ,idList)))))
 
 (defun orgtrello-api/get-cards-from-list (list-id) "List all the cards"
   (orgtrello-hash/make-hash "GET" (format "/lists/%s/cards" list-id)))
 
-(defun orgtrello-api/move-card (card-id idList &optional name due id-members) "Move a card to another list - optional entries (name, due date, id-members)"
-  (->> (orgtrello-api/--deal-with-optional-values `((,name . ("name" . ,name)) (,id-members . ("idMembers" . ,id-members)) (,due . ("due" . ,due))) `(("idList" . ,idList)))
+(defun orgtrello-api/move-card (card-id idList &optional name due id-members desc) "Move a card to another list - optional entries (name, due date, id-members, desc)"
+  (->> (orgtrello-api/--deal-with-optional-values `((,name . ("name" . ,name)) (,id-members . ("idMembers" . ,id-members)) (,due . ("due" . ,due)) (,desc . ("desc" . ,desc))) `(("idList" . ,idList)))
        (orgtrello-hash/make-hash "PUT" (format "/cards/%s" card-id))))
 
 (defun orgtrello-api/add-checklist (card-id name) "Add a checklist to a card"
@@ -1315,10 +1310,10 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
       (insert (format "%S\n" query-map-wrapped)))
     (orgtrello-proxy/response-ok http-con)))
 
-(defun orgtrello-proxy/--read-lines (fPath) "Return a list of lines of a file at FPATH."
+(defun orgtrello-proxy/--read-file-content (fPath) "Return a list of lines of a file at FPATH."
   (with-temp-buffer
     (insert-file-contents fPath)
-    (split-string (buffer-string) "\n" t)))
+    (buffer-string)))
 
 (defun orgtrello-proxy/--update-buffer-to-save (buffer-name buffers-to-save) "Add the buffer-name to the list if not already present"
   (if (member buffer-name buffers-to-save)
@@ -1483,7 +1478,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 (defun orgtrello-proxy/--deal-with-entity-file-action (file) "Given an entity file, load it and run a query action through trello"
   (when (file-exists-p file)
         (orgtrello-proxy/--deal-with-entity-action (-> file
-                                                       orgtrello-proxy/--read-lines
+                                                       orgtrello-proxy/--read-file-content
                                                        read
                                                        orgtrello-data/parse-data) file)))
 
@@ -1665,6 +1660,40 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 (provide 'org-trello-proxy)
 
 
+(require 'org-trello-cbx)
+
+;; #################### orgtrello-buffer
+
+(defun orgtrello-buffer/back-to-card! () "Given the current position, goes on the card's heading"
+  (org-back-to-heading))
+
+(defun orgtrello-buffer/--card-data-start-point () "Compute the first character of the card's text content."
+  (save-excursion
+    (orgtrello-buffer/back-to-card!)
+    (end-of-line)
+    (1+ (point))))
+
+(defun orgtrello-buffer/--first-checkbox-point () "Compute the first position of the card's next checkbox."
+  (save-excursion
+    (orgtrello-buffer/back-to-card!)
+    (orgtrello-cbx/--goto-next-checkbox)
+    (1- (point))))
+
+(defun orgtrello-buffer/extract-description-from-current-position () "Given the current position, extract the text content of current card."
+  (let ((start (orgtrello-buffer/--card-data-start-point))
+        (end   (orgtrello-buffer/--first-checkbox-point)))
+    (when (< start end)
+          (orgtrello-buffer/filter-out-properties
+           (buffer-substring-no-properties start end)))))
+
+(defun orgtrello-buffer/filter-out-properties (text-content) "Given a string, remove any org properties if any"
+  (->> text-content
+       (replace-regexp-in-string "^:.*" "")
+       (s-trim-left)))
+
+(provide 'org-trello-buffer)
+
+
 (require 'org-trello-log)
 (require 'org-trello-setup)
 (require 'org-trello-action)
@@ -1673,6 +1702,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 (require 'org-trello-data)
 (require 'org-trello-cbx)
 (require 'org-trello-query)
+(require 'org-trello-buffer)
 
 ;; #################### orgtrello-controller
 
@@ -1713,13 +1743,12 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   (orgtrello-action/reload-setup)
   ;; now exploit some
   (let* ((orgtrello-controller/--list-keywords (nreverse (orgtrello-controller/filtered-kwds)))
-         (orgtrello-controller/--hmap-id-name (cl-reduce
-                                    (lambda (hmap name)
-                                      (progn
-                                        (puthash (assoc-default name org-file-properties) name hmap)
-                                        hmap))
-                                    orgtrello-controller/--list-keywords
-                                    :initial-value (orgtrello-hash/empty-hash)))
+         (orgtrello-controller/--hmap-id-name
+          (--reduce-from (progn
+                           (puthash (assoc-default it org-file-properties) it acc)
+                           acc)
+                         (orgtrello-hash/empty-hash)
+                         orgtrello-controller/--list-keywords))
          (orgtrello-controller/--list-users (orgtrello-controller/--list-user-entries org-file-properties))
          (orgtrello-controller/--hmap-user-id-name (orgtrello-hash/make-transpose-properties orgtrello-controller/--list-users))
          (orgtrello-controller/--hmap-user-name-id (orgtrello-hash/make-properties orgtrello-controller/--list-users)))
@@ -1768,17 +1797,18 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
     ;; name is mandatory
     (if (equal :ok checks-ok-or-error-message)
         ;; parent and grandparent are useless here
-        (let* ((orgtrello-controller/--card-kwd  (orgtrello-controller/--retrieve-state-of-card card-meta))
-               (orgtrello-controller/--list-id   (assoc-default orgtrello-controller/--card-kwd org-file-properties))
-               (orgtrello-controller/--card-id   (orgtrello-data/entity-id    card-meta))
-               (orgtrello-controller/--card-name (orgtrello-data/entity-name card-meta))
-               (orgtrello-controller/--card-due  (orgtrello-data/entity-due   card-meta))
+        (let* ((orgtrello-controller/--card-kwd           (orgtrello-controller/--retrieve-state-of-card card-meta))
+               (orgtrello-controller/--list-id            (assoc-default orgtrello-controller/--card-kwd org-file-properties))
+               (orgtrello-controller/--card-id            (orgtrello-data/entity-id          card-meta))
+               (orgtrello-controller/--card-name          (orgtrello-data/entity-name        card-meta))
+               (orgtrello-controller/--card-due           (orgtrello-data/entity-due         card-meta))
+               (orgtrello-controller/--card-desc          (orgtrello-data/entity-description card-meta))
                (orgtrello-controller/--user-ids-assigned  (orgtrello-data/entity-member-ids card-meta)))
           (if orgtrello-controller/--card-id
               ;; update
-              (orgtrello-api/move-card orgtrello-controller/--card-id orgtrello-controller/--list-id orgtrello-controller/--card-name orgtrello-controller/--card-due orgtrello-controller/--user-ids-assigned)
+              (orgtrello-api/move-card orgtrello-controller/--card-id orgtrello-controller/--list-id orgtrello-controller/--card-name orgtrello-controller/--card-due orgtrello-controller/--user-ids-assigned orgtrello-controller/--card-desc)
             ;; create
-            (orgtrello-api/add-card orgtrello-controller/--card-name orgtrello-controller/--list-id orgtrello-controller/--card-due orgtrello-controller/--user-ids-assigned)))
+            (orgtrello-api/add-card orgtrello-controller/--card-name orgtrello-controller/--list-id orgtrello-controller/--card-due orgtrello-controller/--user-ids-assigned orgtrello-controller/--card-desc)))
       checks-ok-or-error-message)))
 
 (defun orgtrello-controller/--checks-before-sync-checklist (checklist-meta card-meta) "Checks done before synchronizing the checklist."
@@ -2038,46 +2068,45 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun orgtrello-controller/--compute-items-from-checklist (checklist entities adjacency) "Given a checklist, retrieve its items and update the entities hash and the adjacency list."
   (let ((checklist-id (orgtrello-data/entity-id checklist)))
-    (cl-reduce
-     (lambda (acc-entities-hash item)
-       (cl-destructuring-bind (entities adjacency) acc-entities-hash
-         (list (orgtrello-controller/--add-entity-to-entities item entities) (orgtrello-controller/--add-entity-to-adjacency item checklist adjacency))))
-     (orgtrello-data/entity-items checklist)
-     :initial-value (list entities adjacency))))
+    (--reduce-from (cl-destructuring-bind (entities adjacency) acc
+                     (list (orgtrello-controller/--add-entity-to-entities it entities)
+                           (orgtrello-controller/--add-entity-to-adjacency it checklist adjacency)))
+                   (list entities adjacency)
+                   (orgtrello-data/entity-items checklist))))
 
 (defun orgtrello-controller/--retrieve-checklist-from-card (card) "Given a card, retrieve the checklist of the card (using trello). This gives a list of checklist in the trello order."
   (--> card
        (orgtrello-data/entity-checklists it)                                                            ;; retrieve checklist ids
-       (cl-reduce
-        (lambda (acc-list checklist-id)
-          (cons (-> checklist-id
-                    orgtrello-api/get-checklist
-                    (orgtrello-query/http-trello *do-sync-query*)) acc-list))
-        it :initial-value nil)                                                                         ;; retrieve the trello checklist
+       (-reduce-from (lambda (acc-list checklist-id)
+                       (cons (-> checklist-id
+                                 orgtrello-api/get-checklist
+                                 (orgtrello-query/http-trello *do-sync-query*)) acc-list))
+                     nil
+                     it)                                                                         ;; retrieve the trello checklist
        (sort it (lambda (a b) (when (<= (orgtrello-data/entity-position a) (orgtrello-data/entity-position b)) 1)))))          ;; sort them by pos to get back to the right order (reversed)
 
 (defun orgtrello-controller/--compute-checklist-entities-from-card (card entities adjacency) "Given a card, retrieve its checklists (with their items) in the right order."
   (let ((card-id (orgtrello-data/entity-id card)))
     (--> card
          (orgtrello-controller/--retrieve-checklist-from-card it)
-         (cl-reduce
-          (lambda (acc-entities-hash checklist)
-            (cl-destructuring-bind (entities adjacency) acc-entities-hash
-              (orgtrello-controller/--compute-items-from-checklist checklist (orgtrello-controller/--add-entity-to-entities checklist entities) (orgtrello-controller/--add-entity-to-adjacency checklist card adjacency))))
-          it :initial-value (list entities adjacency)))))                               ;; at last complete checklist with item
+         (-reduce-from (lambda (acc checklist)
+                          (cl-destructuring-bind (entities adjacency) acc
+                            (orgtrello-controller/--compute-items-from-checklist checklist (orgtrello-controller/--add-entity-to-entities checklist entities) (orgtrello-controller/--add-entity-to-adjacency checklist card adjacency))))
+                       (list entities adjacency)
+                       it))));; at last complete checklist with item
 
 ;; one map for each complete entity: {entity-id entity} (entity in {card, checklist, item}
 ;; adjacency list {card-id (checklist-id)
 ;;                 checklist-id (item-id)}
 
 (defun orgtrello-controller/--compute-full-entities-from-trello (cards) "Given a list of cards, compute the full cards data from the trello board. The order from the trello board is kept. Hash result is of the form: {entity-id '(entity-card {checklist-id (checklist (item))})}"
-  (cl-reduce
-   (lambda (acc-entities-hash entity-card)
-     (orgtrello-log/msg *OT/INFO* "Computing card '%s' data..." (orgtrello-data/entity-name entity-card))
-     (cl-destructuring-bind (entities adjacency) acc-entities-hash
-       (orgtrello-controller/--compute-checklist-entities-from-card entity-card (orgtrello-controller/--add-entity-to-entities entity-card entities) adjacency)))
-   cards
-   :initial-value (list (orgtrello-hash/empty-hash) (orgtrello-hash/empty-hash))))
+  (--reduce-from (progn
+                   (orgtrello-log/msg *OT/INFO* "Computing card '%s' data..."
+                                      (orgtrello-data/entity-name it)))
+                 (cl-destructuring-bind (entities adjacency) acc
+                   (orgtrello-controller/--compute-checklist-entities-from-card it (orgtrello-controller/--add-entity-to-entities entity-card entities) adjacency))
+                 (list (orgtrello-hash/empty-hash) (orgtrello-hash/empty-hash))
+                 cards))
 
 (defun orgtrello-controller/--get-entity (id entities-hash) "Update the card entry inside the hash."
   (gethash id entities-hash))
@@ -2168,7 +2197,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
         (puthash :id   (orgtrello-data/entity-id trello-checklist)   org-checklist-to-merge)
         org-checklist-to-merge)))
 
-(defun orgtrello-controller/--merge-users-assigned (trello-card org-card) "Merge users assigned from trello and org."
+(defun orgtrello-controller/--merge-member-ids (trello-card org-card) "Merge users assigned from trello and org."
   (--> trello-card
        (orgtrello-data/entity-member-ids it)
        (orgtrello-data/merge-2-lists-without-duplicates it (orgtrello-data/entity-member-ids-as-list org-card))
@@ -2178,13 +2207,14 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   (if (null trello-card)
       org-card
       (let ((org-card-to-merge (orgtrello-controller/--init-map-from org-card)))
-        (puthash :level   *CARD-LEVEL*                                                             org-card-to-merge)
-        (puthash :id      (orgtrello-data/entity-id trello-card)                                   org-card-to-merge)
-        (puthash :name    (orgtrello-data/entity-name trello-card)                                 org-card-to-merge)
+        (puthash :level   *CARD-LEVEL*                                                               org-card-to-merge)
+        (puthash :id      (orgtrello-data/entity-id trello-card)                                     org-card-to-merge)
+        (puthash :name    (orgtrello-data/entity-name trello-card)                                   org-card-to-merge)
         (puthash :keyword (-> trello-card
                               orgtrello-data/entity-list-id
-                              orgtrello-controller/--compute-card-status)                                     org-card-to-merge)
-        (puthash :member-ids (orgtrello-controller/--merge-users-assigned trello-card org-card-to-merge)  org-card-to-merge)
+                              orgtrello-controller/--compute-card-status)                            org-card-to-merge)
+        (puthash :member-ids (orgtrello-controller/--merge-member-ids trello-card org-card-to-merge) org-card-to-merge)
+        (puthash :desc    (orgtrello-data/entity-description trello-card)                            org-card-to-merge)
         org-card-to-merge)))
 
 (defun orgtrello-controller/--dispatch-merge-fn (entity) "Dispatch the function fn to merge the entity."
@@ -2223,7 +2253,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 (defun orgtrello-controller/--write-entity! (entity-id entity) "Write the entity in the buffer to the current position. Move the cursor position."
   (orgtrello-log/msg *OT/INFO* "Synchronizing entity '%s' with id '%s'..." (orgtrello-data/entity-name entity) entity-id)
   (insert (orgtrello-controller/--compute-entity-to-org-entry entity))
-  (if entity-id (orgtrello-controller/--update-property entity-id (and *ORGTRELLO-NATURAL-ORG-CHECKLIST* (not (orgtrello-data/entity-card-p entity))))))
+  (when entity-id (orgtrello-controller/--update-property entity-id (and *ORGTRELLO-NATURAL-ORG-CHECKLIST* (not (orgtrello-data/entity-card-p entity))))))
 
 ;; (defun orgtrello-controller/org-map-entities! (fn-to-execute &optional entities) "Execute fn-to-execute function for all entities from buffer."
 ;;   (org-map-entries
@@ -2249,7 +2279,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   (orgtrello-controller/--write-entity! entity-id (gethash entity-id entities))
   (--map (orgtrello-controller/--write-item! it entities) (gethash entity-id adjacency)))
 
-(defun orgtrello-controller/--update-users-assigned-property! (entity) "Update the users assigned property card entry."
+(defun orgtrello-controller/--update-member-ids-property! (entity) "Update the users assigned property card entry."
   (--> entity
        (orgtrello-data/entity-member-ids it)
        (orgtrello-controller/--csv-user-ids-to-csv-user-names it *HMAP-USERS-ID-NAME*)
@@ -2258,7 +2288,9 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun orgtrello-controller/--write-card! (entity-id entity entities adjacency) "Write the card inside the org buffer."
   (orgtrello-controller/--write-entity! entity-id entity)
-  (orgtrello-controller/--update-users-assigned-property! entity)
+  (orgtrello-controller/--update-member-ids-property! entity)
+  (-when-let (entity-desc (orgtrello-data/entity-description entity))
+             (insert (format "%s\n" entity-desc)))
   (--map (orgtrello-controller/--write-checklist! it entities adjacency) (gethash entity-id adjacency)))
 
 (defun orgtrello-controller/--sync-buffer-with-trello-data (data buffer-name) "Given all the entities, update the current buffer with those."
@@ -2526,14 +2558,13 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
         list-ids))
 
 (defun orgtrello-controller/--create-lists-according-to-keywords (board-id list-keywords) "Given a list of names, build those lists on the trello boards. Return the hashmap (name, id) of the new lists created."
-  (cl-reduce
-   (lambda (acc-hash-name-id list-name)
-     (progn
-       (orgtrello-log/msg *OT/INFO* "Board id %s - Creating list '%s'" board-id list-name)
-       (puthash list-name (orgtrello-data/entity-id (orgtrello-query/http-trello (orgtrello-api/add-list list-name board-id) *do-sync-query*)) acc-hash-name-id)
-       acc-hash-name-id))
-   list-keywords
-   :initial-value (orgtrello-hash/empty-hash)))
+  (--reduce-from (progn
+                   (orgtrello-log/msg *OT/INFO* "Board id %s - Creating list '%s'"
+                                      board-id it)
+                   (puthash it (orgtrello-data/entity-id (orgtrello-query/http-trello (orgtrello-api/add-list it board-id) *do-sync-query*)) acc)
+                   acc)
+                 (orgtrello-hash/empty-hash)
+                 list-keywords))
 
 (defun orgtrello-controller/do-create-board-and-lists () "Command to create a board and the lists."
   (defvar orgtrello-controller/--board-name nil)        (setq orgtrello-controller/--board-name nil)
@@ -2743,7 +2774,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
      (lambda ()
        (orgtrello-controller/--remove-properties-file! *LIST-NAMES* *HMAP-USERS-NAME-ID* *ORGTRELLO-USER-LOGGED-IN* t) ;; remove any orgtrello relative entries
        (orgtrello-controller/--delete-property *ORGTRELLO-ID*)          ;; remove all properties orgtrello-id from the buffer
-       (orgtrello-controller/--delete-property *ORGTRELLO-USERS-ENTRY*) ;; remove all properties users-assigned
+       (orgtrello-controller/--delete-property *ORGTRELLO-USERS-ENTRY*) ;; remove all properties users-assigned/member-ids
        (orgtrello-log/msg *OT/NOLOG* "Cleanup done!")) ;; a simple message to tell the user that the work is done!
      *do-save-buffer*
      *do-reload-setup*))

@@ -3,7 +3,7 @@ PACKAGE_FOLDER=org-trello-$(VERSION)
 ARCHIVE=$(PACKAGE_FOLDER).tar
 USER=ardumont
 
-test: clean generate
+test: clean
 	cask exec emacs -Q -batch \
 			-l ert \
 			-l ./launch-tests.el \
