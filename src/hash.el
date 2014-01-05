@@ -6,7 +6,7 @@
 (defun orgtrello-hash/empty-hash () "Empty hash table with test 'equal"
   (make-hash-table :test 'equal))
 
-(defun orgtrello-hash/make-hash-org (member-ids level keyword name id due position buffer-name) "Utility function to ease the creation of the orgtrello-metadata"
+(defun orgtrello-hash/make-hash-org (member-ids level keyword name id due position buffer-name desc) "Utility function to ease the orgtrello-metadata creation"
   (let ((h (orgtrello-hash/empty-hash)))
     (puthash :buffername     buffer-name h)
     (puthash :position       position    h)
@@ -16,6 +16,7 @@
     (puthash :id             id          h)
     (puthash :due            due         h)
     (puthash :member-ids     member-ids  h)
+    (puthash :desc           desc        h)
     h))
 
 (defun orgtrello-hash/make-hash (method uri &optional params) "Utility function to ease the creation of the map - wait, where are my clojure data again!?"

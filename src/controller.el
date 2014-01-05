@@ -102,17 +102,18 @@
     ;; name is mandatory
     (if (equal :ok checks-ok-or-error-message)
         ;; parent and grandparent are useless here
-        (let* ((orgtrello-controller/--card-kwd  (orgtrello-controller/--retrieve-state-of-card card-meta))
-               (orgtrello-controller/--list-id   (assoc-default orgtrello-controller/--card-kwd org-file-properties))
-               (orgtrello-controller/--card-id   (orgtrello-data/entity-id    card-meta))
-               (orgtrello-controller/--card-name (orgtrello-data/entity-name card-meta))
-               (orgtrello-controller/--card-due  (orgtrello-data/entity-due   card-meta))
+        (let* ((orgtrello-controller/--card-kwd           (orgtrello-controller/--retrieve-state-of-card card-meta))
+               (orgtrello-controller/--list-id            (assoc-default orgtrello-controller/--card-kwd org-file-properties))
+               (orgtrello-controller/--card-id            (orgtrello-data/entity-id          card-meta))
+               (orgtrello-controller/--card-name          (orgtrello-data/entity-name        card-meta))
+               (orgtrello-controller/--card-due           (orgtrello-data/entity-due         card-meta))
+               (orgtrello-controller/--card-desc          (orgtrello-data/entity-description card-meta))
                (orgtrello-controller/--user-ids-assigned  (orgtrello-data/entity-member-ids card-meta)))
           (if orgtrello-controller/--card-id
               ;; update
-              (orgtrello-api/move-card orgtrello-controller/--card-id orgtrello-controller/--list-id orgtrello-controller/--card-name orgtrello-controller/--card-due orgtrello-controller/--user-ids-assigned)
+              (orgtrello-api/move-card orgtrello-controller/--card-id orgtrello-controller/--list-id orgtrello-controller/--card-name orgtrello-controller/--card-due orgtrello-controller/--user-ids-assigned orgtrello-controller/--card-desc)
             ;; create
-            (orgtrello-api/add-card orgtrello-controller/--card-name orgtrello-controller/--list-id orgtrello-controller/--card-due orgtrello-controller/--user-ids-assigned)))
+            (orgtrello-api/add-card orgtrello-controller/--card-name orgtrello-controller/--list-id orgtrello-controller/--card-due orgtrello-controller/--user-ids-assigned orgtrello-controller/--card-desc)))
       checks-ok-or-error-message)))
 
 (defun orgtrello-controller/--checks-before-sync-checklist (checklist-meta card-meta) "Checks done before synchronizing the checklist."
