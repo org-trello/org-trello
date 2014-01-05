@@ -5,7 +5,7 @@
 
 (message "Launching tests!")
 
-(load-file "org-trello.el")
+(load-file "load-namespaces.el")
 
 ;; ########################## util test function
 
