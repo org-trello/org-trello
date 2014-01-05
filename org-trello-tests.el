@@ -2035,6 +2035,20 @@ hello there
 - [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}
   - [X] Emacs-Lisp  :PROPERTIES: {\"orgtrello-id\":\"52c9451784251e1b260127f8\"}
   - [X] Common-Lisp :PROPERTIES: {\"orgtrello-id\":\"52c94518b2c5b28e37012ba4\"}")
+       (orgtrello-buffer/extract-description-from-current-position)))
+
+    (expect nil
+     (with-temp-buffer
+       (insert "* TODO Joy of FUN(ctional) LANGUAGES")
+       (orgtrello-buffer/extract-description-from-current-position)))
+
+    (expect ""
+     (with-temp-buffer
+       (insert "* TODO Joy of FUN(ctional) LANGUAGES
+:PROPERTIES:
+:orgtrello-id: 52c945143004d4617c012528
+:END:
+- [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}")
        (orgtrello-buffer/extract-description-from-current-position))))
 
 (provide 'org-trello-tests)
