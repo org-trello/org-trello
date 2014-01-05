@@ -27,20 +27,18 @@
     h))
 
 (defun orgtrello-hash/make-properties (properties) "Given a list of key value pair, return a hash table."
-  (cl-reduce
-   (lambda (map list-key-value)
-     (puthash (car list-key-value) (cdr list-key-value) map)
-     map)
-   properties
-   :initial-value (orgtrello-hash/empty-hash)))
+  (--reduce-from (progn
+                   (puthash (car it) (cdr it) acc)
+                   acc)
+                 (orgtrello-hash/empty-hash)
+                 properties))
 
 (defun orgtrello-hash/make-transpose-properties (properties) "Given a list of key value pair, return a hash table with key/value transposed."
-  (-reduce-from
-   (lambda (map list-key-value)
-     (puthash (cdr list-key-value) (car list-key-value) map)
-     map)
-   (orgtrello-hash/empty-hash)
-   properties))
+  (--reduce-from (progn
+                  (puthash (cdr it) (car it) acc)
+                  acc)
+                 (orgtrello-hash/empty-hash)
+                 properties))
 
 (defun orgtrello-hash/make-hierarchy (current &optional parent grandparent) "Helper constructor for the hashmap holding the full metadata about the current-entry."
   (orgtrello-hash/make-properties `((:current . ,current)

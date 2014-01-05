@@ -8,11 +8,9 @@
   (if optional-entry (cons value entries) entries))
 
 (defun orgtrello-api/--deal-with-optional-values (optional-entries-values entries) "Add the optional entry/value depending on their entry. Return entries updated with value if entry, entries untouched otherwise."
-  (cl-reduce
-   (lambda (l entry-value)
-     (orgtrello-api/--deal-with-optional-value (car entry-value) (cdr entry-value) l))
-   optional-entries-values
-   :initial-value entries))
+  (--reduce-from (orgtrello-api/--deal-with-optional-value (car it) (cdr it) acc)
+                  entries
+                  optional-entries-values))
 
 (defun orgtrello-api/add-board (name &optional description) "Create a board."
   (orgtrello-hash/make-hash "POST" "/boards" (orgtrello-api/--deal-with-optional-value description `("desc" . ,description) `(("name" . ,name)))))

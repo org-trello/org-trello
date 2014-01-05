@@ -47,13 +47,12 @@
   (orgtrello-action/reload-setup)
   ;; now exploit some
   (let* ((orgtrello-controller/--list-keywords (nreverse (orgtrello-controller/filtered-kwds)))
-         (orgtrello-controller/--hmap-id-name (cl-reduce
-                                    (lambda (hmap name)
-                                      (progn
-                                        (puthash (assoc-default name org-file-properties) name hmap)
-                                        hmap))
-                                    orgtrello-controller/--list-keywords
-                                    :initial-value (orgtrello-hash/empty-hash)))
+         (orgtrello-controller/--hmap-id-name
+          (--reduce-from (progn
+                           (puthash (assoc-default it org-file-properties) it acc)
+                           acc)
+                         (orgtrello-hash/empty-hash)
+                         orgtrello-controller/--list-keywords))
          (orgtrello-controller/--list-users (orgtrello-controller/--list-user-entries org-file-properties))
          (orgtrello-controller/--hmap-user-id-name (orgtrello-hash/make-transpose-properties orgtrello-controller/--list-users))
          (orgtrello-controller/--hmap-user-name-id (orgtrello-hash/make-properties orgtrello-controller/--list-users)))
@@ -373,46 +372,45 @@
 
 (defun orgtrello-controller/--compute-items-from-checklist (checklist entities adjacency) "Given a checklist, retrieve its items and update the entities hash and the adjacency list."
   (let ((checklist-id (orgtrello-data/entity-id checklist)))
-    (cl-reduce
-     (lambda (acc-entities-hash item)
-       (cl-destructuring-bind (entities adjacency) acc-entities-hash
-         (list (orgtrello-controller/--add-entity-to-entities item entities) (orgtrello-controller/--add-entity-to-adjacency item checklist adjacency))))
-     (orgtrello-data/entity-items checklist)
-     :initial-value (list entities adjacency))))
+    (--reduce-from (cl-destructuring-bind (entities adjacency) acc
+                     (list (orgtrello-controller/--add-entity-to-entities it entities)
+                           (orgtrello-controller/--add-entity-to-adjacency it checklist adjacency)))
+                   (list entities adjacency)
+                   (orgtrello-data/entity-items checklist))))
 
 (defun orgtrello-controller/--retrieve-checklist-from-card (card) "Given a card, retrieve the checklist of the card (using trello). This gives a list of checklist in the trello order."
   (--> card
        (orgtrello-data/entity-checklists it)                                                            ;; retrieve checklist ids
-       (cl-reduce
-        (lambda (acc-list checklist-id)
-          (cons (-> checklist-id
-                    orgtrello-api/get-checklist
-                    (orgtrello-query/http-trello *do-sync-query*)) acc-list))
-        it :initial-value nil)                                                                         ;; retrieve the trello checklist
+       (-reduce-from (lambda (acc-list checklist-id)
+                       (cons (-> checklist-id
+                                 orgtrello-api/get-checklist
+                                 (orgtrello-query/http-trello *do-sync-query*)) acc-list))
+                     nil
+                     it)                                                                         ;; retrieve the trello checklist
        (sort it (lambda (a b) (when (<= (orgtrello-data/entity-position a) (orgtrello-data/entity-position b)) 1)))))          ;; sort them by pos to get back to the right order (reversed)
 
 (defun orgtrello-controller/--compute-checklist-entities-from-card (card entities adjacency) "Given a card, retrieve its checklists (with their items) in the right order."
   (let ((card-id (orgtrello-data/entity-id card)))
     (--> card
          (orgtrello-controller/--retrieve-checklist-from-card it)
-         (cl-reduce
-          (lambda (acc-entities-hash checklist)
-            (cl-destructuring-bind (entities adjacency) acc-entities-hash
-              (orgtrello-controller/--compute-items-from-checklist checklist (orgtrello-controller/--add-entity-to-entities checklist entities) (orgtrello-controller/--add-entity-to-adjacency checklist card adjacency))))
-          it :initial-value (list entities adjacency)))))                               ;; at last complete checklist with item
+         (-reduce-from (lambda (acc checklist)
+                          (cl-destructuring-bind (entities adjacency) acc
+                            (orgtrello-controller/--compute-items-from-checklist checklist (orgtrello-controller/--add-entity-to-entities checklist entities) (orgtrello-controller/--add-entity-to-adjacency checklist card adjacency))))
+                       (list entities adjacency)
+                       it))));; at last complete checklist with item
 
 ;; one map for each complete entity: {entity-id entity} (entity in {card, checklist, item}
 ;; adjacency list {card-id (checklist-id)
 ;;                 checklist-id (item-id)}
 
 (defun orgtrello-controller/--compute-full-entities-from-trello (cards) "Given a list of cards, compute the full cards data from the trello board. The order from the trello board is kept. Hash result is of the form: {entity-id '(entity-card {checklist-id (checklist (item))})}"
-  (cl-reduce
-   (lambda (acc-entities-hash entity-card)
-     (orgtrello-log/msg *OT/INFO* "Computing card '%s' data..." (orgtrello-data/entity-name entity-card))
-     (cl-destructuring-bind (entities adjacency) acc-entities-hash
-       (orgtrello-controller/--compute-checklist-entities-from-card entity-card (orgtrello-controller/--add-entity-to-entities entity-card entities) adjacency)))
-   cards
-   :initial-value (list (orgtrello-hash/empty-hash) (orgtrello-hash/empty-hash))))
+  (--reduce-from (progn
+                   (orgtrello-log/msg *OT/INFO* "Computing card '%s' data..."
+                                      (orgtrello-data/entity-name it)))
+                 (cl-destructuring-bind (entities adjacency) acc
+                   (orgtrello-controller/--compute-checklist-entities-from-card it (orgtrello-controller/--add-entity-to-entities entity-card entities) adjacency))
+                 (list (orgtrello-hash/empty-hash) (orgtrello-hash/empty-hash))
+                 cards))
 
 (defun orgtrello-controller/--get-entity (id entities-hash) "Update the card entry inside the hash."
   (gethash id entities-hash))
@@ -864,14 +862,13 @@
         list-ids))
 
 (defun orgtrello-controller/--create-lists-according-to-keywords (board-id list-keywords) "Given a list of names, build those lists on the trello boards. Return the hashmap (name, id) of the new lists created."
-  (cl-reduce
-   (lambda (acc-hash-name-id list-name)
-     (progn
-       (orgtrello-log/msg *OT/INFO* "Board id %s - Creating list '%s'" board-id list-name)
-       (puthash list-name (orgtrello-data/entity-id (orgtrello-query/http-trello (orgtrello-api/add-list list-name board-id) *do-sync-query*)) acc-hash-name-id)
-       acc-hash-name-id))
-   list-keywords
-   :initial-value (orgtrello-hash/empty-hash)))
+  (--reduce-from (progn
+                   (orgtrello-log/msg *OT/INFO* "Board id %s - Creating list '%s'"
+                                      board-id it)
+                   (puthash it (orgtrello-data/entity-id (orgtrello-query/http-trello (orgtrello-api/add-list it board-id) *do-sync-query*)) acc)
+                   acc)
+                 (orgtrello-hash/empty-hash)
+                 list-keywords))
 
 (defun orgtrello-controller/do-create-board-and-lists () "Command to create a board and the lists."
   (defvar orgtrello-controller/--board-name nil)        (setq orgtrello-controller/--board-name nil)

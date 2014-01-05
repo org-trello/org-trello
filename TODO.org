@@ -776,10 +776,10 @@ CLOSED: [2014-01-04 sam. 19:26]
 - [X] Unfold every entries before triggering the sync from trello to avoid problems similar as https://github.com/ardumont/org-trello/issues/53
 - [X] Version
 - [X] Release notes
-* IN-PROGRESS 0.2.8 [33%]
+* IN-PROGRESS 0.2.8 [50%]
 - [X] Backlog
 - [X] Synchronize description - https://github.com/ardumont/org-trello/issues/80
-- [ ] Use --reduce-from from dash instead of cl-reduce to reduce the cl deps
+- [X] Use --reduce-from from dash instead of cl-reduce to reduce the cl deps
 - [ ] Version
 - [ ] Update doc
 - [ ] Release notes
