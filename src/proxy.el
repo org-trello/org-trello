@@ -84,10 +84,10 @@
       (insert (format "%S\n" query-map-wrapped)))
     (orgtrello-proxy/response-ok http-con)))
 
-(defun orgtrello-proxy/--read-lines (fPath) "Return a list of lines of a file at FPATH."
+(defun orgtrello-proxy/--read-file-content (fPath) "Return a list of lines of a file at FPATH."
   (with-temp-buffer
     (insert-file-contents fPath)
-    (split-string (buffer-string) "\n" t)))
+    (buffer-string)))
 
 (defun orgtrello-proxy/--update-buffer-to-save (buffer-name buffers-to-save) "Add the buffer-name to the list if not already present"
   (if (member buffer-name buffers-to-save)
@@ -252,7 +252,7 @@
 (defun orgtrello-proxy/--deal-with-entity-file-action (file) "Given an entity file, load it and run a query action through trello"
   (when (file-exists-p file)
         (orgtrello-proxy/--deal-with-entity-action (-> file
-                                                       orgtrello-proxy/--read-lines
+                                                       orgtrello-proxy/--read-file-content
                                                        read
                                                        orgtrello-data/parse-data) file)))
 
