@@ -6,6 +6,7 @@
 (require 'org-trello-data)
 (require 'org-trello-cbx)
 (require 'org-trello-query)
+(require 'org-trello-buffer)
 
 ;; #################### orgtrello-controller
 
