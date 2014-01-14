@@ -2051,5 +2051,9 @@ hello there
 - [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}")
        (orgtrello-buffer/extract-description-from-current-position))))
 
+(expectations
+ (expect #("same-string" 0 11 (invisible org-link)) (orgtrello-cbx/--make-string-invisible "same-string")))
+
+
 (provide 'org-trello-tests)
 ;;; org-trello-tests ends here

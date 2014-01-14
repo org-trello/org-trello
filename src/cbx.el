@@ -42,16 +42,23 @@
     (goto-char pt)
     (orgtrello-cbx/--read-properties (orgtrello-cbx/--read-checkbox!))))
 
-(defun orgtrello-cbx/--update-properties (checkbox-string properties) "Given the current checkbox-string and the new properties, update the properties in the current entry."
-  (s-join " :PROPERTIES: "  `(,(orgtrello-cbx/--checkbox-data checkbox-string)
-                              ,(orgtrello-cbx/--to-properties properties))))
+;; (defun orgtrello-cbx/--make-string-invisible (text-str) "Given a string, add invisible properties to it."
+;;   (put-text-property 1 (length text-str) 'invisible text-str)
+;;   ;; (font-lock-add-keywords nil `((,text-str (0 (add-text-properties 0 ,(length text-str) '(invisible org-link))))))
+;;   text-str)
 
-(defvar orgtrello-cbx/--rules-to-align-checkbox-properties
-  `((orgtrello-rules
-     (regexp   . "^[ ]*-\\{1\\}.*\\( :PROPERTIES: \\).*$")
-     (group    . 1)
-     (justify  . t)))
-  "Rules to use with align-region to justify")
+(defun orgtrello-cbx/--make-properties-as-string (properties)
+  (format " :PROPERTIES: %s" (orgtrello-cbx/--to-properties properties)))
+
+;; (defun orgtrello-cbx/--update-properties (checkbox-string properties) "Given the current checkbox-string and the new properties, update the properties in the current entry."
+;;   (format "%s%s" (orgtrello-cbx/--checkbox-data checkbox-string) (orgtrello-cbx/--make-properties-as-string properties)))
+
+;; (defvar orgtrello-cbx/--rules-to-align-checkbox-properties
+;;   `((orgtrello-rules
+;;      (regexp   . "^[ ]*-\\{1\\}.*\\( :PROPERTIES: \\).*$")
+;;      (group    . 1)
+;;      (justify  . t)))
+;;   "Rules to use with align-region to justify")
 
 (defun orgtrello-cbx/--point-at-beg-of-region-for-justify () "Compute the beginning of region - marked by a headline."
   (save-excursion
@@ -67,12 +74,19 @@
 
 (defun orgtrello-cbx/--write-properties-at-point (pt properties) "Given the new properties, update the current entry."
   (save-excursion
+    (defvar orgtrello-cbx/--tmp-point)
     (goto-char pt)
-    (let ((updated-checkbox-str (orgtrello-cbx/--update-properties (orgtrello-cbx/--read-checkbox!) properties)))
+    (let* ((checkbox-title   (-> (orgtrello-cbx/--read-checkbox!) orgtrello-cbx/--checkbox-data))
+           (updated-property (orgtrello-cbx/--make-properties-as-string properties)))
       (beginning-of-line)
       (kill-line)
-      (insert updated-checkbox-str)
-      updated-checkbox-str)))
+      (insert checkbox-title)
+      (setq orgtrello-cbx/--tmp-point (point))
+      (insert updated-property)
+      ;; build an overlay to hide the cbx id
+      (overlay-put (make-overlay orgtrello-cbx/--tmp-point (point-at-eol) (current-buffer) t nil)
+                   'invisible 'org-trello-cbx-property) ;; outline to use the default one but beware with outline, there is an ellipsis (...)
+      (format "%s%s" checkbox-title updated-property))))
 
 (defun orgtrello-cbx/--key-to-search (key) "Search the key key as a symbol"
   (if (stringp key) (intern key) key))

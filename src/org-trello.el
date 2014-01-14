@@ -210,30 +210,30 @@
   :lighter    " ot"
   :after-hook (org-trello/install-local-prefix-mode-keybinding! *ORGTRELLO-MODE-PREFIX-KEYBINDING*))
 
-(defun org-trello/justify-on-save () "Justify the properties checkbox."
-  (if org-trello-mode (orgtrello-controller/justify-file)))
+;; (defun org-trello/justify-on-save () "Justify the properties checkbox."
+;;   (if org-trello-mode (orgtrello-controller/justify-file)))
 
 (add-hook 'org-trello-mode-on-hook
           (lambda ()
-            ;; hightlight the properties of the checkboxes
-            (font-lock-add-keywords 'org-mode '((":PROPERTIES:" 0 font-lock-keyword-face t)))
-            (font-lock-add-keywords 'org-mode '((": {\"orgtrello-id\":.*}" 0 font-lock-comment-face t)))
+            ;; buffer-invisibility-spec
+            (add-to-invisibility-spec '(org-trello-cbx-property)) ;; for an ellipsis (...) change to '(org-trello-cbx-property . t)
             ;; start the proxy
             (orgtrello-proxy/start)
             ;; installing hooks
-            (add-hook 'before-save-hook 'org-trello/justify-on-save)
+            ;; (add-hook 'before-save-hook 'org-trello/justify-on-save)
             ;; a little message in the minibuffer to notify the user
             (orgtrello-log/msg *OT/NOLOG* (org-trello/--startup-message *ORGTRELLO-MODE-PREFIX-KEYBINDING*))))
 
 (add-hook 'org-trello-mode-off-hook
           (lambda ()
+            (remove-from-invisibility-spec '(org-trello-cbx-property)) ;; for an ellipsis (...) change to '(org-trello-cbx-property . t)
             ;; remove the highlight
-            (font-lock-remove-keywords 'org-mode '((":PROPERTIES:" 0 font-lock-keyword-face t)))
-            (font-lock-remove-keywords 'org-mode '((": {\"orgtrello-id\":.*}" 0 font-lock-comment-face t)))
+            ;; (font-lock-remove-keywords 'org-mode '((":PROPERTIES:" 0 font-lock-keyword-face t)))
+            ;; (font-lock-remove-keywords 'org-mode '((": {\"orgtrello-id\":.*}" 0 font-lock-comment-face t)))
             ;; stop the proxy
             (orgtrello-proxy/stop)
             ;; uninstalling hooks
-            (remove-hook 'before-save-hook 'org-trello/justify-on-save)
+            ;; (remove-hook 'before-save-hook 'org-trello/justify-on-save)
             ;; a little message in the minibuffer to notify the user
             (orgtrello-log/msg *OT/NOLOG* "org-trello/ot is off!")))
 
