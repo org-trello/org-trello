@@ -45,11 +45,6 @@
 (defun orgtrello-cbx/--make-properties-as-string (properties)
   (format " :PROPERTIES: %s" (orgtrello-cbx/--to-properties properties)))
 
-(defun orgtrello-cbx/--point-at-beg-of-region-for-justify () "Compute the beginning of region - marked by a headline."
-  (save-excursion
-    (org-back-to-heading)
-    (point-at-bol)))
-
 (defun orgtrello-cbx/--write-properties-at-point (pt properties) "Given the new properties, update the current entry."
   (save-excursion
     (defvar orgtrello-cbx/--tmp-point)
