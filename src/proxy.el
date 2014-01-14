@@ -370,11 +370,8 @@
 (defun orgtrello-proxy/timer-stop () "Stop the orgtrello-timer." (orgtrello-proxy/http-consumer nil))
 
 (defun orgtrello-action/--deal-with-consumer-msg-controls-or-actions-then-do (msg control-or-action-fns fn-to-execute &optional save-buffer-p reload-setup-p nolog-p) "Decorator fn to execute actions before/after the controls."
-  ;; stop the timer
   (orgtrello-proxy/timer-stop)
-  ;; Execute as usual
-  (orgtrello-action/--msg-controls-or-actions-then-do msg control-or-action-fns fn-to-execute save-buffer-p reload-setup-p nolog-p)
-  ;; start the timer
+  (orgtrello-action/--msg-controls-or-actions-then-do msg control-or-action-fns fn-to-execute save-buffer-p reload-setup-p nolog-p)   ;; Execute as usual
   (orgtrello-proxy/timer-start))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-proxy loaded!")
