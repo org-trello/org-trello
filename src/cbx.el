@@ -42,35 +42,13 @@
     (goto-char pt)
     (orgtrello-cbx/--read-properties (orgtrello-cbx/--read-checkbox!))))
 
-;; (defun orgtrello-cbx/--make-string-invisible (text-str) "Given a string, add invisible properties to it."
-;;   (put-text-property 1 (length text-str) 'invisible text-str)
-;;   ;; (font-lock-add-keywords nil `((,text-str (0 (add-text-properties 0 ,(length text-str) '(invisible org-link))))))
-;;   text-str)
-
 (defun orgtrello-cbx/--make-properties-as-string (properties)
   (format " :PROPERTIES: %s" (orgtrello-cbx/--to-properties properties)))
-
-;; (defun orgtrello-cbx/--update-properties (checkbox-string properties) "Given the current checkbox-string and the new properties, update the properties in the current entry."
-;;   (format "%s%s" (orgtrello-cbx/--checkbox-data checkbox-string) (orgtrello-cbx/--make-properties-as-string properties)))
-
-;; (defvar orgtrello-cbx/--rules-to-align-checkbox-properties
-;;   `((orgtrello-rules
-;;      (regexp   . "^[ ]*-\\{1\\}.*\\( :PROPERTIES: \\).*$")
-;;      (group    . 1)
-;;      (justify  . t)))
-;;   "Rules to use with align-region to justify")
 
 (defun orgtrello-cbx/--point-at-beg-of-region-for-justify () "Compute the beginning of region - marked by a headline."
   (save-excursion
     (org-back-to-heading)
     (point-at-bol)))
-
-(defun orgtrello-cbx/--justify-property-current-line () "Justify the content of the current region."
-  (align-region (orgtrello-cbx/--point-at-beg-of-region-for-justify)
-                (orgtrello-cbx/--compute-next-card-point)
-                'entire
-                orgtrello-cbx/--rules-to-align-checkbox-properties
-                nil))
 
 (defun orgtrello-cbx/--write-properties-at-point (pt properties) "Given the new properties, update the current entry."
   (save-excursion

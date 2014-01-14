@@ -520,35 +520,13 @@ If you want to use this, we recommand to use the native org checklists - http://
     (goto-char pt)
     (orgtrello-cbx/--read-properties (orgtrello-cbx/--read-checkbox!))))
 
-;; (defun orgtrello-cbx/--make-string-invisible (text-str) "Given a string, add invisible properties to it."
-;;   (put-text-property 1 (length text-str) 'invisible text-str)
-;;   ;; (font-lock-add-keywords nil `((,text-str (0 (add-text-properties 0 ,(length text-str) '(invisible org-link))))))
-;;   text-str)
-
 (defun orgtrello-cbx/--make-properties-as-string (properties)
   (format " :PROPERTIES: %s" (orgtrello-cbx/--to-properties properties)))
-
-;; (defun orgtrello-cbx/--update-properties (checkbox-string properties) "Given the current checkbox-string and the new properties, update the properties in the current entry."
-;;   (format "%s%s" (orgtrello-cbx/--checkbox-data checkbox-string) (orgtrello-cbx/--make-properties-as-string properties)))
-
-;; (defvar orgtrello-cbx/--rules-to-align-checkbox-properties
-;;   `((orgtrello-rules
-;;      (regexp   . "^[ ]*-\\{1\\}.*\\( :PROPERTIES: \\).*$")
-;;      (group    . 1)
-;;      (justify  . t)))
-;;   "Rules to use with align-region to justify")
 
 (defun orgtrello-cbx/--point-at-beg-of-region-for-justify () "Compute the beginning of region - marked by a headline."
   (save-excursion
     (org-back-to-heading)
     (point-at-bol)))
-
-(defun orgtrello-cbx/--justify-property-current-line () "Justify the content of the current region."
-  (align-region (orgtrello-cbx/--point-at-beg-of-region-for-justify)
-                (orgtrello-cbx/--compute-next-card-point)
-                'entire
-                orgtrello-cbx/--rules-to-align-checkbox-properties
-                nil))
 
 (defun orgtrello-cbx/--write-properties-at-point (pt properties) "Given the new properties, update the current entry."
   (save-excursion
@@ -1985,9 +1963,6 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   (orgtrello-log/msg *OT/WARN* "Synchronizing org-mode file to the board '%s'. This may take some time, some coffee may be a good idea..." (orgtrello-controller/--board-name))
   (orgtrello-controller/org-map-entries *CARD-LEVEL* 'orgtrello-controller/do-sync-full-entity))
 
-(defun orgtrello-controller/justify-file () "Map over the file and justify entries with checkbox."
-  (orgtrello-controller/org-map-entries *CARD-LEVEL* 'orgtrello-cbx/--justify-property-current-line))
-
 (defun orgtrello-controller/--compute-card-status (card-id-list) "Given a card's id, compute its status."
   (gethash card-id-list *HMAP-ID-NAME*))
 
@@ -2650,7 +2625,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 (provide 'org-trello-controller)
 
 
-f(require 'org-trello-log)
+(require 'org-trello-log)
 (require 'org-trello-setup)
 (require 'org-trello-action)
 (require 'org-trello-hash)
@@ -2862,20 +2837,12 @@ f(require 'org-trello-log)
   :lighter    " ot"
   :after-hook (org-trello/install-local-prefix-mode-keybinding! *ORGTRELLO-MODE-PREFIX-KEYBINDING*))
 
-;; (defun org-trello/justify-on-save () "Justify the properties checkbox."
-;;   (if org-trello-mode (orgtrello-controller/justify-file)))
-
 (add-hook 'org-trello-mode-on-hook
           (lambda ()
             ;; buffer-invisibility-spec
             (add-to-invisibility-spec '(org-trello-cbx-property)) ;; for an ellipsis (...) change to '(org-trello-cbx-property . t)
-            ;; hightlight the properties of the checkboxes
-            ;; (font-lock-add-keywords 'org-mode '((":PROPERTIES:" 0 font-lock-keyword-face t)))
-            ;; (font-lock-add-keywords 'org-mode '((": {\"orgtrello-id\":.*}" 0 font-lock-comment-face t)))
             ;; start the proxy
             (orgtrello-proxy/start)
-            ;; installing hooks
-            ;; (add-hook 'before-save-hook 'org-trello/justify-on-save)
             ;; a little message in the minibuffer to notify the user
             (orgtrello-log/msg *OT/NOLOG* (org-trello/--startup-message *ORGTRELLO-MODE-PREFIX-KEYBINDING*))))
 
@@ -2883,12 +2850,8 @@ f(require 'org-trello-log)
           (lambda ()
             (remove-from-invisibility-spec '(org-trello-cbx-property)) ;; for an ellipsis (...) change to '(org-trello-cbx-property . t)
             ;; remove the highlight
-            ;; (font-lock-remove-keywords 'org-mode '((":PROPERTIES:" 0 font-lock-keyword-face t)))
-            ;; (font-lock-remove-keywords 'org-mode '((": {\"orgtrello-id\":.*}" 0 font-lock-comment-face t)))
             ;; stop the proxy
             (orgtrello-proxy/stop)
-            ;; uninstalling hooks
-            ;; (remove-hook 'before-save-hook 'org-trello/justify-on-save)
             ;; a little message in the minibuffer to notify the user
             (orgtrello-log/msg *OT/NOLOG* "org-trello/ot is off!")))
 

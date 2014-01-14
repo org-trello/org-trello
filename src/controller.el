@@ -279,9 +279,6 @@
   (orgtrello-log/msg *OT/WARN* "Synchronizing org-mode file to the board '%s'. This may take some time, some coffee may be a good idea..." (orgtrello-controller/--board-name))
   (orgtrello-controller/org-map-entries *CARD-LEVEL* 'orgtrello-controller/do-sync-full-entity))
 
-(defun orgtrello-controller/justify-file () "Map over the file and justify entries with checkbox."
-  (orgtrello-controller/org-map-entries *CARD-LEVEL* 'orgtrello-cbx/--justify-property-current-line))
-
 (defun orgtrello-controller/--compute-card-status (card-id-list) "Given a card's id, compute its status."
   (gethash card-id-list *HMAP-ID-NAME*))
 

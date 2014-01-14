@@ -799,21 +799,6 @@ DEADLINE: <some-date>
   (insert "- [X] call people [4/4] :PROPERTIES: {\"orgtrello-id\":\"456\"}")
   (forward-line -1))
 
-(expectations
-  (expect 1
-    (with-temp-buffer
-      (insert "* heading\n")
-      (insert "- [ ] some checklist\n")
-      (insert "  - [ ] some item\n")
-      (orgtrello-cbx/--point-at-beg-of-region-for-justify)))
-  (expect 21
-    (with-temp-buffer
-      (insert "#+TODO: TODO | DONE\n")
-      (insert "* heading\n")
-      (insert "- [ ] some checklist\n")
-      (insert "  - [ ] some item\n")
-      (orgtrello-cbx/--point-at-beg-of-region-for-justify))))
-
 (expectations (desc "orgtrello-cbx/--read-properties-from-point")
   (expect '((orgtrello-id . "123")) (with-temp-buffer
                                       (insert "- [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}")
