@@ -64,6 +64,7 @@
 (require 's)
 (require 'kv)
 (require 'esxml)
+(require 'align)
 
 (defvar *ORGTRELLO-VERSION* "0.2.8.2" "org-trello version")
 

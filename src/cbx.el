@@ -58,8 +58,6 @@
     (org-back-to-heading)
     (point-at-bol)))
 
-(require 'align)
-
 (defun orgtrello-cbx/--justify-property-current-line () "Justify the content of the current region."
   (align-region (orgtrello-cbx/--point-at-beg-of-region-for-justify)
                 (orgtrello-cbx/--compute-next-card-point)
