@@ -61,6 +61,7 @@
       (insert checkbox-title)
       (setq orgtrello-cbx/--tmp-point (point))
       (insert updated-property)
+      (remove-overlays (point-at-bol) (point-at-eol))
       ;; build an overlay to hide the cbx id
       (overlay-put (make-overlay orgtrello-cbx/--tmp-point (point-at-eol) (current-buffer) t nil)
                    'invisible 'org-trello-cbx-property) ;; outline to use the default one but beware with outline, there is an ellipsis (...)
