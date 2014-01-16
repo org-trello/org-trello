@@ -43,7 +43,7 @@
     (orgtrello-cbx/--read-properties (orgtrello-cbx/--read-checkbox!))))
 
 (defun orgtrello-cbx/--make-properties-as-string (properties)
-  (format " :PROPERTIES: %s" (orgtrello-cbx/--to-properties properties)))
+  (format ":PROPERTIES: %s" (orgtrello-cbx/--to-properties properties)))
 
 (defun orgtrello-cbx/--write-properties-at-point (pt properties) "Given the new properties, update the current entry."
   (save-excursion
@@ -54,6 +54,7 @@
       (beginning-of-line)
       (kill-line)
       (insert checkbox-title)
+      (insert " ")
       (setq orgtrello-cbx/--tmp-point (point))
       (insert updated-property)
       ;; remove overlay present on current position
