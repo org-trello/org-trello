@@ -1,3 +1,9 @@
+# 0.2.8.1
+
+- [X] Fix error on synchronization from trello
+- [X] Update doc
+- [X] Release notes
+
 # 0.2.8
 
 - [X] Backlog
