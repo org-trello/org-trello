@@ -406,9 +406,9 @@
 (defun orgtrello-controller/--compute-full-entities-from-trello (cards) "Given a list of cards, compute the full cards data from the trello board. The order from the trello board is kept. Hash result is of the form: {entity-id '(entity-card {checklist-id (checklist (item))})}"
   (--reduce-from (progn
                    (orgtrello-log/msg *OT/INFO* "Computing card '%s' data..."
-                                      (orgtrello-data/entity-name it)))
-                 (cl-destructuring-bind (entities adjacency) acc
-                   (orgtrello-controller/--compute-checklist-entities-from-card it (orgtrello-controller/--add-entity-to-entities entity-card entities) adjacency))
+                                      (orgtrello-data/entity-name it))
+                   (cl-destructuring-bind (entities adjacency) acc
+                     (orgtrello-controller/--compute-checklist-entities-from-card it (orgtrello-controller/--add-entity-to-entities entity-card entities) adjacency)))
                  (list (orgtrello-hash/empty-hash) (orgtrello-hash/empty-hash))
                  cards))
 
