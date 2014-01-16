@@ -4,7 +4,7 @@
 
 ;; Author: Antoine R. Dumont <eniotna.t AT gmail.com>
 ;; Maintainer: Antoine R. Dumont <eniotna.t AT gmail.com>
-;; Version: 0.2.8.1
+;; Version: 0.2.8.2
 ;; Package-Requires: ((org "8.0.7") (dash "1.5.0") (request "0.2.0") (cl-lib "0.3.0") (json "1.2") (elnode "0.9.9.7.6") (esxml "0.3.0") (s "1.7.0") (kv "0.0.17"))
 ;; Keywords: org-mode trello sync org-trello
 ;; URL: https://github.com/ardumont/org-trello
@@ -65,7 +65,7 @@
 (require 'kv)
 (require 'esxml)
 
-(defvar *ORGTRELLO-VERSION* "0.2.8.1" "org-trello version")
+(defvar *ORGTRELLO-VERSION* "0.2.8.2" "org-trello version")
 
 (provide 'org-trello-header)
 
@@ -2104,7 +2104,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
                    (orgtrello-log/msg *OT/INFO* "Computing card '%s' data..."
                                       (orgtrello-data/entity-name it))
                    (cl-destructuring-bind (entities adjacency) acc
-                     (orgtrello-controller/--compute-checklist-entities-from-card it (orgtrello-controller/--add-entity-to-entities entity-card entities) adjacency)))
+                     (orgtrello-controller/--compute-checklist-entities-from-card it (orgtrello-controller/--add-entity-to-entities it entities) adjacency)))
                  (list (orgtrello-hash/empty-hash) (orgtrello-hash/empty-hash))
                  cards))
 

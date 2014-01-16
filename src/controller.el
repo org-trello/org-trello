@@ -408,7 +408,7 @@
                    (orgtrello-log/msg *OT/INFO* "Computing card '%s' data..."
                                       (orgtrello-data/entity-name it))
                    (cl-destructuring-bind (entities adjacency) acc
-                     (orgtrello-controller/--compute-checklist-entities-from-card it (orgtrello-controller/--add-entity-to-entities entity-card entities) adjacency)))
+                     (orgtrello-controller/--compute-checklist-entities-from-card it (orgtrello-controller/--add-entity-to-entities it entities) adjacency)))
                  (list (orgtrello-hash/empty-hash) (orgtrello-hash/empty-hash))
                  cards))
 
