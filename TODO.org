@@ -790,7 +790,7 @@ CLOSED: [2014-01-16 jeu. 21:15]
 * DONE 0.2.8.2 [100%]
 CLOSED: [2014-01-16 jeu. 21:15]
 - [X] Fix another error on sync from trello routine
-* IN-PROGRESS 0.2.9 [16%]
+* IN-PROGRESS 0.2.9 [20%]
 - [X] Remove org-trello.el at the root of the code (as the package generates this file and the test load without it, no longer needs to be gitted)
 - [-] Invisible checkbox identifier - https://github.com/ardumont/org-trello/issues/98
   - [X] text properties to hide properties
@@ -798,7 +798,7 @@ CLOSED: [2014-01-16 jeu. 21:15]
   - [X] When removing all org-trello data, overlays destruction!
   - [X] When removing a checkbox/item entity, the associated overlay must be removed too.
   - [X] When removing card, overlays present in the card region must disappear too.
-  - [ ] Create a migration routine to install overlays on org-trello checkbox
+  - [X] Create a migration routine to install overlays on org-trello checkbox
   - [ ] Reference the migration routine in the README.md
   - [ ] Ensure sync-from-trello routine works with overlays too.
 - [ ] Release notes

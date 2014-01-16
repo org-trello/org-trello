@@ -137,6 +137,12 @@
      *do-save-buffer*
      *do-reload-setup*))
 
+(defun org-trello/migrate-checkbox-to-overlays () "A simple routine to migrate the new usage of checkbox with overlays (which permits to hide the properties from the user)"
+  (interactive)
+  (orgtrello-action/--controls-or-actions-then-do
+     '(orgtrello-controller/--setup-properties orgtrello-controller/--control-keys orgtrello-controller/--control-properties orgtrello-controller/--control-encoding)
+     'orgtrello-controller/migrate-checkbox-with-overlays!))
+
 (defun org-trello/activate-natural-org-checkboxes () "Activate the natural org-checkboxes - http://orgmode.org/manual/Checkboxes.html"
   (interactive)
   (setq *ORGTRELLO-NATURAL-ORG-CHECKLIST* t)
@@ -167,23 +173,24 @@
   (orgtrello-log/msg 0 (org-trello/--help-describing-bindings-template *ORGTRELLO-MODE-PREFIX-KEYBINDING* org-trello/--list-of-interactive-command-binding-couples)))
 
 (defvar org-trello/--list-of-interactive-command-binding-couples
-  '((org-trello/version                     "v" "Display the current version installed.")
-    (org-trello/install-key-and-token       "i" "Install the keys and the access-token.")
-    (org-trello/install-board-and-lists-ids "I" "Select the board and attach the todo, doing and done list.")
-    (org-trello/check-setup                 "d" "Check that the setup is ok. If everything is ok, will simply display 'Setup ok!'.")
-    (org-trello/assign-me                   "a" "Assign oneself to the card.")
-    (org-trello/unassign-me                 "u" "Unassign oneself of the card")
-    (org-trello/delete-setup                "D" "Clean up the org buffer from all org-trello informations.")
-    (org-trello/create-board                "b" "Create interactively a board and attach the org-mode file to this trello board.")
-    (org-trello/sync-from-trello            "S" "Synchronize the org-mode file from the trello board (trello -> org-mode).")
-    (org-trello/sync-entity                 "c" "Create/Update an entity (card/checklist/item) depending on its level and status. Do not deal with level superior to 4.")
-    (org-trello/sync-full-entity            "C" "Create/Update a complete entity card/checklist/item and its subtree (depending on its level).")
-    (org-trello/kill-entity                 "k" "Kill the entity (and its arborescence tree) from the trello board and the org buffer.")
-    (org-trello/kill-all-entities           "K" "Kill all the entities (and their arborescence tree) from the trello board and the org buffer.")
-    (org-trello/sync-to-trello              "s" "Synchronize the org-mode file to the trello board (org-mode -> trello).")
-    (org-trello/jump-to-card                "j" "Jump to card in browser.")
-    (org-trello/jump-to-trello-board        "J" "Open the browser to your current trello board.")
-    (org-trello/help-describing-bindings    "h" "This help message."))
+  '((org-trello/version                      "v" "Display the current version installed.")
+    (org-trello/install-key-and-token        "i" "Install the keys and the access-token.")
+    (org-trello/install-board-and-lists-ids  "I" "Select the board and attach the todo, doing and done list.")
+    (org-trello/check-setup                  "d" "Check that the setup is ok. If everything is ok, will simply display 'Setup ok!'.")
+    (org-trello/assign-me                    "a" "Assign oneself to the card.")
+    (org-trello/unassign-me                  "u" "Unassign oneself of the card")
+    (org-trello/delete-setup                 "D" "Clean up the org buffer from all org-trello informations.")
+    (org-trello/create-board                 "b" "Create interactively a board and attach the org-mode file to this trello board.")
+    (org-trello/sync-from-trello             "S" "Synchronize the org-mode file from the trello board (trello -> org-mode).")
+    (org-trello/sync-entity                  "c" "Create/Update an entity (card/checklist/item) depending on its level and status. Do not deal with level superior to 4.")
+    (org-trello/sync-full-entity             "C" "Create/Update a complete entity card/checklist/item and its subtree (depending on its level).")
+    (org-trello/kill-entity                  "k" "Kill the entity (and its arborescence tree) from the trello board and the org buffer.")
+    (org-trello/kill-all-entities            "K" "Kill all the entities (and their arborescence tree) from the trello board and the org buffer.")
+    (org-trello/sync-to-trello               "s" "Synchronize the org-mode file to the trello board (org-mode -> trello).")
+    (org-trello/jump-to-card                 "j" "Jump to card in browser.")
+    (org-trello/jump-to-trello-board         "J" "Open the browser to your current trello board.")
+    (org-trello/migrate-checkbox-to-overlays "M" "Migrate the use of checkbox to overlays (to hide the checkbox properties from the user). This is to be used once after the installation of org-trello 0.2.9.")
+    (org-trello/help-describing-bindings     "h" "This help message."))
   "List of command and default binding without the prefix key.")
 
 (defun org-trello/--install-local-keybinding-map! (previous-org-trello-mode-prefix-keybinding org-trello-mode-prefix-keybinding interactive-command-binding-to-install)

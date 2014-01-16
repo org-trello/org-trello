@@ -45,6 +45,13 @@
 (defun orgtrello-cbx/--make-properties-as-string (properties)
   (format ":PROPERTIES: %s" (orgtrello-cbx/--to-properties properties)))
 
+(defun orgtrello-cbx/install-overlays! (start-position) "Install org-trello overlays (first remove the current overlay on line)."
+  ;; remove overlay present on current position
+  (remove-overlays (point-at-bol) (point-at-eol))
+  ;; build an overlay to hide the cbx properties
+  (overlay-put (make-overlay start-position (point-at-eol) (current-buffer) t nil)
+               'invisible 'org-trello-cbx-property))
+
 (defun orgtrello-cbx/--write-properties-at-point (pt properties) "Given the new properties, update the current entry."
   (save-excursion
     (defvar orgtrello-cbx/--tmp-point)
@@ -57,11 +64,8 @@
       (insert " ")
       (setq orgtrello-cbx/--tmp-point (point))
       (insert updated-property)
-      ;; remove overlay present on current position
-      (remove-overlays (point-at-bol) (point-at-eol))
-      ;; build an overlay to hide the cbx properties
-      (overlay-put (make-overlay orgtrello-cbx/--tmp-point (point-at-eol) (current-buffer) t nil)
-                   'invisible 'org-trello-cbx-property) ;; outline to use the default one but beware with outline, there is an ellipsis (...)
+      (orgtrello-cbx/install-overlays! orgtrello-cbx/--tmp-point)
+       ;; outline to use the default one but beware with outline, there is an ellipsis (...)
       (format "%s%s" checkbox-title updated-property))))
 
 (defun orgtrello-cbx/--key-to-search (key) "Search the key key as a symbol"
