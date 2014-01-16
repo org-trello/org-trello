@@ -216,8 +216,9 @@
   (delete-region start end))
 
 (defun orgtrello-action/--delete-card-region () "Delete the card region (including overlays and line)"
+  (org-back-to-heading)
   (let ((orgtrello-action/--starting-point (point))
-        (orgtrello-action/--ending-point   (save-excursion (1- (if (org-goto-sibling) (point) (point-max)))))) ;; next card or point-max
+        (orgtrello-action/--ending-point   (save-excursion (if (org-goto-sibling) (point) (point-max))))) ;; next card or point-max
     (orgtrello-action/--delete-region orgtrello-action/--starting-point orgtrello-action/--ending-point)))
 
 (defun orgtrello-action/--delete-checkbox-checklist-region () "Delete the checklist region"
