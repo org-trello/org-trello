@@ -934,7 +934,8 @@
   (save-excursion
     (goto-char (point-min))
     (while (re-search-forward ":PROPERTIES: {.*" nil t)
-      (replace-match "" nil t))))
+      (remove-overlays (point-at-bol) (point-at-eol)) ;; the current overlay on this line
+      (replace-match "" nil t))))                     ;; then remove the property
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-controller loaded!")
 
