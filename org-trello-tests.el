@@ -539,18 +539,6 @@
 (expectations (desc "orgtrello-cbx/--read-properties")
   (expect '((orgtrello-id . "123")) (orgtrello-cbx/--read-properties "- [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}")))
 
-(expectations (desc "orgtrello-cbx/--update-properties")
-  (expect "- [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}"
-    (orgtrello-cbx/--update-properties "- [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"abc\"}" `((,*ORGTRELLO-ID* . "123"))))
-  (expect "- [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"456\"}"
-    (orgtrello-cbx/--update-properties "- [X] some checkbox" `((,*ORGTRELLO-ID* . "456"))))
-  (expect "- [X] some checkbox :PROPERTIES: {}"
-    (orgtrello-cbx/--update-properties "- [X] some checkbox" nil))
-  (expect "- [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"789\"}"
-    (orgtrello-cbx/--update-properties "- [X] some checkbox :PROPERTIES:" `((,*ORGTRELLO-ID* . "789"))))
-  (expect "- [X] some checkbox :PROPERTIES: {}"
-    (orgtrello-cbx/--update-properties "- [X] some checkbox :PROPERTIES:" nil)))
-
 (expectations (desc "orgtrello-cbx/--org-get-property")
   (expect "123"    (orgtrello-cbx/--org-get-property "orgtrello-id" `((orgtrello-id . "123"))))
   (expect nil      (orgtrello-cbx/--org-get-property "orgtrello-id" `(("orgtrello-id" . "123"))))
@@ -2035,10 +2023,6 @@ hello there
 :END:
 - [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}")
        (orgtrello-buffer/extract-description-from-current-position))))
-
-(expectations
- (expect #("same-string" 0 11 (invisible org-link)) (orgtrello-cbx/--make-string-invisible "same-string")))
-
 
 (provide 'org-trello-tests)
 ;;; org-trello-tests ends here
