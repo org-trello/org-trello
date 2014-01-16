@@ -801,7 +801,6 @@ CLOSED: [2014-01-16 jeu. 21:15]
   - [ ] Create a migration routine to install overlays on org-trello checkbox
   - [ ] Reference the migration routine in the README.md
   - [ ] Ensure sync-from-trello routine works with overlays too.
-- [ ] Extract a new namespace mode for the org-trello mode definition
 - [ ] Release notes
 - [ ] Update version
 - [ ] Release
