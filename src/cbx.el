@@ -185,6 +185,11 @@ This is a list with the following elements:
   (when (and (not (org-at-heading-p)) (< (point) (point-max)) (not (orgtrello-cbx/checkbox-p)))
         (orgtrello-cbx/--goto-next-checkbox)))
 
+(defun orgtrello-cbx/--goto-next-checkbox-with-same-level! (level) "Compute the next checkbox's beginning of line (with the same level). Does not preserve the current position. If hitting a heading or the end of the file, return nil."
+  (forward-line)
+  (when (and (not (org-at-heading-p)) (< (point) (point-max)) (not (trace :equality-level (= level (trace :current-level (orgtrello-data/current-level))))) (not (orgtrello-cbx/checkbox-p)))
+        (orgtrello-cbx/--goto-next-checkbox-with-same-level level)))
+
 (defun orgtrello-cbx/--map-checkboxes (level fn-to-execute) "Map over the checkboxes and execute fn when in checkbox. Does not preserve the cursor position. Do not exceed the point-max."
   (orgtrello-cbx/--goto-next-checkbox)
   (when (< level (orgtrello-data/current-level))
