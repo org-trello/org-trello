@@ -799,7 +799,7 @@ CLOSED: [2014-01-16 jeu. 21:15]
   - [X] When removing a checkbox/item entity, the associated overlay must be removed too.
   - [X] When removing card, overlays present in the card region must disappear too.
   - [X] Create a migration routine to install overlays on org-trello checkbox
-  - [ ] Reference the migration routine in the README.md
+  - [X] Reference the migration routine in the README.md
   - [ ] Ensure sync-from-trello routine works with overlays too.
 - [ ] Release notes
 - [ ] Update version
