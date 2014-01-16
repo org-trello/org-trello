@@ -534,8 +534,9 @@ If you want to use this, we recommand to use the native org checklists - http://
       (insert checkbox-title)
       (setq orgtrello-cbx/--tmp-point (point))
       (insert updated-property)
-      (when (< 0 (length (overlay-lists))) (remove-overlays (point-at-bol) (point-at-eol)))
-      ;; build an overlay to hide the cbx id
+      ;; remove overlay present on current position
+      (remove-overlays (point-at-bol) (point-at-eol))
+      ;; build an overlay to hide the cbx properties
       (overlay-put (make-overlay orgtrello-cbx/--tmp-point (point-at-eol) (current-buffer) t nil)
                    'invisible 'org-trello-cbx-property) ;; outline to use the default one but beware with outline, there is an ellipsis (...)
       (format "%s%s" checkbox-title updated-property))))
