@@ -390,8 +390,8 @@
   (let ((card-id (orgtrello-data/entity-id card)))
     (--> card
          (orgtrello-controller/--retrieve-checklist-from-card it)
-         (-reduce-from (lambda (acc checklist)
-                          (cl-destructuring-bind (entities adjacency) acc
+         (-reduce-from (lambda (acc-entities-adj checklist)
+                          (cl-destructuring-bind (entities adjacency) acc-entities-adj
                             (orgtrello-controller/--compute-items-from-checklist checklist (orgtrello-controller/--add-entity-to-entities checklist entities) (orgtrello-controller/--add-entity-to-adjacency checklist card adjacency))))
                        (list entities adjacency)
                        it))));; at last complete checklist with item
