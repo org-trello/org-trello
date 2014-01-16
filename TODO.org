@@ -784,7 +784,24 @@ CLOSED: [2014-01-05 dim. 17:32]
 - [X] Version
 - [X] Update doc
 - [X] Release notes
-* TODO 0.2.9 [%]
+* DONE 0.2.8.1 [100%]
+CLOSED: [2014-01-16 jeu. 21:15]
+- [X] Fix error on sync from trello routine
+* DONE 0.2.8.2 [100%]
+CLOSED: [2014-01-16 jeu. 21:15]
+- [X] Fix another error on sync from trello routine
+* IN-PROGRESS 0.2.9 [0%]
+- [-] Invisible checkbox identifier - https://github.com/ardumont/org-trello/issues/98
+  - [X] text properties to hide properties
+  - [ ] When inserting marker (because data is not yet synced, this must be inside an overlay too)
+  - [ ] When removing card, overlays present in the region of the card must disappear too.
+  - [ ] When removing all org-trello data, overlays destruction!
+  - [ ] Create a migration routine for existing buffer without overlay
+- [ ] Release notes
+- [ ] Update version
+- [ ] Release
+* TODO 0.3.0 [%]
+- [ ] Clean the code regarding the old checklist/item entities (with stars)
 - [ ] Improve the upgrading version way (writed at 2 places, 1 is better to avoid duplication)
 - [ ] Synchronize user comments - https://github.com/ardumont/org-trello/issues/86
 - [ ] More fined grained use of the trello api (retrieve only data we use) - https://github.com/ardumont/org-trello/issues/69
@@ -795,10 +812,8 @@ CLOSED: [2014-01-05 dim. 17:32]
 - [ ] One command to sync them all - https://github.com/ardumont/org-trello/issues/59
 - [ ] Expose a public trello board showing the status of org-trello and reference it inside the release notes
 - [ ] Now that elnode is here, this may be simpler to use a fake trello server (use clojure :D)
-- [ ] Update the literate org-trello.org (completely desynchronized since 0.1.2) -> coding it to avoid doing manual split (I see the irony)
 - [ ] POC: use a temporary buffer to sync with trello, when done, merge with the user's buffer.
 - [ ] Improve tests coverage - some major and important functionalities are not covered (due at time of ignorance on how to do it, there is only so much one can do!
-- [ ] Release notes
 * TODO Template [0%]
 - [ ] Backlog
 - [ ] Version
