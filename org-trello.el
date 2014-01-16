@@ -189,16 +189,12 @@ If you want to use this, we recommand to use the native org checklists - http://
     h))
 
 (defun orgtrello-hash/make-properties (properties) "Given a list of key value pair, return a hash table."
-  (--reduce-from (progn
-                   (puthash (car it) (cdr it) acc)
-                   acc)
+  (--reduce-from (progn (puthash (car it) (cdr it) acc) acc)
                  (orgtrello-hash/empty-hash)
                  properties))
 
 (defun orgtrello-hash/make-transpose-properties (properties) "Given a list of key value pair, return a hash table with key/value transposed."
-  (--reduce-from (progn
-                  (puthash (cdr it) (car it) acc)
-                  acc)
+  (--reduce-from (progn (puthash (cdr it) (car it) acc) acc)
                  (orgtrello-hash/empty-hash)
                  properties))
 
@@ -461,15 +457,15 @@ If you want to use this, we recommand to use the native org checklists - http://
   (cond ((eq :json-false entities)                                           nil)
         ((--any? (funcall it entities) '(stringp symbolp numberp functionp)) entities)
         ((arrayp entities)                                                   (mapcar 'orgtrello-data/parse-data entities))
-        (t                                                                                  (let ((hmap (--reduce-from (let ((key (car it))
-                                                                                                                             (val (cdr it)))
-                                                                                                                         (-when-let (new-key (orgtrello-data/--deal-with-key key))
-                                                                                                                                    (puthash new-key (orgtrello-data/parse-data val) acc))
-                                                                                                                         acc)
-                                                                                                                       (orgtrello-hash/empty-hash)
-                                                                                                                       entities)))
-                                                                                              (-when-let (level (orgtrello-data/--compute-level hmap)) (puthash :level level hmap))
-                                                                                              hmap))))
+        (t                                                                   (let ((hmap (--reduce-from (let ((key (car it))
+                                                                                                              (val (cdr it)))
+                                                                                                          (-when-let (new-key (orgtrello-data/--deal-with-key key))
+                                                                                                                     (puthash new-key (orgtrello-data/parse-data val) acc))
+                                                                                                          acc)
+                                                                                                        (orgtrello-hash/empty-hash)
+                                                                                                        entities)))
+                                                                               (-when-let (level (orgtrello-data/--compute-level hmap)) (puthash :level level hmap))
+                                                                               hmap))))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-data loaded!")
 
@@ -2071,8 +2067,8 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   (let ((card-id (orgtrello-data/entity-id card)))
     (--> card
          (orgtrello-controller/--retrieve-checklist-from-card it)
-         (-reduce-from (lambda (acc checklist)
-                          (cl-destructuring-bind (entities adjacency) acc
+         (-reduce-from (lambda (acc-entities-adj checklist)
+                          (cl-destructuring-bind (entities adjacency) acc-entities-adj
                             (orgtrello-controller/--compute-items-from-checklist checklist (orgtrello-controller/--add-entity-to-entities checklist entities) (orgtrello-controller/--add-entity-to-adjacency checklist card adjacency))))
                        (list entities adjacency)
                        it))));; at last complete checklist with item
