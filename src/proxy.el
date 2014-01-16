@@ -223,7 +223,9 @@
 
 (defun orgtrello-action/--delete-checkbox-checklist-region () "Delete the checklist region"
   (let ((orgtrello-action/--starting-point (point-at-bol))
-        (orgtrello-action/--ending-point (save-excursion (-if-let (result (orgtrello-cbx/--goto-next-checkbox)) result (orgtrello-cbx/--compute-next-card-point))))) ;; next checkbox or next card or point-max
+        (orgtrello-action/--ending-point (save-excursion (-if-let (result (orgtrello-cbx/--goto-next-checkbox-with-same-level! *CHECKLIST-LEVEL*))
+                                                                  result
+                                                                  (orgtrello-cbx/--compute-next-card-point))))) ;; next checkbox or next card or point-max
     (orgtrello-action/--delete-region orgtrello-action/--starting-point orgtrello-action/--ending-point)))
 
 (defun orgtrello-action/--delete-checkbox-item-region () "Delete the item region"

@@ -797,7 +797,7 @@ CLOSED: [2014-01-16 jeu. 21:15]
   - [X] When inserting marker (because data is not yet synced, this must be inside an overlay too)
   - [X] When removing all org-trello data, overlays destruction!
   - [X] When removing a checkbox/item entity, the associated overlay must be removed too.
-  - [ ] When removing card, overlays present in the card region must disappear too.
+  - [X] When removing card, overlays present in the card region must disappear too.
   - [ ] Create a migration routine to install overlays on org-trello checkbox
   - [ ] Reference the migration routine in the README.md
   - [ ] Ensure sync-from-trello routine works with overlays too.
