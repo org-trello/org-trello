@@ -45,9 +45,12 @@
 (defun orgtrello-cbx/--make-properties-as-string (properties)
   (format ":PROPERTIES: %s" (orgtrello-cbx/--to-properties properties)))
 
+(defun orgtrello-cbx/remove-overlays! (start end) "Remove the overlays presents between start and end in the current buffer"
+  (remove-overlays (point-at-bol) (point-at-eol)))
+
 (defun orgtrello-cbx/install-overlays! (start-position) "Install org-trello overlays (first remove the current overlay on line)."
   ;; remove overlay present on current position
-  (remove-overlays (point-at-bol) (point-at-eol))
+  (orgtrello-cbx/remove-overlays! (point-at-bol) (point-at-eol))
   ;; build an overlay to hide the cbx properties
   (overlay-put (make-overlay start-position (point-at-eol) (current-buffer) t nil)
                'invisible 'org-trello-cbx-property))

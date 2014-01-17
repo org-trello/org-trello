@@ -937,6 +937,12 @@
       (remove-overlays (point-at-bol) (point-at-eol)) ;; the current overlay on this line
       (replace-match "" nil t))))                     ;; then remove the property
 
+(defun orgtrello-controller/remove-overlays! () "Remove every org-trello overlays from the current buffer."
+  (save-excursion
+    (goto-char (point-min))
+    (while (re-search-forward ":PROPERTIES: {.*" nil t)
+      (orgtrello-cbx/remove-overlays! (match-beginning 0) (match-end 0)))))
+
 (defun orgtrello-controller/migrate-checkbox-with-overlays! () "Install overlays throughout the all buffers."
   (save-excursion
     (goto-char (point-min))
