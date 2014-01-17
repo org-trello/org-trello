@@ -805,7 +805,11 @@ CLOSED: [2014-01-16 jeu. 21:15]
 - [ ] Release notes
 - [ ] Update version
 - [ ] Release
-* TODO 0.3.0 [%]
+* TODO 0.3.0 [0%]
+- [ ] Extract a data representation for org-trello buffer to decorrelate the file serialization file from the computation (decomplecting -> ease of testing, computation, overall maintenance, sandbox i/o to a minimum)
+  - [ ] extracter (from file/region to data)
+  - [ ] updater (from data to updated data)
+  - [ ] serializer (from data to file/region update)
 - [ ] Clean the code regarding the old checklist/item entities (with stars)
 - [ ] Improve the upgrading version way (writed at 2 places, 1 is better to avoid duplication)
 - [ ] Synchronize user comments - https://github.com/ardumont/org-trello/issues/86
