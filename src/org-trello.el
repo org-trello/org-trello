@@ -223,6 +223,8 @@
             (add-to-invisibility-spec '(org-trello-cbx-property)) ;; for an ellipsis (...) change to '(org-trello-cbx-property . t)
             ;; start the proxy
             (orgtrello-proxy/start)
+            ;; installing hooks
+            ;;(add-hook 'before-save-hook 'orgtrello-controller/migrate-checkbox-with-overlays!) ;; before-change-functions
             ;; a little message in the minibuffer to notify the user
             (orgtrello-log/msg *OT/NOLOG* (org-trello/--startup-message *ORGTRELLO-MODE-PREFIX-KEYBINDING*))))
 
@@ -232,6 +234,8 @@
             ;; remove the highlight
             ;; stop the proxy
             (orgtrello-proxy/stop)
+            ;; installing hooks
+            ;;(remove-hook 'before-save-hook 'orgtrello-controller/migrate-checkbox-with-overlays!)
             ;; a little message in the minibuffer to notify the user
             (orgtrello-log/msg *OT/NOLOG* "org-trello/ot is off!")))
 
