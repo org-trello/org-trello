@@ -89,8 +89,12 @@ Tested on:
 ## 0.2.9
 
 From 0.2.9 onward, the property "orgtrello-id" from the checkbox (checklists, items) will be hidden.
-First, in your existing org-trello buffer, you need to run the `M-x org-trello/migrate-checkbox-to-overlays` (C-c o M) interactive command.
-This will install [overlays](https://www.gnu.org/software/emacs/manual/html_node/elisp/Overlays.html) (implementation detail which permits to hide those properties).
+You should not have to do anything.
+
+*Note*
+- Upon activating org-trello minor mode, all existing checkbox will be migrated and should disappear before your eyes.
+- Symmetrically, when deactivating org-trello, all checkbox will appear.
+- For this, org-trello use [overlays](https://www.gnu.org/software/emacs/manual/html_node/elisp/Overlays.html) (implementation detail which permits to hide buffer region).
 
 If you began to use org-trello, nothing to do.
 
