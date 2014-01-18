@@ -783,82 +783,55 @@ DEADLINE: <some-date>
 (expectations (desc "orgtrello-webadmin/--compute-filename-from-entity")
   (expect (format "%sorg-trello/3/test.org-123.el" elnode-webserver-docroot) (orgtrello-webadmin/--compute-filename-from-entity (orgtrello-hash/make-properties '((:level . 3) (:buffername . "test.org") (:position . "123"))))))
 
-(with-temp-buffer
-  (insert "- [X] call people [4/4] :PROPERTIES: {\"orgtrello-id\":\"456\"}")
-  (forward-line -1))
+(defmacro orgtrello-tests/with-temp-buffer (text body-test &optional nb-lines-forward)
+  `(with-temp-buffer
+     (org-mode)
+     (insert ,text)
+     (forward-line (if ,nb-lines-forward ,nb-lines-forward -1))
+     (org-trello-mode)
+     ,body-test))
+
+(defmacro orgtrello-tests/with-temp-buffer-and-return-buffer-content (text body-test &optional nb-line-forwards)
+  `(with-temp-buffer
+     (org-mode)
+     (insert ,text)
+     (forward-line (if ,nb-line-forwards ,nb-line-forwards -1))
+     (org-trello-mode)
+     ,body-test
+     (buffer-string)))
 
 (expectations (desc "orgtrello-cbx/--read-properties-from-point")
-  (expect '((orgtrello-id . "123")) (with-temp-buffer
-                                      (insert "- [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}")
-                                      (forward-line -1)
-                                      (orgtrello-cbx/--read-properties-from-point (point))))
-  (expect nil (with-temp-buffer
-                (insert "- [X] some checkbox :PROPERTIES: {}")
-                (forward-line -1)
-                (orgtrello-cbx/--read-properties-from-point (point))))
-  (expect nil (with-temp-buffer
-                (insert "- [X] some checkbox")
-                (forward-line -1)
-                (orgtrello-cbx/--read-properties-from-point (point)))))
+  (expect '((orgtrello-id . "123"))
+          (orgtrello-tests/with-temp-buffer "- [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}" (orgtrello-cbx/--read-properties-from-point (point))))
+  (expect nil
+          (orgtrello-tests/with-temp-buffer "- [X] some checkbox :PROPERTIES: {}" (orgtrello-cbx/--read-properties-from-point (point))))
+  (expect nil (orgtrello-tests/with-temp-buffer "- [X] some checkbox" (orgtrello-cbx/--read-properties-from-point (point)))))
 
 (expectations (desc "orgtrello-cbx/--write-properties-at-point")
   (expect "- [X] some checkbox:PROPERTIES: {\"orgtrello-id\":456}"
-    (with-temp-buffer
-      (insert "- [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}")
-      (forward-line -1)
-      (orgtrello-cbx/--write-properties-at-point (point) `(("orgtrello-id" . 456))))))
+          (orgtrello-tests/with-temp-buffer "- [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}" (orgtrello-cbx/--write-properties-at-point (point) `(("orgtrello-id" . 456))))))
 
 (expectations (desc "orgtrello-cbx/org-get-property")
   (expect "abc"
-    (with-temp-buffer
-      (insert "- [X] some checkbox                                                                :PROPERTIES: {\"orgtrello-id\":\"abc\"}")
-      (forward-line -1)
-      (orgtrello-cbx/org-get-property (point) "orgtrello-id")))
+          (orgtrello-tests/with-temp-buffer "- [X] some checkbox                                                                :PROPERTIES: {\"orgtrello-id\":\"abc\"}" (orgtrello-cbx/org-get-property (point) "orgtrello-id")))
   (expect nil
-    (with-temp-buffer
-      (insert "- [X] some checkbox                                                                :PROPERTIES: {\"orgtrello-id\":\"abc\"}")
-      (forward-line -1)
-      (orgtrello-cbx/org-get-property (point) "inexistant-id"))))
+          (orgtrello-tests/with-temp-buffer "- [X] some checkbox                                                                :PROPERTIES: {\"orgtrello-id\":\"abc\"}" (orgtrello-cbx/org-get-property (point) "inexistant-id"))))
 
 (expectations (desc "orgtrello-cbx/org-set-property")
   (expect "- [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"abc\"}"
-    (with-temp-buffer
-      (insert "- [X] some checkbox")
-      (forward-line -1)
-      (orgtrello-cbx/org-set-property "orgtrello-id" "abc")
-      (buffer-string)))
+          (orgtrello-tests/with-temp-buffer-and-return-buffer-content "- [X] some checkbox"  (orgtrello-cbx/org-set-property "orgtrello-id" "abc")))
   (expect "- [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"abc\"}"
-    (with-temp-buffer
-      (insert "- [X] some checkbox :PROPERTIES: {}")
-      (forward-line -1)
-      (orgtrello-cbx/org-set-property "orgtrello-id" "abc")
-      (buffer-string)))
+          (orgtrello-tests/with-temp-buffer-and-return-buffer-content "- [X] some checkbox :PROPERTIES: {}" (orgtrello-cbx/org-set-property "orgtrello-id" "abc")))
   (expect "- [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"def\"}"
-    (with-temp-buffer
-      (insert "- [X] some checkbox                                                                                                    :PROPERTIES: {\"orgtrello-id\":\"abc\"}")
-      (forward-line -1)
-      (orgtrello-cbx/org-set-property "orgtrello-id" "def")
-      (buffer-string))))
+          (orgtrello-tests/with-temp-buffer-and-return-buffer-content "- [X] some checkbox                                                                                :PROPERTIES: {\"orgtrello-id\":\"abc\"}" (orgtrello-cbx/org-set-property "orgtrello-id" "def"))))
 
 (expectations (desc "orgtrello-cbx/org-delete-property")
   (expect "- [X] some checkbox :PROPERTIES: {}"
-    (with-temp-buffer
-      (insert "- [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}")
-      (forward-line -1)
-      (orgtrello-cbx/org-delete-property "orgtrello-id")
-      (buffer-string)))
+          (orgtrello-tests/with-temp-buffer-and-return-buffer-content "- [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}" (orgtrello-cbx/org-delete-property "orgtrello-id")))
   (expect "- [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"def\"}"
-    (with-temp-buffer
-      (insert "- [X] some checkbox                                                                                         :PROPERTIES: {\"orgtrello-id\":\"def\"}")
-      (forward-line -1)
-      (orgtrello-cbx/org-delete-property "inexistant")
-      (buffer-string)))
+          (orgtrello-tests/with-temp-buffer-and-return-buffer-content  "- [X] some checkbox                                                    :PROPERTIES: {\"orgtrello-id\":\"def\"}" (orgtrello-cbx/org-delete-property "inexistant")))
   (expect "- [X] some checkbox :PROPERTIES: {}"
-    (with-temp-buffer
-      (insert "- [X] some checkbox")
-      (forward-line -1)
-      (orgtrello-cbx/org-delete-property "inexistant")
-      (buffer-string))))
+          (orgtrello-tests/with-temp-buffer-and-return-buffer-content "- [X] some checkbox" (orgtrello-cbx/org-delete-property "inexistant"))))
 
 (expectations (desc "orgtrello-query/--prepare-params-assoc!")
   (expect '((id . "id") (name . "some%20content%20to%20escape%20%26%20voila%21"))
@@ -971,55 +944,12 @@ DEADLINE: <some-date>
  (expect (format "%sorg-trello/3/" elnode-webserver-docroot) (orgtrello-elnode/compute-entity-level-dir *ITEM-LEVEL*)))
 
 (expectations (desc "orgtrello-cbx/--compute-next-card-point")
-  (expect 50
-    (with-temp-buffer
-      (insert "* heading\n")
-      (insert "- [ ] some checklist\n")
-      (insert "  - [ ] some item\n")
-      (orgtrello-cbx/--compute-next-card-point)))
-  (expect 70
-    (with-temp-buffer
-      (insert "#+TODO: TODO | DONE\n")
-      (insert "* heading\n")
-      (insert "- [ ] some checklist\n")
-      (insert "  - [ ] some item\n")
-      (forward-line -2)
-      (orgtrello-cbx/--compute-next-card-point)))
-  (expect 65
-    (with-temp-buffer
-      (insert "* heading\n")
-      (insert "- [ ] some checklist\n")
-      (insert "  - [ ] some item\n")
-      (insert "* next heading\n")
-      (forward-line -2)
-      (orgtrello-cbx/--compute-next-card-point)))
-  (expect 85
-    (with-temp-buffer
-      (insert "#+TODO: TODO | DONE\n")
-      (insert "* heading\n")
-      (insert "- [ ] some checklist\n")
-      (insert "  - [ ] some item\n")
-      (insert "* next heading\n")
-      (forward-line -2)
-      (orgtrello-cbx/--compute-next-card-point)))
-  (expect 85
-    (with-temp-buffer
-      (insert "#+TODO: TODO | DONE\n")
-      (insert "* heading\n")
-      (insert "- [ ] some checklist\n")
-      (insert "  - [ ] some item\n")
-      (insert "* next heading\n")
-      (forward-line -3)
-      (orgtrello-cbx/--compute-next-card-point)))
-  (expect 85
-    (with-temp-buffer
-      (insert "#+TODO: TODO | DONE\n")
-      (insert "* heading\n")
-      (insert "- [ ] some checklist\n")
-      (insert "  - [ ] some item\n")
-      (insert "* next heading\n")
-      (forward-line -4)
-      (orgtrello-cbx/--compute-next-card-point))))
+  (expect 50 (orgtrello-tests/with-temp-buffer "* heading\n- [ ] some checklist\n  - [ ] some item\n"                                      (orgtrello-cbx/--compute-next-card-point))) ;; return the max point
+  (expect 70 (orgtrello-tests/with-temp-buffer "#+TODO: TODO | DONE\n* heading\n- [ ] some checklist\n  - [ ] some item\n"                 (orgtrello-cbx/--compute-next-card-point))) ;; return the max point
+  (expect 65 (orgtrello-tests/with-temp-buffer "* heading\n- [ ] some checklist\n  - [ ] some item\n* next heading\n"                      (orgtrello-cbx/--compute-next-card-point)))
+  (expect 85 (orgtrello-tests/with-temp-buffer "#+TODO: TODO | DONE\n* heading\n- [ ] some checklist\n  - [ ] some item\n* next heading\n" (orgtrello-cbx/--compute-next-card-point)))
+  (expect 70 (orgtrello-tests/with-temp-buffer "#+TODO: TODO | DONE\n* heading\n- [ ] some checklist\n  - [ ] some item\n* next heading\n" (orgtrello-cbx/--compute-next-card-point) -3))
+  (expect 70 (orgtrello-tests/with-temp-buffer "#+TODO: TODO | DONE\n* heading\n- [ ] some checklist\n  - [ ] some item\n* next heading\n" (orgtrello-cbx/--compute-next-card-point) -4)))
 
 (expectations (desc "orgtrello-webadmin/--header-table")
   (expect '(tr nil (td nil) (td nil "Action") (td nil "Entity") (td nil "Delete")) (orgtrello-webadmin/--header-table)))
