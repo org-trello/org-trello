@@ -801,6 +801,8 @@ CLOSED: [2014-01-16 jeu. 21:15]
   - [X] Create a migration routine to install overlays on org-trello checkbox
   - [X] Reference the migration routine in the README.md
   - [X] Activate checkbox migration at org-trello-mode-on time (this way, no manual intervention from the user)
+  - [X] Install org-trello overlays at org-trello-mode startup
+  - [X] Uninstall org-trello overlays at org-trello mode shutdown
   - [ ] Ensure sync-from-trello routine works with overlays too.
 - [ ] Release notes
 - [ ] Update version

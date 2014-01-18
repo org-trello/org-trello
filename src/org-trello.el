@@ -219,10 +219,12 @@
 
 (add-hook 'org-trello-mode-on-hook
           (lambda ()
-            ;; buffer-invisibility-spec
-            (add-to-invisibility-spec '(org-trello-cbx-property)) ;; for an ellipsis (...) change to '(org-trello-cbx-property . t)
             ;; start the proxy
             (orgtrello-proxy/start)
+            ;; buffer-invisibility-spec
+            (add-to-invisibility-spec '(org-trello-cbx-property)) ;; for an ellipsis (...) change to '(org-trello-cbx-property . t)
+            ;; installing hooks
+            (add-hook 'before-save-hook 'orgtrello-controller/migrate-checkbox-with-overlays!) ;; before-change-functions
             ;; migrate all checkbox at org-trello mode activation
             (orgtrello-controller/migrate-checkbox-with-overlays!)
             ;; a little message in the minibuffer to notify the user
@@ -230,10 +232,14 @@
 
 (add-hook 'org-trello-mode-off-hook
           (lambda ()
-            (remove-from-invisibility-spec '(org-trello-cbx-property)) ;; for an ellipsis (...) change to '(org-trello-cbx-property . t)
-            ;; remove the highlight
             ;; stop the proxy
             (orgtrello-proxy/stop)
+            ;; remove the invisible property names
+            (remove-from-invisibility-spec '(org-trello-cbx-property)) ;; for an ellipsis (...) change to '(org-trello-cbx-property . t)
+            ;; installing hooks
+            (remove-hook 'before-save-hook 'orgtrello-controller/migrate-checkbox-with-overlays!)
+            ;; remove org-trello overlays
+            (orgtrello-controller/remove-overlays!)
             ;; a little message in the minibuffer to notify the user
             (orgtrello-log/msg *OT/NOLOG* "org-trello/ot is off!")))
 
