@@ -28,6 +28,23 @@
  (expect t (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data ())
                        (orgtrello-hash/empty-hash))))
 
+(defmacro orgtrello-tests/with-temp-buffer (text body-test &optional nb-lines-forward)
+  `(with-temp-buffer
+     (org-mode)
+     (insert ,text)
+     (forward-line (if ,nb-lines-forward ,nb-lines-forward -1))
+     (org-trello-mode)
+     ,body-test))
+
+(defmacro orgtrello-tests/with-temp-buffer-and-return-buffer-content (text body-test &optional nb-line-forwards)
+  `(with-temp-buffer
+     (org-mode)
+     (insert ,text)
+     (forward-line (if ,nb-line-forwards ,nb-line-forwards -1))
+     (org-trello-mode)
+     ,body-test
+     (buffer-string)))
+
 ;; ########################## orgtrello-hash
 
 (expectations (desc "testing orgtrello-hash/make-hash-org")
@@ -782,23 +799,6 @@ DEADLINE: <some-date>
 
 (expectations (desc "orgtrello-webadmin/--compute-filename-from-entity")
   (expect (format "%sorg-trello/3/test.org-123.el" elnode-webserver-docroot) (orgtrello-webadmin/--compute-filename-from-entity (orgtrello-hash/make-properties '((:level . 3) (:buffername . "test.org") (:position . "123"))))))
-
-(defmacro orgtrello-tests/with-temp-buffer (text body-test &optional nb-lines-forward)
-  `(with-temp-buffer
-     (org-mode)
-     (insert ,text)
-     (forward-line (if ,nb-lines-forward ,nb-lines-forward -1))
-     (org-trello-mode)
-     ,body-test))
-
-(defmacro orgtrello-tests/with-temp-buffer-and-return-buffer-content (text body-test &optional nb-line-forwards)
-  `(with-temp-buffer
-     (org-mode)
-     (insert ,text)
-     (forward-line (if ,nb-line-forwards ,nb-line-forwards -1))
-     (org-trello-mode)
-     ,body-test
-     (buffer-string)))
 
 (expectations (desc "orgtrello-cbx/--read-properties-from-point")
   (expect '((orgtrello-id . "123"))
