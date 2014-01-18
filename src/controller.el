@@ -543,12 +543,9 @@
 
 (defun orgtrello-controller/--update-property (id orgcheckbox-p) "Update the property depending on the nature of thing to sync. Move the cursor position."
   (if orgcheckbox-p
-      (progn
-        ;; need to get back one line backward for the checkboxes as their properties is at the same level (otherwise, for headings we do not care)
-        (forward-line -1)
-        (orgtrello-action/set-property *ORGTRELLO-ID* id)
-        ;; getting back normally for the rest
-        (forward-line))
+      (save-excursion
+        (forward-line -1) ;; need to get back one line backward for the checkboxes as their properties is at the same level (otherwise, for headings we do not care)
+        (orgtrello-action/set-property *ORGTRELLO-ID* id))
       (orgtrello-action/set-property *ORGTRELLO-ID* id)))
 
 (defun orgtrello-controller/--write-entity! (entity-id entity) "Write the entity in the buffer to the current position. Move the cursor position."
