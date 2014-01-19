@@ -137,12 +137,6 @@
      *do-save-buffer*
      *do-reload-setup*))
 
-(defun org-trello/migrate-checkbox-to-overlays () "A simple routine to migrate the new usage of checkbox with overlays (which permits to hide the properties from the user)"
-  (interactive)
-  (orgtrello-action/--controls-or-actions-then-do
-     '(orgtrello-controller/--setup-properties orgtrello-controller/--control-keys orgtrello-controller/--control-properties orgtrello-controller/--control-encoding)
-     'orgtrello-controller/migrate-checkbox-with-overlays!))
-
 (defun org-trello/activate-natural-org-checkboxes () "Activate the natural org-checkboxes - http://orgmode.org/manual/Checkboxes.html"
   (interactive)
   (setq *ORGTRELLO-NATURAL-ORG-CHECKLIST* t)
@@ -189,7 +183,6 @@
     (org-trello/sync-to-trello               "s" "Synchronize the org-mode file to the trello board (org-mode -> trello).")
     (org-trello/jump-to-card                 "j" "Jump to card in browser.")
     (org-trello/jump-to-trello-board         "J" "Open the browser to your current trello board.")
-    (org-trello/migrate-checkbox-to-overlays "M" "Migrate the use of checkbox to overlays (to hide the checkbox properties from the user). This is to be used once after the installation of org-trello 0.2.9.")
     (org-trello/help-describing-bindings     "h" "This help message."))
   "List of command and default binding without the prefix key.")
 
@@ -224,9 +217,9 @@
             ;; buffer-invisibility-spec
             (add-to-invisibility-spec '(org-trello-cbx-property)) ;; for an ellipsis (...) change to '(org-trello-cbx-property . t)
             ;; installing hooks
-            (add-hook 'before-save-hook 'orgtrello-controller/migrate-checkbox-with-overlays!) ;; before-change-functions
+            (add-hook 'before-save-hook 'orgtrello-controller/install-overlays!) ;; before-change-functions
             ;; migrate all checkbox at org-trello mode activation
-            (orgtrello-controller/migrate-checkbox-with-overlays!)
+            (orgtrello-controller/install-overlays!)
             ;; a little message in the minibuffer to notify the user
             (orgtrello-log/msg *OT/NOLOG* (org-trello/--startup-message *ORGTRELLO-MODE-PREFIX-KEYBINDING*))))
 
@@ -237,7 +230,7 @@
             ;; remove the invisible property names
             (remove-from-invisibility-spec '(org-trello-cbx-property)) ;; for an ellipsis (...) change to '(org-trello-cbx-property . t)
             ;; installing hooks
-            (remove-hook 'before-save-hook 'orgtrello-controller/migrate-checkbox-with-overlays!)
+            (remove-hook 'before-save-hook 'orgtrello-controller/install-overlays!)
             ;; remove org-trello overlays
             (orgtrello-controller/remove-overlays!)
             ;; a little message in the minibuffer to notify the user

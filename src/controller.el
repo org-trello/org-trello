@@ -938,7 +938,7 @@
 (defun orgtrello-controller/remove-overlays! () "Remove every org-trello overlays from the current buffer."
   (orgtrello-cbx/remove-overlays! (point-min) (point-max)))
 
-(defun orgtrello-controller/migrate-checkbox-with-overlays! () "Install overlays throughout the all buffers."
+(defun orgtrello-controller/install-overlays! () "Install overlays throughout the all buffers."
   (orgtrello-controller/remove-overlays!)
   (save-excursion
     (goto-char (point-min))

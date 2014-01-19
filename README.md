@@ -88,8 +88,7 @@ Tested on:
 
 ## 0.2.9
 
-From 0.2.9 onward, the property "orgtrello-id" from the checkbox (checklists, items) will be hidden.
-You should not have to do anything.
+For information, from 0.2.9 onward, the property "orgtrello-id" from the checkbox (checklists, items) will be hidden.
 
 *Note*
 - Upon activating org-trello minor mode, all existing checkbox will be migrated and should disappear before your eyes.
@@ -408,7 +407,6 @@ Keybindings        | Interactive commands                             | Descript
 <kbd>C-c o u</kbd> | `M-x org-trello/unassign-me`                     | Unassign one-self from the current card
 <kbd>C-c o j</kbd> | `M-x org-trello/jump-to-card`                    | Jump to current card
 <kbd>C-c o J</kbd> | `M-x org-trello/jump-to-trello-board`            | Jump to current trello board
-<kbd>C-c o M</kbd> | `M-x org-trello/migrate-checkbox-to-overlays`    | Migrate the use of checkbox to overlays (to hide the checkbox properties from the user). This is to be used once after the installation of org-trello 0.2.9.
 <kbd>C-c o h</kbd> | `M-x org-trello/help-describing-bindings`        | This help message.
 
 # Use cases

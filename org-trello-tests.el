@@ -1584,7 +1584,6 @@ C-c o K - M-x org-trello/kill-all-entities - Kill all the entities (and their ar
 C-c o s - M-x org-trello/sync-to-trello - Synchronize the org-mode file to the trello board (org-mode -> trello).
 C-c o j - M-x org-trello/jump-to-card - Jump to card in browser.
 C-c o J - M-x org-trello/jump-to-trello-board - Open the browser to your current trello board.
-C-c o M - M-x org-trello/migrate-checkbox-to-overlays - Migrate the use of checkbox to overlays (to hide the checkbox properties from the user). This is to be used once after the installation of org-trello 0.2.9.
 C-c o h - M-x org-trello/help-describing-bindings - This help message."
       (org-trello/--help-describing-bindings-template *ORGTRELLO-MODE-PREFIX-KEYBINDING* org-trello/--list-of-interactive-command-binding-couples)))
 
