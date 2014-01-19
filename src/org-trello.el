@@ -210,8 +210,8 @@
   :lighter    " ot"
   :after-hook (org-trello/install-local-prefix-mode-keybinding! *ORGTRELLO-MODE-PREFIX-KEYBINDING*))
 
-(defun org-trello-mode-on-hook-fn (&optional full-mode) "Actions to do when org-trello starts."
-  (unless full-mode
+(defun org-trello-mode-on-hook-fn (&optional partial-mode) "Actions to do when org-trello starts."
+  (unless partial-mode
           (orgtrello-proxy/start)
           ;; buffer-invisibility-spec
           (add-to-invisibility-spec '(org-trello-cbx-property)) ;; for an ellipsis (...) change to '(org-trello-cbx-property . t)
@@ -222,8 +222,8 @@
           ;; a little message in the minibuffer to notify the user
           (orgtrello-log/msg *OT/NOLOG* (org-trello/--startup-message *ORGTRELLO-MODE-PREFIX-KEYBINDING*))))
 
-(defun org-trello-mode-off-hook-fn (&optional full-mode) "Actions to do when org-trello stops."
-  (unless full-mode
+(defun org-trello-mode-off-hook-fn (&optional partial-mode) "Actions to do when org-trello stops."
+  (unless partial-mode
           (orgtrello-proxy/stop)
           ;; remove the invisible property names
           (remove-from-invisibility-spec '(org-trello-cbx-property)) ;; for an ellipsis (...) change to '(org-trello-cbx-property . t)
@@ -234,9 +234,9 @@
           ;; a little message in the minibuffer to notify the user
           (orgtrello-log/msg *OT/NOLOG* "org-trello/ot is off!")))
 
-(add-hook 'org-trello-mode-on-hook (lambda () (org-trello-mode-on-hook-fn t)))
+(add-hook 'org-trello-mode-on-hook 'org-trello-mode-on-hook-fn)
 
-(remove-hook 'org-trello-mode-off-hook (lambda () (org-trello-mode-off-hook-fn t)) )
+(add-hook 'org-trello-mode-off-hook 'org-trello-mode-off-hook-fn)
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello loaded!")
 
