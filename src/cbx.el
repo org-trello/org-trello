@@ -57,19 +57,14 @@
 
 (defun orgtrello-cbx/--write-properties-at-point (pt properties) "Given the new properties, update the current entry."
   (save-excursion
-    (defvar orgtrello-cbx/--tmp-point)
     (goto-char pt)
     (let* ((checkbox-title   (-> (orgtrello-cbx/--read-checkbox!) orgtrello-cbx/--checkbox-data))
-           (updated-property (orgtrello-cbx/--make-properties-as-string properties)))
+           (updated-property (orgtrello-cbx/--make-properties-as-string properties))
+           (text-to-insert   (format "%s %s" checkbox-title updated-property)))
       (beginning-of-line)
       (kill-line)
-      (insert checkbox-title)
-      (insert " ")
-      (setq orgtrello-cbx/--tmp-point (point))
-      (insert updated-property)
-      (orgtrello-cbx/install-overlays! orgtrello-cbx/--tmp-point)
-       ;; outline to use the default one but beware with outline, there is an ellipsis (...)
-      (format "%s%s" checkbox-title updated-property))))
+      (insert text-to-insert)
+      text-to-insert)))
 
 (defun orgtrello-cbx/--key-to-search (key) "Search the key key as a symbol"
   (if (stringp key) (intern key) key))

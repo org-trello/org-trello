@@ -813,7 +813,7 @@ DEADLINE: <some-date>
   (expect nil (orgtrello-tests/with-temp-buffer "- [X] some checkbox" (orgtrello-cbx/--read-properties-from-point (point)))))
 
 (expectations (desc "orgtrello-cbx/--write-properties-at-point")
-  (expect "- [X] some checkbox:PROPERTIES: {\"orgtrello-id\":456}"
+  (expect "- [X] some checkbox :PROPERTIES: {\"orgtrello-id\":456}"
           (orgtrello-tests/with-temp-buffer "- [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}" (orgtrello-cbx/--write-properties-at-point (point) `(("orgtrello-id" . 456))))))
 
 (expectations (desc "orgtrello-cbx/org-get-property")
