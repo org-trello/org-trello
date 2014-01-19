@@ -790,7 +790,7 @@ CLOSED: [2014-01-16 jeu. 21:15]
 * DONE 0.2.8.2 [100%]
 CLOSED: [2014-01-16 jeu. 21:15]
 - [X] Fix another error on sync from trello routine
-* IN-PROGRESS 0.2.9 [37%]
+* IN-PROGRESS 0.2.9 [40%]
 - [X] Remove org-trello.el at the root of the code (as the package generates this file and the test load without it, no longer needs to be gitted)
 - [X] Invisible checkbox identifier - https://github.com/ardumont/org-trello/issues/98
   - [X] text properties to hide properties
@@ -805,12 +805,14 @@ CLOSED: [2014-01-16 jeu. 21:15]
   - [X] Uninstall org-trello overlays at org-trello mode shutdown
   - [X] Ensure sync-from-trello routine works with overlays too.
 - [X] Fix sync from trello which loses the state of the checkboxes
-- [ ] Improve the proxy requesting multiple entities multiple times for the same entity on trello (multiple results in remote)
-- [ ] Remove org-trello bindings when org-trello's minor mode is switched off.
+- [X] Fix tests break since org-trello.el has been destroyed and simplify the testing
+- [ ] Improve the proxy requesting multiple entities multiple times for the same entity on trello (multiple results in trello board)
+- [ ] Remove org-trello bindings when org-trello's minor mode is switched off (this is not currently the case)
 - [ ] Release notes
 - [ ] Update version
 - [ ] Release
 * TODO 0.3.0 [0%]
+- [ ] Hide trello global properties
 - [ ] Extract a data representation for org-trello buffer to decorrelate the file serialization file from the computation (decomplecting -> ease of testing, computation, overall maintenance, sandbox i/o to a minimum)
   - [ ] extracter (from file/region to data)
   - [ ] updater (from data to updated data)
