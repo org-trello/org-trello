@@ -534,9 +534,11 @@
                (puthash id (orgtrello-data/merge-2-lists-without-duplicates (gethash id trello-adjacency) (gethash id org-adjacency))     trello-adjacency)) ;; update entity adjacency to trello
              trello-entities)
 
+    ;; copy the entities only present on org files to the trello entities.
     (maphash (lambda (id org-entity)
-               (puthash id (funcall (orgtrello-controller/--dispatch-merge-fn org-entity) (orgtrello-controller/--get-entity id trello-entities) org-entity)    trello-entities) ;; updating entity to trello
-               (puthash id (orgtrello-data/merge-2-lists-without-duplicates (gethash id trello-adjacency) (gethash id org-adjacency))     trello-adjacency)) ;; update entity adjacency to trello
+               (unless (gethash id trello-entities)
+                       (puthash id org-entity trello-entities)
+                       (puthash id (gethash id org-adjacency) trello-adjacency)))
              org-entities)
 
     (list trello-entities trello-adjacency)))

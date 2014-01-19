@@ -790,7 +790,7 @@ CLOSED: [2014-01-16 jeu. 21:15]
 * DONE 0.2.8.2 [100%]
 CLOSED: [2014-01-16 jeu. 21:15]
 - [X] Fix another error on sync from trello routine
-* IN-PROGRESS 0.2.9 [25%]
+* IN-PROGRESS 0.2.9 [37%]
 - [X] Remove org-trello.el at the root of the code (as the package generates this file and the test load without it, no longer needs to be gitted)
 - [X] Invisible checkbox identifier - https://github.com/ardumont/org-trello/issues/98
   - [X] text properties to hide properties
@@ -804,7 +804,7 @@ CLOSED: [2014-01-16 jeu. 21:15]
   - [X] Install org-trello overlays at org-trello-mode startup
   - [X] Uninstall org-trello overlays at org-trello mode shutdown
   - [X] Ensure sync-from-trello routine works with overlays too.
-- [ ] Fix sync from trello which loses the state of the checkboxes
+- [X] Fix sync from trello which loses the state of the checkboxes
 - [ ] Improve the proxy requesting multiple entities multiple times for the same entity on trello (multiple results in remote)
 - [ ] Remove org-trello bindings when org-trello's minor mode is switched off.
 - [ ] Release notes
