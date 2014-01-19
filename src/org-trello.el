@@ -220,7 +220,9 @@
           ;; migrate all checkbox at org-trello mode activation
           (orgtrello-controller/install-overlays!)
           ;; a little message in the minibuffer to notify the user
-          (orgtrello-log/msg *OT/NOLOG* (org-trello/--startup-message *ORGTRELLO-MODE-PREFIX-KEYBINDING*))))
+          (orgtrello-log/msg *OT/NOLOG* (org-trello/--startup-message *ORGTRELLO-MODE-PREFIX-KEYBINDING*))
+          ;; Overwrite the org-mode-map
+          (define-key org-mode-map "\C-e" 'org-trello/end-of-line!)))
 
 (defun org-trello-mode-off-hook-fn (&optional partial-mode) "Actions to do when org-trello stops."
   (unless partial-mode
@@ -231,8 +233,20 @@
           (remove-hook 'before-save-hook 'orgtrello-controller/install-overlays!)
           ;; remove org-trello overlays
           (orgtrello-controller/remove-overlays!)
+          ;; Reinstall the default org-mode-map
+          (define-key org-mode-map "\C-e" 'org-end-of-line)
           ;; a little message in the minibuffer to notify the user
           (orgtrello-log/msg *OT/NOLOG* "org-trello/ot is off!")))
+
+(defun org-trello/end-of-line! () "Move the cursor at the end of the line. For a checkbox, move to the 1- point (because of overlays)."
+  (interactive)
+  (let* ((pt (save-excursion (org-end-of-line) (point)))
+         (entity-level (-> (orgtrello-data/entry-get-full-metadata) orgtrello-data/current orgtrello-data/entity-level)))
+    (goto-char (if (or (= *CHECKLIST-LEVEL* entity-level) (= *ITEM-LEVEL* entity-level)) (- pt (org-trello/compute-overlay-size!) 1) pt))))
+
+(defun org-trello/compute-overlay-size! ()
+  (let ((o (first (overlays-in (point-at-bol) (point-at-eol)))))
+    (- (overlay-end o) (overlay-start o))))
 
 (add-hook 'org-trello-mode-on-hook 'org-trello-mode-on-hook-fn)
 
