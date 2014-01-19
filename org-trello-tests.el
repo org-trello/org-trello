@@ -28,12 +28,19 @@
  (expect t (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data ())
                        (orgtrello-hash/empty-hash))))
 
+(defun org-trello-mode-test () "Trigger org-trello-mode but shaped for the tests."
+  (remove-hook 'org-trello-mode-on-hook (lambda () (org-trello-mode-on-hook-fn t)))
+  (add-hook 'org-trello-mode-on-hook 'org-trello-mode-off-hook-fn)
+  (remove-hook 'org-trello-mode-off-hook (lambda () (org-trello-mode-off-hook-fn t)) )
+  (add-hook 'org-trello-mode-off-hook 'org-trello-mode-off-hook-fn)
+  (org-trello-mode))
+
 (defmacro orgtrello-tests/with-temp-buffer (text body-test &optional nb-lines-forward)
   `(with-temp-buffer
      (org-mode)
      (insert ,text)
      (forward-line (if ,nb-lines-forward ,nb-lines-forward -1))
-     (org-trello-mode)
+     (org-trello-mode-test)
      ,body-test))
 
 (defmacro orgtrello-tests/with-temp-buffer-and-return-buffer-content (text body-test &optional nb-line-forwards)
@@ -41,7 +48,7 @@
      (org-mode)
      (insert ,text)
      (forward-line (if ,nb-line-forwards ,nb-line-forwards -1))
-     (org-trello-mode)
+     (org-trello-mode-test)
      ,body-test
      (buffer-string)))
 

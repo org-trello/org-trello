@@ -210,31 +210,33 @@
   :lighter    " ot"
   :after-hook (org-trello/install-local-prefix-mode-keybinding! *ORGTRELLO-MODE-PREFIX-KEYBINDING*))
 
-(add-hook 'org-trello-mode-on-hook
-          (lambda ()
-            ;; start the proxy
-            (orgtrello-proxy/start)
-            ;; buffer-invisibility-spec
-            (add-to-invisibility-spec '(org-trello-cbx-property)) ;; for an ellipsis (...) change to '(org-trello-cbx-property . t)
-            ;; installing hooks
-            (add-hook 'before-save-hook 'orgtrello-controller/install-overlays!) ;; before-change-functions
-            ;; migrate all checkbox at org-trello mode activation
-            (orgtrello-controller/install-overlays!)
-            ;; a little message in the minibuffer to notify the user
-            (orgtrello-log/msg *OT/NOLOG* (org-trello/--startup-message *ORGTRELLO-MODE-PREFIX-KEYBINDING*))))
+(defun org-trello-mode-on-hook-fn (&optional full-mode) "Actions to do when org-trello starts."
+  (unless full-mode
+          (orgtrello-proxy/start)
+          ;; buffer-invisibility-spec
+          (add-to-invisibility-spec '(org-trello-cbx-property)) ;; for an ellipsis (...) change to '(org-trello-cbx-property . t)
+          ;; installing hooks
+          (add-hook 'before-save-hook 'orgtrello-controller/install-overlays!) ;; before-change-functions
+          ;; migrate all checkbox at org-trello mode activation
+          (orgtrello-controller/install-overlays!)
+          ;; a little message in the minibuffer to notify the user
+          (orgtrello-log/msg *OT/NOLOG* (org-trello/--startup-message *ORGTRELLO-MODE-PREFIX-KEYBINDING*))))
 
-(add-hook 'org-trello-mode-off-hook
-          (lambda ()
-            ;; stop the proxy
-            (orgtrello-proxy/stop)
-            ;; remove the invisible property names
-            (remove-from-invisibility-spec '(org-trello-cbx-property)) ;; for an ellipsis (...) change to '(org-trello-cbx-property . t)
-            ;; installing hooks
-            (remove-hook 'before-save-hook 'orgtrello-controller/install-overlays!)
-            ;; remove org-trello overlays
-            (orgtrello-controller/remove-overlays!)
-            ;; a little message in the minibuffer to notify the user
-            (orgtrello-log/msg *OT/NOLOG* "org-trello/ot is off!")))
+(defun org-trello-mode-off-hook-fn (&optional full-mode) "Actions to do when org-trello stops."
+  (unless full-mode
+          (orgtrello-proxy/stop)
+          ;; remove the invisible property names
+          (remove-from-invisibility-spec '(org-trello-cbx-property)) ;; for an ellipsis (...) change to '(org-trello-cbx-property . t)
+          ;; installing hooks
+          (remove-hook 'before-save-hook 'orgtrello-controller/install-overlays!)
+          ;; remove org-trello overlays
+          (orgtrello-controller/remove-overlays!)
+          ;; a little message in the minibuffer to notify the user
+          (orgtrello-log/msg *OT/NOLOG* "org-trello/ot is off!")))
+
+(add-hook 'org-trello-mode-on-hook (lambda () (org-trello-mode-on-hook-fn t)))
+
+(remove-hook 'org-trello-mode-off-hook (lambda () (org-trello-mode-off-hook-fn t)) )
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello loaded!")
 
