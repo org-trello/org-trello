@@ -784,7 +784,42 @@ CLOSED: [2014-01-05 dim. 17:32]
 - [X] Version
 - [X] Update doc
 - [X] Release notes
-* TODO 0.2.9 [%]
+* DONE 0.2.8.1 [100%]
+CLOSED: [2014-01-16 jeu. 21:15]
+- [X] Fix error on sync from trello routine
+* DONE 0.2.8.2 [100%]
+CLOSED: [2014-01-16 jeu. 21:15]
+- [X] Fix another error on sync from trello routine
+* DONE 0.2.9 [100%]
+CLOSED: [2014-01-19 dim. 22:34]
+- [X] Remove org-trello.el at the root of the code (as the package generates this file and the test load without it, no longer needs to be gitted)
+- [X] Invisible checkbox identifier - https://github.com/ardumont/org-trello/issues/98
+  - [X] text properties to hide properties
+  - [X] When inserting marker (because data is not yet synced, this must be inside an overlay too)
+  - [X] When removing all org-trello data, overlays destruction!
+  - [X] When removing a checkbox/item entity, the associated overlay must be removed too.
+  - [X] When removing card, overlays present in the card region must disappear too.
+  - [X] Create a migration routine to install overlays on org-trello checkbox
+  - [X] Reference the migration routine in the README.md
+  - [X] Activate checkbox migration at org-trello-mode-on time (this way, no manual intervention from the user)
+  - [X] Install org-trello overlays at org-trello-mode startup
+  - [X] Uninstall org-trello overlays at org-trello mode shutdown
+  - [X] Ensure sync-from-trello routine works with overlays too.
+- [X] Fix sync from trello which loses the state of the checkboxes
+- [X] Fix tests break since org-trello.el has been destroyed and simplify the testing
+- [X] Overload the C-e mapping to go at the end of the line for the org-trello mode
+- [X] Release notes
+- [X] Update version
+- [X] Release
+* TODO 0.3.0 [0%]
+- [ ] Remove org-trello bindings when org-trello's minor mode is switched off (this is not currently the case)
+- [ ] Improve the proxy requesting multiple entities multiple times for the same entity on trello (multiple results in trello board)
+- [ ] Hide trello global properties
+- [ ] Extract a data representation for org-trello buffer to decorrelate the file serialization file from the computation (decomplecting -> ease of testing, computation, overall maintenance, sandbox i/o to a minimum)
+  - [ ] extracter (from file/region to data)
+  - [ ] updater (from data to updated data)
+  - [ ] serializer (from data to file/region update)
+- [ ] Clean the code regarding the old checklist/item entities (with stars)
 - [ ] Improve the upgrading version way (writed at 2 places, 1 is better to avoid duplication)
 - [ ] Synchronize user comments - https://github.com/ardumont/org-trello/issues/86
 - [ ] More fined grained use of the trello api (retrieve only data we use) - https://github.com/ardumont/org-trello/issues/69
@@ -795,23 +830,10 @@ CLOSED: [2014-01-05 dim. 17:32]
 - [ ] One command to sync them all - https://github.com/ardumont/org-trello/issues/59
 - [ ] Expose a public trello board showing the status of org-trello and reference it inside the release notes
 - [ ] Now that elnode is here, this may be simpler to use a fake trello server (use clojure :D)
-- [ ] Update the literate org-trello.org (completely desynchronized since 0.1.2) -> coding it to avoid doing manual split (I see the irony)
 - [ ] POC: use a temporary buffer to sync with trello, when done, merge with the user's buffer.
 - [ ] Improve tests coverage - some major and important functionalities are not covered (due at time of ignorance on how to do it, there is only so much one can do!
-- [ ] Release notes
 * TODO Template [0%]
 - [ ] Backlog
 - [ ] Version
 - [ ] Update doc
 - [ ] Release notes
-* Notes
-(org-show-siblings)
-(org-first-headline-recenter)
-org-outline-regexp
-(org-goto-local-search-headings marker nil nil)
-(orgtrello/map-checkboxes (lambda () (message "%s" (orgtrello-data/metadata))))
-** Adding member
-- during the card creation (POST request), idMembers request is a request param (list of comma-separated list of member id)
-- during the card update (PUT request), idMembers is a request param (list of comma-separated list of member id)
-- update directly the card with member via PUT /cards/id/idMembers=1,2,3
-- GET -> idMembers in a card is a list of member ids

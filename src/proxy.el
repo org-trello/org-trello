@@ -211,6 +211,33 @@
 (defun orgtrello-action/org-delete-property (key) "Delete a property depending on the nature of the current entry (org heading or checkbox)."
   (funcall (if (orgtrello-cbx/checkbox-p) 'orgtrello-cbx/org-delete-property 'org-delete-property) key))
 
+(defun orgtrello-action/--delete-region (start end) "Delete a region defined by start and end bound."
+  (remove-overlays start end) ;; remove overlays on the card region
+  (delete-region start end))
+
+(defun orgtrello-action/--delete-card-region () "Delete the card region (including overlays and line)"
+  (org-back-to-heading)
+  (let ((orgtrello-action/--starting-point (point))
+        (orgtrello-action/--ending-point   (save-excursion (if (org-goto-sibling) (point) (point-max))))) ;; next card or point-max
+    (orgtrello-action/--delete-region orgtrello-action/--starting-point orgtrello-action/--ending-point)))
+
+(defun orgtrello-action/--delete-checkbox-checklist-region () "Delete the checklist region"
+  (let ((orgtrello-action/--starting-point (point-at-bol))
+        (orgtrello-action/--ending-point (save-excursion (-if-let (result (orgtrello-cbx/--goto-next-checkbox-with-same-level! *CHECKLIST-LEVEL*))
+                                                                  result
+                                                                  (orgtrello-cbx/--compute-next-card-point))))) ;; next checkbox or next card or point-max
+    (orgtrello-action/--delete-region orgtrello-action/--starting-point orgtrello-action/--ending-point)))
+
+(defun orgtrello-action/--delete-checkbox-item-region () "Delete the item region"
+  (let ((orgtrello-action/--starting-point (point-at-bol))
+        (orgtrello-action/--ending-point (1+ (point-at-eol))))
+    (orgtrello-action/--delete-region orgtrello-action/--starting-point orgtrello-action/--ending-point)))
+
+(defun orgtrello-action/delete-region (entity) "Delete the region"
+  (cond ((orgtrello-data/entity-card-p entity) 'orgtrello-action/--delete-card-region)
+        ((orgtrello-data/entity-checklist-p entity) 'orgtrello-action/--delete-checkbox-checklist-region)
+        ((orgtrello-data/entity-item-p entity) 'orgtrello-action/--delete-checkbox-item-region)))
+
 (defun orgtrello-proxy/--standard-delete-success-callback (entity-to-del file-to-cleanup) "Return a callback function able to deal with the position."
   (lexical-let ((op/--entry-position    (orgtrello-data/entity-position entity-to-del))
                 (op/--entry-buffer-name (orgtrello-data/entity-buffername entity-to-del))
@@ -223,14 +250,10 @@
          (set-buffer op/--entry-buffer-name)
          (save-excursion
            (when (orgtrello-proxy/--getting-back-to-marker op/--marker)
-                 (unless (orgtrello-cbx/checkbox-p) (org-back-to-heading t)) ;; get back to the top level if on heading
-                 (orgtrello-action/org-delete-property *ORGTRELLO-ID*)       ;; delete the property
-                 (if (org-at-heading-p)
-                     (hide-subtree)
-                     (when (orgtrello-cbx/checkbox-p) (org-cycle 'fold)))
-                 (beginning-of-line)
-                 (kill-line)
-                 (kill-line))))
+                 (-> (orgtrello-data/entry-get-full-metadata)
+                     orgtrello-data/current
+                     orgtrello-action/delete-region
+                     funcall))))
        (orgtrello-proxy/--cleanup-and-save-buffer-metadata op/--entry-file op/--entry-buffer-name)))))
 
 (defun orgtrello-proxy/--delete (entity-data entity-full-metadata entry-file-archived) "Execute the entity deletion."
@@ -370,11 +393,8 @@
 (defun orgtrello-proxy/timer-stop () "Stop the orgtrello-timer." (orgtrello-proxy/http-consumer nil))
 
 (defun orgtrello-action/--deal-with-consumer-msg-controls-or-actions-then-do (msg control-or-action-fns fn-to-execute &optional save-buffer-p reload-setup-p nolog-p) "Decorator fn to execute actions before/after the controls."
-  ;; stop the timer
   (orgtrello-proxy/timer-stop)
-  ;; Execute as usual
-  (orgtrello-action/--msg-controls-or-actions-then-do msg control-or-action-fns fn-to-execute save-buffer-p reload-setup-p nolog-p)
-  ;; start the timer
+  (orgtrello-action/--msg-controls-or-actions-then-do msg control-or-action-fns fn-to-execute save-buffer-p reload-setup-p nolog-p)   ;; Execute as usual
   (orgtrello-proxy/timer-start))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-proxy loaded!")

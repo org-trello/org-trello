@@ -27,16 +27,12 @@
     h))
 
 (defun orgtrello-hash/make-properties (properties) "Given a list of key value pair, return a hash table."
-  (--reduce-from (progn
-                   (puthash (car it) (cdr it) acc)
-                   acc)
+  (--reduce-from (progn (puthash (car it) (cdr it) acc) acc)
                  (orgtrello-hash/empty-hash)
                  properties))
 
 (defun orgtrello-hash/make-transpose-properties (properties) "Given a list of key value pair, return a hash table with key/value transposed."
-  (--reduce-from (progn
-                  (puthash (cdr it) (car it) acc)
-                  acc)
+  (--reduce-from (progn (puthash (cdr it) (car it) acc) acc)
                  (orgtrello-hash/empty-hash)
                  properties))
 

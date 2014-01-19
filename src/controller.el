@@ -279,9 +279,6 @@
   (orgtrello-log/msg *OT/WARN* "Synchronizing org-mode file to the board '%s'. This may take some time, some coffee may be a good idea..." (orgtrello-controller/--board-name))
   (orgtrello-controller/org-map-entries *CARD-LEVEL* 'orgtrello-controller/do-sync-full-entity))
 
-(defun orgtrello-controller/justify-file () "Map over the file and justify entries with checkbox."
-  (orgtrello-controller/org-map-entries *CARD-LEVEL* 'orgtrello-cbx/--justify-property-current-line))
-
 (defun orgtrello-controller/--compute-card-status (card-id-list) "Given a card's id, compute its status."
   (gethash card-id-list *HMAP-ID-NAME*))
 
@@ -393,8 +390,8 @@
   (let ((card-id (orgtrello-data/entity-id card)))
     (--> card
          (orgtrello-controller/--retrieve-checklist-from-card it)
-         (-reduce-from (lambda (acc checklist)
-                          (cl-destructuring-bind (entities adjacency) acc
+         (-reduce-from (lambda (acc-entities-adj checklist)
+                          (cl-destructuring-bind (entities adjacency) acc-entities-adj
                             (orgtrello-controller/--compute-items-from-checklist checklist (orgtrello-controller/--add-entity-to-entities checklist entities) (orgtrello-controller/--add-entity-to-adjacency checklist card adjacency))))
                        (list entities adjacency)
                        it))));; at last complete checklist with item
@@ -537,21 +534,20 @@
                (puthash id (orgtrello-data/merge-2-lists-without-duplicates (gethash id trello-adjacency) (gethash id org-adjacency))     trello-adjacency)) ;; update entity adjacency to trello
              trello-entities)
 
+    ;; copy the entities only present on org files to the trello entities.
     (maphash (lambda (id org-entity)
-               (puthash id (funcall (orgtrello-controller/--dispatch-merge-fn org-entity) (orgtrello-controller/--get-entity id trello-entities) org-entity)    trello-entities) ;; updating entity to trello
-               (puthash id (orgtrello-data/merge-2-lists-without-duplicates (gethash id trello-adjacency) (gethash id org-adjacency))     trello-adjacency)) ;; update entity adjacency to trello
+               (unless (gethash id trello-entities)
+                       (puthash id org-entity trello-entities)
+                       (puthash id (gethash id org-adjacency) trello-adjacency)))
              org-entities)
 
     (list trello-entities trello-adjacency)))
 
 (defun orgtrello-controller/--update-property (id orgcheckbox-p) "Update the property depending on the nature of thing to sync. Move the cursor position."
   (if orgcheckbox-p
-      (progn
-        ;; need to get back one line backward for the checkboxes as their properties is at the same level (otherwise, for headings we do not care)
-        (forward-line -1)
-        (orgtrello-action/set-property *ORGTRELLO-ID* id)
-        ;; getting back normally for the rest
-        (forward-line))
+      (save-excursion
+        (forward-line -1) ;; need to get back one line backward for the checkboxes as their properties is at the same level (otherwise, for headings we do not care)
+        (orgtrello-action/set-property *ORGTRELLO-ID* id))
       (orgtrello-action/set-property *ORGTRELLO-ID* id)))
 
 (defun orgtrello-controller/--write-entity! (entity-id entity) "Write the entity in the buffer to the current position. Move the cursor position."
@@ -614,6 +610,7 @@
 (defun orgtrello-controller/--cleanup-org-entries () "Cleanup org-entries from the buffer (FIXME find a suiter way of merging data than removing them all and put them back)."
   (goto-char (point-min))
   (outline-next-heading)
+  (orgtrello-cbx/remove-overlays! (point-at-bol) (point-max))
   (kill-region (point-at-bol) (point-max)))
 
 (defun orgtrello-controller/--sync-buffer-with-trello-data-callback (buffername &optional position name) "Generate a callback which knows the buffer with which it must work. (this callback must take a buffer-name and a position)"
@@ -937,7 +934,18 @@
   (save-excursion
     (goto-char (point-min))
     (while (re-search-forward ":PROPERTIES: {.*" nil t)
-      (replace-match "" nil t))))
+      (remove-overlays (point-at-bol) (point-at-eol)) ;; the current overlay on this line
+      (replace-match "" nil t))))                     ;; then remove the property
+
+(defun orgtrello-controller/remove-overlays! () "Remove every org-trello overlays from the current buffer."
+  (orgtrello-cbx/remove-overlays! (point-min) (point-max)))
+
+(defun orgtrello-controller/install-overlays! () "Install overlays throughout the all buffers."
+  (orgtrello-controller/remove-overlays!)
+  (save-excursion
+    (goto-char (point-min))
+    (while (re-search-forward ":PROPERTIES: {.*" nil t)
+      (orgtrello-cbx/install-overlays! (match-beginning 0)))))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-controller loaded!")
 

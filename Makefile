@@ -1,4 +1,4 @@
-VERSION=$$(grep "^;; Version: " org-trello.el | cut -f3 -d' ')
+VERSION=$$(grep "^;; Version: " src/header.el | cut -f3 -d' ')
 PACKAGE_FOLDER=org-trello-$(VERSION)
 ARCHIVE=$(PACKAGE_FOLDER).tar
 USER=ardumont

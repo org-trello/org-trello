@@ -167,23 +167,23 @@
   (orgtrello-log/msg 0 (org-trello/--help-describing-bindings-template *ORGTRELLO-MODE-PREFIX-KEYBINDING* org-trello/--list-of-interactive-command-binding-couples)))
 
 (defvar org-trello/--list-of-interactive-command-binding-couples
-  '((org-trello/version                     "v" "Display the current version installed.")
-    (org-trello/install-key-and-token       "i" "Install the keys and the access-token.")
-    (org-trello/install-board-and-lists-ids "I" "Select the board and attach the todo, doing and done list.")
-    (org-trello/check-setup                 "d" "Check that the setup is ok. If everything is ok, will simply display 'Setup ok!'.")
-    (org-trello/assign-me                   "a" "Assign oneself to the card.")
-    (org-trello/unassign-me                 "u" "Unassign oneself of the card")
-    (org-trello/delete-setup                "D" "Clean up the org buffer from all org-trello informations.")
-    (org-trello/create-board                "b" "Create interactively a board and attach the org-mode file to this trello board.")
-    (org-trello/sync-from-trello            "S" "Synchronize the org-mode file from the trello board (trello -> org-mode).")
-    (org-trello/sync-entity                 "c" "Create/Update an entity (card/checklist/item) depending on its level and status. Do not deal with level superior to 4.")
-    (org-trello/sync-full-entity            "C" "Create/Update a complete entity card/checklist/item and its subtree (depending on its level).")
-    (org-trello/kill-entity                 "k" "Kill the entity (and its arborescence tree) from the trello board and the org buffer.")
-    (org-trello/kill-all-entities           "K" "Kill all the entities (and their arborescence tree) from the trello board and the org buffer.")
-    (org-trello/sync-to-trello              "s" "Synchronize the org-mode file to the trello board (org-mode -> trello).")
-    (org-trello/jump-to-card                "j" "Jump to card in browser.")
-    (org-trello/jump-to-trello-board        "J" "Open the browser to your current trello board.")
-    (org-trello/help-describing-bindings    "h" "This help message."))
+  '((org-trello/version                      "v" "Display the current version installed.")
+    (org-trello/install-key-and-token        "i" "Install the keys and the access-token.")
+    (org-trello/install-board-and-lists-ids  "I" "Select the board and attach the todo, doing and done list.")
+    (org-trello/check-setup                  "d" "Check that the setup is ok. If everything is ok, will simply display 'Setup ok!'.")
+    (org-trello/assign-me                    "a" "Assign oneself to the card.")
+    (org-trello/unassign-me                  "u" "Unassign oneself of the card")
+    (org-trello/delete-setup                 "D" "Clean up the org buffer from all org-trello informations.")
+    (org-trello/create-board                 "b" "Create interactively a board and attach the org-mode file to this trello board.")
+    (org-trello/sync-from-trello             "S" "Synchronize the org-mode file from the trello board (trello -> org-mode).")
+    (org-trello/sync-entity                  "c" "Create/Update an entity (card/checklist/item) depending on its level and status. Do not deal with level superior to 4.")
+    (org-trello/sync-full-entity             "C" "Create/Update a complete entity card/checklist/item and its subtree (depending on its level).")
+    (org-trello/kill-entity                  "k" "Kill the entity (and its arborescence tree) from the trello board and the org buffer.")
+    (org-trello/kill-all-entities            "K" "Kill all the entities (and their arborescence tree) from the trello board and the org buffer.")
+    (org-trello/sync-to-trello               "s" "Synchronize the org-mode file to the trello board (org-mode -> trello).")
+    (org-trello/jump-to-card                 "j" "Jump to card in browser.")
+    (org-trello/jump-to-trello-board         "J" "Open the browser to your current trello board.")
+    (org-trello/help-describing-bindings     "h" "This help message."))
   "List of command and default binding without the prefix key.")
 
 (defun org-trello/--install-local-keybinding-map! (previous-org-trello-mode-prefix-keybinding org-trello-mode-prefix-keybinding interactive-command-binding-to-install)
@@ -210,32 +210,47 @@
   :lighter    " ot"
   :after-hook (org-trello/install-local-prefix-mode-keybinding! *ORGTRELLO-MODE-PREFIX-KEYBINDING*))
 
-(defun org-trello/justify-on-save () "Justify the properties checkbox."
-  (if org-trello-mode (orgtrello-controller/justify-file)))
+(defun org-trello-mode-on-hook-fn (&optional partial-mode) "Actions to do when org-trello starts."
+  (unless partial-mode
+          (orgtrello-proxy/start)
+          ;; buffer-invisibility-spec
+          (add-to-invisibility-spec '(org-trello-cbx-property)) ;; for an ellipsis (...) change to '(org-trello-cbx-property . t)
+          ;; installing hooks
+          (add-hook 'before-save-hook 'orgtrello-controller/install-overlays!) ;; before-change-functions
+          ;; migrate all checkbox at org-trello mode activation
+          (orgtrello-controller/install-overlays!)
+          ;; a little message in the minibuffer to notify the user
+          (orgtrello-log/msg *OT/NOLOG* (org-trello/--startup-message *ORGTRELLO-MODE-PREFIX-KEYBINDING*))
+          ;; Overwrite the org-mode-map
+          (define-key org-mode-map "\C-e" 'org-trello/end-of-line!)))
 
-(add-hook 'org-trello-mode-on-hook
-          (lambda ()
-            ;; hightlight the properties of the checkboxes
-            (font-lock-add-keywords 'org-mode '((":PROPERTIES:" 0 font-lock-keyword-face t)))
-            (font-lock-add-keywords 'org-mode '((": {\"orgtrello-id\":.*}" 0 font-lock-comment-face t)))
-            ;; start the proxy
-            (orgtrello-proxy/start)
-            ;; installing hooks
-            (add-hook 'before-save-hook 'org-trello/justify-on-save)
-            ;; a little message in the minibuffer to notify the user
-            (orgtrello-log/msg *OT/NOLOG* (org-trello/--startup-message *ORGTRELLO-MODE-PREFIX-KEYBINDING*))))
+(defun org-trello-mode-off-hook-fn (&optional partial-mode) "Actions to do when org-trello stops."
+  (unless partial-mode
+          (orgtrello-proxy/stop)
+          ;; remove the invisible property names
+          (remove-from-invisibility-spec '(org-trello-cbx-property)) ;; for an ellipsis (...) change to '(org-trello-cbx-property . t)
+          ;; installing hooks
+          (remove-hook 'before-save-hook 'orgtrello-controller/install-overlays!)
+          ;; remove org-trello overlays
+          (orgtrello-controller/remove-overlays!)
+          ;; Reinstall the default org-mode-map
+          (define-key org-mode-map "\C-e" 'org-end-of-line)
+          ;; a little message in the minibuffer to notify the user
+          (orgtrello-log/msg *OT/NOLOG* "org-trello/ot is off!")))
 
-(add-hook 'org-trello-mode-off-hook
-          (lambda ()
-            ;; remove the highlight
-            (font-lock-remove-keywords 'org-mode '((":PROPERTIES:" 0 font-lock-keyword-face t)))
-            (font-lock-remove-keywords 'org-mode '((": {\"orgtrello-id\":.*}" 0 font-lock-comment-face t)))
-            ;; stop the proxy
-            (orgtrello-proxy/stop)
-            ;; uninstalling hooks
-            (remove-hook 'before-save-hook 'org-trello/justify-on-save)
-            ;; a little message in the minibuffer to notify the user
-            (orgtrello-log/msg *OT/NOLOG* "org-trello/ot is off!")))
+(defun org-trello/end-of-line! () "Move the cursor at the end of the line. For a checkbox, move to the 1- point (because of overlays)."
+  (interactive)
+  (let* ((pt (save-excursion (org-end-of-line) (point)))
+         (entity-level (-> (orgtrello-data/entry-get-full-metadata) orgtrello-data/current orgtrello-data/entity-level)))
+    (goto-char (if (or (= *CHECKLIST-LEVEL* entity-level) (= *ITEM-LEVEL* entity-level)) (- pt (org-trello/compute-overlay-size!) 1) pt))))
+
+(defun org-trello/compute-overlay-size! ()
+  (let ((o (first (overlays-in (point-at-bol) (point-at-eol)))))
+    (- (overlay-end o) (overlay-start o))))
+
+(add-hook 'org-trello-mode-on-hook 'org-trello-mode-on-hook-fn)
+
+(add-hook 'org-trello-mode-off-hook 'org-trello-mode-off-hook-fn)
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello loaded!")
 

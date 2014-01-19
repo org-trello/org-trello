@@ -8,7 +8,7 @@
 
 (defun org-trello/load-namespaces (splitted-files) "Load the src files."
   (message "org-trello files: %s" splitted-files)
-  (mapcar (lambda (current-ns-file) (org-trello/load-ns current-ns-file)) splitted-files))
+  (mapcar 'org-trello/load-ns splitted-files))
 
 (load-file "./namespaces.el")
 (require 'org-trello-namespaces)

@@ -4,10 +4,11 @@
 
 **Table of Contents**  *generated with [DocToc](http://doctoc.herokuapp.com/)*
 
-- [rationale](#rationale)
+- [Rationale](#rationale)
 - [Emacs version](#emacs-version)
 - [Migration](#migration)
-	- [0.2.1 -> 0.2.2](#028)
+	- [0.2.9](#029)
+	- [0.2.8](#028)
 	- [0.2.1 -> 0.2.2](#021-->-022)
 	- [0.1.5 -> 0.1.6](#015-->-016)
 	- [0.1.1 -> 0.1.2](#011-->-012)
@@ -69,7 +70,7 @@
 - [Mailing list](#mailing-list)
 - [License](#license)
 
-# rationale
+# Rationale
 
 - [org-mode](http://orgmode.org/) is what I need.
 - [Trello](http://trello.com/) is what my team need.
@@ -81,12 +82,25 @@ This will satisfy org-modians and trelloans won't see any difference!
 
 Tested on:
 - GNU Emacs 24.3.1 (x86_64-pc-linux-gnu, X toolkit, Xaw3d scroll bars) of 2013-04-14 on marid, modified by Debian (from 0.1.0)
+- GNU Emacs 24.3.1 (x86_64-pc-linux-gnu, GTK+ Version 3.6.0) of 2014-01-03 on chindi02, modified by Debian
 
 # Migration
 
+## 0.2.9
+
+For information, from 0.2.9 onward, the property "orgtrello-id" from the checkbox (checklists, items) will be hidden.
+
+*Note*
+- Upon activating org-trello minor mode, all existing checkbox will be migrated and should disappear before your eyes.
+- Symmetrically, when deactivating org-trello, all checkbox will appear.
+- For this, org-trello use [overlays](https://www.gnu.org/software/emacs/manual/html_node/elisp/Overlays.html) (implementation detail which permits to hide buffer region).
+
+If you began to use org-trello, nothing to do.
+
 ## 0.2.8
 
-From now on, the card description can be synchronized too.
+From 0.2.8 onward, the card description can be synchronized too.
+Just synchronize as usual.
 
 ## 0.2.1 -> 0.2.2
 
@@ -375,25 +389,25 @@ M-x org-trello/create-board
 
 Actual bindings (not definitive, suggestions regarding those bindings are welcome):
 
-Keybindings        | Interactive commands                         | Description
--------------------|----------------------------------------------|-----------------------------------------------------------------------------------------------------------------------
-                   | `M-x org-trello/version`                     | org-trello's current version
-<kbd>C-c o i</kbd> | `M-x org-trello/install-key-and-token`       | Install the keys and the access-token.
-<kbd>C-c o I</kbd> | `M-x org-trello/install-board-and-lists-ids` | Select the board and attach the todo, doing and done list.
-<kbd>C-c o d</kbd> | `M-x org-trello/check-setup`                 | Check that the setup is ok. If everything is ok, will simply display 'Setup ok!'
-<kbd>C-c o D</kbd> | `M-x org-trello/delete-setup`                | Clean up the org buffer from all org-trello informations
-<kbd>C-c o b</kbd> | `M-x org-trello/create-board`                | Create interactively a board and attach the org-mode file to this trello board.
-<kbd>C-c o c</kbd> | `M-x org-trello/sync-entity`                 | Create/Update an entity (card/checklist/item) depending on its level and status. Do not deal with level superior to 4.
-<kbd>C-c o C</kbd> | `M-x org-trello/sync-full-entity`            | Create/Update a complete entity card/checklist/item and its subtree (depending on its level).
-<kbd>C-c o s</kbd> | `M-x org-trello/sync-to-trello`              | Synchronize the org-mode file to the trello board (org-mode -> trello).
-<kbd>C-c o S</kbd> | `M-x org-trello/sync-from-trello`            | Synchronize the org-mode file from the trello board (trello -> org-mode).
-<kbd>C-c o k</kbd> | `M-x org-trello/kill-entity`                 | Kill the entity (and its arborescence tree) from the trello board and the org buffer.
-<kbd>C-c o K</kbd> | `M-x org-trello/kill-all-entities`           | Kill all the entities (and their arborescence tree) from the trello board and the org buffer.
-<kbd>C-c o a</kbd> | `M-x org-trello/assign-me`                   | Assign one-self to the current card
-<kbd>C-c o u</kbd> | `M-x org-trello/unassign-me`                 | Unassign one-self from the current card
-<kbd>C-c o j</kbd> | `M-x org-trello/jump-to-card`                | Jump to current card
-<kbd>C-c o J</kbd> | `M-x org-trello/jump-to-trello-board`        | Jump to current trello board
-<kbd>C-c o h</kbd> | `M-x org-trello/help-describing-bindings`    | This help message.
+Keybindings        | Interactive commands                             | Description
+-------------------|--------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------
+                   | `M-x org-trello/version`                         | org-trello's current version
+<kbd>C-c o i</kbd> | `M-x org-trello/install-key-and-token`           | Install the keys and the access-token.
+<kbd>C-c o I</kbd> | `M-x org-trello/install-board-and-lists-ids`     | Select the board and attach the todo, doing and done list.
+<kbd>C-c o d</kbd> | `M-x org-trello/check-setup`                     | Check that the setup is ok. If everything is ok, will simply display 'Setup ok!'
+<kbd>C-c o D</kbd> | `M-x org-trello/delete-setup`                    | Clean up the org buffer from all org-trello informations
+<kbd>C-c o b</kbd> | `M-x org-trello/create-board`                    | Create interactively a board and attach the org-mode file to this trello board.
+<kbd>C-c o c</kbd> | `M-x org-trello/sync-entity`                     | Create/Update an entity (card/checklist/item) depending on its level and status. Do not deal with level superior to 4.
+<kbd>C-c o C</kbd> | `M-x org-trello/sync-full-entity`                | Create/Update a complete entity card/checklist/item and its subtree (depending on its level).
+<kbd>C-c o s</kbd> | `M-x org-trello/sync-to-trello`                  | Synchronize the org-mode file to the trello board (org-mode -> trello).
+<kbd>C-c o S</kbd> | `M-x org-trello/sync-from-trello`                | Synchronize the org-mode file from the trello board (trello -> org-mode).
+<kbd>C-c o k</kbd> | `M-x org-trello/kill-entity`                     | Kill the entity (and its arborescence tree) from the trello board and the org buffer.
+<kbd>C-c o K</kbd> | `M-x org-trello/kill-all-entities`               | Kill all the entities (and their arborescence tree) from the trello board and the org buffer.
+<kbd>C-c o a</kbd> | `M-x org-trello/assign-me`                       | Assign one-self to the current card
+<kbd>C-c o u</kbd> | `M-x org-trello/unassign-me`                     | Unassign one-self from the current card
+<kbd>C-c o j</kbd> | `M-x org-trello/jump-to-card`                    | Jump to current card
+<kbd>C-c o J</kbd> | `M-x org-trello/jump-to-trello-board`            | Jump to current trello board
+<kbd>C-c o h</kbd> | `M-x org-trello/help-describing-bindings`        | This help message.
 
 # Use cases
 

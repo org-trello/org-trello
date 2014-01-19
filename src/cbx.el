@@ -42,39 +42,29 @@
     (goto-char pt)
     (orgtrello-cbx/--read-properties (orgtrello-cbx/--read-checkbox!))))
 
-(defun orgtrello-cbx/--update-properties (checkbox-string properties) "Given the current checkbox-string and the new properties, update the properties in the current entry."
-  (s-join " :PROPERTIES: "  `(,(orgtrello-cbx/--checkbox-data checkbox-string)
-                              ,(orgtrello-cbx/--to-properties properties))))
+(defun orgtrello-cbx/--make-properties-as-string (properties)
+  (format ":PROPERTIES: %s" (orgtrello-cbx/--to-properties properties)))
 
-(defvar orgtrello-cbx/--rules-to-align-checkbox-properties
-  `((orgtrello-rules
-     (regexp   . "^[ ]*-\\{1\\}.*\\( :PROPERTIES: \\).*$")
-     (group    . 1)
-     (justify  . t)))
-  "Rules to use with align-region to justify")
+(defun orgtrello-cbx/remove-overlays! (start end) "Remove the overlays presents between start and end in the current buffer"
+  (remove-overlays start end 'invisible 'org-trello-cbx-property))
 
-(defun orgtrello-cbx/--point-at-beg-of-region-for-justify () "Compute the beginning of region - marked by a headline."
-  (save-excursion
-    (org-back-to-heading)
-    (point-at-bol)))
-
-(require 'align)
-
-(defun orgtrello-cbx/--justify-property-current-line () "Justify the content of the current region."
-  (align-region (orgtrello-cbx/--point-at-beg-of-region-for-justify)
-                (orgtrello-cbx/--compute-next-card-point)
-                'entire
-                orgtrello-cbx/--rules-to-align-checkbox-properties
-                nil))
+(defun orgtrello-cbx/install-overlays! (start-position) "Install org-trello overlays (first remove the current overlay on line)."
+  ;; remove overlay present on current position
+  (orgtrello-cbx/remove-overlays! (point-at-bol) (point-at-eol))
+  ;; build an overlay to hide the cbx properties
+  (overlay-put (make-overlay start-position (point-at-eol) (current-buffer) t nil)
+               'invisible 'org-trello-cbx-property))
 
 (defun orgtrello-cbx/--write-properties-at-point (pt properties) "Given the new properties, update the current entry."
   (save-excursion
     (goto-char pt)
-    (let ((updated-checkbox-str (orgtrello-cbx/--update-properties (orgtrello-cbx/--read-checkbox!) properties)))
+    (let* ((checkbox-title   (-> (orgtrello-cbx/--read-checkbox!) orgtrello-cbx/--checkbox-data))
+           (updated-property (orgtrello-cbx/--make-properties-as-string properties))
+           (text-to-insert   (format "%s %s" checkbox-title updated-property)))
       (beginning-of-line)
       (kill-line)
-      (insert updated-checkbox-str)
-      updated-checkbox-str)))
+      (insert text-to-insert)
+      text-to-insert)))
 
 (defun orgtrello-cbx/--key-to-search (key) "Search the key key as a symbol"
   (if (stringp key) (intern key) key))
@@ -187,15 +177,23 @@ This is a list with the following elements:
       1-
       orgtrello-cbx/--org-up!))
 
-(defun orgtrello-cbx/--compute-next-card-point () "Compute the next card's position."
+(defun orgtrello-cbx/--compute-next-card-point () "Compute the next card's position. Does preserve position. If finding a sibling return the point-at-bol of such sibling, otherwise return the max point in buffer."
   (save-excursion
     (org-back-to-heading)
     (if (org-goto-sibling) (point-at-bol) (point-max))))
 
-(defun orgtrello-cbx/--goto-next-checkbox () "Compute the next checkbox's beginning of line. Does preserve the current position. If hitting a heading or the end of the file, return nil."
+(defun orgtrello-cbx/--goto-next-checkbox () "Compute the next checkbox's beginning of line. Does not preserve the current position. If hitting a heading or the end of the file, return nil."
   (forward-line)
   (when (and (not (org-at-heading-p)) (< (point) (point-max)) (not (orgtrello-cbx/checkbox-p)))
         (orgtrello-cbx/--goto-next-checkbox)))
+
+(defun orgtrello-cbx/--goto-next-checkbox-with-same-level! (level) "Compute the next checkbox's beginning of line (with the same level). Does not preserve the current position. If hitting a heading or the end of the file, return nil. Otherwise, return the current position."
+  (forward-line)
+  (if (= level (orgtrello-data/current-level))
+      (point)
+      (if (or (org-at-heading-p) (<= (point-max) (point)))
+          nil
+          (orgtrello-cbx/--goto-next-checkbox-with-same-level! level))))
 
 (defun orgtrello-cbx/--map-checkboxes (level fn-to-execute) "Map over the checkboxes and execute fn when in checkbox. Does not preserve the cursor position. Do not exceed the point-max."
   (orgtrello-cbx/--goto-next-checkbox)

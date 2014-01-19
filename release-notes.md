@@ -1,3 +1,13 @@
+# 0.2.9
+
+- [X] Remove org-trello.el at the root of the code (as the package generates this file and the test load without it, no longer needs to be gitted)
+- [X] Invisible checkbox identifier - https://github.com/ardumont/org-trello/issues/98
+- [X] Fix sync from trello which loses the state of the checkboxes
+- [X] Fix tests break since org-trello.el has been destroyed and simplify the testing
+- [X] Overload the C-e mapping to go at the end of the line for the org-trello mode
+- [X] Update doc
+- [X] Release notes
+
 # 0.2.8.2
 
 - [X] Fix yet another error on synchronization from trello.
