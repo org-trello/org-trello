@@ -790,7 +790,7 @@ CLOSED: [2014-01-16 jeu. 21:15]
 * DONE 0.2.8.2 [100%]
 CLOSED: [2014-01-16 jeu. 21:15]
 - [X] Fix another error on sync from trello routine
-* IN-PROGRESS 0.2.9 [75%]
+* IN-PROGRESS 0.2.9 [87%]
 - [X] Remove org-trello.el at the root of the code (as the package generates this file and the test load without it, no longer needs to be gitted)
 - [X] Invisible checkbox identifier - https://github.com/ardumont/org-trello/issues/98
   - [X] text properties to hide properties
@@ -808,7 +808,7 @@ CLOSED: [2014-01-16 jeu. 21:15]
 - [X] Fix tests break since org-trello.el has been destroyed and simplify the testing
 - [X] Overload the C-e mapping to go at the end of the line for the org-trello mode
 - [X] Release notes
-- [ ] Update version
+- [X] Update version
 - [ ] Release
 * TODO 0.3.0 [0%]
 - [ ] Remove org-trello bindings when org-trello's minor mode is switched off (this is not currently the case)
