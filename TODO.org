@@ -816,9 +816,9 @@ CLOSED: [2014-01-20 lun. 18:47]
 - [X] Forgot to ship code
 - [X] Update version
 - [X] Release notes
-* TODO 0.3.0 [11%]
+* IN-PROGRESS 0.3.0 [22%]
 - [X] Backlog
-- [ ] Upgrade Version
+- [X] Upgrade Version
 - [ ] Remove org-trello bindings when org-trello's minor mode is switched off (this is not currently the case)
 - [ ] Improve the proxy requesting multiple entities multiple times for the same entity on trello (multiple results in trello board)
 - [ ] Hide trello global properties
