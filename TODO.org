@@ -816,11 +816,11 @@ CLOSED: [2014-01-20 lun. 18:47]
 - [X] Forgot to ship code
 - [X] Update version
 - [X] Release notes
-* IN-PROGRESS 0.3.0 [50%]
+* IN-PROGRESS 0.3.0 [80%]
 - [X] Backlog
 - [X] Upgrade Version
 - [X] org-trello bindings remains present when org-trello is switched off. Fix it.
-- [ ] Update doc
+- [X] Update doc
 - [ ] Release notes
 
 * TODO 0.3.1 [%]
