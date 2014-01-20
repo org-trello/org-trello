@@ -242,11 +242,15 @@
   (interactive)
   (let* ((pt (save-excursion (org-end-of-line) (point)))
          (entity-level (-> (orgtrello-data/entry-get-full-metadata) orgtrello-data/current orgtrello-data/entity-level)))
-    (goto-char (if (or (= *CHECKLIST-LEVEL* entity-level) (= *ITEM-LEVEL* entity-level)) (- pt (org-trello/compute-overlay-size!) 1) pt))))
+    (goto-char (if (or (= *CHECKLIST-LEVEL* entity-level) (= *ITEM-LEVEL* entity-level))
+                   (-if-let (s (org-trello/compute-overlay-size!))
+                            (- pt s 1)
+                            pt)
+                   pt))))
 
-(defun org-trello/compute-overlay-size! ()
-  (let ((o (first (overlays-in (point-at-bol) (point-at-eol)))))
-    (- (overlay-end o) (overlay-start o))))
+(defun org-trello/compute-overlay-size! () "Compute the overlay size to the current position"
+  (when-let (o (first (overlays-in (point-at-bol) (point-at-eol))))
+            (- (overlay-end o) (overlay-start o))))
 
 (add-hook 'org-trello-mode-on-hook 'org-trello-mode-on-hook-fn)
 
