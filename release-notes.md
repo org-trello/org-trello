@@ -1,3 +1,11 @@
+# 0.3.0
+
+- [X] Backlog
+- [X] Upgrade Version
+- [X] org-trello bindings remains present when org-trello is switched off. Fix it.
+- [X] Update doc
+- [X] Release notes
+
 # 0.2.9.1
 
 - [X] Forgot to ship code

@@ -197,6 +197,14 @@
             (local-set-key (kbd (concat org-trello-mode-prefix-keybinding binding)) command)))
         interactive-command-binding-to-install))
 
+(defun org-trello/--remove-local-keybinding-map! (previous-org-trello-mode-prefix-keybinding interactive-command-binding-to-install)
+  "Remove the default org-trello bindings."
+  (mapc (lambda (command-and-binding)
+          (let ((command (first command-and-binding))
+                (binding (second command-and-binding)))
+            (local-unset-key (kbd (concat previous-org-trello-mode-prefix-keybinding binding)))))
+        interactive-command-binding-to-install))
+
 (defvar *ORGTRELLO-MODE-PREFIX-KEYBINDING*          "C-c o" "The default prefix keybinding.")
 (defvar *PREVIOUS-ORGTRELLO-MODE-PREFIX-KEYBINDING* "C-c o" "The memory default prefix keybinding.")
 
@@ -205,13 +213,16 @@
   (setq *ORGTRELLO-MODE-PREFIX-KEYBINDING* keybinding)
   (org-trello/--install-local-keybinding-map! *PREVIOUS-ORGTRELLO-MODE-PREFIX-KEYBINDING* *ORGTRELLO-MODE-PREFIX-KEYBINDING* org-trello/--list-of-interactive-command-binding-couples))
 
+(defun org-trello/remove-local-prefix-mode-keybinding! (keybinding) "Install the new default org-trello mode keybinding."
+  (org-trello/--remove-local-keybinding-map! *PREVIOUS-ORGTRELLO-MODE-PREFIX-KEYBINDING* org-trello/--list-of-interactive-command-binding-couples))
+
 ;;;###autoload
 (define-minor-mode org-trello-mode "Sync your org-mode and your trello together."
-  :lighter    " ot"
-  :after-hook (org-trello/install-local-prefix-mode-keybinding! *ORGTRELLO-MODE-PREFIX-KEYBINDING*))
+  :lighter    " ot")
 
 (defun org-trello-mode-on-hook-fn (&optional partial-mode) "Actions to do when org-trello starts."
   (unless partial-mode
+          (org-trello/install-local-prefix-mode-keybinding! *ORGTRELLO-MODE-PREFIX-KEYBINDING*)
           (orgtrello-proxy/start)
           ;; buffer-invisibility-spec
           (add-to-invisibility-spec '(org-trello-cbx-property)) ;; for an ellipsis (...) change to '(org-trello-cbx-property . t)
@@ -226,6 +237,7 @@
 
 (defun org-trello-mode-off-hook-fn (&optional partial-mode) "Actions to do when org-trello stops."
   (unless partial-mode
+          (org-trello/remove-local-prefix-mode-keybinding! *ORGTRELLO-MODE-PREFIX-KEYBINDING*)
           (orgtrello-proxy/stop)
           ;; remove the invisible property names
           (remove-from-invisibility-spec '(org-trello-cbx-property)) ;; for an ellipsis (...) change to '(org-trello-cbx-property . t)
@@ -242,11 +254,15 @@
   (interactive)
   (let* ((pt (save-excursion (org-end-of-line) (point)))
          (entity-level (-> (orgtrello-data/entry-get-full-metadata) orgtrello-data/current orgtrello-data/entity-level)))
-    (goto-char (if (or (= *CHECKLIST-LEVEL* entity-level) (= *ITEM-LEVEL* entity-level)) (- pt (org-trello/compute-overlay-size!) 1) pt))))
+    (goto-char (if (or (= *CHECKLIST-LEVEL* entity-level) (= *ITEM-LEVEL* entity-level))
+                   (-if-let (s (org-trello/compute-overlay-size!))
+                            (- pt s 1)
+                            pt)
+                   pt))))
 
-(defun org-trello/compute-overlay-size! ()
-  (let ((o (first (overlays-in (point-at-bol) (point-at-eol)))))
-    (- (overlay-end o) (overlay-start o))))
+(defun org-trello/compute-overlay-size! () "Compute the overlay size to the current position"
+  (when-let (o (first (overlays-in (point-at-bol) (point-at-eol))))
+            (- (overlay-end o) (overlay-start o))))
 
 (add-hook 'org-trello-mode-on-hook 'org-trello-mode-on-hook-fn)
 
