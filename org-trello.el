@@ -4,7 +4,7 @@
 
 ;; Author: Antoine R. Dumont <eniotna.t AT gmail.com>
 ;; Maintainer: Antoine R. Dumont <eniotna.t AT gmail.com>
-;; Version: 0.2.8.2
+;; Version: 0.2.9.1
 ;; Package-Requires: ((org "8.0.7") (dash "2.4.2") (request "0.2.0") (cl-lib "0.3.0") (json "1.2") (elnode "0.9.9.7.6") (esxml "0.3.0") (s "1.7.0") (kv "0.0.19"))
 ;; Keywords: org-mode trello sync org-trello
 ;; URL: https://github.com/ardumont/org-trello
@@ -66,7 +66,7 @@
 (require 'esxml)
 (require 'align)
 
-(defvar *ORGTRELLO-VERSION* "0.2.8.2" "org-trello version")
+(defvar *ORGTRELLO-VERSION* "0.2.9.1" "org-trello version")
 
 (provide 'org-trello-header)
 
@@ -533,14 +533,12 @@ If you want to use this, we recommand to use the native org checklists - http://
   (save-excursion
     (goto-char pt)
     (let* ((checkbox-title   (-> (orgtrello-cbx/--read-checkbox!) orgtrello-cbx/--checkbox-data))
-           (updated-property (orgtrello-cbx/--make-properties-as-string properties)))
+           (updated-property (orgtrello-cbx/--make-properties-as-string properties))
+           (text-to-insert   (format "%s %s" checkbox-title updated-property)))
       (beginning-of-line)
       (kill-line)
-      (insert checkbox-title)
-      (insert " ")
-      (insert updated-property)
-       ;; outline to use the default one but beware with outline, there is an ellipsis (...)
-      (format "%s%s" checkbox-title updated-property))))
+      (insert text-to-insert)
+      text-to-insert)))
 
 (defun orgtrello-cbx/--key-to-search (key) "Search the key key as a symbol"
   (if (stringp key) (intern key) key))
@@ -2877,8 +2875,8 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   :lighter    " ot"
   :after-hook (org-trello/install-local-prefix-mode-keybinding! *ORGTRELLO-MODE-PREFIX-KEYBINDING*))
 
-(defun org-trello-mode-on-hook-fn (&optional full-mode) "Actions to do when org-trello starts."
-  (unless full-mode
+(defun org-trello-mode-on-hook-fn (&optional partial-mode) "Actions to do when org-trello starts."
+  (unless partial-mode
           (orgtrello-proxy/start)
           ;; buffer-invisibility-spec
           (add-to-invisibility-spec '(org-trello-cbx-property)) ;; for an ellipsis (...) change to '(org-trello-cbx-property . t)
@@ -2887,10 +2885,12 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
           ;; migrate all checkbox at org-trello mode activation
           (orgtrello-controller/install-overlays!)
           ;; a little message in the minibuffer to notify the user
-          (orgtrello-log/msg *OT/NOLOG* (org-trello/--startup-message *ORGTRELLO-MODE-PREFIX-KEYBINDING*))))
+          (orgtrello-log/msg *OT/NOLOG* (org-trello/--startup-message *ORGTRELLO-MODE-PREFIX-KEYBINDING*))
+          ;; Overwrite the org-mode-map
+          (define-key org-mode-map "\C-e" 'org-trello/end-of-line!)))
 
-(defun org-trello-mode-off-hook-fn (&optional full-mode) "Actions to do when org-trello stops."
-  (unless full-mode
+(defun org-trello-mode-off-hook-fn (&optional partial-mode) "Actions to do when org-trello stops."
+  (unless partial-mode
           (orgtrello-proxy/stop)
           ;; remove the invisible property names
           (remove-from-invisibility-spec '(org-trello-cbx-property)) ;; for an ellipsis (...) change to '(org-trello-cbx-property . t)
@@ -2898,12 +2898,24 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
           (remove-hook 'before-save-hook 'orgtrello-controller/install-overlays!)
           ;; remove org-trello overlays
           (orgtrello-controller/remove-overlays!)
+          ;; Reinstall the default org-mode-map
+          (define-key org-mode-map "\C-e" 'org-end-of-line)
           ;; a little message in the minibuffer to notify the user
           (orgtrello-log/msg *OT/NOLOG* "org-trello/ot is off!")))
 
-(add-hook 'org-trello-mode-on-hook (lambda () (org-trello-mode-on-hook-fn t)))
+(defun org-trello/end-of-line! () "Move the cursor at the end of the line. For a checkbox, move to the 1- point (because of overlays)."
+  (interactive)
+  (let* ((pt (save-excursion (org-end-of-line) (point)))
+         (entity-level (-> (orgtrello-data/entry-get-full-metadata) orgtrello-data/current orgtrello-data/entity-level)))
+    (goto-char (if (or (= *CHECKLIST-LEVEL* entity-level) (= *ITEM-LEVEL* entity-level)) (- pt (org-trello/compute-overlay-size!) 1) pt))))
 
-(remove-hook 'org-trello-mode-off-hook (lambda () (org-trello-mode-off-hook-fn t)) )
+(defun org-trello/compute-overlay-size! ()
+  (let ((o (first (overlays-in (point-at-bol) (point-at-eol)))))
+    (- (overlay-end o) (overlay-start o))))
+
+(add-hook 'org-trello-mode-on-hook 'org-trello-mode-on-hook-fn)
+
+(add-hook 'org-trello-mode-off-hook 'org-trello-mode-off-hook-fn)
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello loaded!")
 
