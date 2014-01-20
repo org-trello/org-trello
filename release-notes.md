@@ -1,3 +1,9 @@
+# 0.2.9.1
+
+- [X] Forgot to ship code
+- [X] Update version
+- [X] Release notes
+
 # 0.2.9
 
 - [X] Remove org-trello.el at the root of the code (as the package generates this file and the test load without it, no longer needs to be gitted)
