@@ -816,7 +816,9 @@ CLOSED: [2014-01-20 lun. 18:47]
 - [X] Forgot to ship code
 - [X] Update version
 - [X] Release notes
-* TODO 0.3.0 [0%]
+* TODO 0.3.0 [11%]
+- [X] Backlog
+- [ ] Upgrade Version
 - [ ] Remove org-trello bindings when org-trello's minor mode is switched off (this is not currently the case)
 - [ ] Improve the proxy requesting multiple entities multiple times for the same entity on trello (multiple results in trello board)
 - [ ] Hide trello global properties
@@ -824,8 +826,12 @@ CLOSED: [2014-01-20 lun. 18:47]
   - [ ] extracter (from file/region to data)
   - [ ] updater (from data to updated data)
   - [ ] serializer (from data to file/region update)
-- [ ] Clean the code regarding the old checklist/item entities (with stars)
-- [ ] Improve the upgrading version way (writed at 2 places, 1 is better to avoid duplication)
+- [ ] Improve the upgrading version way (2 places, 1 is better to avoid duplication)
+- [ ] Update doc
+- [ ] Release notes
+
+* TODO 0.3.1 [%]
+- [ ] Clean the code regarding the old checklist/item entities (with stars) - https://github.com/ardumont/org-trello/issues/105
 - [ ] Synchronize user comments - https://github.com/ardumont/org-trello/issues/86
 - [ ] More fined grained use of the trello api (retrieve only data we use) - https://github.com/ardumont/org-trello/issues/69
 - [ ] Use trello labels and org tags as one - https://github.com/ardumont/org-trello/issues/70
@@ -836,7 +842,7 @@ CLOSED: [2014-01-20 lun. 18:47]
 - [ ] Expose a public trello board showing the status of org-trello and reference it inside the release notes
 - [ ] Now that elnode is here, this may be simpler to use a fake trello server (use clojure :D)
 - [ ] POC: use a temporary buffer to sync with trello, when done, merge with the user's buffer.
-- [ ] Improve tests coverage - some major and important functionalities are not covered (due at time of ignorance on how to do it, there is only so much one can do!
+- [ ] Improve tests coverage - some major and important functionalities are not covered (due at time of ignorance on how to do it, there is only so much one can do!)
 * TODO Template [0%]
 - [ ] Backlog
 - [ ] Version
