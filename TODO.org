@@ -820,7 +820,6 @@ CLOSED: [2014-01-20 lun. 18:47]
 - [X] Backlog
 - [X] Upgrade Version
 - [X] org-trello bindings remains present when org-trello is switched off. Fix it.
-- [ ] Hide trello global properties
 - [ ] Update doc
 - [ ] Release notes
 
