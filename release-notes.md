@@ -1,3 +1,13 @@
+# 0.3.1
+
+- [X] Backlog
+- [X] Version
+- [X] Avoid duplication in declaring the org-trello version
+- [X] Add the important information about emacs 24.3+ (org-trello is only supported from this version range)
+- [X] Clean the code regarding the old checklist/item entities (with stars) - https://github.com/ardumont/org-trello/issues/105
+- [X] Sometimes, multiple cards are created more than once. Improve the proxy policy regarding this - Unable to reproduce so do nothing.
+- [X] Release notes
+
 # 0.3.0
 
 - [X] Backlog
