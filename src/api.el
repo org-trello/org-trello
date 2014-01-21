@@ -71,7 +71,7 @@
   (->> (orgtrello-api/--deal-with-optional-value checked `("checked" . ,checked) `(("name" . ,name)))
        (orgtrello-hash/make-hash "POST" (format "/checklists/%s/checkItems" checklist-id) )))
 
-(defun orgtrello-api/update-item (card-id checklist-id item-id name &optional state) "Update a item"
+(defun orgtrello-api/update-item (card-id checklist-id item-id name &optional state) "Update an item"
   (->> (orgtrello-api/--deal-with-optional-value state `("state" . ,state) `(("name" . ,name)))
        (orgtrello-hash/make-hash "PUT" (format "/cards/%s/checklist/%s/checkItem/%s" card-id checklist-id item-id))))
 

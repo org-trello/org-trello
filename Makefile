@@ -37,7 +37,7 @@ prepare:
 	cp -r org-trello.el org-trello-pkg.el $(PACKAGE_FOLDER)
 
 generate:
-	cask exec emacs -Q --batch -l ./package.el
+	cask exec emacs -Q --batch -l ./build-package.el
 
 package: clean generate pkg-el prepare
 	tar cvf $(ARCHIVE) $(PACKAGE_FOLDER)
