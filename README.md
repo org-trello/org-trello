@@ -7,6 +7,7 @@
 - [Rationale](#rationale)
 - [Emacs version](#emacs-version)
 - [Migration](#migration)
+	- [0.3.1](#031)
 	- [0.2.9](#029)
 	- [0.2.8](#028)
 	- [0.2.1 -> 0.2.2](#021-->-022)
@@ -85,6 +86,11 @@ Tested on:
 - GNU Emacs 24.3.1 (x86_64-pc-linux-gnu, GTK+ Version 3.6.0) of 2014-01-03 on chindi02, modified by Debian
 
 # Migration
+
+## 0.3.1
+
+The old checklist/item format has been removed - https://github.com/ardumont/org-trello/issues/105.
+Now the org checkbox way is the standard one.
 
 ## 0.2.9
 
@@ -472,98 +478,6 @@ For example, once synced to trello, this looks like:
   - [X] Ocaml                                                 :PROPERTIES: {"orgtrello-id":"521dc9fb7ef4310554003ab3"}
 - [X] Hybrid                                                  :PROPERTIES: {"orgtrello-id":"521dc9f6238d072770007217"}
   - [X] Scala                                                 :PROPERTIES: {"orgtrello-id":"521dc9fc8e95d74636004109"}
-```
-
-#### Migrate to 0.1.6
-
-To migrate your 0.1.6 org trello buffer to the new format:
-- simply push the content to trello (`C-c o s`)
-- Erase the content of your buffer except for the org-trello properties (`#+` entries at the beginning of the file)
-- and sync from trello again (`C-c o S`).
-
-#### Reactivate
-
-This is activated by default but if you change this and you want to get back:
-
-```lisp
-(org-trello/activate-natural-org-checkboxes)
-```
-
-### Original format (previous to 0.1.6)
-
-```org-mode
-* IN-PROGRESS Joy of FUN(ctional) LANGUAGES
-** TODO LISP
-*** DONE Emacs-Lisp
-*** DONE Common-Lisp
-*** Scheme
-*** TODO Clojure
-** DONE ML
-*** DONE Haskell
-*** DONE Ocaml
-** DONE Hybrid
-*** DONE Scala
-** A little more explanation, this is level 2 so checklist on trello
-*** item (level 3)
-**** Any entity superior to level 4 are not considered for sync
-```
-
-Once synchronized, this looks like (largely prettier in emacs org buffer):
-
-```org-mode
-* IN-PROGRESS Joy of FUN(ctional) LANGUAGES
-:PROPERTIES:
-:orgtrello-id: 521dc9f3edeabee47600401e
-:END:
-** TODO LISP
-:PROPERTIES:
-:orgtrello-id: 521dc9f48e95d74636004107
-:END:
-*** DONE Emacs-Lisp
-:PROPERTIES:
-:orgtrello-id: 521dc9f7487c2e9b250047a5
-:END:
-*** DONE Common-Lisp
-:PROPERTIES:
-:orgtrello-id: 521dc9f7ae27842a36003b26
-:END:
-*** TODO Scheme
-:PROPERTIES:
-:orgtrello-id: 521dc9f834f52df935003b15
-:END:
-*** DONE Clojure
-:PROPERTIES:
-:orgtrello-id: 521dc9f9c1b85c905f006b4e
-:END:
-** TODO ML
-:PROPERTIES:
-:orgtrello-id: 521dc9f5d49a919614000266
-:END:
-*** DONE Haskell
-:PROPERTIES:
-:orgtrello-id: 521dc9fa5699f00b25003bd0
-:END:
-*** DONE Ocaml
-:PROPERTIES:
-:orgtrello-id: 521dc9fb7ef4310554003ab3
-:END:
-** TODO Hybrid
-:PROPERTIES:
-:orgtrello-id: 521dc9f6238d072770007217
-:END:
-*** DONE Scala
-:PROPERTIES:
-:orgtrello-id: 521dc9fc8e95d74636004109
-:END:
-
-```
-
-#### Activate
-
-From 0.1.6 onwards, if you want to deactivate the default way, and get back to the original way, put this snippet somewhere in your init file:
-
-```lisp
-(org-trello/deactivate-natural-org-checkboxes)
 ```
 
 ## Creation step-by-step
