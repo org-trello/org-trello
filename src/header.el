@@ -65,7 +65,11 @@
 (require 'kv)
 (require 'esxml)
 (require 'align)
-(require 'package)
+
+(when (version< emacs-version "24.3")
+      (error (concat "Oops - your emacs isn't supported. org-trello only works on Emacs 24.3+ and you're running version: " emacs-version ". Please upgrade your Emacs and try again.")))
+
+(require 'package) (package-initialize)
 
 (defvar *ORGTRELLO-VERSION* (when (package-installed-p 'org-trello)
                                   (mapconcat (lambda (e) (format "%s" e)) (aref (assoc-default 'org-trello package-alist) 0) ".")) "current org-trello version installed.")
