@@ -149,29 +149,14 @@
           *ERROR-SYNC-ITEM-SYNC-CHECKLIST-FIRST*)
       *ERROR-SYNC-ITEM-MISSING-NAME*)))
 
-(defun orgtrello-controller/--item-compute-state-or-check (checklist-update-items-p item-state checklist-state possible-states) "Compute the item's state/check (for creation/update)."
-  (let* ((orgtrello-controller/--item-checked   (first possible-states))
-         (orgtrello-controller/--item-unchecked (second possible-states)))
-    (cond ((and checklist-update-items-p (string= *DONE* checklist-state))                      orgtrello-controller/--item-checked)
-          ((and checklist-update-items-p (or checklist-state (string= *TODO* checklist-state))) orgtrello-controller/--item-unchecked)
-          ((string= *DONE* item-state)                                                          orgtrello-controller/--item-checked)
-          (t                                                                                    orgtrello-controller/--item-unchecked))))
-
-(defun orgtrello-controller/--item-compute-state (checklist-update-items-p item-state checklist-state) "Compute the item's state (for creation)."
-  (orgtrello-controller/--item-compute-state-or-check checklist-update-items-p item-state checklist-state '("complete" "incomplete")))
-
-(defun orgtrello-controller/--item-compute-check (checklist-update-items-p item-state checklist-state) "Compute the item's check status (for update)."
-    (orgtrello-controller/--item-compute-state-or-check checklist-update-items-p item-state checklist-state '(t nil)))
-
 (defun orgtrello-controller/--compute-state-from-keyword (state) "Given a state, compute the org equivalent (to use with org-todo function)"
   (if (string= *DONE* state) 'done 'none))
 
-(defun orgtrello-controller/--update-item-according-to-checklist-status (checklist-update-items-p checklist-meta) "Update the item of the checklist according to the status of the checklist."
-  (if checklist-update-items-p
-      (-> checklist-meta
-          orgtrello-data/entity-keyword
-          orgtrello-controller/--compute-state-from-keyword
-          org-todo)))
+(defun orgtrello-controller/compute-state (state) "Given a state (TODO/DONE) compute the trello state equivalent."
+  (orgtrello-controller/--compute-state-generic state '("complete" "incomplete")))
+
+(defun orgtrello-controller/compute-check (state) "Given a state (TODO/DONE) compute the trello check equivalent."
+  (orgtrello-controller/--compute-state-generic state '(t nil)))
 
 (defun orgtrello-controller/--item (item-meta &optional checklist-meta card-meta) "Deal with create/update item query build. If the checks are ko, the error message is returned."
   (let ((checks-ok-or-error-message (orgtrello-controller/--checks-before-sync-item item-meta checklist-meta card-meta)))
@@ -185,13 +170,18 @@
                (orgtrello-controller/--item-state   (orgtrello-data/entity-keyword item-meta))
                (orgtrello-controller/--checklist-state    (orgtrello-data/entity-keyword checklist-meta)))
 
-          (orgtrello-controller/--update-item-according-to-checklist-status *ORGTRELLO-CHECKLIST-UPDATE-ITEMS* checklist-meta)
           ;; update/create items
           (if orgtrello-controller/--item-id
               ;; update - rename, check or uncheck the item
-              (orgtrello-api/update-item orgtrello-controller/--card-id orgtrello-controller/--checklist-id orgtrello-controller/--item-id orgtrello-controller/--item-name (orgtrello-controller/--item-compute-state *ORGTRELLO-CHECKLIST-UPDATE-ITEMS* orgtrello-controller/--item-state orgtrello-controller/--checklist-state))
-            ;; create
-            (orgtrello-api/add-items orgtrello-controller/--checklist-id orgtrello-controller/--item-name (orgtrello-controller/--item-compute-check *ORGTRELLO-CHECKLIST-UPDATE-ITEMS* orgtrello-controller/--item-state orgtrello-controller/--checklist-state))))
+              (orgtrello-api/update-item orgtrello-controller/--card-id
+                                         orgtrello-controller/--checklist-id
+                                         orgtrello-controller/--item-id
+                                         orgtrello-controller/--item-name
+                                         (orgtrello-controller/compute-state orgtrello-controller/--item-state))
+              ;; create
+              (orgtrello-api/add-items orgtrello-controller/--checklist-id
+                                       orgtrello-controller/--item-name
+                                       (orgtrello-controller/compute-check orgtrello-controller/--item-state))))
       checks-ok-or-error-message)))
 
 (defun orgtrello-controller/--too-deep-level (meta &optional parent-meta grandparent-meta) "Deal with too deep level."
@@ -270,7 +260,7 @@
       (orgtrello-controller/map-sync-checkboxes)))
 
 (defun orgtrello-controller/map-sync-checkboxes () "Map the sync to checkboxes."
-  (when *ORGTRELLO-NATURAL-ORG-CHECKLIST* (orgtrello-cbx/map-checkboxes 'orgtrello-controller/do-sync-entity)))
+  (orgtrello-cbx/map-checkboxes 'orgtrello-controller/do-sync-entity))
 
 (defun orgtrello-controller/org-map-entries (level fn-to-execute) "Map fn-to-execute to a given entities with level level. fn-to-execute is a function without any parameter."
   (org-map-entries (lambda () (when (= level (orgtrello-data/current-level)) (funcall fn-to-execute)))))
@@ -288,7 +278,7 @@
 (defun orgtrello-controller/--private-compute-card-to-org-entry (name status due-date) "Compute the org format for card."
   (format "* %s %s\n%s" (if status status *TODO*) name (orgtrello-controller/--compute-due-date due-date)))
 
-(defun orgtrello-controller/--compute-card-to-org-entry (card &optional orgcheckbox-p) "Given a card, compute its org-mode entry equivalence. orgcheckbox-p is nil"
+(defun orgtrello-controller/--compute-card-to-org-entry (card) "Given a card, compute its org-mode entry equivalence. orgcheckbox-p is nil"
   (orgtrello-controller/--private-compute-card-to-org-entry (orgtrello-data/entity-name card) (orgtrello-data/entity-keyword card) (orgtrello-data/entity-due card)))
 
 (defun orgtrello-controller/--compute-checklist-to-orgtrello-entry (name &optional level status) "Compute the orgtrello format checklist"
@@ -337,35 +327,18 @@
           (orgtrello-controller/--compute-state-item-checkbox status)
           name))
 
-(defun orgtrello-controller/--compute-item-to-orgtrello-entry (name &optional level status)
-  (format "%s %s %s\n"
-          (orgtrello-controller/--star level)
-          (orgtrello-controller/--compute-state-item status)
-          name))
-
 (defun orgtrello-controller/--compute-checklist-to-org-entry (checklist &optional orgcheckbox-p) "Given a checklist, compute its org-mode entry equivalence."
-  (funcall (if orgcheckbox-p
-               'orgtrello-controller/--compute-checklist-to-org-checkbox
-               'orgtrello-controller/--compute-item-to-orgtrello-entry)
-           (orgtrello-data/entity-name checklist)
-           *CHECKLIST-LEVEL*
-           "incomplete"))
+  (orgtrello-controller/--compute-checklist-to-org-checkbox (orgtrello-data/entity-name checklist) *CHECKLIST-LEVEL* "incomplete"))
 
-(defun orgtrello-controller/--compute-item-to-org-entry (item &optional orgcheckbox-p) "Given a checklist item, compute its org-mode entry equivalence."
-  (funcall (if orgcheckbox-p
-               'orgtrello-controller/--compute-item-to-org-checkbox
-               'orgtrello-controller/--compute-item-to-orgtrello-entry)
-           (orgtrello-data/entity-name item)
-           *ITEM-LEVEL*
-           (orgtrello-data/entity-keyword item)))
+(defun orgtrello-controller/--compute-item-to-org-entry (item) "Given a checklist item, compute its org-mode entry equivalence."
+  (orgtrello-controller/--compute-item-to-org-checkbox (orgtrello-data/entity-name item) *ITEM-LEVEL* (orgtrello-data/entity-keyword item)))
 
 (defun orgtrello-controller/--compute-entity-to-org-entry (entity) "Given an entity, compute its org representation."
   (funcall
    (cond ((orgtrello-data/entity-card-p entity)      'orgtrello-controller/--compute-card-to-org-entry)
          ((orgtrello-data/entity-checklist-p entity) 'orgtrello-controller/--compute-checklist-to-org-entry)
          ((orgtrello-data/entity-item-p entity)      'orgtrello-controller/--compute-item-to-org-entry))
-   entity
-   *ORGTRELLO-NATURAL-ORG-CHECKLIST*))
+   entity))
 
 (defun orgtrello-controller/--compute-items-from-checklist (checklist entities adjacency) "Given a checklist, retrieve its items and update the entities hash and the adjacency list."
   (let ((checklist-id (orgtrello-data/entity-id checklist)))
@@ -553,22 +526,13 @@
 (defun orgtrello-controller/--write-entity! (entity-id entity) "Write the entity in the buffer to the current position. Move the cursor position."
   (orgtrello-log/msg *OT/INFO* "Synchronizing entity '%s' with id '%s'..." (orgtrello-data/entity-name entity) entity-id)
   (insert (orgtrello-controller/--compute-entity-to-org-entry entity))
-  (when entity-id (orgtrello-controller/--update-property entity-id (and *ORGTRELLO-NATURAL-ORG-CHECKLIST* (not (orgtrello-data/entity-card-p entity))))))
-
-;; (defun orgtrello-controller/org-map-entities! (fn-to-execute &optional entities) "Execute fn-to-execute function for all entities from buffer."
-;;   (org-map-entries
-;;      (lambda ()
-;;        (funcall fn-to-execute entities) ;; execute on heading entry
-;;        (when *ORGTRELLO-NATURAL-ORG-CHECKLIST*
-;;              (orgtrello-cbx/map-checkboxes (lambda () (funcall fn-to-execute entities))))) t 'file))
-;; execute the same function for each org-checkboxes entry
+  (when entity-id (orgtrello-controller/--update-property entity-id (not (orgtrello-data/entity-card-p entity)))))
 
 (defun orgtrello-controller/org-map-entities-without-params! (fn-to-execute) "Execute fn-to-execute function for all entities from buffer - fn-to-execute is a function without any parameters."
   (org-map-entries
      (lambda ()
        (funcall fn-to-execute) ;; execute on heading entry
-       (when *ORGTRELLO-NATURAL-ORG-CHECKLIST*
-             (orgtrello-cbx/map-checkboxes fn-to-execute))) t 'file))
+       (orgtrello-cbx/map-checkboxes fn-to-execute)) t 'file))
 
 (defun orgtrello-controller/--write-item! (entity-id entities) "Write the item to the org buffer."
   (->> entities

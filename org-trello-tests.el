@@ -373,26 +373,6 @@
   (expect 'done (orgtrello-controller/--compute-state-from-keyword *DONE*))
   (expect 'none (orgtrello-controller/--compute-state-from-keyword "IN")))
 
-(expectations (desc "orgtrello-controller/--item-compute-state")
-  (expect "complete" (orgtrello-controller/--item-compute-state t "DONE" "DONE"))
-  (expect "complete" (orgtrello-controller/--item-compute-state t "TODO" "DONE"))
-  (expect "incomplete" (orgtrello-controller/--item-compute-state t "DONE" "TODO"))
-  (expect "incomplete" (orgtrello-controller/--item-compute-state t "TODO" "TODO"))
-  (expect "complete" (orgtrello-controller/--item-compute-state nil "DONE" "DONE"))
-  (expect "incomplete" (orgtrello-controller/--item-compute-state nil "TODO" "DONE"))
-  (expect "complete" (orgtrello-controller/--item-compute-state nil "DONE" "TODO"))
-  (expect "incomplete" (orgtrello-controller/--item-compute-state nil "TODO" "TODO")) )
-
-(expectations (desc "orgtrello-controller/--item-compute-check")
-  (expect t (orgtrello-controller/--item-compute-check t "DONE" "DONE"))
-  (expect t (orgtrello-controller/--item-compute-check t "TODO" "DONE"))
-  (expect nil (orgtrello-controller/--item-compute-check t "DONE" "TODO"))
-  (expect nil (orgtrello-controller/--item-compute-check t "TODO" "TODO"))
-  (expect t (orgtrello-controller/--item-compute-check nil "DONE" "DONE"))
-  (expect nil (orgtrello-controller/--item-compute-check nil "TODO" "DONE"))
-  (expect t (orgtrello-controller/--item-compute-check nil "DONE" "TODO"))
-  (expect nil (orgtrello-controller/--item-compute-check nil "TODO" "TODO")) )
-
 (expectations (desc "orgtrello-elnode/--dictionary-lessp")
  (expect t (and (orgtrello-elnode/--dictionary-lessp "a" "b")
                 (null (orgtrello-elnode/--dictionary-lessp "b" "a"))
@@ -670,35 +650,17 @@ DEADLINE: <some-date>
   (expect "  - [ ] name
 " (orgtrello-controller/--compute-item-to-org-checkbox "name" 3 "incomplete")))
 
-(expectations (desc "orgtrello-controller/--compute-item-to-orgtrello-entry")
-  (expect "*** DONE name
-" (orgtrello-controller/--compute-item-to-orgtrello-entry "name" 3 "complete"))
-  (expect "*** TODO name
-" (orgtrello-controller/--compute-item-to-orgtrello-entry "name" 3 "incomplete")))
-
 (expectations (desc "orgtrello-controller/--compute-checklist-to-org-entry")
   (expect "- [-] name
 " (orgtrello-controller/--compute-checklist-to-org-entry (orgtrello-hash/make-properties `((:name . "name"))) t))
   (expect "- [-] name
 " (orgtrello-controller/--compute-checklist-to-org-entry (orgtrello-hash/make-properties `((:name . "name"))) t)))
 
-(expectations (desc "orgtrello-controller/--compute-checklist-to-org-entry")
-  (expect "** TODO name
-" (orgtrello-controller/--compute-checklist-to-org-entry (orgtrello-hash/make-properties `((:name . "name"))) nil))
-  (expect "** TODO name
-" (orgtrello-controller/--compute-checklist-to-org-entry (orgtrello-hash/make-properties `((:name . "name"))) nil)))
-
 (expectations (desc "orgtrello-controller/--compute-item-to-org-entry - 1")
   (expect "  - [X] name
-" (orgtrello-controller/--compute-item-to-org-entry (orgtrello-hash/make-properties `((:name . "name") (:keyword . "complete"))) t))
+" (orgtrello-controller/--compute-item-to-org-entry (orgtrello-hash/make-properties `((:name . "name") (:keyword . "complete")))))
   (expect "  - [ ] name
-" (orgtrello-controller/--compute-item-to-org-entry (orgtrello-hash/make-properties `((:name . "name") (:keyword . "incomplete"))) t)))
-
-(expectations (desc "orgtrello-controller/--compute-item-to-org-entry - 2")
-  (expect "*** DONE name
-" (orgtrello-controller/--compute-item-to-org-entry (orgtrello-hash/make-properties `((:name . "name") (:keyword . "complete"))) nil))
-  (expect "*** TODO name
-" (orgtrello-controller/--compute-item-to-org-entry (orgtrello-hash/make-properties `((:name . "name") (:keyword . "incomplete"))) nil)))
+" (orgtrello-controller/--compute-item-to-org-entry (orgtrello-hash/make-properties `((:name . "name") (:keyword . "incomplete"))))))
 
 (expectations (desc "orgtrello-data/entity-*")
   (expect "test" (orgtrello-data/entity-buffername            (orgtrello-hash/make-properties `((:buffername . "test")))))
@@ -767,11 +729,6 @@ DEADLINE: <some-date>
 (expectations (desc "orgtrello-controller/--compute-state-item-checkbox")
   (expect "[X]" (orgtrello-controller/--compute-state-item-checkbox "complete"))
   (expect "[ ]" (orgtrello-controller/--compute-state-item-checkbox "incomplete")))
-
-(expectations (desc "orgtrello-controller/--compute-state-item")
- (expect "DONE" (orgtrello-controller/--compute-state-item "complete"))
- (expect "TODO" (orgtrello-controller/--compute-state-item "incomplete")))
-(message "Tests done!")
 
 (expectations (desc "orgtrello-data/--entity-with-level-p")
  (expect nil (orgtrello-data/--entity-with-level-p nil 1))
@@ -1905,6 +1862,14 @@ hello there
 :END:
 - [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}"
        (orgtrello-buffer/extract-description-from-current-position))))
+
+(expectations
+  (expect "complete" (orgtrello-controller/compute-state *DONE*))
+  (expect "incomplete" (orgtrello-controller/compute-state "anything-else")))
+
+(expectations
+  (expect t   (orgtrello-controller/compute-check *DONE*))
+  (expect nil (orgtrello-controller/compute-check "anything-else")))
 
 (provide 'org-trello-tests)
 ;;; org-trello-tests ends here

@@ -5,8 +5,7 @@
 
 ;; #################### orgtrello-cbx
 
-(defun orgtrello-cbx/checkbox-p () "Is there a checkbox at point?"
-  (and *ORGTRELLO-NATURAL-ORG-CHECKLIST* (org-at-item-checkbox-p)))
+(defun orgtrello-cbx/checkbox-p () "Is there a checkbox at point?" (org-at-item-checkbox-p))
 
 (defun orgtrello-cbx/--to-properties (alist) "Serialize an association list to json."
   (json-encode-hash-table (orgtrello-hash/make-properties alist)))
