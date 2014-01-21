@@ -65,8 +65,10 @@
 (require 'kv)
 (require 'esxml)
 (require 'align)
+(require 'package)
 
-(defvar *ORGTRELLO-VERSION* "0.3.1" "org-trello version")
+(defvar *ORGTRELLO-VERSION* (when (package-installed-p 'org-trello)
+                                  (mapconcat (lambda (e) (format "%s" e)) (aref (assoc-default 'org-trello package-alist) 0) ".")) "current org-trello version installed.")
 
 (provide 'org-trello-header)
 

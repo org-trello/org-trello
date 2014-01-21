@@ -824,11 +824,11 @@ CLOSED: [2014-01-20 lun. 22:02]
 - [X] Update doc
 - [X] Release notes
 
-* IN-PROGRESS 0.3.1 [28%]
+* IN-PROGRESS 0.3.1 [42%]
 - [X] Backlog
 - [X] Version
+- [X] Avoid duplication in declaring the org-trello version
 - [ ] Clean the code regarding the old checklist/item entities (with stars) - https://github.com/ardumont/org-trello/issues/105
-- [ ] Avoid duplication in declaring the org-trello version.
 - [ ] Sometimes, multiple cards are created more than once. Improve the proxy policy regarding this.
 - [ ] Release notes
 - [ ] Release
