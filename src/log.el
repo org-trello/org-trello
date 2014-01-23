@@ -1,5 +1,3 @@
-;; #################### orgtrello-log
-
 (defvar *OT/NOLOG* 0)
 (defvar *OT/ERROR* 1)
 (defvar *OT/WARN*  2)
@@ -23,7 +21,5 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
     (apply 'message args)))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-log loaded!")
-
-(provide 'org-trello-log)
 
 

@@ -1,8 +1,3 @@
-(require 'org-trello-log)
-(require 'org-trello-setup)
-
-;; #################### orgtrello-action
-
 (defun trace (label e) "Decorator for some inaccessible code to easily 'message'."
   (message "TRACE: %s: %S" label e)
   e)
@@ -71,7 +66,5 @@
      (unless nolog-p (orgtrello-log/msg *OT/INFO* (concat msg " - done!"))))))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-action loaded!")
-
-(provide 'org-trello-action)
 
 

@@ -1,15 +1,3 @@
-(require 'org-trello-log)
-(require 'org-trello-setup)
-(require 'org-trello-action)
-(require 'org-trello-hash)
-(require 'org-trello-api)
-(require 'org-trello-data)
-(require 'org-trello-cbx)
-(require 'org-trello-query)
-(require 'org-trello-controller)
-
-;; #################### org-trello
-
 (defun org-trello/sync-entity () "Control first, then if ok, create a simple entity."
   (interactive)
   (orgtrello-action/--deal-with-consumer-msg-controls-or-actions-then-do

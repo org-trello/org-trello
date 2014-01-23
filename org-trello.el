@@ -4,7 +4,7 @@
 
 ;; Author: Antoine R. Dumont <eniotna.t AT gmail.com>
 ;; Maintainer: Antoine R. Dumont <eniotna.t AT gmail.com>
-;; Version: 0.3.1
+;; Version: 0.3.1.1
 ;; Package-Requires: ((org "8.0.7") (dash "2.4.2") (request "0.2.0") (cl-lib "0.3.0") (json "1.2") (elnode "0.9.9.7.6") (esxml "0.3.0") (s "1.7.0") (kv "0.0.19"))
 ;; Keywords: org-mode trello sync org-trello
 ;; URL: https://github.com/ardumont/org-trello
@@ -74,11 +74,7 @@
 (defvar *ORGTRELLO-VERSION* (when (package-installed-p 'org-trello)
                                   (mapconcat (lambda (e) (format "%s" e)) (aref (assoc-default 'org-trello package-alist) 0) ".")) "current org-trello version installed.")
 
-(provide 'org-trello-header)
-
 
-;; #################### orgtrello-log
-
 (defvar *OT/NOLOG* 0)
 (defvar *OT/ERROR* 1)
 (defvar *OT/WARN*  2)
@@ -103,14 +99,7 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-log loaded!")
 
-(provide 'org-trello-log)
-
 
-(require 'org-trello-header)
-(require 'org-trello-log)
-
-;; #################### orgtrello-setup
-
 (defvar *consumer-key*                nil                                               "Id representing the user.")
 (defvar *access-token*                nil                                               "Read/write access token to use trello on behalf of the user.")
 (defvar *ORGTRELLO-MARKER*            "orgtrello-marker"                                "A marker used inside the org buffer to synchronize entries.")
@@ -163,14 +152,7 @@ If you want to use this, we recommand to use the native org checklists - http://
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-setup loaded!")
 
-(provide 'org-trello-setup)
-
 
-(require 'org-trello-log)
-(require 'org-trello-setup)
-
-;; #################### orgtrello-hash
-
 (defun orgtrello-hash/empty-hash () "Empty hash table with test 'equal"
   (make-hash-table :test 'equal))
 
@@ -214,14 +196,7 @@ If you want to use this, we recommand to use the native org checklists - http://
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-hash loaded!")
 
-(provide 'org-trello-hash)
-
 
-(require 'org-trello-log)
-(require 'org-trello-setup)
-
-;; #################### orgtrello-action
-
 (defun trace (label e) "Decorator for some inaccessible code to easily 'message'."
   (message "TRACE: %s: %S" label e)
   e)
@@ -291,16 +266,7 @@ If you want to use this, we recommand to use the native org checklists - http://
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-action loaded!")
 
-(provide 'org-trello-action)
-
 
-(require 'org-trello-log)
-(require 'org-trello-setup)
-(require 'org-trello-hash)
-(require 'org-trello-action)
-
-;; #################### orgtrello-data
-
 (defvar *ORGTRELLO-ID* "orgtrello-id" "Key entry used for the trello identifier and the trello marker (the first sync).")
 
 (defun orgtrello-data/merge-2-lists-without-duplicates (a-list b-list) "Merge 2 lists together (no duplicates)."
@@ -475,16 +441,7 @@ If you want to use this, we recommand to use the native org checklists - http://
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-data loaded!")
 
-(provide 'org-trello-data)
-
 
-(require 'org-trello-log)
-(require 'org-trello-setup)
-(require 'org-trello-hash)
-(require 'org-trello-data)
-
-;; #################### orgtrello-cbx
-
 (defun orgtrello-cbx/checkbox-p () "Is there a checkbox at point?" (org-at-item-checkbox-p))
 
 (defun orgtrello-cbx/--to-properties (alist) "Serialize an association list to json."
@@ -687,15 +644,7 @@ This is a list with the following elements:
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-cbx loaded!")
 
-(provide 'org-trello-cbx)
-
 
-(require 'org-trello-log)
-(require 'org-trello-setup)
-(require 'org-trello-hash)
-
-;; #################### orgtrello-api
-
 (defun orgtrello-api/--deal-with-optional-value (optional-entry value entries) "Add the optional value depending on the entry. Return entries updated with value if entry, entries untouched otherwise."
   (if optional-entry (cons value entries) entries))
 
@@ -781,15 +730,7 @@ This is a list with the following elements:
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-api loaded!")
 
-(provide 'org-trello-api)
-
 
-(require 'org-trello-log)
-(require 'org-trello-setup)
-(require 'org-trello-data)
-
-;; #################### orgtrello-query
-
 (defvar *TRELLO-URL* "https://api.trello.com/1" "The needed prefix url for trello")
 
 (defun orgtrello-query/--compute-url (server uri) "Compute the trello url from the given uri."
@@ -869,11 +810,7 @@ This is a list with the following elements:
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-query loaded!")
 
-(provide 'org-trello-query)
-
 
-;; #################### orgtrello-elnode
-
 (defun orgtrello-elnode/compute-entity-level-dir (level) "Given a level, compute the folder onto which the file will be serialized."
   (format "%s%s/%s/" elnode-webserver-docroot "org-trello" level))
 
@@ -917,16 +854,7 @@ This is a list with the following elements:
 (defun orgtrello-elnode/remove-file (file-to-remove) "Remove metadata file."
   (when (file-exists-p file-to-remove) (delete-file file-to-remove)))
 
-(provide 'org-trello-elnode)
-
 
-(require 'org-trello-log)
-(require 'org-trello-setup)
-(require 'org-trello-data)
-(require 'org-trello-elnode)
-
-;; #################### orgtrello-webadmin
-
 (defun orgtrello-webadmin/--compute-root-static-files () "Root files under which css and js files are installed."
   (format "%s%s" elnode-webserver-docroot "org-trello/bootstrap"))
 
@@ -1221,21 +1149,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-admin loaded!")
 
-(provide 'org-trello-webadmin)
-
 
-(require 'org-trello-log)
-(require 'org-trello-setup)
-(require 'org-trello-hash)
-(require 'org-trello-query)
-(require 'org-trello-data)
-(require 'org-trello-action)
-(require 'org-trello-cbx)
-(require 'org-trello-elnode)
-(require 'org-trello-webadmin)
-
-;; #################### orgtrello-proxy
-
 (defvar *ORGTRELLO-PROXY-HOST* "localhost" "proxy host")
 (defvar *ORGTRELLO-PROXY-PORT* nil         "proxy port")
 (defvar *ORGTRELLO-PROXY-URL*  nil         "proxy url")
@@ -1677,13 +1591,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-proxy-install loaded!")
 
-(provide 'org-trello-proxy)
-
 
-(require 'org-trello-cbx)
-
-;; #################### orgtrello-buffer
-
 (defun orgtrello-buffer/back-to-card! () "Given the current position, goes on the card's heading"
   (org-back-to-heading))
 
@@ -1711,21 +1619,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
        (replace-regexp-in-string "^:.*" "")
        (s-trim-left)))
 
-(provide 'org-trello-buffer)
-
 
-(require 'org-trello-log)
-(require 'org-trello-setup)
-(require 'org-trello-action)
-(require 'org-trello-hash)
-(require 'org-trello-api)
-(require 'org-trello-data)
-(require 'org-trello-cbx)
-(require 'org-trello-query)
-(require 'org-trello-buffer)
-
-;; #################### orgtrello-controller
-
 ;; Specific state - FIXME check if they do not already exist on org-mode to avoid potential collisions
 (defvar *TODO* "TODO" "org-mode todo state")
 (defvar *DONE* "DONE" "org-mode done state")
@@ -2629,21 +2523,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-controller loaded!")
 
-(provide 'org-trello-controller)
-
 
-(require 'org-trello-log)
-(require 'org-trello-setup)
-(require 'org-trello-action)
-(require 'org-trello-hash)
-(require 'org-trello-api)
-(require 'org-trello-data)
-(require 'org-trello-cbx)
-(require 'org-trello-query)
-(require 'org-trello-controller)
-
-;; #################### org-trello
-
 (defun org-trello/sync-entity () "Control first, then if ok, create a simple entity."
   (interactive)
   (orgtrello-action/--deal-with-consumer-msg-controls-or-actions-then-do

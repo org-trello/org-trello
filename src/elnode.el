@@ -1,5 +1,3 @@
-;; #################### orgtrello-elnode
-
 (defun orgtrello-elnode/compute-entity-level-dir (level) "Given a level, compute the folder onto which the file will be serialized."
   (format "%s%s/%s/" elnode-webserver-docroot "org-trello" level))
 
@@ -42,7 +40,5 @@
 
 (defun orgtrello-elnode/remove-file (file-to-remove) "Remove metadata file."
   (when (file-exists-p file-to-remove) (delete-file file-to-remove)))
-
-(provide 'org-trello-elnode)
 
 

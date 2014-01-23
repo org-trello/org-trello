@@ -1,8 +1,3 @@
-(require 'org-trello-header)
-(require 'org-trello-log)
-
-;; #################### orgtrello-setup
-
 (defvar *consumer-key*                nil                                               "Id representing the user.")
 (defvar *access-token*                nil                                               "Read/write access token to use trello on behalf of the user.")
 (defvar *ORGTRELLO-MARKER*            "orgtrello-marker"                                "A marker used inside the org buffer to synchronize entries.")
@@ -54,7 +49,5 @@ If you want to use this, we recommand to use the native org checklists - http://
   (message "org-trello version: %s" *ORGTRELLO-VERSION*))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-setup loaded!")
-
-(provide 'org-trello-setup)
 
 

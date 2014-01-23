@@ -1,15 +1,3 @@
-(require 'org-trello-log)
-(require 'org-trello-setup)
-(require 'org-trello-action)
-(require 'org-trello-hash)
-(require 'org-trello-api)
-(require 'org-trello-data)
-(require 'org-trello-cbx)
-(require 'org-trello-query)
-(require 'org-trello-buffer)
-
-;; #################### orgtrello-controller
-
 ;; Specific state - FIXME check if they do not already exist on org-mode to avoid potential collisions
 (defvar *TODO* "TODO" "org-mode todo state")
 (defvar *DONE* "DONE" "org-mode done state")
@@ -912,7 +900,5 @@
       (orgtrello-cbx/install-overlays! (match-beginning 0)))))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-controller loaded!")
-
-(provide 'org-trello-controller)
 
 

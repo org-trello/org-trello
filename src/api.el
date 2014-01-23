@@ -1,9 +1,3 @@
-(require 'org-trello-log)
-(require 'org-trello-setup)
-(require 'org-trello-hash)
-
-;; #################### orgtrello-api
-
 (defun orgtrello-api/--deal-with-optional-value (optional-entry value entries) "Add the optional value depending on the entry. Return entries updated with value if entry, entries untouched otherwise."
   (if optional-entry (cons value entries) entries))
 
@@ -88,7 +82,5 @@
   (orgtrello-hash/make-hash "GET" "/members/me"))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-api loaded!")
-
-(provide 'org-trello-api)
 
 

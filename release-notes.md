@@ -1,3 +1,9 @@
+# 0.3.1.1
+
+- [X] Installation failure - https://github.com/ardumont/org-trello/issues/112
+- [X] Version
+- [X] Release notes
+
 # 0.3.1
 
 - [X] Backlog
