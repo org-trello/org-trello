@@ -833,7 +833,12 @@ CLOSED: [2014-01-21 mar. 19:43]
 - [X] Clean the code regarding the old checklist/item entities (with stars) - https://github.com/ardumont/org-trello/issues/105
 - [X] Sometimes, multiple cards are created more than once. Improve the proxy policy regarding this - Unable to reproduce so do nothing.
 - [X] Release notes
-* 0.3.2 [%]
+* TOOD 0.3.1.1 [33%]
+- [X] Installation failure - https://github.com/ardumont/org-trello/issues/112
+- [ ] Version
+- [ ] Release notes
+
+* TODO 0.3.2 [%]
 - [ ] Extract a data representation for org-trello buffer to decorrelate the file serialization file from the computation (decomplecting -> ease of testing, computation, overall maintenance, sandbox i/o to a minimum)
   - [ ] extracter (from file/region to data)
   - [ ] updater (from data to updated data)

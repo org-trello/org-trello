@@ -1,10 +1,3 @@
-(require 'org-trello-log)
-(require 'org-trello-setup)
-(require 'org-trello-hash)
-(require 'org-trello-action)
-
-;; #################### orgtrello-data
-
 (defvar *ORGTRELLO-ID* "orgtrello-id" "Key entry used for the trello identifier and the trello marker (the first sync).")
 
 (defun orgtrello-data/merge-2-lists-without-duplicates (a-list b-list) "Merge 2 lists together (no duplicates)."
@@ -178,7 +171,5 @@
                                                                                hmap))))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-data loaded!")
-
-(provide 'org-trello-data)
 
 

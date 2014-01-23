@@ -1,9 +1,3 @@
-(require 'org-trello-log)
-(require 'org-trello-setup)
-(require 'org-trello-data)
-
-;; #################### orgtrello-query
-
 (defvar *TRELLO-URL* "https://api.trello.com/1" "The needed prefix url for trello")
 
 (defun orgtrello-query/--compute-url (server uri) "Compute the trello url from the given uri."
@@ -82,7 +76,5 @@
   (orgtrello-query/--http *TRELLO-URL* query-map sync success-callback error-callback t))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-query loaded!")
-
-(provide 'org-trello-query)
 
 

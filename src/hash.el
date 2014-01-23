@@ -1,8 +1,3 @@
-(require 'org-trello-log)
-(require 'org-trello-setup)
-
-;; #################### orgtrello-hash
-
 (defun orgtrello-hash/empty-hash () "Empty hash table with test 'equal"
   (make-hash-table :test 'equal))
 
@@ -45,7 +40,5 @@
   (format ":%s:" s))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-hash loaded!")
-
-(provide 'org-trello-hash)
 
 

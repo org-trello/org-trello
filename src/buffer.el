@@ -1,7 +1,3 @@
-(require 'org-trello-cbx)
-
-;; #################### orgtrello-buffer
-
 (defun orgtrello-buffer/back-to-card! () "Given the current position, goes on the card's heading"
   (org-back-to-heading))
 
@@ -28,7 +24,5 @@
   (->> text-content
        (replace-regexp-in-string "^:.*" "")
        (s-trim-left)))
-
-(provide 'org-trello-buffer)
 
 

@@ -1,10 +1,3 @@
-(require 'org-trello-log)
-(require 'org-trello-setup)
-(require 'org-trello-hash)
-(require 'org-trello-data)
-
-;; #################### orgtrello-cbx
-
 (defun orgtrello-cbx/checkbox-p () "Is there a checkbox at point?" (org-at-item-checkbox-p))
 
 (defun orgtrello-cbx/--to-properties (alist) "Serialize an association list to json."
@@ -206,7 +199,5 @@ This is a list with the following elements:
     (save-excursion (orgtrello-cbx/--map-checkboxes level fn-to-execute)))) ;; then map over the next checkboxes and sync them
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-cbx loaded!")
-
-(provide 'org-trello-cbx)
 
 

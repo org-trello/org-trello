@@ -1,15 +1,3 @@
-(require 'org-trello-log)
-(require 'org-trello-setup)
-(require 'org-trello-hash)
-(require 'org-trello-query)
-(require 'org-trello-data)
-(require 'org-trello-action)
-(require 'org-trello-cbx)
-(require 'org-trello-elnode)
-(require 'org-trello-webadmin)
-
-;; #################### orgtrello-proxy
-
 (defvar *ORGTRELLO-PROXY-HOST* "localhost" "proxy host")
 (defvar *ORGTRELLO-PROXY-PORT* nil         "proxy port")
 (defvar *ORGTRELLO-PROXY-URL*  nil         "proxy url")
@@ -450,7 +438,5 @@
   (orgtrello-proxy/start))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-proxy-install loaded!")
-
-(provide 'org-trello-proxy)
 
 
