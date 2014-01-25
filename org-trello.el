@@ -120,19 +120,6 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
 (defvar *ORGTRELLO-USER-LOGGED-IN*    nil                                               "Current user logged in.")
 
 (defvar *ORGTRELLO-HTTPS*               "https://trello.com"                            "URL https to help in browsing")
-(defvar *ORGTRELLO-NATURAL-ORG-CHECKLIST* t
-  "Permit the user to choose the natural org checklists over the first org-trello one (present from the start which are more basic).
-   To alter this behavior, update in your init.el:
-   (require 'org-trello)
-   (org-trello/activate-natural-org-checkboxes)")
-
-(defvar *ORGTRELLO-CHECKLIST-UPDATE-ITEMS* nil
-  "OBSOLETE: A variable to permit the checklist's status to be pass along to its items. t, if checklist's status is DONE, the items are updated to DONE (org-mode buffer and trello board), nil only the items's status is used.
-   To let the user completely choose what status he/she wants for every level, just change in your init.el file:
-   (require 'org-trello)
-   (setq *ORGTRELLO-CHECKLIST-UPDATE-ITEMS* nil)
-
-If you want to use this, we recommand to use the native org checklists - http://orgmode.org/manual/Checkboxes.html.")
 
 (defvar *ERROR-SYNC-CARD-MISSING-NAME* "Cannot synchronize the card - missing mandatory name. Skip it...")
 (defvar *ERROR-SYNC-CHECKLIST-SYNC-CARD-FIRST* "Cannot synchronize the checklist - the card must be synchronized first. Skip it...")
@@ -2651,16 +2638,6 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
      *do-save-buffer*
      *do-reload-setup*))
 
-(defun org-trello/activate-natural-org-checkboxes () "Activate the natural org-checkboxes - http://orgmode.org/manual/Checkboxes.html"
-  (interactive)
-  (setq *ORGTRELLO-NATURAL-ORG-CHECKLIST* t)
-  (setq *ORGTRELLO-CHECKLIST-UPDATE-ITEMS* nil))
-
-(defun org-trello/deactivate-natural-org-checkboxes () "Activate the natural org-checkboxes - http://orgmode.org/manual/Checkboxes.html"
-  (interactive)
-  (setq *ORGTRELLO-NATURAL-ORG-CHECKLIST* nil)
-  (setq *ORGTRELLO-CHECKLIST-UPDATE-ITEMS* t))
-
 (defun org-trello/--replace-string-prefix-in-string (keybinding string-to-replace)
   (replace-regexp-in-string "#PREFIX#" keybinding string-to-replace t))
 
@@ -2706,9 +2683,9 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
           (let ((command (first command-and-binding))
                 (binding (second command-and-binding)))
             ;; unset previous binding
-            (local-unset-key (kbd (concat previous-org-trello-mode-prefix-keybinding binding)))
+            (define-key org-trello-mode-map (kbd (concat previous-org-trello-mode-prefix-keybinding binding)) nil)
             ;; set new binding
-            (local-set-key (kbd (concat org-trello-mode-prefix-keybinding binding)) command)))
+            (define-key org-trello-mode-map (kbd (concat org-trello-mode-prefix-keybinding binding)) command)))
         interactive-command-binding-to-install))
 
 (defun org-trello/--remove-local-keybinding-map! (previous-org-trello-mode-prefix-keybinding interactive-command-binding-to-install)
@@ -2716,7 +2693,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   (mapc (lambda (command-and-binding)
           (let ((command (first command-and-binding))
                 (binding (second command-and-binding)))
-            (local-unset-key (kbd (concat previous-org-trello-mode-prefix-keybinding binding)))))
+            (define-key org-trello-mode-map (kbd (concat previous-org-trello-mode-prefix-keybinding binding)) nil)))
         interactive-command-binding-to-install))
 
 (defvar *ORGTRELLO-MODE-PREFIX-KEYBINDING*          "C-c o" "The default prefix keybinding.")
@@ -2732,7 +2709,8 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 ;;;###autoload
 (define-minor-mode org-trello-mode "Sync your org-mode and your trello together."
-  :lighter    " ot")
+  :lighter " ot"
+  :keymap  (make-sparse-keymap))
 
 (defun org-trello-mode-on-hook-fn (&optional partial-mode) "Actions to do when org-trello starts."
   (unless partial-mode
@@ -2747,7 +2725,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
           ;; a little message in the minibuffer to notify the user
           (orgtrello-log/msg *OT/NOLOG* (org-trello/--startup-message *ORGTRELLO-MODE-PREFIX-KEYBINDING*))
           ;; Overwrite the org-mode-map
-          (define-key org-mode-map "\C-e" 'org-trello/end-of-line!)))
+          (define-key org-trello-mode-map [remap org-end-of-line] 'org-trello/end-of-line!)))
 
 (defun org-trello-mode-off-hook-fn (&optional partial-mode) "Actions to do when org-trello stops."
   (unless partial-mode
@@ -2759,8 +2737,8 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
           (remove-hook 'before-save-hook 'orgtrello-controller/install-overlays!)
           ;; remove org-trello overlays
           (orgtrello-controller/remove-overlays!)
-          ;; Reinstall the default org-mode-map
-          (define-key org-mode-map "\C-e" 'org-end-of-line)
+          ;; remove mapping override
+          (define-key org-trello-mode-map [remap org-end-of-line] nil)
           ;; a little message in the minibuffer to notify the user
           (orgtrello-log/msg *OT/NOLOG* "org-trello/ot is off!")))
 

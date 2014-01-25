@@ -170,9 +170,9 @@
           (let ((command (first command-and-binding))
                 (binding (second command-and-binding)))
             ;; unset previous binding
-            (local-unset-key (kbd (concat previous-org-trello-mode-prefix-keybinding binding)))
+            (define-key org-trello-mode-map (kbd (concat previous-org-trello-mode-prefix-keybinding binding)) nil)
             ;; set new binding
-            (local-set-key (kbd (concat org-trello-mode-prefix-keybinding binding)) command)))
+            (define-key org-trello-mode-map (kbd (concat org-trello-mode-prefix-keybinding binding)) command)))
         interactive-command-binding-to-install))
 
 (defun org-trello/--remove-local-keybinding-map! (previous-org-trello-mode-prefix-keybinding interactive-command-binding-to-install)
@@ -180,7 +180,7 @@
   (mapc (lambda (command-and-binding)
           (let ((command (first command-and-binding))
                 (binding (second command-and-binding)))
-            (local-unset-key (kbd (concat previous-org-trello-mode-prefix-keybinding binding)))))
+            (define-key org-trello-mode-map (kbd (concat previous-org-trello-mode-prefix-keybinding binding)) nil)))
         interactive-command-binding-to-install))
 
 (defvar *ORGTRELLO-MODE-PREFIX-KEYBINDING*          "C-c o" "The default prefix keybinding.")
