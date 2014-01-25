@@ -18,19 +18,6 @@
 (defvar *ORGTRELLO-USER-LOGGED-IN*    nil                                               "Current user logged in.")
 
 (defvar *ORGTRELLO-HTTPS*               "https://trello.com"                            "URL https to help in browsing")
-(defvar *ORGTRELLO-NATURAL-ORG-CHECKLIST* t
-  "Permit the user to choose the natural org checklists over the first org-trello one (present from the start which are more basic).
-   To alter this behavior, update in your init.el:
-   (require 'org-trello)
-   (org-trello/activate-natural-org-checkboxes)")
-
-(defvar *ORGTRELLO-CHECKLIST-UPDATE-ITEMS* nil
-  "OBSOLETE: A variable to permit the checklist's status to be pass along to its items. t, if checklist's status is DONE, the items are updated to DONE (org-mode buffer and trello board), nil only the items's status is used.
-   To let the user completely choose what status he/she wants for every level, just change in your init.el file:
-   (require 'org-trello)
-   (setq *ORGTRELLO-CHECKLIST-UPDATE-ITEMS* nil)
-
-If you want to use this, we recommand to use the native org checklists - http://orgmode.org/manual/Checkboxes.html.")
 
 (defvar *ERROR-SYNC-CARD-MISSING-NAME* "Cannot synchronize the card - missing mandatory name. Skip it...")
 (defvar *ERROR-SYNC-CHECKLIST-SYNC-CARD-FIRST* "Cannot synchronize the checklist - the card must be synchronized first. Skip it...")

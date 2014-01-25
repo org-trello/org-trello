@@ -125,16 +125,6 @@
      *do-save-buffer*
      *do-reload-setup*))
 
-(defun org-trello/activate-natural-org-checkboxes () "Activate the natural org-checkboxes - http://orgmode.org/manual/Checkboxes.html"
-  (interactive)
-  (setq *ORGTRELLO-NATURAL-ORG-CHECKLIST* t)
-  (setq *ORGTRELLO-CHECKLIST-UPDATE-ITEMS* nil))
-
-(defun org-trello/deactivate-natural-org-checkboxes () "Activate the natural org-checkboxes - http://orgmode.org/manual/Checkboxes.html"
-  (interactive)
-  (setq *ORGTRELLO-NATURAL-ORG-CHECKLIST* nil)
-  (setq *ORGTRELLO-CHECKLIST-UPDATE-ITEMS* t))
-
 (defun org-trello/--replace-string-prefix-in-string (keybinding string-to-replace)
   (replace-regexp-in-string "#PREFIX#" keybinding string-to-replace t))
 
