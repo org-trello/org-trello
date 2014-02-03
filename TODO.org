@@ -839,7 +839,8 @@ CLOSED: [2014-01-23 jeu. 21:11]
 - [X] Version
 - [X] Release notes
 
-* IN-PROGRESS 0.3.2 [100%]
+* DONE 0.3.2 [100%]
+CLOSED: [2014-02-03 lun. 11:48]
 - [X] Use standard remapping to override the org-end-of-line routine - https://www.gnu.org/software/emacs/manual/html_node/elisp/Remapping-Commands.html
 - [X] Clean some dead code
 - [X] Use standard mode map definition for the org-trello bindings
