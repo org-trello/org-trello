@@ -125,16 +125,6 @@
      *do-save-buffer*
      *do-reload-setup*))
 
-(defun org-trello/activate-natural-org-checkboxes () "Activate the natural org-checkboxes - http://orgmode.org/manual/Checkboxes.html"
-  (interactive)
-  (setq *ORGTRELLO-NATURAL-ORG-CHECKLIST* t)
-  (setq *ORGTRELLO-CHECKLIST-UPDATE-ITEMS* nil))
-
-(defun org-trello/deactivate-natural-org-checkboxes () "Activate the natural org-checkboxes - http://orgmode.org/manual/Checkboxes.html"
-  (interactive)
-  (setq *ORGTRELLO-NATURAL-ORG-CHECKLIST* nil)
-  (setq *ORGTRELLO-CHECKLIST-UPDATE-ITEMS* t))
-
 (defun org-trello/--replace-string-prefix-in-string (keybinding string-to-replace)
   (replace-regexp-in-string "#PREFIX#" keybinding string-to-replace t))
 
@@ -180,9 +170,9 @@
           (let ((command (first command-and-binding))
                 (binding (second command-and-binding)))
             ;; unset previous binding
-            (local-unset-key (kbd (concat previous-org-trello-mode-prefix-keybinding binding)))
+            (define-key org-trello-mode-map (kbd (concat previous-org-trello-mode-prefix-keybinding binding)) nil)
             ;; set new binding
-            (local-set-key (kbd (concat org-trello-mode-prefix-keybinding binding)) command)))
+            (define-key org-trello-mode-map (kbd (concat org-trello-mode-prefix-keybinding binding)) command)))
         interactive-command-binding-to-install))
 
 (defun org-trello/--remove-local-keybinding-map! (previous-org-trello-mode-prefix-keybinding interactive-command-binding-to-install)
@@ -190,7 +180,7 @@
   (mapc (lambda (command-and-binding)
           (let ((command (first command-and-binding))
                 (binding (second command-and-binding)))
-            (local-unset-key (kbd (concat previous-org-trello-mode-prefix-keybinding binding)))))
+            (define-key org-trello-mode-map (kbd (concat previous-org-trello-mode-prefix-keybinding binding)) nil)))
         interactive-command-binding-to-install))
 
 (defvar *ORGTRELLO-MODE-PREFIX-KEYBINDING*          "C-c o" "The default prefix keybinding.")
@@ -206,7 +196,8 @@
 
 ;;;###autoload
 (define-minor-mode org-trello-mode "Sync your org-mode and your trello together."
-  :lighter    " ot")
+  :lighter " ot"
+  :keymap  (make-sparse-keymap))
 
 (defun org-trello-mode-on-hook-fn (&optional partial-mode) "Actions to do when org-trello starts."
   (unless partial-mode
@@ -221,7 +212,7 @@
           ;; a little message in the minibuffer to notify the user
           (orgtrello-log/msg *OT/NOLOG* (org-trello/--startup-message *ORGTRELLO-MODE-PREFIX-KEYBINDING*))
           ;; Overwrite the org-mode-map
-          (define-key org-mode-map "\C-e" 'org-trello/end-of-line!)))
+          (define-key org-trello-mode-map [remap org-end-of-line] 'org-trello/end-of-line!)))
 
 (defun org-trello-mode-off-hook-fn (&optional partial-mode) "Actions to do when org-trello stops."
   (unless partial-mode
@@ -233,8 +224,8 @@
           (remove-hook 'before-save-hook 'orgtrello-controller/install-overlays!)
           ;; remove org-trello overlays
           (orgtrello-controller/remove-overlays!)
-          ;; Reinstall the default org-mode-map
-          (define-key org-mode-map "\C-e" 'org-end-of-line)
+          ;; remove mapping override
+          (define-key org-trello-mode-map [remap org-end-of-line] nil)
           ;; a little message in the minibuffer to notify the user
           (orgtrello-log/msg *OT/NOLOG* "org-trello/ot is off!")))
 

@@ -13,7 +13,7 @@
     (orgtrello-cbx/--goto-next-checkbox)
     (1- (point))))
 
-(defun orgtrello-buffer/extract-description-from-current-position () "Given the current position, extract the text content of current card."
+(defun orgtrello-buffer/extract-description-from-current-position! () "Given the current position, extract the text content of current card."
   (let ((start (orgtrello-buffer/--card-data-start-point))
         (end   (orgtrello-buffer/--first-checkbox-point)))
     (when (< start end)
@@ -22,7 +22,7 @@
 
 (defun orgtrello-buffer/filter-out-properties (text-content) "Given a string, remove any org properties if any"
   (->> text-content
-       (replace-regexp-in-string "^:.*" "")
+       (replace-regexp-in-string "^[ ]*:.*" "")
        (s-trim-left)))
 
 
