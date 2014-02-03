@@ -839,13 +839,13 @@ CLOSED: [2014-01-23 jeu. 21:11]
 - [X] Version
 - [X] Release notes
 
-* IN-PROGRESS 0.3.2 [83%]
+* IN-PROGRESS 0.3.2 [100%]
 - [X] Use standard remapping to override the org-end-of-line routine - https://www.gnu.org/software/emacs/manual/html_node/elisp/Remapping-Commands.html
 - [X] Clean some dead code
 - [X] Use standard mode map definition for the org-trello bindings
 - [X] Fix description extract - https://github.com/ardumont/org-trello/issues/114
 - [X] Version
-- [ ] Release notes
+- [X] Release notes
 * TODO 0.3.3 [%]
 - [ ] Extract a data representation for org-trello buffer to decorrelate the file serialization file from the computation (decomplecting -> ease of testing, computation, overall maintenance, sandbox i/o to a minimum)
   - [ ] extracter (from file/region to data)
