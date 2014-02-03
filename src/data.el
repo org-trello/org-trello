@@ -36,7 +36,7 @@
          (cons od/--point)
          (cons (buffer-name))
          (cons (orgtrello-controller/--user-ids-assigned-to-current-card))
-         (cons (orgtrello-buffer/extract-description-from-current-position))
+         (cons (orgtrello-buffer/extract-description-from-current-position!))
          orgtrello-data/--convert-to-orgtrello-metadata)))
 
 (defun orgtrello-action/org-up-parent () "A function to get back to the current entry's parent"
