@@ -22,9 +22,4 @@ env:
   - EMACS=emacs24
   # - EMACS=emacs-snapshot
 script:
-  # unit/integration tests
-  make test
-  # testing install file in marmalade
-  make install-file-with-deps-from-marmalade
-  # testing install file in melpa
-  make install-file-with-deps-from-melpa
+  ./run-ci.sh
