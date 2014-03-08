@@ -52,8 +52,14 @@ full-install-from-marmalade:
 full-install-from-melpa:
 	./clean-install-melpa.sh
 
-install-package: package
-	cask exec emacs --batch -l ./build.el -- org-trello-$(VERSION).tar
+clean-cache:
+	rm -rf .elpa
+
+install-package-with-marmalade: clean-cache package
+	cask exec emacs -Q --batch -l ./build.el -- marmalade org-trello-$(VERSION).tar
+
+install-package-with-melpa: clean-cache package
+	cask exec emacs -Q --batch -l ./build.el -- melpa org-trello-$(VERSION).tar
 
 install-package-and-tests: install-package
 	cask exec emacs -Q --batch -l ./launch-tests.el
