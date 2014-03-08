@@ -46,17 +46,17 @@ package: clean generate pkg-el prepare
 info:
 	cask info
 
-full-install-from-marmalade:
-	./full-install-with.sh marmalade
+install-package-from-marmalage:
+	./install-package-from.sh marmalade
 
-full-install-from-melpa:
-	./full-install-with.sh melpa
+install-package-from-melpa:
+	./install-package-from.sh melpa
 
-install-package-with-marmalade: package
-	./package-install-file-with.sh marmalade $(VERSION)
+install-file-with-deps-from-marmalade: package
+	./install-file-with-deps-from.sh marmalade $(VERSION)
 
-install-package-with-melpa: package
-	./package-install-file-with.sh melpa $(VERSION)
+install-file-with-deps-from-melpa: package
+	./install-file-with-deps-from.sh melpa $(VERSION)
 
 cleanup-data:
 	rm -rvf ~/.emacs.d/elnode/public_html/org-trello/{1,2,3}/.scanning/* \

@@ -19,6 +19,8 @@
   (add-to-list 'package-archives repo-ref)
   ;; refresh the list according to the repository installed
   (package-refresh-contents)
+  ;; workaround
+  (dolist (p '(elnode)) (package-install p))
   ;; install the file in the context
   (package-install-file package-file))
 
