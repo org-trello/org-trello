@@ -2,6 +2,7 @@
 
 (require 'package)
 (package-initialize)
+(add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
 (package-refresh-contents)
 
 (setq package-user-dir (concat (file-name-directory (or (buffer-file-name) load-file-name default-directory)) ".elpa"))
