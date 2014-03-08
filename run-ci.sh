@@ -1,5 +1,7 @@
 #!/bin/sh -xe
 
+emacs --version
+
 # unit/integration tests
 make test
 # testing install file in marmalade
