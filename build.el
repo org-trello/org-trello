@@ -19,10 +19,6 @@
   (add-to-list 'package-archives repo-ref)
   ;; refresh the list according to the repository installed
   (package-refresh-contents)
-  ;; install the deps as the package-install-file seems to not install the deps itself
-  (mapc (lambda (p) (message "package dependency installation: %s" p)
-          (package-install p))
-        '(emacs elnode json cl-lib elnode esxml s kv request dash))
   ;; install the file in the context
   (package-install-file package-file))
 
