@@ -69,8 +69,6 @@
 (when (version< emacs-version "24.3")
       (error (concat "Oops - your emacs isn't supported. org-trello only works on Emacs 24.3+ and you're running version: " emacs-version ". Please upgrade your Emacs and try again.")))
 
-(require 'package) (package-initialize)
-
 (defvar *ORGTRELLO-VERSION* "0.3.3"  "current org-trello version installed.")
 
 
