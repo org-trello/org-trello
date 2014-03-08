@@ -20,7 +20,7 @@ before_install:
 env:
   #- EMACS=emacs
   - EMACS=emacs24
-  - EMACS=emacs-snapshot
+  # - EMACS=emacs-snapshot
 script:
   # unit/integration tests
   make test
