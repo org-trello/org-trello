@@ -46,10 +46,10 @@ package: clean generate pkg-el prepare
 info:
 	cask info
 
-clean-install-marmalade:
+full-install-from-marmalade:
 	./clean-install-marmalade.sh
 
-clean-install-melpa:
+full-install-from-melpa:
 	./clean-install-melpa.sh
 
 install-package: package
