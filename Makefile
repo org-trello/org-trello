@@ -46,7 +46,7 @@ package: clean generate pkg-el prepare
 info:
 	cask info
 
-install-package-from-marmalage:
+install-package-from-marmalade:
 	./install-package-from.sh marmalade
 
 install-package-from-melpa:
