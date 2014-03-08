@@ -62,7 +62,23 @@ make test
 
 This will trigger:
 - the [org-trello.el](./org-trello.el) generation from the [src/](./src/) source files
-- trigger the launch-test.el script that runs the tests
+- trigger the launch-test.el script that runs the unit/integration tests
+
+## Install
+
+To test that the package, once created, can be installed (using the repository to fetch the dependencies).
+
+```sh
+make install-file-with-deps-from-marmalade install-file-with-deps-from-melpa
+```
+
+## Full install testing
+
+As we deploy both in marmalade and in melpa, we need to ensure once delivered that the installation is ok.
+
+```sh
+make install-package-from-marmalage install-package-from-melpa
+```
 
 ## Release
 
