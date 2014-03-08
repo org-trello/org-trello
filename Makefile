@@ -52,19 +52,11 @@ full-install-from-marmalade:
 full-install-from-melpa:
 	./full-install-with.sh melpa
 
-clean-cache:
-	rm -rf .elpa
+install-package-with-marmalade: package
+	./package-install-file-with.sh marmalade $(VERSION)
 
-install-package-with-marmalade: clean-cache package
-	cask exec emacs -Q --batch -l ./build.el -- marmalade org-trello-$(VERSION).tar
-
-install-package-with-melpa: clean-cache package
-	cask exec emacs -Q --batch -l ./build.el -- melpa org-trello-$(VERSION).tar
-
-install-package-and-tests: install-package
-	cask exec emacs -Q --batch -l ./launch-tests.el
-
-ttest: tangle test
+install-package-with-melpa: package
+	./package-install-file-with.sh melpa $(VERSION)
 
 cleanup-data:
 	rm -rvf ~/.emacs.d/elnode/public_html/org-trello/{1,2,3}/.scanning/* \
