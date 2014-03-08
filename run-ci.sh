@@ -1,6 +1,11 @@
 #!/bin/sh -xe
 
-emacs --version
+CASK_EMACS=${EMACS:-$(which emacs)}
+
+echo "*** Emacs version ***"
+echo "CASK_EMACS = $CASK_EMACS"
+"$CASK_EMACS" --version
+echo
 
 # unit/integration tests
 make test
