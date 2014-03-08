@@ -240,8 +240,8 @@
                    pt))))
 
 (defun org-trello/compute-overlay-size! () "Compute the overlay size to the current position"
-  (when-let (o (first (overlays-in (point-at-bol) (point-at-eol))))
-            (- (overlay-end o) (overlay-start o))))
+  (-when-let (o (first (overlays-in (point-at-bol) (point-at-eol))))
+             (- (overlay-end o) (overlay-start o))))
 
 (add-hook 'org-trello-mode-on-hook 'org-trello-mode-on-hook-fn)
 
