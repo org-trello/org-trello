@@ -22,4 +22,4 @@ env:
   - EMACS=emacs24
   # - EMACS=emacs-snapshot
 script:
-  ./run-travis-ci.sh
+  ./run-ci.sh

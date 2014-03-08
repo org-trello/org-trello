@@ -4,7 +4,7 @@ ARCHIVE=$(PACKAGE_FOLDER).tar
 USER=ardumont
 
 test: clean
-	cask exec emacs -Q -batch \
+	cask exec emacs --batch \
 			-l ert \
 			-l ./launch-tests.el \
 			-f ert-run-tests-batch-and-exit
@@ -46,16 +46,17 @@ package: clean generate pkg-el prepare
 info:
 	cask info
 
-clean-install:
-	./clean-install.sh
+install-package-from-marmalade:
+	./install-package-from.sh marmalade
 
-install-package: package
-	cask exec emacs --batch -l ./build.el -- org-trello-$(VERSION).tar
+install-package-from-melpa:
+	./install-package-from.sh melpa
 
-install-package-and-tests: install-package
-	cask exec emacs -Q --batch -l ./launch-tests.el
+install-file-with-deps-from-marmalade: package
+	./install-file-with-deps-from.sh marmalade $(VERSION)
 
-ttest: tangle test
+install-file-with-deps-from-melpa: package
+	./install-file-with-deps-from.sh melpa $(VERSION)
 
 cleanup-data:
 	rm -rvf ~/.emacs.d/elnode/public_html/org-trello/{1,2,3}/.scanning/* \
