@@ -14,6 +14,6 @@
   (add-to-list 'package-archives repo-ref)
   (package-refresh-contents)
   ;; install needed deps (not required or problematic)
-  (dolist (p '(org elnode org-trello)) (package-install p)))
+  (mapc (lambda (p) (package-install p)) '(org elnode org-trello)))
 
 ;; end
