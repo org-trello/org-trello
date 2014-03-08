@@ -4,7 +4,7 @@
 
 ;; Author: Antoine R. Dumont <eniotna.t AT gmail.com>
 ;; Maintainer: Antoine R. Dumont <eniotna.t AT gmail.com>
-;; Version: 0.3.2
+;; Version: 0.3.3
 ;; Package-Requires: ((emacs "24.3") (dash "2.5.0") (request "0.2.0") (cl-lib "0.3.0") (json "1.2") (elnode "0.9.9.7.6") (esxml "0.3.0") (s "1.7.0") (kv "0.0.19"))
 ;; Keywords: org-mode trello sync org-trello
 ;; URL: https://github.com/ardumont/org-trello
@@ -71,6 +71,6 @@
 
 (require 'package) (package-initialize)
 
-(defvar *ORGTRELLO-VERSION* "0.3.2"  "current org-trello version installed.")
+(defvar *ORGTRELLO-VERSION* "0.3.3"  "current org-trello version installed.")
 
 
