@@ -4,7 +4,7 @@ ARCHIVE=$(PACKAGE_FOLDER).tar
 USER=ardumont
 
 test: clean
-	cask exec emacs -Q -batch \
+	cask exec emacs --batch \
 			-l ert \
 			-l ./launch-tests.el \
 			-f ert-run-tests-batch-and-exit
