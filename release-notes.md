@@ -1,3 +1,20 @@
+# 0.3.3
+
+- [X] Issue when installing on melpa reported wrongly on melpa and reported back https://github.com/ardumont/org-trello/issues/117
+- [X] Fix typo when-let in -when-let
+- [X] Remove org as a dependency, the plugins org- do not seem to declare it + problem in dependency
+- [X] Upgrade to dash 2.5.0
+- [X] Clarify the possible manipulation to install the package as a file or directly from the multiple repository
+- [X] Integration test to install the file with marmalade
+- [X] Integration test to install the file with melpa
+- [X] Integration test to fully install the package on marmalade
+- [X] Integration test to fully install the package on melpa
+- [X] Update README-dev.md about those targets
+- [X] Decline these tests with multiple emacs versions
+- [X] Use these targets on travis (even if the feedback will be way longer, it's better than no feedback)
+- [X] Upgrade version
+- [X] Ensure org-trello works with emacs 24.4 (how do i install it...)
+
 # 0.3.2
 
 - [X] Use standard remapping to override the org-end-of-line routine - https://www.gnu.org/software/emacs/manual/html_node/elisp/Remapping-Commands.html
