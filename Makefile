@@ -47,10 +47,10 @@ info:
 	cask info
 
 full-install-from-marmalade:
-	./clean-install-marmalade.sh
+	./full-install-from-marmalade.sh
 
 full-install-from-melpa:
-	./clean-install-melpa.sh
+	./full-install-from-melpa.sh
 
 clean-cache:
 	rm -rf .elpa
