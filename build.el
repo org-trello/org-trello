@@ -1,14 +1,25 @@
-;; from shell: emacs --batch -l ./build.el -- package-file-name
+;; from shell: emacs -Q --batch -l ./build.el -- repository-name package-file-name...
+
+(defvar repository '(("marmalade" . "http://marmalade-repo.org/packages/")
+                     ("melpa"     . "http://melpa.milkbox.net/packages/"))
+  "List of repository to install org-trello's dependency from.")
 
 (require 'package)
 (package-initialize)
-(add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
-(package-refresh-contents)
 
 (setq package-user-dir (concat (file-name-directory (or (buffer-file-name) load-file-name default-directory)) ".elpa"))
 
-(let ((package (concat "./" (car (reverse command-line-args)))))
-  (message "the package is: %s" package)
-  (package-install-file package))
+(let* ((cli           (reverse command-line-args))
+       (package-name  (car cli))
+       (repo          (cadr cli))
+       (package-file  (format "./%s" package-name))
+       (repo-ref      (assoc repo repository)))
+  (message "Installing '%s' using standard repository + '%s'" package-file repo)
+  ;; install the repo asked for
+  (add-to-list 'package-archives repo-ref)
+  ;; refresh the list according to the repository installed
+  (package-refresh-contents)
+  ;; install the file in the context
+  (package-install-file package-file))
 
 ;; End
