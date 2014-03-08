@@ -847,7 +847,7 @@ CLOSED: [2014-02-03 lun. 11:48]
 - [X] Fix description extract - https://github.com/ardumont/org-trello/issues/114
 - [X] Version
 - [X] Release notes
-* IN-PROGRESS 0.3.3 [86%]
+* IN-PROGRESS 0.3.3 [93%]
 - [X] Issue when installing on melpa reported wrongly on melpa and reported back https://github.com/ardumont/org-trello/issues/117
 - [X] Fix typo when-let in -when-let
 - [X] Remove org as a dependency, the plugins org- do not seem to declare it + problem in dependency
@@ -861,7 +861,7 @@ CLOSED: [2014-02-03 lun. 11:48]
 - [X] Decline these tests with multiple emacs versions
 - [X] Use these targets on travis (even if the feedback will be way longer, it's better than no feedback)
 - [X] Upgrade version
-- [ ] Ensure org-trello works with emacs 24.4 (how do i install it...)
+- [X] Ensure org-trello works with emacs 24.4 (how do i install it...)
 - [ ] Deploy
 * TODO 0.3.4
 - [ ] Extract a data representation for org-trello buffer to decorrelate the file serialization file from the computation (decomplecting -> ease of testing, computation, overall maintenance, sandbox i/o to a minimum)
