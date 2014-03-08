@@ -4,7 +4,7 @@
 
 PACKAGE=${1-"org-trello"}
 
-CLEAN_INSTALL_FOLDER=$HOME/$PACKAGE-install
+CLEAN_INSTALL_FOLDER=$HOME/$PACKAGE-install-marmalade
 
 # prepare
 

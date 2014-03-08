@@ -46,8 +46,11 @@ package: clean generate pkg-el prepare
 info:
 	cask info
 
-clean-install:
-	./clean-install.sh
+clean-install-marmalade:
+	./clean-install-marmalade.sh
+
+clean-install-melpa:
+	./clean-install-melpa.sh
 
 install-package: package
 	cask exec emacs --batch -l ./build.el -- org-trello-$(VERSION).tar
