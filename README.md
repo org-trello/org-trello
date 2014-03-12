@@ -320,7 +320,7 @@ git clone http://github.com/ardumont/org-trello.git
 Add the org-trello directory to your load path and then add
 
 ``` lisp
-(add-to-list 'load-path "/path/to/org-trello/"))
+(add-to-list 'load-path "/path/to/org-trello/")
 (require 'org-trello)
 ```
 
