@@ -58,9 +58,9 @@
          url-hexify-string
          (replace-regexp-in-string "!" "%21")
          (replace-regexp-in-string "'" "%27")
-         (replace-regexp-in-string "(" "%2A")
-         (replace-regexp-in-string ")" "%2B")
-         (replace-regexp-in-string "*" "%2C")))
+         (replace-regexp-in-string "(" "%28")
+         (replace-regexp-in-string ")" "%29")
+         (replace-regexp-in-string "*" "%2A")))
 
 (defun orgtrello-query/--prepare-params-assoc! (params) "Prepare params as association list."
   (--map (let ((value (cdr it))) (if (and value (stringp value)) `(,(car it) . ,(funcall orgtrello-query/--hexify value)) it)) params))
