@@ -72,7 +72,12 @@ Please consider upgrading Emacs." emacs-version) "Error message when installing 
 (require 'kv)
 (require 'esxml)
 
-(require (if (version< "24.3" emacs-version) 'cl-lib 'cl))
+(if (version< "24.3" emacs-version)
+    (require 'cl-lib)
+  (progn ;; need to alias the call
+    (require 'cl)
+    (defalias 'cl-defun 'defun*)
+    (defalias 'cl-destructuring-bind 'destructuring-bind)))
 
 (defvar *ORGTRELLO-VERSION* "0.3.4" "current org-trello version installed.")
 
