@@ -1,4 +1,4 @@
-;;; org-trello.el --- Org minor mode to synchronize with trello
+;;; org-trello.el --- Minor mode to synchronize org-mode buffer and trello board
 
 ;; Copyright (C) 2013 Antoine R. Dumont <eniotna.t AT gmail.com>
 
@@ -28,7 +28,7 @@
 
 ;;; Commentary:
 
-;; Minor mode for org-mode to sync org-mode and trello
+;; Minor mode to sync org-mode buffer and trello board
 ;;
 ;; 1) Add the following to your emacs init file
 ;; (require 'org-trello)
@@ -48,6 +48,11 @@
 ;;
 ;; 6) Help (C-c o h)
 ;; M-x org-trello/help-describing-setup
+;;
+;; Now you can work with trello from the comfort of emacs.
+;; Enjoy!
+
+;; More informations on https://ardumont.github.io/org-trello
 
 ;;; Code:
 
