@@ -439,12 +439,8 @@ Now you are ready to use org-mode as usual.
 
 ## Formats
 
-There is a new setup which is activated by default, using the natural org [checkboxes](http://orgmode.org/manual/Checkboxes.html).
+[Natural org checkboxes](http://orgmode.org/manual/Checkboxes.html).
 Thanks to @sw1nn [for showing me this org feature, this is awesome!](https://github.com/ardumont/org-trello/issues/14).
-
-### natural org format (from 0.1.6 onwards)
-
-Activated by default.
 
 ```org-mode
 - [-] LISP
@@ -469,17 +465,19 @@ For example, once synced to trello, this looks like:
 :PROPERTIES:
 :orgtrello-id: 521dc9f3edeabee47600401e
 :END:
-- [-] LISP                                                    :PROPERTIES: {"orgtrello-id":"521dc9f48e95d74636004107"}
-  - [X] Emacs-Lisp                                            :PROPERTIES: {"orgtrello-id":"521dc9f7487c2e9b250047a5"}
-  - [X] Common-Lisp                                           :PROPERTIES: {"orgtrello-id":"521dc9f7ae27842a36003b26"}
-  - [ ] Scheme                                                :PROPERTIES: {"orgtrello-id":"521dc9f834f52df935003b15"}
-  - [X] Clojure                                               :PROPERTIES: {"orgtrello-id":"521dc9f9c1b85c905f006b4e"}
-- [X] ML                                                      :PROPERTIES: {"orgtrello-id":"521dc9f5d49a919614000266"}
-  - [X] Haskell                                               :PROPERTIES: {"orgtrello-id":"521dc9fa5699f00b25003bd0"}
-  - [X] Ocaml                                                 :PROPERTIES: {"orgtrello-id":"521dc9fb7ef4310554003ab3"}
-- [X] Hybrid                                                  :PROPERTIES: {"orgtrello-id":"521dc9f6238d072770007217"}
-  - [X] Scala                                                 :PROPERTIES: {"orgtrello-id":"521dc9fc8e95d74636004109"}
-```
+- [-] LISP :PROPERTIES: {"orgtrello-id":"521dc9f48e95d74636004107"}
+  - [X] Emacs-Lisp :PROPERTIES: {"orgtrello-id":"521dc9f7487c2e9b250047a5"}
+  - [X] Common-Lisp :PROPERTIES: {"orgtrello-id":"521dc9f7ae27842a36003b26"}
+  - [ ] Scheme :PROPERTIES: {"orgtrello-id":"521dc9f834f52df935003b15"}
+  - [X] Clojure :PROPERTIES: {"orgtrello-id":"521dc9f9c1b85c905f006b4e"}
+- [X] ML :PROPERTIES: {"orgtrello-id":"521dc9f5d49a919614000266"}
+  - [X] Haskell :PROPERTIES: {"orgtrello-id":"521dc9fa5699f00b25003bd0"}
+  - [X] Ocaml :PROPERTIES: {"orgtrello-id":"521dc9fb7ef4310554003ab3"}
+- [X] Hybrid :PROPERTIES: {"orgtrello-id":"521dc9f6238d072770007217"}
+  - [X] Scala :PROPERTIES: {"orgtrello-id":"521dc9fc8e95d74636004109"}
+  ```
+
+*Note* In org-trello buffer, the :PROPERTIES: for the checklists/items won't be visible for the user.
 
 ## Creation step-by-step
 
