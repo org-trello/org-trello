@@ -1,3 +1,12 @@
+# 0.3.4
+
+- [X] PR fix typo in readme - https://github.com/ardumont/org-trello/pull/120
+- [X] Fix webadmin button to delete running action
+- [X] Add version emacs 24.3.50 in documentation
+- [X] Improve documentation
+- [X] Upgrade version
+- [X] Release notes
+
 # 0.3.3
 
 - [X] Issue when installing on melpa reported wrongly on melpa and reported back https://github.com/ardumont/org-trello/issues/117
