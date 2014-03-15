@@ -3,6 +3,62 @@ org-trello [![Build Status](https://travis-ci.org/ardumont/org-trello.png?branch
 
 [Org](http://orgmode.org/) minor mode - 2-way sync [org](http://orgmode.org/) & [trello](http://trello.com/)
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](http://doctoc.herokuapp.com/)*
+
+- [Rationale](#rationale)
+- [Emacs version](#emacs-version)
+- [Migration](#migration)
+	- [0.3.1](#031)
+	- [0.2.9](#029)
+	- [0.2.8](#028)
+	- [0.2.1 -> 0.2.2](#021-->-022)
+	- [0.1.5 -> 0.1.6](#015-->-016)
+	- [0.1.1 -> 0.1.2](#011-->-012)
+- [TL;DR](#tldr)
+	- [Fast setup](#fast-setup)
+	- [Prefix binding override in one shot](#prefix-binding-override-in-one-shot)
+	- [Demo](#demo)
+		- [Synchronize one entity](#synchronize-one-entity)
+		- [Install](#install)
+		- [Setup key and token](#setup-key-and-token)
+		- [Attach org file to trello board](#attach-org-file-to-trello-board)
+		- [Synchronize one complete entity](#synchronize-one-complete-entity)
+		- [Synchronize from org to trello](#synchronize-from-org-to-trello)
+		- [Sync from trello to org (new format)](#sync-from-trello-to-org-new-format)
+		- [Synchronize from trello to org (old format)](#synchronize-from-trello-to-org-old-format)
+		- [Create board and sync](#create-board-and-sync)
+		- [Create board with your keywords](#create-board-with-your-keywords)
+		- [Use the checkbox Luke](#use-the-checkbox-luke)
+		- [Kill entities](#kill-entities)
+		- [Cleanup routine](#cleanup-routine)
+		- [org-trello - webadmin](#org-trello---webadmin)
+		- [Simple help routine](#simple-help-routine)
+		- [Check your Setup](#check-your-setup)
+		- [Assign oneself to the card](#assign-oneself-to-the-card)
+- [Contributions](#contributions)
+- [Release notes](#release-notes)
+- [Install](#install-1)
+	- [marmalade - Stable version](#marmalade---stable-version)
+	- [melpa - ~snapshot](#melpa---~snapshot)
+	- [org-trello](#org-trello)
+	- [github](#github)
+	- [Example](#example)
+- [Setup](#setup)
+	- [Emacs related](#emacs-related)
+	- [Trello related](#trello-related)
+		- [keys](#keys)
+		- [Sync org to trello](#sync-org-to-trello)
+			- [Sync your org-mode buffer](#sync-your-org-mode-buffer)
+		- [Create a board](#create-a-board)
+- [Bindings](#bindings)
+- [Use cases](#use-cases)
+	- [Setup](#setup-1)
+	- [Formats](#formats)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Rationale
 
 - [org-mode](http://orgmode.org/) is what I need.
