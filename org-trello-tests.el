@@ -1919,5 +1919,27 @@ hello there
   (expect t   (orgtrello-controller/compute-check *DONE*))
   (expect nil (orgtrello-controller/compute-check "anything-else")))
 
+(expectations (desc "orgtrello-cbx/--metadata-from-checklist")
+  (expect '(nil "DONE" nil "some checkbox" nil)
+    (orgtrello-tests/with-temp-buffer "- [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}" (orgtrello-cbx/--metadata-from-checklist (orgtrello-cbx/--read-checkbox!))))
+  (expect '(nil "TODO" nil "some other checkbox" nil)
+    (orgtrello-tests/with-temp-buffer " - [] some other checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}" (orgtrello-cbx/--metadata-from-checklist (orgtrello-cbx/--read-checkbox!)))))
+
+(expectations (desc "orgtrello-cbx/--read-checkbox!")
+  (expect " - [] some other checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}"
+    (orgtrello-tests/with-temp-buffer " - [] some other checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}" (orgtrello-cbx/--read-checkbox!)))
+  (expect "- [X] some checkbox"
+    (orgtrello-tests/with-temp-buffer "- [X] some checkbox" (orgtrello-cbx/--read-checkbox!))))
+
+(expectations (desc "orgtrello-cbx/--level!")
+  (expect 2 (orgtrello-tests/with-temp-buffer "- [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}" (orgtrello-cbx/--level!)))
+  (expect 3 (orgtrello-tests/with-temp-buffer " - [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}" (orgtrello-cbx/--level!))))
+
+(expectations (desc "orgtrello-cbx/org-checkbox-metadata")
+  (expect '(2 nil "DONE" nil "some checkbox" nil)
+    (orgtrello-tests/with-temp-buffer "- [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}" (orgtrello-cbx/org-checkbox-metadata)))
+  (expect '(3 nil "TODO" nil "some other checkbox" nil)
+    (orgtrello-tests/with-temp-buffer " - [ ] some other checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}" (orgtrello-cbx/org-checkbox-metadata))))
+
 (provide 'org-trello-tests)
 ;;; org-trello-tests ends here

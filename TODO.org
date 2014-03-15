@@ -873,6 +873,7 @@ CLOSED: [2014-03-15 sam. 11:59]
 - [X] Update documentation TOC
 - [X] Upgrade version
 - [X] Release notes
+- [X] Improve computation level for checkbox (checklist/items) - https://github.com/ardumont/org-trello/issues/121#issuecomment-37559929
 * TODO 0.3.5
 - [ ] Extract a data representation for org-trello buffer to decorrelate the file serialization file from the computation (decomplecting -> ease of testing, computation, overall maintenance, sandbox i/o to a minimum)
   - [ ] extracter (from file/region to data)
