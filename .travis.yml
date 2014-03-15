@@ -1,4 +1,8 @@
 language: emacs-lisp
+env:
+  #- EMACS=emacs
+  - EMACS=emacs24
+  # - EMACS=emacs-snapshot
 before_install:
   - mv Cask Cask.origin
   - grep -v "marmalade" Cask.origin > Cask
@@ -17,9 +21,5 @@ before_install:
   - curl -fsSkL https://raw.github.com/cask/cask/master/go | python
   - export PATH="/home/travis/.cask/bin:$PATH"
   - cask
-env:
-  #- EMACS=emacs
-  - EMACS=emacs24
-  # - EMACS=emacs-snapshot
 script:
   ./run-ci.sh

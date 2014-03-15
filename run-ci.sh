@@ -8,8 +8,4 @@ echo "CASK_EMACS = $CASK_EMACS"
 echo
 
 # unit/integration tests
-make test
-# testing install file in marmalade
-make install-file-with-deps-from-marmalade
-# testing install file in melpa
-make install-file-with-deps-from-melpa
+make EMACS=$CASK_EMACS install test install-file-with-deps-from-marmalade install-file-with-deps-from-melpa
