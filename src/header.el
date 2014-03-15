@@ -52,6 +52,11 @@
 ;;; Code:
 
 
+(defvar *ERROR-INSTALL-MSG* (format "Oops - your emacs isn't supported. org-trello only works on Emacs 24.3+ and you're running version: %s.
+Please consider upgrading Emacs." emacs-version) "Error message when installing org-trello with an unsupported emacs version.")
+
+(when (version< emacs-version "24") (error *ERROR-INSTALL-MSG*))
+
 ;; Dependency on internal Emacs libs
 (require 'org)
 (require 'json)
@@ -67,17 +72,7 @@
 (require 'kv)
 (require 'esxml)
 
-;; for dealing with older version of emacs 24
-(if (require 'cl-lib nil t)
-    ;; nothing to do
-    t
-  ;; Else we're on an older version so require cl.
-  (require 'cl))
-
-(defvar *ERROR-INSTALL-MSG* (format "Oops - your emacs isn't supported. org-trello only works on Emacs 24.3+ and you're running version: %s.
-Please consider upgrading Emacs." emacs-version) "Error message when installing org-trello with an unsupported emacs version.")
-
-(when (version< emacs-version "24") (error *ERROR-INSTALL-MSG*))
+(require (if (version< "24.3" emacs-version) 'cl-lib 'cl))
 
 (defvar *ORGTRELLO-VERSION* "0.3.4"  "current org-trello version installed.")
 
