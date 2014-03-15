@@ -7,7 +7,7 @@ before_install:
   - cask
 env:
   - EVM_EMACS=emacs-24.3-bin
-  - EVM_EMACS=emacs-git-snapshot
+  # - EVM_EMACS=emacs-git-snapshot # it's not emacs 24.3.50
 script:
   - emacs --version
   - make install test install-file-with-deps-from-marmalade install-file-with-deps-from-melpa
