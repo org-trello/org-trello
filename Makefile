@@ -4,6 +4,8 @@ ARCHIVE=$(PACKAGE_FOLDER).tar
 USER=ardumont
 EMACS=emacs
 
+.PHONY: clean
+
 clean:
 	rm -rf *.tar $(PACKAGE_FOLDER)
 
