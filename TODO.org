@@ -864,7 +864,8 @@ CLOSED: [2014-03-08 sam. 17:27]
 - [X] Upgrade version
 - [X] Ensure org-trello works with emacs 24.4 (how do i install it...)
 - [X] Release note
-* IN-PROGRESS 0.3.4 [100%]
+* DONE 0.3.4 [100%]
+CLOSED: [2014-03-15 sam. 11:59]
 - [X] PR fix typo in readme - https://github.com/ardumont/org-trello/pull/120
 - [X] Fix webadmin button to delete running action
 - [X] Add version emacs 24.3.50 in documentation
