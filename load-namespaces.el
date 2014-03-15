@@ -4,7 +4,8 @@
   (message "org-trello file: '%s' loading..." current-ns-file)
   (with-temp-file current-ns-file
     (insert-file-contents current-ns-file)
-    (eval-buffer nil t current-ns-file t t)))
+    (eval-buffer nil nil current-ns-file t t)
+    (message "org-trello file: '%s' loaded!" current-ns-file)))
 
 (defun org-trello/load-namespaces (splitted-files) "Load the src files."
   (message "org-trello files: %s" splitted-files)
