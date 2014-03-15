@@ -188,9 +188,9 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
            (value . ,value))))
 
 (defun orgtrello-webadmin/--delete-action (entity) "Generate the button to delete some action."
-  (-if-let (entity-id (orgtrello-data/entity-id entity))
-           (orgtrello-webadmin/--input-button-html (format "deleteEntities('/proxy/admin/entities/delete/%s');" entity-id) "x")
-           ""))
+  (-if-let (entity-id (orgtrello-data/entity-id-or-marker entity))
+      (orgtrello-webadmin/--input-button-html (format "deleteEntities('/proxy/admin/entities/delete/%s');" entity-id) "x")
+    ""))
 
 (defun orgtrello-webadmin/--compute-class (tr-class) "Compute the tr-class"
   `(class . ,(cond ((string= tr-class "icon-play")  "success")

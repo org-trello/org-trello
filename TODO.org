@@ -865,6 +865,10 @@ CLOSED: [2014-03-08 sam. 17:27]
 - [X] Ensure org-trello works with emacs 24.4 (how do i install it...)
 - [X] Release note
 * TODO 0.3.4
+- [X] PR fix typo in readme - https://github.com/ardumont/org-trello/pull/120
+- [X] Fix webadmin button to delete running action
+- [ ] Add version emacs 24.3.50 in documentation
+* TODO 0.3.5
 - [ ] Extract a data representation for org-trello buffer to decorrelate the file serialization file from the computation (decomplecting -> ease of testing, computation, overall maintenance, sandbox i/o to a minimum)
   - [ ] extracter (from file/region to data)
   - [ ] updater (from data to updated data)
