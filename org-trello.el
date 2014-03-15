@@ -69,6 +69,10 @@
 
 (when (version< emacs-version "24")
       (error (concat "Oops - your emacs isn't supported. org-trello only works on Emacs 24.3+ and you're running version: " emacs-version ". Please upgrade your Emacs and try again.")))
+(defvar *ERROR-INSTALL-MSG* (format "Oops - your emacs isn't supported. org-trello only works on Emacs 24.3+ and you're running version: %s.
+Please consider upgrading Emacs." emacs-version) "Error message when installing org-trello with an unsupported emacs version.")
+
+(when (version< emacs-version "24") (error *ERROR-INSTALL-MSG*))
 
 (defvar *ORGTRELLO-VERSION* "0.3.4"  "current org-trello version installed.")
 
