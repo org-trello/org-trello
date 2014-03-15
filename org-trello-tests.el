@@ -534,12 +534,17 @@
 (expectations (desc "orgtrello-cbx/--to-properties\\\":\\\"123\\\"}")
   (expect "{\"orgtrello-id\":\"123\"}"                              (orgtrello-cbx/--to-properties `((,*ORGTRELLO-ID* . "123"))))
   (expect "{\"orgtrello-id\":\"456\"}"                              (orgtrello-cbx/--to-properties `((,*ORGTRELLO-ID* . "123") (,*ORGTRELLO-ID* . "456"))))
-  (expect "{\"orgtrello-id\":\"def\",\"orgtrello-marker\":\"456\",\"orgtrello-id\":\"abc\"}" (orgtrello-cbx/--to-properties `(("orgtrello-id" . "abc") (orgtrello-marker . "456") (orgtrello-id . "def"))))
-  (expect "{\"orgtrello-marker\":\"456\",\"orgtrello-id\":\"def\"}" (orgtrello-cbx/--to-properties `(("orgtrello-id" . "abc") (orgtrello-marker . "456") ("orgtrello-id" . "def"))))
-  (expect "{\"orgtrello-marker\":\"456\",\"orgtrello-id\":\"def\"}" (orgtrello-cbx/--to-properties `((orgtrello-id . "abc") (orgtrello-marker . "456") (orgtrello-id . "def")))))
+  (expect "{\"orgtrello-id\":\"def\",\"orgtrello-marker\":\"456\",\"orgtrello-id\":\"abc\"}"
+    (replace-regexp-in-string ", " "," (orgtrello-cbx/--to-properties `(("orgtrello-id" . "abc") (orgtrello-marker . "456") (orgtrello-id . "def")))))
+  (expect "{\"orgtrello-marker\":\"456\",\"orgtrello-id\":\"def\"}"
+    (replace-regexp-in-string ", " "," (orgtrello-cbx/--to-properties `(("orgtrello-id" . "abc") (orgtrello-marker . "456") ("orgtrello-id" . "def")))))
+  (expect "{\"orgtrello-marker\":\"456\",\"orgtrello-id\":\"def\"}"
+    (replace-regexp-in-string ", " "," (orgtrello-cbx/--to-properties `((orgtrello-id . "abc") (orgtrello-marker . "456") (orgtrello-id . "def"))))))
 
-(expectations  (desc "orgtrello-cbx/--from-properties")
-  (expect '((orgtrello-id . "123")) (orgtrello-cbx/--from-properties "{\"orgtrello-id\":\"123\"}")))
+(expectations (desc "orgtrello-cbx/--from-properties")
+  (expect '((orgtrello-id . "123")) (orgtrello-cbx/--from-properties "{\"orgtrello-id\":\"123\"}"))
+  (expect '((orgtrello-marker . "456") (orgtrello-id . "123")) (orgtrello-cbx/--from-properties "{\"orgtrello-id\":\"123\",\"orgtrello-marker\":\"456\"}"))
+  (expect '((orgtrello-marker . "456") (orgtrello-id . "123")) (orgtrello-cbx/--from-properties "{\"orgtrello-id\":\"123\", \"orgtrello-marker\":\"456\"}")))
 
 (expectations (desc "orgtrello-cbx/--read-properties")
   (expect '((orgtrello-id . "123")) (orgtrello-cbx/--read-properties "- [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}")))
