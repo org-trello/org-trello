@@ -874,9 +874,9 @@ CLOSED: [2014-03-15 sam. 11:59]
 - [X] Upgrade version
 - [X] Release notes
 - [X] Improve computation level for checkbox (checklist/items) - https://github.com/ardumont/org-trello/issues/121#issuecomment-37559929
-* IN-PROGRESS 0.3.5 [33%]
+* IN-PROGRESS 0.3.5 [66%]
 - [X] Test multiple emacs version - https://github.com/ardumont/org-trello/issues/52
-- [ ] Version
+- [X] Version
 - [ ] Release note
 
 * TODO 0.3.5 [%]

@@ -4,7 +4,7 @@
 
 ;; Author: Antoine R. Dumont <eniotna.t AT gmail.com>
 ;; Maintainer: Antoine R. Dumont <eniotna.t AT gmail.com>
-;; Version: 0.3.4
+;; Version: 0.3.5
 ;; Package-Requires: ((dash "2.5.0") (request "0.2.0") (elnode "0.9.9.7.6") (esxml "0.3.0") (s "1.7.0") (kv "0.0.19"))
 ;; Keywords: org-mode trello sync org-trello
 ;; URL: https://github.com/ardumont/org-trello
@@ -79,7 +79,7 @@ Please consider upgrading Emacs." emacs-version) "Error message when installing 
     (defalias 'cl-defun 'defun*)
     (defalias 'cl-destructuring-bind 'destructuring-bind)))
 
-(defvar *ORGTRELLO-VERSION* "0.3.4" "current org-trello version installed.")
+(defvar *ORGTRELLO-VERSION* "0.3.5" "current org-trello version installed.")
 
 
 (defvar *OT/NOLOG* 0)
