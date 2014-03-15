@@ -7,6 +7,9 @@
 
 (load-file "load-namespaces.el")
 
+;; behaviour of expectations changed
+(setq expectations-execute-at-once t)
+
 ;; ########################## util test function
 
 (defun hash-equal (hash1 hash2) "Compare two hash tables to see whether they are equal."
