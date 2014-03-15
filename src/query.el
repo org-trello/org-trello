@@ -49,9 +49,21 @@
         ((or (string= "POST" method) (string= "PUT" method)) 'orgtrello-query/--post-or-put)
         ((string= "DELETE" method)                           'orgtrello-query/--delete)))
 
-;; url-insert-entities-in-string
+(defvar orgtrello-query/--hexify
+  (if (version< emacs-version "24.3") 'orgtrello-query/--url-hexify-string 'url-hexify-string)
+  "Function to use to hexify depending on emacs version.")
+
+(defun orgtrello-query/--url-hexify-string (value) "Wrapper around url-hexify-string (older emacs 24 version do not map ! to %21)."
+       (->> value
+         url-hexify-string
+         (replace-regexp-in-string "!" "%21")
+         (replace-regexp-in-string "'" "%27")
+         (replace-regexp-in-string "(" "%28")
+         (replace-regexp-in-string ")" "%29")
+         (replace-regexp-in-string "*" "%2A")))
+
 (defun orgtrello-query/--prepare-params-assoc! (params) "Prepare params as association list."
-  (--map (let ((value (cdr it))) (if (and value (stringp value)) `(,(car it) . ,(url-hexify-string value)) it)) params))
+  (--map (let ((value (cdr it))) (if (and value (stringp value)) `(,(car it) . ,(funcall orgtrello-query/--hexify value)) it)) params))
 
 (defun orgtrello-query/--read-data (data) "Prepare params as association list."
   (--map (let ((value (cdr it))) (if (and value (stringp value)) `(,(car it) . ,(url-unhex-string value)) it)) data))

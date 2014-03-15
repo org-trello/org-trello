@@ -1,3 +1,10 @@
+# 0.3.5
+
+- [X] Test multiple emacs version - https://github.com/ardumont/org-trello/issues/52
+- [X] Version
+- [X] Update documentation note for the package view
+- [X] Release note
+
 # 0.3.4
 
 - [X] PR fix typo in readme - https://github.com/ardumont/org-trello/pull/120

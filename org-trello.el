@@ -1,11 +1,11 @@
-;;; org-trello.el --- Org minor mode to synchronize with trello
+;;; org-trello.el --- Minor mode to synchronize org-mode buffer and trello board
 
 ;; Copyright (C) 2013 Antoine R. Dumont <eniotna.t AT gmail.com>
 
 ;; Author: Antoine R. Dumont <eniotna.t AT gmail.com>
 ;; Maintainer: Antoine R. Dumont <eniotna.t AT gmail.com>
-;; Version: 0.3.4
-;; Package-Requires: ((emacs "24.3") (dash "2.5.0") (request "0.2.0") (cl-lib "0.3.0") (json "1.2") (elnode "0.9.9.7.6") (esxml "0.3.0") (s "1.7.0") (kv "0.0.19"))
+;; Version: 0.3.5
+;; Package-Requires: ((dash "2.5.0") (request "0.2.0") (elnode "0.9.9.7.6") (esxml "0.3.0") (s "1.7.0") (kv "0.0.19"))
 ;; Keywords: org-mode trello sync org-trello
 ;; URL: https://github.com/ardumont/org-trello
 
@@ -28,7 +28,7 @@
 
 ;;; Commentary:
 
-;; Minor mode for org-mode to sync org-mode and trello
+;; Minor mode to sync org-mode buffer and trello board
 ;;
 ;; 1) Add the following to your emacs init file
 ;; (require 'org-trello)
@@ -48,28 +48,43 @@
 ;;
 ;; 6) Help (C-c o h)
 ;; M-x org-trello/help-describing-setup
+;;
+;; Now you can work with trello from the comfort of emacs.
+;; Enjoy!
+
+;; More informations on https://ardumont.github.io/org-trello
 
 ;;; Code:
 
 
+(defvar *ERROR-INSTALL-MSG* (format "Oops - your emacs isn't supported. org-trello only works on Emacs 24.3+ and you're running version: %s.
+Please consider upgrading Emacs." emacs-version) "Error message when installing org-trello with an unsupported emacs version.")
+
+(when (version< emacs-version "24") (error *ERROR-INSTALL-MSG*))
+
+;; Dependency on internal Emacs libs
 (require 'org)
 (require 'json)
+(require 'parse-time)
+(require 'timer)
+(require 'align)
+
+;; Depdendency on external Emacs libs
 (require 'dash)
 (require 'request)
-(eval-when-compile (require 'cl-lib))
-(require 'cl-lib)
-(require 'parse-time)
 (require 'elnode)
-(require 'timer)
 (require 's)
 (require 'kv)
 (require 'esxml)
-(require 'align)
 
-(when (version< emacs-version "24.3")
-      (error (concat "Oops - your emacs isn't supported. org-trello only works on Emacs 24.3+ and you're running version: " emacs-version ". Please upgrade your Emacs and try again.")))
+(if (version< "24.3" emacs-version)
+    (require 'cl-lib)
+  (progn ;; need to alias the call
+    (require 'cl)
+    (defalias 'cl-defun 'defun*)
+    (defalias 'cl-destructuring-bind 'destructuring-bind)))
 
-(defvar *ORGTRELLO-VERSION* "0.3.4"  "current org-trello version installed.")
+(defvar *ORGTRELLO-VERSION* "0.3.5" "current org-trello version installed.")
 
 
 (defvar *OT/NOLOG* 0)
@@ -770,9 +785,21 @@ This is a list with the following elements:
         ((or (string= "POST" method) (string= "PUT" method)) 'orgtrello-query/--post-or-put)
         ((string= "DELETE" method)                           'orgtrello-query/--delete)))
 
-;; url-insert-entities-in-string
+(defvar orgtrello-query/--hexify
+  (if (version< emacs-version "24.3") 'orgtrello-query/--url-hexify-string 'url-hexify-string)
+  "Function to use to hexify depending on emacs version.")
+
+(defun orgtrello-query/--url-hexify-string (value) "Wrapper around url-hexify-string (older emacs 24 version do not map ! to %21)."
+       (->> value
+         url-hexify-string
+         (replace-regexp-in-string "!" "%21")
+         (replace-regexp-in-string "'" "%27")
+         (replace-regexp-in-string "(" "%28")
+         (replace-regexp-in-string ")" "%29")
+         (replace-regexp-in-string "*" "%2A")))
+
 (defun orgtrello-query/--prepare-params-assoc! (params) "Prepare params as association list."
-  (--map (let ((value (cdr it))) (if (and value (stringp value)) `(,(car it) . ,(url-hexify-string value)) it)) params))
+  (--map (let ((value (cdr it))) (if (and value (stringp value)) `(,(car it) . ,(funcall orgtrello-query/--hexify value)) it)) params))
 
 (defun orgtrello-query/--read-data (data) "Prepare params as association list."
   (--map (let ((value (cdr it))) (if (and value (stringp value)) `(,(car it) . ,(url-unhex-string value)) it)) data))

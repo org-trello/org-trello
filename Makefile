@@ -4,6 +4,8 @@ ARCHIVE=$(PACKAGE_FOLDER).tar
 USER=ardumont
 EMACS=emacs
 
+.PHONY: clean
+
 clean:
 	rm -rf *.tar $(PACKAGE_FOLDER)
 
@@ -15,11 +17,6 @@ test: clean
 			-l ert \
 			-l ./launch-tests.el \
 			-f ert-run-tests-batch-and-exit
-
-itest-clean:
-	rm -f "#org-trello-tests.org#" "org-trello-tests.org" "org-trello-tests.org~"
-
-tests:	test itest
 
 pkg-el:
 	cask package

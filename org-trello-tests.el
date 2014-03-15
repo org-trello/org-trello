@@ -1,4 +1,3 @@
-(require 'cl-lib)
 (require 'ert)
 (require 'ert-expectations)
 (require 'el-mock)
@@ -804,24 +803,24 @@ DEADLINE: <some-date>
           (orgtrello-tests/with-temp-buffer-and-return-buffer-content "- [X] some checkbox" (orgtrello-cbx/org-delete-property "inexistant"))))
 
 (expectations (desc "orgtrello-query/--prepare-params-assoc!")
-  (expect '((id . "id") (name . "some%20content%20to%20escape%20%26%20voila%21"))
-    (orgtrello-query/--prepare-params-assoc! '((id . "id") (name . "some content to escape & voila!"))))
-  (expect '((id . "id") (name . "some%20content%20to%20escape%20%26%20voila%21") (any . "content%20is%20escaped%20%26%20%3E%20this%20is%20fun%21"))
-    (orgtrello-query/--prepare-params-assoc! '((id . "id") (name . "some content to escape & voila!") (any . "content is escaped & > this is fun!"))))
-  (expect '((id) (name . "some%20content%20to%20escape%20%26%20voila%21") (any . "content%20is%20escaped%20%26%20%3E%20this%20is%20fun%21"))
-    (orgtrello-query/--prepare-params-assoc! '((id) (name . "some content to escape & voila!") (any . "content is escaped & > this is fun!"))))
-  (expect '((ok . t) (name . "some%20content%20to%20escape%20%26%20voila%21") (any . "content%20is%20escaped%20%26%20%3E%20this%20is%20fun%21"))
-    (orgtrello-query/--prepare-params-assoc! '((ok . t) (name . "some content to escape & voila!") (any . "content is escaped & > this is fun!")))))
+  (expect '((id . "id") (name . "some%20content%20to%20escape%20voila"))
+    (orgtrello-query/--prepare-params-assoc! '((id . "id") (name . "some content to escape voila"))))
+  (expect '((id . "id") (name . "some%20content%20to%20escape%20voila") (any . "content%20is%20escaped%20this%20is%20fun"))
+    (orgtrello-query/--prepare-params-assoc! '((id . "id") (name . "some content to escape voila") (any . "content is escaped this is fun"))))
+  (expect '((id) (name . "some%20content%20to%20escape%20voila") (any . "content%20is%20escaped%20this%20is%20fun"))
+    (orgtrello-query/--prepare-params-assoc! '((id) (name . "some content to escape voila") (any . "content is escaped this is fun"))))
+  (expect '((ok . t) (name . "some%20content%20to%20escape%20voila") (any . "content%20is%20escaped%20this%20is%20fun"))
+    (orgtrello-query/--prepare-params-assoc! '((ok . t) (name . "some content to escape voila") (any . "content is escaped this is fun")))))
 
 (expectations (desc "orgtrello-query/--prepare-query-params!")
-  (expect '((name . "some%20content%20to%20escape%20%26%20voila%21") (id . "id"))
-    (orgtrello-query/--prepare-query-params! '((id . "id") (name . "some content to escape & voila!"))))
-  (expect '((any . "content%20is%20escaped%20%26%20%3E%20this%20is%20fun%21") (name . "some%20content%20to%20escape%20%26%20voila%21") (id . "id"))
-    (orgtrello-query/--prepare-query-params! '((id . "id") (name . "some content to escape & voila!") (any . "content is escaped & > this is fun!"))))
-  (expect '((any . "content%20is%20escaped%20%26%20%3E%20this%20is%20fun%21") (name . "some%20content%20to%20escape%20%26%20voila%21") (id))
-    (orgtrello-query/--prepare-query-params! '((id) (name . "some content to escape & voila!") (any . "content is escaped & > this is fun!"))))
-  (expect '((any . "content%20is%20escaped%20%26%20%3E%20this%20is%20fun%21") (name . "some%20content%20to%20escape%20%26%20voila%21") (ok . t))
-    (orgtrello-query/--prepare-query-params! '((ok . t) (name . "some content to escape & voila!") (any . "content is escaped & > this is fun!")))))
+  (expect '((name . "some%20content%20to%20escape%20voila") (id . "id"))
+    (orgtrello-query/--prepare-query-params! '((id . "id") (name . "some content to escape voila"))))
+  (expect '((any . "content%20is%20escaped%20this%20is%20fun") (name . "some%20content%20to%20escape%20voila") (id . "id"))
+    (orgtrello-query/--prepare-query-params! '((id . "id") (name . "some content to escape voila") (any . "content is escaped this is fun"))))
+  (expect '((any . "content%20is%20escaped%20this%20is%20fun") (name . "some%20content%20to%20escape%20voila") (id))
+    (orgtrello-query/--prepare-query-params! '((id) (name . "some content to escape voila") (any . "content is escaped this is fun"))))
+  (expect '((any . "content%20is%20escaped%20this%20is%20fun") (name . "some%20content%20to%20escape%20voila") (ok . t))
+    (orgtrello-query/--prepare-query-params! '((ok . t) (name . "some content to escape voila") (any . "content is escaped this is fun")))))
 
 (expectations (desc "orgtrello-query/--prepare-params-assoc!")
   (expect '((name . "some data with & keywords hexified") (id . "abc") (other-field . "hexified string"))
@@ -831,13 +830,13 @@ DEADLINE: <some-date>
          orgtrello-proxy/--json-read-from-string)))
 
 (expectations (desc "orgtrello-query/--prepare-params-assoc!")
-  (expect '((name . "some%20data%20with%20%26%20keywords%20hexified") (id . "abc") (other-field . "hexified%20string"))
-    (-> '((other-field . "hexified string") (id . "abc") (name . "some data with & keywords hexified"))
+  (expect '((name . "some%20data%20with%20keywords%20hexified") (id . "abc") (other-field . "hexified%20string"))
+    (-> '((other-field . "hexified string") (id . "abc") (name . "some data with keywords hexified"))
         orgtrello-query/--prepare-params-assoc!
         json-encode
         orgtrello-proxy/--unhexify-data))
-  (expect '((name . "some data with & keywords hexified") (id . "abc") (other-field . "hexified string"))
-    (-> '((other-field . "hexified string") (id . "abc") (name . "some data with & keywords hexified"))
+  (expect '((name . "some data with keywords hexified") (id . "abc") (other-field . "hexified string"))
+    (-> '((other-field . "hexified string") (id . "abc") (name . "some data with keywords hexified"))
         orgtrello-query/--prepare-params-assoc!
         json-encode
         (orgtrello-proxy/--unhexify-data t))))
@@ -1948,6 +1947,10 @@ hello there
     (orgtrello-tests/with-temp-buffer "- [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}" (orgtrello-cbx/org-checkbox-metadata)))
   (expect '(3 nil "TODO" nil "some other checkbox" nil)
     (orgtrello-tests/with-temp-buffer " - [ ] some other checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}" (orgtrello-cbx/org-checkbox-metadata))))
+
+(expectations
+  (expect (downcase "%28%29%2A%25%21%24%26%27%2B%2C%3B%3D%20content%20is%20escaped%20this%20is%20fun%20ain%20t%20it")
+    (downcase (funcall orgtrello-query/--hexify "()*%!$&'+,;= content is escaped this is fun ain t it"))))
 
 (provide 'org-trello-tests)
 ;;; org-trello-tests ends here
