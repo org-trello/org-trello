@@ -1,4 +1,3 @@
-(require 'cl-lib)
 (require 'ert)
 (require 'ert-expectations)
 (require 'el-mock)
