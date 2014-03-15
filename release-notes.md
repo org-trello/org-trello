@@ -3,6 +3,7 @@
 - [X] PR fix typo in readme - https://github.com/ardumont/org-trello/pull/120
 - [X] Fix webadmin button to delete running action
 - [X] Add version emacs 24.3.50 in documentation
+- [X] Improve computation level for checkbox (checklist/items) - https://github.com/ardumont/org-trello/issues/121#issuecomment-37559929
 - [X] Improve documentation
 - [X] Upgrade version
 - [X] Release notes
