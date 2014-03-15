@@ -412,7 +412,7 @@ Keybindings        | Interactive commands                             | Descript
 <kbd>C-c o K</kbd> | `M-x org-trello/kill-all-entities`               | Kill all the entities (and their arborescence tree) from the trello board and the org buffer.
 <kbd>C-c o a</kbd> | `M-x org-trello/assign-me`                       | Assign one-self to the current card
 <kbd>C-c o u</kbd> | `M-x org-trello/unassign-me`                     | Unassign one-self from the current card
-<kbd>C-c o j</kbd> | `M-x org-trello/jump-to-card`                    | Jump to current card
+<kbd>C-c o j</kbd> | `M-x org-trello/jump-to-card`                    | Jump to current trello card
 <kbd>C-c o J</kbd> | `M-x org-trello/jump-to-trello-board`            | Jump to current trello board
 <kbd>C-c o h</kbd> | `M-x org-trello/help-describing-bindings`        | This help message.
 
