@@ -4,7 +4,7 @@
 
 ;; Author: Antoine R. Dumont <eniotna.t AT gmail.com>
 ;; Maintainer: Antoine R. Dumont <eniotna.t AT gmail.com>
-;; Version: 0.3.3
+;; Version: 0.3.4
 ;; Package-Requires: ((emacs "24.3") (dash "2.5.0") (request "0.2.0") (cl-lib "0.3.0") (json "1.2") (elnode "0.9.9.7.6") (esxml "0.3.0") (s "1.7.0") (kv "0.0.19"))
 ;; Keywords: org-mode trello sync org-trello
 ;; URL: https://github.com/ardumont/org-trello
@@ -69,7 +69,7 @@
 (when (version< emacs-version "24.3")
       (error (concat "Oops - your emacs isn't supported. org-trello only works on Emacs 24.3+ and you're running version: " emacs-version ". Please upgrade your Emacs and try again.")))
 
-(defvar *ORGTRELLO-VERSION* "0.3.3"  "current org-trello version installed.")
+(defvar *ORGTRELLO-VERSION* "0.3.4"  "current org-trello version installed.")
 
 
 (defvar *OT/NOLOG* 0)
@@ -563,10 +563,13 @@ To ease the computation, we consider level 4 if no - to start with, and to avoid
   (let* ((oc/--checklist-data   (orgtrello-cbx/--checkbox-data full-checklist))
          (oc/--meta             (orgtrello-cbx/--org-split-data oc/--checklist-data))
          (oc/--status-retrieved (orgtrello-cbx/--retrieve-status oc/--meta)))
-      (list (orgtrello-cbx/--level oc/--meta) nil (orgtrello-cbx/--status oc/--status-retrieved) nil (orgtrello-cbx/--name oc/--checklist-data oc/--status-retrieved) nil)))
+    (list nil (orgtrello-cbx/--status oc/--status-retrieved) nil (orgtrello-cbx/--name oc/--checklist-data oc/--status-retrieved) nil)))
+
+(defun orgtrello-cbx/--level! () "Compute the levels from the current position (which is `bol`)"
+  (if (org-at-item-bullet-p) *CHECKLIST-LEVEL* *ITEM-LEVEL*))
 
 (defun orgtrello-cbx/org-checkbox-metadata ()
-  "Extract the metadata about the checklist - this is the symmetrical as org-heading-components but for the checklist.
+  "Extract the metadata about the checklist - this is the symmetrical with `org-heading-components` but for the checklist.
 Return the components of the current heading.
 This is a list with the following elements:
 - the level as an integer                                          - (begins at 2)
@@ -577,9 +580,10 @@ This is a list with the following elements:
 - the tags string, or nil.                                         - nil"
   (save-excursion
     (beginning-of-line)
-    (orgtrello-cbx/--metadata-from-checklist (orgtrello-cbx/--read-checkbox!))))
+    (cons (orgtrello-cbx/--level!)
+          (orgtrello-cbx/--metadata-from-checklist (orgtrello-cbx/--read-checkbox!)))))
 
-(defun orgtrello-cbx/--get-level (meta) "Retreve the level from the meta describing the checklist"
+(defun orgtrello-cbx/--get-level (meta) "Retrieve the level from the meta describing the checklist"
   (car meta))
 
 (defun orgtrello-cbx/--org-up! (destination-level) "An internal function to get back to the current entry's parent - return the level found or nil if the level found is a card."
@@ -1029,9 +1033,9 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
            (value . ,value))))
 
 (defun orgtrello-webadmin/--delete-action (entity) "Generate the button to delete some action."
-  (-if-let (entity-id (orgtrello-data/entity-id entity))
-           (orgtrello-webadmin/--input-button-html (format "deleteEntities('/proxy/admin/entities/delete/%s');" entity-id) "x")
-           ""))
+  (-if-let (entity-id (orgtrello-data/entity-id-or-marker entity))
+      (orgtrello-webadmin/--input-button-html (format "deleteEntities('/proxy/admin/entities/delete/%s');" entity-id) "x")
+    ""))
 
 (defun orgtrello-webadmin/--compute-class (tr-class) "Compute the tr-class"
   `(class . ,(cond ((string= tr-class "icon-play")  "success")

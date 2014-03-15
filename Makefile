@@ -2,9 +2,16 @@ VERSION=$$(grep "^;; Version: " src/header.el | cut -f3 -d' ')
 PACKAGE_FOLDER=org-trello-$(VERSION)
 ARCHIVE=$(PACKAGE_FOLDER).tar
 USER=ardumont
+EMACS=emacs
+
+clean:
+	rm -rf *.tar $(PACKAGE_FOLDER)
+
+install:
+	cask install
 
 test: clean
-	cask exec emacs --batch \
+	cask exec $(EMACS) --batch \
 			-l ert \
 			-l ./launch-tests.el \
 			-f ert-run-tests-batch-and-exit
@@ -12,32 +19,17 @@ test: clean
 itest-clean:
 	rm -f "#org-trello-tests.org#" "org-trello-tests.org" "org-trello-tests.org~"
 
-itest: itest-clean
-	cask exec ecukes --script
-
-itest-f: itest-clean
-	cask exec ecukes --script --dbg $(FEATURE)
-
-itest-f-win: itest-clean
-	cask exec ecukes --dbg $(FEATURE)
-
-itest-win:
-	cask exec ecukes features --dbg
-
 tests:	test itest
 
 pkg-el:
 	cask package
-
-clean:
-	rm -rf *.tar $(PACKAGE_FOLDER)
 
 prepare:
 	mkdir -p $(PACKAGE_FOLDER)
 	cp -r org-trello.el org-trello-pkg.el $(PACKAGE_FOLDER)
 
 generate:
-	cask exec emacs -Q --batch -l ./build-package.el
+	cask exec $(EMACS) -Q --batch -l ./build-package.el
 
 package: clean generate pkg-el prepare
 	tar cvf $(ARCHIVE) $(PACKAGE_FOLDER)
