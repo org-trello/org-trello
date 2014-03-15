@@ -1,4 +1,5 @@
-# org-trello [![Build Status](https://travis-ci.org/ardumont/org-trello.png?branch=master)](https://travis-ci.org/ardumont/org-trello)
+org-trello [![Build Status](https://travis-ci.org/ardumont/org-trello.png?branch=master)](https://travis-ci.org/ardumont/org-trello)
+==========
 
 [Org](http://orgmode.org/) minor mode - 2-way sync [org](http://orgmode.org/) & [trello](http://trello.com/)
 
