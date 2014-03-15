@@ -16,11 +16,6 @@ test: clean
 			-l ./launch-tests.el \
 			-f ert-run-tests-batch-and-exit
 
-itest-clean:
-	rm -f "#org-trello-tests.org#" "org-trello-tests.org" "org-trello-tests.org~"
-
-tests:	test itest
-
 pkg-el:
 	cask package
 
