@@ -538,6 +538,14 @@ This will also remove the entries from the org-mode buffer.
 You can remove all data from the org-mode buffer with `C-c o x`.
 This will remove any org-trello related entries in your file (headers included).
 
+## Jump to trello board
+
+When inside your org-trello buffer (not on metadata), hit `C-c o j` and this will open your browser to the current trello board that your org-trello buffer is connected to.
+
+## Jump to trello card
+
+When inside your org-trello buffer, somewhere inside a card, hit `C-c o j` and this will open your browser to the current trello card.
+
 # Errors
 
 Here are the possible error messages you can get if trying to sync in bad conditions:
