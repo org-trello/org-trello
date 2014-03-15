@@ -1948,5 +1948,9 @@ hello there
   (expect '(3 nil "TODO" nil "some other checkbox" nil)
     (orgtrello-tests/with-temp-buffer " - [ ] some other checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}" (orgtrello-cbx/org-checkbox-metadata))))
 
+(expectations
+  (expect (downcase "%25%20%21%20%24%20%26%20%27%20%28%20%29%20%2A%20%2B%20%2C%20%3B%20%3D%20content%20is%20escaped%20this%20is%20fun%20ain%20t%20it")
+    (downcase (funcall orgtrello-query/--hexify "% ! $ & ' ( ) * + , ; = content is escaped this is fun ain t it"))))
+
 (provide 'org-trello-tests)
 ;;; org-trello-tests ends here
