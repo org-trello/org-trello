@@ -7,7 +7,7 @@
 ;; Version: 0.3.5
 ;; Package-Requires: ((dash "2.5.0") (request "0.2.0") (elnode "0.9.9.7.6") (esxml "0.3.0") (s "1.7.0") (kv "0.0.19"))
 ;; Keywords: org-mode trello sync org-trello
-;; URL: https://github.com/ardumont/org-trello
+;; URL: https://github.com/org-trello/org-trello
 
 ;; This file is NOT part of GNU Emacs.
 
@@ -1878,7 +1878,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun orgtrello-controller/do-sync-full-entity () "Do the actual full card creation - from card to item. Beware full side effects..."
   (orgtrello-log/msg *OT/INFO* "Synchronizing full entity with its structure on board '%s'..." (orgtrello-controller/--board-name))
-  ;; in any case, we need to show the subtree, otherwise https://github.com/ardumont/org-trello/issues/53
+  ;; in any case, we need to show the subtree, otherwise https://github.com/org-trello/org-trello/issues/53
   (org-show-subtree)
   (if (org-at-heading-p)
       (org-map-tree (lambda () (orgtrello-controller/do-sync-entity) (orgtrello-controller/map-sync-checkboxes)))
@@ -2045,7 +2045,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   (let ((entities (orgtrello-hash/empty-hash))
         (adjacency (orgtrello-hash/empty-hash)))
     (orgtrello-controller/org-map-entities-without-params! (lambda ()
-                                                             ;; first will unfold every entries, otherwise https://github.com/ardumont/org-trello/issues/53
+                                                             ;; first will unfold every entries, otherwise https://github.com/org-trello/org-trello/issues/53
                                                              (org-show-subtree)
                                                              (let ((current-entity (-> (orgtrello-data/entry-get-full-metadata) orgtrello-data/current)))
                                                                (unless (-> current-entity orgtrello-data/entity-id orgtrello-controller/id-p) ;; if no id, we set one

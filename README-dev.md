@@ -101,4 +101,4 @@ This will:
 
 Note:
 - this is an orchestration of the [release.sh](./release.sh) script
-- the packaging for MELPA is automatically done from ardumont/org-trello repository
+- the packaging for MELPA is automatically done from org-trello/org-trello repository
