@@ -1090,7 +1090,9 @@
         (orgtrello-query/http-trello (orgtrello-api/add-card-comment card-id comment) t
                                      (function* (lambda (&key data &allow-other-keys) "Synchronize the buffer with the response data."
                                                   (orgtrello-log/msg *OT/TRACE* "proxy - response data: %S" data)
-                                                  (orgtrello-controller/--update-comments! comment))))))))
+                                                  (orgtrello-controller/--update-comments! comment)
+                                                  (when *ORGTRELLO-DO-SHOW-CARD-COMMENTS-AFTER-ADDING*
+                                                    (orgtrello-controller/do-show-card-comments!)))))))))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-controller loaded!")
 

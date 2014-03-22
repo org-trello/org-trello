@@ -133,7 +133,7 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
 (defvar *ORGTRELLO-CARD-COMMENTS*     "orgtrello-card-comments"                         "Current card's comments property.")
 (defvar *ORGTRELLO-CARD-COMMENTS-DELIMITER* "###"                                       "Current card's comments delimiter.")
 (defvar *ORGTRELLO-CARD-COMMENTS-DELIMITER-PRINT* "\n\n"                                "Current card's comments delimiter to print.")
-
+(defvar *ORGTRELLO-DO-SHOW-CARD-COMMENTS-AFTER-ADDING* nil                              "Show the comment buffer after adding one comment")
 
 (defvar *ORGTRELLO-HTTPS*               "https://trello.com"                            "URL https to help in browsing")
 
@@ -727,7 +727,7 @@ This is a list with the following elements:
 
 (defun orgtrello-api/get-cards (board-id)
   "cards of a board"
-  (orgtrello-hash/make-hash "GET" (format "/boards/%s/cards?actions=commentCard&actions_limit=5&action_fields=data&action_memberCreator_fields=username&field=closed,desc,due,idBoard,idChecklists,idList,idMembers,name,pos" board-id)))
+  (orgtrello-hash/make-hash "GET" (format "/boards/%s/cards?actions=commentCard&field=closed,desc,due,idBoard,idChecklists,idList,idMembers,name,pos" board-id)))
 
 (defun orgtrello-api/get-card (card-id)
   "Detail of a card with id card-id."
@@ -2820,7 +2820,9 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
         (orgtrello-query/http-trello (orgtrello-api/add-card-comment card-id comment) t
                                      (function* (lambda (&key data &allow-other-keys) "Synchronize the buffer with the response data."
                                                   (orgtrello-log/msg *OT/TRACE* "proxy - response data: %S" data)
-                                                  (orgtrello-controller/--update-comments! comment))))))))
+                                                  (orgtrello-controller/--update-comments! comment)
+                                                  (when *ORGTRELLO-DO-SHOW-CARD-COMMENTS-AFTER-ADDING*
+                                                    (orgtrello-controller/do-show-card-comments!)))))))))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-controller loaded!")
 
