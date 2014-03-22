@@ -1071,6 +1071,14 @@
          (insert (format "%s\n\n" comments-title))
          (insert comments-formatted))))))
 
+(defun orgtrello-controller/--update-comments! (new-comment)
+  "Given a current position on a card and a new comment, add a new comment to the current comments."
+  (->> (orgtrello-buffer/get-card-comments!)
+    orgtrello-controller/format-comments
+    (concat (orgtrello-controller/--me!) ": " new-comment *ORGTRELLO-CARD-COMMENTS-DELIMITER-PRINT*)
+    orgtrello-controller/unformat-comments
+    orgtrello-buffer/put-card-comments!))
+
 (defun orgtrello-controller/do-add-card-comment! ()
   "Wait for the input to add a comment to the current card."
   (save-excursion
@@ -1082,11 +1090,7 @@
         (orgtrello-query/http-trello (orgtrello-api/add-card-comment card-id comment) t
                                      (function* (lambda (&key data &allow-other-keys) "Synchronize the buffer with the response data."
                                                   (orgtrello-log/msg *OT/TRACE* "proxy - response data: %S" data)
-                                                  (->> (orgtrello-buffer/get-card-comments!)
-                                                    orgtrello-controller/format-comments
-                                                    (concat (orgtrello-controller/--me!) ": " comment *ORGTRELLO-CARD-COMMENTS-DELIMITER-PRINT*)
-                                                    orgtrello-controller/unformat-comments
-                                                    orgtrello-buffer/put-card-comments!))))))))
+                                                  (orgtrello-controller/--update-comments! comment))))))))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-controller loaded!")
 
