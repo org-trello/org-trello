@@ -881,17 +881,39 @@ CLOSED: [2014-03-15 sam. 23:13]
 - [X] Update documentation note for the package view
 - [X] Release note
 
-* TODO 0.3.5 [%]
+* DONE 0.3.6 [100%]
+CLOSED: [2014-03-22 Sat 22:51]
+- [X] Test multiple emacs version - https://github.com/org-trello/org-trello/issues/52
+- [X] Add a logo to website - https://github.com/org-trello/org-trello/issues/129
+- [X] Synchronize user comments - https://github.com/org-trello/org-trello/issues/86
+  - [X] Retrieve the last 5 comments
+  - [X] Write the last 5 comments
+  - [X] Make the org-trello parsing routine aware of comments (even if not used, for symmetry's sake)
+  - [X] Add interactive command for the user to see the last 5 comments
+  - [X] Add a binding to the interactive 'show comments' command
+- [X] Add a comment to a card - https://github.com/org-trello/org-trello/issues/132
+  - [X] Open the api to add a comment to a card
+  - [X] Add an interactive command to add a comment (with sync to trello)
+  - [X] Add a binding to the 'add a comment' command
+  - [X] Update the current comments list locally
+- [X] Take control over the test file which is now too big (dispatch in 'namespace' test buffer)
+- [X] Version
+- [X] Release notes
+* TODO 0.3.7 [0%]
+- [ ] Use trello labels and org tags as one - https://github.com/org-trello/org-trello/issues/70
+- [ ] Release notes
+- [ ] Version
+* TODO 0.3.X [0%]
+- [ ] Open stop all synchronization actions - https://github.com/org-trello/org-trello/issues/131
+- [ ] Use active region - https://github.com/org-trello/org-trello/issues/130
+- [ ] Provide org-trello-mode-hook - https://github.com/org-trello/org-trello/issues/116
 - [ ] Extract a data representation for org-trello buffer to decorrelate the file serialization file from the computation (decomplecting -> ease of testing, computation, overall maintenance, sandbox i/o to a minimum)
   - [ ] extracter (from file/region to data)
   - [ ] updater (from data to updated data)
   - [ ] serializer (from data to file/region update)
-- [ ] Synchronize user comments - https://github.com/org-trello/org-trello/issues/86
 - [ ] More fined grained use of the trello api (retrieve only data we use) - https://github.com/org-trello/org-trello/issues/69
-- [ ] Use trello labels and org tags as one - https://github.com/org-trello/org-trello/issues/70
 - [ ] Another Disposition about org's buffer - https://github.com/org-trello/org-trello/issues/33
 - [ ] Improve sync request policy - https://github.com/org-trello/org-trello/issues/58
-- [ ] Test multiple emacs version - https://github.com/org-trello/org-trello/issues/52
 - [ ] One command to sync them all - https://github.com/org-trello/org-trello/issues/59
 - [ ] Now that elnode is here, this may be simpler to use a fake trello server (use clojure :D)
 - [ ] POC: use a temporary buffer to sync with trello, when done, merge with the user's buffer.
