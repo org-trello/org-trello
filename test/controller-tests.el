@@ -385,3 +385,7 @@ DEADLINE: <some-date>
 (expectations
   (expect "dude0: some comments\n\ndude1: some other comments"
     (orgtrello-controller/format-comments "dude0: some comments###dude1: some other comments")))
+
+(expectations
+ (expect "dude0: some comments###dude1: some other comments"
+         (orgtrello-controller/unformat-comments "dude0: some comments\n\ndude1: some other comments")))
