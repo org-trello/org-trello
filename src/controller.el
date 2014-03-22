@@ -1044,10 +1044,15 @@
     (while (re-search-forward ":PROPERTIES: {.*" nil t)
       (orgtrello-cbx/install-overlays! (match-beginning 0)))))
 
+(defun orgtrello-controller/unformat-comments (comments)
+  (->> comments
+    (s-split *ORGTRELLO-CARD-COMMENTS-DELIMITER-PRINT*)
+    (s-join *ORGTRELLO-CARD-COMMENTS-DELIMITER*)))
+
 (defun orgtrello-controller/format-comments (comments)
-  (--> comments
-    (s-split *ORGTRELLO-CARD-COMMENTS-DELIMITER* it)
-    (s-join "\n\n" it)))
+  (->> comments
+    (s-split *ORGTRELLO-CARD-COMMENTS-DELIMITER*)
+    (s-join *ORGTRELLO-CARD-COMMENTS-DELIMITER-PRINT*)))
 
 (defun orgtrello-controller/do-show-card-comments! ()
   "Show the card comments in a temporary buffer."
@@ -1069,12 +1074,19 @@
 (defun orgtrello-controller/do-add-card-comment! ()
   "Wait for the input to add a comment to the current card."
   (save-excursion
-   (orgtrello-buffer/back-to-card!)
-   (let* ((card-id (-> (orgtrello-data/metadata) orgtrello-data/entity-id))
-          (comment (read-string "Add a comment: ")))
-     (if (or (null card-id) (string= "" card-id) (string= "" comment))
-         (message "Empty comment - skip.")
-       (orgtrello-query/http-trello (orgtrello-api/add-card-comment card-id comment) t)))))
+    (orgtrello-buffer/back-to-card!)
+    (let* ((card-id (-> (orgtrello-data/metadata) orgtrello-data/entity-id))
+           (comment (read-string "Add a comment: ")))
+      (if (or (null card-id) (string= "" card-id) (string= "" comment))
+          (message "Empty comment - skip.")
+        (orgtrello-query/http-trello (orgtrello-api/add-card-comment card-id comment) t
+                                     (function* (lambda (&key data &allow-other-keys) "Synchronize the buffer with the response data."
+                                                  (orgtrello-log/msg *OT/TRACE* "proxy - response data: %S" data)
+                                                  (->> (orgtrello-buffer/get-card-comments!)
+                                                    orgtrello-controller/format-comments
+                                                    (concat "me: " comment *ORGTRELLO-CARD-COMMENTS-DELIMITER-PRINT*)
+                                                    orgtrello-controller/unformat-comments
+                                                    orgtrello-buffer/put-card-comments!))))))))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-controller loaded!")
 

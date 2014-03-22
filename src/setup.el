@@ -18,6 +18,7 @@
 (defvar *ORGTRELLO-USER-LOGGED-IN*    nil                                               "Current user logged in.")
 (defvar *ORGTRELLO-CARD-COMMENTS*     "orgtrello-card-comments"                         "Current card's comments property.")
 (defvar *ORGTRELLO-CARD-COMMENTS-DELIMITER* "###"                                       "Current card's comments delimiter.")
+(defvar *ORGTRELLO-CARD-COMMENTS-DELIMITER-PRINT* "\n\n"                                "Current card's comments delimiter to print.")
 
 
 (defvar *ORGTRELLO-HTTPS*               "https://trello.com"                            "URL https to help in browsing")
