@@ -61,8 +61,8 @@ make test
 ```
 
 This will trigger:
-- the [org-trello.el](./org-trello.el) generation from the [src/](./src/) source files
-- trigger the launch-test.el script that runs the unit/integration tests
+- the loading of the source code from the **src/** folder.
+- trigger the **launch-test.el** script that runs the unit/integration tests (stored in **test/** folder)
 
 ## Install
 
