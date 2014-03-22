@@ -2803,11 +2803,12 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun orgtrello-controller/--update-comments! (new-comment)
   "Given a current position on a card and a new comment, add a new comment to the current comments."
-  (->> (orgtrello-buffer/get-card-comments!)
-    orgtrello-controller/format-comments
-    (concat (orgtrello-controller/--me!) ": " new-comment *ORGTRELLO-CARD-COMMENTS-DELIMITER-PRINT*)
-    orgtrello-controller/unformat-comments
-    orgtrello-buffer/put-card-comments!))
+  (let ((comments (orgtrello-buffer/get-card-comments!)))
+    (->> (if comments comments "")
+      orgtrello-controller/format-comments
+      (concat (orgtrello-controller/--me!) ": " new-comment *ORGTRELLO-CARD-COMMENTS-DELIMITER-PRINT*)
+      orgtrello-controller/unformat-comments
+      orgtrello-buffer/put-card-comments!)))
 
 (defun orgtrello-controller/do-add-card-comment! ()
   "Wait for the input to add a comment to the current card."

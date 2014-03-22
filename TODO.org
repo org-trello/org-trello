@@ -899,6 +899,12 @@ CLOSED: [2014-03-22 Sat 22:51]
 - [X] Take control over the test file which is now too big (dispatch in 'namespace' test buffer)
 - [X] Version
 - [X] Release notes
+* IN-PROGRESS 0.3.6.1 [50%]
+- [X] Fix already used bindings
+- [X] Fix edge case about adding comments
+- [ ] Version
+- [ ] Release notes
+
 * TODO 0.3.7 [0%]
 - [ ] Use trello labels and org tags as one - https://github.com/org-trello/org-trello/issues/70
 - [ ] Release notes
