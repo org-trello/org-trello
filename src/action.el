@@ -44,7 +44,7 @@
       ;; no control, we simply execute the function
       (funcall fn-to-execute)))
 
-(defun orgtrello-action/--functional-controls-then-do (control-fns entity fn-to-execute args) "Execute the function fn if control-fns is nil or if the result of apply every function to fn-to-execute is ok."
+(defun orgtrello-action/functional-controls-then-do (control-fns entity fn-to-execute args) "Execute the function fn if control-fns is nil or if the result of apply every function to fn-to-execute is ok."
   (if control-fns
       (let ((org-trello/--error-messages (-> control-fns (orgtrello-action/--execute-controls entity) orgtrello-action/--filter-error-messages)))
         (if org-trello/--error-messages

@@ -18,14 +18,14 @@
   (expect   "List of errors:
  - Level too high. Do not deal with entity other than card/checklist/items!
 "
-      (orgtrello-action/--functional-controls-then-do
+      (orgtrello-action/functional-controls-then-do
        '(orgtrello-controller/--right-level-p)
        (orgtrello-hash/make-hierarchy (orgtrello-hash/make-hash-org :users 4 :kwd :name nil :due :position :buffer-name :desc :comments))
        (lambda (entity s) (format "%S %s" entity s))
        "- hello"))
 
   (expect "#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:current #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:buffername :buffer-name :position :position :level 3 :keyword :kwd :name :name :id nil :due :due :member-ids :users :desc :desc :comments :comments)) :parent nil :grandparent nil)) - hello"
-    (orgtrello-action/--functional-controls-then-do
+    (orgtrello-action/functional-controls-then-do
      '(orgtrello-controller/--right-level-p)
      (orgtrello-hash/make-hierarchy (orgtrello-hash/make-hash-org :users 3 :kwd :name nil :due :position :buffer-name :desc :comments))
      (lambda (entity s) (format "%S %s" entity s))
@@ -35,14 +35,14 @@
   (expect "List of errors:
  - Entity must been synchronized with trello first!
 "
-    (orgtrello-action/--functional-controls-then-do
+    (orgtrello-action/functional-controls-then-do
      '(orgtrello-controller/--right-level-p orgtrello-controller/--already-synced-p)
      (orgtrello-hash/make-hierarchy (orgtrello-hash/make-hash-org :users 1 :kwd :name nil :due :position :buffer-name :desc :comments))
      (lambda (entity s) (format "%S %s" entity s))
      "- hello"))
   (expect "#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:current #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:buffername :buffer-name :position :position :level 1 :keyword :kwd :name :name :id \"some-id\" :due :due :member-ids :users :desc :desc :comments :comments)) :parent nil :grandparent nil)) - hello"
 
-    (orgtrello-action/--functional-controls-then-do
+    (orgtrello-action/functional-controls-then-do
      '(orgtrello-controller/--right-level-p orgtrello-controller/--already-synced-p)
      (orgtrello-hash/make-hierarchy (orgtrello-hash/make-hash-org :users 1 :kwd :name "some-id" :due :position :buffer-name :desc :comments))
      (lambda (entity s) (format "%S %s" entity s))

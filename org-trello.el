@@ -242,7 +242,7 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
       ;; no control, we simply execute the function
       (funcall fn-to-execute)))
 
-(defun orgtrello-action/--functional-controls-then-do (control-fns entity fn-to-execute args) "Execute the function fn if control-fns is nil or if the result of apply every function to fn-to-execute is ok."
+(defun orgtrello-action/functional-controls-then-do (control-fns entity fn-to-execute args) "Execute the function fn if control-fns is nil or if the result of apply every function to fn-to-execute is ok."
   (if control-fns
       (let ((org-trello/--error-messages (-> control-fns (orgtrello-action/--execute-controls entity) orgtrello-action/--filter-error-messages)))
         (if org-trello/--error-messages
@@ -1868,7 +1868,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
     (orgtrello-proxy/http-producer orgtrello-controller/--current)))
 
 (defun orgtrello-controller/--checks-then-delegate-action-on-entity-to-proxy (functional-controls action) "Execute the functional controls then if all pass, delegate the action 'action' to the proxy."
-  (orgtrello-action/--functional-controls-then-do functional-controls (orgtrello-data/entry-get-full-metadata) 'orgtrello-controller/--delegate-to-the-proxy action))
+  (orgtrello-action/functional-controls-then-do functional-controls (orgtrello-data/entry-get-full-metadata) 'orgtrello-controller/--delegate-to-the-proxy action))
 
 (defun orgtrello-controller/do-delete-simple (&optional sync) "Do the deletion of an entity."
   (orgtrello-controller/--checks-then-delegate-action-on-entity-to-proxy '(orgtrello-controller/--right-level-p orgtrello-controller/--already-synced-p) *ORGTRELLO-ACTION-DELETE*))

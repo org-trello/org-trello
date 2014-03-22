@@ -232,7 +232,7 @@
     (orgtrello-proxy/http-producer orgtrello-controller/--current)))
 
 (defun orgtrello-controller/--checks-then-delegate-action-on-entity-to-proxy (functional-controls action) "Execute the functional controls then if all pass, delegate the action 'action' to the proxy."
-  (orgtrello-action/--functional-controls-then-do functional-controls (orgtrello-data/entry-get-full-metadata) 'orgtrello-controller/--delegate-to-the-proxy action))
+  (orgtrello-action/functional-controls-then-do functional-controls (orgtrello-data/entry-get-full-metadata) 'orgtrello-controller/--delegate-to-the-proxy action))
 
 (defun orgtrello-controller/do-delete-simple (&optional sync) "Do the deletion of an entity."
   (orgtrello-controller/--checks-then-delegate-action-on-entity-to-proxy '(orgtrello-controller/--right-level-p orgtrello-controller/--already-synced-p) *ORGTRELLO-ACTION-DELETE*))
