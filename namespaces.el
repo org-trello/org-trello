@@ -19,7 +19,7 @@
                              "src/org-trello.el"
                              "src/footer.el") "Splitted org-trello files.")
 
-x(defvar *ORG-TRELLO-TEST-FILES* '("test/utils-tests.el"         ;; utils function for the following tests buffer
+(defvar *ORG-TRELLO-TEST-FILES* '("test/utils-tests.el"         ;; utils function for the following tests buffer
                                   "test/hash-tests.el"
                                   "test/action-tests.el"
                                   "test/data-tests.el"
