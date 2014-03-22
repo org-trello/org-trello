@@ -51,7 +51,7 @@
     (setq *ORGTRELLO-USER-LOGGED-IN* (orgtrello-controller/--me))
     :ok))
 
-(defun orgtrello-controller/--control-encoding (&optional args) "Use utf-8, otherwise, there will be trouble."
+(defun orgtrello-controller/control-encoding (&optional args) "Use utf-8, otherwise, there will be trouble."
   (progn
     (orgtrello-log/msg *OT/ERROR* "Ensure you use utf-8 encoding for your org buffer.")
     :ok))

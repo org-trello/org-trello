@@ -3,7 +3,7 @@
   (interactive)
   (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
      "Requesting entity sync"
-     '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/--control-encoding)
+     '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/control-encoding)
      'orgtrello-controller/do-sync-entity))
 
 (defun org-trello/sync-full-entity ()
@@ -11,7 +11,7 @@
   (interactive)
   (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
      "Requesting entity and structure sync"
-     '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/--control-encoding)
+     '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/control-encoding)
      'orgtrello-controller/do-sync-full-entity))
 
 (defun org-trello/sync-to-trello ()
@@ -19,7 +19,7 @@
   (interactive)
   (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
      "Requesting sync org buffer to trello board"
-     '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/--control-encoding)
+     '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/control-encoding)
      'orgtrello-controller/do-sync-full-file))
 
 (defun org-trello/sync-from-trello ()
@@ -28,7 +28,7 @@
   ;; execute the action
   (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
      "Requesting sync org buffer from trello board"
-     '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/--control-encoding)
+     '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/control-encoding)
      'orgtrello-controller/do-sync-full-from-trello
      *do-save-buffer*))
 
@@ -37,7 +37,7 @@
   (interactive)
   (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
      "Requesting deleting entity"
-     '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/--control-encoding)
+     '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/control-encoding)
      'orgtrello-controller/do-delete-simple))
 
 (defun org-trello/kill-all-entities ()
@@ -45,7 +45,7 @@
   (interactive)
   (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
      "Requesting deleting entities"
-     '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/--control-encoding)
+     '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/control-encoding)
      'orgtrello-controller/do-delete-entities))
 
 (defun org-trello/install-key-and-token ()
@@ -72,7 +72,7 @@
   "Jump to current card in browser."
   (interactive)
   (orgtrello-action/controls-or-actions-then-do
-     '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/--control-encoding)
+     '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/control-encoding)
      (lambda ()
        (let* ((full-meta       (orgtrello-data/entry-get-full-metadata))
               (entity          (orgtrello-data/current full-meta))
@@ -86,7 +86,7 @@
   "Jump to current trello board."
   (interactive)
   (orgtrello-action/controls-or-actions-then-do
-     '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/--control-encoding)
+     '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/control-encoding)
      (lambda () (browse-url (org-trello/https-trello (format "/b/%s" (orgtrello-controller/--board-id)))))))
 
 (defun org-trello/create-board ()
@@ -123,7 +123,7 @@
   "Check the current setup."
   (interactive)
   (orgtrello-action/controls-or-actions-then-do
-     '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/--control-encoding)
+     '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/control-encoding)
      (lambda () (orgtrello-log/msg *OT/NOLOG* "Setup ok!"))))
 
 (defun org-trello/delete-setup ()
@@ -131,7 +131,7 @@
   (interactive)
   (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
    "Deleting current org-trello setup"
-     '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/--control-encoding)
+     '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/control-encoding)
      (lambda ()
        (orgtrello-controller/--remove-properties-file! *LIST-NAMES* *HMAP-USERS-NAME-ID* *ORGTRELLO-USER-LOGGED-IN* t) ;; remove any orgtrello relative entries
        (orgtrello-controller/--delete-property *ORGTRELLO-ID*)          ;; remove all properties orgtrello-id from the buffer
