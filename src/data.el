@@ -150,7 +150,8 @@
                                                                         (member         . :member)
                                                                         (memberships    . :memberships)
                                                                         (username       . :username)
-                                                                        (fullName       . :full-name))))
+                                                                        (fullName       . :full-name)
+                                                                        (actions        . :comments))))
 
 (defun orgtrello-data/--deal-with-key (key) "Given a key, return it as is if it's a keyword or return its mapped version from *ORGTRELLO-DATA-MAP-KEYWORDS*"
   (cond ((keywordp key) key)
