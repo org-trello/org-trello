@@ -1084,7 +1084,7 @@
                                                   (orgtrello-log/msg *OT/TRACE* "proxy - response data: %S" data)
                                                   (->> (orgtrello-buffer/get-card-comments!)
                                                     orgtrello-controller/format-comments
-                                                    (concat "me: " comment *ORGTRELLO-CARD-COMMENTS-DELIMITER-PRINT*)
+                                                    (concat (orgtrello-controller/--me) ": " comment *ORGTRELLO-CARD-COMMENTS-DELIMITER-PRINT*)
                                                     orgtrello-controller/unformat-comments
                                                     orgtrello-buffer/put-card-comments!))))))))
 
