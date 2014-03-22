@@ -187,8 +187,8 @@
 
 (defun orgtrello-data/--dispatch-parse-data-fn (key)
   "Given a key, return the function to call to execute the parsing (parse-actions or parse-data)"
-  (cond ((eq :actions key) 'orgtrello-data/--parse-actions)
-        (t                 'orgtrello-data/parse-data)))
+  (cond ((eq :comments key) 'orgtrello-data/--parse-actions)
+        (t                  'orgtrello-data/parse-data)))
 
 (defun orgtrello-data/--parse-actions (data &optional size)
   (->> data

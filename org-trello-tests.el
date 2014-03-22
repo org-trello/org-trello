@@ -1960,6 +1960,10 @@ hello there
                            (url :url id :id name :name idMembers :member-ids idList :list-id idChecklists :checklists idBoard :board-id due :due desc :desc closed :closed idCard :card-id checkItems :items state :checked status :status buffername :buffername sync :sync uri :uri method :method params :params action :action start :start callback :callback pos :position position :position keyword :keyword level :level member-ids :member-ids member :member memberships :memberships username :username fullName :full-name actions :comments))
              *ORGTRELLO-DATA-MAP-KEYWORDS*)))
 
+(expectations
+  (expect 'orgtrello-data/--parse-actions (orgtrello-data/--dispatch-parse-data-fn ':comments))
+  (expect 'orgtrello-data/parse-data (orgtrello-data/--dispatch-parse-data-fn ':something-else)))
+
 (setq partial-data-to-test '[((memberCreator (username . "ardumont")
                                              (initials . "AD")
                                              (fullName . "Antoine R. Dumont")
