@@ -71,7 +71,7 @@
 (defun org-trello/jump-to-card ()
   "Jump to current card in browser."
   (interactive)
-  (orgtrello-action/--controls-or-actions-then-do
+  (orgtrello-action/controls-or-actions-then-do
      '(orgtrello-controller/--setup-properties orgtrello-controller/--control-keys orgtrello-controller/--control-properties orgtrello-controller/--control-encoding)
      (lambda ()
        (let* ((full-meta       (orgtrello-data/entry-get-full-metadata))
@@ -85,7 +85,7 @@
 (defun org-trello/jump-to-trello-board ()
   "Jump to current trello board."
   (interactive)
-  (orgtrello-action/--controls-or-actions-then-do
+  (orgtrello-action/controls-or-actions-then-do
      '(orgtrello-controller/--setup-properties orgtrello-controller/--control-keys orgtrello-controller/--control-properties orgtrello-controller/--control-encoding)
      (lambda () (browse-url (org-trello/https-trello (format "/b/%s" (orgtrello-controller/--board-id)))))))
 
@@ -122,7 +122,7 @@
 (defun org-trello/check-setup ()
   "Check the current setup."
   (interactive)
-  (orgtrello-action/--controls-or-actions-then-do
+  (orgtrello-action/controls-or-actions-then-do
      '(orgtrello-controller/--setup-properties orgtrello-controller/--control-keys orgtrello-controller/--control-properties orgtrello-controller/--control-encoding)
      (lambda () (orgtrello-log/msg *OT/NOLOG* "Setup ok!"))))
 

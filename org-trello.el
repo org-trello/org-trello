@@ -230,7 +230,7 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
 (defun orgtrello-action/--compute-error-message (error-msgs) "Given a list of error messages, compute them as a string."
   (apply 'concat (--map (concat "- " it "\n") error-msgs)))
 
-(defun orgtrello-action/--controls-or-actions-then-do (control-or-action-fns fn-to-execute &optional nolog-p) "Execute the function fn-to-execute if control-or-action-fns is nil or display the error message if problems."
+(defun orgtrello-action/controls-or-actions-then-do (control-or-action-fns fn-to-execute &optional nolog-p) "Execute the function fn-to-execute if control-or-action-fns is nil or display the error message if problems."
   (if control-or-action-fns
       (let ((org-trello/--error-messages (-> control-or-action-fns orgtrello-action/--execute-controls orgtrello-action/--filter-error-messages)))
         (if org-trello/--error-messages
@@ -257,7 +257,7 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
   (unless nolog-p (orgtrello-log/msg *OT/INFO* (concat msg "...")))
   ;; now execute the controls and the main action
   (orgtrello-action/safe-wrap
-   (orgtrello-action/--controls-or-actions-then-do control-or-action-fns fn-to-execute nolog-p)
+   (orgtrello-action/controls-or-actions-then-do control-or-action-fns fn-to-execute nolog-p)
    (progn
      (when save-buffer-p  (save-buffer))
      (when reload-setup-p (orgtrello-action/reload-setup))
@@ -2603,7 +2603,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun org-trello/jump-to-card () "Jump to current card in browser."
   (interactive)
-  (orgtrello-action/--controls-or-actions-then-do
+  (orgtrello-action/controls-or-actions-then-do
      '(orgtrello-controller/--setup-properties orgtrello-controller/--control-keys orgtrello-controller/--control-properties orgtrello-controller/--control-encoding)
      (lambda ()
        (let* ((full-meta       (orgtrello-data/entry-get-full-metadata))
@@ -2616,7 +2616,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun org-trello/jump-to-trello-board () "Jump to current trello board."
   (interactive)
-  (orgtrello-action/--controls-or-actions-then-do
+  (orgtrello-action/controls-or-actions-then-do
      '(orgtrello-controller/--setup-properties orgtrello-controller/--control-keys orgtrello-controller/--control-properties orgtrello-controller/--control-encoding)
      (lambda () (browse-url (org-trello/https-trello (format "/b/%s" (orgtrello-controller/--board-id)))))))
 
@@ -2649,7 +2649,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun org-trello/check-setup () "Check the current setup."
   (interactive)
-  (orgtrello-action/--controls-or-actions-then-do
+  (orgtrello-action/controls-or-actions-then-do
      '(orgtrello-controller/--setup-properties orgtrello-controller/--control-keys orgtrello-controller/--control-properties orgtrello-controller/--control-encoding)
      (lambda () (orgtrello-log/msg *OT/NOLOG* "Setup ok!"))))
 

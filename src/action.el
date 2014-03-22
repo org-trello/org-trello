@@ -32,7 +32,7 @@
 (defun orgtrello-action/--compute-error-message (error-msgs) "Given a list of error messages, compute them as a string."
   (apply 'concat (--map (concat "- " it "\n") error-msgs)))
 
-(defun orgtrello-action/--controls-or-actions-then-do (control-or-action-fns fn-to-execute &optional nolog-p) "Execute the function fn-to-execute if control-or-action-fns is nil or display the error message if problems."
+(defun orgtrello-action/controls-or-actions-then-do (control-or-action-fns fn-to-execute &optional nolog-p) "Execute the function fn-to-execute if control-or-action-fns is nil or display the error message if problems."
   (if control-or-action-fns
       (let ((org-trello/--error-messages (-> control-or-action-fns orgtrello-action/--execute-controls orgtrello-action/--filter-error-messages)))
         (if org-trello/--error-messages
@@ -59,7 +59,7 @@
   (unless nolog-p (orgtrello-log/msg *OT/INFO* (concat msg "...")))
   ;; now execute the controls and the main action
   (orgtrello-action/safe-wrap
-   (orgtrello-action/--controls-or-actions-then-do control-or-action-fns fn-to-execute nolog-p)
+   (orgtrello-action/controls-or-actions-then-do control-or-action-fns fn-to-execute nolog-p)
    (progn
      (when save-buffer-p  (save-buffer))
      (when reload-setup-p (orgtrello-action/reload-setup))
