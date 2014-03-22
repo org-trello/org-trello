@@ -53,7 +53,7 @@
     (setq *HMAP-ID-NAME* orgtrello-controller/--hmap-id-name)
     (setq *HMAP-USERS-ID-NAME* orgtrello-controller/--hmap-user-id-name)
     (setq *HMAP-USERS-NAME-ID* orgtrello-controller/--hmap-user-name-id)
-    (setq *ORGTRELLO-USER-LOGGED-IN* (orgtrello-controller/--me))
+    (setq *ORGTRELLO-USER-LOGGED-IN* (orgtrello-controller/--me!))
     :ok))
 
 (defun orgtrello-controller/control-encoding (&optional args)
@@ -991,7 +991,7 @@
 (defun orgtrello-controller/--users-to (users) "Given a list of users, compute the comma separated users."
   (if users (mapconcat 'identity users ",") ""))
 
-(defun orgtrello-controller/--me ()
+(defun orgtrello-controller/--me! ()
   (assoc-default *ORGTRELLO-USER-ME* org-file-properties))
 
 (defun orgtrello-controller/--user-ids-assigned-to-current-card () "Compute the user ids assigned to the current card."
@@ -1084,7 +1084,7 @@
                                                   (orgtrello-log/msg *OT/TRACE* "proxy - response data: %S" data)
                                                   (->> (orgtrello-buffer/get-card-comments!)
                                                     orgtrello-controller/format-comments
-                                                    (concat (orgtrello-controller/--me) ": " comment *ORGTRELLO-CARD-COMMENTS-DELIMITER-PRINT*)
+                                                    (concat (orgtrello-controller/--me!) ": " comment *ORGTRELLO-CARD-COMMENTS-DELIMITER-PRINT*)
                                                     orgtrello-controller/unformat-comments
                                                     orgtrello-buffer/put-card-comments!))))))))
 
