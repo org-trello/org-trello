@@ -44,7 +44,7 @@ the [Makefile](./Makefile) is your ally for:
 
 ## Package
 
-fThe sources are built from the [src/](./src/) folder and generated into one [org-trello.el](./org-trello.el) file which is the only file packaged.
+The sources are built from the [src/](./src/) folder and generated into one [org-trello.el](./org-trello.el) file which is the only file packaged.
 
 This will trigger:
 - the org-trello.el generation from the [src/](./src/) source files
