@@ -881,7 +881,7 @@ CLOSED: [2014-03-15 sam. 23:13]
 - [X] Update documentation note for the package view
 - [X] Release note
 
-* IN-PROGRESS 0.3.6 [71%]
+* IN-PROGRESS 0.3.6 [85%]
 - [X] Test multiple emacs version - https://github.com/org-trello/org-trello/issues/52
 - [X] Add a logo to website - https://github.com/org-trello/org-trello/issues/129
 - [X] Synchronize user comments - https://github.com/org-trello/org-trello/issues/86
@@ -896,7 +896,7 @@ CLOSED: [2014-03-15 sam. 23:13]
   - [X] Add a binding to the 'add a comment' command
   - [X] Update the current comments list locally
 - [X] Take control over the test file which is now too big (dispatch in 'namespace' test buffer)
-- [ ] Version
+- [X] Version
 - [ ] Release notes
 * TODO 0.3.7 [0%]
 - [ ] Use trello labels and org tags as one - https://github.com/org-trello/org-trello/issues/70
