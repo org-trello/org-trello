@@ -889,7 +889,7 @@ CLOSED: [2014-03-15 sam. 23:13]
   - [X] Write the last 5 comments
   - [X] Make the org-trello parsing routine aware of comments (even if not used, for symmetry's sake)
   - [X] Add interactive command for the user to see the last 5 comments
-  - [ ] Add a binding to the interactive show comments command
+  - [X] Add a binding to the interactive show comments command
   - [ ] Add an interactive command to add a comment (with sync to trello)
   - [ ] Write the new comment locally
 - [X] Take control over the test file which is now too big (dispatch in 'namespace' test buffer)

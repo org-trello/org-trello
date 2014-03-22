@@ -188,6 +188,7 @@
     (org-trello/sync-to-trello               "s" "Synchronize the org-mode file to the trello board (org-mode -> trello).")
     (org-trello/jump-to-card                 "j" "Jump to card in browser.")
     (org-trello/jump-to-trello-board         "J" "Open the browser to your current trello board.")
+    (org-trello/show-card-comments           "c" "Show the card's comments.")
     (org-trello/help-describing-bindings     "h" "This help message."))
   "List of command and default binding without the prefix key.")
 
