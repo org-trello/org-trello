@@ -59,7 +59,7 @@
 (defun orgtrello-controller/--board-name () "Compute the board's name" (assoc-default *BOARD-NAME* org-file-properties))
 (defun orgtrello-controller/--board-id () "Compute the board's id" (assoc-default *BOARD-ID* org-file-properties))
 
-(defun orgtrello-controller/--control-properties (&optional args) "org-trello needs the properties board-id and all list id from the trello board to be setuped on header property file. :ok if ok, or the error message if problems."
+(defun orgtrello-controller/control-properties (&optional args) "org-trello needs the properties board-id and all list id from the trello board to be setuped on header property file. :ok if ok, or the error message if problems."
   (let ((orgtrello-controller/--hmap-count (hash-table-count *HMAP-ID-NAME*)))
     (if (and org-file-properties (orgtrello-controller/--board-id) (= (length *LIST-NAMES*) orgtrello-controller/--hmap-count))
         :ok
