@@ -188,8 +188,8 @@
 
 (defun orgtrello-controller/--update-query-with-org-metadata (query-map position buffer-name &optional name success-callback sync) "Given a trello query, add proxy metadata needed to work."
   (puthash :uri          (orgtrello-query/--url-hexify-string (gethash :uri query-map)) query-map) ;; protect the query for transfer to proxy
-  (puthash :position       position         query-map)
-  (puthash :buffername     buffer-name      query-map)
+  (puthash :position     position                                                       query-map)
+  (puthash :buffername   buffer-name                                                    query-map)
   (when success-callback (puthash :callback success-callback query-map))
   (when sync             (puthash :sync     sync             query-map))
   (when name             (puthash :name     name             query-map))
