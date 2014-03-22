@@ -194,7 +194,7 @@
              (-> entity-data
                  orgtrello-data/entity-action
                  orgtrello-proxy/--dispatch-action
-                 (funcall entity-data (orgtrello-data/entry-get-full-metadata) op/--entry-file-archived)))))))
+                 (funcall entity-data (orgtrello-data/entry-get-full-metadata!) op/--entry-file-archived)))))))
 
 (defun orgtrello-action/org-delete-property (key) "Delete a property depending on the nature of the current entry (org heading or checkbox)."
   (funcall (if (orgtrello-cbx/checkbox-p) 'orgtrello-cbx/org-delete-property 'org-delete-property) key))
@@ -238,7 +238,7 @@
          (set-buffer op/--entry-buffer-name)
          (save-excursion
            (when (orgtrello-proxy/--getting-back-to-marker op/--marker)
-                 (-> (orgtrello-data/entry-get-full-metadata)
+                 (-> (orgtrello-data/entry-get-full-metadata!)
                      orgtrello-data/current
                      orgtrello-action/delete-region
                      funcall))))

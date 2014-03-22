@@ -100,33 +100,33 @@
   (expect nil (orgtrello-data/entity-item-p (orgtrello-hash/make-properties `((:state . 1)))))
   (expect nil (orgtrello-data/entity-item-p (orgtrello-hash/make-properties `((id . 1))))))
 
-(expectations (desc "orgtrello-data/entry-get-full-metadata")
-  (expect nil    (->> (orgtrello-tests/with-temp-buffer "* card" (orgtrello-data/entry-get-full-metadata))
+(expectations (desc "orgtrello-data/entry-get-full-metadata!")
+  (expect nil    (->> (orgtrello-tests/with-temp-buffer "* card" (orgtrello-data/entry-get-full-metadata!))
                       (orgtrello-data/parent)))
-  (expect nil    (->> (orgtrello-tests/with-temp-buffer "* card" (orgtrello-data/entry-get-full-metadata))
+  (expect nil    (->> (orgtrello-tests/with-temp-buffer "* card" (orgtrello-data/entry-get-full-metadata!))
                       (orgtrello-data/grandparent)))
-  (expect "card" (->> (orgtrello-tests/with-temp-buffer "* card" (orgtrello-data/entry-get-full-metadata))
+  (expect "card" (->> (orgtrello-tests/with-temp-buffer "* card" (orgtrello-data/entry-get-full-metadata!))
                       (orgtrello-data/current)
                       orgtrello-data/entity-name)))
 
-(expectations (desc "orgtrello-data/entry-get-full-metadata")
-  (expect "card"      (->> (orgtrello-tests/with-temp-buffer "* card\n- [ ] checklist\n" (orgtrello-data/entry-get-full-metadata))
+(expectations (desc "orgtrello-data/entry-get-full-metadata!")
+  (expect "card"      (->> (orgtrello-tests/with-temp-buffer "* card\n- [ ] checklist\n" (orgtrello-data/entry-get-full-metadata!))
                            (orgtrello-data/parent)
                            orgtrello-data/entity-name))
-  (expect nil         (->> (orgtrello-tests/with-temp-buffer "* card\n- [ ] checklist\n" (orgtrello-data/entry-get-full-metadata))
+  (expect nil         (->> (orgtrello-tests/with-temp-buffer "* card\n- [ ] checklist\n" (orgtrello-data/entry-get-full-metadata!))
                            (orgtrello-data/grandparent)))
-  (expect "checklist" (->> (orgtrello-tests/with-temp-buffer "* card\n- [ ] checklist\n" (orgtrello-data/entry-get-full-metadata))
+  (expect "checklist" (->> (orgtrello-tests/with-temp-buffer "* card\n- [ ] checklist\n" (orgtrello-data/entry-get-full-metadata!))
                            (orgtrello-data/current)
                            orgtrello-data/entity-name)))
 
-(expectations (desc "orgtrello-data/entry-get-full-metadata")
-  (expect "checklist" (->> (orgtrello-tests/with-temp-buffer "* card\n- [ ] checklist\n  - [ ] item\n" (orgtrello-data/entry-get-full-metadata))
+(expectations (desc "orgtrello-data/entry-get-full-metadata!")
+  (expect "checklist" (->> (orgtrello-tests/with-temp-buffer "* card\n- [ ] checklist\n  - [ ] item\n" (orgtrello-data/entry-get-full-metadata!))
                            (orgtrello-data/parent)
                            orgtrello-data/entity-name))
-  (expect "card"      (->> (orgtrello-tests/with-temp-buffer "* card\n- [ ] checklist\n  - [ ] item\n" (orgtrello-data/entry-get-full-metadata))
+  (expect "card"      (->> (orgtrello-tests/with-temp-buffer "* card\n- [ ] checklist\n  - [ ] item\n" (orgtrello-data/entry-get-full-metadata!))
                            (orgtrello-data/grandparent)
                            orgtrello-data/entity-name))
-  (expect "item"      (->> (orgtrello-tests/with-temp-buffer "* card\n- [ ] checklist\n  - [ ] item\n" (orgtrello-data/entry-get-full-metadata))
+  (expect "item"      (->> (orgtrello-tests/with-temp-buffer "* card\n- [ ] checklist\n  - [ ] item\n" (orgtrello-data/entry-get-full-metadata!))
                            (orgtrello-data/current)
                            orgtrello-data/entity-name)))
 
@@ -449,7 +449,7 @@
     (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:comment-id "532d7441852414f343560757" :comment-text "comment 3" :comment-user "ardumont"))
                 (second (orgtrello-data/--parse-actions partial-data-to-test)))))
 
-;; (ert-deftest testing-orgtrello-data/metadata ()
+;; (ert-deftest testing-orgtrello-data/metadata! ()
 ;;   (let ((h-values (orgtrello-tests/with-temp-buffer ":PROPERTIES:
 ;; #+PROPERTY: orgtrello-user-ardumont some-user-id
 ;; #+PROPERTY: orgtrello-user-dude some-user-id2
@@ -462,7 +462,7 @@
 ;; :orgtrello-card-comments: ardumont: this is some comments###dude: some other comment
 ;; :END:
 ;; some description\n"
-;;                                                     (orgtrello-data/metadata))))
+;;                                                     (orgtrello-data/metadata!))))
 ;;     (should (equal (gethash :level h-values) 1))
 ;;     (should (equal (gethash :name h-values) "card title"))
 ;;     (should (equal (gethash :id h-values) "some-id"))

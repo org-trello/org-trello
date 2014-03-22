@@ -263,7 +263,7 @@
 
 (defun orgtrello-controller/--checks-then-delegate-action-on-entity-to-proxy (functional-controls action)
   "Execute the functional controls then if all pass, delegate the action 'action' to the proxy."
-  (orgtrello-action/functional-controls-then-do functional-controls (orgtrello-data/entry-get-full-metadata) 'orgtrello-controller/--delegate-to-the-proxy action))
+  (orgtrello-action/functional-controls-then-do functional-controls (orgtrello-data/entry-get-full-metadata!) 'orgtrello-controller/--delegate-to-the-proxy action))
 
 (defun orgtrello-controller/do-delete-simple (&optional sync)
   "Do the deletion of an entity."
@@ -478,10 +478,10 @@
     (orgtrello-controller/org-map-entities-without-params! (lambda ()
                                                              ;; first will unfold every entries, otherwise https://github.com/org-trello/org-trello/issues/53
                                                              (org-show-subtree)
-                                                             (let ((current-entity (-> (orgtrello-data/entry-get-full-metadata) orgtrello-data/current)))
+                                                             (let ((current-entity (-> (orgtrello-data/entry-get-full-metadata!) orgtrello-data/current)))
                                                                (unless (-> current-entity orgtrello-data/entity-id orgtrello-controller/id-p) ;; if no id, we set one
                                                                        (orgtrello-controller/--set-marker (orgtrello-controller/--compute-marker-from-entry current-entity)))
-                                                               (let ((current-meta (orgtrello-data/entry-get-full-metadata)))
+                                                               (let ((current-meta (orgtrello-data/entry-get-full-metadata!)))
                                                                  (-> current-meta ;; we recompute the metadata because they may have changed
                                                                      orgtrello-data/current
                                                                      orgtrello-controller/--dispatch-create-entities-map-with-adjacency
@@ -720,7 +720,7 @@
 
 (defun orgtrello-controller/--do-delete-card (&optional sync)
   "Delete the card."
-  (when (= *CARD-LEVEL* (-> (orgtrello-data/entry-get-full-metadata)
+  (when (= *CARD-LEVEL* (-> (orgtrello-data/entry-get-full-metadata!)
                             orgtrello-data/current
                             orgtrello-data/entity-level))
         (orgtrello-controller/do-delete-simple sync)))
@@ -1058,7 +1058,7 @@
   "Show the card comments in a temporary buffer."
   (save-excursion
     (orgtrello-buffer/back-to-card!)
-    (let* ((current-card-name      (-> (orgtrello-data/metadata) orgtrello-data/entity-name))
+    (let* ((current-card-name      (-> (orgtrello-data/metadata!) orgtrello-data/entity-name))
            (comments-title (format "comments for card '%s'" current-card-name))
            (comments-formatted (-> (orgtrello-buffer/get-card-comments!)
                                  orgtrello-controller/format-comments)))
@@ -1083,7 +1083,7 @@
   "Wait for the input to add a comment to the current card."
   (save-excursion
     (orgtrello-buffer/back-to-card!)
-    (let* ((card-id (-> (orgtrello-data/metadata) orgtrello-data/entity-id))
+    (let* ((card-id (-> (orgtrello-data/metadata!) orgtrello-data/entity-id))
            (comment (read-string "Add a comment: ")))
       (if (or (null card-id) (string= "" card-id) (string= "" comment))
           (message "Empty comment - skip.")

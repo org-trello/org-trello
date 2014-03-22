@@ -140,7 +140,7 @@ To ease the computation, we consider level 4 if no - to start with, and to avoid
 (defun orgtrello-cbx/--level! () "Compute the levels from the current position (which is `bol`)"
   (if (org-at-item-bullet-p) *CHECKLIST-LEVEL* *ITEM-LEVEL*))
 
-(defun orgtrello-cbx/org-checkbox-metadata ()
+(defun orgtrello-cbx/org-checkbox-metadata! ()
   "Extract the metadata about the checklist - this is the symmetrical with `org-heading-components` but for the checklist.
 Return the components of the current heading.
 This is a list with the following elements:
@@ -159,7 +159,7 @@ This is a list with the following elements:
   (car meta))
 
 (defun orgtrello-cbx/--org-up! (destination-level) "An internal function to get back to the current entry's parent - return the level found or nil if the level found is a card."
-  (let ((current-level (orgtrello-cbx/--get-level (orgtrello-cbx/org-checkbox-metadata))))
+  (let ((current-level (orgtrello-cbx/--get-level (orgtrello-cbx/org-checkbox-metadata!))))
     (cond ((= *CARD-LEVEL*      current-level) nil)
           ((= destination-level current-level) destination-level)
           ((= *CHECKLIST-LEVEL* current-level) (org-up-heading-safe))
@@ -168,7 +168,7 @@ This is a list with the following elements:
                                                  (orgtrello-cbx/--org-up! destination-level))))))
 
 (defun orgtrello-cbx/org-up! () "A function to get back to the current entry's parent."
-  (-> (orgtrello-cbx/org-checkbox-metadata)
+  (-> (orgtrello-cbx/org-checkbox-metadata!)
       orgtrello-cbx/--get-level
       1-
       orgtrello-cbx/--org-up!))

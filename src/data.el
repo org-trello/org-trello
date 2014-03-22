@@ -15,13 +15,13 @@
         (concat (concat year "-" mon "-" day "T") (if hour (concat hour ":" min ":" sec) "00:00:00") ".000Z"))
       orgmode-date))
 
-(defun orgtrello-data/org-entity-metadata ()
+(defun orgtrello-data/org-entity-metadata! ()
   "Compute the metadata the org-mode way."
   (org-heading-components))
 
-(defun orgtrello-data/--extract-metadata ()
+(defun orgtrello-data/--extract-metadata! ()
   "Extract the current metadata depending on the org-trello's checklist policy."
-  (funcall (if (orgtrello-cbx/checkbox-p) 'orgtrello-cbx/org-checkbox-metadata 'orgtrello-data/org-entity-metadata)))
+  (funcall (if (orgtrello-cbx/checkbox-p) 'orgtrello-cbx/org-checkbox-metadata! 'orgtrello-data/org-entity-metadata!)))
 
 (defun orgtrello-data/extract-identifier (point)
   "Extract the identifier from the point."
@@ -35,10 +35,10 @@
   "Extract the identifier from the point."
   (funcall (if (orgtrello-cbx/checkbox-p) 'orgtrello-cbx/org-get-property 'org-entry-get) point key))
 
-(defun orgtrello-data/metadata ()
+(defun orgtrello-data/metadata! ()
   "Compute the metadata for a given org entry. Also add some metadata identifier/due-data/point/buffer-name/etc..."
   (let ((od/--point (point)))
-    (->> (orgtrello-data/--extract-metadata)
+    (->> (orgtrello-data/--extract-metadata!)
          (cons (-> od/--point (orgtrello-action/org-entry-get "DEADLINE") orgtrello-data/--convert-orgmode-date-to-trello-date))
          (cons (orgtrello-data/extract-identifier od/--point))
          (cons od/--point)
@@ -56,18 +56,18 @@
   "Extract the metadata from the current heading's parent."
   (save-excursion
     (orgtrello-action/org-up-parent)
-    (orgtrello-data/metadata)))
+    (orgtrello-data/metadata!)))
 
 (defun orgtrello-data/--grandparent-metadata ()
   "Extract the metadata from the current heading's grandparent."
   (save-excursion
     (orgtrello-action/org-up-parent)
     (orgtrello-action/org-up-parent)
-    (orgtrello-data/metadata)))
+    (orgtrello-data/metadata!)))
 
-(defun orgtrello-data/entry-get-full-metadata ()
+(defun orgtrello-data/entry-get-full-metadata! ()
   "Compute metadata needed for entry into a map with keys :current, :parent, :grandparent. Returns nil if the level is superior to 4."
-  (let* ((current   (orgtrello-data/metadata))
+  (let* ((current   (orgtrello-data/metadata!))
          (level     (orgtrello-data/entity-level current)))
     (when (< level *OUTOFBOUNDS-LEVEL*)
           (let ((ancestors (cond ((= level *CARD-LEVEL*)      '(nil nil))
@@ -139,7 +139,7 @@
 (defun orgtrello-data/parent      (entry-meta) (orgtrello-data/gethash-data :parent      entry-meta))
 (defun orgtrello-data/grandparent (entry-meta) (orgtrello-data/gethash-data :grandparent entry-meta))
 
-(defun orgtrello-data/current-level () "Compute the current level's position." (-> (orgtrello-data/metadata) orgtrello-data/entity-level))
+(defun orgtrello-data/current-level () "Compute the current level's position." (-> (orgtrello-data/metadata!) orgtrello-data/entity-level))
 
 (defun orgtrello-data/--compute-level (entity-map) "Given a map, compute the entity level"
   (cond ((gethash :list-id entity-map) *CARD-LEVEL*)

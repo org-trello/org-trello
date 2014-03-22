@@ -166,13 +166,13 @@
                                                        (orgtrello-cbx/--read-properties-from-point (point))))
 
   (expect nil (orgtrello-tests/with-temp-buffer "* card\n- [X] hello :PROPERTIES: {\"orgtrello-id\":\"orgtrello-marker-123\"}\n" (progn
-                                                                                                                                   (orgtrello-proxy/--cleanup-meta (orgtrello-data/entry-get-full-metadata))
+                                                                                                                                   (orgtrello-proxy/--cleanup-meta (orgtrello-data/entry-get-full-metadata!))
                                                                                                                                    (orgtrello-cbx/--read-properties-from-point (point)))))
 
-  (expect nil (orgtrello-tests/with-temp-buffer "* card\n- [X] hello :PROPERTIES: {\"orgtrello-id\":\"orgtrello-marker-123\"}\n" (progn (orgtrello-proxy/--cleanup-meta (orgtrello-data/entry-get-full-metadata))
+  (expect nil (orgtrello-tests/with-temp-buffer "* card\n- [X] hello :PROPERTIES: {\"orgtrello-id\":\"orgtrello-marker-123\"}\n" (progn (orgtrello-proxy/--cleanup-meta (orgtrello-data/entry-get-full-metadata!))
                                                                                                                                         (orgtrello-cbx/--read-properties-from-point (point)))))
 
-  (expect nil (orgtrello-tests/with-temp-buffer "* card\n- [X] cl :PROPERTIES: {\"orgtrello-id\":\"abc\"}\n  - [X] item :PROPERTIES: {\"orgtrello-id\":\"orgtrello-marker-123\"}\n" (progn (orgtrello-proxy/--cleanup-meta (orgtrello-data/entry-get-full-metadata))
+  (expect nil (orgtrello-tests/with-temp-buffer "* card\n- [X] cl :PROPERTIES: {\"orgtrello-id\":\"abc\"}\n  - [X] item :PROPERTIES: {\"orgtrello-id\":\"orgtrello-marker-123\"}\n" (progn (orgtrello-proxy/--cleanup-meta (orgtrello-data/entry-get-full-metadata!))
                                                                                                                                                                                            (orgtrello-cbx/--read-properties-from-point (point))))))
 
 (expectations (desc "orgtrello-cbx/--metadata-from-checklist")
@@ -191,8 +191,8 @@
   (expect 2 (orgtrello-tests/with-temp-buffer "- [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}" (orgtrello-cbx/--level!)))
   (expect 3 (orgtrello-tests/with-temp-buffer " - [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}" (orgtrello-cbx/--level!))))
 
-(expectations (desc "orgtrello-cbx/org-checkbox-metadata")
+(expectations (desc "orgtrello-cbx/org-checkbox-metadata!")
   (expect '(2 nil "DONE" nil "some checkbox" nil)
-    (orgtrello-tests/with-temp-buffer "- [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}" (orgtrello-cbx/org-checkbox-metadata)))
+    (orgtrello-tests/with-temp-buffer "- [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}" (orgtrello-cbx/org-checkbox-metadata!)))
   (expect '(3 nil "TODO" nil "some other checkbox" nil)
-    (orgtrello-tests/with-temp-buffer " - [ ] some other checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}" (orgtrello-cbx/org-checkbox-metadata))))
+    (orgtrello-tests/with-temp-buffer " - [ ] some other checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}" (orgtrello-cbx/org-checkbox-metadata!))))

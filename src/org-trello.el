@@ -90,7 +90,7 @@
   (orgtrello-action/controls-or-actions-then-do
      '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/control-encoding)
      (lambda ()
-       (let* ((full-meta       (orgtrello-data/entry-get-full-metadata))
+       (let* ((full-meta       (orgtrello-data/entry-get-full-metadata!))
               (entity          (orgtrello-data/current full-meta))
               (right-entity-fn (cond ((orgtrello-data/entity-item-p entity)      'orgtrello-data/grandparent)
                                      ((orgtrello-data/entity-checklist-p entity) 'orgtrello-data/parent)
@@ -274,7 +274,7 @@
   "Move the cursor at the end of the line. For a checkbox, move to the 1- point (because of overlays)."
   (interactive)
   (let* ((pt (save-excursion (org-end-of-line) (point)))
-         (entity-level (-> (orgtrello-data/entry-get-full-metadata) orgtrello-data/current orgtrello-data/entity-level)))
+         (entity-level (-> (orgtrello-data/entry-get-full-metadata!) orgtrello-data/current orgtrello-data/entity-level)))
     (goto-char (if (or (= *CHECKLIST-LEVEL* entity-level) (= *ITEM-LEVEL* entity-level))
                    (-if-let (s (org-trello/compute-overlay-size!))
                             (- pt s 1)
