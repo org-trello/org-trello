@@ -1066,6 +1066,16 @@
          (insert (format "%s\n\n" comments-title))
          (insert comments-formatted))))))
 
+(defun orgtrello-controller/do-add-card-comment! ()
+  "Wait for the input to add a comment to the current card."
+  (save-excursion
+   (orgtrello-buffer/back-to-card!)
+   (let* ((card-id (-> (orgtrello-data/metadata) orgtrello-data/entity-id))
+          (comment (read-string "Add a comment: ")))
+     (if (or (null card-id) (string= "" card-id) (string= "" comment))
+         (message "Empty comment - skip.")
+       (orgtrello-query/http-trello (orgtrello-api/add-card-comment card-id comment) t)))))
+
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-controller loaded!")
 
 

@@ -1,3 +1,11 @@
+(defun org-trello/add-card-comments ()
+  "Control first, then if ok, add a comment to the current card."
+  (interactive)
+  (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
+   "Add card comment"
+   '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/control-encoding)
+   'orgtrello-controller/do-add-card-comment!))
+
 (defun org-trello/show-card-comments ()
   "Control first, then if ok, show a simple buffer with the current card's last comments."
   (interactive)
