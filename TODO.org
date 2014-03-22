@@ -899,10 +899,10 @@ CLOSED: [2014-03-22 Sat 22:51]
 - [X] Take control over the test file which is now too big (dispatch in 'namespace' test buffer)
 - [X] Version
 - [X] Release notes
-* IN-PROGRESS 0.3.6.1 [50%]
+* IN-PROGRESS 0.3.6.1 [75%]
 - [X] Fix already used bindings
 - [X] Fix edge case about adding comments
-- [ ] Version
+- [X] Version
 - [ ] Release notes
 
 * TODO 0.3.7 [0%]
