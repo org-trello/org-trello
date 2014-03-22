@@ -469,7 +469,8 @@
 (defun orgtrello-controller/--merge-card (trello-card org-card) "Merge trello and org card together."
   (if (null trello-card)
       org-card
-      (let ((org-card-to-merge (orgtrello-controller/--init-map-from org-card)))
+    (let ((org-card-to-merge (orgtrello-controller/--init-map-from org-card)))
+        (puthash :comments (orgtrello-data/entity-comments trello-card)                              org-card-to-merge)
         (puthash :level   *CARD-LEVEL*                                                               org-card-to-merge)
         (puthash :id      (orgtrello-data/entity-id trello-card)                                     org-card-to-merge)
         (puthash :name    (orgtrello-data/entity-name trello-card)                                   org-card-to-merge)
