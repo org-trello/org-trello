@@ -30,7 +30,7 @@
 (defun orgtrello-controller/--list-user-entries (properties) "List the users entries."
   (--filter (string-match-p *ORGTRELLO-USER-PREFIX* (car it)) properties))
 
-(defun orgtrello-controller/--setup-properties (&optional args) "Setup the properties according to the org-mode setup. Return :ok."
+(defun orgtrello-controller/setup-properties (&optional args) "Setup the properties according to the org-mode setup. Return :ok."
   ;; read the setup
   (orgtrello-action/reload-setup)
   ;; now exploit some
