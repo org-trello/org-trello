@@ -106,9 +106,9 @@
   (expect nil                       (gethash :params (orgtrello-api/get-cards :board-id))))
 
 (expectations (desc "orgtrello-api/get-card")
-  (expect "GET"                                 (gethash :method (orgtrello-api/get-card :card-id)))
-  (expect "/cards/:card-id?actions=commentCard" (gethash :uri    (orgtrello-api/get-card :card-id)))
-  (expect nil                                   (gethash :params (orgtrello-api/get-card :card-id))))
+  (expect "GET"                                                                                                         (gethash :method (orgtrello-api/get-card :card-id)))
+  (expect "/cards/:card-id?actions=commentCard&actions_limit=5&action_fields=data&action_memberCreator_fields=username" (gethash :uri    (orgtrello-api/get-card :card-id)))
+  (expect nil                                                                                                           (gethash :params (orgtrello-api/get-card :card-id))))
 
 (expectations (desc "orgtrello-api/delete-card")
   (expect "DELETE"           (gethash :method (orgtrello-api/delete-card :card-id)))

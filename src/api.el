@@ -26,7 +26,7 @@
 
 (defun orgtrello-api/get-card (card-id)
   "Detail of a card with id card-id."
-  (orgtrello-hash/make-hash "GET" (format "/cards/%s?actions=commentCard" card-id)))
+  (orgtrello-hash/make-hash "GET" (format "/cards/%s?actions=commentCard&actions_limit=5&action_fields=data&action_memberCreator_fields=username" card-id)))
 
 (defun orgtrello-api/delete-card (card-id)
   "Delete a card with id card-id."
