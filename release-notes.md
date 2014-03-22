@@ -1,3 +1,10 @@
+# 0.3.6.1
+
+- [X] Fix already used bindings
+- [X] Fix edge case about adding comments
+- [X] Version
+- [X] Release notes
+
 # 0.3.6
 
 - [X] Test multiple emacs version - https://github.com/org-trello/org-trello/issues/52
