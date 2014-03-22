@@ -1050,6 +1050,7 @@
     (s-join "\n\n" it)))
 
 (defun orgtrello-controller/do-show-card-comments! ()
+  "Show the card comments in a temporary buffer."
   (let* ((current-card-name "current-card")
          (comments-title (format "comments for card '%s'" current-card-name))
          (comments-formatted (-> (orgtrello-buffer/get-card-comments!)
