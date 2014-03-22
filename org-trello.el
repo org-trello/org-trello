@@ -4,7 +4,7 @@
 
 ;; Author: Antoine R. Dumont <eniotna.t AT gmail.com>
 ;; Maintainer: Antoine R. Dumont <eniotna.t AT gmail.com>
-;; Version: 0.3.6
+;; Version: 0.3.6.1
 ;; Package-Requires: ((dash "2.5.0") (request "0.2.0") (elnode "0.9.9.7.6") (esxml "0.3.0") (s "1.7.0") (kv "0.0.19"))
 ;; Keywords: org-mode trello sync org-trello
 ;; URL: https://github.com/org-trello/org-trello
@@ -84,7 +84,7 @@ Please consider upgrading Emacs." emacs-version) "Error message when installing 
     (defalias 'cl-defun 'defun*)
     (defalias 'cl-destructuring-bind 'destructuring-bind)))
 
-(defvar *ORGTRELLO-VERSION* "0.3.6" "current org-trello version installed.")
+(defvar *ORGTRELLO-VERSION* "0.3.6.1" "current org-trello version installed.")
 
 
 (defvar *OT/NOLOG* 0)
@@ -2803,11 +2803,12 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun orgtrello-controller/--update-comments! (new-comment)
   "Given a current position on a card and a new comment, add a new comment to the current comments."
-  (->> (orgtrello-buffer/get-card-comments!)
-    orgtrello-controller/format-comments
-    (concat (orgtrello-controller/--me!) ": " new-comment *ORGTRELLO-CARD-COMMENTS-DELIMITER-PRINT*)
-    orgtrello-controller/unformat-comments
-    orgtrello-buffer/put-card-comments!))
+  (let ((comments (orgtrello-buffer/get-card-comments!)))
+    (->> (if comments comments "")
+      orgtrello-controller/format-comments
+      (concat (orgtrello-controller/--me!) ": " new-comment *ORGTRELLO-CARD-COMMENTS-DELIMITER-PRINT*)
+      orgtrello-controller/unformat-comments
+      orgtrello-buffer/put-card-comments!)))
 
 (defun orgtrello-controller/do-add-card-comment! ()
   "Wait for the input to add a comment to the current card."
@@ -3025,7 +3026,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
     (org-trello/sync-to-trello               "s" "Synchronize the org-mode file to the trello board (org-mode -> trello).")
     (org-trello/jump-to-card                 "j" "Jump to card in browser.")
     (org-trello/jump-to-trello-board         "J" "Open the browser to your current trello board.")
-    (org-trello/show-card-comments           "c" "Show the card's comments.")
+    (org-trello/show-card-comments           "o" "Show the card's comments.")
     (org-trello/add-card-comments            "A" "Add a comment to the card.")
     (org-trello/help-describing-bindings     "h" "This help message."))
   "List of command and default binding without the prefix key.")
