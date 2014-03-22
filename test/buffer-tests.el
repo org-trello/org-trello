@@ -105,3 +105,12 @@ hello there
   (expect "" (orgtrello-buffer/filter-out-properties ":PROPERTIES: filter happens and blank is left."))
   (expect "" (orgtrello-buffer/filter-out-properties "  :PROPERTIES: filter still happens and blank is left."))
   (expect "multiple lines\n" (orgtrello-buffer/filter-out-properties "  multiple lines\n  :PROPERTIES: filter still happens and blank is left.")))
+
+(expectations
+ (expect "some-comments###with-dummy-data"
+         (orgtrello-tests/with-temp-buffer
+          "* card
+:PROPERTIES:
+:orgtrello-card-comments: some-comments###with-dummy-data
+:END:"
+          (orgtrello-buffer/get-card-comments!))))
