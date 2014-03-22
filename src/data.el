@@ -193,7 +193,6 @@
 (defun orgtrello-data/--parse-actions (data &optional size)
   "Given a 'comment' (trello action limited to comment in org-trello) structure, return a list of map representing a comment."
   (->> data
-    ;; (-take (if size size 5))
     (mapcar (lambda (it)
               (progn
                 (let ((amap (orgtrello-hash/empty-hash)))
