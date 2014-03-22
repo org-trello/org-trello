@@ -16,6 +16,8 @@
 (defvar *ORGTRELLO-USERS-ENTRY*       "orgtrello-users"                                 "orgtrello property entry to store the users assigned to a card.")
 (defvar *ORGTRELLO-USER-ME*           "orgtrello-user-me"                               "Current user's property id.")
 (defvar *ORGTRELLO-USER-LOGGED-IN*    nil                                               "Current user logged in.")
+(defvar *ORGTRELLO-CARD-COMMENTS*     "orgtrello-card-comments"                         "Current card's comment property.")
+
 
 (defvar *ORGTRELLO-HTTPS*               "https://trello.com"                            "URL https to help in browsing")
 

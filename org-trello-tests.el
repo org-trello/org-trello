@@ -2013,5 +2013,10 @@ hello there
     (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:comment-id "532d7441852414f343560757" :comment-text "comment 3" :comment-user "ardumont"))
                 (second (orgtrello-data/--parse-actions partial-data-to-test)))))
 
+(expectations
+  (expect "me : some first comment\nanother-me : another comment"
+    (orgtrello-controller/--comments-to-list (list (orgtrello-hash/make-properties '((:comment-user . "me") (:comment-text . "some first comment")))
+                                                   (orgtrello-hash/make-properties '((:comment-user . "another-me") (:comment-text . "another comment")))))))
+
 (provide 'org-trello-tests)
 ;;; org-trello-tests ends here
