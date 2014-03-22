@@ -26,5 +26,6 @@ C-c o s - M-x org-trello/sync-to-trello - Synchronize the org-mode file to the t
 C-c o j - M-x org-trello/jump-to-card - Jump to card in browser.
 C-c o J - M-x org-trello/jump-to-trello-board - Open the browser to your current trello board.
 C-c o c - M-x org-trello/show-card-comments - Show the card's comments.
+C-c o A - M-x org-trello/add-card-comments - Add a comment to the card.
 C-c o h - M-x org-trello/help-describing-bindings - This help message."
       (org-trello/--help-describing-bindings-template *ORGTRELLO-MODE-PREFIX-KEYBINDING* org-trello/--list-of-interactive-command-binding-couples)))
