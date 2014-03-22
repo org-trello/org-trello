@@ -1547,7 +1547,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun orgtrello-proxy/timer-stop () "Stop the orgtrello-timer." (orgtrello-proxy/http-consumer nil))
 
-(defun orgtrello-action/--deal-with-consumer-msg-controls-or-actions-then-do (msg control-or-action-fns fn-to-execute &optional save-buffer-p reload-setup-p nolog-p) "Decorator fn to execute actions before/after the controls."
+(defun orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do (msg control-or-action-fns fn-to-execute &optional save-buffer-p reload-setup-p nolog-p) "Decorator fn to execute actions before/after the controls."
   (orgtrello-proxy/timer-stop)
   (orgtrello-action/--msg-controls-or-actions-then-do msg control-or-action-fns fn-to-execute save-buffer-p reload-setup-p nolog-p)   ;; Execute as usual
   (orgtrello-proxy/timer-start))
@@ -2541,21 +2541,21 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun org-trello/sync-entity () "Control first, then if ok, create a simple entity."
   (interactive)
-  (orgtrello-action/--deal-with-consumer-msg-controls-or-actions-then-do
+  (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
      "Requesting entity sync"
      '(orgtrello-controller/--setup-properties orgtrello-controller/--control-keys orgtrello-controller/--control-properties orgtrello-controller/--control-encoding)
      'orgtrello-controller/do-sync-entity))
 
 (defun org-trello/sync-full-entity () "Control first, then if ok, create an entity and all its arborescence if need be."
   (interactive)
-  (orgtrello-action/--deal-with-consumer-msg-controls-or-actions-then-do
+  (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
      "Requesting entity and structure sync"
      '(orgtrello-controller/--setup-properties orgtrello-controller/--control-keys orgtrello-controller/--control-properties orgtrello-controller/--control-encoding)
      'orgtrello-controller/do-sync-full-entity))
 
 (defun org-trello/sync-to-trello () "Control first, then if ok, sync the org-mode file completely to trello."
   (interactive)
-  (orgtrello-action/--deal-with-consumer-msg-controls-or-actions-then-do
+  (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
      "Requesting sync org buffer to trello board"
      '(orgtrello-controller/--setup-properties orgtrello-controller/--control-keys orgtrello-controller/--control-properties orgtrello-controller/--control-encoding)
      'orgtrello-controller/do-sync-full-file))
@@ -2563,7 +2563,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 (defun org-trello/sync-from-trello () "Control first, then if ok, sync the org-mode file from the trello board."
   (interactive)
   ;; execute the action
-  (orgtrello-action/--deal-with-consumer-msg-controls-or-actions-then-do
+  (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
      "Requesting sync org buffer from trello board"
      '(orgtrello-controller/--setup-properties orgtrello-controller/--control-keys orgtrello-controller/--control-properties orgtrello-controller/--control-encoding)
      'orgtrello-controller/do-sync-full-from-trello
@@ -2571,21 +2571,21 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun org-trello/kill-entity () "Control first, then if ok, delete the entity and all its arborescence."
   (interactive)
-  (orgtrello-action/--deal-with-consumer-msg-controls-or-actions-then-do
+  (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
      "Requesting deleting entity"
      '(orgtrello-controller/--setup-properties orgtrello-controller/--control-keys orgtrello-controller/--control-properties orgtrello-controller/--control-encoding)
      'orgtrello-controller/do-delete-simple))
 
 (defun org-trello/kill-all-entities () "Control first, then if ok, delete the entity and all its arborescence."
   (interactive)
-  (orgtrello-action/--deal-with-consumer-msg-controls-or-actions-then-do
+  (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
      "Requesting deleting entities"
      '(orgtrello-controller/--setup-properties orgtrello-controller/--control-keys orgtrello-controller/--control-properties orgtrello-controller/--control-encoding)
      'orgtrello-controller/do-delete-entities))
 
 (defun org-trello/install-key-and-token () "No control, trigger the setup installation of the key and the read/write token."
   (interactive)
-  (orgtrello-action/--deal-with-consumer-msg-controls-or-actions-then-do
+  (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
    "Setup key and token"
    nil
    'orgtrello-controller/do-install-key-and-token
@@ -2594,7 +2594,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun org-trello/install-board-and-lists-ids () "Control first, then if ok, trigger the setup installation of the trello board to sync with."
   (interactive)
-  (orgtrello-action/--deal-with-consumer-msg-controls-or-actions-then-do
+  (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
      "Install boards and lists"
      '(orgtrello-controller/--setup-properties orgtrello-controller/--control-keys)
      'orgtrello-controller/do-install-board-and-lists
@@ -2622,7 +2622,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun org-trello/create-board () "Control first, then if ok, trigger the board creation."
   (interactive)
-  (orgtrello-action/--deal-with-consumer-msg-controls-or-actions-then-do
+  (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
      "Create board and lists"
      '(orgtrello-controller/--setup-properties orgtrello-controller/--control-keys)
      'orgtrello-controller/do-create-board-and-lists
@@ -2631,7 +2631,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun org-trello/assign-me () "Assign oneself to the card."
   (interactive)
-  (orgtrello-action/--deal-with-consumer-msg-controls-or-actions-then-do
+  (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
      "Create board and lists"
      '(orgtrello-controller/--setup-properties orgtrello-controller/--control-keys)
      'orgtrello-controller/do-assign-me
@@ -2640,7 +2640,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun org-trello/unassign-me () "Unassign oneself of the card."
   (interactive)
-  (orgtrello-action/--deal-with-consumer-msg-controls-or-actions-then-do
+  (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
      "Create board and lists"
      '(orgtrello-controller/--setup-properties orgtrello-controller/--control-keys)
      'orgtrello-controller/do-unassign-me
@@ -2655,7 +2655,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun org-trello/delete-setup () "Delete the current setup."
   (interactive)
-  (orgtrello-action/--deal-with-consumer-msg-controls-or-actions-then-do
+  (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
    "Deleting current org-trello setup"
      '(orgtrello-controller/--setup-properties orgtrello-controller/--control-keys orgtrello-controller/--control-properties orgtrello-controller/--control-encoding)
      (lambda ()
