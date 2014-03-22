@@ -1,11 +1,13 @@
 (defvar *ORGTRELLO-ID* "orgtrello-id" "Key entry used for the trello identifier and the trello marker (the first sync).")
 
-(defun orgtrello-data/merge-2-lists-without-duplicates (a-list b-list) "Merge 2 lists together (no duplicates)."
+(defun orgtrello-data/merge-2-lists-without-duplicates (a-list b-list)
+  "Merge 2 lists together (no duplicates)."
   (-> a-list
       (append b-list)
       (delete-dups)))
 
-(defun orgtrello-data/--convert-orgmode-date-to-trello-date (orgmode-date) "Convert the org-mode deadline into a time adapted for trello."
+(defun orgtrello-data/--convert-orgmode-date-to-trello-date (orgmode-date)
+  "Convert the org-mode deadline into a time adapted for trello."
   (if (and orgmode-date (not (string-match-p "T*Z" orgmode-date)))
       (cl-destructuring-bind (sec min hour day mon year dow dst tz)
                              (--map (if it (if (< it 10) (concat "0" (int-to-string it)) (int-to-string it)))
@@ -13,22 +15,28 @@
         (concat (concat year "-" mon "-" day "T") (if hour (concat hour ":" min ":" sec) "00:00:00") ".000Z"))
       orgmode-date))
 
-(defun orgtrello-data/org-entity-metadata () "Compute the metadata the org-mode way."
+(defun orgtrello-data/org-entity-metadata ()
+  "Compute the metadata the org-mode way."
   (org-heading-components))
 
-(defun orgtrello-data/--extract-metadata () "Extract the current metadata depending on the org-trello's checklist policy."
+(defun orgtrello-data/--extract-metadata ()
+  "Extract the current metadata depending on the org-trello's checklist policy."
   (funcall (if (orgtrello-cbx/checkbox-p) 'orgtrello-cbx/org-checkbox-metadata 'orgtrello-data/org-entity-metadata)))
 
-(defun orgtrello-data/extract-identifier (point) "Extract the identifier from the point."
+(defun orgtrello-data/extract-identifier (point)
+  "Extract the identifier from the point."
   (orgtrello-action/org-entry-get point *ORGTRELLO-ID*))
 
- (defun orgtrello-action/set-property (key value) "Either set the propery normally (as for entities) or specifically for checklist."
+(defun orgtrello-action/set-property (key value)
+  "Either set the propery normally (as for entities) or specifically for checklist."
   (funcall (if (orgtrello-cbx/checkbox-p) 'orgtrello-cbx/org-set-property 'org-set-property) key value))
 
-(defun orgtrello-action/org-entry-get (point key) "Extract the identifier from the point."
+(defun orgtrello-action/org-entry-get (point key)
+  "Extract the identifier from the point."
   (funcall (if (orgtrello-cbx/checkbox-p) 'orgtrello-cbx/org-get-property 'org-entry-get) point key))
 
-(defun orgtrello-data/metadata () "Compute the metadata for a given org entry. Also add some metadata identifier/due-data/point/buffer-name/etc..."
+(defun orgtrello-data/metadata ()
+  "Compute the metadata for a given org entry. Also add some metadata identifier/due-data/point/buffer-name/etc..."
   (let ((od/--point (point)))
     (->> (orgtrello-data/--extract-metadata)
          (cons (-> od/--point (orgtrello-action/org-entry-get "DEADLINE") orgtrello-data/--convert-orgmode-date-to-trello-date))
@@ -39,21 +47,25 @@
          (cons (orgtrello-buffer/extract-description-from-current-position!))
          orgtrello-data/--convert-to-orgtrello-metadata)))
 
-(defun orgtrello-action/org-up-parent () "A function to get back to the current entry's parent"
+(defun orgtrello-action/org-up-parent ()
+  "A function to get back to the current entry's parent"
   (funcall (if (orgtrello-cbx/checkbox-p) 'orgtrello-cbx/org-up! 'org-up-heading-safe)))
 
-(defun orgtrello-data/--parent-metadata () "Extract the metadata from the current heading's parent."
+(defun orgtrello-data/--parent-metadata ()
+  "Extract the metadata from the current heading's parent."
   (save-excursion
     (orgtrello-action/org-up-parent)
     (orgtrello-data/metadata)))
 
-(defun orgtrello-data/--grandparent-metadata () "Extract the metadata from the current heading's grandparent."
+(defun orgtrello-data/--grandparent-metadata ()
+  "Extract the metadata from the current heading's grandparent."
   (save-excursion
     (orgtrello-action/org-up-parent)
     (orgtrello-action/org-up-parent)
     (orgtrello-data/metadata)))
 
-(defun orgtrello-data/entry-get-full-metadata () "Compute metadata needed for entry into a map with keys :current, :parent, :grandparent. Returns nil if the level is superior to 4."
+(defun orgtrello-data/entry-get-full-metadata ()
+  "Compute metadata needed for entry into a map with keys :current, :parent, :grandparent. Returns nil if the level is superior to 4."
   (let* ((current   (orgtrello-data/metadata))
          (level     (orgtrello-data/entity-level current)))
     (when (< level *OUTOFBOUNDS-LEVEL*)
@@ -62,11 +74,14 @@
                                  ((= level *ITEM-LEVEL*)      `(,(orgtrello-data/--parent-metadata) ,(orgtrello-data/--grandparent-metadata))))))
             (orgtrello-hash/make-hierarchy current (first ancestors) (second ancestors))))))
 
-(defun orgtrello-data/--convert-to-orgtrello-metadata (heading-metadata) "Given the heading-metadata returned by the function 'org-heading-components, make it a hashmap with key :level, :keyword, :name. and their respective value"
+(defun orgtrello-data/--convert-to-orgtrello-metadata (heading-metadata)
+  "Given the heading-metadata returned by the function 'org-heading-components, make it a hashmap with key :level, :keyword, :name. and their respective value"
   (cl-destructuring-bind (description member-ids buffer-name point id due level _ keyword _ name &rest) heading-metadata
                          (orgtrello-hash/make-hash-org member-ids level keyword name id due point buffer-name description)))
 
-(defun orgtrello-data/--compute-fn (entity list-dispatch-fn) "Given an entity, compute the result" (funcall (if (hash-table-p entity) (first list-dispatch-fn) (second list-dispatch-fn)) entity))
+(defun orgtrello-data/--compute-fn (entity list-dispatch-fn)
+  "Given an entity, compute the result"
+  (funcall (if (hash-table-p entity) (first list-dispatch-fn) (second list-dispatch-fn)) entity))
 
 (defun orgtrello-data/--entity-with-level-p (entity level) "Is the entity with level level?" (-> entity orgtrello-data/entity-level (eq level)))
 (defun orgtrello-data/entity-card-p      (entity) "Is this a card?"      (orgtrello-data/--entity-with-level-p entity *CARD-LEVEL*))
@@ -153,13 +168,16 @@
                                                                         (memberships    . :memberships)
                                                                         (username       . :username)
                                                                         (fullName       . :full-name)
-                                                                        (actions        . :comments))))
+                                                                        (actions        . :comments)
+                                                                        (idMemberCreator . :user-creator-id))))
 
-(defun orgtrello-data/--deal-with-key (key) "Given a key, return it as is if it's a keyword or return its mapped version from *ORGTRELLO-DATA-MAP-KEYWORDS*"
+(defun orgtrello-data/--deal-with-key (key)
+  "Given a key, return it as is if it's a keyword or return its mapped version from *ORGTRELLO-DATA-MAP-KEYWORDS*"
   (cond ((keywordp key) key)
         (t             (gethash key *ORGTRELLO-DATA-MAP-KEYWORDS*))))
 
-(defun orgtrello-data/parse-data (entities) "Given a trello entity, convert into org-trello entity"
+(defun orgtrello-data/parse-data (entities)
+  "Given a trello entity, convert into org-trello entity"
   (cond ((eq :json-false entities)                                           nil)
         ((--any? (funcall it entities) '(stringp symbolp numberp functionp)) entities)
         ((arrayp entities)                                                   (mapcar 'orgtrello-data/parse-data entities))
