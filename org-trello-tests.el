@@ -707,7 +707,9 @@ DEADLINE: <some-date>
   (expect "test" (orgtrello-data/entity-start                 (orgtrello-hash/make-properties `((:start . "test")))))
   (expect nil (orgtrello-data/entity-start                    (orgtrello-hash/make-properties `((inexistant . "test")))))
   (expect "test" (orgtrello-data/entity-action                (orgtrello-hash/make-properties `((:action . "test")))))
-  (expect nil (orgtrello-data/entity-action                   (orgtrello-hash/make-properties `((inexistant . "test"))))))
+  (expect nil (orgtrello-data/entity-action                   (orgtrello-hash/make-properties `((inexistant . "test")))))
+  (expect "test" (orgtrello-data/entity-comments              (orgtrello-hash/make-properties `((:comments . "test")))))
+  (expect nil (orgtrello-data/entity-comments                 (orgtrello-hash/make-properties `((inexistant . "test"))))))
 
 (expectations (desc "orgtrello-data/entity-* - 2")
   (expect :some-method (orgtrello-data/entity-method (orgtrello-hash/make-properties `((:method . :some-method )))))

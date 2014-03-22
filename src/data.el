@@ -101,6 +101,8 @@
 (defun orgtrello-data/entity-closed       (entity) "Retrieve the level from the entity."                                                       (orgtrello-data/gethash-data :closed         entity))
 (defun orgtrello-data/entity-callback     (entity) "Retrieve the level from the entity."                                                       (orgtrello-data/gethash-data :callback       entity))
 (defun orgtrello-data/entity-start        (entity) "Retrieve the level from the entity."                                                       (orgtrello-data/gethash-data :start          entity))
+(defun orgtrello-data/entity-comments     (entity) "Retrieve the comments from the entity"                                                     (orgtrello-data/gethash-data :comments       entity))
+
 
 (defun orgtrello-data/entity-method (query-map) "Retrieve the http method"    (orgtrello-data/gethash-data :method query-map))
 (defun orgtrello-data/entity-uri    (query-map) "Retrieve the http uri"       (orgtrello-data/gethash-data :uri    query-map))
