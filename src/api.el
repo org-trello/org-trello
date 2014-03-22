@@ -22,7 +22,7 @@
 
 (defun orgtrello-api/get-cards (board-id)
   "cards of a board"
-  (orgtrello-hash/make-hash "GET" (format "/boards/%s/cards?actions=commentCard&actions_limit=5&action_fields=data&action_memberCreator_fields=username" board-id)))
+  (orgtrello-hash/make-hash "GET" (format "/boards/%s/cards?actions=commentCard&actions_limit=5&action_fields=data&action_memberCreator_fields=username&field=closed,desc,due,idBoard,idChecklists,idList,idMembers,name,pos" board-id)))
 
 (defun orgtrello-api/get-card (card-id)
   "Detail of a card with id card-id."

@@ -102,7 +102,7 @@
 
 (expectations (desc "testing orgtrello-api/get-board")
   (expect "GET"                                                                                                                 (gethash :method (orgtrello-api/get-cards :board-id)))
-  (expect "/boards/:board-id/cards?actions=commentCard&actions_limit=5&action_fields=data&action_memberCreator_fields=username" (gethash :uri    (orgtrello-api/get-cards :board-id)))
+  (expect "/boards/:board-id/cards?actions=commentCard&actions_limit=5&action_fields=data&action_memberCreator_fields=username&field=closed,desc,due,idBoard,idChecklists,idList,idMembers,name,pos" (gethash :uri    (orgtrello-api/get-cards :board-id)))
   (expect nil                                                                                                                   (gethash :params (orgtrello-api/get-cards :board-id))))
 
 (expectations (desc "orgtrello-api/get-card")
