@@ -178,13 +178,28 @@
                                                                         (memberships    . :memberships)
                                                                         (username       . :username)
                                                                         (fullName       . :full-name)
-                                                                        (actions        . :comments)
-                                                                        (idMemberCreator . :user-creator-id))))
+                                                                        (actions        . :comments))))
 
 (defun orgtrello-data/--deal-with-key (key)
   "Given a key, return it as is if it's a keyword or return its mapped version from *ORGTRELLO-DATA-MAP-KEYWORDS*"
   (cond ((keywordp key) key)
         (t             (gethash key *ORGTRELLO-DATA-MAP-KEYWORDS*))))
+
+(defun orgtrello-data/--dispatch-parse-data-fn (key)
+  "Given a key, return the function to call to execute the parsing (parse-actions or parse-data)"
+  (cond ((eq :actions key) 'orgtrello-data/--parse-actions)
+        (t                 'orgtrello-data/parse-data)))
+
+(defun orgtrello-data/--parse-actions (data &optional size)
+  (->> data
+    ;; (-take (if size size 5))
+    (mapcar (lambda (it)
+              (progn
+                (let ((amap (orgtrello-hash/empty-hash)))
+                  (puthash :comment-id (assoc-default 'id it)                                 amap)
+                  (puthash :comment-text (->> it (assoc-default 'data) (assoc-default 'text)) amap)
+                  (puthash :comment-user (->> it car (assoc-default 'username))               amap)
+                  amap))))))
 
 (defun orgtrello-data/parse-data (entities)
   "Given a trello entity, convert into org-trello entity"

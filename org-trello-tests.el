@@ -1960,5 +1960,54 @@ hello there
                            (url :url id :id name :name idMembers :member-ids idList :list-id idChecklists :checklists idBoard :board-id due :due desc :desc closed :closed idCard :card-id checkItems :items state :checked status :status buffername :buffername sync :sync uri :uri method :method params :params action :action start :start callback :callback pos :position position :position keyword :keyword level :level member-ids :member-ids member :member memberships :memberships username :username fullName :full-name actions :comments))
              *ORGTRELLO-DATA-MAP-KEYWORDS*)))
 
+(setq partial-data-to-test '[((memberCreator (username . "ardumont")
+                                             (initials . "AD")
+                                             (fullName . "Antoine R. Dumont")
+                                             (avatarHash . "ff242a6fbf51ccf70e4760b23e194bca")
+                                             (id . "4f2baa2f72b7c1293501cad3"))
+                              (date . "2014-03-22T11:30:15.358Z")
+                              (type . "commentCard")
+                              (data
+                               (text . "comment 4")
+                               (card
+                                (id . "532d6fd99e39209f27ab2d61")
+                                (name . "Joy of FUN(ctional) LANGUAGES")
+                                (idShort . 2733)
+                                (shortLink . "otLncD1l"))
+                               (board
+                                (id . "51d99bbc1e1d8988390047f2")
+                                (name . "api test board")
+                                (shortLink . "6JSsg3aG")))
+                              (idMemberCreator . "4f2baa2f72b7c1293501cad3")
+                              (id . "532d7447b247e3d24f365309"))
+                             ((memberCreator
+                               (username . "ardumont")
+                               (initials . "AD")
+                               (fullName . "Antoine R. Dumont")
+                               (avatarHash . "ff242a6fbf51ccf70e4760b23e194bca")
+                               (id . "4f2baa2f72b7c1293501cad3"))
+                              (date . "2014-03-22T11:30:09.927Z")
+                              (type . "commentCard")
+                              (data
+                               (text . "comment 3")
+                               (card
+                                (id . "532d6fd99e39209f27ab2d61")
+                                (name . "Joy of FUN(ctional) LANGUAGES")
+                                (idShort . 2733)
+                                (shortLink . "otLncD1l"))
+                               (board
+                                (id . "51d99bbc1e1d8988390047f2")
+                                (name . "api test board")
+                                (shortLink . "6JSsg3aG")))
+                              (idMemberCreator . "4f2baa2f72b7c1293501cad3")
+                              (id . "532d7441852414f343560757"))])
+
+(expectations
+  (expect t (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:comment-id "532d7447b247e3d24f365309" :comment-text "comment 4" :comment-user "ardumont"))
+                (first (orgtrello-data/--parse-actions partial-data-to-test))))
+  (expect t
+    (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:comment-id "532d7441852414f343560757" :comment-text "comment 3" :comment-user "ardumont"))
+                (second (orgtrello-data/--parse-actions partial-data-to-test)))))
+
 (provide 'org-trello-tests)
 ;;; org-trello-tests ends here
