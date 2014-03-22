@@ -881,7 +881,7 @@ CLOSED: [2014-03-15 sam. 23:13]
 - [X] Update documentation note for the package view
 - [X] Release note
 
-* IN-PROGRESS 0.3.6 [40%]
+* IN-PROGRESS 0.3.6 [50%]
 - [X] Test multiple emacs version - https://github.com/org-trello/org-trello/issues/52
 - [X] Add a logo to website - https://github.com/org-trello/org-trello/issues/129
 - [-] Synchronize user comments - https://github.com/org-trello/org-trello/issues/86
@@ -891,6 +891,7 @@ CLOSED: [2014-03-15 sam. 23:13]
   - [ ] Routine for the user to see the last 5 comments
   - [ ] Routine to add a comment (with sync to trello)
   - [ ] Write the new comment locally
+- [X] Take control over the test file which is now too big (dispatch in 'namespace' test buffer)
 - [ ] Release notes
 - [ ] Version
 * TODO 0.3.7 [0%]
