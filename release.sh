@@ -21,11 +21,11 @@ git fetch -p --all
 
 git checkout master
 
-git merge origin/master
+git merge upstream/master
 
 git tag $VERSION
 
-git push --tag
+git push upstream --tag
 
 make package
 
