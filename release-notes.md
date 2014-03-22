@@ -1,3 +1,13 @@
+# 0.3.6
+
+- [X] Test multiple emacs version - https://github.com/org-trello/org-trello/issues/52
+- [X] Add a logo to website - https://github.com/org-trello/org-trello/issues/129
+- [X] Synchronize user comments - https://github.com/org-trello/org-trello/issues/86
+- [X] Add a comment to a card - https://github.com/org-trello/org-trello/issues/132
+- [X] Take control over the test file which is now too big (dispatch in 'namespace' test buffer)
+- [X] Version
+- [X] Release notes
+
 # 0.3.5
 
 - [X] Test multiple emacs version - https://github.com/org-trello/org-trello/issues/52
