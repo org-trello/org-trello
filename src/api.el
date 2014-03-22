@@ -107,6 +107,10 @@
   "Retrieve the current user's member informations."
   (orgtrello-hash/make-hash "GET" "/members/me"))
 
+(defun orgtrello-api/add-card-comment (card-id comment-text)
+  "Add a comment to a card"
+  (orgtrello-hash/make-hash "POST" (format "/cards/%s/actions/comments" card-id) `(("text" . ,comment-text))))
+
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-api loaded!")
 
 

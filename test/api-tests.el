@@ -224,3 +224,9 @@
   (expect "POST"                                                                (gethash :method (orgtrello-api/add-card "card-name" "list-id" "due-date")))
   (expect "/cards/"                                                             (gethash :uri    (orgtrello-api/add-card "card-name" "list-id" "due-date")))
   (expect '(("due" . "due-date") ("name" . "card-name") ("idList" . "list-id")) (gethash :params (orgtrello-api/add-card "card-name" "list-id" "due-date"))))
+
+(expectations
+ (desc "orgtrello-api/add-card-comment")
+ (expect "POST"                             (gethash :method (orgtrello-api/add-card-comment :card-id "some comment text")))
+ (expect "/cards/:card-id/actions/comments" (gethash :uri    (orgtrello-api/add-card-comment :card-id "some comment text")))
+ (expect '(("text" . "some comment text"))  (gethash :params (orgtrello-api/add-card-comment :card-id "some comment text"))))

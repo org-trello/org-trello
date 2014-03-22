@@ -881,17 +881,20 @@ CLOSED: [2014-03-15 sam. 23:13]
 - [X] Update documentation note for the package view
 - [X] Release note
 
-* IN-PROGRESS 0.3.6 [50%]
+* IN-PROGRESS 0.3.6 [57%]
 - [X] Test multiple emacs version - https://github.com/org-trello/org-trello/issues/52
 - [X] Add a logo to website - https://github.com/org-trello/org-trello/issues/129
-- [-] Synchronize user comments - https://github.com/org-trello/org-trello/issues/86
+- [X] Synchronize user comments - https://github.com/org-trello/org-trello/issues/86
   - [X] Retrieve the last 5 comments
   - [X] Write the last 5 comments
   - [X] Make the org-trello parsing routine aware of comments (even if not used, for symmetry's sake)
   - [X] Add interactive command for the user to see the last 5 comments
-  - [X] Add a binding to the interactive show comments command
+  - [X] Add a binding to the interactive 'show comments' command
+- [-] Add a comment to a card - https://github.com/org-trello/org-trello/issues/132
+  - [X] Open the api to add a comment to a card
   - [ ] Add an interactive command to add a comment (with sync to trello)
-  - [ ] Write the new comment locally
+  - [ ] Add a binding to the 'add a comment' command
+  - [ ] Update the current comment list locally
 - [X] Take control over the test file which is now too big (dispatch in 'namespace' test buffer)
 - [ ] Release notes
 - [ ] Version
