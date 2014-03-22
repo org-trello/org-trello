@@ -1044,7 +1044,24 @@
     (while (re-search-forward ":PROPERTIES: {.*" nil t)
       (orgtrello-cbx/install-overlays! (match-beginning 0)))))
 
-(defun orgtrello-controller/do-show-comments! ())
+(defun orgtrello-controller/format-comments (comments)
+  (--> comments
+    (s-split *ORGTRELLO-CARD-COMMENTS-DELIMITER* it)
+    (s-join "\n\n" it)))
+
+(defun orgtrello-controller/do-show-card-comments! ()
+  (let* ((current-card-name "current-card")
+         (comments-title (format "comments for card '%s'" current-card-name))
+         (comments-formatted (-> (orgtrello-buffer/get-card-comments!)
+                               orgtrello-controller/format-comments)))
+    (with-temp-buffer-window
+     "*org-trello-card-comments*"
+     nil
+     nil
+     (progn
+       (temp-buffer-resize-mode 1)
+       (insert (format "%s\n\n" comments-title))
+       (insert comments-formatted)))))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-controller loaded!")
 

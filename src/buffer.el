@@ -20,6 +20,10 @@
           (orgtrello-buffer/filter-out-properties
            (buffer-substring-no-properties start end)))))
 
+(defun orgtrello-buffer/get-card-comments! ()
+  "Retrieve the card's comments. Can be nil if not on a card."
+  (orgtrello-action/org-entry-get (point) *ORGTRELLO-CARD-COMMENTS*))
+
 (defun orgtrello-buffer/filter-out-properties (text-content) "Given a string, remove any org properties if any"
   (->> text-content
        (replace-regexp-in-string "^[ ]*:.*" "")

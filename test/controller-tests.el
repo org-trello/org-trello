@@ -381,3 +381,7 @@ DEADLINE: <some-date>
   (expect "me: some first comment###another-me: another comment"
     (orgtrello-controller/--comments-to-list (list (orgtrello-hash/make-properties '((:comment-user . "me") (:comment-text . "some first comment")))
                                                    (orgtrello-hash/make-properties '((:comment-user . "another-me") (:comment-text . "another comment")))))))
+
+(expectations
+  (expect "dude0: some comments\n\ndude1: some other comments"
+    (orgtrello-controller/format-comments "dude0: some comments###dude1: some other comments")))

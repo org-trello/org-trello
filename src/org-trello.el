@@ -1,3 +1,11 @@
+(defun org-trello/show-card-comments ()
+  "Control first, then if ok, show a simple buffer with the current card's last comments."
+  (interactive)
+  (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
+   "Show current card's last comments"
+   '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/control-encoding)
+   'orgtrello-controller/do-show-card-comments!))
+
 (defun org-trello/sync-entity ()
   "Control first, then if ok, create a simple entity."
   (interactive)
