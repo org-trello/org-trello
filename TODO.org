@@ -887,7 +887,7 @@ CLOSED: [2014-03-15 sam. 23:13]
 - [-] Synchronize user comments - https://github.com/org-trello/org-trello/issues/86
   - [X] Retrieve the last 5 comments
   - [X] Write the last 5 comments
-  - [ ] Make the org-trello parsing routine aware of comments (even if not used, for symmetry's sake)
+  - [X] Make the org-trello parsing routine aware of comments (even if not used, for symmetry's sake)
   - [ ] Routine for the user to see the last 5 comments
   - [ ] Routine to add a comment (with sync to trello)
   - [ ] Write the new comment locally
