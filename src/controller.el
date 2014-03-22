@@ -1051,18 +1051,20 @@
 
 (defun orgtrello-controller/do-show-card-comments! ()
   "Show the card comments in a temporary buffer."
-  (let* ((current-card-name "current-card")
-         (comments-title (format "comments for card '%s'" current-card-name))
-         (comments-formatted (-> (orgtrello-buffer/get-card-comments!)
-                               orgtrello-controller/format-comments)))
-    (with-temp-buffer-window
-     "*org-trello-card-comments*"
-     nil
-     nil
-     (progn
-       (temp-buffer-resize-mode 1)
-       (insert (format "%s\n\n" comments-title))
-       (insert comments-formatted)))))
+  (save-excursion
+    (orgtrello-buffer/back-to-card!)
+    (let* ((current-card-name      (-> (orgtrello-data/metadata) orgtrello-data/entity-name))
+           (comments-title (format "comments for card '%s'" current-card-name))
+           (comments-formatted (-> (orgtrello-buffer/get-card-comments!)
+                                 orgtrello-controller/format-comments)))
+      (with-temp-buffer-window
+       "*org-trello-card-comments*"
+       nil
+       nil
+       (progn
+         (temp-buffer-resize-mode 1)
+         (insert (format "%s\n\n" comments-title))
+         (insert comments-formatted))))))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-controller loaded!")
 
