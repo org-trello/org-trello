@@ -543,8 +543,8 @@
 (defun orgtrello-controller/--comments-to-list (comments-hash)
   "Given a list of comments hashmap, return the serialized string comment."
   (->> comments-hash
-    (--map (s-join " : " (list (gethash :comment-user it) (gethash :comment-text it))))
-    (s-join "\n")))
+    (--map (s-join ": " (list (gethash :comment-user it) (gethash :comment-text it))))
+    (s-join *ORGTRELLO-CARD-COMMENTS-DELIMITER*)))
 
 (defun orgtrello-controller/set-property-comment! (comments)
   "Update comment property."
