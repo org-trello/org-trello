@@ -911,23 +911,23 @@
   "Command to install the list boards."
   (interactive)
   (cl-destructuring-bind
-      (orgtrello-controller/--chosen-board-id orgtrello-controller/--chosen-board-name) (-> (orgtrello-controller/--list-boards)
-                                                                                          orgtrello-controller/--id-name
-                                                                                          orgtrello-controller/choose-board!)
-    (let* ((orgtrello-controller/--board-lists-hname-id (-> orgtrello-controller/--chosen-board-id
-                                                          orgtrello-controller/--list-board-lists
-                                                          orgtrello-controller/--name-id))
-           (orgtrello-controller/--board-list-keywords  (orgtrello-controller/--hash-table-keys orgtrello-controller/--board-lists-hname-id))
-           (orgtrello-controller/--board-users-name-id  (orgtrello-controller/--board-users-information-from-board-id! orgtrello-controller/--chosen-board-id))
-           (user-logged-in                              (orgtrello-controller/--user-logged-in)))
+      (chosen-board-id chosen-board-name) (-> (orgtrello-controller/--list-boards)
+                                            orgtrello-controller/--id-name
+                                            orgtrello-controller/choose-board!)
+    (let* ((board-lists-hname-id (-> chosen-board-id
+                                   orgtrello-controller/--list-board-lists
+                                   orgtrello-controller/--name-id))
+           (board-list-keywords (orgtrello-controller/--hash-table-keys board-lists-hname-id))
+           (board-users-name-id (orgtrello-controller/--board-users-information-from-board-id! chosen-board-id))
+           (user-logged-in      (orgtrello-controller/--user-logged-in)))
       ;; remove any eventual present entry
-      (orgtrello-controller/--remove-properties-file! orgtrello-controller/--board-list-keywords orgtrello-controller/--board-users-name-id user-logged-in t)
+      (orgtrello-controller/--remove-properties-file! board-list-keywords board-users-name-id user-logged-in t)
       ;; update with new ones
       (orgtrello-controller/--update-orgmode-file-with-properties
-       orgtrello-controller/--chosen-board-name
-       orgtrello-controller/--chosen-board-id
-       orgtrello-controller/--board-lists-hname-id
-       orgtrello-controller/--board-users-name-id
+       chosen-board-name
+       chosen-board-id
+       board-lists-hname-id
+       board-users-name-id
        user-logged-in
        t))
     "Install board and list ids done!"))
