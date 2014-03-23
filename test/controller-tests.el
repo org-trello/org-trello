@@ -401,18 +401,18 @@ DEADLINE: <some-date>
     (orgtrello-controller/--display-boards-to-choose (orgtrello-hash/make-properties '((:id-board0 . "board0-name") (:id-board1 . "board1-name"))))))
 
 (expectations
- (expect '(":PROPERTIES:"
-           "#+property: board-name some-board-name"
-           "#+property: board-id some-board-id"
-           "#+PROPERTY: DONE done-id"
-           "#+PROPERTY: TODO todo-id"
-           ""
-           "#+PROPERTY: orgtrello-user-some-other-user some-other-user-id"
-           "#+PROPERTY: orgtrello-user-user user-id"
-           "#+PROPERTY: :green green label"
-           "#+PROPERTY: :red red label"
-           "#+PROPERTY: orgtrello-user-me user"
-           ":END:")
+  (expect '(":PROPERTIES:"
+            "#+property: board-name some-board-name"
+            "#+property: board-id some-board-id"
+            "#+PROPERTY: DONE done-id"
+            "#+PROPERTY: TODO todo-id"
+            ""
+            "#+PROPERTY: orgtrello-user-some-other-user some-other-user-id"
+            "#+PROPERTY: orgtrello-user-user user-id"
+            "#+PROPERTY: :green green label"
+            "#+PROPERTY: :red red label"
+            "#+PROPERTY: orgtrello-user-me user"
+            ":END:")
          (orgtrello-controller/--compute-metadata!
           "some-board-name"
           "some-board-id"
@@ -422,9 +422,9 @@ DEADLINE: <some-date>
           (orgtrello-hash/make-properties '((:red . "red label") (:green . "green label"))))))
 
 (expectations
- expect
- '("#+PROPERTY: :green green label" "#+PROPERTY: :red red label")
- (orgtrello-controller/--properties-labels (orgtrello-hash/make-properties '((:red . "red label") (:green . "green label")))))
+  (expect
+      '("#+PROPERTY: :green green label" "#+PROPERTY: :red red label")
+    (orgtrello-controller/--properties-labels (orgtrello-hash/make-properties '((:red . "red label") (:green . "green label"))))))
 
 (expectations
  (expect ":red: some label\n\n:yellow: some other label"
