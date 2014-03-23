@@ -42,3 +42,9 @@
      (org-trello-mode-test)
      ,body-test
      (buffer-string)))
+
+(defmacro orgtrello-tests/with-org-buffer (text body-test)
+  `(with-temp-buffer
+     (insert ,text)
+     (org-mode)
+     ,body-test))

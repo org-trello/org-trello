@@ -33,4 +33,16 @@
        (replace-regexp-in-string "^[ ]*:.*" "")
        (s-trim-left)))
 
+(defun orgtrello-buffer/board-name! ()
+  "Compute the board's name"
+  (assoc-default *BOARD-NAME* org-file-properties))
+
+(defun orgtrello-buffer/board-id! ()
+  "Compute the board's id"
+  (assoc-default *BOARD-ID* org-file-properties))
+
+(defun orgtrello-buffer/me! ()
+  "Compute the board's current user"
+  (assoc-default *ORGTRELLO-USER-ME* org-file-properties))
+
 

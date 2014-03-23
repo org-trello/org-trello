@@ -8,6 +8,7 @@
 (load-file "load-namespaces.el")
 ;; load test code
 (org-trello/load-namespaces *ORG-TRELLO-TEST-FILES*)
+(message "Loading tests done!")
 
 ;; behaviour of expectations changed
 (setq expectations-execute-at-once t)

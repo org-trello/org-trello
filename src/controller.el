@@ -53,7 +53,7 @@
     (setq *HMAP-ID-NAME* orgtrello-controller/--hmap-id-name)
     (setq *HMAP-USERS-ID-NAME* orgtrello-controller/--hmap-user-id-name)
     (setq *HMAP-USERS-NAME-ID* orgtrello-controller/--hmap-user-name-id)
-    (setq *ORGTRELLO-USER-LOGGED-IN* (orgtrello-controller/--me!))
+    (setq *ORGTRELLO-USER-LOGGED-IN* (orgtrello-buffer/me!))
     :ok))
 
 (defun orgtrello-controller/control-encoding (&optional args)
@@ -62,15 +62,10 @@
     (orgtrello-log/msg *OT/ERROR* "Ensure you use utf-8 encoding for your org buffer.")
     :ok))
 
-(defun orgtrello-controller/--board-name ()
-  "Compute the board's name" (assoc-default *BOARD-NAME* org-file-properties))
-(defun orgtrello-controller/--board-id ()
-  "Compute the board's id" (assoc-default *BOARD-ID* org-file-properties))
-
 (defun orgtrello-controller/control-properties (&optional args)
   "org-trello needs the properties board-id and all list id from the trello board to be setuped on header property file. :ok if ok, or the error message if problems."
   (let ((orgtrello-controller/--hmap-count (hash-table-count *HMAP-ID-NAME*)))
-    (if (and org-file-properties (orgtrello-controller/--board-id) (= (length *LIST-NAMES*) orgtrello-controller/--hmap-count))
+    (if (and org-file-properties (orgtrello-buffer/board-id!) (= (length *LIST-NAMES*) orgtrello-controller/--hmap-count))
         :ok
         "Setup problem.\nEither you did not connect your org-mode buffer with a trello board, to correct this:\n  * attach to a board through C-c o I or M-x org-trello/install-board-and-lists-ids\n  * or create a board from scratch with C-c o b or M-x org-trello/create-board).\nEither your org-mode's todo keyword list and your trello board lists are not named the same way (which they must).\nFor this, connect to trello and rename your board's list according to your org-mode's todo list.\nAlso, you can specify on your org-mode buffer the todo list you want to work with, for example: #+TODO: TODO DOING | DONE FAIL (hit C-c C-c to refresh the setup)")))
 
@@ -275,7 +270,7 @@
 
 (defun orgtrello-controller/do-sync-full-entity ()
   "Do the actual full card creation - from card to item. Beware full side effects..."
-  (orgtrello-log/msg *OT/INFO* "Synchronizing full entity with its structure on board '%s'..." (orgtrello-controller/--board-name))
+  (orgtrello-log/msg *OT/INFO* "Synchronizing full entity with its structure on board '%s'..." (orgtrello-buffer/board-name!))
   ;; in any case, we need to show the subtree, otherwise https://github.com/org-trello/org-trello/issues/53
   (org-show-subtree)
   (if (org-at-heading-p)
@@ -292,7 +287,7 @@
 
 (defun orgtrello-controller/do-sync-full-file ()
   "Full org-mode file synchronisation."
-  (orgtrello-log/msg *OT/WARN* "Synchronizing org-mode file to the board '%s'. This may take some time, some coffee may be a good idea..." (orgtrello-controller/--board-name))
+  (orgtrello-log/msg *OT/WARN* "Synchronizing org-mode file to the board '%s'. This may take some time, some coffee may be a good idea..." (orgtrello-buffer/board-name!))
   (orgtrello-controller/org-map-entries *CARD-LEVEL* 'orgtrello-controller/do-sync-full-entity))
 
 (defun orgtrello-controller/--compute-card-status (card-id-list)
@@ -688,9 +683,9 @@
 
 (defun orgtrello-controller/do-sync-full-from-trello (&optional sync)
   "Full org-mode file synchronisation. Beware, this will block emacs as the request is synchronous."
-  (orgtrello-log/msg *OT/INFO* "Synchronizing the trello board '%s' to the org-mode file. This may take a moment, some coffee may be a good idea..." (orgtrello-controller/--board-name))
+  (orgtrello-log/msg *OT/INFO* "Synchronizing the trello board '%s' to the org-mode file. This may take a moment, some coffee may be a good idea..." (orgtrello-buffer/board-name!))
   ;; then start the sync computations
-  (--> (orgtrello-controller/--board-id)
+  (--> (orgtrello-buffer/board-id!)
        (orgtrello-api/get-cards it)
        (orgtrello-controller/--update-query-with-org-metadata it nil (buffer-name) nil 'orgtrello-controller/--sync-buffer-with-trello-data-callback)
        (orgtrello-proxy/http it sync)))
@@ -1014,9 +1009,6 @@
 (defun orgtrello-controller/--users-to (users) "Given a list of users, compute the comma separated users."
   (if users (mapconcat 'identity users ",") ""))
 
-(defun orgtrello-controller/--me! ()
-  (assoc-default *ORGTRELLO-USER-ME* org-file-properties))
-
 (defun orgtrello-controller/--user-ids-assigned-to-current-card () "Compute the user ids assigned to the current card."
   (--> (orgtrello-controller/get-usernames-assigned-property!)
        (orgtrello-controller/--users-from it)
@@ -1099,7 +1091,7 @@
   (let ((comments (orgtrello-buffer/get-card-comments!)))
     (->> (if comments comments "")
       orgtrello-controller/format-comments
-      (concat (orgtrello-controller/--me!) ": " new-comment *ORGTRELLO-CARD-COMMENTS-DELIMITER-PRINT*)
+      (concat (orgtrello-buffer/me!) ": " new-comment *ORGTRELLO-CARD-COMMENTS-DELIMITER-PRINT*)
       orgtrello-controller/unformat-comments
       orgtrello-buffer/put-card-comments!)))
 
@@ -1144,9 +1136,9 @@
 
 (defun orgtrello-controller/do-update-board-metadata! ()
   "Update metadata about the current board we are connected to."
-  (let ((board-id (orgtrello-controller/--board-id)))
+  (let ((board-id (orgtrello-buffer/board-id!)))
     (->> (orgtrello-controller/--list-board-lists! board-id)
-      (orgtrello-controller/do-write-board-metadata! board-id (orgtrello-controller/--board-name) (orgtrello-controller/--me!)))))
+      (orgtrello-controller/do-write-board-metadata! board-id (orgtrello-buffer/board-name!) (orgtrello-buffer/me!)))))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-controller loaded!")
 

@@ -113,7 +113,7 @@
   (interactive)
   (orgtrello-action/controls-or-actions-then-do
      '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/control-encoding)
-     (lambda () (browse-url (org-trello/https-trello (format "/b/%s" (orgtrello-controller/--board-id)))))))
+     (lambda () (browse-url (org-trello/https-trello (format "/b/%s" (orgtrello-buffer/board-id!)))))))
 
 (defun org-trello/create-board ()
   "Control first, then if ok, trigger the board creation."
