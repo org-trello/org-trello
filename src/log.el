@@ -1,9 +1,9 @@
-(defvar *OT/NOLOG* 0)
-(defvar *OT/ERROR* 1)
-(defvar *OT/WARN*  2)
-(defvar *OT/INFO*  3)
-(defvar *OT/DEBUG* 4)
-(defvar *OT/TRACE* 5)
+(defconst *OT/NOLOG* 0)
+(defconst *OT/ERROR* 1)
+(defconst *OT/WARN*  2)
+(defconst *OT/INFO*  3)
+(defconst *OT/DEBUG* 4)
+(defconst *OT/TRACE* 5)
 
 (defvar *orgtrello-log/level* *OT/INFO*
   "Set log level.

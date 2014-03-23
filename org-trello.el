@@ -57,7 +57,7 @@
 ;;; Code:
 
 
-(defvar *ERROR-INSTALL-MSG* (format "Oops - your emacs isn't supported. org-trello only works on Emacs 24.3+ and you're running version: %s.
+(defconst *ERROR-INSTALL-MSG* (format "Oops - your emacs isn't supported. org-trello only works on Emacs 24.3+ and you're running version: %s.
 Please consider upgrading Emacs." emacs-version) "Error message when installing org-trello with an unsupported emacs version.")
 
 (when (version< emacs-version "24") (error *ERROR-INSTALL-MSG*))
@@ -84,15 +84,15 @@ Please consider upgrading Emacs." emacs-version) "Error message when installing 
     (defalias 'cl-defun 'defun*)
     (defalias 'cl-destructuring-bind 'destructuring-bind)))
 
-(defvar *ORGTRELLO-VERSION* "0.3.6.1" "current org-trello version installed.")
+(defconst *ORGTRELLO-VERSION* "0.3.6.1" "current org-trello version installed.")
 
 
-(defvar *OT/NOLOG* 0)
-(defvar *OT/ERROR* 1)
-(defvar *OT/WARN*  2)
-(defvar *OT/INFO*  3)
-(defvar *OT/DEBUG* 4)
-(defvar *OT/TRACE* 5)
+(defconst *OT/NOLOG* 0)
+(defconst *OT/ERROR* 1)
+(defconst *OT/WARN*  2)
+(defconst *OT/INFO*  3)
+(defconst *OT/DEBUG* 4)
+(defconst *OT/TRACE* 5)
 
 (defvar *orgtrello-log/level* *OT/INFO*
   "Set log level.
@@ -112,38 +112,38 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-log loaded!")
 
 
-(defvar *consumer-key*                nil                                               "Id representing the user.")
-(defvar *access-token*                nil                                               "Read/write access token to use trello on behalf of the user.")
-(defvar *ORGTRELLO-MARKER*            "orgtrello-marker"                                "A marker used inside the org buffer to synchronize entries.")
-(defvar *do-sync-query*               t                                                 "An alias to t to make the boolean more significant in the given context.")
-(defvar *do-save-buffer*              t                                                 "Another alias to t to make the boolean more significant in the given context.")
-(defvar *do-reload-setup*             t                                                 "Another alias to t to make the boolean more significant in the given context.")
-(defvar *do-not-display-log*          t                                                 "Another alias to t to make the boolean more significant in the given context.")
-(defvar *CARD-LEVEL*                  1                                                 "card level")
-(defvar *CHECKLIST-LEVEL*             2                                                 "checkbox level")
-(defvar *ITEM-LEVEL*                  3                                                 "item level")
-(defvar *OUTOFBOUNDS-LEVEL*           4                                                 "Out of bounds level")
-(defvar *ORGTRELLO-LEVELS*            `(,*CARD-LEVEL* ,*CHECKLIST-LEVEL* ,*ITEM-LEVEL*) "Current levels 1 is card, 2 is checklist, 3 is item.")
-(defvar *ORGTRELLO-ACTION-SYNC*       "sync-entity"                                     "Possible action regarding the entity synchronization.")
-(defvar *ORGTRELLO-ACTION-DELETE*     "delete"                                          "Possible action regarding the entity deletion.")
-(defvar *ORGTRELLO-USER-PREFIX*       "orgtrello-user-"                                 "orgtrello prefix to define user to a org-mode level.")
-(defvar *ORGTRELLO-USERS-ENTRY*       "orgtrello-users"                                 "orgtrello property entry to store the users assigned to a card.")
-(defvar *ORGTRELLO-USER-ME*           "orgtrello-user-me"                               "Current user's property id.")
-(defvar *ORGTRELLO-USER-LOGGED-IN*    nil                                               "Current user logged in.")
-(defvar *ORGTRELLO-CARD-COMMENTS*     "orgtrello-card-comments"                         "Current card's comments property.")
-(defvar *ORGTRELLO-CARD-COMMENTS-DELIMITER* "###"                                       "Current card's comments delimiter.")
-(defvar *ORGTRELLO-CARD-COMMENTS-DELIMITER-PRINT* "\n\n"                                "Current card's comments delimiter to print.")
-(defvar *ORGTRELLO-DO-SHOW-CARD-COMMENTS-AFTER-ADDING* nil                              "Show the comment buffer after adding one comment")
+(defconst *consumer-key*                nil                                               "Id representing the user.")
+(defconst *access-token*                nil                                               "Read/write access token to use trello on behalf of the user.")
+(defconst *ORGTRELLO-MARKER*            "orgtrello-marker"                                "A marker used inside the org buffer to synchronize entries.")
+(defconst *do-sync-query*               t                                                 "An alias to t to make the boolean more significant in the given context.")
+(defconst *do-save-buffer*              t                                                 "Another alias to t to make the boolean more significant in the given context.")
+(defconst *do-reload-setup*             t                                                 "Another alias to t to make the boolean more significant in the given context.")
+(defconst *do-not-display-log*          t                                                 "Another alias to t to make the boolean more significant in the given context.")
+(defconst *CARD-LEVEL*                  1                                                 "card level")
+(defconst *CHECKLIST-LEVEL*             2                                                 "checkbox level")
+(defconst *ITEM-LEVEL*                  3                                                 "item level")
+(defconst *OUTOFBOUNDS-LEVEL*           4                                                 "Out of bounds level")
+(defconst *ORGTRELLO-LEVELS*            `(,*CARD-LEVEL* ,*CHECKLIST-LEVEL* ,*ITEM-LEVEL*) "Current levels 1 is card, 2 is checklist, 3 is item.")
+(defconst *ORGTRELLO-ACTION-SYNC*       "sync-entity"                                     "Possible action regarding the entity synchronization.")
+(defconst *ORGTRELLO-ACTION-DELETE*     "delete"                                          "Possible action regarding the entity deletion.")
+(defconst *ORGTRELLO-USER-PREFIX*       "orgtrello-user-"                                 "orgtrello prefix to define user to a org-mode level.")
+(defconst *ORGTRELLO-USERS-ENTRY*       "orgtrello-users"                                 "orgtrello property entry to store the users assigned to a card.")
+(defconst *ORGTRELLO-USER-ME*           "orgtrello-user-me"                               "Current user's property id.")
+(defconst *ORGTRELLO-USER-LOGGED-IN*    nil                                               "Current user logged in.")
+(defconst *ORGTRELLO-CARD-COMMENTS*     "orgtrello-card-comments"                         "Current card's comments property.")
+(defconst *ORGTRELLO-CARD-COMMENTS-DELIMITER* "###"                                       "Current card's comments delimiter.")
+(defconst *ORGTRELLO-CARD-COMMENTS-DELIMITER-PRINT* "\n\n"                                "Current card's comments delimiter to print.")
+(defconst *ORGTRELLO-DO-SHOW-CARD-COMMENTS-AFTER-ADDING* nil                              "Show the comment buffer after adding one comment")
 
-(defvar *ORGTRELLO-HTTPS*               "https://trello.com"                            "URL https to help in browsing")
+(defconst *ORGTRELLO-HTTPS*               "https://trello.com"                            "URL https to help in browsing")
 
-(defvar *ERROR-SYNC-CARD-MISSING-NAME* "Cannot synchronize the card - missing mandatory name. Skip it...")
-(defvar *ERROR-SYNC-CHECKLIST-SYNC-CARD-FIRST* "Cannot synchronize the checklist - the card must be synchronized first. Skip it...")
-(defvar *ERROR-SYNC-CHECKLIST-MISSING-NAME* "Cannot synchronize the checklist - missing mandatory name. Skip it...")
-(defvar *ERROR-SYNC-ITEM-SYNC-CARD-FIRST* "Cannot synchronize the item - the card must be synchronized first. Skip it...")
-(defvar *ERROR-SYNC-ITEM-SYNC-CHECKLIST-FIRST* "Cannot synchronize the item - the checklist must be synchronized first. Skip it...")
-(defvar *ERROR-SYNC-ITEM-MISSING-NAME* "Cannot synchronize the item - missing mandatory name. Skip it...")
-(defvar *ERROR-SYNC-ITEM-SYNC-UPPER-LAYER-FIRST* "The card and the checklist must be synced before syncing the item. Skip it...")
+(defconst *ERROR-SYNC-CARD-MISSING-NAME* "Cannot synchronize the card - missing mandatory name. Skip it...")
+(defconst *ERROR-SYNC-CHECKLIST-SYNC-CARD-FIRST* "Cannot synchronize the checklist - the card must be synchronized first. Skip it...")
+(defconst *ERROR-SYNC-CHECKLIST-MISSING-NAME* "Cannot synchronize the checklist - missing mandatory name. Skip it...")
+(defconst *ERROR-SYNC-ITEM-SYNC-CARD-FIRST* "Cannot synchronize the item - the card must be synchronized first. Skip it...")
+(defconst *ERROR-SYNC-ITEM-SYNC-CHECKLIST-FIRST* "Cannot synchronize the item - the checklist must be synchronized first. Skip it...")
+(defconst *ERROR-SYNC-ITEM-MISSING-NAME* "Cannot synchronize the item - missing mandatory name. Skip it...")
+(defconst *ERROR-SYNC-ITEM-SYNC-UPPER-LAYER-FIRST* "The card and the checklist must be synced before syncing the item. Skip it...")
 
 (defun org-trello/https-trello (url-without-base-uri) "An helper method to compute the uri to trello"
   (concat *ORGTRELLO-HTTPS* url-without-base-uri))
@@ -819,7 +819,7 @@ This is a list with the following elements:
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-api loaded!")
 
 
-(defvar *TRELLO-URL* "https://api.trello.com/1" "The needed prefix url for trello")
+(defconst *TRELLO-URL* "https://api.trello.com/1" "The needed prefix url for trello")
 
 (defun orgtrello-query/--compute-url (server uri) "Compute the trello url from the given uri."
   (format "%s%s" server uri))
@@ -1729,20 +1729,20 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 
 ;; Specific state - FIXME check if they do not already exist on org-mode to avoid potential collisions
-(defvar *TODO* "TODO" "org-mode todo state")
-(defvar *DONE* "DONE" "org-mode done state")
+(defconst *TODO* "TODO" "org-mode todo state")
+(defconst *DONE* "DONE" "org-mode done state")
 
 ;; Properties key for the orgtrello headers #+PROPERTY board-id, etc...
-(defvar *BOARD-ID*   "board-id" "orgtrello property board-id entry")
-(defvar *BOARD-NAME* "board-name" "orgtrello property board-name entry")
+(defconst *BOARD-ID*   "board-id" "orgtrello property board-id entry")
+(defconst *BOARD-NAME* "board-name" "orgtrello property board-name entry")
 
 (defvar *LIST-NAMES*         nil "orgtrello property names of the different lists. This use the standard 'org-todo-keywords property from org-mode.")
 (defvar *HMAP-ID-NAME*       nil "orgtrello hash map containing for each id, the associated name (or org keyword).")
 (defvar *HMAP-USERS-ID-NAME* nil "orgtrello hash map containing for each user name, the associated id.")
 (defvar *HMAP-USERS-NAME-ID* nil "orgtrello hash map containing for each user id, the associated name.")
 
-(defvar *CONFIG-DIR*  (concat (getenv "HOME") "/" ".trello"))
-(defvar *CONFIG-FILE* (concat *CONFIG-DIR* "/config.el"))
+(defconst *CONFIG-DIR*  (concat (getenv "HOME") "/" ".trello"))
+(defconst *CONFIG-FILE* (concat *CONFIG-DIR* "/config.el"))
 
 (defun orgtrello-controller/compute-marker (buffer-name name position)
   "Compute the orgtrello marker which is composed of buffer-name, name and position"

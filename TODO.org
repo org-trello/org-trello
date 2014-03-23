@@ -847,7 +847,7 @@ CLOSED: [2014-02-03 lun. 11:48]
 - [X] Fix description extract - https://github.com/org-trello/org-trello/issues/114
 - [X] Version
 - [X] Release notes
-* DONE 0.3.3 [93%]
+* DONE 0.3.3 [100%]
 CLOSED: [2014-03-08 sam. 17:27]
 - [X] Issue when installing on melpa reported wrongly on melpa and reported back https://github.com/org-trello/org-trello/issues/117
 - [X] Fix typo when-let in -when-let
@@ -906,7 +906,8 @@ CLOSED: [2014-03-22 Sat 23:53]
 - [X] Version
 - [X] Release notes
 
-* TODO 0.3.7 [0%]
+* IN-PROGRESS 0.3.7 [25%]
+- [X] Use `defconst` keyword instead of defvar
 - [ ] Use trello labels and org tags as one - https://github.com/org-trello/org-trello/issues/70
 - [ ] Release notes
 - [ ] Version

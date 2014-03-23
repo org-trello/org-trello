@@ -1,18 +1,18 @@
 ;; Specific state - FIXME check if they do not already exist on org-mode to avoid potential collisions
-(defvar *TODO* "TODO" "org-mode todo state")
-(defvar *DONE* "DONE" "org-mode done state")
+(defconst *TODO* "TODO" "org-mode todo state")
+(defconst *DONE* "DONE" "org-mode done state")
 
 ;; Properties key for the orgtrello headers #+PROPERTY board-id, etc...
-(defvar *BOARD-ID*   "board-id" "orgtrello property board-id entry")
-(defvar *BOARD-NAME* "board-name" "orgtrello property board-name entry")
+(defconst *BOARD-ID*   "board-id" "orgtrello property board-id entry")
+(defconst *BOARD-NAME* "board-name" "orgtrello property board-name entry")
 
 (defvar *LIST-NAMES*         nil "orgtrello property names of the different lists. This use the standard 'org-todo-keywords property from org-mode.")
 (defvar *HMAP-ID-NAME*       nil "orgtrello hash map containing for each id, the associated name (or org keyword).")
 (defvar *HMAP-USERS-ID-NAME* nil "orgtrello hash map containing for each user name, the associated id.")
 (defvar *HMAP-USERS-NAME-ID* nil "orgtrello hash map containing for each user id, the associated name.")
 
-(defvar *CONFIG-DIR*  (concat (getenv "HOME") "/" ".trello"))
-(defvar *CONFIG-FILE* (concat *CONFIG-DIR* "/config.el"))
+(defconst *CONFIG-DIR*  (concat (getenv "HOME") "/" ".trello"))
+(defconst *CONFIG-FILE* (concat *CONFIG-DIR* "/config.el"))
 
 (defun orgtrello-controller/compute-marker (buffer-name name position)
   "Compute the orgtrello marker which is composed of buffer-name, name and position"
