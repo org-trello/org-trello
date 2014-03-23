@@ -1092,10 +1092,7 @@
            (comments-title (format "comments for card '%s'" current-card-name))
            (comments-formatted (-> (orgtrello-buffer/get-card-comments!)
                                  orgtrello-controller/format-comments)))
-      (with-temp-buffer-window
-       "*org-trello-card-comments*"
-       nil
-       nil
+      (with-temp-buffer-window "*org-trello*" nil nil
        (progn
          (temp-buffer-resize-mode 1)
          (insert (format "%s\n\n" comments-title))
@@ -1156,6 +1153,20 @@
          (board-lists (orgtrello-controller/--list-board-lists! board-id))
          (board-labels (->> board-id orgtrello-controller/--board! orgtrello-data/entity-labels)))
     (orgtrello-controller/do-write-board-metadata! board-id (orgtrello-buffer/board-name!) (orgtrello-buffer/me!) board-lists board-labels)))
+
+(defun orgtrello-controller/--format-labels (labels)
+  "Given an assoc list of labels, serialize it."
+  (->> labels
+    (--map (s-join ": " (list (car it) (cdr it))))
+    (s-join "\n\n")))
+
+(defun orgtrello-controller/do-show-board-labels! ()
+  (let ((labels (-> (orgtrello-buffer/labels!) orgtrello-controller/--format-labels)))
+    (with-temp-buffer-window "*org-trello*" nil nil
+     (progn
+       (temp-buffer-resize-mode 1)
+       (insert "Labels:\n\n")
+       (insert labels)))))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-controller loaded!")
 

@@ -426,6 +426,9 @@ DEADLINE: <some-date>
  '("#+PROPERTY: :green green label" "#+PROPERTY: :red red label")
  (orgtrello-controller/--properties-labels (orgtrello-hash/make-properties '((:red . "red label") (:green . "green label")))))
 
+(expectations
+ (expect ":red: some label\n\n:yellow: some other label"
+         (orgtrello-controller/--format-labels '((":red" . "some label") (":yellow" . "some other label")))))
 
 ;; cannot keep this test because the prod code does save the buffer
 ;; (expectations

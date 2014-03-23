@@ -14,6 +14,14 @@
    '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/control-encoding)
    'orgtrello-controller/do-show-card-comments!))
 
+(defun org-trello/show-board-labels ()
+  "Control first, then if ok, show a simple buffer with the current board's labels."
+  (interactive)
+  (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
+   "Show current board's labels"
+   '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/control-encoding)
+   'orgtrello-controller/do-show-board-labels!))
+
 (defun org-trello/sync-entity ()
   "Control first, then if ok, create a simple entity."
   (interactive)

@@ -33,16 +33,23 @@
        (replace-regexp-in-string "^[ ]*:.*" "")
        (s-trim-left)))
 
+(defun orgtrello-buffer/--get-data! (key)
+  (assoc-default key org-file-properties))
+
 (defun orgtrello-buffer/board-name! ()
   "Compute the board's name"
-  (assoc-default *BOARD-NAME* org-file-properties))
+  (orgtrello-buffer/--get-data! *BOARD-NAME*))
 
 (defun orgtrello-buffer/board-id! ()
   "Compute the board's id"
-  (assoc-default *BOARD-ID* org-file-properties))
+  (orgtrello-buffer/--get-data! *BOARD-ID*))
 
 (defun orgtrello-buffer/me! ()
   "Compute the board's current user"
-  (assoc-default *ORGTRELLO-USER-ME* org-file-properties))
+  (orgtrello-buffer/--get-data! *ORGTRELLO-USER-ME*))
+
+(defun orgtrello-buffer/labels! ()
+  "Compute the board's current labels and return it as an association list."
+  (mapcar (lambda (color) `(,color . ,(orgtrello-buffer/--get-data! color))) '(":red" ":blue" ":orange" ":yellow" ":purple" ":green")))
 
 
