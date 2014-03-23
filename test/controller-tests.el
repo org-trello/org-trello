@@ -453,3 +453,9 @@ DEADLINE: <some-date>
 ;;                                        (orgtrello-hash/make-properties '(("user" . "user-id") ("some-other-user" . "some-other-user-id")))
 ;;                                        "user"
 ;;                                        (orgtrello-hash/make-properties '((:red . "red label") (:green . "green label")))))))
+
+(expectations
+  (expect "a,b,c" (orgtrello-controller/--tags-to-labels ":a:b:c"))
+  (expect "a,b,c" (orgtrello-controller/--tags-to-labels "a:b:c"))
+  (expect "a," (orgtrello-controller/--tags-to-labels ":a:"))
+  (expect "a," (orgtrello-controller/--tags-to-labels "a:")))

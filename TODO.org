@@ -918,7 +918,7 @@ CLOSED: [2014-03-22 Sat 23:53]
   - [X] Show current labels
   - [X] Parse labels among org data
   - [X] Open api to create/update cards with labels
-  - [ ] Update labels information when synchronizing to trello
+  - [X] Update labels information when synchronizing to trello
   - [ ] Update tags information when synchronizing from trello
 - [X] Refactor + Fix create / connect to board
 - [X] Update metadata command about the board currently connected (sometimes, new information arise)
