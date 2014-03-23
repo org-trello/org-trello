@@ -307,13 +307,13 @@
   "Compute the format of the due date."
   (if due-date (format "DEADLINE: <%s>\n" due-date) ""))
 
-(defun orgtrello-controller/--private-compute-card-to-org-entry (name status due-date)
-  "Compute the org format for card."
-  (format "* %s %s\n%s" (if status status *TODO*) name (orgtrello-controller/--compute-due-date due-date)))
+(defun orgtrello-controller/--private-compute-card-to-org-entry (name status due-date tags)
+  "Compxute the org format for card."
+  (format "* %s %s%s\n%s" (if status status *TODO*) name (if tags (concat " " tags)  "") (orgtrello-controller/--compute-due-date due-date)))
 
 (defun orgtrello-controller/--compute-card-to-org-entry (card)
   "Given a card, compute its org-mode entry equivalence. orgcheckbox-p is nil"
-  (orgtrello-controller/--private-compute-card-to-org-entry (orgtrello-data/entity-name card) (orgtrello-data/entity-keyword card) (orgtrello-data/entity-due card)))
+  (orgtrello-controller/--private-compute-card-to-org-entry (orgtrello-data/entity-name card) (orgtrello-data/entity-keyword card) (orgtrello-data/entity-due card) (orgtrello-data/entity-tags card)))
 
 (defun orgtrello-controller/--compute-checklist-to-orgtrello-entry (name &optional level status)
   "Compute the orgtrello format checklist"

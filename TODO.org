@@ -906,9 +906,9 @@ CLOSED: [2014-03-22 Sat 23:53]
 - [X] Version
 - [X] Release notes
 
-* IN-PROGRESS 0.3.7 [50%]
+* IN-PROGRESS 0.3.7 [66%]
 - [X] Use `defconst` keyword instead of defvar
-- [-] Use trello labels and org tags as one - https://github.com/org-trello/org-trello/issues/70
+- [X] Use trello labels and org tags as one - CLOSE https://github.com/org-trello/org-trello/issues/70
   - [X] Open information 'labelNames' in get-board API call
   - [X] Ensure the information is retrieved when parsing http response for querying board information
   - [X] Retrieve labels from the board
@@ -920,7 +920,7 @@ CLOSED: [2014-03-22 Sat 23:53]
   - [X] Open api to create/update cards with labels
   - [X] Update labels information when synchronizing to trello
   - [X] Retrieve labels information when synchronizing from trello
-  - [ ] Update buffer data with tags
+  - [X] Update buffer data with tags
 - [X] Refactor + Fix create / connect to board
 - [X] Update metadata command about the board currently connected (sometimes, new information arise)
 - [ ] Release notes

@@ -88,11 +88,9 @@
   (expect "" (orgtrello-controller/--compute-due-date nil)))
 
 (expectations (desc "orgtrello-controller/--private-compute-card-to-org-entry")
-  (expect "* name TODO
-DEADLINE: <some-date>
-" (orgtrello-controller/--private-compute-card-to-org-entry "TODO" "name" "some-date"))
-  (expect "* name TODO
-" (orgtrello-controller/--private-compute-card-to-org-entry "TODO" "name" nil)))
+  (expect "* name TODO :some-tags:\nDEADLINE: <some-date>\n" (orgtrello-controller/--private-compute-card-to-org-entry "TODO" "name" "some-date" ":some-tags:"))
+  (expect "* name TODO\n" (orgtrello-controller/--private-compute-card-to-org-entry "TODO" "name" nil nil))
+  (expect "* name TODO :tag,tag2:\n" (orgtrello-controller/--private-compute-card-to-org-entry "TODO" "name" nil ":tag,tag2:")))
 
 (expectations (desc "orgtrello-controller/--compute-checklist-to-orgtrello-entry")
   (expect "** name\n" (orgtrello-controller/--compute-checklist-to-orgtrello-entry "name"))
