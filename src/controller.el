@@ -1110,6 +1110,14 @@
                                                   (when *ORGTRELLO-DO-SHOW-CARD-COMMENTS-AFTER-ADDING*
                                                     (orgtrello-controller/do-show-card-comments!)))))))))
 
+(defun orgtrello-controller/do-cleanup-from-buffer! (&optional globally-flag)
+  "Permit to clean the buffer from trello data."
+  (orgtrello-controller/--remove-properties-file! *LIST-NAMES* *HMAP-USERS-NAME-ID* *ORGTRELLO-USER-LOGGED-IN* t) ;; remove any orgtrello relative entries
+  (when globally-flag
+    (orgtrello-controller/--delete-property *ORGTRELLO-ID*)              ;; remove all properties orgtrello-id from the buffer
+    (orgtrello-controller/--delete-property *ORGTRELLO-USERS-ENTRY*)     ;; remove all properties users-assigned/member-ids
+    (orgtrello-controller/--delete-property *ORGTRELLO-CARD-COMMENTS*))) ;; remove all properties users-assigned/member-ids
+
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-controller loaded!")
 
 
