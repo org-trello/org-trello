@@ -1081,7 +1081,7 @@
            (comments-title (format "comments for card '%s'" current-card-name))
            (comments-formatted (-> (orgtrello-buffer/get-card-comments!)
                                  orgtrello-controller/format-comments)))
-      (with-temp-buffer-window "*org-trello*" nil nil
+      (with-temp-buffer-window *ORGTRELLO-TITLE-BUFFER-INFORMATION* nil nil
        (progn
          (temp-buffer-resize-mode 1)
          (insert (format "%s\n\n" comments-title))
@@ -1151,7 +1151,7 @@
 
 (defun orgtrello-controller/do-show-board-labels! ()
   (let ((labels (-> (orgtrello-buffer/labels!) orgtrello-controller/--format-labels)))
-    (with-temp-buffer-window "*org-trello*" nil nil
+    (with-temp-buffer-window *ORGTRELLO-TITLE-BUFFER-INFORMATION* nil nil
      (progn
        (temp-buffer-resize-mode 1)
        (insert "Labels:\n\n")

@@ -20,6 +20,7 @@
 (defconst *ORGTRELLO-CARD-COMMENTS-DELIMITER* "###"                                       "Current card's comments delimiter.")
 (defconst *ORGTRELLO-CARD-COMMENTS-DELIMITER-PRINT* "\n\n"                                "Current card's comments delimiter to print.")
 (defconst *ORGTRELLO-DO-SHOW-CARD-COMMENTS-AFTER-ADDING* nil                              "Show the comment buffer after adding one comment")
+(defconst *ORGTRELLO-TITLE-BUFFER-INFORMATION* "*org-trello-information*"                 "Title for the org-trello buffers that display information.")
 
 (defconst *ORGTRELLO-HTTPS*               "https://trello.com"                            "URL https to help in browsing")
 
