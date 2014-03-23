@@ -908,7 +908,15 @@ CLOSED: [2014-03-22 Sat 23:53]
 
 * IN-PROGRESS 0.3.7 [25%]
 - [X] Use `defconst` keyword instead of defvar
-- [ ] Use trello labels and org tags as one - https://github.com/org-trello/org-trello/issues/70
+- [-] Use trello labels and org tags as one - https://github.com/org-trello/org-trello/issues/70
+  - [X] Open information 'labelNames' in get-board API call
+  - [ ] Make sure the information is retrieved when parsing response
+  - [ ] Retrieve labels from the board
+  - [ ] Install labels/tags information in global org-trello metadata
+  - [ ] Make labels/tags metadata `org-todo` aware
+  - [ ] Attach label/tags to card (in principles, it's `org-todo`'s job)
+  - [ ] Update labels information when synchronizing to trello
+  - [ ] Update tags information when synchronizing from trello
 - [ ] Release notes
 - [ ] Version
 * TODO 0.3.X [0%]
