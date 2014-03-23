@@ -906,7 +906,8 @@ CLOSED: [2014-03-22 Sat 23:53]
 - [X] Version
 - [X] Release notes
 
-* IN-PROGRESS 0.3.7 [83%]
+* DONE 0.3.7 [100%]
+CLOSED: [2014-03-24 Mon 00:58]
 - [X] Use `defconst` keyword instead of defvar
 - [X] Use trello labels and org tags as one - CLOSE https://github.com/org-trello/org-trello/issues/70
   - [X] Open information 'labelNames' in get-board API call
@@ -924,7 +925,7 @@ CLOSED: [2014-03-22 Sat 23:53]
 - [X] Refactor + Fix create / connect to board
 - [X] Update metadata command about the board currently connected (sometimes, new information arise)
 - [X] Release notes
-- [ ] Version
+- [X] Version
 * TODO 0.3.X [0%]
 - [ ] Open stop all synchronization actions - https://github.com/org-trello/org-trello/issues/131
 - [ ] Use active region - https://github.com/org-trello/org-trello/issues/130
