@@ -458,4 +458,5 @@ DEADLINE: <some-date>
   (expect "a,b,c" (orgtrello-controller/--tags-to-labels ":a:b:c"))
   (expect "a,b,c" (orgtrello-controller/--tags-to-labels "a:b:c"))
   (expect "a," (orgtrello-controller/--tags-to-labels ":a:"))
-  (expect "a," (orgtrello-controller/--tags-to-labels "a:")))
+  (expect "a," (orgtrello-controller/--tags-to-labels "a:"))
+  (expect nil  (orgtrello-controller/--tags-to-labels nil)))

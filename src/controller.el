@@ -93,9 +93,11 @@
   (-if-let (orgtrello-controller/--card-name (orgtrello-data/entity-name card-meta)) :ok *ERROR-SYNC-CARD-MISSING-NAME*))
 
 (defun orgtrello-controller/--tags-to-labels (str)
-  (let* ((s (s-split ":" str))
-         (ns (if (string= "" (car s)) (cdr s) s)))
-    (s-join "," ns)))
+  "Transform org tags string to csv labels."
+  (when str
+    (let* ((s (s-split ":" str))
+           (ns (if (string= "" (car s)) (cdr s) s)))
+      (s-join "," ns))))
 
 (defun orgtrello-controller/--card (card-meta &optional parent-meta grandparent-meta)
   "Deal with create/update card query build. If the checks are ko, the error message is returned."
