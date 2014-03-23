@@ -894,17 +894,6 @@
              board-users-hash-name-id)
     res-list))
 
-(defun orgtrello-controller/--compute-metadata! (board-name board-id board-lists-hash-name-id board-users-hash-name-id user-me &optional update-todo-keywords)
-  "Prepare the metadata to dump on header file."
-  `(":PROPERTIES:"
-    ,(format "#+PROPERTY: %s    %s" *BOARD-NAME* board-name)
-    ,(format "#+PROPERTY: %s      %s" *BOARD-ID* board-id)
-    ,@(orgtrello-controller/--compute-board-lists-hash-name-id board-lists-hash-name-id)
-    ,(if update-todo-keywords (orgtrello-controller/--properties-compute-todo-keywords-as-string board-lists-hash-name-id) "")
-    ,@(orgtrello-controller/--properties-compute-users-ids board-users-hash-name-id)
-    ,(format "#+PROPERTY: %s %s" *ORGTRELLO-USER-ME* user-me)
-    ":END:"))
-
 (defun orgtrello-controller/--update-orgmode-file-with-properties! (board-name board-id board-lists-hash-name-id board-users-hash-name-id user-me board-labels &optional update-todo-keywords)
   "Update the orgmode file with the needed headers for org-trello to work."
   (with-current-buffer (current-buffer)
