@@ -187,7 +187,9 @@
                                                                         (blue           . :blue)
                                                                         (green          . :green)
                                                                         (orange         . :orange)
-                                                                        (purple         . :purple))))
+                                                                        (purple         . :purple)
+                                                                        (labels         . :labels)
+                                                                        (color          . :color))))
 
 (defun orgtrello-data/--deal-with-key (key)
   "Given a key, return it as is if it's a keyword or return its mapped version from *ORGTRELLO-DATA-MAP-KEYWORDS*"

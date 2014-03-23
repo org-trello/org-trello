@@ -173,7 +173,6 @@
                                                     (shortUrl . "https://trello.com/c/9XPLuJhi")
                                                     (pos . "98304")
                                                     (name . "Joy of FUN(ctional) LANGUAGES")
-                                                    (labels . [])
                                                     (manualCoverAttachment . :json-false)
                                                     (idAttachmentCover)
                                                     (idShort . 2515)
@@ -379,7 +378,7 @@
 (expectations
   (expect t (hash-equal
              #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
-                           (url :url id :id name :name idMembers :member-ids idList :list-id idChecklists :checklists idBoard :board-id due :due desc :desc closed :closed idCard :card-id checkItems :items state :checked status :status buffername :buffername sync :sync uri :uri method :method params :params action :action start :start callback :callback pos :position position :position keyword :keyword level :level member-ids :member-ids member :member memberships :memberships username :username fullName :full-name actions :comments labelNames :labels red :red yellow :yellow blue :blue green :green orange :orange purple :purple))
+                           (url :url id :id name :name idMembers :member-ids idList :list-id idChecklists :checklists idBoard :board-id due :due desc :desc closed :closed idCard :card-id checkItems :items state :checked status :status buffername :buffername sync :sync uri :uri method :method params :params action :action start :start callback :callback pos :position position :position keyword :keyword level :level member-ids :member-ids member :member memberships :memberships username :username fullName :full-name actions :comments labelNames :labels red :red yellow :yellow blue :blue green :green orange :orange purple :purple labels :labels color :color))
              *ORGTRELLO-DATA-MAP-KEYWORDS*)))
 
 (expectations
