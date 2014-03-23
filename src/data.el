@@ -179,7 +179,14 @@
                                                                         (memberships    . :memberships)
                                                                         (username       . :username)
                                                                         (fullName       . :full-name)
-                                                                        (actions        . :comments))))
+                                                                        (actions        . :comments)
+                                                                        (labelNames     . :labels)
+                                                                        (red            . :red)
+                                                                        (yellow         . :yellow)
+                                                                        (blue           . :blue)
+                                                                        (green          . :green)
+                                                                        (orange         . :orange)
+                                                                        (purple         . :purple))))
 
 (defun orgtrello-data/--deal-with-key (key)
   "Given a key, return it as is if it's a keyword or return its mapped version from *ORGTRELLO-DATA-MAP-KEYWORDS*"
