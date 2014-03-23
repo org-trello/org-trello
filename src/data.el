@@ -77,8 +77,8 @@
 
 (defun orgtrello-data/--convert-to-orgtrello-metadata (heading-metadata)
   "Given the heading-metadata returned by the function 'org-heading-components, make it a hashmap with key :level, :keyword, :name. and their respective value"
-  (cl-destructuring-bind (comments description member-ids buffer-name point id due level _ keyword _ name &rest) heading-metadata
-                         (orgtrello-hash/make-hash-org member-ids level keyword name id due point buffer-name description comments)))
+  (cl-destructuring-bind (comments description member-ids buffer-name point id due level _ keyword _ name tags) heading-metadata
+                         (orgtrello-hash/make-hash-org member-ids level keyword name id due point buffer-name description comments tags)))
 
 (defun orgtrello-data/--compute-fn (entity list-dispatch-fn)
   "Given an entity, compute the result"
@@ -129,6 +129,7 @@
 (defun orgtrello-data/entity-start        (entity) (orgtrello-data/gethash-data :start          entity))
 (defun orgtrello-data/entity-comments     (entity) (orgtrello-data/gethash-data :comments       entity))
 (defun orgtrello-data/entity-labels       (entity) (orgtrello-data/gethash-data :labels         entity))
+(defun orgtrello-data/entity-tags         (entity) (orgtrello-data/gethash-data :tags           entity))
 
 (defun orgtrello-data/entity-method (query-map) (orgtrello-data/gethash-data :method query-map))
 (defun orgtrello-data/entity-uri    (query-map) (orgtrello-data/gethash-data :uri    query-map))

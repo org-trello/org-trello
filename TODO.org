@@ -916,6 +916,7 @@ CLOSED: [2014-03-22 Sat 23:53]
   - [X] Make labels/tags metadata `org-todo` aware
   - [X] Attach label/tags to card (in principles, it's `org-todo`'s job)
   - [X] Show current labels
+  - [X] Parse labels among org data
   - [ ] Update labels information when synchronizing to trello
   - [ ] Update tags information when synchronizing from trello
 - [X] Refactor + Fix create / connect to board
