@@ -389,3 +389,13 @@ DEADLINE: <some-date>
 (expectations
  (expect "dude0: some comments###dude1: some other comments"
          (orgtrello-controller/unformat-comments "dude0: some comments\n\ndude1: some other comments")))
+
+(expectations
+  (expect t
+    (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data ("0" :id-board0 "1" :id-board1))
+                (orgtrello-controller/--index-board-map (orgtrello-hash/make-properties '((:id-board0 . "board0-name") (:id-board1 . "board1-name")))))))
+
+(expectations
+  (expect
+      "0: board0-name\n1: board1-name\n"
+    (orgtrello-controller/--display-boards-to-choose (orgtrello-hash/make-properties '((:id-board0 . "board0-name") (:id-board1 . "board1-name"))))))

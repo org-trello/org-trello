@@ -452,7 +452,14 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
                                                                         (memberships    . :memberships)
                                                                         (username       . :username)
                                                                         (fullName       . :full-name)
-                                                                        (actions        . :comments))))
+                                                                        (actions        . :comments)
+                                                                        (labelNames     . :labels)
+                                                                        (red            . :red)
+                                                                        (yellow         . :yellow)
+                                                                        (blue           . :blue)
+                                                                        (green          . :green)
+                                                                        (orange         . :orange)
+                                                                        (purple         . :purple))))
 
 (defun orgtrello-data/--deal-with-key (key)
   "Given a key, return it as is if it's a keyword or return its mapped version from *ORGTRELLO-DATA-MAP-KEYWORDS*"
@@ -723,7 +730,7 @@ This is a list with the following elements:
 
 (defun orgtrello-api/get-board (id)
   "Retrieve the boards of the current user."
-  (orgtrello-hash/make-hash "GET" (format "/boards/%s" id) '(("memberships" . "active") ("memberships_member" . "true") ("fields" . "name,memberships,closed"))))
+  (orgtrello-hash/make-hash "GET" (format "/boards/%s" id) '(("memberships" . "active") ("memberships_member" . "true") ("fields" . "name,memberships,closed,labelNames"))))
 
 (defun orgtrello-api/get-cards (board-id)
   "cards of a board"
@@ -2495,24 +2502,39 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   "Return the map of the existing list of the board with id board-id. (Synchronous request)"
   (orgtrello-query/http-trello (orgtrello-api/get-lists board-id) *do-sync-query*))
 
-(defun orgtrello-controller/--choose-board (boards)
-  "Given a map of boards, display the possible boards for the user to choose which one he wants to work with."  ;; ugliest ever
-  (defvar orgtrello-controller/--board-chosen nil)
-  (setq orgtrello-controller/--board-chosen nil)
-  (let* ((str-key-val  "")
-         (i            0)
-         (i-id (orgtrello-hash/empty-hash)))
-    (maphash (lambda (id name)
-               (setq str-key-val (format "%s%d: %s\n" str-key-val i name))
-               (puthash (format "%d" i) id i-id)
+(defun orgtrello-controller/--index-board-map (boards)
+  "Given a map of board (id . name), return a map of (position . name)"
+  (let ((i               0)
+        (index-board-map (orgtrello-hash/empty-hash)))
+    (maphash (lambda (id _)
+               (puthash (format "%d" i) id index-board-map)
                (setq i (+ 1 i)))
              boards)
-    (while (not (gethash orgtrello-controller/--board-chosen i-id))
-      (setq orgtrello-controller/--board-chosen
-            (read-string (format "%s\nInput the number of the board desired: " str-key-val))))
-    (let* ((orgtrello-controller/--chosen-board-id   (gethash orgtrello-controller/--board-chosen i-id))
-           (orgtrello-controller/--chosen-board-name ))
-      `(,orgtrello-controller/--chosen-board-id ,(gethash orgtrello-controller/--chosen-board-id boards)))))
+    index-board-map))
+
+(defun orgtrello-controller/--display-boards-to-choose (boards)
+  "Given a map of board (id . name), return a string to display in minibuffer."
+  (let ((string-result  "")
+        (i            0))
+    (maphash (lambda (_ name)
+               (setq string-result (format "%s%d: %s\n" string-result i name))
+               (setq i (+ 1 i)))
+             boards)
+    string-result))
+
+(defun orgtrello-controller/choose-board! (boards)
+  "Given a map of boards, display the possible boards for the user to choose which one he wants to work with."  ;; ugliest ever
+  (let* ((index-selected-board    nil)
+         (display-board-to-choose (orgtrello-controller/--display-boards-to-choose boards))
+         (index-board-map         (orgtrello-controller/--index-board-map boards)))
+    ;; keep asking the selection until the choice is possible
+    (while (not (gethash index-selected-board index-board-map))
+      (setq index-selected-board (read-string (format "%s\nInput the number of the board desired: " display-board-to-choose))))
+    ;; when we are good
+    (let ((selected-id-board (gethash index-selected-board index-board-map)))
+      (list selected-id-board (gethash selected-id-board boards)))))
+
+;; (orgtrello-controller/choose-board! (orgtrello-hash/make-properties '((:id-board0 . "board0-name") (:id-board1 . "board1-name"))))
 
 (defun orgtrello-controller/--convention-property-name (name)
   "Use the right convention for the property used in the headers of the org-mode file."
@@ -2627,14 +2649,14 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   (interactive)
   (cl-destructuring-bind
       (orgtrello-controller/--chosen-board-id orgtrello-controller/--chosen-board-name) (-> (orgtrello-controller/--list-boards)
-                                                                      orgtrello-controller/--id-name
-                                                                      orgtrello-controller/--choose-board)
+                                                                                          orgtrello-controller/--id-name
+                                                                                          orgtrello-controller/choose-board!)
     (let* ((orgtrello-controller/--board-lists-hname-id (-> orgtrello-controller/--chosen-board-id
-                                                 orgtrello-controller/--list-board-lists
-                                                 orgtrello-controller/--name-id))
-           (orgtrello-controller/--board-list-keywords (orgtrello-controller/--hash-table-keys orgtrello-controller/--board-lists-hname-id))
-           (orgtrello-controller/--board-users-name-id (orgtrello-controller/--board-users-information-from-board-id! orgtrello-controller/--chosen-board-id))
-           (user-logged-in                  (orgtrello-controller/--user-logged-in)))
+                                                          orgtrello-controller/--list-board-lists
+                                                          orgtrello-controller/--name-id))
+           (orgtrello-controller/--board-list-keywords  (orgtrello-controller/--hash-table-keys orgtrello-controller/--board-lists-hname-id))
+           (orgtrello-controller/--board-users-name-id  (orgtrello-controller/--board-users-information-from-board-id! orgtrello-controller/--chosen-board-id))
+           (user-logged-in                              (orgtrello-controller/--user-logged-in)))
       ;; remove any eventual present entry
       (orgtrello-controller/--remove-properties-file! orgtrello-controller/--board-list-keywords orgtrello-controller/--board-users-name-id user-logged-in t)
       ;; update with new ones
