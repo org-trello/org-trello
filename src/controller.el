@@ -838,7 +838,7 @@
            ,@(--map (orgtrello-controller/compute-property (orgtrello-controller/--convention-property-name it)) list-keywords)
            ,@(orgtrello-controller/--compute-hash-name-id-to-list users-hash-name-id)
            ,(orgtrello-controller/compute-property *ORGTRELLO-USER-ME* user-me)
-           ,(if update-todo-keywords "#+TODO: ")
+           ,(when update-todo-keywords "#+TODO: ")
            ":END:")
          (mapc (lambda (property-to-remove) (orgtrello-controller/--delete-buffer-property property-to-remove))))))
 
