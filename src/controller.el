@@ -840,7 +840,7 @@
            ,(orgtrello-controller/compute-property *ORGTRELLO-USER-ME* user-me)
            ,(when update-todo-keywords "#+TODO: ")
            ":END:")
-         (mapc (lambda (property-to-remove) (orgtrello-controller/--delete-buffer-property property-to-remove))))))
+         (mapc 'orgtrello-controller/--delete-buffer-property!))))
 
 (defun orgtrello-controller/--compute-keyword-separation (name)
   "Given a keyword done (case insensitive) return a string '| done' or directly the keyword"
