@@ -803,7 +803,7 @@
   "Use the right convention for the property used in the headers of the org-mode file."
   (replace-regexp-in-string " " "-" name))
 
-(defun orgtrello-controller/--delete-buffer-property (property-name)
+(defun orgtrello-controller/--delete-buffer-property! (property-name)
   "A simple routine to delete a #+property: entry from the org-mode buffer."
   (save-excursion
     (goto-char (point-min))
