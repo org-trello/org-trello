@@ -818,7 +818,6 @@
   (format "#+property: %s %s" property-name (if property-value property-value "")))
 
 (defun orgtrello-controller/--compute-hash-name-id-to-list (users-hash-name-id)
-
   (let ((res-list nil))
     (maphash (lambda (name id) (--> name
                                     (replace-regexp-in-string *ORGTRELLO-USER-PREFIX* "" it)
@@ -829,18 +828,29 @@
     res-list))
 
 (defun orgtrello-controller/--remove-properties-file! (list-keywords users-hash-name-id user-me &optional update-todo-keywords)
-  "Remove the current org-trello properties"
+  "Remove the current org-trello header metadata."
   (with-current-buffer (current-buffer)
     ;; compute the list of properties to purge
     (->> `(":PROPERTIES"
-           ,(orgtrello-controller/compute-property *BOARD-ID*)
            ,(orgtrello-controller/compute-property *BOARD-NAME*)
+           ,(orgtrello-controller/compute-property *BOARD-ID*)
            ,@(--map (orgtrello-controller/compute-property (orgtrello-controller/--convention-property-name it)) list-keywords)
            ,@(orgtrello-controller/--compute-hash-name-id-to-list users-hash-name-id)
            ,(orgtrello-controller/compute-property *ORGTRELLO-USER-ME* user-me)
            ,(when update-todo-keywords "#+TODO: ")
            ":END:")
-         (mapc 'orgtrello-controller/--delete-buffer-property!))))
+      (mapc 'orgtrello-controller/--delete-buffer-property!))))
+
+(defun orgtrello-controller/--compute-metadata! (board-name board-id board-lists-hash-name-id board-users-hash-name-id user-me &optional update-todo-keywords)
+  "Compute the org-trello metadata to dump on header file."
+  `(":PROPERTIES:"
+    ,(orgtrello-controller/compute-property *BOARD-NAME* board-name)
+    ,(orgtrello-controller/compute-property *BOARD-ID* board-id)
+    ,@(orgtrello-controller/--compute-board-lists-hash-name-id board-lists-hash-name-id)
+    ,(if update-todo-keywords (orgtrello-controller/--properties-compute-todo-keywords-as-string board-lists-hash-name-id) "")
+    ,@(orgtrello-controller/--properties-compute-users-ids board-users-hash-name-id)
+    ,(format "#+PROPERTY: %s %s" *ORGTRELLO-USER-ME* user-me)
+    ":END:"))
 
 (defun orgtrello-controller/--compute-keyword-separation (name)
   "Given a keyword done (case insensitive) return a string '| done' or directly the keyword"
@@ -868,7 +878,6 @@
                            (nreverse res-list))) ""))
 
 (defun orgtrello-controller/--properties-compute-users-ids (board-users-hash-name-id)
-
   (let ((res-list))
     (maphash (lambda (name id) (--> name
                                     (format "#+PROPERTY: %s%s %s" *ORGTRELLO-USER-PREFIX* it id)
@@ -876,20 +885,24 @@
              board-users-hash-name-id)
     res-list))
 
-(defun orgtrello-controller/--update-orgmode-file-with-properties (board-name board-id board-lists-hash-name-id board-users-hash-name-id user-me &optional update-todo-keywords)
+(defun orgtrello-controller/--compute-metadata! (board-name board-id board-lists-hash-name-id board-users-hash-name-id user-me &optional update-todo-keywords)
+  "Prepare the metadata to dump on header file."
+  `(":PROPERTIES:"
+    ,(format "#+PROPERTY: %s    %s" *BOARD-NAME* board-name)
+    ,(format "#+PROPERTY: %s      %s" *BOARD-ID* board-id)
+    ,@(orgtrello-controller/--compute-board-lists-hash-name-id board-lists-hash-name-id)
+    ,(if update-todo-keywords (orgtrello-controller/--properties-compute-todo-keywords-as-string board-lists-hash-name-id) "")
+    ,@(orgtrello-controller/--properties-compute-users-ids board-users-hash-name-id)
+    ,(format "#+PROPERTY: %s %s" *ORGTRELLO-USER-ME* user-me)
+    ":END:"))
+
+(defun orgtrello-controller/--update-orgmode-file-with-properties! (board-name board-id board-lists-hash-name-id board-users-hash-name-id user-me &optional update-todo-keywords)
   "Update the orgmode file with the needed headers for org-trello to work."
   (with-current-buffer (current-buffer)
     (goto-char (point-min))
     (set-buffer-file-coding-system 'utf-8-auto) ;; force utf-8
-    (->> `(":PROPERTIES:"
-           ,(format "#+PROPERTY: %s    %s" *BOARD-NAME* board-name)
-            ,(format "#+PROPERTY: %s      %s" *BOARD-ID* board-id)
-            ,@(orgtrello-controller/--compute-board-lists-hash-name-id board-lists-hash-name-id)
-            ,(if update-todo-keywords (orgtrello-controller/--properties-compute-todo-keywords-as-string board-lists-hash-name-id))
-            ,@(orgtrello-controller/--properties-compute-users-ids board-users-hash-name-id)
-            ,(format "#+PROPERTY: %s %s" *ORGTRELLO-USER-ME* user-me)
-            ":END:")
-         (mapc (lambda (property-to-insert) (insert property-to-insert "\n"))))
+    (->> (orgtrello-controller/--compute-metadata! board-name board-id board-lists-hash-name-id board-users-hash-name-id user-me update-todo-keywords)
+      (--map (insert it "\n")))
     (goto-char (point-min))
     (org-cycle)
     (save-buffer)
@@ -921,9 +934,9 @@
            (board-users-name-id (orgtrello-controller/--board-users-information-from-board-id! chosen-board-id))
            (user-logged-in      (orgtrello-controller/--user-logged-in)))
       ;; remove any eventual present entry
-      (orgtrello-controller/--remove-properties-file! board-list-keywords board-users-name-id user-logged-in t)
+      (orgtrello-controller/do-cleanup-from-buffer!)
       ;; update with new ones
-      (orgtrello-controller/--update-orgmode-file-with-properties
+      (orgtrello-controller/--update-orgmode-file-with-properties!
        chosen-board-name
        chosen-board-id
        board-lists-hname-id
@@ -937,7 +950,6 @@
   (mapcar 'orgtrello-data/entity-member memberships-map))
 
 (defun orgtrello-controller/--compute-user-properties-hash (user-properties)
-
   (--reduce-from (progn (puthash (orgtrello-data/entity-username it) (orgtrello-data/entity-id it) acc) acc) (orgtrello-hash/empty-hash) user-properties))
 
 (defun orgtrello-controller/--compute-user-properties-hash-from-board (board-info)
@@ -979,18 +991,25 @@
 
 (defun orgtrello-controller/do-create-board-and-lists ()
   "Command to create a board and the lists."
-  (defvar orgtrello-controller/--board-name nil)        (setq orgtrello-controller/--board-name nil)
-  (defvar orgtrello-controller/--board-description nil) (setq orgtrello-controller/--board-description nil)
-  (while (not orgtrello-controller/--board-name) (setq orgtrello-controller/--board-name (read-string "Please, input the desired board name: ")))
-  (setq orgtrello-controller/--board-description (read-string "Please, input the board description (empty for none): "))
-  (cl-destructuring-bind (orgtrello-controller/--board-id orgtrello-controller/--board-name) (orgtrello-controller/--create-board orgtrello-controller/--board-name orgtrello-controller/--board-description)
-                         (let* ((orgtrello-controller/--board-list-ids       (--map (orgtrello-data/entity-id it) (orgtrello-controller/--list-board-lists orgtrello-controller/--board-id)))  ;; first retrieve the existing lists (created by default on trello)
-                                (orgtrello-controller/--lists-to-close       (orgtrello-controller/--close-lists orgtrello-controller/--board-list-ids))                                ;; close those lists (they may surely not match the name we want)
-                                (orgtrello-controller/--board-lists-hname-id (orgtrello-controller/--create-lists-according-to-keywords orgtrello-controller/--board-id *LIST-NAMES*))  ;; create the list, this returns the ids list
-                                (orgtrello-controller/--board-users-name-id  (orgtrello-controller/--board-users-information-from-board-id! orgtrello-controller/--board-id))           ;; retrieve user informations
-                                (user-logged-in                   (orgtrello-controller/--user-logged-in)))
-                           (orgtrello-controller/--remove-properties-file! *LIST-NAMES* orgtrello-controller/--board-users-name-id user-logged-in) ;; remove eventual already present entry
-                           (orgtrello-controller/--update-orgmode-file-with-properties orgtrello-controller/--board-name orgtrello-controller/--board-id orgtrello-controller/--board-lists-hname-id orgtrello-controller/--board-users-name-id user-logged-in))) ;; update org buffer with new ones
+  (let ((input-board-name        (orgtrello-input/read-not-empty! "Please, input the desired board name: "))
+        (input-board-description (read-string "Please, input the board description (empty for none): ")))
+
+    ;; do create the board and more
+    (cl-destructuring-bind (board-id board-name) (orgtrello-controller/--create-board input-board-name input-board-description)
+      (let* (;; first retrieve the existing lists (created by default on trello)
+             (board-list-ids       (mapcar 'orgtrello-data/entity-id (orgtrello-controller/--list-board-lists board-id)))
+             ;; close those lists (they may surely not match the name we want)
+             (lists-to-close       (orgtrello-controller/--close-lists board-list-ids))
+             ;; create the list, this returns the ids list
+             (board-lists-hname-id (orgtrello-controller/--create-lists-according-to-keywords board-id *LIST-NAMES*))
+             ;; retrieve user informations
+             (board-users-name-id  (orgtrello-controller/--board-users-information-from-board-id! board-id))
+             ;; compute the current user's information
+             (user-logged-in       (orgtrello-controller/--user-logged-in)))
+        ;; clean the buffer's old metadata
+        (orgtrello-controller/do-cleanup-from-buffer!)
+        ;; update org buffer with new ones
+        (orgtrello-controller/--update-orgmode-file-with-properties! board-name board-id board-lists-hname-id board-users-name-id user-logged-in))))
   "Create board and lists done!")
 
 (defun orgtrello-controller/--users-from (string-users)

@@ -399,3 +399,43 @@ DEADLINE: <some-date>
   (expect
       "0: board0-name\n1: board1-name\n"
     (orgtrello-controller/--display-boards-to-choose (orgtrello-hash/make-properties '((:id-board0 . "board0-name") (:id-board1 . "board1-name"))))))
+
+(expectations
+  (expect '(":PROPERTIES:"
+            "#+PROPERTY: board-name    some-board-name"
+            "#+PROPERTY: board-id      some-board-id"
+            "#+PROPERTY: DONE done-id"
+            "#+PROPERTY: TODO todo-id"
+            ""
+            "#+PROPERTY: orgtrello-user-some-other-user some-other-user-id"
+            "#+PROPERTY: orgtrello-user-user user-id"
+            "#+PROPERTY: orgtrello-user-me user"
+            ":END:")
+    (orgtrello-controller/--compute-metadata!
+     "some-board-name"
+     "some-board-id"
+     (orgtrello-hash/make-properties '(("TODO" . "todo-id") ("DONE" . "done-id")))
+     (orgtrello-hash/make-properties '(("user" . "user-id") ("some-other-user" . "some-other-user-id")))
+     "user")))
+
+
+;; cannot keep this test because the prod code does save the buffer
+;; (expectations
+;;   (expect
+;;       ":PROPERTIES:
+;; #+PROPERTY: board-name    some-board-name
+;; #+PROPERTY: board-id      some-board-id
+;; #+PROPERTY: DONE done-id
+;; #+PROPERTY: TODO todo-id
+
+;; #+PROPERTY: orgtrello-user-some-other-user some-other-user-id
+;; #+PROPERTY: orgtrello-user-user user-id
+;; #+PROPERTY: orgtrello-user-me user
+;; :END:"
+;;     (orgtrello-tests/with-temp-buffer ""
+;;                                       (orgtrello-controller/--update-orgmode-file-with-properties!
+;;                                        "some-board-name"
+;;                                        "some-board-id"
+;;                                        (orgtrello-hash/make-properties '(("TODO" . "todo-id") ("DONE" . "done-id")))
+;;                                        (orgtrello-hash/make-properties '(("user" . "user-id") ("some-other-user" . "some-other-user-id")))
+;;                                        "user"))))
