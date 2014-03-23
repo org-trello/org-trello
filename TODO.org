@@ -917,6 +917,7 @@ CLOSED: [2014-03-22 Sat 23:53]
   - [X] Attach label/tags to card (in principles, it's `org-todo`'s job)
   - [X] Show current labels
   - [X] Parse labels among org data
+  - [X] Open api to create/update cards with labels
   - [ ] Update labels information when synchronizing to trello
   - [ ] Update tags information when synchronizing from trello
 - [X] Refactor + Fix create / connect to board

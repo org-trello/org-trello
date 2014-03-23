@@ -64,6 +64,11 @@
   (expect "/cards/"                                                                                                 (gethash :uri    (orgtrello-api/add-card :name-card :id-list nil nil :description)))
   (expect '(("desc" . :description) ("name" . :name-card) ("idList" . :id-list))                                    (gethash :params (orgtrello-api/add-card :name-card :id-list nil nil :description))))
 
+(expectations (desc "orgtrello-api/add-card - name, idList, labels")
+  (expect "POST"                                                              (gethash :method (orgtrello-api/add-card :name-card :id-list nil nil nil :labels)))
+  (expect "/cards/"                                                           (gethash :uri    (orgtrello-api/add-card :name-card :id-list nil nil nil :labels)))
+  (expect '(("labels" . :labels) ("name" . :name-card) ("idList" . :id-list)) (gethash :params (orgtrello-api/add-card :name-card :id-list nil nil nil :labels))))
+
 (expectations (desc "orgtrello-api/move-card - card-id, list-id, name")
   (expect "PUT"                                             (gethash :method (orgtrello-api/move-card :id-card :id-list "name-card")))
   (expect "/cards/:id-card"                                 (gethash :uri    (orgtrello-api/move-card :id-card :id-list "name-card")))
