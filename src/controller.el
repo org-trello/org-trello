@@ -54,6 +54,7 @@
     (setq *HMAP-USERS-ID-NAME* orgtrello-controller/--hmap-user-id-name)
     (setq *HMAP-USERS-NAME-ID* orgtrello-controller/--hmap-user-name-id)
     (setq *ORGTRELLO-USER-LOGGED-IN* (orgtrello-buffer/me!))
+    (setq org-tag-alist '(("red" . ?r) ("green" . ?g) ("yellow" . ?y) ("blue" . ?b) ("purple" . ?p) ("orange" . ?o)))
     :ok))
 
 (defun orgtrello-controller/control-encoding (&optional args)

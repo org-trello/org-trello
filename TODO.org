@@ -911,10 +911,10 @@ CLOSED: [2014-03-22 Sat 23:53]
 - [-] Use trello labels and org tags as one - https://github.com/org-trello/org-trello/issues/70
   - [X] Open information 'labelNames' in get-board API call
   - [X] Ensure the information is retrieved when parsing http response for querying board information
-  - [ ] Install labels/tags information in global org-trello metadata
   - [X] Retrieve labels from the board
-  - [ ] Make labels/tags metadata `org-todo` aware
-  - [ ] Attach label/tags to card (in principles, it's `org-todo`'s job)
+  - [X] Install labels/tags information in global org-trello metadata
+  - [X] Make labels/tags metadata `org-todo` aware
+  - [X] Attach label/tags to card (in principles, it's `org-todo`'s job)
   - [ ] Update labels information when synchronizing to trello
   - [ ] Update tags information when synchronizing from trello
 - [X] Refactor + Fix create / connect to board
