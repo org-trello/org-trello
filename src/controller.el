@@ -757,11 +757,11 @@
   "Given a list of entities, return a map of (id, name)."
   (--reduce-from (progn (puthash (orgtrello-data/entity-name it) (orgtrello-data/entity-id it) acc) acc) (orgtrello-hash/empty-hash) entities))
 
-(defun orgtrello-controller/--list-boards ()
+(defun orgtrello-controller/--list-boards! ()
   "Return the map of the existing boards associated to the current account. (Synchronous request)"
   (--remove (orgtrello-data/entity-closed it) (orgtrello-query/http-trello (orgtrello-api/get-boards) *do-sync-query*)))
 
-(defun orgtrello-controller/--list-board-lists (board-id)
+(defun orgtrello-controller/--list-board-lists! (board-id)
   "Return the map of the existing list of the board with id board-id. (Synchronous request)"
   (orgtrello-query/http-trello (orgtrello-api/get-lists board-id) *do-sync-query*))
 
@@ -914,36 +914,25 @@
     (maphash (lambda (k v) (push k keys)) hash-table)
     keys))
 
-(defun orgtrello-controller/--user-logged-in ()
+(defun orgtrello-controller/--user-logged-in! ()
   "Compute the current user."
-  (--> (orgtrello-api/get-me)
-       (orgtrello-query/http-trello it *do-sync-query*)
-       (orgtrello-data/entity-username it)))
+  (-> (orgtrello-api/get-me)
+       (orgtrello-query/http-trello *do-sync-query*)
+       orgtrello-data/entity-username))
 
 (defun orgtrello-controller/do-install-board-and-lists ()
   "Command to install the list boards."
   (interactive)
-  (cl-destructuring-bind
-      (chosen-board-id chosen-board-name) (-> (orgtrello-controller/--list-boards)
-                                            orgtrello-controller/--id-name
-                                            orgtrello-controller/choose-board!)
-    (let* ((board-lists-hname-id (-> chosen-board-id
-                                   orgtrello-controller/--list-board-lists
-                                   orgtrello-controller/--name-id))
-           (board-list-keywords (orgtrello-controller/--hash-table-keys board-lists-hname-id))
-           (board-users-name-id (orgtrello-controller/--board-users-information-from-board-id! chosen-board-id))
-           (user-logged-in      (orgtrello-controller/--user-logged-in)))
-      ;; remove any eventual present entry
-      (orgtrello-controller/do-cleanup-from-buffer!)
-      ;; update with new ones
-      (orgtrello-controller/--update-orgmode-file-with-properties!
-       chosen-board-name
-       chosen-board-id
-       board-lists-hname-id
-       board-users-name-id
-       user-logged-in
-       t))
-    "Install board and list ids done!"))
+  (let* ((board-info        (-> (orgtrello-controller/--list-boards!)
+                              orgtrello-controller/--id-name
+                              orgtrello-controller/choose-board!))
+         (chosen-board-id   (first board-info))
+         (chosen-board-name (second board-info))
+         (board-lists       (orgtrello-controller/--list-board-lists! chosen-board-id))
+         (user-logged-in    (orgtrello-controller/--user-logged-in!)))
+    ;; Update metadata about the board
+    (orgtrello-controller/do-write-board-metadata! chosen-board-id chosen-board-name user-logged-in board-lists))
+  "Install board and list ids done!")
 
 (defun orgtrello-controller/--compute-user-properties (memberships-map)
   "Given a map, extract the map of user informations."
@@ -997,7 +986,7 @@
     ;; do create the board and more
     (cl-destructuring-bind (board-id board-name) (orgtrello-controller/--create-board input-board-name input-board-description)
       (let* (;; first retrieve the existing lists (created by default on trello)
-             (board-list-ids       (mapcar 'orgtrello-data/entity-id (orgtrello-controller/--list-board-lists board-id)))
+             (board-list-ids       (mapcar 'orgtrello-data/entity-id (orgtrello-controller/--list-board-lists! board-id)))
              ;; close those lists (they may surely not match the name we want)
              (lists-to-close       (orgtrello-controller/--close-lists board-list-ids))
              ;; create the list, this returns the ids list
@@ -1005,7 +994,7 @@
              ;; retrieve user informations
              (board-users-name-id  (orgtrello-controller/--board-users-information-from-board-id! board-id))
              ;; compute the current user's information
-             (user-logged-in       (orgtrello-controller/--user-logged-in)))
+             (user-logged-in       (orgtrello-controller/--user-logged-in!)))
         ;; clean the buffer's old metadata
         (orgtrello-controller/do-cleanup-from-buffer!)
         ;; update org buffer with new ones
@@ -1136,6 +1125,28 @@
     (orgtrello-controller/--delete-property *ORGTRELLO-ID*)              ;; remove all properties orgtrello-id from the buffer
     (orgtrello-controller/--delete-property *ORGTRELLO-USERS-ENTRY*)     ;; remove all properties users-assigned/member-ids
     (orgtrello-controller/--delete-property *ORGTRELLO-CARD-COMMENTS*))) ;; remove all properties users-assigned/member-ids
+
+(defun orgtrello-controller/do-write-board-metadata! (board-id board-name user-logged-in board-lists)
+  "Given a board id, write in the current buffer the updated data."
+  (let* ((board-lists-hname-id (orgtrello-controller/--name-id board-lists))
+         (board-list-keywords  (orgtrello-controller/--hash-table-keys board-lists-hname-id))
+         (board-users-name-id  (orgtrello-controller/--board-users-information-from-board-id! board-id)))
+    ;; remove any eventual present entry
+    (orgtrello-controller/do-cleanup-from-buffer!)
+    ;; update with new ones
+    (orgtrello-controller/--update-orgmode-file-with-properties!
+     board-name
+     board-id
+     board-lists-hname-id
+     board-users-name-id
+     user-logged-in
+     t)))
+
+(defun orgtrello-controller/do-update-board-metadata! ()
+  "Update metadata about the current board we are connected to."
+  (let ((board-id (orgtrello-controller/--board-id)))
+    (->> (orgtrello-controller/--list-board-lists! board-id)
+      (orgtrello-controller/do-write-board-metadata! board-id (orgtrello-controller/--board-name) (orgtrello-controller/--me!)))))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-controller loaded!")
 

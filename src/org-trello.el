@@ -84,6 +84,16 @@
      *do-save-buffer*
      *do-reload-setup*))
 
+(defun org-trello/update-board-metadata ()
+  "Control first, then if ok, trigger the update of the informations about the board."
+  (interactive)
+  (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
+   "Update board information"
+   '(orgtrello-controller/setup-properties orgtrello-controller/control-keys)
+   'orgtrello-controller/do-update-board-metadata!
+   *do-save-buffer*
+   *do-reload-setup*))
+
 (defun org-trello/jump-to-card ()
   "Jump to current card in browser."
   (interactive)
