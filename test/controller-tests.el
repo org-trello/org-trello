@@ -401,22 +401,30 @@ DEADLINE: <some-date>
     (orgtrello-controller/--display-boards-to-choose (orgtrello-hash/make-properties '((:id-board0 . "board0-name") (:id-board1 . "board1-name"))))))
 
 (expectations
-  (expect '(":PROPERTIES:"
-            "#+PROPERTY: board-name    some-board-name"
-            "#+PROPERTY: board-id      some-board-id"
-            "#+PROPERTY: DONE done-id"
-            "#+PROPERTY: TODO todo-id"
-            ""
-            "#+PROPERTY: orgtrello-user-some-other-user some-other-user-id"
-            "#+PROPERTY: orgtrello-user-user user-id"
-            "#+PROPERTY: orgtrello-user-me user"
-            ":END:")
-    (orgtrello-controller/--compute-metadata!
-     "some-board-name"
-     "some-board-id"
-     (orgtrello-hash/make-properties '(("TODO" . "todo-id") ("DONE" . "done-id")))
-     (orgtrello-hash/make-properties '(("user" . "user-id") ("some-other-user" . "some-other-user-id")))
-     "user")))
+ (expect '(":PROPERTIES:"
+           "#+property: board-name some-board-name"
+           "#+property: board-id some-board-id"
+           "#+PROPERTY: DONE done-id"
+           "#+PROPERTY: TODO todo-id"
+           ""
+           "#+PROPERTY: orgtrello-user-some-other-user some-other-user-id"
+           "#+PROPERTY: orgtrello-user-user user-id"
+           "#+PROPERTY: :green green label"
+           "#+PROPERTY: :red red label"
+           "#+PROPERTY: orgtrello-user-me user"
+           ":END:")
+         (orgtrello-controller/--compute-metadata!
+          "some-board-name"
+          "some-board-id"
+          (orgtrello-hash/make-properties '(("TODO" . "todo-id") ("DONE" . "done-id")))
+          (orgtrello-hash/make-properties '(("user" . "user-id") ("some-other-user" . "some-other-user-id")))
+          "user"
+          (orgtrello-hash/make-properties '((:red . "red label") (:green . "green label"))))))
+
+(expectations
+ expect
+ '("#+PROPERTY: :green green label" "#+PROPERTY: :red red label")
+ (orgtrello-controller/--properties-labels (orgtrello-hash/make-properties '((:red . "red label") (:green . "green label")))))
 
 
 ;; cannot keep this test because the prod code does save the buffer
@@ -438,4 +446,5 @@ DEADLINE: <some-date>
 ;;                                        "some-board-id"
 ;;                                        (orgtrello-hash/make-properties '(("TODO" . "todo-id") ("DONE" . "done-id")))
 ;;                                        (orgtrello-hash/make-properties '(("user" . "user-id") ("some-other-user" . "some-other-user-id")))
-;;                                        "user"))))
+;;                                        "user"
+;;                                        (orgtrello-hash/make-properties '((:red . "red label") (:green . "green label")))))))

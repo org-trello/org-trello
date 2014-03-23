@@ -128,7 +128,7 @@
 (defun orgtrello-data/entity-callback     (entity) (orgtrello-data/gethash-data :callback       entity))
 (defun orgtrello-data/entity-start        (entity) (orgtrello-data/gethash-data :start          entity))
 (defun orgtrello-data/entity-comments     (entity) (orgtrello-data/gethash-data :comments       entity))
-
+(defun orgtrello-data/entity-labels       (entity) (orgtrello-data/gethash-data :labels         entity))
 
 (defun orgtrello-data/entity-method (query-map) (orgtrello-data/gethash-data :method query-map))
 (defun orgtrello-data/entity-uri    (query-map) (orgtrello-data/gethash-data :uri    query-map))
