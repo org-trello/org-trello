@@ -1,3 +1,12 @@
+# 0.3.7
+
+- [X] Use `defconst` keyword instead of defvar
+- [X] Use trello labels and org tags as one - CLOSE https://github.com/org-trello/org-trello/issues/70
+- [X] Refactor + Fix create / connect to board
+- [X] Update metadata command about the board currently connected (sometimes, new information arise)
+- [X] Release notes
+- [X] Version
+
 # 0.3.6.1
 
 - [X] Fix already used bindings

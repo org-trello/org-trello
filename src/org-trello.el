@@ -10,15 +10,23 @@
   "Control first, then if ok, show a simple buffer with the current card's last comments."
   (interactive)
   (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
-   "Show current card's last comments"
+   "Display current card's last comments"
    '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/control-encoding)
    'orgtrello-controller/do-show-card-comments!))
+
+(defun org-trello/show-board-labels ()
+  "Control first, then if ok, show a simple buffer with the current board's labels."
+  (interactive)
+  (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
+   "Display current board's labels"
+   '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/control-encoding)
+   'orgtrello-controller/do-show-board-labels!))
 
 (defun org-trello/sync-entity ()
   "Control first, then if ok, create a simple entity."
   (interactive)
   (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
-     "Requesting entity sync"
+     "Request 'sync entity'"
      '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/control-encoding)
      'orgtrello-controller/do-sync-entity))
 
@@ -26,7 +34,7 @@
   "Control first, then if ok, create an entity and all its arborescence if need be."
   (interactive)
   (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
-     "Requesting entity and structure sync"
+     "Request 'sync entity with structure"
      '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/control-encoding)
      'orgtrello-controller/do-sync-full-entity))
 
@@ -34,7 +42,7 @@
   "Control first, then if ok, sync the org-mode file completely to trello."
   (interactive)
   (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
-     "Requesting sync org buffer to trello board"
+     "Request 'sync org buffer to trello board'"
      '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/control-encoding)
      'orgtrello-controller/do-sync-full-file))
 
@@ -43,7 +51,7 @@
   (interactive)
   ;; execute the action
   (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
-     "Requesting sync org buffer from trello board"
+     "Request 'sync org buffer from trello board'"
      '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/control-encoding)
      'orgtrello-controller/do-sync-full-from-trello
      *do-save-buffer*))
@@ -52,7 +60,7 @@
   "Control first, then if ok, delete the entity and all its arborescence."
   (interactive)
   (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
-     "Requesting deleting entity"
+     "Request 'delete entity'"
      '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/control-encoding)
      'orgtrello-controller/do-delete-simple))
 
@@ -60,7 +68,7 @@
   "Control first, then if ok, delete the entity and all its arborescence."
   (interactive)
   (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
-     "Requesting deleting entities"
+     "Request - 'delete entities'"
      '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/control-encoding)
      'orgtrello-controller/do-delete-entities))
 
@@ -84,6 +92,16 @@
      *do-save-buffer*
      *do-reload-setup*))
 
+(defun org-trello/update-board-metadata ()
+  "Control first, then if ok, trigger the update of the informations about the board."
+  (interactive)
+  (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
+   "Update board information"
+   '(orgtrello-controller/setup-properties orgtrello-controller/control-keys)
+   'orgtrello-controller/do-update-board-metadata!
+   *do-save-buffer*
+   *do-reload-setup*))
+
 (defun org-trello/jump-to-card ()
   "Jump to current card in browser."
   (interactive)
@@ -103,7 +121,7 @@
   (interactive)
   (orgtrello-action/controls-or-actions-then-do
      '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/control-encoding)
-     (lambda () (browse-url (org-trello/https-trello (format "/b/%s" (orgtrello-controller/--board-id)))))))
+     (lambda () (browse-url (org-trello/https-trello (format "/b/%s" (orgtrello-buffer/board-id!)))))))
 
 (defun org-trello/create-board ()
   "Control first, then if ok, trigger the board creation."
@@ -119,7 +137,7 @@
   "Assign oneself to the card."
   (interactive)
   (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
-     "Create board and lists"
+     "Assign myself to card"
      '(orgtrello-controller/setup-properties orgtrello-controller/control-keys)
      'orgtrello-controller/do-assign-me
      *do-save-buffer*
@@ -129,7 +147,7 @@
   "Unassign oneself of the card."
   (interactive)
   (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
-     "Create board and lists"
+     "Unassign me from card"
      '(orgtrello-controller/setup-properties orgtrello-controller/control-keys)
      'orgtrello-controller/do-unassign-me
      *do-save-buffer*
@@ -146,12 +164,10 @@
   "Delete the current setup."
   (interactive)
   (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
-   "Deleting current org-trello setup"
+   "Delete current org-trello setup"
      '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/control-encoding)
      (lambda ()
-       (orgtrello-controller/--remove-properties-file! *LIST-NAMES* *HMAP-USERS-NAME-ID* *ORGTRELLO-USER-LOGGED-IN* t) ;; remove any orgtrello relative entries
-       (orgtrello-controller/--delete-property *ORGTRELLO-ID*)          ;; remove all properties orgtrello-id from the buffer
-       (orgtrello-controller/--delete-property *ORGTRELLO-USERS-ENTRY*) ;; remove all properties users-assigned/member-ids
+       (orgtrello-controller/do-cleanup-from-buffer! t) ;; will do a global cleanup
        (orgtrello-log/msg *OT/NOLOG* "Cleanup done!")) ;; a simple message to tell the user that the work is done!
      *do-save-buffer*
      *do-reload-setup*))
@@ -185,7 +201,7 @@
     (org-trello/install-board-and-lists-ids  "I" "Select the board and attach the todo, doing and done list.")
     (org-trello/check-setup                  "d" "Check that the setup is ok. If everything is ok, will simply display 'Setup ok!'.")
     (org-trello/assign-me                    "a" "Assign oneself to the card.")
-    (org-trello/unassign-me                  "u" "Unassign oneself of the card")
+    (org-trello/unassign-me                  "u" "Unassign oneself from the card")
     (org-trello/delete-setup                 "D" "Clean up the org buffer from all org-trello informations.")
     (org-trello/create-board                 "b" "Create interactively a board and attach the org-mode file to this trello board.")
     (org-trello/sync-from-trello             "S" "Synchronize the org-mode file from the trello board (trello -> org-mode).")
@@ -196,8 +212,10 @@
     (org-trello/sync-to-trello               "s" "Synchronize the org-mode file to the trello board (org-mode -> trello).")
     (org-trello/jump-to-card                 "j" "Jump to card in browser.")
     (org-trello/jump-to-trello-board         "J" "Open the browser to your current trello board.")
-    (org-trello/show-card-comments           "o" "Show the card's comments.")
+    (org-trello/show-card-comments           "o" "Display the card's comments in a pop-up buffer.")
     (org-trello/add-card-comments            "A" "Add a comment to the card.")
+    (org-trello/show-board-labels            "l" "Display the board's labels in a pop-up buffer.")
+    (org-trello/update-board-metadata        "U" "Update the buffer's trello board metadata.")
     (org-trello/help-describing-bindings     "h" "This help message."))
   "List of command and default binding without the prefix key.")
 

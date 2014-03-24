@@ -4,7 +4,7 @@
 
 ;; Author: Antoine R. Dumont <eniotna.t AT gmail.com>
 ;; Maintainer: Antoine R. Dumont <eniotna.t AT gmail.com>
-;; Version: 0.3.6.1
+;; Version: 0.3.7
 ;; Package-Requires: ((dash "2.5.0") (request "0.2.0") (elnode "0.9.9.7.6") (esxml "0.3.0") (s "1.7.0") (kv "0.0.19"))
 ;; Keywords: org-mode trello sync org-trello
 ;; URL: https://github.com/org-trello/org-trello
@@ -57,7 +57,7 @@
 ;;; Code:
 
 
-(defvar *ERROR-INSTALL-MSG* (format "Oops - your emacs isn't supported. org-trello only works on Emacs 24.3+ and you're running version: %s.
+(defconst *ERROR-INSTALL-MSG* (format "Oops - your emacs isn't supported. org-trello only works on Emacs 24.3+ and you're running version: %s.
 Please consider upgrading Emacs." emacs-version) "Error message when installing org-trello with an unsupported emacs version.")
 
 (when (version< emacs-version "24") (error *ERROR-INSTALL-MSG*))
@@ -84,6 +84,6 @@ Please consider upgrading Emacs." emacs-version) "Error message when installing 
     (defalias 'cl-defun 'defun*)
     (defalias 'cl-destructuring-bind 'destructuring-bind)))
 
-(defvar *ORGTRELLO-VERSION* "0.3.6.1" "current org-trello version installed.")
+(defconst *ORGTRELLO-VERSION* "0.3.7" "current org-trello version installed.")
 
 

@@ -847,7 +847,7 @@ CLOSED: [2014-02-03 lun. 11:48]
 - [X] Fix description extract - https://github.com/org-trello/org-trello/issues/114
 - [X] Version
 - [X] Release notes
-* DONE 0.3.3 [93%]
+* DONE 0.3.3 [100%]
 CLOSED: [2014-03-08 sam. 17:27]
 - [X] Issue when installing on melpa reported wrongly on melpa and reported back https://github.com/org-trello/org-trello/issues/117
 - [X] Fix typo when-let in -when-let
@@ -906,10 +906,26 @@ CLOSED: [2014-03-22 Sat 23:53]
 - [X] Version
 - [X] Release notes
 
-* TODO 0.3.7 [0%]
-- [ ] Use trello labels and org tags as one - https://github.com/org-trello/org-trello/issues/70
-- [ ] Release notes
-- [ ] Version
+* DONE 0.3.7 [100%]
+CLOSED: [2014-03-24 Mon 00:58]
+- [X] Use `defconst` keyword instead of defvar
+- [X] Use trello labels and org tags as one - CLOSE https://github.com/org-trello/org-trello/issues/70
+  - [X] Open information 'labelNames' in get-board API call
+  - [X] Ensure the information is retrieved when parsing http response for querying board information
+  - [X] Retrieve labels from the board
+  - [X] Install labels/tags information in global org-trello metadata
+  - [X] Make labels/tags metadata `org-todo` aware
+  - [X] Attach label/tags to card (in principles, it's `org-todo`'s job)
+  - [X] Show current labels
+  - [X] Parse labels among org data
+  - [X] Open api to create/update cards with labels
+  - [X] Update labels information when synchronizing to trello
+  - [X] Retrieve labels information when synchronizing from trello
+  - [X] Update buffer data with tags
+- [X] Refactor + Fix create / connect to board
+- [X] Update metadata command about the board currently connected (sometimes, new information arise)
+- [X] Release notes
+- [X] Version
 * TODO 0.3.X [0%]
 - [ ] Open stop all synchronization actions - https://github.com/org-trello/org-trello/issues/131
 - [ ] Use active region - https://github.com/org-trello/org-trello/issues/130

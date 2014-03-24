@@ -3,7 +3,7 @@
 (require 'el-mock)
 
 (ert-deftest testing-orgtrello-controller/--compute-data-from-entity-meta ()
-  (let* ((entry   (orgtrello-hash/make-hash-org :member-ids :some-level :some-keyword :some-name "some-id" :some-due :some-point :some-buffername :desc :comments)))
+  (let* ((entry   (orgtrello-hash/make-hash-org :member-ids :some-level :some-keyword :some-name "some-id" :some-due :some-point :some-buffername :desc :comments :tags)))
     (should (equal (orgtrello-data/entity-id entry)          "some-id"))
     (should (equal (orgtrello-data/entity-name entry)        :some-name))
     (should (equal (orgtrello-data/entity-keyword entry)     :some-keyword))
@@ -12,6 +12,8 @@
     (should (equal (orgtrello-data/entity-position entry)    :some-point))
     (should (equal (orgtrello-data/entity-buffername entry)  :some-buffername))
     (should (equal (orgtrello-data/entity-member-ids entry)  :member-ids))
+    (should (equal (orgtrello-data/entity-tags entry)        :tags))
+    (should (equal (orgtrello-data/entity-comments entry)    :comments))
     (should (equal (orgtrello-data/entity-description entry) :desc))))
 
 (ert-deftest testing-orgtrello-controller/--id-name ()
@@ -64,9 +66,9 @@
   (expect 'none (orgtrello-controller/--compute-state-from-keyword "IN")))
 
 (expectations (desc "orgtrello-controller/--compute-marker-from-entry")
-  (expect "id"                                                        (orgtrello-controller/--compute-marker-from-entry (orgtrello-hash/make-hash-org :users :level :kwd :name      "id"  :due :position :buffername :desc :comments)))
-  (expect "orgtrello-marker-2a0b98e652ce6349a0659a7a8eeb3783ffe9a11a" (orgtrello-controller/--compute-marker-from-entry (orgtrello-hash/make-hash-org :users :level :kwd "some-name" nil :due 1234      "buffername" :desc :comments)))
-  (expect "orgtrello-marker-6c59c5dcf6c83edaeb3f4923bfd929a091504bb3" (orgtrello-controller/--compute-marker-from-entry (orgtrello-hash/make-hash-org :users :level :kwd "some-name" nil :due 4321      "some-other-buffername" :desc :comments))))
+  (expect "id"                                                        (orgtrello-controller/--compute-marker-from-entry (orgtrello-hash/make-hash-org :users :level :kwd :name      "id"  :due :position :buffername :desc :comments :tags)))
+  (expect "orgtrello-marker-2a0b98e652ce6349a0659a7a8eeb3783ffe9a11a" (orgtrello-controller/--compute-marker-from-entry (orgtrello-hash/make-hash-org :users :level :kwd "some-name" nil :due 1234      "buffername" :desc :comments :tags)))
+  (expect "orgtrello-marker-6c59c5dcf6c83edaeb3f4923bfd929a091504bb3" (orgtrello-controller/--compute-marker-from-entry (orgtrello-hash/make-hash-org :users :level :kwd "some-name" nil :due 4321      "some-other-buffername" :desc :comments :tags))))
 
 (expectations (desc "orgtrello-marker-2a0b98e652ce6349a0659a7a8eeb3783ffe9a11a")
   (expect "orgtrello-marker-2a0b98e652ce6349a0659a7a8eeb3783ffe9a11a" (orgtrello-controller/compute-marker "buffername" "some-name" 1234))
@@ -86,11 +88,9 @@
   (expect "" (orgtrello-controller/--compute-due-date nil)))
 
 (expectations (desc "orgtrello-controller/--private-compute-card-to-org-entry")
-  (expect "* name TODO
-DEADLINE: <some-date>
-" (orgtrello-controller/--private-compute-card-to-org-entry "TODO" "name" "some-date"))
-  (expect "* name TODO
-" (orgtrello-controller/--private-compute-card-to-org-entry "TODO" "name" nil)))
+  (expect "* name TODO :some-tags:\nDEADLINE: <some-date>\n" (orgtrello-controller/--private-compute-card-to-org-entry "TODO" "name" "some-date" ":some-tags:"))
+  (expect "* name TODO\n" (orgtrello-controller/--private-compute-card-to-org-entry "TODO" "name" nil nil))
+  (expect "* name TODO :tag,tag2:\n" (orgtrello-controller/--private-compute-card-to-org-entry "TODO" "name" nil ":tag,tag2:")))
 
 (expectations (desc "orgtrello-controller/--compute-checklist-to-orgtrello-entry")
   (expect "** name\n" (orgtrello-controller/--compute-checklist-to-orgtrello-entry "name"))
@@ -185,9 +185,9 @@ DEADLINE: <some-date>
               (expect 'orgtrello-controller/--item-delete      (gethash *ITEM-LEVEL* *MAP-DISPATCH-DELETE*)))
 
 (expectations (desc "orgtrello-controller/--dispatch-create-entities-map-with-adjacency")
-  (expect 'orgtrello-controller/--put-card-with-adjacency     (orgtrello-controller/--dispatch-create-entities-map-with-adjacency (orgtrello-hash/make-hash-org :users *CARD-LEVEL* nil nil nil nil nil nil nil :comments)))
-  (expect 'orgtrello-controller/--put-entities-with-adjacency (orgtrello-controller/--dispatch-create-entities-map-with-adjacency (orgtrello-hash/make-hash-org :users *CHECKLIST-LEVEL* nil nil nil nil nil nil nil :comments)))
-  (expect 'orgtrello-controller/--put-entities-with-adjacency (orgtrello-controller/--dispatch-create-entities-map-with-adjacency (orgtrello-hash/make-hash-org :users *ITEM-LEVEL* nil nil nil nil nil nil nil :comments))))
+  (expect 'orgtrello-controller/--put-card-with-adjacency     (orgtrello-controller/--dispatch-create-entities-map-with-adjacency (orgtrello-hash/make-hash-org :users *CARD-LEVEL* nil nil nil nil nil nil nil :comments :tags)))
+  (expect 'orgtrello-controller/--put-entities-with-adjacency (orgtrello-controller/--dispatch-create-entities-map-with-adjacency (orgtrello-hash/make-hash-org :users *CHECKLIST-LEVEL* nil nil nil nil nil nil nil :comments :tags)))
+  (expect 'orgtrello-controller/--put-entities-with-adjacency (orgtrello-controller/--dispatch-create-entities-map-with-adjacency (orgtrello-hash/make-hash-org :users *ITEM-LEVEL* nil nil nil nil nil nil nil :comments :tags))))
 
 (ert-deftest testing-orgtrello-controller/--init-map-from ()
   (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data ()) (orgtrello-controller/--init-map-from nil))))
@@ -389,3 +389,77 @@ DEADLINE: <some-date>
 (expectations
  (expect "dude0: some comments###dude1: some other comments"
          (orgtrello-controller/unformat-comments "dude0: some comments\n\ndude1: some other comments")))
+
+(expectations
+  (expect t
+    (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data ("0" :id-board0 "1" :id-board1))
+                (orgtrello-controller/--index-board-map (orgtrello-hash/make-properties '((:id-board0 . "board0-name") (:id-board1 . "board1-name")))))))
+
+(expectations
+  (expect
+      "0: board0-name\n1: board1-name\n"
+    (orgtrello-controller/--display-boards-to-choose (orgtrello-hash/make-properties '((:id-board0 . "board0-name") (:id-board1 . "board1-name"))))))
+
+(expectations
+  (expect '(":PROPERTIES:"
+            "#+property: board-name some-board-name"
+            "#+property: board-id some-board-id"
+            "#+PROPERTY: DONE done-id"
+            "#+PROPERTY: TODO todo-id"
+            ""
+            "#+PROPERTY: orgtrello-user-some-other-user some-other-user-id"
+            "#+PROPERTY: orgtrello-user-user user-id"
+            "#+PROPERTY: :green green label"
+            "#+PROPERTY: :red red label"
+            "#+PROPERTY: orgtrello-user-me user"
+            ":END:")
+         (orgtrello-controller/--compute-metadata!
+          "some-board-name"
+          "some-board-id"
+          (orgtrello-hash/make-properties '(("TODO" . "todo-id") ("DONE" . "done-id")))
+          (orgtrello-hash/make-properties '(("user" . "user-id") ("some-other-user" . "some-other-user-id")))
+          "user"
+          (orgtrello-hash/make-properties '((:red . "red label") (:green . "green label"))))))
+
+(expectations
+  (expect
+      '("#+PROPERTY: :green green label" "#+PROPERTY: :red red label")
+    (orgtrello-controller/--properties-labels (orgtrello-hash/make-properties '((:red . "red label") (:green . "green label"))))))
+
+(expectations
+ (expect ":red: some label\n\n:yellow: some other label"
+         (orgtrello-controller/--format-labels '((":red" . "some label") (":yellow" . "some other label")))))
+
+;; cannot keep this test because the prod code does save the buffer
+;; (expectations
+;;   (expect
+;;       ":PROPERTIES:
+;; #+PROPERTY: board-name    some-board-name
+;; #+PROPERTY: board-id      some-board-id
+;; #+PROPERTY: DONE done-id
+;; #+PROPERTY: TODO todo-id
+
+;; #+PROPERTY: orgtrello-user-some-other-user some-other-user-id
+;; #+PROPERTY: orgtrello-user-user user-id
+;; #+PROPERTY: orgtrello-user-me user
+;; :END:"
+;;     (orgtrello-tests/with-temp-buffer ""
+;;                                       (orgtrello-controller/--update-orgmode-file-with-properties!
+;;                                        "some-board-name"
+;;                                        "some-board-id"
+;;                                        (orgtrello-hash/make-properties '(("TODO" . "todo-id") ("DONE" . "done-id")))
+;;                                        (orgtrello-hash/make-properties '(("user" . "user-id") ("some-other-user" . "some-other-user-id")))
+;;                                        "user"
+;;                                        (orgtrello-hash/make-properties '((:red . "red label") (:green . "green label")))))))
+
+(expectations
+  (expect "a,b,c" (orgtrello-controller/--tags-to-labels ":a:b:c"))
+  (expect "a,b,c" (orgtrello-controller/--tags-to-labels "a:b:c"))
+  (expect "a," (orgtrello-controller/--tags-to-labels ":a:"))
+  (expect "a," (orgtrello-controller/--tags-to-labels "a:"))
+  (expect nil  (orgtrello-controller/--tags-to-labels nil)))
+
+(expectations
+ (expect ":red:" (orgtrello-controller/--labels-to-tags (list (orgtrello-hash/make-properties '((:color . "red"))))))
+ (expect ":red:yellow:" (orgtrello-controller/--labels-to-tags (list (orgtrello-hash/make-properties '((:color . "red")))
+                                                                     (orgtrello-hash/make-properties '((:color . "yellow")))))))

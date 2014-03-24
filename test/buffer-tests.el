@@ -114,3 +114,18 @@ hello there
 :orgtrello-card-comments: some-comments###with-dummy-data
 :END:"
           (orgtrello-buffer/get-card-comments!))))
+
+(expectations
+  (expect
+      "this-is-the-board-id"
+    (orgtrello-tests/with-org-buffer
+      (format ":PROPERTIES:\n#+PROPERTY: %s this-is-the-board-id\n:END:\n* card\n" *BOARD-ID*)
+      (orgtrello-buffer/board-id!)))
+  (expect "this-is-the-board-name"
+    (orgtrello-tests/with-org-buffer
+     (format ":PROPERTIES:\n#+PROPERTY: %s this-is-the-board-name\n:END:\n* card\n" *BOARD-NAME*)
+     (orgtrello-buffer/board-name!)))
+  (expect "this-is-the-user"
+    (orgtrello-tests/with-org-buffer
+     (format ":PROPERTIES:\n#+PROPERTY: %s this-is-the-user\n:END:\n* card\n" *ORGTRELLO-USER-ME*)
+     (orgtrello-buffer/me!))))

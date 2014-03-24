@@ -1,4 +1,4 @@
-(defvar *TRELLO-URL* "https://api.trello.com/1" "The needed prefix url for trello")
+(defconst *TRELLO-URL* "https://api.trello.com/1" "The needed prefix url for trello")
 
 (defun orgtrello-query/--compute-url (server uri) "Compute the trello url from the given uri."
   (format "%s%s" server uri))
