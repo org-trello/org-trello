@@ -10,7 +10,7 @@
   "Control first, then if ok, show a simple buffer with the current card's last comments."
   (interactive)
   (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
-   "Show current card's last comments"
+   "Display current card's last comments"
    '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/control-encoding)
    'orgtrello-controller/do-show-card-comments!))
 
@@ -18,7 +18,7 @@
   "Control first, then if ok, show a simple buffer with the current board's labels."
   (interactive)
   (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
-   "Show current board's labels"
+   "Display current board's labels"
    '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/control-encoding)
    'orgtrello-controller/do-show-board-labels!))
 
@@ -26,7 +26,7 @@
   "Control first, then if ok, create a simple entity."
   (interactive)
   (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
-     "Requesting entity sync"
+     "Request 'sync entity'"
      '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/control-encoding)
      'orgtrello-controller/do-sync-entity))
 
@@ -34,7 +34,7 @@
   "Control first, then if ok, create an entity and all its arborescence if need be."
   (interactive)
   (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
-     "Requesting entity and structure sync"
+     "Request 'sync entity with structure"
      '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/control-encoding)
      'orgtrello-controller/do-sync-full-entity))
 
@@ -42,7 +42,7 @@
   "Control first, then if ok, sync the org-mode file completely to trello."
   (interactive)
   (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
-     "Requesting sync org buffer to trello board"
+     "Request 'sync org buffer to trello board'"
      '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/control-encoding)
      'orgtrello-controller/do-sync-full-file))
 
@@ -51,7 +51,7 @@
   (interactive)
   ;; execute the action
   (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
-     "Requesting sync org buffer from trello board"
+     "Request 'sync org buffer from trello board'"
      '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/control-encoding)
      'orgtrello-controller/do-sync-full-from-trello
      *do-save-buffer*))
@@ -60,7 +60,7 @@
   "Control first, then if ok, delete the entity and all its arborescence."
   (interactive)
   (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
-     "Requesting deleting entity"
+     "Request 'delete entity'"
      '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/control-encoding)
      'orgtrello-controller/do-delete-simple))
 
@@ -68,7 +68,7 @@
   "Control first, then if ok, delete the entity and all its arborescence."
   (interactive)
   (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
-     "Requesting deleting entities"
+     "Request - 'delete entities'"
      '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/control-encoding)
      'orgtrello-controller/do-delete-entities))
 
@@ -164,7 +164,7 @@
   "Delete the current setup."
   (interactive)
   (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
-   "Deleting current org-trello setup"
+   "Delete current org-trello setup"
      '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/control-encoding)
      (lambda ()
        (orgtrello-controller/do-cleanup-from-buffer! t) ;; will do a global cleanup
