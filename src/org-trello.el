@@ -214,6 +214,8 @@
     (org-trello/jump-to-trello-board         "J" "Open the browser to your current trello board.")
     (org-trello/show-card-comments           "o" "Display the card's comments in a pop-up buffer.")
     (org-trello/add-card-comments            "A" "Add a comment to the card.")
+    (org-trello/show-board-labels            "l" "Display the board's labels in a pop-up buffer.")
+    (org-trello/update-board-metadata        "U" "Update the buffer's trello board metadata.")
     (org-trello/help-describing-bindings     "h" "This help message."))
   "List of command and default binding without the prefix key.")
 
