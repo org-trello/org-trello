@@ -201,7 +201,7 @@
     (org-trello/install-board-and-lists-ids  "I" "Select the board and attach the todo, doing and done list.")
     (org-trello/check-setup                  "d" "Check that the setup is ok. If everything is ok, will simply display 'Setup ok!'.")
     (org-trello/assign-me                    "a" "Assign oneself to the card.")
-    (org-trello/unassign-me                  "u" "Unassign oneself of the card")
+    (org-trello/unassign-me                  "u" "Unassign oneself from the card")
     (org-trello/delete-setup                 "D" "Clean up the org buffer from all org-trello informations.")
     (org-trello/create-board                 "b" "Create interactively a board and attach the org-mode file to this trello board.")
     (org-trello/sync-from-trello             "S" "Synchronize the org-mode file from the trello board (trello -> org-mode).")
