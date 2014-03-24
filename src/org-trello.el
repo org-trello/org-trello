@@ -137,7 +137,7 @@
   "Assign oneself to the card."
   (interactive)
   (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
-     "Create board and lists"
+     "Assign myself to card"
      '(orgtrello-controller/setup-properties orgtrello-controller/control-keys)
      'orgtrello-controller/do-assign-me
      *do-save-buffer*
@@ -147,7 +147,7 @@
   "Unassign oneself of the card."
   (interactive)
   (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
-     "Create board and lists"
+     "Unassign me from card"
      '(orgtrello-controller/setup-properties orgtrello-controller/control-keys)
      'orgtrello-controller/do-unassign-me
      *do-save-buffer*
