@@ -381,19 +381,6 @@
   (expect nil (orgtrello-controller/compute-check "anything-else")))
 
 (expectations
-  (expect "me: some first comment###another-me: another comment"
-    (orgtrello-controller/--comments-to-list (list (orgtrello-hash/make-properties '((:comment-user . "me") (:comment-text . "some first comment")))
-                                                   (orgtrello-hash/make-properties '((:comment-user . "another-me") (:comment-text . "another comment")))))))
-
-(expectations
-  (expect "dude0: some comments\n\ndude1: some other comments"
-    (orgtrello-controller/format-comments "dude0: some comments###dude1: some other comments")))
-
-(expectations
- (expect "dude0: some comments###dude1: some other comments"
-         (orgtrello-controller/unformat-comments "dude0: some comments\n\ndude1: some other comments")))
-
-(expectations
   (expect t
     (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data ("0" :id-board0 "1" :id-board1))
                 (orgtrello-controller/--index-board-map (orgtrello-hash/make-properties '((:id-board0 . "board0-name") (:id-board1 . "board1-name")))))))
@@ -428,10 +415,6 @@
   (expect
       '("#+PROPERTY: :green green label" "#+PROPERTY: :red red label")
     (orgtrello-controller/--properties-labels (orgtrello-hash/make-properties '((:red . "red label") (:green . "green label"))))))
-
-(expectations
- (expect ":red: some label\n\n:yellow: some other label"
-         (orgtrello-controller/--format-labels '((":red" . "some label") (":yellow" . "some other label")))))
 
 ;; cannot keep this test because the prod code does save the buffer
 ;; (expectations

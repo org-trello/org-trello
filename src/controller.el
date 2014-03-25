@@ -644,17 +644,11 @@
        (replace-regexp-in-string *ORGTRELLO-USER-PREFIX* "" it)
        (orgtrello-controller/set-usernames-assigned-property! it)))
 
-(defun orgtrello-controller/--comments-to-list (comments-hash)
-  "Given a list of comments hashmap, return the serialized string comment."
-  (->> comments-hash
-    (--map (s-join ": " (list (gethash :comment-user it) (gethash :comment-text it))))
-    (s-join *ORGTRELLO-CARD-COMMENTS-DELIMITER*)))
-
 (defun orgtrello-controller/--update-property-card-comments! (entity)
   "Update last comments "
   (->> entity
     orgtrello-data/entity-comments
-    orgtrello-controller/--comments-to-list
+    orgtrello-data/comments-to-list
     orgtrello-buffer/set-property-comment!))
 
 (defun orgtrello-controller/--write-card! (entity-id entity entities adjacency)
@@ -1082,16 +1076,6 @@
     (while (re-search-forward ":PROPERTIES: {.*" nil t)
       (orgtrello-cbx/install-overlays! (match-beginning 0)))))
 
-(defun orgtrello-controller/unformat-comments (comments)
-  (->> comments
-    (s-split *ORGTRELLO-CARD-COMMENTS-DELIMITER-PRINT*)
-    (s-join *ORGTRELLO-CARD-COMMENTS-DELIMITER*)))
-
-(defun orgtrello-controller/format-comments (comments)
-  (->> comments
-    (s-split *ORGTRELLO-CARD-COMMENTS-DELIMITER*)
-    (s-join *ORGTRELLO-CARD-COMMENTS-DELIMITER-PRINT*)))
-
 (defun orgtrello-controller/do-show-card-comments! ()
   "Show the card comments in a temporary buffer."
   (save-excursion
@@ -1099,16 +1083,16 @@
     (let* ((current-card-name (-> (orgtrello-data/metadata!) orgtrello-data/entity-name))
            (comments-title (format "comments for card '%s'" current-card-name))
            (comments-formatted (-> (orgtrello-buffer/get-card-comments!)
-                                 orgtrello-controller/format-comments)))
+                                 orgtrello-data/format-comments)))
       (orgtrello-buffer/pop-up-with-content! comments-title comments-formatted))))
 
 (defun orgtrello-controller/--update-comments! (new-comment)
   "Given a current position on a card and a new comment, add a new comment to the current comments."
   (let ((comments (orgtrello-buffer/get-card-comments!)))
     (->> (if comments comments "")
-      orgtrello-controller/format-comments
+      orgtrello-data/format-comments
       (concat (orgtrello-buffer/me!) ": " new-comment *ORGTRELLO-CARD-COMMENTS-DELIMITER-PRINT*)
-      orgtrello-controller/unformat-comments
+      orgtrello-data/unformat-comments
       orgtrello-buffer/put-card-comments!)))
 
 (defun orgtrello-controller/do-add-card-comment! ()
@@ -1158,15 +1142,9 @@
          (board-labels (->> board-id orgtrello-controller/--board! orgtrello-data/entity-labels)))
     (orgtrello-controller/do-write-board-metadata! board-id (orgtrello-buffer/board-name!) (orgtrello-buffer/me!) board-lists board-labels)))
 
-(defun orgtrello-controller/--format-labels (labels)
-  "Given an assoc list of labels, serialize it."
-  (->> labels
-    (--map (s-join ": " (list (car it) (cdr it))))
-    (s-join "\n\n")))
-
 (defun orgtrello-controller/do-show-board-labels! ()
   (->> (orgtrello-buffer/labels!)
-    orgtrello-controller/--format-labels
+    orgtrello-data/format-labels
     (orgtrello-buffer/pop-up-with-content! "Labels")))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-controller loaded!")

@@ -232,4 +232,28 @@
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-data loaded!")
 
+(defun orgtrello-data/comments-to-list (comments-hash)
+  "Given a list of comments hashmap, return the serialized string comment."
+  (->> comments-hash
+    (--map (s-join ": " (list (gethash :comment-user it) (gethash :comment-text it))))
+    (s-join *ORGTRELLO-CARD-COMMENTS-DELIMITER*)))
+
+(defun orgtrello-data/format-labels (labels)
+  "Given an assoc list of labels, serialize it."
+  (->> labels
+    (--map (s-join ": " (list (car it) (cdr it))))
+    (s-join "\n\n")))
+
+(defun orgtrello-data/unformat-comments (comments)
+  "Given a string of comments human readable, transform it into a property format."
+  (->> comments
+    (s-split *ORGTRELLO-CARD-COMMENTS-DELIMITER-PRINT*)
+    (s-join *ORGTRELLO-CARD-COMMENTS-DELIMITER*)))
+
+(defun orgtrello-data/format-comments (comments)
+  "Given a property string of comments, work it to permit a human readable display."
+  (->> comments
+    (s-split *ORGTRELLO-CARD-COMMENTS-DELIMITER*)
+    (s-join *ORGTRELLO-CARD-COMMENTS-DELIMITER-PRINT*)))
+
 

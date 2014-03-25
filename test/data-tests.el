@@ -455,3 +455,20 @@
 ;;     (should (equal (gethash :desc h-values) "some-description"))
 ;;     (should (equal (gethash :comments h-values) "ardumont: this is some comments###dude: some other comments"))
 ;;     (should (equal (gethash :keywords h-values) "IN-PROGRESS"))))
+
+(expectations
+ (expect "me: some first comment###another-me: another comment"
+         (orgtrello-data/comments-to-list (list (orgtrello-hash/make-properties '((:comment-user . "me") (:comment-text . "some first comment")))
+                                                (orgtrello-hash/make-properties '((:comment-user . "another-me") (:comment-text . "another comment")))))))
+
+(expectations
+ (expect ":red: some label\n\n:yellow: some other label"
+         (orgtrello-data/format-labels '((":red" . "some label") (":yellow" . "some other label")))))
+
+(expectations
+ (expect "dude0: some comments\n\ndude1: some other comments"
+         (orgtrello-data/format-comments "dude0: some comments###dude1: some other comments")))
+
+(expectations
+ (expect "dude0: some comments###dude1: some other comments"
+         (orgtrello-data/unformat-comments "dude0: some comments\n\ndude1: some other comments")))
