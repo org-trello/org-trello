@@ -12,8 +12,7 @@ C-c o 2 - M-x action2 - some other description" (org-trello/--help-describing-bi
 C-c o i - M-x org-trello/install-key-and-token - Install the keys and the access-token.
 C-c o I - M-x org-trello/install-board-and-lists-ids - Select the board and attach the todo, doing and done list.
 C-c o d - M-x org-trello/check-setup - Check that the setup is ok. If everything is ok, will simply display 'Setup ok!'.
-C-c o a - M-x org-trello/assign-me - Assign oneself to the card.
-C-c o u - M-x org-trello/unassign-me - Unassign oneself from the card
+C-c o a - M-x org-trello/assign-me - Assign oneself to the card. With C-u modifier, unassign oneself from the card.
 C-c o D - M-x org-trello/delete-setup - Clean up the org buffer from all org-trello informations.
 C-c o b - M-x org-trello/create-board - Create interactively a board and attach the org-mode file to this trello board.
 C-c o c - M-x org-trello/sync-entity - Create/Update an entity (card/checklist/item) depending on its level and status. Do not deal with level superior to 4.
@@ -26,7 +25,7 @@ C-c o J - M-x org-trello/jump-to-trello-board - Open the browser to your current
 C-c o o - M-x org-trello/show-card-comments - Display the card's comments in a pop-up buffer.
 C-c o A - M-x org-trello/add-card-comments - Add a comment to the card.
 C-c o l - M-x org-trello/show-board-labels - Display the board's labels in a pop-up buffer.
-C-c o U - M-x org-trello/update-board-metadata - Update the buffer's trello board metadata.
+C-c o u - M-x org-trello/update-board-metadata - Update the buffer's trello board metadata.
 C-c o g - M-x org-trello/abort-sync - Abort synchronization activities.
 C-c o h - M-x org-trello/help-describing-bindings - This help message."
       (org-trello/--help-describing-bindings-template *ORGTRELLO-MODE-PREFIX-KEYBINDING* org-trello/--list-of-interactive-command-binding-couples)))

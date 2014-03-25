@@ -102,15 +102,12 @@
   (interactive)
   (org-trello/do-and-save "Create board and lists" 'orgtrello-controller/do-create-board-and-lists))
 
-(defun org-trello/assign-me ()
-  "Assign oneself to the card."
-  (interactive)
-  (org-trello/do-and-save "Assign myself to card" 'orgtrello-controller/do-assign-me))
-
-(defun org-trello/unassign-me ()
-  "Unassign oneself of the card."
-  (interactive)
-  (org-trello/do-and-save "Unassign me from card" 'orgtrello-controller/do-unassign-me))
+(defun org-trello/assign-me (&optional modifier)
+  "Assign oneself to the card. With C-u modifier, unassign form the card."
+  (interactive "P")
+  (if modifier
+      (org-trello/do-and-save "Unassign me from card" 'orgtrello-controller/do-unassign-me)
+    (org-trello/do-and-save "Assign myself to card" 'orgtrello-controller/do-assign-me)))
 
 (defun org-trello/check-setup ()
   "Check the current setup."
@@ -157,8 +154,7 @@
     (org-trello/install-key-and-token        "i" "Install the keys and the access-token.")
     (org-trello/install-board-and-lists-ids  "I" "Select the board and attach the todo, doing and done list.")
     (org-trello/check-setup                  "d" "Check that the setup is ok. If everything is ok, will simply display 'Setup ok!'.")
-    (org-trello/assign-me                    "a" "Assign oneself to the card.")
-    (org-trello/unassign-me                  "u" "Unassign oneself from the card")
+    (org-trello/assign-me                    "a" "Assign oneself to the card. With C-u modifier, unassign oneself from the card.")
     (org-trello/delete-setup                 "D" "Clean up the org buffer from all org-trello informations.")
     (org-trello/create-board                 "b" "Create interactively a board and attach the org-mode file to this trello board.")
     (org-trello/sync-entity                  "c" "Create/Update an entity (card/checklist/item) depending on its level and status. Do not deal with level superior to 4.")
@@ -171,7 +167,7 @@
     (org-trello/show-card-comments           "o" "Display the card's comments in a pop-up buffer.")
     (org-trello/add-card-comments            "A" "Add a comment to the card.")
     (org-trello/show-board-labels            "l" "Display the board's labels in a pop-up buffer.")
-    (org-trello/update-board-metadata        "U" "Update the buffer's trello board metadata.")
+    (org-trello/update-board-metadata        "u" "Update the buffer's trello board metadata.")
     (org-trello/abort-sync                   "g" "Abort synchronization activities.")
     (org-trello/help-describing-bindings     "h" "This help message."))
   "List of commands and default bindings without the prefix key.")

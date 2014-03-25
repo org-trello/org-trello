@@ -926,7 +926,7 @@ CLOSED: [2014-03-24 Mon 00:58]
 - [X] Update metadata command about the board currently connected (sometimes, new information arise)
 - [X] Release notes
 - [X] Version
-* TODO 0.3.8 [33%]
+* TODO 0.3.8 [44%]
 - [X] Some refactoring
   - [X] Align sync from trello card tags/labels serialization with org's tags behavior
   - [X] Refactor open org-trello buffer with title/content
@@ -934,9 +934,9 @@ CLOSED: [2014-03-24 Mon 00:58]
   - [X] Do not override the user's existing tags
 - [X] Provide org-trello-mode-hook - CLOSE https://github.com/org-trello/org-trello/issues/116
 - [X] Open stop all synchronization actions - CLOSE https://github.com/org-trello/org-trello/issues/131
-- [-] Use C-u keychord to create a symmetry use (e.g. `C-c o s` is sync to trello, `C-u C-c o s` is sync from trello)
+- [X] Use C-u keychord to create a symmetry use (e.g. `C-c o s` is sync to trello, `C-u C-c o s` is sync from trello)
   - [X] sync-buffer, sync-to-trello, with C-u, sync-from-trello
-  - [ ] assign-me, with C-u, unassign me
+  - [X] assign-me, with C-u, unassign me
 - [ ] A command to 'sync from trello' the current entity
 - [ ] A command to 'sync from trello' the current entity and its structure
 - [ ] Use active region - https://github.com/org-trello/org-trello/issues/130
