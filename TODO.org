@@ -930,6 +930,7 @@ CLOSED: [2014-03-24 Mon 00:58]
 - [ ] Open stop all synchronization actions - https://github.com/org-trello/org-trello/issues/131
 - [X] Some refactoring
   - [X] Align sync from trello card tags/labels serialization with org's tags behavior
+  - [X] Refactor open org-trello buffer with title/content
 - [ ] A command to 'sync from trello' the current entity
 - [ ] A command to 'sync from trello' the current entity and its structure
 - [ ] Use active region - https://github.com/org-trello/org-trello/issues/130
