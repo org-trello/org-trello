@@ -65,6 +65,9 @@
      (when reload-setup-p (orgtrello-action/reload-setup))
      (unless nolog-p (orgtrello-log/msg *OT/INFO* (concat msg " - done!"))))))
 
+(defun orgtrello-action/delete-file! (file-to-remove) "Remove metadata file."
+  (when (file-exists-p file-to-remove) (delete-file file-to-remove)))
+
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-action loaded!")
 
 

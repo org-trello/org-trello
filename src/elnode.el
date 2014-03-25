@@ -38,7 +38,4 @@
             orgtrello-elnode/--list-files-result
             (sort orgtrello-elnode/--list-files-result 'orgtrello-elnode/--dictionary-lessp))))
 
-(defun orgtrello-elnode/remove-file (file-to-remove) "Remove metadata file."
-  (when (file-exists-p file-to-remove) (delete-file file-to-remove)))
-
 

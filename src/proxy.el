@@ -88,7 +88,7 @@
   (setq *ORGTRELLO-LIST-BUFFERS-TO-SAVE* (orgtrello-proxy/--update-buffer-to-save buffer-name *ORGTRELLO-LIST-BUFFERS-TO-SAVE*)))
 
 (defun orgtrello-proxy/--cleanup-and-save-buffer-metadata (archive-file buffer-name) "To cleanup metadata after the all actions are done!"
-  (orgtrello-elnode/remove-file archive-file) ;; cleanup archive file
+  (orgtrello-action/delete-file! archive-file) ;; cleanup archive file
   (orgtrello-proxy/update-buffer-to-save! buffer-name)) ;; register the buffer for later saving
 
 (defun orgtrello-proxy/batch-save (buffers) "Save sequentially a list of buffers."
@@ -172,7 +172,7 @@
                                      (function* (lambda (&key error-thrown &allow-other-keys)
                                                   (orgtrello-log/msg *OT/ERROR* "client - Problem during the sync request to the proxy- error-thrown: %s" error-thrown)
                                                   (orgtrello-proxy/--cleanup-meta oq/--entity-full-meta)
-                                                  (orgtrello-elnode/remove-file oq/--entry-file-archived)
+                                                  (orgtrello-action/delete-file! oq/--entry-file-archived)
                                                   (throw 'org-trello-timer-go-to-sleep t))))
         ;; cannot execute the request
         (progn
@@ -254,7 +254,7 @@
          (function* (lambda (&key error-thrown &allow-other-keys)
                       (orgtrello-log/msg *OT/ERROR* "client - Problem during the deletion request to the proxy- error-thrown: %s" error-thrown)
                       (orgtrello-proxy/--cleanup-meta oq/--entity-full-meta)
-                      (orgtrello-elnode/remove-file oq/--entry-file-archived)
+                      (orgtrello-action/delete-file! oq/--entry-file-archived)
                       (throw 'org-trello-timer-go-to-sleep t))))
         (progn
           (orgtrello-log/msg *OT/INFO* orgtrello-query/--query-map)
@@ -312,7 +312,7 @@
     (insert "Timer - Scanning entities...")))
 
 (defun orgtrello-proxy/--timer-delete-lock (lock-file) "Cleanup after the timer has been triggered."
-  (orgtrello-elnode/remove-file lock-file))
+  (orgtrello-action/delete-file! lock-file))
 
 (defun orgtrello-proxy/--consumer-lock-and-scan-entity-files-hierarchically-and-do () "A handler to extract the entity informations from files (in order card, checklist, items)."
   (undo-boundary)

@@ -277,14 +277,14 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
                                   first))
            (-> entity-to-delete
                orgtrello-webadmin/--compute-filename-from-entity
-               orgtrello-elnode/remove-file)))
+               orgtrello-action/delete-file!)))
 
 (defun orgtrello-webadmin/delete-entities! () "Remove the entities/files."
   (->> *ORGTRELLO-LEVELS*
        orgtrello-webadmin/--list-entities
        (--map (-> it
                   orgtrello-webadmin/--compute-filename-from-entity
-                  orgtrello-elnode/remove-file))))
+                  orgtrello-action/delete-file!))))
 
 (defun orgtrello-webadmin/elnode-delete-entity (http-con) "Deal with actions to do on 'action' (entities)."
   (let ((id (elnode-http-mapping http-con 1)))
