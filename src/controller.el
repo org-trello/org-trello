@@ -308,12 +308,24 @@
   (if due-date (format "DEADLINE: <%s>\n" due-date) ""))
 
 (defun orgtrello-controller/--private-compute-card-to-org-entry (name status due-date tags)
-  "Compxute the org format for card."
-  (format "* %s %s%s\n%s" (if status status *TODO*) name (if tags (concat " " tags)  "") (orgtrello-controller/--compute-due-date due-date)))
+  "Compute the org format for card."
+  (let ((prefix-string (format "* %s %s" (if status status *TODO*) name)))
+    (format "%s%s\n%s" prefix-string (orgtrello-controller/--serialize-tags prefix-string tags) (orgtrello-controller/--compute-due-date due-date))))
+
+(defun orgtrello-controller/--serialize-tags (prefix-string tags)
+  "Compute the tags serialization string. If tags is empty, return \"\", otherwise, if prefix-string's length is superior to 72, only  "
+  (if (or (null tags) (string= "" tags))
+      ""
+    (let ((l (length prefix-string)))
+      (format "%s%s" (if (< 72 l) " " (orgtrello-controller/--symbol " " (- 72 l))) tags))))
 
 (defun orgtrello-controller/--compute-card-to-org-entry (card)
   "Given a card, compute its org-mode entry equivalence. orgcheckbox-p is nil"
-  (orgtrello-controller/--private-compute-card-to-org-entry (orgtrello-data/entity-name card) (orgtrello-data/entity-keyword card) (orgtrello-data/entity-due card) (orgtrello-data/entity-tags card)))
+  (orgtrello-controller/--private-compute-card-to-org-entry
+   (orgtrello-data/entity-name card)
+   (orgtrello-data/entity-keyword card)
+   (orgtrello-data/entity-due card)
+   (orgtrello-data/entity-tags card)))
 
 (defun orgtrello-controller/--compute-checklist-to-orgtrello-entry (name &optional level status)
   "Compute the orgtrello format checklist"

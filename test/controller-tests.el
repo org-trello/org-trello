@@ -88,9 +88,12 @@
   (expect "" (orgtrello-controller/--compute-due-date nil)))
 
 (expectations (desc "orgtrello-controller/--private-compute-card-to-org-entry")
-  (expect "* name TODO :some-tags:\nDEADLINE: <some-date>\n" (orgtrello-controller/--private-compute-card-to-org-entry "TODO" "name" "some-date" ":some-tags:"))
-  (expect "* name TODO\n" (orgtrello-controller/--private-compute-card-to-org-entry "TODO" "name" nil nil))
-  (expect "* name TODO :tag,tag2:\n" (orgtrello-controller/--private-compute-card-to-org-entry "TODO" "name" nil ":tag,tag2:")))
+  (expect "* name TODO                                                             :some-tags:\nDEADLINE: <some-date>\n"
+          (orgtrello-controller/--private-compute-card-to-org-entry "TODO" "name" "some-date" ":some-tags:"))
+  (expect "* name TODO\n"
+          (orgtrello-controller/--private-compute-card-to-org-entry "TODO" "name" nil nil))
+  (expect "* name TODO                                                             :tag,tag2:\n"
+          (orgtrello-controller/--private-compute-card-to-org-entry "TODO" "name" nil ":tag,tag2:")))
 
 (expectations (desc "orgtrello-controller/--compute-checklist-to-orgtrello-entry")
   (expect "** name\n" (orgtrello-controller/--compute-checklist-to-orgtrello-entry "name"))
@@ -463,3 +466,9 @@
  (expect ":red:" (orgtrello-controller/--labels-to-tags (list (orgtrello-hash/make-properties '((:color . "red"))))))
  (expect ":red:yellow:" (orgtrello-controller/--labels-to-tags (list (orgtrello-hash/make-properties '((:color . "red")))
                                                                      (orgtrello-hash/make-properties '((:color . "yellow")))))))
+(expectations
+  (expect "" (orgtrello-controller/--serialize-tags "* card name" nil))
+  (expect "" (orgtrello-controller/--serialize-tags "* card name" ""))
+  (expect "                                                             :red:green:" (orgtrello-controller/--serialize-tags "* card name" ":red:green:"))
+  (expect "                                                     :red:green:blue:" (orgtrello-controller/--serialize-tags "* another card name" ":red:green:blue:"))
+  (expect " :red:green:blue:" (orgtrello-controller/--serialize-tags "* this is another card name with an extremely long label name, more than 72 chars" ":red:green:blue:")))
