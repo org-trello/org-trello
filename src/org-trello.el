@@ -5,6 +5,15 @@
    '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/control-encoding)
    action-fn))
 
+(defun org-trello/do-and-save (action-label action-fn)
+  "Execute action and then save the buffer."
+  (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
+   action-label
+   '(orgtrello-controller/setup-properties orgtrello-controller/control-keys)
+   action-fn
+   *do-save-buffer*
+   *do-reload-setup*))
+
 (defun org-trello/abort-sync ()
   "Control first, then if ok, add a comment to the current card."
   (interactive)
@@ -65,22 +74,12 @@
 (defun org-trello/install-board-and-lists-ids ()
   "Control first, then if ok, trigger the setup installation of the trello board to sync with."
   (interactive)
-  (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
-     "Install boards and lists"
-     '(orgtrello-controller/setup-properties orgtrello-controller/control-keys)
-     'orgtrello-controller/do-install-board-and-lists
-     *do-save-buffer*
-     *do-reload-setup*))
+  (org-trello/do-and-save "Install boards and lists" 'orgtrello-controller/do-install-board-and-lists))
 
 (defun org-trello/update-board-metadata ()
   "Control first, then if ok, trigger the update of the informations about the board."
   (interactive)
-  (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
-   "Update board information"
-   '(orgtrello-controller/setup-properties orgtrello-controller/control-keys)
-   'orgtrello-controller/do-update-board-metadata!
-   *do-save-buffer*
-   *do-reload-setup*))
+  (org-trello/do-and-save "Update board information" 'orgtrello-controller/do-update-board-metadata!))
 
 (defun org-trello/jump-to-card ()
   "Jump to current card in browser."
@@ -106,32 +105,17 @@
 (defun org-trello/create-board ()
   "Control first, then if ok, trigger the board creation."
   (interactive)
-  (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
-     "Create board and lists"
-     '(orgtrello-controller/setup-properties orgtrello-controller/control-keys)
-     'orgtrello-controller/do-create-board-and-lists
-     *do-save-buffer*
-     *do-reload-setup*))
+  (org-trello/do-and-save "Create board and lists" 'orgtrello-controller/do-create-board-and-lists))
 
 (defun org-trello/assign-me ()
   "Assign oneself to the card."
   (interactive)
-  (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
-     "Assign myself to card"
-     '(orgtrello-controller/setup-properties orgtrello-controller/control-keys)
-     'orgtrello-controller/do-assign-me
-     *do-save-buffer*
-     *do-reload-setup*))
+  (org-trello/do-and-save "Assign myself to card" 'orgtrello-controller/do-assign-me))
 
 (defun org-trello/unassign-me ()
   "Unassign oneself of the card."
   (interactive)
-  (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
-     "Unassign me from card"
-     '(orgtrello-controller/setup-properties orgtrello-controller/control-keys)
-     'orgtrello-controller/do-unassign-me
-     *do-save-buffer*
-     *do-reload-setup*))
+  (org-trello/do-and-save "Unassign me from card" 'orgtrello-controller/do-unassign-me))
 
 (defun org-trello/check-setup ()
   "Check the current setup."
