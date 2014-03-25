@@ -270,21 +270,23 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 (defun orgtrello-webadmin/--compute-filename-from-entity (entity) "Compute the filename of a file given an entity."
   (format "%s%s-%s.el" (orgtrello-elnode/compute-entity-level-dir (orgtrello-data/entity-level entity)) (orgtrello-data/entity-buffername entity) (orgtrello-data/entity-position entity)))
 
+(defun orgtrello-webadmin/--delete-entity-file! (entity-file-name)
+  "Given an entity, retrieve its full path name and delete it"
+  (-> entity-file-name
+    orgtrello-webadmin/--compute-filename-from-entity
+    orgtrello-action/delete-file!))
+
 (defun orgtrello-webadmin/--delete-entity-with-id (id) "Remove the entity/file which match the id id."
   (-if-let (entity-to-delete (->> *ORGTRELLO-LEVELS*
                                   orgtrello-webadmin/--list-entities
                                   (--filter (string= id (orgtrello-data/entity-id it)))
                                   first))
-           (-> entity-to-delete
-               orgtrello-webadmin/--compute-filename-from-entity
-               orgtrello-action/delete-file!)))
+      (orgtrello-webadmin/--delete-entity-file! entity-to-delete)))
 
 (defun orgtrello-webadmin/delete-entities! () "Remove the entities/files."
   (->> *ORGTRELLO-LEVELS*
        orgtrello-webadmin/--list-entities
-       (--map (-> it
-                  orgtrello-webadmin/--compute-filename-from-entity
-                  orgtrello-action/delete-file!))))
+       (--map (orgtrello-webadmin/--delete-entity-file! it))))
 
 (defun orgtrello-webadmin/elnode-delete-entity (http-con) "Deal with actions to do on 'action' (entities)."
   (let ((id (elnode-http-mapping http-con 1)))
