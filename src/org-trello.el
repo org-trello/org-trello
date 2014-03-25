@@ -16,6 +16,13 @@
    *do-save-buffer*
    *do-reload-setup*))
 
+(defun org-trello/do (action-fn)
+  "First checks, then if controls ok, execute"
+  (interactive)
+  (orgtrello-action/controls-or-actions-then-do
+   '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/control-encoding)
+   action-fn))
+
 (defun org-trello/abort-sync ()
   "Control first, then if ok, add a comment to the current card."
   (interactive)
@@ -83,8 +90,7 @@
 (defun org-trello/jump-to-card ()
   "Jump to current card in browser."
   (interactive)
-  (orgtrello-action/controls-or-actions-then-do
-     '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/control-encoding)
+  (org-trello/do
      (lambda ()
        (let* ((full-meta       (orgtrello-data/entry-get-full-metadata!))
               (entity          (orgtrello-data/current full-meta))
@@ -97,9 +103,7 @@
 (defun org-trello/jump-to-trello-board ()
   "Jump to current trello board."
   (interactive)
-  (orgtrello-action/controls-or-actions-then-do
-     '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/control-encoding)
-     (lambda () (browse-url (org-trello/https-trello (format "/b/%s" (orgtrello-buffer/board-id!)))))))
+  (org-trello/do (lambda () (browse-url (org-trello/https-trello (format "/b/%s" (orgtrello-buffer/board-id!)))))))
 
 (defun org-trello/create-board ()
   "Control first, then if ok, trigger the board creation."
@@ -111,14 +115,12 @@
   (interactive "P")
   (if modifier
       (org-trello/proxy-do-and-save "Unassign me from card" 'orgtrello-controller/do-unassign-me)
-    (org-trello/proxy-do-and-save "Assign myself to card" 'orgtrello-controller/do-assign-me)))
+    (org-trello/Proxy-do-and-save "Assign myself to card" 'orgtrello-controller/do-assign-me)))
 
 (defun org-trello/check-setup ()
   "Check the current setup."
   (interactive)
-  (orgtrello-action/controls-or-actions-then-do
-     '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/control-encoding)
-     (lambda () (orgtrello-log/msg *OT/NOLOG* "Setup ok!"))))
+  (org-trello/do (lambda () (orgtrello-log/msg *OT/NOLOG* "Setup ok!"))))
 
 (defun org-trello/delete-setup ()
   "Delete the current setup."
