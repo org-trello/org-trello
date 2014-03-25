@@ -926,21 +926,26 @@ CLOSED: [2014-03-24 Mon 00:58]
 - [X] Update metadata command about the board currently connected (sometimes, new information arise)
 - [X] Release notes
 - [X] Version
-* TODO 0.3.X [0%]
+* TODO 0.3.8 [0%]
 - [ ] Open stop all synchronization actions - https://github.com/org-trello/org-trello/issues/131
+- [ ] A command to 'sync from trello' the current entity
+- [ ] A command to 'sync from trello' the current entity and its structure
 - [ ] Use active region - https://github.com/org-trello/org-trello/issues/130
+- [ ] Version
+- [ ] Release notes
+
+* TODO 0.3.X [0%]
 - [ ] Provide org-trello-mode-hook - https://github.com/org-trello/org-trello/issues/116
+- [ ] More fined grained use of the trello api (retrieve only data we use) - https://github.com/org-trello/org-trello/issues/69
+- [ ] Improve sync request policy - https://github.com/org-trello/org-trello/issues/58
+- [ ] One command to sync them all - https://github.com/org-trello/org-trello/issues/59
 - [ ] Extract a data representation for org-trello buffer to decorrelate the file serialization file from the computation (decomplecting -> ease of testing, computation, overall maintenance, sandbox i/o to a minimum)
   - [ ] extracter (from file/region to data)
   - [ ] updater (from data to updated data)
   - [ ] serializer (from data to file/region update)
-- [ ] More fined grained use of the trello api (retrieve only data we use) - https://github.com/org-trello/org-trello/issues/69
 - [ ] Another Disposition about org's buffer - https://github.com/org-trello/org-trello/issues/33
-- [ ] Improve sync request policy - https://github.com/org-trello/org-trello/issues/58
-- [ ] One command to sync them all - https://github.com/org-trello/org-trello/issues/59
 - [ ] Now that elnode is here, this may be simpler to use a fake trello server (use clojure :D)
 - [ ] POC: use a temporary buffer to sync with trello, when done, merge with the user's buffer.
-- [ ] Improve tests coverage - some major and important functionalities are not covered (due at time of ignorance on how to do it, there is only so much one can do!)
 * TODO Template [0%]
 - [ ] Backlog
 - [ ] Version
