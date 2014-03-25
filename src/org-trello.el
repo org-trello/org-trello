@@ -174,7 +174,7 @@
     (org-trello/update-board-metadata        "U" "Update the buffer's trello board metadata.")
     (org-trello/abort-sync                   "g" "Abort synchronization activities.")
     (org-trello/help-describing-bindings     "h" "This help message."))
-  "List of command and default binding without the prefix key.")
+  "List of commands and default bindings without the prefix key.")
 
 (defun org-trello/--install-local-keybinding-map! (previous-org-trello-mode-prefix-keybinding org-trello-mode-prefix-keybinding interactive-command-binding-to-install)
   "Install locally the default binding map with the prefix binding of org-trello-mode-prefix-keybinding."
