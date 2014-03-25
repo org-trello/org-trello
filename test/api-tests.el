@@ -169,8 +169,12 @@
   (expect "/checklists/:checklist-id/checkItems/:item-id" (gethash :uri    (orgtrello-api/delete-item :checklist-id :item-id))))
 
 (expectations (desc "orgtrello-api/get-items")
-  (expect "GET"                                    (gethash :method (orgtrello-api/get-items :checklist-id)))
+  (expect "GET"                                   (gethash :method (orgtrello-api/get-items :checklist-id)))
   (expect "/checklists/:checklist-id/checkItems/" (gethash :uri    (orgtrello-api/get-items :checklist-id))))
+
+(expectations (desc "orgtrello-api/get-item")
+  (expect "GET"                                           (gethash :method (orgtrello-api/get-item :checklist-id :item-id)))
+  (expect "/checklists/:checklist-id/checkItems/:item-id" (gethash :uri    (orgtrello-api/get-item :checklist-id :item-id))))
 
 (expectations (desc "orgtrello-api/get-member")
   (expect "GET"          (gethash :method (orgtrello-api/get-member :id)))

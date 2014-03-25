@@ -106,6 +106,10 @@
   "List the checklist items."
   (orgtrello-hash/make-hash "GET" (format "/checklists/%s/checkItems/" checklist-id)))
 
+(defun orgtrello-api/get-item (checklist-id item-id)
+  "List the checklist items."
+  (orgtrello-hash/make-hash "GET" (format "/checklists/%s/checkItems/%s" checklist-id item-id)))
+
 (defun orgtrello-api/delete-item (checklist-id item-id)
   "Delete a item with id item-id"
   (orgtrello-hash/make-hash "DELETE" (format "/checklists/%s/checkItems/%s" checklist-id item-id)))
