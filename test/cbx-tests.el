@@ -196,3 +196,7 @@
     (orgtrello-tests/with-temp-buffer "- [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}" (orgtrello-cbx/org-checkbox-metadata!)))
   (expect '(3 nil "TODO" nil "some other checkbox" nil)
     (orgtrello-tests/with-temp-buffer " - [ ] some other checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}" (orgtrello-cbx/org-checkbox-metadata!))))
+
+(expectations
+  (expect 25 (orgtrello-tests/with-temp-buffer "* card\n- [ ] checkbox 0\n- [ ] checkbox 1\n" (orgtrello-cbx/next-checklist-point!) -2))
+  (expect 56 (orgtrello-tests/with-temp-buffer "* card\n- [ ] checkbox 0\n  - [ ] item0\n- [ ] checkbox 1\n" (orgtrello-cbx/next-checklist-point!) -1)))

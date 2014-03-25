@@ -64,6 +64,39 @@
   "Update comments property."
   (org-entry-put nil *ORGTRELLO-CARD-COMMENTS* comments))
 
+(defun orgtrello-buffer/compute-card-header-and-description-region! ()
+  "Compute the card region zone (only the card headers + description) couple '(start end)."
+  (let ((point-start)
+        (point-end)))
+  (save-excursion
+    (orgtrello-buffer/back-to-card!)
+    (setq point-start (point-at-bol))
+    (orgtrello-cbx/--goto-next-checkbox)
+    (setq point-end (point-at-bol))
+    `(,point-start ,point-end)))
+
+(defun orgtrello-buffer/compute-checklist-header-region! ()
+  "Compute the checklist's region (only the header, without computing the zone occupied by items) couple '(start end)."
+  `(,(point-at-bol) ,(point-at-eol)))
+
+(defun orgtrello-buffer/compute-checklist-region! ()
+  "Compute the checklist's region (including the items) couple '(start end)."
+  `(,(point-at-bol) ,(orgtrello-cbx/next-checklist-point!)))
+
+(defun orgtrello-buffer/compute-item-region! ()
+  "Compute the item region couple '(start end)."
+  `(,(point-at-bol) ,(point-at-eol)))
+
+(defun orgtrello-buffer/compute-card-region! ()
+  "Compute the card region zone (only the card headers + description) couple '(start end)."
+  (let ((point-start)
+        (point-end)))
+  (save-excursion
+    (orgtrello-buffer/back-to-card!)
+    (setq point-start (point-at-bol))
+    (setq point-end (orgtrello-cbx/--compute-next-card-point))
+    `(,point-start ,point-end)))
+
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-buffer loaded!")
 
 

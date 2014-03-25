@@ -129,3 +129,31 @@ hello there
     (orgtrello-tests/with-org-buffer
      (format ":PROPERTIES:\n#+PROPERTY: %s this-is-the-user\n:END:\n* card\n" *ORGTRELLO-USER-ME*)
      (orgtrello-buffer/me!))))
+
+(expectations
+  (expect '(1 85)
+    (orgtrello-tests/with-temp-buffer "* card       :some-tags:
+:PROPERTIES:
+:orgtrello-id: some-id
+:END:
+some-description
+- [ ] checklist
+  - [ ] item" (orgtrello-buffer/compute-card-header-and-description-region!))))
+
+(expectations
+  (expect '(8 23)
+    (orgtrello-tests/with-temp-buffer "* card\n- [ ] checklist\n- [ ] another" (orgtrello-buffer/compute-checklist-header-region!))))
+
+(expectations
+  (expect '(8 24)
+    (orgtrello-tests/with-temp-buffer "* card\n- [ ] checklist\n- [ ] item" (orgtrello-buffer/compute-checklist-region!)))
+  (expect '(8 36)
+    (orgtrello-tests/with-temp-buffer "* card\n- [ ] checklist\n  - [ ] item" (orgtrello-buffer/compute-checklist-region!)))
+  (expect '(8 48)
+    (orgtrello-tests/with-temp-buffer "* card\n- [ ] checklist\n  - [ ] item\n  - item 2\n" (orgtrello-buffer/compute-checklist-region!) -3))
+  (expect '(8 48)
+    (orgtrello-tests/with-temp-buffer "* card\n- [ ] checklist\n  - [ ] item\n  - item 2\n* another card" (orgtrello-buffer/compute-checklist-region!) -3)))
+
+(expectations
+  (expect '(17 32)
+    (orgtrello-tests/with-temp-buffer "- [ ] checklist\n  - [ ] another" (orgtrello-buffer/compute-item-region!) 0)))
