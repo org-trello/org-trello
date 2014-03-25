@@ -20,7 +20,7 @@ C-c o c - M-x org-trello/sync-entity - Create/Update an entity (card/checklist/i
 C-c o C - M-x org-trello/sync-full-entity - Create/Update a complete entity card/checklist/item and its subtree (depending on its level).
 C-c o k - M-x org-trello/kill-entity - Kill the entity (and its arborescence tree) from the trello board and the org buffer.
 C-c o K - M-x org-trello/kill-all-entities - Kill all the entities (and their arborescence tree) from the trello board and the org buffer.
-C-c o s - M-x org-trello/sync-buffer - Synchronize the org-mode file to the trello board (org-mode -> trello). with prefix, C-u, sync-from-trello
+C-c o s - M-x org-trello/sync-buffer - Synchronize the org-mode file to the trello board (org-mode -> trello). With prefix C-u, sync-from-trello (org-mode <- trello).
 C-c o j - M-x org-trello/jump-to-card - Jump to card in browser.
 C-c o J - M-x org-trello/jump-to-trello-board - Open the browser to your current trello board.
 C-c o o - M-x org-trello/show-card-comments - Display the card's comments in a pop-up buffer.

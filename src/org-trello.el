@@ -165,7 +165,7 @@
     (org-trello/sync-full-entity             "C" "Create/Update a complete entity card/checklist/item and its subtree (depending on its level).")
     (org-trello/kill-entity                  "k" "Kill the entity (and its arborescence tree) from the trello board and the org buffer.")
     (org-trello/kill-all-entities            "K" "Kill all the entities (and their arborescence tree) from the trello board and the org buffer.")
-    (org-trello/sync-buffer                  "s" "Synchronize the org-mode file to the trello board (org-mode -> trello). with prefix, C-u, sync-from-trello ")
+    (org-trello/sync-buffer                  "s" "Synchronize the org-mode file to the trello board (org-mode -> trello). With prefix C-u, sync-from-trello (org-mode <- trello).")
     (org-trello/jump-to-card                 "j" "Jump to card in browser.")
     (org-trello/jump-to-trello-board         "J" "Open the browser to your current trello board.")
     (org-trello/show-card-comments           "o" "Display the card's comments in a pop-up buffer.")
