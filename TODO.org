@@ -926,12 +926,12 @@ CLOSED: [2014-03-24 Mon 00:58]
 - [X] Update metadata command about the board currently connected (sometimes, new information arise)
 - [X] Release notes
 - [X] Version
-* TODO 0.3.8 [12%]
+* TODO 0.3.8 [25%]
 - [X] Some refactoring
   - [X] Align sync from trello card tags/labels serialization with org's tags behavior
   - [X] Refactor open org-trello buffer with title/content
   - [X] Sanitize functions (move functions to their right namespaces)
-- [ ] Provide org-trello-mode-hook - https://github.com/org-trello/org-trello/issues/116
+- [X] Provide org-trello-mode-hook - CLOSE https://github.com/org-trello/org-trello/issues/116
 - [ ] Open stop all synchronization actions - https://github.com/org-trello/org-trello/issues/131
 - [ ] A command to 'sync from trello' the current entity
 - [ ] A command to 'sync from trello' the current entity and its structure

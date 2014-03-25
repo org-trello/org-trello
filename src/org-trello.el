@@ -256,6 +256,8 @@
   :lighter " ot"
   :keymap  (make-sparse-keymap))
 
+(defvar org-trello-mode-hook '() "org-trello-hook for user to extend org-trello with their own behavior.")
+
 (defun org-trello-mode-on-hook-fn (&optional partial-mode)
   "Actions to do when org-trello starts."
   (unless partial-mode
@@ -270,7 +272,9 @@
           ;; a little message in the minibuffer to notify the user
           (orgtrello-log/msg *OT/NOLOG* (org-trello/--startup-message *ORGTRELLO-MODE-PREFIX-KEYBINDING*))
           ;; Overwrite the org-mode-map
-          (define-key org-trello-mode-map [remap org-end-of-line] 'org-trello/end-of-line!)))
+          (define-key org-trello-mode-map [remap org-end-of-line] 'org-trello/end-of-line!)
+          ;; run hook at startup
+          (run-hooks 'org-trello-mode-hook)))
 
 (defun org-trello-mode-off-hook-fn (&optional partial-mode)
   "Actions to do when org-trello stops."
