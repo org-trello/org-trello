@@ -37,12 +37,12 @@
 (defun org-trello/sync-entity ()
   "Control first, then if ok, create a simple entity."
   (interactive)
-  (org-trello/do "Request 'sync entity'" 'orgtrello-controller/do-sync-entity))
+  (org-trello/do "Request 'sync entity to trello'" 'orgtrello-controller/do-sync-entity-to-trello!))
 
 (defun org-trello/sync-full-entity ()
   "Control first, then if ok, create an entity and all its arborescence if need be."
   (interactive)
-  (org-trello/do "Request 'sync entity with structure" 'orgtrello-controller/do-sync-full-entity))
+  (org-trello/do "Request 'sync entity with structure" 'orgtrello-controller/do-sync-full-entity-to-trello!))
 
 (defun org-trello/sync-buffer (&optional modifier)
   "Will trigger a buffer sync action. If modifier is nil, will sync *TO* trello, otherwise, will sync *FROM* trello."

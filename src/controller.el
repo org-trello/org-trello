@@ -279,22 +279,22 @@
   "Do the deletion of an entity."
   (orgtrello-controller/--checks-then-delegate-action-on-entity-to-proxy '(orgtrello-controller/--right-level-p orgtrello-controller/--already-synced-p) *ORGTRELLO-ACTION-DELETE*))
 
-(defun orgtrello-controller/do-sync-entity ()
+(defun orgtrello-controller/do-sync-entity-to-trello! ()
   "Do the entity synchronization (if never synchronized, will create it, update it otherwise)."
   (orgtrello-controller/--checks-then-delegate-action-on-entity-to-proxy '(orgtrello-controller/--right-level-p orgtrello-controller/--mandatory-name-ok-p) *ORGTRELLO-ACTION-SYNC*))
 
-(defun orgtrello-controller/do-sync-full-entity ()
+(defun orgtrello-controller/do-sync-full-entity-to-trello! ()
   "Do the actual full card creation - from card to item. Beware full side effects..."
   (orgtrello-log/msg *OT/INFO* "Synchronizing full entity with its structure on board '%s'..." (orgtrello-buffer/board-name!))
   ;; in any case, we need to show the subtree, otherwise https://github.com/org-trello/org-trello/issues/53
   (org-show-subtree)
   (if (org-at-heading-p)
-      (org-map-tree (lambda () (orgtrello-controller/do-sync-entity) (orgtrello-controller/map-sync-checkboxes)))
+      (org-map-tree (lambda () (orgtrello-controller/do-sync-entity-to-trello!) (orgtrello-controller/map-sync-checkboxes)))
       (orgtrello-controller/map-sync-checkboxes)))
 
 (defun orgtrello-controller/map-sync-checkboxes ()
   "Map the sync to checkboxes."
-  (orgtrello-cbx/map-checkboxes 'orgtrello-controller/do-sync-entity))
+  (orgtrello-cbx/map-checkboxes 'orgtrello-controller/do-sync-entity-to-trello!))
 
 (defun orgtrello-controller/org-map-entries (level fn-to-execute)
   "Map fn-to-execute to a given entities with level level. fn-to-execute is a function without any parameter."
@@ -303,7 +303,7 @@
 (defun orgtrello-controller/do-sync-full-file-to-trello! ()
   "Full org-mode file synchronisation."
   (orgtrello-log/msg *OT/WARN* "Synchronizing org-mode file to the board '%s'. This may take some time, some coffee may be a good idea..." (orgtrello-buffer/board-name!))
-  (orgtrello-controller/org-map-entries *CARD-LEVEL* 'orgtrello-controller/do-sync-full-entity))
+  (orgtrello-controller/org-map-entries *CARD-LEVEL* 'orgtrello-controller/do-sync-full-entity-to-trello!))
 
 (defun orgtrello-controller/--compute-card-status (card-id-list)
   "Given a card's id, compute its status."
