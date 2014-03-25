@@ -52,4 +52,12 @@
   "Compute the board's current labels and return it as an association list."
   (mapcar (lambda (color) `(,color . ,(orgtrello-buffer/--get-data! color))) '(":red" ":blue" ":orange" ":yellow" ":purple" ":green")))
 
+(defun orgtrello-buffer/pop-up-with-content! (title body-content)
+  "Compute a temporary buffer *ORGTRELLO-TITLE-BUFFER-INFORMATION* with the title and body-content."
+  (with-temp-buffer-window
+   *ORGTRELLO-TITLE-BUFFER-INFORMATION* nil nil
+   (progn
+     (temp-buffer-resize-mode 1)
+     (insert (format "%s:\n\n%s" title body-content)))))
+
 

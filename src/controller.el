@@ -1107,7 +1107,7 @@
            (comments-title (format "comments for card '%s'" current-card-name))
            (comments-formatted (-> (orgtrello-buffer/get-card-comments!)
                                  orgtrello-controller/format-comments)))
-      (orgtrello-controller/--pop-up-with-content! comments-title comments-formatted))))
+      (orgtrello-buffer/pop-up-with-content! comments-title comments-formatted))))
 
 (defun orgtrello-controller/--update-comments! (new-comment)
   "Given a current position on a card and a new comment, add a new comment to the current comments."
@@ -1171,18 +1171,10 @@
     (--map (s-join ": " (list (car it) (cdr it))))
     (s-join "\n\n")))
 
-(defun orgtrello-controller/--pop-up-with-content! (title body-content)
-  "Compute a temporary buffer *ORGTRELLO-TITLE-BUFFER-INFORMATION* with the title and body-content."
-  (with-temp-buffer-window
-   *ORGTRELLO-TITLE-BUFFER-INFORMATION* nil nil
-   (progn
-     (temp-buffer-resize-mode 1)
-     (insert (format "%s:\n\n%s" title body-content)))))
-
 (defun orgtrello-controller/do-show-board-labels! ()
   (->> (orgtrello-buffer/labels!)
     orgtrello-controller/--format-labels
-    (orgtrello-controller/--pop-up-with-content! "Labels")))
+    (orgtrello-buffer/pop-up-with-content! "Labels")))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-controller loaded!")
 
