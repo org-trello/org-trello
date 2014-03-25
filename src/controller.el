@@ -720,21 +720,25 @@
 
 (defun orgtrello-controller/--sync-entity-buffer-with-trello-data-callback (buffername &optional position name)
   "Generate a callback which knows the buffer with which it must work. (this callback must take a buffer-name and a position)"
-  (lexical-let ((buffer-name (trace :buffername buffername))
-                (pos         (trace :position position)))
+  (lexical-let ((buffer-name buffername)
+                (pos         position))
     (function* (lambda (&key data &allow-other-keys) "Synchronize the buffer with the response data."
        (orgtrello-log/msg *OT/TRACE* "proxy - response data: %S" data)
        (orgtrello-action/safe-wrap
-        (progn
+        (save-excursion
           (goto-char pos)
-          (cond ((orgtrello-data/entity-card-p data)      (progn
-                                                            (apply 'delete-region (orgtrello-buffer/compute-card-header-and-description-region!))
+          (point-at-bol)
+          (org-show-subtree)
+          (cond ((orgtrello-data/entity-card-p data)      (let ((region (orgtrello-buffer/compute-card-header-and-description-region!)))
+                                                            (apply 'delete-region region)
                                                             (orgtrello-controller/--write-card-header! (orgtrello-data/entity-id data) data)))
-                ((orgtrello-data/entity-checklist-p data) (progn
-                                                            (apply 'delete-region (orgtrello-buffer/compute-checklist-header-region!))
+                ((orgtrello-data/entity-checklist-p data) (let ((region (orgtrello-buffer/compute-checklist-header-region!)))
+                                                            (apply 'orgtrello-cbx/remove-overlays! region)
+                                                            (apply 'delete-region region)
                                                             (orgtrello-controller/--write-checklist-header! (orgtrello-data/entity-id data) data)))
-                ((orgtrello-data/entity-item-p data)      (progn
-                                                            (apply 'delete-region (orgtrello-buffer/compute-item-region!))
+                ((orgtrello-data/entity-item-p data)      (let ((region (orgtrello-buffer/compute-item-region!)))
+                                                            (apply 'orgtrello-cbx/remove-overlays! region)
+                                                            (apply 'delete-region region)
                                                             (orgtrello-controller/--write-entity! (orgtrello-data/entity-id data) data)))))
         (orgtrello-log/msg *OT/INFO* "Synchronizing the trello and org data merge - done!"))))))
 

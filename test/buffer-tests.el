@@ -131,7 +131,7 @@ hello there
      (orgtrello-buffer/me!))))
 
 (expectations
-  (expect '(1 85)
+  (expect '(1 84)
     (orgtrello-tests/with-temp-buffer "* card       :some-tags:
 :PROPERTIES:
 :orgtrello-id: some-id
@@ -141,7 +141,7 @@ some-description
   - [ ] item" (orgtrello-buffer/compute-card-header-and-description-region!))))
 
 (expectations
-  (expect '(8 23)
+  (expect '(8 24)
     (orgtrello-tests/with-temp-buffer "* card\n- [ ] checklist\n- [ ] another" (orgtrello-buffer/compute-checklist-header-region!))))
 
 (expectations
@@ -155,5 +155,5 @@ some-description
     (orgtrello-tests/with-temp-buffer "* card\n- [ ] checklist\n  - [ ] item\n  - item 2\n* another card" (orgtrello-buffer/compute-checklist-region!) -3)))
 
 (expectations
-  (expect '(17 32)
+  (expect '(17 33)
     (orgtrello-tests/with-temp-buffer "- [ ] checklist\n  - [ ] another" (orgtrello-buffer/compute-item-region!) 0)))

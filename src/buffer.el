@@ -72,12 +72,12 @@
     (orgtrello-buffer/back-to-card!)
     (setq point-start (point-at-bol))
     (orgtrello-cbx/--goto-next-checkbox)
-    (setq point-end (point-at-bol))
+    (setq point-end (1- (point-at-bol)))
     `(,point-start ,point-end)))
 
 (defun orgtrello-buffer/compute-checklist-header-region! ()
   "Compute the checklist's region (only the header, without computing the zone occupied by items) couple '(start end)."
-  `(,(point-at-bol) ,(point-at-eol)))
+  `(,(point-at-bol) ,(1+ (point-at-eol))))
 
 (defun orgtrello-buffer/compute-checklist-region! ()
   "Compute the checklist's region (including the items) couple '(start end)."
@@ -85,7 +85,7 @@
 
 (defun orgtrello-buffer/compute-item-region! ()
   "Compute the item region couple '(start end)."
-  `(,(point-at-bol) ,(point-at-eol)))
+  `(,(point-at-bol) ,(1+ (point-at-eol))))
 
 (defun orgtrello-buffer/compute-card-region! ()
   "Compute the card region zone (only the card headers + description) couple '(start end)."
