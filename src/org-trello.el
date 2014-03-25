@@ -8,73 +8,49 @@
 (defun org-trello/abort-sync ()
   "Control first, then if ok, add a comment to the current card."
   (interactive)
-  (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
-   "Abort sync activities"
-   '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/control-encoding)
-   'orgtrello-webadmin/delete-entities!))
+  (org-trello/do "Abort sync activities" 'orgtrello-webadmin/delete-entities!))
 
 (defun org-trello/add-card-comments ()
   "Control first, then if ok, add a comment to the current card."
   (interactive)
-  (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
-   "Add card comment"
-   '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/control-encoding)
-   'orgtrello-controller/do-add-card-comment!))
+  (org-trello/do "Add card comment" 'orgtrello-controller/do-add-card-comment!))
 
 (defun org-trello/show-card-comments ()
   "Control first, then if ok, show a simple buffer with the current card's last comments."
   (interactive)
-  (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
-   "Display current card's last comments"
-   '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/control-encoding)
-   'orgtrello-controller/do-show-card-comments!))
+  (org-trello/do "Display current card's last comments" 'orgtrello-controller/do-show-card-comments!))
 
 (defun org-trello/show-board-labels ()
   "Control first, then if ok, show a simple buffer with the current board's labels."
   (interactive)
-  (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
-   "Display current board's labels"
-   '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/control-encoding)
-   'orgtrello-controller/do-show-board-labels!))
+  (org-trello/do "Display current board's labels" 'orgtrello-controller/do-show-board-labels!))
 
 (defun org-trello/sync-entity ()
   "Control first, then if ok, create a simple entity."
   (interactive)
-  (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
-     "Request 'sync entity'"
-     '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/control-encoding)
-     'orgtrello-controller/do-sync-entity))
+  (org-trello/do "Request 'sync entity'" 'orgtrello-controller/do-sync-entity))
 
 (defun org-trello/sync-full-entity ()
   "Control first, then if ok, create an entity and all its arborescence if need be."
   (interactive)
-  (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
-     "Request 'sync entity with structure"
-     '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/control-encoding)
-     'orgtrello-controller/do-sync-full-entity))
+  (org-trello/do "Request 'sync entity with structure" 'orgtrello-controller/do-sync-full-entity))
 
 (defun org-trello/sync-buffer (&optional modifier)
   "Will trigger a buffer sync action. If modifier is nil, will sync *TO* trello, otherwise, will sync *FROM* trello."
   (interactive "P")
   (let ((sync-action-fn    (if modifier 'orgtrello-controller/do-sync-full-file-from-trello! 'orgtrello-controller/do-sync-full-file-to-trello!))
         (sync-action-label (format "Request 'sync org buffer %s trello board'" (if modifier "from" "to"))))
-    (message "%S" `(org-trello/do ,sync-action-label ,sync-action-fn))))
+    (org-trello/do sync-action-label sync-action-fn)))
 
 (defun org-trello/kill-entity ()
   "Control first, then if ok, delete the entity and all its arborescence."
   (interactive)
-  (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
-     "Request 'delete entity'"
-     '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/control-encoding)
-     'orgtrello-controller/do-delete-simple))
+  (org-trello/do "Request 'delete entity'" 'orgtrello-controller/do-delete-simple))
 
 (defun org-trello/kill-all-entities ()
   "Control first, then if ok, delete the entity and all its arborescence."
   (interactive)
-  (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
-     "Request - 'delete entities'"
-     '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/control-encoding)
-     'orgtrello-controller/do-delete-entities))
+  (org-trello/do "Request - 'delete entities'" 'orgtrello-controller/do-delete-entities))
 
 (defun org-trello/install-key-and-token ()
   "No control, trigger the setup installation of the key and the read/write token."
