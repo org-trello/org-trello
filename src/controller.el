@@ -300,7 +300,7 @@
   "Map fn-to-execute to a given entities with level level. fn-to-execute is a function without any parameter."
   (org-map-entries (lambda () (when (= level (orgtrello-data/current-level)) (funcall fn-to-execute)))))
 
-(defun orgtrello-controller/do-sync-full-file ()
+(defun orgtrello-controller/do-sync-full-file-to-trello! ()
   "Full org-mode file synchronisation."
   (orgtrello-log/msg *OT/WARN* "Synchronizing org-mode file to the board '%s'. This may take some time, some coffee may be a good idea..." (orgtrello-buffer/board-name!))
   (orgtrello-controller/org-map-entries *CARD-LEVEL* 'orgtrello-controller/do-sync-full-entity))
@@ -701,7 +701,7 @@
            (orgtrello-controller/--sync-buffer-with-trello-data buffer-name)
            (orgtrello-action/safe-wrap (orgtrello-log/msg *OT/INFO* "Synchronizing the trello and org data merge - done!")))))))
 
-(defun orgtrello-controller/do-sync-full-from-trello (&optional sync)
+(defun orgtrello-controller/do-sync-full-file-from-trello! (&optional sync)
   "Full org-mode file synchronisation. Beware, this will block emacs as the request is synchronous."
   (orgtrello-log/msg *OT/INFO* "Synchronizing the trello board '%s' to the org-mode file. This may take a moment, some coffee may be a good idea..." (orgtrello-buffer/board-name!))
   ;; then start the sync computations

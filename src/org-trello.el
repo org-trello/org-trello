@@ -1,3 +1,10 @@
+(defun org-trello/do (action-label action-fn)
+  "Execute sync action."
+  (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
+   action-label
+   '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/control-encoding)
+   action-fn))
+
 (defun org-trello/abort-sync ()
   "Control first, then if ok, add a comment to the current card."
   (interactive)
@@ -46,23 +53,12 @@
      '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/control-encoding)
      'orgtrello-controller/do-sync-full-entity))
 
-(defun org-trello/sync-to-trello ()
-  "Control first, then if ok, sync the org-mode file completely to trello."
-  (interactive)
-  (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
-     "Request 'sync org buffer to trello board'"
-     '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/control-encoding)
-     'orgtrello-controller/do-sync-full-file))
-
-(defun org-trello/sync-from-trello ()
-  "Control first, then if ok, sync the org-mode file from the trello board."
-  (interactive)
-  ;; execute the action
-  (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
-     "Request 'sync org buffer from trello board'"
-     '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/control-encoding)
-     'orgtrello-controller/do-sync-full-from-trello
-     *do-save-buffer*))
+(defun org-trello/sync-buffer (&optional modifier)
+  "Will trigger a buffer sync action. If modifier is nil, will sync *TO* trello, otherwise, will sync *FROM* trello."
+  (interactive "P")
+  (let ((sync-action-fn    (if modifier 'orgtrello-controller/do-sync-full-file-from-trello! 'orgtrello-controller/do-sync-full-file-to-trello!))
+        (sync-action-label (format "Request 'sync org buffer %s trello board'" (if modifier "from" "to"))))
+    (message "%S" `(org-trello/do ,sync-action-label ,sync-action-fn))))
 
 (defun org-trello/kill-entity ()
   "Control first, then if ok, delete the entity and all its arborescence."
@@ -212,12 +208,11 @@
     (org-trello/unassign-me                  "u" "Unassign oneself from the card")
     (org-trello/delete-setup                 "D" "Clean up the org buffer from all org-trello informations.")
     (org-trello/create-board                 "b" "Create interactively a board and attach the org-mode file to this trello board.")
-    (org-trello/sync-from-trello             "S" "Synchronize the org-mode file from the trello board (trello -> org-mode).")
     (org-trello/sync-entity                  "c" "Create/Update an entity (card/checklist/item) depending on its level and status. Do not deal with level superior to 4.")
     (org-trello/sync-full-entity             "C" "Create/Update a complete entity card/checklist/item and its subtree (depending on its level).")
     (org-trello/kill-entity                  "k" "Kill the entity (and its arborescence tree) from the trello board and the org buffer.")
     (org-trello/kill-all-entities            "K" "Kill all the entities (and their arborescence tree) from the trello board and the org buffer.")
-    (org-trello/sync-to-trello               "s" "Synchronize the org-mode file to the trello board (org-mode -> trello).")
+    (org-trello/sync-buffer                  "s" "Synchronize the org-mode file to the trello board (org-mode -> trello). with prefix, C-u, sync-from-trello ")
     (org-trello/jump-to-card                 "j" "Jump to card in browser.")
     (org-trello/jump-to-trello-board         "J" "Open the browser to your current trello board.")
     (org-trello/show-card-comments           "o" "Display the card's comments in a pop-up buffer.")
