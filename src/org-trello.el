@@ -1,15 +1,17 @@
-(defun org-trello/proxy-do (action-label action-fn)
+(defun org-trello/proxy-do (action-label action-fn &optional with-save-flag)
   "Execute sync action."
   (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
    action-label
    '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/control-encoding)
-   action-fn))
+   action-fn
+   (when with-save-flag *do-save-buffer*)
+   (when with-save-flag *do-reload-setup*)))
 
-(defun org-trello/proxy-do-and-save (action-label action-fn &optional no-check)
+(defun org-trello/proxy-do-and-save (action-label action-fn &optional no-check-flag)
   "Execute action and then save the buffer."
   (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
    action-label
-   (if no-check nil '(orgtrello-controller/setup-properties orgtrello-controller/control-keys))
+   (if no-check-flag nil '(orgtrello-controller/setup-properties orgtrello-controller/control-keys))
    action-fn
    *do-save-buffer*
    *do-reload-setup*))
@@ -121,14 +123,12 @@
 (defun org-trello/delete-setup ()
   "Delete the current setup."
   (interactive)
-  (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
+  (org-trello/proxy-do
    "Delete current org-trello setup"
-     '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/control-encoding)
-     (lambda ()
-       (orgtrello-controller/do-cleanup-from-buffer! t) ;; will do a global cleanup
-       (orgtrello-log/msg *OT/NOLOG* "Cleanup done!")) ;; a simple message to tell the user that the work is done!
-     *do-save-buffer*
-     *do-reload-setup*))
+   (lambda ()
+     (orgtrello-controller/do-cleanup-from-buffer! t)                                  ;; will do a global cleanup
+     (orgtrello-log/msg *OT/NOLOG* "Cleanup done!")) ;; a simple message to tell the user that the work is done!
+   t))
 
 (defun org-trello/--replace-string-prefix-in-string (keybinding string-to-replace)
   (replace-regexp-in-string "#PREFIX#" keybinding string-to-replace t))
