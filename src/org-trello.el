@@ -132,12 +132,10 @@
      *do-reload-setup*))
 
 (defun org-trello/--replace-string-prefix-in-string (keybinding string-to-replace)
-  (replace-regexp-in-string
-   "#PREFIX#" keybinding string-to-replace t))
+  (replace-regexp-in-string "#PREFIX#" keybinding string-to-replace t))
 
 (defun org-trello/--startup-message (keybinding)
-  (let ((template-string
-         "org-trello/ot is on! To begin with, hit #PREFIX# h or M-x 'org-trello/help-describing-bindings"))
+  (let ((template-string "org-trello/ot is on! To begin with, hit #PREFIX# h or M-x 'org-trello/help-describing-bindings"))
     (replace-regexp-in-string "#PREFIX#" keybinding template-string t)))
 
 (defun org-trello/--help-describing-bindings-template (keybinding list-command-binding-description)
