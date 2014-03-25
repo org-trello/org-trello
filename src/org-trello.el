@@ -90,20 +90,12 @@
 (defun org-trello/jump-to-card ()
   "Jump to current card in browser."
   (interactive)
-  (org-trello/do
-     (lambda ()
-       (let* ((full-meta       (orgtrello-data/entry-get-full-metadata!))
-              (entity          (orgtrello-data/current full-meta))
-              (right-entity-fn (cond ((orgtrello-data/entity-item-p entity)      'orgtrello-data/grandparent)
-                                     ((orgtrello-data/entity-checklist-p entity) 'orgtrello-data/parent)
-                                     ((orgtrello-data/entity-card-p entity)      'orgtrello-data/current))))
-         (-if-let (card-id (->> full-meta (funcall right-entity-fn) orgtrello-data/entity-id))
-                  (browse-url (org-trello/https-trello (format "/c/%s" card-id))))))))
+  (org-trello/do 'orgtrello-controller/jump-to-card!))
 
 (defun org-trello/jump-to-trello-board ()
   "Jump to current trello board."
   (interactive)
-  (org-trello/do (lambda () (browse-url (org-trello/https-trello (format "/b/%s" (orgtrello-buffer/board-id!)))))))
+  (org-trello/do 'orgtrello-controller/jump-to-board!))
 
 (defun org-trello/create-board ()
   "Control first, then if ok, trigger the board creation."
@@ -125,12 +117,7 @@
 (defun org-trello/delete-setup ()
   "Delete the current setup."
   (interactive)
-  (org-trello/proxy-do
-   "Delete current org-trello setup"
-   (lambda ()
-     (orgtrello-controller/do-cleanup-from-buffer! t)                                  ;; will do a global cleanup
-     (orgtrello-log/msg *OT/NOLOG* "Cleanup done!")) ;; a simple message to tell the user that the work is done!
-   t))
+  (org-trello/proxy-do "Delete current org-trello setup" 'orgtrello-controller/delete-setup! t))
 
 (defun org-trello/--replace-string-prefix-in-string (keybinding string-to-replace)
   (replace-regexp-in-string "#PREFIX#" keybinding string-to-replace t))

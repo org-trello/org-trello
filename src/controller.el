@@ -1199,6 +1199,25 @@
     orgtrello-data/format-labels
     (orgtrello-buffer/pop-up-with-content! "Labels")))
 
+(defun orgtrello-controller/jump-to-card! ()
+  "Given a current entry, execute the extraction and the jump to card action."
+  (let* ((full-meta       (orgtrello-data/entry-get-full-metadata!))
+         (entity          (orgtrello-data/current full-meta))
+         (right-entity-fn (cond ((orgtrello-data/entity-item-p entity)      'orgtrello-data/grandparent)
+                                ((orgtrello-data/entity-checklist-p entity) 'orgtrello-data/parent)
+                                ((orgtrello-data/entity-card-p entity)      'orgtrello-data/current))))
+    (-if-let (card-id (->> full-meta (funcall right-entity-fn) orgtrello-data/entity-id))
+        (browse-url (org-trello/https-trello (format "/c/%s" card-id))))))
+
+(defun orgtrello-controller/jump-to-board! ()
+  "Given the current position, execute the information extraction and jump to board action."
+  (browse-url (org-trello/https-trello (format "/b/%s" (orgtrello-buffer/board-id!)))))
+
+(defun orgtrello-controller/delete-setup! ()
+  "Global org-trello metadata clean up."
+  (orgtrello-controller/do-cleanup-from-buffer! t)
+  (orgtrello-log/msg *OT/NOLOG* "Cleanup done!"))
+
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-controller loaded!")
 
 
