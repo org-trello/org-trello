@@ -1,11 +1,11 @@
-(defun org-trello/do (action-label action-fn)
+(defun org-trello/proxy-do (action-label action-fn)
   "Execute sync action."
   (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
    action-label
    '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/control-encoding)
    action-fn))
 
-(defun org-trello/do-and-save (action-label action-fn &optional no-check)
+(defun org-trello/proxy-do-and-save (action-label action-fn &optional no-check)
   "Execute action and then save the buffer."
   (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
    action-label
@@ -17,66 +17,66 @@
 (defun org-trello/abort-sync ()
   "Control first, then if ok, add a comment to the current card."
   (interactive)
-  (org-trello/do "Abort sync activities" 'orgtrello-webadmin/delete-entities!))
+  (org-trello/proxy-do "Abort sync activities" 'orgtrello-webadmin/delete-entities!))
 
 (defun org-trello/add-card-comments ()
   "Control first, then if ok, add a comment to the current card."
   (interactive)
-  (org-trello/do "Add card comment" 'orgtrello-controller/do-add-card-comment!))
+  (org-trello/proxy-do "Add card comment" 'orgtrello-controller/do-add-card-comment!))
 
 (defun org-trello/show-card-comments ()
   "Control first, then if ok, show a simple buffer with the current card's last comments."
   (interactive)
-  (org-trello/do "Display current card's last comments" 'orgtrello-controller/do-show-card-comments!))
+  (org-trello/proxy-do "Display current card's last comments" 'orgtrello-controller/do-show-card-comments!))
 
 (defun org-trello/show-board-labels ()
   "Control first, then if ok, show a simple buffer with the current board's labels."
   (interactive)
-  (org-trello/do "Display current board's labels" 'orgtrello-controller/do-show-board-labels!))
+  (org-trello/proxy-do "Display current board's labels" 'orgtrello-controller/do-show-board-labels!))
 
 (defun org-trello/sync-entity (&optional modifier)
   "Control first, then if ok, sync a simple entity (without its structure)."
   (interactive "P")
   (if modifier
-      (org-trello/do "Request 'sync entity from trello'" 'orgtrello-controller/do-sync-entity-from-trello!)
-    (org-trello/do "Request 'sync entity to trello'" 'orgtrello-controller/do-sync-entity-to-trello!)))
+      (org-trello/proxy-do "Request 'sync entity from trello'" 'orgtrello-controller/do-sync-entity-from-trello!)
+    (org-trello/proxy-do "Request 'sync entity to trello'" 'orgtrello-controller/do-sync-entity-to-trello!)))
 
 (defun org-trello/sync-full-entity ()
   "Control first, then if ok, create an entity and all its arborescence if need be."
   (interactive)
-  (org-trello/do "Request 'sync entity with structure" 'orgtrello-controller/do-sync-full-entity-to-trello!))
+  (org-trello/proxy-do "Request 'sync entity with structure" 'orgtrello-controller/do-sync-full-entity-to-trello!))
 
 (defun org-trello/sync-buffer (&optional modifier)
   "Will trigger a buffer sync action. If modifier is nil, will sync *TO* trello, otherwise, will sync *FROM* trello."
   (interactive "P")
   (if modifier
-      (org-trello/do "Request 'sync org buffer from trello board'" 'orgtrello-controller/do-sync-full-file-from-trello!)
-    (org-trello/do "Request 'sync org buffer to trello board'" 'orgtrello-controller/do-sync-full-file-to-trello!)))
+      (org-trello/proxy-do "Request 'sync org buffer from trello board'" 'orgtrello-controller/do-sync-full-file-from-trello!)
+    (org-trello/proxy-do "Request 'sync org buffer to trello board'" 'orgtrello-controller/do-sync-full-file-to-trello!)))
 
 (defun org-trello/kill-entity ()
   "Control first, then if ok, delete the entity and all its arborescence."
   (interactive)
-  (org-trello/do "Request 'delete entity'" 'orgtrello-controller/do-delete-simple))
+  (org-trello/proxy-do "Request 'delete entity'" 'orgtrello-controller/do-delete-simple))
 
 (defun org-trello/kill-all-entities ()
   "Control first, then if ok, delete the entity and all its arborescence."
   (interactive)
-  (org-trello/do "Request - 'delete entities'" 'orgtrello-controller/do-delete-entities))
+  (org-trello/proxy-do "Request - 'delete entities'" 'orgtrello-controller/do-delete-entities))
 
 (defun org-trello/install-key-and-token ()
   "No control, trigger the setup installation of the key and the read/write token."
   (interactive)
-  (org-trello/do-and-save "Setup key and token" 'orgtrello-controller/do-install-key-and-token t))
+  (org-trello/proxy-do-and-save "Setup key and token" 'orgtrello-controller/do-install-key-and-token t))
 
 (defun org-trello/install-board-and-lists-ids ()
   "Control first, then if ok, trigger the setup installation of the trello board to sync with."
   (interactive)
-  (org-trello/do-and-save "Install boards and lists" 'orgtrello-controller/do-install-board-and-lists))
+  (org-trello/proxy-do-and-save "Install boards and lists" 'orgtrello-controller/do-install-board-and-lists))
 
 (defun org-trello/update-board-metadata ()
   "Control first, then if ok, trigger the update of the informations about the board."
   (interactive)
-  (org-trello/do-and-save "Update board information" 'orgtrello-controller/do-update-board-metadata!))
+  (org-trello/proxy-do-and-save "Update board information" 'orgtrello-controller/do-update-board-metadata!))
 
 (defun org-trello/jump-to-card ()
   "Jump to current card in browser."
@@ -102,14 +102,14 @@
 (defun org-trello/create-board ()
   "Control first, then if ok, trigger the board creation."
   (interactive)
-  (org-trello/do-and-save "Create board and lists" 'orgtrello-controller/do-create-board-and-lists))
+  (org-trello/proxy-do-and-save "Create board and lists" 'orgtrello-controller/do-create-board-and-lists))
 
 (defun org-trello/assign-me (&optional modifier)
   "Assign oneself to the card. With C-u modifier, unassign form the card."
   (interactive "P")
   (if modifier
-      (org-trello/do-and-save "Unassign me from card" 'orgtrello-controller/do-unassign-me)
-    (org-trello/do-and-save "Assign myself to card" 'orgtrello-controller/do-assign-me)))
+      (org-trello/proxy-do-and-save "Unassign me from card" 'orgtrello-controller/do-unassign-me)
+    (org-trello/proxy-do-and-save "Assign myself to card" 'orgtrello-controller/do-assign-me)))
 
 (defun org-trello/check-setup ()
   "Check the current setup."
