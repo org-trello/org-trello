@@ -6,3 +6,7 @@
     value))
 
 ;; (orgtrello-input/read-not-empty! "some-value? ")
+
+(orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-input loaded!")
+
+

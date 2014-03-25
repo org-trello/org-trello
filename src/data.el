@@ -256,4 +256,6 @@
     (s-split *ORGTRELLO-CARD-COMMENTS-DELIMITER*)
     (s-join *ORGTRELLO-CARD-COMMENTS-DELIMITER-PRINT*)))
 
+(orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-data loaded!")
+
 

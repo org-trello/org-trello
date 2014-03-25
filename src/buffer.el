@@ -64,4 +64,6 @@
   "Update comments property."
   (org-entry-put nil *ORGTRELLO-CARD-COMMENTS* comments))
 
+(orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-buffer loaded!")
+
 

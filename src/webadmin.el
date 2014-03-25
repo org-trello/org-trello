@@ -292,6 +292,6 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   (let ((id (elnode-http-mapping http-con 1)))
     (if (string= "" id) (orgtrello-webadmin/delete-entities!) (orgtrello-webadmin/--delete-entity-with-id id))))
 
-(orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-admin loaded!")
+(orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-webadmin loaded!")
 
 
