@@ -107,7 +107,7 @@
   (interactive "P")
   (if modifier
       (org-trello/proxy-do-and-save "Unassign me from card" 'orgtrello-controller/do-unassign-me)
-    (org-trello/Proxy-do-and-save "Assign myself to card" 'orgtrello-controller/do-assign-me)))
+    (org-trello/proxy-do-and-save "Assign myself to card" 'orgtrello-controller/do-assign-me)))
 
 (defun org-trello/check-setup ()
   "Check the current setup."

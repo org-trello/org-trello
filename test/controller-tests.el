@@ -455,3 +455,60 @@
   (expect "                                                             :red:green:" (orgtrello-controller/--serialize-tags "* card name" ":red:green:"))
   (expect "                                                     :red:green:blue:" (orgtrello-controller/--serialize-tags "* another card name" ":red:green:blue:"))
   (expect " :red:green:blue:" (orgtrello-controller/--serialize-tags "* this is another card name with an extremely long label name, more than 72 chars" ":red:green:blue:")))
+
+(expectations
+  (desc "orgtrello-controller/--write-entity! - card")
+  (expect "\n* DONE some card name                                                   :red:green:\n  :PROPERTIES:\n  :orgtrello-id: some-card-id\n  :END:\n"
+    (orgtrello-tests/with-temp-buffer-and-return-buffer-content
+     "\n"
+     (orgtrello-controller/--write-entity! "some-card-id " (orgtrello-hash/make-properties `((:keyword . "DONE")
+                                                                                             (:tags . ":red:green:")
+                                                                                             (:desc . "some description")
+                                                                                             (:level . ,*CARD-LEVEL*)
+                                                                                             (:name . "some card name"))))
+     0)))
+
+(expectations
+  (desc "orgtrello-controller/--write-entity! - checklist")
+  (expect "* some content\n- [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}\n"
+    (orgtrello-tests/with-temp-buffer-and-return-buffer-content
+     "* some content\n"
+     (orgtrello-controller/--write-entity! "some-checklist-id" (orgtrello-hash/make-properties `((:keyword . "DONE")
+                                                                                                 (:level . ,*CHECKLIST-LEVEL*)
+                                                                                                 (:name . "some checklist name"))))
+     0)))
+
+(expectations
+  (desc "orgtrello-controller/--write-entity! - item")
+  (expect "* some content\n- [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}\n  - [X] some item name :PROPERTIES: {\"orgtrello-id\":\"some-item-id\"}\n"
+    (orgtrello-tests/with-temp-buffer-and-return-buffer-content
+     "* some content\n- [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}\n"
+     (orgtrello-controller/--write-entity! "some-item-id" (orgtrello-hash/make-properties `((:keyword . "DONE")
+                                                                                            (:level . ,*ITEM-LEVEL*)
+                                                                                            (:name . "some item name"))))
+     0)))
+
+(expectations
+  (expect "
+* TODO some card name
+  :PROPERTIES:
+  :orgtrello-id: some-id
+  :orgtrello-users: ardumont,dude
+  :orgtrello-card-comments: ardumont: some comment
+  :END:
+some description
+"
+    (orgtrello-tests/with-temp-buffer-and-return-buffer-content
+     "\n"
+     (progn
+       (setq *HMAP-USERS-ID-NAME* (orgtrello-hash/make-properties '(("ardumont-id" . "ardumont")
+                                                                    ("dude-id" . "dude"))))
+       (orgtrello-controller/--write-card-header! "some-id" (orgtrello-hash/make-properties `((:keyword . "TODO")
+                                                                                              (:member-ids . "ardumont-id,dude-id")
+                                                                                              (:comments . ,(list (orgtrello-hash/make-properties '((:comment-user . "ardumont")
+                                                                                                                                                    (:comment-text . "some comment")))))
+                                                                                              (:labels . ":red:green:")
+                                                                                              (:desc . "some description")
+                                                                                              (:level . ,*CARD-LEVEL*)
+                                                                                              (:name . "some card name")))))
+     0)))
