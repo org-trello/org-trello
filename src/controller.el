@@ -637,9 +637,13 @@
        (gethash entity-id)
        (orgtrello-controller/--write-entity! entity-id)))
 
+(defun orgtrello-controller/--write-checklist-header! (entity-id entity)
+  "Write the checklist header."
+  (orgtrello-controller/--write-entity! entity-id entity))
+
 (defun orgtrello-controller/--write-checklist! (entity-id entities adjacency)
   "Write the checklist inside the org buffer."
-  (orgtrello-controller/--write-entity! entity-id (gethash entity-id entities))
+  (orgtrello-controller/--write-checklist-header! entity-id (gethash entity-id entities))
   (--map (orgtrello-controller/--write-item! it entities) (gethash entity-id adjacency)))
 
 (defun orgtrello-controller/--update-member-ids-property! (entity)
@@ -657,13 +661,17 @@
     orgtrello-data/comments-to-list
     orgtrello-buffer/set-property-comment!))
 
-(defun orgtrello-controller/--write-card! (entity-id entity entities adjacency)
-  "Write the card inside the org buffer."
+(defun orgtrello-controller/--write-card-header! (entity-id entity)
+  "Given an entity, write its header properties without its structure."
   (orgtrello-controller/--write-entity! entity-id entity)
   (orgtrello-controller/--update-member-ids-property! entity)
   (orgtrello-controller/--update-property-card-comments! entity)
   (-when-let (entity-desc (orgtrello-data/entity-description entity))
-             (insert (format "%s\n" entity-desc)))
+    (insert (format "%s\n" entity-desc))))
+
+(defun orgtrello-controller/--write-card! (entity-id entity entities adjacency)
+  "Write the card inside the org buffer."
+  (orgtrello-controller/--write-card-header! entity-id entity)
   (--map (orgtrello-controller/--write-checklist! it entities adjacency) (gethash entity-id adjacency)))
 
 (defun orgtrello-controller/--sync-buffer-with-trello-data (data buffer-name)
@@ -709,6 +717,44 @@
        (orgtrello-api/get-cards it)
        (orgtrello-controller/--update-query-with-org-metadata it nil (buffer-name) nil 'orgtrello-controller/--sync-buffer-with-trello-data-callback)
        (orgtrello-proxy/http it sync)))
+
+(defun orgtrello-controller/--sync-entity-buffer-with-trello-data-callback (buffername &optional position name)
+  "Generate a callback which knows the buffer with which it must work. (this callback must take a buffer-name and a position)"
+  (lexical-let ((buffer-name (trace :buffername buffername))
+                (pos         (trace :position position)))
+    (function* (lambda (&key data &allow-other-keys) "Synchronize the buffer with the response data."
+       (orgtrello-log/msg *OT/TRACE* "proxy - response data: %S" data)
+       (orgtrello-action/safe-wrap
+        (progn
+          (goto-char pos)
+          (cond ((orgtrello-data/entity-card-p data)      (progn
+                                                            (apply 'delete-region (orgtrello-buffer/compute-card-header-and-description-region!))
+                                                            (orgtrello-controller/--write-card-header! (orgtrello-data/entity-id data) data)))
+                ((orgtrello-data/entity-checklist-p data) (progn
+                                                            (apply 'delete-region (orgtrello-buffer/compute-checklist-header-region!))
+                                                            (orgtrello-controller/--write-checklist-header! (orgtrello-data/entity-id data) data)))
+                ((orgtrello-data/entity-item-p data)      (progn
+                                                            (apply 'delete-region (orgtrello-buffer/compute-item-region!))
+                                                            (orgtrello-controller/--write-entity! (orgtrello-data/entity-id data) data)))))
+        (orgtrello-log/msg *OT/INFO* "Synchronizing the trello and org data merge - done!"))))))
+
+(defun orgtrello-controller/--dispatch-sync-request (entity)
+  "Dispatch the sync request creation depending on the nature of the entry."
+  (let* ((current-meta (orgtrello-data/current entity))
+         (entity-id    (orgtrello-data/entity-id current-meta))
+         (parent-id    (-> entity orgtrello-data/parent orgtrello-data/entity-id))
+         (level        (orgtrello-data/entity-level current-meta)))
+    (cond ((= level *CARD-LEVEL*)      (orgtrello-api/get-card entity-id))
+          ((= level *CHECKLIST-LEVEL*) (orgtrello-api/get-checklist entity-id))
+          ((= level *ITEM-LEVEL*)      (orgtrello-api/get-item parent-id entity-id)))))
+
+(defun orgtrello-controller/do-sync-entity-from-trello! (&optional sync)
+  "Entity (card/checklist/item) synchronization (without its structure) from trello."
+  (orgtrello-log/msg *OT/INFO* "Synchronizing the trello entity to the org-mode file...")
+  (-> (orgtrello-data/entry-get-full-metadata!)
+    orgtrello-controller/--dispatch-sync-request
+    (orgtrello-controller/--update-query-with-org-metadata (point) (buffer-name) nil 'orgtrello-controller/--sync-entity-buffer-with-trello-data-callback)
+    (orgtrello-proxy/http sync)))
 
 (defun orgtrello-controller/--card-delete (card-meta &optional parent-meta)
   "Deal with the deletion query of a card" ;; parent is useless here

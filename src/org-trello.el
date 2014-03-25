@@ -34,10 +34,12 @@
   (interactive)
   (org-trello/do "Display current board's labels" 'orgtrello-controller/do-show-board-labels!))
 
-(defun org-trello/sync-entity ()
-  "Control first, then if ok, create a simple entity."
-  (interactive)
-  (org-trello/do "Request 'sync entity to trello'" 'orgtrello-controller/do-sync-entity-to-trello!))
+(defun org-trello/sync-entity (&optional modifier)
+  "Control first, then if ok, sync a simple entity (without its structure)."
+  (interactive "P")
+  (if modifier
+      (org-trello/do "Request 'sync entity from trello'" 'orgtrello-controller/do-sync-entity-from-trello!)
+    (org-trello/do "Request 'sync entity to trello'" 'orgtrello-controller/do-sync-entity-to-trello!)))
 
 (defun org-trello/sync-full-entity ()
   "Control first, then if ok, create an entity and all its arborescence if need be."
@@ -47,9 +49,9 @@
 (defun org-trello/sync-buffer (&optional modifier)
   "Will trigger a buffer sync action. If modifier is nil, will sync *TO* trello, otherwise, will sync *FROM* trello."
   (interactive "P")
-  (let ((sync-action-fn    (if modifier 'orgtrello-controller/do-sync-full-file-from-trello! 'orgtrello-controller/do-sync-full-file-to-trello!))
-        (sync-action-label (format "Request 'sync org buffer %s trello board'" (if modifier "from" "to"))))
-    (org-trello/do sync-action-label sync-action-fn)))
+  (if modifier
+      (org-trello/do "Request 'sync org buffer from trello board'" 'orgtrello-controller/do-sync-full-file-from-trello!)
+    (org-trello/do "Request 'sync org buffer to trello board'" 'orgtrello-controller/do-sync-full-file-to-trello!)))
 
 (defun org-trello/kill-entity ()
   "Control first, then if ok, delete the entity and all its arborescence."
