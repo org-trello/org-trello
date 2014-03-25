@@ -60,4 +60,8 @@
      (temp-buffer-resize-mode 1)
      (insert (format "%s:\n\n%s" title body-content)))))
 
+(defun orgtrello-buffer/set-property-comment! (comments)
+  "Update comments property."
+  (org-entry-put nil *ORGTRELLO-CARD-COMMENTS* comments))
+
 

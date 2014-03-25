@@ -645,24 +645,17 @@
        (orgtrello-controller/set-usernames-assigned-property! it)))
 
 (defun orgtrello-controller/--comments-to-list (comments-hash)
-
   "Given a list of comments hashmap, return the serialized string comment."
   (->> comments-hash
     (--map (s-join ": " (list (gethash :comment-user it) (gethash :comment-text it))))
     (s-join *ORGTRELLO-CARD-COMMENTS-DELIMITER*)))
 
-(defun orgtrello-controller/set-property-comment! (comments)
-
-  "Update comment property."
-  (org-entry-put nil *ORGTRELLO-CARD-COMMENTS* comments))
-
 (defun orgtrello-controller/--update-property-card-comments! (entity)
-
   "Update last comments "
   (->> entity
     orgtrello-data/entity-comments
     orgtrello-controller/--comments-to-list
-    orgtrello-controller/set-property-comment!))
+    orgtrello-buffer/set-property-comment!))
 
 (defun orgtrello-controller/--write-card! (entity-id entity entities adjacency)
   "Write the card inside the org buffer."
