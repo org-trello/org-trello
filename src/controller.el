@@ -54,8 +54,14 @@
     (setq *HMAP-USERS-ID-NAME* orgtrello-controller/--hmap-user-id-name)
     (setq *HMAP-USERS-NAME-ID* orgtrello-controller/--hmap-user-name-id)
     (setq *ORGTRELLO-USER-LOGGED-IN* (orgtrello-buffer/me!))
-    (setq org-tag-alist '(("red" . ?r) ("green" . ?g) ("yellow" . ?y) ("blue" . ?b) ("purple" . ?p) ("orange" . ?o)))
+    (add-to-list 'org-tag-alist '("red" . ?r))
+    (add-to-list 'org-tag-alist '("green" . ?g))
+    (add-to-list 'org-tag-alist '("yellow" . ?y))
+    (add-to-list 'org-tag-alist '("blue" . ?b))
+    (add-to-list 'org-tag-alist '("purple" . ?p))
+    (add-to-list 'org-tag-alist '("orange" . ?o))
     :ok))
+
 
 (defun orgtrello-controller/control-encoding (&optional args)
   "Use utf-8, otherwise, there will be trouble."

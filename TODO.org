@@ -931,6 +931,7 @@ CLOSED: [2014-03-24 Mon 00:58]
   - [X] Align sync from trello card tags/labels serialization with org's tags behavior
   - [X] Refactor open org-trello buffer with title/content
   - [X] Sanitize functions (move functions to their right namespaces)
+  - [X] Do not override the user's existing tags
 - [X] Provide org-trello-mode-hook - CLOSE https://github.com/org-trello/org-trello/issues/116
 - [ ] Open stop all synchronization actions - https://github.com/org-trello/org-trello/issues/131
 - [ ] A command to 'sync from trello' the current entity
