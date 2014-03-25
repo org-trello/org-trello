@@ -1,3 +1,11 @@
+(defun org-trello/abort-sync ()
+  "Control first, then if ok, add a comment to the current card."
+  (interactive)
+  (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
+   "Abort sync activities"
+   '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/control-encoding)
+   'orgtrello-webadmin/delete-entities!))
+
 (defun org-trello/add-card-comments ()
   "Control first, then if ok, add a comment to the current card."
   (interactive)
@@ -216,6 +224,7 @@
     (org-trello/add-card-comments            "A" "Add a comment to the card.")
     (org-trello/show-board-labels            "l" "Display the board's labels in a pop-up buffer.")
     (org-trello/update-board-metadata        "U" "Update the buffer's trello board metadata.")
+    (org-trello/abort-sync                   "g" "Abort synchronization activities.")
     (org-trello/help-describing-bindings     "h" "This help message."))
   "List of command and default binding without the prefix key.")
 
