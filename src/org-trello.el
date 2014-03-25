@@ -5,11 +5,11 @@
    '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/control-encoding)
    action-fn))
 
-(defun org-trello/do-and-save (action-label action-fn)
+(defun org-trello/do-and-save (action-label action-fn &optional no-check)
   "Execute action and then save the buffer."
   (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
    action-label
-   '(orgtrello-controller/setup-properties orgtrello-controller/control-keys)
+   (if no-check nil '(orgtrello-controller/setup-properties orgtrello-controller/control-keys))
    action-fn
    *do-save-buffer*
    *do-reload-setup*))
@@ -64,12 +64,7 @@
 (defun org-trello/install-key-and-token ()
   "No control, trigger the setup installation of the key and the read/write token."
   (interactive)
-  (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
-   "Setup key and token"
-   nil
-   'orgtrello-controller/do-install-key-and-token
-   *do-save-buffer*
-   *do-reload-setup*))
+  (org-trello/do-and-save "Setup key and token" 'orgtrello-controller/do-install-key-and-token t))
 
 (defun org-trello/install-board-and-lists-ids ()
   "Control first, then if ok, trigger the setup installation of the trello board to sync with."
