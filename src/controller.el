@@ -537,15 +537,11 @@
       orgtrello-data/current
       (orgtrello-controller/--add-entity-to-entities entities)))
 
-(defun orgtrello-controller/--init-map-from (data)
-  "Init a map from a given data. If data is nil, return an empty hash table."
-  (if data data (orgtrello-hash/empty-hash)))
-
 (defun orgtrello-controller/--merge-item (trello-item org-item)
   "Merge trello and org item together."
   (if (null trello-item)
       org-item
-      (let ((org-item-to-merge (orgtrello-controller/--init-map-from org-item)))
+      (let ((org-item-to-merge (orgtrello-hash/init-map-from org-item)))
         (puthash :level *ITEM-LEVEL*                             org-item-to-merge)
         (puthash :id    (orgtrello-data/entity-id trello-item)   org-item-to-merge)
         (puthash :name  (orgtrello-data/entity-name trello-item) org-item-to-merge)
@@ -560,7 +556,7 @@
   "Merge trello and org checklist together."
   (if (null trello-checklist)
       org-checklist
-      (let ((org-checklist-to-merge (orgtrello-controller/--init-map-from org-checklist)))
+      (let ((org-checklist-to-merge (orgtrello-hash/init-map-from org-checklist)))
         (puthash :level *CHECKLIST-LEVEL*                            org-checklist-to-merge)
         (puthash :name (orgtrello-data/entity-name trello-checklist) org-checklist-to-merge)
         (puthash :id   (orgtrello-data/entity-id trello-checklist)   org-checklist-to-merge)
@@ -582,7 +578,7 @@
   "Merge trello and org card together."
   (if (null trello-card)
       org-card
-    (let ((org-card-to-merge (orgtrello-controller/--init-map-from org-card)))
+    (let ((org-card-to-merge (orgtrello-hash/init-map-from org-card)))
       (puthash :tags     (orgtrello-controller/--labels-to-tags (orgtrello-data/entity-labels trello-card))   org-card-to-merge)
       (puthash :comments (orgtrello-data/entity-comments trello-card)                              org-card-to-merge)
       (puthash :level   *CARD-LEVEL*                                                               org-card-to-merge)

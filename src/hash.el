@@ -42,6 +42,10 @@
 (defun orgtrello-hash/key (s) "Given a string, compute its key format."
   (format ":%s:" s))
 
+(defun orgtrello-hash/init-map-from (data)
+  "Init a map from a given data. If data is nil, return an empty hash table."
+  (if data data (orgtrello-hash/empty-hash)))
+
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-hash loaded!")
 
 

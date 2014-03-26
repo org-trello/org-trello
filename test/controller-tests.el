@@ -192,12 +192,6 @@
   (expect 'orgtrello-controller/--put-entities-with-adjacency (orgtrello-controller/--dispatch-create-entities-map-with-adjacency (orgtrello-hash/make-hash-org :users *CHECKLIST-LEVEL* nil nil nil nil nil nil nil :comments :tags)))
   (expect 'orgtrello-controller/--put-entities-with-adjacency (orgtrello-controller/--dispatch-create-entities-map-with-adjacency (orgtrello-hash/make-hash-org :users *ITEM-LEVEL* nil nil nil nil nil nil nil :comments :tags))))
 
-(ert-deftest testing-orgtrello-controller/--init-map-from ()
-  (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data ()) (orgtrello-controller/--init-map-from nil))))
-
-(expectations (desc "orgtrello-controller/--init-map-from")
-  (expect :data (orgtrello-controller/--init-map-from :data)))
-
 (ert-deftest testing-orgtrello-controller/--merge-item ()
   (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "TODO" :id nil :level 3))
                       (orgtrello-controller/--merge-item (orgtrello-hash/make-properties `((:checked . "anything") (:name . "some name")))
