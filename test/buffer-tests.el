@@ -304,7 +304,6 @@ some old description
 #+PROPERTY: orgtrello-user-dude dude-id
 :END:
 
-
 * TODO some card name
   :PROPERTIES:
   :orgtrello-id: some-id
@@ -318,7 +317,6 @@ some description
 #+PROPERTY: orgtrello-user-ardumont ardumont-id
 #+PROPERTY: orgtrello-user-dude dude-id
 :END:
-
 * TODO some old card name
   :PROPERTIES:
   :orgtrello-id: some-id
@@ -336,7 +334,6 @@ some old description
                                                                                 (:level . ,*CARD-LEVEL*)
                                                                                 (:name . "some card name")
                                                                                 (:id . "some-id"))))
-
      0)))
 
 (expectations
