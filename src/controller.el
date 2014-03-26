@@ -215,9 +215,9 @@
 
 (defun orgtrello-buffer/--compute-marker-from-entry (entry)
   "Compute and set the marker (either a sha1 or the id of the entry-metadata)."
-  (-if-let (orgtrello-controller/--current-entry-id (orgtrello-data/entity-id entry))
-           orgtrello-controller/--current-entry-id
-           (orgtrello-controller/compute-marker (orgtrello-data/entity-buffername entry) (orgtrello-data/entity-name entry) (orgtrello-data/entity-position entry))))
+  (-if-let (current-entry-id (orgtrello-data/entity-id entry))
+      current-entry-id
+    (orgtrello-controller/compute-marker (orgtrello-data/entity-buffername entry) (orgtrello-data/entity-name entry) (orgtrello-data/entity-position entry))))
 
 (defun orgtrello-controller/--right-level-p (entity)
   "Compute if the level is correct (not higher than level 4)."
@@ -240,12 +240,12 @@
 
 (defun orgtrello-controller/--delegate-to-the-proxy (full-meta action)
   "Execute the delegation to the consumer."
-  (let* ((orgtrello-controller/--current (orgtrello-data/current full-meta))
-         (orgtrello-controller/--marker  (orgtrello-buffer/--compute-marker-from-entry orgtrello-controller/--current)))
-    (orgtrello-buffer/set-marker-if-not-present orgtrello-controller/--current orgtrello-controller/--marker)
-    (puthash :id      orgtrello-controller/--marker orgtrello-controller/--current)
-    (puthash :action  action             orgtrello-controller/--current)
-    (orgtrello-proxy/http-producer orgtrello-controller/--current)))
+  (let* ((current (orgtrello-data/current full-meta))
+         (marker  (orgtrello-buffer/--compute-marker-from-entry current)))
+    (orgtrello-buffer/set-marker-if-not-present current marker)
+    (puthash :id      marker current)
+    (puthash :action  action current)
+    (orgtrello-proxy/http-producer current)))
 
 (defun orgtrello-controller/--checks-then-delegate-action-on-entity-to-proxy (functional-controls action)
   "Execute the functional controls then if all pass, delegate the action 'action' to the proxy."
