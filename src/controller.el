@@ -31,7 +31,7 @@
   ;; read the setup
   (orgtrello-action/reload-setup)
   ;; now exploit some
-  (let* ((list-keywords (nreverse (orgtrello-buffer/filtered-kwds!)))
+  (let* ((list-keywords (reverse (orgtrello-buffer/filtered-kwds!)))
          (hmap-id-name (--reduce-from (progn
                                         (puthash (orgtrello-buffer/org-file-get-property! it) it acc)
                                         acc)

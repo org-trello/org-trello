@@ -926,7 +926,7 @@ CLOSED: [2014-03-24 Mon 00:58]
 - [X] Update metadata command about the board currently connected (sometimes, new information arise)
 - [X] Release notes
 - [X] Version
-* TODO 0.3.8 [54%]
+* TODO 0.3.8 [53%]
 - [X] Some refactoring
   - [X] Align sync from trello card tags/labels serialization with org's tags behavior
   - [X] Refactor open org-trello buffer with title/content
@@ -941,6 +941,8 @@ CLOSED: [2014-03-24 Mon 00:58]
 - [X] Use C-u on sync-entity-to-trello command to trigger the sync-entity-from-trello
 - [ ] A command to 'sync from trello' the current entity and its structure
 - [ ] Use C-u on sync-entity-and-structure-to-trello command to trigger the sync-entity-and-structure-from-trello
+- [ ] Refactoring
+- [X] Fix bug regarding org keywords which disappeared
 - [ ] Use active region - https://github.com/org-trello/org-trello/issues/130
 - [ ] Version
 - [ ] Release notes
