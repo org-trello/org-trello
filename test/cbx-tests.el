@@ -148,13 +148,13 @@
   (expect "- [X] some checkbox :PROPERTIES: {}"
           (orgtrello-tests/with-temp-buffer-and-return-buffer-content "- [X] some checkbox" (orgtrello-cbx/org-delete-property "inexistant"))))
 
-(expectations (desc "orgtrello-cbx/--compute-next-card-point")
-  (expect 50 (orgtrello-tests/with-temp-buffer "* heading\n- [ ] some checklist\n  - [ ] some item\n"                                      (orgtrello-cbx/--compute-next-card-point))) ;; return the max point
-  (expect 70 (orgtrello-tests/with-temp-buffer "#+TODO: TODO | DONE\n* heading\n- [ ] some checklist\n  - [ ] some item\n"                 (orgtrello-cbx/--compute-next-card-point))) ;; return the max point
-  (expect 65 (orgtrello-tests/with-temp-buffer "* heading\n- [ ] some checklist\n  - [ ] some item\n* next heading\n"                      (orgtrello-cbx/--compute-next-card-point)))
-  (expect 85 (orgtrello-tests/with-temp-buffer "#+TODO: TODO | DONE\n* heading\n- [ ] some checklist\n  - [ ] some item\n* next heading\n" (orgtrello-cbx/--compute-next-card-point)))
-  (expect 70 (orgtrello-tests/with-temp-buffer "#+TODO: TODO | DONE\n* heading\n- [ ] some checklist\n  - [ ] some item\n* next heading\n" (orgtrello-cbx/--compute-next-card-point) -3))
-  (expect 70 (orgtrello-tests/with-temp-buffer "#+TODO: TODO | DONE\n* heading\n- [ ] some checklist\n  - [ ] some item\n* next heading\n" (orgtrello-cbx/--compute-next-card-point) -4)))
+(expectations (desc "orgtrello-cbx/compute-next-card-point!")
+  (expect 50 (orgtrello-tests/with-temp-buffer "* heading\n- [ ] some checklist\n  - [ ] some item\n"                                      (orgtrello-cbx/compute-next-card-point!))) ;; return the max point
+  (expect 70 (orgtrello-tests/with-temp-buffer "#+TODO: TODO | DONE\n* heading\n- [ ] some checklist\n  - [ ] some item\n"                 (orgtrello-cbx/compute-next-card-point!))) ;; return the max point
+  (expect 65 (orgtrello-tests/with-temp-buffer "* heading\n- [ ] some checklist\n  - [ ] some item\n* next heading\n"                      (orgtrello-cbx/compute-next-card-point!)))
+  (expect 85 (orgtrello-tests/with-temp-buffer "#+TODO: TODO | DONE\n* heading\n- [ ] some checklist\n  - [ ] some item\n* next heading\n" (orgtrello-cbx/compute-next-card-point!)))
+  (expect 70 (orgtrello-tests/with-temp-buffer "#+TODO: TODO | DONE\n* heading\n- [ ] some checklist\n  - [ ] some item\n* next heading\n" (orgtrello-cbx/compute-next-card-point!) -3))
+  (expect 70 (orgtrello-tests/with-temp-buffer "#+TODO: TODO | DONE\n* heading\n- [ ] some checklist\n  - [ ] some item\n* next heading\n" (orgtrello-cbx/compute-next-card-point!) -4)))
 
 
 (expectations (desc "orgtrello-cbx/--read-properties-from-point")
