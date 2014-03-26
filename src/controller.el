@@ -356,14 +356,6 @@
   "Compute the status of the checkbox"
   (orgtrello-controller/--compute-state-generic state '("[X]" "[-]")))
 
-(defun orgtrello-controller/--compute-state-item-checkbox (state)
-  "Compute the status of the item checkbox"
-  (orgtrello-controller/--compute-state-generic state '("[X]" "[ ]")))
-
-(defun orgtrello-controller/--compute-state-item (state)
-  "Compute the status of the checkbox"
-  (orgtrello-controller/--compute-state-generic state `(,*DONE* ,*TODO*)))
-
 (defun orgtrello-controller/--compute-level-into-spaces (level)
   "level 2 is 0 space, otherwise 2 spaces."
   (if (equal level *CHECKLIST-LEVEL*) 0 2))
@@ -383,7 +375,7 @@
           (-> level
               orgtrello-controller/--compute-level-into-spaces
               orgtrello-controller/--space)
-          (orgtrello-controller/--compute-state-item-checkbox status)
+          (orgtrello-data/--compute-state-item-checkbox status)
           name))
 
 (defun orgtrello-controller/--compute-checklist-to-org-entry (checklist &optional orgcheckbox-p)
@@ -452,21 +444,6 @@
       orgtrello-data/current
       (orgtrello-backend/--add-entity-to-entities entities)))
 
-(defun orgtrello-controller/--merge-item (trello-item org-item)
-  "Merge trello and org item together."
-  (if (null trello-item)
-      org-item
-      (let ((org-item-to-merge (orgtrello-hash/init-map-from org-item)))
-        (puthash :level *ITEM-LEVEL*                             org-item-to-merge)
-        (puthash :id    (orgtrello-data/entity-id trello-item)   org-item-to-merge)
-        (puthash :name  (orgtrello-data/entity-name trello-item) org-item-to-merge)
-        ;; FIXME find how to populate keyword
-        (--> trello-item
-             (orgtrello-data/entity-checked it)
-             (orgtrello-controller/--compute-state-item it)
-             (puthash :keyword it org-item-to-merge))
-        org-item-to-merge)))
-
 (defun orgtrello-controller/--merge-checklist (trello-checklist org-checklist)
   "Merge trello and org checklist together."
   (if (null trello-checklist)
@@ -510,7 +487,7 @@
   "Dispatch the function fn to merge the entity."
   (cond ((orgtrello-data/entity-card-p entity)      'orgtrello-controller/--merge-card)
         ((orgtrello-data/entity-checklist-p entity) 'orgtrello-controller/--merge-checklist)
-        ((orgtrello-data/entity-item-p entity)      'orgtrello-controller/--merge-item)))
+        ((orgtrello-data/entity-item-p entity)      'orgtrello-data/merge-item)))
 
 (defun orgtrello-controller/--merge-entities-trello-and-org (trello-data org-data)
   "Merge the org-entity entities inside the trello-entities."

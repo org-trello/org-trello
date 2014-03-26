@@ -189,7 +189,7 @@
   (let ((region (orgtrello-buffer/compute-item-region!)))
     (apply 'orgtrello-cbx/remove-overlays! region)
     (apply 'delete-region region)
-    (orgtrello-buffer/write-entity! (orgtrello-data/entity-id item) (orgtrello-controller/--merge-item item item)))) ;; hack to merge item to itself to map to the org-trello world, otherwise we lose status for example
+    (orgtrello-buffer/write-entity! (orgtrello-data/entity-id item) (orgtrello-data/merge-item item item)))) ;; hack to merge item to itself to map to the org-trello world, otherwise we lose status for example
 
 (defun orgtrello-buffer/--csv-user-ids-to-csv-user-names (csv-users-id users-id-name) "Given a comma separated list of user id and a map, return a comma separated list of username."
   (->> csv-users-id

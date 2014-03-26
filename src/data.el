@@ -260,6 +260,29 @@
   "Is the string a trello identifier?"
   (and id (not (string-match-p (format "^%s-" *ORGTRELLO-MARKER*) id))))
 
+(defun orgtrello-data/merge-item (trello-item org-item)
+  "Merge trello and org item together."
+  (if (null trello-item)
+      org-item
+    (let ((org-item-to-merge (orgtrello-hash/init-map-from org-item)))
+      (puthash :level *ITEM-LEVEL*                             org-item-to-merge)
+      (puthash :id    (orgtrello-data/entity-id trello-item)   org-item-to-merge)
+      (puthash :name  (orgtrello-data/entity-name trello-item) org-item-to-merge)
+      ;; FIXME find how to populate keyword
+      (--> trello-item
+        (orgtrello-data/entity-checked it)
+        (orgtrello-data/--compute-state-item it)
+        (puthash :keyword it org-item-to-merge))
+      org-item-to-merge)))
+
+(defun orgtrello-data/--compute-state-item-checkbox (state)
+  "Compute the status of the item checkbox"
+  (orgtrello-controller/--compute-state-generic state '("[X]" "[ ]")))
+
+(defun orgtrello-data/--compute-state-item (state)
+  "Compute the status of the checkbox"
+  (orgtrello-controller/--compute-state-generic state `(,*DONE* ,*TODO*)))
+
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-data loaded!")
 
 
