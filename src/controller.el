@@ -523,9 +523,10 @@
 
 ;; entities of the form: {entity-id '(entity-card {checklist-id (checklist (item))})}
 
-(defun orgtrello-controller/--compute-entities-from-org-buffer! (buffername &optional region-start region-end)
+(defun orgtrello-controller/--compute-entities-from-org-buffer! (&optional buffername region-start region-end)
   "Compute the current entities hash from the buffer in the same format as the sync-from-trello routine. Return the list of entities map and adjacency map in this order."
-  (set-buffer buffername)
+  (when buffername
+    (set-buffer buffername))
   (save-excursion
     (goto-char (if region-start region-start (point-min))) ;; start from start-region if specified, otherwise, start from the start of the file
     (orgtrello-controller/--compute-entities-from-org! region-end)))
@@ -691,17 +692,12 @@
           (goto-char pos)
           (point-at-bol)
           (org-show-subtree)
-          (cond ((orgtrello-data/entity-card-p data)      (let ((region (orgtrello-buffer/compute-card-header-and-description-region!)))
-                                                            (apply 'delete-region region)
-                                                            (orgtrello-buffer/write-card-header! (orgtrello-data/entity-id data) data)))
-                ((orgtrello-data/entity-checklist-p data) (let ((region (orgtrello-buffer/compute-checklist-header-region!)))
-                                                            (apply 'orgtrello-cbx/remove-overlays! region)
-                                                            (apply 'delete-region region)
-                                                            (orgtrello-buffer/write-checklist-header! (orgtrello-data/entity-id data) data)))
-                ((orgtrello-data/entity-item-p data)      (let ((region (orgtrello-buffer/compute-item-region!)))
-                                                            (apply 'orgtrello-cbx/remove-overlays! region)
-                                                            (apply 'delete-region region)
-                                                            (orgtrello-buffer/write-entity! (orgtrello-data/entity-id data) data)))))
+          (funcall
+           (cond ((orgtrello-data/entity-card-p data)      'orgtrello-buffer/overwrite-card-header!)
+                 ((orgtrello-data/entity-checklist-p data) 'orgtrello-buffer/overwrite-checklist-header!)
+                 ((orgtrello-data/entity-item-p data)      'orgtrello-buffer/overwrite-item!))
+           data)
+          (save-buffer))
         (orgtrello-log/msg *OT/INFO* "Synchronizing the trello and org data merge - done!"))))))
 
 (defun orgtrello-controller/--sync-entity-and-structure-to-buffer-with-trello-data-callback (buffername &optional position name)
@@ -715,29 +711,12 @@
           (goto-char pos)
           (point-at-bol)
           (org-show-subtree)
-          (cond ((orgtrello-data/entity-card-p data)      (let* ((region                   (orgtrello-buffer/compute-card-region!))
-                                                                 (region-start             (first region))
-                                                                 (region-end               (second region))
-                                                                 (entities-from-org-buffer (orgtrello-controller/--compute-entities-from-org-buffer! buffer-name region-start region-end))
-                                                                 (entities-from-trello     (orgtrello-controller/--compute-full-cards-from-trello! (list data)))
-                                                                 (merged-entities          (orgtrello-controller/--merge-entities-trello-and-org entities-from-trello entities-from-org-buffer)))
-                                                            (apply 'delete-region region)
-                                                            ;; write the full card region with full card structure
-                                                            (orgtrello-buffer/write-card! (orgtrello-data/entity-id data) data (first merged-entities) (second merged-entities))))
-                ((orgtrello-data/entity-checklist-p data) (let* ((region (orgtrello-buffer/compute-checklist-region!))
-                                                                 (region-start             (first region))
-                                                                 (region-end               (second region))
-                                                                 (entities-from-org-buffer (orgtrello-controller/--compute-entities-from-org-buffer! buffer-name region-start region-end))
-                                                                 (entities-from-trello     (orgtrello-controller/--compute-full-checklist-from-trello! data))
-                                                                 (merged-entities          (orgtrello-controller/--merge-entities-trello-and-org entities-from-trello entities-from-org-buffer)))
-                                                            (apply 'orgtrello-cbx/remove-overlays! region)
-                                                            (apply 'delete-region region)
-                                                            ;; write the full checklist region with full checklist structure
-                                                            (orgtrello-buffer/write-checklist! (orgtrello-data/entity-id data) (first merged-entities) (second merged-entities))))
-                ((orgtrello-data/entity-item-p data)      (let ((region (orgtrello-buffer/compute-item-region!)))
-                                                            (apply 'orgtrello-cbx/remove-overlays! region)
-                                                            (apply 'delete-region region)
-                                                            (orgtrello-buffer/write-entity! (orgtrello-data/entity-id data) data)))))
+          (funcall
+           (cond ((orgtrello-data/entity-card-p data)      'orgtrello-buffer/overwrite-card!)
+                 ((orgtrello-data/entity-checklist-p data) 'orgtrello-buffer/overwrite-checklist!)
+                 ((orgtrello-data/entity-item-p data)      'orgtrello-buffer/overwrite-item!))
+           data)
+          (save-buffer))
         (orgtrello-log/msg *OT/INFO* "Synchronizing the trello and org data merge - done!"))))))
 
 (defun orgtrello-controller/--dispatch-sync-request (entity)

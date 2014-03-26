@@ -146,6 +146,51 @@
   (insert (orgtrello-controller/--compute-entity-to-org-entry entity))
   (when entity-id (orgtrello-controller/--update-property entity-id (not (orgtrello-data/entity-card-p entity)))))
 
+(defun orgtrello-buffer/overwrite-card-header! (card)
+  "Given an updated card 'card' and the current position, overwrite the current position with the updated card data."
+  (let ((region (orgtrello-buffer/compute-card-header-and-description-region!)))
+    (apply 'delete-region region)
+    (orgtrello-buffer/write-card-header! (orgtrello-data/entity-id card) card)))
+
+(defun orgtrello-buffer/overwrite-card! (card)
+  "Given an updated full card 'card' and the current position, overwrite the current position with the full updated card data."
+  (let* ((region                   (orgtrello-buffer/compute-card-region!))
+         (region-start             (first region))
+         (region-end               (second region))
+         (entities-from-org-buffer (orgtrello-controller/--compute-entities-from-org-buffer! nil region-start region-end))
+         (entities-from-trello     (orgtrello-controller/--compute-full-cards-from-trello! (list card)))
+         (merged-entities          (orgtrello-controller/--merge-entities-trello-and-org entities-from-trello entities-from-org-buffer)))
+    (apply 'delete-region region)
+    ;; write the full card region with full card structure
+    (orgtrello-buffer/write-card! (orgtrello-data/entity-id card) card (first merged-entities) (second merged-entities))))
+
+(defun orgtrello-buffer/overwrite-checklist-header! (checklist)
+  "Given an updated checklist 'checklist' and the current position, overwrite the current position with the updated checklist data."
+  (let ((region (orgtrello-buffer/compute-checklist-header-region!)))
+    (apply 'orgtrello-cbx/remove-overlays! region)
+    (apply 'delete-region region)
+    (orgtrello-buffer/write-checklist-header! (orgtrello-data/entity-id checklist) checklist)))
+
+(defun orgtrello-buffer/overwrite-checklist! (checklist)
+  "Given an updated full checklist 'checklist' and the current position, overwrite the current position with the full updated checklist data."
+  (let* ((region                   (orgtrello-buffer/compute-checklist-region!))
+         (region-start             (first region))
+         (region-end               (second region))
+         (entities-from-org-buffer (orgtrello-controller/--compute-entities-from-org-buffer! nil region-start region-end))
+         (entities-from-trello     (orgtrello-controller/--compute-full-checklist-from-trello! checklist))
+         (merged-entities          (orgtrello-controller/--merge-entities-trello-and-org entities-from-trello entities-from-org-buffer)))
+    (apply 'orgtrello-cbx/remove-overlays! region)
+    (apply 'delete-region region)
+    ;; write the full checklist region with full checklist structure
+    (orgtrello-buffer/write-checklist! (orgtrello-data/entity-id checklist) (first merged-entities) (second merged-entities))))
+
+(defun orgtrello-buffer/overwrite-item! (item)
+  "Given an updated item 'item' and the current position, overwrite the current position with the updated item data."
+  (let ((region (orgtrello-buffer/compute-item-region!)))
+    (apply 'orgtrello-cbx/remove-overlays! region)
+    (apply 'delete-region region)
+    (orgtrello-buffer/write-entity! (orgtrello-data/entity-id item) item)))
+
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-buffer loaded!")
 
 
