@@ -216,9 +216,9 @@
           ;; buffer-invisibility-spec
           (add-to-invisibility-spec '(org-trello-cbx-property)) ;; for an ellipsis (...) change to '(org-trello-cbx-property . t)
           ;; installing hooks
-          (add-hook 'before-save-hook 'orgtrello-controller/install-overlays!) ;; before-change-functions
+          (add-hook 'before-save-hook 'orgtrello-buffer/install-overlays!) ;; before-change-functions
           ;; migrate all checkbox at org-trello mode activation
-          (orgtrello-controller/install-overlays!)
+          (orgtrello-buffer/install-overlays!)
           ;; a little message in the minibuffer to notify the user
           (orgtrello-log/msg *OT/NOLOG* (org-trello/--startup-message *ORGTRELLO-MODE-PREFIX-KEYBINDING*))
           ;; Overwrite the org-mode-map
@@ -234,9 +234,9 @@
           ;; remove the invisible property names
           (remove-from-invisibility-spec '(org-trello-cbx-property)) ;; for an ellipsis (...) change to '(org-trello-cbx-property . t)
           ;; installing hooks
-          (remove-hook 'before-save-hook 'orgtrello-controller/install-overlays!)
+          (remove-hook 'before-save-hook 'orgtrello-buffer/install-overlays!)
           ;; remove org-trello overlays
-          (orgtrello-controller/remove-overlays!)
+          (orgtrello-buffer/remove-overlays!)
           ;; remove mapping override
           (define-key org-trello-mode-map [remap org-end-of-line] nil)
           ;; a little message in the minibuffer to notify the user

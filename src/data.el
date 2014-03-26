@@ -277,11 +277,91 @@
 
 (defun orgtrello-data/--compute-state-item-checkbox (state)
   "Compute the status of the item checkbox"
-  (orgtrello-controller/--compute-state-generic state '("[X]" "[ ]")))
+  (orgtrello-data/--compute-state-generic state '("[X]" "[ ]")))
 
 (defun orgtrello-data/--compute-state-item (state)
   "Compute the status of the checkbox"
-  (orgtrello-controller/--compute-state-generic state `(,*DONE* ,*TODO*)))
+  (orgtrello-data/--compute-state-generic state `(,*DONE* ,*TODO*)))
+
+(defun orgtrello-data/--merge-checklist (trello-checklist org-checklist)
+  "Merge trello and org checklist together."
+  (if (null trello-checklist)
+      org-checklist
+      (let ((org-checklist-to-merge (orgtrello-hash/init-map-from org-checklist)))
+        (puthash :level *CHECKLIST-LEVEL*                            org-checklist-to-merge)
+        (puthash :name (orgtrello-data/entity-name trello-checklist) org-checklist-to-merge)
+        (puthash :id   (orgtrello-data/entity-id trello-checklist)   org-checklist-to-merge)
+        org-checklist-to-merge)))
+
+(defun orgtrello-data/--merge-member-ids (trello-card org-card)
+  "Merge users assigned from trello and org."
+  (--> trello-card
+       (orgtrello-data/entity-member-ids it)
+       (orgtrello-data/merge-2-lists-without-duplicates it (orgtrello-data/entity-member-ids-as-list org-card))
+       (orgtrello-buffer/--users-to it)))
+
+(defun orgtrello-data/--labels-to-tags (labels)
+  (when labels
+    (-when-let (tags (s-join ":" (--map (gethash :color it) labels)))
+      (concat ":" tags ":"))))
+
+(defun orgtrello-data/--merge-card (trello-card org-card)
+  "Merge trello and org card together."
+  (if (null trello-card)
+      org-card
+    (let ((org-card-to-merge (orgtrello-hash/init-map-from org-card)))
+      (puthash :tags     (orgtrello-data/--labels-to-tags (orgtrello-data/entity-labels trello-card))   org-card-to-merge)
+      (puthash :comments (orgtrello-data/entity-comments trello-card)                              org-card-to-merge)
+      (puthash :level   *CARD-LEVEL*                                                               org-card-to-merge)
+      (puthash :id      (orgtrello-data/entity-id trello-card)                                     org-card-to-merge)
+      (puthash :name    (orgtrello-data/entity-name trello-card)                                   org-card-to-merge)
+      (puthash :keyword (-> trello-card
+                          orgtrello-data/entity-list-id
+                          orgtrello-data/--compute-card-status)                            org-card-to-merge)
+      (puthash :member-ids (orgtrello-data/--merge-member-ids trello-card org-card-to-merge) org-card-to-merge)
+      (puthash :desc    (orgtrello-data/entity-description trello-card)                            org-card-to-merge)
+      org-card-to-merge)))
+
+(defun orgtrello-data/--dispatch-merge-fn (entity)
+  "Dispatch the function fn to merge the entity."
+  (cond ((orgtrello-data/entity-card-p entity)      'orgtrello-data/--merge-card)
+        ((orgtrello-data/entity-checklist-p entity) 'orgtrello-data/--merge-checklist)
+        ((orgtrello-data/entity-item-p entity)      'orgtrello-data/merge-item)))
+
+(defun orgtrello-data/merge-entities-trello-and-org (trello-data org-data)
+  "Merge the org-entity entities inside the trello-entities."
+  (let ((trello-entities  (first trello-data))
+        (trello-adjacency (second trello-data))
+        (org-entities     (first org-data))
+        (org-adjacency    (second org-data)))
+
+    (maphash (lambda (id trello-entity)
+               (puthash id (funcall (orgtrello-data/--dispatch-merge-fn trello-entity) trello-entity (orgtrello-data/--get-entity id org-entities)) trello-entities) ;; updating entity to trello
+               (puthash id (orgtrello-data/merge-2-lists-without-duplicates (gethash id trello-adjacency) (gethash id org-adjacency))     trello-adjacency)) ;; update entity adjacency to trello
+             trello-entities)
+
+    ;; copy the entities only present on org files to the trello entities.
+    (maphash (lambda (id org-entity)
+               (unless (gethash id trello-entities)
+                       (puthash id org-entity trello-entities)
+                       (puthash id (gethash id org-adjacency) trello-adjacency)))
+             org-entities)
+
+    (list trello-entities trello-adjacency)))
+
+(defun orgtrello-data/--compute-card-status (card-id-list)
+  "Given a card's id, compute its status."
+  (gethash card-id-list *HMAP-ID-NAME*))
+
+(defun orgtrello-data/--get-entity (id entities-hash)
+  "Update the card entry inside the hash."
+  (gethash id entities-hash))
+
+(defun orgtrello-data/--compute-state-generic (state list-state)
+  "Computing generic."
+  (if (or (string= "complete" state)
+          (string= *DONE* state)) (first list-state) (second list-state)))
+
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-data loaded!")
 

@@ -105,7 +105,7 @@
       (throw 'org-trello-timer-go-to-sleep t))))
 
 (defun orgtrello-proxy/--getting-back-to-headline (data) "Trying another approach to getting back to header computing the normal form of an entry in the buffer."
-  (orgtrello-proxy/--getting-back-to-marker (orgtrello-controller/--compute-entity-to-org-entry data)))
+  (orgtrello-proxy/--getting-back-to-marker (orgtrello-buffer/--compute-entity-to-org-entry data)))
 
 (defun orgtrello-proxy/--compute-pattern-search-from-marker (marker) "Given a marker, compute the pattern to look for in the file."
   marker)
