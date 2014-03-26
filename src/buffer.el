@@ -113,10 +113,10 @@
 (defun orgtrello-buffer/update-member-ids-property! (entity)
   "Update the users assigned property card entry."
   (--> entity
-       (orgtrello-data/entity-member-ids it)
-       (orgtrello-buffer/--csv-user-ids-to-csv-user-names it *HMAP-USERS-ID-NAME*)
-       (replace-regexp-in-string *ORGTRELLO-USER-PREFIX* "" it)
-       (orgtrello-buffer/set-usernames-assigned-property! it)))
+    (orgtrello-data/entity-member-ids it)
+    (orgtrello-buffer/--csv-user-ids-to-csv-user-names it *HMAP-USERS-ID-NAME*)
+    (replace-regexp-in-string *ORGTRELLO-USER-PREFIX* "" it)
+    (orgtrello-buffer/set-usernames-assigned-property! it)))
 
 (defun orgtrello-buffer/update-property-card-comments! (entity)
   "Update last comments "
