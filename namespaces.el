@@ -28,6 +28,7 @@
                                     "test/cbx-tests.el"
                                     "test/api-tests.el"
                                     "test/query-tests.el"
+                                    "test/backend-tests.el"
                                     "test/elnode-tests.el"
                                     "test/webadmin-tests.el"
                                     "test/proxy-tests.el"

@@ -256,9 +256,6 @@
 ;;     (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :member-ids "1,2,3,4,5" :level 1 :id 1 :keyword nil))
 ;;                         (orgtrello-controller/--merge-card `((id . 1) (name . "some name") (idList . 1) (idMembers . ["1" "2" "3"])) (orgtrello-hash/make-properties `((:name . "some other name") (:member-ids . "4,5,3"))))))))
 
-(expectations (desc "orgtrello-controller/--add-to-last-pos")
- (expect '(1 2 3 4) (orgtrello-controller/--add-to-last-pos 4 '(1 2 3))))
-
 (expectations (desc "orgtrello-controller/--compute-user-properties")
   (expect t (hash-equal
              #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data

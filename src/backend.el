@@ -3,7 +3,7 @@
   (let ((checklist-id (orgtrello-data/entity-id checklist)))
     (--reduce-from (cl-destructuring-bind (entities adjacency) acc
                      (list (orgtrello-backend/--add-entity-to-entities it entities)
-                           (orgtrello-controller/--add-entity-to-adjacency it checklist adjacency)))
+                           (orgtrello-backend/--add-entity-to-adjacency it checklist adjacency)))
                    (list entities adjacency)
                    (orgtrello-data/entity-items checklist))))
 
@@ -26,7 +26,7 @@
          (orgtrello-backend/retrieve-checklist-from-card! it)
          (-reduce-from (lambda (acc-entities-adj checklist)
                           (cl-destructuring-bind (entities adjacency) acc-entities-adj
-                            (orgtrello-backend/compute-items-from-checklist! checklist (orgtrello-backend/--add-entity-to-entities checklist entities) (orgtrello-controller/--add-entity-to-adjacency checklist card adjacency))))
+                            (orgtrello-backend/compute-items-from-checklist! checklist (orgtrello-backend/--add-entity-to-entities checklist entities) (orgtrello-backend/--add-entity-to-adjacency checklist card adjacency))))
                        (list entities adjacency)
                        it))));; at last complete checklist with item
 
@@ -62,7 +62,7 @@
   "Adding entity to the adjacency entry."
   (let* ((current-id (orgtrello-data/entity-id-or-marker current-entity))
          (parent-id  (orgtrello-data/entity-id-or-marker parent-entity)))
-    (puthash parent-id (orgtrello-controller/--add-to-last-pos current-id (gethash parent-id adjacency)) adjacency)
+    (puthash parent-id (orgtrello-backend/--add-to-last-pos current-id (gethash parent-id adjacency)) adjacency)
     adjacency))
 
 (defun orgtrello-backend/--put-entities-with-adjacency (current-meta entities adjacency)
@@ -70,6 +70,14 @@
   (let ((current-entity (orgtrello-data/current current-meta))
         (parent-entity  (orgtrello-data/parent current-meta)))
     (list (orgtrello-backend/--add-entity-to-entities current-entity entities) (orgtrello-backend/--add-entity-to-adjacency current-entity parent-entity adjacency))))
+
+;; FIXME find an already existing implementation.
+(defun orgtrello-backend/--add-to-last-pos (value list)
+  "Adding the value to the list in last position."
+  (--> list
+    (reverse it)
+    (cons value it)
+    (reverse it)))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-backend loaded!")
 

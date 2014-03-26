@@ -412,14 +412,6 @@
       (orgtrello-controller/--put-entities entities)
       (list adjacency)))
 
-;; FIXME find an already existing implementation.
-(defun orgtrello-controller/--add-to-last-pos (value list)
-  "Adding the value to the list in last position."
-  (--> list
-       (reverse it)
-       (cons value it)
-       (reverse it)))
-
 (defun orgtrello-controller/--dispatch-create-entities-map-with-adjacency (entity)
   "Dispatch the function to update map depending on the entity level."
   (if (orgtrello-data/entity-card-p entity) 'orgtrello-controller/--put-card-with-adjacency 'orgtrello-backend/--put-entities-with-adjacency))
