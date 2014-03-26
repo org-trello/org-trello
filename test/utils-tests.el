@@ -32,6 +32,7 @@
      (insert ,text)
      (forward-line (if ,nb-lines-forward ,nb-lines-forward -1))
      (org-trello-mode-test)
+     (orgtrello-controller/setup-properties)
      ,body-test))
 
 (defmacro orgtrello-tests/with-temp-buffer-and-return-buffer-content (text body-test &optional nb-line-forwards)
@@ -40,6 +41,7 @@
      (insert ,text)
      (forward-line (if ,nb-line-forwards ,nb-line-forwards -1))
      (org-trello-mode-test)
+     (orgtrello-controller/setup-properties)
      ,body-test
      (buffer-substring-no-properties (point-min) (point-max))))
 
