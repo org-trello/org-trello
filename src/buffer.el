@@ -95,7 +95,7 @@
     (orgtrello-buffer/back-to-card!)
     (setq point-start (point-at-bol))
     (setq point-end (orgtrello-cbx/--compute-next-card-point))
-    `(,point-start ,point-end)))
+    `(,point-start ,(1- point-end))))
 
 (defun orgtrello-buffer/write-item! (item-id entities)
   "Write the item to the org buffer."
