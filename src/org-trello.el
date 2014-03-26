@@ -1,3 +1,7 @@
+;; Constant to alias t for the code to be clearer.
+(defconst *org-trello/with-save-flag*     t  "Represents the fact that we need to save the buffer after action.")
+(defconst *org-trello/with-no-check-flag* t "Represents the fact that we do not need to make checks before action.")
+
 (defun org-trello/proxy-do (action-label action-fn &optional with-save-flag)
   "Execute sync action."
   (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
@@ -47,7 +51,7 @@
   "Control first, then if ok, sync a simple entity (without its structure)."
   (interactive "P")
   (if modifier
-      (org-trello/proxy-do "Request 'sync entity from trello'" 'orgtrello-controller/do-sync-entity-from-trello! t)
+      (org-trello/proxy-do "Request 'sync entity from trello'" 'orgtrello-controller/do-sync-entity-from-trello! *org-trello/with-save-flag*)
     (org-trello/proxy-do "Request 'sync entity to trello'" 'orgtrello-controller/do-sync-entity-to-trello!)))
 
 (defun org-trello/sync-full-entity ()
@@ -75,7 +79,7 @@
 (defun org-trello/install-key-and-token ()
   "No control, trigger the setup installation of the key and the read/write token."
   (interactive)
-  (org-trello/proxy-do-and-save "Setup key and token" 'orgtrello-controller/do-install-key-and-token t))
+  (org-trello/proxy-do-and-save "Setup key and token" 'orgtrello-controller/do-install-key-and-token *org-trello/with-no-check-flag*))
 
 (defun org-trello/install-board-and-lists-ids ()
   "Control first, then if ok, trigger the setup installation of the trello board to sync with."
@@ -117,7 +121,7 @@
 (defun org-trello/delete-setup ()
   "Delete the current setup."
   (interactive)
-  (org-trello/proxy-do "Delete current org-trello setup" 'orgtrello-controller/delete-setup! t))
+  (org-trello/proxy-do "Delete current org-trello setup" 'orgtrello-controller/delete-setup! *org-trello/with-save-flag*))
 
 (defun org-trello/--replace-string-prefix-in-string (keybinding string-to-replace)
   (replace-regexp-in-string "#PREFIX#" keybinding string-to-replace t))
