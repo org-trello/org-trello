@@ -54,10 +54,12 @@
       (org-trello/proxy-do "Request 'sync entity from trello'" 'orgtrello-controller/do-sync-entity-from-trello! *org-trello/with-save-flag*)
     (org-trello/proxy-do "Request 'sync entity to trello'" 'orgtrello-controller/do-sync-entity-to-trello!)))
 
-(defun org-trello/sync-full-entity ()
-  "Control first, then if ok, create an entity and all its arborescence if need be."
-  (interactive)
-  (org-trello/proxy-do "Request 'sync entity with structure" 'orgtrello-controller/do-sync-full-entity-to-trello!))
+(defun org-trello/sync-full-entity (&optional modifier)
+  "Control first, then if ok, create an entity and all its arborescence if need be. If modifier is nil, will sync *TO* trello, otherwise (called with C-u), will sync *FROM* trello."
+  (interactive "P")
+  (if modifier
+      (org-trello/proxy-do "Request 'sync entity with structure from trello" 'orgtrello-controller/do-sync-entity-and-structure-from-trello!)
+    (org-trello/proxy-do "Request 'sync entity with structure to trello" 'orgtrello-controller/do-sync-full-entity-to-trello!)))
 
 (defun org-trello/sync-buffer (&optional modifier)
   "Will trigger a buffer sync action. If modifier is nil, will sync *TO* trello, otherwise (called with C-u), will sync *FROM* trello."

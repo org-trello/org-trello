@@ -493,31 +493,34 @@
   "Dispatch the function to update map depending on the entity level."
   (if (orgtrello-data/entity-card-p entity) 'orgtrello-controller/--put-card-with-adjacency 'orgtrello-controller/--put-entities-with-adjacency))
 
-(defun orgtrello-controller/--compute-entities-from-org! ()
-  "Compute the full entities present in the org buffer which already had been sync'ed previously. Return the list of entities map and adjacency map in this order."
+(defun orgtrello-controller/--compute-entities-from-org! (&optional region-end)
+  "Compute the full entities present in the org buffer which already had been sync'ed previously. Return the list of entities map and adjacency map in this order. If region-end is specified, will work on the region (current-point, region-end), otherwise, work on all buffer."
   (let ((entities (orgtrello-hash/empty-hash))
         (adjacency (orgtrello-hash/empty-hash)))
-    (orgtrello-controller/org-map-entities-without-params! (lambda ()
-                                                             ;; first will unfold every entries, otherwise https://github.com/org-trello/org-trello/issues/53
-                                                             (org-show-subtree)
-                                                             (let ((current-entity (-> (orgtrello-data/entry-get-full-metadata!) orgtrello-data/current)))
-                                                               (unless (-> current-entity orgtrello-data/entity-id orgtrello-controller/id-p) ;; if no id, we set one
-                                                                       (orgtrello-controller/--set-marker (orgtrello-controller/--compute-marker-from-entry current-entity)))
-                                                               (let ((current-meta (orgtrello-data/entry-get-full-metadata!)))
-                                                                 (-> current-meta ;; we recompute the metadata because they may have changed
-                                                                     orgtrello-data/current
-                                                                     orgtrello-controller/--dispatch-create-entities-map-with-adjacency
-                                                                     (funcall current-meta entities adjacency))))))
+    (orgtrello-controller/org-map-entities-without-params!
+     (lambda ()
+       ;; either the region-end is null, so we work on all the buffer, or the region-end is specified and we need to filter out entities that are after the specified point.
+       (when (or (null region-end) (< (point) region-end))
+         ;; first will unfold every entries, otherwise https://github.com/org-trello/org-trello/issues/53
+         (org-show-subtree)
+         (let ((current-entity (-> (orgtrello-data/entry-get-full-metadata!) orgtrello-data/current)))
+           (unless (-> current-entity orgtrello-data/entity-id orgtrello-controller/id-p) ;; if no id, we set one
+             (orgtrello-controller/--set-marker (orgtrello-controller/--compute-marker-from-entry current-entity)))
+           (let ((current-meta (orgtrello-data/entry-get-full-metadata!)))
+             (-> current-meta ;; we recompute the metadata because they may have changed
+               orgtrello-data/current
+               orgtrello-controller/--dispatch-create-entities-map-with-adjacency
+               (funcall current-meta entities adjacency)))))))
     (list entities adjacency)))
 
 ;; entities of the form: {entity-id '(entity-card {checklist-id (checklist (item))})}
 
-(defun orgtrello-controller/--compute-entities-from-org-buffer! (buffername)
+(defun orgtrello-controller/--compute-entities-from-org-buffer! (buffername &optional region-start region-end)
   "Compute the current entities hash from the buffer in the same format as the sync-from-trello routine. Return the list of entities map and adjacency map in this order."
   (set-buffer buffername)
   (save-excursion
-    (goto-char (point-min))
-    (orgtrello-controller/--compute-entities-from-org!)))
+    (goto-char (if region-start region-start (point-min))) ;; start from start-region if specified, otherwise, start from the start of the file
+    (orgtrello-controller/--compute-entities-from-org! region-end)))
 
 (defun orgtrello-controller/--put-entities (current-meta entities)
   "Deal with adding a new item to entities."
@@ -692,6 +695,40 @@
                                                             (apply 'delete-region region)
                                                             (orgtrello-buffer/write-entity! (orgtrello-data/entity-id data) data)))))
         (orgtrello-log/msg *OT/INFO* "Synchronizing the trello and org data merge - done!"))))))
+
+(defun orgtrello-controller/--sync-entity-and-structure-to-buffer-with-trello-data-callback (buffername &optional position name)
+  "Generate a callback which knows the buffer with which it must work. (this callback must take a buffer-name and a position)"
+  (lexical-let ((buffer-name buffername)
+                (pos         position))
+    (function* (lambda (&key data &allow-other-keys) "Synchronize the buffer with the response data."
+       (orgtrello-log/msg *OT/TRACE* "proxy - response data: %S" data)
+       (orgtrello-action/safe-wrap
+        (save-excursion
+          (goto-char pos)
+          (point-at-bol)
+          (org-show-subtree)
+          (cond ((orgtrello-data/entity-card-p data)      (let* ((region                   (orgtrello-buffer/compute-card-region!))
+                                                                 (region-start             (first region))
+                                                                 (region-end               (second region))
+                                                                 (entities-from-org-buffer (orgtrello-controller/--compute-entities-from-org-buffer! buffer-name region-start region-end))
+                                                                 (entities-from-trello     (orgtrello-controller/--compute-full-entities-from-trello (list data)))
+                                                                 (merged-entities          (orgtrello-controller/--merge-entities-trello-and-org entities-from-trello entities-from-org-buffer)))
+                                                            (apply 'delete-region region)
+                                                            ;; write the full card region with full card structure
+                                                            (orgtrello-buffer/write-card! (orgtrello-data/entity-id data) data (first merged-entities) (second merged-entities))))
+                ((orgtrello-data/entity-checklist-p data) (let* ((region (orgtrello-buffer/compute-checklist-region!))
+                                                                 (region-start             (first region))
+                                                                 (region-end               (second region))
+                                                                 (entities-from-org-buffer (orgtrello-controller/--compute-entities-from-org-buffer! buffer-name region-start region-end)))
+                                                            (apply 'orgtrello-cbx/remove-overlays! region)
+                                                            (apply 'delete-region region)
+                                                            ;; write the full checklist region with full checklist structure
+                                                            ;; (orgtrello-buffer/write-checklist-header! (orgtrello-data/entity-id data) data)
+                                                            ))
+                ((orgtrello-data/entity-item-p data)      (let ((region (orgtrello-buffer/compute-item-region!)))
+                                                            (apply 'orgtrello-cbx/remove-overlays! region)
+                                                            (apply 'delete-region region)
+                                                            (orgtrello-buffer/write-entity! (orgtrello-data/entity-id data) data)))))
         (orgtrello-log/msg *OT/INFO* "Synchronizing the trello and org data merge - done!"))))))
 
 (defun orgtrello-controller/--dispatch-sync-request (entity)
@@ -711,6 +748,13 @@
     orgtrello-controller/--dispatch-sync-request
     (orgtrello-controller/--update-query-with-org-metadata (point) (buffer-name) nil 'orgtrello-controller/--sync-entity-to-buffer-with-trello-data-callback)
     (orgtrello-proxy/http sync)))
+
+(defun orgtrello-controller/do-sync-entity-and-structure-from-trello! (&optional sync)
+  "Entity (card/checklist/item) synchronization (with its structure) from trello."
+  (orgtrello-log/msg *OT/INFO* "Synchronizing the trello entity and its structure to the org-mode file...")
+  (-> (orgtrello-data/entry-get-full-metadata!)
+    orgtrello-controller/--dispatch-sync-request
+    (orgtrello-controller/--update-query-with-org-metadata (point) (buffer-name) nil 'orgtrello-controller/--sync-entity-and-structure-to-buffer-with-trello-data-callback)
     (orgtrello-proxy/http sync)))
 
 (defun orgtrello-controller/--card-delete (card-meta &optional parent-meta)
