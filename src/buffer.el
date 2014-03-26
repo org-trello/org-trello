@@ -459,6 +459,10 @@
 (defun orgtrello-buffer/org-file-properties! ()
   org-file-properties)
 
+(defun orgtrello-buffer/org-map-entries (level fn-to-execute)
+  "Map fn-to-execute to a given entities with level level. fn-to-execute is a function without any parameter."
+  (org-map-entries (lambda () (when (= level (orgtrello-buffer/current-level!)) (funcall fn-to-execute)))))
+
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-buffer loaded!")
 
 

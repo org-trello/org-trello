@@ -272,14 +272,10 @@
   "Map the sync to checkboxes."
   (orgtrello-cbx/map-checkboxes 'orgtrello-controller/do-sync-entity-to-trello!))
 
-(defun orgtrello-controller/org-map-entries (level fn-to-execute)
-  "Map fn-to-execute to a given entities with level level. fn-to-execute is a function without any parameter."
-  (org-map-entries (lambda () (when (= level (orgtrello-buffer/current-level!)) (funcall fn-to-execute)))))
-
 (defun orgtrello-controller/do-sync-full-file-to-trello! ()
   "Full org-mode file synchronisation."
   (orgtrello-log/msg *OT/WARN* "Synchronizing org-mode file to the board '%s'. This may take some time, some coffee may be a good idea..." (orgtrello-buffer/board-name!))
-  (orgtrello-controller/org-map-entries *CARD-LEVEL* 'orgtrello-controller/do-sync-full-entity-to-trello!))
+  (orgtrello-buffer/org-map-entries *CARD-LEVEL* 'orgtrello-controller/do-sync-full-entity-to-trello!))
 
 (defun orgtrello-controller/--sync-buffer-with-trello-data (data buffer-name)
   "Given all the entities, update the current buffer with those."
