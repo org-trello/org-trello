@@ -35,20 +35,19 @@
   ;; read the setup
   (orgtrello-action/reload-setup)
   ;; now exploit some
-  (let* ((orgtrello-controller/--list-keywords (nreverse (orgtrello-controller/filtered-kwds)))
-         (orgtrello-controller/--hmap-id-name
-          (--reduce-from (progn
-                           (puthash (assoc-default it org-file-properties) it acc)
-                           acc)
-                         (orgtrello-hash/empty-hash)
-                         orgtrello-controller/--list-keywords))
-         (orgtrello-controller/--list-users (orgtrello-controller/--list-user-entries org-file-properties))
-         (orgtrello-controller/--hmap-user-id-name (orgtrello-hash/make-transpose-properties orgtrello-controller/--list-users))
-         (orgtrello-controller/--hmap-user-name-id (orgtrello-hash/make-properties orgtrello-controller/--list-users)))
-    (setq *LIST-NAMES*   orgtrello-controller/--list-keywords)
-    (setq *HMAP-ID-NAME* orgtrello-controller/--hmap-id-name)
-    (setq *HMAP-USERS-ID-NAME* orgtrello-controller/--hmap-user-id-name)
-    (setq *HMAP-USERS-NAME-ID* orgtrello-controller/--hmap-user-name-id)
+  (let* ((list-keywords (nreverse (orgtrello-controller/filtered-kwds)))
+         (hmap-id-name (--reduce-from (progn
+                                        (puthash (assoc-default it org-file-properties) it acc)
+                                        acc)
+                                      (orgtrello-hash/empty-hash)
+                                      list-keywords))
+         (list-users (orgtrello-controller/--list-user-entries org-file-properties))
+         (hmap-user-id-name (orgtrello-hash/make-transpose-properties list-users))
+         (hmap-user-name-id (orgtrello-hash/make-properties list-users)))
+    (setq *LIST-NAMES*   list-keywords)
+    (setq *HMAP-ID-NAME* hmap-id-name)
+    (setq *HMAP-USERS-ID-NAME* hmap-user-id-name)
+    (setq *HMAP-USERS-NAME-ID* hmap-user-name-id)
     (setq *ORGTRELLO-USER-LOGGED-IN* (orgtrello-buffer/me!))
     (add-to-list 'org-tag-alist '("red" . ?r))
     (add-to-list 'org-tag-alist '("green" . ?g))
@@ -66,8 +65,8 @@
 
 (defun orgtrello-controller/control-properties (&optional args)
   "org-trello needs the properties board-id and all list id from the trello board to be setuped on header property file. :ok if ok, or the error message if problems."
-  (let ((orgtrello-controller/--hmap-count (hash-table-count *HMAP-ID-NAME*)))
-    (if (and org-file-properties (orgtrello-buffer/board-id!) (= (length *LIST-NAMES*) orgtrello-controller/--hmap-count))
+  (let ((hmap-count (hash-table-count *HMAP-ID-NAME*)))
+    (if (and org-file-properties (orgtrello-buffer/board-id!) (= (length *LIST-NAMES*) hmap-count))
         :ok
         "Setup problem.\nEither you did not connect your org-mode buffer with a trello board, to correct this:\n  * attach to a board through C-c o I or M-x org-trello/install-board-and-lists-ids\n  * or create a board from scratch with C-c o b or M-x org-trello/create-board).\nEither your org-mode's todo keyword list and your trello board lists are not named the same way (which they must).\nFor this, connect to trello and rename your board's list according to your org-mode's todo list.\nAlso, you can specify on your org-mode buffer the todo list you want to work with, for example: #+TODO: TODO DOING | DONE FAIL (hit C-c C-c to refresh the setup)")))
 
@@ -104,30 +103,28 @@
     ;; name is mandatory
     (if (equal :ok checks-ok-or-error-message)
         ;; parent and grandparent are useless here
-        (let* ((orgtrello-controller/--card-kwd           (orgtrello-controller/--retrieve-state-of-card card-meta))
-               (orgtrello-controller/--list-id            (assoc-default orgtrello-controller/--card-kwd org-file-properties))
-               (orgtrello-controller/--card-id            (orgtrello-data/entity-id          card-meta))
-               (orgtrello-controller/--card-name          (orgtrello-data/entity-name        card-meta))
-               (orgtrello-controller/--card-due           (orgtrello-data/entity-due         card-meta))
-               (orgtrello-controller/--card-desc          (orgtrello-data/entity-description card-meta))
-               (orgtrello-controller/--user-ids-assigned  (orgtrello-data/entity-member-ids card-meta))
-               (orgtrello-controller/--labels             (orgtrello-controller/--tags-to-labels (orgtrello-data/entity-tags card-meta))))
-          (if orgtrello-controller/--card-id
+        (let* ((card-kwd                (orgtrello-controller/--retrieve-state-of-card card-meta))
+               (list-id                 (assoc-default card-kwd org-file-properties))
+               (card-id                 (orgtrello-data/entity-id          card-meta))
+               (card-name               (orgtrello-data/entity-name        card-meta))
+               (card-due                (orgtrello-data/entity-due         card-meta))
+               (card-desc               (orgtrello-data/entity-description card-meta))
+               (card-user-ids-assigned  (orgtrello-data/entity-member-ids  card-meta))
+               (card-labels             (orgtrello-controller/--tags-to-labels (orgtrello-data/entity-tags card-meta))))
+          (if card-id
               ;; update
-              (orgtrello-api/move-card orgtrello-controller/--card-id orgtrello-controller/--list-id orgtrello-controller/--card-name orgtrello-controller/--card-due orgtrello-controller/--user-ids-assigned orgtrello-controller/--card-desc orgtrello-controller/--labels)
+              (orgtrello-api/move-card card-id list-id card-name card-due card-user-ids-assigned card-desc card-labels)
             ;; create
-            (orgtrello-api/add-card orgtrello-controller/--card-name orgtrello-controller/--list-id orgtrello-controller/--card-due orgtrello-controller/--user-ids-assigned orgtrello-controller/--card-desc orgtrello-controller/--labels)))
+            (orgtrello-api/add-card card-name list-id card-due card-user-ids-assigned card-desc card-labels)))
       checks-ok-or-error-message)))
 
 (defun orgtrello-controller/--checks-before-sync-checklist (checklist-meta card-meta)
   "Checks done before synchronizing the checklist."
-  (let ((orgtrello-controller/--checklist-name (orgtrello-data/entity-name checklist-meta))
-        (orgtrello-controller/--card-id        (orgtrello-data/entity-id card-meta)))
-    (if orgtrello-controller/--checklist-name
-        (if orgtrello-controller/--card-id
-            :ok
-          *ERROR-SYNC-CHECKLIST-SYNC-CARD-FIRST*)
-      *ERROR-SYNC-CHECKLIST-MISSING-NAME*)))
+  (-if-let (checklist-name (orgtrello-data/entity-name checklist-meta))
+      (-if-let (card-id (orgtrello-data/entity-id card-meta))
+          :ok
+        *ERROR-SYNC-CHECKLIST-SYNC-CARD-FIRST*)
+    *ERROR-SYNC-CHECKLIST-MISSING-NAME*))
 
 (defun orgtrello-controller/--checklist (checklist-meta &optional card-meta grandparent-meta)
   "Deal with create/update checklist query build. If the checks are ko, the error message is returned."
@@ -135,14 +132,13 @@
     ;; name is mandatory
     (if (equal :ok checks-ok-or-error-message)
         ;; grandparent is useless here
-        (let* ((orgtrello-controller/--checklist-id   (orgtrello-data/entity-id checklist-meta))
-               (orgtrello-controller/--card-id        (orgtrello-data/entity-id card-meta))
-               (orgtrello-controller/--checklist-name (orgtrello-data/entity-name checklist-meta)))
-          (if orgtrello-controller/--checklist-id
+        (let ((card-id        (orgtrello-data/entity-id card-meta))
+              (checklist-name (orgtrello-data/entity-name checklist-meta)))
+          (-if-let (checklist-id (orgtrello-data/entity-id checklist-meta))
               ;; update
-              (orgtrello-api/update-checklist orgtrello-controller/--checklist-id orgtrello-controller/--checklist-name)
+              (orgtrello-api/update-checklist checklist-id checklist-name)
             ;; create
-            (orgtrello-api/add-checklist orgtrello-controller/--card-id orgtrello-controller/--checklist-name)))
+            (orgtrello-api/add-checklist card-id checklist-name)))
       checks-ok-or-error-message)))
 
 (defun orgtrello-controller/--checks-before-sync-item (item-meta checklist-meta card-meta)
