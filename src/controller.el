@@ -482,7 +482,7 @@
   (--> trello-card
        (orgtrello-data/entity-member-ids it)
        (orgtrello-data/merge-2-lists-without-duplicates it (orgtrello-data/entity-member-ids-as-list org-card))
-       (orgtrello-controller/--users-to it)))
+       (orgtrello-buffer/--users-to it)))
 
 (defun orgtrello-controller/--labels-to-tags (labels)
   (when labels
@@ -965,30 +965,17 @@
         (orgtrello-controller/--update-orgmode-file-with-properties! board-name board-id board-lists-hname-id board-users-name-id user-logged-in))))
   "Create board and lists done!")
 
-(defun orgtrello-controller/--users-from (string-users)
-  "Compute the users name from the comma separated value in string."
-  (when string-users (split-string string-users "," t)))
-
 (defun orgtrello-controller/--add-user (user users) "Add the user to the users list"
   (if (member user users) users (cons user users)))
 
 (defun orgtrello-controller/--remove-user (user users) "Add the user to the users list"
   (if (member user users) (remove user users) users users))
 
-(defun orgtrello-controller/--users-to (users) "Given a list of users, compute the comma separated users."
-  (if users (mapconcat 'identity users ",") ""))
-
 (defun orgtrello-controller/--user-ids-assigned-to-current-card () "Compute the user ids assigned to the current card."
   (--> (orgtrello-controller/get-usernames-assigned-property!)
-       (orgtrello-controller/--users-from it)
+       (orgtrello-buffer/--users-from it)
        (--map (gethash (format "%s%s" *ORGTRELLO-USER-PREFIX* it) *HMAP-USERS-NAME-ID*) it)
-       (orgtrello-controller/--users-to it)))
-
-(defun orgtrello-controller/--csv-user-ids-to-csv-user-names (csv-users-id users-id-name) "Given a comma separated list of user id and a map, return a comma separated list of username."
-  (->> csv-users-id
-       orgtrello-controller/--users-from
-       (--map (gethash it users-id-name))
-       orgtrello-controller/--users-to))
+       (orgtrello-buffer/--users-to it)))
 
 (defun orgtrello-controller/get-usernames-assigned-property! () "Read the org users property from the current entry."
   (org-entry-get nil *ORGTRELLO-USERS-ENTRY*))
@@ -998,16 +985,16 @@
 
 (defun orgtrello-controller/do-assign-me () "Command to assign oneself to the card."
   (--> (orgtrello-controller/get-usernames-assigned-property!)
-       (orgtrello-controller/--users-from it)
+       (orgtrello-buffer/--users-from it)
        (orgtrello-controller/--add-user *ORGTRELLO-USER-LOGGED-IN* it)
-       (orgtrello-controller/--users-to it)
+       (orgtrello-buffer/--users-to it)
        (orgtrello-controller/set-usernames-assigned-property! it)))
 
 (defun orgtrello-controller/do-unassign-me () "Command to unassign oneself of the card."
   (--> (orgtrello-controller/get-usernames-assigned-property!)
-       (orgtrello-controller/--users-from it)
+       (orgtrello-buffer/--users-from it)
        (orgtrello-controller/--remove-user *ORGTRELLO-USER-LOGGED-IN* it)
-       (orgtrello-controller/--users-to it)
+       (orgtrello-buffer/--users-to it)
        (orgtrello-controller/set-usernames-assigned-property! it)))
 
 (defun orgtrello-controller/--delete-property (property) "Given a property name (checkbox), if found, delete it from the buffer."

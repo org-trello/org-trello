@@ -104,7 +104,7 @@
   "Retrieve the users assigned to the entity."
   (-> entity
     orgtrello-data/entity-member-ids
-    orgtrello-controller/--users-from))
+    orgtrello-buffer/--users-from))
 
 (defun orgtrello-data/entity-name         (entity) (orgtrello-data/gethash-data :name           entity))
 (defun orgtrello-data/entity-memberships  (entity) (orgtrello-data/gethash-data :memberships    entity))

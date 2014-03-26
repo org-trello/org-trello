@@ -309,16 +309,6 @@
   '(("orgtrello-user-ardumont" . "4f2baa2f72b7c1293501cad3") ("orgtrello-user-orgmode" . "5203a0c833fc36360800177f"))
   (orgtrello-controller/--list-user-entries '(("board-name" . "api test board") ("board-id" . "51d99bbc1e1d8988390047f2") ("TODO" . "51d99bbc1e1d8988390047f3") ("IN-PROGRESS" . "51d99bbc1e1d8988390047f4") ("DONE" . "51d99bbc1e1d8988390047f5") ("PENDING" . "51e53898ea3d1780690015ca") ("DELEGATED" . "51e538a89c05f1e25c0027c6") ("FAIL" . "51e538a26f75d07902002d25") ("CANCELLED" . "51e538e6c7a68fa0510014ee") ("orgtrello-user-ardumont" . "4f2baa2f72b7c1293501cad3") ("orgtrello-user-orgmode" . "5203a0c833fc36360800177f")))))
 
-(expectations (desc "orgtrello-controller/--users-from")
-  (expect '("a" "b" "c") (orgtrello-controller/--users-from "a,b,c,,"))
-  (expect '() (orgtrello-controller/--users-from ",,,"))
-  (expect '() (orgtrello-controller/--users-from ""))
-  (expect '() (orgtrello-controller/--users-from nil)))
-
-(expectations (desc "orgtrello-controller/--users-to")
-  (expect "" (orgtrello-controller/--users-to nil))
-  (expect "a,b,c," (orgtrello-controller/--users-to '("a" "b" "c" ""))))
-
 (expectations (desc "orgtrello-controller/--add-user")
   (expect '("a" "b" "c") (orgtrello-controller/--add-user "a" '("a" "b" "c")))
   (expect '("a" "b" "c") (orgtrello-controller/--add-user "a" '("b" "c"))))
@@ -329,11 +319,6 @@
   (expect nil        (orgtrello-controller/--remove-user "c" nil))
   (expect nil        (orgtrello-controller/--remove-user nil nil))
   (expect '("a")     (orgtrello-controller/--remove-user nil '("a"))))
-
-(expectations (desc "orgtrello-controller/--csv-user-ids-to-csv-user-names")
-  (expect "user0,user1,user2" (orgtrello-controller/--csv-user-ids-to-csv-user-names "id0,id1,id2" (orgtrello-hash/make-properties '(("id0". "user0") ("id1". "user1") ("id2". "user2")))))
-  (expect "user0,user1," (orgtrello-controller/--csv-user-ids-to-csv-user-names "id0,id1,id2" (orgtrello-hash/make-properties '(("id0". "user0") ("id1". "user1")))))
-  (expect "user0" (orgtrello-controller/--csv-user-ids-to-csv-user-names "id0" (orgtrello-hash/make-properties '(("id0". "user0"))))))
 
 (expectations (desc "orgtrello-controller/compute-property")
  (expect "#+property: test "      (orgtrello-controller/compute-property "test"))

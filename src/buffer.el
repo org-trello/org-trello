@@ -116,7 +116,7 @@
   "Update the users assigned property card entry."
   (--> entity
        (orgtrello-data/entity-member-ids it)
-       (orgtrello-controller/--csv-user-ids-to-csv-user-names it *HMAP-USERS-ID-NAME*)
+       (orgtrello-buffer/--csv-user-ids-to-csv-user-names it *HMAP-USERS-ID-NAME*)
        (replace-regexp-in-string *ORGTRELLO-USER-PREFIX* "" it)
        (orgtrello-controller/set-usernames-assigned-property! it)))
 
@@ -190,6 +190,19 @@
     (apply 'orgtrello-cbx/remove-overlays! region)
     (apply 'delete-region region)
     (orgtrello-buffer/write-entity! (orgtrello-data/entity-id item) (orgtrello-controller/--merge-item item item)))) ;; hack to merge item to itself to map to the org-trello world, otherwise we lose status for example
+
+(defun orgtrello-buffer/--csv-user-ids-to-csv-user-names (csv-users-id users-id-name) "Given a comma separated list of user id and a map, return a comma separated list of username."
+  (->> csv-users-id
+    orgtrello-buffer/--users-from
+    (--map (gethash it users-id-name))
+    orgtrello-buffer/--users-to))
+
+(defun orgtrello-buffer/--users-from (string-users)
+  "Compute the users name from the comma separated value in string."
+  (when string-users (split-string string-users "," t)))
+
+(defun orgtrello-buffer/--users-to (users) "Given a list of users, compute the comma separated users."
+  (if users (mapconcat 'identity users ",") ""))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-buffer loaded!")
 

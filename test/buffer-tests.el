@@ -214,3 +214,18 @@ some description
                                                                                             (:level . ,*ITEM-LEVEL*)
                                                                                             (:name . "some item name"))))
      0)))
+
+(expectations (desc "orgtrello-buffer/--csv-user-ids-to-csv-user-names")
+              (expect "user0,user1,user2" (orgtrello-buffer/--csv-user-ids-to-csv-user-names "id0,id1,id2" (orgtrello-hash/make-properties '(("id0". "user0") ("id1". "user1") ("id2". "user2")))))
+              (expect "user0,user1," (orgtrello-buffer/--csv-user-ids-to-csv-user-names "id0,id1,id2" (orgtrello-hash/make-properties '(("id0". "user0") ("id1". "user1")))))
+              (expect "user0" (orgtrello-buffer/--csv-user-ids-to-csv-user-names "id0" (orgtrello-hash/make-properties '(("id0". "user0"))))))
+
+(expectations (desc "orgtrello-buffer/--users-from")
+              (expect '("a" "b" "c") (orgtrello-buffer/--users-from "a,b,c,,"))
+              (expect '() (orgtrello-buffer/--users-from ",,,"))
+              (expect '() (orgtrello-buffer/--users-from ""))
+              (expect '() (orgtrello-buffer/--users-from nil)))
+
+(expectations (desc "orgtrello-buffer/--users-to")
+              (expect "" (orgtrello-buffer/--users-to nil))
+              (expect "a,b,c," (orgtrello-buffer/--users-to '("a" "b" "c" ""))))
