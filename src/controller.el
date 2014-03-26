@@ -532,6 +532,7 @@
            ,@(orgtrello-controller/--compute-hash-name-id-to-list users-hash-name-id)
            ,(orgtrello-controller/compute-property *ORGTRELLO-USER-ME* user-me)
            ,(when update-todo-keywords "#+TODO: ")
+           ":red" ":blue" ":yellow" ":green" ":orange" ":purple"
            ":END:")
       (mapc 'orgtrello-controller/--delete-buffer-property!))))
 
@@ -758,9 +759,7 @@
   "Permit to clean the buffer from trello data."
   (orgtrello-controller/--remove-properties-file! *LIST-NAMES* *HMAP-USERS-NAME-ID* *ORGTRELLO-USER-LOGGED-IN* t) ;; remove any orgtrello relative entries
   (when globally-flag
-    (orgtrello-buffer/delete-property! *ORGTRELLO-ID*)              ;; remove all properties orgtrello-id from the buffer
-    (orgtrello-buffer/delete-property! *ORGTRELLO-USERS-ENTRY*)     ;; remove all properties users-assigned/member-ids
-    (orgtrello-buffer/delete-property! *ORGTRELLO-CARD-COMMENTS*))) ;; remove all properties users-assigned/member-ids
+    (mapc 'orgtrello-buffer/delete-property! `(,*ORGTRELLO-ID* ,*ORGTRELLO-USERS-ENTRY* ,*ORGTRELLO-CARD-COMMENTS*))))
 
 (defun orgtrello-controller/do-write-board-metadata! (board-id board-name user-logged-in board-lists board-labels)
   "Given a board id, write in the current buffer the updated data."
