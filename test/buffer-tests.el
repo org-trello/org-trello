@@ -196,6 +196,42 @@ some description
 #+PROPERTY: orgtrello-user-dude dude-id
 :END:
 
+* TODO some old card name
+  :PROPERTIES:
+  :orgtrello-id: some-id
+  :orgtrello-users: ardumont,dude
+  :orgtrello-card-comments:
+  :END:
+some old description
+- [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-id\"}
+"
+    (orgtrello-tests/with-temp-buffer-and-return-buffer-content
+     ":PROPERTIES:
+#+PROPERTY: orgtrello-user-ardumont ardumont-id
+#+PROPERTY: orgtrello-user-dude dude-id
+:END:
+
+* TODO some old card name
+  :PROPERTIES:
+  :orgtrello-id: some-id
+  :orgtrello-users: ardumont,dude
+  :orgtrello-card-comments:
+  :END:
+some old description
+- [ ] some old checklist name\n"
+     (orgtrello-buffer/overwrite-checklist-header! (orgtrello-hash/make-properties `((:keyword . "DONE")
+                                                                                     (:level . ,*CHECKLIST-LEVEL*)
+                                                                                     (:name . "some checklist name")
+                                                                                     (:id . "some-id"))))
+
+     -1)))
+
+(expectations
+  (expect ":PROPERTIES:
+#+PROPERTY: orgtrello-user-ardumont ardumont-id
+#+PROPERTY: orgtrello-user-dude dude-id
+:END:
+
 
 * TODO some card name
   :PROPERTIES:
@@ -205,8 +241,8 @@ some description
   :END:
 some description
 "
-         (orgtrello-tests/with-temp-buffer-and-return-buffer-content
-          ":PROPERTIES:
+    (orgtrello-tests/with-temp-buffer-and-return-buffer-content
+     ":PROPERTIES:
 #+PROPERTY: orgtrello-user-ardumont ardumont-id
 #+PROPERTY: orgtrello-user-dude dude-id
 :END:
@@ -219,17 +255,17 @@ some description
   :END:
 some old description
 "
-          (orgtrello-buffer/overwrite-card-header! (orgtrello-hash/make-properties `((:keyword . "TODO")
-                                                                                               (:member-ids . "ardumont-id,dude-id")
-                                                                                               (:comments . ,(list (orgtrello-hash/make-properties '((:comment-user . "ardumont")
-                                                                                                                                                     (:comment-text . "some comment")))))
-                                                                                               (:labels . ":red:green:")
-                                                                                               (:desc . "some description")
-                                                                                               (:level . ,*CARD-LEVEL*)
-                                                                                               (:name . "some card name")
-                                                                                               (:id . "some-id"))))
+     (orgtrello-buffer/overwrite-card-header! (orgtrello-hash/make-properties `((:keyword . "TODO")
+                                                                                (:member-ids . "ardumont-id,dude-id")
+                                                                                (:comments . ,(list (orgtrello-hash/make-properties '((:comment-user . "ardumont")
+                                                                                                                                      (:comment-text . "some comment")))))
+                                                                                (:labels . ":red:green:")
+                                                                                (:desc . "some description")
+                                                                                (:level . ,*CARD-LEVEL*)
+                                                                                (:name . "some card name")
+                                                                                (:id . "some-id"))))
 
-          0)))
+     0)))
 
 ;; (expectations
 ;;   (expect ":PROPERTIES:
