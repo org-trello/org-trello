@@ -159,7 +159,11 @@ some-description
     (orgtrello-tests/with-temp-buffer "- [ ] checklist\n  - [ ] another" (orgtrello-buffer/compute-item-region!) 0)))
 
 (expectations
-  (expect "
+  (expect ":PROPERTIES:
+#+PROPERTY: orgtrello-user-ardumont ardumont-id
+#+PROPERTY: orgtrello-user-dude dude-id
+:END:
+
 * TODO some card name
   :PROPERTIES:
   :orgtrello-id: some-id
@@ -169,18 +173,21 @@ some-description
 some description
 "
     (orgtrello-tests/with-temp-buffer-and-return-buffer-content
-     "\n"
-     (progn
-       (setq *HMAP-USERS-ID-NAME* (orgtrello-hash/make-properties '(("ardumont-id" . "ardumont")
-                                                                    ("dude-id" . "dude"))))
-       (orgtrello-buffer/write-card-header! "some-id" (orgtrello-hash/make-properties `((:keyword . "TODO")
-                                                                                              (:member-ids . "ardumont-id,dude-id")
-                                                                                              (:comments . ,(list (orgtrello-hash/make-properties '((:comment-user . "ardumont")
-                                                                                                                                                    (:comment-text . "some comment")))))
-                                                                                              (:labels . ":red:green:")
-                                                                                              (:desc . "some description")
-                                                                                              (:level . ,*CARD-LEVEL*)
-                                                                                              (:name . "some card name")))))
+     ":PROPERTIES:
+#+PROPERTY: orgtrello-user-ardumont ardumont-id
+#+PROPERTY: orgtrello-user-dude dude-id
+:END:
+
+"
+     (orgtrello-buffer/write-card-header! "some-id" (orgtrello-hash/make-properties `((:keyword . "TODO")
+                                                                                      (:member-ids . "ardumont-id,dude-id")
+                                                                                      (:comments . ,(list (orgtrello-hash/make-properties '((:comment-user . "ardumont")
+                                                                                                                                            (:comment-text . "some comment")))))
+                                                                                      (:labels . ":red:green:")
+                                                                                      (:desc . "some description")
+                                                                                      (:level . ,*CARD-LEVEL*)
+                                                                                      (:name . "some card name"))))
+
      0)))
 
 (expectations
@@ -366,7 +373,6 @@ some description
                            orgtrello-data/entity-name)))
 
 (ert-deftest testing-orgtrello-buffer/metadata! ()
-  ;;(setq *HMAP-USERS-NAME-ID* (orgtrello-hash/make-properties `((,(format "%s%s" *ORGTRELLO-USER-PREFIX* "ardumont") . "ardumont-id") (,(format "%s%s" *ORGTRELLO-USER-PREFIX* "dude") . "dude-id"))))
   (let ((h-values            (orgtrello-tests/with-temp-buffer ":PROPERTIES:
 #+PROPERTY: orgtrello-user-ardumont some-user-id
 #+PROPERTY: orgtrello-user-dude some-user-id2
