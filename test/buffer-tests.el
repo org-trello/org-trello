@@ -138,7 +138,7 @@ hello there
 :END:
 some-description
 - [ ] checklist
-  - [ ] item" (orgtrello-buffer/compute-card-header-and-description-region!))))
+  - [ ] item" (orgtrello-buffer/compute-card-metadata-region!))))
 
 (expectations
   (expect '(8 24)

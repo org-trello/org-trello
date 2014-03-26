@@ -64,16 +64,9 @@
   "Update comments property."
   (org-entry-put nil *ORGTRELLO-CARD-COMMENTS* comments))
 
-(defun orgtrello-buffer/compute-card-header-and-description-region! ()
+(defun orgtrello-buffer/compute-card-metadata-region! ()
   "Compute the card region zone (only the card headers + description) couple '(start end)."
-  (let ((point-start)
-        (point-end)))
-  (save-excursion
-    (orgtrello-buffer/back-to-card!)
-    (setq point-start (point-at-bol))
-    (orgtrello-cbx/--goto-next-checkbox)
-    (setq point-end (1- (point-at-bol)))
-    `(,point-start ,point-end)))
+  `(,(orgtrello-buffer/--card-start-point!) ,(orgtrello-buffer/--card-metadata-end-point!)))
 
 (defun orgtrello-buffer/compute-checklist-header-region! ()
   "Compute the checklist's region (only the header, without computing the zone occupied by items) couple '(start end)."
@@ -142,7 +135,7 @@
 
 (defun orgtrello-buffer/overwrite-card-header! (card)
   "Given an updated card 'card' and the current position, overwrite the current position with the updated card data."
-  (let ((region (orgtrello-buffer/compute-card-header-and-description-region!)))
+  (let ((region (orgtrello-buffer/compute-card-metadata-region!)))
     (apply 'delete-region region)
     (orgtrello-buffer/write-card-header! (orgtrello-data/entity-id card) card)))
 
