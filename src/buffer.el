@@ -150,19 +150,23 @@
   "Given an updated card 'card' and the current position, overwrite the current position with the updated card data."
   (let ((region (orgtrello-buffer/compute-card-metadata-region!)))
     (apply 'delete-region region)
+    (puthash :member-ids (-> card orgtrello-data/entity-member-ids orgtrello-data/--users-to) card)
     (orgtrello-buffer/write-card-header! (orgtrello-data/entity-id card) card)))
 
 (defun orgtrello-buffer/overwrite-card! (card)
   "Given an updated full card 'card' and the current position, overwrite the current position with the full updated card data."
-  (let* ((region                   (orgtrello-buffer/compute-card-region!))
+  (let* ((card-id                  (orgtrello-data/entity-id card))
+         (region                   (orgtrello-buffer/compute-card-region!))
          (region-start             (first region))
          (region-end               (second region))
          (entities-from-org-buffer (orgtrello-buffer/compute-entities-from-org-buffer! nil region-start region-end))
          (entities-from-trello     (orgtrello-backend/compute-full-cards-from-trello! (list card)))
-         (merged-entities          (orgtrello-data/merge-entities-trello-and-org entities-from-trello entities-from-org-buffer)))
+         (merged-entities          (orgtrello-data/merge-entities-trello-and-org entities-from-trello entities-from-org-buffer))
+         (entities                 (first merged-entities))
+         (entities-adj             (second merged-entities)))
     (apply 'delete-region region)
     ;; write the full card region with full card structure
-    (orgtrello-buffer/write-card! (orgtrello-data/entity-id card) card (first merged-entities) (second merged-entities))))
+    (orgtrello-buffer/write-card! card-id (gethash card-id entities) entities entities-adj)))
 
 (defun orgtrello-buffer/overwrite-checklist-header! (checklist)
   "Given an updated checklist 'checklist' and the current position, overwrite the current position with the updated checklist data."
