@@ -395,5 +395,4 @@ some description\n"
     (should (equal "some description"                                            (orgtrello-data/entity-description h-values)))
     (should (equal "ardumont: this is some comments###dude: some other comment"  (orgtrello-data/entity-comments h-values)))
     (should (equal "some-user-id,some-user-id2"                                  (orgtrello-data/entity-member-ids h-values)))
-    (should (equal "TODO"                                                        (orgtrello-data/entity-keyword h-values)))
-    ))
+    (should (equal "TODO"                                                        (orgtrello-data/entity-keyword h-values)))))
