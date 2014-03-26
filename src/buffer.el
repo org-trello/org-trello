@@ -97,20 +97,20 @@
     (setq point-end (orgtrello-cbx/--compute-next-card-point))
     `(,point-start ,point-end)))
 
-(defun orgtrello-buffer/write-item! (entity-id entities)
+(defun orgtrello-buffer/write-item! (item-id entities)
   "Write the item to the org buffer."
   (->> entities
-       (gethash entity-id)
-       (orgtrello-buffer/write-entity! entity-id)))
+       (gethash item-id)
+       (orgtrello-buffer/write-entity! item-id)))
 
 (defun orgtrello-buffer/write-checklist-header! (entity-id entity)
   "Write the checklist data and properties without its structure."
   (orgtrello-buffer/write-entity! entity-id entity))
 
-(defun orgtrello-buffer/write-checklist! (entity-id entities adjacency)
+(defun orgtrello-buffer/write-checklist! (checklist-id entities adjacency)
   "Write the checklist and its structure inside the org buffer."
-  (orgtrello-buffer/write-checklist-header! entity-id (gethash entity-id entities))
-  (--map (orgtrello-buffer/write-item! it entities) (gethash entity-id adjacency)))
+  (orgtrello-buffer/write-checklist-header! checklist-id (gethash checklist-id entities))
+  (--map (orgtrello-buffer/write-item! it entities) (gethash checklist-id adjacency)))
 
 (defun orgtrello-buffer/update-member-ids-property! (entity)
   "Update the users assigned property card entry."
@@ -127,18 +127,18 @@
     orgtrello-data/comments-to-list
     orgtrello-buffer/set-property-comment!))
 
-(defun orgtrello-buffer/write-card-header! (entity-id entity)
+(defun orgtrello-buffer/write-card-header! (card-id card)
   "Given a card entity, write its data and properties without its structure."
-  (orgtrello-buffer/write-entity! entity-id entity)
-  (orgtrello-buffer/update-member-ids-property! entity)
-  (orgtrello-buffer/update-property-card-comments! entity)
-  (-when-let (entity-desc (orgtrello-data/entity-description entity))
-    (insert (format "%s\n" entity-desc))))
+  (orgtrello-buffer/write-entity! card-id card)
+  (orgtrello-buffer/update-member-ids-property! card)
+  (orgtrello-buffer/update-property-card-comments! card)
+  (-when-let (card-desc (orgtrello-data/entity-description card))
+    (insert (format "%s\n" card-desc))))
 
-(defun orgtrello-buffer/write-card! (entity-id entity entities adjacency)
+(defun orgtrello-buffer/write-card! (card-id card entities adjacency)
   "Write the card and its structure inside the org buffer."
-  (orgtrello-buffer/write-card-header! entity-id entity)
-  (--map (orgtrello-buffer/write-checklist! it entities adjacency) (gethash entity-id adjacency)))
+  (orgtrello-buffer/write-card-header! card-id card)
+  (--map (orgtrello-buffer/write-checklist! it entities adjacency) (gethash card-id adjacency)))
 
 (defun orgtrello-buffer/write-entity! (entity-id entity)
   "Write the entity in the buffer to the current position. Move the cursor position."
