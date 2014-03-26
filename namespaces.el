@@ -11,6 +11,7 @@
                                "src/cbx.el"
                                "src/api.el"
                                "src/query.el"
+                               "src/backend.el"
                                "src/elnode.el"
                                "src/webadmin.el"
                                "src/proxy.el"

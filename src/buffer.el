@@ -158,7 +158,7 @@
          (region-start             (first region))
          (region-end               (second region))
          (entities-from-org-buffer (orgtrello-buffer/compute-entities-from-org-buffer! nil region-start region-end))
-         (entities-from-trello     (orgtrello-controller/--compute-full-cards-from-trello! (list card)))
+         (entities-from-trello     (orgtrello-backend/compute-full-cards-from-trello! (list card)))
          (merged-entities          (orgtrello-controller/--merge-entities-trello-and-org entities-from-trello entities-from-org-buffer)))
     (apply 'delete-region region)
     ;; write the full card region with full card structure
@@ -177,7 +177,7 @@
          (region-start             (first region))
          (region-end               (second region))
          (entities-from-org-buffer (orgtrello-buffer/compute-entities-from-org-buffer! nil region-start region-end))
-         (entities-from-trello     (orgtrello-controller/--compute-full-checklist-from-trello! checklist))
+         (entities-from-trello     (orgtrello-backend/compute-full-checklist-from-trello! checklist))
          (merged-entities          (orgtrello-controller/--merge-entities-trello-and-org entities-from-trello entities-from-org-buffer)))
     (apply 'orgtrello-cbx/remove-overlays! region)
     (apply 'delete-region region)

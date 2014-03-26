@@ -406,60 +406,6 @@
          ((orgtrello-data/entity-item-p entity)      'orgtrello-controller/--compute-item-to-org-entry))
    entity))
 
-(defun orgtrello-controller/--compute-items-from-checklist (checklist entities adjacency)
-  "Given a checklist, retrieve its items and update the entities hash and the adjacency list."
-  (let ((checklist-id (orgtrello-data/entity-id checklist)))
-    (--reduce-from (cl-destructuring-bind (entities adjacency) acc
-                     (list (orgtrello-controller/--add-entity-to-entities it entities)
-                           (orgtrello-controller/--add-entity-to-adjacency it checklist adjacency)))
-                   (list entities adjacency)
-                   (orgtrello-data/entity-items checklist))))
-
-(defun orgtrello-controller/--retrieve-checklist-from-card (card)
-  "Given a card, retrieve the checklist of the card (using trello). This gives a list of checklist in the trello order."
-  (--> card
-       (orgtrello-data/entity-checklists it)                                                            ;; retrieve checklist ids
-       (-reduce-from (lambda (acc-list checklist-id)
-                       (cons (-> checklist-id
-                                 orgtrello-api/get-checklist
-                                 (orgtrello-query/http-trello *do-sync-query*)) acc-list))
-                     nil
-                     it)                                                                         ;; retrieve the trello checklist
-       (sort it (lambda (a b) (when (<= (orgtrello-data/entity-position a) (orgtrello-data/entity-position b)) 1)))))          ;; sort them by pos to get back to the right order (reversed)
-
-(defun orgtrello-controller/--compute-checklist-entities-from-card (card entities adjacency)
-  "Given a card, retrieve its checklists (with their items) in the right order."
-  (let ((card-id (orgtrello-data/entity-id card)))
-    (--> card
-         (orgtrello-controller/--retrieve-checklist-from-card it)
-         (-reduce-from (lambda (acc-entities-adj checklist)
-                          (cl-destructuring-bind (entities adjacency) acc-entities-adj
-                            (orgtrello-controller/--compute-items-from-checklist checklist (orgtrello-controller/--add-entity-to-entities checklist entities) (orgtrello-controller/--add-entity-to-adjacency checklist card adjacency))))
-                       (list entities adjacency)
-                       it))));; at last complete checklist with item
-
-;; one map for each complete entity: {entity-id entity} (entity in {card, checklist, item}
-;; adjacency list {card-id (checklist-id)
-;;                 checklist-id (item-id)}
-
-(defun orgtrello-controller/--compute-full-cards-from-trello! (cards)
-  "Given a list of cards, compute the full cards data from the trello board. The order from the trello board is kept. Hash result is of the form: {entity-id '(entity-card {checklist-id (checklist (item))})}"
-  (--reduce-from (progn
-                   (orgtrello-log/msg *OT/INFO* "Computing card '%s' data..."
-                                      (orgtrello-data/entity-name it))
-                   (cl-destructuring-bind (entities adjacency) acc
-                     (orgtrello-controller/--compute-checklist-entities-from-card it (orgtrello-controller/--add-entity-to-entities it entities) adjacency)))
-                 (list (orgtrello-hash/empty-hash) (orgtrello-hash/empty-hash))
-                 cards))
-
-(defun orgtrello-controller/--compute-full-checklist-from-trello! (checklist)
-  "Given a checklist, compute the full items data from trello. The order from the trello board is kept. Return result is the list of entities and adjacency in this order."
-  (let ((entities (orgtrello-hash/empty-hash))
-        (adjacency (orgtrello-hash/empty-hash)))
-    (orgtrello-log/msg *OT/INFO* "Computing checklist '%s' data..." (orgtrello-data/entity-name checklist))
-    (puthash (orgtrello-data/entity-id checklist) checklist entities)
-    (orgtrello-controller/--compute-items-from-checklist checklist entities adjacency)))
-
 (defun orgtrello-controller/--get-entity (id entities-hash)
   "Update the card entry inside the hash."
   (gethash id entities-hash))
@@ -470,12 +416,6 @@
       (orgtrello-controller/--put-entities entities)
       (list adjacency)))
 
-(defun orgtrello-controller/--add-entity-to-entities (entity entities)
-  "Adding entity to the hash entities."
-  (let ((entity-id (orgtrello-data/entity-id-or-marker entity)))
-    (puthash entity-id entity entities)
-    entities))
-
 ;; FIXME find an already existing implementation.
 (defun orgtrello-controller/--add-to-last-pos (value list)
   "Adding the value to the list in last position."
@@ -484,22 +424,9 @@
        (cons value it)
        (reverse it)))
 
-(defun orgtrello-controller/--add-entity-to-adjacency (current-entity parent-entity adjacency)
-  "Adding entity to the adjacency entry."
-  (let* ((current-id (orgtrello-data/entity-id-or-marker current-entity))
-         (parent-id  (orgtrello-data/entity-id-or-marker parent-entity)))
-    (puthash parent-id (orgtrello-controller/--add-to-last-pos current-id (gethash parent-id adjacency)) adjacency)
-    adjacency))
-
-(defun orgtrello-controller/--put-entities-with-adjacency (current-meta entities adjacency)
-  "Deal with adding a new item to entities."
-  (let ((current-entity (orgtrello-data/current current-meta))
-        (parent-entity  (orgtrello-data/parent current-meta)))
-    (list (orgtrello-controller/--add-entity-to-entities current-entity entities) (orgtrello-controller/--add-entity-to-adjacency current-entity parent-entity adjacency))))
-
 (defun orgtrello-controller/--dispatch-create-entities-map-with-adjacency (entity)
   "Dispatch the function to update map depending on the entity level."
-  (if (orgtrello-data/entity-card-p entity) 'orgtrello-controller/--put-card-with-adjacency 'orgtrello-controller/--put-entities-with-adjacency))
+  (if (orgtrello-data/entity-card-p entity) 'orgtrello-controller/--put-card-with-adjacency 'orgtrello-backend/--put-entities-with-adjacency))
 
 (defun orgtrello-controller/--compute-entities-from-org! (&optional region-end)
   "Compute the full entities present in the org buffer which already had been sync'ed previously. Return the list of entities map and adjacency map in this order. If region-end is specified, will work on the region (current-point, region-end), otherwise, work on all buffer."
@@ -535,7 +462,7 @@
   "Deal with adding a new item to entities."
   (-> current-meta
       orgtrello-data/current
-      (orgtrello-controller/--add-entity-to-entities entities)))
+      (orgtrello-backend/--add-entity-to-entities entities)))
 
 (defun orgtrello-controller/--merge-item (trello-item org-item)
   "Merge trello and org item together."
@@ -662,7 +589,7 @@
     (function* (lambda (&key data &allow-other-keys) "Synchronize the buffer with the response data."
        (orgtrello-log/msg *OT/TRACE* "proxy - response data: %S" data)
        (-> data                                                                 ;; compute merge between already sync'ed entries and the trello data
-           orgtrello-controller/--compute-full-cards-from-trello!                        ;; slow computation with network access
+           orgtrello-backend/compute-full-cards-from-trello!                        ;; slow computation with network access
            (orgtrello-controller/--merge-entities-trello-and-org entities-from-org-buffer) ;; slow merge computation
            ((lambda (entry) (orgtrello-controller/--cleanup-org-entries) entry))           ;; hack to clean the org entries just before synchronizing the buffer
            (orgtrello-controller/--sync-buffer-with-trello-data buffer-name)
