@@ -157,3 +157,60 @@ some-description
 (expectations
   (expect '(17 33)
     (orgtrello-tests/with-temp-buffer "- [ ] checklist\n  - [ ] another" (orgtrello-buffer/compute-item-region!) 0)))
+
+(expectations
+  (expect "
+* TODO some card name
+  :PROPERTIES:
+  :orgtrello-id: some-id
+  :orgtrello-users: ardumont,dude
+  :orgtrello-card-comments: ardumont: some comment
+  :END:
+some description
+"
+    (orgtrello-tests/with-temp-buffer-and-return-buffer-content
+     "\n"
+     (progn
+       (setq *HMAP-USERS-ID-NAME* (orgtrello-hash/make-properties '(("ardumont-id" . "ardumont")
+                                                                    ("dude-id" . "dude"))))
+       (orgtrello-buffer/write-card-header! "some-id" (orgtrello-hash/make-properties `((:keyword . "TODO")
+                                                                                              (:member-ids . "ardumont-id,dude-id")
+                                                                                              (:comments . ,(list (orgtrello-hash/make-properties '((:comment-user . "ardumont")
+                                                                                                                                                    (:comment-text . "some comment")))))
+                                                                                              (:labels . ":red:green:")
+                                                                                              (:desc . "some description")
+                                                                                              (:level . ,*CARD-LEVEL*)
+                                                                                              (:name . "some card name")))))
+     0)))
+
+(expectations
+  (desc "orgtrello-buffer/write-entity! - card")
+  (expect "\n* DONE some card name                                                   :red:green:\n  :PROPERTIES:\n  :orgtrello-id: some-card-id\n  :END:\n"
+    (orgtrello-tests/with-temp-buffer-and-return-buffer-content
+     "\n"
+     (orgtrello-buffer/write-entity! "some-card-id " (orgtrello-hash/make-properties `((:keyword . "DONE")
+                                                                                             (:tags . ":red:green:")
+                                                                                             (:desc . "some description")
+                                                                                             (:level . ,*CARD-LEVEL*)
+                                                                                             (:name . "some card name"))))
+     0)))
+
+(expectations
+  (desc "orgtrello-buffer/write-entity! - checklist")
+  (expect "* some content\n- [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}\n"
+    (orgtrello-tests/with-temp-buffer-and-return-buffer-content
+     "* some content\n"
+     (orgtrello-buffer/write-entity! "some-checklist-id" (orgtrello-hash/make-properties `((:keyword . "DONE")
+                                                                                                 (:level . ,*CHECKLIST-LEVEL*)
+                                                                                                 (:name . "some checklist name"))))
+     0)))
+
+(expectations
+  (desc "orgtrello-buffer/write-entity! - item")
+  (expect "* some content\n- [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}\n  - [X] some item name :PROPERTIES: {\"orgtrello-id\":\"some-item-id\"}\n"
+    (orgtrello-tests/with-temp-buffer-and-return-buffer-content
+     "* some content\n- [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}\n"
+     (orgtrello-buffer/write-entity! "some-item-id" (orgtrello-hash/make-properties `((:keyword . "DONE")
+                                                                                            (:level . ,*ITEM-LEVEL*)
+                                                                                            (:name . "some item name"))))
+     0)))

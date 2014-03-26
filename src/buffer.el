@@ -97,6 +97,55 @@
     (setq point-end (orgtrello-cbx/--compute-next-card-point))
     `(,point-start ,point-end)))
 
+(defun orgtrello-buffer/write-item! (entity-id entities)
+  "Write the item to the org buffer."
+  (->> entities
+       (gethash entity-id)
+       (orgtrello-buffer/write-entity! entity-id)))
+
+(defun orgtrello-buffer/write-checklist-header! (entity-id entity)
+  "Write the checklist data and properties without its structure."
+  (orgtrello-buffer/write-entity! entity-id entity))
+
+(defun orgtrello-buffer/write-checklist! (entity-id entities adjacency)
+  "Write the checklist and its structure inside the org buffer."
+  (orgtrello-buffer/write-checklist-header! entity-id (gethash entity-id entities))
+  (--map (orgtrello-buffer/write-item! it entities) (gethash entity-id adjacency)))
+
+(defun orgtrello-buffer/update-member-ids-property! (entity)
+  "Update the users assigned property card entry."
+  (--> entity
+       (orgtrello-data/entity-member-ids it)
+       (orgtrello-controller/--csv-user-ids-to-csv-user-names it *HMAP-USERS-ID-NAME*)
+       (replace-regexp-in-string *ORGTRELLO-USER-PREFIX* "" it)
+       (orgtrello-controller/set-usernames-assigned-property! it)))
+
+(defun orgtrello-buffer/update-property-card-comments! (entity)
+  "Update last comments "
+  (->> entity
+    orgtrello-data/entity-comments
+    orgtrello-data/comments-to-list
+    orgtrello-buffer/set-property-comment!))
+
+(defun orgtrello-buffer/write-card-header! (entity-id entity)
+  "Given a card entity, write its data and properties without its structure."
+  (orgtrello-buffer/write-entity! entity-id entity)
+  (orgtrello-buffer/update-member-ids-property! entity)
+  (orgtrello-buffer/update-property-card-comments! entity)
+  (-when-let (entity-desc (orgtrello-data/entity-description entity))
+    (insert (format "%s\n" entity-desc))))
+
+(defun orgtrello-buffer/write-card! (entity-id entity entities adjacency)
+  "Write the card and its structure inside the org buffer."
+  (orgtrello-buffer/write-card-header! entity-id entity)
+  (--map (orgtrello-buffer/write-checklist! it entities adjacency) (gethash entity-id adjacency)))
+
+(defun orgtrello-buffer/write-entity! (entity-id entity)
+  "Write the entity in the buffer to the current position. Move the cursor position."
+  (orgtrello-log/msg *OT/INFO* "Synchronizing entity '%s' with id '%s'..." (orgtrello-data/entity-name entity) entity-id)
+  (insert (orgtrello-controller/--compute-entity-to-org-entry entity))
+  (when entity-id (orgtrello-controller/--update-property entity-id (not (orgtrello-data/entity-card-p entity)))))
+
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-buffer loaded!")
 
 

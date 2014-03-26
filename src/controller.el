@@ -618,61 +618,12 @@
         (orgtrello-action/set-property *ORGTRELLO-ID* id))
       (orgtrello-action/set-property *ORGTRELLO-ID* id)))
 
-(defun orgtrello-controller/--write-entity! (entity-id entity)
-  "Write the entity in the buffer to the current position. Move the cursor position."
-  (orgtrello-log/msg *OT/INFO* "Synchronizing entity '%s' with id '%s'..." (orgtrello-data/entity-name entity) entity-id)
-  (insert (orgtrello-controller/--compute-entity-to-org-entry entity))
-  (when entity-id (orgtrello-controller/--update-property entity-id (not (orgtrello-data/entity-card-p entity)))))
-
 (defun orgtrello-controller/org-map-entities-without-params! (fn-to-execute)
   "Execute fn-to-execute function for all entities from buffer - fn-to-execute is a function without any parameters."
   (org-map-entries
      (lambda ()
        (funcall fn-to-execute) ;; execute on heading entry
        (orgtrello-cbx/map-checkboxes fn-to-execute)) t 'file))
-
-(defun orgtrello-controller/--write-item! (entity-id entities)
-  "Write the item to the org buffer."
-  (->> entities
-       (gethash entity-id)
-       (orgtrello-controller/--write-entity! entity-id)))
-
-(defun orgtrello-controller/--write-checklist-header! (entity-id entity)
-  "Write the checklist header."
-  (orgtrello-controller/--write-entity! entity-id entity))
-
-(defun orgtrello-controller/--write-checklist! (entity-id entities adjacency)
-  "Write the checklist inside the org buffer."
-  (orgtrello-controller/--write-checklist-header! entity-id (gethash entity-id entities))
-  (--map (orgtrello-controller/--write-item! it entities) (gethash entity-id adjacency)))
-
-(defun orgtrello-controller/--update-member-ids-property! (entity)
-  "Update the users assigned property card entry."
-  (--> entity
-       (orgtrello-data/entity-member-ids it)
-       (orgtrello-controller/--csv-user-ids-to-csv-user-names it *HMAP-USERS-ID-NAME*)
-       (replace-regexp-in-string *ORGTRELLO-USER-PREFIX* "" it)
-       (orgtrello-controller/set-usernames-assigned-property! it)))
-
-(defun orgtrello-controller/--update-property-card-comments! (entity)
-  "Update last comments "
-  (->> entity
-    orgtrello-data/entity-comments
-    orgtrello-data/comments-to-list
-    orgtrello-buffer/set-property-comment!))
-
-(defun orgtrello-controller/--write-card-header! (entity-id entity)
-  "Given an entity, write its header properties without its structure."
-  (orgtrello-controller/--write-entity! entity-id entity)
-  (orgtrello-controller/--update-member-ids-property! entity)
-  (orgtrello-controller/--update-property-card-comments! entity)
-  (-when-let (entity-desc (orgtrello-data/entity-description entity))
-    (insert (format "%s\n" entity-desc))))
-
-(defun orgtrello-controller/--write-card! (entity-id entity entities adjacency)
-  "Write the card inside the org buffer."
-  (orgtrello-controller/--write-card-header! entity-id entity)
-  (--map (orgtrello-controller/--write-checklist! it entities adjacency) (gethash entity-id adjacency)))
 
 (defun orgtrello-controller/--sync-buffer-with-trello-data (data buffer-name)
   "Given all the entities, update the current buffer with those."
@@ -683,7 +634,7 @@
       (maphash
        (lambda (new-id entity)
          (when (orgtrello-data/entity-card-p entity)
-               (orgtrello-controller/--write-card! new-id entity entities adjacency)))
+               (orgtrello-buffer/write-card! new-id entity entities adjacency)))
        entities)
       (goto-char (point-min)) ;; go back to the beginning of file
       (org-sort-entries t ?o) ;; sort the entries on their keywords
@@ -731,15 +682,16 @@
           (org-show-subtree)
           (cond ((orgtrello-data/entity-card-p data)      (let ((region (orgtrello-buffer/compute-card-header-and-description-region!)))
                                                             (apply 'delete-region region)
-                                                            (orgtrello-controller/--write-card-header! (orgtrello-data/entity-id data) data)))
+                                                            (orgtrello-buffer/write-card-header! (orgtrello-data/entity-id data) data)))
                 ((orgtrello-data/entity-checklist-p data) (let ((region (orgtrello-buffer/compute-checklist-header-region!)))
                                                             (apply 'orgtrello-cbx/remove-overlays! region)
                                                             (apply 'delete-region region)
-                                                            (orgtrello-controller/--write-checklist-header! (orgtrello-data/entity-id data) data)))
+                                                            (orgtrello-buffer/write-checklist-header! (orgtrello-data/entity-id data) data)))
                 ((orgtrello-data/entity-item-p data)      (let ((region (orgtrello-buffer/compute-item-region!)))
                                                             (apply 'orgtrello-cbx/remove-overlays! region)
                                                             (apply 'delete-region region)
-                                                            (orgtrello-controller/--write-entity! (orgtrello-data/entity-id data) data)))))
+                                                            (orgtrello-buffer/write-entity! (orgtrello-data/entity-id data) data)))))
+        (orgtrello-log/msg *OT/INFO* "Synchronizing the trello and org data merge - done!"))))))
         (orgtrello-log/msg *OT/INFO* "Synchronizing the trello and org data merge - done!"))))))
 
 (defun orgtrello-controller/--dispatch-sync-request (entity)
