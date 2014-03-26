@@ -1,19 +1,24 @@
-(defun orgtrello-buffer/back-to-card! () "Given the current position, goes on the card's heading"
+(defun orgtrello-buffer/back-to-card! ()
+  "Given the current position, goes on the card's heading"
   (org-back-to-heading))
 
-(defun orgtrello-buffer/--card-description-start-point! () "Compute the first character of the card's description content."
+(defun orgtrello-buffer/--card-description-start-point! ()
+  "Compute the first character of the card's description content."
   (save-excursion (orgtrello-buffer/back-to-card!) (1+ (point-at-eol))))
 
-(defun orgtrello-buffer/--card-start-point! () "Compute the first character of the card."
+(defun orgtrello-buffer/--card-start-point! ()
+  "Compute the first character of the card."
   (save-excursion (orgtrello-buffer/back-to-card!) (point-at-bol)))
 
-(defun orgtrello-buffer/--card-metadata-end-point! () "Compute the first position of the card's next checkbox."
+(defun orgtrello-buffer/--card-metadata-end-point! ()
+  "Compute the first position of the card's next checkbox."
   (save-excursion
     (orgtrello-buffer/back-to-card!)
     (orgtrello-cbx/--goto-next-checkbox)
     (1- (point))))
 
-(defun orgtrello-buffer/extract-description-from-current-position! () "Given the current position, extract the text content of current card."
+(defun orgtrello-buffer/extract-description-from-current-position! ()
+  "Given the current position, extract the text content of current card."
   (let ((start (orgtrello-buffer/--card-description-start-point!))
         (end   (orgtrello-buffer/--card-metadata-end-point!)))
     (when (< start end)
@@ -28,7 +33,8 @@
   "Retrieve the card's comments. Can be nil if not on a card."
   (org-entry-put (point) *ORGTRELLO-CARD-COMMENTS* comments))
 
-(defun orgtrello-buffer/filter-out-properties (text-content) "Given a string, remove any org properties if any"
+(defun orgtrello-buffer/filter-out-properties (text-content)
+  "Given a string, remove any org properties if any"
   (->> text-content
        (replace-regexp-in-string "^[ ]*:.*" "")
        (s-trim-left)))
@@ -180,7 +186,8 @@
     (apply 'delete-region region)
     (orgtrello-buffer/write-entity! (orgtrello-data/entity-id item) (orgtrello-data/merge-item item item)))) ;; hack to merge item to itself to map to the org-trello world, otherwise we lose status for example
 
-(defun orgtrello-buffer/--csv-user-ids-to-csv-user-names (csv-users-id users-id-name) "Given a comma separated list of user id and a map, return a comma separated list of username."
+(defun orgtrello-buffer/--csv-user-ids-to-csv-user-names (csv-users-id users-id-name)
+  "Given a comma separated list of user id and a map, return a comma separated list of username."
   (->> csv-users-id
     orgtrello-data/--users-from
     (--map (gethash it users-id-name))
@@ -340,13 +347,16 @@
      (funcall fn-to-execute) ;; execute on heading entry
      (orgtrello-cbx/map-checkboxes fn-to-execute)) t 'file))
 
-(defun orgtrello-buffer/get-usernames-assigned-property! () "Read the org users property from the current entry."
+(defun orgtrello-buffer/get-usernames-assigned-property! ()
+  "Read the org users property from the current entry."
   (org-entry-get nil *ORGTRELLO-USERS-ENTRY*))
 
-(defun orgtrello-buffer/set-usernames-assigned-property! (csv-users) "Update users org property."
+(defun orgtrello-buffer/set-usernames-assigned-property! (csv-users)
+  "Update users org property."
   (org-entry-put nil *ORGTRELLO-USERS-ENTRY* csv-users))
 
-(defun orgtrello-buffer/delete-property! (property) "Given a property name (checkbox), if found, delete it from the buffer."
+(defun orgtrello-buffer/delete-property! (property)
+  "Given a property name (checkbox), if found, delete it from the buffer."
   (org-delete-property-globally property)
   (save-excursion
     (goto-char (point-min))
@@ -354,10 +364,12 @@
       (remove-overlays (point-at-bol) (point-at-eol)) ;; the current overlay on this line
       (replace-match "" nil t))))                     ;; then remove the property
 
-(defun orgtrello-buffer/remove-overlays! () "Remove every org-trello overlays from the current buffer."
+(defun orgtrello-buffer/remove-overlays! ()
+  "Remove every org-trello overlays from the current buffer."
   (orgtrello-cbx/remove-overlays! (point-min) (point-max)))
 
-(defun orgtrello-buffer/install-overlays! () "Install overlays throughout the all buffers."
+(defun orgtrello-buffer/install-overlays! ()
+  "Install overlays throughout the all buffers."
   (orgtrello-buffer/remove-overlays!)
   (save-excursion
     (goto-char (point-min))
@@ -439,7 +451,9 @@
   (cl-destructuring-bind (comments description member-ids buffer-name point id due level _ keyword _ name tags) heading-metadata
                          (orgtrello-hash/make-hash-org member-ids level keyword name id due point buffer-name description comments tags)))
 
-(defun orgtrello-buffer/current-level! () "Compute the current level's position." (-> (orgtrello-buffer/metadata!) orgtrello-data/entity-level))
+(defun orgtrello-buffer/current-level! ()
+  "Compute the current level's position."
+  (-> (orgtrello-buffer/metadata!) orgtrello-data/entity-level))
 
 (defun orgtrello-buffer/filtered-kwds! ()
   "org keywords used (based on org-todo-keywords-1)."
