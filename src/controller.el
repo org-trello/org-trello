@@ -442,7 +442,7 @@
 ;; adjacency list {card-id (checklist-id)
 ;;                 checklist-id (item-id)}
 
-(defun orgtrello-controller/--compute-full-entities-from-trello (cards)
+(defun orgtrello-controller/--compute-full-cards-from-trello! (cards)
   "Given a list of cards, compute the full cards data from the trello board. The order from the trello board is kept. Hash result is of the form: {entity-id '(entity-card {checklist-id (checklist (item))})}"
   (--reduce-from (progn
                    (orgtrello-log/msg *OT/INFO* "Computing card '%s' data..."
@@ -657,7 +657,7 @@
     (function* (lambda (&key data &allow-other-keys) "Synchronize the buffer with the response data."
        (orgtrello-log/msg *OT/TRACE* "proxy - response data: %S" data)
        (-> data                                                                 ;; compute merge between already sync'ed entries and the trello data
-           orgtrello-controller/--compute-full-entities-from-trello                        ;; slow computation with network access
+           orgtrello-controller/--compute-full-cards-from-trello!                        ;; slow computation with network access
            (orgtrello-controller/--merge-entities-trello-and-org entities-from-org-buffer) ;; slow merge computation
            ((lambda (entry) (orgtrello-controller/--cleanup-org-entries) entry))           ;; hack to clean the org entries just before synchronizing the buffer
            (orgtrello-controller/--sync-buffer-with-trello-data buffer-name)
@@ -711,7 +711,7 @@
                                                                  (region-start             (first region))
                                                                  (region-end               (second region))
                                                                  (entities-from-org-buffer (orgtrello-controller/--compute-entities-from-org-buffer! buffer-name region-start region-end))
-                                                                 (entities-from-trello     (orgtrello-controller/--compute-full-entities-from-trello (list data)))
+                                                                 (entities-from-trello     (orgtrello-controller/--compute-full-cards-from-trello! (list data)))
                                                                  (merged-entities          (orgtrello-controller/--merge-entities-trello-and-org entities-from-trello entities-from-org-buffer)))
                                                             (apply 'delete-region region)
                                                             ;; write the full card region with full card structure
