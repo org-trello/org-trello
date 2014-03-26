@@ -1,3 +1,8 @@
+(defun orgtrello-buffer/org-entry-put! (point property value)
+  (if (or (null value) (string= "" value))
+      (orgtrello-buffer/delete-property! property)
+    (org-entry-put point property value)))
+
 (defun orgtrello-buffer/back-to-card! ()
   "Given the current position, goes on the card's heading"
   (org-back-to-heading))
@@ -31,7 +36,7 @@
 
 (defun orgtrello-buffer/put-card-comments! (comments)
   "Retrieve the card's comments. Can be nil if not on a card."
-  (org-entry-put (point) *ORGTRELLO-CARD-COMMENTS* comments))
+  (orgtrello-buffer/org-entry-put! (point) *ORGTRELLO-CARD-COMMENTS* comments))
 
 (defun orgtrello-buffer/filter-out-properties (text-content)
   "Given a string, remove any org properties if any"
@@ -68,7 +73,7 @@
 
 (defun orgtrello-buffer/set-property-comment! (comments)
   "Update comments property."
-  (org-entry-put nil *ORGTRELLO-CARD-COMMENTS* comments))
+  (orgtrello-buffer/org-entry-put! nil *ORGTRELLO-CARD-COMMENTS* comments))
 
 (defun orgtrello-buffer/compute-card-metadata-region! ()
   "Compute the card region zone (only the card headers + description) couple '(start end)."
@@ -353,9 +358,7 @@
 
 (defun orgtrello-buffer/set-usernames-assigned-property! (csv-users)
   "Update users org property."
-  (if (or (null csv-users) (string= "" csv-users))
-      (orgtrello-buffer/delete-property! *ORGTRELLO-USERS-ENTRY*)
-    (org-entry-put nil *ORGTRELLO-USERS-ENTRY* csv-users)))
+  (orgtrello-buffer/org-entry-put! nil *ORGTRELLO-USERS-ENTRY* csv-users))
 
 (defun orgtrello-buffer/delete-property! (property)
   "Given a property name (checkbox), if found, delete it from the buffer."
