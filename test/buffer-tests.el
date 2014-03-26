@@ -389,6 +389,90 @@ some description
      0)))
 
 (expectations
+  (expect ":PROPERTIES:
+#+PROPERTY: orgtrello-user-ardumont ardumont-id
+#+PROPERTY: orgtrello-user-dude dude-id
+:END:
+
+* TODO some card name
+  :PROPERTIES:
+  :orgtrello-id: some-card-id
+  :orgtrello-users: ardumont,dude
+  :orgtrello-card-comments: ardumont: some comment
+  :END:
+some description
+- [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}
+  - [X] some item name :PROPERTIES: {\"orgtrello-id\":\"some-item-id\"}
+  - [ ] some other item name :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\"}
+"
+    (orgtrello-tests/with-temp-buffer-and-return-buffer-content
+     ":PROPERTIES:
+#+PROPERTY: orgtrello-user-ardumont ardumont-id
+#+PROPERTY: orgtrello-user-dude dude-id
+:END:
+
+* TODO some card name
+  :PROPERTIES:
+  :orgtrello-id: some-card-id
+  :orgtrello-users: ardumont,dude
+  :orgtrello-card-comments: ardumont: some comment
+  :END:
+some description
+"
+     (orgtrello-buffer/write-checklist! "some-checklist-id"
+                                        (orgtrello-hash/make-properties `(("some-checklist-id" . ,(orgtrello-hash/make-properties `((:id . "some-checklist-id")
+                                                                                                                                    (:name . "some checklist name")
+                                                                                                                                    (:level . ,*CHECKLIST-LEVEL*))))
+                                                                          ("some-item-id"  . ,(orgtrello-hash/make-properties `((:id . "some-item-id")
+                                                                                                                                (:name . "some item name")
+                                                                                                                                (:level . ,*ITEM-LEVEL*)
+                                                                                                                                (:keyword . "DONE"))))
+                                                                          ("some-other-item-id"  . ,(orgtrello-hash/make-properties `((:id . "some-other-item-id")
+                                                                                                                                      (:name . "some other item name")
+                                                                                                                                      (:level . ,*ITEM-LEVEL*)
+                                                                                                                                      (:keyword . "TODO"))))))
+                                        (orgtrello-hash/make-properties `(("some-checklist-id" . ("some-item-id" "some-other-item-id")))))
+     0)))
+
+(expectations
+  (expect ":PROPERTIES:
+#+PROPERTY: orgtrello-user-ardumont ardumont-id
+#+PROPERTY: orgtrello-user-dude dude-id
+:END:
+
+* TODO some card name
+  :PROPERTIES:
+  :orgtrello-id: some-card-id
+  :orgtrello-users: ardumont,dude
+  :orgtrello-card-comments: ardumont: some comment
+  :END:
+some description
+- [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}
+  - [X] some item name :PROPERTIES: {\"orgtrello-id\":\"some-item-id\"}
+"
+    (orgtrello-tests/with-temp-buffer-and-return-buffer-content
+     ":PROPERTIES:
+#+PROPERTY: orgtrello-user-ardumont ardumont-id
+#+PROPERTY: orgtrello-user-dude dude-id
+:END:
+
+* TODO some card name
+  :PROPERTIES:
+  :orgtrello-id: some-card-id
+  :orgtrello-users: ardumont,dude
+  :orgtrello-card-comments: ardumont: some comment
+  :END:
+some description
+- [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}
+"
+     (orgtrello-buffer/write-item! "some-item-id"
+                                   (orgtrello-hash/make-properties `(("some-item-id"  . ,(orgtrello-hash/make-properties `((:id . "some-item-id")
+                                                                                                                           (:name . "some item name")
+                                                                                                                           (:level . ,*ITEM-LEVEL*)
+                                                                                                                           (:keyword . "DONE")))))))
+     0)))
+
+(expectations
   (desc "orgtrello-buffer/write-entity! - card")
   (expect "\n* DONE some card name                                                   :red:green:\n  :PROPERTIES:\n  :orgtrello-id: some-card-id\n  :END:\n"
     (orgtrello-tests/with-temp-buffer-and-return-buffer-content
