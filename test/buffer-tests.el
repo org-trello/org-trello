@@ -365,24 +365,29 @@ some description
                            (orgtrello-data/current)
                            orgtrello-data/entity-name)))
 
-;; (ert-deftest testing-orgtrello-buffer/metadata! ()
-;;   (let ((h-values (orgtrello-tests/with-temp-buffer ":PROPERTIES:
-;; #+PROPERTY: orgtrello-user-ardumont some-user-id
-;; #+PROPERTY: orgtrello-user-dude some-user-id2
-;; :END:
+(ert-deftest testing-orgtrello-buffer/metadata! ()
+  ;;(setq *HMAP-USERS-NAME-ID* (orgtrello-hash/make-properties `((,(format "%s%s" *ORGTRELLO-USER-PREFIX* "ardumont") . "ardumont-id") (,(format "%s%s" *ORGTRELLO-USER-PREFIX* "dude") . "dude-id"))))
+  (let ((h-values            (orgtrello-tests/with-temp-buffer ":PROPERTIES:
+#+PROPERTY: orgtrello-user-ardumont some-user-id
+#+PROPERTY: orgtrello-user-dude some-user-id2
+:END:
 
-;; * IN-PROGRESS card title
-;; :PROPERTIES:
-;; :orgtrello-id: some-id
-;; :orgtrello-users: ardumont,dude
-;; :orgtrello-card-comments: ardumont: this is some comments###dude: some other comment
-;; :END:
-;; some description\n"
-;;                                                     (orgtrello-buffer/metadata!))))
-;;     (should (equal (gethash :level h-values) 1))
-;;     (should (equal (gethash :name h-values) "card title"))
-;;     (should (equal (gethash :id h-values) "some-id"))
-;;     (should (equal (gethash :due h-values) nil))
-;;     (should (equal (gethash :desc h-values) "some-description"))
-;;     (should (equal (gethash :comments h-values) "ardumont: this is some comments###dude: some other comments"))
-;;     (should (equal (gethash :keywords h-values) "IN-PROGRESS"))))
+* TODO card title
+:PROPERTIES:
+:orgtrello-id: some-id
+:orgtrello-users: ardumont,dude
+:orgtrello-card-comments: ardumont: this is some comments###dude: some other comment
+:END:
+some description\n"
+                                                               (orgtrello-buffer/metadata!)
+                                                               -2)))
+    (should (equal 1                                                             (orgtrello-data/entity-level h-values)))
+    (should (equal nil                                                           (orgtrello-data/entity-tags h-values)))
+    (should (equal "card title"                                                (orgtrello-data/entity-name h-values)))
+    (should (equal "some-id"                                                     (orgtrello-data/entity-id h-values)))
+    (should (equal nil                                                           (orgtrello-data/entity-due h-values)))
+    (should (equal "some description"                                            (orgtrello-data/entity-description h-values)))
+    (should (equal "ardumont: this is some comments###dude: some other comment"  (orgtrello-data/entity-comments h-values)))
+    (should (equal "some-user-id,some-user-id2"                                  (orgtrello-data/entity-member-ids h-values)))
+    (should (equal "TODO"                                                        (orgtrello-data/entity-keyword h-values)))
+    ))

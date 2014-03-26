@@ -407,15 +407,15 @@
 
 (defun orgtrello-buffer/metadata! ()
   "Compute the metadata for a given org entry. Also add some metadata identifier/due-data/point/buffer-name/etc..."
-  (let ((od/--point (point)))
+  (let ((current-point (point)))
     (->> (orgtrello-buffer/--extract-metadata!)
-         (cons (-> od/--point (orgtrello-buffer/org-entry-get "DEADLINE") orgtrello-buffer/--convert-orgmode-date-to-trello-date))
-         (cons (orgtrello-buffer/extract-identifier! od/--point))
-         (cons od/--point)
+         (cons (-> current-point (orgtrello-buffer/org-entry-get "DEADLINE") orgtrello-buffer/--convert-orgmode-date-to-trello-date))
+         (cons (orgtrello-buffer/extract-identifier! current-point))
+         (cons current-point)
          (cons (buffer-name))
          (cons (orgtrello-buffer/--user-ids-assigned-to-current-card))
          (cons (orgtrello-buffer/extract-description-from-current-position!))
-         (cons (orgtrello-buffer/org-entry-get od/--point *ORGTRELLO-CARD-COMMENTS*))
+         (cons (orgtrello-buffer/org-entry-get current-point *ORGTRELLO-CARD-COMMENTS*))
          orgtrello-buffer/--convert-to-orgtrello-metadata)))
 
 (defun orgtrello-buffer/org-up-parent! ()
