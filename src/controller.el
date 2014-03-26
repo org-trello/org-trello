@@ -523,7 +523,7 @@
 
 ;; entities of the form: {entity-id '(entity-card {checklist-id (checklist (item))})}
 
-(defun orgtrello-controller/--compute-entities-from-org-buffer! (&optional buffername region-start region-end)
+(defun orgtrello-buffer/compute-entities-from-org-buffer! (&optional buffername region-start region-end)
   "Compute the current entities hash from the buffer in the same format as the sync-from-trello routine. Return the list of entities map and adjacency map in this order."
   (when buffername
     (set-buffer buffername))
@@ -658,7 +658,7 @@
 (defun orgtrello-controller/--sync-buffer-with-trello-data-callback (buffername &optional position name)
   "Generate a callback which knows the buffer with which it must work. (this callback must take a buffer-name and a position)"
   (lexical-let ((buffer-name              buffername)
-                (entities-from-org-buffer (orgtrello-controller/--compute-entities-from-org-buffer! buffername)))
+                (entities-from-org-buffer (orgtrello-buffer/compute-entities-from-org-buffer! buffername)))
     (function* (lambda (&key data &allow-other-keys) "Synchronize the buffer with the response data."
        (orgtrello-log/msg *OT/TRACE* "proxy - response data: %S" data)
        (-> data                                                                 ;; compute merge between already sync'ed entries and the trello data
