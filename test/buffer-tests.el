@@ -231,6 +231,51 @@ some old description
 
           0)))
 
+;; (expectations
+;;   (expect ":PROPERTIES:
+;; #+PROPERTY: orgtrello-user-ardumont ardumont-id
+;; #+PROPERTY: orgtrello-user-dude dude-id
+;; :END:
+
+
+;; * TODO some card name
+;;   :PROPERTIES:
+;;   :orgtrello-id: some-id
+;;   :orgtrello-users: ardumont,dude
+;;   :orgtrello-card-comments: ardumont: some comment
+;;   :END:
+;; some description
+;; - [ ] new namelist checklist :PROPERTIES: {\"orgtrello-id\": \"some-checklist-id\"}
+;;   - [X] new named item :PROPERTIES: {\"orgtrello-id\": \"some-item-id\"}
+;; "
+;;     (orgtrello-tests/with-temp-buffer-and-return-buffer-content
+;;      ":PROPERTIES:
+;; #+PROPERTY: orgtrello-user-ardumont ardumont-id
+;; #+PROPERTY: orgtrello-user-dude dude-id
+;; :END:
+
+;; * TODO some old card name
+;;   :PROPERTIES:
+;;   :orgtrello-id: some-id
+;;   :orgtrello-users: ardumont,dude
+;;   :orgtrello-card-comments:
+;;   :END:
+;; some old description
+;; - [ ] old checklist :PROPERTIES: {\"orgtrello-id\": \"some-checklist-id\"}
+;;   - [ ] old item :PROPERTIES: {\"orgtrello-id\": \"some-item-id\"}
+;; "
+;;      (orgtrello-buffer/overwrite-card! (orgtrello-hash/make-properties `((:keyword . "TODO")
+;;                                                                          (:member-ids . "ardumont-id,dude-id")
+;;                                                                          (:comments . ,(list (orgtrello-hash/make-properties '((:comment-user . "ardumont")
+;;                                                                                                                                (:comment-text . "some comment")))))
+;;                                                                          (:labels . ":red:green:")
+;;                                                                          (:desc . "some description")
+;;                                                                          (:level . ,*CARD-LEVEL*)
+;;                                                                          (:name . "some card name")
+;;                                                                          (:id . "some-id"))))
+
+;;      0)))
+
 (expectations
   (desc "orgtrello-buffer/write-entity! - card")
   (expect "\n* DONE some card name                                                   :red:green:\n  :PROPERTIES:\n  :orgtrello-id: some-card-id\n  :END:\n"
