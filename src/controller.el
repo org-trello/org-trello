@@ -452,6 +452,14 @@
                  (list (orgtrello-hash/empty-hash) (orgtrello-hash/empty-hash))
                  cards))
 
+(defun orgtrello-controller/--compute-full-checklist-from-trello! (checklist)
+  "Given a checklist, compute the full items data from trello. The order from the trello board is kept. Return result is the list of entities and adjacency in this order."
+  (let ((entities (orgtrello-hash/empty-hash))
+        (adjacency (orgtrello-hash/empty-hash)))
+    (orgtrello-log/msg *OT/INFO* "Computing checklist '%s' data..." (orgtrello-data/entity-name checklist))
+    (puthash (orgtrello-data/entity-id checklist) checklist entities)
+    (orgtrello-controller/--compute-items-from-checklist checklist entities adjacency)))
+
 (defun orgtrello-controller/--get-entity (id entities-hash)
   "Update the card entry inside the hash."
   (gethash id entities-hash))
@@ -719,12 +727,13 @@
                 ((orgtrello-data/entity-checklist-p data) (let* ((region (orgtrello-buffer/compute-checklist-region!))
                                                                  (region-start             (first region))
                                                                  (region-end               (second region))
-                                                                 (entities-from-org-buffer (orgtrello-controller/--compute-entities-from-org-buffer! buffer-name region-start region-end)))
+                                                                 (entities-from-org-buffer (orgtrello-controller/--compute-entities-from-org-buffer! buffer-name region-start region-end))
+                                                                 (entities-from-trello     (orgtrello-controller/--compute-full-checklist-from-trello! data))
+                                                                 (merged-entities          (orgtrello-controller/--merge-entities-trello-and-org entities-from-trello entities-from-org-buffer)))
                                                             (apply 'orgtrello-cbx/remove-overlays! region)
                                                             (apply 'delete-region region)
                                                             ;; write the full checklist region with full checklist structure
-                                                            ;; (orgtrello-buffer/write-checklist-header! (orgtrello-data/entity-id data) data)
-                                                            ))
+                                                            (orgtrello-buffer/write-checklist! (orgtrello-data/entity-id data) (first merged-entities) (second merged-entities))))
                 ((orgtrello-data/entity-item-p data)      (let ((region (orgtrello-buffer/compute-item-region!)))
                                                             (apply 'orgtrello-cbx/remove-overlays! region)
                                                             (apply 'delete-region region)
