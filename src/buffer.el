@@ -353,7 +353,9 @@
 
 (defun orgtrello-buffer/set-usernames-assigned-property! (csv-users)
   "Update users org property."
-  (org-entry-put nil *ORGTRELLO-USERS-ENTRY* csv-users))
+  (if (or (null csv-users) (string= "" csv-users))
+      (orgtrello-buffer/delete-property! *ORGTRELLO-USERS-ENTRY*)
+    (org-entry-put nil *ORGTRELLO-USERS-ENTRY* csv-users)))
 
 (defun orgtrello-buffer/delete-property! (property)
   "Given a property name (checkbox), if found, delete it from the buffer."
