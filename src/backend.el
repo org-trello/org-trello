@@ -58,7 +58,7 @@
     (puthash entity-id entity entities)
     entities))
 
-(defun orgtrello-buffer/--add-entity-to-adjacency (current-entity parent-entity adjacency)
+(defun orgtrello-backend/--add-entity-to-adjacency (current-entity parent-entity adjacency)
   "Adding entity to the adjacency entry."
   (let* ((current-id (orgtrello-data/entity-id-or-marker current-entity))
          (parent-id  (orgtrello-data/entity-id-or-marker parent-entity)))
