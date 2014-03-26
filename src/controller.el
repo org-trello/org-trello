@@ -22,10 +22,6 @@
        sha1
        (concat *ORGTRELLO-MARKER* "-")))
 
-(defun orgtrello-controller/filtered-kwds ()
-  "org keywords used (based on org-todo-keywords-1)."
-  org-todo-keywords-1)
-
 (defun orgtrello-controller/--list-user-entries (properties)
   "List the users entries."
   (--filter (string-match-p *ORGTRELLO-USER-PREFIX* (car it)) properties))
@@ -35,13 +31,13 @@
   ;; read the setup
   (orgtrello-action/reload-setup)
   ;; now exploit some
-  (let* ((list-keywords (nreverse (orgtrello-controller/filtered-kwds)))
+  (let* ((list-keywords (nreverse (orgtrello-buffer/filtered-kwds!)))
          (hmap-id-name (--reduce-from (progn
-                                        (puthash (assoc-default it org-file-properties) it acc)
+                                        (puthash (orgtrello-buffer/org-file-get-property! it) it acc)
                                         acc)
                                       (orgtrello-hash/empty-hash)
                                       list-keywords))
-         (list-users (orgtrello-controller/--list-user-entries org-file-properties))
+         (list-users (orgtrello-controller/--list-user-entries (orgtrello-buffer/org-file-properties!)))
          (hmap-user-id-name (orgtrello-hash/make-transpose-properties list-users))
          (hmap-user-name-id (orgtrello-hash/make-properties list-users)))
     (setq *LIST-NAMES*   list-keywords)
@@ -66,7 +62,7 @@
 (defun orgtrello-controller/control-properties (&optional args)
   "org-trello needs the properties board-id and all list id from the trello board to be setuped on header property file. :ok if ok, or the error message if problems."
   (let ((hmap-count (hash-table-count *HMAP-ID-NAME*)))
-    (if (and org-file-properties (orgtrello-buffer/board-id!) (= (length *LIST-NAMES*) hmap-count))
+    (if (and (orgtrello-buffer/org-file-properties!) (orgtrello-buffer/board-id!) (= (length *LIST-NAMES*) hmap-count))
         :ok
         "Setup problem.\nEither you did not connect your org-mode buffer with a trello board, to correct this:\n  * attach to a board through C-c o I or M-x org-trello/install-board-and-lists-ids\n  * or create a board from scratch with C-c o b or M-x org-trello/create-board).\nEither your org-mode's todo keyword list and your trello board lists are not named the same way (which they must).\nFor this, connect to trello and rename your board's list according to your org-mode's todo list.\nAlso, you can specify on your org-mode buffer the todo list you want to work with, for example: #+TODO: TODO DOING | DONE FAIL (hit C-c C-c to refresh the setup)")))
 
@@ -104,7 +100,7 @@
     (if (equal :ok checks-ok-or-error-message)
         ;; parent and grandparent are useless here
         (let* ((card-kwd                (orgtrello-controller/--retrieve-state-of-card card-meta))
-               (list-id                 (assoc-default card-kwd org-file-properties))
+               (list-id                 (orgtrello-buffer/org-file-get-property! card-kwd))
                (card-id                 (orgtrello-data/entity-id          card-meta))
                (card-name               (orgtrello-data/entity-name        card-meta))
                (card-due                (orgtrello-data/entity-due         card-meta))

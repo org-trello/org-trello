@@ -452,6 +452,16 @@
 
 (defun orgtrello-buffer/current-level! () "Compute the current level's position." (-> (orgtrello-buffer/metadata!) orgtrello-data/entity-level))
 
+(defun orgtrello-buffer/filtered-kwds! ()
+  "org keywords used (based on org-todo-keywords-1)."
+  org-todo-keywords-1)
+
+(defun orgtrello-buffer/org-file-properties! ()
+  org-file-properties)
+
+(defun orgtrello-buffer/org-file-get-property! (property)
+  (assoc-default property (orgtrello-buffer/org-file-properties!)))
+
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-buffer loaded!")
 
 
