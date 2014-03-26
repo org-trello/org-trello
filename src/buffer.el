@@ -189,7 +189,7 @@
   (let ((region (orgtrello-buffer/compute-item-region!)))
     (apply 'orgtrello-cbx/remove-overlays! region)
     (apply 'delete-region region)
-    (orgtrello-buffer/write-entity! (orgtrello-data/entity-id item) item)))
+    (orgtrello-buffer/write-entity! (orgtrello-data/entity-id item) (orgtrello-controller/--merge-item item item)))) ;; hack to merge item to itself to map to the org-trello world, otherwise we lose status for example
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-buffer loaded!")
 
