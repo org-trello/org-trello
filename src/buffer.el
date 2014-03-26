@@ -120,12 +120,14 @@
   (orgtrello-buffer/update-member-ids-property! card)
   (orgtrello-buffer/update-property-card-comments! card)
   (-when-let (card-desc (orgtrello-data/entity-description card))
-    (insert (format "%s\n" card-desc))))
+    (insert (format "%s" card-desc))))
 
 (defun orgtrello-buffer/write-card! (card-id card entities adjacency)
   "Write the card and its structure inside the org buffer."
   (orgtrello-buffer/write-card-header! card-id card)
-  (--map (orgtrello-buffer/write-checklist! it entities adjacency) (gethash card-id adjacency)))
+  (-when-let (checklists (gethash card-id adjacency))
+    (insert "\n")
+    (--map (orgtrello-buffer/write-checklist! it entities adjacency) checklists)))
 
 (defun orgtrello-buffer/write-entity! (entity-id entity)
   "Write the entity in the buffer to the current position. Move the cursor position."
