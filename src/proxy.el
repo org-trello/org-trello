@@ -140,7 +140,7 @@
                                                  (concat "Entity '" orgtrello-proxy/--entity-name "' with id '" orgtrello-proxy/--entry-id "' synced!")
                                                  (let ((orgtrello-proxy/--entry-name (orgtrello-data/entity-name data)))
                                                    ;; not present, this was just created, we add a simple property
-                                                   (orgtrello-action/set-property *ORGTRELLO-ID* orgtrello-proxy/--entry-new-id)
+                                                   (orgtrello-buffer/set-property *ORGTRELLO-ID* orgtrello-proxy/--entry-new-id)
                                                    (concat "Newly entity '" orgtrello-proxy/--entry-name "' with id '" orgtrello-proxy/--entry-new-id "' synced!")))))))
                         (when str-msg (orgtrello-log/msg *OT/INFO* str-msg)))))
                   (orgtrello-proxy/--cleanup-and-save-buffer-metadata orgtrello-proxy/--entry-file orgtrello-proxy/--entry-buffer-name))))))
@@ -194,7 +194,7 @@
              (-> entity-data
                  orgtrello-data/entity-action
                  orgtrello-proxy/--dispatch-action
-                 (funcall entity-data (orgtrello-data/entry-get-full-metadata!) op/--entry-file-archived)))))))
+                 (funcall entity-data (orgtrello-buffer/entry-get-full-metadata!) op/--entry-file-archived)))))))
 
 (defun orgtrello-action/org-delete-property (key) "Delete a property depending on the nature of the current entry (org heading or checkbox)."
   (funcall (if (orgtrello-cbx/checkbox-p) 'orgtrello-cbx/org-delete-property 'org-delete-property) key))
@@ -238,7 +238,7 @@
          (set-buffer op/--entry-buffer-name)
          (save-excursion
            (when (orgtrello-proxy/--getting-back-to-marker op/--marker)
-                 (-> (orgtrello-data/entry-get-full-metadata!)
+                 (-> (orgtrello-buffer/entry-get-full-metadata!)
                      orgtrello-data/current
                      orgtrello-action/delete-region
                      funcall))))

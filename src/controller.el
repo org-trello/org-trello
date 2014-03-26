@@ -260,7 +260,7 @@
 
 (defun orgtrello-controller/--checks-then-delegate-action-on-entity-to-proxy (functional-controls action)
   "Execute the functional controls then if all pass, delegate the action 'action' to the proxy."
-  (orgtrello-action/functional-controls-then-do functional-controls (orgtrello-data/entry-get-full-metadata!) 'orgtrello-controller/--delegate-to-the-proxy action))
+  (orgtrello-action/functional-controls-then-do functional-controls (orgtrello-buffer/entry-get-full-metadata!) 'orgtrello-controller/--delegate-to-the-proxy action))
 
 (defun orgtrello-controller/do-delete-simple (&optional sync)
   "Do the deletion of an entity."
@@ -285,7 +285,7 @@
 
 (defun orgtrello-controller/org-map-entries (level fn-to-execute)
   "Map fn-to-execute to a given entities with level level. fn-to-execute is a function without any parameter."
-  (org-map-entries (lambda () (when (= level (orgtrello-data/current-level)) (funcall fn-to-execute)))))
+  (org-map-entries (lambda () (when (= level (orgtrello-buffer/current-level!)) (funcall fn-to-execute)))))
 
 (defun orgtrello-controller/do-sync-full-file-to-trello! ()
   "Full org-mode file synchronisation."
@@ -387,7 +387,7 @@
 (defun orgtrello-controller/do-sync-entity-from-trello! (&optional sync)
   "Entity (card/checklist/item) synchronization (without its structure) from trello."
   (orgtrello-log/msg *OT/INFO* "Synchronizing the trello entity to the org-mode file...")
-  (-> (orgtrello-data/entry-get-full-metadata!)
+  (-> (orgtrello-buffer/entry-get-full-metadata!)
     orgtrello-controller/--dispatch-sync-request
     (orgtrello-controller/--update-query-with-org-metadata (point) (buffer-name) nil 'orgtrello-controller/--sync-entity-to-buffer-with-trello-data-callback)
     (orgtrello-proxy/http sync)))
@@ -395,7 +395,7 @@
 (defun orgtrello-controller/do-sync-entity-and-structure-from-trello! (&optional sync)
   "Entity (card/checklist/item) synchronization (with its structure) from trello."
   (orgtrello-log/msg *OT/INFO* "Synchronizing the trello entity and its structure to the org-mode file...")
-  (-> (orgtrello-data/entry-get-full-metadata!)
+  (-> (orgtrello-buffer/entry-get-full-metadata!)
     orgtrello-controller/--dispatch-sync-request
     (orgtrello-controller/--update-query-with-org-metadata (point) (buffer-name) nil 'orgtrello-controller/--sync-entity-and-structure-to-buffer-with-trello-data-callback)
     (orgtrello-proxy/http sync)))
@@ -425,7 +425,7 @@
 
 (defun orgtrello-controller/--do-delete-card (&optional sync)
   "Delete the card."
-  (when (= *CARD-LEVEL* (-> (orgtrello-data/entry-get-full-metadata!)
+  (when (= *CARD-LEVEL* (-> (orgtrello-buffer/entry-get-full-metadata!)
                             orgtrello-data/current
                             orgtrello-data/entity-level))
         (orgtrello-controller/do-delete-simple sync)))
@@ -715,31 +715,31 @@
 (defun orgtrello-controller/--remove-user (user users) "Add the user to the users list"
   (if (member user users) (remove user users) users users))
 
-(defun orgtrello-controller/--user-ids-assigned-to-current-card () "Compute the user ids assigned to the current card."
+(defun orgtrello-buffer/--user-ids-assigned-to-current-card () "Compute the user ids assigned to the current card."
   (--> (orgtrello-buffer/get-usernames-assigned-property!)
-       (orgtrello-buffer/--users-from it)
+       (orgtrello-data/--users-from it)
        (--map (gethash (format "%s%s" *ORGTRELLO-USER-PREFIX* it) *HMAP-USERS-NAME-ID*) it)
-       (orgtrello-buffer/--users-to it)))
+       (orgtrello-data/--users-to it)))
 
 (defun orgtrello-controller/do-assign-me () "Command to assign oneself to the card."
   (--> (orgtrello-buffer/get-usernames-assigned-property!)
-       (orgtrello-buffer/--users-from it)
+       (orgtrello-data/--users-from it)
        (orgtrello-controller/--add-user *ORGTRELLO-USER-LOGGED-IN* it)
-       (orgtrello-buffer/--users-to it)
+       (orgtrello-data/--users-to it)
        (orgtrello-buffer/set-usernames-assigned-property! it)))
 
 (defun orgtrello-controller/do-unassign-me () "Command to unassign oneself of the card."
   (--> (orgtrello-buffer/get-usernames-assigned-property!)
-       (orgtrello-buffer/--users-from it)
+       (orgtrello-data/--users-from it)
        (orgtrello-controller/--remove-user *ORGTRELLO-USER-LOGGED-IN* it)
-       (orgtrello-buffer/--users-to it)
+       (orgtrello-data/--users-to it)
        (orgtrello-buffer/set-usernames-assigned-property! it)))
 
 (defun orgtrello-controller/do-show-card-comments! ()
   "Show the card comments in a temporary buffer."
   (save-excursion
     (orgtrello-buffer/back-to-card!)
-    (let* ((current-card-name (-> (orgtrello-data/metadata!) orgtrello-data/entity-name))
+    (let* ((current-card-name (-> (orgtrello-buffer/metadata!) orgtrello-data/entity-name))
            (comments-title (format "comments for card '%s'" current-card-name))
            (comments-formatted (-> (orgtrello-buffer/get-card-comments!)
                                  orgtrello-data/format-comments)))
@@ -758,7 +758,7 @@
   "Wait for the input to add a comment to the current card."
   (save-excursion
     (orgtrello-buffer/back-to-card!)
-    (let* ((card-id (-> (orgtrello-data/metadata!) orgtrello-data/entity-id))
+    (let* ((card-id (-> (orgtrello-buffer/metadata!) orgtrello-data/entity-id))
            (comment (read-string "Add a comment: ")))
       (if (or (null card-id) (string= "" card-id) (string= "" comment))
           (message "Empty comment - skip.")
@@ -808,7 +808,7 @@
 
 (defun orgtrello-controller/jump-to-card! ()
   "Given a current entry, execute the extraction and the jump to card action."
-  (let* ((full-meta       (orgtrello-data/entry-get-full-metadata!))
+  (let* ((full-meta       (orgtrello-buffer/entry-get-full-metadata!))
          (entity          (orgtrello-data/current full-meta))
          (right-entity-fn (cond ((orgtrello-data/entity-item-p entity)      'orgtrello-data/grandparent)
                                 ((orgtrello-data/entity-checklist-p entity) 'orgtrello-data/parent)

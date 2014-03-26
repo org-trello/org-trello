@@ -2,23 +2,6 @@
 (require 'ert-expectations)
 (require 'el-mock)
 
-(expectations (desc "testing orgtrello-data/--convert-to-orgtrello-metadata")
-  (expect "some name :orgtrello-id-identifier:"  (gethash :name       (orgtrello-data/--convert-to-orgtrello-metadata '(:comments "" "" "buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil))))
-  (expect "IN PROGRESS"                          (gethash :keyword    (orgtrello-data/--convert-to-orgtrello-metadata '(:comments "" "" "buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil))))
-  (expect 0                                      (gethash :level      (orgtrello-data/--convert-to-orgtrello-metadata '(:comments "" "" "buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil))))
-  (expect :id                                    (gethash :id         (orgtrello-data/--convert-to-orgtrello-metadata '(:comments "" "" "buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil))))
-  (expect :due                                   (gethash :due        (orgtrello-data/--convert-to-orgtrello-metadata '(:comments "" "" "buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil))))
-  (expect :point                                 (gethash :position   (orgtrello-data/--convert-to-orgtrello-metadata '(:comments "" "" "buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil))))
-  (expect "1,2,3"                                (gethash :member-ids (orgtrello-data/--convert-to-orgtrello-metadata '(:comments "" "1,2,3" "buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil))))
-  (expect :desc                                  (gethash :desc       (orgtrello-data/--convert-to-orgtrello-metadata '(:comments :desc "1,2,3" "buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil))))
-  (expect :comments                              (gethash :comments   (orgtrello-data/--convert-to-orgtrello-metadata '(:comments :desc "1,2,3" "buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil)))))
-
-(expectations (desc "testing orgtrello-data/--convert-orgmode-date-to-trello-date")
-  (expect "2013-07-18T02:00:00.000Z" (orgtrello-data/--convert-orgmode-date-to-trello-date "2013-07-18T02:00:00.000Z"))
-  (expect "2013-07-29T14:00:00.000Z" (orgtrello-data/--convert-orgmode-date-to-trello-date "2013-07-29 lun. 14:00"))
-  (expect "2013-07-29T00:00:00.000Z" (orgtrello-data/--convert-orgmode-date-to-trello-date "2013-07-29"))
-  (expect nil                        (orgtrello-data/--convert-orgmode-date-to-trello-date nil)))
-
 (expectations (desc "orgtrello-data/entity-*")
   (expect "test" (orgtrello-data/entity-buffername            (orgtrello-hash/make-properties `((:buffername . "test")))))
   (expect nil (orgtrello-data/entity-buffername               (orgtrello-hash/make-properties `((inexistant . "test")))))
@@ -99,36 +82,6 @@
   (expect nil (orgtrello-data/entity-item-p (orgtrello-hash/make-properties `((:level . ,*CARD-LEVEL*)))))
   (expect nil (orgtrello-data/entity-item-p (orgtrello-hash/make-properties `((:state . 1)))))
   (expect nil (orgtrello-data/entity-item-p (orgtrello-hash/make-properties `((id . 1))))))
-
-(expectations (desc "orgtrello-data/entry-get-full-metadata!")
-  (expect nil    (->> (orgtrello-tests/with-temp-buffer "* card" (orgtrello-data/entry-get-full-metadata!))
-                      (orgtrello-data/parent)))
-  (expect nil    (->> (orgtrello-tests/with-temp-buffer "* card" (orgtrello-data/entry-get-full-metadata!))
-                      (orgtrello-data/grandparent)))
-  (expect "card" (->> (orgtrello-tests/with-temp-buffer "* card" (orgtrello-data/entry-get-full-metadata!))
-                      (orgtrello-data/current)
-                      orgtrello-data/entity-name)))
-
-(expectations (desc "orgtrello-data/entry-get-full-metadata!")
-  (expect "card"      (->> (orgtrello-tests/with-temp-buffer "* card\n- [ ] checklist\n" (orgtrello-data/entry-get-full-metadata!))
-                           (orgtrello-data/parent)
-                           orgtrello-data/entity-name))
-  (expect nil         (->> (orgtrello-tests/with-temp-buffer "* card\n- [ ] checklist\n" (orgtrello-data/entry-get-full-metadata!))
-                           (orgtrello-data/grandparent)))
-  (expect "checklist" (->> (orgtrello-tests/with-temp-buffer "* card\n- [ ] checklist\n" (orgtrello-data/entry-get-full-metadata!))
-                           (orgtrello-data/current)
-                           orgtrello-data/entity-name)))
-
-(expectations (desc "orgtrello-data/entry-get-full-metadata!")
-  (expect "checklist" (->> (orgtrello-tests/with-temp-buffer "* card\n- [ ] checklist\n  - [ ] item\n" (orgtrello-data/entry-get-full-metadata!))
-                           (orgtrello-data/parent)
-                           orgtrello-data/entity-name))
-  (expect "card"      (->> (orgtrello-tests/with-temp-buffer "* card\n- [ ] checklist\n  - [ ] item\n" (orgtrello-data/entry-get-full-metadata!))
-                           (orgtrello-data/grandparent)
-                           orgtrello-data/entity-name))
-  (expect "item"      (->> (orgtrello-tests/with-temp-buffer "* card\n- [ ] checklist\n  - [ ] item\n" (orgtrello-data/entry-get-full-metadata!))
-                           (orgtrello-data/current)
-                           orgtrello-data/entity-name)))
 
 (expectations (desc "orgtrello-data/merge-2-lists-without-duplicates")
   (expect '(1 2 3 4) (orgtrello-data/merge-2-lists-without-duplicates '(1 2 3) '(4 1 2)))
@@ -434,28 +387,6 @@
     (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:comment-id "532d7441852414f343560757" :comment-text "comment 3" :comment-user "ardumont"))
                 (second (orgtrello-data/--parse-actions partial-data-to-test)))))
 
-;; (ert-deftest testing-orgtrello-data/metadata! ()
-;;   (let ((h-values (orgtrello-tests/with-temp-buffer ":PROPERTIES:
-;; #+PROPERTY: orgtrello-user-ardumont some-user-id
-;; #+PROPERTY: orgtrello-user-dude some-user-id2
-;; :END:
-
-;; * IN-PROGRESS card title
-;; :PROPERTIES:
-;; :orgtrello-id: some-id
-;; :orgtrello-users: ardumont,dude
-;; :orgtrello-card-comments: ardumont: this is some comments###dude: some other comment
-;; :END:
-;; some description\n"
-;;                                                     (orgtrello-data/metadata!))))
-;;     (should (equal (gethash :level h-values) 1))
-;;     (should (equal (gethash :name h-values) "card title"))
-;;     (should (equal (gethash :id h-values) "some-id"))
-;;     (should (equal (gethash :due h-values) nil))
-;;     (should (equal (gethash :desc h-values) "some-description"))
-;;     (should (equal (gethash :comments h-values) "ardumont: this is some comments###dude: some other comments"))
-;;     (should (equal (gethash :keywords h-values) "IN-PROGRESS"))))
-
 (expectations
  (expect "me: some first comment###another-me: another comment"
          (orgtrello-data/comments-to-list (list (orgtrello-hash/make-properties '((:comment-user . "me") (:comment-text . "some first comment")))
@@ -581,3 +512,13 @@
               (expect "[X]" (orgtrello-data/--compute-state-generic "complete" '("[X]" "[-]")))
               (expect "[-]" (orgtrello-data/--compute-state-generic "incomplete" '("[X]" "[-]")))
               (expect "[X]" (orgtrello-data/--compute-state-generic "DONE" '("[X]" "[-]"))))
+
+(expectations (desc "orgtrello-data/--users-from")
+              (expect '("a" "b" "c") (orgtrello-data/--users-from "a,b,c,,"))
+              (expect '() (orgtrello-data/--users-from ",,,"))
+              (expect '() (orgtrello-data/--users-from ""))
+              (expect '() (orgtrello-data/--users-from nil)))
+
+(expectations (desc "orgtrello-data/--users-to")
+              (expect "" (orgtrello-data/--users-to nil))
+              (expect "a,b,c," (orgtrello-data/--users-to '("a" "b" "c" ""))))

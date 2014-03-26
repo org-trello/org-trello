@@ -22,7 +22,7 @@
 
 (defun orgtrello-buffer/get-card-comments! ()
   "Retrieve the card's comments. Can be nil if not on a card."
-  (orgtrello-action/org-entry-get (point) *ORGTRELLO-CARD-COMMENTS*))
+  (orgtrello-buffer/org-entry-get (point) *ORGTRELLO-CARD-COMMENTS*))
 
 (defun orgtrello-buffer/put-card-comments! (comments)
   "Retrieve the card's comments. Can be nil if not on a card."
@@ -193,16 +193,9 @@
 
 (defun orgtrello-buffer/--csv-user-ids-to-csv-user-names (csv-users-id users-id-name) "Given a comma separated list of user id and a map, return a comma separated list of username."
   (->> csv-users-id
-    orgtrello-buffer/--users-from
+    orgtrello-data/--users-from
     (--map (gethash it users-id-name))
-    orgtrello-buffer/--users-to))
-
-(defun orgtrello-buffer/--users-from (string-users)
-  "Compute the users name from the comma separated value in string."
-  (when string-users (split-string string-users "," t)))
-
-(defun orgtrello-buffer/--users-to (users) "Given a list of users, compute the comma separated users."
-  (if users (mapconcat 'identity users ",") ""))
+    orgtrello-data/--users-to))
 
 (defun orgtrello-buffer/--compute-entity-to-org-entry (entity)
   "Given an entity, compute its org representation."
@@ -308,10 +301,10 @@
        (when (or (null region-end) (< (point) region-end))
          ;; first will unfold every entries, otherwise https://github.com/org-trello/org-trello/issues/53
          (org-show-subtree)
-         (let ((current-entity (-> (orgtrello-data/entry-get-full-metadata!) orgtrello-data/current)))
+         (let ((current-entity (-> (orgtrello-buffer/entry-get-full-metadata!) orgtrello-data/current)))
            (unless (-> current-entity orgtrello-data/entity-id orgtrello-data/id-p) ;; if no id, we set one
              (orgtrello-buffer/--set-marker (orgtrello-buffer/--compute-marker-from-entry current-entity)))
-           (let ((current-meta (orgtrello-data/entry-get-full-metadata!)))
+           (let ((current-meta (orgtrello-buffer/entry-get-full-metadata!)))
              (-> current-meta ;; we recompute the metadata because they may have changed
                orgtrello-data/current
                orgtrello-buffer/--dispatch-create-entities-map-with-adjacency
@@ -339,12 +332,12 @@
   (if orgcheckbox-p
       (save-excursion
         (forward-line -1) ;; need to get back one line backward for the checkboxes as their properties is at the same level (otherwise, for headings we do not care)
-        (orgtrello-action/set-property *ORGTRELLO-ID* id))
-      (orgtrello-action/set-property *ORGTRELLO-ID* id)))
+        (orgtrello-buffer/set-property *ORGTRELLO-ID* id))
+      (orgtrello-buffer/set-property *ORGTRELLO-ID* id)))
 
 (defun orgtrello-buffer/--set-marker (marker)
   "Set a marker to get back to later."
-  (orgtrello-action/set-property *ORGTRELLO-ID* marker))
+  (orgtrello-buffer/set-property *ORGTRELLO-ID* marker))
 
 (defun orgtrello-buffer/set-marker-if-not-present (current-entity marker)
   "Set the marker to the entry if we never did."
@@ -381,6 +374,84 @@
     (goto-char (point-min))
     (while (re-search-forward ":PROPERTIES: {.*" nil t)
       (orgtrello-cbx/install-overlays! (match-beginning 0)))))
+
+
+(defun orgtrello-buffer/--convert-orgmode-date-to-trello-date (orgmode-date)
+  "Convert the org-mode deadline into a time adapted for trello."
+  (if (and orgmode-date (not (string-match-p "T*Z" orgmode-date)))
+      (cl-destructuring-bind (sec min hour day mon year dow dst tz)
+                             (--map (if it (if (< it 10) (concat "0" (int-to-string it)) (int-to-string it)))
+                                    (parse-time-string orgmode-date))
+        (concat (concat year "-" mon "-" day "T") (if hour (concat hour ":" min ":" sec) "00:00:00") ".000Z"))
+      orgmode-date))
+
+(defun orgtrello-buffer/org-entity-metadata! ()
+  "Compute the metadata the org-mode way."
+  (org-heading-components))
+
+(defun orgtrello-buffer/--extract-metadata! ()
+  "Extract the current metadata depending on the org-trello's checklist policy."
+  (funcall (if (orgtrello-cbx/checkbox-p) 'orgtrello-cbx/org-checkbox-metadata! 'orgtrello-buffer/org-entity-metadata!)))
+
+(defun orgtrello-buffer/extract-identifier! (point)
+  "Extract the identifier from the point."
+  (orgtrello-buffer/org-entry-get point *ORGTRELLO-ID*))
+
+(defun orgtrello-buffer/set-property (key value)
+  "Either set the propery normally (as for entities) or specifically for checklist."
+  (funcall (if (orgtrello-cbx/checkbox-p) 'orgtrello-cbx/org-set-property 'org-set-property) key value))
+
+(defun orgtrello-buffer/org-entry-get (point key)
+  "Extract the identifier from the point."
+  (funcall (if (orgtrello-cbx/checkbox-p) 'orgtrello-cbx/org-get-property 'org-entry-get) point key))
+
+(defun orgtrello-buffer/metadata! ()
+  "Compute the metadata for a given org entry. Also add some metadata identifier/due-data/point/buffer-name/etc..."
+  (let ((od/--point (point)))
+    (->> (orgtrello-buffer/--extract-metadata!)
+         (cons (-> od/--point (orgtrello-buffer/org-entry-get "DEADLINE") orgtrello-buffer/--convert-orgmode-date-to-trello-date))
+         (cons (orgtrello-buffer/extract-identifier! od/--point))
+         (cons od/--point)
+         (cons (buffer-name))
+         (cons (orgtrello-buffer/--user-ids-assigned-to-current-card))
+         (cons (orgtrello-buffer/extract-description-from-current-position!))
+         (cons (orgtrello-buffer/org-entry-get od/--point *ORGTRELLO-CARD-COMMENTS*))
+         orgtrello-buffer/--convert-to-orgtrello-metadata)))
+
+(defun orgtrello-buffer/org-up-parent! ()
+  "A function to get back to the current entry's parent"
+  (funcall (if (orgtrello-cbx/checkbox-p) 'orgtrello-cbx/org-up! 'org-up-heading-safe)))
+
+(defun orgtrello-buffer/--parent-metadata! ()
+  "Extract the metadata from the current heading's parent."
+  (save-excursion
+    (orgtrello-buffer/org-up-parent!)
+    (orgtrello-buffer/metadata!)))
+
+(defun orgtrello-buffer/--grandparent-metadata! ()
+  "Extract the metadata from the current heading's grandparent."
+  (save-excursion
+    (orgtrello-buffer/org-up-parent!)
+    (orgtrello-buffer/org-up-parent!)
+    (orgtrello-buffer/metadata!)))
+
+(defun orgtrello-buffer/entry-get-full-metadata! ()
+  "Compute metadata needed for entry into a map with keys :current, :parent, :grandparent. Returns nil if the level is superior to 4."
+  (let* ((current   (orgtrello-buffer/metadata!))
+         (level     (orgtrello-data/entity-level current)))
+    (when (< level *OUTOFBOUNDS-LEVEL*)
+          (let ((ancestors (cond ((= level *CARD-LEVEL*)      '(nil nil))
+                                 ((= level *CHECKLIST-LEVEL*) `(,(orgtrello-buffer/--parent-metadata!) nil))
+                                 ((= level *ITEM-LEVEL*)      `(,(orgtrello-buffer/--parent-metadata!) ,(orgtrello-buffer/--grandparent-metadata!))))))
+            (orgtrello-hash/make-hierarchy current (first ancestors) (second ancestors))))))
+
+(defun orgtrello-buffer/--convert-to-orgtrello-metadata (heading-metadata)
+  "Given the heading-metadata returned by the function 'org-heading-components, make it a hashmap with key :level, :keyword, :name. and their respective value"
+  (cl-destructuring-bind (comments description member-ids buffer-name point id due level _ keyword _ name tags) heading-metadata
+                         (orgtrello-hash/make-hash-org member-ids level keyword name id due point buffer-name description comments tags)))
+
+(defun orgtrello-buffer/current-level! () "Compute the current level's position." (-> (orgtrello-buffer/metadata!) orgtrello-data/entity-level))
+
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-buffer loaded!")
 
 
