@@ -58,7 +58,6 @@
     (add-to-list 'org-tag-alist '("orange" . ?o))
     :ok))
 
-
 (defun orgtrello-controller/control-encoding (&optional args)
   "Use utf-8, otherwise, there will be trouble."
   (progn
@@ -86,13 +85,11 @@
 
 (defun orgtrello-controller/--retrieve-state-of-card (card-meta)
   "Given a card, retrieve its state depending on its :keyword metadata. If empty or no keyword then, its equivalence is *TODO*, otherwise, return its current state."
-  (-if-let (orgtrello-controller/--card-kwd (orgtrello-data/entity-keyword card-meta *TODO*))
-           orgtrello-controller/--card-kwd
-           *TODO*))
+  (-if-let (card-kwd (orgtrello-data/entity-keyword card-meta *TODO*)) card-kwd *TODO*))
 
 (defun orgtrello-controller/--checks-before-sync-card (card-meta)
   "Checks done before synchronizing the cards."
-  (-if-let (orgtrello-controller/--card-name (orgtrello-data/entity-name card-meta)) :ok *ERROR-SYNC-CARD-MISSING-NAME*))
+  (if (orgtrello-data/entity-name card-meta) :ok *ERROR-SYNC-CARD-MISSING-NAME*))
 
 (defun orgtrello-controller/--tags-to-labels (str)
   "Transform org tags string to csv labels."
