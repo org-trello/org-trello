@@ -33,24 +33,24 @@
        (replace-regexp-in-string "^[ ]*:.*" "")
        (s-trim-left)))
 
-(defun orgtrello-buffer/--get-data! (key)
-  (assoc-default key org-file-properties))
+(defun orgtrello-buffer/org-file-get-property! (property-key)
+  (assoc-default property-key (orgtrello-buffer/org-file-properties!)))
 
 (defun orgtrello-buffer/board-name! ()
   "Compute the board's name"
-  (orgtrello-buffer/--get-data! *BOARD-NAME*))
+  (orgtrello-buffer/org-file-get-property! *BOARD-NAME*))
 
 (defun orgtrello-buffer/board-id! ()
   "Compute the board's id"
-  (orgtrello-buffer/--get-data! *BOARD-ID*))
+  (orgtrello-buffer/org-file-get-property! *BOARD-ID*))
 
 (defun orgtrello-buffer/me! ()
   "Compute the board's current user"
-  (orgtrello-buffer/--get-data! *ORGTRELLO-USER-ME*))
+  (orgtrello-buffer/org-file-get-property! *ORGTRELLO-USER-ME*))
 
 (defun orgtrello-buffer/labels! ()
   "Compute the board's current labels and return it as an association list."
-  (mapcar (lambda (color) `(,color . ,(orgtrello-buffer/--get-data! color))) '(":red" ":blue" ":orange" ":yellow" ":purple" ":green")))
+  (mapcar (lambda (color) `(,color . ,(orgtrello-buffer/org-file-get-property! color))) '(":red" ":blue" ":orange" ":yellow" ":purple" ":green")))
 
 (defun orgtrello-buffer/pop-up-with-content! (title body-content)
   "Compute a temporary buffer *ORGTRELLO-TITLE-BUFFER-INFORMATION* with the title and body-content."
@@ -458,9 +458,6 @@
 
 (defun orgtrello-buffer/org-file-properties! ()
   org-file-properties)
-
-(defun orgtrello-buffer/org-file-get-property! (property)
-  (assoc-default property (orgtrello-buffer/org-file-properties!)))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-buffer loaded!")
 
