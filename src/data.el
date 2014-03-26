@@ -94,7 +94,7 @@
 
 (defun orgtrello-data/entity-id (entity)
   "Dispatch to the rightful function to get the id"
-  (let ((id (orgtrello-data/entity-id-or-marker entity))) (when (orgtrello-controller/id-p id) id)))
+  (let ((id (orgtrello-data/entity-id-or-marker entity))) (when (orgtrello-data/id-p id) id)))
 
 (defun orgtrello-data/entity-keyword (entity &optional default-value)
   "Retrieve the keyword from the entity."
@@ -255,6 +255,10 @@
   (->> comments
     (s-split *ORGTRELLO-CARD-COMMENTS-DELIMITER*)
     (s-join *ORGTRELLO-CARD-COMMENTS-DELIMITER-PRINT*)))
+
+(defun orgtrello-data/id-p (id)
+  "Is the string a trello identifier?"
+  (and id (not (string-match-p (format "^%s-" *ORGTRELLO-MARKER*) id))))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-data loaded!")
 

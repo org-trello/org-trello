@@ -134,7 +134,7 @@
                       ;; get back to the buffer and update the id if need be
                       (let ((str-msg (when (orgtrello-proxy/--get-back-to-marker orgtrello-proxy/--marker-id data)
                                            ;; now we extract the data
-                                           (let ((orgtrello-proxy/--entry-id (when (orgtrello-controller/id-p orgtrello-proxy/--marker-id) orgtrello-proxy/--marker-id)))
+                                           (let ((orgtrello-proxy/--entry-id (when (orgtrello-data/id-p orgtrello-proxy/--marker-id) orgtrello-proxy/--marker-id)))
                                              (if orgtrello-proxy/--entry-id ;; id already present in the org-mode file
                                                  ;; no need to add another
                                                  (concat "Entity '" orgtrello-proxy/--entity-name "' with id '" orgtrello-proxy/--entry-id "' synced!")

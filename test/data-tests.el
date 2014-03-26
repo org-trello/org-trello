@@ -472,3 +472,11 @@
 (expectations
  (expect "dude0: some comments###dude1: some other comments"
          (orgtrello-data/unformat-comments "dude0: some comments\n\ndude1: some other comments")))
+
+(expectations (desc "orgtrello-data/id-p")
+              (expect t   (orgtrello-data/id-p "anything-that-does-not-start-with-orgtrello-marker"))
+              (expect t   (orgtrello-data/id-p "agfgdsfgbdfgbdfgbdfshouldbetrue"))
+              (expect t   (orgtrello-data/id-p "orgtrello-markeragfgdsfgbdfgbdfgbdfshouldbetrue"))
+              (expect t   (orgtrello-data/id-p "should-be-true-orgtrello-marker-agfgdsfgbdfgbdfgbdf"))
+              (expect nil (orgtrello-data/id-p "orgtrello-marker-shouldbenil"))
+              (expect nil (orgtrello-data/id-p nil)))

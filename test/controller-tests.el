@@ -74,14 +74,6 @@
   (expect "orgtrello-marker-2a0b98e652ce6349a0659a7a8eeb3783ffe9a11a" (orgtrello-controller/compute-marker "buffername" "some-name" 1234))
   (expect "orgtrello-marker-6c59c5dcf6c83edaeb3f4923bfd929a091504bb3" (orgtrello-controller/compute-marker "some-other-buffername" "some-name" 4321)))
 
-(expectations (desc "orgtrello-controller/id-p")
-              (expect t   (orgtrello-controller/id-p "anything-that-does-not-start-with-orgtrello-marker"))
-              (expect t   (orgtrello-controller/id-p "agfgdsfgbdfgbdfgbdfshouldbetrue"))
-              (expect t   (orgtrello-controller/id-p "orgtrello-markeragfgdsfgbdfgbdfgbdfshouldbetrue"))
-              (expect t   (orgtrello-controller/id-p "should-be-true-orgtrello-marker-agfgdsfgbdfgbdfgbdf"))
-              (expect nil (orgtrello-controller/id-p "orgtrello-marker-shouldbenil"))
-              (expect nil (orgtrello-controller/id-p nil)))
-
 (expectations (desc "orgtrello-controller/--compute-due-date")
   (expect "DEADLINE: <some-date>
 " (orgtrello-controller/--compute-due-date "some-date"))

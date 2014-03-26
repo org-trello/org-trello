@@ -22,10 +22,6 @@
        sha1
        (concat *ORGTRELLO-MARKER* "-")))
 
-(defun orgtrello-controller/id-p (id)
-  "Is the string a trello identifier?"
-  (and id (not (string-match-p (format "^%s-" *ORGTRELLO-MARKER*) id))))
-
 (defun orgtrello-controller/filtered-kwds ()
   "org keywords used (based on org-todo-keywords-1)."
   org-todo-keywords-1)
@@ -439,7 +435,7 @@
          ;; first will unfold every entries, otherwise https://github.com/org-trello/org-trello/issues/53
          (org-show-subtree)
          (let ((current-entity (-> (orgtrello-data/entry-get-full-metadata!) orgtrello-data/current)))
-           (unless (-> current-entity orgtrello-data/entity-id orgtrello-controller/id-p) ;; if no id, we set one
+           (unless (-> current-entity orgtrello-data/entity-id orgtrello-data/id-p) ;; if no id, we set one
              (orgtrello-controller/--set-marker (orgtrello-controller/--compute-marker-from-entry current-entity)))
            (let ((current-meta (orgtrello-data/entry-get-full-metadata!)))
              (-> current-meta ;; we recompute the metadata because they may have changed
