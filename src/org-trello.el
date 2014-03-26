@@ -60,7 +60,7 @@
   (org-trello/proxy-do "Request 'sync entity with structure" 'orgtrello-controller/do-sync-full-entity-to-trello!))
 
 (defun org-trello/sync-buffer (&optional modifier)
-  "Will trigger a buffer sync action. If modifier is nil, will sync *TO* trello, otherwise, will sync *FROM* trello."
+  "Will trigger a buffer sync action. If modifier is nil, will sync *TO* trello, otherwise (called with C-u), will sync *FROM* trello."
   (interactive "P")
   (if modifier
       (org-trello/proxy-do "Request 'sync org buffer from trello board'" 'orgtrello-controller/do-sync-full-file-from-trello!)

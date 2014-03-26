@@ -669,7 +669,7 @@
        (orgtrello-controller/--update-query-with-org-metadata it nil (buffer-name) nil 'orgtrello-controller/--sync-buffer-with-trello-data-callback)
        (orgtrello-proxy/http it sync)))
 
-(defun orgtrello-controller/--sync-entity-buffer-with-trello-data-callback (buffername &optional position name)
+(defun orgtrello-controller/--sync-entity-to-buffer-with-trello-data-callback (buffername &optional position name)
   "Generate a callback which knows the buffer with which it must work. (this callback must take a buffer-name and a position)"
   (lexical-let ((buffer-name buffername)
                 (pos         position))
@@ -709,7 +709,8 @@
   (orgtrello-log/msg *OT/INFO* "Synchronizing the trello entity to the org-mode file...")
   (-> (orgtrello-data/entry-get-full-metadata!)
     orgtrello-controller/--dispatch-sync-request
-    (orgtrello-controller/--update-query-with-org-metadata (point) (buffer-name) nil 'orgtrello-controller/--sync-entity-buffer-with-trello-data-callback)
+    (orgtrello-controller/--update-query-with-org-metadata (point) (buffer-name) nil 'orgtrello-controller/--sync-entity-to-buffer-with-trello-data-callback)
+    (orgtrello-proxy/http sync)))
     (orgtrello-proxy/http sync)))
 
 (defun orgtrello-controller/--card-delete (card-meta &optional parent-meta)
