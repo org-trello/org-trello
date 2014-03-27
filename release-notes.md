@@ -1,3 +1,24 @@
+# 0.3.8
+
+- [X] Some refactoring
+  - [X] Align sync from trello card tags/labels serialization with org's tags behavior
+  - [X] Refactor open org-trello buffer with title/content
+  - [X] Sanitize functions (move functions to their right namespaces)
+  - [X] Do not override the user's existing tags
+- [X] Provide org-trello-mode-hook - CLOSE https://github.com/org-trello/org-trello/issues/116
+- [X] Open stop all synchronization actions - CLOSE https://github.com/org-trello/org-trello/issues/131
+- [X] Use C-u keychord to create a symmetry use (e.g. `C-c o s` is sync to trello, `C-u C-c o s` is sync from trello)
+  - [X] sync-buffer, sync-to-trello, with C-u, sync-from-trello
+  - [X] assign-me, with C-u, unassign me
+  - [X] A command to 'sync from trello' the current entity without its structure - CLOSE https://github.com/org-trello/org-trello/issues/139
+  - [X] Use C-u on sync-entity-to-trello command to trigger the sync-entity-from-trello
+  - [X] A command to 'sync from trello' the current entity and its structure - CLOSE https://github.com/org-trello/org-trello/issues/140
+  - [X] Use C-u on sync-entity-and-structure-to-trello command to trigger the sync-entity-and-structure-from-trello
+- [X] Some more refactoring
+- [X] Fix bug regarding org keywords which disappeared
+- [X] Version
+- [X] Release notes
+
 # 0.3.7
 
 - [X] Use `defconst` keyword instead of defvar
