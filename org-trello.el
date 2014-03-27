@@ -2308,7 +2308,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
          (cons (orgtrello-buffer/--user-ids-assigned-to-current-card))
          (cons (orgtrello-buffer/extract-description-from-current-position!))
          (cons (orgtrello-buffer/org-entry-get current-point *ORGTRELLO-CARD-COMMENTS*))
-         orgtrello-buffer/--convert-to-orgtrello-metadata)))
+         orgtrello-buffer/--to-orgtrello-metadata)))
 
 (defun orgtrello-buffer/org-up-parent! ()
   "A function to get back to the current entry's parent"
@@ -2337,7 +2337,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
                                  ((= level *ITEM-LEVEL*)      `(,(orgtrello-buffer/--parent-metadata!) ,(orgtrello-buffer/--grandparent-metadata!))))))
             (orgtrello-hash/make-hierarchy current (first ancestors) (second ancestors))))))
 
-(defun orgtrello-buffer/--convert-to-orgtrello-metadata (heading-metadata)
+(defun orgtrello-buffer/--to-orgtrello-metadata (heading-metadata)
   "Given the heading-metadata returned by the function 'org-heading-components, make it a hashmap with key :level, :keyword, :name. and their respective value"
   (cl-destructuring-bind (comments description member-ids buffer-name point id due level _ keyword _ name tags) heading-metadata
                          (orgtrello-hash/make-hash-org member-ids level keyword name id due point buffer-name description comments tags)))
