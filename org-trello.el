@@ -2700,11 +2700,29 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
           (save-buffer))
         (orgtrello-log/msg *OT/INFO* "Synchronizing the trello and org data merge - done!"))))))
 
-(defun orgtrello-controller/--compute-full-entity-from-trello! (entity)
-  "Compute the needed entities from trello."
-  (cond ((orgtrello-data/entity-card-p data)      (orgtrello-backend/compute-full-cards-from-trello! (list entity)))
-        ((orgtrello-data/entity-checklist-p data) (orgtrello-backend/compute-full-checklist-from-trello! entity))
-        ((orgtrello-data/entity-item-p data)      entity)));; on item, we do not need computation as there is no nested values
+(defun orgtrello-controller/fetch-and-overwrite-card! (card)
+  "Given a card, retrieve latest information from trello and overwrite in current buffer."
+  (let* ((card-id                  (orgtrello-data/entity-id card))
+         (region                   (orgtrello-buffer/compute-entity-region! card))
+         (entities-from-org-buffer (apply 'orgtrello-buffer/compute-entities-from-org-buffer! (cons nil region)))
+         (entities-from-trello     (orgtrello-backend/compute-full-cards-from-trello! (list card)))
+         (merged-entities          (orgtrello-data/merge-entities-trello-and-org entities-from-trello entities-from-org-buffer))
+         (entities                 (first merged-entities))
+         (entities-adj             (second merged-entities)))
+    (orgtrello-buffer/clean-region! region)
+    (orgtrello-buffer/write-card! card-id (gethash card-id entities) entities entities-adj)))
+
+(defun orgtrello-controller/fetch-and-overwrite-checklist! (checklist)
+  "Given a checklist, retrieve latest information from trello and overwrite in current buffer."
+  (let* ((checklist-id             (orgtrello-data/entity-id checklist))
+         (region                   (orgtrello-buffer/compute-entity-region! checklist))
+         (entities-from-org-buffer (apply 'orgtrello-buffer/compute-entities-from-org-buffer! (cons nil region)))
+         (entities-from-trello     (orgtrello-backend/compute-full-checklist-from-trello! checklist))
+         (merged-entities          (orgtrello-data/merge-entities-trello-and-org entities-from-trello entities-from-org-buffer))
+         (entities                 (first merged-entities))
+         (entities-adj             (second merged-entities)))
+    (orgtrello-buffer/clean-region! region)
+    (orgtrello-buffer/write-checklist! checklist-id entities entities-adj)))
 
 (defun orgtrello-controller/--sync-entity-and-structure-to-buffer-with-trello-data-callback (buffername &optional position name)
   "Generate a callback which knows the buffer with which it must work. (this callback must take a buffer-name and a position)"
@@ -2719,21 +2737,13 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
           (point-at-bol)
           (org-show-subtree)
           ;; data manipulation + computations
-          (let* ((data-id                  (orgtrello-data/entity-id (trace :entity-id data)))
-                 (region                   (orgtrello-buffer/compute-entity-region! data))
-                 (entities-from-org-buffer (apply 'orgtrello-buffer/compute-entities-from-org-buffer! (cons buffer-name region)))
-                 (entities-from-trello     (orgtrello-controller/--compute-full-entity-from-trello! data))
-                 (merged-entities          (orgtrello-data/merge-entities-trello-and-org entities-from-trello entities-from-org-buffer))
-                 (entities                 (first merged-entities))
-                 (entities-adj             (second merged-entities)))
-            ;; clean up actions
-            (orgtrello-buffer/clean-region! region)
-            ;; at last overwrite with new data
-            (cond ((orgtrello-data/entity-card-p data)      (orgtrello-buffer/write-card! data-id (gethash data-id entities) entities entities-adj))
-                  ((orgtrello-data/entity-checklist-p data) (orgtrello-buffer/write-checklist! data-id entities entities-adj))
-                  ((orgtrello-data/entity-item-p data)      (orgtrello-buffer/write-entity! data-id entities)))
-            ;; at last
-            (save-buffer)))
+          (funcall
+           (cond ((orgtrello-data/entity-card-p data)      'orgtrello-controller/fetch-and-overwrite-card!)
+                 ((orgtrello-data/entity-checklist-p data) 'orgtrello-controller/fetch-and-overwrite-checklist!)
+                 ((orgtrello-data/entity-item-p data)      'orgtrello-buffer/overwrite-item!))
+           data)
+          ;; at last
+          (save-buffer))
         (orgtrello-log/msg *OT/INFO* "Synchronizing the trello and org data merge - done!"))))))
 
 (defun orgtrello-controller/--dispatch-sync-request (entity)
