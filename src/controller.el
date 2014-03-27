@@ -360,7 +360,7 @@
           (org-show-subtree)
           ;; data manipulation + computations
           (let* ((data-id                  (orgtrello-data/entity-id (trace :entity-id data)))
-                 (region                   (orgtrello-buffer/compute-card-region!))
+                 (region                   (orgtrello-buffer/compute-entity-region! data))
                  (entities-from-org-buffer (apply 'orgtrello-buffer/compute-entities-from-org-buffer! (cons buffer-name region)))
                  (entities-from-trello     (orgtrello-controller/--compute-full-entity-from-trello! data))
                  (merged-entities          (orgtrello-data/merge-entities-trello-and-org entities-from-trello entities-from-org-buffer))

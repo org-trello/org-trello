@@ -83,6 +83,11 @@
   "Compute the checklist's region (only the header, without computing the zone occupied by items) couple '(start end)."
   `(,(point-at-bol) ,(1+ (point-at-eol))))
 
+(defun orgtrello-buffer/compute-entity-region! (entity)
+  (cond ((orgtrello-data/entity-card-p entity)      (orgtrello-buffer/compute-card-region!))
+        ((orgtrello-data/entity-checklist-p entity) (orgtrello-buffer/compute-checklist-region!))
+        ((orgtrello-data/entity-item-p entity)      (orgtrello-buffer/compute-item-region!))))
+
 (defun orgtrello-buffer/compute-checklist-region! ()
   "Compute the checklist's region (including the items) couple '(start end)."
   `(,(point-at-bol) ,(orgtrello-cbx/next-checklist-point!)))

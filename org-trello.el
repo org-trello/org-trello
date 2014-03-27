@@ -1967,6 +1967,11 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   "Compute the checklist's region (only the header, without computing the zone occupied by items) couple '(start end)."
   `(,(point-at-bol) ,(1+ (point-at-eol))))
 
+(defun orgtrello-buffer/compute-entity-region! (entity)
+  (cond ((orgtrello-data/entity-card-p entity)      (orgtrello-buffer/compute-card-region!))
+        ((orgtrello-data/entity-checklist-p entity) (orgtrello-buffer/compute-checklist-region!))
+        ((orgtrello-data/entity-item-p entity)      (orgtrello-buffer/compute-item-region!))))
+
 (defun orgtrello-buffer/compute-checklist-region! ()
   "Compute the checklist's region (including the items) couple '(start end)."
   `(,(point-at-bol) ,(orgtrello-cbx/next-checklist-point!)))
@@ -2715,7 +2720,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
           (org-show-subtree)
           ;; data manipulation + computations
           (let* ((data-id                  (orgtrello-data/entity-id (trace :entity-id data)))
-                 (region                   (orgtrello-buffer/compute-card-region!))
+                 (region                   (orgtrello-buffer/compute-entity-region! data))
                  (entities-from-org-buffer (apply 'orgtrello-buffer/compute-entities-from-org-buffer! (cons buffer-name region)))
                  (entities-from-trello     (orgtrello-controller/--compute-full-entity-from-trello! data))
                  (merged-entities          (orgtrello-data/merge-entities-trello-and-org entities-from-trello entities-from-org-buffer))
