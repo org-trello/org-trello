@@ -1882,7 +1882,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun orgtrello-buffer/org-entry-put! (point property value)
   (if (or (null value) (string= "" value))
-      (orgtrello-buffer/delete-property! property)
+      (orgtrello-buffer/delete-property-from-entry! property)
     (org-entry-put point property value)))
 
 (defun orgtrello-buffer/back-to-card! ()
@@ -2221,9 +2221,13 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   "Update users org property."
   (orgtrello-buffer/org-entry-put! nil *ORGTRELLO-USERS-ENTRY* csv-users))
 
+(defun orgtrello-buffer/delete-property-from-entry! (property)
+  "Delete a property from the org buffer."
+  (org-delete-property property))
+
 (defun orgtrello-buffer/delete-property! (property)
   "Given a property name (checkbox), if found, delete it from the buffer."
-  (org-delete-property-globally property)
+  (orgtrello-buffer/delete-property-from-entry! property)
   (save-excursion
     (goto-char (point-min))
     (while (re-search-forward ":PROPERTIES: {.*" nil t)
