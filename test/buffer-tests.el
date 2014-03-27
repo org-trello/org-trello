@@ -497,45 +497,42 @@ some description
                                                                                             (:name . "some item name"))))
      0)))
 
-(expectations (desc "orgtrello-buffer/--csv-user-ids-to-csv-user-names")
-              (expect "user0,user1,user2" (orgtrello-buffer/--csv-user-ids-to-csv-user-names "id0,id1,id2" (orgtrello-hash/make-properties '(("id0". "user0") ("id1". "user1") ("id2". "user2")))))
-              (expect "user0,user1," (orgtrello-buffer/--csv-user-ids-to-csv-user-names "id0,id1,id2" (orgtrello-hash/make-properties '(("id0". "user0") ("id1". "user1")))))
-              (expect "user0" (orgtrello-buffer/--csv-user-ids-to-csv-user-names "id0" (orgtrello-hash/make-properties '(("id0". "user0"))))))
+(expectations
+  (desc "orgtrello-buffer/--csv-user-ids-to-csv-user-names")
+  (expect "user0,user1,user2" (orgtrello-buffer/--csv-user-ids-to-csv-user-names "id0,id1,id2" (orgtrello-hash/make-properties '(("id0". "user0") ("id1". "user1") ("id2". "user2")))))
+  (expect "user0,user1," (orgtrello-buffer/--csv-user-ids-to-csv-user-names "id0,id1,id2" (orgtrello-hash/make-properties '(("id0". "user0") ("id1". "user1")))))
+  (expect "user0" (orgtrello-buffer/--csv-user-ids-to-csv-user-names "id0" (orgtrello-hash/make-properties '(("id0". "user0"))))))
 
-(expectations (desc "orgtrello-buffer/--compute-checklist-to-org-entry")
-              (expect "- [-] name
-" (orgtrello-buffer/--compute-checklist-to-org-entry (orgtrello-hash/make-properties `((:name . "name"))) t))
-              (expect "- [-] name
-" (orgtrello-buffer/--compute-checklist-to-org-entry (orgtrello-hash/make-properties `((:name . "name"))) t)))
+(expectations
+  (desc "orgtrello-buffer/--compute-checklist-to-org-entry")
+  (expect "- [-] name\n" (orgtrello-buffer/--compute-checklist-to-org-entry (orgtrello-hash/make-properties `((:name . "name"))) t))
+  (expect "- [-] name\n" (orgtrello-buffer/--compute-checklist-to-org-entry (orgtrello-hash/make-properties `((:name . "name"))) t)))
 
-(expectations (desc "orgtrello-buffer/--compute-item-to-org-entry - 1")
-              (expect "  - [X] name
-" (orgtrello-buffer/--compute-item-to-org-entry (orgtrello-hash/make-properties `((:name . "name") (:keyword . "complete")))))
-              (expect "  - [ ] name
-" (orgtrello-buffer/--compute-item-to-org-entry (orgtrello-hash/make-properties `((:name . "name") (:keyword . "incomplete"))))))
+(expectations
+  (desc "orgtrello-buffer/--compute-item-to-org-entry - 1")
+  (expect "  - [X] name\n" (orgtrello-buffer/--compute-item-to-org-entry (orgtrello-hash/make-properties `((:name . "name") (:keyword . "complete")))))
+  (expect "  - [ ] name\n" (orgtrello-buffer/--compute-item-to-org-entry (orgtrello-hash/make-properties `((:name . "name") (:keyword . "incomplete"))))))
 
-(expectations (desc "orgtrello-buffer/--compute-item-to-org-checkbox")
-              (expect "- [X] name
-" (orgtrello-buffer/--compute-item-to-org-checkbox "name" 2 "complete"))
-              (expect "  - [X] name
-" (orgtrello-buffer/--compute-item-to-org-checkbox "name" 3 "complete"))
-              (expect "- [X] name
-" (orgtrello-buffer/--compute-item-to-org-checkbox "name" 2 "complete"))
-              (expect "  - [ ] name
-" (orgtrello-buffer/--compute-item-to-org-checkbox "name" 3 "incomplete")))
+(expectations
+  (desc "orgtrello-buffer/--compute-item-to-org-checkbox")
+  (expect "- [X] name\n" (orgtrello-buffer/--compute-item-to-org-checkbox "name" 2 "complete"))
+  (expect "  - [X] name\n" (orgtrello-buffer/--compute-item-to-org-checkbox "name" 3 "complete"))
+  (expect "- [X] name\n" (orgtrello-buffer/--compute-item-to-org-checkbox "name" 2 "complete"))
+  (expect "  - [ ] name\n" (orgtrello-buffer/--compute-item-to-org-checkbox "name" 3 "incomplete")))
 
-(expectations (desc "orgtrello-buffer/--private-compute-card-to-org-entry")
-              (expect "* name TODO                                                             :some-tags:\nDEADLINE: <some-date>\n"
-                (orgtrello-buffer/--private-compute-card-to-org-entry "TODO" "name" "some-date" ":some-tags:"))
-              (expect "* name TODO\n"
-                (orgtrello-buffer/--private-compute-card-to-org-entry "TODO" "name" nil nil))
-              (expect "* name TODO                                                             :tag,tag2:\n"
-                (orgtrello-buffer/--private-compute-card-to-org-entry "TODO" "name" nil ":tag,tag2:")))
+(expectations
+  (desc "orgtrello-buffer/--private-compute-card-to-org-entry")
+  (expect "* name TODO                                                             :some-tags:\nDEADLINE: <some-date>\n"
+    (orgtrello-buffer/--private-compute-card-to-org-entry "TODO" "name" "some-date" ":some-tags:"))
+  (expect "* name TODO\n"
+    (orgtrello-buffer/--private-compute-card-to-org-entry "TODO" "name" nil nil))
+  (expect "* name TODO                                                             :tag,tag2:\n"
+    (orgtrello-buffer/--private-compute-card-to-org-entry "TODO" "name" nil ":tag,tag2:")))
 
-(expectations (desc "orgtrello-buffer/--compute-due-date")
-              (expect "DEADLINE: <some-date>
-" (orgtrello-buffer/--compute-due-date "some-date"))
-              (expect "" (orgtrello-buffer/--compute-due-date nil)))
+(expectations
+  (desc "orgtrello-buffer/--compute-due-date")
+  (expect "DEADLINE: <some-date>\n" (orgtrello-buffer/--compute-due-date "some-date"))
+  (expect "" (orgtrello-buffer/--compute-due-date nil)))
 
 (expectations
   (expect "" (orgtrello-buffer/--serialize-tags "* card name" nil))
@@ -582,34 +579,32 @@ some description
   (expect 2 (orgtrello-buffer/--compute-level-into-spaces 'any)))
 
 (expectations (desc "orgtrello-buffer/--compute-checklist-to-org-checkbox")
-  (expect "- [X] name
-" (orgtrello-buffer/--compute-checklist-to-org-checkbox "name" 2 "complete"))
-  (expect "  - [X] name
-" (orgtrello-buffer/--compute-checklist-to-org-checkbox "name" 3 "complete"))
-  (expect "- [X] name
-" (orgtrello-buffer/--compute-checklist-to-org-checkbox "name" 2 "complete"))
-  (expect "  - [-] name
-" (orgtrello-buffer/--compute-checklist-to-org-checkbox "name" 3 "incomplete")))
+  (expect "- [X] name\n" (orgtrello-buffer/--compute-checklist-to-org-checkbox "name" 2 "complete"))
+  (expect "  - [X] name\n" (orgtrello-buffer/--compute-checklist-to-org-checkbox "name" 3 "complete"))
+  (expect "- [X] name\n" (orgtrello-buffer/--compute-checklist-to-org-checkbox "name" 2 "complete"))
+  (expect "  - [-] name\n" (orgtrello-buffer/--compute-checklist-to-org-checkbox "name" 3 "incomplete")))
 
 (expectations (desc "orgtrello-buffer/--compute-state-checkbox")
   (expect "[X]" (orgtrello-buffer/--compute-state-checkbox "complete"))
   (expect "[-]" (orgtrello-buffer/--compute-state-checkbox "incomplete")))
 
-(expectations (desc "orgtrello-buffer/--dispatch-create-entities-map-with-adjacency")
-              (expect 'orgtrello-buffer/--put-card-with-adjacency     (orgtrello-buffer/--dispatch-create-entities-map-with-adjacency (orgtrello-hash/make-hash-org :users *CARD-LEVEL* nil nil nil nil nil nil nil :comments :tags)))
-              (expect 'orgtrello-backend/--put-entities-with-adjacency (orgtrello-buffer/--dispatch-create-entities-map-with-adjacency (orgtrello-hash/make-hash-org :users *CHECKLIST-LEVEL* nil nil nil nil nil nil nil :comments :tags)))
-              (expect 'orgtrello-backend/--put-entities-with-adjacency (orgtrello-buffer/--dispatch-create-entities-map-with-adjacency (orgtrello-hash/make-hash-org :users *ITEM-LEVEL* nil nil nil nil nil nil nil :comments :tags))))
+(expectations
+  (desc "orgtrello-buffer/--dispatch-create-entities-map-with-adjacency")
+  (expect 'orgtrello-buffer/--put-card-with-adjacency     (orgtrello-buffer/--dispatch-create-entities-map-with-adjacency (orgtrello-hash/make-hash-org :users *CARD-LEVEL* nil nil nil nil nil nil nil :comments :tags)))
+  (expect 'orgtrello-backend/--put-entities-with-adjacency (orgtrello-buffer/--dispatch-create-entities-map-with-adjacency (orgtrello-hash/make-hash-org :users *CHECKLIST-LEVEL* nil nil nil nil nil nil nil :comments :tags)))
+  (expect 'orgtrello-backend/--put-entities-with-adjacency (orgtrello-buffer/--dispatch-create-entities-map-with-adjacency (orgtrello-hash/make-hash-org :users *ITEM-LEVEL* nil nil nil nil nil nil nil :comments :tags))))
 
-(expectations (desc "testing orgtrello-buffer/--convert-to-orgtrello-metadata")
-  (expect "some name :orgtrello-id-identifier:"  (gethash :name       (orgtrello-buffer/--convert-to-orgtrello-metadata '(:comments "" "" "buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil))))
-  (expect "IN PROGRESS"                          (gethash :keyword    (orgtrello-buffer/--convert-to-orgtrello-metadata '(:comments "" "" "buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil))))
-  (expect 0                                      (gethash :level      (orgtrello-buffer/--convert-to-orgtrello-metadata '(:comments "" "" "buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil))))
-  (expect :id                                    (gethash :id         (orgtrello-buffer/--convert-to-orgtrello-metadata '(:comments "" "" "buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil))))
-  (expect :due                                   (gethash :due        (orgtrello-buffer/--convert-to-orgtrello-metadata '(:comments "" "" "buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil))))
-  (expect :point                                 (gethash :position   (orgtrello-buffer/--convert-to-orgtrello-metadata '(:comments "" "" "buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil))))
-  (expect "1,2,3"                                (gethash :member-ids (orgtrello-buffer/--convert-to-orgtrello-metadata '(:comments "" "1,2,3" "buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil))))
-  (expect :desc                                  (gethash :desc       (orgtrello-buffer/--convert-to-orgtrello-metadata '(:comments :desc "1,2,3" "buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil))))
-  (expect :comments                              (gethash :comments   (orgtrello-buffer/--convert-to-orgtrello-metadata '(:comments :desc "1,2,3" "buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil)))))
+(expectations
+  (desc "testing orgtrello-buffer/--to-orgtrello-metadata")
+  (expect "some name :orgtrello-id-identifier:"  (gethash :name       (orgtrello-buffer/--to-orgtrello-metadata '(:comments "" "" "buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil))))
+  (expect "IN PROGRESS"                          (gethash :keyword    (orgtrello-buffer/--to-orgtrello-metadata '(:comments "" "" "buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil))))
+  (expect 0                                      (gethash :level      (orgtrello-buffer/--to-orgtrello-metadata '(:comments "" "" "buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil))))
+  (expect :id                                    (gethash :id         (orgtrello-buffer/--to-orgtrello-metadata '(:comments "" "" "buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil))))
+  (expect :due                                   (gethash :due        (orgtrello-buffer/--to-orgtrello-metadata '(:comments "" "" "buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil))))
+  (expect :point                                 (gethash :position   (orgtrello-buffer/--to-orgtrello-metadata '(:comments "" "" "buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil))))
+  (expect "1,2,3"                                (gethash :member-ids (orgtrello-buffer/--to-orgtrello-metadata '(:comments "" "1,2,3" "buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil))))
+  (expect :desc                                  (gethash :desc       (orgtrello-buffer/--to-orgtrello-metadata '(:comments :desc "1,2,3" "buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil))))
+  (expect :comments                              (gethash :comments   (orgtrello-buffer/--to-orgtrello-metadata '(:comments :desc "1,2,3" "buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil)))))
 
 (expectations (desc "testing orgtrello-buffer/--convert-orgmode-date-to-trello-date")
   (expect "2013-07-18T02:00:00.000Z" (orgtrello-buffer/--convert-orgmode-date-to-trello-date "2013-07-18T02:00:00.000Z"))
