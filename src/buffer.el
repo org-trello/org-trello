@@ -165,7 +165,6 @@
          (entities                 (first merged-entities))
          (entities-adj             (second merged-entities)))
     (apply 'delete-region region)
-    ;; write the full card region with full card structure
     (orgtrello-buffer/write-card! card-id (gethash card-id entities) entities entities-adj)))
 
 (defun orgtrello-buffer/overwrite-checklist-header! (checklist)
@@ -185,7 +184,6 @@
          (merged-entities          (orgtrello-data/merge-entities-trello-and-org entities-from-trello entities-from-org-buffer)))
     (apply 'orgtrello-cbx/remove-overlays! region)
     (apply 'delete-region region)
-    ;; write the full checklist region with full checklist structure
     (orgtrello-buffer/write-checklist! (orgtrello-data/entity-id checklist) (first merged-entities) (second merged-entities))))
 
 (defun orgtrello-buffer/overwrite-item! (item)
