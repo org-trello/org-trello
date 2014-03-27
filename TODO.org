@@ -926,7 +926,7 @@ CLOSED: [2014-03-24 Mon 00:58]
 - [X] Update metadata command about the board currently connected (sometimes, new information arise)
 - [X] Release notes
 - [X] Version
-* IN-PROGRESS 0.3.8 [75%]
+* IN-PROGRESS 0.3.8 [87%]
 - [X] Some refactoring
   - [X] Align sync from trello card tags/labels serialization with org's tags behavior
   - [X] Refactor open org-trello buffer with title/content
@@ -943,7 +943,7 @@ CLOSED: [2014-03-24 Mon 00:58]
   - [X] Use C-u on sync-entity-and-structure-to-trello command to trigger the sync-entity-and-structure-from-trello
 - [X] Some more refactoring
 - [X] Fix bug regarding org keywords which disappeared
-- [ ] Version
+- [X] Version
 - [ ] Release notes
 
 * TODO 0.3.X [0%]
