@@ -371,7 +371,7 @@
             ;; at last overwrite with new data
             (cond ((orgtrello-data/entity-card-p data)      (orgtrello-buffer/write-card! data-id (gethash data-id entities) entities entities-adj))
                   ((orgtrello-data/entity-checklist-p data) (orgtrello-buffer/write-checklist! data-id entities entities-adj))
-                  ((orgtrello-data/entity-item-p data)      (orgtrello-buffer/write-entity! data-id entities entities-adj)))
+                  ((orgtrello-data/entity-item-p data)      (orgtrello-buffer/write-entity! data-id entities)))
             ;; at last
             (save-buffer)))
         (orgtrello-log/msg *OT/INFO* "Synchronizing the trello and org data merge - done!"))))))

@@ -2720,7 +2720,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
             ;; at last overwrite with new data
             (cond ((orgtrello-data/entity-card-p data)      (orgtrello-buffer/write-card! data-id (gethash data-id entities) entities entities-adj))
                   ((orgtrello-data/entity-checklist-p data) (orgtrello-buffer/write-checklist! data-id entities entities-adj))
-                  ((orgtrello-data/entity-item-p data)      (orgtrello-buffer/write-entity! data-id entities entities-adj)))
+                  ((orgtrello-data/entity-item-p data)      (orgtrello-buffer/write-entity! data-id entities)))
             ;; at last
             (save-buffer)))
         (orgtrello-log/msg *OT/INFO* "Synchronizing the trello and org data merge - done!"))))))
@@ -3231,7 +3231,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   "Control first, then if ok, sync a simple entity (without its structure)."
   (interactive "P")
   (if modifier
-      (org-trello/proxy-do "Request 'sync entity from trello'" 'orgtrello-controller/do-sync-entity-from-trello! *org-trello/with-save-flag*)
+      (org-trello/proxy-do "Request 'sync entity from trello'" 'orgtrello-controller/do-sync-entity-from-trello!)
     (org-trello/proxy-do "Request 'sync entity to trello'" 'orgtrello-controller/do-sync-entity-to-trello!)))
 
 (defun org-trello/sync-full-entity (&optional modifier)
