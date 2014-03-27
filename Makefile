@@ -6,6 +6,9 @@ EMACS=emacs
 
 .PHONY: clean
 
+pr:
+	hub pull-request -b org-trello:master
+
 clean:
 	rm -rf *.tar $(PACKAGE_FOLDER)
 
