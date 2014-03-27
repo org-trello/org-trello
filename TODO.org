@@ -926,7 +926,7 @@ CLOSED: [2014-03-24 Mon 00:58]
 - [X] Update metadata command about the board currently connected (sometimes, new information arise)
 - [X] Release notes
 - [X] Version
-* TODO 0.3.8 [53%]
+* IN-PROGRESS 0.3.8 [75%]
 - [X] Some refactoring
   - [X] Align sync from trello card tags/labels serialization with org's tags behavior
   - [X] Refactor open org-trello buffer with title/content
@@ -937,17 +937,17 @@ CLOSED: [2014-03-24 Mon 00:58]
 - [X] Use C-u keychord to create a symmetry use (e.g. `C-c o s` is sync to trello, `C-u C-c o s` is sync from trello)
   - [X] sync-buffer, sync-to-trello, with C-u, sync-from-trello
   - [X] assign-me, with C-u, unassign me
-- [X] A command to 'sync from trello' the current entity without its structure
-- [X] Use C-u on sync-entity-to-trello command to trigger the sync-entity-from-trello
-- [ ] A command to 'sync from trello' the current entity and its structure
-- [ ] Use C-u on sync-entity-and-structure-to-trello command to trigger the sync-entity-and-structure-from-trello
-- [ ] Refactoring
+  - [X] A command to 'sync from trello' the current entity without its structure
+  - [X] Use C-u on sync-entity-to-trello command to trigger the sync-entity-from-trello
+  - [X] A command to 'sync from trello' the current entity and its structure
+  - [X] Use C-u on sync-entity-and-structure-to-trello command to trigger the sync-entity-and-structure-from-trello
+- [X] Some more refactoring
 - [X] Fix bug regarding org keywords which disappeared
-- [ ] Use active region - https://github.com/org-trello/org-trello/issues/130
 - [ ] Version
 - [ ] Release notes
 
 * TODO 0.3.X [0%]
+- [ ] Use active region - https://github.com/org-trello/org-trello/issues/130
 - [ ] More fined grained use of the trello api (retrieve only data we use) - https://github.com/org-trello/org-trello/issues/69
 - [ ] Improve sync request policy - https://github.com/org-trello/org-trello/issues/58
 - [ ] One command to sync them all - https://github.com/org-trello/org-trello/issues/59
