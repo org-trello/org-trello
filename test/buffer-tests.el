@@ -349,6 +349,7 @@ some description
 - [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}
   - [X] some item name :PROPERTIES: {\"orgtrello-id\":\"some-item-id\"}
   - [ ] some other item name :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\"}
+- [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\"}
 "
     (orgtrello-tests/with-temp-buffer-and-return-buffer-content
      ":PROPERTIES:
@@ -369,6 +370,9 @@ some description
                                    (orgtrello-hash/make-properties `(("some-checklist-id" . ,(orgtrello-hash/make-properties `((:id . "some-checklist-id")
                                                                                                                                (:name . "some checklist name")
                                                                                                                                (:level . ,*CHECKLIST-LEVEL*))))
+                                                                     ("some-other-checklist-id" . ,(orgtrello-hash/make-properties `((:id . "some-other-checklist-id")
+                                                                                                                                     (:name . "some other checklist name")
+                                                                                                                                     (:level . ,*CHECKLIST-LEVEL*))))
                                                                      ("some-item-id"  . ,(orgtrello-hash/make-properties `((:id . "some-item-id")
                                                                                                                            (:name . "some item name")
                                                                                                                            (:level . ,*ITEM-LEVEL*)
@@ -377,8 +381,9 @@ some description
                                                                                                                                  (:name . "some other item name")
                                                                                                                                  (:level . ,*ITEM-LEVEL*)
                                                                                                                                  (:keyword . "TODO"))))))
-                                   (orgtrello-hash/make-properties `(("some-checklist-id" . ("some-item-id" "some-other-item-id"))
-                                                                     ("some-card-id" . ("some-checklist-id")))))
+                                   (orgtrello-hash/make-properties `(("some-other-checklist-id" . ())
+                                                                     ("some-checklist-id" . ("some-item-id" "some-other-item-id"))
+                                                                     ("some-card-id" . ("some-checklist-id" "some-other-checklist-id")))))
      0)))
 
 (expectations
