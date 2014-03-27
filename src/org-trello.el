@@ -68,10 +68,12 @@
       (org-trello/proxy-do "Request 'sync org buffer from trello board'" 'orgtrello-controller/do-sync-full-file-from-trello!)
     (org-trello/proxy-do "Request 'sync org buffer to trello board'" 'orgtrello-controller/do-sync-full-file-to-trello!)))
 
-(defun org-trello/kill-entity ()
-  "Control first, then if ok, delete the entity and all its arborescence."
-  (interactive)
-  (org-trello/proxy-do "Request 'delete entity'" 'orgtrello-controller/do-delete-simple))
+(defun org-trello/kill-entity (&optional modifier)
+  "Control first, then if ok, delete the entity and all its arborescence. If used with C-u, kill all buffer entities."
+  (interactive "P")
+  (if modifier
+      (org-trello/kill-all-entities)
+    (org-trello/proxy-do "Request 'delete entity'" 'orgtrello-controller/do-delete-simple)))
 
 (defun org-trello/kill-all-entities ()
   "Control first, then if ok, delete the entity and all its arborescence."
@@ -93,10 +95,12 @@
   (interactive)
   (org-trello/proxy-do-and-save "Update board information" 'orgtrello-controller/do-update-board-metadata!))
 
-(defun org-trello/jump-to-card ()
-  "Jump to current card in browser."
+(defun org-trello/jump-to-card (&optional modifier)
+  "Jump to current card in browser. If C-u modifier is used, jump to board."
   (interactive)
-  (org-trello/do 'orgtrello-controller/jump-to-card!))
+  (if modifier
+      (org-trello/jump-to-trello-board)
+    (org-trello/do 'orgtrello-controller/jump-to-card!)))
 
 (defun org-trello/jump-to-trello-board ()
   "Jump to current trello board."

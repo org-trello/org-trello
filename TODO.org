@@ -926,7 +926,8 @@ CLOSED: [2014-03-24 Mon 00:58]
 - [X] Update metadata command about the board currently connected (sometimes, new information arise)
 - [X] Release notes
 - [X] Version
-* IN-PROGRESS 0.3.8 [87%]
+* DONE 0.3.8 [100%]
+CLOSED: [2014-03-27 Thu 18:20]
 - [X] Some refactoring
   - [X] Align sync from trello card tags/labels serialization with org's tags behavior
   - [X] Refactor open org-trello buffer with title/content
@@ -944,12 +945,17 @@ CLOSED: [2014-03-24 Mon 00:58]
 - [X] Some more refactoring
 - [X] Fix bug regarding org keywords which disappeared
 - [X] Version
+- [X] Release notes
+
+* IN-PROGRESS 0.3.9 [25%]
+- [X] Refactor - Symmetry for all commands where that makes sense (without C-u/with C-u)
+- [ ] Improve sync request policy - https://github.com/org-trello/org-trello/issues/58
+- [ ] Version
 - [ ] Release notes
 
 * TODO 0.3.X [0%]
 - [ ] Use active region - https://github.com/org-trello/org-trello/issues/130
 - [ ] More fined grained use of the trello api (retrieve only data we use) - https://github.com/org-trello/org-trello/issues/69
-- [ ] Improve sync request policy - https://github.com/org-trello/org-trello/issues/58
 - [ ] One command to sync them all - https://github.com/org-trello/org-trello/issues/59
 - [ ] Extract a data representation for org-trello buffer to decorrelate the file serialization file from the computation (decomplecting -> ease of testing, computation, overall maintenance, sandbox i/o to a minimum)
   - [ ] extracter (from file/region to data)
