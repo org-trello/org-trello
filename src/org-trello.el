@@ -51,7 +51,7 @@
   "Control first, then if ok, sync a simple entity (without its structure)."
   (interactive "P")
   (if modifier
-      (org-trello/proxy-do "Request 'sync entity from trello'" 'orgtrello-controller/do-sync-entity-from-trello! *org-trello/with-save-flag*)
+      (org-trello/proxy-do "Request 'sync entity from trello'" 'orgtrello-controller/do-sync-entity-from-trello!)
     (org-trello/proxy-do "Request 'sync entity to trello'" 'orgtrello-controller/do-sync-entity-to-trello!)))
 
 (defun org-trello/sync-full-entity (&optional modifier)
