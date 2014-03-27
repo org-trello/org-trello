@@ -466,16 +466,21 @@ some description
      0)))
 
 (expectations
-  (desc "orgtrello-buffer/write-entity! - card")
-  (expect "\n* DONE some card name                                                   :red:green:\n  :PROPERTIES:\n  :orgtrello-id: some-card-id\n  :END:\n"
-    (orgtrello-tests/with-temp-buffer-and-return-buffer-content
-     "\n"
-     (orgtrello-buffer/write-entity! "some-card-id " (orgtrello-hash/make-properties `((:keyword . "DONE")
-                                                                                             (:tags . ":red:green:")
-                                                                                             (:desc . "some description")
-                                                                                             (:level . ,*CARD-LEVEL*)
-                                                                                             (:name . "some card name"))))
-     0)))
+ (desc "orgtrello-buffer/write-entity! - card")
+ (expect "
+* DONE some card name                                                   :red:green:
+  :PROPERTIES:
+  :orgtrello-id: some-card-id
+  :END:
+"
+         (orgtrello-tests/with-temp-buffer-and-return-buffer-content
+          "\n"
+          (orgtrello-buffer/write-entity! "some-card-id" (orgtrello-hash/make-properties `((:keyword . "DONE")
+                                                                                           (:tags . ":red:green:")
+                                                                                           (:desc . "some description")
+                                                                                           (:level . ,*CARD-LEVEL*)
+                                                                                           (:name . "some card name"))))
+          0)))
 
 (expectations
   (desc "orgtrello-buffer/write-entity! - checklist")
