@@ -324,7 +324,7 @@ some old description
 - [ ] checklist
 "
      (orgtrello-buffer/overwrite-card-header! (orgtrello-hash/make-properties `((:keyword . "TODO")
-                                                                                (:member-ids . "ardumont-id,dude-id")
+                                                                                (:member-ids . ,(list "ardumont-id" "dude-id"))
                                                                                 (:comments . ,(list (orgtrello-hash/make-properties '((:comment-user . "ardumont")
                                                                                                                                       (:comment-text . "some comment")))))
                                                                                 (:labels . ":red:green:")
