@@ -170,9 +170,11 @@
 
 (defun orgtrello-data/format-comments (comments)
   "Given a property string of comments, work it to permit a human readable display."
-  (->> comments
-    (s-split *ORGTRELLO-CARD-COMMENTS-DELIMITER*)
-    (s-join *ORGTRELLO-CARD-COMMENTS-DELIMITER-PRINT*)))
+  (if comments
+    (->> comments
+      (s-split *ORGTRELLO-CARD-COMMENTS-DELIMITER*)
+      (s-join *ORGTRELLO-CARD-COMMENTS-DELIMITER-PRINT*))
+    "No comments to display!"))
 
 (defun orgtrello-data/id-p (id)
   "Is the string a trello identifier?"
