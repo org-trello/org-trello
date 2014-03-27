@@ -88,7 +88,7 @@
   (setq *ORGTRELLO-LIST-BUFFERS-TO-SAVE* (orgtrello-proxy/--update-buffer-to-save buffer-name *ORGTRELLO-LIST-BUFFERS-TO-SAVE*)))
 
 (defun orgtrello-proxy/--cleanup-and-save-buffer-metadata (archive-file buffer-name) "To cleanup metadata after the all actions are done!"
-  (orgtrello-elnode/remove-file archive-file) ;; cleanup archive file
+  (orgtrello-action/delete-file! archive-file) ;; cleanup archive file
   (orgtrello-proxy/update-buffer-to-save! buffer-name)) ;; register the buffer for later saving
 
 (defun orgtrello-proxy/batch-save (buffers) "Save sequentially a list of buffers."
@@ -105,7 +105,7 @@
       (throw 'org-trello-timer-go-to-sleep t))))
 
 (defun orgtrello-proxy/--getting-back-to-headline (data) "Trying another approach to getting back to header computing the normal form of an entry in the buffer."
-  (orgtrello-proxy/--getting-back-to-marker (orgtrello-controller/--compute-entity-to-org-entry data)))
+  (orgtrello-proxy/--getting-back-to-marker (orgtrello-buffer/--compute-entity-to-org-entry data)))
 
 (defun orgtrello-proxy/--compute-pattern-search-from-marker (marker) "Given a marker, compute the pattern to look for in the file."
   marker)
@@ -134,13 +134,13 @@
                       ;; get back to the buffer and update the id if need be
                       (let ((str-msg (when (orgtrello-proxy/--get-back-to-marker orgtrello-proxy/--marker-id data)
                                            ;; now we extract the data
-                                           (let ((orgtrello-proxy/--entry-id (when (orgtrello-controller/id-p orgtrello-proxy/--marker-id) orgtrello-proxy/--marker-id)))
+                                           (let ((orgtrello-proxy/--entry-id (when (orgtrello-data/id-p orgtrello-proxy/--marker-id) orgtrello-proxy/--marker-id)))
                                              (if orgtrello-proxy/--entry-id ;; id already present in the org-mode file
                                                  ;; no need to add another
                                                  (concat "Entity '" orgtrello-proxy/--entity-name "' with id '" orgtrello-proxy/--entry-id "' synced!")
                                                  (let ((orgtrello-proxy/--entry-name (orgtrello-data/entity-name data)))
                                                    ;; not present, this was just created, we add a simple property
-                                                   (orgtrello-action/set-property *ORGTRELLO-ID* orgtrello-proxy/--entry-new-id)
+                                                   (orgtrello-buffer/set-property *ORGTRELLO-ID* orgtrello-proxy/--entry-new-id)
                                                    (concat "Newly entity '" orgtrello-proxy/--entry-name "' with id '" orgtrello-proxy/--entry-new-id "' synced!")))))))
                         (when str-msg (orgtrello-log/msg *OT/INFO* str-msg)))))
                   (orgtrello-proxy/--cleanup-and-save-buffer-metadata orgtrello-proxy/--entry-file orgtrello-proxy/--entry-buffer-name))))))
@@ -172,7 +172,7 @@
                                      (function* (lambda (&key error-thrown &allow-other-keys)
                                                   (orgtrello-log/msg *OT/ERROR* "client - Problem during the sync request to the proxy- error-thrown: %s" error-thrown)
                                                   (orgtrello-proxy/--cleanup-meta oq/--entity-full-meta)
-                                                  (orgtrello-elnode/remove-file oq/--entry-file-archived)
+                                                  (orgtrello-action/delete-file! oq/--entry-file-archived)
                                                   (throw 'org-trello-timer-go-to-sleep t))))
         ;; cannot execute the request
         (progn
@@ -194,7 +194,7 @@
              (-> entity-data
                  orgtrello-data/entity-action
                  orgtrello-proxy/--dispatch-action
-                 (funcall entity-data (orgtrello-data/entry-get-full-metadata!) op/--entry-file-archived)))))))
+                 (funcall entity-data (orgtrello-buffer/entry-get-full-metadata!) op/--entry-file-archived)))))))
 
 (defun orgtrello-action/org-delete-property (key) "Delete a property depending on the nature of the current entry (org heading or checkbox)."
   (funcall (if (orgtrello-cbx/checkbox-p) 'orgtrello-cbx/org-delete-property 'org-delete-property) key))
@@ -213,7 +213,7 @@
   (let ((orgtrello-action/--starting-point (point-at-bol))
         (orgtrello-action/--ending-point (save-excursion (-if-let (result (orgtrello-cbx/--goto-next-checkbox-with-same-level! *CHECKLIST-LEVEL*))
                                                                   result
-                                                                  (orgtrello-cbx/--compute-next-card-point))))) ;; next checkbox or next card or point-max
+                                                                  (orgtrello-cbx/compute-next-card-point!))))) ;; next checkbox or next card or point-max
     (orgtrello-action/--delete-region orgtrello-action/--starting-point orgtrello-action/--ending-point)))
 
 (defun orgtrello-action/--delete-checkbox-item-region () "Delete the item region"
@@ -238,7 +238,7 @@
          (set-buffer op/--entry-buffer-name)
          (save-excursion
            (when (orgtrello-proxy/--getting-back-to-marker op/--marker)
-                 (-> (orgtrello-data/entry-get-full-metadata!)
+                 (-> (orgtrello-buffer/entry-get-full-metadata!)
                      orgtrello-data/current
                      orgtrello-action/delete-region
                      funcall))))
@@ -254,7 +254,7 @@
          (function* (lambda (&key error-thrown &allow-other-keys)
                       (orgtrello-log/msg *OT/ERROR* "client - Problem during the deletion request to the proxy- error-thrown: %s" error-thrown)
                       (orgtrello-proxy/--cleanup-meta oq/--entity-full-meta)
-                      (orgtrello-elnode/remove-file oq/--entry-file-archived)
+                      (orgtrello-action/delete-file! oq/--entry-file-archived)
                       (throw 'org-trello-timer-go-to-sleep t))))
         (progn
           (orgtrello-log/msg *OT/INFO* orgtrello-query/--query-map)
@@ -312,7 +312,7 @@
     (insert "Timer - Scanning entities...")))
 
 (defun orgtrello-proxy/--timer-delete-lock (lock-file) "Cleanup after the timer has been triggered."
-  (orgtrello-elnode/remove-file lock-file))
+  (orgtrello-action/delete-file! lock-file))
 
 (defun orgtrello-proxy/--consumer-lock-and-scan-entity-files-hierarchically-and-do () "A handler to extract the entity informations from files (in order card, checklist, items)."
   (undo-boundary)

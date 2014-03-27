@@ -926,21 +926,38 @@ CLOSED: [2014-03-24 Mon 00:58]
 - [X] Update metadata command about the board currently connected (sometimes, new information arise)
 - [X] Release notes
 - [X] Version
+* IN-PROGRESS 0.3.8 [87%]
+- [X] Some refactoring
+  - [X] Align sync from trello card tags/labels serialization with org's tags behavior
+  - [X] Refactor open org-trello buffer with title/content
+  - [X] Sanitize functions (move functions to their right namespaces)
+  - [X] Do not override the user's existing tags
+- [X] Provide org-trello-mode-hook - CLOSE https://github.com/org-trello/org-trello/issues/116
+- [X] Open stop all synchronization actions - CLOSE https://github.com/org-trello/org-trello/issues/131
+- [X] Use C-u keychord to create a symmetry use (e.g. `C-c o s` is sync to trello, `C-u C-c o s` is sync from trello)
+  - [X] sync-buffer, sync-to-trello, with C-u, sync-from-trello
+  - [X] assign-me, with C-u, unassign me
+  - [X] A command to 'sync from trello' the current entity without its structure - CLOSE https://github.com/org-trello/org-trello/issues/139
+  - [X] Use C-u on sync-entity-to-trello command to trigger the sync-entity-from-trello
+  - [X] A command to 'sync from trello' the current entity and its structure - CLOSE https://github.com/org-trello/org-trello/issues/140
+  - [X] Use C-u on sync-entity-and-structure-to-trello command to trigger the sync-entity-and-structure-from-trello
+- [X] Some more refactoring
+- [X] Fix bug regarding org keywords which disappeared
+- [X] Version
+- [ ] Release notes
+
 * TODO 0.3.X [0%]
-- [ ] Open stop all synchronization actions - https://github.com/org-trello/org-trello/issues/131
 - [ ] Use active region - https://github.com/org-trello/org-trello/issues/130
-- [ ] Provide org-trello-mode-hook - https://github.com/org-trello/org-trello/issues/116
+- [ ] More fined grained use of the trello api (retrieve only data we use) - https://github.com/org-trello/org-trello/issues/69
+- [ ] Improve sync request policy - https://github.com/org-trello/org-trello/issues/58
+- [ ] One command to sync them all - https://github.com/org-trello/org-trello/issues/59
 - [ ] Extract a data representation for org-trello buffer to decorrelate the file serialization file from the computation (decomplecting -> ease of testing, computation, overall maintenance, sandbox i/o to a minimum)
   - [ ] extracter (from file/region to data)
   - [ ] updater (from data to updated data)
   - [ ] serializer (from data to file/region update)
-- [ ] More fined grained use of the trello api (retrieve only data we use) - https://github.com/org-trello/org-trello/issues/69
 - [ ] Another Disposition about org's buffer - https://github.com/org-trello/org-trello/issues/33
-- [ ] Improve sync request policy - https://github.com/org-trello/org-trello/issues/58
-- [ ] One command to sync them all - https://github.com/org-trello/org-trello/issues/59
 - [ ] Now that elnode is here, this may be simpler to use a fake trello server (use clojure :D)
 - [ ] POC: use a temporary buffer to sync with trello, when done, merge with the user's buffer.
-- [ ] Improve tests coverage - some major and important functionalities are not covered (due at time of ignorance on how to do it, there is only so much one can do!)
 * TODO Template [0%]
 - [ ] Backlog
 - [ ] Version

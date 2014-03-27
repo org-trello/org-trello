@@ -26,7 +26,7 @@
 
 (defun orgtrello-api/get-card (card-id)
   "Detail of a card with id card-id."
-  (orgtrello-hash/make-hash "GET" (format "/cards/%s?action_fields=data&action_memberCreator_fields=username" card-id)))
+  (orgtrello-hash/make-hash "GET" (format "/cards/%s?actions=commentCard&action_fields=data&action_memberCreator_fields=username" card-id)))
 
 (defun orgtrello-api/delete-card (card-id)
   "Delete a card with id card-id."
@@ -105,6 +105,10 @@
 (defun orgtrello-api/get-items (checklist-id)
   "List the checklist items."
   (orgtrello-hash/make-hash "GET" (format "/checklists/%s/checkItems/" checklist-id)))
+
+(defun orgtrello-api/get-item (checklist-id item-id)
+  "List the checklist items."
+  (orgtrello-hash/make-hash "GET" (format "/checklists/%s/checkItems/%s" checklist-id item-id)))
 
 (defun orgtrello-api/delete-item (checklist-id item-id)
   "Delete a item with id item-id"

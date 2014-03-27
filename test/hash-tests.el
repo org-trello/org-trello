@@ -71,3 +71,9 @@
   (expect *ERROR-SYNC-ITEM-MISSING-NAME*      (-> (orgtrello-hash/make-hash-org :users 3 :keyword nil :id :due :position :buffer-name :desc :comments :tags)
                                                   orgtrello-hash/make-hierarchy
                                                   orgtrello-controller/--mandatory-name-ok-p)))
+
+(ert-deftest testing-orgtrello-hash/init-map-from ()
+  (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data ()) (orgtrello-hash/init-map-from nil))))
+
+(expectations (desc "orgtrello-hash/init-map-from")
+              (expect :data (orgtrello-hash/init-map-from :data)))

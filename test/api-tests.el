@@ -18,9 +18,9 @@
   (expect nil                                                                                                                (gethash :params (orgtrello-api/get-cards :board-id))))
 
 (expectations (desc "orgtrello-api/get-card")
-  (expect "GET"                                                                     (gethash :method (orgtrello-api/get-card :card-id)))
-  (expect "/cards/:card-id?action_fields=data&action_memberCreator_fields=username" (gethash :uri    (orgtrello-api/get-card :card-id)))
-  (expect nil                                                                       (gethash :params (orgtrello-api/get-card :card-id))))
+  (expect "GET"                                                                                         (gethash :method (orgtrello-api/get-card :card-id)))
+  (expect "/cards/:card-id?actions=commentCard&action_fields=data&action_memberCreator_fields=username" (gethash :uri    (orgtrello-api/get-card :card-id)))
+  (expect nil                                                                                           (gethash :params (orgtrello-api/get-card :card-id))))
 
 (expectations (desc "orgtrello-api/delete-card")
   (expect "DELETE"           (gethash :method (orgtrello-api/delete-card :card-id)))
@@ -169,8 +169,12 @@
   (expect "/checklists/:checklist-id/checkItems/:item-id" (gethash :uri    (orgtrello-api/delete-item :checklist-id :item-id))))
 
 (expectations (desc "orgtrello-api/get-items")
-  (expect "GET"                                    (gethash :method (orgtrello-api/get-items :checklist-id)))
+  (expect "GET"                                   (gethash :method (orgtrello-api/get-items :checklist-id)))
   (expect "/checklists/:checklist-id/checkItems/" (gethash :uri    (orgtrello-api/get-items :checklist-id))))
+
+(expectations (desc "orgtrello-api/get-item")
+  (expect "GET"                                           (gethash :method (orgtrello-api/get-item :checklist-id :item-id)))
+  (expect "/checklists/:checklist-id/checkItems/:item-id" (gethash :uri    (orgtrello-api/get-item :checklist-id :item-id))))
 
 (expectations (desc "orgtrello-api/get-member")
   (expect "GET"          (gethash :method (orgtrello-api/get-member :id)))

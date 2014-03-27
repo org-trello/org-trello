@@ -173,7 +173,7 @@ This is a list with the following elements:
       1-
       orgtrello-cbx/--org-up!))
 
-(defun orgtrello-cbx/--compute-next-card-point () "Compute the next card's position. Does preserve position. If finding a sibling return the point-at-bol of such sibling, otherwise return the max point in buffer."
+(defun orgtrello-cbx/compute-next-card-point! () "Compute the next card's position. Does preserve position. If a sibling is found, return the point-at-bol, otherwise return the max point in buffer."
   (save-excursion
     (org-back-to-heading)
     (if (org-goto-sibling) (point-at-bol) (point-max))))
@@ -185,7 +185,7 @@ This is a list with the following elements:
 
 (defun orgtrello-cbx/--goto-next-checkbox-with-same-level! (level) "Compute the next checkbox's beginning of line (with the same level). Does not preserve the current position. If hitting a heading or the end of the file, return nil. Otherwise, return the current position."
   (forward-line)
-  (if (= level (orgtrello-data/current-level))
+  (if (= level (orgtrello-buffer/current-level!))
       (point)
       (if (or (org-at-heading-p) (<= (point-max) (point)))
           nil
@@ -193,14 +193,21 @@ This is a list with the following elements:
 
 (defun orgtrello-cbx/--map-checkboxes (level fn-to-execute) "Map over the checkboxes and execute fn when in checkbox. Does not preserve the cursor position. Do not exceed the point-max."
   (orgtrello-cbx/--goto-next-checkbox)
-  (when (< level (orgtrello-data/current-level))
+  (when (< level (orgtrello-buffer/current-level!))
         (funcall fn-to-execute)
         (orgtrello-cbx/--map-checkboxes level fn-to-execute)))
 
 (defun orgtrello-cbx/map-checkboxes (fn-to-execute) "Map over the current checkbox and sync them."
-  (let ((level (orgtrello-data/current-level)))
+  (let ((level (orgtrello-buffer/current-level!)))
     (when (= level *CHECKLIST-LEVEL*) (funcall fn-to-execute))
     (save-excursion (orgtrello-cbx/--map-checkboxes level fn-to-execute)))) ;; then map over the next checkboxes and sync them
+
+(defun orgtrello-cbx/next-checklist-point! ()
+  "Compute the next checklist position"
+  (let ((next-checklist-point (save-excursion (orgtrello-cbx/--goto-next-checkbox-with-same-level! *CHECKLIST-LEVEL*) (point))))
+    (if next-checklist-point
+        next-checklist-point
+      (orgtrello-cbx/compute-next-card-point!))))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-cbx loaded!")
 
