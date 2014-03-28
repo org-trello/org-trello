@@ -21,7 +21,7 @@
   "Query the http-consumer process once to make it trigger a timer"
   (--> `((start . ,start))
     (orgtrello-hash/make-hash "POST" "/timer/" it)
-    (orgtrello-query/--http *ORGTRELLO-PROXY-URL* it t)))
+    (orgtrello-query/--http *ORGTRELLO-PROXY-URL* it *do-sync-query*)))
 
 (defun orgtrello-proxy/--json-read-from-string (data)
   "Read the json data and unhexify them."
