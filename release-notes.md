@@ -1,3 +1,14 @@
+# 0.3.9
+
+- [X] Refactor - Symmetry for all commands where that makes sense (without C-u/with C-u)
+- [X] Refactor - Enforce the api request creation usage with the params as usual
+- [X] Let trello filter out needless data - CLOSE https://github.com/org-trello/org-trello/issues/69
+  - [X] Let trello filter out needless data - get card
+  - [X] Let trello filter out needless data - get checklist
+  - [X] Let trello filter out needless data - get item
+- [X] Upgrade Version
+- [X] Release notes
+
 # 0.3.8
 
 - [X] Some refactoring

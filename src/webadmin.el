@@ -243,7 +243,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
          (scan-fns (if scan-flag (cons 'orgtrello-elnode/archived-scanning-dir list-fns) list-fns)) ;; build the list of functions to create the composed function
          (composed-fn (compose-fn scan-fns)))
     (--map
-     (orgtrello-data/parse-data (read (orgtrello-webadmin/--content-file it)))
+     (orgtrello-proxy/parse-query (read (orgtrello-webadmin/--content-file it)))
      (--mapcat (orgtrello-elnode/list-files (funcall composed-fn it)) levels))))
 
 (defun orgtrello-webadmin/elnode-current-entity (http-con) "A basic display of the list of entities to scan."
@@ -291,6 +291,15 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 (defun orgtrello-webadmin/elnode-delete-entity (http-con) "Deal with actions to do on 'action' (entities)."
   (let ((id (elnode-http-mapping http-con 1)))
     (if (string= "" id) (orgtrello-webadmin/delete-entities!) (orgtrello-webadmin/--delete-entity-with-id id))))
+
+(defvar *ORGTRELLO-QUERY-APP-ROUTES-WEBADMIN*
+  '(("^localhost//proxy/admin/entities/current/\\(.*\\)" . orgtrello-webadmin/elnode-current-entity)
+    ("^localhost//proxy/admin/entities/next/\\(.*\\)" . orgtrello-webadmin/elnode-next-entities)
+    ("^localhost//proxy/admin/entities/delete/\\(.*\\)" . orgtrello-webadmin/elnode-delete-entity)
+    ("^localhost//proxy/admin/\\(.*\\)" . orgtrello-webadmin/--elnode-admin)
+    ;; static files
+    ("^localhost//static/\\(.*\\)/\\(.*\\)" . orgtrello-webadmin/elnode-static-file))    ;; proxy to request trello
+  "Webadmin routes")
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-webadmin loaded!")
 

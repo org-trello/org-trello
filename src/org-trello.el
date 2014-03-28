@@ -1,15 +1,11 @@
-;; Constant to alias t for the code to be clearer.
-(defconst *org-trello/with-save-flag*     t  "Represents the fact that we need to save the buffer after action.")
-(defconst *org-trello/with-no-check-flag* t "Represents the fact that we do not need to make checks before action.")
-
 (defun org-trello/proxy-do (action-label action-fn &optional with-save-flag)
   "Execute sync action."
   (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
    action-label
    '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/control-encoding)
    action-fn
-   (when with-save-flag *do-save-buffer*)
-   (when with-save-flag *do-reload-setup*)))
+   (when with-save-flag 'do-save-buffer)
+   (when with-save-flag 'do-reload-setup)))
 
 (defun org-trello/proxy-do-and-save (action-label action-fn &optional no-check-flag)
   "Execute action and then save the buffer."
@@ -17,15 +13,19 @@
    action-label
    (if no-check-flag nil '(orgtrello-controller/setup-properties orgtrello-controller/control-keys))
    action-fn
-   *do-save-buffer*
-   *do-reload-setup*))
+   'do-save-buffer
+   'do-reload-setup))
 
 (defun org-trello/do (action-fn)
   "First checks, then if controls ok, execute"
-  (interactive)
   (orgtrello-action/controls-or-actions-then-do
    '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/control-encoding)
    action-fn))
+
+(defun org-trello/reload-server ()
+  "Reload the proxy and the webadmin server."
+  (interactive)
+  (orgtrello-server/reload))
 
 (defun org-trello/abort-sync ()
   "Control first, then if ok, add a comment to the current card."
@@ -68,10 +68,12 @@
       (org-trello/proxy-do "Request 'sync org buffer from trello board'" 'orgtrello-controller/do-sync-full-file-from-trello!)
     (org-trello/proxy-do "Request 'sync org buffer to trello board'" 'orgtrello-controller/do-sync-full-file-to-trello!)))
 
-(defun org-trello/kill-entity ()
-  "Control first, then if ok, delete the entity and all its arborescence."
-  (interactive)
-  (org-trello/proxy-do "Request 'delete entity'" 'orgtrello-controller/do-delete-simple))
+(defun org-trello/kill-entity (&optional modifier)
+  "Control first, then if ok, delete the entity and all its arborescence. If used with C-u, kill all buffer entities."
+  (interactive "P")
+  (if modifier
+      (org-trello/kill-all-entities)
+    (org-trello/proxy-do "Request 'delete entity'" 'orgtrello-controller/do-delete-simple)))
 
 (defun org-trello/kill-all-entities ()
   "Control first, then if ok, delete the entity and all its arborescence."
@@ -81,7 +83,7 @@
 (defun org-trello/install-key-and-token ()
   "No control, trigger the setup installation of the key and the read/write token."
   (interactive)
-  (org-trello/proxy-do-and-save "Setup key and token" 'orgtrello-controller/do-install-key-and-token *org-trello/with-no-check-flag*))
+  (org-trello/proxy-do-and-save "Setup key and token" 'orgtrello-controller/do-install-key-and-token 'do-no-checks))
 
 (defun org-trello/install-board-and-lists-ids ()
   "Control first, then if ok, trigger the setup installation of the trello board to sync with."
@@ -93,10 +95,12 @@
   (interactive)
   (org-trello/proxy-do-and-save "Update board information" 'orgtrello-controller/do-update-board-metadata!))
 
-(defun org-trello/jump-to-card ()
-  "Jump to current card in browser."
-  (interactive)
-  (org-trello/do 'orgtrello-controller/jump-to-card!))
+(defun org-trello/jump-to-card (&optional modifier)
+  "Jump to current card in browser. If C-u modifier is used, jump to board."
+  (interactive "P")
+  (if modifier
+      (org-trello/jump-to-trello-board)
+    (org-trello/do 'orgtrello-controller/jump-to-card!)))
 
 (defun org-trello/jump-to-trello-board ()
   "Jump to current trello board."
@@ -123,7 +127,7 @@
 (defun org-trello/delete-setup ()
   "Delete the current setup."
   (interactive)
-  (org-trello/proxy-do "Delete current org-trello setup" 'orgtrello-controller/delete-setup! *org-trello/with-save-flag*))
+  (org-trello/proxy-do "Delete current org-trello setup" 'orgtrello-controller/delete-setup! 'do-save-buffer))
 
 (defun org-trello/--replace-string-prefix-in-string (keybinding string-to-replace)
   (replace-regexp-in-string "#PREFIX#" keybinding string-to-replace t))
@@ -212,7 +216,7 @@
   "Actions to do when org-trello starts."
   (unless partial-mode
           (org-trello/install-local-prefix-mode-keybinding! *ORGTRELLO-MODE-PREFIX-KEYBINDING*)
-          (orgtrello-proxy/start)
+          (orgtrello-server/start)
           ;; buffer-invisibility-spec
           (add-to-invisibility-spec '(org-trello-cbx-property)) ;; for an ellipsis (...) change to '(org-trello-cbx-property . t)
           ;; installing hooks
@@ -230,7 +234,7 @@
   "Actions to do when org-trello stops."
   (unless partial-mode
           (org-trello/remove-local-prefix-mode-keybinding! *ORGTRELLO-MODE-PREFIX-KEYBINDING*)
-          (orgtrello-proxy/stop)
+          (orgtrello-server/stop)
           ;; remove the invisible property names
           (remove-from-invisibility-spec '(org-trello-cbx-property)) ;; for an ellipsis (...) change to '(org-trello-cbx-property . t)
           ;; installing hooks

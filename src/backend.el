@@ -14,7 +14,7 @@
        (-reduce-from (lambda (acc-list checklist-id)
                        (cons (-> checklist-id
                                  orgtrello-api/get-checklist
-                                 (orgtrello-query/http-trello *do-sync-query*)) acc-list))
+                                 (orgtrello-query/http-trello 'do-sync-query)) acc-list))
                      nil
                      it)                                                                         ;; retrieve the trello checklist
        (sort it (lambda (a b) (when (<= (orgtrello-data/entity-position a) (orgtrello-data/entity-position b)) 1)))))          ;; sort them by pos to get back to the right order (reversed)
