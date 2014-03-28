@@ -7,6 +7,7 @@
 (defun orgtrello-proxy/http (query-map &optional sync success-callback error-callback)
   "Query the proxy for the trello api."
   (--> query-map
+    (orgtrello-query/--prepare-query-params! it)
     (orgtrello-hash/make-hash "POST" "/trello/" it)
     (orgtrello-query/--http *ORGTRELLO-PROXY-URL* it sync success-callback error-callback)))
 
@@ -54,7 +55,7 @@
 (defun orgtrello-proxy/--elnode-proxy (http-con)
   "Deal with request to trello (for creation/sync request, use orgtrello-proxy/--elnode-proxy-producer)."
   (orgtrello-log/msg *OT/TRACE* "Proxy - Request received. Transmitting...")
-  (let* ((query-map-wrapped    (orgtrello-proxy/--extract-trello-query http-con)) ;; wrapped query is mandatory
+  (let* ((query-map-wrapped    (orgtrello-proxy/--extract-trello-query http-con 'unhexify)) ;; wrapped query is mandatory, we unhexify the wrapped query
          (query-map-data       (orgtrello-data/parse-data query-map-wrapped))
          (position             (orgtrello-data/entity-position query-map-data)) ;; position is mandatory
          (buffer-name          (orgtrello-data/entity-buffername query-map-data)) ;; buffer-name is mandatory
