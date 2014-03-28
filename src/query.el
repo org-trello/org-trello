@@ -50,10 +50,10 @@
         ((string= "DELETE" method)                           'orgtrello-query/--delete)))
 
 (defvar orgtrello-query/--hexify
-  (if (version< emacs-version "24.3") 'orgtrello-query/--url-hexify-string 'url-hexify-string)
+  (if (version< emacs-version "24.3") 'orgtrello-query/url-hexify-string 'url-hexify-string)
   "Function to use to hexify depending on emacs version.")
 
-(defun orgtrello-query/--url-hexify-string (value) "Wrapper around url-hexify-string (older emacs 24 version do not map ! to %21)."
+(defun orgtrello-query/url-hexify-string (value) "Wrapper around url-hexify-string (older emacs 24 version do not map ! to %21)."
        (->> value
          url-hexify-string
          (replace-regexp-in-string "!" "%21")
