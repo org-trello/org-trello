@@ -421,7 +421,7 @@
    'orgtrello-proxy/--consumer-lock-and-scan-entity-files-hierarchically-and-do
    nil ;; cannot save the buffer
    nil ;; do not need to reload the org-trello setup
-   do-not-display-log));; do no want to log
+   'do-not-display-log));; do no want to log
 
 (defun orgtrello-proxy/--prepare-filesystem ()
   "Prepare the filesystem for every level."
