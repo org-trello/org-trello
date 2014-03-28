@@ -24,11 +24,16 @@
 
 (defun orgtrello-api/get-cards (board-id)
   "cards of a board"
-  (orgtrello-hash/make-hash "GET" (format "/boards/%s/cards?actions=commentCard&field=closed,desc,due,idBoard,idChecklists,idList,idMembers,name,pos" board-id)))
+  (orgtrello-hash/make-hash "GET" (format "/boards/%s/cards" board-id)
+                            '(("actions" .  "commentCard")
+                              ("field" . "closed,desc,due,idBoard,idChecklists,idList,idMembers,name,pos"))))
 
 (defun orgtrello-api/get-card (card-id)
   "Detail of a card with id card-id."
-  (orgtrello-hash/make-hash "GET" (format "/cards/%s?actions=commentCard&action_fields=data&action_memberCreator_fields=username" card-id)))
+  (orgtrello-hash/make-hash "GET" (format "/cards/%s" card-id)
+                            '(("actions" . "commentCard")
+                              ("action_fields" . "data")
+                              ("action_memberCreator_fields" . "username"))))
 
 (defun orgtrello-api/delete-card (card-id)
   "Delete a card with id card-id."
