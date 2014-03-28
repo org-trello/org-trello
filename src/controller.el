@@ -385,21 +385,21 @@
           (save-buffer))
         (orgtrello-log/msg *OT/INFO* "Synchronizing the trello and org data merge - done!"))))))
 
-(defun orgtrello-controller/--dispatch-sync-request (entity)
+(defun orgtrello-controller/--dispatch-sync-request (entity &optional with-filter)
   "Dispatch the sync request creation depending on the nature of the entry."
   (let* ((current-meta (orgtrello-data/current entity))
          (entity-id    (orgtrello-data/entity-id current-meta))
          (parent-id    (-> entity orgtrello-data/parent orgtrello-data/entity-id))
          (level        (orgtrello-data/entity-level current-meta)))
     (cond ((= level *CARD-LEVEL*)      (orgtrello-api/get-card entity-id))
-          ((= level *CHECKLIST-LEVEL*) (orgtrello-api/get-checklist entity-id))
+          ((= level *CHECKLIST-LEVEL*) (orgtrello-api/get-checklist entity-id with-filter))
           ((= level *ITEM-LEVEL*)      (orgtrello-api/get-item parent-id entity-id)))))
 
 (defun orgtrello-controller/do-sync-entity-from-trello! (&optional sync)
   "Entity (card/checklist/item) synchronization (without its structure) from trello."
   (orgtrello-log/msg *OT/INFO* "Synchronizing the trello entity to the org-mode file...")
   (-> (orgtrello-buffer/entry-get-full-metadata!)
-    orgtrello-controller/--dispatch-sync-request
+    (orgtrello-controller/--dispatch-sync-request 'with-filter)
     (orgtrello-controller/--update-query-with-org-metadata (point) (buffer-name) nil 'orgtrello-controller/--sync-entity-to-buffer-with-trello-data-callback)
     (orgtrello-proxy/http sync)))
 

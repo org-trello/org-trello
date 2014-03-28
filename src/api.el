@@ -99,9 +99,13 @@
   "List the checklists of a card"
   (orgtrello-api/make-query "GET" (format "/cards/%s/checklists" card-id)))
 
-(defun orgtrello-api/get-checklist (checklist-id)
+(defun orgtrello-api/get-checklist (checklist-id &optional without-items)
   "Retrieve all the information from a checklist"
-  (orgtrello-api/make-query "GET" (format "/checklists/%s" checklist-id)))
+  (let ((default-params '(("fields" . "name,pos")
+                          ("checkItem_fields" . "name,pos,state"))))
+    (orgtrello-api/make-query "GET"
+                              (format "/checklists/%s" checklist-id)
+                              (if without-items (cons '("checkItems" . "none") default-params) default-params))))
 
 (defun orgtrello-api/delete-checklist (checklist-id)
   "Delete a checklist with checklist-id"

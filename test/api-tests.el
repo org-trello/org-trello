@@ -139,10 +139,15 @@
   (expect "/cards/:card-id/checklists" (gethash :uri    (orgtrello-api/get-checklists :card-id)))
   (expect nil                          (gethash :params (orgtrello-api/get-checklists :card-id))))
 
-(expectations (desc "orgtrello-api/get-checklist")
-  (expect "GET"                        (gethash :method (orgtrello-api/get-checklist :checklist-id)))
-  (expect "/checklists/:checklist-id" (gethash :uri    (orgtrello-api/get-checklist :checklist-id)))
-  (expect nil                         (gethash :params (orgtrello-api/get-checklist :checklist-id))))
+(expectations
+  (desc "orgtrello-api/get-checklist")
+  (expect "GET"                                                                                      (gethash :method (orgtrello-api/get-checklist :checklist-id)))
+  (expect "/checklists/:checklist-id"                                                                (gethash :uri    (orgtrello-api/get-checklist :checklist-id)))
+  (expect '(("fields" . "name,pos") ("checkItem_fields" . "name,pos,state"))                         (gethash :params (orgtrello-api/get-checklist :checklist-id))))
+
+(expectations
+  (desc "orgtrello-api/get-checklist - no items required")
+  (expect '(("checkItems" . "none") ("fields" . "name,pos") ("checkItem_fields" . "name,pos,state")) (gethash :params (orgtrello-api/get-checklist :checklist-id 'no-items))))
 
 (expectations (desc "orgtrello-api/add-items - 1")
   (expect "POST"                                     (gethash :method (orgtrello-api/add-items :checklist-id "item-name" t)))
