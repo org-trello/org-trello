@@ -97,7 +97,7 @@
 
 (defun org-trello/jump-to-card (&optional modifier)
   "Jump to current card in browser. If C-u modifier is used, jump to board."
-  (interactive)
+  (interactive "P")
   (if modifier
       (org-trello/jump-to-trello-board)
     (org-trello/do 'orgtrello-controller/jump-to-card!)))
