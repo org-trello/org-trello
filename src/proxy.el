@@ -74,7 +74,7 @@
 (defun orgtrello-proxy/--elnode-proxy-producer (http-con)
   "A handler which is an entity informations producer on files under the docroot/level-entities/"
   (orgtrello-log/msg *OT/TRACE* "Proxy-producer - Request received. Generating entity file...")
-  (let* ((query-map-wrapped    (orgtrello-proxy/--extract-trello-query http-con 'unhexify)) ;; wrapped query is mandatory ;; FIXME need to recurse the all result
+  (let* ((query-map-wrapped    (orgtrello-proxy/--extract-trello-query http-con 'unhexify)) ;; wrapped query is mandatory
          (query-map-data       (orgtrello-data/parse-data query-map-wrapped))
          (position             (orgtrello-data/entity-position query-map-data))          ;; position is mandatory
          (buffer-name          (orgtrello-data/entity-buffername query-map-data))        ;; buffer-name is mandatory
