@@ -18,7 +18,9 @@
 
 (defun orgtrello-api/get-board (id)
   "Retrieve the boards of the current user."
-  (orgtrello-hash/make-hash "GET" (format "/boards/%s" id) '(("memberships" . "active") ("memberships_member" . "true") ("fields" . "name,memberships,closed,labelNames"))))
+  (orgtrello-hash/make-hash "GET" (format "/boards/%s" id) '(("memberships" . "active")
+                                                             ("memberships_member" . "true")
+                                                             ("fields" . "name,memberships,closed,labelNames"))))
 
 (defun orgtrello-api/get-cards (board-id)
   "cards of a board"
