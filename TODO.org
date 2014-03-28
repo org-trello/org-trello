@@ -947,21 +947,18 @@ CLOSED: [2014-03-27 Thu 18:20]
 - [X] Version
 - [X] Release notes
 
-* IN-PROGRESS 0.3.9 [16%]
+* IN-PROGRESS 0.3.9 [60%]
 - [X] Refactor - Symmetry for all commands where that makes sense (without C-u/with C-u)
-- [-] Refactor - Enforce the api request creation usage with the params as usual
-- [-] Let trello filter out needless data - https://github.com/org-trello/org-trello/issues/69
+- [X] Refactor - Enforce the api request creation usage with the params as usual
+- [X] Let trello filter out needless data - CLOSE https://github.com/org-trello/org-trello/issues/69
   - [X] Let trello filter out needless data - get card
   - [X] Let trello filter out needless data - get checklist
-  - [ ] Let trello filter out needless data - get item
-  - [ ] Let trello filter out needless data - get board
-  - [ ] Let trello filter out needless data - get cards
-  - [ ] Let trello filter out needless data - get checklists
-- [ ] Improve sync request policy - https://github.com/org-trello/org-trello/issues/58
+  - [X] Let trello filter out needless data - get item
 - [ ] Version
 - [ ] Release notes
 
 * TODO 0.3.X [0%]
+- [ ] Improve sync request policy - https://github.com/org-trello/org-trello/issues/58
 - [ ] Use active region - https://github.com/org-trello/org-trello/issues/130
 - [ ] More fined grained use of the trello api (retrieve only data we use) - https://github.com/org-trello/org-trello/issues/69
 - [ ] One command to sync them all - https://github.com/org-trello/org-trello/issues/59

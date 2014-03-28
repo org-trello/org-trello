@@ -33,7 +33,7 @@
   "cards of a board"
   (orgtrello-api/make-query "GET" (format "/boards/%s/cards" board-id)
                             '(("actions" .  "commentCard")
-                              ("field" . "closed,desc,due,idBoard,idChecklists,idList,idMembers,name,pos"))))
+                              ("fields" . "closed,desc,due,idBoard,idChecklists,idList,idMembers,name,pos"))))
 
 (defun orgtrello-api/get-card (card-id)
   "Detail of a card with id card-id."
@@ -101,7 +101,7 @@
 
 (defun orgtrello-api/get-checklist (checklist-id &optional without-items)
   "Retrieve all the information from a checklist"
-  (let ((default-params '(("fields" . "name,pos")
+  (let ((default-params '(("fields" . "name,pos,idCard") ;; the id card is useful for us to determine if we deal with a checklist
                           ("checkItem_fields" . "name,pos,state"))))
     (orgtrello-api/make-query "GET"
                               (format "/checklists/%s" checklist-id)
@@ -127,7 +127,7 @@
 
 (defun orgtrello-api/get-item (checklist-id item-id)
   "List the checklist items."
-  (orgtrello-api/make-query "GET" (format "/checklists/%s/checkItems/%s" checklist-id item-id)))
+  (orgtrello-api/make-query "GET" (format "/checklists/%s/checkItems/%s" checklist-id item-id) '(("fields" . "name,pos,state"))))
 
 (defun orgtrello-api/delete-item (checklist-id item-id)
   "Delete a item with id item-id"
