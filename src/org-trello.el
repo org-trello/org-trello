@@ -22,6 +22,11 @@
    '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/control-encoding)
    action-fn))
 
+(defun org-trello/reload-server ()
+  "Reload the proxy and the webadmin server."
+  (interactive)
+  (orgtrello-server/reload))
+
 (defun org-trello/abort-sync ()
   "Control first, then if ok, add a comment to the current card."
   (interactive)
@@ -211,7 +216,7 @@
   "Actions to do when org-trello starts."
   (unless partial-mode
           (org-trello/install-local-prefix-mode-keybinding! *ORGTRELLO-MODE-PREFIX-KEYBINDING*)
-          (orgtrello-proxy/start)
+          (orgtrello-server/start)
           ;; buffer-invisibility-spec
           (add-to-invisibility-spec '(org-trello-cbx-property)) ;; for an ellipsis (...) change to '(org-trello-cbx-property . t)
           ;; installing hooks
@@ -229,7 +234,7 @@
   "Actions to do when org-trello stops."
   (unless partial-mode
           (org-trello/remove-local-prefix-mode-keybinding! *ORGTRELLO-MODE-PREFIX-KEYBINDING*)
-          (orgtrello-proxy/stop)
+          (orgtrello-server/stop)
           ;; remove the invisible property names
           (remove-from-invisibility-spec '(org-trello-cbx-property)) ;; for an ellipsis (...) change to '(org-trello-cbx-property . t)
           ;; installing hooks

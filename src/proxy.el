@@ -1,28 +1,22 @@
-(defvar *ORGTRELLO-PROXY-HOST* "localhost" "proxy host")
-(defvar *ORGTRELLO-PROXY-PORT* nil         "proxy port")
-(defvar *ORGTRELLO-PROXY-URL*  nil         "proxy url")
-
-(defvar *ORGTRELLO-PROXY-DEFAULT-PORT* 9876 "Default proxy port") (setq *ORGTRELLO-PROXY-PORT* *ORGTRELLO-PROXY-DEFAULT-PORT*)
-
 (defun orgtrello-proxy/http (query-map &optional sync success-callback error-callback)
   "Query the proxy for the trello api."
   (--> query-map
     (orgtrello-query/--prepare-query-params! it)
     (orgtrello-api/make-query "POST" "/trello/" it)
-    (orgtrello-query/--http *ORGTRELLO-PROXY-URL* it sync success-callback error-callback)))
+    (orgtrello-query/--http *ORGTRELLO-SERVER-URL* it sync success-callback error-callback)))
 
 (defun orgtrello-proxy/http-producer (query-map &optional sync)
   "Query the proxy producer"
   (--> query-map
     (orgtrello-query/--prepare-query-params! it)
     (orgtrello-api/make-query "POST" "/producer/" it)
-    (orgtrello-query/--http *ORGTRELLO-PROXY-URL* it sync)))
+    (orgtrello-query/--http *ORGTRELLO-SERVER-URL* it sync)))
 
 (defun orgtrello-proxy/http-consumer (start)
   "Query the http-consumer process once to make it trigger a timer"
   (--> `((start . ,start))
     (orgtrello-api/make-query "POST" "/timer/" it)
-    (orgtrello-query/--http *ORGTRELLO-PROXY-URL* it 'do-sync-query)))
+    (orgtrello-query/--http *ORGTRELLO-SERVER-URL* it 'do-sync-query)))
 
 (defun orgtrello-proxy/--json-read-from-string (data)
   "Read the json data and unhexify them."
@@ -475,63 +469,15 @@
   (orgtrello-action/msg-controls-or-actions-then-do msg control-or-action-fns fn-to-execute save-buffer-p reload-setup-p nolog-p)   ;; Execute as usual
   (orgtrello-proxy/timer-start))
 
-(orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-proxy loaded!")
-
-;; #################### orgtrello-proxy installation
-
-(defvar *ORGTRELLO-QUERY-APP-ROUTES*
+(defvar *ORGTRELLO-QUERY-APP-ROUTES-PROXY*
   '(;; proxy to request trello
-    ("^localhost//proxy/admin/entities/current/\\(.*\\)" . orgtrello-webadmin/elnode-current-entity)
-    ("^localhost//proxy/admin/entities/next/\\(.*\\)" . orgtrello-webadmin/elnode-next-entities)
-    ("^localhost//proxy/admin/entities/delete/\\(.*\\)" . orgtrello-webadmin/elnode-delete-entity)
-    ("^localhost//proxy/admin/\\(.*\\)" . orgtrello-webadmin/--elnode-admin)
-    ;; proxy to request trello
     ("^localhost//proxy/trello/\\(.*\\)" . orgtrello-proxy/--elnode-proxy)
     ;; proxy producer to receive async creation request
     ("^localhost//proxy/producer/\\(.*\\)" . orgtrello-proxy/--elnode-proxy-producer)
     ;; proxy to request trello
-    ("^localhost//proxy/timer/\\(.*\\)" . orgtrello-proxy/--elnode-timer)
-    ;; static files
-    ("^localhost//static/\\(.*\\)/\\(.*\\)" . orgtrello-webadmin/elnode-static-file))
-  "Org-trello dispatch routes for the webserver")
+    ("^localhost//proxy/timer/\\(.*\\)" . orgtrello-proxy/--elnode-timer))
+  "Org-trello dispatch routes for the proxy")
 
-(defun orgtrello-proxy/--proxy-handler (http-con)
-  "Proxy handler."
-  (elnode-hostpath-dispatcher http-con *ORGTRELLO-QUERY-APP-ROUTES*))
-
-(defun orgtrello-proxy/--start (port host)
-  "Starting the proxy."
-  (orgtrello-log/msg *OT/TRACE* "Proxy-server starting...")
-  (elnode-start 'orgtrello-proxy/--proxy-handler :port port :host host)
-  (setq elnode--do-error-logging nil)
-  (orgtrello-log/msg *OT/TRACE* "Proxy-server started!"))
-
-(defun orgtrello-proxy/start ()
-  "Start the proxy."
-  ;; update with the new port the user possibly changed
-  (setq *ORGTRELLO-PROXY-URL* (format "http://%s:%d/proxy" *ORGTRELLO-PROXY-HOST* *ORGTRELLO-PROXY-PORT*))
-  ;; start the proxy
-  (orgtrello-proxy/--start *ORGTRELLO-PROXY-PORT* *ORGTRELLO-PROXY-HOST*)
-  ;; and the timer
-  (orgtrello-proxy/timer-start))
-
-(defun orgtrello-proxy/stop ()
-  "Stopping the proxy."
-  (orgtrello-log/msg *OT/TRACE* "Proxy-server stopping...")
-  ;; stop the timer
-  (orgtrello-proxy/timer-stop)
-  ;; then stop the proxy
-  (elnode-stop *ORGTRELLO-PROXY-PORT*)
-  (orgtrello-log/msg *OT/TRACE* "Proxy-server stopped!"))
-
-(defun orgtrello-proxy/reload ()
-  "Reload the proxy server."
-  (interactive)
-  (orgtrello-proxy/stop)
-  ;; stop the default port (only useful if the user changed from the default port)
-  (elnode-stop *ORGTRELLO-PROXY-DEFAULT-PORT*)
-  (orgtrello-proxy/start))
-
-(orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-proxy-install loaded!")
+(orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-proxy loaded!")
 
 
