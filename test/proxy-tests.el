@@ -31,7 +31,14 @@
                               (:callback "orgtrello-controller/--sync-buffer-with-trello-data-callback" :buffername "todo-TESTS-simple.org" :position nil :params
                                          ((actions . "commentCard")
                                           (field . "closed,desc,due,idBoard,idChecklists,idList,idMembers,name,pos"))
-                                         :uri "/boards/51d99bbc1e1d8988390047f2/cards" :method "GET" :sync t :name "some name"))
+                                         :uri "/boards/51d99bbc1e1d8988390047f2/cards"
+                                         :method "GET"
+                                         :sync t
+                                         :name "some name"
+                                         :id "some id"
+                                         :action "some action"
+                                         :level 3
+                                         :start nil))
                 (orgtrello-proxy/--parse-query '((callback . "orgtrello-controller/--sync-buffer-with-trello-data-callback")
                                                  (buffername . "todo-TESTS-simple.org")
                                                  (position)
@@ -39,4 +46,8 @@
                                                  (uri . "/boards/51d99bbc1e1d8988390047f2/cards")
                                                  (method . "GET")
                                                  (sync . t)
-                                                 (name . "some name"))))))
+                                                 (name . "some name")
+                                                 (id . "some id")
+                                                 (action . "some action")
+                                                 (level . 3)
+                                                 (start . nil))))))

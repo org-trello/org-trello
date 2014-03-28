@@ -59,7 +59,11 @@
                                                                         (buffername . :buffername)
                                                                         (position . :position)
                                                                         (sync . :sync)
-                                                                        (name . :name)))
+                                                                        (name . :name)
+                                                                        (id . :id)
+                                                                        (action . :action)
+                                                                        (level . :level)
+                                                                        (start . :start)))
   "Constant to map from assoc list to org-trello query map.")
 
 (defun orgtrello-proxy/--transcode-key (key)
@@ -100,7 +104,7 @@
   "A handler which is an entity informations producer on files under the docroot/level-entities/"
   (orgtrello-log/msg *OT/TRACE* "Proxy-producer - Request received. Generating entity file...")
   (let* ((query-map-wrapped    (orgtrello-proxy/--extract-trello-query http-con 'unhexify)) ;; wrapped query is mandatory
-         (query-map-data       (orgtrello-data/parse-data query-map-wrapped))
+         (query-map-data       (orgtrello-proxy/--parse-query query-map-wrapped))
          (position             (orgtrello-data/entity-position query-map-data))          ;; position is mandatory
          (buffer-name          (orgtrello-data/entity-buffername query-map-data))        ;; buffer-name is mandatory
          (level                (orgtrello-data/entity-level query-map-data))
@@ -329,7 +333,7 @@
     (orgtrello-proxy/--deal-with-entity-action (-> file
                                                  orgtrello-proxy/--read-file-content
                                                  read
-                                                 orgtrello-data/parse-data) file)))
+                                                 orgtrello-proxy/--parse-query) file)))
 
 (defun orgtrello-proxy/--deal-with-directory-action (level directory)
   "Given a directory, list the files and take the first one (entity) and do some action on it with trello. Call again if it remains other entities."
@@ -435,7 +439,7 @@
 
 (defun orgtrello-proxy/--elnode-timer (http-con)
   "A process on elnode to trigger even regularly."
-  (let* ((query-map     (-> http-con orgtrello-proxy/--extract-trello-query orgtrello-data/parse-data))
+  (let* ((query-map     (-> http-con orgtrello-proxy/--extract-trello-query orgtrello-proxy/--parse-query))
          (start-or-stop (orgtrello-data/entity-start query-map)))
     (if start-or-stop
         ;; cleanup before starting anew

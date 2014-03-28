@@ -243,7 +243,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
          (scan-fns (if scan-flag (cons 'orgtrello-elnode/archived-scanning-dir list-fns) list-fns)) ;; build the list of functions to create the composed function
          (composed-fn (compose-fn scan-fns)))
     (--map
-     (orgtrello-data/parse-data (read (orgtrello-webadmin/--content-file it)))
+     (orgtrello-proxy/--parse-query (read (orgtrello-webadmin/--content-file it)))
      (--mapcat (orgtrello-elnode/list-files (funcall composed-fn it)) levels))))
 
 (defun orgtrello-webadmin/elnode-current-entity (http-con) "A basic display of the list of entities to scan."
