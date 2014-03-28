@@ -947,14 +947,14 @@ CLOSED: [2014-03-27 Thu 18:20]
 - [X] Version
 - [X] Release notes
 
-* IN-PROGRESS 0.3.9 [60%]
+* IN-PROGRESS 0.3.9 [80%]
 - [X] Refactor - Symmetry for all commands where that makes sense (without C-u/with C-u)
 - [X] Refactor - Enforce the api request creation usage with the params as usual
 - [X] Let trello filter out needless data - CLOSE https://github.com/org-trello/org-trello/issues/69
   - [X] Let trello filter out needless data - get card
   - [X] Let trello filter out needless data - get checklist
   - [X] Let trello filter out needless data - get item
-- [ ] Version
+- [X] Upgrade Version
 - [ ] Release notes
 
 * TODO 0.3.X [0%]
