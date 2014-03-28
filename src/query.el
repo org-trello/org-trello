@@ -65,7 +65,7 @@
 (defun orgtrello-query/--prepare-params-assoc! (params) "Prepare params as association list."
   (--map (let ((value (cdr it))) (if (and value (stringp value)) `(,(car it) . ,(funcall orgtrello-query/--hexify value)) it)) params))
 
-(defun orgtrello-query/--read-data (data) "Prepare params as association list."
+(defun orgtrello-query/read-data (data) "Prepare params as association list."
   (--map (let ((value (cdr it))) (if (and value (stringp value)) `(,(car it) . ,(url-unhex-string value)) it)) data))
 
 (defun orgtrello-query/--prepare-query-params! (params) "Given an association list of data, prepare the values of the params."

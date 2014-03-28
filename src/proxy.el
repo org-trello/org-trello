@@ -25,7 +25,7 @@
 
 (defun orgtrello-proxy/--json-read-from-string (data)
   "Read the json data and unhexify them."
-  (-> data json-read-from-string orgtrello-query/--read-data))
+  (-> data json-read-from-string orgtrello-query/read-data))
 
 (defun orgtrello-proxy/--unhexify-data (params &optional unhexify-flag)
   "Given a params object, unhexify the content if need be."
