@@ -40,7 +40,8 @@
   (orgtrello-api/make-query "GET" (format "/cards/%s" card-id)
                             '(("actions" . "commentCard")
                               ("action_fields" . "data")
-                              ("action_memberCreator_fields" . "username"))))
+                              ("action_memberCreator_fields" . "username")
+                              ("fields" .  "closed,dateLastActivity,desc,due,idChecklists,idList,idMembers,labels,name,pos"))))
 
 (defun orgtrello-api/delete-card (card-id)
   "Delete a card with id card-id."

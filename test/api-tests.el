@@ -26,7 +26,11 @@
 (expectations (desc "orgtrello-api/get-card")
   (expect "GET"                                                                                                  (gethash :method (orgtrello-api/get-card :card-id)))
   (expect "/cards/:card-id"                                                                                      (gethash :uri    (orgtrello-api/get-card :card-id)))
-  (expect '(("actions" . "commentCard") ("action_fields" . "data") ("action_memberCreator_fields" . "username")) (gethash :params (orgtrello-api/get-card :card-id))))
+  (expect '(("actions" . "commentCard")
+            ("action_fields" . "data")
+            ("action_memberCreator_fields" . "username")
+            ("fields" . "closed,dateLastActivity,desc,due,idChecklists,idList,idMembers,labels,name,pos"))
+          (gethash :params (orgtrello-api/get-card :card-id))))
 
 (expectations (desc "orgtrello-api/delete-card")
   (expect "DELETE"           (gethash :method (orgtrello-api/delete-card :card-id)))
