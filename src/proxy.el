@@ -64,7 +64,7 @@
          (sync                 (orgtrello-data/entity-sync query-map-data)) ;; there is a possibility to enforce the sync between proxy and client
          (query-map            (orgtrello-proxy/--compute-trello-query query-map-data)) ;; extracting the query
          (name                 (orgtrello-data/entity-name query-map-data))) ;; extracting the name of the entity (optional)
-    (orgtrello-query/http-trello query-map sync (when standard-callback-fn (funcall standard-callback-fn buffer-name position name)))
+    (orgtrello-query/http-trello query-map sync (when standard-callback-fn (funcall standard-callback-fn buffer-name position name))) ;; callback-fn is not a callback, it creates one
     (orgtrello-proxy/response-ok http-con)))
 
 (defun orgtrello-proxy/--compute-metadata-filename (root-dir buffer-name position)
