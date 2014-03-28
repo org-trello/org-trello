@@ -52,11 +52,36 @@
   "OK response from the proxy to the client." ;; all is good
   (orgtrello-proxy/--response http-con '((status . "ok"))))
 
+(defconst *ORGTRELLO-PROXY-QUERY-KEY* (orgtrello-hash/make-properties '((params . :params)
+                                                                        (method . :method)
+                                                                        (uri    . :uri)
+                                                                        (callback . :callback)
+                                                                        (buffername . :buffername)
+                                                                        (position . :position)
+                                                                        (sync . :sync)
+                                                                        (name . :name)))
+  "Constant to map from assoc list to org-trello query map.")
+
+(defun orgtrello-proxy/--transcode-key (key)
+  "Retrieve the corresponding key."
+  (gethash key *ORGTRELLO-PROXY-QUERY-KEY*))
+
+(defun orgtrello-proxy/--parse-query (entities)
+  "Given a query wrapped, convert into org-trello entity"
+  (cond ((eq :params entities)  entities) ;; return params as is
+        (t                      (--reduce-from (let ((key (car it))
+                                                     (val (cdr it)))
+                                                 (-when-let (new-key (orgtrello-proxy/--transcode-key key))
+                                                   (puthash new-key val acc))
+                                                 acc)
+                                               (orgtrello-hash/empty-hash)
+                                               entities))))
+
 (defun orgtrello-proxy/--elnode-proxy (http-con)
   "Deal with request to trello (for creation/sync request, use orgtrello-proxy/--elnode-proxy-producer)."
   (orgtrello-log/msg *OT/TRACE* "Proxy - Request received. Transmitting...")
   (let* ((query-map-wrapped    (orgtrello-proxy/--extract-trello-query http-con 'unhexify)) ;; wrapped query is mandatory, we unhexify the wrapped query
-         (query-map-data       (orgtrello-data/parse-data query-map-wrapped))
+         (query-map-data       (orgtrello-proxy/--parse-query query-map-wrapped))
          (position             (orgtrello-data/entity-position query-map-data)) ;; position is mandatory
          (buffer-name          (orgtrello-data/entity-buffername query-map-data)) ;; buffer-name is mandatory
          (standard-callback    (orgtrello-data/entity-callback query-map-data)) ;; there is the possibility to transmit the callback from the client to the proxy

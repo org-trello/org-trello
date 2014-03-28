@@ -947,8 +947,9 @@ CLOSED: [2014-03-27 Thu 18:20]
 - [X] Version
 - [X] Release notes
 
-* IN-PROGRESS 0.3.9 [25%]
+* IN-PROGRESS 0.3.9 [40%]
 - [X] Refactor - Symmetry for all commands where that makes sense (without C-u/with C-u)
+- [X] Refactor - Enforce the api request creation usage with the params as usual
 - [ ] Improve sync request policy - https://github.com/org-trello/org-trello/issues/58
 - [ ] Version
 - [ ] Release notes

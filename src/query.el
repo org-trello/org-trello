@@ -72,12 +72,22 @@
     (replace-regexp-in-string "*" "%2A")))
 
 (defun orgtrello-query/--prepare-params-assoc! (params)
-  "Prepare params as association list."
-  (--map (let ((value (cdr it))) (if (and value (stringp value)) `(,(car it) . ,(funcall orgtrello-query/--hexify value)) it)) params))
+  "Prepare params as association list (deal with nested list too)."
+  (--map (let ((key   (car it))
+               (value (cdr it)))
+           (cond ((and value (stringp value)) `(,key . ,(funcall orgtrello-query/--hexify value)))
+                 ((and value (listp value))   `(,key . ,(orgtrello-query/--prepare-params-assoc! value)))
+                 (t                            it)))
+         params))
 
 (defun orgtrello-query/read-data (data)
-  "Prepare params as association list."
-  (--map (let ((value (cdr it))) (if (and value (stringp value)) `(,(car it) . ,(url-unhex-string value)) it)) data))
+  "Prepare params as association list (deal with nested list too)."
+  (--map (let ((key   (car it))
+               (value (cdr it)))
+           (cond ((and value (stringp value)) `(,key . ,(url-unhex-string value)))
+                 ((and value (listp value))   `(,key . ,(orgtrello-query/read-data value)))
+                 (t  it)))
+         data))
 
 (defun orgtrello-query/--prepare-query-params! (params)
   "Given an association list of data, prepare the values of the params."
@@ -88,14 +98,14 @@
 
 (defun orgtrello-query/--http (server query-map &optional sync success-callback error-callback authentication-p)
   "HTTP query the server with the query-map."
-  (let* ((oq/--fn-dispatch (-> query-map
-                             orgtrello-data/entity-method
-                             orgtrello-query/--dispatch-http-query)))
+  (let* ((dispatch-http-query-fn (-> query-map
+                                   orgtrello-data/entity-method
+                                   orgtrello-query/--dispatch-http-query)))
     (if sync
         (progn ;; synchronous request
           (puthash :sync t query-map)
-          (request-response-data (funcall oq/--fn-dispatch server query-map success-callback error-callback authentication-p)))
-      (funcall oq/--fn-dispatch server query-map success-callback error-callback authentication-p))))
+          (request-response-data (funcall dispatch-http-query-fn server query-map success-callback error-callback authentication-p)))
+      (funcall dispatch-http-query-fn server query-map success-callback error-callback authentication-p))))
 
 (defun orgtrello-query/http-trello (query-map &optional sync success-callback error-callback)
   "Query the trello api."
