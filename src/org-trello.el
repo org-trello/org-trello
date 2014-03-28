@@ -18,7 +18,6 @@
 
 (defun org-trello/do (action-fn)
   "First checks, then if controls ok, execute"
-  (interactive)
   (orgtrello-action/controls-or-actions-then-do
    '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/control-encoding)
    action-fn))
