@@ -8,20 +8,20 @@
   "Query the proxy for the trello api."
   (--> query-map
     (orgtrello-query/--prepare-query-params! it)
-    (orgtrello-hash/make-hash "POST" "/trello/" it)
+    (orgtrello-api/make-query "POST" "/trello/" it)
     (orgtrello-query/--http *ORGTRELLO-PROXY-URL* it sync success-callback error-callback)))
 
 (defun orgtrello-proxy/http-producer (query-map &optional sync)
   "Query the proxy producer"
   (--> query-map
     (orgtrello-query/--prepare-query-params! it)
-    (orgtrello-hash/make-hash "POST" "/producer/" it)
+    (orgtrello-api/make-query "POST" "/producer/" it)
     (orgtrello-query/--http *ORGTRELLO-PROXY-URL* it sync)))
 
 (defun orgtrello-proxy/http-consumer (start)
   "Query the http-consumer process once to make it trigger a timer"
   (--> `((start . ,start))
-    (orgtrello-hash/make-hash "POST" "/timer/" it)
+    (orgtrello-api/make-query "POST" "/timer/" it)
     (orgtrello-query/--http *ORGTRELLO-PROXY-URL* it *do-sync-query*)))
 
 (defun orgtrello-proxy/--json-read-from-string (data)
@@ -41,7 +41,7 @@
 
 (defun orgtrello-proxy/--compute-trello-query (query-map-wrapped)
   "Build a trello query from the control of query-map-wrapped."
-  (orgtrello-hash/make-hash (orgtrello-data/entity-method query-map-wrapped) (orgtrello-data/entity-uri query-map-wrapped) (orgtrello-data/entity-params query-map-wrapped)))
+  (orgtrello-api/make-query (orgtrello-data/entity-method query-map-wrapped) (orgtrello-data/entity-uri query-map-wrapped) (orgtrello-data/entity-params query-map-wrapped)))
 
 (defun orgtrello-proxy/--response (http-con data)
   "A response wrapper"

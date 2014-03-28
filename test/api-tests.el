@@ -2,6 +2,12 @@
 (require 'ert-expectations)
 (require 'el-mock)
 
+(expectations
+ (desc "testing orgtrello-api/make-query")
+ (expect :some-method (gethash :method (orgtrello-api/make-query :some-method :some-uri)))
+ (expect :some-uri    (gethash :uri    (orgtrello-api/make-query :some-method :some-uri)))
+ (expect nil          (gethash :params (orgtrello-api/make-query :some-method :some-uri))))
+
 (expectations (desc "testing orgtrello-api/get-boards")
   (expect "GET"                (gethash :method (orgtrello-api/get-boards)))
   (expect "/members/me/boards" (gethash :uri    (orgtrello-api/get-boards)))
