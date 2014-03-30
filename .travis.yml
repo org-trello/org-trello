@@ -4,11 +4,11 @@ before_install:
   - export PATH="$HOME/.cask/bin:$PATH"
   - export PATH="$HOME/.evm/bin:$PATH"
   - evm install $EVM_EMACS --use
+  - emacs --version
   - cask
 env:
   - EVM_EMACS=emacs-24.1-bin
   - EVM_EMACS=emacs-24.2-bin
   - EVM_EMACS=emacs-24.3-bin
 script:
-  - emacs --version
   - make install test install-file-with-deps-from-marmalade install-file-with-deps-from-melpa
