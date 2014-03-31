@@ -458,9 +458,9 @@
 (defun orgtrello-controller/do-install-key-and-token ()
   "Procedure to install the *consumer-key* and the token for the user in the config-file."
   (interactive)
-  (browse-url (org-trello/https-trello "/1/appKey/generate"))
+  (browse-url (org-trello/compute-url "/1/appKey/generate"))
   (let ((orgtrello-controller/--*consumer-key* (read-string "*consumer-key*: ")))
-    (browse-url (org-trello/https-trello (format "/1/authorize?response_type=token&name=org-trello&scope=read,write&expiration=never&key=%s" orgtrello-controller/--*consumer-key*)))
+    (browse-url (org-trello/compute-url (format "/1/authorize?response_type=token&name=org-trello&scope=read,write&expiration=never&key=%s" orgtrello-controller/--*consumer-key*)))
     (let ((orgtrello-controller/--access-token (read-string "Access-token: ")))
       (orgtrello-controller/--do-install-config-file orgtrello-controller/--*consumer-key* orgtrello-controller/--access-token)
       "Install key and read/write access token done!")))
@@ -824,11 +824,11 @@
                                 ((orgtrello-data/entity-checklist-p entity) 'orgtrello-data/parent)
                                 ((orgtrello-data/entity-card-p entity)      'orgtrello-data/current))))
     (-if-let (card-id (->> full-meta (funcall right-entity-fn) orgtrello-data/entity-id))
-        (browse-url (org-trello/https-trello (format "/c/%s" card-id))))))
+        (browse-url (org-trello/compute-url (format "/c/%s" card-id))))))
 
 (defun orgtrello-controller/jump-to-board! ()
   "Given the current position, execute the information extraction and jump to board action."
-  (browse-url (org-trello/https-trello (format "/b/%s" (orgtrello-buffer/board-id!)))))
+  (browse-url (org-trello/compute-url (format "/b/%s" (orgtrello-buffer/board-id!)))))
 
 (defun orgtrello-controller/delete-setup! ()
   "Global org-trello metadata clean up."
