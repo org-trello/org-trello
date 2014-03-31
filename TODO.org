@@ -958,10 +958,10 @@ CLOSED: [2014-03-28 Fri 17:05]
 - [X] Upgrade Version
 - [X] Release notes
 
-* IN-PROGRESS 0.4.0 [25%]
+* IN-PROGRESS 0.4.0 [75%]
 - [X] Refactor
-- [ ] Fix - Close https://github.com/org-trello/org-trello/issues/145
-- [ ] Version
+- [X] Fix - Close https://github.com/org-trello/org-trello/issues/145
+- [X] Version
 - [ ] Release notes
 * TODO 0.4.x [0%]
 - [ ] Improve sync request policy - https://github.com/org-trello/org-trello/issues/58
