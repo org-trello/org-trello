@@ -3118,7 +3118,8 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 (defun orgtrello-controller/do-install-board-and-lists ()
   "Command to install the list boards."
   (interactive)
-  (let* ((board-info        (-> (orgtrello-controller/--list-boards!)
+  (let* ((resize-mini-windows t)
+         (board-info        (-> (orgtrello-controller/--list-boards!)
                               orgtrello-controller/--id-name
                               orgtrello-controller/choose-board!))
          (chosen-board-id   (first board-info))
