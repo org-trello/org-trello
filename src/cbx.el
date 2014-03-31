@@ -101,7 +101,7 @@
        (s-split " ")))
 
 (defun orgtrello-cbx/--list-is-checkbox-p (l) "Is this a checkbox?"
-  (string= "-" (first (--drop-while (string= "" it) l))))
+  (string= "-" (car (--drop-while (string= "" it) l))))
 
 (defun orgtrello-cbx/--level (l)
   "Given a list of strings, compute the level (starts at 2).

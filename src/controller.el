@@ -278,8 +278,8 @@
 
 (defun orgtrello-controller/--sync-buffer-with-trello-data (data buffer-name)
   "Given all the entities, update the current buffer with those."
-  (let ((entities (first data))
-        (adjacency (second data)))
+  (let ((entities (car data))
+        (adjacency (cadr data)))
     (with-current-buffer buffer-name
       (goto-char (point-max)) ;; go at the end of the file
       (maphash
@@ -346,8 +346,8 @@
          (entities-from-org-buffer (apply 'orgtrello-buffer/compute-entities-from-org-buffer! (cons nil region)))
          (entities-from-trello     (orgtrello-backend/compute-full-cards-from-trello! (list card)))
          (merged-entities          (orgtrello-data/merge-entities-trello-and-org entities-from-trello entities-from-org-buffer))
-         (entities                 (first merged-entities))
-         (entities-adj             (second merged-entities)))
+         (entities                 (car merged-entities))
+         (entities-adj             (cadr merged-entities)))
     (orgtrello-buffer/clean-region! region)
     (orgtrello-buffer/write-card! card-id (gethash card-id entities) entities entities-adj)))
 
@@ -358,8 +358,8 @@
          (entities-from-org-buffer (apply 'orgtrello-buffer/compute-entities-from-org-buffer! (cons nil region)))
          (entities-from-trello     (orgtrello-backend/compute-full-checklist-from-trello! checklist))
          (merged-entities          (orgtrello-data/merge-entities-trello-and-org entities-from-trello entities-from-org-buffer))
-         (entities                 (first merged-entities))
-         (entities-adj             (second merged-entities)))
+         (entities                 (car merged-entities))
+         (entities-adj             (cadr merged-entities)))
     (orgtrello-buffer/clean-region! region)
     (orgtrello-buffer/write-checklist! checklist-id entities entities-adj)))
 
@@ -645,8 +645,8 @@
   (let* ((board-info        (-> (orgtrello-controller/--list-boards!)
                               orgtrello-controller/--id-name
                               orgtrello-controller/choose-board!))
-         (chosen-board-id   (first board-info))
-         (chosen-board-name (second board-info))
+         (chosen-board-id   (car board-info))
+         (chosen-board-name (cadr board-info))
          (board-lists       (orgtrello-controller/--list-board-lists! chosen-board-id))
          (board-labels      (->> chosen-board-id orgtrello-controller/--board! orgtrello-data/entity-labels))
          (user-logged-in    (orgtrello-controller/--user-logged-in!)))

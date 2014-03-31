@@ -8,7 +8,7 @@
 
 (defun orgtrello-data/--compute-fn (entity list-dispatch-fn)
   "Given an entity, compute the result"
-  (funcall (if (hash-table-p entity) (first list-dispatch-fn) (second list-dispatch-fn)) entity))
+  (funcall (if (hash-table-p entity) (car list-dispatch-fn) (cadr list-dispatch-fn)) entity))
 
 (defun orgtrello-data/--entity-with-level-p (entity level) "Is the entity with level level?" (-> entity orgtrello-data/entity-level (eq level)))
 (defun orgtrello-data/entity-card-p      (entity) "Is this a card?"      (orgtrello-data/--entity-with-level-p entity *CARD-LEVEL*))
@@ -245,10 +245,10 @@
 
 (defun orgtrello-data/merge-entities-trello-and-org (trello-data org-data)
   "Merge the org-entity entities inside the trello-entities."
-  (let ((trello-entities  (first trello-data))
-        (trello-adjacency (second trello-data))
-        (org-entities     (first org-data))
-        (org-adjacency    (second org-data)))
+  (let ((trello-entities  (car trello-data))
+        (trello-adjacency (cadr trello-data))
+        (org-entities     (car org-data))
+        (org-adjacency    (cadr org-data)))
 
     (maphash (lambda (id trello-entity)
                (puthash id (funcall (orgtrello-data/--dispatch-merge-fn trello-entity) trello-entity (orgtrello-data/--get-entity id org-entities)) trello-entities) ;; updating entity to trello
@@ -275,7 +275,7 @@
 (defun orgtrello-data/--compute-state-generic (state list-state)
   "Computing generic."
   (if (or (string= "complete" state)
-          (string= *DONE* state)) (first list-state) (second list-state)))
+          (string= *DONE* state)) (car list-state) (cadr list-state)))
 
 (defun orgtrello-data/--users-from (string-users)
   "Compute the users name from the comma separated value in string."

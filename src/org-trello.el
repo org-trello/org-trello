@@ -139,9 +139,9 @@
 (defun org-trello/--help-describing-bindings-template (keybinding list-command-binding-description)
   "Standard Help message template"
   (->> list-command-binding-description
-       (--map (let ((command        (first it))
-                    (prefix-binding (second it))
-                    (help-msg       (third it)))
+       (--map (let ((command        (car it))
+                    (prefix-binding (cadr it))
+                    (help-msg       (caddr it)))
                 (concat keybinding " " prefix-binding " - M-x " (symbol-name command) " - " help-msg)))
        (s-join "\n")))
 
@@ -176,8 +176,8 @@
 (defun org-trello/--install-local-keybinding-map! (previous-org-trello-mode-prefix-keybinding org-trello-mode-prefix-keybinding interactive-command-binding-to-install)
   "Install locally the default binding map with the prefix binding of org-trello-mode-prefix-keybinding."
   (mapc (lambda (command-and-binding)
-          (let ((command (first command-and-binding))
-                (binding (second command-and-binding)))
+          (let ((command (car command-and-binding))
+                (binding (cadr command-and-binding)))
             ;; unset previous binding
             (define-key org-trello-mode-map (kbd (concat previous-org-trello-mode-prefix-keybinding binding)) nil)
             ;; set new binding
@@ -187,8 +187,8 @@
 (defun org-trello/--remove-local-keybinding-map! (previous-org-trello-mode-prefix-keybinding interactive-command-binding-to-install)
   "Remove the default org-trello bindings."
   (mapc (lambda (command-and-binding)
-          (let ((command (first command-and-binding))
-                (binding (second command-and-binding)))
+          (let ((command (car command-and-binding))
+                (binding (cadr command-and-binding)))
             (define-key org-trello-mode-map (kbd (concat previous-org-trello-mode-prefix-keybinding binding)) nil)))
         interactive-command-binding-to-install))
 
@@ -259,7 +259,7 @@
 
 (defun org-trello/compute-overlay-size! ()
   "Compute the overlay size to the current position"
-  (-when-let (o (first (overlays-in (point-at-bol) (point-at-eol))))
+  (-when-let (o (car (overlays-in (point-at-bol) (point-at-eol))))
              (- (overlay-end o) (overlay-start o))))
 
 (add-hook 'org-trello-mode-on-hook 'org-trello-mode-on-hook-fn)

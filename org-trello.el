@@ -280,7 +280,7 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
 
 (defun orgtrello-data/--compute-fn (entity list-dispatch-fn)
   "Given an entity, compute the result"
-  (funcall (if (hash-table-p entity) (first list-dispatch-fn) (second list-dispatch-fn)) entity))
+  (funcall (if (hash-table-p entity) (car list-dispatch-fn) (cadr list-dispatch-fn)) entity))
 
 (defun orgtrello-data/--entity-with-level-p (entity level) "Is the entity with level level?" (-> entity orgtrello-data/entity-level (eq level)))
 (defun orgtrello-data/entity-card-p      (entity) "Is this a card?"      (orgtrello-data/--entity-with-level-p entity *CARD-LEVEL*))
@@ -517,10 +517,10 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
 
 (defun orgtrello-data/merge-entities-trello-and-org (trello-data org-data)
   "Merge the org-entity entities inside the trello-entities."
-  (let ((trello-entities  (first trello-data))
-        (trello-adjacency (second trello-data))
-        (org-entities     (first org-data))
-        (org-adjacency    (second org-data)))
+  (let ((trello-entities  (car trello-data))
+        (trello-adjacency (cadr trello-data))
+        (org-entities     (car org-data))
+        (org-adjacency    (cadr org-data)))
 
     (maphash (lambda (id trello-entity)
                (puthash id (funcall (orgtrello-data/--dispatch-merge-fn trello-entity) trello-entity (orgtrello-data/--get-entity id org-entities)) trello-entities) ;; updating entity to trello
@@ -547,7 +547,7 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
 (defun orgtrello-data/--compute-state-generic (state list-state)
   "Computing generic."
   (if (or (string= "complete" state)
-          (string= *DONE* state)) (first list-state) (second list-state)))
+          (string= *DONE* state)) (car list-state) (cadr list-state)))
 
 (defun orgtrello-data/--users-from (string-users)
   "Compute the users name from the comma separated value in string."
@@ -601,7 +601,7 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
 (defun orgtrello-cbx/remove-overlays! (start end) "Remove the overlays presents between start and end in the current buffer"
   (remove-overlays start end 'invisible 'org-trello-cbx-property))
 
-(defun orgtrello-cbx/install-overlays! (start-position) "Install org-trello overlays (first remove the current overlay on line)."
+(defun orgtrello-cbx/install-overlays! (start-position) "Install org-trello overlays (car remove the current overlay on line)."
   ;; remove overlay present on current position
   (orgtrello-cbx/remove-overlays! (point-at-bol) (point-at-eol))
   ;; build an overlay to hide the cbx properties
@@ -662,7 +662,7 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
        (s-split " ")))
 
 (defun orgtrello-cbx/--list-is-checkbox-p (l) "Is this a checkbox?"
-  (string= "-" (first (--drop-while (string= "" it) l))))
+  (string= "-" (car (--drop-while (string= "" it) l))))
 
 (defun orgtrello-cbx/--level (l)
   "Given a list of strings, compute the level (starts at 2).
@@ -1672,8 +1672,8 @@ This is a list with the following elements:
 
 (defun orgtrello-webadmin/--download-and-install-file (key-file) "Download the file represented by the parameter. Also, if the archive downloaded is a zip, unzip it."
   (let* ((url-tmp-dest (gethash key-file *ORGTRELLO-FILES*))
-         (url          (first  url-tmp-dest))
-         (tmp-dest     (second url-tmp-dest))
+         (url          (car  url-tmp-dest))
+         (tmp-dest     (cadr url-tmp-dest))
          (final-dest   (third  url-tmp-dest))
          (extension    (file-name-extension url)))
     ;; download the file
@@ -2437,7 +2437,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
           (let ((ancestors (cond ((= level *CARD-LEVEL*)      '(nil nil))
                                  ((= level *CHECKLIST-LEVEL*) `(,(orgtrello-buffer/--parent-metadata!) nil))
                                  ((= level *ITEM-LEVEL*)      `(,(orgtrello-buffer/--parent-metadata!) ,(orgtrello-buffer/--grandparent-metadata!))))))
-            (orgtrello-hash/make-hierarchy current (first ancestors) (second ancestors))))))
+            (orgtrello-hash/make-hierarchy current (car ancestors) (cadr ancestors))))))
 
 (defun orgtrello-buffer/--to-orgtrello-metadata (heading-metadata)
   "Given the heading-metadata returned by the function 'org-heading-components, make it a hashmap with key :level, :keyword, :name. and their respective value"
@@ -2754,8 +2754,8 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun orgtrello-controller/--sync-buffer-with-trello-data (data buffer-name)
   "Given all the entities, update the current buffer with those."
-  (let ((entities (first data))
-        (adjacency (second data)))
+  (let ((entities (car data))
+        (adjacency (cadr data)))
     (with-current-buffer buffer-name
       (goto-char (point-max)) ;; go at the end of the file
       (maphash
@@ -2822,8 +2822,8 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
          (entities-from-org-buffer (apply 'orgtrello-buffer/compute-entities-from-org-buffer! (cons nil region)))
          (entities-from-trello     (orgtrello-backend/compute-full-cards-from-trello! (list card)))
          (merged-entities          (orgtrello-data/merge-entities-trello-and-org entities-from-trello entities-from-org-buffer))
-         (entities                 (first merged-entities))
-         (entities-adj             (second merged-entities)))
+         (entities                 (car merged-entities))
+         (entities-adj             (cadr merged-entities)))
     (orgtrello-buffer/clean-region! region)
     (orgtrello-buffer/write-card! card-id (gethash card-id entities) entities entities-adj)))
 
@@ -2834,8 +2834,8 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
          (entities-from-org-buffer (apply 'orgtrello-buffer/compute-entities-from-org-buffer! (cons nil region)))
          (entities-from-trello     (orgtrello-backend/compute-full-checklist-from-trello! checklist))
          (merged-entities          (orgtrello-data/merge-entities-trello-and-org entities-from-trello entities-from-org-buffer))
-         (entities                 (first merged-entities))
-         (entities-adj             (second merged-entities)))
+         (entities                 (car merged-entities))
+         (entities-adj             (cadr merged-entities)))
     (orgtrello-buffer/clean-region! region)
     (orgtrello-buffer/write-checklist! checklist-id entities entities-adj)))
 
@@ -3121,8 +3121,8 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   (let* ((board-info        (-> (orgtrello-controller/--list-boards!)
                               orgtrello-controller/--id-name
                               orgtrello-controller/choose-board!))
-         (chosen-board-id   (first board-info))
-         (chosen-board-name (second board-info))
+         (chosen-board-id   (car board-info))
+         (chosen-board-name (cadr board-info))
          (board-lists       (orgtrello-controller/--list-board-lists! chosen-board-id))
          (board-labels      (->> chosen-board-id orgtrello-controller/--board! orgtrello-data/entity-labels))
          (user-logged-in    (orgtrello-controller/--user-logged-in!)))
@@ -3455,8 +3455,8 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 (defun org-trello/--help-describing-bindings-template (keybinding list-command-binding-description)
   "Standard Help message template"
   (->> list-command-binding-description
-       (--map (let ((command        (first it))
-                    (prefix-binding (second it))
+       (--map (let ((command        (car it))
+                    (prefix-binding (cadr it))
                     (help-msg       (third it)))
                 (concat keybinding " " prefix-binding " - M-x " (symbol-name command) " - " help-msg)))
        (s-join "\n")))
@@ -3492,8 +3492,8 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 (defun org-trello/--install-local-keybinding-map! (previous-org-trello-mode-prefix-keybinding org-trello-mode-prefix-keybinding interactive-command-binding-to-install)
   "Install locally the default binding map with the prefix binding of org-trello-mode-prefix-keybinding."
   (mapc (lambda (command-and-binding)
-          (let ((command (first command-and-binding))
-                (binding (second command-and-binding)))
+          (let ((command (car command-and-binding))
+                (binding (cadr command-and-binding)))
             ;; unset previous binding
             (define-key org-trello-mode-map (kbd (concat previous-org-trello-mode-prefix-keybinding binding)) nil)
             ;; set new binding
@@ -3503,8 +3503,8 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 (defun org-trello/--remove-local-keybinding-map! (previous-org-trello-mode-prefix-keybinding interactive-command-binding-to-install)
   "Remove the default org-trello bindings."
   (mapc (lambda (command-and-binding)
-          (let ((command (first command-and-binding))
-                (binding (second command-and-binding)))
+          (let ((command (car command-and-binding))
+                (binding (cadr command-and-binding)))
             (define-key org-trello-mode-map (kbd (concat previous-org-trello-mode-prefix-keybinding binding)) nil)))
         interactive-command-binding-to-install))
 
@@ -3575,7 +3575,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun org-trello/compute-overlay-size! ()
   "Compute the overlay size to the current position"
-  (-when-let (o (first (overlays-in (point-at-bol) (point-at-eol))))
+  (-when-let (o (car (overlays-in (point-at-bol) (point-at-eol))))
              (- (overlay-end o) (overlay-start o))))
 
 (add-hook 'org-trello-mode-on-hook 'org-trello-mode-on-hook-fn)

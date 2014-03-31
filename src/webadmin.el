@@ -23,15 +23,15 @@
 
 (defun orgtrello-webadmin/--download-and-install-file (key-file) "Download the file represented by the parameter. Also, if the archive downloaded is a zip, unzip it."
   (let* ((url-tmp-dest (gethash key-file *ORGTRELLO-FILES*))
-         (url          (first  url-tmp-dest))
-         (tmp-dest     (second url-tmp-dest))
-         (final-dest   (third  url-tmp-dest))
+         (url          (car  url-tmp-dest))
+         (tmp-dest     (cadr url-tmp-dest))
+         (final-dest   (caddr url-tmp-dest))
          (extension    (file-name-extension url)))
     ;; download the file
     (url-copy-file url tmp-dest t)
     (if (equal "zip" extension)
         (orgtrello-webadmin/--unzip-and-install tmp-dest (file-name-directory final-dest))
-        (orgtrello-webadmin/--install-file tmp-dest final-dest))))
+      (orgtrello-webadmin/--install-file tmp-dest final-dest))))
 
 (defun orgtrello-webadmin/--install-css-js-files-once () "Install bootstrap and jquery if need be."
   (when (orgtrello-webadmin/--installation-needed-p)

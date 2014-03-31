@@ -267,10 +267,10 @@
                                                  (id . "50aa59502ddab2fc1100115b"))])))
     (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
                                       (:url "https://trello.com/b/o9oY3NlQ/1-board-to-rule-them-all" :closed t :desc "" :name "1-board-to-rule-them-all" :id "5203a4fd0ac2f5b75c001d1d"))
-                        (first list-hash)))
+                        (car list-hash)))
     (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
                                       (:url "https://trello.com/b/xzOJmxzy/demandes-infra" :closed t :desc "" :name "Demandes Infra" :id "50aa59502ddab2fc1100115b"))
-                        (second list-hash)))))
+                        (cadr list-hash)))))
 
 (expectations (desc "orgtrello-data/parse-data - with nested assoc list.")
               (defvar actual-result)
@@ -296,9 +296,9 @@
               (expect "52c0b52ece09f28f6801fe5e" (orgtrello-data/entity-id actual-result))
               (expect 2 (length (orgtrello-data/entity-items actual-result)))
               (expect t (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:position 16384 :name "introduction" :id "52c0b537ad469b9d6d044fa1" :checked "incomplete" :level 3))
-                                    (first (orgtrello-data/entity-items actual-result))))
+                                    (car (orgtrello-data/entity-items actual-result))))
               (expect t (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:position 32768 :name "Ch. 1 - A scalable language" :id "52c0b5386548fde20105ea4e" :checked "incomplete" :level 3))
-                                    (second (orgtrello-data/entity-items actual-result)))))
+                                    (cadr (orgtrello-data/entity-items actual-result)))))
 
 (expectations
  (expect :keyword (orgtrello-data/--deal-with-key :keyword))
@@ -359,10 +359,10 @@
 
 (expectations
   (expect t (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:comment-id "532d7447b247e3d24f365309" :comment-text "comment 4" :comment-user "ardumont"))
-                (first (orgtrello-data/--parse-actions partial-data-to-test))))
+                (car (orgtrello-data/--parse-actions partial-data-to-test))))
   (expect t
     (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:comment-id "532d7441852414f343560757" :comment-text "comment 3" :comment-user "ardumont"))
-                (second (orgtrello-data/--parse-actions partial-data-to-test)))))
+                (cadr (orgtrello-data/--parse-actions partial-data-to-test)))))
 
 (expectations
  (expect "me: some first comment###another-me: another comment"
