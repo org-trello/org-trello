@@ -1021,7 +1021,7 @@ This is a list with the following elements:
     json-read-from-string                     ;; now getting back an association list
     orgtrello-query/--prepare-params-assoc!))
 
-(defun orgtrello-query/--http (server query-map &optional sync success-callback error-callback authentication-p)
+(defun orgtrello-query/http (server query-map &optional sync success-callback error-callback authentication-p)
   "HTTP query the server with the query-map."
   (let* ((dispatch-http-query-fn (-> query-map
                                    orgtrello-data/entity-method
@@ -1034,7 +1034,7 @@ This is a list with the following elements:
 
 (defun orgtrello-query/http-trello (query-map &optional sync success-callback error-callback)
   "Query the trello api."
-  (orgtrello-query/--http *TRELLO-URL* query-map sync success-callback error-callback t))
+  (orgtrello-query/http *TRELLO-URL* query-map sync success-callback error-callback t))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-query loaded!")
 
@@ -1169,20 +1169,20 @@ This is a list with the following elements:
   (--> query-map
     (orgtrello-query/--prepare-query-params! it)
     (orgtrello-api/make-query "POST" "/trello/" it)
-    (orgtrello-query/--http *ORGTRELLO-SERVER-URL* it sync success-callback error-callback)))
+    (orgtrello-query/http *ORGTRELLO-SERVER-URL* it sync success-callback error-callback)))
 
 (defun orgtrello-proxy/http-producer (query-map &optional sync)
   "Query the proxy producer"
   (--> query-map
     (orgtrello-query/--prepare-query-params! it)
     (orgtrello-api/make-query "POST" "/producer/" it)
-    (orgtrello-query/--http *ORGTRELLO-SERVER-URL* it sync)))
+    (orgtrello-query/http *ORGTRELLO-SERVER-URL* it sync)))
 
 (defun orgtrello-proxy/http-consumer (start)
   "Query the http-consumer process once to make it trigger a timer"
   (--> `((start . ,start))
     (orgtrello-api/make-query "POST" "/timer/" it)
-    (orgtrello-query/--http *ORGTRELLO-SERVER-URL* it 'do-sync-query)))
+    (orgtrello-query/http *ORGTRELLO-SERVER-URL* it 'do-sync-query)))
 
 (defun orgtrello-proxy/--json-read-from-string (data)
   "Read the json data and unhexify them."
