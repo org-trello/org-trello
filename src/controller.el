@@ -445,14 +445,14 @@
   "Launch a batch deletion of every single entities present on the buffer."
   (org-map-entries (lambda () (orgtrello-controller/--do-delete-card sync)) t 'file))
 
-(defun orgtrello-controller/--do-install-config-file (*consumer-key* *access-token*)
+(defun orgtrello-controller/--do-install-config-file (consumer-key access-token)
   "Persist the file config-file with the input of the user."
   (make-directory *CONFIG-DIR* t)
   (with-temp-file *CONFIG-FILE*
     (erase-buffer)
     (goto-char (point-min))
-    (insert (format "(setq *consumer-key* \"%s\")\n" *consumer-key*))
-    (insert (format "(setq *access-token* \"%s\")" *access-token*))
+    (insert (format "(setq *consumer-key* \"%s\")\n" consumer-key))
+    (insert (format "(setq *access-token* \"%s\")" access-token))
     (write-file *CONFIG-FILE* 't)))
 
 (defun orgtrello-controller/do-install-key-and-token ()
