@@ -120,7 +120,7 @@ To ease the computation, we consider level 4 if no - to start with, and to avoid
                               (string= "[ ]" it))) l)))
 
 (defun orgtrello-cbx/--status (s) "Given a checklist status, return the TODO/DONE for org-trello to work."
-  (if (string= "[X]" s) "DONE" "TODO"))
+  (if (string= "[X]" s) *ORGTRELLO-DONE* *ORGTRELLO-TODO*))
 
 (defun orgtrello-cbx/--name (s status) "Retrieve the name of the checklist"
   (->> s

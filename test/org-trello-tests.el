@@ -28,4 +28,4 @@ C-c o l - M-x org-trello/show-board-labels - Display the board's labels in a pop
 C-c o u - M-x org-trello/update-board-metadata - Update the buffer's trello board metadata.
 C-c o g - M-x org-trello/abort-sync - Abort synchronization activities.
 C-c o h - M-x org-trello/help-describing-bindings - This help message."
-      (org-trello/--help-describing-bindings-template *ORGTRELLO-MODE-PREFIX-KEYBINDING* org-trello/--list-of-interactive-command-binding-couples)))
+      (org-trello/--help-describing-bindings-template *ORGTRELLO-MODE-PREFIX-KEYBINDING* *org-trello-interactive-command-binding-couples*)))

@@ -57,10 +57,10 @@
 ;;; Code:
 
 
-(defconst *ERROR-INSTALL-MSG* (format "Oops - your emacs isn't supported. org-trello only works on Emacs 24.3+ and you're running version: %s.
+(defconst *ORGTRELLO-ERROR-INSTALL-MSG* (format "Oops - your emacs isn't supported. org-trello only works on Emacs 24.3+ and you're running version: %s.
 Please consider upgrading Emacs." emacs-version) "Error message when installing org-trello with an unsupported emacs version.")
 
-(when (version< emacs-version "24") (error *ERROR-INSTALL-MSG*))
+(when (version< emacs-version "24") (error *ORGTRELLO-ERROR-INSTALL-MSG*))
 
 ;; Dependency on internal Emacs libs
 (require 'org)

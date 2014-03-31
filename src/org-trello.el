@@ -148,9 +148,9 @@
 (defun org-trello/help-describing-bindings ()
   "A simple message to describe the standard bindings used."
   (interactive)
-  (orgtrello-log/msg 0 (org-trello/--help-describing-bindings-template *ORGTRELLO-MODE-PREFIX-KEYBINDING* org-trello/--list-of-interactive-command-binding-couples)))
+  (orgtrello-log/msg 0 (org-trello/--help-describing-bindings-template *ORGTRELLO-MODE-PREFIX-KEYBINDING* *org-trello-interactive-command-binding-couples*)))
 
-(defvar org-trello/--list-of-interactive-command-binding-couples
+(defvar *org-trello-interactive-command-binding-couples*
   '((org-trello/version                      "v" "Display the current version installed.")
     (org-trello/install-key-and-token        "i" "Install the keys and the access-token.")
     (org-trello/install-board-and-lists-ids  "I" "Select the board and attach the todo, doing and done list.")
@@ -199,11 +199,11 @@
   "Install the new default org-trello mode keybinding."
   (setq *PREVIOUS-ORGTRELLO-MODE-PREFIX-KEYBINDING* *ORGTRELLO-MODE-PREFIX-KEYBINDING*)
   (setq *ORGTRELLO-MODE-PREFIX-KEYBINDING* keybinding)
-  (org-trello/--install-local-keybinding-map! *PREVIOUS-ORGTRELLO-MODE-PREFIX-KEYBINDING* *ORGTRELLO-MODE-PREFIX-KEYBINDING* org-trello/--list-of-interactive-command-binding-couples))
+  (org-trello/--install-local-keybinding-map! *PREVIOUS-ORGTRELLO-MODE-PREFIX-KEYBINDING* *ORGTRELLO-MODE-PREFIX-KEYBINDING* *org-trello-interactive-command-binding-couples*))
 
 (defun org-trello/remove-local-prefix-mode-keybinding! (keybinding)
   "Install the new default org-trello mode keybinding."
-  (org-trello/--remove-local-keybinding-map! *PREVIOUS-ORGTRELLO-MODE-PREFIX-KEYBINDING* org-trello/--list-of-interactive-command-binding-couples))
+  (org-trello/--remove-local-keybinding-map! *PREVIOUS-ORGTRELLO-MODE-PREFIX-KEYBINDING* *org-trello-interactive-command-binding-couples*))
 
 ;;;###autoload
 (define-minor-mode org-trello-mode "Sync your org-mode and your trello together."

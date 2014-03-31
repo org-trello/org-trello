@@ -190,7 +190,7 @@
 
 (defun orgtrello-data/--compute-state-item (state)
   "Compute the status of the checkbox"
-  (orgtrello-data/--compute-state-generic state `(,*DONE* ,*TODO*)))
+  (orgtrello-data/--compute-state-generic state `(,*ORGTRELLO-DONE* ,*ORGTRELLO-TODO*)))
 
 (defun orgtrello-data/--merge-checklist (trello-checklist org-checklist)
   "Merge trello and org checklist together."
@@ -275,7 +275,7 @@
 (defun orgtrello-data/--compute-state-generic (state list-state)
   "Computing generic."
   (if (or (string= "complete" state)
-          (string= *DONE* state)) (car list-state) (cadr list-state)))
+          (string= *ORGTRELLO-DONE* state)) (car list-state) (cadr list-state)))
 
 (defun orgtrello-data/--users-from (string-users)
   "Compute the users name from the comma separated value in string."

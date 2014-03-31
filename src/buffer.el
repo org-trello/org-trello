@@ -196,7 +196,7 @@
 
 (defun orgtrello-buffer/--private-compute-card-to-org-entry (name status due-date tags)
   "Compute the org format for card."
-  (let ((prefix-string (format "* %s %s" (if status status *TODO*) name)))
+  (let ((prefix-string (format "* %s %s" (if status status *ORGTRELLO-TODO*) name)))
     (format "%s%s\n%s" prefix-string (orgtrello-buffer/--serialize-tags prefix-string tags) (orgtrello-buffer/--compute-due-date due-date))))
 
 (defun orgtrello-buffer/--serialize-tags (prefix-string tags)

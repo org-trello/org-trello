@@ -61,8 +61,8 @@
 
 (expectations (desc "orgtrello-controller/--compute-state-from-keyword")
   (expect 'none (orgtrello-controller/--compute-state-from-keyword ""))
-  (expect 'none (orgtrello-controller/--compute-state-from-keyword *TODO*))
-  (expect 'done (orgtrello-controller/--compute-state-from-keyword *DONE*))
+  (expect 'none (orgtrello-controller/--compute-state-from-keyword *ORGTRELLO-TODO*))
+  (expect 'done (orgtrello-controller/--compute-state-from-keyword *ORGTRELLO-DONE*))
   (expect 'none (orgtrello-controller/--compute-state-from-keyword "IN")))
 
 (expectations (desc "orgtrello-marker-2a0b98e652ce6349a0659a7a8eeb3783ffe9a11a")
@@ -148,11 +148,11 @@
  (expect "#+property: test value" (orgtrello-controller/compute-property "test" "value")))
 
 (expectations
-  (expect "complete" (orgtrello-controller/compute-state *DONE*))
+  (expect "complete" (orgtrello-controller/compute-state *ORGTRELLO-DONE*))
   (expect "incomplete" (orgtrello-controller/compute-state "anything-else")))
 
 (expectations
-  (expect t   (orgtrello-controller/compute-check *DONE*))
+  (expect t   (orgtrello-controller/compute-check *ORGTRELLO-DONE*))
   (expect nil (orgtrello-controller/compute-check "anything-else")))
 
 (expectations
