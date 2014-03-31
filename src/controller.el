@@ -459,10 +459,10 @@
   "Procedure to install the *consumer-key* and the token for the user in the config-file."
   (interactive)
   (browse-url (org-trello/compute-url "/1/appKey/generate"))
-  (let ((orgtrello-controller/--*consumer-key* (read-string "*consumer-key*: ")))
-    (browse-url (org-trello/compute-url (format "/1/authorize?response_type=token&name=org-trello&scope=read,write&expiration=never&key=%s" orgtrello-controller/--*consumer-key*)))
-    (let ((orgtrello-controller/--access-token (read-string "Access-token: ")))
-      (orgtrello-controller/--do-install-config-file orgtrello-controller/--*consumer-key* orgtrello-controller/--access-token)
+  (let ((consumer-key (read-string "*consumer-key*: ")))
+    (browse-url (org-trello/compute-url (format "/1/authorize?response_type=token&name=org-trello&scope=read,write&expiration=never&key=%s" consumer-key)))
+    (let ((access-token (read-string "Access-token: ")))
+      (orgtrello-controller/--do-install-config-file consumer-key access-token)
       "Install key and read/write access token done!")))
 
 (defun orgtrello-controller/--id-name (entities)
