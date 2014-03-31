@@ -1,3 +1,10 @@
+# 0.4.0
+
+- [X] Refactor
+- [X] Fix - Close https://github.com/org-trello/org-trello/issues/145
+- [X] Version
+- [X] Release notes
+
 # 0.3.9
 
 - [X] Refactor - Symmetry for all commands where that makes sense (without C-u/with C-u)
