@@ -2929,7 +2929,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
     (goto-char (point-min))
     (insert (format "(setq *consumer-key* \"%s\")\n" consumer-key))
     (insert (format "(setq *access-token* \"%s\")" access-token))
-    (write-file *CONFIG-FILE* 't)))
+    (write-file *CONFIG-FILE* 'do-ask-for-overwrite)))
 
 (defun orgtrello-controller/do-install-key-and-token ()
   "Procedure to install the *consumer-key* and the token for the user in the config-file."
