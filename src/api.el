@@ -1,4 +1,5 @@
-(defun orgtrello-api/make-query (method uri &optional params) "Utility function to ease the creation of the map - wait, where are my clojure data again!?"
+(defun orgtrello-api/make-query (method uri &optional params)
+  "Utility function to ease the creation of the map - wait, where are my clojure data again!?"
   (let ((h (orgtrello-hash/empty-hash)))
     (puthash :method method h)
     (puthash :uri    uri    h)

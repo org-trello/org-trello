@@ -1,18 +1,22 @@
-(defun trace (label e) "Decorator for some inaccessible code to easily 'message'."
+(defun trace (label e)
+  "Decorator for some inaccessible code to easily 'message'."
   (message "TRACE: %s: %S" label e)
   e)
 
-(defun -trace (e &optional label) "Decorator for some inaccessible code to easily 'message'."
+(defun -trace (e &optional label)
+  "Decorator for some inaccessible code to easily 'message'."
   (progn
     (if label
         (trace label e)
         (message "TRACE: %S" e))
     e))
 
-(defun orgtrello-action/reload-setup () "Reload orgtrello setup."
+(defun orgtrello-action/reload-setup ()
+  "Reload orgtrello setup."
   (org-set-regexps-and-options))
 
-(defmacro orgtrello-action/safe-wrap (fn &rest clean-up) "A macro to deal with intercept uncaught error when executing the fn call and cleaning up using the clean-up body."
+(defmacro orgtrello-action/safe-wrap (fn &rest clean-up)
+  "A macro to deal with intercept uncaught error when executing the fn call and cleaning up using the clean-up body."
   `(unwind-protect
        (let (retval)
          (condition-case ex
@@ -23,16 +27,20 @@
          retval)
      ,@clean-up))
 
-(defun orgtrello-action/--execute-controls (controls-or-actions-fns &optional entity) "Given a series of controls, execute them and return the results."
+(defun orgtrello-action/--execute-controls (controls-or-actions-fns &optional entity)
+  "Given a series of controls, execute them and return the results."
   (--map (funcall it entity) controls-or-actions-fns))
 
-(defun orgtrello-action/--filter-error-messages (control-or-actions) "Given a list of control or actions done, filter only the error message. Return nil if no error message."
+(defun orgtrello-action/--filter-error-messages (control-or-actions)
+  "Given a list of control or actions done, filter only the error message. Return nil if no error message."
   (--filter (not (equal :ok it)) control-or-actions))
 
-(defun orgtrello-action/--compute-error-message (error-msgs) "Given a list of error messages, compute them as a string."
+(defun orgtrello-action/--compute-error-message (error-msgs)
+  "Given a list of error messages, compute them as a string."
   (apply 'concat (--map (concat "- " it "\n") error-msgs)))
 
-(defun orgtrello-action/controls-or-actions-then-do (control-or-action-fns fn-to-execute &optional nolog-p) "Execute the function fn-to-execute if control-or-action-fns is nil or display the error message if problems."
+(defun orgtrello-action/controls-or-actions-then-do (control-or-action-fns fn-to-execute &optional nolog-p)
+  "Execute the function fn-to-execute if control-or-action-fns is nil or display the error message if problems."
   (if control-or-action-fns
       (let ((org-trello/--error-messages (-> control-or-action-fns orgtrello-action/--execute-controls orgtrello-action/--filter-error-messages)))
         (if org-trello/--error-messages
@@ -44,7 +52,8 @@
       ;; no control, we simply execute the function
       (funcall fn-to-execute)))
 
-(defun orgtrello-action/functional-controls-then-do (control-fns entity fn-to-execute args) "Execute the function fn if control-fns is nil or if the result of apply every function to fn-to-execute is ok."
+(defun orgtrello-action/functional-controls-then-do (control-fns entity fn-to-execute args)
+  "Execute the function fn if control-fns is nil or if the result of apply every function to fn-to-execute is ok."
   (if control-fns
       (let ((org-trello/--error-messages (-> control-fns (orgtrello-action/--execute-controls entity) orgtrello-action/--filter-error-messages)))
         (if org-trello/--error-messages
@@ -55,7 +64,8 @@
       ;; no control, we simply execute the function
       (funcall fn-to-execute entity args)))
 
-(defun orgtrello-action/msg-controls-or-actions-then-do (msg control-or-action-fns fn-to-execute &optional save-buffer-p reload-setup-p nolog-p) "A decorator fn to execute some action before/after the controls."
+(defun orgtrello-action/msg-controls-or-actions-then-do (msg control-or-action-fns fn-to-execute &optional save-buffer-p reload-setup-p nolog-p)
+  "A decorator fn to execute some action before/after the controls."
   (unless nolog-p (orgtrello-log/msg *OT/INFO* (concat msg "...")))
   ;; now execute the controls and the main action
   (orgtrello-action/safe-wrap
@@ -65,7 +75,8 @@
      (when reload-setup-p (orgtrello-action/reload-setup))
      (unless nolog-p (orgtrello-log/msg *OT/INFO* (concat msg " - done!"))))))
 
-(defun orgtrello-action/delete-file! (file-to-remove) "Remove metadata file."
+(defun orgtrello-action/delete-file! (file-to-remove)
+  "Remove metadata file."
   (when (file-exists-p file-to-remove) (delete-file file-to-remove)))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-action loaded!")
