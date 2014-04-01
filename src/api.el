@@ -13,8 +13,8 @@
 (defun orgtrello-api/--deal-with-optional-values (optional-entries-values entries)
   "Add the optional entry/value depending on their entry. Return entries updated with value if entry, entries untouched otherwise."
   (--reduce-from (orgtrello-api/--deal-with-optional-value (car it) (cdr it) acc)
-                  entries
-                  optional-entries-values))
+                 entries
+                 optional-entries-values))
 
 (defun orgtrello-api/add-board (name &optional description)
   "Create a board."
@@ -86,7 +86,7 @@
                                                     (,desc . ("desc" . ,desc))
                                                     (,labels . ("labels" . ,labels)))
                                                   `(("idList" . ,idList)))
-       (orgtrello-api/make-query "PUT" (format "/cards/%s" card-id))))
+    (orgtrello-api/make-query "PUT" (format "/cards/%s" card-id))))
 
 (defun orgtrello-api/add-checklist (card-id name)
   "Add a checklist to a card"
@@ -115,12 +115,12 @@
 (defun orgtrello-api/add-items (checklist-id name &optional checked)
   "Add todo items (trello items) to a checklist with id 'id'"
   (->> (orgtrello-api/--deal-with-optional-value checked `("checked" . ,checked) `(("name" . ,name)))
-       (orgtrello-api/make-query "POST" (format "/checklists/%s/checkItems" checklist-id) )))
+    (orgtrello-api/make-query "POST" (format "/checklists/%s/checkItems" checklist-id) )))
 
 (defun orgtrello-api/update-item (card-id checklist-id item-id name &optional state)
   "Update an item"
   (->> (orgtrello-api/--deal-with-optional-value state `("state" . ,state) `(("name" . ,name)))
-       (orgtrello-api/make-query "PUT" (format "/cards/%s/checklist/%s/checkItem/%s" card-id checklist-id item-id))))
+    (orgtrello-api/make-query "PUT" (format "/cards/%s/checklist/%s/checkItem/%s" card-id checklist-id item-id))))
 
 (defun orgtrello-api/get-items (checklist-id)
   "List the checklist items."

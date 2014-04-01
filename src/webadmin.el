@@ -7,8 +7,8 @@
   (let ((dir (orgtrello-webadmin/--compute-root-static-files)))
     (not (and (file-exists-p dir)
               (< 3 (-> dir
-                       directory-files
-                       length)))))) ;; . and .. are returned by default
+                     directory-files
+                     length)))))) ;; . and .. are returned by default
 
 (defvar *ORGTRELLO-FILES* (let ((tmp (orgtrello-hash/empty-hash)))
                             ;;                    url                                                  temp file            install destination
@@ -23,7 +23,7 @@
 (defun orgtrello-webadmin/--install-file (file file-dest)
   "Install the file from temporary location to the final destination."
   (when (file-exists-p file)
-        (rename-file file file-dest t)))
+    (rename-file file file-dest t)))
 
 (defun orgtrello-webadmin/--download-and-install-file (key-file)
   "Download the file represented by the parameter. Also, if the archive downloaded is a zip, unzip it."
@@ -41,7 +41,7 @@
 (defun orgtrello-webadmin/--install-css-js-files-once ()
   "Install bootstrap and jquery if need be."
   (when (orgtrello-webadmin/--installation-needed-p)
-        (mapc (lambda (key-file) (orgtrello-webadmin/--download-and-install-file key-file)) '(:bootstrap :jquery))))
+    (mapc (lambda (key-file) (orgtrello-webadmin/--download-and-install-file key-file)) '(:bootstrap :jquery))))
 
 (defun orgtrello-webadmin/--render-html (data)
   "Render the data in html."
@@ -240,7 +240,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
                 ,(orgtrello-webadmin/--entity (car entities) icon-array-run)
                 ;; next running actions
                 ,@(orgtrello-webadmin/--list-entities-as-html (cdr entities) icon-array-nxt))
-        "None")))
+      "None")))
 
 (defun orgtrello-webadmin/--response-html (data http-con)
   "A response wrapper."
@@ -250,7 +250,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 (defun orgtrello-webadmin/--elnode-admin (http-con)
   "A basic display of data"
   (-> (orgtrello-webadmin/html "org-trello/proxy-admin" "Commiters" "Administration the running queries to trello")
-      (orgtrello-webadmin/--response-html  http-con)))
+    (orgtrello-webadmin/--response-html  http-con)))
 
 (defun compose-fn (funcs)
   "Composes several functions into one."
@@ -259,7 +259,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
       (if intern-funcs
           (funcall (car intern-funcs)
                    (funcall (compose-fn (cdr intern-funcs)) arg))
-          arg))))
+        arg))))
 
 (defun orgtrello-webadmin/--list-entities (levels &optional scan-flag)
   "Compute the actions into list."
@@ -273,17 +273,17 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 (defun orgtrello-webadmin/elnode-current-entity (http-con)
   "A basic display of the list of entities to scan."
   (-> *ORGTRELLO-LEVELS*
-      (orgtrello-webadmin/--list-entities 'scan-folder)
-      nreverse
-      (orgtrello-webadmin/--entities-as-html "icon-play" "icon-pause")
-      (orgtrello-webadmin/--response-html http-con)))
+    (orgtrello-webadmin/--list-entities 'scan-folder)
+    nreverse
+    (orgtrello-webadmin/--entities-as-html "icon-play" "icon-pause")
+    (orgtrello-webadmin/--response-html http-con)))
 
 (defun orgtrello-webadmin/elnode-next-entities (http-con)
   "A basic display of the list of entities to scan."
   (-> *ORGTRELLO-LEVELS*
-       orgtrello-webadmin/--list-entities
-       orgtrello-webadmin/--entities-as-html
-       (orgtrello-webadmin/--response-html http-con)))
+    orgtrello-webadmin/--list-entities
+    orgtrello-webadmin/--entities-as-html
+    (orgtrello-webadmin/--response-html http-con)))
 
 (defun orgtrello-webadmin/elnode-static-file (http-con)
   "Serve static files if they exist. Throw 404 if it does not exists. Also, install bootstrap and jquery the first time round."
@@ -292,7 +292,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   (let ((full-file (format "%s/%s/%s" (orgtrello-webadmin/--compute-root-static-files) (elnode-http-mapping http-con 1) (elnode-http-mapping http-con 2))))
     (if (file-exists-p full-file)
         (elnode-send-file http-con full-file)
-        (elnode-send-404 http-con (format "Resource file '%s' not found!" full-file)))))
+      (elnode-send-404 http-con (format "Resource file '%s' not found!" full-file)))))
 
 (defun orgtrello-webadmin/--compute-filename-from-entity (entity)
   "Compute the filename of a file given an entity."
@@ -307,16 +307,16 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 (defun orgtrello-webadmin/--delete-entity-with-id (id)
   "Remove the entity/file which match the id id."
   (-if-let (entity-to-delete (->> *ORGTRELLO-LEVELS*
-                                  orgtrello-webadmin/--list-entities
-                                  (--filter (string= id (orgtrello-data/entity-id it)))
-                                  first))
+                               orgtrello-webadmin/--list-entities
+                               (--filter (string= id (orgtrello-data/entity-id it)))
+                               first))
       (orgtrello-webadmin/--delete-entity-file! entity-to-delete)))
 
 (defun orgtrello-webadmin/delete-entities! ()
   "Remove the entities/files."
   (->> *ORGTRELLO-LEVELS*
-       orgtrello-webadmin/--list-entities
-       (--map (orgtrello-webadmin/--delete-entity-file! it))))
+    orgtrello-webadmin/--list-entities
+    (--map (orgtrello-webadmin/--delete-entity-file! it))))
 
 (defun orgtrello-webadmin/elnode-delete-entity (http-con)
   "Deal with actions to do on 'action' (entities)."

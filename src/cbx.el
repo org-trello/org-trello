@@ -17,22 +17,22 @@
 (defun orgtrello-cbx/--checkbox-metadata (s)
   "Retrieve the checkbox's metadata."
   (-when-let (res (-> s
-                      orgtrello-cbx/--checkbox-split
-                      second))
-             (s-trim-left res)))
+                    orgtrello-cbx/--checkbox-split
+                    second))
+    (s-trim-left res)))
 
 (defun orgtrello-cbx/--checkbox-data (s)
   "Retrieve the checkbox's data."
-    (-> s
-      orgtrello-cbx/--checkbox-split
-      first
-      s-trim-right))
+  (-> s
+    orgtrello-cbx/--checkbox-split
+    first
+    s-trim-right))
 
 (defun orgtrello-cbx/--read-properties (s)
   "Read the properties from the current string."
   (->> s
-       orgtrello-cbx/--checkbox-metadata
-       orgtrello-cbx/--from-properties))
+    orgtrello-cbx/--checkbox-metadata
+    orgtrello-cbx/--from-properties))
 
 (defun orgtrello-cbx/--read-checkbox! ()
   "Read the full checkbox's content"
@@ -78,48 +78,48 @@
 (defun orgtrello-cbx/--org-get-property (key properties)
   "Internal accessor to the key property."
   (-> key
-      orgtrello-cbx/--key-to-search
-      (assoc-default properties)))
+    orgtrello-cbx/--key-to-search
+    (assoc-default properties)))
 
 (defun orgtrello-cbx/--org-update-property (key value properties)
   "Internal accessor to the key property."
   (->> properties
-       (orgtrello-cbx/--org-delete-property key)
-       (cons `(,(orgtrello-cbx/--key-to-search key) . ,value))))
+    (orgtrello-cbx/--org-delete-property key)
+    (cons `(,(orgtrello-cbx/--key-to-search key) . ,value))))
 
 (defun orgtrello-cbx/--org-delete-property (key properties)
   "Delete the key from the properties."
   (-> key
-      orgtrello-cbx/--key-to-search
-      (assq-delete-all properties)))
+    orgtrello-cbx/--key-to-search
+    (assq-delete-all properties)))
 
 (defun orgtrello-cbx/org-set-property (key value)
   "Read the properties. Add the new property key with the value value. Write the new properties."
   (let ((current-point (point)))
     (->> current-point
-         orgtrello-cbx/--read-properties-from-point
-         (orgtrello-cbx/--org-update-property key value)
-         (orgtrello-cbx/--write-properties-at-point current-point))))
+      orgtrello-cbx/--read-properties-from-point
+      (orgtrello-cbx/--org-update-property key value)
+      (orgtrello-cbx/--write-properties-at-point current-point))))
 
 (defun orgtrello-cbx/org-get-property (point key)
   "Retrieve the value for the key key."
   (->> point
-       orgtrello-cbx/--read-properties-from-point
-       (orgtrello-cbx/--org-get-property key)))
+    orgtrello-cbx/--read-properties-from-point
+    (orgtrello-cbx/--org-get-property key)))
 
 (defun orgtrello-cbx/org-delete-property (key)
   "Delete the property key from the properties."
   (let ((current-point (point)))
     (->> current-point
-         orgtrello-cbx/--read-properties-from-point
-         (orgtrello-cbx/--org-delete-property key)
-         (orgtrello-cbx/--write-properties-at-point current-point))))
+      orgtrello-cbx/--read-properties-from-point
+      (orgtrello-cbx/--org-delete-property key)
+      (orgtrello-cbx/--write-properties-at-point current-point))))
 
 (defun orgtrello-cbx/--org-split-data (s)
   "Split the string into meta data with -."
   (->> s
-       (s-replace "[ ]" "[]")
-       (s-split " ")))
+    (s-replace "[ ]" "[]")
+    (s-split " ")))
 
 (defun orgtrello-cbx/--list-is-checkbox-p (l)
   "Is this a checkbox?"
@@ -133,7 +133,7 @@ String look like:
 To ease the computation, we consider level 4 if no - to start with, and to avoid missed typing, we consider level 2 if there is no space before the - and level 3 otherwise."
   (if (orgtrello-cbx/--list-is-checkbox-p l)
       (if (string= "-" (car l)) *CHECKLIST-LEVEL* *ITEM-LEVEL*)
-      *OUTOFBOUNDS-LEVEL*))
+    *OUTOFBOUNDS-LEVEL*))
 
 (defun orgtrello-cbx/--retrieve-status (l)
   "Given a list of metadata, return the status"
@@ -149,12 +149,12 @@ To ease the computation, we consider level 4 if no - to start with, and to avoid
 (defun orgtrello-cbx/--name (s status)
   "Retrieve the name of the checklist"
   (->> s
-       (s-replace "[ ]" "[]")
-       s-trim-left
-       (s-chop-prefix "-")
-       s-trim-left
-       (s-chop-prefix status)
-       s-trim))
+    (s-replace "[ ]" "[]")
+    s-trim-left
+    (s-chop-prefix "-")
+    s-trim-left
+    (s-chop-prefix status)
+    s-trim))
 
 (defun orgtrello-cbx/--metadata-from-checklist (full-checklist)
   "Given a checklist string, extract the list of metadata"
@@ -199,9 +199,9 @@ This is a list with the following elements:
 (defun orgtrello-cbx/org-up! ()
   "A function to get back to the current entry's parent."
   (-> (orgtrello-cbx/org-checkbox-metadata!)
-      orgtrello-cbx/--get-level
-      1-
-      orgtrello-cbx/--org-up!))
+    orgtrello-cbx/--get-level
+    1-
+    orgtrello-cbx/--org-up!))
 
 (defun orgtrello-cbx/compute-next-card-point! ()
   "Compute the next card's position. Does preserve position. If a sibling is found, return the point-at-bol, otherwise return the max point in buffer."
@@ -213,23 +213,23 @@ This is a list with the following elements:
   "Compute the next checkbox's beginning of line. Does not preserve the current position. If hitting a heading or the end of the file, return nil."
   (forward-line)
   (when (and (not (org-at-heading-p)) (< (point) (point-max)) (not (orgtrello-cbx/checkbox-p)))
-        (orgtrello-cbx/--goto-next-checkbox)))
+    (orgtrello-cbx/--goto-next-checkbox)))
 
 (defun orgtrello-cbx/--goto-next-checkbox-with-same-level! (level)
   "Compute the next checkbox's beginning of line (with the same level). Does not preserve the current position. If hitting a heading or the end of the file, return nil. Otherwise, return the current position."
   (forward-line)
   (if (= level (orgtrello-buffer/current-level!))
       (point)
-      (if (or (org-at-heading-p) (<= (point-max) (point)))
-          nil
-          (orgtrello-cbx/--goto-next-checkbox-with-same-level! level))))
+    (if (or (org-at-heading-p) (<= (point-max) (point)))
+        nil
+      (orgtrello-cbx/--goto-next-checkbox-with-same-level! level))))
 
 (defun orgtrello-cbx/--map-checkboxes (level fn-to-execute)
   "Map over the checkboxes and execute fn when in checkbox. Does not preserve the cursor position. Do not exceed the point-max."
   (orgtrello-cbx/--goto-next-checkbox)
   (when (< level (orgtrello-buffer/current-level!))
-        (funcall fn-to-execute)
-        (orgtrello-cbx/--map-checkboxes level fn-to-execute)))
+    (funcall fn-to-execute)
+    (orgtrello-cbx/--map-checkboxes level fn-to-execute)))
 
 (defun orgtrello-cbx/map-checkboxes (fn-to-execute)
   "Map over the current checkbox and sync them."

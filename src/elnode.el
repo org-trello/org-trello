@@ -30,9 +30,9 @@
       (while (and str (not (string-equal "" str)))
         (let ((p (string-match "[0-9]*\\.?[0-9]+" str)))
           (cond ((null p) (setq res (cons str res))
-                          (setq str nil))
+                 (setq str nil))
                 ((= p 0)  (setq res (cons (string-to-number (match-string 0 str)) res))
-                          (setq str (substring str (match-end 0))))
+                 (setq str (substring str (match-end 0))))
                 (t        (setq res (cons (substring str 0 (match-beginning 0)) res))
                           (setq str (substring str (match-beginning 0)))))))
       (reverse res))))
@@ -41,7 +41,7 @@
   "Compute list of regular files (no directory . and ..). List is sorted lexicographically if sort-flag-lexicographically is set, naturally otherwise."
   (let ((orgtrello-elnode/--list-files-result (--filter (file-regular-p it) (directory-files directory t))))
     (unless sort-lexicographically
-            orgtrello-elnode/--list-files-result
-            (sort orgtrello-elnode/--list-files-result 'orgtrello-elnode/--dictionary-lessp))))
+      orgtrello-elnode/--list-files-result
+      (sort orgtrello-elnode/--list-files-result 'orgtrello-elnode/--dictionary-lessp))))
 
 
