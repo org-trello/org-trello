@@ -3,6 +3,7 @@
 - [X] Refactor
 - [X] Fix - Close https://github.com/org-trello/org-trello/issues/145
 - [X] Remove unused dependency
+- [X] Update README-dev.md
 - [X] Version
 - [X] Release notes
 
