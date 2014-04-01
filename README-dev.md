@@ -12,21 +12,26 @@ This is described in the [namespaces.el](./namespaces) file.
 
 The namespaces are in loading order:
 
-Namespace File    | Description
+Namespace File    | Description of the namespace
 ------------------|------------------------------------------------------------------------
-header.el         | The main information about org-trello (version, licence, deps, etc...)
-log.el            | A namespace to provide log facilities
-setup.el          | Main variable that permits internal customisation of org-trello
-hash.el           | Hash-map maniputation utilities
-action.el         | Higher-order functions
-data.el           | Internal data manipulation
+header.el         | Main information about org-trello (version, licence, deps, etc...)
+log.el            | Provide log facilities
+setup.el          | Main variable definition that permits internal org-trello functions customization
+hash.el           | Hash-map manipulation utilities
+action.el         | Higher-order functions helper
+data.el           | Internal org-trello data manipulation
 cbx.el            | Checkbox manipulation utilities
-api.el            | Trello API abstraction
+api.el            | Trello API abstraction DSL
 query.el          | HTTP query utilities
-elnode.el         | Elnode utilities
-webadmin.el       | Web admin utilities
-proxy.el          | Proxy utilities
-org-trello .el    | Main org-trello using everything else
+backend.el        | Deals with trello requests
+elnode.el         | Elnode utilities (common namespace between proxy.el and webadmin.el)
+proxy.el          | Proxy utilities - Namespace in charge of dealing with the trello requests
+webadmin.el       | Web admin front utilities. Namespace in charge of web admin interface
+server.el         | Main namespace that hides the webadmin and the proxy
+buffer.el         | Buffer manipulation functions
+input.el          | Text input functions
+controller.el     | Controller used by org-trello.el
+org-trello.el     | Main org-trello mode which defines interactive command and the mode to be used
 footer.el         | End of the org-trello packaging
 
 ## Loading
