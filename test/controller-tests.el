@@ -61,8 +61,8 @@
 
 (expectations (desc "orgtrello-controller/--compute-state-from-keyword")
   (expect 'none (orgtrello-controller/--compute-state-from-keyword ""))
-  (expect 'none (orgtrello-controller/--compute-state-from-keyword *TODO*))
-  (expect 'done (orgtrello-controller/--compute-state-from-keyword *DONE*))
+  (expect 'none (orgtrello-controller/--compute-state-from-keyword *ORGTRELLO-TODO*))
+  (expect 'done (orgtrello-controller/--compute-state-from-keyword *ORGTRELLO-DONE*))
   (expect 'none (orgtrello-controller/--compute-state-from-keyword "IN")))
 
 (expectations (desc "orgtrello-marker-2a0b98e652ce6349a0659a7a8eeb3783ffe9a11a")
@@ -83,7 +83,7 @@
   (expect t (hash-equal
              #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
                            (:username "ardumont" :full-name "Antoine R. Dumont" :id "4f2baa2f72b7c1293501cad3"))
-             (first (orgtrello-controller/--compute-user-properties '(#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
+             (car (orgtrello-controller/--compute-user-properties '(#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
                                                                          (:member #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
                                                                                                 (:username "ardumont" :full-name "Antoine R. Dumont" :id "4f2baa2f72b7c1293501cad3"))
                                                                                   :id "51d99bbc1e1d8988390047f6"))
@@ -94,7 +94,7 @@
   (expect t (hash-equal
              #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
                            (:username "orgmode" :full-name "org trello" :id "5203a0c833fc36360800177f"))
-             (second (orgtrello-controller/--compute-user-properties '(#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
+             (cadr (orgtrello-controller/--compute-user-properties '(#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
                                                                           (:member #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
                                                                                                  (:username "ardumont" :full-name "Antoine R. Dumont" :id "4f2baa2f72b7c1293501cad3"))
                                                                                    :id "51d99bbc1e1d8988390047f6"))
@@ -148,11 +148,11 @@
  (expect "#+property: test value" (orgtrello-controller/compute-property "test" "value")))
 
 (expectations
-  (expect "complete" (orgtrello-controller/compute-state *DONE*))
+  (expect "complete" (orgtrello-controller/compute-state *ORGTRELLO-DONE*))
   (expect "incomplete" (orgtrello-controller/compute-state "anything-else")))
 
 (expectations
-  (expect t   (orgtrello-controller/compute-check *DONE*))
+  (expect t   (orgtrello-controller/compute-check *ORGTRELLO-DONE*))
   (expect nil (orgtrello-controller/compute-check "anything-else")))
 
 (expectations

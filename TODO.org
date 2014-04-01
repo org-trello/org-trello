@@ -958,7 +958,16 @@ CLOSED: [2014-03-28 Fri 17:05]
 - [X] Upgrade Version
 - [X] Release notes
 
-* TODO 0.3.X [0%]
+* DONE 0.4.0 [100%]
+CLOSED: [2014-03-31 Mon 21:44]
+- [X] Refactor
+- [X] Fix - Close https://github.com/org-trello/org-trello/issues/145
+- [X] Remove unused dependency
+- [X] Update README-dev.md
+- [X] Version
+- [X] Release notes
+
+* TODO 0.4.x [0%]
 - [ ] Improve sync request policy - https://github.com/org-trello/org-trello/issues/58
 - [ ] Use active region - https://github.com/org-trello/org-trello/issues/130
 - [ ] More fined grained use of the trello api (retrieve only data we use) - https://github.com/org-trello/org-trello/issues/69

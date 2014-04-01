@@ -96,7 +96,7 @@
     json-read-from-string                     ;; now getting back an association list
     orgtrello-query/--prepare-params-assoc!))
 
-(defun orgtrello-query/--http (server query-map &optional sync success-callback error-callback authentication-p)
+(defun orgtrello-query/http (server query-map &optional sync success-callback error-callback authentication-p)
   "HTTP query the server with the query-map."
   (let* ((dispatch-http-query-fn (-> query-map
                                    orgtrello-data/entity-method
@@ -109,7 +109,7 @@
 
 (defun orgtrello-query/http-trello (query-map &optional sync success-callback error-callback)
   "Query the trello api."
-  (orgtrello-query/--http *TRELLO-URL* query-map sync success-callback error-callback t))
+  (orgtrello-query/http *TRELLO-URL* query-map sync success-callback error-callback t))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-query loaded!")
 

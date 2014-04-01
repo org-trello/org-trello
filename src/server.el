@@ -35,10 +35,10 @@
 
 (defun orgtrello-server/reload ()
   "Reload the proxy server."
-  (orgtrello-proxy/stop)
+  (orgtrello-server/stop)
   ;; stop the default port (only useful if the user changed from the default port)
   (elnode-stop *ORGTRELLO-SERVER-DEFAULT-PORT*)
-  (orgtrello-proxy/start))
+  (orgtrello-server/start))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-server loaded!")
 

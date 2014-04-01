@@ -28,12 +28,15 @@
 (defconst *ERROR-SYNC-ITEM-MISSING-NAME* "Cannot synchronize the item - missing mandatory name. Skip it...")
 (defconst *ERROR-SYNC-ITEM-SYNC-UPPER-LAYER-FIRST* "The card and the checklist must be synced before syncing the item. Skip it...")
 
-(defun org-trello/https-trello (url-without-base-uri) "An helper method to compute the uri to trello"
+(defun org-trello/compute-url (url-without-base-uri)
+  "An helper method to compute the uri to trello"
   (concat *ORGTRELLO-HTTPS* url-without-base-uri))
 
 ;; #################### orgtrello-version
 
-(defun org-trello/version () (interactive) "Version of org-trello"
+(defun org-trello/version ()
+  (interactive)
+  "Version of org-trello"
   (message "org-trello version: %s" *ORGTRELLO-VERSION*))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-setup loaded!")

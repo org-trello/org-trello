@@ -3,12 +3,12 @@
 (defun orgtrello-data/merge-2-lists-without-duplicates (a-list b-list)
   "Merge 2 lists together (no duplicates)."
   (-> a-list
-      (append b-list)
-      (delete-dups)))
+    (append b-list)
+    (delete-dups)))
 
 (defun orgtrello-data/--compute-fn (entity list-dispatch-fn)
   "Given an entity, compute the result"
-  (funcall (if (hash-table-p entity) (first list-dispatch-fn) (second list-dispatch-fn)) entity))
+  (funcall (if (hash-table-p entity) (car list-dispatch-fn) (cadr list-dispatch-fn)) entity))
 
 (defun orgtrello-data/--entity-with-level-p (entity level) "Is the entity with level level?" (-> entity orgtrello-data/entity-level (eq level)))
 (defun orgtrello-data/entity-card-p      (entity) "Is this a card?"      (orgtrello-data/--entity-with-level-p entity *CARD-LEVEL*))
@@ -61,10 +61,10 @@
 (defun orgtrello-data/grandparent (entry-meta) (orgtrello-data/gethash-data :grandparent entry-meta))
 
 (defun orgtrello-data/--compute-level (entity-map) "Given a map, compute the entity level"
-  (cond ((gethash :list-id entity-map) *CARD-LEVEL*)
-        ((gethash :card-id entity-map) *CHECKLIST-LEVEL*)
-        ((gethash :checked entity-map) *ITEM-LEVEL*)
-        (t nil)))
+       (cond ((gethash :list-id entity-map) *CARD-LEVEL*)
+             ((gethash :card-id entity-map) *CHECKLIST-LEVEL*)
+             ((gethash :checked entity-map) *ITEM-LEVEL*)
+             (t nil)))
 
 (defvar *ORGTRELLO-DATA-MAP-KEYWORDS* (orgtrello-hash/make-properties `((url            . :url)
                                                                         (id             . :id)
@@ -160,9 +160,9 @@
 (defun orgtrello-data/format-comments (comments)
   "Given a property string of comments, work it to permit a human readable display."
   (if comments
-    (->> comments
-      (s-split *ORGTRELLO-CARD-COMMENTS-DELIMITER*)
-      (s-join *ORGTRELLO-CARD-COMMENTS-DELIMITER-PRINT*))
+      (->> comments
+        (s-split *ORGTRELLO-CARD-COMMENTS-DELIMITER*)
+        (s-join *ORGTRELLO-CARD-COMMENTS-DELIMITER-PRINT*))
     "No comments to display!"))
 
 (defun orgtrello-data/id-p (id)
@@ -190,17 +190,17 @@
 
 (defun orgtrello-data/--compute-state-item (state)
   "Compute the status of the checkbox"
-  (orgtrello-data/--compute-state-generic state `(,*DONE* ,*TODO*)))
+  (orgtrello-data/--compute-state-generic state `(,*ORGTRELLO-DONE* ,*ORGTRELLO-TODO*)))
 
 (defun orgtrello-data/--merge-checklist (trello-checklist org-checklist)
   "Merge trello and org checklist together."
   (if (null trello-checklist)
       org-checklist
-      (let ((org-checklist-to-merge (orgtrello-hash/init-map-from org-checklist)))
-        (puthash :level *CHECKLIST-LEVEL*                            org-checklist-to-merge)
-        (puthash :name (orgtrello-data/entity-name trello-checklist) org-checklist-to-merge)
-        (puthash :id   (orgtrello-data/entity-id trello-checklist)   org-checklist-to-merge)
-        org-checklist-to-merge)))
+    (let ((org-checklist-to-merge (orgtrello-hash/init-map-from org-checklist)))
+      (puthash :level *CHECKLIST-LEVEL*                            org-checklist-to-merge)
+      (puthash :name (orgtrello-data/entity-name trello-checklist) org-checklist-to-merge)
+      (puthash :id   (orgtrello-data/entity-id trello-checklist)   org-checklist-to-merge)
+      org-checklist-to-merge)))
 
 (defun orgtrello-data/entity-member-ids-as-list (entity)
   "Retrieve the users assigned to the entity."
@@ -211,9 +211,9 @@
 (defun orgtrello-data/--merge-member-ids (trello-card org-card)
   "Merge users assigned from trello and org."
   (--> trello-card
-       (orgtrello-data/entity-member-ids it)
-       (orgtrello-data/merge-2-lists-without-duplicates it (orgtrello-data/entity-member-ids-as-list org-card))
-       (orgtrello-data/--users-to it)))
+    (orgtrello-data/entity-member-ids it)
+    (orgtrello-data/merge-2-lists-without-duplicates it (orgtrello-data/entity-member-ids-as-list org-card))
+    (orgtrello-data/--users-to it)))
 
 (defun orgtrello-data/--labels-to-tags (labels)
   (when labels
@@ -245,10 +245,10 @@
 
 (defun orgtrello-data/merge-entities-trello-and-org (trello-data org-data)
   "Merge the org-entity entities inside the trello-entities."
-  (let ((trello-entities  (first trello-data))
-        (trello-adjacency (second trello-data))
-        (org-entities     (first org-data))
-        (org-adjacency    (second org-data)))
+  (let ((trello-entities  (car trello-data))
+        (trello-adjacency (cadr trello-data))
+        (org-entities     (car org-data))
+        (org-adjacency    (cadr org-data)))
 
     (maphash (lambda (id trello-entity)
                (puthash id (funcall (orgtrello-data/--dispatch-merge-fn trello-entity) trello-entity (orgtrello-data/--get-entity id org-entities)) trello-entities) ;; updating entity to trello
@@ -258,8 +258,8 @@
     ;; copy the entities only present on org files to the trello entities.
     (maphash (lambda (id org-entity)
                (unless (gethash id trello-entities)
-                       (puthash id org-entity trello-entities)
-                       (puthash id (gethash id org-adjacency) trello-adjacency)))
+                 (puthash id org-entity trello-entities)
+                 (puthash id (gethash id org-adjacency) trello-adjacency)))
              org-entities)
 
     (list trello-entities trello-adjacency)))
@@ -275,14 +275,14 @@
 (defun orgtrello-data/--compute-state-generic (state list-state)
   "Computing generic."
   (if (or (string= "complete" state)
-          (string= *DONE* state)) (first list-state) (second list-state)))
+          (string= *ORGTRELLO-DONE* state)) (car list-state) (cadr list-state)))
 
 (defun orgtrello-data/--users-from (string-users)
   "Compute the users name from the comma separated value in string."
   (when string-users (split-string string-users "," t)))
 
 (defun orgtrello-data/--users-to (users) "Given a list of users, compute the comma separated users."
-  (if users (mapconcat 'identity users ",") ""))
+       (if users (mapconcat 'identity users ",") ""))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-data loaded!")
 

@@ -1,4 +1,5 @@
-(defun orgtrello-hash/empty-hash () "Empty hash table with test 'equal"
+(defun orgtrello-hash/empty-hash ()
+  "Empty hash table with test 'equal"
   (make-hash-table :test 'equal))
 
 (defun orgtrello-hash/make-hash-org (member-ids level keyword name id due position buffer-name desc comments tags)
@@ -17,22 +18,26 @@
     (puthash :tags           tags        h)
     h))
 
-(defun orgtrello-hash/make-properties (properties) "Given a list of key value pair, return a hash table."
+(defun orgtrello-hash/make-properties (properties)
+  "Given a list of key value pair, return a hash table."
   (--reduce-from (progn (puthash (car it) (cdr it) acc) acc)
                  (orgtrello-hash/empty-hash)
                  properties))
 
-(defun orgtrello-hash/make-transpose-properties (properties) "Given a list of key value pair, return a hash table with key/value transposed."
+(defun orgtrello-hash/make-transpose-properties (properties)
+  "Given a list of key value pair, return a hash table with key/value transposed."
   (--reduce-from (progn (puthash (cdr it) (car it) acc) acc)
                  (orgtrello-hash/empty-hash)
                  properties))
 
-(defun orgtrello-hash/make-hierarchy (current &optional parent grandparent) "Helper constructor for the hashmap holding the full metadata about the current-entry."
+(defun orgtrello-hash/make-hierarchy (current &optional parent grandparent)
+  "Helper constructor for the hashmap holding the full metadata about the current-entry."
   (orgtrello-hash/make-properties `((:current . ,current)
                                     (:parent . ,parent)
                                     (:grandparent . ,grandparent))))
 
-(defun orgtrello-hash/key (s) "Given a string, compute its key format."
+(defun orgtrello-hash/key (s)
+  "Given a string, compute its key format."
   (format ":%s:" s))
 
 (defun orgtrello-hash/init-map-from (data)
