@@ -11,4 +11,8 @@ env:
   - EVM_EMACS=emacs-24.2-bin
   - EVM_EMACS=emacs-24.3-bin
 script:
-  - make install test install-file-with-deps-from-marmalade install-file-with-deps-from-melpa
+  - pwd
+  - make install
+  - make test
+  - make install-file-with-deps-from-marmalade
+  - make install-file-with-deps-from-melpa
