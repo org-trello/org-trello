@@ -459,6 +459,17 @@
   "Map fn-to-execute to a given entities with level level. fn-to-execute is a function without any parameter."
   (org-map-entries (lambda () (when (= level (orgtrello-buffer/current-level!)) (funcall fn-to-execute)))))
 
+(defconst *ORGTRELLO-SLASH-PATTERN* "/")
+(defconst *ORGTRELLO-DEFENSIVE-PATTERN* "!!!___orgtrello-defensive-pattern___!!!")
+
+(defun orgtrello-buffer/defensive-filename-from-buffername (buffer-name)
+  "Compute a filename from a buffername with forbidden filename character"
+  (replace-regexp-in-string *ORGTRELLO-SLASH-PATTERN* *ORGTRELLO-DEFENSIVE-PATTERN* buffer-name))
+
+(defun orgtrello-buffer/defensive-buffername-from-filename (filename)
+  "Compute a buffername from a filename"
+  (replace-regexp-in-string *ORGTRELLO-DEFENSIVE-PATTERN* *ORGTRELLO-SLASH-PATTERN* filename))
+
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-buffer loaded!")
 
 

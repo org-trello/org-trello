@@ -51,3 +51,8 @@
                                                     (action . "some action")
                                                     (level . 3)
                                                     (start . nil))))))
+
+(expectations
+ (expect "some-root-dir/some-buffername-1000.el" (orgtrello-proxy/--compute-metadata-filename "some-root-dir/" "some-buffername" 1000))
+ (expect "some-root-dir/some-buffername-with-dangerous-pattern-including-!!!___orgtrello-defensive-pattern___!!!-1000.el"
+         (orgtrello-proxy/--compute-metadata-filename "some-root-dir/" "some-buffername-with-dangerous-pattern-including-/" 1000)))

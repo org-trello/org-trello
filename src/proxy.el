@@ -91,8 +91,10 @@
     (orgtrello-proxy/response-ok http-con)))
 
 (defun orgtrello-proxy/--compute-metadata-filename (root-dir buffer-name position)
-  "Compute the metadata entity filename"
-  (format "%s%s-%s.el" root-dir buffer-name position))
+  "Compute the metadata entity filename from a buffer-name"
+  (--> buffer-name
+    (orgtrello-buffer/defensive-filename-from-buffername it)
+    (format "%s%s-%s.el" root-dir it position)))
 
 (defun orgtrello-proxy/--elnode-proxy-producer (http-con)
   "A handler which is an entity informations producer on files under the docroot/level-entities/"
