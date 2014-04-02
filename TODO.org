@@ -966,9 +966,9 @@ CLOSED: [2014-03-31 Mon 21:44]
 - [X] Update README-dev.md
 - [X] Version
 - [X] Release notes
-* IN-PROGRESS 0.4.0.1 [33%]
+* IN-PROGRESS 0.4.0.1 [66%]
 - [X] Fix 'Sync doesn't work if org buffer name contains special characters' - Close #147
-- [ ] Version
+- [X] Version
 - [ ] Release notes
 
 * TODO 0.4.x [0%]
