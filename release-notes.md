@@ -1,3 +1,9 @@
+# 0.4.0.1
+
+- [X] Fix 'Sync doesn't work if org buffer name contains special characters' - Close #147
+- [X] Version
+- [X] Release notes
+
 # 0.4.0
 
 - [X] Refactor
