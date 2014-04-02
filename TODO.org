@@ -966,7 +966,8 @@ CLOSED: [2014-03-31 Mon 21:44]
 - [X] Update README-dev.md
 - [X] Version
 - [X] Release notes
-* IN-PROGRESS 0.4.0.1 [100%]
+* DONE 0.4.0.1 [100%]
+CLOSED: [2014-04-02 Wed 14:48]
 - [X] Fix 'Sync doesn't work if org buffer name contains special characters' - Close #147
 - [X] Version
 - [X] Release notes
