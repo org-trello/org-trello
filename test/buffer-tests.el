@@ -676,3 +676,9 @@ some description\n"
     (should (equal "ardumont: this is some comments###dude: some other comment"  (orgtrello-data/entity-comments h-values)))
     (should (equal "some-user-id,some-user-id2"                                  (orgtrello-data/entity-member-ids h-values)))
     (should (equal "TODO"                                                        (orgtrello-data/entity-keyword h-values)))))
+
+(expectations
+ (expect "<!?#$+[]{}()buffername-with-dangerous-symbols!!!___orgtrello-defensive-pattern___!!!with-slash"
+         (orgtrello-buffer/defensive-filename-from-buffername "<!?#$+[]{}()buffername-with-dangerous-symbols/with-slash"))
+ (expect "<!?#$+[]{}()buffername-with=dangerous-symbols/with-slash"
+         (orgtrello-buffer/defensive-buffername-from-filename "<!?#$+[]{}()buffername-with=dangerous-symbols!!!___orgtrello-defensive-pattern___!!!with-slash")))
