@@ -37,22 +37,44 @@
 ;; 2) Once - Install the consumer-key and the read-write token for org-trello to be able to work in your name with your trello boards (C-c o i)
 ;; M-x org-trello/install-key-and-token
 ;;
-;; 3) Once per org-mode file/board you want to connect to (C-c o I)
+;; You may want:
+;; - to connect your org buffer to an existing board (C-c o I). Beware that this will only install properties needed to speak with trello board (nothing else).
 ;; M-x org-trello/install-board-and-lists-ids
 ;;
-;; 4) You can also create a board directly from a org-mode buffer (C-c o b)
+;; - to create an empty board directly from a org-mode buffer (C-c o b)
 ;; M-x org-trello/create-board
 ;;
-;; 5) Check your setup (C-c o d)
+;; 3) Now check your setup is ok (C-c o d)
 ;; M-x org-trello/check-setup
 ;;
-;; 6) Help (C-c o h)
+;; 6) For some more help (C-c o h)
 ;; M-x org-trello/help-describing-setup
 ;;
-;; Now you can work with trello from the comfort of emacs.
+;; 7) If you attached to an existing trello board, you may want to bootstrap your org-buffer (C-u C-c o s)
+;; C-u M-x org-trello/sync-buffer
+;;
+;; Now you can work with trello from the comfort of org-mode and emacs
+;; 8) Sync an entity from org to trello (C-c o c)
+;; M-x org-trello/sync-entity
+;;
+;; 9) Sync an entity and its structure from org to trello (C-c o C)
+;; M-x org-trello/sync-full-entity
+;;
+;; 10) Sync an entity from trello to org (C-u C-c o c)
+;; C-u M-x org-trello/sync-entity
+;;
+;; 11) Sync an entity and its structure from trello to org (C-u C-c o C)
+;; C-u M-x org-trello/sync-full-entity
+;;
+;; 12) Sync all the org buffer to trello (C-c o s)
+;; M-x org-trello/sync-buffer
+;;
+;; 13) As already mentionned, you can sync all the org buffer from trello (C-u C-c o s)
+;; C-u M-x org-trello/sync-buffer
+;;
 ;; Enjoy!
-
-;; More informations on https://ardumont.github.io/org-trello
+;;
+;; More informations on https://org-trello.github.io/org-trello
 
 ;;; Code:
 
