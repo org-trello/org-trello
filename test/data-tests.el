@@ -515,5 +515,17 @@
               (expect "a,b,c," (orgtrello-data/--users-to '("a" "b" "c" ""))))
 
 (expectations
-  (expect ":trello-labels" (orgtrello-data/--merge-labels ":trello-labels" nil))
-  (expect "org-tags:trello-labels" (orgtrello-data/--merge-labels ":trello-labels" "org-tags:")))
+  (expect ":trello-labels:"                    (orgtrello-data/--merge-labels-as-tags ":trello-labels:" nil))
+  (expect ":org-tags:trello-labels:"           (orgtrello-data/--merge-labels-as-tags ":trello-labels:" ":org-tags:"))
+  (expect ":red:org-tags:howto:trello-labels:" (orgtrello-data/--merge-labels-as-tags ":trello-labels:red:" ":red:org-tags:howto:")))
+
+(expectations
+  (expect '("a" "b" "c") (orgtrello-data/--from-tags-to-list ":a:b:c:")))
+
+(expectations
+  (expect ":red:" (orgtrello-data/--labels-hash-to-tags        (list (orgtrello-hash/make-properties '((:color . "red"))))))
+  (expect ":red:yellow:" (orgtrello-data/--labels-hash-to-tags (list (orgtrello-hash/make-properties '((:color . "red")))
+                                                                     (orgtrello-hash/make-properties '((:color . "yellow")))))))
+(expectations
+  (expect nil (orgtrello-data/--labels-to-tags nil))
+  (expect ":a:b:c:" (orgtrello-data/--labels-to-tags '("a" "b" "c"))))

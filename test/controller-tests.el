@@ -219,8 +219,3 @@
   (expect "a," (orgtrello-controller/--tags-to-labels ":a:"))
   (expect "a," (orgtrello-controller/--tags-to-labels "a:"))
   (expect nil  (orgtrello-controller/--tags-to-labels nil)))
-
-(expectations
- (expect ":red:" (orgtrello-data/--labels-to-tags (list (orgtrello-hash/make-properties '((:color . "red"))))))
- (expect ":red:yellow:" (orgtrello-data/--labels-to-tags (list (orgtrello-hash/make-properties '((:color . "red")))
-                                                                     (orgtrello-hash/make-properties '((:color . "yellow")))))))
