@@ -42,7 +42,7 @@
   "Given a string, remove any org properties if any"
   (->> text-content
     (replace-regexp-in-string "^[ ]*:.*" "")
-    (replace-regexp-in-string "DEADLINE:.*" "")
+    (replace-regexp-in-string (format "%s.*" *ORGTRELLO-DEADLINE-PREFIX*) "")
     s-trim-left))
 
 (defun orgtrello-buffer/org-file-get-property! (property-key)
@@ -193,7 +193,7 @@
 
 (defun orgtrello-buffer/--compute-due-date (due-date)
   "Compute the format of the due date."
-  (if due-date (format "DEADLINE: <%s>\n" due-date) ""))
+  (if due-date (format "%s <%s>\n" *ORGTRELLO-DEADLINE-PREFIX* due-date) ""))
 
 (defun orgtrello-buffer/--private-compute-card-to-org-entry (name status due-date tags)
   "Compute the org format for card."
