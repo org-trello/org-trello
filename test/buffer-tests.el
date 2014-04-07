@@ -188,10 +188,38 @@ some description"
                                                                                            (:member-ids . "ardumont-id,dude-id")
                                                                                            (:comments . ,(list (orgtrello-hash/make-properties '((:comment-user . "ardumont")
                                                                                                                                                  (:comment-text . "some comment")))))
-                                                                                           (:labels . ":red:green:")
                                                                                            (:desc . "some description")
                                                                                            (:level . ,*CARD-LEVEL*)
                                                                                            (:name . "some card name"))))
+
+     0))
+  (expect ":PROPERTIES:
+#+PROPERTY: orgtrello-user-ardumont ardumont-id
+#+PROPERTY: orgtrello-user-dude dude-id
+:END:
+* TODO some card name                                                   :red:green:
+DEADLINE: <some-due-date>
+  :PROPERTIES:
+  :orgtrello-id: some-card-id
+  :orgtrello-users: ardumont,dude
+  :orgtrello-card-comments: ardumont: some comment
+  :END:
+some description"
+    (orgtrello-tests/with-temp-buffer-and-return-buffer-content
+     ":PROPERTIES:
+#+PROPERTY: orgtrello-user-ardumont ardumont-id
+#+PROPERTY: orgtrello-user-dude dude-id
+:END:
+"
+     (orgtrello-buffer/write-card-header! "some-card-id" (orgtrello-hash/make-properties `((:keyword . "TODO")
+                                                                                           (:member-ids . "ardumont-id,dude-id")
+                                                                                           (:comments . ,(list (orgtrello-hash/make-properties '((:comment-user . "ardumont")
+                                                                                                                                                 (:comment-text . "some comment")))))
+                                                                                           (:tags . ":red:green:")
+                                                                                           (:desc . "some description")
+                                                                                           (:level . ,*CARD-LEVEL*)
+                                                                                           (:name . "some card name")
+                                                                                           (:due . "some-due-date"))))
 
      0)))
 
