@@ -4,7 +4,7 @@
   "Merge 2 lists together (no duplicates)."
   (-> a-list
     (append b-list)
-    (delete-dups)))
+    delete-dups))
 
 (defun orgtrello-data/--compute-fn (entity list-dispatch-fn)
   "Given an entity, compute the result"
