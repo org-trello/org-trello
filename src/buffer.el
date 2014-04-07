@@ -42,6 +42,7 @@
   "Given a string, remove any org properties if any"
   (->> text-content
     (replace-regexp-in-string "^[ ]*:.*" "")
+    (replace-regexp-in-string "DEADLINE:.*" "")
     (s-trim-left)))
 
 (defun orgtrello-buffer/org-file-get-property! (property-key)

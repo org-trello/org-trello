@@ -3,6 +3,7 @@
 (require 'el-mock)
 
 (expectations
+  (desc "orgtrello-buffer/filter-out-properties")
   (expect "hello there\nhow are you today\nthis is a hell of a ride" (orgtrello-buffer/filter-out-properties ":PROPERTIES:
 :orgtrello-id: 52c945143004d4617c012528
 :END:
@@ -11,11 +12,18 @@ how are you today
 this is a hell of a ride"))
   (expect "hello there\nhow are you today\nthis is a hell of a ride" (orgtrello-buffer/filter-out-properties "hello there
 how are you today
+this is a hell of a ride"))
+
+  (expect "hello there\nhow are you today\nthis is a hell of a ride" (orgtrello-buffer/filter-out-properties "  DEADLINE: <2014-04-01T00:00:00.000Z>
+hello there
+how are you today
 this is a hell of a ride")))
 
-(expectations (desc "orgtrello-buffer/extract-description-from-current-position! - standard org-trello properties without blanks before them.")
+(expectations
+ (desc "orgtrello-buffer/extract-description-from-current-position! - standard org-trello properties without blanks before them.")
   (expect "hello there"
     (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
+   DEADLINE: <2014-04-01T00:00:00.000Z>
 :PROPERTIES:
 :orgtrello-id: 52c945143004d4617c012528
 :END:
