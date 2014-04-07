@@ -157,11 +157,16 @@
   (apply 'orgtrello-cbx/remove-overlays! region)
   (apply 'delete-region region))
 
+(defun orgtrello-buffer/overwrite-and-merge-card-header! (trello-card)
+  "Given a card, compute the merge and then overwrite it locally"
+  (->> (orgtrello-buffer/metadata!)
+    (orgtrello-data/--merge-card trello-card)
+    orgtrello-buffer/overwrite-card-header!))
+
 (defun orgtrello-buffer/overwrite-card-header! (card)
   "Given an updated card 'card' and the current position, overwrite the current position with the updated card data."
   (let ((region (orgtrello-buffer/compute-card-metadata-region!)))
     (orgtrello-buffer/clean-region! region)
-    (puthash :member-ids (-> card orgtrello-data/entity-member-ids orgtrello-data/--users-to) card)
     (orgtrello-buffer/write-card-header! (orgtrello-data/entity-id card) card)))
 
 (defun orgtrello-buffer/overwrite-checklist-header! (checklist)
