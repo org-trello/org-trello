@@ -4,7 +4,7 @@
 
 ;; Author: Antoine R. Dumont <eniotna.t AT gmail.com>
 ;; Maintainer: Antoine R. Dumont <eniotna.t AT gmail.com>
-;; Version: 0.4.0.1
+;; Version: 0.4.1
 ;; Package-Requires: ((dash "2.5.0") (request "0.2.0") (elnode "0.9.9.7.6") (esxml "0.3.0") (s "1.7.0"))
 ;; Keywords: org-mode trello sync org-trello
 ;; URL: https://github.com/org-trello/org-trello
@@ -37,22 +37,44 @@
 ;; 2) Once - Install the consumer-key and the read-write token for org-trello to be able to work in your name with your trello boards (C-c o i)
 ;; M-x org-trello/install-key-and-token
 ;;
-;; 3) Once per org-mode file/board you want to connect to (C-c o I)
+;; You may want:
+;; - to connect your org buffer to an existing board (C-c o I). Beware that this will only install properties needed to speak with trello board (nothing else).
 ;; M-x org-trello/install-board-and-lists-ids
 ;;
-;; 4) You can also create a board directly from a org-mode buffer (C-c o b)
+;; - to create an empty board directly from a org-mode buffer (C-c o b)
 ;; M-x org-trello/create-board
 ;;
-;; 5) Check your setup (C-c o d)
+;; 3) Now check your setup is ok (C-c o d)
 ;; M-x org-trello/check-setup
 ;;
-;; 6) Help (C-c o h)
+;; 6) For some more help (C-c o h)
 ;; M-x org-trello/help-describing-setup
 ;;
-;; Now you can work with trello from the comfort of emacs.
+;; 7) If you attached to an existing trello board, you may want to bootstrap your org-buffer (C-u C-c o s)
+;; C-u M-x org-trello/sync-buffer
+;;
+;; Now you can work with trello from the comfort of org-mode and emacs
+;; 8) Sync an entity from org to trello (C-c o c)
+;; M-x org-trello/sync-entity
+;;
+;; 9) Sync an entity and its structure from org to trello (C-c o C)
+;; M-x org-trello/sync-full-entity
+;;
+;; 10) Sync an entity from trello to org (C-u C-c o c)
+;; C-u M-x org-trello/sync-entity
+;;
+;; 11) Sync an entity and its structure from trello to org (C-u C-c o C)
+;; C-u M-x org-trello/sync-full-entity
+;;
+;; 12) Sync all the org buffer to trello (C-c o s)
+;; M-x org-trello/sync-buffer
+;;
+;; 13) As already mentionned, you can sync all the org buffer from trello (C-u C-c o s)
+;; C-u M-x org-trello/sync-buffer
+;;
 ;; Enjoy!
-
-;; More informations on https://ardumont.github.io/org-trello
+;;
+;; More informations on https://org-trello.github.io/org-trello
 
 ;;; Code:
 
@@ -83,7 +105,7 @@ Please consider upgrading Emacs." emacs-version) "Error message when installing 
     (defalias 'cl-defun 'defun*)
     (defalias 'cl-destructuring-bind 'destructuring-bind)))
 
-(defconst *ORGTRELLO-VERSION* "0.4.0.1" "current org-trello version installed.")
+(defconst *ORGTRELLO-VERSION* "0.4.1" "current org-trello version installed.")
 
 
 (defconst *OT/NOLOG* 0)
@@ -131,6 +153,7 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
 (defconst *ORGTRELLO-CARD-COMMENTS-DELIMITER-PRINT* "\n\n"                                "Current card's comments delimiter to print.")
 (defconst *ORGTRELLO-DO-SHOW-CARD-COMMENTS-AFTER-ADDING* nil                              "Show the comment buffer after adding one comment")
 (defconst *ORGTRELLO-TITLE-BUFFER-INFORMATION* "*org-trello-information*"                 "Title for the org-trello buffers that display information.")
+(defconst *ORGTRELLO-DEADLINE-PREFIX*   "DEADLINE:"                                       "Deadline (org's equivalent to trello's due date property) prefix")
 
 (defconst *ORGTRELLO-HTTPS*               "https://trello.com"                            "URL https to help in browsing")
 
@@ -295,7 +318,7 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
   "Merge 2 lists together (no duplicates)."
   (-> a-list
     (append b-list)
-    (delete-dups)))
+    delete-dups))
 
 (defun orgtrello-data/--compute-fn (entity list-dispatch-fn)
   "Given an entity, compute the result"
@@ -507,25 +530,48 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
     (orgtrello-data/--users-to it)))
 
 (defun orgtrello-data/--labels-to-tags (labels)
+  "Given a list of tags, return a joined string with : as separator"
   (when labels
-    (-when-let (tags (s-join ":" (--map (gethash :color it) labels)))
+    (-when-let (tags (s-join ":" labels))
       (concat ":" tags ":"))))
+
+(defun orgtrello-data/--labels-hash-to-tags (labels)
+  "Given a hash map with :labels entry, return a tag string joined by : separator."
+  (when labels
+    (orgtrello-data/--labels-to-tags (--map (gethash :color it) labels))))
+
+(defun orgtrello-data/--from-tags-to-list (tags)
+  "Given a : string separated string, return a list of non empty string."
+  (->> tags
+    (s-split ":")
+    (--filter (not (string= "" it)))))
+
+(defun orgtrello-data/--merge-labels-as-tags (trello-labels org-tags)
+  "Given trello labels and org-tags, merge both of them"
+  (if org-tags
+      (let ((org-tags-as-list (orgtrello-data/--from-tags-to-list org-tags))
+            (trello-tags-as-list (orgtrello-data/--from-tags-to-list trello-labels)))
+        (orgtrello-data/--labels-to-tags (orgtrello-data/merge-2-lists-without-duplicates org-tags-as-list trello-tags-as-list)))
+    trello-labels))
 
 (defun orgtrello-data/--merge-card (trello-card org-card)
   "Merge trello and org card together."
   (if (null trello-card)
       org-card
     (let ((org-card-to-merge (orgtrello-hash/init-map-from org-card)))
-      (puthash :tags     (orgtrello-data/--labels-to-tags (orgtrello-data/entity-labels trello-card))   org-card-to-merge)
-      (puthash :comments (orgtrello-data/entity-comments trello-card)                              org-card-to-merge)
-      (puthash :level   *CARD-LEVEL*                                                               org-card-to-merge)
-      (puthash :id      (orgtrello-data/entity-id trello-card)                                     org-card-to-merge)
-      (puthash :name    (orgtrello-data/entity-name trello-card)                                   org-card-to-merge)
-      (puthash :keyword (-> trello-card
-                          orgtrello-data/entity-list-id
-                          orgtrello-data/--compute-card-status)                            org-card-to-merge)
-      (puthash :member-ids (orgtrello-data/--merge-member-ids trello-card org-card-to-merge) org-card-to-merge)
-      (puthash :desc    (orgtrello-data/entity-description trello-card)                            org-card-to-merge)
+      (puthash :tags       (orgtrello-data/--merge-labels-as-tags
+                            (orgtrello-data/--labels-hash-to-tags (orgtrello-data/entity-labels trello-card))
+                            (orgtrello-data/entity-tags org-card))                                       org-card-to-merge)
+      (puthash :comments   (orgtrello-data/entity-comments trello-card)                                  org-card-to-merge)
+      (puthash :level      *CARD-LEVEL*                                                                  org-card-to-merge)
+      (puthash :id         (orgtrello-data/entity-id trello-card)                                        org-card-to-merge)
+      (puthash :name       (orgtrello-data/entity-name trello-card)                                      org-card-to-merge)
+      (puthash :keyword    (-> trello-card
+                             orgtrello-data/entity-list-id
+                             orgtrello-data/--compute-card-status)                                       org-card-to-merge)
+      (puthash :member-ids (orgtrello-data/--merge-member-ids trello-card org-card-to-merge)             org-card-to-merge)
+      (puthash :desc       (orgtrello-data/entity-description trello-card)                               org-card-to-merge)
+      (puthash :due        (orgtrello-data/entity-due trello-card)                                       org-card-to-merge)
       org-card-to-merge)))
 
 (defun orgtrello-data/--dispatch-merge-fn (entity)
@@ -2136,7 +2182,8 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   "Given a string, remove any org properties if any"
   (->> text-content
     (replace-regexp-in-string "^[ ]*:.*" "")
-    (s-trim-left)))
+    (replace-regexp-in-string (format "%s.*" *ORGTRELLO-DEADLINE-PREFIX*) "")
+    s-trim-left))
 
 (defun orgtrello-buffer/org-file-get-property! (property-key)
   (assoc-default property-key (orgtrello-buffer/org-file-properties!)))
@@ -2250,11 +2297,16 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   (apply 'orgtrello-cbx/remove-overlays! region)
   (apply 'delete-region region))
 
+(defun orgtrello-buffer/overwrite-and-merge-card-header! (trello-card)
+  "Given a card, compute the merge and then overwrite it locally"
+  (->> (orgtrello-buffer/metadata!)
+    (orgtrello-data/--merge-card trello-card)
+    orgtrello-buffer/overwrite-card-header!))
+
 (defun orgtrello-buffer/overwrite-card-header! (card)
   "Given an updated card 'card' and the current position, overwrite the current position with the updated card data."
   (let ((region (orgtrello-buffer/compute-card-metadata-region!)))
     (orgtrello-buffer/clean-region! region)
-    (puthash :member-ids (-> card orgtrello-data/entity-member-ids orgtrello-data/--users-to) card)
     (orgtrello-buffer/write-card-header! (orgtrello-data/entity-id card) card)))
 
 (defun orgtrello-buffer/overwrite-checklist-header! (checklist)
@@ -2286,7 +2338,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun orgtrello-buffer/--compute-due-date (due-date)
   "Compute the format of the due date."
-  (if due-date (format "DEADLINE: <%s>\n" due-date) ""))
+  (if due-date (format "%s <%s>\n" *ORGTRELLO-DEADLINE-PREFIX* due-date) ""))
 
 (defun orgtrello-buffer/--private-compute-card-to-org-entry (name status due-date tags)
   "Compute the org format for card."
@@ -2913,7 +2965,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
                     (point-at-bol)
                     (org-show-subtree)
                     (funcall
-                     (cond ((orgtrello-data/entity-card-p data)      'orgtrello-buffer/overwrite-card-header!)
+                     (cond ((orgtrello-data/entity-card-p data)      'orgtrello-buffer/overwrite-and-merge-card-header!)
                            ((orgtrello-data/entity-checklist-p data) 'orgtrello-buffer/overwrite-checklist-header!)
                            ((orgtrello-data/entity-item-p data)      'orgtrello-buffer/overwrite-item!))
                      data)

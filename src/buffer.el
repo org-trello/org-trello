@@ -42,7 +42,8 @@
   "Given a string, remove any org properties if any"
   (->> text-content
     (replace-regexp-in-string "^[ ]*:.*" "")
-    (s-trim-left)))
+    (replace-regexp-in-string (format "%s.*" *ORGTRELLO-DEADLINE-PREFIX*) "")
+    s-trim-left))
 
 (defun orgtrello-buffer/org-file-get-property! (property-key)
   (assoc-default property-key (orgtrello-buffer/org-file-properties!)))
@@ -156,11 +157,16 @@
   (apply 'orgtrello-cbx/remove-overlays! region)
   (apply 'delete-region region))
 
+(defun orgtrello-buffer/overwrite-and-merge-card-header! (trello-card)
+  "Given a card, compute the merge and then overwrite it locally"
+  (->> (orgtrello-buffer/metadata!)
+    (orgtrello-data/--merge-card trello-card)
+    orgtrello-buffer/overwrite-card-header!))
+
 (defun orgtrello-buffer/overwrite-card-header! (card)
   "Given an updated card 'card' and the current position, overwrite the current position with the updated card data."
   (let ((region (orgtrello-buffer/compute-card-metadata-region!)))
     (orgtrello-buffer/clean-region! region)
-    (puthash :member-ids (-> card orgtrello-data/entity-member-ids orgtrello-data/--users-to) card)
     (orgtrello-buffer/write-card-header! (orgtrello-data/entity-id card) card)))
 
 (defun orgtrello-buffer/overwrite-checklist-header! (checklist)
@@ -192,7 +198,7 @@
 
 (defun orgtrello-buffer/--compute-due-date (due-date)
   "Compute the format of the due date."
-  (if due-date (format "DEADLINE: <%s>\n" due-date) ""))
+  (if due-date (format "%s <%s>\n" *ORGTRELLO-DEADLINE-PREFIX* due-date) ""))
 
 (defun orgtrello-buffer/--private-compute-card-to-org-entry (name status due-date tags)
   "Compute the org format for card."

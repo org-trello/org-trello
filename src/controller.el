@@ -332,7 +332,7 @@
                     (point-at-bol)
                     (org-show-subtree)
                     (funcall
-                     (cond ((orgtrello-data/entity-card-p data)      'orgtrello-buffer/overwrite-card-header!)
+                     (cond ((orgtrello-data/entity-card-p data)      'orgtrello-buffer/overwrite-and-merge-card-header!)
                            ((orgtrello-data/entity-checklist-p data) 'orgtrello-buffer/overwrite-checklist-header!)
                            ((orgtrello-data/entity-item-p data)      'orgtrello-buffer/overwrite-item!))
                      data)

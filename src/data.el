@@ -4,7 +4,7 @@
   "Merge 2 lists together (no duplicates)."
   (-> a-list
     (append b-list)
-    (delete-dups)))
+    delete-dups))
 
 (defun orgtrello-data/--compute-fn (entity list-dispatch-fn)
   "Given an entity, compute the result"
@@ -216,25 +216,48 @@
     (orgtrello-data/--users-to it)))
 
 (defun orgtrello-data/--labels-to-tags (labels)
+  "Given a list of tags, return a joined string with : as separator"
   (when labels
-    (-when-let (tags (s-join ":" (--map (gethash :color it) labels)))
+    (-when-let (tags (s-join ":" labels))
       (concat ":" tags ":"))))
+
+(defun orgtrello-data/--labels-hash-to-tags (labels)
+  "Given a hash map with :labels entry, return a tag string joined by : separator."
+  (when labels
+    (orgtrello-data/--labels-to-tags (--map (gethash :color it) labels))))
+
+(defun orgtrello-data/--from-tags-to-list (tags)
+  "Given a : string separated string, return a list of non empty string."
+  (->> tags
+    (s-split ":")
+    (--filter (not (string= "" it)))))
+
+(defun orgtrello-data/--merge-labels-as-tags (trello-labels org-tags)
+  "Given trello labels and org-tags, merge both of them"
+  (if org-tags
+      (let ((org-tags-as-list (orgtrello-data/--from-tags-to-list org-tags))
+            (trello-tags-as-list (orgtrello-data/--from-tags-to-list trello-labels)))
+        (orgtrello-data/--labels-to-tags (orgtrello-data/merge-2-lists-without-duplicates org-tags-as-list trello-tags-as-list)))
+    trello-labels))
 
 (defun orgtrello-data/--merge-card (trello-card org-card)
   "Merge trello and org card together."
   (if (null trello-card)
       org-card
     (let ((org-card-to-merge (orgtrello-hash/init-map-from org-card)))
-      (puthash :tags     (orgtrello-data/--labels-to-tags (orgtrello-data/entity-labels trello-card))   org-card-to-merge)
-      (puthash :comments (orgtrello-data/entity-comments trello-card)                              org-card-to-merge)
-      (puthash :level   *CARD-LEVEL*                                                               org-card-to-merge)
-      (puthash :id      (orgtrello-data/entity-id trello-card)                                     org-card-to-merge)
-      (puthash :name    (orgtrello-data/entity-name trello-card)                                   org-card-to-merge)
-      (puthash :keyword (-> trello-card
-                          orgtrello-data/entity-list-id
-                          orgtrello-data/--compute-card-status)                            org-card-to-merge)
-      (puthash :member-ids (orgtrello-data/--merge-member-ids trello-card org-card-to-merge) org-card-to-merge)
-      (puthash :desc    (orgtrello-data/entity-description trello-card)                            org-card-to-merge)
+      (puthash :tags       (orgtrello-data/--merge-labels-as-tags
+                            (orgtrello-data/--labels-hash-to-tags (orgtrello-data/entity-labels trello-card))
+                            (orgtrello-data/entity-tags org-card))                                       org-card-to-merge)
+      (puthash :comments   (orgtrello-data/entity-comments trello-card)                                  org-card-to-merge)
+      (puthash :level      *CARD-LEVEL*                                                                  org-card-to-merge)
+      (puthash :id         (orgtrello-data/entity-id trello-card)                                        org-card-to-merge)
+      (puthash :name       (orgtrello-data/entity-name trello-card)                                      org-card-to-merge)
+      (puthash :keyword    (-> trello-card
+                             orgtrello-data/entity-list-id
+                             orgtrello-data/--compute-card-status)                                       org-card-to-merge)
+      (puthash :member-ids (orgtrello-data/--merge-member-ids trello-card org-card-to-merge)             org-card-to-merge)
+      (puthash :desc       (orgtrello-data/entity-description trello-card)                               org-card-to-merge)
+      (puthash :due        (orgtrello-data/entity-due trello-card)                                       org-card-to-merge)
       org-card-to-merge)))
 
 (defun orgtrello-data/--dispatch-merge-fn (entity)
