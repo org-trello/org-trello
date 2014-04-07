@@ -220,12 +220,20 @@
     (-when-let (tags (s-join ":" (--map (gethash :color it) labels)))
       (concat ":" tags ":"))))
 
+(defun orgtrello-data/--merge-labels (trello-labels org-tags)
+  "Given trello labels and org-tags, merge both of them"
+  (if org-tags
+    (replace-regexp-in-string "::" ":" (concat org-tags trello-labels))
+    trello-labels))
+
 (defun orgtrello-data/--merge-card (trello-card org-card)
   "Merge trello and org card together."
   (if (null trello-card)
       org-card
     (let ((org-card-to-merge (orgtrello-hash/init-map-from org-card)))
-      (puthash :tags     (orgtrello-data/--labels-to-tags (orgtrello-data/entity-labels trello-card)) org-card-to-merge)
+      (puthash :tags     (orgtrello-data/--merge-labels
+                          (orgtrello-data/--labels-to-tags (orgtrello-data/entity-labels trello-card))
+                          (orgtrello-data/entity-tags org-card))                                    org-card-to-merge)
       (puthash :comments (orgtrello-data/entity-comments trello-card)                                 org-card-to-merge)
       (puthash :level   *CARD-LEVEL*                                                                  org-card-to-merge)
       (puthash :id      (orgtrello-data/entity-id trello-card)                                        org-card-to-merge)

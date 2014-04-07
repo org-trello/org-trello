@@ -463,7 +463,21 @@
                                                                                        (:due . "some due date")
                                                                                        (:labels . ,(list (orgtrello-hash/make-properties '((:color . "red")))
                                                                                                          (orgtrello-hash/make-properties '((:color . "green")))))))
-                                                     (orgtrello-hash/make-properties '((:name . "some other name"))))))))
+                                                     (orgtrello-hash/make-properties '((:name . "some other name"))))))
+    (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
+                                      (:name "some name" :tags ":other-stuff:not-trello-flag:red:green:" :comments "some comments" :level 1 :id "123" :keyword nil :member-ids "ardumont-id,some-dude-id" :desc "some description" :due "some due date"))
+                        (orgtrello-data/--merge-card (orgtrello-hash/make-properties `((:id . "123")
+                                                                                       (:name . "some name")
+                                                                                       (:status . "TODO")
+                                                                                       (:idList . 1)
+                                                                                       (:comments . "some comments")
+                                                                                       (:member-ids . ("ardumont-id" "some-dude-id"))
+                                                                                       (:desc . "some description")
+                                                                                       (:due . "some due date")
+                                                                                       (:labels . ,(list (orgtrello-hash/make-properties '((:color . "red")))
+                                                                                                         (orgtrello-hash/make-properties '((:color . "green")))))))
+                                                     (orgtrello-hash/make-properties '((:name . "some other name")
+                                                                                       (:tags . ":other-stuff:not-trello-flag:"))))))))
 
 (expectations (desc "orgtrello-data/--merge-member-ids")
               (expect "'some-keybinding' is fun 'some-keybinding'" (org-trello/--replace-string-prefix-in-string "some-keybinding" "'#PREFIX#' is fun '#PREFIX#'")))
@@ -499,3 +513,7 @@
 (expectations (desc "orgtrello-data/--users-to")
               (expect "" (orgtrello-data/--users-to nil))
               (expect "a,b,c," (orgtrello-data/--users-to '("a" "b" "c" ""))))
+
+(expectations
+  (expect ":trello-labels" (orgtrello-data/--merge-labels ":trello-labels" nil))
+  (expect "org-tags:trello-labels" (orgtrello-data/--merge-labels ":trello-labels" "org-tags:")))
