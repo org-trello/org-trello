@@ -1,3 +1,13 @@
+# 0.4.1
+
+- [X] Fix deadline/description problem - #154
+- [X] Fix deadline/due date problem - #153
+- [X] When sync from trello, merge non trello org tags with trello tags (to avoid loss for the user)
+- [X] When sync to trello, filter out org tags that will not be understood by trello (to avoid 400 request from trello)
+- [X] Add the quick start in the main package description
+- [X] Version
+- [X] Release notes
+
 # 0.4.0.1
 
 - [X] Fix 'Sync doesn't work if org buffer name contains special characters' - Close #147
