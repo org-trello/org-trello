@@ -43,7 +43,7 @@
   (->> text-content
     (replace-regexp-in-string "^[ ]*:.*" "")
     (replace-regexp-in-string "DEADLINE:.*" "")
-    (s-trim-left)))
+    s-trim-left))
 
 (defun orgtrello-buffer/org-file-get-property! (property-key)
   (assoc-default property-key (orgtrello-buffer/org-file-properties!)))
