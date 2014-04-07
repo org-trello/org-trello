@@ -235,6 +235,7 @@
                           orgtrello-data/--compute-card-status)                            org-card-to-merge)
       (puthash :member-ids (orgtrello-data/--merge-member-ids trello-card org-card-to-merge) org-card-to-merge)
       (puthash :desc    (orgtrello-data/entity-description trello-card)                            org-card-to-merge)
+      (puthash :due     (orgtrello-data/entity-due trello-card)                                    org-card-to-merge)
       org-card-to-merge)))
 
 (defun orgtrello-data/--dispatch-merge-fn (entity)
