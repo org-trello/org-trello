@@ -971,11 +971,11 @@ CLOSED: [2014-04-02 Wed 14:48]
 - [X] Fix 'Sync doesn't work if org buffer name contains special characters' - Close #147
 - [X] Version
 - [X] Release notes
-* TODO 0.4.1 [50%]
+* TODO 0.4.1 [66%]
 - [X] Fix deadline/description problem - #154
 - [X] Fix deadline/due date problem - #153
 - [X] When sync from trello, merge non trello org tags with trello tags (to avoid loss for the user)
-- [ ] When sync to trello, filter out org tags that will not be understood by trello (to avoid 400 request from trello)
+- [X] When sync to trello, filter out org tags that will not be understood by trello (to avoid 400 request from trello)
 - [ ] Version
 - [ ] Release notes
 
