@@ -971,6 +971,13 @@ CLOSED: [2014-04-02 Wed 14:48]
 - [X] Fix 'Sync doesn't work if org buffer name contains special characters' - Close #147
 - [X] Version
 - [X] Release notes
+* TODO 0.4.1 [33%]
+- [X] Fix deadline/description problem - #154
+- [X] Fix deadline/due date problem - #153
+- [ ] When sync to trello, filter out org tags that will not be understood by trello (to avoid 400 request from trello)
+- [ ] When sync from trello, merge non trello org tags with trello tags (to avoid loss for the user)
+- [ ] Version
+- [ ] Release notes
 
 * TODO 0.4.x [0%]
 - [ ] Improve sync request policy - https://github.com/org-trello/org-trello/issues/58
@@ -989,3 +996,19 @@ CLOSED: [2014-04-02 Wed 14:48]
 - [ ] Version
 - [ ] Update doc
 - [ ] Release notes
+* Integration tests
+Mock `(json-read)` (heart of the http process returned for everything) to:
+
+** write cards
+
+return '((actions . []) (pos . 16384) (name . "Joy of FUN(ctional) LANGUAGES") (labels . []) (idMembers . []) (idList . "51d99bbc1e1d8988390047f4") (idChecklists . ["53423e457bcf3ef07f4ea575" "53423e418a38ce922cb3750e" "53423e425b6667f92ceda03e"]) (due . "2014-04-01T00:00:00.000Z") (desc . "") (dateLastActivity . "2014-04-07T06:06:48.998Z") (closed . :json-false) (id . "53423e3f4d9e570a6930d684"))
+
+And then ensure the writing of the card in the buffer is ok.
+
+** write checklists
+
+Same idea
+
+** write items
+
+Same idea
