@@ -614,7 +614,8 @@
              board-users-hash-name-id)
     res-list))
 
-(defun orgtrello-controller/--update-orgmode-file-with-properties! (board-name board-id board-lists-hash-name-id board-users-hash-name-id user-me board-labels &optional update-todo-keywords)
+(defun orgtrello-controller/--update-orgmode-file-with-properties!
+    (board-name board-id board-lists-hash-name-id board-users-hash-name-id user-me board-labels &optional update-todo-keywords)
   "Update the orgmode file with the needed headers for org-trello to work."
   (with-current-buffer (current-buffer)
     (goto-char (point-min))
@@ -716,7 +717,13 @@
         ;; clean the buffer's old metadata
         (orgtrello-controller/do-cleanup-from-buffer!)
         ;; update org buffer with new ones
-        (orgtrello-controller/--update-orgmode-file-with-properties! board-name board-id board-lists-hname-id board-users-name-id user-logged-in nil))))
+        (orgtrello-controller/--update-orgmode-file-with-properties!
+         board-name
+         board-id
+         board-lists-hname-id
+         board-users-name-id
+         user-logged-in
+         (orgtrello-hash/make-properties '((:red) (:green) (:yellow) (:purple) (:blue) (:orange)))))))
   "Create board and lists done!")
 
 (defun orgtrello-controller/--add-user (user users) "Add the user to the users list"

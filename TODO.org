@@ -981,9 +981,9 @@ CLOSED: [2014-04-07 Mon 14:29]
 - [X] Version
 - [X] Release notes
 
-* IN-PROGRESS 0.4.1.1 [20%]
+* IN-PROGRESS 0.4.1.1 [40%]
 - [X] Remove non interactive commands
-- [ ] Create board does not work - #157
+- [X] Create board does not work - Close #157
 - [ ] Version
 - [ ] Update doc
 - [ ] Release notes
