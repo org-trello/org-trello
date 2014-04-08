@@ -457,7 +457,6 @@
 
 (defun orgtrello-controller/do-install-key-and-token ()
   "Procedure to install the *consumer-key* and the token for the user in the config-file."
-  (interactive)
   (browse-url (org-trello/compute-url "/1/appKey/generate"))
   (let ((consumer-key (read-string "*consumer-key*: ")))
     (browse-url (org-trello/compute-url (format "/1/authorize?response_type=token&name=org-trello&scope=read,write&expiration=never&key=%s" consumer-key)))
@@ -641,7 +640,6 @@
 
 (defun orgtrello-controller/do-install-board-and-lists ()
   "Command to install the list boards."
-  (interactive)
   (let* ((board-info        (-> (orgtrello-controller/--list-boards!)
                               orgtrello-controller/--id-name
                               orgtrello-controller/choose-board!))
