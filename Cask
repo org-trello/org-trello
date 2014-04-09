@@ -3,7 +3,7 @@
 
 (package-file "org-trello.el")
 
-(files "org-trello.el" "org-trello-pkg.el")
+(files "org-trello.el" "org-trello-pkg.el" "dist/org-trello-readme.txt")
 
 (development
  (depends-on "ert")
