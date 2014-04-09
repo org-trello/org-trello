@@ -516,8 +516,6 @@
     (let ((selected-id-board (gethash index-selected-board index-board-map)))
       (list selected-id-board (gethash selected-id-board boards)))))
 
-;; (orgtrello-controller/choose-board! (orgtrello-hash/make-properties '((:id-board0 . "board0-name") (:id-board1 . "board1-name"))))
-
 (defun orgtrello-controller/--convention-property-name (name)
   "Use the right convention for the property used in the headers of the org-mode file."
   (replace-regexp-in-string " " "-" name))

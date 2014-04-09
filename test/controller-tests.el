@@ -249,3 +249,41 @@
     (let ((*consumer-key* nil)
           (*access-token* "some-access-token"))
       (orgtrello-controller/control-keys))))
+
+(expectations
+  (expect '(:id-board0 "board0-name")
+    (with-mock
+      (mock (read-string *) => "0")
+      (orgtrello-controller/choose-board! (orgtrello-hash/make-properties '((:id-board0 . "board0-name") (:id-board1 . "board1-name"))))))
+  (expect '(:id-board1 "board1-name")
+    (with-mock
+      (mock (read-string *) => "1")
+      (orgtrello-controller/choose-board! (orgtrello-hash/make-properties '((:id-board0 . "board0-name") (:id-board1 . "board1-name")))))))
+
+(expectations
+  (expect t
+    (hash-equal
+     #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:id "id0" :name "name0" :closed nil))
+     (car (with-mock
+            (mock (orgtrello-api/get-boards)                          => :query)
+            (mock (orgtrello-query/http-trello :query 'do-sync-query) => `(,(orgtrello-hash/make-properties '((:id . "id0") (:name . "name0") (:closed)))
+                                                                           ,(orgtrello-hash/make-properties '((:id . "id1") (:name . "name1") (:closed)))
+                                                                           ,(orgtrello-hash/make-properties '((:id . "id1") (:name . "name1") (:closed . t)))))
+            (orgtrello-controller/--list-boards!)))))
+  (expect
+      t
+    (hash-equal
+     #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:id "id1" :name "name1" :closed nil))
+     (cadr (with-mock
+             (mock (orgtrello-api/get-boards)                          => :query)
+             (mock (orgtrello-query/http-trello :query 'do-sync-query) => `(,(orgtrello-hash/make-properties '((:id . "id0") (:name . "name0") (:closed)))
+                                                                            ,(orgtrello-hash/make-properties '((:id . "id1") (:name . "name1") (:closed)))
+                                                                            ,(orgtrello-hash/make-properties '((:id . "id1") (:name . "name1") (:closed . t)))))
+             (orgtrello-controller/--list-boards!))))))
+
+(expectations
+  (expect :some-result
+    (with-mock
+      (mock (orgtrello-api/get-lists :board-id)                 => :query)
+      (mock (orgtrello-query/http-trello :query 'do-sync-query) => :some-result)
+      (orgtrello-controller/--list-board-lists! :board-id))))
