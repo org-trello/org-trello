@@ -981,11 +981,11 @@ CLOSED: [2014-04-07 Mon 14:29]
 - [X] Version
 - [X] Release notes
 
-* IN-PROGRESS 0.4.1.1 [60%]
+* IN-PROGRESS 0.4.1.1 [80%]
 - [X] Remove non interactive commands
 - [X] Create board does not work - Close #157
 - [X] Improve loading keys policy - #156
-- [ ] Version
+- [X] Version
 - [ ] Release notes
 * TODO 0.4.x [0%]
 - [ ] Improve sync request policy - https://github.com/org-trello/org-trello/issues/58
