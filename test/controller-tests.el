@@ -266,7 +266,7 @@
      #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:id "id0" :name "name0" :closed nil))
      (car (with-mock
             (mock (orgtrello-api/get-boards)                          => :query)
-            (mock (orgtrello-query/http-trello :query 'do-sync-query) => `(,(orgtrello-hash/make-properties '((:id . "id0") (:name . "name0") (:closed)))
+            (mock (orgtrello-query/http-trello :query 'synchronous-query) => `(,(orgtrello-hash/make-properties '((:id . "id0") (:name . "name0") (:closed)))
                                                                            ,(orgtrello-hash/make-properties '((:id . "id1") (:name . "name1") (:closed)))
                                                                            ,(orgtrello-hash/make-properties '((:id . "id1") (:name . "name1") (:closed . t)))))
             (orgtrello-controller/--list-boards!)))))
@@ -276,7 +276,7 @@
      #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:id "id1" :name "name1" :closed nil))
      (cadr (with-mock
              (mock (orgtrello-api/get-boards)                          => :query)
-             (mock (orgtrello-query/http-trello :query 'do-sync-query) => `(,(orgtrello-hash/make-properties '((:id . "id0") (:name . "name0") (:closed)))
+             (mock (orgtrello-query/http-trello :query 'synchronous-query) => `(,(orgtrello-hash/make-properties '((:id . "id0") (:name . "name0") (:closed)))
                                                                             ,(orgtrello-hash/make-properties '((:id . "id1") (:name . "name1") (:closed)))
                                                                             ,(orgtrello-hash/make-properties '((:id . "id1") (:name . "name1") (:closed . t)))))
              (orgtrello-controller/--list-boards!))))))
@@ -285,5 +285,5 @@
   (expect :some-result
     (with-mock
       (mock (orgtrello-api/get-lists :board-id)                 => :query)
-      (mock (orgtrello-query/http-trello :query 'do-sync-query) => :some-result)
+      (mock (orgtrello-query/http-trello :query 'synchronous-query) => :some-result)
       (orgtrello-controller/--list-board-lists! :board-id))))
