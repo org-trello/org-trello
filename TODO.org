@@ -981,6 +981,14 @@ CLOSED: [2014-04-07 Mon 14:29]
 - [X] Version
 - [X] Release notes
 
+* DONE 0.4.1.1 [100%]
+CLOSED: [2014-04-09 Wed 20:31]
+- [X] Remove non interactive commands
+- [X] Create board does not work - Close #157
+- [X] Improve loading keys policy - #156
+- [X] Use cask to make the packaging and remove old personal routines
+- [X] Version
+- [X] Release notes
 * TODO 0.4.x [0%]
 - [ ] Improve sync request policy - https://github.com/org-trello/org-trello/issues/58
 - [ ] Use active region - https://github.com/org-trello/org-trello/issues/130

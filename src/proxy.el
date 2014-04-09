@@ -16,7 +16,7 @@
   "Query the http-consumer process once to make it trigger a timer"
   (--> `((start . ,start))
     (orgtrello-api/make-query "POST" "/timer/" it)
-    (orgtrello-query/http *ORGTRELLO-SERVER-URL* it 'do-sync-query)))
+    (orgtrello-query/http *ORGTRELLO-SERVER-URL* it 'synchronous-query)))
 
 (defun orgtrello-proxy/--json-read-from-string (data)
   "Read the json data and unhexify them."
@@ -221,7 +221,7 @@
                 (oq/--entry-file-archived    entry-file-archived))
     (if (hash-table-p orgtrello-query/--query-map)
         ;; execute the request
-        (orgtrello-query/http-trello orgtrello-query/--query-map 'do-sync-query
+        (orgtrello-query/http-trello orgtrello-query/--query-map 'synchronous-query
                                      (orgtrello-proxy/--standard-post-or-put-success-callback entity-data entry-file-archived)
                                      (function* (lambda (&key error-thrown &allow-other-keys)
                                                   (orgtrello-log/msg *OT/ERROR* "client - Problem during the sync request to the proxy- error-thrown: %s" error-thrown)
@@ -312,7 +312,7 @@
                 (oq/--entity-full-meta       entity-full-metadata)
                 (oq/--entry-file-archived    entry-file-archived))
     (if (hash-table-p orgtrello-query/--query-map)
-        (orgtrello-query/http-trello orgtrello-query/--query-map 'do-sync-query
+        (orgtrello-query/http-trello orgtrello-query/--query-map 'synchronous-query
                                      (orgtrello-proxy/--standard-delete-success-callback entity-data entry-file-archived)
                                      (function* (lambda (&key error-thrown &allow-other-keys)
                                                   (orgtrello-log/msg *OT/ERROR* "client - Problem during the deletion request to the proxy- error-thrown: %s" error-thrown)

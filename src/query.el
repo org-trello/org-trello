@@ -109,7 +109,7 @@
 
 (defun orgtrello-query/http-trello (query-map &optional sync success-callback error-callback)
   "Query the trello api."
-  (orgtrello-query/http *TRELLO-URL* query-map sync success-callback error-callback t))
+  (orgtrello-query/http *TRELLO-URL* query-map sync success-callback error-callback 'with-authentication))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-query loaded!")
 

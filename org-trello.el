@@ -4,7 +4,7 @@
 
 ;; Author: Antoine R. Dumont <eniotna.t AT gmail.com>
 ;; Maintainer: Antoine R. Dumont <eniotna.t AT gmail.com>
-;; Version: 0.4.1
+;; Version: 0.4.1.1
 ;; Package-Requires: ((dash "2.5.0") (request "0.2.0") (elnode "0.9.9.7.6") (esxml "0.3.0") (s "1.7.0"))
 ;; Keywords: org-mode trello sync org-trello
 ;; URL: https://github.com/org-trello/org-trello
@@ -105,7 +105,7 @@ Please consider upgrading Emacs." emacs-version) "Error message when installing 
     (defalias 'cl-defun 'defun*)
     (defalias 'cl-destructuring-bind 'destructuring-bind)))
 
-(defconst *ORGTRELLO-VERSION* "0.4.1" "current org-trello version installed.")
+(defconst *ORGTRELLO-VERSION* "0.4.1.1" "current org-trello version installed.")
 
 
 (defconst *OT/NOLOG* 0)
@@ -1135,7 +1135,7 @@ This is a list with the following elements:
 
 (defun orgtrello-query/http-trello (query-map &optional sync success-callback error-callback)
   "Query the trello api."
-  (orgtrello-query/http *TRELLO-URL* query-map sync success-callback error-callback t))
+  (orgtrello-query/http *TRELLO-URL* query-map sync success-callback error-callback 'with-authentication))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-query loaded!")
 
@@ -1156,7 +1156,7 @@ This is a list with the following elements:
     (-reduce-from (lambda (acc-list checklist-id)
                     (cons (-> checklist-id
                             orgtrello-api/get-checklist
-                            (orgtrello-query/http-trello 'do-sync-query)) acc-list))
+                            (orgtrello-query/http-trello 'synchronous-query)) acc-list))
                   nil
                   it)                                                                         ;; retrieve the trello checklist
     (sort it (lambda (a b) (when (<= (orgtrello-data/entity-position a) (orgtrello-data/entity-position b)) 1)))))          ;; sort them by pos to get back to the right order (reversed)
@@ -1289,7 +1289,7 @@ This is a list with the following elements:
   "Query the http-consumer process once to make it trigger a timer"
   (--> `((start . ,start))
     (orgtrello-api/make-query "POST" "/timer/" it)
-    (orgtrello-query/http *ORGTRELLO-SERVER-URL* it 'do-sync-query)))
+    (orgtrello-query/http *ORGTRELLO-SERVER-URL* it 'synchronous-query)))
 
 (defun orgtrello-proxy/--json-read-from-string (data)
   "Read the json data and unhexify them."
@@ -1494,7 +1494,7 @@ This is a list with the following elements:
                 (oq/--entry-file-archived    entry-file-archived))
     (if (hash-table-p orgtrello-query/--query-map)
         ;; execute the request
-        (orgtrello-query/http-trello orgtrello-query/--query-map 'do-sync-query
+        (orgtrello-query/http-trello orgtrello-query/--query-map 'synchronous-query
                                      (orgtrello-proxy/--standard-post-or-put-success-callback entity-data entry-file-archived)
                                      (function* (lambda (&key error-thrown &allow-other-keys)
                                                   (orgtrello-log/msg *OT/ERROR* "client - Problem during the sync request to the proxy- error-thrown: %s" error-thrown)
@@ -1585,7 +1585,7 @@ This is a list with the following elements:
                 (oq/--entity-full-meta       entity-full-metadata)
                 (oq/--entry-file-archived    entry-file-archived))
     (if (hash-table-p orgtrello-query/--query-map)
-        (orgtrello-query/http-trello orgtrello-query/--query-map 'do-sync-query
+        (orgtrello-query/http-trello orgtrello-query/--query-map 'synchronous-query
                                      (orgtrello-proxy/--standard-delete-success-callback entity-data entry-file-archived)
                                      (function* (lambda (&key error-thrown &allow-other-keys)
                                                   (orgtrello-log/msg *OT/ERROR* "client - Problem during the deletion request to the proxy- error-thrown: %s" error-thrown)
@@ -2699,17 +2699,17 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
         :ok
       "Setup problem.\nEither you did not connect your org-mode buffer with a trello board, to correct this:\n  * attach to a board through C-c o I or M-x org-trello/install-board-and-lists-ids\n  * or create a board from scratch with C-c o b or M-x org-trello/create-board).\nEither your org-mode's todo keyword list and your trello board lists are not named the same way (which they must).\nFor this, connect to trello and rename your board's list according to your org-mode's todo list.\nAlso, you can specify on your org-mode buffer the todo list you want to work with, for example: #+TODO: TODO DOING | DONE FAIL (hit C-c C-c to refresh the setup)")))
 
+(defun orgtrello-controller/load-keys (&optional args)
+  "Load the credentials keys from the configuration file."
+  (if (and (file-exists-p *CONFIG-FILE*) (load *CONFIG-FILE*))
+      :ok
+    "Setup problem - Problem during credentials (consumer-key and the read/write access-token) loading - C-c o i or M-x org-trello/install-key-and-token"))
+
 (defun orgtrello-controller/control-keys (&optional args)
   "org-trello needs the *consumer-key* and the *access-token* to access the trello resources. Returns :ok if everything is ok, or the error message if problems."
-  (if (or (and *consumer-key* *access-token*)
-          ;; the data are not set,
-          (and (file-exists-p *CONFIG-FILE*)
-               ;; trying to load them
-               (load *CONFIG-FILE*)
-               ;; still not loaded, something is not right!
-               (and *consumer-key* *access-token*)))
+  (if (and *consumer-key* *access-token*)
       :ok
-    "Setup problem - You need to install the consumer-key and the read/write access-token - C-c o i or M-x org-trello/install-board-and-lists-ids"))
+    "Setup problem - You need to install the consumer-key and the read/write access-token - C-c o i or M-x org-trello/install-key-and-token"))
 
 (defun orgtrello-controller/--retrieve-state-of-card (card-meta)
   "Given a card, retrieve its state depending on its :keyword metadata. If empty or no keyword then, its equivalence is *ORGTRELLO-TODO*, otherwise, return its current state."
@@ -3090,11 +3090,10 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun orgtrello-controller/do-install-key-and-token ()
   "Procedure to install the *consumer-key* and the token for the user in the config-file."
-  (interactive)
   (browse-url (org-trello/compute-url "/1/appKey/generate"))
-  (let ((consumer-key (read-string "*consumer-key*: ")))
+  (let ((consumer-key (read-string "Consumer key: ")))
     (browse-url (org-trello/compute-url (format "/1/authorize?response_type=token&name=org-trello&scope=read,write&expiration=never&key=%s" consumer-key)))
-    (let ((access-token (read-string "Access-token: ")))
+    (let ((access-token (read-string "Access token: ")))
       (orgtrello-controller/--do-install-config-file consumer-key access-token)
       "Install key and read/write access token done!")))
 
@@ -3108,15 +3107,15 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun orgtrello-controller/--list-boards! ()
   "Return the map of the existing boards associated to the current account. (Synchronous request)"
-  (--remove (orgtrello-data/entity-closed it) (orgtrello-query/http-trello (orgtrello-api/get-boards) 'do-sync-query)))
+  (--remove (orgtrello-data/entity-closed it) (orgtrello-query/http-trello (orgtrello-api/get-boards) 'synchronous-query)))
 
 (defun orgtrello-controller/--list-board-lists! (board-id)
   "Return the map of the existing list of the board with id board-id. (Synchronous request)"
-  (orgtrello-query/http-trello (orgtrello-api/get-lists board-id) 'do-sync-query))
+  (orgtrello-query/http-trello (orgtrello-api/get-lists board-id) 'synchronous-query))
 
 (defun orgtrello-controller/--board! (board-id)
   "Return the board with id board-id. (Synchronous request)"
-  (orgtrello-query/http-trello (orgtrello-api/get-board board-id) 'do-sync-query))
+  (orgtrello-query/http-trello (orgtrello-api/get-board board-id) 'synchronous-query))
 
 (defun orgtrello-controller/--index-board-map (boards)
   "Given a map of board (id . name), return a map of (position . name)"
@@ -3149,8 +3148,6 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
     ;; when we are good
     (let ((selected-id-board (gethash index-selected-board index-board-map)))
       (list selected-id-board (gethash selected-id-board boards)))))
-
-;; (orgtrello-controller/choose-board! (orgtrello-hash/make-properties '((:id-board0 . "board0-name") (:id-board1 . "board1-name"))))
 
 (defun orgtrello-controller/--convention-property-name (name)
   "Use the right convention for the property used in the headers of the org-mode file."
@@ -3248,7 +3245,8 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
              board-users-hash-name-id)
     res-list))
 
-(defun orgtrello-controller/--update-orgmode-file-with-properties! (board-name board-id board-lists-hash-name-id board-users-hash-name-id user-me board-labels &optional update-todo-keywords)
+(defun orgtrello-controller/--update-orgmode-file-with-properties!
+    (board-name board-id board-lists-hash-name-id board-users-hash-name-id user-me board-labels &optional update-todo-keywords)
   "Update the orgmode file with the needed headers for org-trello to work."
   (with-current-buffer (current-buffer)
     (goto-char (point-min))
@@ -3269,12 +3267,11 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 (defun orgtrello-controller/--user-logged-in! ()
   "Compute the current user."
   (-> (orgtrello-api/get-me)
-    (orgtrello-query/http-trello 'do-sync-query)
+    (orgtrello-query/http-trello 'synchronous-query)
     orgtrello-data/entity-username))
 
 (defun orgtrello-controller/do-install-board-and-lists ()
   "Command to install the list boards."
-  (interactive)
   (let* ((board-info        (-> (orgtrello-controller/--list-boards!)
                               orgtrello-controller/--id-name
                               orgtrello-controller/choose-board!))
@@ -3305,13 +3302,13 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   "Compute board users' informations."
   (--> board-id
     (orgtrello-api/get-board it)
-    (orgtrello-query/http-trello it 'do-sync-query)
+    (orgtrello-query/http-trello it 'synchronous-query)
     (orgtrello-controller/--compute-user-properties-hash-from-board it)))
 
 (defun orgtrello-controller/--create-board (board-name &optional board-description)
   "Create a board with name and eventually a description."
   (orgtrello-log/msg *OT/INFO* "Creating board '%s'" board-name)
-  (let ((board-data (orgtrello-query/http-trello (orgtrello-api/add-board board-name board-description) 'do-sync-query)))
+  (let ((board-data (orgtrello-query/http-trello (orgtrello-api/add-board board-name board-description) 'synchronous-query)))
     (list (orgtrello-data/entity-id board-data) (orgtrello-data/entity-name board-data))))
 
 (defun orgtrello-controller/--close-lists (list-ids)
@@ -3326,7 +3323,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   (--reduce-from (progn
                    (orgtrello-log/msg *OT/INFO* "Board id %s - Creating list '%s'"
                                       board-id it)
-                   (puthash it (orgtrello-data/entity-id (orgtrello-query/http-trello (orgtrello-api/add-list it board-id) 'do-sync-query)) acc)
+                   (puthash it (orgtrello-data/entity-id (orgtrello-query/http-trello (orgtrello-api/add-list it board-id) 'synchronous-query)) acc)
                    acc)
                  (orgtrello-hash/empty-hash)
                  list-keywords))
@@ -3351,7 +3348,13 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
         ;; clean the buffer's old metadata
         (orgtrello-controller/do-cleanup-from-buffer!)
         ;; update org buffer with new ones
-        (orgtrello-controller/--update-orgmode-file-with-properties! board-name board-id board-lists-hname-id board-users-name-id user-logged-in nil))))
+        (orgtrello-controller/--update-orgmode-file-with-properties!
+         board-name
+         board-id
+         board-lists-hname-id
+         board-users-name-id
+         user-logged-in
+         (orgtrello-hash/make-properties '((:red) (:green) (:yellow) (:purple) (:blue) (:orange)))))))
   "Create board and lists done!")
 
 (defun orgtrello-controller/--add-user (user users) "Add the user to the users list"
@@ -3475,7 +3478,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   "Execute sync action."
   (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
    action-label
-   '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/control-encoding)
+   '(orgtrello-controller/load-keys orgtrello-controller/control-keys orgtrello-controller/setup-properties orgtrello-controller/control-properties orgtrello-controller/control-encoding)
    action-fn
    (when with-save-flag 'do-save-buffer)
    (when with-save-flag 'do-reload-setup)))
@@ -3484,7 +3487,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   "Execute action and then save the buffer."
   (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
    action-label
-   (if no-check-flag nil '(orgtrello-controller/setup-properties orgtrello-controller/control-keys))
+   (if no-check-flag nil '(orgtrello-controller/load-keys orgtrello-controller/control-keys orgtrello-controller/setup-properties))
    action-fn
    'do-save-buffer
    'do-reload-setup))
@@ -3492,7 +3495,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 (defun org-trello/do (action-fn)
   "First checks, then if controls ok, execute"
   (orgtrello-action/controls-or-actions-then-do
-   '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/control-encoding)
+   '(orgtrello-controller/load-keys orgtrello-controller/control-keys orgtrello-controller/setup-properties orgtrello-controller/control-properties orgtrello-controller/control-encoding)
    action-fn))
 
 (defun org-trello/reload-server ()

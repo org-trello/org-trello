@@ -9,8 +9,11 @@ EMACS=emacs
 pr:
 	hub pull-request -b org-trello:master
 
-clean:
-	rm -rf *.tar $(PACKAGE_FOLDER)
+clean-dist:
+	rm -rf dist/
+
+clean: clean-dist
+	rm -rf *.tar
 
 install:
 	cask install
@@ -21,19 +24,18 @@ test: clean
 			-l ./launch-tests.el \
 			-f ert-run-tests-batch-and-exit
 
-pkg-el:
-	cask package
+pkg-file:
+	cask pkg-file
 
-prepare:
-	mkdir -p $(PACKAGE_FOLDER)
-	cp -r org-trello.el org-trello-pkg.el $(PACKAGE_FOLDER)
+pkg-el: pkg-file
+	cask package
 
 generate:
 	cask exec $(EMACS) -Q --batch -l ./build-package.el
 
-package: clean generate pkg-el prepare
-	tar cvf $(ARCHIVE) $(PACKAGE_FOLDER)
-	rm -rf $(PACKAGE_FOLDER)
+package: clean generate pkg-el
+	cp dist/$(ARCHIVE) .
+	make clean-dist
 
 info:
 	cask info

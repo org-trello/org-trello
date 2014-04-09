@@ -2,7 +2,7 @@
   "Execute sync action."
   (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
    action-label
-   '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/control-encoding)
+   '(orgtrello-controller/load-keys orgtrello-controller/control-keys orgtrello-controller/setup-properties orgtrello-controller/control-properties orgtrello-controller/control-encoding)
    action-fn
    (when with-save-flag 'do-save-buffer)
    (when with-save-flag 'do-reload-setup)))
@@ -11,7 +11,7 @@
   "Execute action and then save the buffer."
   (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
    action-label
-   (if no-check-flag nil '(orgtrello-controller/setup-properties orgtrello-controller/control-keys))
+   (if no-check-flag nil '(orgtrello-controller/load-keys orgtrello-controller/control-keys orgtrello-controller/setup-properties))
    action-fn
    'do-save-buffer
    'do-reload-setup))
@@ -19,7 +19,7 @@
 (defun org-trello/do (action-fn)
   "First checks, then if controls ok, execute"
   (orgtrello-action/controls-or-actions-then-do
-   '(orgtrello-controller/setup-properties orgtrello-controller/control-keys orgtrello-controller/control-properties orgtrello-controller/control-encoding)
+   '(orgtrello-controller/load-keys orgtrello-controller/control-keys orgtrello-controller/setup-properties orgtrello-controller/control-properties orgtrello-controller/control-encoding)
    action-fn))
 
 (defun org-trello/reload-server ()

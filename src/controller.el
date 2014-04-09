@@ -66,17 +66,17 @@
         :ok
       "Setup problem.\nEither you did not connect your org-mode buffer with a trello board, to correct this:\n  * attach to a board through C-c o I or M-x org-trello/install-board-and-lists-ids\n  * or create a board from scratch with C-c o b or M-x org-trello/create-board).\nEither your org-mode's todo keyword list and your trello board lists are not named the same way (which they must).\nFor this, connect to trello and rename your board's list according to your org-mode's todo list.\nAlso, you can specify on your org-mode buffer the todo list you want to work with, for example: #+TODO: TODO DOING | DONE FAIL (hit C-c C-c to refresh the setup)")))
 
+(defun orgtrello-controller/load-keys (&optional args)
+  "Load the credentials keys from the configuration file."
+  (if (and (file-exists-p *CONFIG-FILE*) (load *CONFIG-FILE*))
+      :ok
+    "Setup problem - Problem during credentials (consumer-key and the read/write access-token) loading - C-c o i or M-x org-trello/install-key-and-token"))
+
 (defun orgtrello-controller/control-keys (&optional args)
   "org-trello needs the *consumer-key* and the *access-token* to access the trello resources. Returns :ok if everything is ok, or the error message if problems."
-  (if (or (and *consumer-key* *access-token*)
-          ;; the data are not set,
-          (and (file-exists-p *CONFIG-FILE*)
-               ;; trying to load them
-               (load *CONFIG-FILE*)
-               ;; still not loaded, something is not right!
-               (and *consumer-key* *access-token*)))
+  (if (and *consumer-key* *access-token*)
       :ok
-    "Setup problem - You need to install the consumer-key and the read/write access-token - C-c o i or M-x org-trello/install-board-and-lists-ids"))
+    "Setup problem - You need to install the consumer-key and the read/write access-token - C-c o i or M-x org-trello/install-key-and-token"))
 
 (defun orgtrello-controller/--retrieve-state-of-card (card-meta)
   "Given a card, retrieve its state depending on its :keyword metadata. If empty or no keyword then, its equivalence is *ORGTRELLO-TODO*, otherwise, return its current state."
@@ -457,11 +457,10 @@
 
 (defun orgtrello-controller/do-install-key-and-token ()
   "Procedure to install the *consumer-key* and the token for the user in the config-file."
-  (interactive)
   (browse-url (org-trello/compute-url "/1/appKey/generate"))
-  (let ((consumer-key (read-string "*consumer-key*: ")))
+  (let ((consumer-key (read-string "Consumer key: ")))
     (browse-url (org-trello/compute-url (format "/1/authorize?response_type=token&name=org-trello&scope=read,write&expiration=never&key=%s" consumer-key)))
-    (let ((access-token (read-string "Access-token: ")))
+    (let ((access-token (read-string "Access token: ")))
       (orgtrello-controller/--do-install-config-file consumer-key access-token)
       "Install key and read/write access token done!")))
 
@@ -475,15 +474,15 @@
 
 (defun orgtrello-controller/--list-boards! ()
   "Return the map of the existing boards associated to the current account. (Synchronous request)"
-  (--remove (orgtrello-data/entity-closed it) (orgtrello-query/http-trello (orgtrello-api/get-boards) 'do-sync-query)))
+  (--remove (orgtrello-data/entity-closed it) (orgtrello-query/http-trello (orgtrello-api/get-boards) 'synchronous-query)))
 
 (defun orgtrello-controller/--list-board-lists! (board-id)
   "Return the map of the existing list of the board with id board-id. (Synchronous request)"
-  (orgtrello-query/http-trello (orgtrello-api/get-lists board-id) 'do-sync-query))
+  (orgtrello-query/http-trello (orgtrello-api/get-lists board-id) 'synchronous-query))
 
 (defun orgtrello-controller/--board! (board-id)
   "Return the board with id board-id. (Synchronous request)"
-  (orgtrello-query/http-trello (orgtrello-api/get-board board-id) 'do-sync-query))
+  (orgtrello-query/http-trello (orgtrello-api/get-board board-id) 'synchronous-query))
 
 (defun orgtrello-controller/--index-board-map (boards)
   "Given a map of board (id . name), return a map of (position . name)"
@@ -516,8 +515,6 @@
     ;; when we are good
     (let ((selected-id-board (gethash index-selected-board index-board-map)))
       (list selected-id-board (gethash selected-id-board boards)))))
-
-;; (orgtrello-controller/choose-board! (orgtrello-hash/make-properties '((:id-board0 . "board0-name") (:id-board1 . "board1-name"))))
 
 (defun orgtrello-controller/--convention-property-name (name)
   "Use the right convention for the property used in the headers of the org-mode file."
@@ -615,7 +612,8 @@
              board-users-hash-name-id)
     res-list))
 
-(defun orgtrello-controller/--update-orgmode-file-with-properties! (board-name board-id board-lists-hash-name-id board-users-hash-name-id user-me board-labels &optional update-todo-keywords)
+(defun orgtrello-controller/--update-orgmode-file-with-properties!
+    (board-name board-id board-lists-hash-name-id board-users-hash-name-id user-me board-labels &optional update-todo-keywords)
   "Update the orgmode file with the needed headers for org-trello to work."
   (with-current-buffer (current-buffer)
     (goto-char (point-min))
@@ -636,12 +634,11 @@
 (defun orgtrello-controller/--user-logged-in! ()
   "Compute the current user."
   (-> (orgtrello-api/get-me)
-    (orgtrello-query/http-trello 'do-sync-query)
+    (orgtrello-query/http-trello 'synchronous-query)
     orgtrello-data/entity-username))
 
 (defun orgtrello-controller/do-install-board-and-lists ()
   "Command to install the list boards."
-  (interactive)
   (let* ((board-info        (-> (orgtrello-controller/--list-boards!)
                               orgtrello-controller/--id-name
                               orgtrello-controller/choose-board!))
@@ -672,13 +669,13 @@
   "Compute board users' informations."
   (--> board-id
     (orgtrello-api/get-board it)
-    (orgtrello-query/http-trello it 'do-sync-query)
+    (orgtrello-query/http-trello it 'synchronous-query)
     (orgtrello-controller/--compute-user-properties-hash-from-board it)))
 
 (defun orgtrello-controller/--create-board (board-name &optional board-description)
   "Create a board with name and eventually a description."
   (orgtrello-log/msg *OT/INFO* "Creating board '%s'" board-name)
-  (let ((board-data (orgtrello-query/http-trello (orgtrello-api/add-board board-name board-description) 'do-sync-query)))
+  (let ((board-data (orgtrello-query/http-trello (orgtrello-api/add-board board-name board-description) 'synchronous-query)))
     (list (orgtrello-data/entity-id board-data) (orgtrello-data/entity-name board-data))))
 
 (defun orgtrello-controller/--close-lists (list-ids)
@@ -693,7 +690,7 @@
   (--reduce-from (progn
                    (orgtrello-log/msg *OT/INFO* "Board id %s - Creating list '%s'"
                                       board-id it)
-                   (puthash it (orgtrello-data/entity-id (orgtrello-query/http-trello (orgtrello-api/add-list it board-id) 'do-sync-query)) acc)
+                   (puthash it (orgtrello-data/entity-id (orgtrello-query/http-trello (orgtrello-api/add-list it board-id) 'synchronous-query)) acc)
                    acc)
                  (orgtrello-hash/empty-hash)
                  list-keywords))
@@ -718,7 +715,13 @@
         ;; clean the buffer's old metadata
         (orgtrello-controller/do-cleanup-from-buffer!)
         ;; update org buffer with new ones
-        (orgtrello-controller/--update-orgmode-file-with-properties! board-name board-id board-lists-hname-id board-users-name-id user-logged-in nil))))
+        (orgtrello-controller/--update-orgmode-file-with-properties!
+         board-name
+         board-id
+         board-lists-hname-id
+         board-users-name-id
+         user-logged-in
+         (orgtrello-hash/make-properties '((:red) (:green) (:yellow) (:purple) (:blue) (:orange)))))))
   "Create board and lists done!")
 
 (defun orgtrello-controller/--add-user (user users) "Add the user to the users list"
