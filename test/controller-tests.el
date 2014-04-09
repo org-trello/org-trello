@@ -219,3 +219,33 @@
   (expect "a," (orgtrello-controller/--tags-to-labels ":a:"))
   (expect "a," (orgtrello-controller/--tags-to-labels "a:"))
   (expect nil  (orgtrello-controller/--tags-to-labels nil)))
+
+(expectations
+ (expect :ok
+         (with-mock
+          (mock (file-exists-p *CONFIG-FILE*) => t)
+          (mock (load *CONFIG-FILE*)          => t)
+          (orgtrello-controller/load-keys)))
+ (expect "Setup problem - Problem during credentials (consumer-key and the read/write access-token) loading - C-c o i or M-x org-trello/install-key-and-token"
+   (with-mock
+     (mock (file-exists-p *CONFIG-FILE*) => nil)
+     (orgtrello-controller/load-keys)))
+ (expect "Setup problem - Problem during credentials (consumer-key and the read/write access-token) loading - C-c o i or M-x org-trello/install-key-and-token"
+   (with-mock
+     (mock (file-exists-p *CONFIG-FILE*) => t)
+     (mock (load *CONFIG-FILE*)          => nil)
+     (orgtrello-controller/load-keys))))
+
+(expectations
+  (expect :ok
+    (let ((*consumer-key* "some-consumer-key")
+          (*access-token* "some-access-token"))
+      (orgtrello-controller/control-keys)))
+  (expect "Setup problem - You need to install the consumer-key and the read/write access-token - C-c o i or M-x org-trello/install-key-and-token"
+    (let ((*consumer-key* "some-consumer-key")
+          (*access-token* nil))
+      (orgtrello-controller/control-keys)))
+  (expect "Setup problem - You need to install the consumer-key and the read/write access-token - C-c o i or M-x org-trello/install-key-and-token"
+    (let ((*consumer-key* nil)
+          (*access-token* "some-access-token"))
+      (orgtrello-controller/control-keys))))
