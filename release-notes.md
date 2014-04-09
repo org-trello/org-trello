@@ -3,6 +3,7 @@
 - [X] Remove non interactive commands
 - [X] Create board does not work - Close #157
 - [X] Improve loading keys policy - #156
+- [X] Use cask to make the packaging and remove old personal routines
 - [X] Version
 - [X] Release notes
 

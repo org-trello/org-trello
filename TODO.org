@@ -986,6 +986,7 @@ CLOSED: [2014-04-09 Wed 20:31]
 - [X] Remove non interactive commands
 - [X] Create board does not work - Close #157
 - [X] Improve loading keys policy - #156
+- [X] Use cask to make the packaging and remove old personal routines
 - [X] Version
 - [X] Release notes
 * TODO 0.4.x [0%]
