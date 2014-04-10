@@ -50,3 +50,55 @@
 
 (expectations (desc "orgtrello-action/--compute-error-message")
   (expect "- message 1\n- message 2\n" (orgtrello-action/--compute-error-message '("message 1" "message 2"))))
+
+(expectations
+  (desc "orgtrello-action/controls-or-actions-then-do")
+  ;; with no control the action function is direcly executed
+  (expect "some-result"
+    (orgtrello-action/controls-or-actions-then-do nil (lambda () "some-result")))
+  ;; with all controls ok, the action function is executed
+  (expect "some-result"
+    (with-mock
+      (mock (control0) => :ok)
+      (mock (control1) => :ok)
+      (orgtrello-action/controls-or-actions-then-do '(control0 control1) (lambda () "some-result"))))
+  ;; with all controls ok and the no logs flag, the action function is executed
+  (expect "some-result"
+    (with-mock
+      (mock (control0) => :ok)
+      (mock (control1) => :ok)
+      (orgtrello-action/controls-or-actions-then-do '(control0 control1) (lambda () "some-result") 'no-logs)))
+  ;; with a problem in controls, the action function is not executed and the logs are returned
+  (expect "List of errors:\n - some error message from control 1\n- some other error message from control 2\n"
+    (with-mock
+      (mock (control0)            => :ok)
+      (mock (control1-that-fails) => "some error message from control 1")
+      (mock (control2-that-fails) => "some other error message from control 2")
+      (orgtrello-action/controls-or-actions-then-do '(control0 control1-that-fails control2-that-fails) 'some-uncalled-function-because-control-fail)))
+  ;; with a problem in controls, the action function is not executed and the logs are not returned
+  (expect nil
+    (with-mock
+      (mock (control0)            => :ok)
+      (mock (control1-that-fails) => "some error message from control 1")
+      (mock (control2-that-fails) => "some other error message from control 2")
+      (orgtrello-action/controls-or-actions-then-do '(control0 control1-that-fails control2-that-fails) 'some-uncalled-function-because-control-fail 'no-logs))))
+
+(expectations
+  (desc "orgtrello-action/functional-controls-then-do")
+  ;; with no controls, the action is executed
+  (expect "some-result"
+    (orgtrello-action/functional-controls-then-do nil 'entity-not-really-used (lambda (entity-not-used args-not-used) "some-result") 'arg-not-really-used))
+  ;; with controls ok, the action function is executed
+  (with-mock
+    (mock (control0 'entity-not-really-used) => :ok)
+    (mock (control1 'entity-not-really-used) => :ok)
+    (orgtrello-action/functional-controls-then-do '(control0 control1) 'entity-not-really-used (lambda (entity-not-used args-not-used) "some-result") 'arg-not-really-used))
+  ;; with some controls ko, the action function is not executed and the logs are returned
+  (expect "List of errors:\n - control1 failed!\n- control2 failed!\n"
+    (with-mock
+      (mock (control0-that-fails 'entity-not-really-used) => "control1 failed!")
+      (mock (control1            'entity-not-really-used) => :ok)
+      (mock (control2-that-fails 'entity-not-really-used) => "control2 failed!")
+      (orgtrello-action/functional-controls-then-do '(control0-that-fails control1 control2-that-fails)
+                                                    'entity-not-really-used
+                                                    (lambda (entity-not-used args-not-used) "some-result") 'arg-not-really-used))))
