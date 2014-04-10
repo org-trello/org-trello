@@ -91,7 +91,7 @@ Please consider upgrading Emacs." emacs-version) "Error message when installing 
 (require 'timer)
 (require 'align)
 
-;; Depdendency on external Emacs libs
+;; Dependency on external Emacs libs
 (require 'dash)
 (require 'request)
 (require 'elnode)
