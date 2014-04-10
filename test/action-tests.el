@@ -102,3 +102,37 @@
       (orgtrello-action/functional-controls-then-do '(control0-that-fails control1 control2-that-fails)
                                                     'entity-not-really-used
                                                     (lambda (entity-not-used args-not-used) "some-result") 'arg-not-really-used))))
+
+(expectations
+  (desc "orgtrello-action/msg-controls-or-actions-then-do")
+  ;; the execution goes fine and we return the result from the wrapped call to 'orgtrello-action/controls-or-actions-then-do
+  (expect :some-result
+    (with-mock
+      (mock (orgtrello-action/controls-or-actions-then-do :control-or-action-fns :fn-to-execute nil) => :some-result)
+      (orgtrello-action/msg-controls-or-actions-then-do "some-msg" :control-or-action-fns :fn-to-execute)))
+  ;; the execution goes fine, we save the buffer, reload the setup and return the result from the wrapped call to 'orgtrello-action/controls-or-actions-then-do
+  (expect :some-result
+    (with-mock
+      (mock (orgtrello-action/controls-or-actions-then-do :control-or-action-fns :fn-to-execute nil) => :some-result)
+      (mock (save-buffer) => t)
+      (mock (orgtrello-action/reload-setup) => t)
+      (orgtrello-action/msg-controls-or-actions-then-do "some-msg" :control-or-action-fns :fn-to-execute 'save-buffer 'reload-setup)))
+  ;; log nothing, execution goes fine, we save the buffer, reload the setup and return the result from the wrapped call to 'orgtrello-action/controls-or-actions-then-do
+  (expect :some-result
+    (with-mock
+      (mock (orgtrello-action/controls-or-actions-then-do :control-or-action-fns :fn-to-execute 'no-log) => :some-result)
+      (mock (save-buffer) => t)
+      (mock (orgtrello-action/reload-setup) => t)
+      (orgtrello-action/msg-controls-or-actions-then-do "some-msg" :control-or-action-fns :fn-to-execute 'save-buffer 'reload-setup 'no-log)))
+  ;; control is ok, but the execution goes awry, an exception is thrown and caught but does not break the call
+  (expect '(exception (no-catch some-exception :value))
+    (with-mock
+      (mock (control0) => :ok)
+      (orgtrello-action/msg-controls-or-actions-then-do "some-msg" '(control0) (lambda () (throw 'some-exception :value)))))
+  ;; control is ok, but the execution goes awry, an exception is thrown and caught but does not break the call, we do some extra actions in any case and we return the exc.
+  (expect '(exception (no-catch some-exception :value))
+    (with-mock
+      (mock (control0) => :ok)
+      (mock (save-buffer) => t)
+      (mock (orgtrello-action/reload-setup) => t)
+      (orgtrello-action/msg-controls-or-actions-then-do "some-msg" '(control0) (lambda () (throw 'some-exception :value)) 'save-buffer 'reload-setup))))
