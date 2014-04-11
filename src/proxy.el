@@ -251,10 +251,6 @@
            orgtrello-proxy/--dispatch-action
            (funcall entity-data (orgtrello-buffer/entry-get-full-metadata!) op/--entry-file-archived)))))))
 
-(defun orgtrello-action/org-delete-property (key)
-  "Delete a property depending on the nature of the current entry (org heading or checkbox)."
-  (funcall (if (orgtrello-cbx/checkbox-p) 'orgtrello-cbx/org-delete-property 'org-delete-property) key))
-
 (defun orgtrello-action/--delete-region (start end)
   "Delete a region defined by start and end bound."
   (remove-overlays start end) ;; remove overlays on the card region
