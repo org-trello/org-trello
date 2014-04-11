@@ -17,7 +17,7 @@
   ;; now exploit some
   (let* ((list-keywords (reverse (orgtrello-buffer/filtered-kwds!)))
          (hmap-id-name (--reduce-from (progn
-                                        (puthash (orgtrello-buffer/org-file-get-property! it) it acc)
+                                        (orgtrello-data/puthash-data (orgtrello-buffer/org-file-get-property! it) it acc)
                                         acc)
                                       (orgtrello-hash/empty-hash)
                                       list-keywords))
@@ -445,11 +445,11 @@
 
 (defun orgtrello-controller/--id-name (entities)
   "Given a list of entities, return a map of (id, name)."
-  (--reduce-from (progn (puthash (orgtrello-data/entity-id it) (orgtrello-data/entity-name it) acc) acc) (orgtrello-hash/empty-hash) entities))
+  (--reduce-from (progn (orgtrello-data/puthash-data (orgtrello-data/entity-id it) (orgtrello-data/entity-name it) acc) acc) (orgtrello-hash/empty-hash) entities))
 
 (defun orgtrello-controller/--name-id (entities)
   "Given a list of entities, return a map of (id, name)."
-  (--reduce-from (progn (puthash (orgtrello-data/entity-name it) (orgtrello-data/entity-id it) acc) acc) (orgtrello-hash/empty-hash) entities))
+  (--reduce-from (progn (orgtrello-data/puthash-data (orgtrello-data/entity-name it) (orgtrello-data/entity-id it) acc) acc) (orgtrello-hash/empty-hash) entities))
 
 (defun orgtrello-controller/--list-boards! ()
   "Return the map of the existing boards associated to the current account. (Synchronous request)"
@@ -468,7 +468,7 @@
   (let ((i               0)
         (index-board-map (orgtrello-hash/empty-hash)))
     (maphash (lambda (id _)
-               (puthash (format "%d" i) id index-board-map)
+               (orgtrello-data/puthash-data (format "%d" i) id index-board-map)
                (setq i (+ 1 i)))
              boards)
     index-board-map))
@@ -635,7 +635,7 @@
   (mapcar 'orgtrello-data/entity-member memberships-map))
 
 (defun orgtrello-controller/--compute-user-properties-hash (user-properties)
-  (--reduce-from (progn (puthash (orgtrello-data/entity-username it) (orgtrello-data/entity-id it) acc) acc) (orgtrello-hash/empty-hash) user-properties))
+  (--reduce-from (progn (orgtrello-data/puthash-data (orgtrello-data/entity-username it) (orgtrello-data/entity-id it) acc) acc) (orgtrello-hash/empty-hash) user-properties))
 
 (defun orgtrello-controller/--compute-user-properties-hash-from-board (board-info)
   "Compute user properties given board's informations."
@@ -669,7 +669,7 @@
   (--reduce-from (progn
                    (orgtrello-log/msg *OT/INFO* "Board id %s - Creating list '%s'"
                                       board-id it)
-                   (puthash it (orgtrello-data/entity-id (orgtrello-query/http-trello (orgtrello-api/add-list it board-id) 'synchronous-query)) acc)
+                   (orgtrello-data/puthash-data it (orgtrello-data/entity-id (orgtrello-query/http-trello (orgtrello-api/add-list it board-id) 'synchronous-query)) acc)
                    acc)
                  (orgtrello-hash/empty-hash)
                  list-keywords))

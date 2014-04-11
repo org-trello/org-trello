@@ -621,15 +621,15 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
         (org-adjacency    (cadr org-data)))
 
     (maphash (lambda (id trello-entity)
-               (puthash id (funcall (orgtrello-data/--dispatch-merge-fn trello-entity) trello-entity (orgtrello-data/--get-entity id org-entities)) trello-entities) ;; updating entity to trello
-               (puthash id (orgtrello-data/merge-2-lists-without-duplicates (gethash id trello-adjacency) (gethash id org-adjacency))     trello-adjacency)) ;; update entity adjacency to trello
+               (orgtrello-data/puthash-data id (funcall (orgtrello-data/--dispatch-merge-fn trello-entity) trello-entity (orgtrello-data/--get-entity id org-entities)) trello-entities) ;; updating entity to trello
+               (orgtrello-data/puthash-data id (orgtrello-data/merge-2-lists-without-duplicates (gethash id trello-adjacency) (gethash id org-adjacency))     trello-adjacency)) ;; update entity adjacency to trello
              trello-entities)
 
     ;; copy the entities only present on org files to the trello entities.
     (maphash (lambda (id org-entity)
                (unless (gethash id trello-entities)
-                 (puthash id org-entity trello-entities)
-                 (puthash id (gethash id org-adjacency) trello-adjacency)))
+                 (orgtrello-data/puthash-data id org-entity trello-entities)
+                 (orgtrello-data/puthash-data id (gethash id org-adjacency) trello-adjacency)))
              org-entities)
 
     (list trello-entities trello-adjacency)))
@@ -1340,7 +1340,7 @@ This is a list with the following elements:
         (t                      (--reduce-from (let ((key (car it))
                                                      (val (cdr it)))
                                                  (-when-let (new-key (orgtrello-proxy/--transcode-key key))
-                                                   (puthash new-key val acc))
+                                                   (orgtrello-data/puthash-data new-key val acc))
                                                  acc)
                                                (orgtrello-hash/empty-hash)
                                                entities))))
@@ -2629,7 +2629,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   ;; now exploit some
   (let* ((list-keywords (reverse (orgtrello-buffer/filtered-kwds!)))
          (hmap-id-name (--reduce-from (progn
-                                        (puthash (orgtrello-buffer/org-file-get-property! it) it acc)
+                                        (orgtrello-data/puthash-data (orgtrello-buffer/org-file-get-property! it) it acc)
                                         acc)
                                       (orgtrello-hash/empty-hash)
                                       list-keywords))
@@ -3057,11 +3057,11 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun orgtrello-controller/--id-name (entities)
   "Given a list of entities, return a map of (id, name)."
-  (--reduce-from (progn (puthash (orgtrello-data/entity-id it) (orgtrello-data/entity-name it) acc) acc) (orgtrello-hash/empty-hash) entities))
+  (--reduce-from (progn (orgtrello-data/puthash-data (orgtrello-data/entity-id it) (orgtrello-data/entity-name it) acc) acc) (orgtrello-hash/empty-hash) entities))
 
 (defun orgtrello-controller/--name-id (entities)
   "Given a list of entities, return a map of (id, name)."
-  (--reduce-from (progn (puthash (orgtrello-data/entity-name it) (orgtrello-data/entity-id it) acc) acc) (orgtrello-hash/empty-hash) entities))
+  (--reduce-from (progn (orgtrello-data/puthash-data (orgtrello-data/entity-name it) (orgtrello-data/entity-id it) acc) acc) (orgtrello-hash/empty-hash) entities))
 
 (defun orgtrello-controller/--list-boards! ()
   "Return the map of the existing boards associated to the current account. (Synchronous request)"
@@ -3080,7 +3080,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   (let ((i               0)
         (index-board-map (orgtrello-hash/empty-hash)))
     (maphash (lambda (id _)
-               (puthash (format "%d" i) id index-board-map)
+               (orgtrello-data/puthash-data (format "%d" i) id index-board-map)
                (setq i (+ 1 i)))
              boards)
     index-board-map))
@@ -3247,7 +3247,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   (mapcar 'orgtrello-data/entity-member memberships-map))
 
 (defun orgtrello-controller/--compute-user-properties-hash (user-properties)
-  (--reduce-from (progn (puthash (orgtrello-data/entity-username it) (orgtrello-data/entity-id it) acc) acc) (orgtrello-hash/empty-hash) user-properties))
+  (--reduce-from (progn (orgtrello-data/puthash-data (orgtrello-data/entity-username it) (orgtrello-data/entity-id it) acc) acc) (orgtrello-hash/empty-hash) user-properties))
 
 (defun orgtrello-controller/--compute-user-properties-hash-from-board (board-info)
   "Compute user properties given board's informations."
@@ -3281,7 +3281,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   (--reduce-from (progn
                    (orgtrello-log/msg *OT/INFO* "Board id %s - Creating list '%s'"
                                       board-id it)
-                   (puthash it (orgtrello-data/entity-id (orgtrello-query/http-trello (orgtrello-api/add-list it board-id) 'synchronous-query)) acc)
+                   (orgtrello-data/puthash-data it (orgtrello-data/entity-id (orgtrello-query/http-trello (orgtrello-api/add-list it board-id) 'synchronous-query)) acc)
                    acc)
                  (orgtrello-hash/empty-hash)
                  list-keywords))

@@ -70,7 +70,7 @@
         (t                      (--reduce-from (let ((key (car it))
                                                      (val (cdr it)))
                                                  (-when-let (new-key (orgtrello-proxy/--transcode-key key))
-                                                   (puthash new-key val acc))
+                                                   (orgtrello-data/puthash-data new-key val acc))
                                                  acc)
                                                (orgtrello-hash/empty-hash)
                                                entities))))
