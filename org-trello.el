@@ -2750,10 +2750,6 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
           *ERROR-SYNC-ITEM-SYNC-CHECKLIST-FIRST*)
       *ERROR-SYNC-ITEM-MISSING-NAME*)))
 
-(defun orgtrello-controller/--compute-state-from-keyword (state)
-  "Given a state, compute the org equivalent (to use with org-todo function)"
-  (if (string= *ORGTRELLO-DONE* state) 'done 'none))
-
 (defun orgtrello-controller/compute-state (state)
   "Given a state (TODO/DONE) compute the trello state equivalent."
   (orgtrello-data/--compute-state-generic state '("complete" "incomplete")))
