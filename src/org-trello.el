@@ -129,12 +129,9 @@
   (interactive)
   (org-trello/proxy-do "Delete current org-trello setup" 'orgtrello-controller/delete-setup! 'do-save-buffer))
 
-(defun org-trello/--replace-string-prefix-in-string (keybinding string-to-replace)
-  (replace-regexp-in-string "#PREFIX#" keybinding string-to-replace t))
-
 (defun org-trello/--startup-message (keybinding)
-  (let ((template-string "org-trello/ot is on! To begin with, hit #PREFIX# h or M-x 'org-trello/help-describing-bindings"))
-    (replace-regexp-in-string "#PREFIX#" keybinding template-string t)))
+  "Compute org-trello's startup message."
+  (orgtrello-utils/replace-in-string "#PREFIX#" keybinding "org-trello/ot is on! To begin with, hit #PREFIX# h or M-x 'org-trello/help-describing-bindings"))
 
 (defun org-trello/--help-describing-bindings-template (keybinding list-command-binding-description)
   "Standard Help message template"
