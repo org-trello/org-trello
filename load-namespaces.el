@@ -18,7 +18,7 @@
   (mapc 'org-trello/load-ns splitted-files))
 
 (defun org-trello/dev-load-namespaces ()
-  "Load the namespace with interactive command"
+  "Load the namespaces with interactive command."
   (interactive)
   ;; load the namespaces.el files references the namespaces from which generate the org-trello.el + load the src/dev.el namespace for some dev tools
   (mapc 'load-file `(,(org-trello/full-file "namespaces.el") ,(org-trello/full-file "src/dev.el")))
@@ -26,6 +26,4 @@
 
 (org-trello/dev-load-namespaces)
 
-(require 'org-trello-namespaces)
-
-(org-trello/load-namespaces *ORG-TRELLO-FILES*)
+;;; load-namespaces.el ends here
