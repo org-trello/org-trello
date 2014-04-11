@@ -6,10 +6,6 @@
     (append b-list)
     delete-dups))
 
-(defun orgtrello-data/--compute-fn (entity list-dispatch-fn)
-  "Given an entity, compute the result"
-  (funcall (if (hash-table-p entity) (car list-dispatch-fn) (cadr list-dispatch-fn)) entity))
-
 (defun orgtrello-data/--entity-with-level-p (entity level) "Is the entity with level level?" (-> entity orgtrello-data/entity-level (eq level)))
 (defun orgtrello-data/entity-card-p      (entity) "Is this a card?"      (orgtrello-data/--entity-with-level-p entity *CARD-LEVEL*))
 (defun orgtrello-data/entity-checklist-p (entity) "Is this a checklist?" (orgtrello-data/--entity-with-level-p entity *CHECKLIST-LEVEL*))
