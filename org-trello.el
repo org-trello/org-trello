@@ -2339,10 +2339,6 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   "Given a level, compute the number of space for an org checkbox entry."
   (orgtrello-buffer/--symbol " "  n))
 
-(defun orgtrello-buffer/--star (n)
-  "Given a level, compute the number of space for an org checkbox entry."
-  (orgtrello-buffer/--symbol "*"  n))
-
 (defun orgtrello-buffer/--compute-state-checkbox (state)
   "Compute the status of the checkbox"
   (orgtrello-data/--compute-state-generic state '("[X]" "[-]")))

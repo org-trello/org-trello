@@ -653,12 +653,6 @@ some description
   (expect "  "  (orgtrello-buffer/--space 2))
   (expect "   " (orgtrello-buffer/--space 3)) )
 
-(expectations (desc "orgtrello-buffer/--star")
-  (expect ""    (orgtrello-buffer/--star 0))
-  (expect "*"   (orgtrello-buffer/--star 1))
-  (expect "**"  (orgtrello-buffer/--star 2))
-  (expect "***" (orgtrello-buffer/--star 3)) )
-
 (expectations (desc "orgtrello-buffer/--compute-level-into-spaces")
   (expect 0 (orgtrello-buffer/--compute-level-into-spaces 2))
   (expect 2 (orgtrello-buffer/--compute-level-into-spaces nil))
