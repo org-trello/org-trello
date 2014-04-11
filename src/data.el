@@ -1,5 +1,3 @@
-(defvar *ORGTRELLO/ID* "orgtrello-id" "Key entry used for the trello identifier and the trello marker (the first sync).")
-
 (defun orgtrello-data/merge-2-lists-without-duplicates (a-list b-list)
   "Merge 2 lists together (no duplicates)."
   (-> a-list
