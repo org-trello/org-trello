@@ -4,6 +4,7 @@
 
 (defconst *ORG-TRELLO-FILES* '("src/header.el"
                                "src/log.el"
+                               "src/utils.el"
                                "src/setup.el"
                                "src/hash.el"
                                "src/action.el"
@@ -23,6 +24,7 @@
                                "src/footer.el") "Splitted org-trello files.")
 
 (defconst *ORG-TRELLO-TEST-FILES* '("test/utilities-tests.el"         ;; utils function for the following tests buffer
+                                    "test/utils-tests.el"
                                     "test/hash-tests.el"
                                     "test/action-tests.el"
                                     "test/data-tests.el"
