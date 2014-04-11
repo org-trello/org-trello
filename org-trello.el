@@ -91,7 +91,7 @@ Please consider upgrading Emacs." emacs-version) "Error message when installing 
 (require 'timer)
 (require 'align)
 
-;; Depdendency on external Emacs libs
+;; Dependency on external Emacs libs
 (require 'dash)
 (require 'request)
 (require 'elnode)
@@ -134,6 +134,9 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-log loaded!")
 
 
+(defun orgtrello-utils/replace-in-string (expression-to-replace replacement-expression string-input)
+  "Given a string-input, an expression-to-replace (regexp/string) and a replacement-expression, replace the expression-to-replace by replacement-expression in string-input"
+  (replace-regexp-in-string expression-to-replace replacement-expression string-input 'fixed-case))
 (defconst *consumer-key*                nil                                               "Id representing the user.")
 (defconst *access-token*                nil                                               "Read/write access token to use trello on behalf of the user.")
 (defconst *ORGTRELLO-MARKER*            "orgtrello-marker"                                "A marker used inside the org buffer to synchronize entries.")
@@ -163,7 +166,6 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
 (defconst *ERROR-SYNC-ITEM-SYNC-CARD-FIRST* "Cannot synchronize the item - the card must be synchronized first. Skip it...")
 (defconst *ERROR-SYNC-ITEM-SYNC-CHECKLIST-FIRST* "Cannot synchronize the item - the checklist must be synchronized first. Skip it...")
 (defconst *ERROR-SYNC-ITEM-MISSING-NAME* "Cannot synchronize the item - missing mandatory name. Skip it...")
-(defconst *ERROR-SYNC-ITEM-SYNC-UPPER-LAYER-FIRST* "The card and the checklist must be synced before syncing the item. Skip it...")
 
 (defun org-trello/compute-url (url-without-base-uri)
   "An helper method to compute the uri to trello"
@@ -217,10 +219,6 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
                                     (:parent . ,parent)
                                     (:grandparent . ,grandparent))))
 
-(defun orgtrello-hash/key (s)
-  "Given a string, compute its key format."
-  (format ":%s:" s))
-
 (defun orgtrello-hash/init-map-from (data)
   "Init a map from a given data. If data is nil, return an empty hash table."
   (if data data (orgtrello-hash/empty-hash)))
@@ -272,25 +270,23 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
 (defun orgtrello-action/controls-or-actions-then-do (control-or-action-fns fn-to-execute &optional nolog-p)
   "Execute the function fn-to-execute if control-or-action-fns is nil or display the error message if problems."
   (if control-or-action-fns
-      (let ((org-trello/--error-messages (-> control-or-action-fns orgtrello-action/--execute-controls orgtrello-action/--filter-error-messages)))
-        (if org-trello/--error-messages
-            (unless nolog-p
-              ;; there are some trouble, we display all the error messages to help the user understand the problem
-              (orgtrello-log/msg *OT/ERROR* "List of errors:\n %s" (orgtrello-action/--compute-error-message org-trello/--error-messages)))
-          ;; ok execute the function as the controls are ok
-          (funcall fn-to-execute)))
+      (-if-let (error-messages (-> control-or-action-fns orgtrello-action/--execute-controls orgtrello-action/--filter-error-messages))
+          (unless nolog-p
+            ;; there are some trouble, we display all the error messages to help the user understand the problem
+            (orgtrello-log/msg *OT/ERROR* "List of errors:\n %s" (orgtrello-action/--compute-error-message error-messages)))
+        ;; ok execute the function as the controls are ok
+        (funcall fn-to-execute))
     ;; no control, we simply execute the function
     (funcall fn-to-execute)))
 
 (defun orgtrello-action/functional-controls-then-do (control-fns entity fn-to-execute args)
   "Execute the function fn if control-fns is nil or if the result of apply every function to fn-to-execute is ok."
   (if control-fns
-      (let ((org-trello/--error-messages (-> control-fns (orgtrello-action/--execute-controls entity) orgtrello-action/--filter-error-messages)))
-        (if org-trello/--error-messages
-            ;; there are some trouble, we display all the error messages to help the user understand the problem
-            (orgtrello-log/msg *OT/ERROR* "List of errors:\n %s" (orgtrello-action/--compute-error-message org-trello/--error-messages))
-          ;; ok execute the function as the controls are ok
-          (funcall fn-to-execute entity args)))
+      (-if-let (error-messages (-> control-fns (orgtrello-action/--execute-controls entity) orgtrello-action/--filter-error-messages))
+          ;; there are some trouble, we display all the error messages to help the user understand the problem
+          (orgtrello-log/msg *OT/ERROR* "List of errors:\n %s" (orgtrello-action/--compute-error-message error-messages))
+        ;; ok execute the function as the controls are ok
+        (funcall fn-to-execute entity args))
     ;; no control, we simply execute the function
     (funcall fn-to-execute entity args)))
 
@@ -319,10 +315,6 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
   (-> a-list
     (append b-list)
     delete-dups))
-
-(defun orgtrello-data/--compute-fn (entity list-dispatch-fn)
-  "Given an entity, compute the result"
-  (funcall (if (hash-table-p entity) (car list-dispatch-fn) (cadr list-dispatch-fn)) entity))
 
 (defun orgtrello-data/--entity-with-level-p (entity level) "Is the entity with level level?" (-> entity orgtrello-data/entity-level (eq level)))
 (defun orgtrello-data/entity-card-p      (entity) "Is this a card?"      (orgtrello-data/--entity-with-level-p entity *CARD-LEVEL*))
@@ -750,16 +742,6 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
 (defun orgtrello-cbx/--list-is-checkbox-p (l)
   "Is this a checkbox?"
   (string= "-" (car (--drop-while (string= "" it) l))))
-
-(defun orgtrello-cbx/--level (l)
-  "Given a list of strings, compute the level (starts at 2).
-String look like:
-- ('- '[X] 'call 'people '[4/4])
-- (' '  '- '[X] 'call 'people '[4/4]).
-To ease the computation, we consider level 4 if no - to start with, and to avoid missed typing, we consider level 2 if there is no space before the - and level 3 otherwise."
-  (if (orgtrello-cbx/--list-is-checkbox-p l)
-      (if (string= "-" (car l)) *CHECKLIST-LEVEL* *ITEM-LEVEL*)
-    *OUTOFBOUNDS-LEVEL*))
 
 (defun orgtrello-cbx/--retrieve-status (l)
   "Given a list of metadata, return the status"
@@ -3605,12 +3587,9 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   (interactive)
   (org-trello/proxy-do "Delete current org-trello setup" 'orgtrello-controller/delete-setup! 'do-save-buffer))
 
-(defun org-trello/--replace-string-prefix-in-string (keybinding string-to-replace)
-  (replace-regexp-in-string "#PREFIX#" keybinding string-to-replace t))
-
 (defun org-trello/--startup-message (keybinding)
-  (let ((template-string "org-trello/ot is on! To begin with, hit #PREFIX# h or M-x 'org-trello/help-describing-bindings"))
-    (replace-regexp-in-string "#PREFIX#" keybinding template-string t)))
+  "Compute org-trello's startup message."
+  (orgtrello-utils/replace-in-string "#PREFIX#" keybinding "org-trello/ot is on! To begin with, hit #PREFIX# h or M-x 'org-trello/help-describing-bindings"))
 
 (defun org-trello/--help-describing-bindings-template (keybinding list-command-binding-description)
   "Standard Help message template"
