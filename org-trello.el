@@ -2165,11 +2165,11 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun orgtrello-buffer/board-name! ()
   "Compute the board's name"
-  (orgtrello-buffer/org-file-get-property! *BOARD-NAME*))
+  (orgtrello-buffer/org-file-get-property! *ORGTRELLO/BOARD-NAME*))
 
 (defun orgtrello-buffer/board-id! ()
   "Compute the board's id"
-  (orgtrello-buffer/org-file-get-property! *BOARD-ID*))
+  (orgtrello-buffer/org-file-get-property! *ORGTRELLO/BOARD-ID*))
 
 (defun orgtrello-buffer/me! ()
   "Compute the board's current user"
@@ -2599,8 +2599,8 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 (defconst *ORGTRELLO-DONE* "DONE" "org-mode done state")
 
 ;; Properties key for the orgtrello headers #+PROPERTY board-id, etc...
-(defconst *BOARD-ID*   "board-id" "orgtrello property board-id entry")
-(defconst *BOARD-NAME* "board-name" "orgtrello property board-name entry")
+(defconst *ORGTRELLO/BOARD-ID*   "board-id" "orgtrello property board-id entry")
+(defconst *ORGTRELLO/BOARD-NAME* "board-name" "orgtrello property board-name entry")
 
 (defvar *LIST-NAMES*         nil "orgtrello property names of the different lists. This use the standard 'org-todo-keywords property from org-mode.")
 (defvar *HMAP-ID-NAME*       nil "orgtrello hash map containing for each id, the associated name (or org keyword).")
@@ -3140,8 +3140,8 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   (with-current-buffer (current-buffer)
     ;; compute the list of properties to purge
     (->> `(":PROPERTIES"
-           ,(orgtrello-controller/compute-property *BOARD-NAME*)
-           ,(orgtrello-controller/compute-property *BOARD-ID*)
+           ,(orgtrello-controller/compute-property *ORGTRELLO/BOARD-NAME*)
+           ,(orgtrello-controller/compute-property *ORGTRELLO/BOARD-ID*)
            ,@(--map (orgtrello-controller/compute-property (orgtrello-controller/--convention-property-name it)) list-keywords)
            ,@(orgtrello-controller/--compute-hash-name-id-to-list users-hash-name-id)
            ,(orgtrello-controller/compute-property *ORGTRELLO-USER-ME* user-me)
@@ -3161,8 +3161,8 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 (defun orgtrello-controller/--compute-metadata! (board-name board-id board-lists-hash-name-id board-users-hash-name-id user-me board-labels &optional update-todo-keywords)
   "Compute the org-trello metadata to dump on header file."
   `(":PROPERTIES:"
-    ,(orgtrello-controller/compute-property *BOARD-NAME* board-name)
-    ,(orgtrello-controller/compute-property *BOARD-ID* board-id)
+    ,(orgtrello-controller/compute-property *ORGTRELLO/BOARD-NAME* board-name)
+    ,(orgtrello-controller/compute-property *ORGTRELLO/BOARD-ID* board-id)
     ,@(orgtrello-controller/--compute-board-lists-hash-name-id board-lists-hash-name-id)
     ,(if update-todo-keywords (orgtrello-controller/--properties-compute-todo-keywords-as-string board-lists-hash-name-id) "")
     ,@(orgtrello-controller/--properties-compute-users-ids board-users-hash-name-id)

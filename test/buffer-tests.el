@@ -127,11 +127,11 @@ hello there
   (expect
       "this-is-the-board-id"
     (orgtrello-tests/with-org-buffer
-      (format ":PROPERTIES:\n#+PROPERTY: %s this-is-the-board-id\n:END:\n* card\n" *BOARD-ID*)
+      (format ":PROPERTIES:\n#+PROPERTY: %s this-is-the-board-id\n:END:\n* card\n" *ORGTRELLO/BOARD-ID*)
       (orgtrello-buffer/board-id!)))
   (expect "this-is-the-board-name"
     (orgtrello-tests/with-org-buffer
-     (format ":PROPERTIES:\n#+PROPERTY: %s this-is-the-board-name\n:END:\n* card\n" *BOARD-NAME*)
+     (format ":PROPERTIES:\n#+PROPERTY: %s this-is-the-board-name\n:END:\n* card\n" *ORGTRELLO/BOARD-NAME*)
      (orgtrello-buffer/board-name!)))
   (expect "this-is-the-user"
     (orgtrello-tests/with-org-buffer

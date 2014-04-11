@@ -50,11 +50,11 @@
 
 (defun orgtrello-buffer/board-name! ()
   "Compute the board's name"
-  (orgtrello-buffer/org-file-get-property! *BOARD-NAME*))
+  (orgtrello-buffer/org-file-get-property! *ORGTRELLO/BOARD-NAME*))
 
 (defun orgtrello-buffer/board-id! ()
   "Compute the board's id"
-  (orgtrello-buffer/org-file-get-property! *BOARD-ID*))
+  (orgtrello-buffer/org-file-get-property! *ORGTRELLO/BOARD-ID*))
 
 (defun orgtrello-buffer/me! ()
   "Compute the board's current user"
