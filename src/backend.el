@@ -61,7 +61,7 @@
   "Adding entity to the adjacency entry."
   (let* ((current-id (orgtrello-data/entity-id-or-marker current-entity))
          (parent-id  (orgtrello-data/entity-id-or-marker parent-entity)))
-    (orgtrello-data/puthash-data parent-id (orgtrello-utils/conj (gethash parent-id adjacency) current-id) adjacency)))
+    (orgtrello-data/puthash-data parent-id (-snoc (gethash parent-id adjacency) current-id) adjacency)))
 
 (defun orgtrello-backend/--put-entities-with-adjacency (current-meta entities adjacency)
   "Deal with adding a new item to entities."

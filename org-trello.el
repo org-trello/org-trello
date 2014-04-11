@@ -137,10 +137,6 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
 (defun orgtrello-utils/replace-in-string (expression-to-replace replacement-expression string-input)
   "Given a string-input, an expression-to-replace (regexp/string) and a replacement-expression, replace the expression-to-replace by replacement-expression in string-input"
   (replace-regexp-in-string expression-to-replace replacement-expression string-input 'fixed-case))
-
-(defun orgtrello-utils/conj (l v)
-  "Adding the value to the list in last position."
-  (->> l nreverse (cons v) nreverse))
 (defconst *consumer-key*                nil                                               "Id representing the user.")
 (defconst *access-token*                nil                                               "Read/write access token to use trello on behalf of the user.")
 (defconst *ORGTRELLO/MARKER*            "orgtrello-marker"                                "A marker used inside the org buffer to synchronize entries.")
@@ -1209,7 +1205,7 @@ This is a list with the following elements:
   "Adding entity to the adjacency entry."
   (let* ((current-id (orgtrello-data/entity-id-or-marker current-entity))
          (parent-id  (orgtrello-data/entity-id-or-marker parent-entity)))
-    (orgtrello-data/puthash-data parent-id (orgtrello-utils/conj (gethash parent-id adjacency) current-id) adjacency)))
+    (orgtrello-data/puthash-data parent-id (-snoc (gethash parent-id adjacency) current-id) adjacency)))
 
 (defun orgtrello-backend/--put-entities-with-adjacency (current-meta entities adjacency)
   "Deal with adding a new item to entities."
