@@ -201,12 +201,11 @@
 
 (defun orgtrello-controller/--update-query-with-org-metadata (query-map position buffer-name &optional name success-callback sync)
   "Given a trello query, add proxy metadata needed to work."
-  (puthash :position     position                                                       query-map)
-  (puthash :buffername   buffer-name                                                    query-map)
-  (when success-callback (puthash :callback success-callback query-map))
-  (when sync             (puthash :sync     sync             query-map))
-  (when name             (puthash :name     name             query-map))
-  query-map)
+  (when success-callback (orgtrello-data/put-entity-callback success-callback query-map))
+  (when sync             (orgtrello-data/put-entity-sync     sync             query-map))
+  (when name             (orgtrello-data/put-entity-name     name             query-map))
+  (orgtrello-data/put-entity-position     position                            query-map)
+  (orgtrello-data/put-entity-buffername   buffer-name                         query-map))
 
 (defun orgtrello-buffer/--compute-marker-from-entry (entry)
   "Compute and set the marker (either a sha1 or the id of the entry-metadata)."
@@ -238,8 +237,8 @@
   (let* ((current (orgtrello-data/current full-meta))
          (marker  (orgtrello-buffer/--compute-marker-from-entry current)))
     (orgtrello-buffer/set-marker-if-not-present current marker)
-    (puthash :id      marker current)
-    (puthash :action  action current)
+    (orgtrello-data/put-entity-id     marker current)
+    (orgtrello-data/put-entity-action action current)
     (orgtrello-proxy/http-producer current)))
 
 (defun orgtrello-controller/--checks-then-delegate-action-on-entity-to-proxy (functional-controls action)

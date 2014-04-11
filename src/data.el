@@ -172,7 +172,7 @@
                                       acc)
                                     (orgtrello-hash/empty-hash)
                                     entities)))
-           (-when-let (level (orgtrello-data/--compute-level hmap)) (puthash :level level hmap))
+           (-when-let (level (orgtrello-data/--compute-level hmap)) (orgtrello-data/put-entity-level level hmap))
            hmap))))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-data loaded!")

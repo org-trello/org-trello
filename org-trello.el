@@ -469,7 +469,7 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
                                       acc)
                                     (orgtrello-hash/empty-hash)
                                     entities)))
-           (-when-let (level (orgtrello-data/--compute-level hmap)) (puthash :level level hmap))
+           (-when-let (level (orgtrello-data/--compute-level hmap)) (orgtrello-data/put-entity-level level hmap))
            hmap))))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-data loaded!")
@@ -1745,11 +1745,9 @@ This is a list with the following elements:
                      directory-files
                      length)))))) ;; . and .. are returned by default
 
-(defvar *ORGTRELLO-FILES* (let ((tmp (orgtrello-hash/empty-hash)))
-                            ;;                    url                                                  temp file            install destination
-                            (puthash :bootstrap `("http://getbootstrap.com/2.3.2/assets/bootstrap.zip" "/tmp/bootstrap.zip" ,(orgtrello-webadmin/--compute-root-static-files)) tmp)
-                            (puthash :jquery    `("http://code.jquery.com/jquery-2.0.3.min.js"         "/tmp/jquery.js"     ,(format "%s/js" (orgtrello-webadmin/--compute-root-static-files))) tmp)
-                            tmp))
+(defvar *ORGTRELLO-FILES* (->> (orgtrello-hash/empty-hash)
+                            (orgtrello-data/puthash-data :bootstrap `("http://getbootstrap.com/2.3.2/assets/bootstrap.zip" "/tmp/bootstrap.zip" ,(orgtrello-webadmin/--compute-root-static-files)))
+                            (orgtrello-data/puthash-data :jquery    `("http://code.jquery.com/jquery-2.0.3.min.js"         "/tmp/jquery.js"     ,(format "%s/js" (orgtrello-webadmin/--compute-root-static-files))))))
 
 (defun orgtrello-webadmin/--unzip-and-install (file dest)
   "Execute the unarchive command. Dependency on unzip on the system."
@@ -2799,12 +2797,11 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun orgtrello-controller/--update-query-with-org-metadata (query-map position buffer-name &optional name success-callback sync)
   "Given a trello query, add proxy metadata needed to work."
-  (puthash :position     position                                                       query-map)
-  (puthash :buffername   buffer-name                                                    query-map)
-  (when success-callback (puthash :callback success-callback query-map))
-  (when sync             (puthash :sync     sync             query-map))
-  (when name             (puthash :name     name             query-map))
-  query-map)
+  (when success-callback (orgtrello-data/put-entity-callback success-callback query-map))
+  (when sync             (orgtrello-data/put-entity-sync     sync             query-map))
+  (when name             (orgtrello-data/put-entity-name     name             query-map))
+  (orgtrello-data/put-entity-position     position                            query-map)
+  (orgtrello-data/put-entity-buffername   buffer-name                         query-map))
 
 (defun orgtrello-buffer/--compute-marker-from-entry (entry)
   "Compute and set the marker (either a sha1 or the id of the entry-metadata)."
@@ -2836,8 +2833,8 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   (let* ((current (orgtrello-data/current full-meta))
          (marker  (orgtrello-buffer/--compute-marker-from-entry current)))
     (orgtrello-buffer/set-marker-if-not-present current marker)
-    (puthash :id      marker current)
-    (puthash :action  action current)
+    (orgtrello-data/put-entity-id     marker current)
+    (orgtrello-data/put-entity-action action current)
     (orgtrello-proxy/http-producer current)))
 
 (defun orgtrello-controller/--checks-then-delegate-action-on-entity-to-proxy (functional-controls action)

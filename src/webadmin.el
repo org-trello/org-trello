@@ -10,11 +10,9 @@
                      directory-files
                      length)))))) ;; . and .. are returned by default
 
-(defvar *ORGTRELLO-FILES* (let ((tmp (orgtrello-hash/empty-hash)))
-                            ;;                    url                                                  temp file            install destination
-                            (puthash :bootstrap `("http://getbootstrap.com/2.3.2/assets/bootstrap.zip" "/tmp/bootstrap.zip" ,(orgtrello-webadmin/--compute-root-static-files)) tmp)
-                            (puthash :jquery    `("http://code.jquery.com/jquery-2.0.3.min.js"         "/tmp/jquery.js"     ,(format "%s/js" (orgtrello-webadmin/--compute-root-static-files))) tmp)
-                            tmp))
+(defvar *ORGTRELLO-FILES* (->> (orgtrello-hash/empty-hash)
+                            (orgtrello-data/puthash-data :bootstrap `("http://getbootstrap.com/2.3.2/assets/bootstrap.zip" "/tmp/bootstrap.zip" ,(orgtrello-webadmin/--compute-root-static-files)))
+                            (orgtrello-data/puthash-data :jquery    `("http://code.jquery.com/jquery-2.0.3.min.js"         "/tmp/jquery.js"     ,(format "%s/js" (orgtrello-webadmin/--compute-root-static-files))))))
 
 (defun orgtrello-webadmin/--unzip-and-install (file dest)
   "Execute the unarchive command. Dependency on unzip on the system."
