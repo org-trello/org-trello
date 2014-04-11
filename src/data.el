@@ -152,13 +152,10 @@
 (defun orgtrello-data/--parse-actions (data &optional size)
   "Given a 'comment' (trello action limited to comment in org-trello) structure, return a list of map representing a comment."
   (->> data
-    (mapcar (lambda (it)
-              (progn
-                (let ((amap (orgtrello-hash/empty-hash)))
-                  (puthash :comment-id (assoc-default 'id it)                                 amap)
-                  (puthash :comment-text (->> it (assoc-default 'data) (assoc-default 'text)) amap)
-                  (puthash :comment-user (->> it car (assoc-default 'username))               amap)
-                  amap))))))
+    (--map (->> (orgtrello-hash/empty-hash)
+             (orgtrello-data/put-entity-comment-id   (assoc-default 'id it))
+             (orgtrello-data/put-entity-comment-text (->> it (assoc-default 'data) (assoc-default 'text)))
+             (orgtrello-data/put-entity-comment-user (->> it car (assoc-default 'username)))))))
 
 (defun orgtrello-data/parse-data (entities)
   "Given a trello entity, convert into org-trello entity"
@@ -169,9 +166,7 @@
          (let ((hmap (--reduce-from (let ((key (car it))
                                           (val (cdr it)))
                                       (-when-let (new-key (orgtrello-data/--deal-with-key key))
-                                        (puthash new-key
-                                                 (funcall (orgtrello-data/--dispatch-parse-data-fn new-key) val)
-                                                 acc))
+                                        (orgtrello-data/puthash-data new-key (funcall (orgtrello-data/--dispatch-parse-data-fn new-key) val) acc))
                                       acc)
                                     (orgtrello-hash/empty-hash)
                                     entities)))
@@ -183,7 +178,7 @@
 (defun orgtrello-data/comments-to-list (comments-hash)
   "Given a list of comments hashmap, return the serialized string comment."
   (->> comments-hash
-    (--map (s-join ": " (list (gethash :comment-user it) (gethash :comment-text it))))
+    (--map (s-join ": " (list (orgtrello-data/entity-comment-user it) (orgtrello-data/entity-comment-text it))))
     (s-join *ORGTRELLO-CARD-COMMENTS-DELIMITER*)))
 
 (defun orgtrello-data/format-labels (labels)
