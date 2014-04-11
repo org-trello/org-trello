@@ -125,16 +125,6 @@
   "Is this a checkbox?"
   (string= "-" (car (--drop-while (string= "" it) l))))
 
-(defun orgtrello-cbx/--level (l)
-  "Given a list of strings, compute the level (starts at 2).
-String look like:
-- ('- '[X] 'call 'people '[4/4])
-- (' '  '- '[X] 'call 'people '[4/4]).
-To ease the computation, we consider level 4 if no - to start with, and to avoid missed typing, we consider level 2 if there is no space before the - and level 3 otherwise."
-  (if (orgtrello-cbx/--list-is-checkbox-p l)
-      (if (string= "-" (car l)) *CHECKLIST-LEVEL* *ITEM-LEVEL*)
-    *OUTOFBOUNDS-LEVEL*))
-
 (defun orgtrello-cbx/--retrieve-status (l)
   "Given a list of metadata, return the status"
   (car (--drop-while (not (or (string= "[]" it)

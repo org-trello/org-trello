@@ -2,13 +2,6 @@
 (require 'ert-expectations)
 (require 'el-mock)
 
-(expectations (desc "orgtrello-cbx/--level")
-  (expect 2 (orgtrello-cbx/--level '("-" "[X]" "call" "people" "[4/4]")))
-  (expect 3 (orgtrello-cbx/--level '("" "-" "[X]" "Peter")))
-  (expect 3 (orgtrello-cbx/--level '("" "" "-" "[X]" "Peter")))
-  (expect 3 (orgtrello-cbx/--level '("" "" "" "-" "[X]" "Peter")))
-  (expect 4 (orgtrello-cbx/--level '("" "" "" "" "" "Peter"))))
-
 (expectations (desc "orgtrello-cbx/--status")
   (expect "DONE" (orgtrello-cbx/--status"[X]"))
   (expect "TODO" (orgtrello-cbx/--status"[ ]"))
