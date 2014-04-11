@@ -1,10 +1,9 @@
 (defun orgtrello-api/make-query (method uri &optional params)
   "Utility function to ease the creation of the map - wait, where are my clojure data again!?"
   (let ((h (orgtrello-hash/empty-hash)))
-    (puthash :method method h)
-    (puthash :uri    uri    h)
-    (if params (puthash :params params h))
-    h))
+    (->> (if params (orgtrello-data/put-entity-params params h) h)
+      (orgtrello-data/put-entity-method method)
+      (orgtrello-data/put-entity-uri uri))))
 
 (defun orgtrello-api/--deal-with-optional-value (optional-entry value entries)
   "Add the optional value depending on the entry. Return entries updated with value if entry, entries untouched otherwise."
