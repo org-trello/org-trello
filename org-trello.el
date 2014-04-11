@@ -2573,10 +2573,6 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   "Compute a filename from a buffername with forbidden filename character"
   (replace-regexp-in-string *ORGTRELLO-SLASH-PATTERN* *ORGTRELLO-DEFENSIVE-PATTERN* buffer-name))
 
-(defun orgtrello-buffer/defensive-buffername-from-filename (filename)
-  "Compute a buffername from a filename"
-  (replace-regexp-in-string *ORGTRELLO-DEFENSIVE-PATTERN* *ORGTRELLO-SLASH-PATTERN* filename))
-
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-buffer loaded!")
 
 

@@ -749,6 +749,4 @@ some description\n"
 
 (expectations
  (expect "<!?#$+[]{}()buffername-with-dangerous-symbols!!!___orgtrello-defensive-pattern___!!!with-slash"
-         (orgtrello-buffer/defensive-filename-from-buffername "<!?#$+[]{}()buffername-with-dangerous-symbols/with-slash"))
- (expect "<!?#$+[]{}()buffername-with=dangerous-symbols/with-slash"
-         (orgtrello-buffer/defensive-buffername-from-filename "<!?#$+[]{}()buffername-with=dangerous-symbols!!!___orgtrello-defensive-pattern___!!!with-slash")))
+         (orgtrello-buffer/defensive-filename-from-buffername "<!?#$+[]{}()buffername-with-dangerous-symbols/with-slash")))
