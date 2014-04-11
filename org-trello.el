@@ -573,24 +573,23 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
     trello-labels))
 
 (defun orgtrello-data/--merge-card (trello-card org-card)
-  "Merge trello and org card together."
-  (if (null trello-card)
-      org-card
-    (let ((org-card-to-merge (orgtrello-hash/init-map-from org-card)))
-      (puthash :tags       (orgtrello-data/--merge-labels-as-tags
-                            (orgtrello-data/--labels-hash-to-tags (orgtrello-data/entity-labels trello-card))
-                            (orgtrello-data/entity-tags org-card))                                       org-card-to-merge)
-      (puthash :comments   (orgtrello-data/entity-comments trello-card)                                  org-card-to-merge)
-      (puthash :level      *CARD-LEVEL*                                                                  org-card-to-merge)
-      (puthash :id         (orgtrello-data/entity-id trello-card)                                        org-card-to-merge)
-      (puthash :name       (orgtrello-data/entity-name trello-card)                                      org-card-to-merge)
-      (puthash :keyword    (-> trello-card
-                             orgtrello-data/entity-list-id
-                             orgtrello-data/--compute-card-status)                                       org-card-to-merge)
-      (puthash :member-ids (orgtrello-data/--merge-member-ids trello-card org-card-to-merge)             org-card-to-merge)
-      (puthash :desc       (orgtrello-data/entity-description trello-card)                               org-card-to-merge)
-      (puthash :due        (orgtrello-data/entity-due trello-card)                                       org-card-to-merge)
-      org-card-to-merge)))
+  "Merge trello and org card together. If trello-card is nil, return org-card."
+  (if trello-card
+      (->> (orgtrello-hash/init-map-from org-card)
+        (orgtrello-data/put-entity-tags (orgtrello-data/--merge-labels-as-tags
+                                         (orgtrello-data/--labels-hash-to-tags (orgtrello-data/entity-labels trello-card))
+                                         (orgtrello-data/entity-tags org-card)))
+        (orgtrello-data/put-entity-comments(orgtrello-data/entity-comments trello-card))
+        (orgtrello-data/put-entity-level *CARD-LEVEL*)
+        (orgtrello-data/put-entity-id (orgtrello-data/entity-id trello-card))
+        (orgtrello-data/put-entity-name (orgtrello-data/entity-name trello-card))
+        (orgtrello-data/put-entity-keyword (-> trello-card
+                                             orgtrello-data/entity-list-id
+                                             orgtrello-data/--compute-card-status))
+        (orgtrello-data/put-entity-member-ids (orgtrello-data/--merge-member-ids trello-card org-card))
+        (orgtrello-data/put-entity-description (orgtrello-data/entity-description trello-card))
+        (orgtrello-data/put-entity-due (orgtrello-data/entity-due trello-card)))
+    org-card))
 
 (defun orgtrello-data/--dispatch-merge-fn (entity)
   "Dispatch the function fn to merge the entity."
@@ -636,8 +635,9 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
   "Compute the users name from the comma separated value in string."
   (when string-users (split-string string-users "," t)))
 
-(defun orgtrello-data/--users-to (users) "Given a list of users, compute the comma separated users."
-       (if users (mapconcat 'identity users ",") ""))
+(defun orgtrello-data/--users-to (users)
+  "Given a list of users, compute the comma separated string of users."
+  (if users (mapconcat 'identity users ",") ""))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-data loaded!")
 
