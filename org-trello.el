@@ -2628,9 +2628,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   (orgtrello-action/reload-setup)
   ;; now exploit some
   (let* ((list-keywords (reverse (orgtrello-buffer/filtered-kwds!)))
-         (hmap-id-name (--reduce-from (progn
-                                        (orgtrello-data/puthash-data (orgtrello-buffer/org-file-get-property! it) it acc)
-                                        acc)
+         (hmap-id-name (--reduce-from (orgtrello-data/puthash-data (orgtrello-buffer/org-file-get-property! it) it acc)
                                       (orgtrello-hash/empty-hash)
                                       list-keywords))
          (list-users (orgtrello-controller/--list-user-entries (orgtrello-buffer/org-file-properties!)))
@@ -3057,11 +3055,11 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun orgtrello-controller/--id-name (entities)
   "Given a list of entities, return a map of (id, name)."
-  (--reduce-from (progn (orgtrello-data/puthash-data (orgtrello-data/entity-id it) (orgtrello-data/entity-name it) acc) acc) (orgtrello-hash/empty-hash) entities))
+  (--reduce-from (orgtrello-data/puthash-data (orgtrello-data/entity-id it) (orgtrello-data/entity-name it) acc) (orgtrello-hash/empty-hash) entities))
 
 (defun orgtrello-controller/--name-id (entities)
   "Given a list of entities, return a map of (id, name)."
-  (--reduce-from (progn (orgtrello-data/puthash-data (orgtrello-data/entity-name it) (orgtrello-data/entity-id it) acc) acc) (orgtrello-hash/empty-hash) entities))
+  (--reduce-from (orgtrello-data/puthash-data (orgtrello-data/entity-name it) (orgtrello-data/entity-id it) acc) (orgtrello-hash/empty-hash) entities))
 
 (defun orgtrello-controller/--list-boards! ()
   "Return the map of the existing boards associated to the current account. (Synchronous request)"
@@ -3247,7 +3245,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   (mapcar 'orgtrello-data/entity-member memberships-map))
 
 (defun orgtrello-controller/--compute-user-properties-hash (user-properties)
-  (--reduce-from (progn (orgtrello-data/puthash-data (orgtrello-data/entity-username it) (orgtrello-data/entity-id it) acc) acc) (orgtrello-hash/empty-hash) user-properties))
+  (--reduce-from (orgtrello-data/puthash-data (orgtrello-data/entity-username it) (orgtrello-data/entity-id it) acc) (orgtrello-hash/empty-hash) user-properties))
 
 (defun orgtrello-controller/--compute-user-properties-hash-from-board (board-info)
   "Compute user properties given board's informations."
@@ -3279,10 +3277,8 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 (defun orgtrello-controller/--create-lists-according-to-keywords (board-id list-keywords)
   "Given a list of names, build those lists on the trello boards. Return the hashmap (name, id) of the new lists created."
   (--reduce-from (progn
-                   (orgtrello-log/msg *OT/INFO* "Board id %s - Creating list '%s'"
-                                      board-id it)
-                   (orgtrello-data/puthash-data it (orgtrello-data/entity-id (orgtrello-query/http-trello (orgtrello-api/add-list it board-id) 'synchronous-query)) acc)
-                   acc)
+                   (orgtrello-log/msg *OT/INFO* "Board id %s - Creating list '%s'" board-id it)
+                   (orgtrello-data/puthash-data it (orgtrello-data/entity-id (orgtrello-query/http-trello (orgtrello-api/add-list it board-id) 'synchronous-query)) acc))
                  (orgtrello-hash/empty-hash)
                  list-keywords))
 
