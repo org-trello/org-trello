@@ -6,7 +6,7 @@
 (defconst *ORGTRELLO/BOARD-ID*   "board-id" "orgtrello property board-id entry")
 (defconst *ORGTRELLO/BOARD-NAME* "board-name" "orgtrello property board-name entry")
 
-(defvar *LIST-NAMES*         nil "orgtrello property names of the different lists. This use the standard 'org-todo-keywords property from org-mode.")
+(defvar *ORGTRELLO/LIST-NAMES*         nil "orgtrello property names of the different lists. This use the standard 'org-todo-keywords property from org-mode.")
 (defvar *HMAP-ID-NAME*       nil "orgtrello hash map containing for each id, the associated name (or org keyword).")
 (defvar *HMAP-USERS-ID-NAME* nil "orgtrello hash map containing for each user name, the associated id.")
 (defvar *HMAP-USERS-NAME-ID* nil "orgtrello hash map containing for each user id, the associated name.")
@@ -40,7 +40,7 @@
          (list-users (orgtrello-controller/--list-user-entries (orgtrello-buffer/org-file-properties!)))
          (hmap-user-id-name (orgtrello-hash/make-transpose-properties list-users))
          (hmap-user-name-id (orgtrello-hash/make-properties list-users)))
-    (setq *LIST-NAMES*   list-keywords)
+    (setq *ORGTRELLO/LIST-NAMES*   list-keywords)
     (setq *HMAP-ID-NAME* hmap-id-name)
     (setq *HMAP-USERS-ID-NAME* hmap-user-id-name)
     (setq *HMAP-USERS-NAME-ID* hmap-user-name-id)
@@ -62,7 +62,7 @@
 (defun orgtrello-controller/control-properties (&optional args)
   "org-trello needs the properties board-id and all list id from the trello board to be setuped on header property file. :ok if ok, or the error message if problems."
   (let ((hmap-count (hash-table-count *HMAP-ID-NAME*)))
-    (if (and (orgtrello-buffer/org-file-properties!) (orgtrello-buffer/board-id!) (= (length *LIST-NAMES*) hmap-count))
+    (if (and (orgtrello-buffer/org-file-properties!) (orgtrello-buffer/board-id!) (= (length *ORGTRELLO/LIST-NAMES*) hmap-count))
         :ok
       "Setup problem.\nEither you did not connect your org-mode buffer with a trello board, to correct this:\n  * attach to a board through C-c o I or M-x org-trello/install-board-and-lists-ids\n  * or create a board from scratch with C-c o b or M-x org-trello/create-board).\nEither your org-mode's todo keyword list and your trello board lists are not named the same way (which they must).\nFor this, connect to trello and rename your board's list according to your org-mode's todo list.\nAlso, you can specify on your org-mode buffer the todo list you want to work with, for example: #+TODO: TODO DOING | DONE FAIL (hit C-c C-c to refresh the setup)")))
 
@@ -702,7 +702,7 @@
              ;; close those lists (they may surely not match the name we want)
              (lists-to-close       (orgtrello-controller/--close-lists board-list-ids))
              ;; create the list, this returns the ids list
-             (board-lists-hname-id (orgtrello-controller/--create-lists-according-to-keywords board-id *LIST-NAMES*))
+             (board-lists-hname-id (orgtrello-controller/--create-lists-according-to-keywords board-id *ORGTRELLO/LIST-NAMES*))
              ;; retrieve user informations
              (board-users-name-id  (orgtrello-controller/--board-users-information-from-board-id! board-id))
              ;; compute the current user's information
@@ -781,7 +781,7 @@
 
 (defun orgtrello-controller/do-cleanup-from-buffer! (&optional globally-flag)
   "Permit to clean the buffer from trello data."
-  (orgtrello-controller/--remove-properties-file! *LIST-NAMES* *HMAP-USERS-NAME-ID* *ORGTRELLO-USER-LOGGED-IN* t) ;; remove any orgtrello relative entries
+  (orgtrello-controller/--remove-properties-file! *ORGTRELLO/LIST-NAMES* *HMAP-USERS-NAME-ID* *ORGTRELLO-USER-LOGGED-IN* t) ;; remove any orgtrello relative entries
   (when globally-flag
     (mapc 'orgtrello-buffer/delete-property! `(,*ORGTRELLO-ID* ,*ORGTRELLO-USERS-ENTRY* ,*ORGTRELLO-CARD-COMMENTS*))))
 
