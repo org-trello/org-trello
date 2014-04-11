@@ -632,15 +632,6 @@ some description
               (expect "orgtrello-marker-2a0b98e652ce6349a0659a7a8eeb3783ffe9a11a" (orgtrello-buffer/--compute-marker-from-entry (orgtrello-hash/make-hash-org :users :level :kwd "some-name" nil :due 1234      "buffername" :desc :comments :tags)))
               (expect "orgtrello-marker-6c59c5dcf6c83edaeb3f4923bfd929a091504bb3" (orgtrello-buffer/--compute-marker-from-entry (orgtrello-hash/make-hash-org :users :level :kwd "some-name" nil :due 4321      "some-other-buffername" :desc :comments :tags))))
 
-(expectations (desc "orgtrello-buffer/--compute-checklist-to-orgtrello-entry")
-  (expect "** name\n" (orgtrello-buffer/--compute-checklist-to-orgtrello-entry "name"))
-  (expect "** name\n" (orgtrello-buffer/--compute-checklist-to-orgtrello-entry "name" nil))
-  (expect "** name\n" (orgtrello-buffer/--compute-checklist-to-orgtrello-entry "name" 't))
-  (expect "** name\n" (orgtrello-buffer/--compute-checklist-to-orgtrello-entry "name" nil 't))
-  (expect "** name\n" (orgtrello-buffer/--compute-checklist-to-orgtrello-entry "name" 't nil))
-  (expect "** name\n" (orgtrello-buffer/--compute-checklist-to-orgtrello-entry "name" nil nil))
-  (expect "** name\n" (orgtrello-buffer/--compute-checklist-to-orgtrello-entry "name" 't 't)))
-
 (expectations (desc "orgtrello-buffer/--symbol")
   (expect ""      (orgtrello-buffer/--symbol " "  0))
   (expect "*"     (orgtrello-buffer/--symbol "*"  1))

@@ -2325,10 +2325,6 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
    (orgtrello-data/entity-due card)
    (orgtrello-data/entity-tags card)))
 
-(defun orgtrello-buffer/--compute-checklist-to-orgtrello-entry (name &optional level status)
-  "Compute the orgtrello format checklist"
-  (format "** %s\n" name))
-
 (defun orgtrello-buffer/--symbol (sym n)
   "Compute the repetition of a symbol as a string"
   (--> n
