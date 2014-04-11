@@ -20,7 +20,7 @@
               (expect '(:a :b) (orgtrello-proxy/--update-buffer-to-save :a '(:b))))
 
 (expectations (desc "orgtrello-proxy/update-buffer-to-save!")
-              (setq *ORGTRELLO-LIST-BUFFERS-TO-SAVE* nil)
+              (setq *ORGTRELLO/LIST-BUFFERS-TO-SAVE* nil)
               (expect '(:a) (orgtrello-proxy/update-buffer-to-save! :a))
               (expect '(:a) (orgtrello-proxy/update-buffer-to-save! :a))
               (expect '(:b :a) (orgtrello-proxy/update-buffer-to-save! :b)))

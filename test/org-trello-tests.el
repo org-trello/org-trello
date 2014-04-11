@@ -2,7 +2,7 @@
 (require 'ert-expectations)
 (require 'el-mock)
 
-(expectations (desc "ORGTRELLO-MODE-PREFIX-KEYBINDING*")
+(expectations (desc "ORGTRELLO/MODE-PREFIX-KEYBINDING*")
  (expect "C-c o a - M-x some-action - some-description
 C-c o 2 - M-x action2 - some other description" (org-trello/--help-describing-bindings-template "C-c o" '((some-action "a" "some-description")
                                                                                                           (action2 "2" "some other description")))))
@@ -28,4 +28,4 @@ C-c o l - M-x org-trello/show-board-labels - Display the board's labels in a pop
 C-c o u - M-x org-trello/update-board-metadata - Update the buffer's trello board metadata.
 C-c o g - M-x org-trello/abort-sync - Abort synchronization activities.
 C-c o h - M-x org-trello/help-describing-bindings - This help message."
-      (org-trello/--help-describing-bindings-template *ORGTRELLO-MODE-PREFIX-KEYBINDING* *org-trello-interactive-command-binding-couples*)))
+      (org-trello/--help-describing-bindings-template *ORGTRELLO/MODE-PREFIX-KEYBINDING* *org-trello-interactive-command-binding-couples*)))

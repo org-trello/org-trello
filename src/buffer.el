@@ -32,17 +32,17 @@
 
 (defun orgtrello-buffer/get-card-comments! ()
   "Retrieve the card's comments. Can be nil if not on a card."
-  (orgtrello-buffer/org-entry-get (point) *ORGTRELLO-CARD-COMMENTS*))
+  (orgtrello-buffer/org-entry-get (point) *ORGTRELLO/CARD-COMMENTS*))
 
 (defun orgtrello-buffer/put-card-comments! (comments)
   "Retrieve the card's comments. Can be nil if not on a card."
-  (orgtrello-buffer/org-entry-put! (point) *ORGTRELLO-CARD-COMMENTS* comments))
+  (orgtrello-buffer/org-entry-put! (point) *ORGTRELLO/CARD-COMMENTS* comments))
 
 (defun orgtrello-buffer/filter-out-properties (text-content)
   "Given a string, remove any org properties if any"
   (->> text-content
     (replace-regexp-in-string "^[ ]*:.*" "")
-    (replace-regexp-in-string (format "%s.*" *ORGTRELLO-DEADLINE-PREFIX*) "")
+    (replace-regexp-in-string (format "%s.*" *ORGTRELLO/DEADLINE-PREFIX*) "")
     s-trim-left))
 
 (defun orgtrello-buffer/org-file-get-property! (property-key)
@@ -58,23 +58,23 @@
 
 (defun orgtrello-buffer/me! ()
   "Compute the board's current user"
-  (orgtrello-buffer/org-file-get-property! *ORGTRELLO-USER-ME*))
+  (orgtrello-buffer/org-file-get-property! *ORGTRELLO/USER-ME*))
 
 (defun orgtrello-buffer/labels! ()
   "Compute the board's current labels and return it as an association list."
   (mapcar (lambda (color) `(,color . ,(orgtrello-buffer/org-file-get-property! color))) '(":red" ":blue" ":orange" ":yellow" ":purple" ":green")))
 
 (defun orgtrello-buffer/pop-up-with-content! (title body-content)
-  "Compute a temporary buffer *ORGTRELLO-TITLE-BUFFER-INFORMATION* with the title and body-content."
+  "Compute a temporary buffer *ORGTRELLO/TITLE-BUFFER-INFORMATION* with the title and body-content."
   (with-temp-buffer-window
-   *ORGTRELLO-TITLE-BUFFER-INFORMATION* nil nil
+   *ORGTRELLO/TITLE-BUFFER-INFORMATION* nil nil
    (progn
      (temp-buffer-resize-mode 1)
      (insert (format "%s:\n\n%s" title body-content)))))
 
 (defun orgtrello-buffer/set-property-comment! (comments)
   "Update comments property."
-  (orgtrello-buffer/org-entry-put! nil *ORGTRELLO-CARD-COMMENTS* comments))
+  (orgtrello-buffer/org-entry-put! nil *ORGTRELLO/CARD-COMMENTS* comments))
 
 (defun orgtrello-buffer/compute-card-metadata-region! ()
   "Compute the card region zone (only the card headers + description) couple '(start end)."
@@ -121,7 +121,7 @@
   (--> entity
     (orgtrello-data/entity-member-ids it)
     (orgtrello-buffer/--csv-user-ids-to-csv-user-names it *ORGTRELLO/HMAP-USERS-ID-NAME*)
-    (replace-regexp-in-string *ORGTRELLO-USER-PREFIX* "" it)
+    (replace-regexp-in-string *ORGTRELLO/USER-PREFIX* "" it)
     (orgtrello-buffer/set-usernames-assigned-property! it)))
 
 (defun orgtrello-buffer/update-property-card-comments! (entity)
@@ -198,11 +198,11 @@
 
 (defun orgtrello-buffer/--compute-due-date (due-date)
   "Compute the format of the due date."
-  (if due-date (format "%s <%s>\n" *ORGTRELLO-DEADLINE-PREFIX* due-date) ""))
+  (if due-date (format "%s <%s>\n" *ORGTRELLO/DEADLINE-PREFIX* due-date) ""))
 
 (defun orgtrello-buffer/--private-compute-card-to-org-entry (name status due-date tags)
   "Compute the org format for card."
-  (let ((prefix-string (format "* %s %s" (if status status *ORGTRELLO-TODO*) name)))
+  (let ((prefix-string (format "* %s %s" (if status status *ORGTRELLO/TODO*) name)))
     (format "%s%s\n%s" prefix-string (orgtrello-buffer/--serialize-tags prefix-string tags) (orgtrello-buffer/--compute-due-date due-date))))
 
 (defun orgtrello-buffer/--serialize-tags (prefix-string tags)
@@ -315,12 +315,12 @@
   (if orgcheckbox-p
       (save-excursion
         (forward-line -1) ;; need to get back one line backward for the checkboxes as their properties is at the same level (otherwise, for headings we do not care)
-        (orgtrello-buffer/set-property *ORGTRELLO-ID* id))
-    (orgtrello-buffer/set-property *ORGTRELLO-ID* id)))
+        (orgtrello-buffer/set-property *ORGTRELLO/ID* id))
+    (orgtrello-buffer/set-property *ORGTRELLO/ID* id)))
 
 (defun orgtrello-buffer/--set-marker (marker)
   "Set a marker to get back to later."
-  (orgtrello-buffer/set-property *ORGTRELLO-ID* marker))
+  (orgtrello-buffer/set-property *ORGTRELLO/ID* marker))
 
 (defun orgtrello-buffer/set-marker-if-not-present (current-entity marker)
   "Set the marker to the entry if we never did."
@@ -336,11 +336,11 @@
 
 (defun orgtrello-buffer/get-usernames-assigned-property! ()
   "Read the org users property from the current entry."
-  (org-entry-get nil *ORGTRELLO-USERS-ENTRY*))
+  (org-entry-get nil *ORGTRELLO/USERS-ENTRY*))
 
 (defun orgtrello-buffer/set-usernames-assigned-property! (csv-users)
   "Update users org property."
-  (orgtrello-buffer/org-entry-put! nil *ORGTRELLO-USERS-ENTRY* csv-users))
+  (orgtrello-buffer/org-entry-put! nil *ORGTRELLO/USERS-ENTRY* csv-users))
 
 (defun orgtrello-buffer/delete-property-from-entry! (property)
   "Delete a property from the org buffer."
@@ -387,7 +387,7 @@
 
 (defun orgtrello-buffer/extract-identifier! (point)
   "Extract the identifier from the point."
-  (orgtrello-buffer/org-entry-get point *ORGTRELLO-ID*))
+  (orgtrello-buffer/org-entry-get point *ORGTRELLO/ID*))
 
 (defun orgtrello-buffer/set-property (key value)
   "Either set the propery normally (as for entities) or specifically for checklist."
@@ -407,7 +407,7 @@
       (cons (buffer-name))
       (cons (orgtrello-buffer/--user-ids-assigned-to-current-card))
       (cons (orgtrello-buffer/extract-description-from-current-position!))
-      (cons (orgtrello-buffer/org-entry-get current-point *ORGTRELLO-CARD-COMMENTS*))
+      (cons (orgtrello-buffer/org-entry-get current-point *ORGTRELLO/CARD-COMMENTS*))
       orgtrello-buffer/--to-orgtrello-metadata)))
 
 (defun orgtrello-buffer/org-up-parent! ()
@@ -457,12 +457,12 @@
   "Map fn-to-execute to a given entities with level level. fn-to-execute is a function without any parameter."
   (org-map-entries (lambda () (when (= level (orgtrello-buffer/current-level!)) (funcall fn-to-execute)))))
 
-(defconst *ORGTRELLO-SLASH-PATTERN* "/")
-(defconst *ORGTRELLO-DEFENSIVE-PATTERN* "!!!___orgtrello-defensive-pattern___!!!")
+(defconst *ORGTRELLO/SLASH-PATTERN* "/")
+(defconst *ORGTRELLO/DEFENSIVE-PATTERN* "!!!___orgtrello-defensive-pattern___!!!")
 
 (defun orgtrello-buffer/defensive-filename-from-buffername (buffer-name)
   "Compute a filename from a buffername with forbidden filename character"
-  (replace-regexp-in-string *ORGTRELLO-SLASH-PATTERN* *ORGTRELLO-DEFENSIVE-PATTERN* buffer-name))
+  (replace-regexp-in-string *ORGTRELLO/SLASH-PATTERN* *ORGTRELLO/DEFENSIVE-PATTERN* buffer-name))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-buffer loaded!")
 

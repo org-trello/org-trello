@@ -135,7 +135,7 @@ hello there
      (orgtrello-buffer/board-name!)))
   (expect "this-is-the-user"
     (orgtrello-tests/with-org-buffer
-     (format ":PROPERTIES:\n#+PROPERTY: %s this-is-the-user\n:END:\n* card\n" *ORGTRELLO-USER-ME*)
+     (format ":PROPERTIES:\n#+PROPERTY: %s this-is-the-user\n:END:\n* card\n" *ORGTRELLO/USER-ME*)
      (orgtrello-buffer/me!))))
 
 (expectations

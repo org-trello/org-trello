@@ -130,7 +130,7 @@
 
 (defun orgtrello-cbx/--status (s)
   "Given a checklist status, return the TODO/DONE for org-trello to work."
-  (if (string= "[X]" s) *ORGTRELLO-DONE* *ORGTRELLO-TODO*))
+  (if (string= "[X]" s) *ORGTRELLO/DONE* *ORGTRELLO/TODO*))
 
 (defun orgtrello-cbx/--name (s status)
   "Retrieve the name of the checklist"

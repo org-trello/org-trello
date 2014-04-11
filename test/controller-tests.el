@@ -142,11 +142,11 @@
  (expect "#+property: test value" (orgtrello-controller/compute-property "test" "value")))
 
 (expectations
-  (expect "complete" (orgtrello-controller/compute-state *ORGTRELLO-DONE*))
+  (expect "complete" (orgtrello-controller/compute-state *ORGTRELLO/DONE*))
   (expect "incomplete" (orgtrello-controller/compute-state "anything-else")))
 
 (expectations
-  (expect t   (orgtrello-controller/compute-check *ORGTRELLO-DONE*))
+  (expect t   (orgtrello-controller/compute-check *ORGTRELLO/DONE*))
   (expect nil (orgtrello-controller/compute-check "anything-else")))
 
 (expectations

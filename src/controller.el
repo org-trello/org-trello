@@ -1,6 +1,6 @@
 ;; Specific state - FIXME check if they do not already exist on org-mode to avoid potential collisions
-(defconst *ORGTRELLO-TODO* "TODO" "org-mode todo state")
-(defconst *ORGTRELLO-DONE* "DONE" "org-mode done state")
+(defconst *ORGTRELLO/TODO* "TODO" "org-mode todo state")
+(defconst *ORGTRELLO/DONE* "DONE" "org-mode done state")
 
 ;; Properties key for the orgtrello headers #+PROPERTY board-id, etc...
 (defconst *ORGTRELLO/BOARD-ID*   "board-id" "orgtrello property board-id entry")
@@ -16,15 +16,15 @@
 
 (defun orgtrello-controller/compute-marker (buffer-name name position)
   "Compute the orgtrello marker which is composed of buffer-name, name and position"
-  (->> (list *ORGTRELLO-MARKER* buffer-name name (if (stringp position) position (int-to-string position)))
+  (->> (list *ORGTRELLO/MARKER* buffer-name name (if (stringp position) position (int-to-string position)))
     (-interpose "-")
     (apply 'concat)
     sha1
-    (concat *ORGTRELLO-MARKER* "-")))
+    (concat *ORGTRELLO/MARKER* "-")))
 
 (defun orgtrello-controller/--list-user-entries (properties)
   "List the users entries."
-  (--filter (string-match-p *ORGTRELLO-USER-PREFIX* (car it)) properties))
+  (--filter (string-match-p *ORGTRELLO/USER-PREFIX* (car it)) properties))
 
 (defun orgtrello-controller/setup-properties (&optional args)
   "Setup the properties according to the org-mode setup. Return :ok."
@@ -44,7 +44,7 @@
     (setq *ORGTRELLO/HMAP-LIST-ORGKEYWORD-ID-NAME* hmap-id-name)
     (setq *ORGTRELLO/HMAP-USERS-ID-NAME* hmap-user-id-name)
     (setq *ORGTRELLO/HMAP-USERS-NAME-ID* hmap-user-name-id)
-    (setq *ORGTRELLO-USER-LOGGED-IN* (orgtrello-buffer/me!))
+    (setq *ORGTRELLO/USER-LOGGED-IN* (orgtrello-buffer/me!))
     (add-to-list 'org-tag-alist '("red" . ?r))
     (add-to-list 'org-tag-alist '("green" . ?g))
     (add-to-list 'org-tag-alist '("yellow" . ?y))
@@ -79,8 +79,8 @@
     "Setup problem - You need to install the consumer-key and the read/write access-token - C-c o i or M-x org-trello/install-key-and-token"))
 
 (defun orgtrello-controller/--retrieve-state-of-card (card-meta)
-  "Given a card, retrieve its state depending on its :keyword metadata. If empty or no keyword then, its equivalence is *ORGTRELLO-TODO*, otherwise, return its current state."
-  (-if-let (card-kwd (orgtrello-data/entity-keyword card-meta *ORGTRELLO-TODO*)) card-kwd *ORGTRELLO-TODO*))
+  "Given a card, retrieve its state depending on its :keyword metadata. If empty or no keyword then, its equivalence is *ORGTRELLO/TODO*, otherwise, return its current state."
+  (-if-let (card-kwd (orgtrello-data/entity-keyword card-meta *ORGTRELLO/TODO*)) card-kwd *ORGTRELLO/TODO*))
 
 (defun orgtrello-controller/--checks-before-sync-card (card-meta)
   "Checks done before synchronizing the cards."
@@ -247,11 +247,11 @@
 
 (defun orgtrello-controller/do-delete-simple (&optional sync)
   "Do the deletion of an entity."
-  (orgtrello-controller/--checks-then-delegate-action-on-entity-to-proxy '(orgtrello-controller/--right-level-p orgtrello-controller/--already-synced-p) *ORGTRELLO-ACTION-DELETE*))
+  (orgtrello-controller/--checks-then-delegate-action-on-entity-to-proxy '(orgtrello-controller/--right-level-p orgtrello-controller/--already-synced-p) *ORGTRELLO/ACTION-DELETE*))
 
 (defun orgtrello-controller/do-sync-entity-to-trello! ()
   "Do the entity synchronization (if never synchronized, will create it, update it otherwise)."
-  (orgtrello-controller/--checks-then-delegate-action-on-entity-to-proxy '(orgtrello-controller/--right-level-p orgtrello-controller/--mandatory-name-ok-p) *ORGTRELLO-ACTION-SYNC*))
+  (orgtrello-controller/--checks-then-delegate-action-on-entity-to-proxy '(orgtrello-controller/--right-level-p orgtrello-controller/--mandatory-name-ok-p) *ORGTRELLO/ACTION-SYNC*))
 
 (defun orgtrello-controller/do-sync-full-entity-to-trello! ()
   "Do the actual full card creation - from card to item. Beware full side effects..."
@@ -532,8 +532,8 @@
 (defun orgtrello-controller/--compute-hash-name-id-to-list (users-hash-name-id)
   (let ((res-list nil))
     (maphash (lambda (name id) (--> name
-                                 (replace-regexp-in-string *ORGTRELLO-USER-PREFIX* "" it)
-                                 (format "%s%s" *ORGTRELLO-USER-PREFIX* it)
+                                 (replace-regexp-in-string *ORGTRELLO/USER-PREFIX* "" it)
+                                 (format "%s%s" *ORGTRELLO/USER-PREFIX* it)
                                  (orgtrello-controller/compute-property it id)
                                  (push it res-list)))
              users-hash-name-id)
@@ -548,7 +548,7 @@
            ,(orgtrello-controller/compute-property *ORGTRELLO/BOARD-ID*)
            ,@(--map (orgtrello-controller/compute-property (orgtrello-controller/--convention-property-name it)) list-keywords)
            ,@(orgtrello-controller/--compute-hash-name-id-to-list users-hash-name-id)
-           ,(orgtrello-controller/compute-property *ORGTRELLO-USER-ME* user-me)
+           ,(orgtrello-controller/compute-property *ORGTRELLO/USER-ME* user-me)
            ,(when update-todo-keywords "#+TODO: ")
            ":red" ":blue" ":yellow" ":green" ":orange" ":purple"
            ":END:")
@@ -571,7 +571,7 @@
     ,(if update-todo-keywords (orgtrello-controller/--properties-compute-todo-keywords-as-string board-lists-hash-name-id) "")
     ,@(orgtrello-controller/--properties-compute-users-ids board-users-hash-name-id)
     ,@(orgtrello-controller/--properties-labels board-labels)
-    ,(format "#+PROPERTY: %s %s" *ORGTRELLO-USER-ME* user-me)
+    ,(format "#+PROPERTY: %s %s" *ORGTRELLO/USER-ME* user-me)
     ":END:"))
 
 (defun orgtrello-controller/--compute-keyword-separation (name)
@@ -602,7 +602,7 @@
 (defun orgtrello-controller/--properties-compute-users-ids (board-users-hash-name-id)
   (let ((res-list))
     (maphash (lambda (name id) (--> name
-                                 (format "#+PROPERTY: %s%s %s" *ORGTRELLO-USER-PREFIX* it id)
+                                 (format "#+PROPERTY: %s%s %s" *ORGTRELLO/USER-PREFIX* it id)
                                  (push it res-list)))
              board-users-hash-name-id)
     res-list))
@@ -728,20 +728,20 @@
 (defun orgtrello-buffer/--user-ids-assigned-to-current-card () "Compute the user ids assigned to the current card."
        (--> (orgtrello-buffer/get-usernames-assigned-property!)
          (orgtrello-data/--users-from it)
-         (--map (gethash (format "%s%s" *ORGTRELLO-USER-PREFIX* it) *ORGTRELLO/HMAP-USERS-NAME-ID*) it)
+         (--map (gethash (format "%s%s" *ORGTRELLO/USER-PREFIX* it) *ORGTRELLO/HMAP-USERS-NAME-ID*) it)
          (orgtrello-data/--users-to it)))
 
 (defun orgtrello-controller/do-assign-me () "Command to assign oneself to the card."
        (--> (orgtrello-buffer/get-usernames-assigned-property!)
          (orgtrello-data/--users-from it)
-         (orgtrello-controller/--add-user *ORGTRELLO-USER-LOGGED-IN* it)
+         (orgtrello-controller/--add-user *ORGTRELLO/USER-LOGGED-IN* it)
          (orgtrello-data/--users-to it)
          (orgtrello-buffer/set-usernames-assigned-property! it)))
 
 (defun orgtrello-controller/do-unassign-me () "Command to unassign oneself of the card."
        (--> (orgtrello-buffer/get-usernames-assigned-property!)
          (orgtrello-data/--users-from it)
-         (orgtrello-controller/--remove-user *ORGTRELLO-USER-LOGGED-IN* it)
+         (orgtrello-controller/--remove-user *ORGTRELLO/USER-LOGGED-IN* it)
          (orgtrello-data/--users-to it)
          (orgtrello-buffer/set-usernames-assigned-property! it)))
 
@@ -760,7 +760,7 @@
   (let ((comments (orgtrello-buffer/get-card-comments!)))
     (->> (if comments comments "")
       orgtrello-data/format-comments
-      (concat (orgtrello-buffer/me!) ": " new-comment *ORGTRELLO-CARD-COMMENTS-DELIMITER-PRINT*)
+      (concat (orgtrello-buffer/me!) ": " new-comment *ORGTRELLO/CARD-COMMENTS-DELIMITER-PRINT*)
       orgtrello-data/unformat-comments
       orgtrello-buffer/put-card-comments!)))
 
@@ -776,14 +776,14 @@
                                      (function* (lambda (&key data &allow-other-keys) "Synchronize the buffer with the response data."
                                                   (orgtrello-log/msg *OT/TRACE* "proxy - response data: %S" data)
                                                   (orgtrello-controller/--update-comments! comment)
-                                                  (when *ORGTRELLO-DO-SHOW-CARD-COMMENTS-AFTER-ADDING*
+                                                  (when *ORGTRELLO/DO-SHOW-CARD-COMMENTS-AFTER-ADDING*
                                                     (orgtrello-controller/do-show-card-comments!)))))))))
 
 (defun orgtrello-controller/do-cleanup-from-buffer! (&optional globally-flag)
   "Permit to clean the buffer from trello data."
-  (orgtrello-controller/--remove-properties-file! *ORGTRELLO/LIST-NAMES* *ORGTRELLO/HMAP-USERS-NAME-ID* *ORGTRELLO-USER-LOGGED-IN* t) ;; remove any orgtrello relative entries
+  (orgtrello-controller/--remove-properties-file! *ORGTRELLO/LIST-NAMES* *ORGTRELLO/HMAP-USERS-NAME-ID* *ORGTRELLO/USER-LOGGED-IN* t) ;; remove any orgtrello relative entries
   (when globally-flag
-    (mapc 'orgtrello-buffer/delete-property! `(,*ORGTRELLO-ID* ,*ORGTRELLO-USERS-ENTRY* ,*ORGTRELLO-CARD-COMMENTS*))))
+    (mapc 'orgtrello-buffer/delete-property! `(,*ORGTRELLO/ID* ,*ORGTRELLO/USERS-ENTRY* ,*ORGTRELLO/CARD-COMMENTS*))))
 
 (defun orgtrello-controller/do-write-board-metadata! (board-id board-name user-logged-in board-lists board-labels)
   "Given a board id, write in the current buffer the updated data."

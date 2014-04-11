@@ -1,4 +1,4 @@
-(defvar *ORGTRELLO-ID* "orgtrello-id" "Key entry used for the trello identifier and the trello marker (the first sync).")
+(defvar *ORGTRELLO/ID* "orgtrello-id" "Key entry used for the trello identifier and the trello marker (the first sync).")
 
 (defun orgtrello-data/merge-2-lists-without-duplicates (a-list b-list)
   "Merge 2 lists together (no duplicates)."
@@ -109,7 +109,7 @@
              ((orgtrello-data/entity-checked entity-map) *ITEM-LEVEL*)
              (t nil)))
 
-(defvar *ORGTRELLO-DATA-MAP-KEYWORDS* (orgtrello-hash/make-properties `((url            . :url)
+(defvar *ORGTRELLO/DATA-MAP-KEYWORDS* (orgtrello-hash/make-properties `((url            . :url)
                                                                         (id             . :id)
                                                                         (name           . :name)
                                                                         (idMembers      . :member-ids)
@@ -142,9 +142,9 @@
                                                                         (color          . :color))))
 
 (defun orgtrello-data/--deal-with-key (key)
-  "Given a key, return it as is if it's a keyword or return its mapped version from *ORGTRELLO-DATA-MAP-KEYWORDS*"
+  "Given a key, return it as is if it's a keyword or return its mapped version from *ORGTRELLO/DATA-MAP-KEYWORDS*"
   (cond ((keywordp key) key)
-        (t             (gethash key *ORGTRELLO-DATA-MAP-KEYWORDS*))))
+        (t             (gethash key *ORGTRELLO/DATA-MAP-KEYWORDS*))))
 
 (defun orgtrello-data/--dispatch-parse-data-fn (key)
   "Given a key, return the function to call to execute the parsing (parse-actions or parse-data)"
@@ -181,7 +181,7 @@
   "Given a list of comments hashmap, return the serialized string comment."
   (->> comments-hash
     (--map (s-join ": " (list (orgtrello-data/entity-comment-user it) (orgtrello-data/entity-comment-text it))))
-    (s-join *ORGTRELLO-CARD-COMMENTS-DELIMITER*)))
+    (s-join *ORGTRELLO/CARD-COMMENTS-DELIMITER*)))
 
 (defun orgtrello-data/format-labels (labels)
   "Given an assoc list of labels, serialize it."
@@ -192,20 +192,20 @@
 (defun orgtrello-data/unformat-comments (comments)
   "Given a string of comments human readable, transform it into a property format."
   (->> comments
-    (s-split *ORGTRELLO-CARD-COMMENTS-DELIMITER-PRINT*)
-    (s-join *ORGTRELLO-CARD-COMMENTS-DELIMITER*)))
+    (s-split *ORGTRELLO/CARD-COMMENTS-DELIMITER-PRINT*)
+    (s-join *ORGTRELLO/CARD-COMMENTS-DELIMITER*)))
 
 (defun orgtrello-data/format-comments (comments)
   "Given a property string of comments, work it to permit a human readable display."
   (if comments
       (->> comments
-        (s-split *ORGTRELLO-CARD-COMMENTS-DELIMITER*)
-        (s-join *ORGTRELLO-CARD-COMMENTS-DELIMITER-PRINT*))
+        (s-split *ORGTRELLO/CARD-COMMENTS-DELIMITER*)
+        (s-join *ORGTRELLO/CARD-COMMENTS-DELIMITER-PRINT*))
     "No comments to display!"))
 
 (defun orgtrello-data/id-p (id)
   "Is the string a trello identifier?"
-  (and id (not (string-match-p (format "^%s-" *ORGTRELLO-MARKER*) id))))
+  (and id (not (string-match-p (format "^%s-" *ORGTRELLO/MARKER*) id))))
 
 (defun orgtrello-data/merge-item (trello-item org-item)
   "Merge trello and org item together. If trello-item is null, return the org-item"
@@ -226,7 +226,7 @@
 
 (defun orgtrello-data/--compute-state-item (state)
   "Compute the status of the checkbox"
-  (orgtrello-data/--compute-state-generic state `(,*ORGTRELLO-DONE* ,*ORGTRELLO-TODO*)))
+  (orgtrello-data/--compute-state-generic state `(,*ORGTRELLO/DONE* ,*ORGTRELLO/TODO*)))
 
 (defun orgtrello-data/--merge-checklist (trello-checklist org-checklist)
   "Merge trello and org checklist together. If trello-checklist is null, return org-checklist."
@@ -332,7 +332,7 @@
 (defun orgtrello-data/--compute-state-generic (state list-state)
   "Generic computation of a list depending on the state. If state is \"complete\" or \"DONE\", then the first element of the list is returned, otherwise the second."
   (if (or (string= "complete" state)
-          (string= *ORGTRELLO-DONE* state))
+          (string= *ORGTRELLO/DONE* state))
       (car list-state)
     (cadr list-state)))
 
