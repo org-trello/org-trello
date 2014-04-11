@@ -217,17 +217,17 @@
 (expectations
  (expect :ok
          (with-mock
-          (mock (file-exists-p *CONFIG-FILE*) => t)
-          (mock (load *CONFIG-FILE*)          => t)
+          (mock (file-exists-p *ORGTRELLO/CONFIG-FILE*) => t)
+          (mock (load *ORGTRELLO/CONFIG-FILE*)          => t)
           (orgtrello-controller/load-keys)))
  (expect "Setup problem - Problem during credentials (consumer-key and the read/write access-token) loading - C-c o i or M-x org-trello/install-key-and-token"
    (with-mock
-     (mock (file-exists-p *CONFIG-FILE*) => nil)
+     (mock (file-exists-p *ORGTRELLO/CONFIG-FILE*) => nil)
      (orgtrello-controller/load-keys)))
  (expect "Setup problem - Problem during credentials (consumer-key and the read/write access-token) loading - C-c o i or M-x org-trello/install-key-and-token"
    (with-mock
-     (mock (file-exists-p *CONFIG-FILE*) => t)
-     (mock (load *CONFIG-FILE*)          => nil)
+     (mock (file-exists-p *ORGTRELLO/CONFIG-FILE*) => t)
+     (mock (load *ORGTRELLO/CONFIG-FILE*)          => nil)
      (orgtrello-controller/load-keys))))
 
 (expectations

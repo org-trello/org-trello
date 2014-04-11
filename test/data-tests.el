@@ -451,7 +451,7 @@
                                                    nil))))
 
 (ert-deftest testing-orgtrello-data/--merge-card ()
-  (let ((*HMAP-ID-NAME* (orgtrello-hash/make-properties `((1 . "TODO") (2 . "DONE") (3 . "IN-PROGRESS")))))
+  (let ((*ORGTRELLO/HMAP-LIST-ORGKEYWORD-ID-NAME* (orgtrello-hash/make-properties `((1 . "TODO") (2 . "DONE") (3 . "IN-PROGRESS")))))
     (should (hash-equal (orgtrello-hash/make-properties `((:name . "some other name")))
              (orgtrello-data/--merge-card nil
                                           (orgtrello-hash/make-properties `((:name . "some other name"))))))

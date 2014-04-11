@@ -620,7 +620,7 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
 
 (defun orgtrello-data/--compute-card-status (card-id-list)
   "Given a card's id, compute its status."
-  (gethash card-id-list *HMAP-ID-NAME*))
+  (gethash card-id-list *ORGTRELLO/HMAP-LIST-ORGKEYWORD-ID-NAME*))
 
 (defun orgtrello-data/--get-entity (id entities-hash)
   "Update the card entry inside the hash."
@@ -2235,7 +2235,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   "Update the users assigned property card entry."
   (--> entity
     (orgtrello-data/entity-member-ids it)
-    (orgtrello-buffer/--csv-user-ids-to-csv-user-names it *HMAP-USERS-ID-NAME*)
+    (orgtrello-buffer/--csv-user-ids-to-csv-user-names it *ORGTRELLO/HMAP-USERS-ID-NAME*)
     (replace-regexp-in-string *ORGTRELLO-USER-PREFIX* "" it)
     (orgtrello-buffer/set-usernames-assigned-property! it)))
 
@@ -2603,12 +2603,12 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 (defconst *ORGTRELLO/BOARD-NAME* "board-name" "orgtrello property board-name entry")
 
 (defvar *ORGTRELLO/LIST-NAMES*         nil "orgtrello property names of the different lists. This use the standard 'org-todo-keywords property from org-mode.")
-(defvar *HMAP-ID-NAME*       nil "orgtrello hash map containing for each id, the associated name (or org keyword).")
-(defvar *HMAP-USERS-ID-NAME* nil "orgtrello hash map containing for each user name, the associated id.")
-(defvar *HMAP-USERS-NAME-ID* nil "orgtrello hash map containing for each user id, the associated name.")
+(defvar *ORGTRELLO/HMAP-LIST-ORGKEYWORD-ID-NAME*       nil "orgtrello hash map containing for each id, the associated name (or org keyword).")
+(defvar *ORGTRELLO/HMAP-USERS-ID-NAME* nil "orgtrello hash map containing for each user name, the associated id.")
+(defvar *ORGTRELLO/HMAP-USERS-NAME-ID* nil "orgtrello hash map containing for each user id, the associated name.")
 
-(defconst *CONFIG-DIR*  (concat (getenv "HOME") "/" ".trello"))
-(defconst *CONFIG-FILE* (concat *CONFIG-DIR* "/config.el"))
+(defconst *ORGTRELLO/CONFIG-DIR*  (concat (getenv "HOME") "/" ".trello"))
+(defconst *ORGTRELLO/CONFIG-FILE* (concat *ORGTRELLO/CONFIG-DIR* "/config.el"))
 
 (defun orgtrello-controller/compute-marker (buffer-name name position)
   "Compute the orgtrello marker which is composed of buffer-name, name and position"
@@ -2637,9 +2637,9 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
          (hmap-user-id-name (orgtrello-hash/make-transpose-properties list-users))
          (hmap-user-name-id (orgtrello-hash/make-properties list-users)))
     (setq *ORGTRELLO/LIST-NAMES*   list-keywords)
-    (setq *HMAP-ID-NAME* hmap-id-name)
-    (setq *HMAP-USERS-ID-NAME* hmap-user-id-name)
-    (setq *HMAP-USERS-NAME-ID* hmap-user-name-id)
+    (setq *ORGTRELLO/HMAP-LIST-ORGKEYWORD-ID-NAME* hmap-id-name)
+    (setq *ORGTRELLO/HMAP-USERS-ID-NAME* hmap-user-id-name)
+    (setq *ORGTRELLO/HMAP-USERS-NAME-ID* hmap-user-name-id)
     (setq *ORGTRELLO-USER-LOGGED-IN* (orgtrello-buffer/me!))
     (add-to-list 'org-tag-alist '("red" . ?r))
     (add-to-list 'org-tag-alist '("green" . ?g))
@@ -2657,14 +2657,14 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun orgtrello-controller/control-properties (&optional args)
   "org-trello needs the properties board-id and all list id from the trello board to be setuped on header property file. :ok if ok, or the error message if problems."
-  (let ((hmap-count (hash-table-count *HMAP-ID-NAME*)))
+  (let ((hmap-count (hash-table-count *ORGTRELLO/HMAP-LIST-ORGKEYWORD-ID-NAME*)))
     (if (and (orgtrello-buffer/org-file-properties!) (orgtrello-buffer/board-id!) (= (length *ORGTRELLO/LIST-NAMES*) hmap-count))
         :ok
       "Setup problem.\nEither you did not connect your org-mode buffer with a trello board, to correct this:\n  * attach to a board through C-c o I or M-x org-trello/install-board-and-lists-ids\n  * or create a board from scratch with C-c o b or M-x org-trello/create-board).\nEither your org-mode's todo keyword list and your trello board lists are not named the same way (which they must).\nFor this, connect to trello and rename your board's list according to your org-mode's todo list.\nAlso, you can specify on your org-mode buffer the todo list you want to work with, for example: #+TODO: TODO DOING | DONE FAIL (hit C-c C-c to refresh the setup)")))
 
 (defun orgtrello-controller/load-keys (&optional args)
   "Load the credentials keys from the configuration file."
-  (if (and (file-exists-p *CONFIG-FILE*) (load *CONFIG-FILE*))
+  (if (and (file-exists-p *ORGTRELLO/CONFIG-FILE*) (load *ORGTRELLO/CONFIG-FILE*))
       :ok
     "Setup problem - Problem during credentials (consumer-key and the read/write access-token) loading - C-c o i or M-x org-trello/install-key-and-token"))
 
@@ -3038,13 +3038,13 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun orgtrello-controller/--do-install-config-file (consumer-key access-token)
   "Persist the file config-file with the input of the user."
-  (make-directory *CONFIG-DIR* t)
-  (with-temp-file *CONFIG-FILE*
+  (make-directory *ORGTRELLO/CONFIG-DIR* t)
+  (with-temp-file *ORGTRELLO/CONFIG-FILE*
     (erase-buffer)
     (goto-char (point-min))
     (insert (format "(setq *consumer-key* \"%s\")\n" consumer-key))
     (insert (format "(setq *access-token* \"%s\")" access-token))
-    (write-file *CONFIG-FILE* 'do-ask-for-overwrite)))
+    (write-file *ORGTRELLO/CONFIG-FILE* 'do-ask-for-overwrite)))
 
 (defun orgtrello-controller/do-install-key-and-token ()
   "Procedure to install the *consumer-key* and the token for the user in the config-file."
@@ -3324,7 +3324,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 (defun orgtrello-buffer/--user-ids-assigned-to-current-card () "Compute the user ids assigned to the current card."
        (--> (orgtrello-buffer/get-usernames-assigned-property!)
          (orgtrello-data/--users-from it)
-         (--map (gethash (format "%s%s" *ORGTRELLO-USER-PREFIX* it) *HMAP-USERS-NAME-ID*) it)
+         (--map (gethash (format "%s%s" *ORGTRELLO-USER-PREFIX* it) *ORGTRELLO/HMAP-USERS-NAME-ID*) it)
          (orgtrello-data/--users-to it)))
 
 (defun orgtrello-controller/do-assign-me () "Command to assign oneself to the card."
@@ -3377,7 +3377,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun orgtrello-controller/do-cleanup-from-buffer! (&optional globally-flag)
   "Permit to clean the buffer from trello data."
-  (orgtrello-controller/--remove-properties-file! *ORGTRELLO/LIST-NAMES* *HMAP-USERS-NAME-ID* *ORGTRELLO-USER-LOGGED-IN* t) ;; remove any orgtrello relative entries
+  (orgtrello-controller/--remove-properties-file! *ORGTRELLO/LIST-NAMES* *ORGTRELLO/HMAP-USERS-NAME-ID* *ORGTRELLO-USER-LOGGED-IN* t) ;; remove any orgtrello relative entries
   (when globally-flag
     (mapc 'orgtrello-buffer/delete-property! `(,*ORGTRELLO-ID* ,*ORGTRELLO-USERS-ENTRY* ,*ORGTRELLO-CARD-COMMENTS*))))
 

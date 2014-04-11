@@ -120,7 +120,7 @@
   "Update the users assigned property card entry."
   (--> entity
     (orgtrello-data/entity-member-ids it)
-    (orgtrello-buffer/--csv-user-ids-to-csv-user-names it *HMAP-USERS-ID-NAME*)
+    (orgtrello-buffer/--csv-user-ids-to-csv-user-names it *ORGTRELLO/HMAP-USERS-ID-NAME*)
     (replace-regexp-in-string *ORGTRELLO-USER-PREFIX* "" it)
     (orgtrello-buffer/set-usernames-assigned-property! it)))
 

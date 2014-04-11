@@ -323,7 +323,7 @@
 
 (defun orgtrello-data/--compute-card-status (card-id-list)
   "Given a card's id, compute its status."
-  (gethash card-id-list *HMAP-ID-NAME*))
+  (gethash card-id-list *ORGTRELLO/HMAP-LIST-ORGKEYWORD-ID-NAME*))
 
 (defun orgtrello-data/--get-entity (id entities-hash)
   "Update the card entry inside the hash."
