@@ -15,9 +15,6 @@
   (expect :comments         (gethash :comments       (orgtrello-hash/make-hash-org "1,2,3" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org" :desc :comments :tags)))
   (expect :tags             (gethash :tags           (orgtrello-hash/make-hash-org "1,2,3" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org" :desc :comments :tags))))
 
-(expectations (desc "orgtrello-hash/key")
-              (expect ":key:" (orgtrello-hash/key "key")))
-
 (expectations (desc "orgtrello-hash/make-hierarchy")
  (expect :current (gethash :current (orgtrello-hash/make-hierarchy :current)))
  (expect nil (gethash :parent (orgtrello-hash/make-hierarchy :current)))
