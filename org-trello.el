@@ -354,9 +354,9 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
 (defun orgtrello-data/grandparent (entry-meta) (orgtrello-data/gethash-data :grandparent entry-meta))
 
 (defun orgtrello-data/--compute-level (entity-map) "Given a map, compute the entity level"
-       (cond ((gethash :list-id entity-map) *CARD-LEVEL*)
-             ((gethash :card-id entity-map) *CHECKLIST-LEVEL*)
-             ((gethash :checked entity-map) *ITEM-LEVEL*)
+       (cond ((orgtrello-data/entity-list-id entity-map) *CARD-LEVEL*)
+             ((orgtrello-data/entity-card-id entity-map) *CHECKLIST-LEVEL*)
+             ((orgtrello-data/entity-checked entity-map) *ITEM-LEVEL*)
              (t nil)))
 
 (defvar *ORGTRELLO-DATA-MAP-KEYWORDS* (orgtrello-hash/make-properties `((url            . :url)
