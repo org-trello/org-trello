@@ -525,14 +525,13 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
   (orgtrello-data/--compute-state-generic state `(,*ORGTRELLO-DONE* ,*ORGTRELLO-TODO*)))
 
 (defun orgtrello-data/--merge-checklist (trello-checklist org-checklist)
-  "Merge trello and org checklist together."
-  (if (null trello-checklist)
-      org-checklist
-    (let ((org-checklist-to-merge (orgtrello-hash/init-map-from org-checklist)))
-      (puthash :level *CHECKLIST-LEVEL*                            org-checklist-to-merge)
-      (puthash :name (orgtrello-data/entity-name trello-checklist) org-checklist-to-merge)
-      (puthash :id   (orgtrello-data/entity-id trello-checklist)   org-checklist-to-merge)
-      org-checklist-to-merge)))
+  "Merge trello and org checklist together. If trello-checklist is null, return org-checklist."
+  (if trello-checklist
+      (->> (orgtrello-hash/init-map-from org-checklist)
+        (orgtrello-data/put-entity-level *CHECKLIST-LEVEL*)
+        (orgtrello-data/put-entity-name (orgtrello-data/entity-name trello-checklist))
+        (orgtrello-data/put-entity-id (orgtrello-data/entity-id trello-checklist)))
+    org-checklist))
 
 (defun orgtrello-data/entity-member-ids-as-list (entity)
   "Retrieve the users assigned to the entity."
