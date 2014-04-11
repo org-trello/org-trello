@@ -1214,9 +1214,9 @@ This is a list with the following elements:
     (list (orgtrello-backend/--add-entity-to-entities current-entity entities) (orgtrello-backend/--add-entity-to-adjacency current-entity parent-entity adjacency))))
 
 ;; FIXME find an already existing implementation.
-(defun orgtrello-backend/--add-to-last-pos (value list)
+(defun orgtrello-backend/--add-to-last-pos (v l)
   "Adding the value to the list in last position."
-  (->> list reverse (cons value) reverse))
+  (->> l nreverse (cons v) nreverse))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-backend loaded!")
 
