@@ -61,18 +61,13 @@
   "Adding entity to the adjacency entry."
   (let* ((current-id (orgtrello-data/entity-id-or-marker current-entity))
          (parent-id  (orgtrello-data/entity-id-or-marker parent-entity)))
-    (orgtrello-data/puthash-data parent-id (orgtrello-backend/--add-to-last-pos current-id (gethash parent-id adjacency)) adjacency)))
+    (orgtrello-data/puthash-data parent-id (orgtrello-utils/conj current-id (gethash parent-id adjacency)) adjacency)))
 
 (defun orgtrello-backend/--put-entities-with-adjacency (current-meta entities adjacency)
   "Deal with adding a new item to entities."
   (let ((current-entity (orgtrello-data/current current-meta))
         (parent-entity  (orgtrello-data/parent current-meta)))
     (list (orgtrello-backend/--add-entity-to-entities current-entity entities) (orgtrello-backend/--add-entity-to-adjacency current-entity parent-entity adjacency))))
-
-;; FIXME find an already existing implementation.
-(defun orgtrello-backend/--add-to-last-pos (v l)
-  "Adding the value to the list in last position."
-  (->> l nreverse (cons v) nreverse))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-backend loaded!")
 

@@ -5,3 +5,6 @@
 (expectations
  (expect "something-to-be-replaced" (orgtrello-utils/replace-in-string " " "-" "something to be replaced"))
  (expect "something-to-be-replaced" (orgtrello-utils/replace-in-string "###" "-" "something###to###be###replaced")))
+
+(expectations (desc "orgtrello-utils/conj")
+              (expect '(1 2 3 4) (orgtrello-utils/conj 4 '(1 2 3))))
