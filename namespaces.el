@@ -22,7 +22,7 @@
                                "src/org-trello.el"
                                "src/footer.el") "Splitted org-trello files.")
 
-(defconst *ORG-TRELLO-TEST-FILES* '("test/utils-tests.el"         ;; utils function for the following tests buffer
+(defconst *ORG-TRELLO-TEST-FILES* '("test/utilities-tests.el"         ;; utils function for the following tests buffer
                                     "test/hash-tests.el"
                                     "test/action-tests.el"
                                     "test/data-tests.el"
