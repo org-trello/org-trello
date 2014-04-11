@@ -144,10 +144,10 @@
 
 (defun orgtrello-cbx/--metadata-from-checklist (full-checklist)
   "Given a checklist string, extract the list of metadata"
-  (let* ((oc/--checklist-data   (orgtrello-cbx/--checkbox-data full-checklist))
-         (oc/--meta             (orgtrello-cbx/--org-split-data oc/--checklist-data))
-         (oc/--status-retrieved (orgtrello-cbx/--retrieve-status oc/--meta)))
-    (list nil (orgtrello-cbx/--status oc/--status-retrieved) nil (orgtrello-cbx/--name oc/--checklist-data oc/--status-retrieved) nil)))
+  (let* ((checklist-data   (orgtrello-cbx/--checkbox-data full-checklist))
+         (meta             (orgtrello-cbx/--org-split-data checklist-data))
+         (status-retrieved (orgtrello-cbx/--retrieve-status meta)))
+    (list nil (orgtrello-cbx/--status status-retrieved) nil (orgtrello-cbx/--name checklist-data status-retrieved) nil)))
 
 (defun orgtrello-cbx/--level! ()
   "Compute the levels from the current position (which is `bol`)"
@@ -225,10 +225,9 @@ This is a list with the following elements:
 
 (defun orgtrello-cbx/next-checklist-point! ()
   "Compute the next checklist position"
-  (let ((next-checklist-point (save-excursion (orgtrello-cbx/--goto-next-checkbox-with-same-level! *ORGTRELLO/CHECKLIST-LEVEL*) (point))))
-    (if next-checklist-point
-        next-checklist-point
-      (orgtrello-cbx/compute-next-card-point!))))
+  (-if-let (next-checklist-point (save-excursion (orgtrello-cbx/--goto-next-checkbox-with-same-level! *ORGTRELLO/CHECKLIST-LEVEL*) (point)))
+      next-checklist-point
+    (orgtrello-cbx/compute-next-card-point!)))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-cbx loaded!")
 
