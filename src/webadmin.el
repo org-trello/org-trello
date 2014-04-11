@@ -321,7 +321,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   (let ((id (elnode-http-mapping http-con 1)))
     (if (string= "" id) (orgtrello-webadmin/delete-entities!) (orgtrello-webadmin/--delete-entity-with-id id))))
 
-(defvar *ORGTRELLO-QUERY-APP-ROUTES-WEBADMIN*
+(defvar *ORGTRELLO/QUERY-APP-ROUTES-WEBADMIN*
   '(("^localhost//proxy/admin/entities/current/\\(.*\\)" . orgtrello-webadmin/elnode-current-entity)
     ("^localhost//proxy/admin/entities/next/\\(.*\\)" . orgtrello-webadmin/elnode-next-entities)
     ("^localhost//proxy/admin/entities/delete/\\(.*\\)" . orgtrello-webadmin/elnode-delete-entity)

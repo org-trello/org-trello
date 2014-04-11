@@ -3,20 +3,20 @@
   (--> query-map
     (orgtrello-query/--prepare-query-params! it)
     (orgtrello-api/make-query "POST" "/trello/" it)
-    (orgtrello-query/http *ORGTRELLO-SERVER-URL* it sync success-callback error-callback)))
+    (orgtrello-query/http *ORGTRELLO/SERVER-URL* it sync success-callback error-callback)))
 
 (defun orgtrello-proxy/http-producer (query-map &optional sync)
   "Query the proxy producer"
   (--> query-map
     (orgtrello-query/--prepare-query-params! it)
     (orgtrello-api/make-query "POST" "/producer/" it)
-    (orgtrello-query/http *ORGTRELLO-SERVER-URL* it sync)))
+    (orgtrello-query/http *ORGTRELLO/SERVER-URL* it sync)))
 
 (defun orgtrello-proxy/http-consumer (start)
   "Query the http-consumer process once to make it trigger a timer"
   (--> `((start . ,start))
     (orgtrello-api/make-query "POST" "/timer/" it)
-    (orgtrello-query/http *ORGTRELLO-SERVER-URL* it 'synchronous-query)))
+    (orgtrello-query/http *ORGTRELLO/SERVER-URL* it 'synchronous-query)))
 
 (defun orgtrello-proxy/--json-read-from-string (data)
   "Read the json data and unhexify them."
@@ -467,7 +467,7 @@
   (orgtrello-action/msg-controls-or-actions-then-do msg control-or-action-fns fn-to-execute save-buffer-p reload-setup-p nolog-p)   ;; Execute as usual
   (orgtrello-proxy/timer-start))
 
-(defvar *ORGTRELLO-QUERY-APP-ROUTES-PROXY*
+(defvar *ORGTRELLO/QUERY-APP-ROUTES-PROXY*
   '(;; proxy to request trello
     ("^localhost//proxy/trello/\\(.*\\)" . orgtrello-proxy/--elnode-proxy)
     ;; proxy producer to receive async creation request

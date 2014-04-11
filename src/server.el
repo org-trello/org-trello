@@ -1,12 +1,12 @@
-(defvar *ORGTRELLO-SERVER-HOST* "localhost" "proxy host")
-(defvar *ORGTRELLO-SERVER-PORT* nil         "proxy port")
-(defvar *ORGTRELLO-SERVER-URL*  nil         "proxy url")
+(defvar *ORGTRELLO/SERVER-HOST* "localhost" "proxy host")
+(defvar *ORGTRELLO/SERVER-PORT* nil         "proxy port")
+(defvar *ORGTRELLO/SERVER-URL*  nil         "proxy url")
 
-(defvar *ORGTRELLO-SERVER-DEFAULT-PORT* 9876 "Default proxy port") (setq *ORGTRELLO-SERVER-PORT* *ORGTRELLO-SERVER-DEFAULT-PORT*)
+(defvar *ORGTRELLO/SERVER-DEFAULT-PORT* 9876 "Default proxy port") (setq *ORGTRELLO/SERVER-PORT* *ORGTRELLO/SERVER-DEFAULT-PORT*)
 
 (defun orgtrello-server/--proxy-handler (http-con)
   "Proxy handler."
-  (elnode-hostpath-dispatcher http-con (append *ORGTRELLO-QUERY-APP-ROUTES-WEBADMIN* *ORGTRELLO-QUERY-APP-ROUTES-PROXY*)))
+  (elnode-hostpath-dispatcher http-con (append *ORGTRELLO/QUERY-APP-ROUTES-WEBADMIN* *ORGTRELLO/QUERY-APP-ROUTES-PROXY*)))
 
 (defun orgtrello-server/--start (port host)
   "Starting the proxy."
@@ -18,9 +18,9 @@
 (defun orgtrello-server/start ()
   "Start the proxy."
   ;; update with the new port the user possibly changed
-  (setq *ORGTRELLO-SERVER-URL* (format "http://%s:%d/proxy" *ORGTRELLO-SERVER-HOST* *ORGTRELLO-SERVER-PORT*))
+  (setq *ORGTRELLO/SERVER-URL* (format "http://%s:%d/proxy" *ORGTRELLO/SERVER-HOST* *ORGTRELLO/SERVER-PORT*))
   ;; start the proxy
-  (orgtrello-server/--start *ORGTRELLO-SERVER-PORT* *ORGTRELLO-SERVER-HOST*)
+  (orgtrello-server/--start *ORGTRELLO/SERVER-PORT* *ORGTRELLO/SERVER-HOST*)
   ;; and the timer
   (orgtrello-proxy/timer-start))
 
@@ -30,14 +30,14 @@
   ;; stop the timer
   (orgtrello-proxy/timer-stop)
   ;; then stop the proxy
-  (elnode-stop *ORGTRELLO-SERVER-PORT*)
+  (elnode-stop *ORGTRELLO/SERVER-PORT*)
   (orgtrello-log/msg *OT/TRACE* "Proxy-server stopped!"))
 
 (defun orgtrello-server/reload ()
   "Reload the proxy server."
   (orgtrello-server/stop)
   ;; stop the default port (only useful if the user changed from the default port)
-  (elnode-stop *ORGTRELLO-SERVER-DEFAULT-PORT*)
+  (elnode-stop *ORGTRELLO/SERVER-DEFAULT-PORT*)
   (orgtrello-server/start))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-server loaded!")
