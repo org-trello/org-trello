@@ -448,11 +448,11 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
 
 (defun orgtrello-data/--parse-actions (data &optional size)
   "Given a 'comment' (trello action limited to comment in org-trello) structure, return a list of map representing a comment."
-  (->> data
-    (--map (->> (orgtrello-hash/empty-hash)
-             (orgtrello-data/put-entity-comment-id   (assoc-default 'id it))
-             (orgtrello-data/put-entity-comment-text (->> it (assoc-default 'data) (assoc-default 'text)))
-             (orgtrello-data/put-entity-comment-user (->> it car (assoc-default 'username)))))))
+  (--map (->> (orgtrello-hash/empty-hash)
+           (orgtrello-data/put-entity-comment-id   (assoc-default 'id it))
+           (orgtrello-data/put-entity-comment-text (->> it (assoc-default 'data) (assoc-default 'text)))
+           (orgtrello-data/put-entity-comment-user (->> it car (assoc-default 'username))))
+         data))
 
 (defun orgtrello-data/parse-data (entities)
   "Given a trello entity, convert into org-trello entity"
