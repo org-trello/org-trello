@@ -504,19 +504,17 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
   (and id (not (string-match-p (format "^%s-" *ORGTRELLO-MARKER*) id))))
 
 (defun orgtrello-data/merge-item (trello-item org-item)
-  "Merge trello and org item together."
-  (if (null trello-item)
-      org-item
-    (let ((org-item-to-merge (orgtrello-hash/init-map-from org-item)))
-      (puthash :level *ITEM-LEVEL*                             org-item-to-merge)
-      (puthash :id    (orgtrello-data/entity-id trello-item)   org-item-to-merge)
-      (puthash :name  (orgtrello-data/entity-name trello-item) org-item-to-merge)
-      ;; FIXME find how to populate keyword
-      (--> trello-item
-        (orgtrello-data/entity-checked it)
-        (orgtrello-data/--compute-state-item it)
-        (puthash :keyword it org-item-to-merge))
-      org-item-to-merge)))
+  "Merge trello and org item together. If trello-item is null, return the org-item"
+  (if trello-item
+      (let ((org-item-to-merge (orgtrello-hash/init-map-from org-item))) ;; merge
+        (orgtrello-data/put-entity-level *ITEM-LEVEL*            org-item-to-merge)
+        (orgtrello-data/put-entity-id    (orgtrello-data/entity-id trello-item)   org-item-to-merge)
+        (orgtrello-data/put-entity-name  (orgtrello-data/entity-name trello-item) org-item-to-merge)
+        (-> trello-item
+          orgtrello-data/entity-checked
+          orgtrello-data/--compute-state-item
+          (orgtrello-data/put-entity-keyword org-item-to-merge)))
+    org-item))
 
 (defun orgtrello-data/--compute-state-item-checkbox (state)
   "Compute the status of the item checkbox"
