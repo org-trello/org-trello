@@ -236,7 +236,7 @@
 
 (defun orgtrello-buffer/--compute-level-into-spaces (level)
   "level 2 is 0 space, otherwise 2 spaces."
-  (if (equal level *CHECKLIST-LEVEL*) 0 2))
+  (if (equal level *ORGTRELLO/CHECKLIST-LEVEL*) 0 2))
 
 (defun orgtrello-buffer/--compute-checklist-to-org-checkbox (name &optional level status)
   "Compute checklist to the org checkbox format"
@@ -258,11 +258,11 @@
 
 (defun orgtrello-buffer/--compute-checklist-to-org-entry (checklist &optional orgcheckbox-p)
   "Given a checklist, compute its org-mode entry equivalence."
-  (orgtrello-buffer/--compute-checklist-to-org-checkbox (orgtrello-data/entity-name checklist) *CHECKLIST-LEVEL* "incomplete"))
+  (orgtrello-buffer/--compute-checklist-to-org-checkbox (orgtrello-data/entity-name checklist) *ORGTRELLO/CHECKLIST-LEVEL* "incomplete"))
 
 (defun orgtrello-buffer/--compute-item-to-org-entry (item)
   "Given a checklist item, compute its org-mode entry equivalence."
-  (orgtrello-buffer/--compute-item-to-org-checkbox (orgtrello-data/entity-name item) *ITEM-LEVEL* (orgtrello-data/entity-keyword item)))
+  (orgtrello-buffer/--compute-item-to-org-checkbox (orgtrello-data/entity-name item) *ORGTRELLO/ITEM-LEVEL* (orgtrello-data/entity-keyword item)))
 
 (defun orgtrello-buffer/--put-card-with-adjacency (current-meta entities adjacency)
   "Deal with adding card to entities."
@@ -431,10 +431,10 @@
   "Compute metadata needed for entry into a map with keys :current, :parent, :grandparent. Returns nil if the level is superior to 4."
   (let* ((current   (orgtrello-buffer/metadata!))
          (level     (orgtrello-data/entity-level current)))
-    (when (< level *OUTOFBOUNDS-LEVEL*)
-      (let ((ancestors (cond ((= level *CARD-LEVEL*)      '(nil nil))
-                             ((= level *CHECKLIST-LEVEL*) `(,(orgtrello-buffer/--parent-metadata!) nil))
-                             ((= level *ITEM-LEVEL*)      `(,(orgtrello-buffer/--parent-metadata!) ,(orgtrello-buffer/--grandparent-metadata!))))))
+    (when (< level *ORGTRELLO/OUTOFBOUNDS-LEVEL*)
+      (let ((ancestors (cond ((= level *ORGTRELLO/CARD-LEVEL*)      '(nil nil))
+                             ((= level *ORGTRELLO/CHECKLIST-LEVEL*) `(,(orgtrello-buffer/--parent-metadata!) nil))
+                             ((= level *ORGTRELLO/ITEM-LEVEL*)      `(,(orgtrello-buffer/--parent-metadata!) ,(orgtrello-buffer/--grandparent-metadata!))))))
         (orgtrello-hash/make-hierarchy current (car ancestors) (cadr ancestors))))))
 
 (defun orgtrello-buffer/--to-orgtrello-metadata (heading-metadata)

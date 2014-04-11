@@ -248,7 +248,7 @@
   (interactive)
   (let* ((pt (save-excursion (org-end-of-line) (point)))
          (entity-level (-> (orgtrello-buffer/entry-get-full-metadata!) orgtrello-data/current orgtrello-data/entity-level)))
-    (goto-char (if (or (= *CHECKLIST-LEVEL* entity-level) (= *ITEM-LEVEL* entity-level))
+    (goto-char (if (or (= *ORGTRELLO/CHECKLIST-LEVEL* entity-level) (= *ORGTRELLO/ITEM-LEVEL* entity-level))
                    (-if-let (s (org-trello/compute-overlay-size!))
                        (- pt s 1)
                      pt)

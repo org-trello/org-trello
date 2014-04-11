@@ -140,11 +140,11 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
 (defconst *consumer-key*                nil                                               "Id representing the user.")
 (defconst *access-token*                nil                                               "Read/write access token to use trello on behalf of the user.")
 (defconst *ORGTRELLO/MARKER*            "orgtrello-marker"                                "A marker used inside the org buffer to synchronize entries.")
-(defconst *CARD-LEVEL*                  1                                                 "card level")
-(defconst *CHECKLIST-LEVEL*             2                                                 "checkbox level")
-(defconst *ITEM-LEVEL*                  3                                                 "item level")
-(defconst *OUTOFBOUNDS-LEVEL*           4                                                 "Out of bounds level")
-(defconst *ORGTRELLO/LEVELS*            `(,*CARD-LEVEL* ,*CHECKLIST-LEVEL* ,*ITEM-LEVEL*) "Current levels 1 is card, 2 is checklist, 3 is item.")
+(defconst *ORGTRELLO/CARD-LEVEL*                  1                                                 "card level")
+(defconst *ORGTRELLO/CHECKLIST-LEVEL*             2                                                 "checkbox level")
+(defconst *ORGTRELLO/ITEM-LEVEL*                  3                                                 "item level")
+(defconst *ORGTRELLO/OUTOFBOUNDS-LEVEL*           4                                                 "Out of bounds level")
+(defconst *ORGTRELLO/LEVELS*            `(,*ORGTRELLO/CARD-LEVEL* ,*ORGTRELLO/CHECKLIST-LEVEL* ,*ORGTRELLO/ITEM-LEVEL*) "Current levels 1 is card, 2 is checklist, 3 is item.")
 (defconst *ORGTRELLO/ACTION-SYNC*       "sync-entity"                                     "Possible action regarding the entity synchronization.")
 (defconst *ORGTRELLO/ACTION-DELETE*     "delete"                                          "Possible action regarding the entity deletion.")
 (defconst *ORGTRELLO/USER-PREFIX*       "orgtrello-user-"                                 "orgtrello prefix to define user to a org-mode level.")
@@ -160,12 +160,12 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
 
 (defconst *ORGTRELLO/HTTPS*               "https://trello.com"                            "URL https to help in browsing")
 
-(defconst *ERROR-SYNC-CARD-MISSING-NAME* "Cannot synchronize the card - missing mandatory name. Skip it...")
-(defconst *ERROR-SYNC-CHECKLIST-SYNC-CARD-FIRST* "Cannot synchronize the checklist - the card must be synchronized first. Skip it...")
-(defconst *ERROR-SYNC-CHECKLIST-MISSING-NAME* "Cannot synchronize the checklist - missing mandatory name. Skip it...")
-(defconst *ERROR-SYNC-ITEM-SYNC-CARD-FIRST* "Cannot synchronize the item - the card must be synchronized first. Skip it...")
-(defconst *ERROR-SYNC-ITEM-SYNC-CHECKLIST-FIRST* "Cannot synchronize the item - the checklist must be synchronized first. Skip it...")
-(defconst *ERROR-SYNC-ITEM-MISSING-NAME* "Cannot synchronize the item - missing mandatory name. Skip it...")
+(defconst *ORGTRELLO/ERROR-SYNC-CARD-MISSING-NAME* "Cannot synchronize the card - missing mandatory name. Skip it...")
+(defconst *ORGTRELLO/ERROR-SYNC-CHECKLIST-SYNC-CARD-FIRST* "Cannot synchronize the checklist - the card must be synchronized first. Skip it...")
+(defconst *ORGTRELLO/ERROR-SYNC-CHECKLIST-MISSING-NAME* "Cannot synchronize the checklist - missing mandatory name. Skip it...")
+(defconst *ORGTRELLO/ERROR-SYNC-ITEM-SYNC-CARD-FIRST* "Cannot synchronize the item - the card must be synchronized first. Skip it...")
+(defconst *ORGTRELLO/ERROR-SYNC-ITEM-SYNC-CHECKLIST-FIRST* "Cannot synchronize the item - the checklist must be synchronized first. Skip it...")
+(defconst *ORGTRELLO/ERROR-SYNC-ITEM-MISSING-NAME* "Cannot synchronize the item - missing mandatory name. Skip it...")
 
 (defun org-trello/compute-url (url-without-base-uri)
   "An helper method to compute the uri to trello"
@@ -304,9 +304,9 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
     delete-dups))
 
 (defun orgtrello-data/--entity-with-level-p (entity level) "Is the entity with level level?" (-> entity orgtrello-data/entity-level (eq level)))
-(defun orgtrello-data/entity-card-p      (entity) "Is this a card?"      (orgtrello-data/--entity-with-level-p entity *CARD-LEVEL*))
-(defun orgtrello-data/entity-checklist-p (entity) "Is this a checklist?" (orgtrello-data/--entity-with-level-p entity *CHECKLIST-LEVEL*))
-(defun orgtrello-data/entity-item-p      (entity) "Is this an item?"     (orgtrello-data/--entity-with-level-p entity *ITEM-LEVEL*))
+(defun orgtrello-data/entity-card-p      (entity) "Is this a card?"      (orgtrello-data/--entity-with-level-p entity *ORGTRELLO/CARD-LEVEL*))
+(defun orgtrello-data/entity-checklist-p (entity) "Is this a checklist?" (orgtrello-data/--entity-with-level-p entity *ORGTRELLO/CHECKLIST-LEVEL*))
+(defun orgtrello-data/entity-item-p      (entity) "Is this an item?"     (orgtrello-data/--entity-with-level-p entity *ORGTRELLO/ITEM-LEVEL*))
 
 (defun orgtrello-data/gethash-data (key map &optional default-value) "Retrieve the map from some query-map" (when map (gethash key map default-value)))
 
@@ -401,9 +401,9 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
 (defun orgtrello-data/put-grandparent         (value entry-meta) (orgtrello-data/puthash-data :grandparent  value entry-meta))
 
 (defun orgtrello-data/--compute-level (entity-map) "Given a map, compute the entity level"
-       (cond ((orgtrello-data/entity-list-id entity-map) *CARD-LEVEL*)
-             ((orgtrello-data/entity-card-id entity-map) *CHECKLIST-LEVEL*)
-             ((orgtrello-data/entity-checked entity-map) *ITEM-LEVEL*)
+       (cond ((orgtrello-data/entity-list-id entity-map) *ORGTRELLO/CARD-LEVEL*)
+             ((orgtrello-data/entity-card-id entity-map) *ORGTRELLO/CHECKLIST-LEVEL*)
+             ((orgtrello-data/entity-checked entity-map) *ORGTRELLO/ITEM-LEVEL*)
              (t nil)))
 
 (defvar *ORGTRELLO/DATA-MAP-KEYWORDS* (orgtrello-hash/make-properties `((url            . :url)
@@ -508,7 +508,7 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
   "Merge trello and org item together. If trello-item is null, return the org-item"
   (if trello-item
       (let ((org-item-to-merge (orgtrello-hash/init-map-from org-item))) ;; merge
-        (orgtrello-data/put-entity-level *ITEM-LEVEL*            org-item-to-merge)
+        (orgtrello-data/put-entity-level *ORGTRELLO/ITEM-LEVEL*            org-item-to-merge)
         (orgtrello-data/put-entity-id    (orgtrello-data/entity-id trello-item)   org-item-to-merge)
         (orgtrello-data/put-entity-name  (orgtrello-data/entity-name trello-item) org-item-to-merge)
         (-> trello-item
@@ -529,7 +529,7 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
   "Merge trello and org checklist together. If trello-checklist is null, return org-checklist."
   (if trello-checklist
       (->> (orgtrello-hash/init-map-from org-checklist)
-        (orgtrello-data/put-entity-level *CHECKLIST-LEVEL*)
+        (orgtrello-data/put-entity-level *ORGTRELLO/CHECKLIST-LEVEL*)
         (orgtrello-data/put-entity-name (orgtrello-data/entity-name trello-checklist))
         (orgtrello-data/put-entity-id (orgtrello-data/entity-id trello-checklist)))
     org-checklist))
@@ -580,7 +580,7 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
                                          (orgtrello-data/--labels-hash-to-tags (orgtrello-data/entity-labels trello-card))
                                          (orgtrello-data/entity-tags org-card)))
         (orgtrello-data/put-entity-comments(orgtrello-data/entity-comments trello-card))
-        (orgtrello-data/put-entity-level *CARD-LEVEL*)
+        (orgtrello-data/put-entity-level *ORGTRELLO/CARD-LEVEL*)
         (orgtrello-data/put-entity-id (orgtrello-data/entity-id trello-card))
         (orgtrello-data/put-entity-name (orgtrello-data/entity-name trello-card))
         (orgtrello-data/put-entity-keyword (-> trello-card
@@ -797,7 +797,7 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
 
 (defun orgtrello-cbx/--level! ()
   "Compute the levels from the current position (which is `bol`)"
-  (if (org-at-item-bullet-p) *CHECKLIST-LEVEL* *ITEM-LEVEL*))
+  (if (org-at-item-bullet-p) *ORGTRELLO/CHECKLIST-LEVEL* *ORGTRELLO/ITEM-LEVEL*))
 
 (defun orgtrello-cbx/org-checkbox-metadata! ()
   "Extract the metadata about the checklist - this is the symmetrical with `org-heading-components` but for the checklist.
@@ -821,9 +821,9 @@ This is a list with the following elements:
 (defun orgtrello-cbx/--org-up! (destination-level)
   "An internal function to get back to the current entry's parent - return the level found or nil if the level found is a card."
   (let ((current-level (orgtrello-cbx/--get-level (orgtrello-cbx/org-checkbox-metadata!))))
-    (cond ((= *CARD-LEVEL*      current-level) nil)
+    (cond ((= *ORGTRELLO/CARD-LEVEL*      current-level) nil)
           ((= destination-level current-level) destination-level)
-          ((= *CHECKLIST-LEVEL* current-level) (org-up-heading-safe))
+          ((= *ORGTRELLO/CHECKLIST-LEVEL* current-level) (org-up-heading-safe))
           (t                                   (progn
                                                  (forward-line -1)
                                                  (orgtrello-cbx/--org-up! destination-level))))))
@@ -866,12 +866,12 @@ This is a list with the following elements:
 (defun orgtrello-cbx/map-checkboxes (fn-to-execute)
   "Map over the current checkbox and sync them."
   (let ((level (orgtrello-buffer/current-level!)))
-    (when (= level *CHECKLIST-LEVEL*) (funcall fn-to-execute))
+    (when (= level *ORGTRELLO/CHECKLIST-LEVEL*) (funcall fn-to-execute))
     (save-excursion (orgtrello-cbx/--map-checkboxes level fn-to-execute)))) ;; then map over the next checkboxes and sync them
 
 (defun orgtrello-cbx/next-checklist-point! ()
   "Compute the next checklist position"
-  (let ((next-checklist-point (save-excursion (orgtrello-cbx/--goto-next-checkbox-with-same-level! *CHECKLIST-LEVEL*) (point))))
+  (let ((next-checklist-point (save-excursion (orgtrello-cbx/--goto-next-checkbox-with-same-level! *ORGTRELLO/CHECKLIST-LEVEL*) (point))))
     (if next-checklist-point
         next-checklist-point
       (orgtrello-cbx/compute-next-card-point!))))
@@ -1520,7 +1520,7 @@ This is a list with the following elements:
 (defun orgtrello-action/--delete-checkbox-checklist-region ()
   "Delete the checklist region"
   (let ((orgtrello-action/--starting-point (point-at-bol))
-        (orgtrello-action/--ending-point (save-excursion (-if-let (result (orgtrello-cbx/--goto-next-checkbox-with-same-level! *CHECKLIST-LEVEL*))
+        (orgtrello-action/--ending-point (save-excursion (-if-let (result (orgtrello-cbx/--goto-next-checkbox-with-same-level! *ORGTRELLO/CHECKLIST-LEVEL*))
                                                              result
                                                            (orgtrello-cbx/compute-next-card-point!))))) ;; next checkbox or next card or point-max
     (orgtrello-action/--delete-region orgtrello-action/--starting-point orgtrello-action/--ending-point)))
@@ -1597,9 +1597,9 @@ This is a list with the following elements:
 
 (defun orgtrello-proxy/--level-inf-done-p (level)
   "Ensure the actions of the lower level is done (except for level 1 which has no deps)!"
-  (cond ((= *CARD-LEVEL*      level) t)
-        ((= *CHECKLIST-LEVEL* level) (orgtrello-proxy/--level-done-p *CARD-LEVEL*))
-        ((= *ITEM-LEVEL*      level) (and (orgtrello-proxy/--level-done-p *CARD-LEVEL*) (orgtrello-proxy/--level-done-p *CHECKLIST-LEVEL*)))))
+  (cond ((= *ORGTRELLO/CARD-LEVEL*      level) t)
+        ((= *ORGTRELLO/CHECKLIST-LEVEL* level) (orgtrello-proxy/--level-done-p *ORGTRELLO/CARD-LEVEL*))
+        ((= *ORGTRELLO/ITEM-LEVEL*      level) (and (orgtrello-proxy/--level-done-p *ORGTRELLO/CARD-LEVEL*) (orgtrello-proxy/--level-done-p *ORGTRELLO/CHECKLIST-LEVEL*)))))
 
 (defun orgtrello-proxy/--deal-with-level (level directory)"Given a level, retrieve one file (which represents an entity) for this level and sync it, then remove such file. Then recall the function recursively."
        (if (orgtrello-proxy/--level-inf-done-p level)
@@ -2351,7 +2351,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun orgtrello-buffer/--compute-level-into-spaces (level)
   "level 2 is 0 space, otherwise 2 spaces."
-  (if (equal level *CHECKLIST-LEVEL*) 0 2))
+  (if (equal level *ORGTRELLO/CHECKLIST-LEVEL*) 0 2))
 
 (defun orgtrello-buffer/--compute-checklist-to-org-checkbox (name &optional level status)
   "Compute checklist to the org checkbox format"
@@ -2373,11 +2373,11 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun orgtrello-buffer/--compute-checklist-to-org-entry (checklist &optional orgcheckbox-p)
   "Given a checklist, compute its org-mode entry equivalence."
-  (orgtrello-buffer/--compute-checklist-to-org-checkbox (orgtrello-data/entity-name checklist) *CHECKLIST-LEVEL* "incomplete"))
+  (orgtrello-buffer/--compute-checklist-to-org-checkbox (orgtrello-data/entity-name checklist) *ORGTRELLO/CHECKLIST-LEVEL* "incomplete"))
 
 (defun orgtrello-buffer/--compute-item-to-org-entry (item)
   "Given a checklist item, compute its org-mode entry equivalence."
-  (orgtrello-buffer/--compute-item-to-org-checkbox (orgtrello-data/entity-name item) *ITEM-LEVEL* (orgtrello-data/entity-keyword item)))
+  (orgtrello-buffer/--compute-item-to-org-checkbox (orgtrello-data/entity-name item) *ORGTRELLO/ITEM-LEVEL* (orgtrello-data/entity-keyword item)))
 
 (defun orgtrello-buffer/--put-card-with-adjacency (current-meta entities adjacency)
   "Deal with adding card to entities."
@@ -2546,10 +2546,10 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   "Compute metadata needed for entry into a map with keys :current, :parent, :grandparent. Returns nil if the level is superior to 4."
   (let* ((current   (orgtrello-buffer/metadata!))
          (level     (orgtrello-data/entity-level current)))
-    (when (< level *OUTOFBOUNDS-LEVEL*)
-      (let ((ancestors (cond ((= level *CARD-LEVEL*)      '(nil nil))
-                             ((= level *CHECKLIST-LEVEL*) `(,(orgtrello-buffer/--parent-metadata!) nil))
-                             ((= level *ITEM-LEVEL*)      `(,(orgtrello-buffer/--parent-metadata!) ,(orgtrello-buffer/--grandparent-metadata!))))))
+    (when (< level *ORGTRELLO/OUTOFBOUNDS-LEVEL*)
+      (let ((ancestors (cond ((= level *ORGTRELLO/CARD-LEVEL*)      '(nil nil))
+                             ((= level *ORGTRELLO/CHECKLIST-LEVEL*) `(,(orgtrello-buffer/--parent-metadata!) nil))
+                             ((= level *ORGTRELLO/ITEM-LEVEL*)      `(,(orgtrello-buffer/--parent-metadata!) ,(orgtrello-buffer/--grandparent-metadata!))))))
         (orgtrello-hash/make-hierarchy current (car ancestors) (cadr ancestors))))))
 
 (defun orgtrello-buffer/--to-orgtrello-metadata (heading-metadata)
@@ -2680,7 +2680,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun orgtrello-controller/--checks-before-sync-card (card-meta)
   "Checks done before synchronizing the cards."
-  (if (orgtrello-data/entity-name card-meta) :ok *ERROR-SYNC-CARD-MISSING-NAME*))
+  (if (orgtrello-data/entity-name card-meta) :ok *ORGTRELLO/ERROR-SYNC-CARD-MISSING-NAME*))
 
 (defun orgtrello-controller/--tags-to-labels (str)
   "Transform org tags string to csv labels."
@@ -2715,8 +2715,8 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   (-if-let (checklist-name (orgtrello-data/entity-name checklist-meta))
       (-if-let (card-id (orgtrello-data/entity-id card-meta))
           :ok
-        *ERROR-SYNC-CHECKLIST-SYNC-CARD-FIRST*)
-    *ERROR-SYNC-CHECKLIST-MISSING-NAME*))
+        *ORGTRELLO/ERROR-SYNC-CHECKLIST-SYNC-CARD-FIRST*)
+    *ORGTRELLO/ERROR-SYNC-CHECKLIST-MISSING-NAME*))
 
 (defun orgtrello-controller/--checklist (checklist-meta &optional card-meta grandparent-meta)
   "Deal with create/update checklist query build. If the checks are ko, the error message is returned."
@@ -2740,9 +2740,9 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
         (orgtrello-controller/--card-id      (orgtrello-data/entity-id card-meta)))
     (if orgtrello-controller/--item-name
         (if orgtrello-controller/--checklist-id
-            (if orgtrello-controller/--card-id :ok *ERROR-SYNC-ITEM-SYNC-CARD-FIRST*)
-          *ERROR-SYNC-ITEM-SYNC-CHECKLIST-FIRST*)
-      *ERROR-SYNC-ITEM-MISSING-NAME*)))
+            (if orgtrello-controller/--card-id :ok *ORGTRELLO/ERROR-SYNC-ITEM-SYNC-CARD-FIRST*)
+          *ORGTRELLO/ERROR-SYNC-ITEM-SYNC-CHECKLIST-FIRST*)
+      *ORGTRELLO/ERROR-SYNC-ITEM-MISSING-NAME*)))
 
 (defun orgtrello-controller/compute-state (state)
   "Given a state (TODO/DONE) compute the trello state equivalent."
@@ -2783,9 +2783,9 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   "Deal with too deep level."
   "Your arborescence depth is too deep. We only support up to depth 3.\nLevel 1 - card\nLevel 2 - checklist\nLevel 3 - items")
 
-(defvar *MAP-DISPATCH-CREATE-UPDATE* (orgtrello-hash/make-properties `((,*CARD-LEVEL*      . orgtrello-controller/--card)
-                                                                       (,*CHECKLIST-LEVEL* . orgtrello-controller/--checklist)
-                                                                       (,*ITEM-LEVEL*      . orgtrello-controller/--item))) "Dispatch map for the creation/update of card/checklist/item.")
+(defvar *MAP-DISPATCH-CREATE-UPDATE* (orgtrello-hash/make-properties `((,*ORGTRELLO/CARD-LEVEL*      . orgtrello-controller/--card)
+                                                                       (,*ORGTRELLO/CHECKLIST-LEVEL* . orgtrello-controller/--checklist)
+                                                                       (,*ORGTRELLO/ITEM-LEVEL*      . orgtrello-controller/--item))) "Dispatch map for the creation/update of card/checklist/item.")
 
 (defun orgtrello-controller/--dispatch-create (entry-metadata)
   "Dispatch the creation depending on the nature of the entry."
@@ -2811,7 +2811,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun orgtrello-controller/--right-level-p (entity)
   "Compute if the level is correct (not higher than level 4)."
-  (if (< (-> entity orgtrello-data/current orgtrello-data/entity-level) *OUTOFBOUNDS-LEVEL*) :ok "Level too high. Do not deal with entity other than card/checklist/items!"))
+  (if (< (-> entity orgtrello-data/current orgtrello-data/entity-level) *ORGTRELLO/OUTOFBOUNDS-LEVEL*) :ok "Level too high. Do not deal with entity other than card/checklist/items!"))
 
 (defun orgtrello-controller/--already-synced-p (entity)
   "Compute if the entity has already been synchronized."
@@ -2824,9 +2824,9 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
          (name    (orgtrello-data/entity-name current)))
     (if (and name (< 0 (length name)))
         :ok
-      (cond ((= level *CARD-LEVEL*)      *ERROR-SYNC-CARD-MISSING-NAME*)
-            ((= level *CHECKLIST-LEVEL*) *ERROR-SYNC-CHECKLIST-MISSING-NAME*)
-            ((= level *ITEM-LEVEL*)      *ERROR-SYNC-ITEM-MISSING-NAME*)))))
+      (cond ((= level *ORGTRELLO/CARD-LEVEL*)      *ORGTRELLO/ERROR-SYNC-CARD-MISSING-NAME*)
+            ((= level *ORGTRELLO/CHECKLIST-LEVEL*) *ORGTRELLO/ERROR-SYNC-CHECKLIST-MISSING-NAME*)
+            ((= level *ORGTRELLO/ITEM-LEVEL*)      *ORGTRELLO/ERROR-SYNC-ITEM-MISSING-NAME*)))))
 
 (defun orgtrello-controller/--delegate-to-the-proxy (full-meta action)
   "Execute the delegation to the consumer."
@@ -2865,7 +2865,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 (defun orgtrello-controller/do-sync-full-file-to-trello! ()
   "Full org-mode file synchronisation."
   (orgtrello-log/msg *OT/WARN* "Synchronizing org-mode file to the board '%s'. This may take some time, some coffee may be a good idea..." (orgtrello-buffer/board-name!))
-  (orgtrello-buffer/org-map-entries *CARD-LEVEL* 'orgtrello-controller/do-sync-full-entity-to-trello!))
+  (orgtrello-buffer/org-map-entries *ORGTRELLO/CARD-LEVEL* 'orgtrello-controller/do-sync-full-entity-to-trello!))
 
 (defun orgtrello-controller/--sync-buffer-with-trello-data (data buffer-name)
   "Given all the entities, update the current buffer with those."
@@ -2982,9 +2982,9 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
          (entity-id    (orgtrello-data/entity-id current-meta))
          (parent-id    (-> entity orgtrello-data/parent orgtrello-data/entity-id))
          (level        (orgtrello-data/entity-level current-meta)))
-    (cond ((= level *CARD-LEVEL*)      (orgtrello-api/get-card entity-id))
-          ((= level *CHECKLIST-LEVEL*) (orgtrello-api/get-checklist entity-id with-filter))
-          ((= level *ITEM-LEVEL*)      (orgtrello-api/get-item parent-id entity-id)))))
+    (cond ((= level *ORGTRELLO/CARD-LEVEL*)      (orgtrello-api/get-card entity-id))
+          ((= level *ORGTRELLO/CHECKLIST-LEVEL*) (orgtrello-api/get-checklist entity-id with-filter))
+          ((= level *ORGTRELLO/ITEM-LEVEL*)      (orgtrello-api/get-item parent-id entity-id)))))
 
 (defun orgtrello-controller/do-sync-entity-from-trello! (&optional sync)
   "Entity (card/checklist/item) synchronization (without its structure) from trello."
@@ -3014,9 +3014,9 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   "Deal with create/update item query build"
   (orgtrello-api/delete-item (orgtrello-data/entity-id checklist-meta) (orgtrello-data/entity-id item-meta)))
 
-(defvar *MAP-DISPATCH-DELETE* (orgtrello-hash/make-properties `((,*CARD-LEVEL*      . orgtrello-controller/--card-delete)
-                                                                (,*CHECKLIST-LEVEL* . orgtrello-controller/--checklist-delete)
-                                                                (,*ITEM-LEVEL*      . orgtrello-controller/--item-delete))) "Dispatch map for the deletion query of card/checklist/item.")
+(defvar *MAP-DISPATCH-DELETE* (orgtrello-hash/make-properties `((,*ORGTRELLO/CARD-LEVEL*      . orgtrello-controller/--card-delete)
+                                                                (,*ORGTRELLO/CHECKLIST-LEVEL* . orgtrello-controller/--checklist-delete)
+                                                                (,*ORGTRELLO/ITEM-LEVEL*      . orgtrello-controller/--item-delete))) "Dispatch map for the deletion query of card/checklist/item.")
 
 (defun orgtrello-controller/--dispatch-delete (meta &optional parent-meta)
   "Dispatch the delete function to call depending on the level information."
@@ -3027,7 +3027,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun orgtrello-controller/--do-delete-card (&optional sync)
   "Delete the card."
-  (when (= *CARD-LEVEL* (-> (orgtrello-buffer/entry-get-full-metadata!)
+  (when (= *ORGTRELLO/CARD-LEVEL* (-> (orgtrello-buffer/entry-get-full-metadata!)
                           orgtrello-data/current
                           orgtrello-data/entity-level))
     (orgtrello-controller/do-delete-simple sync)))
@@ -3682,7 +3682,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   (interactive)
   (let* ((pt (save-excursion (org-end-of-line) (point)))
          (entity-level (-> (orgtrello-buffer/entry-get-full-metadata!) orgtrello-data/current orgtrello-data/entity-level)))
-    (goto-char (if (or (= *CHECKLIST-LEVEL* entity-level) (= *ITEM-LEVEL* entity-level))
+    (goto-char (if (or (= *ORGTRELLO/CHECKLIST-LEVEL* entity-level) (= *ORGTRELLO/ITEM-LEVEL* entity-level))
                    (-if-let (s (org-trello/compute-overlay-size!))
                        (- pt s 1)
                      pt)

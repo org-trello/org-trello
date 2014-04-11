@@ -23,9 +23,9 @@
                 (null (orgtrello-elnode/--dictionary-lessp "1.32" "1ab")))))
 
 (expectations (desc "orgtrello-elnode/compute-entity-level-dir")
-              (expect (format "%sorg-trello/1/" elnode-webserver-docroot) (orgtrello-elnode/compute-entity-level-dir *CARD-LEVEL*))
-              (expect (format "%sorg-trello/2/" elnode-webserver-docroot) (orgtrello-elnode/compute-entity-level-dir *CHECKLIST-LEVEL*))
-              (expect (format "%sorg-trello/3/" elnode-webserver-docroot) (orgtrello-elnode/compute-entity-level-dir *ITEM-LEVEL*)))
+              (expect (format "%sorg-trello/1/" elnode-webserver-docroot) (orgtrello-elnode/compute-entity-level-dir *ORGTRELLO/CARD-LEVEL*))
+              (expect (format "%sorg-trello/2/" elnode-webserver-docroot) (orgtrello-elnode/compute-entity-level-dir *ORGTRELLO/CHECKLIST-LEVEL*))
+              (expect (format "%sorg-trello/3/" elnode-webserver-docroot) (orgtrello-elnode/compute-entity-level-dir *ORGTRELLO/ITEM-LEVEL*)))
 
 (expectations (desc "orgtrello-elnode/archived-scanning-dir")
               (expect "tests.scanning" (orgtrello-elnode/archived-scanning-dir "tests"))

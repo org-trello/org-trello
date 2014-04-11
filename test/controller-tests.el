@@ -64,14 +64,14 @@
   (expect "orgtrello-marker-6c59c5dcf6c83edaeb3f4923bfd929a091504bb3" (orgtrello-controller/compute-marker "some-other-buffername" "some-name" 4321)))
 
 (expectations (desc "orgtrello-controller/--card")
-              (expect 'orgtrello-controller/--card      (gethash *CARD-LEVEL* *MAP-DISPATCH-CREATE-UPDATE*))
-              (expect 'orgtrello-controller/--checklist (gethash *CHECKLIST-LEVEL* *MAP-DISPATCH-CREATE-UPDATE*))
-              (expect 'orgtrello-controller/--item      (gethash *ITEM-LEVEL* *MAP-DISPATCH-CREATE-UPDATE*)))
+              (expect 'orgtrello-controller/--card      (gethash *ORGTRELLO/CARD-LEVEL* *MAP-DISPATCH-CREATE-UPDATE*))
+              (expect 'orgtrello-controller/--checklist (gethash *ORGTRELLO/CHECKLIST-LEVEL* *MAP-DISPATCH-CREATE-UPDATE*))
+              (expect 'orgtrello-controller/--item      (gethash *ORGTRELLO/ITEM-LEVEL* *MAP-DISPATCH-CREATE-UPDATE*)))
 
 (expectations (desc "orgtrello-controller/--card-delete")
-              (expect 'orgtrello-controller/--card-delete      (gethash *CARD-LEVEL* *MAP-DISPATCH-DELETE*))
-              (expect 'orgtrello-controller/--checklist-delete (gethash *CHECKLIST-LEVEL* *MAP-DISPATCH-DELETE*))
-              (expect 'orgtrello-controller/--item-delete      (gethash *ITEM-LEVEL* *MAP-DISPATCH-DELETE*)))
+              (expect 'orgtrello-controller/--card-delete      (gethash *ORGTRELLO/CARD-LEVEL* *MAP-DISPATCH-DELETE*))
+              (expect 'orgtrello-controller/--checklist-delete (gethash *ORGTRELLO/CHECKLIST-LEVEL* *MAP-DISPATCH-DELETE*))
+              (expect 'orgtrello-controller/--item-delete      (gethash *ORGTRELLO/ITEM-LEVEL* *MAP-DISPATCH-DELETE*)))
 
 (expectations (desc "orgtrello-controller/--compute-user-properties")
   (expect t (hash-equal

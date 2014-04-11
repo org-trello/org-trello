@@ -266,7 +266,7 @@
 (defun orgtrello-action/--delete-checkbox-checklist-region ()
   "Delete the checklist region"
   (let ((orgtrello-action/--starting-point (point-at-bol))
-        (orgtrello-action/--ending-point (save-excursion (-if-let (result (orgtrello-cbx/--goto-next-checkbox-with-same-level! *CHECKLIST-LEVEL*))
+        (orgtrello-action/--ending-point (save-excursion (-if-let (result (orgtrello-cbx/--goto-next-checkbox-with-same-level! *ORGTRELLO/CHECKLIST-LEVEL*))
                                                              result
                                                            (orgtrello-cbx/compute-next-card-point!))))) ;; next checkbox or next card or point-max
     (orgtrello-action/--delete-region orgtrello-action/--starting-point orgtrello-action/--ending-point)))
@@ -343,9 +343,9 @@
 
 (defun orgtrello-proxy/--level-inf-done-p (level)
   "Ensure the actions of the lower level is done (except for level 1 which has no deps)!"
-  (cond ((= *CARD-LEVEL*      level) t)
-        ((= *CHECKLIST-LEVEL* level) (orgtrello-proxy/--level-done-p *CARD-LEVEL*))
-        ((= *ITEM-LEVEL*      level) (and (orgtrello-proxy/--level-done-p *CARD-LEVEL*) (orgtrello-proxy/--level-done-p *CHECKLIST-LEVEL*)))))
+  (cond ((= *ORGTRELLO/CARD-LEVEL*      level) t)
+        ((= *ORGTRELLO/CHECKLIST-LEVEL* level) (orgtrello-proxy/--level-done-p *ORGTRELLO/CARD-LEVEL*))
+        ((= *ORGTRELLO/ITEM-LEVEL*      level) (and (orgtrello-proxy/--level-done-p *ORGTRELLO/CARD-LEVEL*) (orgtrello-proxy/--level-done-p *ORGTRELLO/CHECKLIST-LEVEL*)))))
 
 (defun orgtrello-proxy/--deal-with-level (level directory)"Given a level, retrieve one file (which represents an entity) for this level and sync it, then remove such file. Then recall the function recursively."
        (if (orgtrello-proxy/--level-inf-done-p level)

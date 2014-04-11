@@ -64,30 +64,30 @@
 
 (expectations (desc "orgtrello-data/--entity-with-level-p")
  (expect nil (orgtrello-data/--entity-with-level-p nil 1))
- (expect t   (orgtrello-data/--entity-with-level-p (orgtrello-hash/make-properties `((:level . ,*CARD-LEVEL*))) *CARD-LEVEL*))
- (expect nil (orgtrello-data/--entity-with-level-p (orgtrello-hash/make-properties `((:level . ,*CHECKLIST-LEVEL*))) *CARD-LEVEL*)))
+ (expect t   (orgtrello-data/--entity-with-level-p (orgtrello-hash/make-properties `((:level . ,*ORGTRELLO/CARD-LEVEL*))) *ORGTRELLO/CARD-LEVEL*))
+ (expect nil (orgtrello-data/--entity-with-level-p (orgtrello-hash/make-properties `((:level . ,*ORGTRELLO/CHECKLIST-LEVEL*))) *ORGTRELLO/CARD-LEVEL*)))
 
 (expectations (desc "orgtrello-data/entity-card-p")
- (expect t   (orgtrello-data/entity-card-p (orgtrello-hash/make-properties `((:level . ,*CARD-LEVEL*)))))
- (expect nil (orgtrello-data/entity-card-p (orgtrello-hash/make-properties `((:level . ,*CHECKLIST-LEVEL*)))))
+ (expect t   (orgtrello-data/entity-card-p (orgtrello-hash/make-properties `((:level . ,*ORGTRELLO/CARD-LEVEL*)))))
+ (expect nil (orgtrello-data/entity-card-p (orgtrello-hash/make-properties `((:level . ,*ORGTRELLO/CHECKLIST-LEVEL*)))))
  (expect nil (orgtrello-data/entity-card-p (orgtrello-hash/make-properties `((idList . 1)))))
  (expect nil (orgtrello-data/entity-card-p (orgtrello-hash/make-properties `((id . 1)))))
  (expect nil (orgtrello-data/entity-card-p (orgtrello-hash/make-properties `((:list-id . "this is a card")))))
  (expect nil (orgtrello-data/entity-card-p (orgtrello-hash/make-properties `((anything-else . "this is not a card"))))))
 
 (expectations (desc "orgtrello-data/entity-checklist-p")
- (expect t   (orgtrello-data/entity-checklist-p (orgtrello-hash/make-properties `((:level . ,*CHECKLIST-LEVEL*)))))
- (expect nil (orgtrello-data/entity-checklist-p (orgtrello-hash/make-properties `((:level . ,*ITEM-LEVEL*)))))
+ (expect t   (orgtrello-data/entity-checklist-p (orgtrello-hash/make-properties `((:level . ,*ORGTRELLO/CHECKLIST-LEVEL*)))))
+ (expect nil (orgtrello-data/entity-checklist-p (orgtrello-hash/make-properties `((:level . ,*ORGTRELLO/ITEM-LEVEL*)))))
  (expect nil (orgtrello-data/entity-checklist-p (orgtrello-hash/make-properties `((idCard . 1)))))
  (expect nil (orgtrello-data/entity-checklist-p (orgtrello-hash/make-properties `((id . 1)))))
  (expect nil (orgtrello-data/entity-checklist-p (orgtrello-hash/make-properties `((:card-id . "this is a checklist")))))
  (expect nil (orgtrello-data/entity-checklist-p (orgtrello-hash/make-properties `((anything-else . "this is not a checklist"))))))
 
 (expectations (desc "orgtrello-data/entity-item-p")
-  (expect t   (orgtrello-data/entity-item-p (orgtrello-hash/make-properties `((:level . ,*ITEM-LEVEL*)))))
+  (expect t   (orgtrello-data/entity-item-p (orgtrello-hash/make-properties `((:level . ,*ORGTRELLO/ITEM-LEVEL*)))))
   (expect nil (orgtrello-data/entity-item-p (orgtrello-hash/make-properties `((:checked . "this is an item")))))
   (expect nil (orgtrello-data/entity-item-p (orgtrello-hash/make-properties `((anything-else . "this is not a item")))))
-  (expect nil (orgtrello-data/entity-item-p (orgtrello-hash/make-properties `((:level . ,*CARD-LEVEL*)))))
+  (expect nil (orgtrello-data/entity-item-p (orgtrello-hash/make-properties `((:level . ,*ORGTRELLO/CARD-LEVEL*)))))
   (expect nil (orgtrello-data/entity-item-p (orgtrello-hash/make-properties `((:state . 1)))))
   (expect nil (orgtrello-data/entity-item-p (orgtrello-hash/make-properties `((id . 1))))))
 
@@ -98,8 +98,8 @@
   (expect nil        (orgtrello-data/merge-2-lists-without-duplicates nil nil)))
 
 (expectations (desc "orgtrello-data/entity-card-p")
- (expect t (orgtrello-data/entity-card-p (orgtrello-hash/make-properties `((:level . ,*CARD-LEVEL*)))))
- (expect nil (orgtrello-data/entity-card-p (orgtrello-hash/make-properties `((:level . ,*CHECKLIST-LEVEL*))))))
+ (expect t (orgtrello-data/entity-card-p (orgtrello-hash/make-properties `((:level . ,*ORGTRELLO/CARD-LEVEL*)))))
+ (expect nil (orgtrello-data/entity-card-p (orgtrello-hash/make-properties `((:level . ,*ORGTRELLO/CHECKLIST-LEVEL*))))))
 
 (expectations
   (expect "some-method" (orgtrello-data/gethash-data :method (orgtrello-hash/make-properties `((:method . "some-method")))))
@@ -110,9 +110,9 @@
   (expect nil           (orgtrello-data/gethash-data :key (orgtrello-hash/make-properties `((:key . nil))))))
 
 (expectations (desc "orgtrello-data/--compute-level")
-  (expect *CARD-LEVEL*      (orgtrello-data/--compute-level (orgtrello-hash/make-properties '((:list-id . 0)))))
-  (expect *CHECKLIST-LEVEL* (orgtrello-data/--compute-level (orgtrello-hash/make-properties '((:card-id . 0)))))
-  (expect *ITEM-LEVEL*      (orgtrello-data/--compute-level (orgtrello-hash/make-properties '((:checked . 0)))))
+  (expect *ORGTRELLO/CARD-LEVEL*      (orgtrello-data/--compute-level (orgtrello-hash/make-properties '((:list-id . 0)))))
+  (expect *ORGTRELLO/CHECKLIST-LEVEL* (orgtrello-data/--compute-level (orgtrello-hash/make-properties '((:card-id . 0)))))
+  (expect *ORGTRELLO/ITEM-LEVEL*      (orgtrello-data/--compute-level (orgtrello-hash/make-properties '((:checked . 0)))))
   (expect nil               (orgtrello-data/--compute-level (orgtrello-hash/make-properties '()))))
 
 (ert-deftest testing-orgtrello-data/parse-data-card ()

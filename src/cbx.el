@@ -151,7 +151,7 @@
 
 (defun orgtrello-cbx/--level! ()
   "Compute the levels from the current position (which is `bol`)"
-  (if (org-at-item-bullet-p) *CHECKLIST-LEVEL* *ITEM-LEVEL*))
+  (if (org-at-item-bullet-p) *ORGTRELLO/CHECKLIST-LEVEL* *ORGTRELLO/ITEM-LEVEL*))
 
 (defun orgtrello-cbx/org-checkbox-metadata! ()
   "Extract the metadata about the checklist - this is the symmetrical with `org-heading-components` but for the checklist.
@@ -175,9 +175,9 @@ This is a list with the following elements:
 (defun orgtrello-cbx/--org-up! (destination-level)
   "An internal function to get back to the current entry's parent - return the level found or nil if the level found is a card."
   (let ((current-level (orgtrello-cbx/--get-level (orgtrello-cbx/org-checkbox-metadata!))))
-    (cond ((= *CARD-LEVEL*      current-level) nil)
+    (cond ((= *ORGTRELLO/CARD-LEVEL*      current-level) nil)
           ((= destination-level current-level) destination-level)
-          ((= *CHECKLIST-LEVEL* current-level) (org-up-heading-safe))
+          ((= *ORGTRELLO/CHECKLIST-LEVEL* current-level) (org-up-heading-safe))
           (t                                   (progn
                                                  (forward-line -1)
                                                  (orgtrello-cbx/--org-up! destination-level))))))
@@ -220,12 +220,12 @@ This is a list with the following elements:
 (defun orgtrello-cbx/map-checkboxes (fn-to-execute)
   "Map over the current checkbox and sync them."
   (let ((level (orgtrello-buffer/current-level!)))
-    (when (= level *CHECKLIST-LEVEL*) (funcall fn-to-execute))
+    (when (= level *ORGTRELLO/CHECKLIST-LEVEL*) (funcall fn-to-execute))
     (save-excursion (orgtrello-cbx/--map-checkboxes level fn-to-execute)))) ;; then map over the next checkboxes and sync them
 
 (defun orgtrello-cbx/next-checklist-point! ()
   "Compute the next checklist position"
-  (let ((next-checklist-point (save-excursion (orgtrello-cbx/--goto-next-checkbox-with-same-level! *CHECKLIST-LEVEL*) (point))))
+  (let ((next-checklist-point (save-excursion (orgtrello-cbx/--goto-next-checkbox-with-same-level! *ORGTRELLO/CHECKLIST-LEVEL*) (point))))
     (if next-checklist-point
         next-checklist-point
       (orgtrello-cbx/compute-next-card-point!))))

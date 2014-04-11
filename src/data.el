@@ -7,9 +7,9 @@
     delete-dups))
 
 (defun orgtrello-data/--entity-with-level-p (entity level) "Is the entity with level level?" (-> entity orgtrello-data/entity-level (eq level)))
-(defun orgtrello-data/entity-card-p      (entity) "Is this a card?"      (orgtrello-data/--entity-with-level-p entity *CARD-LEVEL*))
-(defun orgtrello-data/entity-checklist-p (entity) "Is this a checklist?" (orgtrello-data/--entity-with-level-p entity *CHECKLIST-LEVEL*))
-(defun orgtrello-data/entity-item-p      (entity) "Is this an item?"     (orgtrello-data/--entity-with-level-p entity *ITEM-LEVEL*))
+(defun orgtrello-data/entity-card-p      (entity) "Is this a card?"      (orgtrello-data/--entity-with-level-p entity *ORGTRELLO/CARD-LEVEL*))
+(defun orgtrello-data/entity-checklist-p (entity) "Is this a checklist?" (orgtrello-data/--entity-with-level-p entity *ORGTRELLO/CHECKLIST-LEVEL*))
+(defun orgtrello-data/entity-item-p      (entity) "Is this an item?"     (orgtrello-data/--entity-with-level-p entity *ORGTRELLO/ITEM-LEVEL*))
 
 (defun orgtrello-data/gethash-data (key map &optional default-value) "Retrieve the map from some query-map" (when map (gethash key map default-value)))
 
@@ -104,9 +104,9 @@
 (defun orgtrello-data/put-grandparent         (value entry-meta) (orgtrello-data/puthash-data :grandparent  value entry-meta))
 
 (defun orgtrello-data/--compute-level (entity-map) "Given a map, compute the entity level"
-       (cond ((orgtrello-data/entity-list-id entity-map) *CARD-LEVEL*)
-             ((orgtrello-data/entity-card-id entity-map) *CHECKLIST-LEVEL*)
-             ((orgtrello-data/entity-checked entity-map) *ITEM-LEVEL*)
+       (cond ((orgtrello-data/entity-list-id entity-map) *ORGTRELLO/CARD-LEVEL*)
+             ((orgtrello-data/entity-card-id entity-map) *ORGTRELLO/CHECKLIST-LEVEL*)
+             ((orgtrello-data/entity-checked entity-map) *ORGTRELLO/ITEM-LEVEL*)
              (t nil)))
 
 (defvar *ORGTRELLO/DATA-MAP-KEYWORDS* (orgtrello-hash/make-properties `((url            . :url)
@@ -211,7 +211,7 @@
   "Merge trello and org item together. If trello-item is null, return the org-item"
   (if trello-item
       (let ((org-item-to-merge (orgtrello-hash/init-map-from org-item))) ;; merge
-        (orgtrello-data/put-entity-level *ITEM-LEVEL*            org-item-to-merge)
+        (orgtrello-data/put-entity-level *ORGTRELLO/ITEM-LEVEL*            org-item-to-merge)
         (orgtrello-data/put-entity-id    (orgtrello-data/entity-id trello-item)   org-item-to-merge)
         (orgtrello-data/put-entity-name  (orgtrello-data/entity-name trello-item) org-item-to-merge)
         (-> trello-item
@@ -232,7 +232,7 @@
   "Merge trello and org checklist together. If trello-checklist is null, return org-checklist."
   (if trello-checklist
       (->> (orgtrello-hash/init-map-from org-checklist)
-        (orgtrello-data/put-entity-level *CHECKLIST-LEVEL*)
+        (orgtrello-data/put-entity-level *ORGTRELLO/CHECKLIST-LEVEL*)
         (orgtrello-data/put-entity-name (orgtrello-data/entity-name trello-checklist))
         (orgtrello-data/put-entity-id (orgtrello-data/entity-id trello-checklist)))
     org-checklist))
@@ -283,7 +283,7 @@
                                          (orgtrello-data/--labels-hash-to-tags (orgtrello-data/entity-labels trello-card))
                                          (orgtrello-data/entity-tags org-card)))
         (orgtrello-data/put-entity-comments(orgtrello-data/entity-comments trello-card))
-        (orgtrello-data/put-entity-level *CARD-LEVEL*)
+        (orgtrello-data/put-entity-level *ORGTRELLO/CARD-LEVEL*)
         (orgtrello-data/put-entity-id (orgtrello-data/entity-id trello-card))
         (orgtrello-data/put-entity-name (orgtrello-data/entity-name trello-card))
         (orgtrello-data/put-entity-keyword (-> trello-card
