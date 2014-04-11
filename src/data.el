@@ -48,6 +48,7 @@
 (defun orgtrello-data/entity-comment-id   (entity) (orgtrello-data/gethash-data :comment-id   entity))
 (defun orgtrello-data/entity-comment-text (entity) (orgtrello-data/gethash-data :comment-text entity))
 (defun orgtrello-data/entity-comment-user (entity) (orgtrello-data/gethash-data :comment-user entity))
+(defun orgtrello-data/entity-color        (entity) (orgtrello-data/gethash-data :color        entity))
 
 (defun orgtrello-data/entity-method (query-map) (orgtrello-data/gethash-data :method query-map))
 (defun orgtrello-data/entity-uri    (query-map) (orgtrello-data/gethash-data :uri    query-map))
