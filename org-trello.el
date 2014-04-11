@@ -627,9 +627,11 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
   (gethash id entities-hash))
 
 (defun orgtrello-data/--compute-state-generic (state list-state)
-  "Computing generic."
+  "Generic computation of a list depending on the state. If state is \"complete\" or \"DONE\", then the first element of the list is returned, otherwise the second."
   (if (or (string= "complete" state)
-          (string= *ORGTRELLO-DONE* state)) (car list-state) (cadr list-state)))
+          (string= *ORGTRELLO-DONE* state))
+      (car list-state)
+    (cadr list-state)))
 
 (defun orgtrello-data/--users-from (string-users)
   "Compute the users name from the comma separated value in string."
