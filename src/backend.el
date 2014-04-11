@@ -74,10 +74,7 @@
 ;; FIXME find an already existing implementation.
 (defun orgtrello-backend/--add-to-last-pos (value list)
   "Adding the value to the list in last position."
-  (--> list
-    (reverse it)
-    (cons value it)
-    (reverse it)))
+  (->> list reverse (cons value) reverse))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-backend loaded!")
 

@@ -1114,9 +1114,10 @@ This is a list with the following elements:
                                    orgtrello-data/entity-method
                                    orgtrello-query/--dispatch-http-query)))
     (if sync
-        (progn ;; synchronous request
-          (puthash :sync t query-map)
-          (request-response-data (funcall dispatch-http-query-fn server query-map success-callback error-callback authentication-p)))
+        (--> query-map
+          (orgtrello-data/put-entity-sync t it)
+          (funcall dispatch-http-query-fn server it success-callback error-callback authentication-p)
+          (request-response-data it))
       (funcall dispatch-http-query-fn server query-map success-callback error-callback authentication-p))))
 
 (defun orgtrello-query/http-trello (query-map &optional sync success-callback error-callback)
@@ -1202,10 +1203,7 @@ This is a list with the following elements:
 ;; FIXME find an already existing implementation.
 (defun orgtrello-backend/--add-to-last-pos (value list)
   "Adding the value to the list in last position."
-  (--> list
-    (reverse it)
-    (cons value it)
-    (reverse it)))
+  (->> list reverse (cons value) reverse))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-backend loaded!")
 

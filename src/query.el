@@ -102,9 +102,10 @@
                                    orgtrello-data/entity-method
                                    orgtrello-query/--dispatch-http-query)))
     (if sync
-        (progn ;; synchronous request
-          (puthash :sync t query-map)
-          (request-response-data (funcall dispatch-http-query-fn server query-map success-callback error-callback authentication-p)))
+        (--> query-map
+          (orgtrello-data/put-entity-sync t it)
+          (funcall dispatch-http-query-fn server it success-callback error-callback authentication-p)
+          (request-response-data it))
       (funcall dispatch-http-query-fn server query-map success-callback error-callback authentication-p))))
 
 (defun orgtrello-query/http-trello (query-map &optional sync success-callback error-callback)
