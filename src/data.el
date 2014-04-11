@@ -88,6 +88,7 @@
 (defun orgtrello-data/put-entity-comments     (value entity)     (orgtrello-data/puthash-data :comments     value entity))
 (defun orgtrello-data/put-entity-labels       (value entity)     (orgtrello-data/puthash-data :labels       value entity))
 (defun orgtrello-data/put-entity-tags         (value entity)     (orgtrello-data/puthash-data :tags         value entity))
+(defun orgtrello-data/put-entity-keyword      (value entity)     (orgtrello-data/puthash-data :keyword      value entity))
 (defun orgtrello-data/put-entity-comment-id   (value entity)     (orgtrello-data/puthash-data :comment-id   value entity))
 (defun orgtrello-data/put-entity-comment-text (value entity)     (orgtrello-data/puthash-data :comment-text value entity))
 (defun orgtrello-data/put-entity-comment-user (value entity)     (orgtrello-data/puthash-data :comment-user value entity))

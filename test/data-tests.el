@@ -568,6 +568,7 @@
   (expect t (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:comments     :value)) (orgtrello-data/put-entity-comments     :value (orgtrello-hash/empty-hash))))
   (expect t (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:labels       :value)) (orgtrello-data/put-entity-labels       :value (orgtrello-hash/empty-hash))))
   (expect t (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:tags         :value)) (orgtrello-data/put-entity-tags         :value (orgtrello-hash/empty-hash))))
+  (expect t (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:keyword      :value)) (orgtrello-data/put-entity-keyword      :value (orgtrello-hash/empty-hash))))
   (expect t (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:comment-id   :value)) (orgtrello-data/put-entity-comment-id   :value (orgtrello-hash/empty-hash))))
   (expect t (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:comment-text :value)) (orgtrello-data/put-entity-comment-text :value (orgtrello-hash/empty-hash))))
   (expect t (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:comment-user :value)) (orgtrello-data/put-entity-comment-user :value (orgtrello-hash/empty-hash))))
