@@ -560,7 +560,7 @@
   (expect t (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:buffername   :value)) (orgtrello-data/put-entity-buffername   :value (orgtrello-hash/empty-hash))))
   (expect t (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:checked      :value)) (orgtrello-data/put-entity-checked      :value (orgtrello-hash/empty-hash))))
   (expect t (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:due          :value)) (orgtrello-data/put-entity-due          :value (orgtrello-hash/empty-hash))))
-  (expect t (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:id           :value)) (orgtrello-data/put-entity-id-or-marker :value (orgtrello-hash/empty-hash))))
+  (expect t (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:id           :value)) (orgtrello-data/put-entity-id           :value (orgtrello-hash/empty-hash))))
   (expect t (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:level        :value)) (orgtrello-data/put-entity-level        :value (orgtrello-hash/empty-hash))))
   (expect t (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:closed       :value)) (orgtrello-data/put-entity-closed       :value (orgtrello-hash/empty-hash))))
   (expect t (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:callback     :value)) (orgtrello-data/put-entity-callback     :value (orgtrello-hash/empty-hash))))

@@ -377,7 +377,7 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
 (defun orgtrello-data/put-entity-buffername   (value entity)     (orgtrello-data/puthash-data :buffername   value entity))
 (defun orgtrello-data/put-entity-checked      (value entity)     (orgtrello-data/puthash-data :checked      value entity))
 (defun orgtrello-data/put-entity-due          (value entity)     (orgtrello-data/puthash-data :due          value entity))
-(defun orgtrello-data/put-entity-id-or-marker (value entity)     (orgtrello-data/puthash-data :id           value entity))
+(defun orgtrello-data/put-entity-id           (value entity)     (orgtrello-data/puthash-data :id           value entity))
 (defun orgtrello-data/put-entity-level        (value entity)     (orgtrello-data/puthash-data :level        value entity))
 (defun orgtrello-data/put-entity-closed       (value entity)     (orgtrello-data/puthash-data :closed       value entity))
 (defun orgtrello-data/put-entity-callback     (value entity)     (orgtrello-data/puthash-data :callback     value entity))
