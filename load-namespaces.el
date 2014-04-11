@@ -6,8 +6,6 @@
   "Compute the full file path"
   (format "%s/%s" *org-trello-dir* filename))
 
-(defvar *org-trello-namespaces-files* (org-trello/full-file "namespaces.el") "Expand file so that we could use it directly with interactive command to reload code.")
-
 (defun org-trello/load-ns (current-ns-file) "Load the current namespace file."
   (message "org-trello file: '%s' loading..." current-ns-file)
   (with-temp-file current-ns-file
@@ -22,7 +20,8 @@
 (defun org-trello/dev-load-namespaces ()
   "Load the namespace with interactive command"
   (interactive)
-  (mapc 'load-file `(,*org-trello-namespaces-files* ,(org-trello/full-file "src/dev.el")))
+  ;; load the namespaces.el files references the namespaces from which generate the org-trello.el + load the src/dev.el namespace for some dev tools
+  (mapc 'load-file `(,(org-trello/full-file "namespaces.el") ,(org-trello/full-file "src/dev.el")))
   (org-trello/load-namespaces *ORG-TRELLO-FILES*))
 
 (org-trello/dev-load-namespaces)
