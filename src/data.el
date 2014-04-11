@@ -259,7 +259,7 @@
 (defun orgtrello-data/--labels-hash-to-tags (labels)
   "Given a hash map with :labels entry, return a tag string joined by : separator."
   (when labels
-    (orgtrello-data/--labels-to-tags (--map (gethash :color it) labels))))
+    (orgtrello-data/--labels-to-tags (mapcar 'orgtrello-data/entity-color labels))))
 
 (defun orgtrello-data/--from-tags-to-list (tags)
   "Given a : string separated string, return a list of non empty string."
