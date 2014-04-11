@@ -121,10 +121,6 @@
     (s-replace "[ ]" "[]")
     (s-split " ")))
 
-(defun orgtrello-cbx/--list-is-checkbox-p (l)
-  "Is this a checkbox?"
-  (string= "-" (car (--drop-while (string= "" it) l))))
-
 (defun orgtrello-cbx/--retrieve-status (l)
   "Given a list of metadata, return the status"
   (car (--drop-while (not (or (string= "[]" it)
