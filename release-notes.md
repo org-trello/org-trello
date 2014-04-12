@@ -1,3 +1,12 @@
+# 0.4.2
+
+- [X] Refactoring - Remove dead code
+- [X] Refactoring - Remove duplicated code already existing in dependency library
+- [X] Improve - Fold all entries when sync full file from trello is done
+- [X] Improve loading org-trello namespaces for dev purposes
+- [X] Version
+- [X] Release notes
+
 # 0.4.1.1
 
 - [X] Remove non interactive commands

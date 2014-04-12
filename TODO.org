@@ -989,13 +989,13 @@ CLOSED: [2014-04-09 Wed 20:31]
 - [X] Use cask to make the packaging and remove old personal routines
 - [X] Version
 - [X] Release notes
-* IN-PROGRESS 0.4.2 [83%]
+* IN-PROGRESS 0.4.2 [100%]
 - [X] Refactoring - Remove dead code
 - [X] Refactoring - Remove duplicated code already existing in dependency library
 - [X] Improve - Fold all entries when sync full file from trello is done
 - [X] Improve loading org-trello namespaces for dev purposes
 - [X] Version
-- [ ] Release
+- [X] Release notes
 * TODO 0.4.x [0%]
 - [ ] Improve sync request policy - https://github.com/org-trello/org-trello/issues/58
 - [ ] Use active region - https://github.com/org-trello/org-trello/issues/130
