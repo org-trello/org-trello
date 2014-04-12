@@ -15,9 +15,6 @@
   (expect :comments         (gethash :comments       (orgtrello-hash/make-hash-org "1,2,3" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org" :desc :comments :tags)))
   (expect :tags             (gethash :tags           (orgtrello-hash/make-hash-org "1,2,3" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org" :desc :comments :tags))))
 
-(expectations (desc "orgtrello-hash/key")
-              (expect ":key:" (orgtrello-hash/key "key")))
-
 (expectations (desc "orgtrello-hash/make-hierarchy")
  (expect :current (gethash :current (orgtrello-hash/make-hierarchy :current)))
  (expect nil (gethash :parent (orgtrello-hash/make-hierarchy :current)))
@@ -42,28 +39,28 @@
   (expect :ok                                 (-> (orgtrello-hash/make-hash-org :users 1 :keyword "some name" :id :due :position :buffer-name :desc :comments :tags)
                                                   orgtrello-hash/make-hierarchy
                                                   orgtrello-controller/--mandatory-name-ok-p))
-  (expect *ERROR-SYNC-CARD-MISSING-NAME*      (-> (orgtrello-hash/make-hash-org :users 1 :keyword "" :id :due :position :buffer-name :desc :comments :tags)
+  (expect *ORGTRELLO/ERROR-SYNC-CARD-MISSING-NAME*      (-> (orgtrello-hash/make-hash-org :users 1 :keyword "" :id :due :position :buffer-name :desc :comments :tags)
                                                   orgtrello-hash/make-hierarchy
                                                   orgtrello-controller/--mandatory-name-ok-p))
-  (expect *ERROR-SYNC-CARD-MISSING-NAME*      (-> (orgtrello-hash/make-hash-org :users 1 :keyword nil :id :due :position :buffer-name :desc :comments :tags)
+  (expect *ORGTRELLO/ERROR-SYNC-CARD-MISSING-NAME*      (-> (orgtrello-hash/make-hash-org :users 1 :keyword nil :id :due :position :buffer-name :desc :comments :tags)
                                                   orgtrello-hash/make-hierarchy
                                                   orgtrello-controller/--mandatory-name-ok-p))
   (expect :ok                                 (-> (orgtrello-hash/make-hash-org :users 2 :keyword "some name" :id :due :position :buffer-name :desc :comments :tags)
                                                   orgtrello-hash/make-hierarchy
                                                   orgtrello-controller/--mandatory-name-ok-p))
-  (expect *ERROR-SYNC-CHECKLIST-MISSING-NAME* (-> (orgtrello-hash/make-hash-org :users 2 :keyword "" :id :due :position :buffer-name :desc :comments :tags)
+  (expect *ORGTRELLO/ERROR-SYNC-CHECKLIST-MISSING-NAME* (-> (orgtrello-hash/make-hash-org :users 2 :keyword "" :id :due :position :buffer-name :desc :comments :tags)
                                                   orgtrello-hash/make-hierarchy
                                                   orgtrello-controller/--mandatory-name-ok-p))
-  (expect *ERROR-SYNC-CHECKLIST-MISSING-NAME* (-> (orgtrello-hash/make-hash-org :users 2 :keyword nil :id :due :position :buffer-name :desc :comments :tags)
+  (expect *ORGTRELLO/ERROR-SYNC-CHECKLIST-MISSING-NAME* (-> (orgtrello-hash/make-hash-org :users 2 :keyword nil :id :due :position :buffer-name :desc :comments :tags)
                                                   orgtrello-hash/make-hierarchy
                                                   orgtrello-controller/--mandatory-name-ok-p))
   (expect :ok                                 (-> (orgtrello-hash/make-hash-org :users 3 :keyword "some name" :id :due :position :buffer-name :desc :comments :tags)
                                                   orgtrello-hash/make-hierarchy
                                                   orgtrello-controller/--mandatory-name-ok-p))
-  (expect *ERROR-SYNC-ITEM-MISSING-NAME*      (-> (orgtrello-hash/make-hash-org :users 3 :keyword "" :id :due :position :buffer-name :desc :comments :tags)
+  (expect *ORGTRELLO/ERROR-SYNC-ITEM-MISSING-NAME*      (-> (orgtrello-hash/make-hash-org :users 3 :keyword "" :id :due :position :buffer-name :desc :comments :tags)
                                                   orgtrello-hash/make-hierarchy
                                                   orgtrello-controller/--mandatory-name-ok-p))
-  (expect *ERROR-SYNC-ITEM-MISSING-NAME*      (-> (orgtrello-hash/make-hash-org :users 3 :keyword nil :id :due :position :buffer-name :desc :comments :tags)
+  (expect *ORGTRELLO/ERROR-SYNC-ITEM-MISSING-NAME*      (-> (orgtrello-hash/make-hash-org :users 3 :keyword nil :id :due :position :buffer-name :desc :comments :tags)
                                                   orgtrello-hash/make-hierarchy
                                                   orgtrello-controller/--mandatory-name-ok-p)))
 

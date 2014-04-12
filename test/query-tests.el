@@ -3,8 +3,8 @@
 (require 'el-mock)
 
 (expectations (desc "orgtrello-query/--compute-url")
-  (expect (format "%s%s" *TRELLO-URL* "/uri")            (orgtrello-query/--compute-url *TRELLO-URL* "/uri"))
-  (expect (format "%s%s" *TRELLO-URL* "/uri/other")      (orgtrello-query/--compute-url *TRELLO-URL* "/uri/other"))
+  (expect (format "%s%s" *ORGTRELLO/TRELLO-URL* "/uri")            (orgtrello-query/--compute-url *ORGTRELLO/TRELLO-URL* "/uri"))
+  (expect (format "%s%s" *ORGTRELLO/TRELLO-URL* "/uri/other")      (orgtrello-query/--compute-url *ORGTRELLO/TRELLO-URL* "/uri/other"))
   (expect (format "some-server/uri/some/other")          (orgtrello-query/--compute-url "some-server" "/uri/some/other")))
 
 (expectations (desc "orgtrello-data/entity-* - 1")

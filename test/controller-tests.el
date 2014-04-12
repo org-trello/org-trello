@@ -31,9 +31,9 @@
                                                  (name . "testing board 3"))]))
          (hashtable-result (orgtrello-controller/--id-name entities))
          (hashtable-expected (make-hash-table :test 'equal)))
-    (puthash "id" "testing board" hashtable-expected)
-    (puthash "another-id" "testing board 2" hashtable-expected)
-    (puthash "yet-another-id" "testing board 3" hashtable-expected)
+    (orgtrello-data/puthash-data "id" "testing board" hashtable-expected)
+    (orgtrello-data/puthash-data "another-id" "testing board 2" hashtable-expected)
+    (orgtrello-data/puthash-data "yet-another-id" "testing board 3" hashtable-expected)
     (should (equal (gethash "id" hashtable-result) (gethash "id" hashtable-expected)))
     (should (equal (gethash "another-id" hashtable-result) (gethash "another-id" hashtable-expected)))
     (should (equal (gethash "yet-another-id" hashtable-result) (gethash "yet-another-id" hashtable-expected)))
@@ -51,33 +51,27 @@
                                                  (name . "testing board 3"))]))
          (hashtable-result (orgtrello-controller/--name-id entities))
          (hashtable-expected (make-hash-table :test 'equal)))
-    (puthash "testing board" "id" hashtable-expected)
-    (puthash "testing board 2" "another-id"  hashtable-expected)
-    (puthash "testing board 3" "yet-another-id"  hashtable-expected)
+    (orgtrello-data/puthash-data "testing board" "id" hashtable-expected)
+    (orgtrello-data/puthash-data "testing board 2" "another-id"  hashtable-expected)
+    (orgtrello-data/puthash-data "testing board 3" "yet-another-id"  hashtable-expected)
     (should (equal (gethash "testing board" hashtable-result) (gethash "testing board" hashtable-expected)))
     (should (equal (gethash "testing board 2" hashtable-result) (gethash "testing board 2" hashtable-expected)))
     (should (equal (gethash "testing board 3" hashtable-result) (gethash "testing board 3" hashtable-expected)))
     (should (equal (hash-table-count hashtable-result) (hash-table-count hashtable-expected)))))
-
-(expectations (desc "orgtrello-controller/--compute-state-from-keyword")
-  (expect 'none (orgtrello-controller/--compute-state-from-keyword ""))
-  (expect 'none (orgtrello-controller/--compute-state-from-keyword *ORGTRELLO-TODO*))
-  (expect 'done (orgtrello-controller/--compute-state-from-keyword *ORGTRELLO-DONE*))
-  (expect 'none (orgtrello-controller/--compute-state-from-keyword "IN")))
 
 (expectations (desc "orgtrello-marker-2a0b98e652ce6349a0659a7a8eeb3783ffe9a11a")
   (expect "orgtrello-marker-2a0b98e652ce6349a0659a7a8eeb3783ffe9a11a" (orgtrello-controller/compute-marker "buffername" "some-name" 1234))
   (expect "orgtrello-marker-6c59c5dcf6c83edaeb3f4923bfd929a091504bb3" (orgtrello-controller/compute-marker "some-other-buffername" "some-name" 4321)))
 
 (expectations (desc "orgtrello-controller/--card")
-              (expect 'orgtrello-controller/--card      (gethash *CARD-LEVEL* *MAP-DISPATCH-CREATE-UPDATE*))
-              (expect 'orgtrello-controller/--checklist (gethash *CHECKLIST-LEVEL* *MAP-DISPATCH-CREATE-UPDATE*))
-              (expect 'orgtrello-controller/--item      (gethash *ITEM-LEVEL* *MAP-DISPATCH-CREATE-UPDATE*)))
+              (expect 'orgtrello-controller/--card      (gethash *ORGTRELLO/CARD-LEVEL* *MAP-DISPATCH-CREATE-UPDATE*))
+              (expect 'orgtrello-controller/--checklist (gethash *ORGTRELLO/CHECKLIST-LEVEL* *MAP-DISPATCH-CREATE-UPDATE*))
+              (expect 'orgtrello-controller/--item      (gethash *ORGTRELLO/ITEM-LEVEL* *MAP-DISPATCH-CREATE-UPDATE*)))
 
 (expectations (desc "orgtrello-controller/--card-delete")
-              (expect 'orgtrello-controller/--card-delete      (gethash *CARD-LEVEL* *MAP-DISPATCH-DELETE*))
-              (expect 'orgtrello-controller/--checklist-delete (gethash *CHECKLIST-LEVEL* *MAP-DISPATCH-DELETE*))
-              (expect 'orgtrello-controller/--item-delete      (gethash *ITEM-LEVEL* *MAP-DISPATCH-DELETE*)))
+              (expect 'orgtrello-controller/--card-delete      (gethash *ORGTRELLO/CARD-LEVEL* *MAP-DISPATCH-DELETE*))
+              (expect 'orgtrello-controller/--checklist-delete (gethash *ORGTRELLO/CHECKLIST-LEVEL* *MAP-DISPATCH-DELETE*))
+              (expect 'orgtrello-controller/--item-delete      (gethash *ORGTRELLO/ITEM-LEVEL* *MAP-DISPATCH-DELETE*)))
 
 (expectations (desc "orgtrello-controller/--compute-user-properties")
   (expect t (hash-equal
@@ -148,11 +142,11 @@
  (expect "#+property: test value" (orgtrello-controller/compute-property "test" "value")))
 
 (expectations
-  (expect "complete" (orgtrello-controller/compute-state *ORGTRELLO-DONE*))
+  (expect "complete" (orgtrello-controller/compute-state *ORGTRELLO/DONE*))
   (expect "incomplete" (orgtrello-controller/compute-state "anything-else")))
 
 (expectations
-  (expect t   (orgtrello-controller/compute-check *ORGTRELLO-DONE*))
+  (expect t   (orgtrello-controller/compute-check *ORGTRELLO/DONE*))
   (expect nil (orgtrello-controller/compute-check "anything-else")))
 
 (expectations
@@ -223,17 +217,17 @@
 (expectations
  (expect :ok
          (with-mock
-          (mock (file-exists-p *CONFIG-FILE*) => t)
-          (mock (load *CONFIG-FILE*)          => t)
+          (mock (file-exists-p *ORGTRELLO/CONFIG-FILE*) => t)
+          (mock (load *ORGTRELLO/CONFIG-FILE*)          => t)
           (orgtrello-controller/load-keys)))
  (expect "Setup problem - Problem during credentials (consumer-key and the read/write access-token) loading - C-c o i or M-x org-trello/install-key-and-token"
    (with-mock
-     (mock (file-exists-p *CONFIG-FILE*) => nil)
+     (mock (file-exists-p *ORGTRELLO/CONFIG-FILE*) => nil)
      (orgtrello-controller/load-keys)))
  (expect "Setup problem - Problem during credentials (consumer-key and the read/write access-token) loading - C-c o i or M-x org-trello/install-key-and-token"
    (with-mock
-     (mock (file-exists-p *CONFIG-FILE*) => t)
-     (mock (load *CONFIG-FILE*)          => nil)
+     (mock (file-exists-p *ORGTRELLO/CONFIG-FILE*) => t)
+     (mock (load *ORGTRELLO/CONFIG-FILE*)          => nil)
      (orgtrello-controller/load-keys))))
 
 (expectations

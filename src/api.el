@@ -1,10 +1,9 @@
 (defun orgtrello-api/make-query (method uri &optional params)
   "Utility function to ease the creation of the map - wait, where are my clojure data again!?"
   (let ((h (orgtrello-hash/empty-hash)))
-    (puthash :method method h)
-    (puthash :uri    uri    h)
-    (if params (puthash :params params h))
-    h))
+    (->> (if params (orgtrello-data/put-entity-params params h) h)
+      (orgtrello-data/put-entity-method method)
+      (orgtrello-data/put-entity-uri uri))))
 
 (defun orgtrello-api/--deal-with-optional-value (optional-entry value entries)
   "Add the optional value depending on the entry. Return entries updated with value if entry, entries untouched otherwise."
@@ -56,10 +55,6 @@
   "'Close' the list with id list-id."
   (orgtrello-api/make-query "PUT" (format "/lists/%s/closed" list-id) '((value . t))))
 
-(defun orgtrello-api/get-list (list-id)
-  "Get a list by id"
-  (orgtrello-api/make-query "GET" (format "/lists/%s" list-id)))
-
 (defun orgtrello-api/add-list (name idBoard)
   "Add a list - the name and the board id are mandatory (so i say!)."
   (orgtrello-api/make-query "POST" "/lists/" `(("name" . ,name) ("idBoard" . ,idBoard))))
@@ -73,10 +68,6 @@
                                                                          (,labels . ("labels" . ,labels)))
                                                                        `(("name" . ,name)
                                                                          ("idList" . ,idList)))))
-
-(defun orgtrello-api/get-cards-from-list (list-id)
-  "List all the cards"
-  (orgtrello-api/make-query "GET" (format "/lists/%s/cards" list-id)))
 
 (defun orgtrello-api/move-card (card-id idList &optional name due id-members desc labels)
   "Move a card to another list - optional entries (name, due date, id-members, desc)"
@@ -95,10 +86,6 @@
 (defun orgtrello-api/update-checklist (checklist-id name)
   "Update the checklist's name"
   (orgtrello-api/make-query "PUT" (format "/checklists/%s" checklist-id) `(("name" . ,name))))
-
-(defun orgtrello-api/get-checklists (card-id)
-  "List the checklists of a card"
-  (orgtrello-api/make-query "GET" (format "/cards/%s/checklists" card-id)))
 
 (defun orgtrello-api/get-checklist (checklist-id &optional without-items)
   "Retrieve all the information from a checklist"
@@ -122,10 +109,6 @@
   (->> (orgtrello-api/--deal-with-optional-value state `("state" . ,state) `(("name" . ,name)))
     (orgtrello-api/make-query "PUT" (format "/cards/%s/checklist/%s/checkItem/%s" card-id checklist-id item-id))))
 
-(defun orgtrello-api/get-items (checklist-id)
-  "List the checklist items."
-  (orgtrello-api/make-query "GET" (format "/checklists/%s/checkItems/" checklist-id)))
-
 (defun orgtrello-api/get-item (checklist-id item-id)
   "List the checklist items."
   (orgtrello-api/make-query "GET" (format "/checklists/%s/checkItems/%s" checklist-id item-id) '(("fields" . "name,pos,state"))))
@@ -133,10 +116,6 @@
 (defun orgtrello-api/delete-item (checklist-id item-id)
   "Delete a item with id item-id"
   (orgtrello-api/make-query "DELETE" (format "/checklists/%s/checkItems/%s" checklist-id item-id)))
-
-(defun orgtrello-api/get-member (member-id)
-  "Retrieve the member by its identifier."
-  (orgtrello-api/make-query "GET" (format "/members/%s" member-id)))
 
 (defun orgtrello-api/get-me ()
   "Retrieve the current user's member informations."

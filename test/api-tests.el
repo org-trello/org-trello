@@ -43,18 +43,6 @@
   (expect nil               (gethash :params (orgtrello-api/delete-card :card-id))))
 
 (expectations
-  (desc "orgtrello-api/get-lists")
-  (expect "GET"                      (gethash :method (orgtrello-api/get-lists :board-id)))
-  (expect "/boards/:board-id/lists" (gethash :uri    (orgtrello-api/get-lists :board-id)))
-  (expect nil                       (gethash :params (orgtrello-api/get-lists :board-id))))
-
-(expectations
-  (desc "orgtrello-api/get-list")
-  (expect "GET"              (gethash :method (orgtrello-api/get-list :list-id)))
-  (expect "/lists/:list-id" (gethash :uri    (orgtrello-api/get-list :list-id)))
-  (expect nil               (gethash :params (orgtrello-api/get-list :list-id))))
-
-(expectations
   (desc "orgtrello-api/close-list")
   (expect "PUT"                     (gethash :method (orgtrello-api/close-list :list-id)))
   (expect "/lists/:list-id/closed" (gethash :uri    (orgtrello-api/close-list :list-id)))
@@ -135,12 +123,6 @@
   (expect '(("desc" . :description) ("idList" . :id-list)) (gethash :params (orgtrello-api/move-card :id-card :id-list nil nil nil :description))))
 
 (expectations
-  (desc "orgtrello-api/get-cards-from-list")
-  (expect "GET"                    (gethash :method (orgtrello-api/get-cards-from-list :list-id)))
-  (expect "/lists/:list-id/cards" (gethash :uri    (orgtrello-api/get-cards-from-list :list-id)))
-  (expect nil                     (gethash :params (orgtrello-api/get-cards-from-list :list-id))))
-
-(expectations
   (desc "orgtrello-api/add-checklist")
   (expect "POST"                          (gethash :method (orgtrello-api/add-checklist "id-card" "name-checklist")))
   (expect "/cards/id-card/checklists"    (gethash :uri    (orgtrello-api/add-checklist "id-card" "name-checklist")))
@@ -157,12 +139,6 @@
   (expect "DELETE"                     (gethash :method (orgtrello-api/delete-checklist :id-checklist)))
   (expect "/checklists/:id-checklist" (gethash :uri    (orgtrello-api/delete-checklist :id-checklist)))
   (expect nil                         (gethash :params (orgtrello-api/delete-checklist :id-checklist))))
-
-(expectations
-  (desc "orgtrello-api/get-checklists")
-  (expect "GET"                         (gethash :method (orgtrello-api/get-checklists :card-id)))
-  (expect "/cards/:card-id/checklists" (gethash :uri    (orgtrello-api/get-checklists :card-id)))
-  (expect nil                          (gethash :params (orgtrello-api/get-checklists :card-id))))
 
 (expectations
   (desc "orgtrello-api/get-checklist")
@@ -216,20 +192,10 @@
   (expect "/checklists/:checklist-id/checkItems/:item-id" (gethash :uri    (orgtrello-api/delete-item :checklist-id :item-id))))
 
 (expectations
-  (desc "orgtrello-api/get-items")
-  (expect "GET"                                   (gethash :method (orgtrello-api/get-items :checklist-id)))
-  (expect "/checklists/:checklist-id/checkItems/" (gethash :uri    (orgtrello-api/get-items :checklist-id))))
-
-(expectations
   (desc "orgtrello-api/get-item")
   (expect "GET"                                           (gethash :method (orgtrello-api/get-item :checklist-id :item-id)))
   (expect "/checklists/:checklist-id/checkItems/:item-id" (gethash :uri    (orgtrello-api/get-item :checklist-id :item-id)))
   (expect '(("fields" . "name,pos,state"))                (gethash :params (orgtrello-api/get-item :checklist-id :item-id))))
-
-(expectations
-  (desc "orgtrello-api/get-member")
-  (expect "GET"          (gethash :method (orgtrello-api/get-member :id)))
-  (expect "/members/:id" (gethash :uri (orgtrello-api/get-member :id))))
 
 (expectations
   (desc "orgtrello-api/get-me")
@@ -298,3 +264,9 @@
   (expect "POST"                             (gethash :method (orgtrello-api/add-card-comment :card-id "some comment text")))
   (expect "/cards/:card-id/actions/comments" (gethash :uri    (orgtrello-api/add-card-comment :card-id "some comment text")))
   (expect '(("text" . "some comment text"))  (gethash :params (orgtrello-api/add-card-comment :card-id "some comment text"))))
+
+(expectations
+ (desc "orgtrello-api/get-lists")
+ (expect "GET"                      (gethash :method (orgtrello-api/get-lists :board-id)))
+ (expect "/boards/:board-id/lists" (gethash :uri    (orgtrello-api/get-lists :board-id)))
+ (expect nil                       (gethash :params (orgtrello-api/get-lists :board-id))))

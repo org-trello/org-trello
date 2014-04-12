@@ -10,11 +10,9 @@
                      directory-files
                      length)))))) ;; . and .. are returned by default
 
-(defvar *ORGTRELLO-FILES* (let ((tmp (orgtrello-hash/empty-hash)))
-                            ;;                    url                                                  temp file            install destination
-                            (puthash :bootstrap `("http://getbootstrap.com/2.3.2/assets/bootstrap.zip" "/tmp/bootstrap.zip" ,(orgtrello-webadmin/--compute-root-static-files)) tmp)
-                            (puthash :jquery    `("http://code.jquery.com/jquery-2.0.3.min.js"         "/tmp/jquery.js"     ,(format "%s/js" (orgtrello-webadmin/--compute-root-static-files))) tmp)
-                            tmp))
+(defvar *ORGTRELLO/FILES* (->> (orgtrello-hash/empty-hash)
+                            (orgtrello-data/puthash-data :bootstrap `("http://getbootstrap.com/2.3.2/assets/bootstrap.zip" "/tmp/bootstrap.zip" ,(orgtrello-webadmin/--compute-root-static-files)))
+                            (orgtrello-data/puthash-data :jquery    `("http://code.jquery.com/jquery-2.0.3.min.js"         "/tmp/jquery.js"     ,(format "%s/js" (orgtrello-webadmin/--compute-root-static-files))))))
 
 (defun orgtrello-webadmin/--unzip-and-install (file dest)
   "Execute the unarchive command. Dependency on unzip on the system."
@@ -27,7 +25,7 @@
 
 (defun orgtrello-webadmin/--download-and-install-file (key-file)
   "Download the file represented by the parameter. Also, if the archive downloaded is a zip, unzip it."
-  (let* ((url-tmp-dest (gethash key-file *ORGTRELLO-FILES*))
+  (let* ((url-tmp-dest (gethash key-file *ORGTRELLO/FILES*))
          (url          (car  url-tmp-dest))
          (tmp-dest     (cadr url-tmp-dest))
          (final-dest   (caddr url-tmp-dest))
@@ -272,7 +270,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun orgtrello-webadmin/elnode-current-entity (http-con)
   "A basic display of the list of entities to scan."
-  (-> *ORGTRELLO-LEVELS*
+  (-> *ORGTRELLO/LEVELS*
     (orgtrello-webadmin/--list-entities 'scan-folder)
     nreverse
     (orgtrello-webadmin/--entities-as-html "icon-play" "icon-pause")
@@ -280,7 +278,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun orgtrello-webadmin/elnode-next-entities (http-con)
   "A basic display of the list of entities to scan."
-  (-> *ORGTRELLO-LEVELS*
+  (-> *ORGTRELLO/LEVELS*
     orgtrello-webadmin/--list-entities
     orgtrello-webadmin/--entities-as-html
     (orgtrello-webadmin/--response-html http-con)))
@@ -306,7 +304,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun orgtrello-webadmin/--delete-entity-with-id (id)
   "Remove the entity/file which match the id id."
-  (-if-let (entity-to-delete (->> *ORGTRELLO-LEVELS*
+  (-if-let (entity-to-delete (->> *ORGTRELLO/LEVELS*
                                orgtrello-webadmin/--list-entities
                                (--filter (string= id (orgtrello-data/entity-id it)))
                                first))
@@ -314,7 +312,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun orgtrello-webadmin/delete-entities! ()
   "Remove the entities/files."
-  (->> *ORGTRELLO-LEVELS*
+  (->> *ORGTRELLO/LEVELS*
     orgtrello-webadmin/--list-entities
     (--map (orgtrello-webadmin/--delete-entity-file! it))))
 
@@ -323,7 +321,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   (let ((id (elnode-http-mapping http-con 1)))
     (if (string= "" id) (orgtrello-webadmin/delete-entities!) (orgtrello-webadmin/--delete-entity-with-id id))))
 
-(defvar *ORGTRELLO-QUERY-APP-ROUTES-WEBADMIN*
+(defvar *ORGTRELLO/QUERY-APP-ROUTES-WEBADMIN*
   '(("^localhost//proxy/admin/entities/current/\\(.*\\)" . orgtrello-webadmin/elnode-current-entity)
     ("^localhost//proxy/admin/entities/next/\\(.*\\)" . orgtrello-webadmin/elnode-next-entities)
     ("^localhost//proxy/admin/entities/delete/\\(.*\\)" . orgtrello-webadmin/elnode-delete-entity)

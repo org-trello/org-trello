@@ -1,4 +1,4 @@
-(defconst *TRELLO-URL* "https://api.trello.com/1" "The needed prefix url for trello")
+(defconst *ORGTRELLO/TRELLO-URL* "https://api.trello.com/1" "The needed prefix url for trello")
 
 (defun orgtrello-query/--compute-url (server uri)
   "Compute the trello url from the given uri."
@@ -102,14 +102,15 @@
                                    orgtrello-data/entity-method
                                    orgtrello-query/--dispatch-http-query)))
     (if sync
-        (progn ;; synchronous request
-          (puthash :sync t query-map)
-          (request-response-data (funcall dispatch-http-query-fn server query-map success-callback error-callback authentication-p)))
+        (--> query-map
+          (orgtrello-data/put-entity-sync t it)
+          (funcall dispatch-http-query-fn server it success-callback error-callback authentication-p)
+          (request-response-data it))
       (funcall dispatch-http-query-fn server query-map success-callback error-callback authentication-p))))
 
 (defun orgtrello-query/http-trello (query-map &optional sync success-callback error-callback)
   "Query the trello api."
-  (orgtrello-query/http *TRELLO-URL* query-map sync success-callback error-callback 'with-authentication))
+  (orgtrello-query/http *ORGTRELLO/TRELLO-URL* query-map sync success-callback error-callback 'with-authentication))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-query loaded!")
 

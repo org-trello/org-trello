@@ -121,20 +121,6 @@
     (s-replace "[ ]" "[]")
     (s-split " ")))
 
-(defun orgtrello-cbx/--list-is-checkbox-p (l)
-  "Is this a checkbox?"
-  (string= "-" (car (--drop-while (string= "" it) l))))
-
-(defun orgtrello-cbx/--level (l)
-  "Given a list of strings, compute the level (starts at 2).
-String look like:
-- ('- '[X] 'call 'people '[4/4])
-- (' '  '- '[X] 'call 'people '[4/4]).
-To ease the computation, we consider level 4 if no - to start with, and to avoid missed typing, we consider level 2 if there is no space before the - and level 3 otherwise."
-  (if (orgtrello-cbx/--list-is-checkbox-p l)
-      (if (string= "-" (car l)) *CHECKLIST-LEVEL* *ITEM-LEVEL*)
-    *OUTOFBOUNDS-LEVEL*))
-
 (defun orgtrello-cbx/--retrieve-status (l)
   "Given a list of metadata, return the status"
   (car (--drop-while (not (or (string= "[]" it)
@@ -144,7 +130,7 @@ To ease the computation, we consider level 4 if no - to start with, and to avoid
 
 (defun orgtrello-cbx/--status (s)
   "Given a checklist status, return the TODO/DONE for org-trello to work."
-  (if (string= "[X]" s) *ORGTRELLO-DONE* *ORGTRELLO-TODO*))
+  (if (string= "[X]" s) *ORGTRELLO/DONE* *ORGTRELLO/TODO*))
 
 (defun orgtrello-cbx/--name (s status)
   "Retrieve the name of the checklist"
@@ -158,14 +144,14 @@ To ease the computation, we consider level 4 if no - to start with, and to avoid
 
 (defun orgtrello-cbx/--metadata-from-checklist (full-checklist)
   "Given a checklist string, extract the list of metadata"
-  (let* ((oc/--checklist-data   (orgtrello-cbx/--checkbox-data full-checklist))
-         (oc/--meta             (orgtrello-cbx/--org-split-data oc/--checklist-data))
-         (oc/--status-retrieved (orgtrello-cbx/--retrieve-status oc/--meta)))
-    (list nil (orgtrello-cbx/--status oc/--status-retrieved) nil (orgtrello-cbx/--name oc/--checklist-data oc/--status-retrieved) nil)))
+  (let* ((checklist-data   (orgtrello-cbx/--checkbox-data full-checklist))
+         (meta             (orgtrello-cbx/--org-split-data checklist-data))
+         (status-retrieved (orgtrello-cbx/--retrieve-status meta)))
+    (list nil (orgtrello-cbx/--status status-retrieved) nil (orgtrello-cbx/--name checklist-data status-retrieved) nil)))
 
 (defun orgtrello-cbx/--level! ()
   "Compute the levels from the current position (which is `bol`)"
-  (if (org-at-item-bullet-p) *CHECKLIST-LEVEL* *ITEM-LEVEL*))
+  (if (org-at-item-bullet-p) *ORGTRELLO/CHECKLIST-LEVEL* *ORGTRELLO/ITEM-LEVEL*))
 
 (defun orgtrello-cbx/org-checkbox-metadata! ()
   "Extract the metadata about the checklist - this is the symmetrical with `org-heading-components` but for the checklist.
@@ -189,9 +175,9 @@ This is a list with the following elements:
 (defun orgtrello-cbx/--org-up! (destination-level)
   "An internal function to get back to the current entry's parent - return the level found or nil if the level found is a card."
   (let ((current-level (orgtrello-cbx/--get-level (orgtrello-cbx/org-checkbox-metadata!))))
-    (cond ((= *CARD-LEVEL*      current-level) nil)
+    (cond ((= *ORGTRELLO/CARD-LEVEL*      current-level) nil)
           ((= destination-level current-level) destination-level)
-          ((= *CHECKLIST-LEVEL* current-level) (org-up-heading-safe))
+          ((= *ORGTRELLO/CHECKLIST-LEVEL* current-level) (org-up-heading-safe))
           (t                                   (progn
                                                  (forward-line -1)
                                                  (orgtrello-cbx/--org-up! destination-level))))))
@@ -234,15 +220,14 @@ This is a list with the following elements:
 (defun orgtrello-cbx/map-checkboxes (fn-to-execute)
   "Map over the current checkbox and sync them."
   (let ((level (orgtrello-buffer/current-level!)))
-    (when (= level *CHECKLIST-LEVEL*) (funcall fn-to-execute))
+    (when (= level *ORGTRELLO/CHECKLIST-LEVEL*) (funcall fn-to-execute))
     (save-excursion (orgtrello-cbx/--map-checkboxes level fn-to-execute)))) ;; then map over the next checkboxes and sync them
 
 (defun orgtrello-cbx/next-checklist-point! ()
   "Compute the next checklist position"
-  (let ((next-checklist-point (save-excursion (orgtrello-cbx/--goto-next-checkbox-with-same-level! *CHECKLIST-LEVEL*) (point))))
-    (if next-checklist-point
-        next-checklist-point
-      (orgtrello-cbx/compute-next-card-point!))))
+  (-if-let (next-checklist-point (save-excursion (orgtrello-cbx/--goto-next-checkbox-with-same-level! *ORGTRELLO/CHECKLIST-LEVEL*) (point)))
+      next-checklist-point
+    (orgtrello-cbx/compute-next-card-point!)))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-cbx loaded!")
 

@@ -2,13 +2,6 @@
 (require 'ert-expectations)
 (require 'el-mock)
 
-(expectations (desc "orgtrello-cbx/--level")
-  (expect 2 (orgtrello-cbx/--level '("-" "[X]" "call" "people" "[4/4]")))
-  (expect 3 (orgtrello-cbx/--level '("" "-" "[X]" "Peter")))
-  (expect 3 (orgtrello-cbx/--level '("" "" "-" "[X]" "Peter")))
-  (expect 3 (orgtrello-cbx/--level '("" "" "" "-" "[X]" "Peter")))
-  (expect 4 (orgtrello-cbx/--level '("" "" "" "" "" "Peter"))))
-
 (expectations (desc "orgtrello-cbx/--status")
   (expect "DONE" (orgtrello-cbx/--status"[X]"))
   (expect "TODO" (orgtrello-cbx/--status"[ ]"))
@@ -53,8 +46,8 @@
   (expect "call people [4/4]" (orgtrello-cbx/--name "  -[-] call people [4/4]"  "[-]")))
 
 (expectations (desc "orgtrello-cbx/--to-properties\\\":\\\"123\\\"}")
-  (expect "{\"orgtrello-id\":\"123\"}"                              (orgtrello-cbx/--to-properties `((,*ORGTRELLO-ID* . "123"))))
-  (expect "{\"orgtrello-id\":\"456\"}"                              (orgtrello-cbx/--to-properties `((,*ORGTRELLO-ID* . "123") (,*ORGTRELLO-ID* . "456"))))
+  (expect "{\"orgtrello-id\":\"123\"}"                              (orgtrello-cbx/--to-properties `((,*ORGTRELLO/ID* . "123"))))
+  (expect "{\"orgtrello-id\":\"456\"}"                              (orgtrello-cbx/--to-properties `((,*ORGTRELLO/ID* . "123") (,*ORGTRELLO/ID* . "456"))))
   (expect "{\"orgtrello-id\":\"def\",\"orgtrello-marker\":\"456\",\"orgtrello-id\":\"abc\"}"
     (replace-regexp-in-string ", " "," (orgtrello-cbx/--to-properties `(("orgtrello-id" . "abc") (orgtrello-marker . "456") (orgtrello-id . "def")))))
   (expect "{\"orgtrello-marker\":\"456\",\"orgtrello-id\":\"def\"}"
@@ -104,12 +97,6 @@
   (expect 'some-key (orgtrello-cbx/--key-to-search "some-key"))
   (expect 'some-key (orgtrello-cbx/--key-to-search 'some-key))
   (expect :some-key (orgtrello-cbx/--key-to-search :some-key)))
-
-(expectations (desc "orgtrello-cbx/--list-is-checkbox-p")
-  (expect nil (orgtrello-cbx/--list-is-checkbox-p '("1" "2" "3")))
-  (expect nil (orgtrello-cbx/--list-is-checkbox-p '("1" "2" "3" "-")))
-  (expect t   (orgtrello-cbx/--list-is-checkbox-p '("-" "1" "2" "3")))
-  (expect t   (orgtrello-cbx/--list-is-checkbox-p '("" "" "-" "1" "2" "3"))))
 
 (expectations (desc "orgtrello-cbx/--get-level")
   (expect 1 (orgtrello-cbx/--get-level '(1 2 3)))
