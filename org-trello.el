@@ -2872,6 +2872,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
        entities)
       (goto-char (point-min)) ;; go back to the beginning of file
       (org-sort-entries t ?o) ;; sort the entries on their keywords
+      (org-global-cycle '(4)) ;; fold all entries
       (save-buffer))))
 
 (defun orgtrello-controller/--cleanup-org-entries ()
