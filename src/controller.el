@@ -270,7 +270,7 @@
       (save-buffer))))
 
 (defun orgtrello-controller/--cleanup-org-entries ()
-  "Cleanup org-entries from the buffer (FIXME find a suiter way of merging data than removing them all and put them back)."
+  "Cleanup org-entries from the buffer."
   (goto-char (point-min))
   (outline-next-heading)
   (orgtrello-cbx/remove-overlays! (point-at-bol) (point-max))
@@ -282,10 +282,10 @@
                 (entities-from-org-buffer (orgtrello-buffer/compute-entities-from-org-buffer! buffername)))
     (function* (lambda (&key data &allow-other-keys) "Synchronize the buffer with the response data."
                  (orgtrello-log/msg *OT/TRACE* "proxy - response data: %S" data)
-                 (-> data                                                                 ;; compute merge between already sync'ed entries and the trello data
-                   orgtrello-backend/compute-full-cards-from-trello!                        ;; slow computation with network access
+                 (-> data                                                                  ;; compute merge between already sync'ed entries and the trello data
+                   orgtrello-backend/compute-full-cards-from-trello!                       ;; slow computation with network access
                    (orgtrello-data/merge-entities-trello-and-org entities-from-org-buffer) ;; slow merge computation
-                   ((lambda (entry) (orgtrello-controller/--cleanup-org-entries) entry))           ;; hack to clean the org entries just before synchronizing the buffer
+                   ((lambda (entry) (orgtrello-controller/--cleanup-org-entries) entry))   ;; hack to clean the org entries just before synchronizing the buffer
                    (orgtrello-controller/--sync-buffer-with-trello-data buffer-name)
                    (orgtrello-action/safe-wrap (orgtrello-log/msg *OT/INFO* "Synchronizing the trello and org data merge - done!")))))))
 
