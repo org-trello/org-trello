@@ -221,7 +221,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
     (td () ,(format "%s" (orgtrello-webadmin/--detail-entity *orgtrello-log/level* entity)))
     (td () ,(orgtrello-webadmin/--delete-action entity))))
 
-(defun orgtrello-webadmin/--list-entities-as-html (entities icon-array-nxt)
+(defun orgtrello-webadmin/entities-as-html (entities icon-array-nxt)
   "Given a list of entities, return as html data."
   (--map (orgtrello-webadmin/--entity it icon-array-nxt) entities))
 
@@ -237,7 +237,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
                 ;; first next running action
                 ,(orgtrello-webadmin/--entity (car entities) icon-array-run)
                 ;; next running actions
-                ,@(orgtrello-webadmin/--list-entities-as-html (cdr entities) icon-array-nxt))
+                ,@(orgtrello-webadmin/entities-as-html (cdr entities) icon-array-nxt))
       "None")))
 
 (defun orgtrello-webadmin/--response-html (data http-con)
@@ -259,27 +259,24 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
                    (funcall (compose-fn (cdr intern-funcs)) arg))
         arg))))
 
-(defun orgtrello-webadmin/--list-entities (levels &optional scan-flag)
+
+(defun orgtrello-webadmin/entities (levels &optional with-archive-flag)
   "Compute the actions into list."
-  (let* ((list-fns '(orgtrello-elnode/compute-entity-level-dir))
-         (scan-fns (if scan-flag (cons 'orgtrello-elnode/archived-scanning-dir list-fns) list-fns)) ;; build the list of functions to create the composed function
-         (composed-fn (compose-fn scan-fns)))
-    (--map
-     (orgtrello-proxy/parse-query (read (orgtrello-webadmin/--content-file it)))
-     (--mapcat (orgtrello-elnode/list-files (funcall composed-fn it)) levels))))
+  (let ((all-levels (concatenate 'list levels (when with-archive-flag (mapcar 'orgtrello-proxy/archive-key levels)))))
+    (--mapcat (orgtrello-db/get it *ORGTRELLO-PROXY/DB*) all-levels)))
 
 (defun orgtrello-webadmin/elnode-current-entity (http-con)
-  "A basic display of the list of entities to scan."
+  "A basic display of the current scanned entity."
   (-> *ORGTRELLO/LEVELS*
-    (orgtrello-webadmin/--list-entities 'scan-folder)
+    (orgtrello-webadmin/entities 'with-archives)
     nreverse
     (orgtrello-webadmin/--entities-as-html "icon-play" "icon-pause")
     (orgtrello-webadmin/--response-html http-con)))
 
 (defun orgtrello-webadmin/elnode-next-entities (http-con)
-  "A basic display of the list of entities to scan."
+  "A basic display of the list of the next entities to scan."
   (-> *ORGTRELLO/LEVELS*
-    orgtrello-webadmin/--list-entities
+    orgtrello-webadmin/entities
     orgtrello-webadmin/--entities-as-html
     (orgtrello-webadmin/--response-html http-con)))
 
@@ -305,7 +302,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 (defun orgtrello-webadmin/--delete-entity-with-id (id)
   "Remove the entity/file which match the id id."
   (-if-let (entity-to-delete (->> *ORGTRELLO/LEVELS*
-                               orgtrello-webadmin/--list-entities
+                               orgtrello-webadmin/entities
                                (--filter (string= id (orgtrello-data/entity-id it)))
                                first))
       (orgtrello-webadmin/--delete-entity-file! entity-to-delete)))
@@ -313,7 +310,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 (defun orgtrello-webadmin/delete-entities! ()
   "Remove the entities/files."
   (->> *ORGTRELLO/LEVELS*
-    orgtrello-webadmin/--list-entities
+    orgtrello-webadmin/entities
     (--map (orgtrello-webadmin/--delete-entity-file! it))))
 
 (defun orgtrello-webadmin/elnode-delete-entity (http-con)

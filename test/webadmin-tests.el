@@ -241,7 +241,7 @@
                                                    '(((:action . "create") (:name . "name 0"))
                                                      ((:action . "delete") (:name . "name 1")))) "icon-play" "icon-pause")))
 
-(expectations (desc "orgtrello-webadmin/--list-entities-as-html")
+(expectations (desc "orgtrello-webadmin/entities-as-html")
   (expect '((tr
              ((class . ""))
              (td nil
@@ -268,7 +268,7 @@
                    (type . "button")
                    (onclick . "deleteEntities('/proxy/admin/entities/delete/id2');")
                    (value . "x"))))))
-    (orgtrello-webadmin/--list-entities-as-html (mapcar 'orgtrello-hash/make-properties
+    (orgtrello-webadmin/entities-as-html (mapcar 'orgtrello-hash/make-properties
                                                         '(((:action . "action") (:id . "id") (:marker . "marker"))
                                                           ((:action . "action") (:id . "id2") (:marker . "marker2")))) "next")))
 
