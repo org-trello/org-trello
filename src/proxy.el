@@ -103,13 +103,8 @@
   (orgtrello-log/msg *OT/TRACE* "Proxy-producer - Request received. Generating entity file...")
   (let* ((query-map-wrapped    (orgtrello-proxy/--extract-trello-query http-con 'unhexify)) ;; wrapped query is mandatory
          (query-map-data       (orgtrello-proxy/parse-query query-map-wrapped))
-         (position             (orgtrello-data/entity-position query-map-data))          ;; position is mandatory
-         (buffer-name          (orgtrello-data/entity-buffername query-map-data))        ;; buffer-name is mandatory
-         (level                (orgtrello-data/entity-level query-map-data))
-         (root-dir             (orgtrello-elnode/compute-entity-level-dir level)))
-    ;; generate a file with the entity information
-    (with-temp-file (orgtrello-proxy/--compute-metadata-filename root-dir buffer-name position)
-      (insert (format "%S\n" query-map-wrapped)))
+         (level                (orgtrello-data/entity-level query-map-data)))
+    (orgtrello-db/put level query-map-wrapped *ORGTRELLO-PROXY/DB*)
     (orgtrello-proxy/response-ok http-con)))
 
 (defun orgtrello-proxy/--read-file-content (fPath)
