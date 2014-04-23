@@ -96,6 +96,8 @@
     (orgtrello-buffer/defensive-filename-from-buffername it)
     (format "%s%s-%s.el" root-dir it position)))
 
+(defvar *ORGTRELLO-PROXY/DB* (orgtrello-db/init) "Database reference to orgtrello-proxy")
+
 (defun orgtrello-proxy/--elnode-proxy-producer (http-con)
   "A handler which is an entity informations producer on files under the docroot/level-entities/"
   (orgtrello-log/msg *OT/TRACE* "Proxy-producer - Request received. Generating entity file...")
