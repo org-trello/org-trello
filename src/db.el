@@ -29,6 +29,12 @@
   "Given a list of keys, squash the different values for those keys."
   (--map (orgtrello-db/clear-key it db) keys))
 
+(defun orgtrello-db/clear-entity-with-id (keys id db)
+  "Clear some entities"
+  (--map (-if-let (entities (db-get it db))
+             (db-put key (-remove (lambda (entity) (string= id (orgtrello-data/entity-id entity)))  entities)))
+         keys))
+
 (defun orgtrello-db/copy (old-key new-key db)
   "Copy the old-key as new-key in the db"
   (db-put new-key (db-get old-key db) db))

@@ -345,6 +345,12 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
   "Given a list of keys, squash the different values for those keys."
   (--map (orgtrello-db/clear-key it db) keys))
 
+(defun orgtrello-db/clear-entity-with-id (keys id db)
+  "Clear some entities"
+  (--map (-if-let (entities (db-get it db))
+             (db-put key (-remove (lambda (entity) (string= id (orgtrello-data/entity-id entity)))  entities)))
+         keys))
+
 (defun orgtrello-db/copy (old-key new-key db)
   "Copy the old-key as new-key in the db"
   (db-put new-key (db-get old-key db) db))
@@ -2087,11 +2093,8 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun orgtrello-webadmin/--delete-entity-with-id (id)
   "Remove the entity/file which match the id id."
-  (-if-let (entity-to-delete (->> *ORGTRELLO/LEVELS*
-                               orgtrello-webadmin/entities
-                               (--filter (string= id (orgtrello-data/entity-id it)))
-                               first))
-      (orgtrello-webadmin/--delete-entity-file! entity-to-delete)))
+  ;; FIXME compute the level of the entity
+  (orgtrello-db/clear-entity-with-id (orgtrello-webadmin/keys *ORGTRELLO/LEVELS* 'with-archived-entities) id *ORGTRELLO-PROXY/DB*))
 
 (defun orgtrello-webadmin/delete-entities! ()
   "Remove the entities/files."

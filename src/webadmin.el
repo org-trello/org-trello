@@ -305,11 +305,8 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun orgtrello-webadmin/--delete-entity-with-id (id)
   "Remove the entity/file which match the id id."
-  (-if-let (entity-to-delete (->> *ORGTRELLO/LEVELS*
-                               orgtrello-webadmin/entities
-                               (--filter (string= id (orgtrello-data/entity-id it)))
-                               first))
-      (orgtrello-webadmin/--delete-entity-file! entity-to-delete)))
+  ;; FIXME compute the level of the entity
+  (orgtrello-db/clear-entity-with-id (orgtrello-webadmin/keys *ORGTRELLO/LEVELS* 'with-archived-entities) id *ORGTRELLO-PROXY/DB*))
 
 (defun orgtrello-webadmin/delete-entities! ()
   "Remove the entities/files."
