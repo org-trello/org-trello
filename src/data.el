@@ -13,7 +13,9 @@
 
 (defun orgtrello-data/entity-id (entity)
   "Dispatch to the rightful function to get the id"
-  (let ((id (orgtrello-data/entity-id-or-marker entity))) (when (orgtrello-data/id-p id) id)))
+  (let ((id (orgtrello-data/entity-id-or-marker entity)))
+    (when (orgtrello-data/id-p id)
+      id)))
 
 (defun orgtrello-data/entity-keyword (entity &optional default-value)
   "Retrieve the keyword from the entity."
