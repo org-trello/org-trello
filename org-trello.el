@@ -1624,7 +1624,7 @@ This is a list with the following elements:
                                                                                                          orgtrello-elnode/archived-scanning-dir
                                                                                                          orgtrello-elnode/list-files))))
 
-(defun orgtrello-proxy/--consumer-entity-files-hierarchically-and-do ()
+(defun orgtrello-proxy/--consumer-entity-sync-hierarchically-and-do ()
   "A handler to extract the entity informations from files (in order card, checklist, items)."
   (with-local-quit
     (dolist (l *ORGTRELLO/LEVELS*) (orgtrello-proxy/--deal-with-archived-files l))  ;; if archived file exists, get them back in the queue before anything else
@@ -1655,7 +1655,7 @@ This is a list with the following elements:
   (orgtrello-action/safe-wrap
    (progn
      (orgtrello-proxy/--timer-put-lock *ORGTRELLO/LOCK*)
-     (orgtrello-proxy/--consumer-entity-files-hierarchically-and-do))
+     (orgtrello-proxy/--consumer-entity-sync-hierarchically-and-do))
    (orgtrello-proxy/--timer-delete-lock *ORGTRELLO/LOCK*))
   ;; undo boundary, to make a unit of undo
   (undo-boundary))
