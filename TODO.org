@@ -997,15 +997,17 @@ CLOSED: [2014-04-12 Sat 08:51]
 - [X] Improve loading org-trello namespaces for dev purposes
 - [X] Version
 - [X] Release notes
-* IN-PROGRESS 0.4.3 [25%]
+* IN-PROGRESS 0.4.3 [20%]
 - [X] Prepare backlog
-- [-] Replace local back-end (file implementation) with a RAM database [16%]
+- [-] Replace local back-end (file implementation) with a RAM database [25%]
   - [X] Install 'db dependencies
+  - [X] Add db namespace in dev/test routine
   - [ ] Create an org-trello database
   - [ ] Replace serialization steps with the database writing implementation
   - [ ] Replace the deserialization steps with the database reading implementation
   - [ ] Simplify web admin page listing the remaining entities to make action on
   - [ ] Serialize database when org-trello is shut down (per buffer)
+  - [ ] Deserialize database when org-trello is started and merge with the existing one
 - [ ] Improve start/stop proxy policy (one proxy may sync multiple board)
 - [ ] Version
 - [ ] Release notes
