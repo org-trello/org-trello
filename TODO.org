@@ -999,12 +999,12 @@ CLOSED: [2014-04-12 Sat 08:51]
 - [X] Release notes
 * IN-PROGRESS 0.4.3 [20%]
 - [X] Prepare backlog
-- [-] Replace local back-end (file implementation) with a RAM database [50%]
+- [-] Replace local back-end (file implementation) with a RAM database [62%]
   - [X] Install 'db dependencies
   - [X] Add db namespace in dev/test routine
   - [X] Create an org-trello database
   - [X] Replace serialization steps (file writing) with the database writing implementation
-  - [ ] Replace the deserialization steps with the database reading implementation
+  - [X] Replace the deserialization steps with the database reading implementation
   - [ ] Simplify web admin page listing the remaining entities to make action on
   - [ ] Serialize database when org-trello is shut down (per buffer)
   - [ ] Deserialize database when org-trello is started and merge with the existing one
