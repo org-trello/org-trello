@@ -1,7 +1,8 @@
 (defun orgtrello-db/init ()
   "Initialize an empty database"
-  `(db-hash
-    :filename ,(format "%s/%s" *ORGTRELLO/CONFIG-DIR* "orgtrello.db.elisp")))
+  (db-make
+   `(db-hash
+     :filename ,(format "%s/%s" *ORGTRELLO/CONFIG-DIR* "orgtrello.db"))))
 
 (defun orgtrello-db/put (key value db)
   "Put the value at key in db. If value is already present at key, cons the value to the old value."
