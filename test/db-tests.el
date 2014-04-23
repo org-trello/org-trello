@@ -1,8 +1,11 @@
-(ert-deftest testing-orgtrello-db/put-get ()
-  "Testing put"
+(ert-deftest testing-orgtrello-db/put-pop-get-copy ()
+  "Testing put/pop/get/copy"
   (let ((db (db-make '(db-hash))))
     (should (equal '("some-value") (orgtrello-db/put "some-key" "some-value" db)))
     (should (equal '("some-value2" "some-value") (orgtrello-db/put "some-key" "some-value2" db)))
-    (should (equal "some-value2" (orgtrello-db/get "some-key" db)))
-    (should (equal '("some-value") (db-get "some-key" db)))
-    (should (equal nil (db-get "some-inexistant-key" db)))))
+    (should (equal "some-value2" (orgtrello-db/pop "some-key" db)))
+    (should (equal '("some-value") (orgtrello-db/get "some-key" db)))
+    (should (equal nil (db-get "some-inexistant-key" db)))
+    (orgtrello-db/copy "some-key" "some-new-key" db)
+    (should (equal '("some-value") (orgtrello-db/get "some-key" db)))
+    (should (equal '("some-value") (orgtrello-db/get "some-new-key" db)))))
