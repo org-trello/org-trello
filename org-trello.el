@@ -1648,7 +1648,7 @@ This is a list with the following elements:
   "Cleanup after the timer has been triggered."
   (orgtrello-action/delete-file! lock-file))
 
-(defun orgtrello-proxy/--consumer-lock-and-scan-entity-files-hierarchically-and-do ()
+(defun orgtrello-proxy/--consumer-lock-sync-entity-hierarchically-and-do ()
   "A handler to extract the entity informations from files (in order card, checklist, items)."
   (undo-boundary)
   ;; only one timer at a time
@@ -1679,7 +1679,7 @@ This is a list with the following elements:
   (orgtrello-action/msg-controls-or-actions-then-do
    "Scanning entities to sync"
    '(orgtrello-proxy/--check-network-connection orgtrello-proxy/--check-no-running-timer)
-   'orgtrello-proxy/--consumer-lock-and-scan-entity-files-hierarchically-and-do
+   'orgtrello-proxy/--consumer-lock-sync-entity-hierarchically-and-do
    nil ;; cannot save the buffer
    nil ;; do not need to reload the org-trello setup
    'do-not-display-log));; do no want to log

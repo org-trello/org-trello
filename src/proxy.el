@@ -383,7 +383,7 @@
   "Cleanup after the timer has been triggered."
   (orgtrello-action/delete-file! lock-file))
 
-(defun orgtrello-proxy/--consumer-lock-and-scan-entity-files-hierarchically-and-do ()
+(defun orgtrello-proxy/--consumer-lock-sync-entity-hierarchically-and-do ()
   "A handler to extract the entity informations from files (in order card, checklist, items)."
   (undo-boundary)
   ;; only one timer at a time
@@ -414,7 +414,7 @@
   (orgtrello-action/msg-controls-or-actions-then-do
    "Scanning entities to sync"
    '(orgtrello-proxy/--check-network-connection orgtrello-proxy/--check-no-running-timer)
-   'orgtrello-proxy/--consumer-lock-and-scan-entity-files-hierarchically-and-do
+   'orgtrello-proxy/--consumer-lock-sync-entity-hierarchically-and-do
    nil ;; cannot save the buffer
    nil ;; do not need to reload the org-trello setup
    'do-not-display-log));; do no want to log
@@ -430,7 +430,7 @@
 (defvar *ORGTRELLO/TIMER* nil "A timer run by elnode")
 
 (defun orgtrello-proxy/--elnode-timer (http-con)
-  "A process on elnode to trigger even regularly."
+  "A process on elnode to trigger regularly."
   (let* ((query-map     (-> http-con orgtrello-proxy/--extract-trello-query orgtrello-proxy/parse-query))
          (start-or-stop (orgtrello-data/entity-start query-map)))
     (if start-or-stop
