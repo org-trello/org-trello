@@ -999,7 +999,7 @@ CLOSED: [2014-04-12 Sat 08:51]
 - [X] Release notes
 * IN-PROGRESS 0.4.3 [20%]
 - [X] Prepare backlog
-- [-] Replace local back-end (file implementation) with a RAM database [80%]
+- [-] Replace local back-end (file implementation) with a RAM database [90%]
   - [X] Install 'db dependencies
   - [X] Add db namespace in dev/test routine
   - [X] Create an org-trello database
@@ -1008,7 +1008,7 @@ CLOSED: [2014-04-12 Sat 08:51]
   - [X] Simplify web admin page listing the remaining entities to make action on
   - [X] Native nothing to do - Serialize database when org-trello is shut down (per buffer)
   - [X] Native nothing to do - Deserialize database when org-trello is started and merge with the existing one
-  - [ ] Clean all the current running actions
+  - [X] Clean all the current running actions
   - [ ] Clean the current running action
 - [ ] Improve start/stop proxy policy (one proxy may sync multiple board)
 - [ ] Version

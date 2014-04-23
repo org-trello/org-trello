@@ -21,6 +21,14 @@
       (db-put key oldvl db)
       value-to-return)))
 
+(defun orgtrello-db/clear-key (key db)
+  "Given a key, squash to value to nil."
+  (db-put key nil db))
+
+(defun orgtrello-db/clear-keys (keys db)
+  "Given a list of keys, squash the different values for those keys."
+  (--map (orgtrello-db/clear-key it db) keys))
+
 (defun orgtrello-db/copy (old-key new-key db)
   "Copy the old-key as new-key in the db"
   (db-put new-key (db-get old-key db) db))

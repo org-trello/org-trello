@@ -337,6 +337,14 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
       (db-put key oldvl db)
       value-to-return)))
 
+(defun orgtrello-db/clear-key (key db)
+  "Given a key, squash to value to nil."
+  (db-put key nil db))
+
+(defun orgtrello-db/clear-keys (keys db)
+  "Given a list of keys, squash the different values for those keys."
+  (--map (orgtrello-db/clear-key it db) keys))
+
 (defun orgtrello-db/copy (old-key new-key db)
   "Copy the old-key as new-key in the db"
   (db-put new-key (db-get old-key db) db))
@@ -2021,7 +2029,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun orgtrello-webadmin/--elnode-admin (http-con)
   "A basic display of data"
-  (-> (orgtrello-webadmin/html "org-trello/proxy-admin" "Commiters" "Administration the running queries to trello")
+  (-> (orgtrello-webadmin/html "org-trello/proxy-admin" "Commiters" "Administer the running queries to Trello")
     (orgtrello-webadmin/--response-html  http-con)))
 
 (defun compose-fn (funcs)
@@ -2033,11 +2041,15 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
                    (funcall (compose-fn (cdr intern-funcs)) arg))
         arg))))
 
+(defun orgtrello-webadmin/keys (levels &optional with-archive-flag)
+  "Compute the keys of the db."
+  (concatenate 'list levels (when with-archive-flag (mapcar 'orgtrello-proxy/archive-key levels))))
 
 (defun orgtrello-webadmin/entities (levels &optional with-archive-flag)
   "Compute the actions into list."
-  (let ((all-levels (concatenate 'list levels (when with-archive-flag (mapcar 'orgtrello-proxy/archive-key levels)))))
-    (--mapcat (orgtrello-db/get it *ORGTRELLO-PROXY/DB*) all-levels)))
+  (->> levels
+    orgtrello-webadmin/keys
+    (--mapcat (orgtrello-db/get it *ORGTRELLO-PROXY/DB*))))
 
 (defun orgtrello-webadmin/elnode-current-entity (http-con)
   "A basic display of the current scanned entity."
@@ -2083,9 +2095,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun orgtrello-webadmin/delete-entities! ()
   "Remove the entities/files."
-  (->> *ORGTRELLO/LEVELS*
-    orgtrello-webadmin/entities
-    (--map (orgtrello-webadmin/--delete-entity-file! it))))
+  (orgtrello-db/clear-keys (orgtrello-webadmin/keys *ORGTRELLO/LEVELS* 'with-archived-entities) *ORGTRELLO-PROXY/DB*))
 
 (defun orgtrello-webadmin/elnode-delete-entity (http-con)
   "Deal with actions to do on 'action' (entities)."
