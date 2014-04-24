@@ -46,6 +46,8 @@
 
 (defconst *ORGTRELLO/ID* "orgtrello-id" "Key entry used for the trello identifier and the trello marker (the first sync).")
 
+(defconst *ORGTRELLO/BUFFER-NUMBER* "org-trello-buffer-number" "Key in the database referencing the number of org-trello buffer opened.")
+
 (defun org-trello/compute-url (url-without-base-uri)
   "An helper method to compute the uri to trello"
   (concat *ORGTRELLO/HTTPS* url-without-base-uri))

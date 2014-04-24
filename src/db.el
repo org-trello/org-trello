@@ -1,7 +1,6 @@
 (defun orgtrello-db/init ()
-  "Initialize an empty RAM database (if ~/.trello/orgtrello.db.elc exists, it will load from it."
-  (db-make
-   `(db-hash :from-filename ,(format "%s/%s" *ORGTRELLO/CONFIG-DIR* "orgtrello.db"))))
+  "Initialize a default RAM database (if ~/.trello/orgtrello.db.elc exists, it will load from it."
+  (db-make `(db-hash :from-filename ,(format "%s/%s" *ORGTRELLO/CONFIG-DIR* "orgtrello.db"))))
 
 (defun orgtrello-db/save! (db)
   "Flush the database to disk."
@@ -39,6 +38,26 @@
   (--map (-if-let (entities (db-get it db))
              (db-put key (-remove (lambda (entity) (string= id (orgtrello-data/entity-id entity)))  entities)))
          keys))
+
+(defun orgtrello-db/nb-buffers (db)
+  "Return the number of buffers."
+  (-if-let (v (db-get *ORGTRELLO/BUFFER-NUMBER* db)) v 0))
+
+(defun orgtrello-db/set-nb-buffers (v db)
+  "Set the number of buffers to a given value"
+  (db-put *ORGTRELLO/BUFFER-NUMBER* v db))
+
+(defun orgtrello-db/increment-buffer-size (db)
+  "Increment the number of current buffer."
+  (--> (orgtrello-db/nb-buffers db)
+    (+ 1 it)
+    (orgtrello-db/set-nb-buffers it db)))
+
+(defun orgtrello-db/decrement-buffer-size (db)
+  "Decrement the number of current buffer."
+  (--> (orgtrello-db/nb-buffers db)
+    (- it 1)
+    (orgtrello-db/set-nb-buffers it db)))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-db loaded!")
 

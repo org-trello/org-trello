@@ -27,20 +27,21 @@
   ;; and the timer
   (orgtrello-proxy/timer-start))
 
-(defun orgtrello-server/stop ()
+(defun orgtrello-server/stop (&optional force-stop)
   "Stopping the proxy."
   (orgtrello-log/msg *OT/TRACE* "Proxy-server stopping...")
   ;; flush the database to disk
   (orgtrello-db/save! *ORGTRELLO-SERVER/DB*)
-  ;; stop the timer
-  (orgtrello-proxy/timer-stop)
-  ;; then stop the proxy
-  (elnode-stop *ORGTRELLO/SERVER-PORT*)
+  (when (or force-stop (<= (orgtrello-db/nb-buffers *ORGTRELLO-SERVER/DB*) 0))
+    ;; stop the timer
+    (orgtrello-proxy/timer-stop)
+    ;; then stop the proxy
+    (elnode-stop *ORGTRELLO/SERVER-PORT*))
   (orgtrello-log/msg *OT/TRACE* "Proxy-server stopped!"))
 
 (defun orgtrello-server/reload ()
   "Reload the proxy server."
-  (orgtrello-server/stop)
+  (orgtrello-server/stop 'force-stop-server)
   ;; stop the default port (only useful if the user changed from the default port)
   (elnode-stop *ORGTRELLO/SERVER-DEFAULT-PORT*)
   (orgtrello-server/start))

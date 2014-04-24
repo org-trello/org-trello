@@ -186,6 +186,8 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
 
 (defconst *ORGTRELLO/ID* "orgtrello-id" "Key entry used for the trello identifier and the trello marker (the first sync).")
 
+(defconst *ORGTRELLO/BUFFER-NUMBER* "org-trello-buffer-number" "Key in the database referencing the number of org-trello buffer opened.")
+
 (defun org-trello/compute-url (url-without-base-uri)
   "An helper method to compute the uri to trello"
   (concat *ORGTRELLO/HTTPS* url-without-base-uri))
@@ -315,9 +317,8 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
 
 
 (defun orgtrello-db/init ()
-  "Initialize an empty RAM database (if ~/.trello/orgtrello.db.elc exists, it will load from it."
-  (db-make
-   `(db-hash :from-filename ,(format "%s/%s" *ORGTRELLO/CONFIG-DIR* "orgtrello.db"))))
+  "Initialize a default RAM database (if ~/.trello/orgtrello.db.elc exists, it will load from it."
+  (db-make `(db-hash :from-filename ,(format "%s/%s" *ORGTRELLO/CONFIG-DIR* "orgtrello.db"))))
 
 (defun orgtrello-db/save! (db)
   "Flush the database to disk."
@@ -355,6 +356,26 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
   (--map (-if-let (entities (db-get it db))
              (db-put key (-remove (lambda (entity) (string= id (orgtrello-data/entity-id entity)))  entities)))
          keys))
+
+(defun orgtrello-db/nb-buffers (db)
+  "Return the number of buffers."
+  (-if-let (v (db-get *ORGTRELLO/BUFFER-NUMBER* db)) v 0))
+
+(defun orgtrello-db/set-nb-buffers (v db)
+  "Set the number of buffers to a given value"
+  (db-put *ORGTRELLO/BUFFER-NUMBER* v db))
+
+(defun orgtrello-db/increment-buffer-size (db)
+  "Increment the number of current buffer."
+  (--> (orgtrello-db/nb-buffers db)
+    (+ 1 it)
+    (orgtrello-db/set-nb-buffers it db)))
+
+(defun orgtrello-db/decrement-buffer-size (db)
+  "Decrement the number of current buffer."
+  (--> (orgtrello-db/nb-buffers db)
+    (- it 1)
+    (orgtrello-db/set-nb-buffers it db)))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-db loaded!")
 
@@ -2149,20 +2170,21 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   ;; and the timer
   (orgtrello-proxy/timer-start))
 
-(defun orgtrello-server/stop ()
+(defun orgtrello-server/stop (&optional force-stop)
   "Stopping the proxy."
   (orgtrello-log/msg *OT/TRACE* "Proxy-server stopping...")
   ;; flush the database to disk
   (orgtrello-db/save! *ORGTRELLO-SERVER/DB*)
-  ;; stop the timer
-  (orgtrello-proxy/timer-stop)
-  ;; then stop the proxy
-  (elnode-stop *ORGTRELLO/SERVER-PORT*)
+  (when (or force-stop (<= (orgtrello-db/nb-buffers *ORGTRELLO-SERVER/DB*) 0))
+    ;; stop the timer
+    (orgtrello-proxy/timer-stop)
+    ;; then stop the proxy
+    (elnode-stop *ORGTRELLO/SERVER-PORT*))
   (orgtrello-log/msg *OT/TRACE* "Proxy-server stopped!"))
 
 (defun orgtrello-server/reload ()
   "Reload the proxy server."
-  (orgtrello-server/stop)
+  (orgtrello-server/stop 'force-stop-server)
   ;; stop the default port (only useful if the user changed from the default port)
   (elnode-stop *ORGTRELLO/SERVER-DEFAULT-PORT*)
   (orgtrello-server/start))
@@ -3684,8 +3706,12 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 (defun org-trello-mode-on-hook-fn (&optional partial-mode)
   "Actions to do when org-trello starts."
   (unless partial-mode
+    ;; install the bindings
     (org-trello/install-local-prefix-mode-keybinding! *ORGTRELLO/MODE-PREFIX-KEYBINDING*)
+    ;; start the server which does some initialization on its own
     (orgtrello-server/start)
+    ;; increment the number of buffers with org-trello mode on
+    (orgtrello-db/increment-buffer-size *ORGTRELLO-SERVER/DB*)
     ;; buffer-invisibility-spec
     (add-to-invisibility-spec '(org-trello-cbx-property)) ;; for an ellipsis (...) change to '(org-trello-cbx-property . t)
     ;; installing hooks
@@ -3702,7 +3728,11 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 (defun org-trello-mode-off-hook-fn (&optional partial-mode)
   "Actions to do when org-trello stops."
   (unless partial-mode
+    ;; remove the bindings when org-trello mode off
     (org-trello/remove-local-prefix-mode-keybinding! *ORGTRELLO/MODE-PREFIX-KEYBINDING*)
+    ;; decrement the number of buffers of 1
+    (orgtrello-db/decrement-buffer-size *ORGTRELLO-SERVER/DB*)
+    ;; stop the proxy server and webadmin
     (orgtrello-server/stop)
     ;; remove the invisible property names
     (remove-from-invisibility-spec '(org-trello-cbx-property)) ;; for an ellipsis (...) change to '(org-trello-cbx-property . t)

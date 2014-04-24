@@ -212,8 +212,12 @@
 (defun org-trello-mode-on-hook-fn (&optional partial-mode)
   "Actions to do when org-trello starts."
   (unless partial-mode
+    ;; install the bindings
     (org-trello/install-local-prefix-mode-keybinding! *ORGTRELLO/MODE-PREFIX-KEYBINDING*)
+    ;; start the server which does some initialization on its own
     (orgtrello-server/start)
+    ;; increment the number of buffers with org-trello mode on
+    (orgtrello-db/increment-buffer-size *ORGTRELLO-SERVER/DB*)
     ;; buffer-invisibility-spec
     (add-to-invisibility-spec '(org-trello-cbx-property)) ;; for an ellipsis (...) change to '(org-trello-cbx-property . t)
     ;; installing hooks
@@ -230,7 +234,11 @@
 (defun org-trello-mode-off-hook-fn (&optional partial-mode)
   "Actions to do when org-trello stops."
   (unless partial-mode
+    ;; remove the bindings when org-trello mode off
     (org-trello/remove-local-prefix-mode-keybinding! *ORGTRELLO/MODE-PREFIX-KEYBINDING*)
+    ;; decrement the number of buffers of 1
+    (orgtrello-db/decrement-buffer-size *ORGTRELLO-SERVER/DB*)
+    ;; stop the proxy server and webadmin
     (orgtrello-server/stop)
     ;; remove the invisible property names
     (remove-from-invisibility-spec '(org-trello-cbx-property)) ;; for an ellipsis (...) change to '(org-trello-cbx-property . t)
