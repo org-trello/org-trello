@@ -68,6 +68,7 @@ log.el            | Provide log facilities
 setup.el          | Main variable definition that permits internal org-trello functions customization
 hash.el           | Hash-map manipulation utilities
 action.el         | Higher-order functions helper
+db.el             | RAM Database abstraction
 data.el           | Internal org-trello data manipulation
 cbx.el            | Checkbox manipulation utilities
 api.el            | Trello API abstraction DSL
@@ -76,11 +77,11 @@ backend.el        | Deals with trello requests
 elnode.el         | Elnode utilities (common namespace between proxy.el and webadmin.el)
 proxy.el          | Proxy utilities - Namespace in charge of dealing with the trello requests
 webadmin.el       | Web admin front utilities. Namespace in charge of web admin interface
-server.el         | Main namespace that hides the webadmin and the proxy
+server.el         | Main namespace that hides the webadmin and the proxy (start/stop functionality)
 buffer.el         | Buffer manipulation functions
 input.el          | Text input functions
 controller.el     | Controller used by org-trello.el
-org-trello.el     | Main org-trello mode which defines interactive command and the mode to be used
+org-trello.el     | org-trello minor mode definition which defines interactive commands and the mode
 footer.el         | End of the org-trello packaging
 
 ## Loading
