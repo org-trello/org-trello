@@ -1,7 +1,7 @@
-(defvar *ORGTRELLO-SERVER/DB* nil "Database reference to orgtrello-proxy")
-(defvar *ORGTRELLO/SERVER-HOST* "localhost" "proxy host")
-(defvar *ORGTRELLO/SERVER-PORT* nil         "proxy port")
-(defvar *ORGTRELLO/SERVER-URL*  nil         "proxy url")
+(defvar *ORGTRELLO-SERVER/DB*   nil         "Database reference to orgtrello-proxy")
+(defvar *ORGTRELLO/SERVER-HOST* "localhost" "Proxy host")
+(defvar *ORGTRELLO/SERVER-PORT* nil         "Proxy port")
+(defvar *ORGTRELLO/SERVER-URL*  nil         "Proxy url")
 
 (defvar *ORGTRELLO/SERVER-DEFAULT-PORT* 9876 "Default proxy port") (setq *ORGTRELLO/SERVER-PORT* *ORGTRELLO/SERVER-DEFAULT-PORT*)
 
