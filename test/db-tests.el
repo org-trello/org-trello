@@ -16,8 +16,4 @@
     ;; get is read-only
     (should (equal '("some-value2" 3)               (orgtrello-db/get "some-key" db)))
     ;; if key is not found, nil is returned
-    (should (equal nil                              (orgtrello-db/get "some-inexistant-key" db)))
-    ;; we can copy key to new key
-    (orgtrello-db/copy "some-key" "some-new-key" db)
-    (should (equal '("some-value2" 3)               (orgtrello-db/get "some-key" db)))
-    (should (equal (orgtrello-db/get "some-key" db) (orgtrello-db/get "some-new-key" db)))))
+    (should (equal nil                              (orgtrello-db/get "some-inexistant-key" db)))))

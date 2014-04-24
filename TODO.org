@@ -997,7 +997,7 @@ CLOSED: [2014-04-12 Sat 08:51]
 - [X] Improve loading org-trello namespaces for dev purposes
 - [X] Version
 - [X] Release notes
-* IN-PROGRESS 0.4.3 [42%]
+* IN-PROGRESS 0.4.3 [50%]
 - [X] Prepare backlog
 - [X] Replace local back-end (file implementation) with a RAM database [100%]
   - [X] Install 'db dependencies
@@ -1014,6 +1014,7 @@ CLOSED: [2014-04-12 Sat 08:51]
   - [X] Make some refactoring
   - [X] Serialize database when org-trello is shut down (per buffer)
 - [X] Update README-dev.md about the new db namespace
+- [X] Remove some useless new code
 - [ ] Improve start/stop server policy (one server may sync multiple buffers/boards... and right now, not really taken into account)
 - [ ] Clean dead code from the implementation switch from implicit disk files db to RAM db
 - [ ] Version

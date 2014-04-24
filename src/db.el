@@ -40,10 +40,6 @@
              (db-put key (-remove (lambda (entity) (string= id (orgtrello-data/entity-id entity)))  entities)))
          keys))
 
-(defun orgtrello-db/copy (old-key new-key db)
-  "Copy the old-key as new-key in the db"
-  (db-put new-key (db-get old-key db) db))
-
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-db loaded!")
 
 
