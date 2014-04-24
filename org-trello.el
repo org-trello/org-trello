@@ -315,15 +315,20 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
 
 
 (defun orgtrello-db/init ()
-  "Initialize an empty database"
+  "Initialize an empty RAM database (if ~/.trello/orgtrello.db.elc exists, it will load from it."
   (db-make
-   `(db-hash
-     :filename ,(format "%s/%s" *ORGTRELLO/CONFIG-DIR* "orgtrello.db"))))
+   `(db-hash :from-filename ,(format "%s/%s" *ORGTRELLO/CONFIG-DIR* "orgtrello.db"))))
+
+(defun orgtrello-db/save! (db)
+  "Flush the database to disk."
+  (plist-put db :filename (format "%s/%s" *ORGTRELLO/CONFIG-DIR* "orgtrello.db")) ;; add the :filename property
+  (db-hash/save db)                                                               ;; flush to disk
+  (plist-put db :filename nil))                                                   ;; remove the :filename property
 
 (defun orgtrello-db/put (key value db)
-  "Put the value at key in db. If value is already present at key, cons the value to the old value."
+  "Put the value at key in db. If value is already present at key, put the value to the end of old value."
   (let* ((old-value (db-get key db))
-         (new-value (cons value old-value)))
+         (new-value (-snoc old-value value)))
     (db-put key new-value db)))
 
 (defun orgtrello-db/get (key db)
@@ -333,7 +338,7 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
 (defun orgtrello-db/pop (key db)
   "Get the value from value at key. This is destructive."
   (-when-let (oldvl (db-get key db))
-    (let ((value-to-return (pop oldvl)))
+    (let* ((value-to-return (pop oldvl)))
       (db-put key oldvl db)
       value-to-return)))
 
@@ -354,6 +359,10 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
 (defun orgtrello-db/copy (old-key new-key db)
   "Copy the old-key as new-key in the db"
   (db-put new-key (db-get old-key db) db))
+
+(orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-db loaded!")
+
+
 (defun orgtrello-data/merge-2-lists-without-duplicates (a-list b-list)
   "Merge 2 lists together (no duplicates)."
   (-> a-list
@@ -1403,15 +1412,13 @@ This is a list with the following elements:
     (orgtrello-buffer/defensive-filename-from-buffername it)
     (format "%s%s-%s.el" root-dir it position)))
 
-(defvar *ORGTRELLO-PROXY/DB* (orgtrello-db/init) "Database reference to orgtrello-proxy")
-
 (defun orgtrello-proxy/--elnode-proxy-producer (http-con)
   "A handler which is an entity informations producer on files under the docroot/level-entities/"
   (orgtrello-log/msg *OT/TRACE* "Proxy-producer - Request received. Generating entity file...")
   (let* ((query-map-wrapped    (orgtrello-proxy/--extract-trello-query http-con 'unhexify)) ;; wrapped query is mandatory
          (query-map-data       (orgtrello-proxy/parse-query query-map-wrapped))
          (level                (orgtrello-data/entity-level query-map-data)))
-    (orgtrello-db/put level query-map-data *ORGTRELLO-PROXY/DB*)
+    (orgtrello-db/put level query-map-data *ORGTRELLO-SERVER/DB*)
     (orgtrello-proxy/response-ok http-con)))
 
 (defun orgtrello-proxy/--read-file-content (fPath)
@@ -1538,7 +1545,7 @@ This is a list with the following elements:
 
 (defun orgtrello-proxy/--deal-with-entity-action (entity-data)
   "Compute the synchronization of an entity (retrieving latest information from buffer)"
-  (let* ((position    (orgtrello-data/entity-position (trace :entity-data entity-data)))   ;; position is mandatory
+  (let* ((position    (orgtrello-data/entity-position entity-data))   ;; position is mandatory
          (buffer-name (orgtrello-data/entity-buffername entity-data))    ;; buffer-name too
          (marker      (orgtrello-data/entity-id-or-marker entity-data))  ;; retrieve the id (which serves as a marker too)
          (level       (orgtrello-data/entity-level entity-data)))
@@ -1547,7 +1554,7 @@ This is a list with the following elements:
     (orgtrello-proxy/--safe-wrap-or-throw-error ;; will update via tag the trello id of the new persisted data (if needed)
      (save-excursion
        (when (orgtrello-proxy/--get-back-to-marker marker entity-data)
-         (orgtrello-db/put (orgtrello-proxy/archive-key level) entity-data *ORGTRELLO-PROXY/DB*) ;; keep an archived version
+         (orgtrello-db/put (orgtrello-proxy/archive-key level) entity-data *ORGTRELLO-SERVER/DB*) ;; keep an archived version
          (-> entity-data
            orgtrello-data/entity-action
            orgtrello-proxy/--dispatch-action
@@ -1612,7 +1619,7 @@ This is a list with the following elements:
   "Clean archived entity from model when done!"
   (-> level
     orgtrello-proxy/archive-key
-    (orgtrello-db/pop *ORGTRELLO-PROXY/DB*)))
+    (orgtrello-db/pop *ORGTRELLO-SERVER/DB*)))
 
 (defun orgtrello-proxy/--delete (entity-data entity-full-metadata)
   "Execute the entity deletion."
@@ -1635,7 +1642,7 @@ This is a list with the following elements:
 
 (defun orgtrello-proxy/--deal-with-entities-at-level (level)
   "Given a level, retrieve entity from this level and do some action on it with trello. Call again if it remains other entities."
-  (-when-let (entity (orgtrello-db/pop level *ORGTRELLO-PROXY/DB*))
+  (-when-let (entity (orgtrello-db/pop level *ORGTRELLO-SERVER/DB*))
     (orgtrello-proxy/--deal-with-entity-action entity) ;; deal with entity action
     (unless (orgtrello-proxy/--level-done-p level)     ;; if level is not done, call again for the same level
       (orgtrello-proxy/--deal-with-level level))))
@@ -1643,7 +1650,7 @@ This is a list with the following elements:
 (defun orgtrello-proxy/--level-done-p (level)
   "Does there remain some entities for the level specified?"
   (-> level
-    (orgtrello-db/get *ORGTRELLO-PROXY/DB*)
+    (orgtrello-db/get *ORGTRELLO-SERVER/DB*)
     null))
 
 (defun orgtrello-proxy/--level-inf-done-p (level)
@@ -2055,7 +2062,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   "Compute the actions into list."
   (->> levels
     orgtrello-webadmin/keys
-    (--mapcat (orgtrello-db/get it *ORGTRELLO-PROXY/DB*))))
+    (--mapcat (orgtrello-db/get it *ORGTRELLO-SERVER/DB*))))
 
 (defun orgtrello-webadmin/elnode-current-entity (http-con)
   "A basic display of the current scanned entity."
@@ -2094,11 +2101,11 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 (defun orgtrello-webadmin/--delete-entity-with-id (id)
   "Remove the entity/file which match the id id."
   ;; FIXME compute the level of the entity
-  (orgtrello-db/clear-entity-with-id (orgtrello-webadmin/keys *ORGTRELLO/LEVELS* 'with-archived-entities) id *ORGTRELLO-PROXY/DB*))
+  (orgtrello-db/clear-entity-with-id (orgtrello-webadmin/keys *ORGTRELLO/LEVELS* 'with-archived-entities) id *ORGTRELLO-SERVER/DB*))
 
 (defun orgtrello-webadmin/delete-entities! ()
   "Remove the entities/files."
-  (orgtrello-db/clear-keys (orgtrello-webadmin/keys *ORGTRELLO/LEVELS* 'with-archived-entities) *ORGTRELLO-PROXY/DB*))
+  (orgtrello-db/clear-keys (orgtrello-webadmin/keys *ORGTRELLO/LEVELS* 'with-archived-entities) *ORGTRELLO-SERVER/DB*))
 
 (defun orgtrello-webadmin/elnode-delete-entity (http-con)
   "Deal with actions to do on 'action' (entities)."
@@ -2117,6 +2124,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-webadmin loaded!")
 
 
+(defvar *ORGTRELLO-SERVER/DB* nil "Database reference to orgtrello-proxy")
 (defvar *ORGTRELLO/SERVER-HOST* "localhost" "proxy host")
 (defvar *ORGTRELLO/SERVER-PORT* nil         "proxy port")
 (defvar *ORGTRELLO/SERVER-URL*  nil         "proxy url")
@@ -2138,6 +2146,8 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   "Start the proxy."
   ;; update with the new port the user possibly changed
   (setq *ORGTRELLO/SERVER-URL* (format "http://%s:%d/proxy" *ORGTRELLO/SERVER-HOST* *ORGTRELLO/SERVER-PORT*))
+  ;; initialize the database
+  (setq *ORGTRELLO-SERVER/DB* (if *ORGTRELLO-SERVER/DB* *ORGTRELLO-SERVER/DB* (orgtrello-db/init)))
   ;; start the proxy
   (orgtrello-server/--start *ORGTRELLO/SERVER-PORT* *ORGTRELLO/SERVER-HOST*)
   ;; and the timer

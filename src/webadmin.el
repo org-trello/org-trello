@@ -267,7 +267,7 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   "Compute the actions into list."
   (->> levels
     orgtrello-webadmin/keys
-    (--mapcat (orgtrello-db/get it *ORGTRELLO-PROXY/DB*))))
+    (--mapcat (orgtrello-db/get it *ORGTRELLO-SERVER/DB*))))
 
 (defun orgtrello-webadmin/elnode-current-entity (http-con)
   "A basic display of the current scanned entity."
@@ -306,11 +306,11 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 (defun orgtrello-webadmin/--delete-entity-with-id (id)
   "Remove the entity/file which match the id id."
   ;; FIXME compute the level of the entity
-  (orgtrello-db/clear-entity-with-id (orgtrello-webadmin/keys *ORGTRELLO/LEVELS* 'with-archived-entities) id *ORGTRELLO-PROXY/DB*))
+  (orgtrello-db/clear-entity-with-id (orgtrello-webadmin/keys *ORGTRELLO/LEVELS* 'with-archived-entities) id *ORGTRELLO-SERVER/DB*))
 
 (defun orgtrello-webadmin/delete-entities! ()
   "Remove the entities/files."
-  (orgtrello-db/clear-keys (orgtrello-webadmin/keys *ORGTRELLO/LEVELS* 'with-archived-entities) *ORGTRELLO-PROXY/DB*))
+  (orgtrello-db/clear-keys (orgtrello-webadmin/keys *ORGTRELLO/LEVELS* 'with-archived-entities) *ORGTRELLO-SERVER/DB*))
 
 (defun orgtrello-webadmin/elnode-delete-entity (http-con)
   "Deal with actions to do on 'action' (entities)."

@@ -96,15 +96,13 @@
     (orgtrello-buffer/defensive-filename-from-buffername it)
     (format "%s%s-%s.el" root-dir it position)))
 
-(defvar *ORGTRELLO-PROXY/DB* nil "Database reference to orgtrello-proxy")
-
 (defun orgtrello-proxy/--elnode-proxy-producer (http-con)
   "A handler which is an entity informations producer on files under the docroot/level-entities/"
   (orgtrello-log/msg *OT/TRACE* "Proxy-producer - Request received. Generating entity file...")
   (let* ((query-map-wrapped    (orgtrello-proxy/--extract-trello-query http-con 'unhexify)) ;; wrapped query is mandatory
          (query-map-data       (orgtrello-proxy/parse-query query-map-wrapped))
          (level                (orgtrello-data/entity-level query-map-data)))
-    (orgtrello-db/put level query-map-data *ORGTRELLO-PROXY/DB*)
+    (orgtrello-db/put level query-map-data *ORGTRELLO-SERVER/DB*)
     (orgtrello-proxy/response-ok http-con)))
 
 (defun orgtrello-proxy/--read-file-content (fPath)
@@ -240,7 +238,7 @@
     (orgtrello-proxy/--safe-wrap-or-throw-error ;; will update via tag the trello id of the new persisted data (if needed)
      (save-excursion
        (when (orgtrello-proxy/--get-back-to-marker marker entity-data)
-         (orgtrello-db/put (orgtrello-proxy/archive-key level) entity-data *ORGTRELLO-PROXY/DB*) ;; keep an archived version
+         (orgtrello-db/put (orgtrello-proxy/archive-key level) entity-data *ORGTRELLO-SERVER/DB*) ;; keep an archived version
          (-> entity-data
            orgtrello-data/entity-action
            orgtrello-proxy/--dispatch-action
@@ -305,7 +303,7 @@
   "Clean archived entity from model when done!"
   (-> level
     orgtrello-proxy/archive-key
-    (orgtrello-db/pop *ORGTRELLO-PROXY/DB*)))
+    (orgtrello-db/pop *ORGTRELLO-SERVER/DB*)))
 
 (defun orgtrello-proxy/--delete (entity-data entity-full-metadata)
   "Execute the entity deletion."
@@ -328,7 +326,7 @@
 
 (defun orgtrello-proxy/--deal-with-entities-at-level (level)
   "Given a level, retrieve entity from this level and do some action on it with trello. Call again if it remains other entities."
-  (-when-let (entity (orgtrello-db/pop level *ORGTRELLO-PROXY/DB*))
+  (-when-let (entity (orgtrello-db/pop level *ORGTRELLO-SERVER/DB*))
     (orgtrello-proxy/--deal-with-entity-action entity) ;; deal with entity action
     (unless (orgtrello-proxy/--level-done-p level)     ;; if level is not done, call again for the same level
       (orgtrello-proxy/--deal-with-level level))))
@@ -336,7 +334,7 @@
 (defun orgtrello-proxy/--level-done-p (level)
   "Does there remain some entities for the level specified?"
   (-> level
-    (orgtrello-db/get *ORGTRELLO-PROXY/DB*)
+    (orgtrello-db/get *ORGTRELLO-SERVER/DB*)
     null))
 
 (defun orgtrello-proxy/--level-inf-done-p (level)

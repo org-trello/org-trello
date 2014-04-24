@@ -1,3 +1,4 @@
+(defvar *ORGTRELLO-SERVER/DB* nil "Database reference to orgtrello-proxy")
 (defvar *ORGTRELLO/SERVER-HOST* "localhost" "proxy host")
 (defvar *ORGTRELLO/SERVER-PORT* nil         "proxy port")
 (defvar *ORGTRELLO/SERVER-URL*  nil         "proxy url")
@@ -20,7 +21,7 @@
   ;; update with the new port the user possibly changed
   (setq *ORGTRELLO/SERVER-URL* (format "http://%s:%d/proxy" *ORGTRELLO/SERVER-HOST* *ORGTRELLO/SERVER-PORT*))
   ;; initialize the database
-  (setq *ORGTRELLO-PROXY/DB* (if *ORGTRELLO-PROXY/DB* *ORGTRELLO-PROXY/DB* (orgtrello-db/init)))
+  (setq *ORGTRELLO-SERVER/DB* (if *ORGTRELLO-SERVER/DB* *ORGTRELLO-SERVER/DB* (orgtrello-db/init)))
   ;; start the proxy
   (orgtrello-server/--start *ORGTRELLO/SERVER-PORT* *ORGTRELLO/SERVER-HOST*)
   ;; and the timer
