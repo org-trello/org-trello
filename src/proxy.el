@@ -97,8 +97,6 @@
     (format "%s%s-%s.el" root-dir it position)))
 
 (defvar *ORGTRELLO-PROXY/DB* nil "Database reference to orgtrello-proxy")
-;; init the db if need be
-(setq *ORGTRELLO-PROXY/DB* (if *ORGTRELLO-PROXY/DB* *ORGTRELLO-PROXY/DB* (orgtrello-db/init)))
 
 (defun orgtrello-proxy/--elnode-proxy-producer (http-con)
   "A handler which is an entity informations producer on files under the docroot/level-entities/"

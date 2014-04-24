@@ -19,6 +19,8 @@
   "Start the proxy."
   ;; update with the new port the user possibly changed
   (setq *ORGTRELLO/SERVER-URL* (format "http://%s:%d/proxy" *ORGTRELLO/SERVER-HOST* *ORGTRELLO/SERVER-PORT*))
+  ;; initialize the database
+  (setq *ORGTRELLO-PROXY/DB* (if *ORGTRELLO-PROXY/DB* *ORGTRELLO-PROXY/DB* (orgtrello-db/init)))
   ;; start the proxy
   (orgtrello-server/--start *ORGTRELLO/SERVER-PORT* *ORGTRELLO/SERVER-HOST*)
   ;; and the timer
