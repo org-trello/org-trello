@@ -2607,9 +2607,6 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   "Map fn-to-execute to a given entities with level level. fn-to-execute is a function without any parameter."
   (org-map-entries (lambda () (when (= level (orgtrello-buffer/current-level!)) (funcall fn-to-execute)))))
 
-(defconst *ORGTRELLO/SLASH-PATTERN* "/")
-(defconst *ORGTRELLO/DEFENSIVE-PATTERN* "!!!___orgtrello-defensive-pattern___!!!")
-
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-buffer loaded!")
 
 
