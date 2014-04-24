@@ -9,9 +9,6 @@
               (expect "entity name" (orgtrello-webadmin/--detail-entity 3 (orgtrello-hash/make-properties '((:name . "entity name")))))
               (expect "entity name" (gethash :name (orgtrello-webadmin/--detail-entity 5 (orgtrello-hash/make-properties '((:name . "entity name")))))))
 
-(expectations (desc "orgtrello-webadmin/--compute-filename-from-entity")
-              (expect (format "%sorg-trello/3/test.org-123.el" elnode-webserver-docroot) (orgtrello-webadmin/--compute-filename-from-entity (orgtrello-hash/make-properties '((:level . 3) (:buffername . "test.org") (:position . "123"))))))
-
 (expectations (desc "orgtrello-webadmin/--header-table")
   (expect '(tr nil (td nil) (td nil "Action") (td nil "Entity") (td nil "Delete")) (orgtrello-webadmin/--header-table)))
 

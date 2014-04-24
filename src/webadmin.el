@@ -287,10 +287,6 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
         (elnode-send-file http-con full-file)
       (elnode-send-404 http-con (format "Resource file '%s' not found!" full-file)))))
 
-(defun orgtrello-webadmin/--compute-filename-from-entity (entity)
-  "Compute the filename of a file given an entity."
-  (format "%s%s-%s.el" (orgtrello-elnode/compute-entity-level-dir (orgtrello-data/entity-level entity)) (orgtrello-data/entity-buffername entity) (orgtrello-data/entity-position entity)))
-
 (defun orgtrello-webadmin/--delete-entity-with-id (id)
   "Remove the entity/file which match the id id."
   ;; FIXME compute the level of the entity

@@ -2071,10 +2071,6 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
         (elnode-send-file http-con full-file)
       (elnode-send-404 http-con (format "Resource file '%s' not found!" full-file)))))
 
-(defun orgtrello-webadmin/--compute-filename-from-entity (entity)
-  "Compute the filename of a file given an entity."
-  (format "%s%s-%s.el" (orgtrello-elnode/compute-entity-level-dir (orgtrello-data/entity-level entity)) (orgtrello-data/entity-buffername entity) (orgtrello-data/entity-position entity)))
-
 (defun orgtrello-webadmin/--delete-entity-with-id (id)
   "Remove the entity/file which match the id id."
   ;; FIXME compute the level of the entity
@@ -2613,10 +2609,6 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defconst *ORGTRELLO/SLASH-PATTERN* "/")
 (defconst *ORGTRELLO/DEFENSIVE-PATTERN* "!!!___orgtrello-defensive-pattern___!!!")
-
-(defun orgtrello-buffer/defensive-filename-from-buffername (buffer-name)
-  "Compute a filename from a buffername with forbidden filename character"
-  (replace-regexp-in-string *ORGTRELLO/SLASH-PATTERN* *ORGTRELLO/DEFENSIVE-PATTERN* buffer-name))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-buffer loaded!")
 
