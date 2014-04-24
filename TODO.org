@@ -997,9 +997,9 @@ CLOSED: [2014-04-12 Sat 08:51]
 - [X] Improve loading org-trello namespaces for dev purposes
 - [X] Version
 - [X] Release notes
-* IN-PROGRESS 0.4.3 [16%]
+* IN-PROGRESS 0.4.3 [33%]
 - [X] Prepare backlog
-- [-] Replace local back-end (file implementation) with a RAM database [84%]
+- [X] Replace local back-end (file implementation) with a RAM database [100%]
   - [X] Install 'db dependencies
   - [X] Add db namespace in dev/test routine
   - [X] Create an org-trello database
@@ -1010,9 +1010,9 @@ CLOSED: [2014-04-12 Sat 08:51]
   - [X] Clean the current running action
   - [X] Fix some bad behaviors (bad order in db and http requests, write to disk at every actions in db, ...)
   - [X] Initialize the database
+  - [X] Deserialize database when org-trello is started and merge with the existing one (done with the initialization)
   - [X] Make some refactoring
-  - [ ] Serialize database when org-trello is shut down (per buffer)
-  - [ ] Deserialize database when org-trello is started and merge with the existing one
+  - [X] Serialize database when org-trello is shut down (per buffer)
 - [ ] Improve start/stop server policy (one server may sync multiple boards... and right now, not taken into account)
 - [ ] Clean dead code from the implementation from disk files to RAM db
 - [ ] Version

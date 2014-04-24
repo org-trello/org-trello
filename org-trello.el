@@ -2156,6 +2156,8 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 (defun orgtrello-server/stop ()
   "Stopping the proxy."
   (orgtrello-log/msg *OT/TRACE* "Proxy-server stopping...")
+  ;; flush the database to disk
+  (orgtrello-db/save! *ORGTRELLO-SERVER/DB*)
   ;; stop the timer
   (orgtrello-proxy/timer-stop)
   ;; then stop the proxy
