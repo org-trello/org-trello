@@ -1423,12 +1423,6 @@ This is a list with the following elements:
     (orgtrello-query/http-trello query-map sync (when standard-callback-fn (funcall standard-callback-fn buffer-name position name))) ;; callback-fn is not a callback, it creates one
     (orgtrello-proxy/response-ok http-con)))
 
-(defun orgtrello-proxy/--compute-metadata-filename (root-dir buffer-name position)
-  "Compute the metadata entity filename from a buffer-name"
-  (--> buffer-name
-    (orgtrello-buffer/defensive-filename-from-buffername it)
-    (format "%s%s-%s.el" root-dir it position)))
-
 (defun orgtrello-proxy/--elnode-proxy-producer (http-con)
   "A handler which is an entity informations producer on files under the docroot/level-entities/"
   (orgtrello-log/msg *OT/TRACE* "Proxy-producer - Request received. Generating entity file...")
@@ -1437,12 +1431,6 @@ This is a list with the following elements:
          (level                (orgtrello-data/entity-level query-map-data)))
     (orgtrello-db/put level query-map-data *ORGTRELLO-SERVER/DB*)
     (orgtrello-proxy/response-ok http-con)))
-
-(defun orgtrello-proxy/--read-file-content (fPath)
-  "Return a list of lines of a file at FPATH."
-  (with-temp-buffer
-    (insert-file-contents fPath)
-    (buffer-string)))
 
 (defun orgtrello-proxy/--update-buffer-to-save (buffer-name buffers-to-save)
   "Add the buffer-name to the list if not already present"
@@ -1518,14 +1506,6 @@ This is a list with the following elements:
                                                 (format "Newly entity '%s' with id '%s' synced!" entry-name entry-new-id)))))
                         (orgtrello-log/msg *OT/INFO* str-msg))))
                   (orgtrello-proxy/--cleanup-and-save-buffer-metadata level entry-buffer-name))))))
-
-(defun orgtrello-proxy/--archived-scanning-file (file)
-  "Given a filename, return its archived filename if we were to move such file."
-  (format "%s/%s" (orgtrello-elnode/archived-scanning-dir (file-name-directory file)) (file-name-nondirectory file)))
-
-(defun orgtrello-proxy/--archive-entity-file-when-scanning (file-to-archive file-archive-name)
-  "Move the file to the running folder to specify a sync is running."
-  (rename-file file file-archive-name t))
 
 (defun orgtrello-proxy/--dispatch-action (action)
   "Dispatch action function depending on the flag action"
@@ -1751,14 +1731,6 @@ This is a list with the following elements:
    nil ;; cannot save the buffer
    nil ;; do not need to reload the org-trello setup
    'do-not-display-log));; do no want to log
-
-(defun orgtrello-proxy/--prepare-filesystem ()
-  "Prepare the filesystem for every level."
-  (dolist (l *ORGTRELLO/LEVELS*)
-    (-> l
-      orgtrello-elnode/compute-entity-level-dir
-      orgtrello-elnode/archived-scanning-dir
-      (mkdir t))))
 
 (defvar *ORGTRELLO/TIMER* nil "A timer run by elnode")
 
@@ -1991,12 +1963,6 @@ refresh(\"/proxy/admin/entities/next/\", '#next-actions');
 refresh(\"/proxy/admin/entities/current/\", '#current-action');
 ")))
 
-(defun orgtrello-webadmin/--content-file (file)
-  "Return the content of a file (absolute name)."
-  (with-temp-buffer
-    (insert-file-contents file)
-    (buffer-string)))
-
 (defun orgtrello-webadmin/--header-table ()
   "Generate headers."
   `(tr () (td ()) (td () "Action") (td () "Entity") (td () "Delete")))
@@ -2108,12 +2074,6 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 (defun orgtrello-webadmin/--compute-filename-from-entity (entity)
   "Compute the filename of a file given an entity."
   (format "%s%s-%s.el" (orgtrello-elnode/compute-entity-level-dir (orgtrello-data/entity-level entity)) (orgtrello-data/entity-buffername entity) (orgtrello-data/entity-position entity)))
-
-(defun orgtrello-webadmin/--delete-entity-file! (entity-file-name)
-  "Given an entity, retrieve its full path name and delete it"
-  (-> entity-file-name
-    orgtrello-webadmin/--compute-filename-from-entity
-    orgtrello-action/delete-file!))
 
 (defun orgtrello-webadmin/--delete-entity-with-id (id)
   "Remove the entity/file which match the id id."

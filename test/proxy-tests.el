@@ -11,9 +11,6 @@
               (expect "marker-is-a-trello-id" (orgtrello-proxy/--compute-pattern-search-from-marker "marker-is-a-trello-id"))
               (expect "orgtrello-marker-tony" (orgtrello-proxy/--compute-pattern-search-from-marker "orgtrello-marker-tony")))
 
-(expectations (desc "orgtrello-proxy/--archived-scanning-file")
-              (expect "test/folder/.scanning/filename" (orgtrello-proxy/--archived-scanning-file "test/folder/filename")))
-
 (expectations (desc "orgtrello-proxy/--update-buffer-to-save")
               (expect '(:a) (orgtrello-proxy/--update-buffer-to-save :a nil))
               (expect '(:a) (orgtrello-proxy/--update-buffer-to-save :a '(:a)))
@@ -51,8 +48,3 @@
                                                     (action . "some action")
                                                     (level . 3)
                                                     (start . nil))))))
-
-(expectations
- (expect "some-root-dir/some-buffername-1000.el" (orgtrello-proxy/--compute-metadata-filename "some-root-dir/" "some-buffername" 1000))
- (expect "some-root-dir/some-buffername-with-dangerous-pattern-including-!!!___orgtrello-defensive-pattern___!!!-1000.el"
-         (orgtrello-proxy/--compute-metadata-filename "some-root-dir/" "some-buffername-with-dangerous-pattern-including-/" 1000)))

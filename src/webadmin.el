@@ -179,12 +179,6 @@ refresh(\"/proxy/admin/entities/next/\", '#next-actions');
 refresh(\"/proxy/admin/entities/current/\", '#current-action');
 ")))
 
-(defun orgtrello-webadmin/--content-file (file)
-  "Return the content of a file (absolute name)."
-  (with-temp-buffer
-    (insert-file-contents file)
-    (buffer-string)))
-
 (defun orgtrello-webadmin/--header-table ()
   "Generate headers."
   `(tr () (td ()) (td () "Action") (td () "Entity") (td () "Delete")))
@@ -296,12 +290,6 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 (defun orgtrello-webadmin/--compute-filename-from-entity (entity)
   "Compute the filename of a file given an entity."
   (format "%s%s-%s.el" (orgtrello-elnode/compute-entity-level-dir (orgtrello-data/entity-level entity)) (orgtrello-data/entity-buffername entity) (orgtrello-data/entity-position entity)))
-
-(defun orgtrello-webadmin/--delete-entity-file! (entity-file-name)
-  "Given an entity, retrieve its full path name and delete it"
-  (-> entity-file-name
-    orgtrello-webadmin/--compute-filename-from-entity
-    orgtrello-action/delete-file!))
 
 (defun orgtrello-webadmin/--delete-entity-with-id (id)
   "Remove the entity/file which match the id id."

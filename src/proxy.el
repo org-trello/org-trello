@@ -90,12 +90,6 @@
     (orgtrello-query/http-trello query-map sync (when standard-callback-fn (funcall standard-callback-fn buffer-name position name))) ;; callback-fn is not a callback, it creates one
     (orgtrello-proxy/response-ok http-con)))
 
-(defun orgtrello-proxy/--compute-metadata-filename (root-dir buffer-name position)
-  "Compute the metadata entity filename from a buffer-name"
-  (--> buffer-name
-    (orgtrello-buffer/defensive-filename-from-buffername it)
-    (format "%s%s-%s.el" root-dir it position)))
-
 (defun orgtrello-proxy/--elnode-proxy-producer (http-con)
   "A handler which is an entity informations producer on files under the docroot/level-entities/"
   (orgtrello-log/msg *OT/TRACE* "Proxy-producer - Request received. Generating entity file...")
@@ -104,12 +98,6 @@
          (level                (orgtrello-data/entity-level query-map-data)))
     (orgtrello-db/put level query-map-data *ORGTRELLO-SERVER/DB*)
     (orgtrello-proxy/response-ok http-con)))
-
-(defun orgtrello-proxy/--read-file-content (fPath)
-  "Return a list of lines of a file at FPATH."
-  (with-temp-buffer
-    (insert-file-contents fPath)
-    (buffer-string)))
 
 (defun orgtrello-proxy/--update-buffer-to-save (buffer-name buffers-to-save)
   "Add the buffer-name to the list if not already present"
@@ -185,14 +173,6 @@
                                                 (format "Newly entity '%s' with id '%s' synced!" entry-name entry-new-id)))))
                         (orgtrello-log/msg *OT/INFO* str-msg))))
                   (orgtrello-proxy/--cleanup-and-save-buffer-metadata level entry-buffer-name))))))
-
-(defun orgtrello-proxy/--archived-scanning-file (file)
-  "Given a filename, return its archived filename if we were to move such file."
-  (format "%s/%s" (orgtrello-elnode/archived-scanning-dir (file-name-directory file)) (file-name-nondirectory file)))
-
-(defun orgtrello-proxy/--archive-entity-file-when-scanning (file-to-archive file-archive-name)
-  "Move the file to the running folder to specify a sync is running."
-  (rename-file file file-archive-name t))
 
 (defun orgtrello-proxy/--dispatch-action (action)
   "Dispatch action function depending on the flag action"
@@ -418,14 +398,6 @@
    nil ;; cannot save the buffer
    nil ;; do not need to reload the org-trello setup
    'do-not-display-log));; do no want to log
-
-(defun orgtrello-proxy/--prepare-filesystem ()
-  "Prepare the filesystem for every level."
-  (dolist (l *ORGTRELLO/LEVELS*)
-    (-> l
-      orgtrello-elnode/compute-entity-level-dir
-      orgtrello-elnode/archived-scanning-dir
-      (mkdir t))))
 
 (defvar *ORGTRELLO/TIMER* nil "A timer run by elnode")
 
