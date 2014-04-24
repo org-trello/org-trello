@@ -96,7 +96,9 @@
     (orgtrello-buffer/defensive-filename-from-buffername it)
     (format "%s%s-%s.el" root-dir it position)))
 
-(defvar *ORGTRELLO-PROXY/DB* (orgtrello-db/init) "Database reference to orgtrello-proxy")
+(defvar *ORGTRELLO-PROXY/DB* nil "Database reference to orgtrello-proxy")
+;; init the db if need be
+(setq *ORGTRELLO-PROXY/DB* (if *ORGTRELLO-PROXY/DB* *ORGTRELLO-PROXY/DB* (orgtrello-db/init)))
 
 (defun orgtrello-proxy/--elnode-proxy-producer (http-con)
   "A handler which is an entity informations producer on files under the docroot/level-entities/"
@@ -231,7 +233,7 @@
 
 (defun orgtrello-proxy/--deal-with-entity-action (entity-data)
   "Compute the synchronization of an entity (retrieving latest information from buffer)"
-  (let* ((position    (orgtrello-data/entity-position (trace :entity-data entity-data)))   ;; position is mandatory
+  (let* ((position    (orgtrello-data/entity-position entity-data))   ;; position is mandatory
          (buffer-name (orgtrello-data/entity-buffername entity-data))    ;; buffer-name too
          (marker      (orgtrello-data/entity-id-or-marker entity-data))  ;; retrieve the id (which serves as a marker too)
          (level       (orgtrello-data/entity-level entity-data)))
