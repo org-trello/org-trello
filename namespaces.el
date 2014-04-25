@@ -36,6 +36,7 @@
                                     "test/backend-tests.el"
                                     "test/elnode-tests.el"
                                     "test/webadmin-tests.el"
+                                    "test/server-tests.el"
                                     "test/proxy-tests.el"
                                     "test/buffer-tests.el"
                                     "test/controller-tests.el"
