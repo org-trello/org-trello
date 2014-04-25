@@ -1,3 +1,16 @@
+# 0.4.3
+
+- [X] Prepare backlog
+- [X] Replace local back-end (file implementation) with a RAM database [100%]
+- [X] Update README-dev.md about the new db namespace
+- [X] Remove some useless new code
+- [X] Improve start/stop server policy (one server may sync multiple buffers/boards... and right now, not really taken into account)
+- [X] Clean dead code from the implementation switch from implicit disk files db to RAM db [100%]
+- [X] Improve start/stop server policy 2
+- [X] Some Refactoring
+- [X] Version
+- [X] Release notes
+
 # 0.4.2
 
 - [X] Refactoring - Remove dead code
