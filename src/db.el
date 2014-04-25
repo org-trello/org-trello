@@ -25,6 +25,13 @@
       (db-put key oldvl db)
       value-to-return)))
 
+(defun orgtrello-db/pop-last (key db)
+  "Get the value from last value at key. This is destructive."
+  (-when-let (oldvl (nreverse (db-get key db)))
+    (let* ((value-to-return (pop oldvl)))
+      (db-put key (nreverse oldvl) db)
+      value-to-return)))
+
 (defun orgtrello-db/clear-key (key db)
   "Given a key, squash to value to nil."
   (db-put key nil db))

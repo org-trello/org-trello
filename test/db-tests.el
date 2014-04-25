@@ -15,5 +15,9 @@
     (should (equal '("some-value2" 3)               (orgtrello-db/get "some-key" db)))
     ;; get is read-only
     (should (equal '("some-value2" 3)               (orgtrello-db/get "some-key" db)))
+    ;; pop-last returns the last element
+    (should (equal 3                                (orgtrello-db/pop-last "some-key" db)))
+    ;; pop-last is destructive
+    (should (equal '("some-value2")                 (orgtrello-db/get "some-key" db)))
     ;; if key is not found, nil is returned
     (should (equal nil                              (orgtrello-db/get "some-inexistant-key" db)))))
