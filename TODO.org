@@ -997,7 +997,8 @@ CLOSED: [2014-04-12 Sat 08:51]
 - [X] Improve loading org-trello namespaces for dev purposes
 - [X] Version
 - [X] Release notes
-* IN-PROGRESS 0.4.3 [100%]
+* DONE 0.4.3 [100%]
+CLOSED: [2014-04-25 Fri 12:20]
 - [X] Prepare backlog
 - [X] Replace local back-end (file implementation) with a RAM database [100%]
   - [X] Install 'db dependencies
