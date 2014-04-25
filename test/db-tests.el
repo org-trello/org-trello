@@ -2,8 +2,8 @@
 (require 'ert-expectations)
 (require 'el-mock)
 
-(ert-deftest testing-orgtrello-db/put-pop-get-copy ()
-  "Test put/pop/get/copy behaviour"
+(ert-deftest testing-orgtrello-db/behavior ()
+  "Test put/pop/get/copy/pop-last/move-key-values behaviour"
   (let ((db (db-make '(db-hash))))
     ;; put puts value to the end
     (should (equal '("some-value")                  (orgtrello-db/put "some-key" "some-value" db)))
@@ -20,4 +20,12 @@
     ;; pop-last is destructive
     (should (equal '("some-value2")                 (orgtrello-db/get "some-key" db)))
     ;; if key is not found, nil is returned
-    (should (equal nil                              (orgtrello-db/get "some-inexistant-key" db)))))
+    (should (equal nil                              (orgtrello-db/get "some-inexistant-key" db)))
+    ;; add an entry to the list
+    (should (equal '("some-value2" "some-value3")   (orgtrello-db/put "some-key" "some-value3" db)))
+    ;; move the key's values to another key
+    (should (equal '("some-value2" "some-value3")   (orgtrello-db/move-key-values "some-key" "some-new-key" db)))
+    ;; the new key should have the same values as the old key
+    (should (equal '("some-value2" "some-value3")   (orgtrello-db/get "some-new-key" db)))
+    ;; the old key should be empty
+    (should (equal nil                              (orgtrello-db/get "some-key" db)))))

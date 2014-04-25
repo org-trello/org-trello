@@ -326,11 +326,15 @@
       (orgtrello-proxy/--deal-with-entities-at-level level)
     (throw 'org-trello-timer-go-to-sleep t)))
 
+(defun orgtrello-proxy/--deal-with-remaining-archived-entities! (level)
+  "Copy the remaining archived entities (resulting from failed attempts) to the standard entities to be act upon."
+  (orgtrello-db/move-key-values (orgtrello-proxy/archive-key level) level *ORGTRELLO-SERVER/DB*))
+
 (defun orgtrello-proxy/--consumer-entity-sync-hierarchically-and-do ()
   "A handler to extract the entity information (in order card, checklist, items)."
   (with-local-quit
     ;; if it remains archived entities, we copy them back to the standard entries to be retried
-
+    (mapc 'orgtrello-proxy/--deal-with-remaining-archived-entities! *ORGTRELLO/LEVELS*)
     ;; deal with entities
     (catch 'org-trello-timer-go-to-sleep ;; from here on, any underlying can throw an exception, the timer goes to sleep then
       (mapc 'orgtrello-proxy/--deal-with-level *ORGTRELLO/LEVELS*))

@@ -66,6 +66,13 @@
     (- it 1)
     (orgtrello-db/set-nb-buffers it db)))
 
+(defun orgtrello-db/move-key-values (from-key to-key db)
+  "Copy the content of the from-key to to-key in db. Return the content of the to-key."
+  (-when-let (from-values (db-get from-key db))
+    (--map (orgtrello-db/put to-key it db) from-values)
+    (db-put from-key nil db))
+  (db-get to-key db))
+
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-db loaded!")
 
 
