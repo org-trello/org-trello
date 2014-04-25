@@ -2053,16 +2053,19 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun orgtrello-webadmin/elnode-current-entity (http-con)
   "A basic display of the current scanned entity."
-  (-> *ORGTRELLO/LEVELS*
-    (orgtrello-webadmin/entities 'with-archives)
-    nreverse
-    (orgtrello-webadmin/--entities-as-html "icon-play" "icon-pause")
-    (orgtrello-webadmin/--response-html http-con)))
+  (-if-let (current-entity (-> *ORGTRELLO/LEVELS* orgtrello-webadmin/entities car))
+      (-> (list current-entity)
+        (orgtrello-webadmin/--entities-as-html "icon-play" "icon-pause")
+        (orgtrello-webadmin/--response-html http-con))
+    (-> nil
+      (orgtrello-webadmin/--entities-as-html "icon-play" "icon-pause")
+      (orgtrello-webadmin/--response-html http-con))))
 
 (defun orgtrello-webadmin/elnode-next-entities (http-con)
   "A basic display of the list of the next entities to scan."
   (-> *ORGTRELLO/LEVELS*
     orgtrello-webadmin/entities
+    cdr
     orgtrello-webadmin/--entities-as-html
     (orgtrello-webadmin/--response-html http-con)))
 
@@ -2090,12 +2093,11 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
     (if (string= "" id) (orgtrello-webadmin/delete-entities!) (orgtrello-webadmin/--delete-entity-with-id id))))
 
 (defvar *ORGTRELLO/QUERY-APP-ROUTES-WEBADMIN*
-  '(("^localhost//proxy/admin/entities/current/\\(.*\\)" . orgtrello-webadmin/elnode-current-entity)
-    ("^localhost//proxy/admin/entities/next/\\(.*\\)" . orgtrello-webadmin/elnode-next-entities)
-    ("^localhost//proxy/admin/entities/delete/\\(.*\\)" . orgtrello-webadmin/elnode-delete-entity)
-    ("^localhost//proxy/admin/\\(.*\\)" . orgtrello-webadmin/--elnode-admin)
-    ;; static files
-    ("^localhost//static/\\(.*\\)/\\(.*\\)" . orgtrello-webadmin/elnode-static-file))    ;; proxy to request trello
+  '(("^localhost//proxy/admin/entities/current/\\(.*\\)"  . orgtrello-webadmin/elnode-current-entity)
+    ("^localhost//proxy/admin/entities/next/\\(.*\\)"     . orgtrello-webadmin/elnode-next-entities)
+    ("^localhost//proxy/admin/entities/delete/\\(.*\\)"   . orgtrello-webadmin/elnode-delete-entity)
+    ("^localhost//proxy/admin/\\(.*\\)"                   . orgtrello-webadmin/--elnode-admin)
+    ("^localhost//static/\\(.*\\)/\\(.*\\)"               . orgtrello-webadmin/elnode-static-file))
   "Webadmin routes")
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-webadmin loaded!")

@@ -265,16 +265,19 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (defun orgtrello-webadmin/elnode-current-entity (http-con)
   "A basic display of the current scanned entity."
-  (-> *ORGTRELLO/LEVELS*
-    (orgtrello-webadmin/entities 'with-archives)
-    nreverse
-    (orgtrello-webadmin/--entities-as-html "icon-play" "icon-pause")
-    (orgtrello-webadmin/--response-html http-con)))
+  (-if-let (current-entity (-> *ORGTRELLO/LEVELS* orgtrello-webadmin/entities car))
+      (-> (list current-entity)
+        (orgtrello-webadmin/--entities-as-html "icon-play" "icon-pause")
+        (orgtrello-webadmin/--response-html http-con))
+    (-> nil
+      (orgtrello-webadmin/--entities-as-html "icon-play" "icon-pause")
+      (orgtrello-webadmin/--response-html http-con))))
 
 (defun orgtrello-webadmin/elnode-next-entities (http-con)
   "A basic display of the list of the next entities to scan."
   (-> *ORGTRELLO/LEVELS*
     orgtrello-webadmin/entities
+    cdr
     orgtrello-webadmin/--entities-as-html
     (orgtrello-webadmin/--response-html http-con)))
 
