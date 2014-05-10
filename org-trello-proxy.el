@@ -1,3 +1,7 @@
+;;; org-trello-proxy.el --- Proxy namespace (in charge of receiving actions to transmit to the consumer).
+;;; Commentary:
+;;; Code:
+
 (defun orgtrello-proxy/http (query-map &optional sync success-callback error-callback)
   "Query the proxy for the trello api."
   (--> query-map

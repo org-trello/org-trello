@@ -1,3 +1,7 @@
+;;; org-trello-buffer.el --- Manipulation functions of org-trello buffer
+;;; Commentary:
+;;; Code:
+
 (defun orgtrello-buffer/org-entry-put! (point property value)
   (if (or (null value) (string= "" value))
       (orgtrello-buffer/delete-property-from-entry! property)

@@ -1,3 +1,7 @@
+;;; org-trello-log.el --- Log related functions.
+;;; Commentary:
+;;; Code:
+
 (defconst *OT/NOLOG* 0)
 (defconst *OT/ERROR* 1)
 (defconst *OT/WARN*  2)

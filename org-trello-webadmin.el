@@ -1,3 +1,7 @@
+;;; org-trello-webadmin.el --- Web admin front namespace.
+;;; Commentary:
+;;; Code:
+
 (defun orgtrello-webadmin/--compute-root-static-files ()
   "Root files under which css and js files are installed."
   (format "%s%s" elnode-webserver-docroot "org-trello/bootstrap"))

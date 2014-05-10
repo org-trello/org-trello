@@ -1,3 +1,7 @@
+;;; org-trello-data.el --- org-trello data access functions
+;;; Commentary:
+;;; Code:
+
 (defun orgtrello-data/merge-2-lists-without-duplicates (a-list b-list)
   "Merge 2 lists together (no duplicates)."
   (-> a-list

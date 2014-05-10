@@ -1,3 +1,7 @@
+;;; org-trello-elnode.el --- Elnode related functions.
+;;; Commentary:
+;;; Code:
+
 (defun orgtrello-elnode/compute-entity-level-dir (level)
   "Given a level, compute the folder onto which the file will be serialized."
   (format "%s%s/%s/" elnode-webserver-docroot "org-trello" level))

@@ -1,3 +1,7 @@
+;;; org-trello-server.el --- Server (proxy + webadmin + elnode) facade namespace.
+;;; Commentary:
+;;; Code:
+
 (defvar *ORGTRELLO-SERVER/DB*   nil         "Database reference to orgtrello-proxy")
 (defvar *ORGTRELLO/SERVER-HOST* "localhost" "Proxy host")
 (defvar *ORGTRELLO/SERVER-PORT* nil         "Proxy port")

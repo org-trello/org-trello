@@ -1,3 +1,7 @@
+;;; org-trello-hash.el --- Hash manipulation functions (base data structure used by org-trello)
+;;; Commentary:
+;;; Code:
+
 (defun orgtrello-hash/empty-hash ()
   "Empty hash table with test 'equal"
   (make-hash-table :test 'equal))

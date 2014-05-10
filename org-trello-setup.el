@@ -1,3 +1,7 @@
+;;; org-trello-setup.el --- Almost all constants + variables setup for org-trello namespace.
+;;; Commentary:
+;;; Code:
+
 (defconst *consumer-key*                nil                                               "Id representing the user.")
 (defconst *access-token*                nil                                               "Read/write access token to use trello on behalf of the user.")
 (defconst *ORGTRELLO/MARKER*            "orgtrello-marker"                                "A marker used inside the org buffer to synchronize entries.")

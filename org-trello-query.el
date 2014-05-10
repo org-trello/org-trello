@@ -1,3 +1,7 @@
+;;; org-trello-query.el --- HTTP client namespace.
+;;; Commentary:
+;;; Code:
+
 (defconst *ORGTRELLO/TRELLO-URL* "https://api.trello.com/1" "The needed prefix url for trello")
 
 (defun orgtrello-query/--compute-url (server uri)

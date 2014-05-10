@@ -1,3 +1,7 @@
+;;; org-trello-cbx.el --- Manipulation functions of checkbox to add some behavior to org's checkbox
+;;; Commentary:
+;;; Code:
+
 (defun orgtrello-cbx/checkbox-p ()
   "Is there a checkbox at point?"
   (org-at-item-checkbox-p))

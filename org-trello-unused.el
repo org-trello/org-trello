@@ -1,3 +1,7 @@
+;;; org-trello-unused.el --- Some code I'm not set on destroying just yet.
+;;; Commentary:
+;;; Code:
+
 (defun orgtrello-action/org-delete-property (key)
   "Delete a property depending on the nature of the current entry (org heading or checkbox)."
   (funcall (if (orgtrello-cbx/checkbox-p) 'orgtrello-cbx/org-delete-property 'org-delete-property) key))

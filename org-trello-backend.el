@@ -1,3 +1,7 @@
+;;; org-trello-backend.el --- Orchestration namespace to discuss with trello
+;;; Commentary:
+;;; Code:
+
 (defun orgtrello-backend/compute-items-from-checklist! (checklist entities adjacency)
   "Given a checklist, retrieve its items and update the entities hash and the adjacency list."
   (let ((checklist-id (orgtrello-data/entity-id checklist)))

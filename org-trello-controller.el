@@ -1,3 +1,7 @@
+;;; org-trello-controller.el --- Controller of org-trello mode
+;;; Commentary:
+;;; Code:
+
 (defun orgtrello-controller/compute-marker (buffer-name name position)
   "Compute the orgtrello marker which is composed of buffer-name, name and position"
   (->> (list *ORGTRELLO/MARKER* buffer-name name (if (stringp position) position (int-to-string position)))

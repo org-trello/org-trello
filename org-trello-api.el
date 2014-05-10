@@ -1,3 +1,7 @@
+;;; org-trello-api.el --- Interface functions to Trello API
+;;; Commentary:
+;;; Code:
+
 (defun orgtrello-api/make-query (method uri &optional params)
   "Utility function to ease the creation of the map - wait, where are my clojure data again!?"
   (let ((h (orgtrello-hash/empty-hash)))

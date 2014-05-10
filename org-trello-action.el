@@ -1,3 +1,7 @@
+;;; org-trello-action.el --- Reference some action functions
+;;; Commentary:
+;;; Code:
+
 (defun orgtrello-action/reload-setup ()
   "Reload orgtrello setup."
   (org-set-regexps-and-options))
