@@ -9,11 +9,14 @@ EMACS=emacs
 pr:
 	hub pull-request -b org-trello:master
 
+build:
+	cask build
+
 clean-dist:
 	rm -rf dist/
 
 clean: clean-dist
-	rm -rf *.tar
+	rm -rf *.tar *.elc
 
 install:
 	cask install
