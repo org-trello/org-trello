@@ -1026,11 +1026,11 @@ CLOSED: [2014-04-25 Fri 12:20]
 - [X] Some Refactoring
 - [X] Release notes
 * DONE 0.4.4 [0%]
-- [-] Multiple files packaging
+- [-] Multiple files packaging - https://github.com/org-trello/org-trello/issues/163
   - [X] Move src/*.el files to /org-trello
   - [X] Add 'provide statements for each of those files
   - [X] Rework header + org-trello + footer files
-  - [ ] Adapt main org-trello.el files to reference the needed namespaces
+  - [X] Adapt main org-trello.el files to reference the needed namespaces
   - [ ] Adapt test files so that it continues to work
   - [ ] Adapt marmalade packaging
   - [ ] Adapt melpa's org-trello recipe and test it locally

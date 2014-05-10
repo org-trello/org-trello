@@ -109,7 +109,24 @@ Please consider upgrading Emacs." emacs-version) "Error message when installing 
 
 
 
-(require ')
+(require 'org-trello-log)
+(require 'org-trello-utils)
+(require 'org-trello-setup)
+(require 'org-trello-hash)
+(require 'org-trello-action)
+(require 'org-trello-db)
+(require 'org-trello-data)
+(require 'org-trello-cbx)
+(require 'org-trello-api)
+(require 'org-trello-query)
+(require 'org-trello-backend)
+(require 'org-trello-elnode)
+(require 'org-trello-proxy)
+(require 'org-trello-webadmin)
+(require 'org-trello-server)
+(require 'org-trello-buffer)
+(require 'org-trello-input)
+(require 'org-trello-controller)
 
 
 
