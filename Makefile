@@ -1,4 +1,4 @@
-VERSION=$$(grep "^;; Version: " src/header.el | cut -f3 -d' ')
+VERSION=$$(grep "^;; Version: " org-trello.el | cut -f3 -d' ')
 PACKAGE_FOLDER=org-trello-$(VERSION)
 ARCHIVE=$(PACKAGE_FOLDER).tar
 USER=ardumont
@@ -30,10 +30,7 @@ pkg-file:
 pkg-el: pkg-file
 	cask package
 
-generate:
-	cask exec $(EMACS) -Q --batch -l ./build-package.el
-
-package: clean generate pkg-el
+package: clean pkg-el
 	cp dist/$(ARCHIVE) .
 	make clean-dist
 
