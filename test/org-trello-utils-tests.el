@@ -1,3 +1,4 @@
+(require 'org-trello-utils)
 (require 'ert)
 (require 'ert-expectations)
 (require 'el-mock)
