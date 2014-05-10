@@ -1036,8 +1036,8 @@ CLOSED: [2014-04-25 Fri 12:20]
   - [X] Refactoring step - rename some files to avoid confusion
   - [X] Adapt README-dev.md to the current code adaptation
   - [X] Adapt cask packaging
-  - [ ] Does org-trello still compiles?
   - [X] Add missing standard header to namespace
+  - [X] Does org-trello still compiles? NO
   - [ ] Adapt melpa's org-trello recipe and test it locally
   - [ ] Add PR for melpa's org-trello recipe
 - [ ] Update version
