@@ -3,7 +3,9 @@
 ;;; Code:
 
 (require 'elnode)
+(require 'esxml)
 (require 'org-trello-log)
+(require 'org-trello-setup)
 (require 'org-trello-data)
 (require 'org-trello-hash)
 (require 'org-trello-db)

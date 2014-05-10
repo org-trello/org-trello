@@ -2,6 +2,7 @@
 ;;; Commentary:
 ;;; Code:
 
+(require 'dash)
 (require 'org-trello-setup)
 (require 'org-trello-log)
 (require 'org-trello-hash)
