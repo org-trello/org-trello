@@ -313,4 +313,5 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-webadmin loaded!")
 
-
+(provide 'org-trello-webadmin)
+;;; org-trello-webadmin.el ends here

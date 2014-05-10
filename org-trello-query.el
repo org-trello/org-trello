@@ -114,4 +114,5 @@
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-query loaded!")
 
-
+(provide 'org-trello-query)
+;;; org-trello-query.el ends here

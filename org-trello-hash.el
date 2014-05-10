@@ -42,4 +42,5 @@
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-hash loaded!")
 
-
+(provide 'org-trello-hash)
+;;; org-trello-hash.el ends here

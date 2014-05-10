@@ -231,4 +231,5 @@ This is a list with the following elements:
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-cbx loaded!")
 
-
+(provide 'org-trello-cbx)
+;;; org-trello-cbx.el ends here

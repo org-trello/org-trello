@@ -66,4 +66,5 @@
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-action loaded!")
 
-
+(provide 'org-trello-action)
+;;; org-trello-action.el ends here

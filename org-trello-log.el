@@ -23,4 +23,5 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-log loaded!")
 
-
+(provide 'org-trello-log)
+;;; org-trello-log.el ends here

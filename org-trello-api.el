@@ -127,4 +127,5 @@
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-api loaded!")
 
-
+(provide 'org-trello-api)
+;;; org-trello-api.el ends here

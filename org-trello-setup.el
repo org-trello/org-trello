@@ -61,4 +61,5 @@
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-setup loaded!")
 
-
+(provide 'org-trello-setup)
+;;; org-trello-setup.el ends here

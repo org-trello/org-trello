@@ -44,4 +44,5 @@
       orgtrello-elnode/--list-files-result
       (sort orgtrello-elnode/--list-files-result 'orgtrello-elnode/--dictionary-lessp))))
 
-
+(provide 'org-trello-elnode)
+;;; org-trello-elnode.el ends here

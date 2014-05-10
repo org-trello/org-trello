@@ -108,4 +108,5 @@ Please consider upgrading Emacs." emacs-version) "Error message when installing 
 
 (defconst *ORGTRELLO/VERSION* "0.4.3" "current org-trello version installed.")
 
-
+(provide 'org-trello-header)
+;;; org-trello-header.el ends here

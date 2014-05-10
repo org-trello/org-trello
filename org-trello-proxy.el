@@ -438,4 +438,5 @@
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-proxy loaded!")
 
-
+(provide 'org-trello-proxy)
+;;; org-trello-proxy.el ends here

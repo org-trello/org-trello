@@ -346,4 +346,5 @@
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-data loaded!")
 
-
+(provide 'org-trello-data)
+;;; org-trello-data.el ends here

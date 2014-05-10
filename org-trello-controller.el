@@ -816,4 +816,5 @@
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-controller loaded!")
 
-
+(provide 'org-trello-controller)
+;;; org-trello-controller.el ends here

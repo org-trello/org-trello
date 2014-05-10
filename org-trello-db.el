@@ -75,4 +75,5 @@
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-db loaded!")
 
-
+(provide 'org-trello-db)
+;;; org-trello-db.el ends here

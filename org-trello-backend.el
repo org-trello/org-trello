@@ -71,4 +71,5 @@
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-backend loaded!")
 
-
+(provide 'org-trello-backend)
+;;; org-trello-backend.el ends here

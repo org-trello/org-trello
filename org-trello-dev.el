@@ -10,3 +10,6 @@
         (trace label e)
       (message "TRACE: %S" e))
     e))
+
+(provide 'org-trello-dev)
+;;; org-trello-dev.el ends here
