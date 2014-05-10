@@ -78,8 +78,8 @@
 
 ;;; Code:
 
-(defconst *ORGTRELLO/ERROR-INSTALL-MSG* (format "Oops - your emacs isn't supported. org-trello only works on Emacs 24.3+ and you're running version: %s.
-Please consider upgrading Emacs." emacs-version) "Error message when installing org-trello with an unsupported emacs version.")
+(defconst *ORGTRELLO/ERROR-INSTALL-MSG* (format "Oops - your Emacs isn't supported. org-trello only works on Emacs 24.3+ and you're running version: %s.
+Please consider upgrading Emacs." emacs-version) "Error message when installing org-trello with an unsupported Emacs version.")
 
 (when (version< emacs-version "24") (error *ORGTRELLO/ERROR-INSTALL-MSG*))
 
@@ -105,11 +105,11 @@ Please consider upgrading Emacs." emacs-version) "Error message when installing 
     (defalias 'cl-defun 'defun*)
     (defalias 'cl-destructuring-bind 'destructuring-bind)))
 
-(defconst *ORGTRELLO/VERSION* "0.4.3" "current org-trello version installed.")
+(defconst *ORGTRELLO/VERSION* "0.4.3" "Current org-trello version installed.")
 
 (defun org-trello/version ()
-  (interactive)
   "Org-trello version."
+  (interactive)
   (message "org-trello version: %s" *ORGTRELLO/VERSION*))
 
 

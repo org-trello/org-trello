@@ -4,6 +4,7 @@
 
 (require 'org-trello-setup)
 (require 'org-trello-log)
+(require 'org-trello-hash)
 
 (defun orgtrello-data/merge-2-lists-without-duplicates (a-list b-list)
   "Merge 2 lists together (no duplicates)."
