@@ -3,13 +3,6 @@
 (require 'ert-expectations)
 (require 'el-mock)
 
-(expectations (desc "compose-fn")
-              (expect '(3 5 7) (--map (funcall (compose-fn '((lambda (it) (+ 1 it)) (lambda (it) (* 2 it)))) it) '(1 2 3))))
-
-(expectations (desc "orgtrello-webadmin/--detail-entity")
-              (expect "entity name" (orgtrello-webadmin/--detail-entity 3 (orgtrello-hash/make-properties '((:name . "entity name")))))
-              (expect "entity name" (gethash :name (orgtrello-webadmin/--detail-entity 5 (orgtrello-hash/make-properties '((:name . "entity name")))))))
-
 (expectations (desc "orgtrello-webadmin/--header-table")
   (expect '(tr nil (td nil) (td nil "Action") (td nil "Entity") (td nil "Delete")) (orgtrello-webadmin/--header-table)))
 

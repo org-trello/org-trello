@@ -254,15 +254,6 @@ refresh(\"/proxy/admin/entities/current/\", '#current-action');
   (-> (orgtrello-webadmin/html "org-trello/proxy-admin" "Commiters" "Administer the running queries to Trello")
     (orgtrello-webadmin/--response-html  http-con)))
 
-(defun compose-fn (funcs)
-  "Composes several functions into one."
-  (lexical-let ((intern-funcs funcs))
-    (lambda (arg)
-      (if intern-funcs
-          (funcall (car intern-funcs)
-                   (funcall (compose-fn (cdr intern-funcs)) arg))
-        arg))))
-
 (defun orgtrello-webadmin/keys (levels &optional with-archive-flag)
   "Compute the keys of the db."
   (concatenate 'list levels (when with-archive-flag (mapcar 'orgtrello-proxy/archive-key levels))))
