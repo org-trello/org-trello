@@ -10,7 +10,8 @@
   (org-set-regexps-and-options))
 
 (defmacro orgtrello-action/safe-wrap (fn &rest clean-up)
-  "A macro to deal with intercept uncaught error when executing the fn call and cleaning up using the clean-up body."
+  "A macro to deal with intercept uncaught error when executing the FN call.
+The CLEAN-UP body is done whether error are caught or not."
   `(unwind-protect
        (let (retval)
          (condition-case ex
@@ -22,19 +23,22 @@
      ,@clean-up))
 
 (defun orgtrello-action/--execute-controls (controls-or-actions-fns &optional entity)
-  "Given a series of controls, execute them and return the results."
+  "Given CONTROLS-OR-ACTIONS-FNS, execute them and return the results.
+ENTITY is an optional parameter to pass to the list of functions."
   (--map (funcall it entity) controls-or-actions-fns))
 
 (defun orgtrello-action/--filter-error-messages (control-or-actions)
-  "Given a list of control or actions done, filter only the error message. Return nil if no error message."
+  "Given CONTROL-OR-ACTIONS done, filter only the error messages.
+Return nil if no error message."
   (--filter (not (equal :ok it)) control-or-actions))
 
 (defun orgtrello-action/--compute-error-message (error-msgs)
-  "Given a list of error messages, compute them as a string."
+  "Given a list of error messages ERROR-MSGS, compute them as a string."
   (apply 'concat (--map (concat "- " it "\n") error-msgs)))
 
 (defun orgtrello-action/controls-or-actions-then-do (control-or-action-fns fn-to-execute &optional nolog-p)
-  "Execute the function fn-to-execute if control-or-action-fns is nil or display the error message if problems."
+  "If CONTROL-OR-ACTION-FNS is ok, execute the function FN-TO-EXECUTE.
+If there are errors, display them (unless NOLOG-P is set)."
   (if control-or-action-fns
       (-if-let (error-messages (-> control-or-action-fns orgtrello-action/--execute-controls orgtrello-action/--filter-error-messages))
           (unless nolog-p
@@ -46,7 +50,9 @@
     (funcall fn-to-execute)))
 
 (defun orgtrello-action/functional-controls-then-do (control-fns entity fn-to-execute args)
-  "Execute the function fn if control-fns is nil or if the result of apply every function to fn-to-execute is ok."
+  "If CONTROL-FNS are ok, pass ENTITY as parameter to FN-TO-EXECUTE.
+ENTITY and ARGS are function parameter of FN-TO-EXECUTE.
+If any errors are thrown during controls, then display them."
   (if control-fns
       (-if-let (error-messages (-> control-fns (orgtrello-action/--execute-controls entity) orgtrello-action/--filter-error-messages))
           ;; there are some trouble, we display all the error messages to help the user understand the problem
@@ -57,7 +63,12 @@
     (funcall fn-to-execute entity args)))
 
 (defun orgtrello-action/msg-controls-or-actions-then-do (msg control-or-action-fns fn-to-execute &optional save-buffer-p reload-setup-p nolog-p)
-  "A decorator fn to execute some action before/after the controls."
+  "A decorator fn to display some log MSG.
+Then execute some CONTROL-OR-ACTION-FNS.
+If all controls are ok, then execute the parameter-less FN-TO-EXECUTE.
+`(Optionally)` If SAVE-BUFFER-P is set, this will safe the buffer.
+If RELOAD-SETUP-P is set, this will reload org-mode's setup.
+if NOLOG-P is set, this will not log anything."
   (unless nolog-p (orgtrello-log/msg *OT/INFO* (concat msg "...")))
   ;; now execute the controls and the main action
   (orgtrello-action/safe-wrap
