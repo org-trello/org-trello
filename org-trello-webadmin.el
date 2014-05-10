@@ -38,7 +38,7 @@
   (let* ((url-tmp-dest (gethash key-file *ORGTRELLO/FILES*))
          (url          (car  url-tmp-dest))
          (tmp-dest     (cadr url-tmp-dest))
-         (final-dest   (caddr url-tmp-dest))
+         (final-dest   (cadr (cdr url-tmp-dest)))
          (extension    (file-name-extension url)))
     ;; download the file
     (url-copy-file url tmp-dest t)

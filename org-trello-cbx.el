@@ -26,14 +26,14 @@
   "Retrieve the checkbox's metadata."
   (-when-let (res (-> s
                     orgtrello-cbx/--checkbox-split
-                    second))
+                    cadr))
     (s-trim-left res)))
 
 (defun orgtrello-cbx/--checkbox-data (s)
   "Retrieve the checkbox's data."
   (-> s
     orgtrello-cbx/--checkbox-split
-    first
+    car
     s-trim-right))
 
 (defun orgtrello-cbx/--read-properties (s)
