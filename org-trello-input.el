@@ -9,8 +9,6 @@
       (setq value (read-string input-message)))
     value))
 
-;; (orgtrello-input/read-not-empty! "some-value? ")
-
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-input loaded!")
 
 (provide 'org-trello-input)

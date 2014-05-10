@@ -601,7 +601,7 @@
     (goto-char (point-min))
     (set-buffer-file-coding-system 'utf-8-auto) ;; force utf-8
     (->> (orgtrello-controller/--compute-metadata! board-name board-id board-lists-hash-name-id board-users-hash-name-id user-me board-labels update-todo-keywords)
-      (--map (insert it "\n")))
+      (mapc (lambda (it) (insert it "\n"))))
     (goto-char (point-min))
     (org-cycle)
     (save-buffer)

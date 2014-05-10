@@ -1038,6 +1038,8 @@ CLOSED: [2014-04-25 Fri 12:20]
   - [X] Adapt cask packaging
   - [X] Add missing standard header to namespace
   - [X] Does org-trello still compiles? NO
+  - [X] Fix simple compilation warnings
+  - [ ] Fix compilation errors
   - [ ] Adapt melpa's org-trello recipe and test it locally
   - [ ] Add PR for melpa's org-trello recipe
 - [ ] Update version

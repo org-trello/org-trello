@@ -217,8 +217,7 @@
          (level       (orgtrello-data/entity-level entity-data)))
     (orgtrello-log/msg *OT/TRACE* "Proxy-consumer - Searching entity metadata from buffer '%s' at point '%s' to sync..." buffer-name position)
     (orgtrello-proxy/--safe-wrap-or-throw-error ;; will update via tag the trello id of the new persisted data (if needed)
-     (save-excursion
-       (set-buffer buffer-name)                                                     ;; switch to the right buffer
+     (with-current-buffer buffer-name
        (when (orgtrello-proxy/--get-back-to-marker marker entity-data)
          (orgtrello-db/put (orgtrello-proxy/archive-key level) entity-data *ORGTRELLO-SERVER/DB*) ;; keep an archived version
          (-> entity-data

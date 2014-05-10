@@ -45,9 +45,10 @@
   (--map (orgtrello-db/clear-key it db) keys))
 
 (defun orgtrello-db/clear-entity-with-id (keys id db)
-  "Clear some entities"
-  (--map (-if-let (entities (db-get it db))
-             (db-put key (-remove (lambda (entity) (string= id (orgtrello-data/entity-id entity)))  entities)))
+  "From the keys KEYS, Remove entity with id ID inside the database DB."
+  (mapc (lambda (key)
+          (-if-let (entities (db-get key db))
+              (db-put key (-remove (lambda (entity) (string= id (orgtrello-data/entity-id entity))) entities) db)))
          keys))
 
 (defun orgtrello-db/nb-buffers (db)
@@ -73,7 +74,7 @@
 (defun orgtrello-db/move-key-values (from-key to-key db)
   "Copy the content of the from-key to to-key in db. Return the content of the to-key."
   (-when-let (from-values (db-get from-key db))
-    (--map (orgtrello-db/put to-key it db) from-values)
+    (mapc (lambda (it) (orgtrello-db/put to-key it db)) from-values)
     (db-put from-key nil db))
   (db-get to-key db))
 
