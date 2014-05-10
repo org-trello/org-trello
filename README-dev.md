@@ -45,13 +45,13 @@ The conventions enforced in org-trello:
 - predicate functions are suffixed by `-p`. For example, `orgtrello-data/entity-card-p` which checks if the parameter entity is a card or not.
 
 For example:
-- in `src/buffer.el`, all pure public functions are named `orgtrello-buffer/some-fn-name`
-- in `src/input.el`, all pure private functions are named `orgtrello-input/--some-private-fn`
-- in `src/cbx.el`, all public side-effecty functions are named `orgtrello-cbx/some-fn-name!`
+- in `org-trello-buffer.el`, all pure public functions are named `orgtrello-buffer/some-fn-name`
+- in `org-trello-input.el`, all pure private functions are named `orgtrello-input/--some-private-fn`
+- in `org-trello-cbx.el`, all public side-effecty functions are named `orgtrello-cbx/some-fn-name!`
 
 ### Exception
 
-`src/org-trello.el` is the main namespace that declares the:
+`org-trello.el` is the main namespace that declares the:
 - interactive commands used throughout all of org-trello
 - minor mode
 
@@ -61,28 +61,26 @@ Every exposed interactive command is named `org-trello/fn-name`.
 
 The namespaces are in loading order:
 
-Namespace File    | Description of the namespace
-------------------|------------------------------------------------------------------------
-header.el         | Main information about org-trello (version, licence, deps, etc...)
-log.el            | Provide log facilities
-setup.el          | Main variable definition that permits internal org-trello functions customization
-hash.el           | Hash-map manipulation utilities
-action.el         | Higher-order functions helper
-db.el             | RAM Database abstraction
-data.el           | Internal org-trello data manipulation
-cbx.el            | Checkbox manipulation utilities
-api.el            | Trello API abstraction DSL
-query.el          | HTTP query utilities
-backend.el        | Deals with trello requests
-elnode.el         | Elnode utilities (common namespace between proxy.el and webadmin.el)
-proxy.el          | Proxy utilities - Namespace in charge of dealing with the trello requests
-webadmin.el       | Web admin front utilities. Namespace in charge of web admin interface
-server.el         | Main namespace that hides the webadmin and the proxy (start/stop functionality)
-buffer.el         | Buffer manipulation functions
-input.el          | Text input functions
-controller.el     | Controller used by org-trello.el
-org-trello.el     | org-trello minor mode definition which defines interactive commands and the mode
-footer.el         | End of the org-trello packaging
+Namespaces file              | Description of the namespace
+-----------------------------|------------------------------------------------------------------------
+org-trello-log.el            | Provide log facilities
+org-trello-setup.el          | Main variable definition that permits internal org-trello functions customization
+org-trello-hash.el           | Hash-map manipulation utilities
+org-trello-action.el         | Higher-order functions helper
+org-trello-db.el             | RAM Database abstraction
+org-trello-data.el           | Internal org-trello data manipulation
+org-trello-cbx.el            | Checkbox manipulation utilities
+org-trello-api.el            | Trello API abstraction DSL
+org-trello-query.el          | HTTP query utilities
+org-trello-backend.el        | Deals with trello requests
+org-trello-elnode.el         | Elnode utilities (common namespace between proxy.el and webadmin.el)
+org-trello-proxy.el          | Proxy utilities - Namespace in charge of dealing with the trello requests
+org-trello-webadmin.el       | Web admin front utilities. Namespace in charge of web admin interface
+org-trello-server.el         | Main namespace that hides the webadmin and the proxy (start/stop functionality)
+org-trello-buffer.el         | Buffer manipulation functions
+org-trello-input.el          | Text input functions
+org-trello-controller.el     | Controller used by org-trello.el
+org-trello.el                | Main information about org-trello (version, licence, deps, etc...) + org-trello minor mode definition which defines interactive commands and the mode
 
 ## Loading
 
@@ -99,11 +97,7 @@ the [Makefile](./Makefile) is your ally for:
 
 ## Package
 
-The sources are built from the [src/](./src/) folder and generated into one [org-trello.el](./org-trello.el) file which is the only file packaged.
-
-This will trigger:
-- the org-trello.el generation from the [src/](./src/) source files
-- trigger the launch-test.el script that runs the tests
+This packages all the /org-trello*.el/ into a standard tar file.
 
 ```sh
 make package
@@ -116,8 +110,8 @@ make test
 ```
 
 This will trigger:
-- the loading of the source code from the **src/** folder.
-- trigger the **launch-test.el** script that runs the unit/integration tests (stored in **test/** folder)
+- the loading of the source code /org-trello*.el/from the root folder.
+- trigger the **launch-tests.el** script that runs the unit/integration tests (stored in **test/** folder)
 
 ## Install
 

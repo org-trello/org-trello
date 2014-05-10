@@ -1034,7 +1034,7 @@ CLOSED: [2014-04-25 Fri 12:20]
   - [X] Adapt test files so that it continues to work (add the needed require statements)
   - [X] Adapt loading code routine for developing + testing
   - [X] Refactoring step - rename some files to avoid confusion
-  - [ ] Adapt README-dev.md to the current code adaptation
+  - [X] Adapt README-dev.md to the current code adaptation
   - [ ] Adapt marmalade packaging
   - [ ] Adapt melpa's org-trello recipe and test it locally
   - [ ] Add PR for melpa's org-trello recipe
