@@ -1040,6 +1040,9 @@ CLOSED: [2014-04-25 Fri 12:20]
   - [X] Does org-trello still compiles? NO
   - [X] Fix simple compilation warnings
   - [X] Fix some more warnings
+  - [X] Does org-trello's test work? YES
+  - [X] Does org-trello work? NO
+  - [ ] Fix org-trello so that it work again
   - [ ] Adapt melpa's org-trello recipe and test it locally
   - [ ] Add PR for melpa's org-trello recipe
 - [ ] Update version
