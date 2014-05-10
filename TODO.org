@@ -1025,6 +1025,17 @@ CLOSED: [2014-04-25 Fri 12:20]
 - [X] Improve start/stop server policy 2
 - [X] Some Refactoring
 - [X] Release notes
+* DONE 0.4.4 [0%]
+- [ ] Multiple files packaging
+  - [ ] Move src/*.el files to /org-trello
+  - [ ] Add 'provide statements for each of those files
+  - [ ] Adapt main org-trello.el files to reference the needed namespaces
+  - [ ] Adapt test files so that it continues to work
+  - [ ] Adapt marmalade packaging
+  - [ ] Adapt melpa's org-trello recipe and test it locally
+  - [ ] Add PR for melpa's org-trello recipe
+- [ ] Update version
+- [ ] Release notes
 * TODO 0.4.x [0%]
 - [ ] Improve sync request policy - https://github.com/org-trello/org-trello/issues/58
 - [ ] Use active region - https://github.com/org-trello/org-trello/issues/130
