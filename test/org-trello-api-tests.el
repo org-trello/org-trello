@@ -271,3 +271,6 @@
  (expect "GET"                      (gethash :method (orgtrello-api/get-lists :board-id)))
  (expect "/boards/:board-id/lists" (gethash :uri    (orgtrello-api/get-lists :board-id)))
  (expect nil                       (gethash :params (orgtrello-api/get-lists :board-id))))
+
+(provide 'org-trello-api-tests)
+;;; org-trello-api-tests.el ends here

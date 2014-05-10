@@ -115,3 +115,6 @@
 (expectations
   (expect (downcase "%28%29%2A%25%21%24%26%27%2B%2C%3B%3D%20content%20is%20escaped%20this%20is%20fun%20ain%20t%20it")
     (downcase (funcall orgtrello-query/--hexify "()*%!$&'+,;= content is escaped this is fun ain t it"))))
+
+(provide 'org-trello-query-tests)
+;;; org-trello-query-tests.el ends here

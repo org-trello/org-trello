@@ -31,3 +31,6 @@
 (expectations (desc "orgtrello-elnode/archived-scanning-dir")
               (expect "tests.scanning" (orgtrello-elnode/archived-scanning-dir "tests"))
               (expect "nil.scanning" (orgtrello-elnode/archived-scanning-dir nil)))
+
+(provide 'org-trello-elnode-tests)
+;;; org-trello-elnode-tests.el ends here

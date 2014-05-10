@@ -1032,7 +1032,7 @@ CLOSED: [2014-04-25 Fri 12:20]
   - [X] Rework header + org-trello + footer files
   - [X] Adapt main org-trello.el files to reference the needed namespaces
   - [X] Adapt test files so that it continues to work (add the needed require statements)
-  - [ ] Adapt loading code routine for developing
+  - [X] Adapt loading code routine for developing + testing
   - [ ] Adapt README-dev.md to the current code adaptation
   - [ ] Adapt marmalade packaging
   - [ ] Adapt melpa's org-trello recipe and test it locally

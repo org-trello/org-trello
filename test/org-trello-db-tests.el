@@ -30,3 +30,6 @@
     (should (equal '("some-value2" "some-value3")   (orgtrello-db/get "some-new-key" db)))
     ;; the old key should be empty
     (should (equal nil                              (orgtrello-db/get "some-key" db)))))
+
+(provide 'org-trello-db-tests)
+;;; org-trello-db-tests.el ends here

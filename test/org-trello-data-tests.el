@@ -582,3 +582,6 @@
   (expect t (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:current      :value)) (orgtrello-data/put-current             :value (orgtrello-hash/empty-hash))))
   (expect t (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:parent       :value)) (orgtrello-data/put-parent              :value (orgtrello-hash/empty-hash))))
   (expect t (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:grandparent  :value)) (orgtrello-data/put-grandparent         :value (orgtrello-hash/empty-hash)))))
+
+(provide 'org-trello-data-tests)
+;;; org-trello-data-tests.el ends here

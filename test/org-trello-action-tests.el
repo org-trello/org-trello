@@ -137,3 +137,6 @@
       (mock (save-buffer) => t)
       (mock (orgtrello-action/reload-setup) => t)
       (orgtrello-action/msg-controls-or-actions-then-do "some-msg" '(control0) (lambda () (throw 'some-exception :value)) 'save-buffer 'reload-setup))))
+
+(provide 'org-trello-action-tests)
+;;; org-trello-action-tests.el ends here

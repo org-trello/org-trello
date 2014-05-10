@@ -49,3 +49,6 @@
                                                     (action . "some action")
                                                     (level . 3)
                                                     (start . nil))))))
+
+(provide 'org-trello-proxy-tests)
+;;; org-trello-proxy-tests.el ends here

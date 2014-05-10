@@ -70,3 +70,6 @@
 
 (expectations (desc "orgtrello-hash/init-map-from")
               (expect :data (orgtrello-hash/init-map-from :data)))
+
+(provide 'org-trello-hash-tests)
+;;; org-trello-hash-tests.el ends here

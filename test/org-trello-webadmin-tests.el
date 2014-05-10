@@ -275,3 +275,6 @@
   (expect '(class . "warning") (orgtrello-webadmin/--compute-class "icon-pause"))
   (expect '(class . "")        (orgtrello-webadmin/--compute-class nil))
   (expect '(class . "")        (orgtrello-webadmin/--compute-class "any")))
+
+(provide 'org-trello-webadmin-tests)
+;;; org-trello-webadmin-tests.el ends here

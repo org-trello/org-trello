@@ -50,3 +50,6 @@
      (insert ,text)
      (org-mode)
      ,body-test))
+
+(provide 'utilities-tests)
+;;; utilities-tests.el ends here

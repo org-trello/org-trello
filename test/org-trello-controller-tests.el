@@ -282,3 +282,6 @@
       (mock (orgtrello-api/get-lists :board-id)                 => :query)
       (mock (orgtrello-query/http-trello :query 'synchronous-query) => :some-result)
       (orgtrello-controller/--list-board-lists! :board-id))))
+
+(provide 'org-trello-controller-tests)
+;;; org-trello-controller-tests.el ends here
