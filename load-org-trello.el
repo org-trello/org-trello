@@ -4,4 +4,5 @@
 
 (require 'org-trello)
 
-;;; load-namespaces.el ends here
+(provide 'load-org-trello)
+;;; load-org-trello.el ends here

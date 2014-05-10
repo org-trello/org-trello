@@ -15,6 +15,10 @@
 ;; behaviour of expectations changed
 (setq expectations-execute-at-once t)
 
+;; force loading
+
+(require 'load-org-trello)
+
 (require 'org-trello-action-tests)
 (require 'org-trello-api-tests)
 (require 'org-trello-backend-tests)
