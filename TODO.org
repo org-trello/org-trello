@@ -1026,8 +1026,8 @@ CLOSED: [2014-04-25 Fri 12:20]
 - [X] Some Refactoring
 - [X] Release notes
 * DONE 0.4.4 [0%]
-- [ ] Multiple files packaging
-  - [ ] Move src/*.el files to /org-trello
+- [-] Multiple files packaging
+  - [X] Move src/*.el files to /org-trello
   - [ ] Add 'provide statements for each of those files
   - [ ] Adapt main org-trello.el files to reference the needed namespaces
   - [ ] Adapt test files so that it continues to work
