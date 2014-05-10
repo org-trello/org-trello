@@ -722,12 +722,6 @@
 (defun orgtrello-controller/--remove-user (user users) "Add the user to the users list"
        (if (member user users) (remove user users) users users))
 
-(defun orgtrello-buffer/--user-ids-assigned-to-current-card () "Compute the user ids assigned to the current card."
-       (--> (orgtrello-buffer/get-usernames-assigned-property!)
-         (orgtrello-data/--users-from it)
-         (--map (gethash (format "%s%s" *ORGTRELLO/USER-PREFIX* it) *ORGTRELLO/HMAP-USERS-NAME-ID*) it)
-         (orgtrello-data/--users-to it)))
-
 (defun orgtrello-controller/do-assign-me () "Command to assign oneself to the card."
        (--> (orgtrello-buffer/get-usernames-assigned-property!)
          (orgtrello-data/--users-from it)

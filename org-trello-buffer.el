@@ -409,6 +409,13 @@
   "Extract the identifier from the point."
   (funcall (if (orgtrello-cbx/checkbox-p) 'orgtrello-cbx/org-get-property 'org-entry-get) point key))
 
+(defun orgtrello-buffer/--user-ids-assigned-to-current-card ()
+  "Compute the user ids assigned to the current card."
+  (--> (orgtrello-buffer/get-usernames-assigned-property!)
+    (orgtrello-data/--users-from it)
+    (--map (gethash (format "%s%s" *ORGTRELLO/USER-PREFIX* it) *ORGTRELLO/HMAP-USERS-NAME-ID*) it)
+    (orgtrello-data/--users-to it)))
+
 (defun orgtrello-buffer/metadata! ()
   "Compute the metadata for a given org entry. Also add some metadata identifier/due-data/point/buffer-name/etc..."
   (let ((current-point (point)))
