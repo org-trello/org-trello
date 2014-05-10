@@ -8,13 +8,6 @@
 (require 'org-trello-proxy)
 (require 'org-trello-db)
 
-(defvar *ORGTRELLO-SERVER/DB*   nil         "Database reference to orgtrello-proxy")
-(defvar *ORGTRELLO/SERVER-HOST* "localhost" "Proxy host")
-(defvar *ORGTRELLO/SERVER-PORT* nil         "Proxy port")
-(defvar *ORGTRELLO/SERVER-URL*  nil         "Proxy url")
-
-(defvar *ORGTRELLO/SERVER-DEFAULT-PORT* 9876 "Default proxy port") (setq *ORGTRELLO/SERVER-PORT* *ORGTRELLO/SERVER-DEFAULT-PORT*)
-
 (defun orgtrello-server/--proxy-handler (http-con)
   "Proxy handler."
   (elnode-hostpath-dispatcher http-con (append *ORGTRELLO/QUERY-APP-ROUTES-WEBADMIN* *ORGTRELLO/QUERY-APP-ROUTES-PROXY*)))

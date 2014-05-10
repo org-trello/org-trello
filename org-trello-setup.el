@@ -54,6 +54,13 @@
 
 (defconst *ORGTRELLO/BUFFER-NUMBER* "org-trello-buffer-number" "Key in the database referencing the number of org-trello buffer opened.")
 
+(defvar *ORGTRELLO-SERVER/DB*   nil         "Database reference to orgtrello-proxy")
+(defvar *ORGTRELLO/SERVER-HOST* "localhost" "Proxy host")
+(defvar *ORGTRELLO/SERVER-PORT* nil         "Proxy port")
+(defvar *ORGTRELLO/SERVER-URL*  nil         "Proxy url")
+
+(defvar *ORGTRELLO/SERVER-DEFAULT-PORT* 9876 "Default proxy port") (setq *ORGTRELLO/SERVER-PORT* *ORGTRELLO/SERVER-DEFAULT-PORT*)
+
 (defun org-trello/compute-url (url-without-base-uri)
   "An helper method to compute the uri to trello"
   (concat *ORGTRELLO/HTTPS* url-without-base-uri))
