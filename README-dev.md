@@ -86,7 +86,7 @@ footer.el         | End of the org-trello packaging
 
 ## Loading
 
-Use the [load-namespaces.el](./load-namespaces.el) file to load org-trello for development purposes and keep the emacs way of browsing source code (`M-.`, `M-,`).
+Use the [load-org-trello.el](./load-org-trello.el) file to load org-trello for development purposes and keep the emacs way of browsing source code (`M-.`, `M-,`).
 
 Open the file and `M-x eval-buffer`.
 

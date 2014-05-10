@@ -5,7 +5,7 @@
 (message "Launching tests!")
 
 ;; load code prod
-(load-file "load-namespaces.el")
+(load-file "load-org-trello.el")
 
 ;; Add test folder to the load path
 (add-to-list 'load-path (expand-file-name "./test"))
@@ -33,5 +33,5 @@
 (require 'org-trello-utils-tests)
 (require 'org-trello-webadmin-tests)
 
-(provide 'org-trello-tests)
-;;; org-trello-tests ends here
+(provide 'load-org-trello-tests)
+;;; load-org-trello-tests ends here
