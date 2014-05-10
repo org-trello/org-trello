@@ -3,73 +3,29 @@
 (require 'ert-expectations)
 (require 'el-mock)
 
-(expectations (desc "testing orgtrello-hash/make-hash-org")
-  (expect "some name"       (gethash :name           (orgtrello-hash/make-hash-org "" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org" :desc :comments :tags)))
-  (expect "IN PROGRESS"     (gethash :keyword        (orgtrello-hash/make-hash-org "" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org" :desc :comments :tags)))
-  (expect 0                 (gethash :level          (orgtrello-hash/make-hash-org "" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org" :desc :comments :tags)))
-  (expect "some id"         (gethash :id             (orgtrello-hash/make-hash-org "" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org" :desc :comments :tags)))
-  (expect "due-date"        (gethash :due            (orgtrello-hash/make-hash-org "" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org" :desc :comments :tags)))
-  (expect :point            (gethash :position       (orgtrello-hash/make-hash-org "" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org" :desc :comments :tags)))
-  (expect "buffer-name.org" (gethash :buffername     (orgtrello-hash/make-hash-org "" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org" :desc :comments :tags)))
-  (expect "1,2,3"           (gethash :member-ids     (orgtrello-hash/make-hash-org "1,2,3" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org" :desc :comments :tags)))
-  (expect :desc             (gethash :desc           (orgtrello-hash/make-hash-org "1,2,3" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org" :desc :comments :tags)))
-  (expect :comments         (gethash :comments       (orgtrello-hash/make-hash-org "1,2,3" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org" :desc :comments :tags)))
-  (expect :tags             (gethash :tags           (orgtrello-hash/make-hash-org "1,2,3" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org" :desc :comments :tags))))
-
-(expectations (desc "orgtrello-hash/make-hierarchy")
- (expect :current (gethash :current (orgtrello-hash/make-hierarchy :current)))
- (expect nil (gethash :parent (orgtrello-hash/make-hierarchy :current)))
- (expect nil (gethash :grandparent (orgtrello-hash/make-hierarchy :current))))
-
-(expectations (desc "orgtrello-hash/make-hierarchy")
- (expect :current (gethash :current (orgtrello-hash/make-hierarchy :current :parent)))
- (expect :parent (gethash :parent (orgtrello-hash/make-hierarchy :current :parent)))
- (expect nil (gethash :grandparent (orgtrello-hash/make-hierarchy :current :parent))))
-
-(expectations (desc "orgtrello-hash/make-hierarchy")
- (expect :current (gethash :current (orgtrello-hash/make-hierarchy :current :parent :grandparent)))
- (expect :parent (gethash :parent (orgtrello-hash/make-hierarchy :current :parent :grandparent)))
- (expect :grandparent (gethash :grandparent (orgtrello-hash/make-hierarchy :current :parent :grandparent))))
-
-(expectations (desc "orgtrello-hash/make-hierarchy")
- (expect :current (gethash :current (orgtrello-hash/make-hierarchy :current nil :grandparent)))
- (expect nil (gethash :parent (orgtrello-hash/make-hierarchy :current nil :grandparent)))
- (expect :grandparent (gethash :grandparent (orgtrello-hash/make-hierarchy nil :parent :grandparent))))
-
-(expectations (desc "orgtrello-hash/make-hierarchy")
-  (expect :ok                                 (-> (orgtrello-hash/make-hash-org :users 1 :keyword "some name" :id :due :position :buffer-name :desc :comments :tags)
-                                                  orgtrello-hash/make-hierarchy
-                                                  orgtrello-controller/--mandatory-name-ok-p))
-  (expect *ORGTRELLO/ERROR-SYNC-CARD-MISSING-NAME*      (-> (orgtrello-hash/make-hash-org :users 1 :keyword "" :id :due :position :buffer-name :desc :comments :tags)
-                                                  orgtrello-hash/make-hierarchy
-                                                  orgtrello-controller/--mandatory-name-ok-p))
-  (expect *ORGTRELLO/ERROR-SYNC-CARD-MISSING-NAME*      (-> (orgtrello-hash/make-hash-org :users 1 :keyword nil :id :due :position :buffer-name :desc :comments :tags)
-                                                  orgtrello-hash/make-hierarchy
-                                                  orgtrello-controller/--mandatory-name-ok-p))
-  (expect :ok                                 (-> (orgtrello-hash/make-hash-org :users 2 :keyword "some name" :id :due :position :buffer-name :desc :comments :tags)
-                                                  orgtrello-hash/make-hierarchy
-                                                  orgtrello-controller/--mandatory-name-ok-p))
-  (expect *ORGTRELLO/ERROR-SYNC-CHECKLIST-MISSING-NAME* (-> (orgtrello-hash/make-hash-org :users 2 :keyword "" :id :due :position :buffer-name :desc :comments :tags)
-                                                  orgtrello-hash/make-hierarchy
-                                                  orgtrello-controller/--mandatory-name-ok-p))
-  (expect *ORGTRELLO/ERROR-SYNC-CHECKLIST-MISSING-NAME* (-> (orgtrello-hash/make-hash-org :users 2 :keyword nil :id :due :position :buffer-name :desc :comments :tags)
-                                                  orgtrello-hash/make-hierarchy
-                                                  orgtrello-controller/--mandatory-name-ok-p))
-  (expect :ok                                 (-> (orgtrello-hash/make-hash-org :users 3 :keyword "some name" :id :due :position :buffer-name :desc :comments :tags)
-                                                  orgtrello-hash/make-hierarchy
-                                                  orgtrello-controller/--mandatory-name-ok-p))
-  (expect *ORGTRELLO/ERROR-SYNC-ITEM-MISSING-NAME*      (-> (orgtrello-hash/make-hash-org :users 3 :keyword "" :id :due :position :buffer-name :desc :comments :tags)
-                                                  orgtrello-hash/make-hierarchy
-                                                  orgtrello-controller/--mandatory-name-ok-p))
-  (expect *ORGTRELLO/ERROR-SYNC-ITEM-MISSING-NAME*      (-> (orgtrello-hash/make-hash-org :users 3 :keyword nil :id :due :position :buffer-name :desc :comments :tags)
-                                                  orgtrello-hash/make-hierarchy
-                                                  orgtrello-controller/--mandatory-name-ok-p)))
-
 (ert-deftest testing-orgtrello-hash/init-map-from ()
   (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data ()) (orgtrello-hash/init-map-from nil))))
 
 (expectations (desc "orgtrello-hash/init-map-from")
               (expect :data (orgtrello-hash/init-map-from :data)))
+
+(expectations
+  (expect "some-method" (orgtrello-hash/gethash-data :method (orgtrello-hash/make-properties `((:method . "some-method")))))
+  (expect nil           (orgtrello-hash/gethash-data :method (orgtrello-hash/make-properties `((:inexistant . "some-method")))))
+  (expect nil           (orgtrello-hash/gethash-data :key nil))
+  (expect :value        (orgtrello-hash/gethash-data :key (orgtrello-hash/make-properties `((:key . :value)))))
+  (expect nil           (orgtrello-hash/gethash-data :key (orgtrello-hash/make-properties `((:other-key . :value)))))
+  (expect nil           (orgtrello-hash/gethash-data :key (orgtrello-hash/make-properties `((:key . nil))))))
+
+(expectations
+  (expect nil
+    (orgtrello-hash/puthash-data :key :value nil))
+  (expect t
+    (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:key :value))
+                (orgtrello-hash/puthash-data :key :value (orgtrello-hash/empty-hash))))
+  (expect t
+    (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:1 :2 :key :value))
+                (orgtrello-hash/puthash-data :key :value (orgtrello-hash/make-properties '((:1 . :2) (:key . :other-value)))))))
 
 (provide 'org-trello-hash-tests)
 ;;; org-trello-hash-tests.el ends here

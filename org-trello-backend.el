@@ -2,6 +2,13 @@
 ;;; Commentary:
 ;;; Code:
 
+(require 'org-trello-setup)
+(require 'org-trello-log)
+(require 'org-trello-hash)
+(require 'org-trello-data)
+(require 'org-trello-query)
+(require 'org-trello-api)
+
 (defun orgtrello-backend/compute-items-from-checklist! (checklist entities adjacency)
   "Given a checklist, retrieve its items and update the entities hash and the adjacency list."
   (let ((checklist-id (orgtrello-data/entity-id checklist)))
@@ -53,19 +60,19 @@
   (let ((adjacency (orgtrello-hash/empty-hash)))
     (orgtrello-log/msg *OT/INFO* "Computing checklist '%s' data..." (orgtrello-data/entity-name checklist))
     (--> (orgtrello-hash/empty-hash)
-      (orgtrello-data/puthash-data (orgtrello-data/entity-id checklist) checklist it)
+      (orgtrello-hash/puthash-data (orgtrello-data/entity-id checklist) checklist it)
       (orgtrello-backend/compute-items-from-checklist! checklist it adjacency))))
 
 (defun orgtrello-backend/--add-entity-to-entities (entity entities)
   "Adding entity to the hash entities."
   (-> (orgtrello-data/entity-id-or-marker entity)
-    (orgtrello-data/puthash-data entity entities)))
+    (orgtrello-hash/puthash-data entity entities)))
 
 (defun orgtrello-backend/--add-entity-to-adjacency (current-entity parent-entity adjacency)
   "Adding entity to the adjacency entry."
   (let* ((current-id (orgtrello-data/entity-id-or-marker current-entity))
          (parent-id  (orgtrello-data/entity-id-or-marker parent-entity)))
-    (orgtrello-data/puthash-data parent-id (-snoc (gethash parent-id adjacency) current-id) adjacency)))
+    (orgtrello-hash/puthash-data parent-id (-snoc (gethash parent-id adjacency) current-id) adjacency)))
 
 (defun orgtrello-backend/--put-entities-with-adjacency (current-meta entities adjacency)
   "Deal with adding a new item to entities."

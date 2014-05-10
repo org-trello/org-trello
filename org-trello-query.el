@@ -2,6 +2,11 @@
 ;;; Commentary:
 ;;; Code:
 
+(require 'request)
+(require 'org-trello-log)
+(require 'org-trello-setup)
+(require 'org-trello-data)
+
 (defconst *ORGTRELLO/TRELLO-URL* "https://api.trello.com/1" "The needed prefix url for trello")
 
 (defun orgtrello-query/--compute-url (server uri)

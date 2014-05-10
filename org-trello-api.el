@@ -2,6 +2,11 @@
 ;;; Commentary:
 ;;; Code:
 
+(require 'org-trello-setup)
+(require 'org-trello-log)
+(require 'org-trello-hash)
+(require 'org-trello-data)
+
 (defun orgtrello-api/make-query (method uri &optional params)
   "Utility function to ease the creation of the map - wait, where are my clojure data again!?"
   (let ((h (orgtrello-hash/empty-hash)))

@@ -2,6 +2,11 @@
 ;;; Commentary:
 ;;; Code:
 
+(require 'db)
+(require 'org-trello-setup)
+(require 'org-trello-log)
+(require 'org-trello-hash)
+
 (defun orgtrello-db/init ()
   "Initialize a default RAM database (if ~/.trello/orgtrello.db.elc exists, it will load from it."
   (db-make `(db-hash :from-filename ,(format "%s/%s" *ORGTRELLO/CONFIG-DIR* "orgtrello.db"))))

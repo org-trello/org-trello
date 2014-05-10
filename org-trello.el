@@ -107,6 +107,11 @@ Please consider upgrading Emacs." emacs-version) "Error message when installing 
 
 (defconst *ORGTRELLO/VERSION* "0.4.3" "current org-trello version installed.")
 
+(defun org-trello/version ()
+  (interactive)
+  "Org-trello version."
+  (message "org-trello version: %s" *ORGTRELLO/VERSION*))
+
 
 
 (require 'org-trello-log)

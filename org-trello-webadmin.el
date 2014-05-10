@@ -2,6 +2,12 @@
 ;;; Commentary:
 ;;; Code:
 
+(require 'elnode)
+(require 'org-trello-log)
+(require 'org-trello-data)
+(require 'org-trello-hash)
+(require 'org-trello-db)
+
 (defun orgtrello-webadmin/--compute-root-static-files ()
   "Root files under which css and js files are installed."
   (format "%s%s" elnode-webserver-docroot "org-trello/bootstrap"))
@@ -15,8 +21,8 @@
                      length)))))) ;; . and .. are returned by default
 
 (defvar *ORGTRELLO/FILES* (->> (orgtrello-hash/empty-hash)
-                            (orgtrello-data/puthash-data :bootstrap `("http://getbootstrap.com/2.3.2/assets/bootstrap.zip" "/tmp/bootstrap.zip" ,(orgtrello-webadmin/--compute-root-static-files)))
-                            (orgtrello-data/puthash-data :jquery    `("http://code.jquery.com/jquery-2.0.3.min.js"         "/tmp/jquery.js"     ,(format "%s/js" (orgtrello-webadmin/--compute-root-static-files))))))
+                            (orgtrello-hash/puthash-data :bootstrap `("http://getbootstrap.com/2.3.2/assets/bootstrap.zip" "/tmp/bootstrap.zip" ,(orgtrello-webadmin/--compute-root-static-files)))
+                            (orgtrello-hash/puthash-data :jquery    `("http://code.jquery.com/jquery-2.0.3.min.js"         "/tmp/jquery.js"     ,(format "%s/js" (orgtrello-webadmin/--compute-root-static-files))))))
 
 (defun orgtrello-webadmin/--unzip-and-install (file dest)
   "Execute the unarchive command. Dependency on unzip on the system."

@@ -2,6 +2,9 @@
 ;;; Commentary:
 ;;; Code:
 
+(require 'org-trello-setup)
+(require 'org-trello-log)
+
 (defun orgtrello-action/reload-setup ()
   "Reload orgtrello setup."
   (org-set-regexps-and-options))

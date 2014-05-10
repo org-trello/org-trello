@@ -2,6 +2,18 @@
 ;;; Commentary:
 ;;; Code:
 
+(require 'org-trello-setup)
+(require 'org-trello-log)
+(require 'org-trello-buffer)
+(require 'org-trello-data)
+(require 'org-trello-hash)
+(require 'org-trello-api)
+(require 'org-trello-cbx)
+(require 'org-trello-action)
+(require 'org-trello-backend)
+(require 'org-trello-buffer)
+(require 'org-trello-input)
+
 (defun orgtrello-controller/compute-marker (buffer-name name position)
   "Compute the orgtrello marker which is composed of buffer-name, name and position"
   (->> (list *ORGTRELLO/MARKER* buffer-name name (if (stringp position) position (int-to-string position)))
@@ -20,7 +32,7 @@
   (orgtrello-action/reload-setup)
   ;; now exploit some
   (let* ((list-keywords (reverse (orgtrello-buffer/filtered-kwds!)))
-         (hmap-id-name (--reduce-from (orgtrello-data/puthash-data (orgtrello-buffer/org-file-get-property! it) it acc)
+         (hmap-id-name (--reduce-from (orgtrello-hash/puthash-data (orgtrello-buffer/org-file-get-property! it) it acc)
                                       (orgtrello-hash/empty-hash)
                                       list-keywords))
          (list-users (orgtrello-controller/--list-user-entries (orgtrello-buffer/org-file-properties!)))
@@ -448,11 +460,11 @@
 
 (defun orgtrello-controller/--id-name (entities)
   "Given a list of entities, return a map of (id, name)."
-  (--reduce-from (orgtrello-data/puthash-data (orgtrello-data/entity-id it) (orgtrello-data/entity-name it) acc) (orgtrello-hash/empty-hash) entities))
+  (--reduce-from (orgtrello-hash/puthash-data (orgtrello-data/entity-id it) (orgtrello-data/entity-name it) acc) (orgtrello-hash/empty-hash) entities))
 
 (defun orgtrello-controller/--name-id (entities)
   "Given a list of entities, return a map of (id, name)."
-  (--reduce-from (orgtrello-data/puthash-data (orgtrello-data/entity-name it) (orgtrello-data/entity-id it) acc) (orgtrello-hash/empty-hash) entities))
+  (--reduce-from (orgtrello-hash/puthash-data (orgtrello-data/entity-name it) (orgtrello-data/entity-id it) acc) (orgtrello-hash/empty-hash) entities))
 
 (defun orgtrello-controller/--list-boards! ()
   "Return the map of the existing boards associated to the current account. (Synchronous request)"
@@ -471,7 +483,7 @@
   (let ((i               0)
         (index-board-map (orgtrello-hash/empty-hash)))
     (maphash (lambda (id _)
-               (orgtrello-data/puthash-data (format "%d" i) id index-board-map)
+               (orgtrello-hash/puthash-data (format "%d" i) id index-board-map)
                (setq i (+ 1 i)))
              boards)
     index-board-map))
@@ -638,7 +650,7 @@
   (mapcar 'orgtrello-data/entity-member memberships-map))
 
 (defun orgtrello-controller/--compute-user-properties-hash (user-properties)
-  (--reduce-from (orgtrello-data/puthash-data (orgtrello-data/entity-username it) (orgtrello-data/entity-id it) acc) (orgtrello-hash/empty-hash) user-properties))
+  (--reduce-from (orgtrello-hash/puthash-data (orgtrello-data/entity-username it) (orgtrello-data/entity-id it) acc) (orgtrello-hash/empty-hash) user-properties))
 
 (defun orgtrello-controller/--compute-user-properties-hash-from-board (board-info)
   "Compute user properties given board's informations."
@@ -671,7 +683,7 @@
   "Given a list of names, build those lists on the trello boards. Return the hashmap (name, id) of the new lists created."
   (--reduce-from (progn
                    (orgtrello-log/msg *OT/INFO* "Board id %s - Creating list '%s'" board-id it)
-                   (orgtrello-data/puthash-data it (orgtrello-data/entity-id (orgtrello-query/http-trello (orgtrello-api/add-list it board-id) 'synchronous-query)) acc))
+                   (orgtrello-hash/puthash-data it (orgtrello-data/entity-id (orgtrello-query/http-trello (orgtrello-api/add-list it board-id) 'synchronous-query)) acc))
                  (orgtrello-hash/empty-hash)
                  list-keywords))
 

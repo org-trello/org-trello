@@ -2,6 +2,8 @@
 ;;; Commentary:
 ;;; Code:
 
+(require 'org-trello-log)
+
 (defconst *consumer-key*                nil                                               "Id representing the user.")
 (defconst *access-token*                nil                                               "Read/write access token to use trello on behalf of the user.")
 (defconst *ORGTRELLO/MARKER*            "orgtrello-marker"                                "A marker used inside the org buffer to synchronize entries.")
@@ -55,13 +57,6 @@
 (defun org-trello/compute-url (url-without-base-uri)
   "An helper method to compute the uri to trello"
   (concat *ORGTRELLO/HTTPS* url-without-base-uri))
-
-;; #################### orgtrello-version
-
-(defun org-trello/version ()
-  (interactive)
-  "Version of org-trello"
-  (message "org-trello version: %s" *ORGTRELLO/VERSION*))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-setup loaded!")
 

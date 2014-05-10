@@ -2,6 +2,14 @@
 ;;; Commentary:
 ;;; Code:
 
+(require 'org-trello-setup)
+(require 'org-trello-log)
+(require 'org-trello-hash)
+(require 'org-trello-data)
+(require 'org-trello-query)
+(require 'org-trello-cbx)
+(require 'org-trello-backend)
+
 (defun orgtrello-buffer/org-entry-put! (point property value)
   (if (or (null value) (string= "" value))
       (orgtrello-buffer/delete-property-from-entry! property)
@@ -439,12 +447,12 @@
       (let ((ancestors (cond ((= level *ORGTRELLO/CARD-LEVEL*)      '(nil nil))
                              ((= level *ORGTRELLO/CHECKLIST-LEVEL*) `(,(orgtrello-buffer/--parent-metadata!) nil))
                              ((= level *ORGTRELLO/ITEM-LEVEL*)      `(,(orgtrello-buffer/--parent-metadata!) ,(orgtrello-buffer/--grandparent-metadata!))))))
-        (orgtrello-hash/make-hierarchy current (car ancestors) (cadr ancestors))))))
+        (orgtrello-data/make-hierarchy current (car ancestors) (cadr ancestors))))))
 
 (defun orgtrello-buffer/--to-orgtrello-metadata (heading-metadata)
   "Given the heading-metadata returned by the function 'org-heading-components, make it a hashmap with key :level, :keyword, :name. and their respective value"
   (cl-destructuring-bind (comments description member-ids buffer-name point id due level _ keyword _ name tags) heading-metadata
-    (orgtrello-hash/make-hash-org member-ids level keyword name id due point buffer-name description comments tags)))
+    (orgtrello-data/make-hash-org member-ids level keyword name id due point buffer-name description comments tags)))
 
 (defun orgtrello-buffer/current-level! ()
   "Compute the current level's position."

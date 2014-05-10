@@ -2,6 +2,13 @@
 ;;; Commentary:
 ;;; Code:
 
+(require 'org-trello-cbx)
+(require 'org-trello-api)
+
+(require 'ert)
+(require 'ert-expectations)
+(require 'el-mock)
+
 (defun orgtrello-action/org-delete-property (key)
   "Delete a property depending on the nature of the current entry (org heading or checkbox)."
   (funcall (if (orgtrello-cbx/checkbox-p) 'orgtrello-cbx/org-delete-property 'org-delete-property) key))

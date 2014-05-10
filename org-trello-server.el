@@ -2,6 +2,12 @@
 ;;; Commentary:
 ;;; Code:
 
+(require 'elnode)
+(require 'org-trello-log)
+(require 'org-trello-setup)
+(require 'org-trello-proxy)
+(require 'org-trello-db)
+
 (defvar *ORGTRELLO-SERVER/DB*   nil         "Database reference to orgtrello-proxy")
 (defvar *ORGTRELLO/SERVER-HOST* "localhost" "Proxy host")
 (defvar *ORGTRELLO/SERVER-PORT* nil         "Proxy port")

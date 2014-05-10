@@ -2,6 +2,18 @@
 ;;; Commentary:
 ;;; Code:
 
+(require 'elnode)
+(require 'org-trello-log)
+(require 'org-trello-setup)
+(require 'org-trello-query)
+(require 'org-trello-api)
+(require 'org-trello-data)
+(require 'org-trello-hash)
+(require 'org-trello-buffer)
+(require 'org-trello-cbx)
+(require 'org-trello-db)
+(require 'org-trello-action)
+
 (defun orgtrello-proxy/http (query-map &optional sync success-callback error-callback)
   "Query the proxy for the trello api."
   (--> query-map
@@ -74,7 +86,7 @@
         (t                      (--reduce-from (let ((key (car it))
                                                      (val (cdr it)))
                                                  (-when-let (new-key (orgtrello-proxy/--transcode-key key))
-                                                   (orgtrello-data/puthash-data new-key val acc))
+                                                   (orgtrello-hash/puthash-data new-key val acc))
                                                  acc)
                                                (orgtrello-hash/empty-hash)
                                                entities))))
