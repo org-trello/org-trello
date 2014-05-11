@@ -1025,7 +1025,8 @@ CLOSED: [2014-04-25 Fri 12:20]
 - [X] Improve start/stop server policy 2
 - [X] Some Refactoring
 - [X] Release notes
-* IN-PROGRESS 0.4.4 [100%]
+* DONE 0.4.4 [100%]
+CLOSED: [2014-05-11 Sun 23:05]
 - [X] Multiple files packaging - CLOSE #163
   - [X] Move src/*.el files to /org-trello
   - [X] Add 'provide statements for each of those files
