@@ -237,37 +237,37 @@
            orgtrello-proxy/--dispatch-action
            (funcall entity-data (orgtrello-buffer/entry-get-full-metadata!))))))))
 
-(defun orgtrello-action/--delete-region (start end)
+(defun orgtrello-proxy/--delete-region (start end)
   "Delete a region defined by start and end bound."
   (remove-overlays start end) ;; remove overlays on the card region
   (delete-region start end))
 
-(defun orgtrello-action/--delete-card-region ()
+(defun orgtrello-proxy/--delete-card-region ()
   "Delete the card region (including overlays and line)"
   (org-back-to-heading)
   (let ((starting-point (point))
         (ending-point   (save-excursion (if (org-goto-sibling) (point) (point-max))))) ;; next card or point-max
-    (orgtrello-action/--delete-region starting-point ending-point)))
+    (orgtrello-proxy/--delete-region starting-point ending-point)))
 
-(defun orgtrello-action/--delete-checkbox-checklist-region ()
+(defun orgtrello-proxy/--delete-checkbox-checklist-region ()
   "Delete the checklist region"
   (let ((starting-point (point-at-bol))
         (ending-point (save-excursion (-if-let (result (orgtrello-cbx/--goto-next-checkbox-with-same-level! *ORGTRELLO/CHECKLIST-LEVEL*))
                                           result
                                         (orgtrello-cbx/compute-next-card-point!))))) ;; next checkbox or next card or point-max
-    (orgtrello-action/--delete-region starting-point ending-point)))
+    (orgtrello-proxy/--delete-region starting-point ending-point)))
 
-(defun orgtrello-action/--delete-checkbox-item-region ()
+(defun orgtrello-proxy/--delete-checkbox-item-region ()
   "Delete the item region"
   (let ((starting-point (point-at-bol))
         (ending-point (1+ (point-at-eol))))
-    (orgtrello-action/--delete-region starting-point ending-point)))
+    (orgtrello-proxy/--delete-region starting-point ending-point)))
 
-(defun orgtrello-action/delete-region (entity)
+(defun orgtrello-proxy/delete-region (entity)
   "Delete the region"
-  (cond ((orgtrello-data/entity-card-p entity) 'orgtrello-action/--delete-card-region)
-        ((orgtrello-data/entity-checklist-p entity) 'orgtrello-action/--delete-checkbox-checklist-region)
-        ((orgtrello-data/entity-item-p entity) 'orgtrello-action/--delete-checkbox-item-region)))
+  (cond ((orgtrello-data/entity-card-p entity) 'orgtrello-proxy/--delete-card-region)
+        ((orgtrello-data/entity-checklist-p entity) 'orgtrello-proxy/--delete-checkbox-checklist-region)
+        ((orgtrello-data/entity-item-p entity) 'orgtrello-proxy/--delete-checkbox-item-region)))
 
 (defun orgtrello-proxy/--standard-delete-success-callback (entity-to-del)
   "Return a callback function able to deal with the position."
@@ -284,7 +284,7 @@
            (when (orgtrello-proxy/--getting-back-to-marker marker)
              (-> (orgtrello-buffer/entry-get-full-metadata!)
                orgtrello-data/current
-               orgtrello-action/delete-region
+               orgtrello-proxy/delete-region
                funcall))))
        (orgtrello-proxy/--cleanup-and-save-buffer-metadata level entry-buffer-name)))))
 
@@ -449,7 +449,7 @@
     ("^localhost//proxy/producer/\\(.*\\)" . orgtrello-proxy/--elnode-proxy-producer)
     ;; proxy to request trello
     ("^localhost//proxy/timer/\\(.*\\)" . orgtrello-proxy/--elnode-timer))
-  "Org-trello dispatch routes for the proxy")
+  "Org-trello dispatch routes for the proxy.")
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-proxy loaded!")
 
