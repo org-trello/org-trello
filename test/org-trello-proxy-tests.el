@@ -50,5 +50,10 @@
                                                     (level . 3)
                                                     (start . nil))))))
 
+(expectations (desc "map-dispatch-delete")
+              (expect 'orgtrello-proxy/--card-delete      (gethash *ORGTRELLO/CARD-LEVEL* *MAP-DISPATCH-DELETE*))
+              (expect 'orgtrello-proxy/--checklist-delete (gethash *ORGTRELLO/CHECKLIST-LEVEL* *MAP-DISPATCH-DELETE*))
+              (expect 'orgtrello-proxy/--item-delete      (gethash *ORGTRELLO/ITEM-LEVEL* *MAP-DISPATCH-DELETE*)))
+
 (provide 'org-trello-proxy-tests)
 ;;; org-trello-proxy-tests.el ends here

@@ -65,11 +65,6 @@
               (expect 'orgtrello-controller/--checklist (gethash *ORGTRELLO/CHECKLIST-LEVEL* *MAP-DISPATCH-CREATE-UPDATE*))
               (expect 'orgtrello-controller/--item      (gethash *ORGTRELLO/ITEM-LEVEL* *MAP-DISPATCH-CREATE-UPDATE*)))
 
-(expectations (desc "orgtrello-controller/--card-delete")
-              (expect 'orgtrello-controller/--card-delete      (gethash *ORGTRELLO/CARD-LEVEL* *MAP-DISPATCH-DELETE*))
-              (expect 'orgtrello-controller/--checklist-delete (gethash *ORGTRELLO/CHECKLIST-LEVEL* *MAP-DISPATCH-DELETE*))
-              (expect 'orgtrello-controller/--item-delete      (gethash *ORGTRELLO/ITEM-LEVEL* *MAP-DISPATCH-DELETE*)))
-
 (expectations (desc "orgtrello-controller/--compute-user-properties")
   (expect t (hash-equal
              #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data

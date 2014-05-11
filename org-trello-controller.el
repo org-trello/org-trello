@@ -191,21 +191,10 @@ If the checks are ko, the error message is returned."
                                      (orgtrello-controller/compute-check orgtrello-controller/--item-state))))
       checks-ok-or-error-message)))
 
-(defun orgtrello-controller/--too-deep-level (meta &optional parent-meta grandparent-meta)
-  "Given a META and optional PARENT-META and GRANDPARENT-META, deal with too deep level."
-  "Your arborescence depth is too deep. We only support up to depth 3.\nLevel 1 - card\nLevel 2 - checklist\nLevel 3 - items")
-
 (defvar *MAP-DISPATCH-CREATE-UPDATE* (orgtrello-hash/make-properties `((,*ORGTRELLO/CARD-LEVEL*      . orgtrello-controller/--card)
                                                                        (,*ORGTRELLO/CHECKLIST-LEVEL* . orgtrello-controller/--checklist)
-                                                                       (,*ORGTRELLO/ITEM-LEVEL*      . orgtrello-controller/--item))) "Dispatch map for the creation/update of card/checklist/item.")
-
-(defun orgtrello-controller/--dispatch-create (entry-metadata)
-  "Dispatch the ENTRY-METADATA creation depending on the nature of the entry."
-  (let ((current-meta        (orgtrello-data/current entry-metadata)))
-    (-> current-meta
-      orgtrello-data/entity-level
-      (gethash *MAP-DISPATCH-CREATE-UPDATE* 'orgtrello-controller/--too-deep-level)
-      (funcall current-meta (orgtrello-data/parent entry-metadata) (orgtrello-data/grandparent entry-metadata)))))
+                                                                       (,*ORGTRELLO/ITEM-LEVEL*      . orgtrello-controller/--item)))
+  "Dispatch map for the creation/update of card/checklist/item.")
 
 (defun orgtrello-controller/--update-query-with-org-metadata (query-map position buffer-name &optional name success-callback sync)
   "Given a trello QUERY-MAP, POSITION, BUFFER-NAME and optional NAME, SUCCESS-CALLBACK and SYNC, add proxy metadata needed to work."
@@ -414,32 +403,6 @@ Optionally, SYNC permits to synchronize the query."
     orgtrello-controller/--dispatch-sync-request
     (orgtrello-controller/--update-query-with-org-metadata (point) (buffer-name) nil 'orgtrello-controller/--sync-entity-and-structure-to-buffer-with-trello-data-callback)
     (orgtrello-proxy/http sync)))
-
-(defun orgtrello-controller/--card-delete (card-meta &optional parent-meta)
-  "Deal with the deletion query of a CARD-META.
-PARENT-META is not used here."
-  (orgtrello-api/delete-card (orgtrello-data/entity-id card-meta)))
-
-(defun orgtrello-controller/--checklist-delete (checklist-meta &optional parent-meta)
-  "Deal with the deletion query of a CHECKLIST-META.
-PARENT-META is not used here."
-  (orgtrello-api/delete-checklist (orgtrello-data/entity-id checklist-meta)))
-
-(defun orgtrello-controller/--item-delete (item-meta &optional checklist-meta)
-  "Deal with create/update query of an ITEM-META in CHECKLIST-META."
-  (orgtrello-api/delete-item (orgtrello-data/entity-id checklist-meta) (orgtrello-data/entity-id item-meta)))
-
-(defvar *MAP-DISPATCH-DELETE* (orgtrello-hash/make-properties `((,*ORGTRELLO/CARD-LEVEL*      . orgtrello-controller/--card-delete)
-                                                                (,*ORGTRELLO/CHECKLIST-LEVEL* . orgtrello-controller/--checklist-delete)
-                                                                (,*ORGTRELLO/ITEM-LEVEL*      . orgtrello-controller/--item-delete))) "Dispatch map for the deletion query of card/checklist/item.")
-
-(defun orgtrello-controller/--dispatch-delete (meta &optional parent-meta)
-  "Dispatch the call to the delete function depending on META level info.
-Optionally, PARENT-META is a parameter of the function dispatched."
-  (-> meta
-    orgtrello-data/entity-level
-    (gethash *MAP-DISPATCH-DELETE* 'orgtrello-controller/--too-deep-level)
-    (funcall meta parent-meta)))
 
 (defun orgtrello-controller/--do-delete-card (&optional sync)
   "Delete the card.

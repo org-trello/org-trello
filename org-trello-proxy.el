@@ -211,9 +211,17 @@ Move the cursor position."
             orgtrello-data/entity-id)
     (orgtrello-cbx/org-delete-property *ORGTRELLO/ID*)))
 
+(defun orgtrello-proxy/--dispatch-create (entry-metadata)
+  "Dispatch the ENTRY-METADATA creation depending on the nature of the entry."
+  (let ((current-meta        (orgtrello-data/current entry-metadata)))
+    (-> current-meta
+      orgtrello-data/entity-level
+      (gethash *MAP-DISPATCH-CREATE-UPDATE* 'orgtrello-action/--too-deep-level)
+      (funcall current-meta (orgtrello-data/parent entry-metadata) (orgtrello-data/grandparent entry-metadata)))))
+
 (defun orgtrello-proxy/--sync-entity (entity-data entity-full-metadata)
   "Execute the entity ENTITY-DATA and ENTITY-FULL-METADATA synchronization."
-  (lexical-let ((query-map           (orgtrello-controller/--dispatch-create entity-full-metadata))
+  (lexical-let ((query-map           (orgtrello-proxy/--dispatch-create entity-full-metadata))
                 (entity-full-meta    entity-full-metadata)
                 (level               (orgtrello-data/entity-level entity-data)))
     (if (hash-table-p query-map)
@@ -308,9 +316,36 @@ Move the cursor position."
     orgtrello-proxy/archive-key
     (orgtrello-db/pop-last *ORGTRELLO-SERVER/DB*)))
 
+(defun orgtrello-proxy/--card-delete (card-meta &optional parent-meta)
+  "Deal with the deletion query of a CARD-META.
+PARENT-META is not used here."
+  (orgtrello-api/delete-card (orgtrello-data/entity-id card-meta)))
+
+(defun orgtrello-proxy/--checklist-delete (checklist-meta &optional parent-meta)
+  "Deal with the deletion query of a CHECKLIST-META.
+PARENT-META is not used here."
+  (orgtrello-api/delete-checklist (orgtrello-data/entity-id checklist-meta)))
+
+(defun orgtrello-proxy/--item-delete (item-meta &optional checklist-meta)
+  "Deal with create/update query of an ITEM-META in CHECKLIST-META."
+  (orgtrello-api/delete-item (orgtrello-data/entity-id checklist-meta) (orgtrello-data/entity-id item-meta)))
+
+(defvar *MAP-DISPATCH-DELETE* (orgtrello-hash/make-properties `((,*ORGTRELLO/CARD-LEVEL*      . orgtrello-proxy/--card-delete)
+                                                                (,*ORGTRELLO/CHECKLIST-LEVEL* . orgtrello-proxy/--checklist-delete)
+                                                                (,*ORGTRELLO/ITEM-LEVEL*      . orgtrello-proxy/--item-delete)))
+  "Dispatch map for the deletion query of card/checklist/item.")
+
+(defun orgtrello-proxy/--dispatch-delete (meta &optional parent-meta)
+  "Dispatch the call to the delete function depending on META level info.
+Optionally, PARENT-META is a parameter of the function dispatched."
+  (-> meta
+    orgtrello-data/entity-level
+    (gethash *MAP-DISPATCH-DELETE* 'orgtrello-action/--too-deep-level)
+    (funcall meta parent-meta)))
+
 (defun orgtrello-proxy/--delete (entity-data entity-full-metadata)
   "Execute the delete query to remove ENTITY-DATA and ENTITY-FULL-METADATA."
-  (lexical-let ((query-map        (orgtrello-controller/--dispatch-delete (orgtrello-data/current entity-full-metadata) (orgtrello-data/parent entity-full-metadata)))
+  (lexical-let ((query-map        (orgtrello-proxy/--dispatch-delete (orgtrello-data/current entity-full-metadata) (orgtrello-data/parent entity-full-metadata)))
                 (entity-full-meta entity-full-metadata)
                 (level            (orgtrello-data/entity-level entity-data)))
     (if (hash-table-p query-map)
