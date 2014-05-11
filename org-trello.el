@@ -98,13 +98,6 @@ Please consider upgrading Emacs." emacs-version) "Error message when installing 
 (require 'esxml)
 (require 'db)
 
-(if (version< "24.3" emacs-version)
-    (require 'cl-lib)
-  (progn ;; need to alias the call
-    (require 'cl)
-    (defalias 'cl-defun 'defun*)
-    (defalias 'cl-destructuring-bind 'destructuring-bind)))
-
 (defconst *ORGTRELLO/VERSION* "0.4.4" "Current org-trello version installed.")
 
 (defun org-trello/version ()
@@ -123,6 +116,8 @@ Please consider upgrading Emacs." emacs-version) "Error message when installing 
 (require 'org-trello-controller)
 (require 'org-trello-db)
 (require 'org-trello-buffer)
+
+(org-trello/require-cl)
 
 
 

@@ -10,6 +10,8 @@
 (require 'org-trello-cbx)
 (require 'org-trello-backend)
 
+(org-trello/require-cl)
+
 (defun orgtrello-buffer/org-entry-put! (point property value)
   "Put at POINT the PROPERTY with VALUE.
 If the VALUE is nil or empty, remove such PROPERTY."

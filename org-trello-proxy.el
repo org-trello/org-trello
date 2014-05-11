@@ -14,6 +14,8 @@
 (require 'org-trello-db)
 (require 'org-trello-action)
 
+(org-trello/require-cl)
+
 (defun orgtrello-proxy/http (query-map &optional sync success-callback error-callback)
   "Query the proxy for the trello api with QUERY-MAP and optional SYNC, SUCCESS-CALLBACK and ERROR-CALLBACK."
   (--> query-map

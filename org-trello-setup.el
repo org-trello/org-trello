@@ -174,6 +174,15 @@ This use the standard 'org-todo-keywords property from 'org-mode'.")
   "An helper method to compute the uri to trello from URL-WITHOUT-BASE-URI."
   (concat *ORGTRELLO/HTTPS* url-without-base-uri))
 
+(defun org-trello/require-cl ()
+  "Require cl lib."
+  (if (version< "24.3" emacs-version)
+      (require 'cl-lib)
+    (progn ;; need to alias the call
+      (require 'cl)
+      (defalias 'cl-defun 'defun*)
+      (defalias 'cl-destructuring-bind 'destructuring-bind))))
+
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-setup loaded!")
 
 (provide 'org-trello-setup)

@@ -9,6 +9,8 @@
 (require 'org-trello-db)
 (require 'org-trello-webadmin)
 
+(org-trello/require-cl)
+
 (defun orgtrello-server/--proxy-handler (http-con)
   "Proxy handler to deal with HTTP-CON and dispatch towards the right server function."
   (elnode-hostpath-dispatcher http-con (append *ORGTRELLO/QUERY-APP-ROUTES-WEBADMIN* *ORGTRELLO/QUERY-APP-ROUTES-PROXY*)))

@@ -17,6 +17,8 @@
 (require 'org-trello-server)
 (require 'org-trello-proxy)
 
+(org-trello/require-cl)
+
 (defun orgtrello-controller/--list-user-entries (properties)
   "List the users entries from PROPERTIES."
   (--filter (string-match-p *ORGTRELLO/USER-PREFIX* (car it)) properties))

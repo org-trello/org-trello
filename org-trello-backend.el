@@ -10,6 +10,8 @@
 (require 'org-trello-query)
 (require 'org-trello-api)
 
+(org-trello/require-cl)
+
 (defun orgtrello-backend/compute-items-from-checklist! (checklist entities adjacency)
   "Given a CHECKLIST, retrieve its items and update the ENTITIES hash and the ADJACENCY list."
   (let ((checklist-id (orgtrello-data/entity-id checklist)))
