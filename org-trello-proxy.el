@@ -245,23 +245,23 @@
 (defun orgtrello-action/--delete-card-region ()
   "Delete the card region (including overlays and line)"
   (org-back-to-heading)
-  (let ((orgtrello-action/--starting-point (point))
-        (orgtrello-action/--ending-point   (save-excursion (if (org-goto-sibling) (point) (point-max))))) ;; next card or point-max
-    (orgtrello-action/--delete-region orgtrello-action/--starting-point orgtrello-action/--ending-point)))
+  (let ((starting-point (point))
+        (ending-point   (save-excursion (if (org-goto-sibling) (point) (point-max))))) ;; next card or point-max
+    (orgtrello-action/--delete-region starting-point ending-point)))
 
 (defun orgtrello-action/--delete-checkbox-checklist-region ()
   "Delete the checklist region"
-  (let ((orgtrello-action/--starting-point (point-at-bol))
-        (orgtrello-action/--ending-point (save-excursion (-if-let (result (orgtrello-cbx/--goto-next-checkbox-with-same-level! *ORGTRELLO/CHECKLIST-LEVEL*))
-                                                             result
-                                                           (orgtrello-cbx/compute-next-card-point!))))) ;; next checkbox or next card or point-max
-    (orgtrello-action/--delete-region orgtrello-action/--starting-point orgtrello-action/--ending-point)))
+  (let ((starting-point (point-at-bol))
+        (ending-point (save-excursion (-if-let (result (orgtrello-cbx/--goto-next-checkbox-with-same-level! *ORGTRELLO/CHECKLIST-LEVEL*))
+                                          result
+                                        (orgtrello-cbx/compute-next-card-point!))))) ;; next checkbox or next card or point-max
+    (orgtrello-action/--delete-region starting-point ending-point)))
 
 (defun orgtrello-action/--delete-checkbox-item-region ()
   "Delete the item region"
-  (let ((orgtrello-action/--starting-point (point-at-bol))
-        (orgtrello-action/--ending-point (1+ (point-at-eol))))
-    (orgtrello-action/--delete-region orgtrello-action/--starting-point orgtrello-action/--ending-point)))
+  (let ((starting-point (point-at-bol))
+        (ending-point (1+ (point-at-eol))))
+    (orgtrello-action/--delete-region starting-point ending-point)))
 
 (defun orgtrello-action/delete-region (entity)
   "Delete the region"
