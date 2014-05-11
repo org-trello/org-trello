@@ -55,5 +55,25 @@
               (expect 'orgtrello-proxy/--checklist-delete (gethash *ORGTRELLO/CHECKLIST-LEVEL* *MAP-DISPATCH-DELETE*))
               (expect 'orgtrello-proxy/--item-delete      (gethash *ORGTRELLO/ITEM-LEVEL* *MAP-DISPATCH-DELETE*)))
 
+(expectations (desc "orgtrello-proxy/--card")
+              (expect 'orgtrello-proxy/--card      (gethash *ORGTRELLO/CARD-LEVEL* *MAP-DISPATCH-CREATE-UPDATE*))
+              (expect 'orgtrello-proxy/--checklist (gethash *ORGTRELLO/CHECKLIST-LEVEL* *MAP-DISPATCH-CREATE-UPDATE*))
+              (expect 'orgtrello-proxy/--item      (gethash *ORGTRELLO/ITEM-LEVEL* *MAP-DISPATCH-CREATE-UPDATE*)))
+
+(expectations
+ (expect "complete" (orgtrello-proxy/--compute-state *ORGTRELLO/DONE*))
+ (expect "incomplete" (orgtrello-proxy/--compute-state "anything-else")))
+
+(expectations
+ (expect t   (orgtrello-proxy/--compute-check *ORGTRELLO/DONE*))
+ (expect nil (orgtrello-proxy/--compute-check "anything-else")))
+
+(expectations
+ (expect "a,b,c" (orgtrello-proxy/--tags-to-labels ":a:b:c"))
+ (expect "a,b,c" (orgtrello-proxy/--tags-to-labels "a:b:c"))
+ (expect "a," (orgtrello-proxy/--tags-to-labels ":a:"))
+ (expect "a," (orgtrello-proxy/--tags-to-labels "a:"))
+ (expect nil  (orgtrello-proxy/--tags-to-labels nil)))
+
 (provide 'org-trello-proxy-tests)
 ;;; org-trello-proxy-tests.el ends here

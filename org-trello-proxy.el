@@ -211,6 +211,121 @@ Move the cursor position."
             orgtrello-data/entity-id)
     (orgtrello-cbx/org-delete-property *ORGTRELLO/ID*)))
 
+(defun orgtrello-proxy/--retrieve-state-of-card (card-meta)
+  "Given a CARD-META, retrieve its state depending on its :keyword metadata.
+If empty or no keyword then, its equivalence is *ORGTRELLO/TODO*, otherwise, return its current state."
+  (-if-let (card-kwd (orgtrello-data/entity-keyword card-meta *ORGTRELLO/TODO*)) card-kwd *ORGTRELLO/TODO*))
+
+(defun orgtrello-proxy/--checks-before-sync-card (card-meta)
+  "Given the CARD-META, check is done before synchronizing the cards."
+  (if (orgtrello-data/entity-name card-meta) :ok *ORGTRELLO/ERROR-SYNC-CARD-MISSING-NAME*))
+
+(defun orgtrello-proxy/--tags-to-labels (tags)
+  "Transform org TAGS string to csv labels."
+  (when tags
+    (let* ((s (s-split ":" tags))
+           (ns (if (string= "" (car s)) (cdr s) s)))
+      (s-join "," ns))))
+
+(defun orgtrello-proxy/--card (card-meta &optional parent-meta grandparent-meta)
+  "Deal with create/update CARD-META query build.
+PARENT-META and GRANDPARENT-META are indispensable.
+If the checks are ko, the error message is returned."
+  (let ((checks-ok-or-error-message (orgtrello-proxy/--checks-before-sync-card card-meta)))
+    ;; name is mandatory
+    (if (equal :ok checks-ok-or-error-message)
+        ;; parent and grandparent are useless here
+        (let* ((card-kwd                (orgtrello-proxy/--retrieve-state-of-card card-meta))
+               (list-id                 (orgtrello-buffer/org-file-get-property! card-kwd))
+               (card-id                 (orgtrello-data/entity-id          card-meta))
+               (card-name               (orgtrello-data/entity-name        card-meta))
+               (card-due                (orgtrello-data/entity-due         card-meta))
+               (card-desc               (orgtrello-data/entity-description card-meta))
+               (card-user-ids-assigned  (orgtrello-data/entity-member-ids  card-meta))
+               (card-labels             (orgtrello-proxy/--tags-to-labels (orgtrello-data/entity-tags card-meta))))
+          (if card-id
+              ;; update
+              (orgtrello-api/move-card card-id list-id card-name card-due card-user-ids-assigned card-desc card-labels)
+            ;; create
+            (orgtrello-api/add-card card-name list-id card-due card-user-ids-assigned card-desc card-labels)))
+      checks-ok-or-error-message)))
+
+(defun orgtrello-proxy/--checks-before-sync-checklist (checklist-meta card-meta)
+  "Check all is good before synchronizing the CHECKLIST-META (CARD-META indispensable)."
+  (-if-let (checklist-name (orgtrello-data/entity-name checklist-meta))
+      (-if-let (card-id (orgtrello-data/entity-id card-meta))
+          :ok
+        *ORGTRELLO/ERROR-SYNC-CHECKLIST-SYNC-CARD-FIRST*)
+    *ORGTRELLO/ERROR-SYNC-CHECKLIST-MISSING-NAME*))
+
+(defun orgtrello-proxy/--checklist (checklist-meta &optional card-meta grandparent-meta)
+  "Deal with create/update CHECKLIST-META query build.
+CARD-META, GRANDPARENT-META are indispensable.
+If the checks are ko, the error message is returned."
+  (let ((checks-ok-or-error-message (orgtrello-proxy/--checks-before-sync-checklist checklist-meta card-meta)))
+    ;; name is mandatory
+    (if (equal :ok checks-ok-or-error-message)
+        ;; grandparent is useless here
+        (let ((card-id        (orgtrello-data/entity-id card-meta))
+              (checklist-name (orgtrello-data/entity-name checklist-meta)))
+          (-if-let (checklist-id (orgtrello-data/entity-id checklist-meta))
+              ;; update
+              (orgtrello-api/update-checklist checklist-id checklist-name)
+            ;; create
+            (orgtrello-api/add-checklist card-id checklist-name)))
+      checks-ok-or-error-message)))
+
+(defun orgtrello-proxy/--compute-state (state)
+  "Given a STATE (TODO/DONE) compute the trello state equivalent."
+  (orgtrello-data/--compute-state-generic state '("complete" "incomplete")))
+
+(defun orgtrello-proxy/--compute-check (state)
+  "Given a STATE (TODO/DONE) compute the trello check equivalent."
+  (orgtrello-data/--compute-state-generic state '(t nil)))
+
+(defun orgtrello-proxy/--checks-before-sync-item (item-meta checklist-meta card-meta)
+  "Check all is good before synchronizing the item ITEM-META (CHECKLIST-META and CARD-META indispensable)."
+  (let ((item-name    (orgtrello-data/entity-name item-meta))
+        (checklist-id (orgtrello-data/entity-id checklist-meta))
+        (card-id      (orgtrello-data/entity-id card-meta)))
+    (if item-name
+        (if checklist-id
+            (if card-id :ok *ORGTRELLO/ERROR-SYNC-ITEM-SYNC-CARD-FIRST*)
+          *ORGTRELLO/ERROR-SYNC-ITEM-SYNC-CHECKLIST-FIRST*)
+      *ORGTRELLO/ERROR-SYNC-ITEM-MISSING-NAME*)))
+
+(defun orgtrello-proxy/--item (item-meta &optional checklist-meta card-meta)
+  "Deal with create/update ITEM-META query build.
+CHECKLIST-META and CARD-META are indispensable data to compute the query.
+If the checks are ko, the error message is returned."
+  (let ((checks-ok-or-error-message (orgtrello-proxy/--checks-before-sync-item item-meta checklist-meta card-meta)))
+    ;; name is mandatory
+    (if (equal :ok checks-ok-or-error-message)
+        ;; card-meta is only usefull for the update part
+        (let* ((item-id         (orgtrello-data/entity-id item-meta))
+               (checklist-id    (orgtrello-data/entity-id checklist-meta))
+               (card-id         (orgtrello-data/entity-id card-meta))
+               (item-name       (orgtrello-data/entity-name item-meta))
+               (item-state      (orgtrello-data/entity-keyword item-meta)))
+          ;; update/create items
+          (if item-id
+              ;; update - rename, check or uncheck the item
+              (orgtrello-api/update-item card-id
+                                         checklist-id
+                                         item-id
+                                         item-name
+                                         (orgtrello-proxy/--compute-state item-state))
+            ;; create
+            (orgtrello-api/add-items checklist-id
+                                     item-name
+                                     (orgtrello-proxy/--compute-check item-state))))
+      checks-ok-or-error-message)))
+
+(defvar *MAP-DISPATCH-CREATE-UPDATE* (orgtrello-hash/make-properties `((,*ORGTRELLO/CARD-LEVEL*      . orgtrello-proxy/--card)
+                                                                       (,*ORGTRELLO/CHECKLIST-LEVEL* . orgtrello-proxy/--checklist)
+                                                                       (,*ORGTRELLO/ITEM-LEVEL*      . orgtrello-proxy/--item)))
+  "Dispatch map for the creation/update of card/checklist/item.")
+
 (defun orgtrello-proxy/--dispatch-create (entry-metadata)
   "Dispatch the ENTRY-METADATA creation depending on the nature of the entry."
   (let ((current-meta        (orgtrello-data/current entry-metadata)))

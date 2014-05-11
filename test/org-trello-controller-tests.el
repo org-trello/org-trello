@@ -60,11 +60,6 @@
     (should (equal (gethash "testing board 3" hashtable-result) (gethash "testing board 3" hashtable-expected)))
     (should (equal (hash-table-count hashtable-result) (hash-table-count hashtable-expected)))))
 
-(expectations (desc "orgtrello-controller/--card")
-              (expect 'orgtrello-controller/--card      (gethash *ORGTRELLO/CARD-LEVEL* *MAP-DISPATCH-CREATE-UPDATE*))
-              (expect 'orgtrello-controller/--checklist (gethash *ORGTRELLO/CHECKLIST-LEVEL* *MAP-DISPATCH-CREATE-UPDATE*))
-              (expect 'orgtrello-controller/--item      (gethash *ORGTRELLO/ITEM-LEVEL* *MAP-DISPATCH-CREATE-UPDATE*)))
-
 (expectations (desc "orgtrello-controller/--compute-user-properties")
   (expect t (hash-equal
              #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
@@ -134,14 +129,6 @@
  (expect "#+property: test value" (orgtrello-controller/compute-property "test" "value")))
 
 (expectations
-  (expect "complete" (orgtrello-controller/compute-state *ORGTRELLO/DONE*))
-  (expect "incomplete" (orgtrello-controller/compute-state "anything-else")))
-
-(expectations
-  (expect t   (orgtrello-controller/compute-check *ORGTRELLO/DONE*))
-  (expect nil (orgtrello-controller/compute-check "anything-else")))
-
-(expectations
   (expect t
     (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data ("0" :id-board0 "1" :id-board1))
                 (orgtrello-controller/--index-board-map (orgtrello-hash/make-properties '((:id-board0 . "board0-name") (:id-board1 . "board1-name")))))))
@@ -198,13 +185,6 @@
 ;;                                        (orgtrello-hash/make-properties '(("user" . "user-id") ("some-other-user" . "some-other-user-id")))
 ;;                                        "user"
 ;;                                        (orgtrello-hash/make-properties '((:red . "red label") (:green . "green label")))))))
-
-(expectations
-  (expect "a,b,c" (orgtrello-controller/--tags-to-labels ":a:b:c"))
-  (expect "a,b,c" (orgtrello-controller/--tags-to-labels "a:b:c"))
-  (expect "a," (orgtrello-controller/--tags-to-labels ":a:"))
-  (expect "a," (orgtrello-controller/--tags-to-labels "a:"))
-  (expect nil  (orgtrello-controller/--tags-to-labels nil)))
 
 (expectations
  (expect :ok
