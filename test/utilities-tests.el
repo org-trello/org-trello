@@ -22,8 +22,8 @@
                        (orgtrello-hash/empty-hash))))
 
 (defun org-trello-mode-test () "Trigger org-trello-mode but shaped for the tests."
-  (remove-hook 'org-trello-mode-on-hook 'org-trello-mode-on-hook-fn)  (add-hook 'org-trello-mode-on-hook (lambda () (org-trello-mode-on-hook-fn t)))
-  (remove-hook 'org-trello-mode-off-hook 'org-trello-mode-off-hook-fn) (add-hook 'org-trello-mode-off-hook (lambda () (org-trello-mode-off-hook-fn t)) )
+  (remove-hook 'org-trello-mode-on-hook 'orgtrello-controller/mode-on-hook-fn)  (add-hook 'org-trello-mode-on-hook (lambda () (orgtrello-controller/mode-on-hook-fn t)))
+  (remove-hook 'org-trello-mode-off-hook 'orgtrello-controller/mode-off-hook-fn) (add-hook 'org-trello-mode-off-hook (lambda () (orgtrello-controller/mode-off-hook-fn t)) )
   (org-trello-mode))
 
 (defmacro orgtrello-tests/with-temp-buffer (text body-test &optional nb-lines-forward)

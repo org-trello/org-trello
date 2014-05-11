@@ -117,21 +117,12 @@ Please consider upgrading Emacs." emacs-version) "Error message when installing 
 (require 'org-trello-log)
 (require 'org-trello-utils)
 (require 'org-trello-setup)
-(require 'org-trello-hash)
 (require 'org-trello-action)
-(require 'org-trello-db)
-(require 'org-trello-data)
-(require 'org-trello-cbx)
-(require 'org-trello-api)
-(require 'org-trello-query)
-(require 'org-trello-backend)
-(require 'org-trello-elnode)
-(require 'org-trello-proxy)
-(require 'org-trello-webadmin)
 (require 'org-trello-server)
-(require 'org-trello-buffer)
-(require 'org-trello-input)
+(require 'org-trello-proxy)
 (require 'org-trello-controller)
+(require 'org-trello-db)
+(require 'org-trello-buffer)
 
 
 
@@ -292,29 +283,6 @@ If MODIFIER is not nil, unassign oneself from the card."
   (interactive)
   (orgtrello-log/msg 0 (org-trello/--help-describing-bindings-template *ORGTRELLO/MODE-PREFIX-KEYBINDING* *org-trello-interactive-command-binding-couples*)))
 
-(defvar *org-trello-interactive-command-binding-couples*
-  '((org-trello/version                      "v" "Display the current version installed.")
-    (org-trello/install-key-and-token        "i" "Install the keys and the access-token.")
-    (org-trello/install-board-and-lists-ids  "I" "Select the board and attach the todo, doing and done list.")
-    (org-trello/check-setup                  "d" "Check that the setup is ok. If everything is ok, will simply display 'Setup ok!'.")
-    (org-trello/assign-me                    "a" "Assign oneself to the card. With C-u modifier, unassign oneself from the card.")
-    (org-trello/delete-setup                 "D" "Clean up the org buffer from all org-trello informations.")
-    (org-trello/create-board                 "b" "Create interactively a board and attach the org-mode file to this trello board.")
-    (org-trello/sync-entity                  "c" "Create/Update an entity (card/checklist/item) depending on its level and status. Do not deal with level superior to 4.")
-    (org-trello/sync-full-entity             "C" "Create/Update a complete entity card/checklist/item and its subtree (depending on its level).")
-    (org-trello/kill-entity                  "k" "Kill the entity (and its arborescence tree) from the trello board and the org buffer.")
-    (org-trello/kill-all-entities            "K" "Kill all the entities (and their arborescence tree) from the trello board and the org buffer.")
-    (org-trello/sync-buffer                  "s" "Synchronize the org-mode file to the trello board (org-mode -> trello). With prefix C-u, sync-from-trello (org-mode <- trello).")
-    (org-trello/jump-to-card                 "j" "Jump to card in browser.")
-    (org-trello/jump-to-trello-board         "J" "Open the browser to your current trello board.")
-    (org-trello/show-card-comments           "o" "Display the card's comments in a pop-up buffer.")
-    (org-trello/add-card-comments            "A" "Add a comment to the card.")
-    (org-trello/show-board-labels            "l" "Display the board's labels in a pop-up buffer.")
-    (org-trello/update-board-metadata        "u" "Update the buffer's trello board metadata.")
-    (org-trello/abort-sync                   "g" "Abort synchronization activities.")
-    (org-trello/help-describing-bindings     "h" "This help message."))
-  "List of commands and default bindings without the prefix key.")
-
 (defun org-trello/--install-local-keybinding-map! (previous-org-trello-mode-prefix-keybinding org-trello-mode-prefix-keybinding interactive-command-binding-to-install)
   "Install locally the default binding map with the prefix binding of org-trello-mode-prefix-keybinding."
   (mapc (lambda (command-and-binding)
@@ -334,9 +302,6 @@ If MODIFIER is not nil, unassign oneself from the card."
             (define-key org-trello-mode-map (kbd (concat previous-org-trello-mode-prefix-keybinding binding)) nil)))
         interactive-command-binding-to-install))
 
-(defvar *ORGTRELLO/MODE-PREFIX-KEYBINDING*          "C-c o" "The default prefix keybinding.")
-(defvar *PREVIOUS-ORGTRELLO/MODE-PREFIX-KEYBINDING* "C-c o" "The memory default prefix keybinding.")
-
 (defun org-trello/install-local-prefix-mode-keybinding! (keybinding)
   "Install the new default org-trello mode keybinding."
   (setq *PREVIOUS-ORGTRELLO/MODE-PREFIX-KEYBINDING* *ORGTRELLO/MODE-PREFIX-KEYBINDING*)
@@ -355,69 +320,21 @@ If MODIFIER is not nil, unassign oneself from the card."
 (defvar org-trello-mode-hook '()
   "Define one org-trello hook for user to extend org-trello with their own behavior.")
 
-(defun org-trello-mode-on-hook-fn (&optional partial-mode)
-  "Start org-trello hook function to install some org-trello setup.
-PARTIAL-MODE is to be used for tests."
-  (unless partial-mode
-    ;; install the bindings
-    (org-trello/install-local-prefix-mode-keybinding! *ORGTRELLO/MODE-PREFIX-KEYBINDING*)
-    ;; start the server which does some initialization on its own
-    (orgtrello-server/start)
-    ;; increment the number of buffers with org-trello mode on
-    (orgtrello-db/increment-buffer-size *ORGTRELLO-SERVER/DB*)
-    ;; buffer-invisibility-spec
-    (add-to-invisibility-spec '(org-trello-cbx-property)) ;; for an ellipsis (...) change to '(org-trello-cbx-property . t)
-    ;; installing hooks
-    (add-hook 'before-save-hook 'orgtrello-buffer/install-overlays!) ;; before-change-functions
-    ;; migrate all checkbox at org-trello mode activation
-    (orgtrello-buffer/install-overlays!)
-    ;; a little message in the minibuffer to notify the user
-    (orgtrello-log/msg *OT/NOLOG* (org-trello/--startup-message *ORGTRELLO/MODE-PREFIX-KEYBINDING*))
-    ;; Overwrite the org-mode-map
-    (define-key org-trello-mode-map [remap org-end-of-line] 'org-trello/end-of-line!)
-    ;; run hook at startup
-    (run-hooks 'org-trello-mode-hook)))
+(add-hook 'org-trello-mode-on-hook (lambda ()
+                                     ;; install the bindings
+                                     (org-trello/install-local-prefix-mode-keybinding! *ORGTRELLO/MODE-PREFIX-KEYBINDING*)
+                                     ;; Overwrite the org-mode-map
+                                     (define-key org-trello-mode-map [remap org-end-of-line] 'orgtrello-buffer/end-of-line!)))
 
-(defun org-trello-mode-off-hook-fn (&optional partial-mode)
-  "Stop org-trello hook function to deinstall some org-trello setup.
-PARTIAL-MODE is to be used for tests."
-  (unless partial-mode
-    ;; remove the bindings when org-trello mode off
-    (org-trello/remove-local-prefix-mode-keybinding! *ORGTRELLO/MODE-PREFIX-KEYBINDING*)
-    ;; decrement the number of buffers of 1
-    (orgtrello-db/decrement-buffer-size *ORGTRELLO-SERVER/DB*)
-    ;; stop the proxy server and webadmin
-    (orgtrello-server/stop)
-    ;; remove the invisible property names
-    (remove-from-invisibility-spec '(org-trello-cbx-property)) ;; for an ellipsis (...) change to '(org-trello-cbx-property . t)
-    ;; installing hooks
-    (remove-hook 'before-save-hook 'orgtrello-buffer/install-overlays!)
-    ;; remove org-trello overlays
-    (orgtrello-buffer/remove-overlays!)
-    ;; remove mapping override
-    (define-key org-trello-mode-map [remap org-end-of-line] nil)
-    ;; a little message in the minibuffer to notify the user
-    (orgtrello-log/msg *OT/NOLOG* "org-trello/ot is off!")))
+(add-hook 'org-trello-mode-on-hook 'orgtrello-controller/mode-on-hook-fn)
 
-(defun org-trello/end-of-line! ()
-  "Move the cursor at the end of the line. For a checkbox, move to the 1- point (because of overlays)."
-  (interactive)
-  (let* ((pt (save-excursion (org-end-of-line) (point)))
-         (entity-level (-> (orgtrello-buffer/entry-get-full-metadata!) orgtrello-data/current orgtrello-data/entity-level)))
-    (goto-char (if (or (= *ORGTRELLO/CHECKLIST-LEVEL* entity-level) (= *ORGTRELLO/ITEM-LEVEL* entity-level))
-                   (-if-let (s (org-trello/compute-overlay-size!))
-                       (- pt s 1)
-                     pt)
-                 pt))))
+(add-hook 'org-trello-mode-off-hook (lambda ()
+                                      ;; remove the bindings when org-trello mode off
+                                      (org-trello/remove-local-prefix-mode-keybinding! *ORGTRELLO/MODE-PREFIX-KEYBINDING*)
+                                      ;; remove mapping override
+                                      (define-key org-trello-mode-map [remap org-end-of-line] nil)))
 
-(defun org-trello/compute-overlay-size! ()
-  "Compute the overlay size to the current position"
-  (-when-let (o (car (overlays-in (point-at-bol) (point-at-eol))))
-    (- (overlay-end o) (overlay-start o))))
-
-(add-hook 'org-trello-mode-on-hook 'org-trello-mode-on-hook-fn)
-
-(add-hook 'org-trello-mode-off-hook 'org-trello-mode-off-hook-fn)
+(add-hook 'org-trello-mode-off-hook 'orgtrello-controller/mode-off-hook-fn)
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello loaded!")
 

@@ -484,6 +484,22 @@ Make it a hashmap with key :level,  :keyword,  :name and their respective value.
 FN-TO-EXECUTE is a function without any parameter."
   (org-map-entries (lambda () (when (= level (orgtrello-buffer/current-level!)) (funcall fn-to-execute)))))
 
+(defun orgtrello-buffer/end-of-line! ()
+  "Move the cursor at the end of the line. For a checkbox, move to the 1- point (because of overlays)."
+  (interactive)
+  (let* ((pt (save-excursion (org-end-of-line) (point)))
+         (entity-level (-> (orgtrello-buffer/entry-get-full-metadata!) orgtrello-data/current orgtrello-data/entity-level)))
+    (goto-char (if (or (= *ORGTRELLO/CHECKLIST-LEVEL* entity-level) (= *ORGTRELLO/ITEM-LEVEL* entity-level))
+                   (-if-let (s (orgtrello-buffer/compute-overlay-size!))
+                       (- pt s 1)
+                     pt)
+                 pt))))
+
+(defun orgtrello-buffer/compute-overlay-size! ()
+  "Compute the overlay size to the current position"
+  (-when-let (o (car (overlays-in (point-at-bol) (point-at-eol))))
+    (- (overlay-end o) (overlay-start o))))
+
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-buffer loaded!")
 
 (provide 'org-trello-buffer)

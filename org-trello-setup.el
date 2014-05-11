@@ -138,6 +138,35 @@ This use the standard 'org-todo-keywords property from 'org-mode'.")
   "Default proxy port.")
 (setq *ORGTRELLO/SERVER-PORT* *ORGTRELLO/SERVER-DEFAULT-PORT*)
 
+(defvar *ORGTRELLO/MODE-PREFIX-KEYBINDING*          "C-c o"
+  "The default prefix keybinding.")
+
+(defvar *PREVIOUS-ORGTRELLO/MODE-PREFIX-KEYBINDING* "C-c o"
+  "The memory default prefix keybinding.")
+
+(defvar *org-trello-interactive-command-binding-couples*
+  '((org-trello/version                      "v" "Display the current version installed.")
+    (org-trello/install-key-and-token        "i" "Install the keys and the access-token.")
+    (org-trello/install-board-and-lists-ids  "I" "Select the board and attach the todo, doing and done list.")
+    (org-trello/check-setup                  "d" "Check that the setup is ok. If everything is ok, will simply display 'Setup ok!'.")
+    (org-trello/assign-me                    "a" "Assign oneself to the card. With C-u modifier, unassign oneself from the card.")
+    (org-trello/delete-setup                 "D" "Clean up the org buffer from all org-trello informations.")
+    (org-trello/create-board                 "b" "Create interactively a board and attach the org-mode file to this trello board.")
+    (org-trello/sync-entity                  "c" "Create/Update an entity (card/checklist/item) depending on its level and status. Do not deal with level superior to 4.")
+    (org-trello/sync-full-entity             "C" "Create/Update a complete entity card/checklist/item and its subtree (depending on its level).")
+    (org-trello/kill-entity                  "k" "Kill the entity (and its arborescence tree) from the trello board and the org buffer.")
+    (org-trello/kill-all-entities            "K" "Kill all the entities (and their arborescence tree) from the trello board and the org buffer.")
+    (org-trello/sync-buffer                  "s" "Synchronize the org-mode file to the trello board (org-mode -> trello). With prefix C-u, sync-from-trello (org-mode <- trello).")
+    (org-trello/jump-to-card                 "j" "Jump to card in browser.")
+    (org-trello/jump-to-trello-board         "J" "Open the browser to your current trello board.")
+    (org-trello/show-card-comments           "o" "Display the card's comments in a pop-up buffer.")
+    (org-trello/add-card-comments            "A" "Add a comment to the card.")
+    (org-trello/show-board-labels            "l" "Display the board's labels in a pop-up buffer.")
+    (org-trello/update-board-metadata        "u" "Update the buffer's trello board metadata.")
+    (org-trello/abort-sync                   "g" "Abort synchronization activities.")
+    (org-trello/help-describing-bindings     "h" "This help message."))
+  "List of commands and default bindings without the prefix key.")
+
 (defun org-trello/compute-url (url-without-base-uri)
   "An helper method to compute the uri to trello from URL-WITHOUT-BASE-URI."
   (concat *ORGTRELLO/HTTPS* url-without-base-uri))
