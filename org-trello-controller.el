@@ -16,14 +16,6 @@
 (require 'org-trello-db)
 (require 'org-trello-server)
 
-(defun orgtrello-controller/compute-marker (buffer-name name position)
-  "Compute the orgtrello marker which is composed of BUFFER-NAME, NAME and POSITION."
-  (->> (list *ORGTRELLO/MARKER* buffer-name name (if (stringp position) position (int-to-string position)))
-    (-interpose "-")
-    (apply 'concat)
-    sha1
-    (concat *ORGTRELLO/MARKER* "-")))
-
 (defun orgtrello-controller/--list-user-entries (properties)
   "List the users entries from PROPERTIES."
   (--filter (string-match-p *ORGTRELLO/USER-PREFIX* (car it)) properties))
@@ -221,12 +213,6 @@ If the checks are ko, the error message is returned."
   (when name             (orgtrello-data/put-entity-name     name             query-map))
   (orgtrello-data/put-entity-position     position                            query-map)
   (orgtrello-data/put-entity-buffername   buffer-name                         query-map))
-
-(defun orgtrello-buffer/--compute-marker-from-entry (entry)
-  "Compute and set the ENTRY marker (either a sha1 or the id of the entry-metadata)."
-  (-if-let (current-entry-id (orgtrello-data/entity-id entry))
-      current-entry-id
-    (orgtrello-controller/compute-marker (orgtrello-data/entity-buffername entry) (orgtrello-data/entity-name entry) (orgtrello-data/entity-position entry))))
 
 (defun orgtrello-controller/--right-level-p (entity)
   "Compute if the ENTITY level is correct (not higher than level 4)."

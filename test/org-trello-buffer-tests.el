@@ -739,5 +739,9 @@ some description\n"
     (should (equal "some-user-id,some-user-id2"                                  (orgtrello-data/entity-member-ids h-values)))
     (should (equal "TODO"                                                        (orgtrello-data/entity-keyword h-values)))))
 
+(expectations (desc "orgtrello-marker-2a0b98e652ce6349a0659a7a8eeb3783ffe9a11a")
+              (expect "orgtrello-marker-2a0b98e652ce6349a0659a7a8eeb3783ffe9a11a" (orgtrello-buffer/compute-marker "buffername" "some-name" 1234))
+              (expect "orgtrello-marker-6c59c5dcf6c83edaeb3f4923bfd929a091504bb3" (orgtrello-buffer/compute-marker "some-other-buffername" "some-name" 4321)))
+
 (provide 'org-trello-buffer-tests)
 ;;; org-trello-buffer-tests.el ends here

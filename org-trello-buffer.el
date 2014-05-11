@@ -500,6 +500,20 @@ FN-TO-EXECUTE is a function without any parameter."
   (-when-let (o (car (overlays-in (point-at-bol) (point-at-eol))))
     (- (overlay-end o) (overlay-start o))))
 
+(defun orgtrello-buffer/--compute-marker-from-entry (entry)
+  "Compute and set the ENTRY marker (either a sha1 or the id of the entry-metadata)."
+  (-if-let (current-entry-id (orgtrello-data/entity-id entry))
+      current-entry-id
+    (orgtrello-buffer/compute-marker (orgtrello-data/entity-buffername entry) (orgtrello-data/entity-name entry) (orgtrello-data/entity-position entry))))
+
+(defun orgtrello-buffer/compute-marker (buffer-name name position)
+  "Compute the orgtrello marker which is composed of BUFFER-NAME, NAME and POSITION."
+  (->> (list *ORGTRELLO/MARKER* buffer-name name (if (stringp position) position (int-to-string position)))
+    (-interpose "-")
+    (apply 'concat)
+    sha1
+    (concat *ORGTRELLO/MARKER* "-")))
+
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-buffer loaded!")
 
 (provide 'org-trello-buffer)

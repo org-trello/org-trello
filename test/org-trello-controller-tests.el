@@ -60,10 +60,6 @@
     (should (equal (gethash "testing board 3" hashtable-result) (gethash "testing board 3" hashtable-expected)))
     (should (equal (hash-table-count hashtable-result) (hash-table-count hashtable-expected)))))
 
-(expectations (desc "orgtrello-marker-2a0b98e652ce6349a0659a7a8eeb3783ffe9a11a")
-  (expect "orgtrello-marker-2a0b98e652ce6349a0659a7a8eeb3783ffe9a11a" (orgtrello-controller/compute-marker "buffername" "some-name" 1234))
-  (expect "orgtrello-marker-6c59c5dcf6c83edaeb3f4923bfd929a091504bb3" (orgtrello-controller/compute-marker "some-other-buffername" "some-name" 4321)))
-
 (expectations (desc "orgtrello-controller/--card")
               (expect 'orgtrello-controller/--card      (gethash *ORGTRELLO/CARD-LEVEL* *MAP-DISPATCH-CREATE-UPDATE*))
               (expect 'orgtrello-controller/--checklist (gethash *ORGTRELLO/CHECKLIST-LEVEL* *MAP-DISPATCH-CREATE-UPDATE*))
