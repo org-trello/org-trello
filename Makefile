@@ -16,7 +16,8 @@ clean-dist:
 	rm -rf dist/
 
 clean: clean-dist
-	rm -rf *.tar *.elc
+	rm -rf *.tar
+	cask clean-elc
 
 install:
 	cask install
