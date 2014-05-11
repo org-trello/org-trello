@@ -30,7 +30,7 @@
 
 ;; Minor mode to sync org-mode buffer and trello board
 ;;
-;; 1) Add the following to your emacs init file
+;; 1) Add the following to your Emacs init file
 ;; (require 'org-trello)
 ;; (add-hook 'org-mode-hook 'org-trello-mode)
 ;;
@@ -38,7 +38,7 @@
 ;; M-x org-trello/install-key-and-token
 ;;
 ;; You may want:
-;; - to connect your org buffer to an existing board (C-c o I). Beware that this will only install properties needed to speak with trello board (nothing else).
+;; - to connect your org buffer to an existing board (C-c o I).  Beware that this will only install properties needed to speak with trello board (nothing else).
 ;; M-x org-trello/install-board-and-lists-ids
 ;;
 ;; - to create an empty board directly from a org-mode buffer (C-c o b)
@@ -53,7 +53,7 @@
 ;; 7) If you attached to an existing trello board, you may want to bootstrap your org-buffer (C-u C-c o s)
 ;; C-u M-x org-trello/sync-buffer
 ;;
-;; Now you can work with trello from the comfort of org-mode and emacs
+;; Now you can work with trello from the comfort of org-mode and Emacs
 ;; 8) Sync an entity from org to trello (C-c o c)
 ;; M-x org-trello/sync-entity
 ;;
