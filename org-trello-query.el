@@ -7,10 +7,11 @@
 (require 'org-trello-setup)
 (require 'org-trello-data)
 
-(defconst *ORGTRELLO/TRELLO-URL* "https://api.trello.com/1" "The needed prefix url for trello")
+(defconst *ORGTRELLO/TRELLO-URL* "https://api.trello.com/1"
+  "The needed prefix url for trello.")
 
 (defun orgtrello-query/--compute-url (server uri)
-  "Compute the trello url from the given uri."
+  "Compute the trello url from the given SERVER and URI."
   (format "%s%s" server uri))
 
 (cl-defun orgtrello-query/--standard-error-callback (&key error-thrown symbol-status response &allow-other-keys)
@@ -22,7 +23,7 @@
   (orgtrello-log/msg *OT/DEBUG* "client - Proxy received and acknowledged the request%s" (if data (format " - response data: %S." data) ".")))
 
 (defun orgtrello-query/--authentication-params ()
-  "Generates the list of http authentication parameters"
+  "Generate the list of http authentication parameters."
   `((key . ,*consumer-key*) (token . ,*access-token*)))
 
 (defun orgtrello-query/--http-parse ()
@@ -31,7 +32,7 @@
     orgtrello-data/parse-data))
 
 (defun orgtrello-query/--get (server query-map &optional success-callback error-callback authentication-p)
-  "GET"
+  "Execute the GET request to SERVER with QUERY-MAP with optional SUCCESS-CALLBACK, ERROR-CALLBACK and AUTHENTICATION-P."
   (request (->> query-map orgtrello-data/entity-uri (orgtrello-query/--compute-url server))
            :sync    (orgtrello-data/entity-sync   query-map)
            :type    (orgtrello-data/entity-method query-map)
@@ -41,7 +42,7 @@
            :error   (if error-callback error-callback 'orgtrello-query/--standard-error-callback)))
 
 (defun orgtrello-query/--post-or-put (server query-map &optional success-callback error-callback authentication-p)
-  "POST or PUT"
+  "Execute the POST/PUT request to SERVER with QUERY-MAP with optional SUCCESS-CALLBACK, ERROR-CALLBACK and AUTHENTICATION-P."
   (request (->> query-map orgtrello-data/entity-uri (orgtrello-query/--compute-url server))
            :sync    (orgtrello-data/entity-sync   query-map)
            :type    (orgtrello-data/entity-method query-map)
@@ -53,7 +54,7 @@
            :error   (if error-callback error-callback 'orgtrello-query/--standard-error-callback)))
 
 (defun orgtrello-query/--delete (server query-map &optional success-callback error-callback authentication-p)
-  "DELETE"
+  "Execute the DELETE request to SERVER with QUERY-MAP with optional SUCCESS-CALLBACK, ERROR-CALLBACK and AUTHENTICATION-P."
   (request (->> query-map orgtrello-data/entity-uri (orgtrello-query/--compute-url server))
            :sync    (orgtrello-data/entity-sync   query-map)
            :type    (orgtrello-data/entity-method query-map)
@@ -62,16 +63,16 @@
            :error   (if error-callback error-callback 'orgtrello-query/--standard-error-callback)))
 
 (defun orgtrello-query/--dispatch-http-query (method)
-  "Dispatch the function to call depending on the method key."
+  "Dispatch the function to call depending on the METHOD key."
   (cond ((string= "GET" method)                              'orgtrello-query/--get)
         ((or (string= "POST" method) (string= "PUT" method)) 'orgtrello-query/--post-or-put)
         ((string= "DELETE" method)                           'orgtrello-query/--delete)))
 
 (defvar orgtrello-query/--hexify (if (version< emacs-version "24.3") 'orgtrello-query/url-hexify-string 'url-hexify-string)
-  "Function to use to hexify depending on emacs version.")
+  "Function to use to hexify depending on Emacs version.")
 
 (defun orgtrello-query/url-hexify-string (value)
-  "Wrapper around url-hexify-string (older emacs 24 version do not map ! to %21)."
+  "Wrapper around 'url-hexify-string' VALUE (older Emacs 24 version do not map some symbols)."
   (->> value
     url-hexify-string
     (replace-regexp-in-string "!" "%21")
@@ -81,7 +82,7 @@
     (replace-regexp-in-string "*" "%2A")))
 
 (defun orgtrello-query/--prepare-params-assoc! (params)
-  "Prepare params as association list (deal with nested list too)."
+  "Prepare PARAMS as association list (deal with nested list too)."
   (--map (let ((key   (car it))
                (value (cdr it)))
            (cond ((and value (stringp value)) `(,key . ,(funcall orgtrello-query/--hexify value)))
@@ -90,7 +91,7 @@
          params))
 
 (defun orgtrello-query/read-data (data)
-  "Prepare params as association list (deal with nested list too)."
+  "Read the association list DATA (association list of query params)."
   (--map (let ((key   (car it))
                (value (cdr it)))
            (cond ((and value (stringp value)) `(,key . ,(url-unhex-string value)))
@@ -99,14 +100,14 @@
          data))
 
 (defun orgtrello-query/--prepare-query-params! (params)
-  "Given an association list of data, prepare the values of the params."
+  "Given an association list of data, prepare the values of the PARAMS."
   (-> params
     json-encode                               ;; hashtable and association list renders the same result in json
     json-read-from-string                     ;; now getting back an association list
     orgtrello-query/--prepare-params-assoc!))
 
 (defun orgtrello-query/http (server query-map &optional sync success-callback error-callback authentication-p)
-  "HTTP query the server with the query-map."
+  "Execute an HTTP query to the SERVER with QUERY-MAP and optional SYNC, SUCCESS-CALLBACK, ERROR-CALLBACK and AUTHENTICATION-P."
   (let* ((dispatch-http-query-fn (-> query-map
                                    orgtrello-data/entity-method
                                    orgtrello-query/--dispatch-http-query)))
@@ -118,7 +119,7 @@
       (funcall dispatch-http-query-fn server query-map success-callback error-callback authentication-p))))
 
 (defun orgtrello-query/http-trello (query-map &optional sync success-callback error-callback)
-  "Query the trello api."
+  "Execute an HTTP query to trello with QUERY-MAP and optional SYNC, SUCCESS-CALLBACK, ERROR-CALLBACK."
   (orgtrello-query/http *ORGTRELLO/TRELLO-URL* query-map sync success-callback error-callback 'with-authentication))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-query loaded!")
