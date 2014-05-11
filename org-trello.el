@@ -137,7 +137,7 @@ Please consider upgrading Emacs." emacs-version) "Error message when installing 
 
 (defun org-trello/proxy-do (action-label action-fn &optional with-save-flag)
   "Execute sync action."
-  (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
+  (orgtrello-proxy/deal-with-consumer-msg-controls-or-actions-then-do
    action-label
    '(orgtrello-controller/load-keys orgtrello-controller/control-keys orgtrello-controller/setup-properties orgtrello-controller/control-properties orgtrello-controller/control-encoding)
    action-fn
@@ -146,7 +146,7 @@ Please consider upgrading Emacs." emacs-version) "Error message when installing 
 
 (defun org-trello/proxy-do-and-save (action-label action-fn &optional no-check-flag)
   "Execute action and then save the buffer."
-  (orgtrello-action/deal-with-consumer-msg-controls-or-actions-then-do
+  (orgtrello-proxy/deal-with-consumer-msg-controls-or-actions-then-do
    action-label
    (if no-check-flag nil '(orgtrello-controller/load-keys orgtrello-controller/control-keys orgtrello-controller/setup-properties))
    action-fn
