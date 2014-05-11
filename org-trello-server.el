@@ -7,6 +7,7 @@
 (require 'org-trello-setup)
 (require 'org-trello-proxy)
 (require 'org-trello-db)
+(require 'org-trello-webadmin)
 
 (defun orgtrello-server/--proxy-handler (http-con)
   "Proxy handler to deal with HTTP-CON and dispatch towards the right server function."

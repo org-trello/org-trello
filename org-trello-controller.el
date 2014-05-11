@@ -15,6 +15,7 @@
 (require 'org-trello-input)
 (require 'org-trello-db)
 (require 'org-trello-server)
+(require 'org-trello-proxy)
 
 (defun orgtrello-controller/--list-user-entries (properties)
   "List the users entries from PROPERTIES."
