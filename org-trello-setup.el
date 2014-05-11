@@ -167,6 +167,9 @@ This use the standard 'org-todo-keywords property from 'org-mode'.")
     (org-trello/help-describing-bindings     "h" "This help message."))
   "List of commands and default bindings without the prefix key.")
 
+(defvar org-trello-mode-map (make-sparse-keymap)
+  "Org-trello's mode map.")
+
 (defun org-trello/compute-url (url-without-base-uri)
   "An helper method to compute the uri to trello from URL-WITHOUT-BASE-URI."
   (concat *ORGTRELLO/HTTPS* url-without-base-uri))

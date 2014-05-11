@@ -312,9 +312,6 @@ If MODIFIER is not nil, unassign oneself from the card."
   "Install the new default org-trello mode keybinding."
   (org-trello/--remove-local-keybinding-map! *PREVIOUS-ORGTRELLO/MODE-PREFIX-KEYBINDING* *org-trello-interactive-command-binding-couples*))
 
-(defvar org-trello-mode-map (make-sparse-keymap)
-  "Org-trello's mode map.")
-
 ;;;###autoload
 (define-minor-mode org-trello-mode "Sync your org-mode and your trello together."
   :lighter " ot"
