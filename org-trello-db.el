@@ -21,9 +21,9 @@
 (defun orgtrello-db/put (key value db)
   "Update the KEY by appending VALUE to its old-value in DB.
 If an old-value is already present at KEY, put the VALUE to the end of old value."
-  (let* ((old-value (db-get key db))
-         (new-value (-snoc old-value value)))
-    (db-put key new-value db)))
+  (--> (db-get key db)
+    (-snoc it value)
+    (db-put key it db)))
 
 (defun orgtrello-db/get (key db)
   "Read the value at KEY in DB.
@@ -34,7 +34,7 @@ This is read-only."
   "Pop the value at KEY in DB.
 This is destructive."
   (-when-let (oldvl (db-get key db))
-    (let* ((value-to-return (pop oldvl)))
+    (let ((value-to-return (pop oldvl)))
       (db-put key oldvl db)
       value-to-return)))
 
@@ -42,7 +42,7 @@ This is destructive."
   "Pop the last value at KEY in DB.
 This is destructive."
   (-when-let (oldvl (nreverse (db-get key db)))
-    (let* ((value-to-return (pop oldvl)))
+    (let ((value-to-return (pop oldvl)))
       (db-put key (nreverse oldvl) db)
       value-to-return)))
 
