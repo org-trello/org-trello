@@ -196,7 +196,7 @@ Return the level found or nil if the level found is a card."
 
 (defun orgtrello-cbx/current-level! ()
   "Give the current level of the checkbox."
-  (orgtrello-cbx/--get-level (orgtrello-cbx/org-checkbox-metadata!)))
+  (orgtrello-buffer/current-level!))
 
 (defun orgtrello-cbx/org-up! ()
   "A function to get back to the current entry's parent."
