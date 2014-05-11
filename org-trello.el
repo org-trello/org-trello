@@ -136,7 +136,8 @@ Please consider upgrading Emacs." emacs-version) "Error message when installing 
 
 
 (defun org-trello/proxy-do (action-label action-fn &optional with-save-flag)
-  "Execute sync action."
+  "Given an ACTION-LABEL and an ACTION-FN, execute sync action.
+If WITH-SAVE-FLAG is set, will do a buffer save and reload the org setup."
   (orgtrello-proxy/deal-with-consumer-msg-controls-or-actions-then-do
    action-label
    '(orgtrello-controller/load-keys orgtrello-controller/control-keys orgtrello-controller/setup-properties orgtrello-controller/control-properties orgtrello-controller/control-encoding)
@@ -145,7 +146,8 @@ Please consider upgrading Emacs." emacs-version) "Error message when installing 
    (when with-save-flag 'do-reload-setup)))
 
 (defun org-trello/proxy-do-and-save (action-label action-fn &optional no-check-flag)
-  "Execute action and then save the buffer."
+  "Given an ACTION-LABEL and an ACTION-FN, execute sync action.
+If NO-CHECK-FLAG is set, no controls are done."
   (orgtrello-proxy/deal-with-consumer-msg-controls-or-actions-then-do
    action-label
    (if no-check-flag nil '(orgtrello-controller/load-keys orgtrello-controller/control-keys orgtrello-controller/setup-properties))
@@ -154,7 +156,7 @@ Please consider upgrading Emacs." emacs-version) "Error message when installing 
    'do-reload-setup))
 
 (defun org-trello/do (action-fn)
-  "First checks, then if controls ok, execute"
+  "Check and if controls are ok, execute ACTION-FN."
   (orgtrello-action/controls-or-actions-then-do
    '(orgtrello-controller/load-keys orgtrello-controller/control-keys orgtrello-controller/setup-properties orgtrello-controller/control-properties orgtrello-controller/control-encoding)
    action-fn))
@@ -185,35 +187,39 @@ Please consider upgrading Emacs." emacs-version) "Error message when installing 
   (org-trello/proxy-do "Display current board's labels" 'orgtrello-controller/do-show-board-labels!))
 
 (defun org-trello/sync-entity (&optional modifier)
-  "Control first, then if ok, sync a simple entity (without its structure)."
+  "Execute the sync of an entity to trello.
+If MODIFIER is non nil, execute the sync entity from trello."
   (interactive "P")
   (if modifier
       (org-trello/proxy-do "Request 'sync entity from trello'" 'orgtrello-controller/do-sync-entity-from-trello!)
     (org-trello/proxy-do "Request 'sync entity to trello'" 'orgtrello-controller/do-sync-entity-to-trello!)))
 
 (defun org-trello/sync-full-entity (&optional modifier)
-  "Control first, then if ok, create an entity and all its arborescence if need be. If modifier is nil, will sync *TO* trello, otherwise (called with C-u), will sync *FROM* trello."
+  "Execute the sync of an entity and its structure to trello.
+If MODIFIER is non nil, execute the sync entity and its structure from trello."
   (interactive "P")
   (if modifier
       (org-trello/proxy-do "Request 'sync entity with structure from trello" 'orgtrello-controller/do-sync-entity-and-structure-from-trello!)
     (org-trello/proxy-do "Request 'sync entity with structure to trello" 'orgtrello-controller/do-sync-full-entity-to-trello!)))
 
 (defun org-trello/sync-buffer (&optional modifier)
-  "Will trigger a buffer sync action. If modifier is nil, will sync *TO* trello, otherwise (called with C-u), will sync *FROM* trello."
+  "Execute the sync of the entire buffer to trello.
+If MODIFIER is non nil, execute the sync of the entire buffer from trello."
   (interactive "P")
   (if modifier
       (org-trello/proxy-do "Request 'sync org buffer from trello board'" 'orgtrello-controller/do-sync-full-file-from-trello!)
     (org-trello/proxy-do "Request 'sync org buffer to trello board'" 'orgtrello-controller/do-sync-full-file-to-trello!)))
 
 (defun org-trello/kill-entity (&optional modifier)
-  "Control first, then if ok, delete the entity and all its arborescence. If used with C-u, kill all buffer entities."
+  "Execute the entity removal from trello and the buffer.
+If MODIFIER is non nil, execute all entities removal from trello and buffer."
   (interactive "P")
   (if modifier
       (org-trello/kill-all-entities)
     (org-trello/proxy-do "Request 'delete entity'" 'orgtrello-controller/do-delete-simple)))
 
 (defun org-trello/kill-all-entities ()
-  "Control first, then if ok, delete the entity and all its arborescence."
+  "Execute all entities removal from trello and buffer."
   (interactive)
   (org-trello/proxy-do "Request - 'delete entities'" 'orgtrello-controller/do-delete-entities))
 
@@ -233,7 +239,8 @@ Please consider upgrading Emacs." emacs-version) "Error message when installing 
   (org-trello/proxy-do-and-save "Update board information" 'orgtrello-controller/do-update-board-metadata!))
 
 (defun org-trello/jump-to-card (&optional modifier)
-  "Jump to current card in browser. If C-u modifier is used, jump to board."
+  "Jump from current card to trello card in browser.
+If MODIFIER is not nil, jump from current card to board."
   (interactive "P")
   (if modifier
       (org-trello/jump-to-trello-board)
@@ -250,7 +257,8 @@ Please consider upgrading Emacs." emacs-version) "Error message when installing 
   (org-trello/proxy-do-and-save "Create board and lists" 'orgtrello-controller/do-create-board-and-lists))
 
 (defun org-trello/assign-me (&optional modifier)
-  "Assign oneself to the card. With C-u modifier, unassign form the card."
+  "Assign oneself to the card.
+If MODIFIER is not nil, unassign oneself from the card."
   (interactive "P")
   (if modifier
       (org-trello/proxy-do-and-save "Unassign me from card" 'orgtrello-controller/do-unassign-me)
@@ -266,12 +274,12 @@ Please consider upgrading Emacs." emacs-version) "Error message when installing 
   (interactive)
   (org-trello/proxy-do "Delete current org-trello setup" 'orgtrello-controller/delete-setup! 'do-save-buffer))
 
-(defun org-trello/--startup-message (keybinding)
-  "Compute org-trello's startup message."
-  (orgtrello-utils/replace-in-string "#PREFIX#" keybinding "org-trello/ot is on! To begin with, hit #PREFIX# h or M-x 'org-trello/help-describing-bindings"))
+(defun org-trello/--startup-message (prefix-keybinding)
+  "Compute org-trello's startup message with the PREFIX-KEYBINDING."
+  (orgtrello-utils/replace-in-string "#PREFIX#" prefix-keybinding "org-trello/ot is on! To begin with, hit #PREFIX# h or M-x 'org-trello/help-describing-bindings"))
 
 (defun org-trello/--help-describing-bindings-template (keybinding list-command-binding-description)
-  "Standard Help message template"
+  "Standard Help message template from KEYBINDING and LIST-COMMAND-BINDING-DESCRIPTION."
   (->> list-command-binding-description
     (--map (let ((command        (car it))
                  (prefix-binding (cadr it))
@@ -344,10 +352,12 @@ Please consider upgrading Emacs." emacs-version) "Error message when installing 
   :lighter " ot"
   :keymap  (make-sparse-keymap))
 
-(defvar org-trello-mode-hook '() "org-trello-hook for user to extend org-trello with their own behavior.")
+(defvar org-trello-mode-hook '()
+  "Define one org-trello hook for user to extend org-trello with their own behavior.")
 
 (defun org-trello-mode-on-hook-fn (&optional partial-mode)
-  "Actions to do when org-trello starts."
+  "Start org-trello hook function to install some org-trello setup.
+PARTIAL-MODE is to be used for tests."
   (unless partial-mode
     ;; install the bindings
     (org-trello/install-local-prefix-mode-keybinding! *ORGTRELLO/MODE-PREFIX-KEYBINDING*)
@@ -369,7 +379,8 @@ Please consider upgrading Emacs." emacs-version) "Error message when installing 
     (run-hooks 'org-trello-mode-hook)))
 
 (defun org-trello-mode-off-hook-fn (&optional partial-mode)
-  "Actions to do when org-trello stops."
+  "Stop org-trello hook function to deinstall some org-trello setup.
+PARTIAL-MODE is to be used for tests."
   (unless partial-mode
     ;; remove the bindings when org-trello mode off
     (org-trello/remove-local-prefix-mode-keybinding! *ORGTRELLO/MODE-PREFIX-KEYBINDING*)
