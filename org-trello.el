@@ -320,21 +320,27 @@ If MODIFIER is not nil, unassign oneself from the card."
 (defvar org-trello-mode-hook '()
   "Define one org-trello hook for user to extend org-trello with their own behavior.")
 
+(add-hook 'org-trello-mode-on-hook 'orgtrello-controller/mode-on-hook-fn)
+
 (add-hook 'org-trello-mode-on-hook (lambda ()
                                      ;; install the bindings
                                      (org-trello/install-local-prefix-mode-keybinding! *ORGTRELLO/MODE-PREFIX-KEYBINDING*)
                                      ;; Overwrite the org-mode-map
-                                     (define-key org-trello-mode-map [remap org-end-of-line] 'orgtrello-buffer/end-of-line!)))
+                                     (define-key org-trello-mode-map [remap org-end-of-line] 'orgtrello-buffer/end-of-line!)
+                                     ;; a little message in the minibuffer to notify the user
+                                     (orgtrello-log/msg *OT/NOLOG* (org-trello/--startup-message *ORGTRELLO/MODE-PREFIX-KEYBINDING*)))
+          'do-append)
 
-(add-hook 'org-trello-mode-on-hook 'orgtrello-controller/mode-on-hook-fn)
+(add-hook 'org-trello-mode-off-hook 'orgtrello-controller/mode-off-hook-fn)
 
 (add-hook 'org-trello-mode-off-hook (lambda ()
                                       ;; remove the bindings when org-trello mode off
                                       (org-trello/remove-local-prefix-mode-keybinding! *ORGTRELLO/MODE-PREFIX-KEYBINDING*)
                                       ;; remove mapping override
-                                      (define-key org-trello-mode-map [remap org-end-of-line] nil)))
-
-(add-hook 'org-trello-mode-off-hook 'orgtrello-controller/mode-off-hook-fn)
+                                      (define-key org-trello-mode-map [remap org-end-of-line] nil)
+                                      ;; a little message in the minibuffer to notify the user
+                                      (orgtrello-log/msg *OT/NOLOG* "org-trello/ot is off!"))
+          'do-append)
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello loaded!")
 

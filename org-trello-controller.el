@@ -857,8 +857,6 @@ PARTIAL-MODE is to be used for tests."
     (add-hook 'before-save-hook 'orgtrello-buffer/install-overlays!) ;; before-change-functions
     ;; migrate all checkbox at org-trello mode activation
     (orgtrello-buffer/install-overlays!)
-    ;; a little message in the minibuffer to notify the user
-    (orgtrello-log/msg *OT/NOLOG* (org-trello/--startup-message *ORGTRELLO/MODE-PREFIX-KEYBINDING*))
     ;; run hook at startup
     (run-hooks 'org-trello-mode-hook)))
 
@@ -875,9 +873,7 @@ PARTIAL-MODE is to be used for tests."
     ;; installing hooks
     (remove-hook 'before-save-hook 'orgtrello-buffer/install-overlays!)
     ;; remove org-trello overlays
-    (orgtrello-buffer/remove-overlays!)
-    ;; a little message in the minibuffer to notify the user
-    (orgtrello-log/msg *OT/NOLOG* "org-trello/ot is off!")))
+    (orgtrello-buffer/remove-overlays!)))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-controller loaded!")
 
