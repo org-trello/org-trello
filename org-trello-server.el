@@ -9,20 +9,22 @@
 (require 'org-trello-db)
 
 (defun orgtrello-server/--proxy-handler (http-con)
-  "Proxy handler."
+  "Proxy handler to deal with HTTP-CON and dispatch towards the right server function."
   (elnode-hostpath-dispatcher http-con (append *ORGTRELLO/QUERY-APP-ROUTES-WEBADMIN* *ORGTRELLO/QUERY-APP-ROUTES-PROXY*)))
 
 (defun orgtrello-server/--start! (port host)
-  "Starting the proxy."
+  "Starting the proxy at PORT and HOST."
   (elnode-start 'orgtrello-server/--proxy-handler :port port :host host)
   (setq elnode--do-error-logging nil))
 
 (defun orgtrello-server/--server-should-be-started-p (nb-org-trello-buffers)
-  "Determine if the server should be started or not. Return t if it should, nil otherwise."
+  "Predicate to start the server or not depending on the NB-ORG-TRELLO-BUFFERS.
+Return t if it should, nil otherwise."
   (<= nb-org-trello-buffers 0))
 
 (defun orgtrello-server/--server-should-be-stopped-p (nb-org-trello-buffers)
-  "Determine if the server should be stopped. Return t if the server should be, nil otherwise."
+  "Predicate to stop the server depending on the NB-ORG-TRELLO-BUFFERS..
+Return t if the server should be, nil otherwise."
   (<= nb-org-trello-buffers 0))
 
 (defun orgtrello-server/start ()
@@ -41,7 +43,8 @@
   (orgtrello-log/msg *OT/TRACE* "Server started!"))
 
 (defun orgtrello-server/stop (&optional force-stop)
-  "Stop the server."
+  "Stop the server on conditions.
+if FORCE-STOP is specified, the server is stopped."
   (orgtrello-log/msg *OT/TRACE* "Server stopping...")
   (when (or force-stop (orgtrello-server/--server-should-be-stopped-p (orgtrello-db/nb-buffers *ORGTRELLO-SERVER/DB*)))
     ;; flush the database to disk if we do stop the server
