@@ -23,6 +23,29 @@
 
 (require 'load-org-trello)
 
+(defun org-trello/test-load-namespaces! ()
+  "Load the org-trello namespaces."
+  (interactive)
+  (mapc #'load-file '("test/utilities-tests.el"
+                      "test/org-trello-tests.el"
+                      "test/org-trello-action-tests.el"
+                      "test/org-trello-api-tests.el"
+                      "test/org-trello-backend-tests.el"
+                      "test/org-trello-buffer-tests.el"
+                      "test/org-trello-cbx-tests.el"
+                      "test/org-trello-controller-tests.el"
+                      "test/org-trello-data-tests.el"
+                      "test/org-trello-db-tests.el"
+                      "test/org-trello-elnode-tests.el"
+                      "test/org-trello-hash-tests.el"
+                      "test/org-trello-proxy-tests.el"
+                      "test/org-trello-query-tests.el"
+                      "test/org-trello-server-tests.el"
+                      "test/org-trello-utils-tests.el"
+                      "test/org-trello-webadmin-tests.el")))
+
+(org-trello/test-load-namespaces!)
+
 (require 'org-trello-action-tests)
 (require 'org-trello-api-tests)
 (require 'org-trello-backend-tests)
@@ -35,11 +58,6 @@
 (require 'org-trello-hash-tests)
 (require 'org-trello-tests)
 (require 'org-trello-proxy-tests)
-(require 'org-trello-query-tests)
-(require 'org-trello-server-tests)
-(require 'utilities-tests)
-(require 'org-trello-utils-tests)
-(require 'org-trello-webadmin-tests)
 
 (provide 'load-org-trello-tests)
 ;;; load-org-trello-tests ends here
