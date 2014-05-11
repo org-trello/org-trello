@@ -175,9 +175,14 @@
   (expect "- [X] some checkbox"
     (orgtrello-tests/with-temp-buffer "- [X] some checkbox" (orgtrello-cbx/--read-checkbox!))))
 
-(expectations (desc "orgtrello-cbx/--level!")
-  (expect 2 (orgtrello-tests/with-temp-buffer "- [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}" (orgtrello-cbx/--level!)))
-  (expect 3 (orgtrello-tests/with-temp-buffer " - [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}" (orgtrello-cbx/--level!))))
+(expectations
+  (desc "orgtrello-cbx/--level!")
+  (expect 1   (orgtrello-tests/with-temp-buffer "* some card" (orgtrello-cbx/--level!)))
+  (expect 2   (orgtrello-tests/with-temp-buffer "- [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}" (orgtrello-cbx/--level!)))
+  (expect 3   (orgtrello-tests/with-temp-buffer "  - [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}" (orgtrello-cbx/--level!)))
+  (expect 3   (orgtrello-tests/with-temp-buffer " - [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}" (orgtrello-cbx/--level!)))
+  (expect 3   (orgtrello-tests/with-temp-buffer "     - [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}" (orgtrello-cbx/--level!)))
+  (expect nil (orgtrello-tests/with-temp-buffer "something else" (orgtrello-cbx/--level!))))
 
 (expectations (desc "orgtrello-cbx/org-checkbox-metadata!")
   (expect '(2 nil "DONE" nil "some checkbox" nil)

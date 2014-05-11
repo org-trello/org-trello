@@ -160,9 +160,19 @@ Write the new properties at current position."
          (status-retrieved (orgtrello-cbx/--retrieve-status meta)))
     (list nil (orgtrello-cbx/--status status-retrieved) nil (orgtrello-cbx/--name checklist-data status-retrieved) nil)))
 
+(defun orgtrello-cbx/--item-p! ()
+  "Given the current position, determine if we are on an item."
+  (-when-let (s (buffer-substring-no-properties (point-at-bol) (point-at-eol)))
+    (->> s
+      s-trim-left
+      (string-match-p "^- .*"))))
+
 (defun orgtrello-cbx/--level! ()
   "Compute the levels from the current position (which is `bol`)"
-  (if (org-at-item-bullet-p) *ORGTRELLO/CHECKLIST-LEVEL* *ORGTRELLO/ITEM-LEVEL*))
+  (cond ((org-at-heading-p)        *ORGTRELLO/CARD-LEVEL*)
+        ((org-at-item-bullet-p)    *ORGTRELLO/CHECKLIST-LEVEL*)
+        ((orgtrello-cbx/--item-p!) *ORGTRELLO/ITEM-LEVEL*)
+        (t                         nil)))
 
 (defun orgtrello-cbx/org-checkbox-metadata! ()
   "Extract the metadata about the checklist - this is the symmetrical with `org-heading-components` but for the checklist.
@@ -196,7 +206,7 @@ Return the level found or nil if the level found is a card."
 
 (defun orgtrello-cbx/current-level! ()
   "Give the current level of the checkbox."
-  (orgtrello-buffer/current-level!))
+  (orgtrello-cbx/--get-level (orgtrello-cbx/org-checkbox-metadata!)))
 
 (defun orgtrello-cbx/org-up! ()
   "A function to get back to the current entry's parent."
@@ -226,11 +236,12 @@ If hitting a heading or the end of the file, return nil."
 If hitting a heading or the end of the file, return nil.
 Otherwise, return the current position."
   (forward-line)
-  (if (= level (orgtrello-cbx/current-level!))
-      (point)
-    (if (or (org-at-heading-p) (<= (point-max) (point)))
-        nil
-      (orgtrello-cbx/--goto-next-checkbox-with-same-level! level))))
+  (-when-let (current-level (orgtrello-cbx/current-level!))
+    (if (= level current-level)
+        (point)
+      (if (or (org-at-heading-p) (<= (point-max) (point)))
+          nil
+        (orgtrello-cbx/--goto-next-checkbox-with-same-level! level)))))
 
 (defun orgtrello-cbx/--map-checkboxes (level fn-to-execute)
   "Map over the checkboxes with level > to LEVEL and execute FN-TO-EXECUTE.
