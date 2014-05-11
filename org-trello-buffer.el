@@ -11,6 +11,8 @@
 (require 'org-trello-backend)
 
 (defun orgtrello-buffer/org-entry-put! (point property value)
+  "Put at POINT the PROPERTY with VALUE.
+If the VALUE is nil or empty, remove such PROPERTY."
   (if (or (null value) (string= "" value))
       (orgtrello-buffer/delete-property-from-entry! property)
     (org-entry-put point property value)))
@@ -51,7 +53,7 @@
   (orgtrello-buffer/org-entry-put! (point) *ORGTRELLO/CARD-COMMENTS* comments))
 
 (defun orgtrello-buffer/filter-out-properties (text-content)
-  "Given a string, remove any org properties if any"
+  "Given a string TEXT-CONTENT, remove any org properties if any."
   (->> text-content
     (replace-regexp-in-string "^[ ]*:.*" "")
     (replace-regexp-in-string (format "%s.*" *ORGTRELLO/DEADLINE-PREFIX*) "")
@@ -194,14 +196,14 @@
     (orgtrello-buffer/write-entity! (orgtrello-data/entity-id item) (orgtrello-data/merge-item item item)))) ;; hack to merge item to itself to map to the org-trello world, otherwise we lose status for example
 
 (defun orgtrello-buffer/--csv-user-ids-to-csv-user-names (csv-users-id users-id-name)
-  "Given a comma separated list of user id and a map, return a comma separated list of username."
+  "Given a CSV-USERS-ID and a USERS-ID-NAME map, return a csv usernames."
   (->> csv-users-id
     orgtrello-data/--users-from
     (--map (gethash it users-id-name))
     orgtrello-data/--users-to))
 
 (defun orgtrello-buffer/--compute-entity-to-org-entry (entity)
-  "Given an entity, compute its org representation."
+  "Given an ENTITY, compute its org representation."
   (funcall
    (cond ((orgtrello-data/entity-card-p entity)      'orgtrello-buffer/--compute-card-to-org-entry)
          ((orgtrello-data/entity-checklist-p entity) 'orgtrello-buffer/--compute-checklist-to-org-entry)
@@ -209,23 +211,26 @@
    entity))
 
 (defun orgtrello-buffer/--compute-due-date (due-date)
-  "Compute the format of the due date."
+  "Compute the format of the DUE-DATE."
   (if due-date (format "%s <%s>\n" *ORGTRELLO/DEADLINE-PREFIX* due-date) ""))
 
 (defun orgtrello-buffer/--private-compute-card-to-org-entry (name status due-date tags)
-  "Compute the org format for card."
+  "Compute the org format of a card with NAME, STATUS, DUE-DATE and TAGS."
   (let ((prefix-string (format "* %s %s" (if status status *ORGTRELLO/TODO*) name)))
     (format "%s%s\n%s" prefix-string (orgtrello-buffer/--serialize-tags prefix-string tags) (orgtrello-buffer/--compute-due-date due-date))))
 
 (defun orgtrello-buffer/--serialize-tags (prefix-string tags)
-  "Compute the tags serialization string. If tags is empty, return \"\", otherwise, if prefix-string's length is superior to 72, only  "
+  "Given a PREFIX-STRING and TAGS, compute the 'org-mode' serialization string.
+If tags is empty, return an empty string.
+If PREFIX-STRING's length is superior to 72, return tags.
+Otherwise, return the tags with as much space needed to start the tags at position 72."
   (if (or (null tags) (string= "" tags))
       ""
     (let ((l (length prefix-string)))
       (format "%s%s" (if (< 72 l) " " (orgtrello-buffer/--symbol " " (- 72 l))) tags))))
 
 (defun orgtrello-buffer/--compute-card-to-org-entry (card)
-  "Given a card, compute its org-mode entry equivalence. orgcheckbox-p is nil"
+  "Given a CARD, compute its 'org-mode' entry equivalence."
   (orgtrello-buffer/--private-compute-card-to-org-entry
    (orgtrello-data/entity-name card)
    (orgtrello-data/entity-keyword card)
@@ -233,25 +238,25 @@
    (orgtrello-data/entity-tags card)))
 
 (defun orgtrello-buffer/--symbol (sym n)
-  "Compute the repetition of a symbol as a string"
+  "Compute the repetition of a symbol SYM N times as a string."
   (--> n
     (-repeat it sym)
     (s-join "" it)))
 
 (defun orgtrello-buffer/--space (n)
-  "Given a level, compute the number of space for an org checkbox entry."
+  "Given a level, compute N times the number of spaces for an org checkbox entry."
   (orgtrello-buffer/--symbol " "  n))
 
 (defun orgtrello-buffer/--compute-state-checkbox (state)
-  "Compute the status of the checkbox"
+  "Compute the STATE of the checkbox."
   (orgtrello-data/--compute-state-generic state '("[X]" "[-]")))
 
 (defun orgtrello-buffer/--compute-level-into-spaces (level)
-  "level 2 is 0 space, otherwise 2 spaces."
+  "LEVEL 2 is 0 space, otherwise 2 spaces."
   (if (equal level *ORGTRELLO/CHECKLIST-LEVEL*) 0 2))
 
 (defun orgtrello-buffer/--compute-checklist-to-org-checkbox (name &optional level status)
-  "Compute checklist to the org checkbox format"
+  "Compute checklist with NAME and optional LEVEL and STATUS to the org checkbox format."
   (format "%s- %s %s\n"
           (-> level
             orgtrello-buffer/--compute-level-into-spaces
@@ -260,7 +265,7 @@
           name))
 
 (defun orgtrello-buffer/--compute-item-to-org-checkbox (name &optional level status)
-  "Compute item to the org checkbox format"
+  "Compute item with NAME and optional LEVEL and STATUS to the org checkbox format."
   (format "%s- %s %s\n"
           (-> level
             orgtrello-buffer/--compute-level-into-spaces
@@ -269,21 +274,22 @@
           name))
 
 (defun orgtrello-buffer/--compute-checklist-to-org-entry (checklist &optional orgcheckbox-p)
-  "Given a checklist, compute its org-mode entry equivalence."
+  "Given a CHECKLIST, compute its 'org-mode' entry equivalence.
+The optional ORGCHECKBOX-P is not used."
   (orgtrello-buffer/--compute-checklist-to-org-checkbox (orgtrello-data/entity-name checklist) *ORGTRELLO/CHECKLIST-LEVEL* "incomplete"))
 
 (defun orgtrello-buffer/--compute-item-to-org-entry (item)
-  "Given a checklist item, compute its org-mode entry equivalence."
+  "Given a checklist ITEM, compute its 'org-mode' entry equivalence."
   (orgtrello-buffer/--compute-item-to-org-checkbox (orgtrello-data/entity-name item) *ORGTRELLO/ITEM-LEVEL* (orgtrello-data/entity-keyword item)))
 
 (defun orgtrello-buffer/--put-card-with-adjacency (current-meta entities adjacency)
-  "Deal with adding card to entities."
+  "Deal with adding the CURRENT-META in ENTITIES and ADJACENCY."
   (-> current-meta
     (orgtrello-buffer/--put-entities entities)
     (list adjacency)))
 
 (defun orgtrello-buffer/--dispatch-create-entities-map-with-adjacency (entity)
-  "Dispatch the function to update map depending on the entity level."
+  "Given the ENTITY, return the function to add the entity and adjacency."
   (if (orgtrello-data/entity-card-p entity) 'orgtrello-buffer/--put-card-with-adjacency 'orgtrello-backend/--put-entities-with-adjacency))
 
 (defun orgtrello-buffer/--compute-entities-from-org! (&optional region-end)
@@ -306,8 +312,6 @@
                (funcall current-meta entities adjacency)))))))
     (list entities adjacency)))
 
-;; entities of the form: {entity-id '(entity-card {checklist-id (checklist (item))})}
-
 (defun orgtrello-buffer/compute-entities-from-org-buffer! (&optional buffername region-start region-end)
   "Compute the current entities hash from the buffer in the same format as the sync-from-trello routine. Return the list of entities map and adjacency map in this order."
   (when buffername
@@ -317,13 +321,14 @@
     (orgtrello-buffer/--compute-entities-from-org! region-end)))
 
 (defun orgtrello-buffer/--put-entities (current-meta entities)
-  "Deal with adding a new item to entities."
+  "Deal with adding a the current entry from CURRENT-META in ENTITIES."
   (-> current-meta
     orgtrello-data/current
     (orgtrello-backend/--add-entity-to-entities entities)))
 
 (defun orgtrello-buffer/--update-property (id orgcheckbox-p)
-  "Update the property depending on the nature of thing to sync. Move the cursor position."
+  "Update the property identifier with ID if depending on ORGCHECKBOX-P.
+Move the cursor position."
   (if orgcheckbox-p
       (save-excursion
         (forward-line -1) ;; need to get back one line backward for the checkboxes as their properties is at the same level (otherwise, for headings we do not care)
@@ -331,11 +336,11 @@
     (orgtrello-buffer/set-property *ORGTRELLO/ID* id)))
 
 (defun orgtrello-buffer/--set-marker (marker)
-  "Set a marker to get back to later."
+  "Set a MARKER to get back to later."
   (orgtrello-buffer/set-property *ORGTRELLO/ID* marker))
 
 (defun orgtrello-buffer/set-marker-if-not-present (current-entity marker)
-  "Set the marker to the entry if we never did."
+  "Set the CURRENT-ENTITY with MARKER to the entry if we never did."
   (unless (string= (orgtrello-data/entity-id current-entity) marker) ;; if never created before, we need a marker to add inside the file
     (orgtrello-buffer/--set-marker marker)))
 
@@ -379,9 +384,8 @@
     (while (re-search-forward ":PROPERTIES: {.*" nil t)
       (orgtrello-cbx/install-overlays! (match-beginning 0)))))
 
-
 (defun orgtrello-buffer/--convert-orgmode-date-to-trello-date (orgmode-date)
-  "Convert the org-mode deadline into a time adapted for trello."
+  "Convert the 'org-mode' deadline ORGMODE-DATE into a time adapted for trello."
   (if (and orgmode-date (not (string-match-p "T*Z" orgmode-date)))
       (cl-destructuring-bind (sec min hour day mon year dow dst tz)
           (--map (if it (if (< it 10) (concat "0" (int-to-string it)) (int-to-string it)))
@@ -398,15 +402,17 @@
   (funcall (if (orgtrello-cbx/checkbox-p) 'orgtrello-cbx/org-checkbox-metadata! 'orgtrello-buffer/org-entity-metadata!)))
 
 (defun orgtrello-buffer/extract-identifier! (point)
-  "Extract the identifier from the point."
+  "Extract the identifier from POINT."
   (orgtrello-buffer/org-entry-get point *ORGTRELLO/ID*))
 
 (defun orgtrello-buffer/set-property (key value)
-  "Either set the propery normally (as for entities) or specifically for checklist."
+  "Either set the property normally at KEY with VALUE.
+Deal with org entities and checkbox as well."
   (funcall (if (orgtrello-cbx/checkbox-p) 'orgtrello-cbx/org-set-property 'org-set-property) key value))
 
 (defun orgtrello-buffer/org-entry-get (point key)
-  "Extract the identifier from the point."
+  "Extract the identifier from the POINT at KEY.
+Deal with org entities and checkbox as well."
   (funcall (if (orgtrello-cbx/checkbox-p) 'orgtrello-cbx/org-get-property 'org-entry-get) point key))
 
 (defun orgtrello-buffer/--user-ids-assigned-to-current-card ()
@@ -457,7 +463,8 @@
         (orgtrello-data/make-hierarchy current (car ancestors) (cadr ancestors))))))
 
 (defun orgtrello-buffer/--to-orgtrello-metadata (heading-metadata)
-  "Given the heading-metadata returned by the function 'org-heading-components, make it a hashmap with key :level, :keyword, :name. and their respective value"
+  "Given the HEADING-METADATA returned by the function 'org-heading-components.
+Make it a hashmap with key :level,  :keyword,  :name and their respective value."
   (cl-destructuring-bind (comments description member-ids buffer-name point id due level _ keyword _ name tags) heading-metadata
     (orgtrello-data/make-hash-org member-ids level keyword name id due point buffer-name description comments tags)))
 
@@ -473,7 +480,8 @@
   org-file-properties)
 
 (defun orgtrello-buffer/org-map-entries (level fn-to-execute)
-  "Map fn-to-execute to a given entities with level level. fn-to-execute is a function without any parameter."
+  "For a specific checkbox LEVEL, map FN-TO-EXECUTE to the given entities.
+FN-TO-EXECUTE is a function without any parameter."
   (org-map-entries (lambda () (when (= level (orgtrello-buffer/current-level!)) (funcall fn-to-execute)))))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-buffer loaded!")
