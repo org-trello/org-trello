@@ -1025,7 +1025,7 @@ CLOSED: [2014-04-25 Fri 12:20]
 - [X] Improve start/stop server policy 2
 - [X] Some Refactoring
 - [X] Release notes
-* IN-PROGRESS 0.4.4 [33%]
+* IN-PROGRESS 0.4.4 [66%]
 - [X] Multiple files packaging - https://github.com/org-trello/org-trello/issues/163
   - [X] Move src/*.el files to /org-trello
   - [X] Add 'provide statements for each of those files
@@ -1046,7 +1046,7 @@ CLOSED: [2014-04-25 Fri 12:20]
   - [X] Fix org-trello to make it work again
   - [X] Test package melpa install (adapt org-trello recipe and test M-x package-install-file) - https://github.com/ardumont/melpa/blob/org-trello-with-multiple-files-packaging/recipes/org-trello
   - [X] Test package marmalade install
-- [ ] Update version
+- [X] Update version
 - [ ] Release notes
 * TODO 0.4.x [0%]
 - [ ] Improve sync request policy - https://github.com/org-trello/org-trello/issues/58
