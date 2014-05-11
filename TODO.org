@@ -1025,7 +1025,7 @@ CLOSED: [2014-04-25 Fri 12:20]
 - [X] Improve start/stop server policy 2
 - [X] Some Refactoring
 - [X] Release notes
-* DONE 0.4.4 [0%]
+* TODO 0.4.4 [0%]
 - [-] Multiple files packaging - https://github.com/org-trello/org-trello/issues/163
   - [X] Move src/*.el files to /org-trello
   - [X] Add 'provide statements for each of those files
@@ -1042,8 +1042,8 @@ CLOSED: [2014-04-25 Fri 12:20]
   - [X] Fix some more warnings
   - [X] Does org-trello's test work? YES
   - [X] Does org-trello work? NO
-  - [ ] Doc - Update docstring to standard emacs convention
-  - [ ] Fix org-trello so make it work again
+  - [X] Doc - Update docstring to standard emacs convention
+  - [ ] Fix org-trello to make it work again
   - [ ] Adapt melpa's org-trello recipe and test it locally
   - [ ] Add PR for melpa's org-trello recipe
 - [ ] Update version
