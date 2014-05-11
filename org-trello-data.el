@@ -7,110 +7,108 @@
 (require 'org-trello-hash)
 
 (defun orgtrello-data/merge-2-lists-without-duplicates (a-list b-list)
-  "Merge 2 lists together (no duplicates)."
+  "Merge the 2 lists A-LIST and B-LIST together without duplicates."
   (-> a-list
     (append b-list)
     delete-dups))
 
-(defun orgtrello-data/--entity-with-level-p (entity level) "Is the entity with level level?" (-> entity orgtrello-data/entity-level (eq level)))
-(defun orgtrello-data/entity-card-p      (entity) "Is this a card?"      (orgtrello-data/--entity-with-level-p entity *ORGTRELLO/CARD-LEVEL*))
-(defun orgtrello-data/entity-checklist-p (entity) "Is this a checklist?" (orgtrello-data/--entity-with-level-p entity *ORGTRELLO/CHECKLIST-LEVEL*))
-(defun orgtrello-data/entity-item-p      (entity) "Is this an item?"     (orgtrello-data/--entity-with-level-p entity *ORGTRELLO/ITEM-LEVEL*))
+(defun orgtrello-data/--entity-with-level-p (entity level) "Is the ENTITY with level LEVEL?" (-> entity orgtrello-data/entity-level (eq level)))
+(defun orgtrello-data/entity-card-p      (entity) "Is the ENTITY a card?"      (orgtrello-data/--entity-with-level-p entity *ORGTRELLO/CARD-LEVEL*))
+(defun orgtrello-data/entity-checklist-p (entity) "Is the ENTITY a checklist?" (orgtrello-data/--entity-with-level-p entity *ORGTRELLO/CHECKLIST-LEVEL*))
+(defun orgtrello-data/entity-item-p      (entity) "Is the ENTITY an item?"     (orgtrello-data/--entity-with-level-p entity *ORGTRELLO/ITEM-LEVEL*))
 
 (defun orgtrello-data/entity-id (entity)
-  "Dispatch to the rightful function to get the id"
+  "Retrieve the id from the ENTITY."
   (let ((id (orgtrello-data/entity-id-or-marker entity)))
     (when (orgtrello-data/id-p id)
       id)))
 
 (defun orgtrello-data/entity-keyword (entity &optional default-value)
-  "Retrieve the keyword from the entity."
+  "Retrieve the keyword from the ENTITY.
+If the keyword is nil, return the optional DEFAULT-VALUE."
   (orgtrello-hash/gethash-data :keyword entity default-value))
 
-(defun orgtrello-data/entity-name         (entity) (orgtrello-hash/gethash-data :name         entity))
-(defun orgtrello-data/entity-memberships  (entity) (orgtrello-hash/gethash-data :memberships  entity))
-(defun orgtrello-data/entity-member       (entity) (orgtrello-hash/gethash-data :member       entity))
-(defun orgtrello-data/entity-username     (entity) (orgtrello-hash/gethash-data :username     entity))
-(defun orgtrello-data/entity-action       (entity) (orgtrello-hash/gethash-data :action       entity))
-(defun orgtrello-data/entity-board-id     (entity) (orgtrello-hash/gethash-data :board-id     entity))
-(defun orgtrello-data/entity-card-id      (entity) (orgtrello-hash/gethash-data :card-id      entity))
-(defun orgtrello-data/entity-list-id      (entity) (orgtrello-hash/gethash-data :list-id      entity))
-(defun orgtrello-data/entity-member-ids   (entity) (orgtrello-hash/gethash-data :member-ids   entity))
-(defun orgtrello-data/entity-description  (entity) (orgtrello-hash/gethash-data :desc         entity))
-(defun orgtrello-data/entity-checklists   (entity) (orgtrello-hash/gethash-data :checklists   entity))
-(defun orgtrello-data/entity-items        (entity) (orgtrello-hash/gethash-data :items        entity))
-(defun orgtrello-data/entity-position     (entity) (orgtrello-hash/gethash-data :position     entity))
-(defun orgtrello-data/entity-buffername   (entity) (orgtrello-hash/gethash-data :buffername   entity))
-(defun orgtrello-data/entity-checked      (entity) (orgtrello-hash/gethash-data :checked      entity))
-(defun orgtrello-data/entity-due          (entity) (orgtrello-hash/gethash-data :due          entity))
-(defun orgtrello-data/entity-id-or-marker (entity) (orgtrello-hash/gethash-data :id           entity))
-(defun orgtrello-data/entity-level        (entity) (orgtrello-hash/gethash-data :level        entity))
-(defun orgtrello-data/entity-closed       (entity) (orgtrello-hash/gethash-data :closed       entity))
-(defun orgtrello-data/entity-callback     (entity) (orgtrello-hash/gethash-data :callback     entity))
-(defun orgtrello-data/entity-start        (entity) (orgtrello-hash/gethash-data :start        entity))
-(defun orgtrello-data/entity-comments     (entity) (orgtrello-hash/gethash-data :comments     entity))
-(defun orgtrello-data/entity-labels       (entity) (orgtrello-hash/gethash-data :labels       entity))
-(defun orgtrello-data/entity-tags         (entity) (orgtrello-hash/gethash-data :tags         entity))
-(defun orgtrello-data/entity-comment-id   (entity) (orgtrello-hash/gethash-data :comment-id   entity))
-(defun orgtrello-data/entity-comment-text (entity) (orgtrello-hash/gethash-data :comment-text entity))
-(defun orgtrello-data/entity-comment-user (entity) (orgtrello-hash/gethash-data :comment-user entity))
-(defun orgtrello-data/entity-color        (entity) (orgtrello-hash/gethash-data :color        entity))
+(defun orgtrello-data/entity-name         (entity)     "Retrieve the ENTITY's NAME."             (orgtrello-hash/gethash-data :name         entity))
+(defun orgtrello-data/entity-memberships  (entity)     "Retrieve the ENTITY's MEMBERSHIPS."      (orgtrello-hash/gethash-data :memberships  entity))
+(defun orgtrello-data/entity-member       (entity)     "Retrieve the ENTITY's MEMBER."           (orgtrello-hash/gethash-data :member       entity))
+(defun orgtrello-data/entity-username     (entity)     "Retrieve the ENTITY's USERNAME."         (orgtrello-hash/gethash-data :username     entity))
+(defun orgtrello-data/entity-action       (entity)     "Retrieve the ENTITY's ACTION."           (orgtrello-hash/gethash-data :action       entity))
+(defun orgtrello-data/entity-board-id     (entity)     "Retrieve the ENTITY's BOARD-id."         (orgtrello-hash/gethash-data :board-id     entity))
+(defun orgtrello-data/entity-card-id      (entity)     "Retrieve the ENTITY's CARD-id."          (orgtrello-hash/gethash-data :card-id      entity))
+(defun orgtrello-data/entity-list-id      (entity)     "Retrieve the ENTITY's LIST-id."          (orgtrello-hash/gethash-data :list-id      entity))
+(defun orgtrello-data/entity-member-ids   (entity)     "Retrieve the ENTITY's MEMBER-ids."       (orgtrello-hash/gethash-data :member-ids   entity))
+(defun orgtrello-data/entity-description  (entity)     "Retrieve the ENTITY's DESCRIPTION."      (orgtrello-hash/gethash-data :desc         entity))
+(defun orgtrello-data/entity-checklists   (entity)     "Retrieve the ENTITY's CHECKLISTS."       (orgtrello-hash/gethash-data :checklists   entity))
+(defun orgtrello-data/entity-items        (entity)     "Retrieve the ENTITY's ITEMS."            (orgtrello-hash/gethash-data :items        entity))
+(defun orgtrello-data/entity-position     (entity)     "Retrieve the ENTITY's POSITION."         (orgtrello-hash/gethash-data :position     entity))
+(defun orgtrello-data/entity-buffername   (entity)     "Retrieve the ENTITY's BUFFERNAME."       (orgtrello-hash/gethash-data :buffername   entity))
+(defun orgtrello-data/entity-checked      (entity)     "Retrieve the ENTITY's CHECKED."          (orgtrello-hash/gethash-data :checked      entity))
+(defun orgtrello-data/entity-due          (entity)     "Retrieve the ENTITY's DUE."              (orgtrello-hash/gethash-data :due          entity))
+(defun orgtrello-data/entity-id-or-marker (entity)     "Retrieve the ENTITY's ID-or-marker."     (orgtrello-hash/gethash-data :id           entity))
+(defun orgtrello-data/entity-level        (entity)     "Retrieve the ENTITY's LEVEL."            (orgtrello-hash/gethash-data :level        entity))
+(defun orgtrello-data/entity-closed       (entity)     "Retrieve the ENTITY's CLOSED."           (orgtrello-hash/gethash-data :closed       entity))
+(defun orgtrello-data/entity-callback     (entity)     "Retrieve the ENTITY's CALLBACK."         (orgtrello-hash/gethash-data :callback     entity))
+(defun orgtrello-data/entity-start        (entity)     "Retrieve the ENTITY's START."            (orgtrello-hash/gethash-data :start        entity))
+(defun orgtrello-data/entity-comments     (entity)     "Retrieve the ENTITY's COMMENTS."         (orgtrello-hash/gethash-data :comments     entity))
+(defun orgtrello-data/entity-labels       (entity)     "Retrieve the ENTITY's LABELS."           (orgtrello-hash/gethash-data :labels       entity))
+(defun orgtrello-data/entity-tags         (entity)     "Retrieve the ENTITY's TAGS."             (orgtrello-hash/gethash-data :tags         entity))
+(defun orgtrello-data/entity-comment-id   (entity)     "Retrieve the ENTITY's COMMENT-id."       (orgtrello-hash/gethash-data :comment-id   entity))
+(defun orgtrello-data/entity-comment-text (entity)     "Retrieve the ENTITY's COMMENT-text."     (orgtrello-hash/gethash-data :comment-text entity))
+(defun orgtrello-data/entity-comment-user (entity)     "Retrieve the ENTITY's COMMENT-user."     (orgtrello-hash/gethash-data :comment-user entity))
+(defun orgtrello-data/entity-color        (entity)     "Retrieve the ENTITY's COLOR."            (orgtrello-hash/gethash-data :color        entity))
+(defun orgtrello-data/entity-method       (query-map)  "Retrieve the QUERY-MAP's METHOD."        (orgtrello-hash/gethash-data :method query-map))
+(defun orgtrello-data/entity-uri          (query-map)  "Retrieve the QUERY-MAP's URI."           (orgtrello-hash/gethash-data :uri    query-map))
+(defun orgtrello-data/entity-sync         (query-map)  "Retrieve the QUERY-MAP's SYNC."          (orgtrello-hash/gethash-data :sync   query-map))
+(defun orgtrello-data/entity-params       (query-map)  "Retrieve the QUERY-MAP's PARAMS."        (orgtrello-hash/gethash-data :params query-map))
+(defun orgtrello-data/current             (entry-meta) "Retrieve the ENTRY-META's current."      (orgtrello-hash/gethash-data :current     entry-meta))
+(defun orgtrello-data/parent              (entry-meta) "Retrieve the ENTRY-META's parent."       (orgtrello-hash/gethash-data :parent      entry-meta))
+(defun orgtrello-data/grandparent         (entry-meta) "Retrieve the ENTRY-META's grand-parent." (orgtrello-hash/gethash-data :grandparent entry-meta))
 
-(defun orgtrello-data/entity-method (query-map) (orgtrello-hash/gethash-data :method query-map))
-(defun orgtrello-data/entity-uri    (query-map) (orgtrello-hash/gethash-data :uri    query-map))
-(defun orgtrello-data/entity-sync   (query-map) (orgtrello-hash/gethash-data :sync   query-map))
-(defun orgtrello-data/entity-params (query-map) (orgtrello-hash/gethash-data :params query-map))
+(defun orgtrello-data/put-entity-name         (value entity)     "Update the name with VALUE in ENTITY map."                  (orgtrello-hash/puthash-data :name         value entity))
+(defun orgtrello-data/put-entity-memberships  (value entity)     "Update the memberships with VALUE in ENTITY map."           (orgtrello-hash/puthash-data :memberships  value entity))
+(defun orgtrello-data/put-entity-member       (value entity)     "Update the member with VALUE in ENTITY map."                (orgtrello-hash/puthash-data :member       value entity))
+(defun orgtrello-data/put-entity-username     (value entity)     "Update the username with VALUE in ENTITY map."              (orgtrello-hash/puthash-data :username     value entity))
+(defun orgtrello-data/put-entity-action       (value entity)     "Update the action with VALUE in ENTITY map."                (orgtrello-hash/puthash-data :action       value entity))
+(defun orgtrello-data/put-entity-board-id     (value entity)     "Update the board-id with VALUE in ENTITY map."              (orgtrello-hash/puthash-data :board-id     value entity))
+(defun orgtrello-data/put-entity-card-id      (value entity)     "Update the card-id with VALUE in ENTITY map."               (orgtrello-hash/puthash-data :card-id      value entity))
+(defun orgtrello-data/put-entity-list-id      (value entity)     "Update the list-id with VALUE in ENTITY map."               (orgtrello-hash/puthash-data :list-id      value entity))
+(defun orgtrello-data/put-entity-member-ids   (value entity)     "Update the member-ids with VALUE in ENTITY map."            (orgtrello-hash/puthash-data :member-ids   value entity))
+(defun orgtrello-data/put-entity-description  (value entity)     "Update the description with VALUE in ENTITY map."           (orgtrello-hash/puthash-data :desc         value entity))
+(defun orgtrello-data/put-entity-checklists   (value entity)     "Update the checklists with VALUE in ENTITY map."            (orgtrello-hash/puthash-data :checklists   value entity))
+(defun orgtrello-data/put-entity-items        (value entity)     "Update the items with VALUE in ENTITY map."                 (orgtrello-hash/puthash-data :items        value entity))
+(defun orgtrello-data/put-entity-position     (value entity)     "Update the position with VALUE in ENTITY map."              (orgtrello-hash/puthash-data :position     value entity))
+(defun orgtrello-data/put-entity-buffername   (value entity)     "Update the buffername with VALUE in ENTITY map."            (orgtrello-hash/puthash-data :buffername   value entity))
+(defun orgtrello-data/put-entity-checked      (value entity)     "Update the checked with VALUE in ENTITY map."               (orgtrello-hash/puthash-data :checked      value entity))
+(defun orgtrello-data/put-entity-due          (value entity)     "Update the due with VALUE in ENTITY map."                   (orgtrello-hash/puthash-data :due          value entity))
+(defun orgtrello-data/put-entity-id           (value entity)     "Update the id with VALUE in ENTITY map."                    (orgtrello-hash/puthash-data :id           value entity))
+(defun orgtrello-data/put-entity-level        (value entity)     "Update the level with VALUE in ENTITY map."                 (orgtrello-hash/puthash-data :level        value entity))
+(defun orgtrello-data/put-entity-closed       (value entity)     "Update the closed with VALUE in ENTITY map."                (orgtrello-hash/puthash-data :closed       value entity))
+(defun orgtrello-data/put-entity-callback     (value entity)     "Update the callback with VALUE in ENTITY map."              (orgtrello-hash/puthash-data :callback     value entity))
+(defun orgtrello-data/put-entity-start        (value entity)     "Update the start with VALUE in ENTITY map."                 (orgtrello-hash/puthash-data :start        value entity))
+(defun orgtrello-data/put-entity-comments     (value entity)     "Update the comments with VALUE in ENTITY map."              (orgtrello-hash/puthash-data :comments     value entity))
+(defun orgtrello-data/put-entity-labels       (value entity)     "Update the labels with VALUE in ENTITY map."                (orgtrello-hash/puthash-data :labels       value entity))
+(defun orgtrello-data/put-entity-tags         (value entity)     "Update the tags with VALUE in ENTITY map."                  (orgtrello-hash/puthash-data :tags         value entity))
+(defun orgtrello-data/put-entity-keyword      (value entity)     "Update the keyword with VALUE in ENTITY map."               (orgtrello-hash/puthash-data :keyword      value entity))
+(defun orgtrello-data/put-entity-comment-id   (value entity)     "Update the comment-id with VALUE in ENTITY map."            (orgtrello-hash/puthash-data :comment-id   value entity))
+(defun orgtrello-data/put-entity-comment-text (value entity)     "Update the comment-text with VALUE in ENTITY map."          (orgtrello-hash/puthash-data :comment-text value entity))
+(defun orgtrello-data/put-entity-comment-user (value entity)     "Update the comment-user with VALUE in ENTITY map."          (orgtrello-hash/puthash-data :comment-user value entity))
+(defun orgtrello-data/put-entity-method       (value query-map)  "Update the method with VALUE in QUERY-MAP."                 (orgtrello-hash/puthash-data :method       value query-map))
+(defun orgtrello-data/put-entity-uri          (value query-map)  "Update the uri with VALUE in QUERY-MAP."                    (orgtrello-hash/puthash-data :uri          value query-map))
+(defun orgtrello-data/put-entity-sync         (value query-map)  "Update the sync with VALUE in QUERY-MAP."                   (orgtrello-hash/puthash-data :sync         value query-map))
+(defun orgtrello-data/put-entity-params       (value query-map)  "Update the params with VALUE in QUERY-MAP."                 (orgtrello-hash/puthash-data :params       value query-map))
+(defun orgtrello-data/put-current             (value entry-meta) "Update the current entry with VALUE in ENTRY-META map."     (orgtrello-hash/puthash-data :current      value entry-meta))
+(defun orgtrello-data/put-parent              (value entry-meta) "Update the parent entry with VALUE in ENTRY-META map."      (orgtrello-hash/puthash-data :parent       value entry-meta))
+(defun orgtrello-data/put-grandparent         (value entry-meta) "Update the grandparent entry with VALUE in ENTRY-META map." (orgtrello-hash/puthash-data :grandparent  value entry-meta))
 
-(defun orgtrello-data/current     (entry-meta) (orgtrello-hash/gethash-data :current     entry-meta))
-(defun orgtrello-data/parent      (entry-meta) (orgtrello-hash/gethash-data :parent      entry-meta))
-(defun orgtrello-data/grandparent (entry-meta) (orgtrello-hash/gethash-data :grandparent entry-meta))
-
-(defun orgtrello-data/put-entity-name         (value entity)     (orgtrello-hash/puthash-data :name         value entity))
-(defun orgtrello-data/put-entity-memberships  (value entity)     (orgtrello-hash/puthash-data :memberships  value entity))
-(defun orgtrello-data/put-entity-member       (value entity)     (orgtrello-hash/puthash-data :member       value entity))
-(defun orgtrello-data/put-entity-username     (value entity)     (orgtrello-hash/puthash-data :username     value entity))
-(defun orgtrello-data/put-entity-action       (value entity)     (orgtrello-hash/puthash-data :action       value entity))
-(defun orgtrello-data/put-entity-board-id     (value entity)     (orgtrello-hash/puthash-data :board-id     value entity))
-(defun orgtrello-data/put-entity-card-id      (value entity)     (orgtrello-hash/puthash-data :card-id      value entity))
-(defun orgtrello-data/put-entity-list-id      (value entity)     (orgtrello-hash/puthash-data :list-id      value entity))
-(defun orgtrello-data/put-entity-member-ids   (value entity)     (orgtrello-hash/puthash-data :member-ids   value entity))
-(defun orgtrello-data/put-entity-description  (value entity)     (orgtrello-hash/puthash-data :desc         value entity))
-(defun orgtrello-data/put-entity-checklists   (value entity)     (orgtrello-hash/puthash-data :checklists   value entity))
-(defun orgtrello-data/put-entity-items        (value entity)     (orgtrello-hash/puthash-data :items        value entity))
-(defun orgtrello-data/put-entity-position     (value entity)     (orgtrello-hash/puthash-data :position     value entity))
-(defun orgtrello-data/put-entity-buffername   (value entity)     (orgtrello-hash/puthash-data :buffername   value entity))
-(defun orgtrello-data/put-entity-checked      (value entity)     (orgtrello-hash/puthash-data :checked      value entity))
-(defun orgtrello-data/put-entity-due          (value entity)     (orgtrello-hash/puthash-data :due          value entity))
-(defun orgtrello-data/put-entity-id           (value entity)     (orgtrello-hash/puthash-data :id           value entity))
-(defun orgtrello-data/put-entity-level        (value entity)     (orgtrello-hash/puthash-data :level        value entity))
-(defun orgtrello-data/put-entity-closed       (value entity)     (orgtrello-hash/puthash-data :closed       value entity))
-(defun orgtrello-data/put-entity-callback     (value entity)     (orgtrello-hash/puthash-data :callback     value entity))
-(defun orgtrello-data/put-entity-start        (value entity)     (orgtrello-hash/puthash-data :start        value entity))
-(defun orgtrello-data/put-entity-comments     (value entity)     (orgtrello-hash/puthash-data :comments     value entity))
-(defun orgtrello-data/put-entity-labels       (value entity)     (orgtrello-hash/puthash-data :labels       value entity))
-(defun orgtrello-data/put-entity-tags         (value entity)     (orgtrello-hash/puthash-data :tags         value entity))
-(defun orgtrello-data/put-entity-keyword      (value entity)     (orgtrello-hash/puthash-data :keyword      value entity))
-(defun orgtrello-data/put-entity-comment-id   (value entity)     (orgtrello-hash/puthash-data :comment-id   value entity))
-(defun orgtrello-data/put-entity-comment-text (value entity)     (orgtrello-hash/puthash-data :comment-text value entity))
-(defun orgtrello-data/put-entity-comment-user (value entity)     (orgtrello-hash/puthash-data :comment-user value entity))
-
-(defun orgtrello-data/put-entity-method       (value query-map)  (orgtrello-hash/puthash-data :method       value query-map))
-(defun orgtrello-data/put-entity-uri          (value query-map)  (orgtrello-hash/puthash-data :uri          value query-map))
-(defun orgtrello-data/put-entity-sync         (value query-map)  (orgtrello-hash/puthash-data :sync         value query-map))
-(defun orgtrello-data/put-entity-params       (value query-map)  (orgtrello-hash/puthash-data :params       value query-map))
-
-(defun orgtrello-data/put-current             (value entry-meta) (orgtrello-hash/puthash-data :current      value entry-meta))
-(defun orgtrello-data/put-parent              (value entry-meta) (orgtrello-hash/puthash-data :parent       value entry-meta))
-(defun orgtrello-data/put-grandparent         (value entry-meta) (orgtrello-hash/puthash-data :grandparent  value entry-meta))
-
-(defun orgtrello-data/--compute-level (entity-map) "Given a map, compute the entity level"
-       (cond ((orgtrello-data/entity-list-id entity-map) *ORGTRELLO/CARD-LEVEL*)
-             ((orgtrello-data/entity-card-id entity-map) *ORGTRELLO/CHECKLIST-LEVEL*)
-             ((orgtrello-data/entity-checked entity-map) *ORGTRELLO/ITEM-LEVEL*)
-             (t nil)))
+(defun orgtrello-data/--compute-level (entity-map)
+  "Given an ENTITY-MAP, compute the entity level."
+  (cond ((orgtrello-data/entity-list-id entity-map) *ORGTRELLO/CARD-LEVEL*)
+        ((orgtrello-data/entity-card-id entity-map) *ORGTRELLO/CHECKLIST-LEVEL*)
+        ((orgtrello-data/entity-checked entity-map) *ORGTRELLO/ITEM-LEVEL*)
+        (t nil)))
 
 (defun orgtrello-data/make-hash-org (member-ids level keyword name id due position buffer-name desc comments tags)
-  "Utility function to ease the orgtrello-metadata creation"
+  "Compute the hash-map from MEMBER-IDS LEVEL KEYWORD NAME ID DUE POSITION BUFFER-NAME DESC COMMENTS TAGS."
   (->> (orgtrello-hash/empty-hash)
     (orgtrello-data/put-entity-buffername  buffer-name)
     (orgtrello-data/put-entity-position    position)
@@ -125,7 +123,7 @@
     (orgtrello-data/put-entity-tags        tags)))
 
 (defun orgtrello-data/make-hierarchy (current &optional parent grandparent)
-  "Helper constructor for the hashmap holding the full metadata about the current-entry."
+  "Build an org-trello hierarchy using CURRENT, PARENT and GRANDPARENT maps."
   (->> (orgtrello-hash/empty-hash)
     (orgtrello-data/put-current current)
     (orgtrello-data/put-parent parent)
@@ -164,17 +162,18 @@
                                                                         (color          . :color))))
 
 (defun orgtrello-data/--deal-with-key (key)
-  "Given a key, return it as is if it's a keyword or return its mapped version from *ORGTRELLO/DATA-MAP-KEYWORDS*"
+  "Return the KEY as is if it's a keyword or return its org-trello representation."
   (cond ((keywordp key) key)
         (t             (gethash key *ORGTRELLO/DATA-MAP-KEYWORDS*))))
 
 (defun orgtrello-data/--dispatch-parse-data-fn (key)
-  "Given a key, return the function to call to execute the parsing (parse-actions or parse-data)"
+  "Compute the parsing function depending on the KEY."
   (cond ((eq :comments key) 'orgtrello-data/--parse-actions)
         (t                  'orgtrello-data/parse-data)))
 
 (defun orgtrello-data/--parse-actions (data &optional size)
-  "Given a 'comment' (trello action limited to comment in org-trello) structure, return a list of map representing a comment."
+  "Given an association list DATA, filter and return only the 'comment' actions.
+SIZE is a useless parameter, only here to satisfy an implementation detail."
   (--map (->> (orgtrello-hash/empty-hash)
            (orgtrello-data/put-entity-comment-id   (assoc-default 'id it))
            (orgtrello-data/put-entity-comment-text (->> it (assoc-default 'data) (assoc-default 'text)))
@@ -182,7 +181,7 @@
          data))
 
 (defun orgtrello-data/parse-data (entities)
-  "Given a trello entity, convert into org-trello entity"
+  "Parse the data in ENTITIES to an org-trello format."
   (cond ((eq :json-false entities)                                           nil)
         ((--any? (funcall it entities) '(stringp symbolp numberp functionp)) entities)
         ((arrayp entities)                                                   (mapcar 'orgtrello-data/parse-data entities))
@@ -197,28 +196,26 @@
            (-when-let (level (orgtrello-data/--compute-level hmap)) (orgtrello-data/put-entity-level level hmap))
            hmap))))
 
-(orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-data loaded!")
-
 (defun orgtrello-data/comments-to-list (comments-hash)
-  "Given a list of comments hashmap, return the serialized string comment."
+  "Given a list of COMMENTS-HASH maps, return the serialized string comment."
   (->> comments-hash
     (--map (s-join ": " (list (orgtrello-data/entity-comment-user it) (orgtrello-data/entity-comment-text it))))
     (s-join *ORGTRELLO/CARD-COMMENTS-DELIMITER*)))
 
 (defun orgtrello-data/format-labels (labels)
-  "Given an assoc list of labels, serialize it."
+  "Given an assoc list of LABELS, serialize it."
   (->> labels
     (--map (s-join ": " (list (car it) (cdr it))))
     (s-join "\n\n")))
 
 (defun orgtrello-data/unformat-comments (comments)
-  "Given a string of comments human readable, transform it into a property format."
+  "Given a string of COMMENTS human readable, transform it into a property format."
   (->> comments
     (s-split *ORGTRELLO/CARD-COMMENTS-DELIMITER-PRINT*)
     (s-join *ORGTRELLO/CARD-COMMENTS-DELIMITER*)))
 
 (defun orgtrello-data/format-comments (comments)
-  "Given a property string of comments, work it to permit a human readable display."
+  "Given a property string of COMMENTS, work it to permit a human readable display."
   (if comments
       (->> comments
         (s-split *ORGTRELLO/CARD-COMMENTS-DELIMITER*)
@@ -226,11 +223,12 @@
     "No comments to display!"))
 
 (defun orgtrello-data/id-p (id)
-  "Is the string a trello identifier?"
+  "Is the string ID a trello identifier?"
   (and id (not (string-match-p (format "^%s-" *ORGTRELLO/MARKER*) id))))
 
 (defun orgtrello-data/merge-item (trello-item org-item)
-  "Merge trello and org item together. If trello-item is null, return the org-item"
+  "Merge TRELLO-ITEM and ORG-ITEM together.
+If TRELLO-ITEM is nil, return the ORG-ITEM."
   (if trello-item
       (let ((org-item-to-merge (orgtrello-hash/init-map-from org-item))) ;; merge
         (orgtrello-data/put-entity-level *ORGTRELLO/ITEM-LEVEL*            org-item-to-merge)
@@ -243,15 +241,16 @@
     org-item))
 
 (defun orgtrello-data/--compute-state-item-checkbox (state)
-  "Compute the status of the item checkbox"
+  "Compute the STATE of the item checkbox."
   (orgtrello-data/--compute-state-generic state '("[X]" "[ ]")))
 
 (defun orgtrello-data/--compute-state-item (state)
-  "Compute the status of the checkbox"
+  "Compute the STATE of the checkbox."
   (orgtrello-data/--compute-state-generic state `(,*ORGTRELLO/DONE* ,*ORGTRELLO/TODO*)))
 
 (defun orgtrello-data/--merge-checklist (trello-checklist org-checklist)
-  "Merge trello and org checklist together. If trello-checklist is null, return org-checklist."
+  "Merge TRELLO-CHECKLIST and ORG-CHECKLIST together.
+If TRELLO-CHECKLIST is nil, return ORG-CHECKLIST."
   (if trello-checklist
       (->> (orgtrello-hash/init-map-from org-checklist)
         (orgtrello-data/put-entity-level *ORGTRELLO/CHECKLIST-LEVEL*)
@@ -260,37 +259,37 @@
     org-checklist))
 
 (defun orgtrello-data/entity-member-ids-as-list (entity)
-  "Retrieve the users assigned to the entity."
+  "Retrieve the users assigned to the ENTITY."
   (-> entity
     orgtrello-data/entity-member-ids
     orgtrello-data/--users-from))
 
 (defun orgtrello-data/--merge-member-ids (trello-card org-card)
-  "Merge users assigned from trello and org."
+  "Merge users assigned from TRELLO-CARD and ORG-CARD."
   (--> trello-card
     (orgtrello-data/entity-member-ids it)
     (orgtrello-data/merge-2-lists-without-duplicates it (orgtrello-data/entity-member-ids-as-list org-card))
     (orgtrello-data/--users-to it)))
 
 (defun orgtrello-data/--labels-to-tags (labels)
-  "Given a list of tags, return a joined string with : as separator"
+  "Given a list of tags (LABELS), return a joined string with : as separator."
   (when labels
     (-when-let (tags (s-join ":" labels))
       (concat ":" tags ":"))))
 
 (defun orgtrello-data/--labels-hash-to-tags (labels)
-  "Given a hash map with :labels entry, return a tag string joined by : separator."
+  "Given a hash map with LABELS entry, return a tag string joined by : separator."
   (when labels
     (orgtrello-data/--labels-to-tags (mapcar 'orgtrello-data/entity-color labels))))
 
 (defun orgtrello-data/--from-tags-to-list (tags)
-  "Given a : string separated string, return a list of non empty string."
+  "Given TAGS, a : string separated string, return a list of non empty string."
   (->> tags
     (s-split ":")
     (--filter (not (string= "" it)))))
 
 (defun orgtrello-data/--merge-labels-as-tags (trello-labels org-tags)
-  "Given trello labels and org-tags, merge both of them"
+  "Given TRELLO-LABELS and ORG-TAGS, merge both of them."
   (if org-tags
       (let ((org-tags-as-list (orgtrello-data/--from-tags-to-list org-tags))
             (trello-tags-as-list (orgtrello-data/--from-tags-to-list trello-labels)))
@@ -298,7 +297,8 @@
     trello-labels))
 
 (defun orgtrello-data/--merge-card (trello-card org-card)
-  "Merge trello and org card together. If trello-card is nil, return org-card."
+  "Merge TRELLO-CARD and ORG-CARD together.
+If TRELLO-CARD is nil, return ORG-CARD."
   (if trello-card
       (->> (orgtrello-hash/init-map-from org-card)
         (orgtrello-data/put-entity-tags (orgtrello-data/--merge-labels-as-tags
@@ -317,13 +317,13 @@
     org-card))
 
 (defun orgtrello-data/--dispatch-merge-fn (entity)
-  "Dispatch the function fn to merge the entity."
+  "Dispatch the function fn to merge the ENTITY."
   (cond ((orgtrello-data/entity-card-p entity)      'orgtrello-data/--merge-card)
         ((orgtrello-data/entity-checklist-p entity) 'orgtrello-data/--merge-checklist)
         ((orgtrello-data/entity-item-p entity)      'orgtrello-data/merge-item)))
 
 (defun orgtrello-data/merge-entities-trello-and-org (trello-data org-data)
-  "Merge the org-entity entities inside the trello-entities."
+  "Merge to TRELLO-DATA the ORG-DATA, (org-entity entities inside the trello-entities)."
   (let ((trello-entities  (car trello-data))
         (trello-adjacency (cadr trello-data))
         (org-entities     (car org-data))
@@ -344,26 +344,27 @@
     (list trello-entities trello-adjacency)))
 
 (defun orgtrello-data/--compute-card-status (card-id-list)
-  "Given a card's id, compute its status."
+  "Given a CARD-ID-LIST, compute its status."
   (gethash card-id-list *ORGTRELLO/HMAP-LIST-ORGKEYWORD-ID-NAME*))
 
 (defun orgtrello-data/--get-entity (id entities-hash)
-  "Update the card entry inside the hash."
+  "Retrieve the entity with ID in ENTITIES-HASH."
   (gethash id entities-hash))
 
 (defun orgtrello-data/--compute-state-generic (state list-state)
-  "Generic computation of a list depending on the state. If state is \"complete\" or \"DONE\", then the first element of the list is returned, otherwise the second."
+  "Depending on the STATE and a generic LIST-STATE, compute the state.
+If state is \"complete\" or \"DONE\", the first element is returned, otherwise the second."
   (if (or (string= "complete" state)
           (string= *ORGTRELLO/DONE* state))
       (car list-state)
     (cadr list-state)))
 
 (defun orgtrello-data/--users-from (string-users)
-  "Compute the users name from the comma separated value in string."
+  "Compute the users name from the comma separated values STRING-USERS."
   (when string-users (split-string string-users "," t)))
 
 (defun orgtrello-data/--users-to (users)
-  "Given a list of users, compute the comma separated string of users."
+  "Given a list of USERS, compute the comma separated string of users."
   (if users (mapconcat 'identity users ",") ""))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-data loaded!")
