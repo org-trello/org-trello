@@ -1,3 +1,7 @@
+;;; load-org-trello-tests.el --- Load the namespaces of org-trello and org-trello-tests in a test context
+;;; Commentary:
+;;; Code:
+
 (require 'ert)
 (require 'ert-expectations)
 (require 'el-mock)

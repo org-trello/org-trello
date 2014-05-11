@@ -1,4 +1,7 @@
+;;; load-org-trello.el --- Load the namespace of org-trello in a dev or test context
+;;; Commentary:
 ;; Not designed to be used from shell - helper to load the splitted namespaces from src/ and still be able to browse source code from emacs
+;;; Code:
 
 (add-to-list 'load-path (expand-file-name "."))
 
