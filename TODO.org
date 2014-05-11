@@ -1043,7 +1043,7 @@ CLOSED: [2014-04-25 Fri 12:20]
   - [X] Does org-trello's test work? YES
   - [X] Does org-trello work? NO
   - [X] Doc - Update docstring to standard emacs convention
-  - [ ] Fix org-trello to make it work again
+  - [X] Fix org-trello to make it work again
   - [ ] Adapt melpa's org-trello recipe and test it locally
   - [ ] Add PR for melpa's org-trello recipe
 - [ ] Update version
