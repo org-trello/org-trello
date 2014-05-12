@@ -692,37 +692,33 @@ Return the hashmap (name, id) of the new lists created."
   (orgtrello-controller/do-cleanup-from-buffer! t)
   (orgtrello-log/msg *OT/NOLOG* "Cleanup done!"))
 
-(defun orgtrello-controller/mode-on-hook-fn (&optional partial-mode)
-  "Start org-trello hook function to install some org-trello setup.
-PARTIAL-MODE is to be used for tests."
-  (unless partial-mode
-    ;; start the server which does some initialization on its own
-    (orgtrello-server/start)
-    ;; increment the number of buffers with org-trello mode on
-    (orgtrello-db/increment-buffer-size *ORGTRELLO-SERVER/DB*)
-    ;; buffer-invisibility-spec
-    (add-to-invisibility-spec '(org-trello-cbx-property)) ;; for an ellipsis (...) change to '(org-trello-cbx-property . t)
-    ;; installing hooks
-    (add-hook 'before-save-hook 'orgtrello-buffer/install-overlays!) ;; before-change-functions
-    ;; migrate all checkbox at org-trello mode activation
-    (orgtrello-buffer/install-overlays!)
-    ;; run hook at startup
-    (run-hooks 'org-trello-mode-hook)))
+(defun orgtrello-controller/mode-on-hook-fn ()
+  "Start org-trello hook function to install some org-trello setup."
+  ;; start the server which does some initialization on its own
+  (orgtrello-server/start)
+  ;; increment the number of buffers with org-trello mode on
+  (orgtrello-db/increment-buffer-size *ORGTRELLO-SERVER/DB*)
+  ;; buffer-invisibility-spec
+  (add-to-invisibility-spec '(org-trello-cbx-property)) ;; for an ellipsis (...) change to '(org-trello-cbx-property . t)
+  ;; installing hooks
+  (add-hook 'before-save-hook 'orgtrello-buffer/install-overlays!) ;; before-change-functions
+  ;; migrate all checkbox at org-trello mode activation
+  (orgtrello-buffer/install-overlays!)
+  ;; run hook at startup
+  (run-hooks 'org-trello-mode-hook))
 
-(defun orgtrello-controller/mode-off-hook-fn (&optional partial-mode)
-  "Stop org-trello hook function to deinstall some org-trello setup.
-PARTIAL-MODE is to be used for tests."
-  (unless partial-mode
-    ;; decrement the number of buffers of 1
-    (orgtrello-db/decrement-buffer-size *ORGTRELLO-SERVER/DB*)
-    ;; stop the proxy server and webadmin
-    (orgtrello-server/stop)
-    ;; remove the invisible property names
-    (remove-from-invisibility-spec '(org-trello-cbx-property)) ;; for an ellipsis (...) change to '(org-trello-cbx-property . t)
-    ;; installing hooks
-    (remove-hook 'before-save-hook 'orgtrello-buffer/install-overlays!)
-    ;; remove org-trello overlays
-    (orgtrello-buffer/remove-overlays!)))
+(defun orgtrello-controller/mode-off-hook-fn ()
+  "Stop org-trello hook function to deinstall some org-trello setup."
+  ;; decrement the number of buffers of 1
+  (orgtrello-db/decrement-buffer-size *ORGTRELLO-SERVER/DB*)
+  ;; stop the proxy server and webadmin
+  (orgtrello-server/stop)
+  ;; remove the invisible property names
+  (remove-from-invisibility-spec '(org-trello-cbx-property)) ;; for an ellipsis (...) change to '(org-trello-cbx-property . t)
+  ;; installing hooks
+  (remove-hook 'before-save-hook 'orgtrello-buffer/install-overlays!)
+  ;; remove org-trello overlays
+  (orgtrello-buffer/remove-overlays!))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-controller loaded!")
 
