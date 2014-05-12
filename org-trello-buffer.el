@@ -486,16 +486,42 @@ Make it a hashmap with key :level,  :keyword,  :name and their respective value.
 FN-TO-EXECUTE is a function without any parameter."
   (org-map-entries (lambda () (when (= level (orgtrello-buffer/current-level!)) (funcall fn-to-execute)))))
 
+(defun orgtrello-buffer/org-checkbox-p! ()
+  "Predicate to determine if actual position is on org-trello checkbox."
+  (let ((entity-level (-> (orgtrello-buffer/entry-get-full-metadata!) orgtrello-data/current orgtrello-data/entity-level)))
+    (or (= entity-level *ORGTRELLO/CHECKLIST-LEVEL*)
+        (= entity-level *ORGTRELLO/ITEM-LEVEL*))))
+
+(defun orgtrello-buffer/end-of-line-point! ()
+  "Compute the end of line for an org-trello buffer."
+  (let* ((pt (save-excursion (org-end-of-line) (point))))
+    (if (orgtrello-buffer/org-checkbox-p!)
+        (-if-let (s (orgtrello-buffer/compute-overlay-size!))
+            (- pt s 1)
+          pt)
+      pt)))
+
 (defun orgtrello-buffer/end-of-line! ()
   "Move the cursor at the end of the line. For a checkbox, move to the 1- point (because of overlays)."
   (interactive)
-  (let* ((pt (save-excursion (org-end-of-line) (point)))
-         (entity-level (-> (orgtrello-buffer/entry-get-full-metadata!) orgtrello-data/current orgtrello-data/entity-level)))
-    (goto-char (if (or (= *ORGTRELLO/CHECKLIST-LEVEL* entity-level) (= *ORGTRELLO/ITEM-LEVEL* entity-level))
-                   (-if-let (s (orgtrello-buffer/compute-overlay-size!))
-                       (- pt s 1)
-                     pt)
-                 pt))))
+  (goto-char (orgtrello-buffer/end-of-line-point!)))
+
+(defun orgtrello-buffer/org-decorator (org-fn)
+  "If on org-trello checkbox move to the org end of the line.
+In any case, execute ORG-FN."
+  (when (orgtrello-buffer/org-checkbox-p!)
+    (org-end-of-line))
+  (funcall org-fn))
+
+(defun orgtrello-buffer/org-return! ()
+  "Move the cursor at the real end of the line. Then execute org-return."
+  (interactive)
+  (orgtrello-buffer/org-decorator 'org-return))
+
+(defun orgtrello-buffer/org-ctrl-c-ret! ()
+  "Move the cursor at the end of the line. For a checkbox, move to the 1- point (because of overlays)."
+  (interactive)
+  (orgtrello-buffer/org-decorator 'org-ctrl-c-ret))
 
 (defun orgtrello-buffer/compute-overlay-size! ()
   "Compute the overlay size to the current position"

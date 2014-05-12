@@ -322,6 +322,8 @@ If MODIFIER is not nil, unassign oneself from the card."
                                      (org-trello/install-local-prefix-mode-keybinding! *ORGTRELLO/MODE-PREFIX-KEYBINDING*)
                                      ;; Overwrite the org-mode-map
                                      (define-key org-trello-mode-map [remap org-end-of-line] 'orgtrello-buffer/end-of-line!)
+                                     (define-key org-trello-mode-map [remap org-return] 'orgtrello-buffer/org-return!)
+                                     (define-key org-trello-mode-map [remap org-ctrl-c-ret] 'orgtrello-buffer/org-ctrl-c-ret!)
                                      ;; a little message in the minibuffer to notify the user
                                      (orgtrello-log/msg *OT/NOLOG* (org-trello/--startup-message *ORGTRELLO/MODE-PREFIX-KEYBINDING*)))
           'do-append)
@@ -333,6 +335,8 @@ If MODIFIER is not nil, unassign oneself from the card."
                                       (org-trello/remove-local-prefix-mode-keybinding! *ORGTRELLO/MODE-PREFIX-KEYBINDING*)
                                       ;; remove mapping override
                                       (define-key org-trello-mode-map [remap org-end-of-line] nil)
+                                      (define-key org-trello-mode-map [remap org-return] nil)
+                                      (define-key org-trello-mode-map [remap org-ctrl-c-ret] nil)
                                       ;; a little message in the minibuffer to notify the user
                                       (orgtrello-log/msg *OT/NOLOG* "org-trello/ot is off!"))
           'do-append)

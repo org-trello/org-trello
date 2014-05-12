@@ -20,6 +20,7 @@
   - [X] Fix org-trello to make it work again
   - [X] Test package melpa install (adapt org-trello recipe and test M-x package-install-file) - https://github.com/ardumont/melpa/blob/org-trello-with-multiple-files-packaging/recipes/org-trello
   - [X] Test package marmalade install
+- [X] Fix org-trello behavior with overlay on org-return and org-ctrl-c-ret
 - [X] Update version
 - [X] Release notes
 
