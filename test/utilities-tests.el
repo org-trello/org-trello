@@ -21,9 +21,10 @@
  (expect t (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data ())
                        (orgtrello-hash/empty-hash))))
 
-(defun org-trello-mode-test () "Trigger org-trello-mode but shaped for the tests."
-  (remove-hook 'org-trello-mode-on-hook 'org-trello-mode-on-hook-fn)  (add-hook 'org-trello-mode-on-hook (lambda () (org-trello-mode-on-hook-fn t)))
-  (remove-hook 'org-trello-mode-off-hook 'org-trello-mode-off-hook-fn) (add-hook 'org-trello-mode-off-hook (lambda () (org-trello-mode-off-hook-fn t)) )
+(defun org-trello-mode-test ()
+  "Trigger org-trello-mode but shaped for the tests (without hooks)."
+  (setq org-trello-mode-on-hook)
+  (setq org-trello-mode-off-hook)
   (org-trello-mode))
 
 (defmacro orgtrello-tests/with-temp-buffer (text body-test &optional nb-lines-forward)
@@ -50,3 +51,6 @@
      (insert ,text)
      (org-mode)
      ,body-test))
+
+(provide 'utilities-tests)
+;;; utilities-tests.el ends here

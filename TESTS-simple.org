@@ -1,0 +1,65 @@
+:PROPERTIES:
+#+property: board-name api test board
+#+property: board-id 51d99bbc1e1d8988390047f2
+#+PROPERTY: CANCELLED 51e538e6c7a68fa0510014ee
+#+PROPERTY: FAIL 51e538a26f75d07902002d25
+#+PROPERTY: DELEGATED 51e538a89c05f1e25c0027c6
+#+PROPERTY: PENDING 51e53898ea3d1780690015ca
+#+PROPERTY: DONE 51d99bbc1e1d8988390047f5
+#+PROPERTY: IN-PROGRESS 51d99bbc1e1d8988390047f4
+#+PROPERTY: TODO 51d99bbc1e1d8988390047f3
+#+TODO: TODO IN-PROGRESS DONE | PENDING DELEGATED FAIL CANCELLED
+#+PROPERTY: orgtrello-user-orgmode 5203a0c833fc36360800177f
+#+PROPERTY: orgtrello-user-ardumont 4f2baa2f72b7c1293501cad3
+#+PROPERTY: :yellow yellow label
+#+PROPERTY: :red red label
+#+PROPERTY: :purple this is the purple label
+#+PROPERTY: :orange orange label
+#+PROPERTY: :green green label with & char
+#+PROPERTY: :blue
+#+PROPERTY: orgtrello-user-me ardumont
+:END:
+#+title: dummy sample to sync with trello
+#+author: Antoine R. Dumont
+
+* TODO Joy of FUN(ctional) LANGUAGES
+:PROPERTIES:
+:orgtrello-id: orgtrello-marker-08677ec948991d1e5a25ab6b813d8eba03fac20f
+:END:
+- [-] LISP family :PROPERTIES: {}
+  - [X] Emacs-Lisp :PROPERTIES: {}
+  - [X] Common-Lisp :PROPERTIES: {}
+  - [ ] Scheme :PROPERTIES: {}
+  - [X] Clojure :PROPERTIES: {}
+- [-] ML family :PROPERTIES: {}
+  - [X] Haskell :PROPERTIES: {}
+  - [X] Ocaml :PROPERTIES: {}
+- [-] hybrid family :PROPERTIES: {}
+  - [X] Scala :PROPERTIES: {}
+* TODO Programming in scala
+:PROPERTIES:
+:orgtrello-id: orgtrello-marker-350918ed1daed7809545110ee638f43464a91d8a
+:END:
+- [-] chapters :PROPERTIES: {}
+  - [ ] introduction :PROPERTIES: {}
+  - [ ] Ch. 1 - A scalable language :PROPERTIES: {}
+  - [ ] Ch. 2 - First steps in scala :PROPERTIES: {}
+  - [ ] Ch. 3 - Next steps in scala :PROPERTIES: {}
+  - [ ] Ch. 4 - Classes and objects :PROPERTIES: {}
+  - [ ] Ch. 5 - Basic types and operations :PROPERTIES: {}
+  - [ ] Ch. 6 - Functional objects :PROPERTIES: {}
+  - [ ] Ch. 7 - Buit-in control structures :PROPERTIES: {}
+  - [ ] Ch. 8 - Functions and closures :PROPERTIES: {}
+  - [ ] Ch. 9 - Control abstraction :PROPERTIES: {}
+  - [ ] Ch. 10 - Composition and inheritance :PROPERTIES: {}
+  - [ ] Ch. 11 - Scala's hierarchy :PROPERTIES: {}
+  - [ ] Ch. 12 - Traits :PROPERTIES: {}
+* TODO Functional programming in Haskell
+:PROPERTIES:
+:orgtrello-id: orgtrello-marker-347a3433a67e1738168835d7c74fdf98204ca15c
+:END:
+* PENDING Questions about life, the universe and everything
+:PROPERTIES:
+:orgtrello-id: orgtrello-marker-5a67afe68897ef842cb6c754e8934046659006e2
+:END:
+- [-] How to deal with promotion/demotion? :PROPERTIES: {}

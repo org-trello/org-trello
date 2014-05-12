@@ -1,3 +1,4 @@
+(require 'org-trello)
 (require 'ert)
 (require 'ert-expectations)
 (require 'el-mock)
@@ -29,3 +30,6 @@ C-c o u - M-x org-trello/update-board-metadata - Update the buffer's trello boar
 C-c o g - M-x org-trello/abort-sync - Abort synchronization activities.
 C-c o h - M-x org-trello/help-describing-bindings - This help message."
       (org-trello/--help-describing-bindings-template *ORGTRELLO/MODE-PREFIX-KEYBINDING* *org-trello-interactive-command-binding-couples*)))
+
+(provide 'org-trello-tests)
+;;; org-trello-tests.el ends here

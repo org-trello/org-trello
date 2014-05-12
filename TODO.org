@@ -1025,6 +1025,31 @@ CLOSED: [2014-04-25 Fri 12:20]
 - [X] Improve start/stop server policy 2
 - [X] Some Refactoring
 - [X] Release notes
+* DONE 0.4.4 [100%]
+CLOSED: [2014-05-11 Sun 23:05]
+- [X] Multiple files packaging - CLOSE #163
+  - [X] Move src/*.el files to /org-trello
+  - [X] Add 'provide statements for each of those files
+  - [X] Rework header + org-trello + footer files
+  - [X] Adapt main org-trello.el files to reference the needed namespaces
+  - [X] Adapt test files so that it continues to work (add the needed require statements)
+  - [X] Adapt loading code routine for developing + testing
+  - [X] Refactoring step - rename some files to avoid confusion
+  - [X] Adapt README-dev.md to the current code adaptation
+  - [X] Adapt cask packaging
+  - [X] Add missing standard header to namespace
+  - [X] Does org-trello still compiles? NO
+  - [X] Fix simple compilation warnings
+  - [X] Fix some more warnings
+  - [X] Does org-trello's test work? YES
+  - [X] Does org-trello work? NO
+  - [X] Doc - Update docstring to standard emacs convention
+  - [X] Fix org-trello to make it work again
+  - [X] Test package melpa install (adapt org-trello recipe and test M-x package-install-file) - https://github.com/ardumont/melpa/blob/org-trello-with-multiple-files-packaging/recipes/org-trello
+  - [X] Test package marmalade install
+- [X] Fix org-trello behavior with overlay on org-return and org-ctrl-c-ret
+- [X] Update version
+- [X] Release notes
 * TODO 0.4.x [0%]
 - [ ] Improve sync request policy - https://github.com/org-trello/org-trello/issues/58
 - [ ] Use active region - https://github.com/org-trello/org-trello/issues/130
