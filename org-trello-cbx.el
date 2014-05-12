@@ -172,7 +172,7 @@ Write the new properties at current position."
   (cond ((org-at-heading-p)        *ORGTRELLO/CARD-LEVEL*)
         ((org-at-item-bullet-p)    *ORGTRELLO/CHECKLIST-LEVEL*)
         ((orgtrello-cbx/--item-p!) *ORGTRELLO/ITEM-LEVEL*)
-        (t                         nil)))
+        (t                         -1)))
 
 (defun orgtrello-cbx/org-checkbox-metadata! ()
   "Extract the metadata about the checklist - this is the symmetrical with `org-heading-components` but for the checklist.
@@ -236,12 +236,11 @@ If hitting a heading or the end of the file, return nil."
 If hitting a heading or the end of the file, return nil.
 Otherwise, return the current position."
   (forward-line)
-  (-when-let (current-level (orgtrello-cbx/current-level!))
-    (if (= level current-level)
-        (point)
-      (if (or (org-at-heading-p) (<= (point-max) (point)))
-          nil
-        (orgtrello-cbx/--goto-next-checkbox-with-same-level! level)))))
+  (if (= level (orgtrello-cbx/current-level!))
+      (point)
+    (if (or (org-at-heading-p) (<= (point-max) (point)))
+        nil
+      (orgtrello-cbx/--goto-next-checkbox-with-same-level! level))))
 
 (defun orgtrello-cbx/--map-checkboxes (level fn-to-execute)
   "Map over the checkboxes with level > to LEVEL and execute FN-TO-EXECUTE.
