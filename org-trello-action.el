@@ -10,6 +10,15 @@
   "Reload orgtrello setup."
   (org-set-regexps-and-options))
 
+(defmacro orgtrello-action/--safe-wrap-or-throw-error (fn)
+  "Macro to catch uncaught error when executing the FN call.
+If error is thrown, send the 'org-trello-timer-go-to-sleep flag."
+  `(condition-case ex
+       (progn ,fn)
+     ('error
+      (orgtrello-log/msg *OT/ERROR* (concat "### org-trello - consumer ### Caught exception: [" ex "]"))
+      (throw 'org-trello-timer-go-to-sleep t))))
+
 (defmacro orgtrello-action/safe-wrap (fn &rest clean-up)
   "A macro to deal with intercept uncaught error when executing the FN call.
 The CLEAN-UP body is done whether error are caught or not."

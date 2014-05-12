@@ -148,15 +148,6 @@ HTTP-CON is used to transmit parameters."
   "Save sequentially the org-trello list of modified buffers."
   (setq *ORGTRELLO/LIST-BUFFERS-TO-SAVE* (orgtrello-proxy/batch-save *ORGTRELLO/LIST-BUFFERS-TO-SAVE*)))
 
-(defmacro orgtrello-proxy/--safe-wrap-or-throw-error (fn)
-  "Macro to catch uncaught error when executing the FN call.
-If error is thrown, send the 'org-trello-timer-go-to-sleep flag."
-  `(condition-case ex
-       (progn ,fn)
-     ('error
-      (orgtrello-log/msg *OT/ERROR* (concat "### org-trello - consumer ### Caught exception: [" ex "]"))
-      (throw 'org-trello-timer-go-to-sleep t))))
-
 (defun orgtrello-proxy/--getting-back-to-headline (data)
   "Trying another approach to getting back to header computing the normal form of the entry DATA in the buffer."
   (orgtrello-proxy/--getting-back-to-marker (orgtrello-buffer/--compute-entity-to-org-entry data)))
@@ -363,7 +354,7 @@ If the checks are ko, the error message is returned."
          (marker      (orgtrello-data/entity-id-or-marker entity-data))  ;; retrieve the id (which serves as a marker too)
          (level       (orgtrello-data/entity-level entity-data)))
     (orgtrello-log/msg *OT/TRACE* "Proxy-consumer - Searching entity metadata from buffer '%s' at point '%s' to sync..." buffer-name position)
-    (orgtrello-proxy/--safe-wrap-or-throw-error ;; will update via tag the trello id of the new persisted data (if needed)
+    (orgtrello-action/--safe-wrap-or-throw-error ;; will update via tag the trello id of the new persisted data (if needed)
      (with-current-buffer buffer-name
        (when (orgtrello-proxy/--get-back-to-marker marker entity-data)
          (orgtrello-db/put (orgtrello-proxy/archive-key level) entity-data *ORGTRELLO-SERVER/DB*) ;; keep an archived version
