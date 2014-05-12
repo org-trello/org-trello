@@ -196,13 +196,13 @@ This is a list with the following elements:
 (defun orgtrello-cbx/--org-up! (destination-level)
   "A function to get back to the current entry's DESTINATION-LEVEL ancestor.
 Return the level found or nil if the level found is a card."
-  (let ((current-level (orgtrello-cbx/--get-level (orgtrello-cbx/org-checkbox-metadata!))))
-    (cond ((= *ORGTRELLO/CARD-LEVEL*      current-level) nil)
-          ((= destination-level current-level) destination-level)
+  (let ((current-level (orgtrello-cbx/--get-level        (orgtrello-cbx/org-checkbox-metadata!))))
+    (cond ((= *ORGTRELLO/CARD-LEVEL* current-level)      nil)
+          ((= destination-level current-level)           destination-level)
           ((= *ORGTRELLO/CHECKLIST-LEVEL* current-level) (org-up-heading-safe))
-          (t                                   (progn
-                                                 (forward-line -1)
-                                                 (orgtrello-cbx/--org-up! destination-level))))))
+          (t                                             (progn
+                                                           (forward-line -1)
+                                                           (orgtrello-cbx/--org-up! destination-level))))))
 
 (defun orgtrello-cbx/current-level! ()
   "Give the current level of the checkbox."
