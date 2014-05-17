@@ -34,7 +34,7 @@
 ;; (require 'org-trello)
 ;; (add-hook 'org-mode-hook 'org-trello-mode)
 ;;
-;; 2) Once - Install the consumer-key and the read-write token for org-trello to be able to work in your name with your trello boards (C-c o i)
+;; 2) Once - Install the consumer-key and read/write token for org-trello to work in your name with your boards (C-c o i)
 ;; M-x org-trello/install-key-and-token
 ;;
 ;; You may want:
