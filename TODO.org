@@ -19,7 +19,7 @@
 - [X] Backlog
 - [-] Sync from Trello must preserve unknown data card in drawer - #167
   - [X] Extract unknown information and store them in org entity representation
-  - [ ] Ensure those data transit back in trello data when merging
+  - [X] Ensure those data transit back in trello data when merging
   - [ ] Write back those unknown information in the sync from trello
 - [ ] Update version
 - [ ] Release notes

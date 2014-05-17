@@ -445,13 +445,16 @@
 
 (ert-deftest testing-orgtrello-data/--merge-card ()
   (let ((*ORGTRELLO/HMAP-LIST-ORGKEYWORD-ID-NAME* (orgtrello-hash/make-properties `((1 . "TODO") (2 . "DONE") (3 . "IN-PROGRESS")))))
-    (should (hash-equal (orgtrello-hash/make-properties `((:name . "some other name")))
+    (should (hash-equal (orgtrello-hash/make-properties `((:name . "some other name")
+                                                          (:unknown-properties . :something)))
              (orgtrello-data/--merge-card nil
-                                          (orgtrello-hash/make-properties `((:name . "some other name"))))))
+                                          (orgtrello-hash/make-properties `((:name . "some other name")
+                                                                            (:unknown-properties . :something))))))
     (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
-                                      (:name "some name" :tags nil :comments nil :level 1 :id "123" :keyword nil :member-ids "" :desc nil :due nil))
+                                      (:name "some name" :tags nil :comments nil :level 1 :id "123" :keyword nil :member-ids "" :desc nil :due nil :unknown-properties :something))
                         (orgtrello-data/--merge-card (orgtrello-hash/make-properties '((:id . "123") (:name . "some name") (:idList . 1)))
-                                                     (orgtrello-hash/make-properties '((:name . "some other name"))))))
+                                                     (orgtrello-hash/make-properties '((:name . "some other name")
+                                                                                       (:unknown-properties . :something))))))
     (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
                                       (:name "some name" :tags ":red:green:" :comments "some comments" :level 1 :id "123" :keyword nil :member-ids "ardumont-id,some-dude-id" :desc "some description" :due "some due date"))
                         (orgtrello-data/--merge-card (orgtrello-hash/make-properties `((:id . "123")
