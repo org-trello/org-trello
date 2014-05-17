@@ -771,6 +771,28 @@ DEADLINE: <2014-05-17 Sat>
 "
      (orgtrello-buffer/org-unknown-drawer-properties!))))
 
+(expectations
+  (expect
+      "* TODO Joy of FUN(ctional) LANGUAGES
+DEADLINE: <2014-05-17 Sat>
+:PROPERTIES:
+:orgtrello-id: orgtrello-marker-08677ec948991d1e5a25ab6b813d8eba03fac20f
+:property0: value0
+:property1: value1
+:property2: value2
+:END:
+"
+    (orgtrello-tests/with-temp-buffer-and-return-buffer-content
+     "* TODO Joy of FUN(ctional) LANGUAGES
+DEADLINE: <2014-05-17 Sat>
+:PROPERTIES:
+:orgtrello-id: orgtrello-marker-08677ec948991d1e5a25ab6b813d8eba03fac20f
+:END:
+"
+     (orgtrello-buffer/write-unknown-properties! '(("property0" . "value0")
+                                                   ("property1" . "value1")
+                                                   ("property2" . "value2"))))))
+
 
 (provide 'org-trello-buffer-tests)
 ;;; org-trello-buffer-tests.el ends here
