@@ -1050,16 +1050,22 @@ CLOSED: [2014-05-11 Sun 23:05]
 - [X] Fix org-trello behavior with overlay on org-return and org-ctrl-c-ret
 - [X] Update version
 - [X] Release notes
+* IN-PROGRESS 0.4.5 [25%]
+- [X] Backlog
+- [ ] Sync from Trello must preserve unknown data card in drawer - #167
+- [ ] Update version
+- [ ] Release notes
 * TODO 0.4.x [0%]
-- [ ] Improve sync request policy - https://github.com/org-trello/org-trello/issues/58
-- [ ] Use active region - https://github.com/org-trello/org-trello/issues/130
-- [ ] More fined grained use of the trello api (retrieve only data we use) - https://github.com/org-trello/org-trello/issues/69
-- [ ] One command to sync them all - https://github.com/org-trello/org-trello/issues/59
+- [ ] Emacs blocks when sync - #164
+- [ ] Improve sync request policy - #58
+- [ ] Use active region - #130
+- [ ] More fined grained use of the trello api (retrieve only data we use) - #69
+- [ ] One command to sync them all - #59
 - [ ] Extract a data representation for org-trello buffer to decorrelate the file serialization file from the computation (decomplecting -> ease of testing, computation, overall maintenance, sandbox i/o to a minimum)
   - [ ] extracter (from file/region to data)
   - [ ] updater (from data to updated data)
   - [ ] serializer (from data to file/region update)
-- [ ] Another Disposition about org's buffer - https://github.com/org-trello/org-trello/issues/33
+- [ ] Another Disposition about org's buffer - #33
 - [ ] Now that elnode is here, this may be simpler to use a fake trello server (use clojure :D)
 - [ ] POC: use a temporary buffer to sync with trello, when done, merge with the user's buffer.
 * TODO Template [0%]
