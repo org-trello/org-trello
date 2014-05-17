@@ -15,7 +15,8 @@
 - [ ] Another Disposition about org's buffer - #33
 - [ ] Now that elnode is here, this may be simpler to use a fake trello server (use clojure :D)
 - [ ] POC: use a temporary buffer to sync with trello, when done, merge with the user's buffer.
-* IN-PROGRESS 0.4.5 [100%]
+* DONE 0.4.5 [100%]
+CLOSED: [2014-05-17 Sat 21:57]
 - [X] Backlog
 - [X] 'Sync from trello' must preserve unknown data card in drawer - CLOSE #167
   - [X] Extract unknown information and store them in org entity representation
