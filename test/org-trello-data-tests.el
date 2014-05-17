@@ -566,17 +566,18 @@
   (expect t (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:grandparent  :value)) (orgtrello-data/put-grandparent         :value (orgtrello-hash/empty-hash)))))
 
 (expectations (desc "testing orgtrello-data/make-hash-org")
-  (expect "some name"       (gethash :name           (orgtrello-data/make-hash-org "" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org" :desc :comments :tags)))
-  (expect "IN PROGRESS"     (gethash :keyword        (orgtrello-data/make-hash-org "" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org" :desc :comments :tags)))
-  (expect 0                 (gethash :level          (orgtrello-data/make-hash-org "" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org" :desc :comments :tags)))
-  (expect "some id"         (gethash :id             (orgtrello-data/make-hash-org "" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org" :desc :comments :tags)))
-  (expect "due-date"        (gethash :due            (orgtrello-data/make-hash-org "" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org" :desc :comments :tags)))
-  (expect :point            (gethash :position       (orgtrello-data/make-hash-org "" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org" :desc :comments :tags)))
-  (expect "buffer-name.org" (gethash :buffername     (orgtrello-data/make-hash-org "" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org" :desc :comments :tags)))
-  (expect "1,2,3"           (gethash :member-ids     (orgtrello-data/make-hash-org "1,2,3" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org" :desc :comments :tags)))
-  (expect :desc             (gethash :desc           (orgtrello-data/make-hash-org "1,2,3" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org" :desc :comments :tags)))
-  (expect :comments         (gethash :comments       (orgtrello-data/make-hash-org "1,2,3" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org" :desc :comments :tags)))
-  (expect :tags             (gethash :tags           (orgtrello-data/make-hash-org "1,2,3" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org" :desc :comments :tags))))
+  (expect "some name"       (gethash :name           (orgtrello-data/make-hash-org "" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org" :desc :comments :tags :unk)))
+  (expect "IN PROGRESS"     (gethash :keyword        (orgtrello-data/make-hash-org "" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org" :desc :comments :tags :unk)))
+  (expect 0                 (gethash :level          (orgtrello-data/make-hash-org "" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org" :desc :comments :tags :unk)))
+  (expect "some id"         (gethash :id             (orgtrello-data/make-hash-org "" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org" :desc :comments :tags :unk)))
+  (expect "due-date"        (gethash :due            (orgtrello-data/make-hash-org "" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org" :desc :comments :tags :unk)))
+  (expect :point            (gethash :position       (orgtrello-data/make-hash-org "" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org" :desc :comments :tags :unk)))
+  (expect "buffer-name.org" (gethash :buffername     (orgtrello-data/make-hash-org "" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org" :desc :comments :tags :unk)))
+  (expect "1,2,3"           (gethash :member-ids     (orgtrello-data/make-hash-org "1,2,3" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org" :desc :comments :tags :unk)))
+  (expect :desc             (gethash :desc           (orgtrello-data/make-hash-org "1,2,3" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org" :desc :comments :tags :unk)))
+  (expect :comments         (gethash :comments       (orgtrello-data/make-hash-org "1,2,3" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org" :desc :comments :tags :unk)))
+  (expect :tags             (gethash :tags           (orgtrello-data/make-hash-org "1,2,3" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org" :desc :comments :tags :unk)))
+  (expect :unk              (gethash :unknown-properties (orgtrello-data/make-hash-org "1,2,3" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org" :desc :comments :tags :unk))))
 
 (expectations (desc "orgtrello-data/make-hierarchy")
  (expect :current (gethash :current (orgtrello-data/make-hierarchy :current)))
@@ -599,31 +600,31 @@
  (expect :grandparent (gethash :grandparent (orgtrello-data/make-hierarchy nil :parent :grandparent))))
 
 (expectations (desc "orgtrello-data/make-hierarchy")
-  (expect :ok                                 (-> (orgtrello-data/make-hash-org :users 1 :keyword "some name" :id :due :position :buffer-name :desc :comments :tags)
+  (expect :ok                                 (-> (orgtrello-data/make-hash-org :users 1 :keyword "some name" :id :due :position :buffer-name :desc :comments :tags :unk)
                                                   orgtrello-data/make-hierarchy
                                                   orgtrello-controller/--mandatory-name-ok-p))
-  (expect *ORGTRELLO/ERROR-SYNC-CARD-MISSING-NAME*      (-> (orgtrello-data/make-hash-org :users 1 :keyword "" :id :due :position :buffer-name :desc :comments :tags)
+  (expect *ORGTRELLO/ERROR-SYNC-CARD-MISSING-NAME*      (-> (orgtrello-data/make-hash-org :users 1 :keyword "" :id :due :position :buffer-name :desc :comments :tags :unk)
                                                   orgtrello-data/make-hierarchy
                                                   orgtrello-controller/--mandatory-name-ok-p))
-  (expect *ORGTRELLO/ERROR-SYNC-CARD-MISSING-NAME*      (-> (orgtrello-data/make-hash-org :users 1 :keyword nil :id :due :position :buffer-name :desc :comments :tags)
+  (expect *ORGTRELLO/ERROR-SYNC-CARD-MISSING-NAME*      (-> (orgtrello-data/make-hash-org :users 1 :keyword nil :id :due :position :buffer-name :desc :comments :tags :unk)
                                                   orgtrello-data/make-hierarchy
                                                   orgtrello-controller/--mandatory-name-ok-p))
-  (expect :ok                                 (-> (orgtrello-data/make-hash-org :users 2 :keyword "some name" :id :due :position :buffer-name :desc :comments :tags)
+  (expect :ok                                 (-> (orgtrello-data/make-hash-org :users 2 :keyword "some name" :id :due :position :buffer-name :desc :comments :tags :unk)
                                                   orgtrello-data/make-hierarchy
                                                   orgtrello-controller/--mandatory-name-ok-p))
-  (expect *ORGTRELLO/ERROR-SYNC-CHECKLIST-MISSING-NAME* (-> (orgtrello-data/make-hash-org :users 2 :keyword "" :id :due :position :buffer-name :desc :comments :tags)
+  (expect *ORGTRELLO/ERROR-SYNC-CHECKLIST-MISSING-NAME* (-> (orgtrello-data/make-hash-org :users 2 :keyword "" :id :due :position :buffer-name :desc :comments :tags :unk)
                                                   orgtrello-data/make-hierarchy
                                                   orgtrello-controller/--mandatory-name-ok-p))
-  (expect *ORGTRELLO/ERROR-SYNC-CHECKLIST-MISSING-NAME* (-> (orgtrello-data/make-hash-org :users 2 :keyword nil :id :due :position :buffer-name :desc :comments :tags)
+  (expect *ORGTRELLO/ERROR-SYNC-CHECKLIST-MISSING-NAME* (-> (orgtrello-data/make-hash-org :users 2 :keyword nil :id :due :position :buffer-name :desc :comments :tags :unk)
                                                   orgtrello-data/make-hierarchy
                                                   orgtrello-controller/--mandatory-name-ok-p))
-  (expect :ok                                 (-> (orgtrello-data/make-hash-org :users 3 :keyword "some name" :id :due :position :buffer-name :desc :comments :tags)
+  (expect :ok                                 (-> (orgtrello-data/make-hash-org :users 3 :keyword "some name" :id :due :position :buffer-name :desc :comments :tags :unk)
                                                   orgtrello-data/make-hierarchy
                                                   orgtrello-controller/--mandatory-name-ok-p))
-  (expect *ORGTRELLO/ERROR-SYNC-ITEM-MISSING-NAME*      (-> (orgtrello-data/make-hash-org :users 3 :keyword "" :id :due :position :buffer-name :desc :comments :tags)
+  (expect *ORGTRELLO/ERROR-SYNC-ITEM-MISSING-NAME*      (-> (orgtrello-data/make-hash-org :users 3 :keyword "" :id :due :position :buffer-name :desc :comments :tags :unk)
                                                   orgtrello-data/make-hierarchy
                                                   orgtrello-controller/--mandatory-name-ok-p))
-  (expect *ORGTRELLO/ERROR-SYNC-ITEM-MISSING-NAME*      (-> (orgtrello-data/make-hash-org :users 3 :keyword nil :id :due :position :buffer-name :desc :comments :tags)
+  (expect *ORGTRELLO/ERROR-SYNC-ITEM-MISSING-NAME*      (-> (orgtrello-data/make-hash-org :users 3 :keyword nil :id :due :position :buffer-name :desc :comments :tags :unk)
                                                   orgtrello-data/make-hierarchy
                                                   orgtrello-controller/--mandatory-name-ok-p)))
 
