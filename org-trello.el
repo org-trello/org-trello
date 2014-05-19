@@ -4,7 +4,7 @@
 
 ;; Author: Antoine R. Dumont <eniotna.t AT gmail.com>
 ;; Maintainer: Antoine R. Dumont <eniotna.t AT gmail.com>
-;; Version: 0.4.4
+;; Version: 0.4.5
 ;; Package-Requires: ((dash "2.5.0") (request "0.2.0") (elnode "0.9.9.7.6") (esxml "0.3.0") (s "1.7.0") (db "0.0.6"))
 ;; Keywords: org-mode trello sync org-trello
 ;; URL: https://github.com/org-trello/org-trello
@@ -34,7 +34,7 @@
 ;; (require 'org-trello)
 ;; (add-hook 'org-mode-hook 'org-trello-mode)
 ;;
-;; 2) Once - Install the consumer-key and the read-write token for org-trello to be able to work in your name with your trello boards (C-c o i)
+;; 2) Once - Install the consumer-key and read/write token for org-trello to work in your name with your boards (C-c o i)
 ;; M-x org-trello/install-key-and-token
 ;;
 ;; You may want:
@@ -98,7 +98,7 @@ Please consider upgrading Emacs." emacs-version) "Error message when installing 
 (require 'esxml)
 (require 'db)
 
-(defconst *ORGTRELLO/VERSION* "0.4.4" "Current org-trello version installed.")
+(defconst *ORGTRELLO/VERSION* "0.4.5" "Current org-trello version installed.")
 
 (defun org-trello/version ()
   "Org-trello version."

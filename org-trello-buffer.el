@@ -147,11 +147,20 @@ If the VALUE is nil or empty, remove such PROPERTY."
     orgtrello-data/comments-to-list
     orgtrello-buffer/set-property-comment!))
 
+(defun orgtrello-buffer/write-unknown-properties! (unknown-properties)
+  "Write the alist UNKNOWN-PROPERTIES inside standard properties org drawer."
+  (mapc (lambda (property)
+          (let ((key (car property))
+                (value (cdr property)))
+            (orgtrello-buffer/org-entry-put! (point) key value)))
+        unknown-properties))
+
 (defun orgtrello-buffer/write-card-header! (card-id card)
   "Given a card entity, write its data and properties without its structure."
   (orgtrello-buffer/write-entity! card-id card)
   (orgtrello-buffer/update-member-ids-property! card)
   (orgtrello-buffer/update-property-card-comments! card)
+  (orgtrello-buffer/write-unknown-properties! (orgtrello-data/entity-unknown-properties card))
   (-when-let (card-desc (orgtrello-data/entity-description card))
     (insert (format "%s" card-desc))))
 
@@ -435,7 +444,18 @@ Deal with org entities and checkbox as well."
       (cons (orgtrello-buffer/--user-ids-assigned-to-current-card))
       (cons (orgtrello-buffer/extract-description-from-current-position!))
       (cons (orgtrello-buffer/org-entry-get current-point *ORGTRELLO/CARD-COMMENTS*))
+      (cons (orgtrello-buffer/org-unknown-drawer-properties!))
       orgtrello-buffer/--to-orgtrello-metadata)))
+
+(defun orgtrello-buffer/--filter-out-known-properties (list)
+  "Filter out the org-trello known properties from the LIST."
+  (--filter (not (or (string-match-p "^orgtrello-.*" (car it))
+                     (string= (car it) "CATEGORY"))) list))
+
+(defun orgtrello-buffer/org-unknown-drawer-properties! ()
+  "Retrieve the key/value pairs of org-trello unknown drawer properties."
+  (->> (org-entry-properties (point) 'standard)
+    orgtrello-buffer/--filter-out-known-properties))
 
 (defun orgtrello-buffer/org-up-parent! ()
   "A function to get back to the current entry's parent"
@@ -467,8 +487,8 @@ Deal with org entities and checkbox as well."
 (defun orgtrello-buffer/--to-orgtrello-metadata (heading-metadata)
   "Given the HEADING-METADATA returned by the function 'org-heading-components.
 Make it a hashmap with key :level,  :keyword,  :name and their respective value."
-  (cl-destructuring-bind (comments description member-ids buffer-name point id due level _ keyword _ name tags) heading-metadata
-    (orgtrello-data/make-hash-org member-ids level keyword name id due point buffer-name description comments tags)))
+  (cl-destructuring-bind (unknown-properties comments description member-ids buffer-name point id due level _ keyword _ name tags) heading-metadata
+    (orgtrello-data/make-hash-org member-ids level keyword name id due point buffer-name description comments tags unknown-properties)))
 
 (defun orgtrello-buffer/current-level! ()
   "Compute the current level's position."
