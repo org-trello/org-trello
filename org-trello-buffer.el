@@ -162,13 +162,13 @@ If the VALUE is nil or empty, remove such PROPERTY."
   (orgtrello-buffer/update-property-card-comments! card)
   (orgtrello-buffer/write-unknown-properties! (orgtrello-data/entity-unknown-properties card))
   (-when-let (card-desc (orgtrello-data/entity-description card))
-    (insert (format "%s\n" card-desc))))
+    (insert (format "%s" card-desc))))
 
 (defun orgtrello-buffer/write-card! (card-id card entities adjacency)
   "Write the card and its structure inside the org buffer."
   (orgtrello-buffer/write-card-header! card-id card)
+  (insert "\n")
   (-when-let (checklists (gethash card-id adjacency))
-    (insert "\n")
     (--map (orgtrello-buffer/write-checklist! it entities adjacency) checklists)))
 
 (defun orgtrello-buffer/write-entity! (entity-id entity)
