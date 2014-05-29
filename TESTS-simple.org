@@ -24,42 +24,38 @@
 
 * TODO Joy of FUN(ctional) LANGUAGES
 :PROPERTIES:
-:orgtrello-id: orgtrello-marker-08677ec948991d1e5a25ab6b813d8eba03fac20f
 :END:
-- [-] LISP family :PROPERTIES: {}
-  - [X] Emacs-Lisp :PROPERTIES: {}
-  - [X] Common-Lisp :PROPERTIES: {}
-  - [ ] Scheme :PROPERTIES: {}
-  - [X] Clojure :PROPERTIES: {}
-- [-] ML family :PROPERTIES: {}
-  - [X] Haskell :PROPERTIES: {}
-  - [X] Ocaml :PROPERTIES: {}
-- [-] hybrid family :PROPERTIES: {}
-  - [X] Scala :PROPERTIES: {}
+- [-] LISP family
+  - [X] Emacs-Lisp
+  - [X] Common-Lisp
+  - [ ] Scheme
+  - [X] Clojure
+- [-] ML family
+  - [X] Haskell
+  - [X] Ocaml
+- [-] hybrid family
+  - [X] Scala
 * TODO Programming in scala
 :PROPERTIES:
-:orgtrello-id: orgtrello-marker-350918ed1daed7809545110ee638f43464a91d8a
 :END:
-- [-] chapters :PROPERTIES: {}
-  - [ ] introduction :PROPERTIES: {}
-  - [ ] Ch. 1 - A scalable language :PROPERTIES: {}
-  - [ ] Ch. 2 - First steps in scala :PROPERTIES: {}
-  - [ ] Ch. 3 - Next steps in scala :PROPERTIES: {}
-  - [ ] Ch. 4 - Classes and objects :PROPERTIES: {}
-  - [ ] Ch. 5 - Basic types and operations :PROPERTIES: {}
-  - [ ] Ch. 6 - Functional objects :PROPERTIES: {}
-  - [ ] Ch. 7 - Buit-in control structures :PROPERTIES: {}
-  - [ ] Ch. 8 - Functions and closures :PROPERTIES: {}
-  - [ ] Ch. 9 - Control abstraction :PROPERTIES: {}
-  - [ ] Ch. 10 - Composition and inheritance :PROPERTIES: {}
-  - [ ] Ch. 11 - Scala's hierarchy :PROPERTIES: {}
-  - [ ] Ch. 12 - Traits :PROPERTIES: {}
+- [-] chapters
+  - [ ] introduction
+  - [ ] Ch. 1 - A scalable language
+  - [ ] Ch. 2 - First steps in scala
+  - [ ] Ch. 3 - Next steps in scala
+  - [ ] Ch. 4 - Classes and objects
+  - [ ] Ch. 5 - Basic types and operations
+  - [ ] Ch. 6 - Functional objects
+  - [ ] Ch. 7 - Buit-in control structures
+  - [ ] Ch. 8 - Functions and closures
+  - [ ] Ch. 9 - Control abstraction
+  - [ ] Ch. 10 - Composition and inheritance
+  - [ ] Ch. 11 - Scala's hierarchy
+  - [ ] Ch. 12 - Traits
 * TODO Functional programming in Haskell
 :PROPERTIES:
-:orgtrello-id: orgtrello-marker-347a3433a67e1738168835d7c74fdf98204ca15c
 :END:
 * PENDING Questions about life, the universe and everything
 :PROPERTIES:
-:orgtrello-id: orgtrello-marker-5a67afe68897ef842cb6c754e8934046659006e2
 :END:
-- [-] How to deal with promotion/demotion? :PROPERTIES: {}
+- [-] How to deal with promotion/demotion?
