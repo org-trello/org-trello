@@ -167,8 +167,8 @@ If the VALUE is nil or empty, remove such PROPERTY."
 (defun orgtrello-buffer/write-card! (card-id card entities adjacency)
   "Write the card and its structure inside the org buffer."
   (orgtrello-buffer/write-card-header! card-id card)
+  (insert "\n")
   (-when-let (checklists (gethash card-id adjacency))
-    (insert "\n")
     (--map (orgtrello-buffer/write-checklist! it entities adjacency) checklists)))
 
 (defun orgtrello-buffer/write-entity! (entity-id entity)

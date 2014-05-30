@@ -464,6 +464,68 @@ some description
      0)))
 
 (expectations
+ (expect ":PROPERTIES:
+#+PROPERTY: orgtrello-user-ardumont ardumont-id
+#+PROPERTY: orgtrello-user-dude dude-id
+:END:
+* TODO task A
+  :PROPERTIES:
+  :orgtrello-id: card-id-a
+  :orgtrello-users: ardumont,dude
+  :orgtrello-card-comments: ardumont: some comment
+  :END:
+description A
+* TODO task B
+  :PROPERTIES:
+  :orgtrello-id: card-id-b
+  :orgtrello-users: ardumont,dude
+  :orgtrello-card-comments: ardumont: some comment
+  :END:
+description B
+"
+    (orgtrello-tests/with-temp-buffer-and-return-buffer-content
+     ":PROPERTIES:
+#+PROPERTY: orgtrello-user-ardumont ardumont-id
+#+PROPERTY: orgtrello-user-dude dude-id
+:END:
+"
+     (let ()
+       (orgtrello-buffer/write-card!
+        "card-id-a"
+        (orgtrello-hash/make-properties
+         `((:keyword . "TODO")
+           (:desc . "description A")
+           (:level . ,*ORGTRELLO/CARD-LEVEL*)
+           (:name . "task A")
+           (:id . "card-id-a")
+           (:member-ids . "ardumont-id,dude-id")
+           (:comments . ,(list (orgtrello-hash/make-properties
+                                '((:comment-user . "ardumont")
+                                  (:comment-text . "some comment")))))
+           ))
+        (orgtrello-hash/make-properties `())
+        (orgtrello-hash/make-properties `())
+        )
+       (orgtrello-buffer/write-card!
+        "card-id-b"
+        (orgtrello-hash/make-properties
+         `((:keyword . "TODO")
+           (:desc . "description B")
+           (:level . ,*ORGTRELLO/CARD-LEVEL*)
+           (:name . "task B")
+           (:id . "card-id-b")
+           (:member-ids . "ardumont-id,dude-id")
+           (:comments . ,(list (orgtrello-hash/make-properties
+                                '((:comment-user . "ardumont")
+                                  (:comment-text . "some comment")))))
+           ))
+        (orgtrello-hash/make-properties `())
+        (orgtrello-hash/make-properties `())
+        ))
+     0)
+    ))
+
+(expectations
   (expect ":PROPERTIES:
 #+PROPERTY: orgtrello-user-ardumont ardumont-id
 #+PROPERTY: orgtrello-user-dude dude-id
