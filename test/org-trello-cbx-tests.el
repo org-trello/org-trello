@@ -46,7 +46,7 @@
   (expect "call people [4/4]" (orgtrello-cbx/--name "  -[] call people [4/4]"   "[]"))
   (expect "call people [4/4]" (orgtrello-cbx/--name "  -[-] call people [4/4]"  "[-]")))
 
-(expectations (desc "orgtrello-cbx/--to-properties\\\":\\\"123\\\"}")
+(expectations (desc "orgtrello-cbx/--to-properties")
   (expect "{\"orgtrello-id\":\"123\"}"                              (orgtrello-cbx/--to-properties `((,*ORGTRELLO/ID* . "123"))))
   (expect "{\"orgtrello-id\":\"456\"}"                              (orgtrello-cbx/--to-properties `((,*ORGTRELLO/ID* . "123") (,*ORGTRELLO/ID* . "456"))))
   (expect "{\"orgtrello-id\":\"def\",\"orgtrello-marker\":\"456\",\"orgtrello-id\":\"abc\"}"
