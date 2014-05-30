@@ -10,9 +10,21 @@
   "Is there a checkbox at point?"
   (org-at-item-checkbox-p))
 
+(defun orgtrello-cbx/serialize-hashmap (hash-table)
+  "Return a json representation of HASH-TABLE."
+  (--> (let (r)
+        (maphash
+         (lambda (k v) (push (format "\"%s\":\"%s\"" k v) r))
+         hash-table)
+        r)
+    (s-join ", " it)
+    (format "{%s}" it)))
+
 (defun orgtrello-cbx/--to-properties (alist)
   "Serialize an ALIST to json."
-  (json-encode-hash-table (orgtrello-hash/make-properties alist)))
+  (-> alist
+    orgtrello-hash/make-properties
+    orgtrello-cbx/serialize-hashmap))
 
 (defun orgtrello-cbx/--from-properties (string)
   "Deserialize STRING from json to list."

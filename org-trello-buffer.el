@@ -315,7 +315,7 @@ The optional ORGCHECKBOX-P is not used."
          (org-show-subtree)
          (let ((current-entity (-> (orgtrello-buffer/entry-get-full-metadata!) orgtrello-data/current)))
            (unless (-> current-entity orgtrello-data/entity-id orgtrello-data/id-p) ;; if no id, we set one
-             (orgtrello-buffer/--set-marker (orgtrello-buffer/--compute-marker-from-entry current-entity)))
+             (orgtrello-buffer/--set-marker! (orgtrello-buffer/--compute-marker-from-entry current-entity)))
            (let ((current-meta (orgtrello-buffer/entry-get-full-metadata!)))
              (-> current-meta ;; we recompute the metadata because they may have changed
                orgtrello-data/current
@@ -346,14 +346,14 @@ Move the cursor position."
         (orgtrello-buffer/set-property *ORGTRELLO/ID* id))
     (orgtrello-buffer/set-property *ORGTRELLO/ID* id)))
 
-(defun orgtrello-buffer/--set-marker (marker)
+(defun orgtrello-buffer/--set-marker! (marker)
   "Set a MARKER to get back to later."
   (orgtrello-buffer/set-property *ORGTRELLO/ID* marker))
 
-(defun orgtrello-buffer/set-marker-if-not-present (current-entity marker)
+(defun orgtrello-buffer/set-marker-if-not-present! (current-entity marker)
   "Set the CURRENT-ENTITY with MARKER to the entry if we never did."
   (unless (string= (orgtrello-data/entity-id current-entity) marker) ;; if never created before, we need a marker to add inside the file
-    (orgtrello-buffer/--set-marker marker)))
+    (orgtrello-buffer/--set-marker! marker)))
 
 (defun orgtrello-buffer/org-map-entities-without-params! (fn-to-execute)
   "Execute fn-to-execute function for all entities from buffer - fn-to-execute is a function without any parameters."

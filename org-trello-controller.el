@@ -112,7 +112,7 @@ ARGS is not used."
   "Delegate the FULL-META ACTION to execute on it to the consumer."
   (let* ((current (orgtrello-data/current full-meta))
          (marker  (orgtrello-buffer/--compute-marker-from-entry current)))
-    (orgtrello-buffer/set-marker-if-not-present current marker)
+    (orgtrello-buffer/set-marker-if-not-present! current marker)
     (orgtrello-data/put-entity-id     marker current)
     (orgtrello-data/put-entity-action action current)
     (orgtrello-proxy/http-producer current)))
