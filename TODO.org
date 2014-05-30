@@ -15,6 +15,13 @@
 - [ ] Another Disposition about org's buffer - #33
 - [ ] Now that elnode is here, this may be simpler to use a fake trello server (use clojure :D)
 - [ ] POC: use a temporary buffer to sync with trello, when done, merge with the user's buffer.
+* IN-PROGRESS 0.4.6 [50%]
+- [X] Prepare Backlog
+- [X] Fix - CLOSE https://github.com/org-trello/org-trello/issues/172
+- [X] Fix - prelude does some monkey-patching on json-encode-hash-table which is used by org-trello - reimplement this function
+- [ ] CI is broken again - Try to find a solution
+- [ ] Update version
+- [ ] Update release notes
 * DONE 0.4.5 [100%]
 CLOSED: [2014-05-17 Sat 21:57]
 - [X] Backlog
