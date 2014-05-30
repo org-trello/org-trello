@@ -1,3 +1,12 @@
+# 0.4.6
+
+- [X] Prepare Backlog
+- [X] Fix - CLOSE https://github.com/org-trello/org-trello/issues/172
+- [X] Fix - prelude does some monkey-patching on json-encode-hash-table which is used by org-trello - reimplement this function
+- [X] CI is broken again - Try to find a solution
+- [X] Update version
+- [X] Update release notes
+
 # 0.4.5
 
 - [X] Backlog
