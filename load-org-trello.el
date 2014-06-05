@@ -34,5 +34,15 @@
 
 (require 'org-trello)
 
+;; dev utils functions
+
+(defun trace-functions (fns)
+  "Trace functions FNS."
+  (mapc 'trace-function fns))
+
+(defun untrace-functions (fns)
+  "Trace functions FNS."
+  (mapc 'untrace-function fns))
+
 (provide 'load-org-trello)
 ;;; load-org-trello.el ends here
