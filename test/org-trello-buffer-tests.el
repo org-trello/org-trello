@@ -178,7 +178,7 @@ some-description
   :orgtrello-users: ardumont,dude
   :orgtrello-card-comments: ardumont: some comment
   :END:
-some description"
+  some description"
     (orgtrello-tests/with-temp-buffer-and-return-buffer-content
      ":PROPERTIES:
 #+PROPERTY: orgtrello-user-ardumont ardumont-id
@@ -205,7 +205,7 @@ DEADLINE: <some-due-date>
   :orgtrello-users: ardumont,dude
   :orgtrello-card-comments: ardumont: some comment
   :END:
-some description"
+  some description"
     (orgtrello-tests/with-temp-buffer-and-return-buffer-content
      ":PROPERTIES:
 #+PROPERTY: orgtrello-user-ardumont ardumont-id
@@ -333,6 +333,46 @@ some old description
      -1)))
 
 (expectations
+(expect ":PROPERTIES:
+#+PROPERTY: orgtrello-user-ardumont ardumont-id
+#+PROPERTY: orgtrello-user-dude dude-id
+:END:
+* TODO some card name
+  :PROPERTIES:
+  :orgtrello-id: some-card-id
+  :orgtrello-users: ardumont,dude
+  :orgtrello-card-comments: ardumont: some comment
+  :END:
+  * A working
+  * Markdown
+  * Bulleted List
+- [ ] checklist
+"
+    (orgtrello-tests/with-temp-buffer-and-return-buffer-content
+     ":PROPERTIES:
+#+PROPERTY: orgtrello-user-ardumont ardumont-id
+#+PROPERTY: orgtrello-user-dude dude-id
+:END:
+* TODO some old card name
+  :PROPERTIES:
+  :orgtrello-id: some-id
+  :orgtrello-users: ardumont,dude
+  :orgtrello-card-comments:
+  :END:
+some old description
+- [ ] checklist
+"
+     (orgtrello-buffer/overwrite-card-header! (orgtrello-hash/make-properties `((:keyword . "TODO")
+                                                                                (:member-ids . "ardumont-id,dude-id")
+                                                                                (:comments . ,(list (orgtrello-hash/make-properties '((:comment-user . "ardumont")
+                                                                                                                                      (:comment-text . "some comment")))))
+                                                                                (:labels . ":red:green:")
+                                                                                (:desc . "* A working\n* Markdown\n* Bulleted List")
+                                                                                (:level . ,*ORGTRELLO/CARD-LEVEL*)
+                                                                                (:name . "some card name")
+  
+                                                                                (:id . "some-card-id"))))
+     -2))
   (expect ":PROPERTIES:
 #+PROPERTY: orgtrello-user-ardumont ardumont-id
 #+PROPERTY: orgtrello-user-dude dude-id
@@ -343,7 +383,7 @@ some old description
   :orgtrello-users: ardumont,dude
   :orgtrello-card-comments: ardumont: some comment
   :END:
-some description
+  some description
 - [ ] checklist
 "
     (orgtrello-tests/with-temp-buffer-and-return-buffer-content
@@ -382,7 +422,7 @@ some old description
   :orgtrello-users: ardumont,dude
   :orgtrello-card-comments: ardumont: some comment
   :END:
-some description
+  some description
 - [ ] checklist
 "
     (orgtrello-tests/with-temp-buffer-and-return-buffer-content
@@ -422,7 +462,7 @@ some old description
   :orgtrello-users: ardumont,dude
   :orgtrello-card-comments: ardumont: some comment
   :END:
-some description
+  some description
 - [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}
   - [X] some item name :PROPERTIES: {\"orgtrello-id\":\"some-item-id\"}
   - [ ] some other item name :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\"}
@@ -474,14 +514,14 @@ some description
   :orgtrello-users: ardumont,dude
   :orgtrello-card-comments: ardumont: some comment
   :END:
-description A
+  description A
 * TODO task B
   :PROPERTIES:
   :orgtrello-id: card-id-b
   :orgtrello-users: ardumont,dude
   :orgtrello-card-comments: ardumont: some comment
   :END:
-description B
+  description B
 "
     (orgtrello-tests/with-temp-buffer-and-return-buffer-content
      ":PROPERTIES:
