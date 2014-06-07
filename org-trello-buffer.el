@@ -38,6 +38,16 @@ If the VALUE is nil or empty, remove such PROPERTY."
     (orgtrello-cbx/--goto-next-checkbox)
     (1- (point))))
 
+(defun orgtrello-buffer/check-indent! (indent)
+  (let ((bol (point)))
+    (move-to-column indent)
+    (let ((indent-contents (buffer-substring-no-properties bol (point))))
+      (unless (or (= (length indent-contents) 0)
+                  (string-match "^[ \t]+$" indent-contents))
+        (setq indent 0)
+        (forward-line 0))))
+  indent)
+
 ;TODO handle fields?
 (defun orgtrello-buffer/extract-description-from-current-position! ()
   "Given the current position, extract the text content of current card."
@@ -55,12 +65,7 @@ If the VALUE is nil or empty, remove such PROPERTY."
                 (orgtrello-buffer/filter-out-properties
                   (buffer-substring-no-properties start (min end (point))))
                 lines))
-        (let ((bol (point)))
-	      (move-to-column indent)
-	      (let ((indent-contents (buffer-substring-no-properties bol (point))))
-		(unless (string-match "^[ \t]+$" indent-contents)
-		  (setq indent 0)
-		  (forward-line 0))))
+        (setq indent (orgtrello-buffer/check-indent! indent))
 	(while
           (< (point) end)
           (let ((sol (point)))
@@ -69,7 +74,7 @@ If the VALUE is nil or empty, remove such PROPERTY."
                   (cons
 		   (buffer-substring-no-properties sol (min end (point)))
 		   lines)))
-          )))
+        (setq indent (orgtrello-buffer/check-indent! indent)))))
     ;(message "Lines: %S" lines)
     (let ((result
 	   (when lines

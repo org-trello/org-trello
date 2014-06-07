@@ -65,7 +65,18 @@ hello there
 :orgtrello-id: 52c945143004d4617c012528
 :END:
 - [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}"
-       (orgtrello-buffer/extract-description-from-current-position!))))
+       (orgtrello-buffer/extract-description-from-current-position!)))
+    (expect "One Paragraph\n\nAnother Paragraph"
+	    (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
+  DEADLINE: <2014-04-01T00:00:00.000Z>
+  :PROPERTIES:
+  :orgtrello-id: 52c945143004d4617c012528
+  :END:
+  One Paragraph
+
+  Another Paragraph
+"
+					      (orgtrello-buffer/extract-description-from-current-position!))))
 
 (expectations (desc "orgtrello-buffer/extract-description-from-current-position! - non standard org-trello properties with blanks before them.")
   (expect "hello there"
