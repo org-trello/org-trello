@@ -48,41 +48,14 @@ If the VALUE is nil or empty, remove such PROPERTY."
         (forward-line 0))))
   indent)
 
-;TODO handle fields?
 (defun orgtrello-buffer/extract-description-from-current-position! ()
   "Given the current position, extract the text content of current card."
   (let* ((start (orgtrello-buffer/--card-description-start-point!))
-        (end   (orgtrello-buffer/--card-metadata-end-point!))
-        (indent nil)
-        (lines nil))
-    (when (< start end)
-      (save-excursion
-        (goto-char start)
-	(setq indent (org-get-indentation))
-	(forward-line 1)
-        (setq lines
-              (cons
-                (orgtrello-buffer/filter-out-properties
-                  (buffer-substring-no-properties start (min end (point))))
-                lines))
-        (setq indent (orgtrello-buffer/check-indent! indent))
-	(while
-          (< (point) end)
-          (let ((sol (point)))
-	    (forward-line 1)
-            (setq lines
-                  (cons
-		   (buffer-substring-no-properties sol (min end (point)))
-		   lines)))
-        (setq indent (orgtrello-buffer/check-indent! indent)))))
-    ;(message "Lines: %S" lines)
-    (let ((result
-	   (when lines
-	     (orgtrello-buffer/filter-out-properties
-	     (apply 'concat (reverse lines))))))
-      result)))
-
-
+         (end   (orgtrello-buffer/--card-metadata-end-point!)))
+    (->> (buffer-substring-no-properties start end)
+      orgtrello-buffer/filter-out-properties
+      (--map (substring it 2))
+      (s-join "\n"))))
 
 (defun orgtrello-buffer/get-card-comments! ()
   "Retrieve the card's comments. Can be nil if not on a card."
@@ -96,8 +69,7 @@ If the VALUE is nil or empty, remove such PROPERTY."
   "Given a string TEXT-CONTENT, remove any org properties if any."
   (->> text-content
     (replace-regexp-in-string "^[ ]*:.*" "")
-    (replace-regexp-in-string (format "%s.*" *ORGTRELLO/DEADLINE-PREFIX*) "")
-    s-trim-left))
+    (replace-regexp-in-string (format "%s.*" *ORGTRELLO/DEADLINE-PREFIX*) "")))
 
 (defun orgtrello-buffer/org-file-get-property! (property-key)
   (assoc-default property-key (orgtrello-buffer/org-file-properties!)))
@@ -202,7 +174,7 @@ If the VALUE is nil or empty, remove such PROPERTY."
   (-when-let (card-desc (orgtrello-data/entity-description card))
     (let ((start (point)))
       (insert (format "%s" card-desc))
-	(indent-rigidly start (point) 2))))
+      (indent-rigidly start (point) 2))))
 
 (defun orgtrello-buffer/write-card! (card-id card entities adjacency)
   "Write the card and its structure inside the org buffer."
