@@ -27,7 +27,7 @@
                       "org-trello-webadmin.el"
                       "org-trello.el")))
 
-(global-set-key (kbd "C-c o L") 'org-trello/dev-load-namespaces!)
+(global-set-key (kbd "C-c o n") 'org-trello/dev-load-namespaces!)
 
 (org-trello/dev-load-namespaces!)
 (message "org-trello loaded!")
