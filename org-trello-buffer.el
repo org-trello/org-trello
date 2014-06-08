@@ -412,7 +412,7 @@ Move the cursor position."
                              (end   (orgtrello-buffer/--card-metadata-end-point!)))
                          (narrow-to-region start end)        ;; only edit the region start end
                          (goto-char (point-min))
-                         (unless (<= 2 (org-get-indentation)) ;; if need be
+                         (unless (<= 2 (org-get-indentation));; if need be
                            (indent-rigidly start end 2)))))));; now indent with the rightful indentation
 
 (defun orgtrello-buffer/--convert-orgmode-date-to-trello-date (orgmode-date)
