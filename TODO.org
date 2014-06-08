@@ -16,7 +16,8 @@
 - [ ] Now that elnode is here, this may be simpler to use a fake trello server (use clojure :D)
 - [ ] POC: use a temporary buffer to sync with trello, when done, merge with the user's buffer.
 
-* IN-PROGRESS 0.4.7 [100%]
+* DONE 0.4.7 [100%]
+CLOSED: [2014-06-08 Sun 12:28]
 - [X] Backlog
 - [X] Improve the description management in org and trello - #89 #175
 - [X] Revert to the block json-encode-hash-table
