@@ -25,7 +25,10 @@ If the VALUE is nil or empty, remove such PROPERTY."
 
 (defun orgtrello-buffer/--card-description-start-point! ()
   "Compute the first character of the card's description content."
-  (save-excursion (orgtrello-buffer/back-to-card!) (1+ (point-at-eol))))
+  (save-excursion
+    (orgtrello-buffer/back-to-card!)
+    (search-forward ":END:" nil t) ;; if not found, return nil and do not move point
+    (1+ (point-at-eol))));; in any case, the description is then just 1 point more than the current position
 
 (defun orgtrello-buffer/--card-start-point! ()
   "Compute the first character of the card."
@@ -54,8 +57,6 @@ If the VALUE is nil or empty, remove such PROPERTY."
          (end   (orgtrello-buffer/--card-metadata-end-point!)))
     (->> (buffer-substring-no-properties start end)
       s-lines
-      (mapcar 'orgtrello-buffer/filter-out-properties)
-      (--drop-while (s-equals? it "")) ;; the first empty strings are the filtered out properties
       (--map (if (s-equals? "" it) it (substring it 2)))
       (s-join "\n"))))
 
@@ -66,12 +67,6 @@ If the VALUE is nil or empty, remove such PROPERTY."
 (defun orgtrello-buffer/put-card-comments! (comments)
   "Retrieve the card's comments. Can be nil if not on a card."
   (orgtrello-buffer/org-entry-put! (point) *ORGTRELLO/CARD-COMMENTS* comments))
-
-(defun orgtrello-buffer/filter-out-properties (text-content)
-  "Given a string TEXT-CONTENT, remove any org properties if any."
-  (->> text-content
-    (replace-regexp-in-string "^[ ]*:.*" "")
-    (replace-regexp-in-string (format "%s.*" *ORGTRELLO/DEADLINE-PREFIX*) "")))
 
 (defun orgtrello-buffer/org-file-get-property! (property-key)
   (assoc-default property-key (orgtrello-buffer/org-file-properties!)))
