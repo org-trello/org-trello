@@ -25,6 +25,17 @@
 * TODO Joy of FUN(ctional) LANGUAGES
 :PROPERTIES:
 :END:
+  hello description
+  - with many
+  - lines
+
+  - including
+
+  - blanks lines
+  - lists
+  - with start or dash  are now possible
+    - indentation too
+
 - [-] LISP family
   - [X] Emacs-Lisp
   - [X] Common-Lisp
