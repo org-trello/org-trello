@@ -163,16 +163,18 @@ If the VALUE is nil or empty, remove such PROPERTY."
             (orgtrello-buffer/org-entry-put! (point) key value)))
         unknown-properties))
 
+(defun orgtrello-buffer/--write-card-description! (description)
+  "Write at point the current card's DESCRIPTION if present."
+  (when description
+    (insert (format "%s" description))))
+
 (defun orgtrello-buffer/write-card-header! (card-id card)
   "Given a card entity, write its data and properties without its structure."
   (orgtrello-buffer/write-entity! card-id card)
   (orgtrello-buffer/update-member-ids-property! card)
   (orgtrello-buffer/update-property-card-comments! card)
   (orgtrello-buffer/write-unknown-properties! (orgtrello-data/entity-unknown-properties card))
-  (-when-let (card-desc (orgtrello-data/entity-description card))
-    (let ((start (point)))
-      (insert (format "%s" card-desc))
-      (indent-rigidly start (point) 2))))
+  (orgtrello-buffer/--write-card-description! (orgtrello-data/entity-description card)))
 
 (defun orgtrello-buffer/write-card! (card-id card entities adjacency)
   "Write the card and its structure inside the org buffer."
