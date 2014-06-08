@@ -1,3 +1,11 @@
+# 0.4.7
+
+- [X] Backlog
+- [X] Improve the description management in org and trello - #89 #175
+- [X] Revert to the block json-encode-hash-table
+- [X] Upgrade version
+- [X] Update release notes
+
 # 0.4.6
 
 - [X] Prepare Backlog
