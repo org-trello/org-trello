@@ -13,12 +13,12 @@
 - [ ] POC: Investigate webhooks - #137
 - [ ] POC: Leverage elnode and clojurescript core.async - #97
 
-* IN-PROGRESS 0.4.8 [25%]
+* IN-PROGRESS 0.4.8 [50%]
 - [X] Backlog
-- [-] mad caret syndrom - #177
+- [X] mad caret syndrom - #177
   - [X] mad caret - fix sync to
   - [X] mad caret - the caret does not move even when sync computation takes place
-  - [ ] mad caret - fix sync from
+  - [X] mad caret - fix sync from
 - [ ] Upgrade version
 - [ ] Update release notes
 

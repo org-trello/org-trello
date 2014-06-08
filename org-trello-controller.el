@@ -162,7 +162,7 @@ SYNC is not used."
        entities)
       (goto-char (point-min)) ;; go back to the beginning of file
       (org-sort-entries t ?o) ;; sort the entries on their keywords
-      (org-global-cycle '(4)) ;; fold all entries
+      ;;(org-global-cycle '(4)) ;; fold all entries
       (save-buffer))))
 
 (defun orgtrello-controller/--cleanup-org-entries ()
@@ -176,6 +176,7 @@ SYNC is not used."
   "Generate a callback which knows the BUFFERNAME with which it must work.
 This callback must take a BUFFERNAME, a POSITION and a NAME."
   (lexical-let ((buffer-name              buffername)
+                (position                 position)
                 (entities-from-org-buffer (orgtrello-buffer/compute-entities-from-org-buffer! buffername)))
     (function* (lambda (&key data &allow-other-keys) "Synchronize the buffer with the response data."
                  (orgtrello-log/msg *OT/TRACE* "proxy - response data: %S" data)
@@ -184,7 +185,7 @@ This callback must take a BUFFERNAME, a POSITION and a NAME."
                    (orgtrello-data/merge-entities-trello-and-org entities-from-org-buffer) ;; slow merge computation
                    ((lambda (entry) (orgtrello-controller/--cleanup-org-entries) entry))   ;; hack to clean the org entries just before synchronizing the buffer
                    (orgtrello-controller/--sync-buffer-with-trello-data buffer-name)
-                   (orgtrello-action/safe-wrap (orgtrello-log/msg *OT/INFO* "Synchronizing the trello and org data merge - done!")))))))
+                   (orgtrello-action/safe-wrap (progn (goto-char position) (orgtrello-log/msg *OT/INFO* "Synchronizing the trello and org data merge - done!"))))))))
 
 (defun orgtrello-controller/do-sync-full-file-from-trello! (&optional sync)
   "Full org-mode file synchronisation. Beware, this will block emacs as the request is synchronous."
@@ -192,7 +193,7 @@ This callback must take a BUFFERNAME, a POSITION and a NAME."
   ;; then start the sync computations
   (--> (orgtrello-buffer/board-id!)
     (orgtrello-api/get-cards it)
-    (orgtrello-controller/--update-query-with-org-metadata it nil (buffer-name) nil 'orgtrello-controller/--sync-buffer-with-trello-data-callback)
+    (orgtrello-controller/--update-query-with-org-metadata it (point) (buffer-name) nil 'orgtrello-controller/--sync-buffer-with-trello-data-callback)
     (orgtrello-proxy/http it sync)))
 
 (defun orgtrello-controller/--sync-entity-to-buffer-with-trello-data-callback (buffername &optional position name)
@@ -213,7 +214,9 @@ This callback must take a BUFFERNAME, a POSITION and a NAME."
                            ((orgtrello-data/entity-item-p data)      'orgtrello-buffer/overwrite-item!))
                      data)
                     (save-buffer))
-                  (orgtrello-log/msg *OT/INFO* "Synchronizing the trello and org data merge - done!"))))))
+                  (progn
+                    (goto-char pos)
+                    (orgtrello-log/msg *OT/INFO* "Synchronizing the trello and org data merge - done!")))))))
 
 (defun orgtrello-controller/fetch-and-overwrite-card! (card)
   "Given a card, retrieve latest information from trello and overwrite in current buffer."
@@ -260,7 +263,9 @@ This callback must take a BUFFERNAME, a POSITION and a NAME."
                      data)
                     ;; at last
                     (save-buffer))
-                  (orgtrello-log/msg *OT/INFO* "Synchronizing the trello and org data merge - done!"))))))
+                  (progn
+                    (goto-char pos)
+                    (orgtrello-log/msg *OT/INFO* "Synchronizing the trello and org data merge - done!")))))))
 
 (defun orgtrello-controller/--dispatch-sync-request (entity &optional with-filter)
   "Dispatch the sync request creation depending on the nature of the ENTITY.
@@ -276,19 +281,21 @@ If WITH-FILTER is set, only the checklist is returned (without its items)."
 (defun orgtrello-controller/do-sync-entity-from-trello! (&optional sync)
   "Entity (card/checklist/item) synchronization (without its structure) from trello."
   (orgtrello-log/msg *OT/INFO* "Synchronizing the trello entity to the org-mode file...")
-  (-> (orgtrello-buffer/entry-get-full-metadata!)
-    (orgtrello-controller/--dispatch-sync-request 'with-filter)
-    (orgtrello-controller/--update-query-with-org-metadata (point) (buffer-name) nil 'orgtrello-controller/--sync-entity-to-buffer-with-trello-data-callback)
-    (orgtrello-proxy/http sync)))
+  (save-excursion
+    (-> (orgtrello-buffer/entry-get-full-metadata!)
+      (orgtrello-controller/--dispatch-sync-request 'with-filter)
+      (orgtrello-controller/--update-query-with-org-metadata (point) (buffer-name) nil 'orgtrello-controller/--sync-entity-to-buffer-with-trello-data-callback)
+      (orgtrello-proxy/http sync))))
 
 (defun orgtrello-controller/do-sync-entity-and-structure-from-trello! (&optional sync)
   "Entity (card/checklist/item) synchronization (with its structure) from trello.
 Optionally, SYNC permits to synchronize the query."
   (orgtrello-log/msg *OT/INFO* "Synchronizing the trello entity and its structure to the org-mode file...")
-  (-> (orgtrello-buffer/entry-get-full-metadata!)
-    orgtrello-controller/--dispatch-sync-request
-    (orgtrello-controller/--update-query-with-org-metadata (point) (buffer-name) nil 'orgtrello-controller/--sync-entity-and-structure-to-buffer-with-trello-data-callback)
-    (orgtrello-proxy/http sync)))
+  (save-excursion
+    (-> (orgtrello-buffer/entry-get-full-metadata!)
+      orgtrello-controller/--dispatch-sync-request
+      (orgtrello-controller/--update-query-with-org-metadata (point) (buffer-name) nil 'orgtrello-controller/--sync-entity-and-structure-to-buffer-with-trello-data-callback)
+      (orgtrello-proxy/http sync))))
 
 (defun orgtrello-controller/--do-delete-card (&optional sync)
   "Delete the card.
