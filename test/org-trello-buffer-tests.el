@@ -4,25 +4,8 @@
 (require 'el-mock)
 
 (expectations
-  (desc "orgtrello-buffer/filter-out-properties")
-  (expect "hello there\nhow are you today\nthis is a hell of a ride" (orgtrello-buffer/filter-out-properties ":PROPERTIES:
-:orgtrello-id: 52c945143004d4617c012528
-:END:
-hello there
-how are you today
-this is a hell of a ride"))
-  (expect "hello there\nhow are you today\nthis is a hell of a ride" (orgtrello-buffer/filter-out-properties "hello there
-how are you today
-this is a hell of a ride"))
-
-  (expect "hello there\nhow are you today\nthis is a hell of a ride" (orgtrello-buffer/filter-out-properties "  DEADLINE: <2014-04-01T00:00:00.000Z>
-hello there
-how are you today
-this is a hell of a ride")))
-
-(expectations
- (desc "orgtrello-buffer/extract-description-from-current-position! - standard org-trello properties without blanks before them.")
-  (expect "hello there"
+  (desc "orgtrello-buffer/extract-description-from-current-position! - standard org-trello properties without blanks before them.")
+  (expect "llo there"
     (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
    DEADLINE: <2014-04-01T00:00:00.000Z>
 :PROPERTIES:
@@ -30,44 +13,44 @@ this is a hell of a ride")))
 :END:
 hello there
 "
-      (orgtrello-buffer/extract-description-from-current-position!)))
+                                      (orgtrello-buffer/extract-description-from-current-position!)))
 
-    (expect "hello there"
-      (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
+  (expect "hello there"
+    (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
 :PROPERTIES:
 :orgtrello-id: 52c945143004d4617c012528
 :END:
-hello there
+  hello there
 - [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}
   - [X] Emacs-Lisp  :PROPERTIES: {\"orgtrello-id\":\"52c9451784251e1b260127f8\"}
   - [X] Common-Lisp :PROPERTIES: {\"orgtrello-id\":\"52c94518b2c5b28e37012ba4\"}"
-       (orgtrello-buffer/extract-description-from-current-position!)))
+                                      (orgtrello-buffer/extract-description-from-current-position!)))
 
-    (expect "hello there\n"
-      (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
+  (expect "\nhello there\n"
+    (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
 :PROPERTIES:
 :orgtrello-id: 52c945143004d4617c012528
 :END:
 
-hello there
+  hello there
 
 - [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}
   - [X] Emacs-Lisp  :PROPERTIES: {\"orgtrello-id\":\"52c9451784251e1b260127f8\"}
   - [X] Common-Lisp :PROPERTIES: {\"orgtrello-id\":\"52c94518b2c5b28e37012ba4\"}"
-       (orgtrello-buffer/extract-description-from-current-position!)))
+                                      (orgtrello-buffer/extract-description-from-current-position!)))
 
-    (expect nil
-      (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES" (orgtrello-buffer/extract-description-from-current-position!)))
+  (expect nil
+    (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES" (orgtrello-buffer/extract-description-from-current-position!)))
 
-    (expect ""
-      (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
+  (expect nil
+    (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
 :PROPERTIES:
 :orgtrello-id: 52c945143004d4617c012528
 :END:
 - [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}"
-       (orgtrello-buffer/extract-description-from-current-position!)))
-    (expect "One Paragraph\n\nAnother Paragraph"
-	    (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
+                                      (orgtrello-buffer/extract-description-from-current-position!)))
+  (expect "One Paragraph\n\nAnother Paragraph"
+    (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
   DEADLINE: <2014-04-01T00:00:00.000Z>
   :PROPERTIES:
   :orgtrello-id: 52c945143004d4617c012528
@@ -76,71 +59,65 @@ hello there
 
   Another Paragraph
 "
-					      (orgtrello-buffer/extract-description-from-current-position!))))
+                                      (orgtrello-buffer/extract-description-from-current-position!))))
 
 (expectations (desc "orgtrello-buffer/extract-description-from-current-position! - non standard org-trello properties with blanks before them.")
-  (expect "hello there"
-    (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
+              (expect "hello there"
+                (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
  :PROPERTIES:
  :orgtrello-id: 52c945143004d4617c012528
  :END:
-hello there
+  hello there
 "
-      (orgtrello-buffer/extract-description-from-current-position!)))
+                                                  (orgtrello-buffer/extract-description-from-current-position!)))
 
-    (expect "hello there"
-      (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
+              (expect "hello there"
+                (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
  :PROPERTIES:
  :orgtrello-id: 52c945143004d4617c012528
     :END:
-hello there
+  hello there
 - [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}
   - [X] Emacs-Lisp  :PROPERTIES: {\"orgtrello-id\":\"52c9451784251e1b260127f8\"}
   - [X] Common-Lisp :PROPERTIES: {\"orgtrello-id\":\"52c94518b2c5b28e37012ba4\"}"
-       (orgtrello-buffer/extract-description-from-current-position!)))
+                                                  (orgtrello-buffer/extract-description-from-current-position!)))
 
-    (expect "hello there\n"
-      (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
+              (expect "\nhello there\n"
+                (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
   :PROPERTIES:
          :orgtrello-id: 52c945143004d4617c012528
   :END:
 
-hello there
+  hello there
 
 - [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}
   - [X] Emacs-Lisp  :PROPERTIES: {\"orgtrello-id\":\"52c9451784251e1b260127f8\"}
   - [X] Common-Lisp :PROPERTIES: {\"orgtrello-id\":\"52c94518b2c5b28e37012ba4\"}"
-       (orgtrello-buffer/extract-description-from-current-position!)))
-    (expect ""
-      (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
+                                                  (orgtrello-buffer/extract-description-from-current-position!)))
+
+              (expect nil
+                (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
   :PROPERTIES:
  :orgtrello-id: 52c945143004d4617c012528
 :END:
 - [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}"
-                                        (orgtrello-buffer/extract-description-from-current-position!))))
-
-(expectations (desc "orgtrello-buffer/filter-out-properties - removing lines starting with org-trello metadata properties.")
-  (expect "no filter happens here." (orgtrello-buffer/filter-out-properties "no filter happens here."))
-  (expect "no filter happens here." (orgtrello-buffer/filter-out-properties "   no filter happens here."))
-  (expect "" (orgtrello-buffer/filter-out-properties ":PROPERTIES: filter happens and blank is left."))
-  (expect "" (orgtrello-buffer/filter-out-properties "  :PROPERTIES: filter still happens and blank is left."))
-  (expect "multiple lines\n" (orgtrello-buffer/filter-out-properties "  multiple lines\n  :PROPERTIES: filter still happens and blank is left.")))
+                                                  (orgtrello-buffer/extract-description-from-current-position!))))
 
 (expectations
- (expect "some-comments###with-dummy-data"
-         (orgtrello-tests/with-temp-buffer
-          "* card
+  (expect "some-comments###with-dummy-data"
+    (orgtrello-tests/with-temp-buffer
+     "* card
 :PROPERTIES:
 :orgtrello-card-comments: some-comments###with-dummy-data
 :END:"
-          (orgtrello-buffer/get-card-comments!))))
+     (orgtrello-buffer/get-card-comments!))))
 
 (expectations
   (expect
       "this-is-the-board-id"
     (orgtrello-tests/with-org-buffer
-      (format ":PROPERTIES:\n#+PROPERTY: %s this-is-the-board-id\n:END:\n* card\n" *ORGTRELLO/BOARD-ID*)
-      (orgtrello-buffer/board-id!)))
+     (format ":PROPERTIES:\n#+PROPERTY: %s this-is-the-board-id\n:END:\n* card\n" *ORGTRELLO/BOARD-ID*)
+     (orgtrello-buffer/board-id!)))
   (expect "this-is-the-board-name"
     (orgtrello-tests/with-org-buffer
      (format ":PROPERTIES:\n#+PROPERTY: %s this-is-the-board-name\n:END:\n* card\n" *ORGTRELLO/BOARD-NAME*)
@@ -205,6 +182,7 @@ some-description
                                                                                            (:name . "some card name"))))
 
      0))
+
   (expect ":PROPERTIES:
 #+PROPERTY: orgtrello-user-ardumont ardumont-id
 #+PROPERTY: orgtrello-user-dude dude-id
@@ -344,7 +322,7 @@ some old description
      -1)))
 
 (expectations
-(expect ":PROPERTIES:
+  (expect ":PROPERTIES:
 #+PROPERTY: orgtrello-user-ardumont ardumont-id
 #+PROPERTY: orgtrello-user-dude dude-id
 :END:
@@ -381,7 +359,7 @@ some old description
                                                                                 (:desc . "* A working\n* Markdown\n* Bulleted List")
                                                                                 (:level . ,*ORGTRELLO/CARD-LEVEL*)
                                                                                 (:name . "some card name")
-  
+
                                                                                 (:id . "some-card-id"))))
      -2))
   (expect ":PROPERTIES:
@@ -515,7 +493,7 @@ some old description
      0)))
 
 (expectations
- (expect ":PROPERTIES:
+  (expect ":PROPERTIES:
 #+PROPERTY: orgtrello-user-ardumont ardumont-id
 #+PROPERTY: orgtrello-user-dude dude-id
 :END:
@@ -661,21 +639,21 @@ some description
      0)))
 
 (expectations
- (desc "orgtrello-buffer/write-entity! - card")
- (expect "
+  (desc "orgtrello-buffer/write-entity! - card")
+  (expect "
 * DONE some card name                                                   :red:green:
   :PROPERTIES:
   :orgtrello-id: some-card-id
   :END:
 "
-         (orgtrello-tests/with-temp-buffer-and-return-buffer-content
-          "\n"
-          (orgtrello-buffer/write-entity! "some-card-id" (orgtrello-hash/make-properties `((:keyword . "DONE")
-                                                                                           (:tags . ":red:green:")
-                                                                                           (:desc . "some description")
-                                                                                           (:level . ,*ORGTRELLO/CARD-LEVEL*)
-                                                                                           (:name . "some card name"))))
-          0)))
+    (orgtrello-tests/with-temp-buffer-and-return-buffer-content
+     "\n"
+     (orgtrello-buffer/write-entity! "some-card-id" (orgtrello-hash/make-properties `((:keyword . "DONE")
+                                                                                      (:tags . ":red:green:")
+                                                                                      (:desc . "some description")
+                                                                                      (:level . ,*ORGTRELLO/CARD-LEVEL*)
+                                                                                      (:name . "some card name"))))
+     0)))
 
 (expectations
   (desc "orgtrello-buffer/write-entity! - checklist")
@@ -683,8 +661,8 @@ some description
     (orgtrello-tests/with-temp-buffer-and-return-buffer-content
      "* some content\n"
      (orgtrello-buffer/write-entity! "some-checklist-id" (orgtrello-hash/make-properties `((:keyword . "DONE")
-                                                                                                 (:level . ,*ORGTRELLO/CHECKLIST-LEVEL*)
-                                                                                                 (:name . "some checklist name"))))
+                                                                                           (:level . ,*ORGTRELLO/CHECKLIST-LEVEL*)
+                                                                                           (:name . "some checklist name"))))
      0)))
 
 (expectations
@@ -693,8 +671,8 @@ some description
     (orgtrello-tests/with-temp-buffer-and-return-buffer-content
      "* some content\n- [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}\n"
      (orgtrello-buffer/write-entity! "some-item-id" (orgtrello-hash/make-properties `((:keyword . "DONE")
-                                                                                            (:level . ,*ORGTRELLO/ITEM-LEVEL*)
-                                                                                            (:name . "some item name"))))
+                                                                                      (:level . ,*ORGTRELLO/ITEM-LEVEL*)
+                                                                                      (:name . "some item name"))))
      0)))
 
 (expectations
@@ -747,31 +725,31 @@ some description
               (expect "orgtrello-marker-6c59c5dcf6c83edaeb3f4923bfd929a091504bb3" (orgtrello-buffer/--compute-marker-from-entry (orgtrello-data/make-hash-org :users :level :kwd "some-name" nil :due 4321      "some-other-buffername" :desc :comments :tags :unknown))))
 
 (expectations (desc "orgtrello-buffer/--symbol")
-  (expect ""      (orgtrello-buffer/--symbol " "  0))
-  (expect "*"     (orgtrello-buffer/--symbol "*"  1))
-  (expect "****"  (orgtrello-buffer/--symbol "**" 2))
-  (expect "   "   (orgtrello-buffer/--symbol " "  3)) )
+              (expect ""      (orgtrello-buffer/--symbol " "  0))
+              (expect "*"     (orgtrello-buffer/--symbol "*"  1))
+              (expect "****"  (orgtrello-buffer/--symbol "**" 2))
+              (expect "   "   (orgtrello-buffer/--symbol " "  3)) )
 
 (expectations (desc "orgtrello-buffer/--space")
-  (expect ""    (orgtrello-buffer/--space 0))
-  (expect " "   (orgtrello-buffer/--space 1))
-  (expect "  "  (orgtrello-buffer/--space 2))
-  (expect "   " (orgtrello-buffer/--space 3)) )
+              (expect ""    (orgtrello-buffer/--space 0))
+              (expect " "   (orgtrello-buffer/--space 1))
+              (expect "  "  (orgtrello-buffer/--space 2))
+              (expect "   " (orgtrello-buffer/--space 3)) )
 
 (expectations (desc "orgtrello-buffer/--compute-level-into-spaces")
-  (expect 0 (orgtrello-buffer/--compute-level-into-spaces 2))
-  (expect 2 (orgtrello-buffer/--compute-level-into-spaces nil))
-  (expect 2 (orgtrello-buffer/--compute-level-into-spaces 'any)))
+              (expect 0 (orgtrello-buffer/--compute-level-into-spaces 2))
+              (expect 2 (orgtrello-buffer/--compute-level-into-spaces nil))
+              (expect 2 (orgtrello-buffer/--compute-level-into-spaces 'any)))
 
 (expectations (desc "orgtrello-buffer/--compute-checklist-to-org-checkbox")
-  (expect "- [X] name\n" (orgtrello-buffer/--compute-checklist-to-org-checkbox "name" 2 "complete"))
-  (expect "  - [X] name\n" (orgtrello-buffer/--compute-checklist-to-org-checkbox "name" 3 "complete"))
-  (expect "- [X] name\n" (orgtrello-buffer/--compute-checklist-to-org-checkbox "name" 2 "complete"))
-  (expect "  - [-] name\n" (orgtrello-buffer/--compute-checklist-to-org-checkbox "name" 3 "incomplete")))
+              (expect "- [X] name\n" (orgtrello-buffer/--compute-checklist-to-org-checkbox "name" 2 "complete"))
+              (expect "  - [X] name\n" (orgtrello-buffer/--compute-checklist-to-org-checkbox "name" 3 "complete"))
+              (expect "- [X] name\n" (orgtrello-buffer/--compute-checklist-to-org-checkbox "name" 2 "complete"))
+              (expect "  - [-] name\n" (orgtrello-buffer/--compute-checklist-to-org-checkbox "name" 3 "incomplete")))
 
 (expectations (desc "orgtrello-buffer/--compute-state-checkbox")
-  (expect "[X]" (orgtrello-buffer/--compute-state-checkbox "complete"))
-  (expect "[-]" (orgtrello-buffer/--compute-state-checkbox "incomplete")))
+              (expect "[X]" (orgtrello-buffer/--compute-state-checkbox "complete"))
+              (expect "[-]" (orgtrello-buffer/--compute-state-checkbox "incomplete")))
 
 (expectations
   (desc "orgtrello-buffer/--dispatch-create-entities-map-with-adjacency")
@@ -795,40 +773,40 @@ some description
 
 
 (expectations (desc "testing orgtrello-buffer/--convert-orgmode-date-to-trello-date")
-  (expect "2013-07-18T02:00:00.000Z" (orgtrello-buffer/--convert-orgmode-date-to-trello-date "2013-07-18T02:00:00.000Z"))
-  (expect "2013-07-29T14:00:00.000Z" (orgtrello-buffer/--convert-orgmode-date-to-trello-date "2013-07-29 lun. 14:00"))
-  (expect "2013-07-29T00:00:00.000Z" (orgtrello-buffer/--convert-orgmode-date-to-trello-date "2013-07-29"))
-  (expect nil                        (orgtrello-buffer/--convert-orgmode-date-to-trello-date nil)))
+              (expect "2013-07-18T02:00:00.000Z" (orgtrello-buffer/--convert-orgmode-date-to-trello-date "2013-07-18T02:00:00.000Z"))
+              (expect "2013-07-29T14:00:00.000Z" (orgtrello-buffer/--convert-orgmode-date-to-trello-date "2013-07-29 lun. 14:00"))
+              (expect "2013-07-29T00:00:00.000Z" (orgtrello-buffer/--convert-orgmode-date-to-trello-date "2013-07-29"))
+              (expect nil                        (orgtrello-buffer/--convert-orgmode-date-to-trello-date nil)))
 
 (expectations (desc "orgtrello-buffer/entry-get-full-metadata!")
-  (expect nil    (->> (orgtrello-tests/with-temp-buffer "* card" (orgtrello-buffer/entry-get-full-metadata!))
-                      (orgtrello-data/parent)))
-  (expect nil    (->> (orgtrello-tests/with-temp-buffer "* card" (orgtrello-buffer/entry-get-full-metadata!))
-                      (orgtrello-data/grandparent)))
-  (expect "card" (->> (orgtrello-tests/with-temp-buffer "* card" (orgtrello-buffer/entry-get-full-metadata!))
-                      (orgtrello-data/current)
-                      orgtrello-data/entity-name)))
+              (expect nil    (->> (orgtrello-tests/with-temp-buffer "* card" (orgtrello-buffer/entry-get-full-metadata!))
+                               (orgtrello-data/parent)))
+              (expect nil    (->> (orgtrello-tests/with-temp-buffer "* card" (orgtrello-buffer/entry-get-full-metadata!))
+                               (orgtrello-data/grandparent)))
+              (expect "card" (->> (orgtrello-tests/with-temp-buffer "* card" (orgtrello-buffer/entry-get-full-metadata!))
+                               (orgtrello-data/current)
+                               orgtrello-data/entity-name)))
 
 (expectations (desc "orgtrello-buffer/entry-get-full-metadata!")
-  (expect "card"      (->> (orgtrello-tests/with-temp-buffer "* card\n- [ ] checklist\n" (orgtrello-buffer/entry-get-full-metadata!))
-                           (orgtrello-data/parent)
-                           orgtrello-data/entity-name))
-  (expect nil         (->> (orgtrello-tests/with-temp-buffer "* card\n- [ ] checklist\n" (orgtrello-buffer/entry-get-full-metadata!))
-                           (orgtrello-data/grandparent)))
-  (expect "checklist" (->> (orgtrello-tests/with-temp-buffer "* card\n- [ ] checklist\n" (orgtrello-buffer/entry-get-full-metadata!))
-                           (orgtrello-data/current)
-                           orgtrello-data/entity-name)))
+              (expect "card"      (->> (orgtrello-tests/with-temp-buffer "* card\n- [ ] checklist\n" (orgtrello-buffer/entry-get-full-metadata!))
+                                    (orgtrello-data/parent)
+                                    orgtrello-data/entity-name))
+              (expect nil         (->> (orgtrello-tests/with-temp-buffer "* card\n- [ ] checklist\n" (orgtrello-buffer/entry-get-full-metadata!))
+                                    (orgtrello-data/grandparent)))
+              (expect "checklist" (->> (orgtrello-tests/with-temp-buffer "* card\n- [ ] checklist\n" (orgtrello-buffer/entry-get-full-metadata!))
+                                    (orgtrello-data/current)
+                                    orgtrello-data/entity-name)))
 
 (expectations (desc "orgtrello-buffer/entry-get-full-metadata!")
-  (expect "checklist" (->> (orgtrello-tests/with-temp-buffer "* card\n- [ ] checklist\n  - [ ] item\n" (orgtrello-buffer/entry-get-full-metadata!))
-                           (orgtrello-data/parent)
-                           orgtrello-data/entity-name))
-  (expect "card"      (->> (orgtrello-tests/with-temp-buffer "* card\n- [ ] checklist\n  - [ ] item\n" (orgtrello-buffer/entry-get-full-metadata!))
-                           (orgtrello-data/grandparent)
-                           orgtrello-data/entity-name))
-  (expect "item"      (->> (orgtrello-tests/with-temp-buffer "* card\n- [ ] checklist\n  - [ ] item\n" (orgtrello-buffer/entry-get-full-metadata!))
-                           (orgtrello-data/current)
-                           orgtrello-data/entity-name)))
+              (expect "checklist" (->> (orgtrello-tests/with-temp-buffer "* card\n- [ ] checklist\n  - [ ] item\n" (orgtrello-buffer/entry-get-full-metadata!))
+                                    (orgtrello-data/parent)
+                                    orgtrello-data/entity-name))
+              (expect "card"      (->> (orgtrello-tests/with-temp-buffer "* card\n- [ ] checklist\n  - [ ] item\n" (orgtrello-buffer/entry-get-full-metadata!))
+                                    (orgtrello-data/grandparent)
+                                    orgtrello-data/entity-name))
+              (expect "item"      (->> (orgtrello-tests/with-temp-buffer "* card\n- [ ] checklist\n  - [ ] item\n" (orgtrello-buffer/entry-get-full-metadata!))
+                                    (orgtrello-data/current)
+                                    orgtrello-data/entity-name)))
 
 (ert-deftest testing-orgtrello-buffer/metadata! ()
   (let ((h-values            (orgtrello-tests/with-temp-buffer ":PROPERTIES:
@@ -842,7 +820,7 @@ some description
 :orgtrello-users: ardumont,dude
 :orgtrello-card-comments: ardumont: this is some comments###dude: some other comment
 :END:
-some description\n"
+  some description\n"
                                                                (orgtrello-buffer/metadata!)
                                                                -2)))
     (should (equal 1                                                             (orgtrello-data/entity-level h-values)))
@@ -861,12 +839,12 @@ some description\n"
               (expect "orgtrello-marker-6c59c5dcf6c83edaeb3f4923bfd929a091504bb3" (orgtrello-buffer/compute-marker "some-other-buffername" "some-name" 4321)))
 
 (expectations
- (desc "orgtrello-buffer/--filter-out-known-properties")
- (expect '(("some-unknown-thingy" . "some value"))
-         (orgtrello-buffer/--filter-out-known-properties '(("orgtrello-id" . "orgtrello-marker-08677ec948991d1e5a25ab6b813d8eba03fac20f")
-                                                           ("orgtrello-users" . "some user")
-                                                           ("some-unknown-thingy" . "some value")
-                                                           ("CATEGORY" . "TESTS-simple")))))
+  (desc "orgtrello-buffer/--filter-out-known-properties")
+  (expect '(("some-unknown-thingy" . "some value"))
+    (orgtrello-buffer/--filter-out-known-properties '(("orgtrello-id" . "orgtrello-marker-08677ec948991d1e5a25ab6b813d8eba03fac20f")
+                                                      ("orgtrello-users" . "some user")
+                                                      ("some-unknown-thingy" . "some value")
+                                                      ("CATEGORY" . "TESTS-simple")))))
 
 (expectations
   (desc "orgtrello-buffer/org-unknown-drawer-properties!")
@@ -909,3 +887,4 @@ DEADLINE: <2014-05-17 Sat>
 
 (provide 'org-trello-buffer-tests)
 ;;; org-trello-buffer-tests.el ends here
+
