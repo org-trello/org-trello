@@ -55,10 +55,11 @@ If the VALUE is nil or empty, remove such PROPERTY."
   "Given the current position, extract the text content of current card."
   (let* ((start (orgtrello-buffer/--card-description-start-point!))
          (end   (orgtrello-buffer/--card-metadata-end-point!)))
-    (->> (buffer-substring-no-properties start end)
-      s-lines
-      (--map (if (s-equals? "" it) it (substring it 2)))
-      (s-join "\n"))))
+    (when (< start end)
+      (->> (buffer-substring-no-properties start end)
+        s-lines
+        (--map (if (s-equals? "" it) it (substring it 2)))
+        (s-join "\n")))))
 
 (defun orgtrello-buffer/get-card-comments! ()
   "Retrieve the card's comments. Can be nil if not on a card."
