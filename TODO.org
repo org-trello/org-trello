@@ -3,7 +3,6 @@
 #+STYLE: <style> h1,h2,h3 {font-family: arial, helvetica, sans-serif} </style>
 
 * TODO 0.4.x [0%]
-- [ ] The caret does not remain at the position the user asked something, fix.
 - [ ] Emacs blocks when sync - #164
 - [ ] Improve sync request policy - #58
 - [ ] Use active region - #130
@@ -16,6 +15,14 @@
 - [ ] Another Disposition about org's buffer - #33
 - [ ] Now that elnode is here, this may be simpler to use a fake trello server (use clojure :D)
 - [ ] POC: use a temporary buffer to sync with trello, when done, merge with the user's buffer.
+
+* IN-PROGRESS 0.4.8 [25%]
+- [X] Backlog
+- [ ] The caret does not remain at the position the user asked something, fix - #177
+  - [ ] sync to
+  - [ ] sync from
+- [ ] Upgrade version
+- [ ] Update release notes
 
 * DONE 0.4.7 [100%]
 CLOSED: [2014-06-08 Sun 12:28]
