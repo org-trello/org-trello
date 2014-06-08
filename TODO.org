@@ -18,9 +18,9 @@
 
 * IN-PROGRESS 0.4.8 [25%]
 - [X] Backlog
-- [ ] The caret does not remain at the position the user asked something, fix - #177
-  - [ ] sync to
-  - [ ] sync from
+- [-] The caret does not remain at the position the user asked something, fix - #177
+  - [X] mad caret - fix sync to
+  - [ ] mad caret - fix sync from
 - [ ] Upgrade version
 - [ ] Update release notes
 

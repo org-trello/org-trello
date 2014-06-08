@@ -528,12 +528,13 @@ Then recall the function recursively (mutually recursive)."
 (defun orgtrello-proxy/--consumer-lock-sync-entity-hierarchically-and-do ()
   "A handler to extract the entity informations from files (in order card, checklist, items)."
   (undo-boundary)
-  ;; only one timer at a time
-  (orgtrello-action/safe-wrap
-   (progn
-     (orgtrello-proxy/--timer-put-lock *ORGTRELLO/LOCK*)
-     (orgtrello-proxy/--consumer-entity-sync-hierarchically-and-do))
-   (orgtrello-proxy/--timer-delete-lock *ORGTRELLO/LOCK*))
+  (save-excursion
+    ;; only one timer at a time
+    (orgtrello-action/safe-wrap
+     (progn
+       (orgtrello-proxy/--timer-put-lock *ORGTRELLO/LOCK*)
+       (orgtrello-proxy/--consumer-entity-sync-hierarchically-and-do))
+     (orgtrello-proxy/--timer-delete-lock *ORGTRELLO/LOCK*)))
   ;; undo boundary, to make a unit of undo
   (undo-boundary))
 
