@@ -1,3 +1,13 @@
+# 0.4.8
+
+- [X] Backlog
+- [X] mad caret syndrom - Close #177
+  - [X] mad caret - fix sync to
+  - [X] mad caret - the caret does not move even when sync computation takes place
+  - [X] mad caret - fix sync from
+- [X] Upgrade version
+- [X] Update release notes
+
 # 0.4.7
 
 - [X] Backlog
