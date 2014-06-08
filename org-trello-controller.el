@@ -141,7 +141,8 @@ SYNC is not used."
 
 (defun orgtrello-controller/map-sync-checkboxes ()
   "Map the sync to checkboxes."
-  (orgtrello-cbx/map-checkboxes 'orgtrello-controller/do-sync-entity-to-trello!))
+  (save-excursion
+    (orgtrello-cbx/map-checkboxes 'orgtrello-controller/do-sync-entity-to-trello!)))
 
 (defun orgtrello-controller/do-sync-full-file-to-trello! ()
   "Full org-mode file synchronisation."

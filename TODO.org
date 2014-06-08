@@ -15,8 +15,9 @@
 
 * IN-PROGRESS 0.4.8 [25%]
 - [X] Backlog
-- [-] The caret does not remain at the position the user asked something, fix - #177
+- [-] mad caret syndrom - #177
   - [X] mad caret - fix sync to
+  - [X] mad caret - the caret does not move even when sync computation takes place
   - [ ] mad caret - fix sync from
 - [ ] Upgrade version
 - [ ] Update release notes
