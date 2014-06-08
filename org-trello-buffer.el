@@ -154,9 +154,11 @@ If the VALUE is nil or empty, remove such PROPERTY."
         unknown-properties))
 
 (defun orgtrello-buffer/--write-card-description! (description)
-  "Write at point the current card's DESCRIPTION if present."
+  "Write at point the current card's DESCRIPTION if present (and indent it)."
   (when description
-    (insert (format "%s" description))))
+    (let ((start (point)))
+      (insert (format "%s" description))
+      (indent-rigidly start (point) *ORGTRELLO-BUFFER/INDENT-DESCRIPTION*))))
 
 (defun orgtrello-buffer/write-card-header! (card-id card)
   "Given a card entity, write its data and properties without its structure."
