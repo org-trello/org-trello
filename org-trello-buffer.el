@@ -53,8 +53,10 @@ If the VALUE is nil or empty, remove such PROPERTY."
   (let* ((start (orgtrello-buffer/--card-description-start-point!))
          (end   (orgtrello-buffer/--card-metadata-end-point!)))
     (->> (buffer-substring-no-properties start end)
-      orgtrello-buffer/filter-out-properties
-      (--map (substring it 2))
+      s-lines
+      (mapcar 'orgtrello-buffer/filter-out-properties)
+      (--drop-while (s-equals? it "")) ;; the first empty strings are the filtered out properties
+      (--map (if (s-equals? "" it) it (substring it 2)))
       (s-join "\n"))))
 
 (defun orgtrello-buffer/get-card-comments! ()
