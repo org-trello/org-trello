@@ -361,10 +361,11 @@ Move the cursor position."
 
 (defun orgtrello-buffer/org-map-entities-without-params! (fn-to-execute)
   "Execute fn-to-execute function for all entities from buffer - fn-to-execute is a function without any parameters."
-  (org-map-entries
-   (lambda ()
-     (funcall fn-to-execute) ;; execute on heading entry
-     (orgtrello-cbx/map-checkboxes fn-to-execute)) t 'file))
+  (save-excursion
+    (org-map-entries
+     (lambda ()
+       (funcall fn-to-execute) ;; execute on heading entry
+       (orgtrello-cbx/map-checkboxes fn-to-execute)) t 'file)))
 
 (defun orgtrello-buffer/get-usernames-assigned-property! ()
   "Read the org users property from the current entry."
@@ -491,13 +492,14 @@ Deal with org entities and checkbox as well."
 
 (defun orgtrello-buffer/entry-get-full-metadata! ()
   "Compute metadata needed for entry into a map with keys :current, :parent, :grandparent. Returns nil if the level is superior to 4."
-  (let* ((current   (orgtrello-buffer/metadata!))
-         (level     (orgtrello-data/entity-level current)))
-    (when (< level *ORGTRELLO/OUTOFBOUNDS-LEVEL*)
-      (let ((ancestors (cond ((= level *ORGTRELLO/CARD-LEVEL*)      '(nil nil))
-                             ((= level *ORGTRELLO/CHECKLIST-LEVEL*) `(,(orgtrello-buffer/--parent-metadata!) nil))
-                             ((= level *ORGTRELLO/ITEM-LEVEL*)      `(,(orgtrello-buffer/--parent-metadata!) ,(orgtrello-buffer/--grandparent-metadata!))))))
-        (orgtrello-data/make-hierarchy current (car ancestors) (cadr ancestors))))))
+  (save-excursion
+    (let* ((current   (orgtrello-buffer/metadata!))
+           (level     (orgtrello-data/entity-level current)))
+      (when (< level *ORGTRELLO/OUTOFBOUNDS-LEVEL*)
+        (let ((ancestors (cond ((= level *ORGTRELLO/CARD-LEVEL*)      '(nil nil))
+                               ((= level *ORGTRELLO/CHECKLIST-LEVEL*) `(,(orgtrello-buffer/--parent-metadata!) nil))
+                               ((= level *ORGTRELLO/ITEM-LEVEL*)      `(,(orgtrello-buffer/--parent-metadata!) ,(orgtrello-buffer/--grandparent-metadata!))))))
+          (orgtrello-data/make-hierarchy current (car ancestors) (cadr ancestors)))))))
 
 (defun orgtrello-buffer/--to-orgtrello-metadata (heading-metadata)
   "Given the HEADING-METADATA returned by the function 'org-heading-components.
@@ -519,7 +521,8 @@ Make it a hashmap with key :level,  :keyword,  :name and their respective value.
 (defun orgtrello-buffer/org-map-entries (level fn-to-execute)
   "For a specific checkbox LEVEL, map FN-TO-EXECUTE to the given entities.
 FN-TO-EXECUTE is a function without any parameter."
-  (org-map-entries (lambda () (when (= level (orgtrello-buffer/current-level!)) (funcall fn-to-execute)))))
+  (save-excursion
+    (org-map-entries (lambda () (when (= level (orgtrello-buffer/current-level!)) (funcall fn-to-execute))))))
 
 (defun orgtrello-buffer/org-checkbox-p! ()
   "Predicate to determine if actual position is on org-trello checkbox."

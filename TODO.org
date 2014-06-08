@@ -1,21 +1,27 @@
-#+TITLE: org-trello development progression
+#+TITLE: org-trello development backlog
 #+AUTHOR: ardumont
 #+STYLE: <style> h1,h2,h3 {font-family: arial, helvetica, sans-serif} </style>
 
 * TODO 0.4.x [0%]
-- [ ] The caret does not remain at the position the user asked something, fix.
 - [ ] Emacs blocks when sync - #164
 - [ ] Improve sync request policy - #58
 - [ ] Use active region - #130
-- [ ] More fined grained use of the trello api (retrieve only data we use) - #69
 - [ ] One command to sync them all - #59
-- [ ] Extract a data representation for org-trello buffer to decorrelate the file serialization file from the computation (decomplecting -> ease of testing, computation, overall maintenance, sandbox i/o to a minimum)
-  - [ ] extracter (from file/region to data)
-  - [ ] updater (from data to updated data)
-  - [ ] serializer (from data to file/region update)
 - [ ] Another Disposition about org's buffer - #33
-- [ ] Now that elnode is here, this may be simpler to use a fake trello server (use clojure :D)
+- [ ] Fake trello server to help in testing.
 - [ ] POC: use a temporary buffer to sync with trello, when done, merge with the user's buffer.
+- [ ] POC: Investigate webhooks - #137
+- [ ] POC: Leverage elnode and clojurescript core.async - #97
+
+* DONE 0.4.8 [100%]
+CLOSED: [2014-06-08 Sun 19:24]
+- [X] Backlog
+- [X] mad caret syndrom - Close #177
+  - [X] mad caret - fix sync to
+  - [X] mad caret - the caret does not move even when sync computation takes place
+  - [X] mad caret - fix sync from
+- [X] Upgrade version
+- [X] Update release notes
 
 * DONE 0.4.7 [100%]
 CLOSED: [2014-06-08 Sun 12:28]
