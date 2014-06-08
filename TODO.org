@@ -16,9 +16,9 @@
 - [ ] Now that elnode is here, this may be simpler to use a fake trello server (use clojure :D)
 - [ ] POC: use a temporary buffer to sync with trello, when done, merge with the user's buffer.
 
-* IN-PROGRESS 0.4.7 [25%]
+* IN-PROGRESS 0.4.7 [50%]
 - [X] Backlog
-- [ ] Improve the description management in org and trello - #89 #175
+- [X] Improve the description management in org and trello - #89 #175
 - [ ] Upgrade version
 - [ ] Update release notes
 * DONE 0.4.6 [100%]
