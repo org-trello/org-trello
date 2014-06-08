@@ -58,7 +58,7 @@ If the VALUE is nil or empty, remove such PROPERTY."
     (when (< start end)
       (->> (buffer-substring-no-properties start end)
         s-lines
-        (--map (if (s-equals? "" it) it (substring it 2)))
+        (--map (if (s-equals? "" it) it (substring it *ORGTRELLO-BUFFER/INDENT-DESCRIPTION*)))
         (s-join "\n")))))
 
 (defun orgtrello-buffer/get-card-comments! ()
@@ -416,7 +416,7 @@ Move the cursor position."
                          (narrow-to-region start end)        ;; only edit the region start end
                          (goto-char (point-min))
                          (unless (<= 2 (org-get-indentation));; if need be
-                           (indent-rigidly start end 2)))))));; now indent with the rightful indentation
+                           (indent-rigidly start end *ORGTRELLO-BUFFER/INDENT-DESCRIPTION*)))))));; now indent with the rightful indentation
 
 (defun orgtrello-buffer/--convert-orgmode-date-to-trello-date (orgmode-date)
   "Convert the 'org-mode' deadline ORGMODE-DATE into a time adapted for trello."
