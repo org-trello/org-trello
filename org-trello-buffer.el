@@ -404,6 +404,16 @@ Move the cursor position."
     (while (re-search-forward ":PROPERTIES: {.*" nil t)
       (orgtrello-cbx/install-overlays! (match-beginning 0)))))
 
+(defun orgtrello-buffer/indent-card-descriptions! ()
+  "Indent the card descriptions rigidly starting at 2."
+  (save-excursion
+    (org-map-entries (lambda ()
+                       (let ((start (orgtrello-buffer/--card-description-start-point!))
+                             (end   (orgtrello-buffer/--card-metadata-end-point!)))
+                         (narrow-to-region start end)     ;; only edit the region start end
+                         (indent-rigidly start end -9999) ;; remove indentation
+                         (indent-rigidly start end 2))))));; now indent with the rightful indentation
+
 (defun orgtrello-buffer/--convert-orgmode-date-to-trello-date (orgmode-date)
   "Convert the 'org-mode' deadline ORGMODE-DATE into a time adapted for trello."
   (if (and orgmode-date (not (string-match-p "T*Z" orgmode-date)))

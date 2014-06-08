@@ -701,9 +701,12 @@ Return the hashmap (name, id) of the new lists created."
   ;; buffer-invisibility-spec
   (add-to-invisibility-spec '(org-trello-cbx-property)) ;; for an ellipsis (...) change to '(org-trello-cbx-property . t)
   ;; installing hooks
-  (add-hook 'before-save-hook 'orgtrello-buffer/install-overlays!) ;; before-change-functions
+  (mapc (lambda (h)
+          (add-hook 'before-save-hook h)) '(orgtrello-buffer/install-overlays!
+                                            orgtrello-buffer/indent-card-descriptions!))
   ;; migrate all checkbox at org-trello mode activation
   (orgtrello-buffer/install-overlays!)
+  (orgtrello-buffer/indent-card-descriptions!)
   ;; run hook at startup
   (run-hooks 'org-trello-mode-hook))
 
@@ -715,8 +718,10 @@ Return the hashmap (name, id) of the new lists created."
   (orgtrello-server/stop)
   ;; remove the invisible property names
   (remove-from-invisibility-spec '(org-trello-cbx-property)) ;; for an ellipsis (...) change to '(org-trello-cbx-property . t)
-  ;; installing hooks
-  (remove-hook 'before-save-hook 'orgtrello-buffer/install-overlays!)
+  ;; removing hooks
+  (mapc (lambda (h)
+          (remove-hook 'before-save-hook h)) '(orgtrello-buffer/install-overlays!
+                                               orgtrello-buffer/indent-card-descriptions!))
   ;; remove org-trello overlays
   (orgtrello-buffer/remove-overlays!))
 
