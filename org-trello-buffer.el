@@ -25,7 +25,10 @@ If the VALUE is nil or empty, remove such PROPERTY."
 
 (defun orgtrello-buffer/--card-description-start-point! ()
   "Compute the first character of the card's description content."
-  (save-excursion (orgtrello-buffer/back-to-card!) (1+ (point-at-eol))))
+  (save-excursion
+    (orgtrello-buffer/back-to-card!)
+    (search-forward ":END:" nil t) ;; if not found, return nil and do not move point
+    (1+ (point-at-eol))));; in any case, the description is then just 1 point more than the current position
 
 (defun orgtrello-buffer/--card-start-point! ()
   "Compute the first character of the card."
@@ -38,51 +41,15 @@ If the VALUE is nil or empty, remove such PROPERTY."
     (orgtrello-cbx/--goto-next-checkbox)
     (1- (point))))
 
-(defun orgtrello-buffer/check-indent! (indent)
-  (let ((bol (point)))
-    (move-to-column indent)
-    (let ((indent-contents (buffer-substring-no-properties bol (point))))
-      (unless (or (= (length indent-contents) 0)
-                  (string-match "^[ \t]+$" indent-contents))
-        (setq indent 0)
-        (forward-line 0))))
-  indent)
-
-;TODO handle fields?
 (defun orgtrello-buffer/extract-description-from-current-position! ()
   "Given the current position, extract the text content of current card."
   (let* ((start (orgtrello-buffer/--card-description-start-point!))
-        (end   (orgtrello-buffer/--card-metadata-end-point!))
-        (indent nil)
-        (lines nil))
+         (end   (orgtrello-buffer/--card-metadata-end-point!)))
     (when (< start end)
-      (save-excursion
-        (goto-char start)
-	(setq indent (org-get-indentation))
-	(forward-line 1)
-        (setq lines
-              (cons
-                (orgtrello-buffer/filter-out-properties
-                  (buffer-substring-no-properties start (min end (point))))
-                lines))
-        (setq indent (orgtrello-buffer/check-indent! indent))
-	(while
-          (< (point) end)
-          (let ((sol (point)))
-	    (forward-line 1)
-            (setq lines
-                  (cons
-		   (buffer-substring-no-properties sol (min end (point)))
-		   lines)))
-        (setq indent (orgtrello-buffer/check-indent! indent)))))
-    ;(message "Lines: %S" lines)
-    (let ((result
-	   (when lines
-	     (orgtrello-buffer/filter-out-properties
-	     (apply 'concat (reverse lines))))))
-      result)))
-
-
+      (->> (buffer-substring-no-properties start end)
+        s-lines
+        (--map (if (s-equals? "" it) it (substring it *ORGTRELLO-BUFFER/INDENT-DESCRIPTION*)))
+        (s-join "\n")))))
 
 (defun orgtrello-buffer/get-card-comments! ()
   "Retrieve the card's comments. Can be nil if not on a card."
@@ -91,13 +58,6 @@ If the VALUE is nil or empty, remove such PROPERTY."
 (defun orgtrello-buffer/put-card-comments! (comments)
   "Retrieve the card's comments. Can be nil if not on a card."
   (orgtrello-buffer/org-entry-put! (point) *ORGTRELLO/CARD-COMMENTS* comments))
-
-(defun orgtrello-buffer/filter-out-properties (text-content)
-  "Given a string TEXT-CONTENT, remove any org properties if any."
-  (->> text-content
-    (replace-regexp-in-string "^[ ]*:.*" "")
-    (replace-regexp-in-string (format "%s.*" *ORGTRELLO/DEADLINE-PREFIX*) "")
-    s-trim-left))
 
 (defun orgtrello-buffer/org-file-get-property! (property-key)
   (assoc-default property-key (orgtrello-buffer/org-file-properties!)))
@@ -193,16 +153,20 @@ If the VALUE is nil or empty, remove such PROPERTY."
             (orgtrello-buffer/org-entry-put! (point) key value)))
         unknown-properties))
 
+(defun orgtrello-buffer/--write-card-description! (description)
+  "Write at point the current card's DESCRIPTION if present (and indent it)."
+  (when description
+    (let ((start (point)))
+      (insert (format "%s" description))
+      (indent-rigidly start (point) *ORGTRELLO-BUFFER/INDENT-DESCRIPTION*))))
+
 (defun orgtrello-buffer/write-card-header! (card-id card)
   "Given a card entity, write its data and properties without its structure."
   (orgtrello-buffer/write-entity! card-id card)
   (orgtrello-buffer/update-member-ids-property! card)
   (orgtrello-buffer/update-property-card-comments! card)
   (orgtrello-buffer/write-unknown-properties! (orgtrello-data/entity-unknown-properties card))
-  (-when-let (card-desc (orgtrello-data/entity-description card))
-    (let ((start (point)))
-      (insert (format "%s" card-desc))
-	(indent-rigidly start (point) 2))))
+  (orgtrello-buffer/--write-card-description! (orgtrello-data/entity-description card)))
 
 (defun orgtrello-buffer/write-card! (card-id card entities adjacency)
   "Write the card and its structure inside the org buffer."
@@ -434,6 +398,17 @@ Move the cursor position."
     (goto-char (point-min))
     (while (re-search-forward ":PROPERTIES: {.*" nil t)
       (orgtrello-cbx/install-overlays! (match-beginning 0)))))
+
+(defun orgtrello-buffer/indent-card-descriptions! ()
+  "Indent the card descriptions rigidly starting at 2."
+  (save-excursion
+    (org-map-entries (lambda () "Indent the description from the current card if need be."
+                       (let ((start (orgtrello-buffer/--card-description-start-point!))
+                             (end   (orgtrello-buffer/--card-metadata-end-point!)))
+                         (narrow-to-region start end)        ;; only edit the region start end
+                         (goto-char (point-min))
+                         (unless (<= 2 (org-get-indentation));; if need be
+                           (indent-rigidly start end *ORGTRELLO-BUFFER/INDENT-DESCRIPTION*)))))));; now indent with the rightful indentation
 
 (defun orgtrello-buffer/--convert-orgmode-date-to-trello-date (orgmode-date)
   "Convert the 'org-mode' deadline ORGMODE-DATE into a time adapted for trello."

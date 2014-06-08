@@ -144,6 +144,9 @@ This use the standard 'org-todo-keywords property from 'org-mode'.")
 (defvar *PREVIOUS-ORGTRELLO/MODE-PREFIX-KEYBINDING* "C-c o"
   "The memory default prefix keybinding.")
 
+(defconst *ORGTRELLO-BUFFER/INDENT-DESCRIPTION* 2
+  "The default card description's indentation column.")
+
 (defvar *org-trello-interactive-command-binding-couples*
   '((org-trello/version                      "v" "Display the current version installed.")
     (org-trello/install-key-and-token        "i" "Install the keys and the access-token.")

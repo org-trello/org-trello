@@ -17,7 +17,8 @@
 (message "Loading tests done!")
 
 ;; behaviour of expectations changed
-(setq expectations-execute-at-once t)
+(setq expectations-execute-at-once t)       ;; only execute the current sexp at point
+;; (setq expectations-execute-at-once 'all) ;; all tests are executed once hit C-M-x after one sexp
 
 ;; force loading
 

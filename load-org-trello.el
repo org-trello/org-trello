@@ -27,12 +27,22 @@
                       "org-trello-webadmin.el"
                       "org-trello.el")))
 
-(global-set-key (kbd "C-c o L") 'org-trello/dev-load-namespaces!)
+(global-set-key (kbd "C-c o n") 'org-trello/dev-load-namespaces!)
 
 (org-trello/dev-load-namespaces!)
 (message "org-trello loaded!")
 
 (require 'org-trello)
+
+;; dev utils functions
+
+(defun trace-functions (fns)
+  "Trace functions FNS."
+  (mapc 'trace-function fns))
+
+(defun untrace-functions (fns)
+  "Trace functions FNS."
+  (mapc 'untrace-function fns))
 
 (provide 'load-org-trello)
 ;;; load-org-trello.el ends here
