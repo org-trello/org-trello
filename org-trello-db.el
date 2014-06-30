@@ -30,6 +30,13 @@ If an old-value is already present at KEY, put the VALUE to the end of old value
 This is read-only."
   (db-get key db))
 
+(defun orgtrello-db/get! (key db)
+  "Read the value at KEY in DB.
+This is destructive."
+  (-when-let (data (db-get key db))
+    (db-put key nil db)
+    data))
+
 (defun orgtrello-db/pop (key db)
   "Pop the value at KEY in DB.
 This is destructive."
