@@ -459,7 +459,7 @@ Optionally, PARENT-META is a parameter of the function dispatched."
     (if (hash-table-p query-map)
         (orgtrello-query/http-trello
          query-map
-         'synchronous-query
+         nil ;; asynchronous-query
          (orgtrello-proxy/--standard-delete-success-callback entity-data)
          (function* (lambda (&key error-thrown &allow-other-keys)
                       (orgtrello-log/msg *OT/ERROR* "client - Problem during the deletion request to the proxy- error-thrown: %s" error-thrown)
