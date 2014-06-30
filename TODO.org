@@ -13,6 +13,12 @@
 - [ ] POC: Investigate webhooks - #137
 - [ ] POC: Leverage elnode and clojurescript core.async - #97
 
+* TODO 0.4.9 [25%]
+- [X] Backlog
+- [ ] Emacs blocks when sync - #164
+- [ ] Update version
+- [ ] Release notes
+
 * DONE 0.4.8 [100%]
 CLOSED: [2014-06-08 Sun 19:24]
 - [X] Backlog
