@@ -15,7 +15,9 @@
 
 * TODO 0.4.9 [25%]
 - [X] Backlog
-- [ ] Emacs blocks when sync - #164
+- [-] Emacs blocks when sync - #164
+  - [X] deferred dependency - 0.3.1 chosen because it's the common denominator between marmalade and melpa
+  - [ ] Render the data request consumer asynchoneous
 - [ ] Update version
 - [ ] Release notes
 
