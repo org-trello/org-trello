@@ -582,7 +582,7 @@ HTTP-CON is used to read if we need to start or not the timer."
         ;; cleanup anything that the timer possibly left behind
         (orgtrello-proxy/--timer-delete-lock *ORGTRELLO/LOCK*)
         ;; start the timer
-        (setq *ORGTRELLO/TIMER* (run-with-timer 0 5 'orgtrello-proxy/--controls-and-scan-if-ok)))
+        (setq *ORGTRELLO/TIMER* (run-with-timer 0 10 'orgtrello-proxy/--controls-and-scan-if-ok)))
     ;; otherwise, stop it
     (when *ORGTRELLO/TIMER*
       (orgtrello-log/msg *OT/DEBUG* "Proxy-timer - Request received. Stop timer.")
