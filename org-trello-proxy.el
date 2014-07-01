@@ -30,7 +30,7 @@
     (orgtrello-api/make-query "POST" "/producer/" it)
     (orgtrello-query/http *ORGTRELLO/SERVER-URL* it sync)))
 
-(defun orgtrello-proxy/http-consumer (&optional start)
+(defun orgtrello-proxy/http-timer (&optional start)
   "Query the http-consumer process once to make it trigger a timer depending on optional START flag."
   (--> `((start . ,start))
     (orgtrello-api/make-query "POST" "/timer/" it)
@@ -598,11 +598,11 @@ HTTP-CON is used to read if we need to start or not the timer."
 
 (defun orgtrello-proxy/timer-start ()
   "Start the orgtrello-timer."
-  (orgtrello-proxy/http-consumer 'start))
+  (orgtrello-proxy/http-timer 'start))
 
 (defun orgtrello-proxy/timer-stop ()
   "Stop the orgtrello-timer."
-  (orgtrello-proxy/http-consumer))
+  (orgtrello-proxy/http-timer))
 
 (defun orgtrello-proxy/deal-with-consumer-msg-controls-or-actions-then-do (msg control-or-action-fns fn-to-execute &optional save-buffer-p reload-setup-p nolog-p)
   "Decorator function to stop and start timer.
