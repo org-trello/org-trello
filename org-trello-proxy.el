@@ -31,10 +31,17 @@
     (orgtrello-query/http *ORGTRELLO/SERVER-URL* it sync)))
 
 (defun orgtrello-proxy/http-timer (&optional start)
-  "Query the http-consumer process once to make it trigger a timer depending on optional START flag."
+  "Query the http-timer process once to make it trigger a timer depending on optional START flag."
   (--> `((start . ,start))
     (orgtrello-api/make-query "POST" "/timer/" it)
     (orgtrello-query/http *ORGTRELLO/SERVER-URL* it 'synchronous-query)))
+
+(defun orgtrello-proxy/http-consumer ()
+  "Query the http-consumer to consume actions (sync/delete)."
+  (when (orgtrello-proxy/--check-no-running-timer)
+    (--> 'ping
+      (orgtrello-api/make-query "POST" "/consumer/" it)
+      (orgtrello-query/http *ORGTRELLO/SERVER-URL* it 'synchronous-query))))
 
 (defun orgtrello-proxy/--json-read-from-string (data)
   "Read the json DATA and unhexify them."
@@ -563,8 +570,9 @@ ARGS is not used."
 
 (require 'deferred)
 
-(defun orgtrello-proxy/--controls-and-scan-if-ok ()
-  "Execution of the timer which consumes the entities and execute the sync to trello."
+(defun orgtrello-proxy/--elnode-proxy-consumer (http-con)
+  "Consume sync actions (sync/delete) to trello.
+HTTP-CON is the http connection (not used)."
   (orgtrello-action/msg-controls-or-actions-then-do
    "Scanning entities to sync"
    '(orgtrello-proxy/--check-network-connection orgtrello-proxy/--check-no-running-timer)
@@ -584,8 +592,8 @@ HTTP-CON is used to read if we need to start or not the timer."
         (orgtrello-log/msg *OT/DEBUG* "Proxy-timer - Request received. Start timer.")
         ;; cleanup anything that the timer possibly left behind
         (orgtrello-proxy/--timer-delete-lock *ORGTRELLO/LOCK*)
-        ;; start the timer
-        (setq *ORGTRELLO/TIMER* (run-with-timer 0 10 'orgtrello-proxy/--controls-and-scan-if-ok)))
+        ;; start the timer that will send consumption ping to the proxy consumer
+        (setq *ORGTRELLO/TIMER* (run-with-timer 0 10 'orgtrello-proxy/http-consumer)))
     ;; otherwise, stop it
     (when *ORGTRELLO/TIMER*
       (orgtrello-log/msg *OT/DEBUG* "Proxy-timer - Request received. Stop timer.")
@@ -620,7 +628,9 @@ if NOLOG-P is set, no log takes place."
     ;; proxy producer to receive async creation request
     ("^localhost//proxy/producer/\\(.*\\)" . orgtrello-proxy/--elnode-proxy-producer)
     ;; proxy to request trello
-    ("^localhost//proxy/timer/\\(.*\\)" . orgtrello-proxy/--elnode-timer))
+    ("^localhost//proxy/timer/\\(.*\\)" . orgtrello-proxy/--elnode-timer)
+    ;; proxy consumer
+    ("^localhost//proxy/consumer/\\(.*\\)" . orgtrello-proxy/--elnode-proxy-consumer))
   "Org-trello dispatch routes for the proxy.")
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-proxy loaded!")
