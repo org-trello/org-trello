@@ -149,7 +149,9 @@ HTTP-CON is used to transmit parameters."
 
 (defun orgtrello-proxy/batch-save (buffers)
   "Save sequentially a list of BUFFERS."
-  (-each buffers 'save-buffer))
+  (-each buffers (lambda (buffername)
+                   (with-current-buffer buffername
+                     (call-interactively 'save-buffer)))))
 
 (defun orgtrello-proxy/batch-save! ()
   "Save sequentially the org-trello list of modified buffers."
