@@ -505,9 +505,8 @@ this returns a function able to act (sync, delete) on it."
     (mapc 'orgtrello-proxy/--deal-with-remaining-archived-entities! *ORGTRELLO/LEVELS*)
     (catch 'org-trello-timer-go-to-sleep
       (-when-let (level-fns (->> *ORGTRELLO/LEVELS*
-                              (mapcar 'orgtrello-proxy/--deal-with-level)
-                              (-filter 'identity)
-                              (apply 'append)))
+                              (-mapcat 'orgtrello-proxy/--deal-with-level)
+                              (-filter 'identity)))
         (--> level-fns
           (mapcar (lambda (level-fn) `(deferred:nextc it ,level-fn)) it)
           (-snoc it '(deferred:nextc it (lambda ()
