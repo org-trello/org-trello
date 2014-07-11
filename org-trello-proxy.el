@@ -36,6 +36,12 @@
     (orgtrello-api/make-query "POST" "/timer/" it)
     (orgtrello-query/http *ORGTRELLO/SERVER-URL* it 'synchronous-query)))
 
+(defun orgtrello-proxy/http-status! ()
+  "Query the proxy to check its status."
+  (with-current-buffer (url-retrieve-synchronously (format "%s/status" *ORGTRELLO/SERVER-URL*))
+    (prog1 (buffer-string)
+      (kill-buffer))))
+
 (defun orgtrello-proxy/http-consumer ()
   "Query the http-consumer to consume actions (sync/delete)."
   (when (orgtrello-proxy/--check-no-running-timer)
@@ -625,6 +631,11 @@ if NOLOG-P is set, no log takes place."
   (orgtrello-action/msg-controls-or-actions-then-do msg control-or-action-fns fn-to-execute save-buffer-p reload-setup-p nolog-p)   ;; Execute as usual
   (orgtrello-proxy/timer-start))
 
+(defun orgtrello-proxy/--elnode-proxy-status! (http-con)
+  "A simple handler to check whether the proxy is alive.
+HTTP-CON is needed as implementation detail but not used here."
+  (orgtrello-proxy/response-ok http-con))
+
 (defvar *ORGTRELLO/QUERY-APP-ROUTES-PROXY*
   '(;; proxy to request trello
     ("^localhost//proxy/trello/\\(.*\\)" . orgtrello-proxy/--elnode-proxy)
@@ -633,7 +644,9 @@ if NOLOG-P is set, no log takes place."
     ;; proxy to request trello
     ("^localhost//proxy/timer/\\(.*\\)" . orgtrello-proxy/--elnode-timer)
     ;; proxy consumer
-    ("^localhost//proxy/consumer/\\(.*\\)" . orgtrello-proxy/--elnode-proxy-consumer))
+    ("^localhost//proxy/consumer/\\(.*\\)" . orgtrello-proxy/--elnode-proxy-consumer)
+    ;; status check callback
+    ("^localhost//proxy/status" . orgtrello-proxy/--elnode-proxy-status!))
   "Org-trello dispatch routes for the proxy.")
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-proxy loaded!")
