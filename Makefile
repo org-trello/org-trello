@@ -9,6 +9,9 @@ EMACS=emacs
 pr:
 	hub pull-request -b org-trello:master
 
+deps:
+	cask
+
 build:
 	cask build
 
