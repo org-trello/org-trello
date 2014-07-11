@@ -126,7 +126,12 @@ Please consider upgrading Emacs." emacs-version) "Error message when installing 
 If WITH-SAVE-FLAG is set, will do a buffer save and reload the org setup."
   (orgtrello-proxy/deal-with-consumer-msg-controls-or-actions-then-do
    action-label
-   '(orgtrello-controller/load-keys orgtrello-controller/control-keys orgtrello-controller/setup-properties orgtrello-controller/control-properties orgtrello-controller/control-encoding)
+   '(orgtrello-controller/load-keys!
+     orgtrello-controller/control-keys!
+     orgtrello-controller/setup-properties!
+     orgtrello-controller/control-properties!
+     orgtrello-controller/control-encoding!
+     orgtrello-controller/control-proxy-running!)
    action-fn
    (when with-save-flag 'do-save-buffer)
    (when with-save-flag 'do-reload-setup)))
@@ -136,7 +141,7 @@ If WITH-SAVE-FLAG is set, will do a buffer save and reload the org setup."
 If NO-CHECK-FLAG is set, no controls are done."
   (orgtrello-proxy/deal-with-consumer-msg-controls-or-actions-then-do
    action-label
-   (if no-check-flag nil '(orgtrello-controller/load-keys orgtrello-controller/control-keys orgtrello-controller/setup-properties))
+   (if no-check-flag nil '(orgtrello-controller/load-keys! orgtrello-controller/control-keys! orgtrello-controller/setup-properties! orgtrello-controller/control-proxy-running!))
    action-fn
    'do-save-buffer
    'do-reload-setup))
@@ -144,11 +149,11 @@ If NO-CHECK-FLAG is set, no controls are done."
 (defun org-trello/do (action-fn)
   "Check and if controls are ok, execute ACTION-FN."
   (orgtrello-action/controls-or-actions-then-do
-   '(orgtrello-controller/load-keys
-     orgtrello-controller/control-keys
-     orgtrello-controller/setup-properties
-     orgtrello-controller/control-properties
-     orgtrello-controller/control-encoding
+   '(orgtrello-controller/load-keys!
+     orgtrello-controller/control-keys!
+     orgtrello-controller/setup-properties!
+     orgtrello-controller/control-properties!
+     orgtrello-controller/control-encoding!
      orgtrello-controller/control-proxy-running!)
    action-fn))
 
