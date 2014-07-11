@@ -13,11 +13,13 @@
 - [ ] POC: Investigate webhooks - #137
 - [ ] POC: Leverage elnode and clojurescript core.async - #97
 
-* TODO 0.4.9 [25%]
+* IN-PROGRESS 0.4.9 [40%]
 - [X] Backlog
 - [-] Emacs blocks when sync - #164
   - [X] deferred dependency - 0.3.1 chosen because it's the common denominator between marmalade and melpa
   - [ ] Render the data request consumer asynchoneous
+- [X] Sometimes the proxy seems to not be started (which is a mess), add a check on the running proxy before doing anything. - #180
+- [ ] Emacs blocks when sync - #164
 - [ ] Update version
 - [ ] Release notes
 
