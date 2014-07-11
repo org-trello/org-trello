@@ -255,5 +255,15 @@
       (mock (orgtrello-query/http-trello :query 'synchronous-query) => :some-result)
       (orgtrello-controller/--list-board-lists! :board-id))))
 
+(expectations
+ (expect "Proxy not running! Something wicked has happened! Please open an issue on the github tracker."
+         (with-mock
+          (mock (orgtrello-proxy/http-status!) => nil)
+          (orgtrello-controller/control-proxy-running!)))
+ (expect :ok
+         (with-mock
+          (mock (orgtrello-proxy/http-status!) => 'something)
+          (orgtrello-controller/control-proxy-running!))))
+
 (provide 'org-trello-controller-tests)
 ;;; org-trello-controller-tests.el ends here
