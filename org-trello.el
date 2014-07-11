@@ -144,7 +144,12 @@ If NO-CHECK-FLAG is set, no controls are done."
 (defun org-trello/do (action-fn)
   "Check and if controls are ok, execute ACTION-FN."
   (orgtrello-action/controls-or-actions-then-do
-   '(orgtrello-controller/load-keys orgtrello-controller/control-keys orgtrello-controller/setup-properties orgtrello-controller/control-properties orgtrello-controller/control-encoding)
+   '(orgtrello-controller/load-keys
+     orgtrello-controller/control-keys
+     orgtrello-controller/setup-properties
+     orgtrello-controller/control-properties
+     orgtrello-controller/control-encoding
+     orgtrello-controller/control-proxy-running!)
    action-fn))
 
 (defun org-trello/reload-server ()

@@ -733,6 +733,14 @@ Return the hashmap (name, id) of the new lists created."
   ;; remove org-trello overlays
   (orgtrello-buffer/remove-overlays!))
 
+(defun orgtrello-controller/control-proxy-running! (&optional args)
+  "Check whether the org-trello proxy is running or not.
+ARGS is present as an implementation detail, not used here."
+  (let ((http-status (orgtrello-proxy/http-status!)))
+    (if (and http-status (not (string= http-status "")))
+        :ok
+      "Proxy not running! Something wicked has happened! Please open an issue on the github tracker.")))
+
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-controller loaded!")
 
 (provide 'org-trello-controller)
