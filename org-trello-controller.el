@@ -81,6 +81,14 @@ ARGS is not used."
       :ok
     "Setup problem - You need to install the consumer-key and the read/write access-token - C-c o i or M-x org-trello/install-key-and-token"))
 
+(defun orgtrello-controller/control-proxy-running! (&optional args)
+  "Check whether the org-trello proxy is running or not.
+ARGS is present as an implementation detail, not used here."
+  (let ((http-status (orgtrello-proxy/http-status!)))
+    (if (and http-status (not (string= http-status "")))
+        :ok
+      "Proxy not running! Something wicked has happened! Please open an issue on the github tracker.")))
+
 (defun orgtrello-controller/--update-query-with-org-metadata (query-map position buffer-name &optional name success-callback sync)
   "Given a trello QUERY-MAP, POSITION, BUFFER-NAME and optional NAME, SUCCESS-CALLBACK and SYNC, add proxy metadata needed to work."
   (when success-callback (orgtrello-data/put-entity-callback success-callback query-map))
@@ -732,14 +740,6 @@ Return the hashmap (name, id) of the new lists created."
                                                orgtrello-buffer/indent-card-descriptions!))
   ;; remove org-trello overlays
   (orgtrello-buffer/remove-overlays!))
-
-(defun orgtrello-controller/control-proxy-running! (&optional args)
-  "Check whether the org-trello proxy is running or not.
-ARGS is present as an implementation detail, not used here."
-  (let ((http-status (orgtrello-proxy/http-status!)))
-    (if (and http-status (not (string= http-status "")))
-        :ok
-      "Proxy not running! Something wicked has happened! Please open an issue on the github tracker.")))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-controller loaded!")
 
