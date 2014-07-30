@@ -1,7 +1,8 @@
 ;; from shell: emacs --batch -l ./build.el -- repository-name package-file-name...
 
-(defvar repository '(("marmalade" . "http://marmalade-repo.org/packages/")
-                     ("melpa"     . "http://melpa.milkbox.net/packages/"))
+(defvar repository '(("marmalade"        . "http://marmalade-repo.org/packages/")
+                     ("melpa"            . "http://melpa.milkbox.net/packages/")
+                     ("melpa-stable"     . "http://melpa-stable.milkbox.net/packages/"))
   "List of repository to install org-trello's dependency from.")
 
 (require 'package)
