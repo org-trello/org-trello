@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/usr/bin/env bash
 
 if [ $# -ne 3 ]; then
     cat <<EOF
