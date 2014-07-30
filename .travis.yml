@@ -20,5 +20,4 @@ script:
   - pwd
   - make install
   - make test
-  - make install-file-with-deps-from-marmalade
   - make install-file-with-deps-from-melpa

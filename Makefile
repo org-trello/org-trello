@@ -41,14 +41,8 @@ package: clean pkg-el
 info:
 	cask info
 
-install-package-from-marmalade:
-	./install-package-from.sh marmalade
-
 install-package-from-melpa:
 	./install-package-from.sh melpa
-
-install-file-with-deps-from-marmalade: package
-	./install-file-with-deps-from.sh marmalade $(VERSION)
 
 install-file-with-deps-from-melpa: package
 	./install-file-with-deps-from.sh melpa $(VERSION)
