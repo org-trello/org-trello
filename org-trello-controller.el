@@ -81,13 +81,16 @@ ARGS is not used."
       :ok
     "Setup problem - You need to install the consumer-key and the read/write access-token - C-c o i or M-x org-trello/install-key-and-token"))
 
-(defun orgtrello-controller/control-proxy-running! (&optional args)
+(defun orgtrello-controller/reload-proxy-if-not-running! (&optional args)
   "Check whether the org-trello proxy is running or not.
 ARGS is present as an implementation detail, not used here."
   (let ((http-status (orgtrello-proxy/http-status!)))
     (if (and http-status (not (string= http-status "")))
         :ok
-      "Proxy not running! Something wicked has happened! Please open an issue on the github tracker.")))
+      (progn
+        (orgtrello-server/reload)
+        (orgtrello-log/msg *OT/WARN* "Proxy was not running!\nThis should not have happened.\nWe restarted it.\nIf this does not work, please open an issue on the github tracker https://github.com/org-trello/org-trello/issues.")
+        :ok))))
 
 (defun orgtrello-controller/--update-query-with-org-metadata (query-map position buffer-name &optional name success-callback sync)
   "Given a trello QUERY-MAP, POSITION, BUFFER-NAME and optional NAME, SUCCESS-CALLBACK and SYNC, add proxy metadata needed to work."
