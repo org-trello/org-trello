@@ -256,14 +256,15 @@
       (orgtrello-controller/--list-board-lists! :board-id))))
 
 (expectations
- (expect "Proxy not running! Something wicked has happened! Please open an issue on the github tracker."
+ (expect :ok
          (with-mock
           (mock (orgtrello-proxy/http-status!) => nil)
-          (orgtrello-controller/control-proxy-running!)))
+          (mock (orgtrello-server/reload) => nil)
+          (orgtrello-controller/reload-proxy-if-not-running!)))
  (expect :ok
          (with-mock
           (mock (orgtrello-proxy/http-status!) => 'something)
-          (orgtrello-controller/control-proxy-running!))))
+          (orgtrello-controller/reload-proxy-if-not-running!))))
 
 (provide 'org-trello-controller-tests)
 ;;; org-trello-controller-tests.el ends here
