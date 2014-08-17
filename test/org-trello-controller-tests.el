@@ -192,30 +192,30 @@
          (with-mock
           (mock (file-exists-p *ORGTRELLO/CONFIG-FILE*) => t)
           (mock (load *ORGTRELLO/CONFIG-FILE*)          => t)
-          (orgtrello-controller/load-keys!)))
+          (orgtrello-controller/load-keys)))
  (expect "Setup problem - Problem during credentials (consumer-key and the read/write access-token) loading - C-c o i or M-x org-trello/install-key-and-token"
    (with-mock
      (mock (file-exists-p *ORGTRELLO/CONFIG-FILE*) => nil)
-     (orgtrello-controller/load-keys!)))
+     (orgtrello-controller/load-keys)))
  (expect "Setup problem - Problem during credentials (consumer-key and the read/write access-token) loading - C-c o i or M-x org-trello/install-key-and-token"
    (with-mock
      (mock (file-exists-p *ORGTRELLO/CONFIG-FILE*) => t)
      (mock (load *ORGTRELLO/CONFIG-FILE*)          => nil)
-     (orgtrello-controller/load-keys!))))
+     (orgtrello-controller/load-keys))))
 
 (expectations
   (expect :ok
     (let ((*consumer-key* "some-consumer-key")
           (*access-token* "some-access-token"))
-      (orgtrello-controller/control-keys!)))
+      (orgtrello-controller/control-keys)))
   (expect "Setup problem - You need to install the consumer-key and the read/write access-token - C-c o i or M-x org-trello/install-key-and-token"
     (let ((*consumer-key* "some-consumer-key")
           (*access-token* nil))
-      (orgtrello-controller/control-keys!)))
+      (orgtrello-controller/control-keys)))
   (expect "Setup problem - You need to install the consumer-key and the read/write access-token - C-c o i or M-x org-trello/install-key-and-token"
     (let ((*consumer-key* nil)
           (*access-token* "some-access-token"))
-      (orgtrello-controller/control-keys!))))
+      (orgtrello-controller/control-keys))))
 
 (expectations
   (expect '(:id-board0 "board0-name")
@@ -254,17 +254,6 @@
       (mock (orgtrello-api/get-lists :board-id)                 => :query)
       (mock (orgtrello-query/http-trello :query 'synchronous-query) => :some-result)
       (orgtrello-controller/--list-board-lists! :board-id))))
-
-(expectations
- (expect :ok
-         (with-mock
-          (mock (orgtrello-proxy/http-status!) => nil)
-          (mock (orgtrello-server/reload) => nil)
-          (orgtrello-controller/reload-proxy-if-not-running!)))
- (expect :ok
-         (with-mock
-          (mock (orgtrello-proxy/http-status!) => 'something)
-          (orgtrello-controller/reload-proxy-if-not-running!))))
 
 (provide 'org-trello-controller-tests)
 ;;; org-trello-controller-tests.el ends here
