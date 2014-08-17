@@ -487,8 +487,10 @@ Optionally, PARENT-META is a parameter of the function dispatched."
 (defun orgtrello-proxy/--deal-with-entities-at-level (level)
   "Given a LEVEL, retrieve entities from this level.
 this returns a function able to act (sync, delete) on it."
-  (-when-let (entities (orgtrello-db/get! level *ORGTRELLO-SERVER/DB*))
-    (--map `(lambda () (orgtrello-proxy/--deal-with-entity-action ,it)) entities)))
+  (-when-let (entity (orgtrello-db/pop level *ORGTRELLO-SERVER/DB*))
+    (orgtrello-proxy/--deal-with-entity-action entity) ;; deal with entity action to trello
+    (unless (orgtrello-proxy/--level-done-p level) ;; if level is not done, call again for the same level
+      (orgtrello-proxy/--deal-with-level level))))
 
 (defun orgtrello-proxy/--level-done-p (level)
   "Does there remain some entities for the LEVEL specified?"
@@ -517,18 +519,10 @@ this returns a function able to act (sync, delete) on it."
   (with-local-quit
     ;; if it remains archived entities, we copy them back to the standard entries to be retried
     (mapc 'orgtrello-proxy/--deal-with-remaining-archived-entities! *ORGTRELLO/LEVELS*)
-    (catch 'org-trello-timer-go-to-sleep
-      (-when-let (level-fns (->> *ORGTRELLO/LEVELS*
-                              (-mapcat 'orgtrello-proxy/--deal-with-level)
-                              (-filter 'identity)))
-        (--> level-fns
-          (mapcar (lambda (level-fn) `(deferred:nextc it ,level-fn)) it)
-          (-snoc it '(deferred:nextc it (lambda ()
-                                          (orgtrello-proxy/batch-save!)
-                                          (message "Actions on cards, checklists, items done!"))))
-          (cons '(deferred:next (lambda () (message "Actions on cards, checklists, items..."))) it)
-          (cons 'deferred:$ it)
-          (eval it))))))
+    ;; deal with entities
+    (catch 'org-trello-timer-go-to-sleep ;; from here on, any underlying can throw an exception, the timer goes to sleep then
+      (mapc 'orgtrello-proxy/--deal-with-level *ORGTRELLO/LEVELS*))
+    (orgtrello-proxy/batch-save!)))
 
 (defun orgtrello-proxy/--compute-lock-filename ()
   "Compute the name of a lock file."
