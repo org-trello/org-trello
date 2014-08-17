@@ -23,7 +23,7 @@
   "List the users entries from PROPERTIES."
   (--filter (string-match-p *ORGTRELLO/USER-PREFIX* (car it)) properties))
 
-(defun orgtrello-controller/setup-properties! (&optional args)
+(defun orgtrello-controller/setup-properties (&optional args)
   "Setup the properties according to the 'org-mode' setup.
 Return :ok.
 ARGS is not used."
@@ -50,14 +50,14 @@ ARGS is not used."
     (add-to-list 'org-tag-alist '("orange" . ?o))
     :ok))
 
-(defun orgtrello-controller/control-encoding! (&optional args)
+(defun orgtrello-controller/control-encoding (&optional args)
   "Use utf-8, otherwise, there will be trouble.
 ARGS is not used."
   (progn
     (orgtrello-log/msg *OT/ERROR* "Ensure you use utf-8 encoding for your org buffer.")
     :ok))
 
-(defun orgtrello-controller/control-properties! (&optional args)
+(defun orgtrello-controller/control-properties (&optional args)
   "Org-trello needs some header buffer properties set (board id, list ids, ...).
 Return :ok if ok, or the error message if problems.
 ARGS is not used."
@@ -66,31 +66,20 @@ ARGS is not used."
         :ok
       "Setup problem.\nEither you did not connect your org-mode buffer with a trello board, to correct this:\n  * attach to a board through C-c o I or M-x org-trello/install-board-and-lists-ids\n  * or create a board from scratch with C-c o b or M-x org-trello/create-board).\nEither your org-mode's todo keyword list and your trello board lists are not named the same way (which they must).\nFor this, connect to trello and rename your board's list according to your org-mode's todo list.\nAlso, you can specify on your org-mode buffer the todo list you want to work with, for example: #+TODO: TODO DOING | DONE FAIL (hit C-c C-c to refresh the setup)")))
 
-(defun orgtrello-controller/load-keys! (&optional args)
+(defun orgtrello-controller/load-keys (&optional args)
   "Load the credentials keys from the configuration file.
 ARGS is not used."
   (if (and (file-exists-p *ORGTRELLO/CONFIG-FILE*) (load *ORGTRELLO/CONFIG-FILE*))
       :ok
     "Setup problem - Problem during credentials (consumer-key and the read/write access-token) loading - C-c o i or M-x org-trello/install-key-and-token"))
 
-(defun orgtrello-controller/control-keys! (&optional args)
+(defun orgtrello-controller/control-keys (&optional args)
   "Org-trello needs the *consumer-key* and *access-token* for trello resources.
 Returns :ok if everything is ok, or the error message if problems.
 ARGS is not used."
   (if (and *consumer-key* *access-token*)
       :ok
     "Setup problem - You need to install the consumer-key and the read/write access-token - C-c o i or M-x org-trello/install-key-and-token"))
-
-(defun orgtrello-controller/reload-proxy-if-not-running! (&optional args)
-  "Check whether the org-trello proxy is running or not.
-ARGS is present as an implementation detail, not used here."
-  (let ((http-status (orgtrello-proxy/http-status!)))
-    (if (and http-status (not (string= http-status "")))
-        :ok
-      (progn
-        (orgtrello-server/reload)
-        (orgtrello-log/msg *OT/WARN* "Proxy was not running!\nThis should not have happened.\nWe restarted it.\nIf this does not work, please open an issue on the github tracker https://github.com/org-trello/org-trello/issues.")
-        :ok))))
 
 (defun orgtrello-controller/--update-query-with-org-metadata (query-map position buffer-name &optional name success-callback sync)
   "Given a trello QUERY-MAP, POSITION, BUFFER-NAME and optional NAME, SUCCESS-CALLBACK and SYNC, add proxy metadata needed to work."
