@@ -42,7 +42,6 @@ The query can be synchronous depending on SYNC variable."
 
 (defun orgtrello-proxy/--cleanup-and-save-buffer-metadata (level buffer-name)
   "To cleanup metadata (LEVEL, BUFFER-NAME) after all the actions are done!"
-  (orgtrello-proxy/cleanup-archived-entity! level)
   (orgtrello-proxy/update-buffer-to-save! buffer-name)) ;; register the buffer for later saving
 
 (defun orgtrello-proxy/batch-save (buffers)
