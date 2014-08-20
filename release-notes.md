@@ -1,3 +1,23 @@
+# 0.5.0
+
+- [X] Revert 0.4.9 #187 which introduced regressions #186#issuecomment-52423783 and maybe #185
+- [X] Retrieve interesting code from 0.4.9 (for example, start proxy during actions if stopped and warn about it, etc...)
+- [X] Update version
+- [X] Release notes
+
+# 0.4.9
+
+- [X] Backlog
+- [X] Emacs blocks when sync - #164
+  - [X] deferred dependency - 0.3.1 chosen because it's the common denominator between marmalade and melpa
+  - [X] Render the data request consumer asynchoneous
+  - ... emacs still blocks though...
+- [X] Sometimes the proxy seems to not be started (which is a mess), add a check on the running proxy before doing anything. - #180
+- [X] During the check of the proxy, if not started, try to start it.
+- [X] Update version
+- [X] No longer deliver to marmalade (too much work)
+- [X] Release notes
+
 # 0.4.8
 
 - [X] Backlog

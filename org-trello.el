@@ -4,7 +4,7 @@
 
 ;; Author: Antoine R. Dumont <eniotna.t AT gmail.com>
 ;; Maintainer: Antoine R. Dumont <eniotna.t AT gmail.com>
-;; Version: 0.4.8
+;; Version: 0.5.0
 ;; Package-Requires: ((dash "2.7.0") (request "0.2.0") (elnode "0.9.9.8.1") (esxml "0.3.0") (s "1.9.0") (db "0.0.6"))
 ;; Keywords: org-mode trello sync org-trello
 ;; URL: https://github.com/org-trello/org-trello
@@ -98,7 +98,7 @@ Please consider upgrading Emacs." emacs-version) "Error message when installing 
 (require 'esxml)
 (require 'db)
 
-(defconst *ORGTRELLO/VERSION* "0.4.8" "Current org-trello version installed.")
+(defconst *ORGTRELLO/VERSION* "0.5.0" "Current org-trello version installed.")
 
 (defun org-trello/version ()
   "Org-trello version."
@@ -126,7 +126,12 @@ Please consider upgrading Emacs." emacs-version) "Error message when installing 
 If WITH-SAVE-FLAG is set, will do a buffer save and reload the org setup."
   (orgtrello-proxy/deal-with-consumer-msg-controls-or-actions-then-do
    action-label
-   '(orgtrello-controller/load-keys orgtrello-controller/control-keys orgtrello-controller/setup-properties orgtrello-controller/control-properties orgtrello-controller/control-encoding)
+   '(orgtrello-controller/load-keys!
+     orgtrello-controller/control-keys!
+     orgtrello-controller/setup-properties!
+     orgtrello-controller/control-properties!
+     orgtrello-controller/control-encoding!
+     orgtrello-controller/reload-proxy-if-not-running!)
    action-fn
    (when with-save-flag 'do-save-buffer)
    (when with-save-flag 'do-reload-setup)))
@@ -136,7 +141,7 @@ If WITH-SAVE-FLAG is set, will do a buffer save and reload the org setup."
 If NO-CHECK-FLAG is set, no controls are done."
   (orgtrello-proxy/deal-with-consumer-msg-controls-or-actions-then-do
    action-label
-   (if no-check-flag nil '(orgtrello-controller/load-keys orgtrello-controller/control-keys orgtrello-controller/setup-properties))
+   (if no-check-flag nil '(orgtrello-controller/load-keys! orgtrello-controller/control-keys! orgtrello-controller/setup-properties! orgtrello-controller/reload-proxy-if-not-running!))
    action-fn
    'do-save-buffer
    'do-reload-setup))
@@ -144,7 +149,12 @@ If NO-CHECK-FLAG is set, no controls are done."
 (defun org-trello/do (action-fn)
   "Check and if controls are ok, execute ACTION-FN."
   (orgtrello-action/controls-or-actions-then-do
-   '(orgtrello-controller/load-keys orgtrello-controller/control-keys orgtrello-controller/setup-properties orgtrello-controller/control-properties orgtrello-controller/control-encoding)
+   '(orgtrello-controller/load-keys!
+     orgtrello-controller/control-keys!
+     orgtrello-controller/setup-properties!
+     orgtrello-controller/control-properties!
+     orgtrello-controller/control-encoding!
+     orgtrello-controller/reload-proxy-if-not-running!)
    action-fn))
 
 (defun org-trello/reload-server ()
