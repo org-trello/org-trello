@@ -278,7 +278,7 @@ If MODIFIER is not nil, unassign oneself from the card."
   "Standard Help message template from KEYBINDING and LIST-COMMAND-BINDING-DESCRIPTION."
   (->> list-command-binding-description
     (--map (let ((command        (car it))
-                 (prefix-binding (cadr it))caddr
+                 (prefix-binding (cadr it))
                  (help-msg       (cadr (cdr it))))
              (concat keybinding " " prefix-binding " - M-x " (symbol-name command) " - " help-msg)))
     (s-join "\n")))
