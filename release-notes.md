@@ -1,3 +1,10 @@
+# 0.5.0
+
+- [X] Revert 0.4.9 #187 which introduced regressions #186#issuecomment-52423783 and maybe #185
+- [X] Retrieve interesting code from 0.4.9 (for example, start proxy during actions if stopped and warn about it, etc...)
+- [X] Update version
+- [X] Release notes
+
 # 0.4.9
 
 - [X] Backlog
