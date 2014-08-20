@@ -1,10 +1,9 @@
 #!/usr/bin/env bash
 
-if [ $# -ne 2 ]; then
+if [ $# -ne 1 ]; then
     cat <<EOF
-Use: $0 <VERSION> <USER>"
+Use: $0 <VERSION>"
 - VERSION    version to release (0.1.6 for example)
-- USER       your marmalade login
 
 To install the token, execute the install-marmalade-token.sh.
 EOF
@@ -12,8 +11,6 @@ EOF
 fi
 
 WDIR=$(dirname $0)
-VERSION=$1
-USER=$2
 
 # launched from the current dev branch
 
@@ -28,9 +25,3 @@ git tag $VERSION
 git push upstream --tag
 
 make package
-
-$WDIR/push-to-marmalade.sh $USER $HOME/.marmalade/token $VERSION
-
-# FIXME
-
-# automate the release page from github (rest api too)

@@ -4,7 +4,7 @@
 
 ;; Author: Antoine R. Dumont <eniotna.t AT gmail.com>
 ;; Maintainer: Antoine R. Dumont <eniotna.t AT gmail.com>
-;; Version: 0.5.0
+;; Version: 0.5.1
 ;; Package-Requires: ((dash "2.7.0") (request "0.2.0") (elnode "0.9.9.8.1") (esxml "0.3.0") (s "1.9.0") (db "0.0.6"))
 ;; Keywords: org-mode trello sync org-trello
 ;; URL: https://github.com/org-trello/org-trello
@@ -98,7 +98,7 @@ Please consider upgrading Emacs." emacs-version) "Error message when installing 
 (require 'esxml)
 (require 'db)
 
-(defconst *ORGTRELLO/VERSION* "0.5.0" "Current org-trello version installed.")
+(defconst *ORGTRELLO/VERSION* "0.5.1" "Current org-trello version installed.")
 
 (defun org-trello/version ()
   "Org-trello version."
@@ -186,33 +186,37 @@ If NO-CHECK-FLAG is set, no controls are done."
   "Execute the sync of an entity to trello.
 If MODIFIER is non nil, execute the sync entity from trello."
   (interactive "P")
-  (if modifier
-      (org-trello/proxy-do "Request 'sync entity from trello'" 'orgtrello-controller/do-sync-entity-from-trello!)
-    (org-trello/proxy-do "Request 'sync entity to trello'" 'orgtrello-controller/do-sync-entity-to-trello!)))
+  (apply 'org-trello/proxy-do
+         (if modifier
+             '("Request 'sync entity from trello'" orgtrello-controller/do-sync-entity-from-trello!)
+           '("Request 'sync entity to trello'" orgtrello-controller/do-sync-entity-to-trello!))))
 
 (defun org-trello/sync-full-entity (&optional modifier)
   "Execute the sync of an entity and its structure to trello.
 If MODIFIER is non nil, execute the sync entity and its structure from trello."
   (interactive "P")
-  (if modifier
-      (org-trello/proxy-do "Request 'sync entity with structure from trello" 'orgtrello-controller/do-sync-entity-and-structure-from-trello!)
-    (org-trello/proxy-do "Request 'sync entity with structure to trello" 'orgtrello-controller/do-sync-full-entity-to-trello!)))
+  (apply 'org-trello/proxy-do
+         (if modifier
+             '("Request 'sync entity with structure from trello" orgtrello-controller/do-sync-entity-and-structure-from-trello!)
+           '("Request 'sync entity with structure to trello" orgtrello-controller/do-sync-full-entity-to-trello!))))
 
 (defun org-trello/sync-buffer (&optional modifier)
   "Execute the sync of the entire buffer to trello.
 If MODIFIER is non nil, execute the sync of the entire buffer from trello."
   (interactive "P")
-  (if modifier
-      (org-trello/proxy-do "Request 'sync org buffer from trello board'" 'orgtrello-controller/do-sync-full-file-from-trello!)
-    (org-trello/proxy-do "Request 'sync org buffer to trello board'" 'orgtrello-controller/do-sync-full-file-to-trello!)))
+  (apply 'org-trello/proxy-do
+         (if modifier
+             '("Request 'sync org buffer from trello board'" orgtrello-controller/do-sync-full-file-from-trello!)
+           '("Request 'sync org buffer to trello board'" orgtrello-controller/do-sync-full-file-to-trello!))))
 
 (defun org-trello/kill-entity (&optional modifier)
   "Execute the entity removal from trello and the buffer.
 If MODIFIER is non nil, execute all entities removal from trello and buffer."
   (interactive "P")
-  (if modifier
-      (org-trello/kill-all-entities)
-    (org-trello/proxy-do "Request 'delete entity'" 'orgtrello-controller/do-delete-simple)))
+  (apply 'org-trello/proxy-do
+         (if modifier
+             '("Request - 'delete entities'" orgtrello-controller/do-delete-entities)
+           '("Request 'delete entity'" orgtrello-controller/do-delete-simple))))
 
 (defun org-trello/kill-all-entities ()
   "Execute all entities removal from trello and buffer."
@@ -256,9 +260,10 @@ If MODIFIER is not nil, jump from current card to board."
   "Assign oneself to the card.
 If MODIFIER is not nil, unassign oneself from the card."
   (interactive "P")
-  (if modifier
-      (org-trello/proxy-do-and-save "Unassign me from card" 'orgtrello-controller/do-unassign-me)
-    (org-trello/proxy-do-and-save "Assign myself to card" 'orgtrello-controller/do-assign-me)))
+  (apply 'org-trello/proxy-do-and-save
+         (if modifier
+             '("Unassign me from card" orgtrello-controller/do-unassign-me)
+           '("Assign myself to card" orgtrello-controller/do-assign-me))))
 
 (defun org-trello/check-setup ()
   "Check the current setup."
@@ -278,7 +283,7 @@ If MODIFIER is not nil, unassign oneself from the card."
   "Standard Help message template from KEYBINDING and LIST-COMMAND-BINDING-DESCRIPTION."
   (->> list-command-binding-description
     (--map (let ((command        (car it))
-                 (prefix-binding (cadr it))caddr
+                 (prefix-binding (cadr it))
                  (help-msg       (cadr (cdr it))))
              (concat keybinding " " prefix-binding " - M-x " (symbol-name command) " - " help-msg)))
     (s-join "\n")))

@@ -1,4 +1,4 @@
-(define-package "org-trello" "0.5.0" "Minor mode to synchronize org-mode buffer and trello board"
+(define-package "org-trello" "0.5.1" "Minor mode to synchronize org-mode buffer and trello board"
   '((db "0.0.6")
     (s "1.9.0")
     (esxml "0.3.0")
