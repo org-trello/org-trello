@@ -1,3 +1,11 @@
+# 0.5.1
+
+- [X] Remove marmalade remains (release.sh + Makefile)
+- [X] Small refactoring of the main contract
+- [X] Fix bad code (typo caddr)
+- [X] Update version
+- [X] Release notes
+
 # 0.5.0
 
 - [X] Revert 0.4.9 #187 which introduced regressions #186#issuecomment-52423783 and maybe #185

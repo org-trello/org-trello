@@ -23,12 +23,12 @@
   - [ ] Remove state and proxy and let laziness to thy bidding -> Huge rewrites
 - [ ] Update version
 - [ ] Release notes
-* IN-PROGRESS 0.5.1 [80%]
+* IN-PROGRESS 0.5.1 [100%]
 - [X] Remove marmalade remains (release.sh + Makefile)
 - [X] Small refactoring of the main contract
 - [X] Fix bad code (typo caddr)
 - [X] Update version
-- [ ] Release notes
+- [X] Release notes
 * DONE 0.5.0 [100%]
 CLOSED: [2014-08-20 Wed 19:21]
 - [X] Revert 0.4.9 #187 which introduced regressions #186#issuecomment-52423783 and maybe #185
