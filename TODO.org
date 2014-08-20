@@ -14,16 +14,19 @@
 - [ ] POC: Investigate webhooks - #137
 - [ ] POC: Leverage elnode and clojurescript core.async - #97
 
-* TODO 0.5.1 [33%]
-- [X] Remove marmalade remains (release.sh + Makefile)
-- [X] Small refactoring of the main contract
-- [ ] Fix typo
+* TODO 0.5.2 [0%]
 - [-] Is org-trello over-engineered? -> Seems so.
   - [X] Is proxy useful since emacs still blocks? -> The only thing interesting seems to be the ability to watch running actions. As no one seem to care about it, we can remove it.
   - [X] Can't we simply use 'deferred (or 'async library) to defer computations? -> Yes, building actions (sync, delete) as 'lazy' list (macro) of deferred computations.
   - [X] What about concurrency then? There will be indeed possibilities of concurrent requests.
   - [ ] What about race conditions?
   - [ ] Remove state and proxy and let laziness to thy bidding -> Huge rewrites
+- [ ] Update version
+- [ ] Release notes
+* IN-PROGRESS 0.5.1 [50%]
+- [X] Remove marmalade remains (release.sh + Makefile)
+- [X] Small refactoring of the main contract
+- [X] Fix bad code (typo caddr)
 - [ ] Update version
 - [ ] Release notes
 * DONE 0.5.0 [100%]
