@@ -5,7 +5,7 @@
 ;; Author: Antoine R. Dumont <eniotna.t AT gmail.com>
 ;; Maintainer: Antoine R. Dumont <eniotna.t AT gmail.com>
 ;; Version: 0.5.1
-;; Package-Requires: ((dash "2.7.0") (request "0.2.0") (elnode "0.9.9.8.1") (esxml "0.3.0") (s "1.9.0"))
+;; Package-Requires: ((dash "2.7.0") (request "0.2.0") (esxml "0.3.0") (s "1.9.0"))
 ;; Keywords: org-mode trello sync org-trello
 ;; URL: https://github.com/org-trello/org-trello
 
@@ -93,7 +93,6 @@ Please consider upgrading Emacs." emacs-version) "Error message when installing 
 ;; Dependency on external Emacs libs
 (require 'dash)
 (require 'request)
-(require 'elnode)
 (require 's)
 (require 'esxml)
 
