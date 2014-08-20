@@ -13,7 +13,6 @@
 (require 'org-trello-backend)
 (require 'org-trello-buffer)
 (require 'org-trello-input)
-(require 'org-trello-server)
 (require 'org-trello-proxy)
 
 (org-trello/require-cl)
@@ -114,7 +113,7 @@ ARGS is not used."
     (orgtrello-buffer/set-marker-if-not-present! current marker)
     (orgtrello-data/put-entity-id     marker current)
     (orgtrello-data/put-entity-action action current)
-    (orgtrello-proxy/http-producer current)))
+    (orgtrello-proxy/--deal-with-entity-action current)))
 
 (defun orgtrello-controller/--checks-then-delegate-action-on-entity-to-proxy (functional-controls action)
   "Execute the FUNCTIONAL-CONTROLS then if all pass, delegate the ACTION to the proxy."
@@ -701,8 +700,6 @@ Return the hashmap (name, id) of the new lists created."
 
 (defun orgtrello-controller/mode-on-hook-fn ()
   "Start org-trello hook function to install some org-trello setup."
-  ;; start the server which does some initialization on its own
-  (orgtrello-server/start)
   ;; buffer-invisibility-spec
   (add-to-invisibility-spec '(org-trello-cbx-property)) ;; for an ellipsis (...) change to '(org-trello-cbx-property . t)
   ;; installing hooks
@@ -717,8 +714,6 @@ Return the hashmap (name, id) of the new lists created."
 
 (defun orgtrello-controller/mode-off-hook-fn ()
   "Stop org-trello hook function to deinstall some org-trello setup."
-  ;; stop the proxy server and webadmin
-  (orgtrello-server/stop)
   ;; remove the invisible property names
   (remove-from-invisibility-spec '(org-trello-cbx-property)) ;; for an ellipsis (...) change to '(org-trello-cbx-property . t)
   ;; removing hooks

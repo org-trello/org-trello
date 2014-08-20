@@ -108,8 +108,6 @@ Please consider upgrading Emacs." emacs-version) "Error message when installing 
 (require 'org-trello-utils)
 (require 'org-trello-setup)
 (require 'org-trello-action)
-(require 'org-trello-server)
-(require 'org-trello-proxy)
 (require 'org-trello-controller)
 (require 'org-trello-buffer)
 
@@ -120,7 +118,7 @@ Please consider upgrading Emacs." emacs-version) "Error message when installing 
 (defun org-trello/proxy-do (action-label action-fn &optional with-save-flag)
   "Given an ACTION-LABEL and an ACTION-FN, execute sync action.
 If WITH-SAVE-FLAG is set, will do a buffer save and reload the org setup."
-  (orgtrello-proxy/deal-with-consumer-msg-controls-or-actions-then-do
+  (orgtrello-action/msg-controls-or-actions-then-do
    action-label
    '(orgtrello-controller/load-keys!
      orgtrello-controller/control-keys!
@@ -134,7 +132,7 @@ If WITH-SAVE-FLAG is set, will do a buffer save and reload the org setup."
 (defun org-trello/proxy-do-and-save (action-label action-fn &optional no-check-flag)
   "Given an ACTION-LABEL and an ACTION-FN, execute sync action.
 If NO-CHECK-FLAG is set, no controls are done."
-  (orgtrello-proxy/deal-with-consumer-msg-controls-or-actions-then-do
+  (orgtrello-action/msg-controls-or-actions-then-do
    action-label
    (if no-check-flag nil '(orgtrello-controller/load-keys! orgtrello-controller/control-keys! orgtrello-controller/setup-properties!))
    action-fn
@@ -150,11 +148,6 @@ If NO-CHECK-FLAG is set, no controls are done."
      orgtrello-controller/control-properties!
      orgtrello-controller/control-encoding!)
    action-fn))
-
-(defun org-trello/reload-server ()
-  "Reload the proxy and the webadmin server."
-  (interactive)
-  (orgtrello-server/reload))
 
 (defun org-trello/abort-sync ()
   "Control first, then if ok, add a comment to the current card."
