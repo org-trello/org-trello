@@ -3,7 +3,7 @@
 #+STYLE: <style> h1,h2,h3 {font-family: arial, helvetica, sans-serif} </style>
 
 * TODO 0.5.x [0%]
-- [ ] Is org-trello over-engineered
+- [ ] Is org-trello over-engineered?
   - [ ] Is proxy useful since emacs still blocks? (It is definitely lots of code)
   - [ ] Can't we simply use 'deferred or 'async library to defer computations?
 - [ ] Archive cards - #181
