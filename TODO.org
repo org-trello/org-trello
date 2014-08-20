@@ -14,7 +14,7 @@
 - [ ] POC: Investigate webhooks - #137
 - [ ] POC: Leverage elnode and clojurescript core.async - #97
 
-* TODO 0.5.2 [25%]
+* IN-PROGRESS 0.5.2 [33%]
 - [-] Is org-trello over-engineered? -> Seems so. [95%]
   - [X] Is proxy useful since emacs still blocks? -> The only thing interesting seems to be the ability to watch running actions. As no one seem to care about it, we can remove it.
   - [X] Can't we simply use 'deferred (or 'async library) to defer computations? -> Yes, building actions (sync, delete) as 'lazy' list (macro) of deferred computations.
@@ -37,8 +37,10 @@
   - [X] Add deferred.el dependency
   - [X] Update org-trello package
   - [ ] Delete/Sync action as deferred computations
-- [ ] Update version
 - [X] Clean README-dev.md about marmalade
+- [X] Update dependencies version
+- [ ] Now that elnode dependency's out of the way, org-trello can be fully built on melpa-stable.
+- [ ] Update version
 - [ ] Release notes
 * DONE 0.5.1 [100%]
 CLOSED: [2014-08-20 Wed 21:00]

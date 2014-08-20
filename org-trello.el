@@ -5,7 +5,7 @@
 ;; Author: Antoine R. Dumont <eniotna.t AT gmail.com>
 ;; Maintainer: Antoine R. Dumont <eniotna.t AT gmail.com>
 ;; Version: 0.5.1
-;; Package-Requires: ((dash "2.7.0") (request "0.2.0") (s "1.9.0") (deferred "0.3.2"))
+;; Package-Requires: ((dash "2.8.0") (request "0.2.0") (s "1.9.0") (deferred "0.3.2"))
 ;; Keywords: org-mode trello sync org-trello
 ;; URL: https://github.com/org-trello/org-trello
 
