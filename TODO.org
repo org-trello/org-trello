@@ -15,7 +15,7 @@
 - [ ] POC: Leverage elnode and clojurescript core.async - #97
 
 * TODO 0.5.2 [25%]
-- [-] Is org-trello over-engineered? -> Seems so. [84%]
+- [-] Is org-trello over-engineered? -> Seems so. [85%]
   - [X] Is proxy useful since emacs still blocks? -> The only thing interesting seems to be the ability to watch running actions. As no one seem to care about it, we can remove it.
   - [X] Can't we simply use 'deferred (or 'async library) to defer computations? -> Yes, building actions (sync, delete) as 'lazy' list (macro) of deferred computations.
   - [X] What about concurrency then? There will be indeed possibilities of concurrent requests.
@@ -32,6 +32,7 @@
   - [X] Get back to synchronous query for sync from trello routines
   - [X] Clean load-org-trello.el up
   - [X] Update README-dev.md about namespace removal
+  - [X] Fix loading of load-org-trello.el code
   - [ ] Add deferred.el dependency
   - [ ] Update org-trello package
   - [ ] Delete/Sync action as deferred computations
