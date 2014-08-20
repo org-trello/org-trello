@@ -13,7 +13,6 @@
 (require 'org-trello-backend)
 (require 'org-trello-buffer)
 (require 'org-trello-input)
-(require 'org-trello-db)
 (require 'org-trello-server)
 (require 'org-trello-proxy)
 
@@ -715,8 +714,6 @@ Return the hashmap (name, id) of the new lists created."
   "Start org-trello hook function to install some org-trello setup."
   ;; start the server which does some initialization on its own
   (orgtrello-server/start)
-  ;; increment the number of buffers with org-trello mode on
-  (orgtrello-db/increment-buffer-size *ORGTRELLO-SERVER/DB*)
   ;; buffer-invisibility-spec
   (add-to-invisibility-spec '(org-trello-cbx-property)) ;; for an ellipsis (...) change to '(org-trello-cbx-property . t)
   ;; installing hooks
@@ -731,8 +728,6 @@ Return the hashmap (name, id) of the new lists created."
 
 (defun orgtrello-controller/mode-off-hook-fn ()
   "Stop org-trello hook function to deinstall some org-trello setup."
-  ;; decrement the number of buffers of 1
-  (orgtrello-db/decrement-buffer-size *ORGTRELLO-SERVER/DB*)
   ;; stop the proxy server and webadmin
   (orgtrello-server/stop)
   ;; remove the invisible property names

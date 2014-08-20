@@ -111,7 +111,6 @@ Please consider upgrading Emacs." emacs-version) "Error message when installing 
 (require 'org-trello-server)
 (require 'org-trello-proxy)
 (require 'org-trello-controller)
-(require 'org-trello-db)
 (require 'org-trello-buffer)
 
 (org-trello/require-cl)
