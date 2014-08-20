@@ -192,7 +192,7 @@ This callback must take a BUFFERNAME, a POSITION and a NAME."
   (--> (orgtrello-buffer/board-id!)
     (orgtrello-api/get-cards it)
     (orgtrello-controller/--update-query-with-org-metadata it (point) (buffer-name) nil 'orgtrello-controller/--sync-buffer-with-trello-data-callback)
-    (orgtrello-proxy/http it sync)))
+    (orgtrello-proxy/sync-from it sync)))
 
 (defun orgtrello-controller/--sync-entity-to-buffer-with-trello-data-callback (buffername &optional position name)
   "Generate a callback which knows the BUFFERNAME with which it must work.
@@ -283,7 +283,7 @@ If WITH-FILTER is set, only the checklist is returned (without its items)."
     (-> (orgtrello-buffer/entry-get-full-metadata!)
       (orgtrello-controller/--dispatch-sync-request 'with-filter)
       (orgtrello-controller/--update-query-with-org-metadata (point) (buffer-name) nil 'orgtrello-controller/--sync-entity-to-buffer-with-trello-data-callback)
-      (orgtrello-proxy/http sync))))
+      (orgtrello-proxy/sync-from sync))))
 
 (defun orgtrello-controller/do-sync-entity-and-structure-from-trello! (&optional sync)
   "Entity (card/checklist/item) synchronization (with its structure) from trello.
@@ -293,7 +293,7 @@ Optionally, SYNC permits to synchronize the query."
     (-> (orgtrello-buffer/entry-get-full-metadata!)
       orgtrello-controller/--dispatch-sync-request
       (orgtrello-controller/--update-query-with-org-metadata (point) (buffer-name) nil 'orgtrello-controller/--sync-entity-and-structure-to-buffer-with-trello-data-callback)
-      (orgtrello-proxy/http sync))))
+      (orgtrello-proxy/sync-from sync))))
 
 (defun orgtrello-controller/--do-delete-card (&optional sync)
   "Delete the card.

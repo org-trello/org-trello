@@ -12,6 +12,22 @@
 (require 'org-trello-cbx)
 (require 'org-trello-action)
 
+(defun orgtrello-proxy/--compute-trello-query (query-map-data)
+  "Build a trello query from the content of QUERY-MAP-DATA."
+  (orgtrello-api/make-query (orgtrello-data/entity-method query-map-data) (orgtrello-data/entity-uri query-map-data) (orgtrello-data/entity-params query-map-data)))
+
+(defun orgtrello-proxy/sync-from (query-map-data &optional sync)
+  "Deal with request QUERY-MAP-DATA from trello.
+The query can be synchronous depending on SYNC variable."
+  (orgtrello-log/msg *OT/TRACE* "Proxy - Request received. Transmitting...")
+  (let* ((position (orgtrello-data/entity-position query-map-data))          ;; position is mandatory
+         (buffer-name (orgtrello-data/entity-buffername query-map-data))     ;; buffer-name is mandatory
+         (standard-callback (orgtrello-data/entity-callback query-map-data)) ;; there is the possibility to transmit the callback from the client to the proxy
+         (standard-callback-fn (when standard-callback standard-callback))   ;; the callback is passed as a string, we want it as a function when defined
+         (query-map (orgtrello-proxy/--compute-trello-query query-map-data)) ;; extracting the query
+         (name (orgtrello-data/entity-name query-map-data)))                 ;; extracting the name of the entity (optional)
+    (orgtrello-query/http-trello query-map sync (when standard-callback-fn (funcall standard-callback-fn buffer-name position name)))))
+
 (defun orgtrello-proxy/--update-buffer-to-save (buffer-name buffers-to-save)
   "Add the BUFFER-NAME to the list of BUFFERS-TO-SAVE if not already present."
   (if (member buffer-name buffers-to-save)
