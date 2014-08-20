@@ -569,20 +569,16 @@ ARGS is not used."
 ARGS is not used."
   (if (file-exists-p (orgtrello-proxy/--compute-lock-filename)) "Timer already running!" :ok))
 
-(require 'deferred)
-
 (defun orgtrello-proxy/--elnode-proxy-consumer (http-con)
   "Consume sync actions (sync/delete) to trello.
 HTTP-CON is the http connection (not used)."
-  (deferred:$
-    (deferred:next
-      (lambda () (orgtrello-action/msg-controls-or-actions-then-do
-                  "Scanning entities to sync"
-                  '(orgtrello-proxy/--check-network-connection orgtrello-proxy/--check-no-running-timer)
-                  'orgtrello-proxy/--consumer-lock-sync-entity-hierarchically-and-do
-                  nil ;; cannot save the buffer
-                  nil ;; do not need to reload the org-trello setup
-                  'do-not-display-log)))));; do no want to log
+  (orgtrello-action/msg-controls-or-actions-then-do
+   "Scanning entities to sync"
+   '(orgtrello-proxy/--check-network-connection orgtrello-proxy/--check-no-running-timer)
+   'orgtrello-proxy/--consumer-lock-sync-entity-hierarchically-and-do
+   nil ;; cannot save the buffer
+   nil ;; do not need to reload the org-trello setup
+   'do-not-display-log));; do no want to log
 
 (defvar *ORGTRELLO/TIMER* nil
   "A timer run by elnode.")
