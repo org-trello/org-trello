@@ -3,9 +3,6 @@
 #+STYLE: <style> h1,h2,h3 {font-family: arial, helvetica, sans-serif} </style>
 
 * TODO 0.5.x [0%]
-- [ ] Is org-trello over-engineered?
-  - [ ] Is proxy useful since emacs still blocks? (It is definitely lots of code)
-  - [ ] Can't we simply use 'deferred or 'async library to defer computations?
 - [ ] Archive cards - #181
 - [ ] Emacs blocks when sync - #164
 - [ ] Improve sync request policy - #58
@@ -17,6 +14,18 @@
 - [ ] POC: Investigate webhooks - #137
 - [ ] POC: Leverage elnode and clojurescript core.async - #97
 
+* TODO 0.5.1 [33%]
+- [X] Remove marmalade remains (release.sh + Makefile)
+- [X] Small refactoring of the main contract
+- [ ] Fix typo
+- [-] Is org-trello over-engineered? -> Seems so.
+  - [X] Is proxy useful since emacs still blocks? -> The only thing interesting seems to be the ability to watch running actions. As no one seem to care about it, we can remove it.
+  - [X] Can't we simply use 'deferred (or 'async library) to defer computations? -> Yes, building actions (sync, delete) as 'lazy' list (macro) of deferred computations.
+  - [X] What about concurrency then? There will be indeed possibilities of concurrent requests.
+  - [ ] What about race conditions?
+  - [ ] Remove state and proxy and let laziness to thy bidding -> Huge rewrites
+- [ ] Update version
+- [ ] Release notes
 * DONE 0.5.0 [100%]
 CLOSED: [2014-08-20 Wed 19:21]
 - [X] Revert 0.4.9 #187 which introduced regressions #186#issuecomment-52423783 and maybe #185
