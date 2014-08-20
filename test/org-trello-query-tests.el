@@ -87,24 +87,24 @@
   (expect '((any . "content%20is%20escaped%20this%20is%20fun") (name . "some%20content%20to%20escape%20voila") (ok . t))
     (orgtrello-query/--prepare-query-params! '((ok . t) (name . "some content to escape voila") (any . "content is escaped this is fun")))))
 
-(expectations (desc "orgtrello-query/--prepare-params-assoc!")
-  (expect '((name . "some data with & keywords hexified") (id . "abc") (other-field . "hexified string"))
-    (->> '((other-field . "hexified string") (id . "abc") (name . "some data with & keywords hexified"))
-         orgtrello-query/--prepare-params-assoc!
-         json-encode
-         orgtrello-proxy/--json-read-from-string)))
+;; (expectations (desc "orgtrello-query/--prepare-params-assoc!")
+;;   (expect '((name . "some data with & keywords hexified") (id . "abc") (other-field . "hexified string"))
+;;     (->> '((other-field . "hexified string") (id . "abc") (name . "some data with & keywords hexified"))
+;;          orgtrello-query/--prepare-params-assoc!
+;;          json-encode
+;;          orgtrello-proxy/--json-read-from-string)))
 
-(expectations (desc "orgtrello-query/--prepare-params-assoc!")
-  (expect '((name . "some%20data%20with%20keywords%20hexified") (id . "abc") (other-field . "hexified%20string"))
-    (-> '((other-field . "hexified string") (id . "abc") (name . "some data with keywords hexified"))
-        orgtrello-query/--prepare-params-assoc!
-        json-encode
-        orgtrello-proxy/--unhexify-data))
-  (expect '((name . "some data with keywords hexified") (id . "abc") (other-field . "hexified string"))
-    (-> '((other-field . "hexified string") (id . "abc") (name . "some data with keywords hexified"))
-        orgtrello-query/--prepare-params-assoc!
-        json-encode
-        (orgtrello-proxy/--unhexify-data t))))
+;; (expectations (desc "orgtrello-query/--prepare-params-assoc!")
+;;   (expect '((name . "some%20data%20with%20keywords%20hexified") (id . "abc") (other-field . "hexified%20string"))
+;;     (-> '((other-field . "hexified string") (id . "abc") (name . "some data with keywords hexified"))
+;;         orgtrello-query/--prepare-params-assoc!
+;;         json-encode
+;;         orgtrello-proxy/--unhexify-data))
+;;   (expect '((name . "some data with keywords hexified") (id . "abc") (other-field . "hexified string"))
+;;     (-> '((other-field . "hexified string") (id . "abc") (name . "some data with keywords hexified"))
+;;         orgtrello-query/--prepare-params-assoc!
+;;         json-encode
+;;         (orgtrello-proxy/--unhexify-data t))))
 
 (expectations (desc "orgtrello-query/--dispatch-http-query")
   (expect 'orgtrello-query/--get         (orgtrello-query/--dispatch-http-query "GET"))

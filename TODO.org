@@ -33,6 +33,7 @@
   - [X] Clean load-org-trello.el up
   - [X] Update README-dev.md about namespace removal
   - [X] Fix loading of load-org-trello.el code
+  - [X] Clean tests up
   - [ ] Add deferred.el dependency
   - [ ] Update org-trello package
   - [ ] Delete/Sync action as deferred computations
