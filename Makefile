@@ -1,7 +1,6 @@
 VERSION=$$(grep "^;; Version: " org-trello.el | cut -f3 -d' ')
 PACKAGE_FOLDER=org-trello-$(VERSION)
 ARCHIVE=$(PACKAGE_FOLDER).tar
-USER=ardumont
 EMACS=emacs
 
 .PHONY: clean
@@ -56,7 +55,7 @@ cleanup-data:
 		~/.emacs.d/elnode/public_html/org-trello/*.lock
 
 release:
-	./release.sh $(VERSION) $(USER)
+	./release.sh $(VERSION)
 
 install-cask:
 	curl -fsSkL https://raw.github.com/cask/cask/master/go | python
