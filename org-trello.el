@@ -161,7 +161,7 @@ If NO-CHECK-FLAG is set, no controls are done."
 (defun org-trello/abort-sync ()
   "Control first, then if ok, add a comment to the current card."
   (interactive)
-  (org-trello/proxy-do "Abort sync activities" 'orgtrello-webadmin/delete-entities!))
+  (message "Transitioning - Not implemented yet!"))
 
 (defun org-trello/add-card-comments ()
   "Control first, then if ok, add a comment to the current card."
