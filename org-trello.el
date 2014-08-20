@@ -126,8 +126,7 @@ If WITH-SAVE-FLAG is set, will do a buffer save and reload the org setup."
      orgtrello-controller/control-keys!
      orgtrello-controller/setup-properties!
      orgtrello-controller/control-properties!
-     orgtrello-controller/control-encoding!
-     orgtrello-controller/reload-proxy-if-not-running!)
+     orgtrello-controller/control-encoding!)
    action-fn
    (when with-save-flag 'do-save-buffer)
    (when with-save-flag 'do-reload-setup)))
@@ -137,7 +136,7 @@ If WITH-SAVE-FLAG is set, will do a buffer save and reload the org setup."
 If NO-CHECK-FLAG is set, no controls are done."
   (orgtrello-proxy/deal-with-consumer-msg-controls-or-actions-then-do
    action-label
-   (if no-check-flag nil '(orgtrello-controller/load-keys! orgtrello-controller/control-keys! orgtrello-controller/setup-properties! orgtrello-controller/reload-proxy-if-not-running!))
+   (if no-check-flag nil '(orgtrello-controller/load-keys! orgtrello-controller/control-keys! orgtrello-controller/setup-properties!))
    action-fn
    'do-save-buffer
    'do-reload-setup))
@@ -149,8 +148,7 @@ If NO-CHECK-FLAG is set, no controls are done."
      orgtrello-controller/control-keys!
      orgtrello-controller/setup-properties!
      orgtrello-controller/control-properties!
-     orgtrello-controller/control-encoding!
-     orgtrello-controller/reload-proxy-if-not-running!)
+     orgtrello-controller/control-encoding!)
    action-fn))
 
 (defun org-trello/reload-server ()
