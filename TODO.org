@@ -23,7 +23,8 @@
   - [ ] Remove state and proxy and let laziness to thy bidding -> Huge rewrites
 - [ ] Update version
 - [ ] Release notes
-* IN-PROGRESS 0.5.1 [100%]
+* DONE 0.5.1 [100%]
+CLOSED: [2014-08-20 Wed 21:00]
 - [X] Remove marmalade remains (release.sh + Makefile)
 - [X] Small refactoring of the main contract
 - [X] Fix bad code (typo caddr)
