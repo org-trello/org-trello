@@ -114,23 +114,22 @@ This will trigger:
 To test that the package, once created, can be installed (using the repository to fetch the dependencies).
 
 ```sh
-make install-file-with-deps-from-marmalade install-file-with-deps-from-melpa
+make install-file-with-deps-from-melpa
 ```
 
 *Note*:
 This will trigger the installation from a local package `org-trello-<VERSION>.tar`.
-First the installation is used with the dependencies fetch from marmalade `make install-file-with-deps-from-marmalade`.
-Second with melpa's - `make install-file-with-deps-from-marmalade`.
+The installation is used with the dependencies fetched from melpa.
 
 *Note 2*
 These are the targets used by the CI (cf. [.travis.yml](./.travis.yml))
 
 ## Full install testing
 
-As we deploy both in marmalade and in melpa, we can ensure that once delivered, the installation is ok using those targets.
+As we deploy in melpa, we can ensure that once delivered, the installation is ok using those targets.
 
 ```sh
-make install-package-from-marmalade install-package-from-melpa
+make install-package-from-melpa
 ```
 
 ## Release
@@ -157,7 +156,7 @@ This will:
 - tag the latest commit from master using the $VERSION you submit to the script (defaulting to the version from the org-trello.el header)
 - push the tag to the upstream branch repository
 - trigger the package target from the Makefile (thus building a new package to the latest version)
-- push the package to marmalade (if you did the configuration for this, otherwise it will fail)
+- Then manual delivery of the tar to the github release page
 
 Note:
 - this is an orchestration of the [release.sh](./release.sh) script
