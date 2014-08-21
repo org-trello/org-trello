@@ -157,17 +157,17 @@ If NO-CHECK-FLAG is set, no controls are done."
 (defun org-trello/add-card-comments ()
   "Control first, then if ok, add a comment to the current card."
   (interactive)
-  (org-trello/log-and-do "Add card comment" 'orgtrello-controller/do-add-card-comment!))
+  (apply 'org-trello/log-and-do '("Add card comment" orgtrello-controller/do-add-card-comment!)))
 
 (defun org-trello/show-card-comments ()
   "Control first, then if ok, show a simple buffer with the current card's last comments."
   (interactive)
-  (org-trello/log-and-do "Display current card's last comments" 'orgtrello-controller/do-show-card-comments!))
+  (apply 'org-trello/log-and-do '("Display current card's last comments" orgtrello-controller/do-show-card-comments!)))
 
 (defun org-trello/show-board-labels ()
   "Control first, then if ok, show a simple buffer with the current board's labels."
   (interactive)
-  (org-trello/log-and-do "Display current board's labels" 'orgtrello-controller/do-show-board-labels!))
+  (apply 'org-trello/log-and-do '("Display current board's labels" orgtrello-controller/do-show-board-labels!)))
 
 (defun org-trello/sync-entity (&optional modifier)
   "Execute the sync of an entity to trello.
@@ -208,22 +208,22 @@ If MODIFIER is non nil, execute all entities removal from trello and buffer."
 (defun org-trello/kill-all-entities ()
   "Execute all entities removal from trello and buffer."
   (interactive)
-  (org-trello/log-and-do "Request - 'delete entities'" 'orgtrello-controller/do-delete-entities 'save))
+  (apply 'org-trello/log-and-do '("Request - 'delete entities'" orgtrello-controller/do-delete-entities 'save)))
 
 (defun org-trello/install-key-and-token ()
   "No control, trigger the setup installation of the key and the read/write token."
   (interactive)
-  (org-trello/log-do-and-save "Setup key and token" 'orgtrello-controller/do-install-key-and-token 'do-no-checks))
+  (apply 'org-trello/log-do-and-save '("Setup key and token" orgtrello-controller/do-install-key-and-token 'do-no-checks)))
 
 (defun org-trello/install-board-and-lists-ids ()
   "Control first, then if ok, trigger the setup installation of the trello board to sync with."
   (interactive)
-  (org-trello/log-do-and-save "Install boards and lists" 'orgtrello-controller/do-install-board-and-lists))
+  (apply 'org-trello/log-do-and-save '("Install boards and lists" orgtrello-controller/do-install-board-and-lists)))
 
 (defun org-trello/update-board-metadata ()
   "Control first, then if ok, trigger the update of the informations about the board."
   (interactive)
-  (org-trello/log-do-and-save "Update board information" 'orgtrello-controller/do-update-board-metadata!))
+  (apply 'org-trello/log-do-and-save '("Update board information" orgtrello-controller/do-update-board-metadata!)))
 
 (defun org-trello/jump-to-card (&optional modifier)
   "Jump from current card to trello card in browser.
@@ -236,12 +236,12 @@ If MODIFIER is not nil, jump from current card to board."
 (defun org-trello/jump-to-trello-board ()
   "Jump to current trello board."
   (interactive)
-  (org-trello/do 'orgtrello-controller/jump-to-board!))
+  (apply 'org-trello/do '(orgtrello-controller/jump-to-board!)))
 
 (defun org-trello/create-board ()
   "Control first, then if ok, trigger the board creation."
   (interactive)
-  (org-trello/log-do-and-save "Create board and lists" 'orgtrello-controller/do-create-board-and-lists))
+  (apply 'org-trello/log-do-and-save '("Create board and lists" orgtrello-controller/do-create-board-and-lists)))
 
 (defun org-trello/assign-me (&optional modifier)
   "Assign oneself to the card.
@@ -255,12 +255,14 @@ If MODIFIER is not nil, unassign oneself from the card."
 (defun org-trello/check-setup ()
   "Check the current setup."
   (interactive)
-  (org-trello/do (lambda () (orgtrello-log/msg *OT/NOLOG* "Setup ok!"))))
+  (apply 'org-trello/do '((lambda () (orgtrello-log/msg *OT/NOLOG* "Setup ok!")))))
 
 (defun org-trello/delete-setup ()
   "Delete the current setup."
   (interactive)
-  (org-trello/log-and-do "Delete current org-trello setup" 'orgtrello-controller/delete-setup! 'do-save-buffer))
+  (apply 'org-trello/log-and-do '("Delete current org-trello setup" orgtrello-controller/delete-setup! do-save-buffer)))
+
+;;;;;; End interactive commands
 
 (defun org-trello/--startup-message (prefix-keybinding)
   "Compute org-trello's startup message with the PREFIX-KEYBINDING."
