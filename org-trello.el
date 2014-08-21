@@ -122,9 +122,8 @@ Please consider upgrading Emacs." emacs-version) "Error message when installing 
   (lexical-let ((computation comp))
     (deferred:$
       (deferred:next
-        (lambda () (apply (car computation) (cdr computation))))
-      (deferred:nextc it
-        (lambda () (orgtrello-log/msg *OT/INFO* "computation done!"))))))
+        (lambda () (with-local-quit
+                     (apply (car computation) (cdr computation))))))))
 
 (defun org-trello/log-and-do (action-label action-fn &optional with-save-flag)
   "Given an ACTION-LABEL and an ACTION-FN, execute sync action.
