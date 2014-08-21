@@ -13,7 +13,7 @@
 - [ ] POC: Investigate webhooks - #137
 - [ ] POC: Leverage elnode and clojurescript core.async - #97
 
-* IN-PROGRESS 0.5.3 [40%]
+* IN-PROGRESS 0.5.3 [50%]
 - [X] Backlog
 - [-] Emacs blocks when sync - #164 - Deferred the sync/delete actions [80%]
   - [X] Sync to
@@ -22,6 +22,7 @@
   - [X] Cancel running actions
   - [ ] Render the execution asynchronous
 - [X] Fix caret movement problem (At the end of an action, the caret must be at the same position as before)
+- [X] Improve logging system to prefix org-trello message with 'org-trello - '
 - [ ] Update version
 - [ ] Release notes
 * DONE 0.5.2 [100%]
