@@ -18,7 +18,8 @@
 - [ ] Deferred the sync/delete actions
 - [ ] Update version
 - [ ] Release notes
-* IN-PROGRESS 0.5.2 [100%]
+* DONE 0.5.2 [100%]
+CLOSED: [2014-08-21 Thu 03:41]
 - [X] Remove org-trello's over engineered bricks (proxy, elnode, webadmin) -> this will render it synchronous again. [100%]
   - [X] Is proxy useful since emacs still blocks? -> The only thing interesting seems to be the ability to watch running actions. As no one seem to care about it, we can remove it.
   - [X] Can't we simply use 'deferred (or 'async library) to defer computations? -> Yes, building actions (sync, delete) as 'lazy' list (macro) of deferred computations.
