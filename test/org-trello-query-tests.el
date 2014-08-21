@@ -50,71 +50,11 @@
   (expect :closed (orgtrello-data/entity-closed (orgtrello-hash/make-properties '((:closed . :closed)))))
   (expect nil     (orgtrello-data/entity-closed (orgtrello-hash/make-properties '((no . :some-state))))))
 
-(expectations
- (desc "orgtrello-query/--prepare-params-assoc!")
- (expect '((id . "id") (name . "some%20content%20to%20escape%20voila"))
-         (orgtrello-query/--prepare-params-assoc! '((id . "id") (name . "some content to escape voila"))))
- (expect '((id . "id") (name . "some%20content%20to%20escape%20voila") (any . "content%20is%20escaped%20this%20is%20fun"))
-         (orgtrello-query/--prepare-params-assoc! '((id . "id") (name . "some content to escape voila") (any . "content is escaped this is fun"))))
- (expect '((id) (name . "some%20content%20to%20escape%20voila") (any . "content%20is%20escaped%20this%20is%20fun"))
-         (orgtrello-query/--prepare-params-assoc! '((id) (name . "some content to escape voila") (any . "content is escaped this is fun"))))
- (expect '((ok . t) (name . "some%20content%20to%20escape%20voila") (any . "content%20is%20escaped%20this%20is%20fun"))
-         (orgtrello-query/--prepare-params-assoc! '((ok . t) (name . "some content to escape voila") (any . "content is escaped this is fun"))))
- (expect '((ok . t) (params (name . "some%20content%20to%20escape%20voila") (field . "some%20field")))
-         (orgtrello-query/--prepare-params-assoc! '((ok . t) (params (name . "some content to escape voila")
-                                                                     (field . "some field"))))))
-
-(expectations
- (desc "orgtrello-query/read-data")
- (expect '((id . "id") (name . "some content to escape voila"))
-         (orgtrello-query/read-data '((id . "id") (name . "some%20content%20to%20escape%20voila"))))
- (expect '((id . "id") (name . "some content to escape voila") (any . "content is escaped this is fun"))
-         (orgtrello-query/read-data '((id . "id") (name . "some%20content%20to%20escape%20voila") (any . "content%20is%20escaped%20this%20is%20fun"))))
- (expect '((id) (name . "some content to escape voila") (any . "content is escaped this is fun"))
-         (orgtrello-query/read-data '((id) (name . "some%20content%20to%20escape%20voila") (any . "content%20is%20escaped%20this%20is%20fun"))))
- (expect '((ok . t) (name . "some content to escape voila") (any . "content is escaped this is fun"))
-         (orgtrello-query/read-data '((ok . t) (name . "some%20content%20to%20escape%20voila") (any . "content%20is%20escaped%20this%20is%20fun"))))
- (expect '((ok . t) (params (name . "some content to escape voila") (field . "some field")))
-         (orgtrello-query/read-data '((ok . t) (params (name . "some%20content%20to%20escape%20voila") (field . "some%20field"))))))
-
-(expectations (desc "orgtrello-query/--prepare-query-params!")
-  (expect '((name . "some%20content%20to%20escape%20voila") (id . "id"))
-    (orgtrello-query/--prepare-query-params! '((id . "id") (name . "some content to escape voila"))))
-  (expect '((any . "content%20is%20escaped%20this%20is%20fun") (name . "some%20content%20to%20escape%20voila") (id . "id"))
-    (orgtrello-query/--prepare-query-params! '((id . "id") (name . "some content to escape voila") (any . "content is escaped this is fun"))))
-  (expect '((any . "content%20is%20escaped%20this%20is%20fun") (name . "some%20content%20to%20escape%20voila") (id))
-    (orgtrello-query/--prepare-query-params! '((id) (name . "some content to escape voila") (any . "content is escaped this is fun"))))
-  (expect '((any . "content%20is%20escaped%20this%20is%20fun") (name . "some%20content%20to%20escape%20voila") (ok . t))
-    (orgtrello-query/--prepare-query-params! '((ok . t) (name . "some content to escape voila") (any . "content is escaped this is fun")))))
-
-;; (expectations (desc "orgtrello-query/--prepare-params-assoc!")
-;;   (expect '((name . "some data with & keywords hexified") (id . "abc") (other-field . "hexified string"))
-;;     (->> '((other-field . "hexified string") (id . "abc") (name . "some data with & keywords hexified"))
-;;          orgtrello-query/--prepare-params-assoc!
-;;          json-encode
-;;          orgtrello-proxy/--json-read-from-string)))
-
-;; (expectations (desc "orgtrello-query/--prepare-params-assoc!")
-;;   (expect '((name . "some%20data%20with%20keywords%20hexified") (id . "abc") (other-field . "hexified%20string"))
-;;     (-> '((other-field . "hexified string") (id . "abc") (name . "some data with keywords hexified"))
-;;         orgtrello-query/--prepare-params-assoc!
-;;         json-encode
-;;         orgtrello-proxy/--unhexify-data))
-;;   (expect '((name . "some data with keywords hexified") (id . "abc") (other-field . "hexified string"))
-;;     (-> '((other-field . "hexified string") (id . "abc") (name . "some data with keywords hexified"))
-;;         orgtrello-query/--prepare-params-assoc!
-;;         json-encode
-;;         (orgtrello-proxy/--unhexify-data t))))
-
 (expectations (desc "orgtrello-query/--dispatch-http-query")
   (expect 'orgtrello-query/--get         (orgtrello-query/--dispatch-http-query "GET"))
   (expect 'orgtrello-query/--post-or-put (orgtrello-query/--dispatch-http-query "POST"))
   (expect 'orgtrello-query/--post-or-put (orgtrello-query/--dispatch-http-query "PUT"))
   (expect 'orgtrello-query/--delete      (orgtrello-query/--dispatch-http-query "DELETE")))
-
-(expectations
-  (expect (downcase "%28%29%2A%25%21%24%26%27%2B%2C%3B%3D%20content%20is%20escaped%20this%20is%20fun%20ain%20t%20it")
-    (downcase (funcall orgtrello-query/--hexify "()*%!$&'+,;= content is escaped this is fun ain t it"))))
 
 (provide 'org-trello-query-tests)
 ;;; org-trello-query-tests.el ends here

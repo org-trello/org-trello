@@ -18,7 +18,7 @@
 - [ ] Deferred the sync/delete actions
 - [ ] Update version
 - [ ] Release notes
-* IN-PROGRESS 0.5.2 [87%]
+* IN-PROGRESS 0.5.2 [88%]
 - [X] Remove org-trello's over engineered bricks (proxy, elnode, webadmin) -> this will render it synchronous again. [100%]
   - [X] Is proxy useful since emacs still blocks? -> The only thing interesting seems to be the ability to watch running actions. As no one seem to care about it, we can remove it.
   - [X] Can't we simply use 'deferred (or 'async library) to defer computations? -> Yes, building actions (sync, delete) as 'lazy' list (macro) of deferred computations.
@@ -45,6 +45,7 @@
 - [X] Update dependencies version
 - [X] Now that elnode, esxml, db dependencies' are out of the way, org-trello can be fully built on melpa-stable.
 - [X] Update version
+- [X] Clean dead code
 - [ ] Release notes
 * DONE 0.5.1 [100%]
 CLOSED: [2014-08-20 Wed 21:00]
