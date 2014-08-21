@@ -116,26 +116,28 @@ Please consider upgrading Emacs." emacs-version) "Error message when installing 
 
 
 
-(defun org-trello/apply (comp &optional current-buffer-to-save reload-org-setup)
+(defun org-trello/apply (comp &optional current-buffer-to-save reload-org-setup nolog-p)
   "Apply org-trello computation COMP.
 When CURRENT-BUFFER-TO-SAVE (buffer name) is provided, save such buffer.
-When RELOAD-ORG-SETUP is provided, reload the org setup."
+When RELOAD-ORG-SETUP is provided, reload the org setup.
+when NOLOG-P is specified, no output log."
   (lexical-let ((computation    comp)
                 (buffer-to-save current-buffer-to-save)
-                (reload-setup   reload-org-setup))
+                (reload-setup   reload-org-setup)
+                (nolog-flag     nolog-p))
     (deferred:$
       (deferred:next
         (lambda () (save-excursion
                      (with-local-quit
                        (apply (car computation) (cdr computation))))))
+      (deferred:error it
+        (lambda (x) (orgtrello-log/msg *OT/ERROR* "org-trello - Problem during execution - '%s'!" x)))
       (deferred:nextc it
         (lambda ()
           (when buffer-to-save (with-current-buffer buffer-to-save
                                  (call-interactively 'save-buffer)))
           (when reload-setup (orgtrello-action/reload-setup!))
-          (orgtrello-log/msg *OT/INFO* "org-trello - Done!")))
-      (deferred:error it
-        (lambda (x) (orgtrello-log/msg *OT/ERROR* "org-trello - Problem during execution - '%s'!" x))))))
+          (unless nolog-flag (orgtrello-log/msg *OT/INFO* "org-trello - Done!")))))))
 
 (defun org-trello/log-strict-checks-and-do (action-label action-fn &optional with-save-flag)
   "Given an ACTION-LABEL and an ACTION-FN, execute sync action.
@@ -155,16 +157,6 @@ If NO-CHECK-FLAG is set, no controls are done."
   (orgtrello-action/msg-controls-or-actions-then-do
    action-label
    (if no-check-flag nil '(orgtrello-controller/load-keys! orgtrello-controller/control-keys! orgtrello-controller/setup-properties!))
-   action-fn))
-
-(defun org-trello/checks-and-do (action-fn)
-  "Check and if controls are ok, execute ACTION-FN."
-  (orgtrello-action/controls-or-actions-then-do
-   '(orgtrello-controller/load-keys!
-     orgtrello-controller/control-keys!
-     orgtrello-controller/setup-properties!
-     orgtrello-controller/control-properties!
-     orgtrello-controller/control-encoding!)
    action-fn))
 
 (defun org-trello/abort-sync ()
@@ -251,14 +243,16 @@ If MODIFIER is non nil, execute all entities removal from trello and buffer."
   "Jump from current card to trello card in browser.
 If MODIFIER is not nil, jump from current card to board."
   (interactive "P")
-  (org-trello/apply (if modifier
-                        '(org-trello/jump-to-trello-board)
-                      '(org-trello/checks-and-do orgtrello-controller/jump-to-card!))))
+  (org-trello/apply (cons 'org-trello/log-strict-checks-and-do
+                          (if modifier
+                              '("org-trello - Jump to board" orgtrello-controller/jump-to-board!)
+                            '("org-trello - Jump to card" orgtrello-controller/jump-to-card!)))
+                    nil nil 'no-log))
 
 (defun org-trello/jump-to-trello-board ()
   "Jump to current trello board."
   (interactive)
-  (org-trello/apply '(org-trello/checks-and-do orgtrello-controller/jump-to-board!)))
+  (org-trello/apply '(org-trello/log-strict-checks-and-do "org-trello - Jump to board" orgtrello-controller/jump-to-board!) nil nil 'no-log))
 
 (defun org-trello/create-board ()
   "Control first, then if ok, trigger the board creation."
@@ -278,7 +272,7 @@ If MODIFIER is not nil, unassign oneself from the card."
 (defun org-trello/check-setup ()
   "Check the current setup."
   (interactive)
-  (org-trello/apply '(org-trello/checks-and-do (lambda () (orgtrello-log/msg *OT/NOLOG* "Setup ok!")))))
+  (org-trello/apply '(org-trello/log-strict-checks-and-do "org-trello - Checking setup." (lambda () (orgtrello-log/msg *OT/NOLOG* "org-trello - Setup ok!"))) nil nil 'no-log))
 
 (defun org-trello/delete-setup ()
   "Delete the current setup."
@@ -288,7 +282,7 @@ If MODIFIER is not nil, unassign oneself from the card."
 (defun org-trello/help-describing-bindings ()
   "A simple message to describe the standard bindings used."
   (interactive)
-  (org-trello/apply `(orgtrello-log/msg 0 ,(org-trello/--help-describing-bindings-template *ORGTRELLO/MODE-PREFIX-KEYBINDING* *org-trello-interactive-command-binding-couples*))))
+  (org-trello/apply `(orgtrello-log/msg 0 ,(org-trello/--help-describing-bindings-template *ORGTRELLO/MODE-PREFIX-KEYBINDING* *org-trello-interactive-command-binding-couples*)) nil nil 'no-log))
 
 ;;;;;; End interactive commands
 
