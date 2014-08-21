@@ -63,19 +63,18 @@ Move the cursor position."
                 (marker-id         (orgtrello-data/entity-id-or-marker entity-to-sync))
                 (entity-name       (orgtrello-data/entity-name entity-to-sync)))
     (function* (lambda (&key data &allow-other-keys)
-                 (orgtrello-action/safe-wrap
-                  (let ((entry-new-id (orgtrello-data/entity-id data)))
-                    (with-current-buffer entry-buffer-name
-                      ;; will update via tag the trello id of the new persisted data (if needed)
-                      (save-excursion
-                        ;; get back to the buffer and update the id if need be
-                        (-when-let (str-msg (when (orgtrello-proxy/--get-back-to-marker marker-id data)
-                                              (-if-let (entry-id (when (orgtrello-data/id-p marker-id) marker-id)) ;; Already present, we do nothing on the buffer
-                                                  (format "Entity '%s' with id '%s' synced!" entity-name entry-id)
-                                                (let ((entry-name (orgtrello-data/entity-name data))) ;; not present, this was just created, we add a simple property
-                                                  (orgtrello-buffer/set-property *ORGTRELLO/ID* entry-new-id)
-                                                  (format "Newly entity '%s' with id '%s' synced!" entry-name entry-new-id)))))
-                          (orgtrello-log/msg *OT/INFO* str-msg))))))))))
+                 (let ((entry-new-id (orgtrello-data/entity-id data)))
+                   (with-current-buffer entry-buffer-name
+                     ;; will update via tag the trello id of the new persisted data (if needed)
+                     (save-excursion
+                       ;; get back to the buffer and update the id if need be
+                       (-when-let (str-msg (when (orgtrello-proxy/--get-back-to-marker marker-id data)
+                                             (-if-let (entry-id (when (orgtrello-data/id-p marker-id) marker-id)) ;; Already present, we do nothing on the buffer
+                                                 (format "Entity '%s' with id '%s' synced!" entity-name entry-id)
+                                               (let ((entry-name (orgtrello-data/entity-name data))) ;; not present, this was just created, we add a simple property
+                                                 (orgtrello-buffer/set-property *ORGTRELLO/ID* entry-new-id)
+                                                 (format "Newly entity '%s' with id '%s' synced!" entry-name entry-new-id)))))
+                         (orgtrello-log/msg *OT/INFO* str-msg)))))))))
 
 (defun orgtrello-proxy/--dispatch-action (action)
   "Compute the action function depending on the ACTION (sync, delete) to execute."
@@ -284,14 +283,13 @@ If the checks are ko, the error message is returned."
                 (marker            (orgtrello-data/entity-id entity-to-del))
                 (level             (orgtrello-data/entity-level entity-to-del)))
     (lambda (&rest response)
-      (orgtrello-action/safe-wrap
-       (with-current-buffer entry-buffer-name
-         (save-excursion
-           (when (orgtrello-proxy/--getting-back-to-marker marker)
-             (-> (orgtrello-buffer/entry-get-full-metadata!)
-               orgtrello-data/current
-               orgtrello-proxy/delete-region
-               funcall))))))))
+      (with-current-buffer entry-buffer-name
+        (save-excursion
+          (when (orgtrello-proxy/--getting-back-to-marker marker)
+            (-> (orgtrello-buffer/entry-get-full-metadata!)
+              orgtrello-data/current
+              orgtrello-proxy/delete-region
+              funcall)))))))
 
 (defun orgtrello-proxy/--card-delete (card-meta &optional parent-meta)
   "Deal with the deletion query of a CARD-META.

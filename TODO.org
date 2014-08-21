@@ -14,13 +14,14 @@
 - [ ] POC: Investigate webhooks - #137
 - [ ] POC: Leverage elnode and clojurescript core.async - #97
 
-* IN-PROGRESS 0.5.3 [25%]
+* IN-PROGRESS 0.5.3 [40%]
 - [X] Backlog
 - [ ] Deferred the sync/delete actions [0%]
   - [ ] Sync to
   - [ ] Sync from
   - [ ] Delete
   - [ ] Cancel running actions
+- [X] Fix caret movement problem (At the end of an action, the caret must be at the same position as before)
 - [ ] Update version
 - [ ] Release notes
 * DONE 0.5.2 [100%]

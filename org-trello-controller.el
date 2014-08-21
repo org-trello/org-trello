@@ -182,8 +182,7 @@ This callback must take a BUFFERNAME, a POSITION and a NAME."
                    orgtrello-backend/compute-full-cards-from-trello!                       ;; slow computation with network access
                    (orgtrello-data/merge-entities-trello-and-org entities-from-org-buffer) ;; slow merge computation
                    ((lambda (entry) (orgtrello-controller/--cleanup-org-entries) entry))   ;; hack to clean the org entries just before synchronizing the buffer
-                   (orgtrello-controller/--sync-buffer-with-trello-data buffer-name)
-                   (orgtrello-action/safe-wrap (progn (goto-char position) (orgtrello-log/msg *OT/INFO* "Synchronizing the trello and org data merge - done!"))))))))
+                   (orgtrello-controller/--sync-buffer-with-trello-data buffer-name))))))
 
 (defun orgtrello-controller/do-sync-full-file-from-trello! (&optional sync)
   "Full org-mode file synchronisation. Beware, this will block emacs as the request is synchronous."
@@ -201,19 +200,15 @@ This callback must take a BUFFERNAME, a POSITION and a NAME."
                 (pos         position))
     (function* (lambda (&key data &allow-other-keys) "Synchronize the buffer with the response data."
                  (orgtrello-log/msg *OT/TRACE* "proxy - response data: %S" data)
-                 (orgtrello-action/safe-wrap
-                  (save-excursion
-                    (goto-char pos)
-                    (point-at-bol)
-                    (org-show-subtree)
-                    (funcall
-                     (cond ((orgtrello-data/entity-card-p data)      'orgtrello-buffer/overwrite-and-merge-card-header!)
-                           ((orgtrello-data/entity-checklist-p data) 'orgtrello-buffer/overwrite-checklist-header!)
-                           ((orgtrello-data/entity-item-p data)      'orgtrello-buffer/overwrite-item!))
-                     data))
-                  (progn
-                    (goto-char pos)
-                    (orgtrello-log/msg *OT/INFO* "Synchronizing the trello and org data merge - done!")))))))
+                 (save-excursion
+                   (goto-char pos)
+                   (point-at-bol)
+                   (org-show-subtree)
+                   (funcall
+                    (cond ((orgtrello-data/entity-card-p data)      'orgtrello-buffer/overwrite-and-merge-card-header!)
+                          ((orgtrello-data/entity-checklist-p data) 'orgtrello-buffer/overwrite-checklist-header!)
+                          ((orgtrello-data/entity-item-p data)      'orgtrello-buffer/overwrite-item!))
+                    data))))))
 
 (defun orgtrello-controller/fetch-and-overwrite-card! (card)
   "Given a card, retrieve latest information from trello and overwrite in current buffer."
@@ -246,21 +241,17 @@ This callback must take a BUFFERNAME, a POSITION and a NAME."
                 (pos         position))
     (function* (lambda (&key data &allow-other-keys) "Synchronize the buffer with the response data."
                  (orgtrello-log/msg *OT/TRACE* "proxy - response data: %S" data)
-                 (orgtrello-action/safe-wrap
-                  (save-excursion
-                    ;; buffer manipulation
-                    (goto-char pos)
-                    (point-at-bol)
-                    (org-show-subtree)
-                    ;; data manipulation + computations
-                    (funcall
-                     (cond ((orgtrello-data/entity-card-p data)      'orgtrello-controller/fetch-and-overwrite-card!)
-                           ((orgtrello-data/entity-checklist-p data) 'orgtrello-controller/fetch-and-overwrite-checklist!)
-                           ((orgtrello-data/entity-item-p data)      'orgtrello-buffer/overwrite-item!))
-                     data))
-                  (progn
-                    (goto-char pos)
-                    (orgtrello-log/msg *OT/INFO* "Synchronizing the trello and org data merge - done!")))))))
+                 (save-excursion
+                   ;; buffer manipulation
+                   (goto-char pos)
+                   (point-at-bol)
+                   (org-show-subtree)
+                   ;; data manipulation + computations
+                   (funcall
+                    (cond ((orgtrello-data/entity-card-p data)      'orgtrello-controller/fetch-and-overwrite-card!)
+                          ((orgtrello-data/entity-checklist-p data) 'orgtrello-controller/fetch-and-overwrite-checklist!)
+                          ((orgtrello-data/entity-item-p data)      'orgtrello-buffer/overwrite-item!))
+                    data))))))
 
 (defun orgtrello-controller/--dispatch-sync-request (entity &optional with-filter)
   "Dispatch the sync request creation depending on the nature of the ENTITY.

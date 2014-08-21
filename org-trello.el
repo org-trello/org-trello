@@ -126,8 +126,9 @@ When RELOAD-ORG-SETUP is provided, reload the org setup."
                 (reload-setup     reload-org-setup))
     (deferred:$
       (deferred:next
-        (lambda () (with-local-quit
-                     (apply (car computation) (cdr computation)))))
+        (lambda () (save-excursion
+                     (with-local-quit
+                       (apply (car computation) (cdr computation))))))
       (deferred:nextc it
         (lambda ()
           (when buffer-to-save (with-current-buffer buffer-to-save

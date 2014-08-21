@@ -10,19 +10,6 @@
   "Reload org-trello setup."
   (org-set-regexps-and-options))
 
-(defmacro orgtrello-action/safe-wrap (fn &rest clean-up)
-  "A macro to deal with interception of error when executing the FN call.
-The CLEAN-UP body is done whether error are caught or not."
-  `(unwind-protect
-       (let (retval)
-         (condition-case ex
-             (setq retval (progn ,fn))
-           ('error
-            (message (format "### org-trello ### Caught exception: [%s]" ex))
-            (setq retval (cons 'exception (list ex)))))
-         retval)
-     ,@clean-up))
-
 (defun orgtrello-action/--execute-controls (controls-or-actions-fns &optional entity)
   "Given CONTROLS-OR-ACTIONS-FNS, execute them and return the results.
 ENTITY is an optional parameter to pass to the list of functions."
@@ -70,10 +57,7 @@ If all controls are ok, then execute the parameter-less FN-TO-EXECUTE.
 `(Optionally)`
 if NOLOG-P is set, this will not log anything."
   (unless nolog-p (orgtrello-log/msg *OT/INFO* (concat msg "...")))
-  ;; now execute the controls and the main action
-  (orgtrello-action/safe-wrap
-   (orgtrello-action/controls-or-actions-then-do control-or-action-fns fn-to-execute nolog-p)
-   (unless nolog-p (orgtrello-log/msg *OT/INFO* (concat msg " - done!")))))
+  (orgtrello-action/controls-or-actions-then-do control-or-action-fns fn-to-execute nolog-p))
 
 (defun orgtrello-action/--too-deep-level (meta &optional parent-meta grandparent-meta)
   "Given a META and optional PARENT-META and GRANDPARENT-META, deal with too deep level."
