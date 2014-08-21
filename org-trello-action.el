@@ -10,9 +10,8 @@
   "Reload orgtrello setup."
   (org-set-regexps-and-options))
 
-
 (defmacro orgtrello-action/safe-wrap (fn &rest clean-up)
-  "A macro to deal with intercept uncaught error when executing the FN call.
+  "A macro to deal with interception of error when executing the FN call.
 The CLEAN-UP body is done whether error are caught or not."
   `(unwind-protect
        (let (retval)
