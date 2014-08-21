@@ -175,8 +175,8 @@ If MODIFIER is non nil, execute the sync entity from trello."
   (interactive "P")
   (apply 'org-trello/proxy-do
          (if modifier
-             '("Request 'sync entity from trello'" orgtrello-controller/do-sync-entity-from-trello!)
-           '("Request 'sync entity to trello'" orgtrello-controller/do-sync-entity-to-trello!))))
+             '("Request 'sync entity from trello'" orgtrello-controller/do-sync-entity-from-trello! 'save)
+           '("Request 'sync entity to trello'" orgtrello-controller/do-sync-entity-to-trello! 'save))))
 
 (defun org-trello/sync-full-entity (&optional modifier)
   "Execute the sync of an entity and its structure to trello.
@@ -184,8 +184,8 @@ If MODIFIER is non nil, execute the sync entity and its structure from trello."
   (interactive "P")
   (apply 'org-trello/proxy-do
          (if modifier
-             '("Request 'sync entity with structure from trello" orgtrello-controller/do-sync-entity-and-structure-from-trello!)
-           '("Request 'sync entity with structure to trello" orgtrello-controller/do-sync-full-entity-to-trello!))))
+             '("Request 'sync entity with structure from trello" orgtrello-controller/do-sync-entity-and-structure-from-trello! 'save)
+           '("Request 'sync entity with structure to trello" orgtrello-controller/do-sync-full-entity-to-trello! 'save))))
 
 (defun org-trello/sync-buffer (&optional modifier)
   "Execute the sync of the entire buffer to trello.
@@ -193,8 +193,8 @@ If MODIFIER is non nil, execute the sync of the entire buffer from trello."
   (interactive "P")
   (apply 'org-trello/proxy-do
          (if modifier
-             '("Request 'sync org buffer from trello board'" orgtrello-controller/do-sync-full-file-from-trello!)
-           '("Request 'sync org buffer to trello board'" orgtrello-controller/do-sync-full-file-to-trello!))))
+             '("Request 'sync org buffer from trello board'" orgtrello-controller/do-sync-full-file-from-trello! 'save)
+           '("Request 'sync org buffer to trello board'" orgtrello-controller/do-sync-full-file-to-trello! 'save))))
 
 (defun org-trello/kill-entity (&optional modifier)
   "Execute the entity removal from trello and the buffer.
@@ -202,13 +202,13 @@ If MODIFIER is non nil, execute all entities removal from trello and buffer."
   (interactive "P")
   (apply 'org-trello/proxy-do
          (if modifier
-             '("Request - 'delete entities'" orgtrello-controller/do-delete-entities)
-           '("Request 'delete entity'" orgtrello-controller/do-delete-simple))))
+             '("Request - 'delete entities'" orgtrello-controller/do-delete-entities 'save)
+           '("Request 'delete entity'" orgtrello-controller/do-delete-simple 'save))))
 
 (defun org-trello/kill-all-entities ()
   "Execute all entities removal from trello and buffer."
   (interactive)
-  (org-trello/proxy-do "Request - 'delete entities'" 'orgtrello-controller/do-delete-entities))
+  (org-trello/proxy-do "Request - 'delete entities'" 'orgtrello-controller/do-delete-entities 'save))
 
 (defun org-trello/install-key-and-token ()
   "No control, trigger the setup installation of the key and the read/write token."

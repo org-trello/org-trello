@@ -18,8 +18,8 @@
 - [ ] Deferred the sync/delete actions
 - [ ] Update version
 - [ ] Release notes
-* IN-PROGRESS 0.5.2 [33%]
-- [-] Is org-trello over-engineered? -> Seems so. [95%]
+* IN-PROGRESS 0.5.2 [62%]
+- [X] Is org-trello over-engineered? -> Seems so. [100%]
   - [X] Is proxy useful since emacs still blocks? -> The only thing interesting seems to be the ability to watch running actions. As no one seem to care about it, we can remove it.
   - [X] Can't we simply use 'deferred (or 'async library) to defer computations? -> Yes, building actions (sync, delete) as 'lazy' list (macro) of deferred computations.
   - [X] What about concurrency then? There will be indeed possibilities of concurrent requests.
@@ -40,7 +40,7 @@
   - [X] Clean tests up
   - [X] Update org-trello package
 - [X] Fix bug regarding sync-entity and structure (apparently, there is a bad limit computation and this syncs the all buffer)
-- [ ] Fix save buffer at the end of the sync actions
+- [X] Fix save buffer at the end of the sync actions
 - [X] Clean README-dev.md about marmalade
 - [X] Update dependencies version
 - [ ] Now that elnode, esxml, db dependencies' are out of the way, org-trello can be fully built on melpa-stable.
