@@ -4,7 +4,6 @@
 
 * TODO 0.5.x [0%]
 - [ ] Archive cards - #181
-- [ ] Emacs blocks when sync - #164
 - [ ] Improve sync request policy - #58
 - [ ] Use active region - #130
 - [ ] One command to sync them all - #59
@@ -16,7 +15,7 @@
 
 * IN-PROGRESS 0.5.3 [40%]
 - [X] Backlog
-- [-] Deferred the sync/delete actions [80%]
+- [-] Emacs blocks when sync - #164 - Deferred the sync/delete actions [80%]
   - [X] Sync to
   - [X] Sync from
   - [X] Delete
