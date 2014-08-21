@@ -485,9 +485,7 @@ SYNC flag permit to synchronize the http query."
     (->> (orgtrello-controller/--compute-metadata! board-name board-id board-lists-hash-name-id board-users-hash-name-id user-me board-labels update-todo-keywords)
       (mapc (lambda (it) (insert it "\n"))))
     (goto-char (point-min))
-    (org-cycle)
-    (save-buffer)
-    (orgtrello-action/reload-setup)))
+    (org-cycle)))
 
 (defun orgtrello-controller/--hash-table-keys (hash-table)
   "Extract the keys from the HASH-TABLE."
