@@ -129,7 +129,7 @@ If WITH-SAVE-FLAG is set, will do a buffer save and reload the org setup."
    (when with-save-flag 'do-save-buffer)
    (when with-save-flag 'do-reload-setup)))
 
-(defun org-trello/proxy-do-and-save (action-label action-fn &optional no-check-flag)
+(defun org-trello/log-do-and-save (action-label action-fn &optional no-check-flag)
   "Given an ACTION-LABEL and an ACTION-FN, execute sync action.
 If NO-CHECK-FLAG is set, no controls are done."
   (orgtrello-action/msg-controls-or-actions-then-do
@@ -213,17 +213,17 @@ If MODIFIER is non nil, execute all entities removal from trello and buffer."
 (defun org-trello/install-key-and-token ()
   "No control, trigger the setup installation of the key and the read/write token."
   (interactive)
-  (org-trello/proxy-do-and-save "Setup key and token" 'orgtrello-controller/do-install-key-and-token 'do-no-checks))
+  (org-trello/log-do-and-save "Setup key and token" 'orgtrello-controller/do-install-key-and-token 'do-no-checks))
 
 (defun org-trello/install-board-and-lists-ids ()
   "Control first, then if ok, trigger the setup installation of the trello board to sync with."
   (interactive)
-  (org-trello/proxy-do-and-save "Install boards and lists" 'orgtrello-controller/do-install-board-and-lists))
+  (org-trello/log-do-and-save "Install boards and lists" 'orgtrello-controller/do-install-board-and-lists))
 
 (defun org-trello/update-board-metadata ()
   "Control first, then if ok, trigger the update of the informations about the board."
   (interactive)
-  (org-trello/proxy-do-and-save "Update board information" 'orgtrello-controller/do-update-board-metadata!))
+  (org-trello/log-do-and-save "Update board information" 'orgtrello-controller/do-update-board-metadata!))
 
 (defun org-trello/jump-to-card (&optional modifier)
   "Jump from current card to trello card in browser.
@@ -241,13 +241,13 @@ If MODIFIER is not nil, jump from current card to board."
 (defun org-trello/create-board ()
   "Control first, then if ok, trigger the board creation."
   (interactive)
-  (org-trello/proxy-do-and-save "Create board and lists" 'orgtrello-controller/do-create-board-and-lists))
+  (org-trello/log-do-and-save "Create board and lists" 'orgtrello-controller/do-create-board-and-lists))
 
 (defun org-trello/assign-me (&optional modifier)
   "Assign oneself to the card.
 If MODIFIER is not nil, unassign oneself from the card."
   (interactive "P")
-  (apply 'org-trello/proxy-do-and-save
+  (apply 'org-trello/log-do-and-save
          (if modifier
              '("Unassign me from card" orgtrello-controller/do-unassign-me)
            '("Assign myself to card" orgtrello-controller/do-assign-me))))
