@@ -25,9 +25,6 @@
 (defconst *ORGTRELLO/OUTOFBOUNDS-LEVEL* 4
   "Out of bounds level.")
 
-(defconst *ORGTRELLO/LEVELS* `(,*ORGTRELLO/CARD-LEVEL* ,*ORGTRELLO/CHECKLIST-LEVEL* ,*ORGTRELLO/ITEM-LEVEL*)
-  "Current levels 1 is card, 2 is checklist, 3 is item.")
-
 (defconst *ORGTRELLO/ACTION-SYNC* "sync-entity"
   "Possible action regarding the entity synchronization.")
 
@@ -118,25 +115,6 @@ This use the standard 'org-todo-keywords property from 'org-mode'.")
 
 (defconst *ORGTRELLO/ID* "orgtrello-id"
   "Key entry used for the trello identifier and the trello marker (the first sync).")
-
-(defconst *ORGTRELLO/BUFFER-NUMBER* "org-trello-buffer-number"
-  "Key in the database referencing the number of org-trello buffer opened.")
-
-(defvar *ORGTRELLO-SERVER/DB* nil
-  "Database reference to orgtrello-proxy.")
-
-(defvar *ORGTRELLO/SERVER-HOST* "localhost"
-  "Proxy host.")
-
-(defvar *ORGTRELLO/SERVER-PORT* nil
-  "Proxy port.")
-
-(defvar *ORGTRELLO/SERVER-URL*  nil
-  "Proxy url.")
-
-(defvar *ORGTRELLO/SERVER-DEFAULT-PORT* 9876
-  "Default proxy port.")
-(setq *ORGTRELLO/SERVER-PORT* *ORGTRELLO/SERVER-DEFAULT-PORT*)
 
 (defvar *ORGTRELLO/MODE-PREFIX-KEYBINDING*          "C-c o"
   "The default prefix keybinding.")

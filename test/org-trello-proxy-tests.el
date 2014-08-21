@@ -12,11 +12,6 @@
               (expect "marker-is-a-trello-id" (orgtrello-proxy/--compute-pattern-search-from-marker "marker-is-a-trello-id"))
               (expect "orgtrello-marker-tony" (orgtrello-proxy/--compute-pattern-search-from-marker "orgtrello-marker-tony")))
 
-(expectations (desc "orgtrello-proxy/--update-buffer-to-save")
-              (expect '(:a) (orgtrello-proxy/--update-buffer-to-save :a nil))
-              (expect '(:a) (orgtrello-proxy/--update-buffer-to-save :a '(:a)))
-              (expect '(:a :b) (orgtrello-proxy/--update-buffer-to-save :a '(:b))))
-
 (expectations (desc "map-dispatch-delete")
               (expect 'orgtrello-proxy/--card-delete      (gethash *ORGTRELLO/CARD-LEVEL* *MAP-DISPATCH-DELETE*))
               (expect 'orgtrello-proxy/--checklist-delete (gethash *ORGTRELLO/CHECKLIST-LEVEL* *MAP-DISPATCH-DELETE*))

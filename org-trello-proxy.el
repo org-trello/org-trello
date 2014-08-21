@@ -28,12 +28,6 @@ The query can be synchronous depending on SYNC variable."
          (name (orgtrello-data/entity-name query-map-data)))                 ;; extracting the name of the entity (optional)
     (orgtrello-query/http-trello query-map sync (when standard-callback-fn (funcall standard-callback-fn buffer-name position name)))))
 
-(defun orgtrello-proxy/--update-buffer-to-save (buffer-name buffers-to-save)
-  "Add the BUFFER-NAME to the list of BUFFERS-TO-SAVE if not already present."
-  (if (member buffer-name buffers-to-save)
-      buffers-to-save
-    (cons buffer-name buffers-to-save)))
-
 (defun orgtrello-proxy/--getting-back-to-headline (data)
   "Trying another approach to getting back to header computing the normal form of the entry DATA in the buffer."
   (orgtrello-proxy/--getting-back-to-marker (orgtrello-buffer/--compute-entity-to-org-entry data)))
