@@ -16,7 +16,7 @@
                                                        (lambda (a) "ko")) 'arg0)))
 
 (expectations  (desc "orgtrello-action/--function-controls-then-do - 1")
-  (expect   "List of errors:
+  (expect   "org-trello - List of errors:
  - Level too high. Do not deal with entity other than card/checklist/items!
 "
       (orgtrello-action/functional-controls-then-do
@@ -33,7 +33,7 @@
      "- hello")))
 
 (expectations (desc "orgtrello-action/--function-controls-then-do - 2")
-  (expect "List of errors:
+  (expect "org-trello - List of errors:
  - Entity must been synchronized with trello first!
 "
     (orgtrello-action/functional-controls-then-do
@@ -70,7 +70,7 @@
       (mock (control1) => :ok)
       (orgtrello-action/controls-or-actions-then-do '(control0 control1) (lambda () "some-result") 'no-logs)))
   ;; with a problem in controls, the action function is not executed and the logs are returned
-  (expect "List of errors:\n - some error message from control 1\n- some other error message from control 2\n"
+  (expect "org-trello - List of errors:\n - some error message from control 1\n- some other error message from control 2\n"
     (with-mock
       (mock (control0)            => :ok)
       (mock (control1-that-fails) => "some error message from control 1")
@@ -95,7 +95,7 @@
     (mock (control1 'entity-not-really-used) => :ok)
     (orgtrello-action/functional-controls-then-do '(control0 control1) 'entity-not-really-used (lambda (entity-not-used args-not-used) "some-result") 'arg-not-really-used))
   ;; with some controls ko, the action function is not executed and the logs are returned
-  (expect "List of errors:\n - control1 failed!\n- control2 failed!\n"
+  (expect "org-trello - List of errors:\n - control1 failed!\n- control2 failed!\n"
     (with-mock
       (mock (control0-that-fails 'entity-not-really-used) => "control1 failed!")
       (mock (control1            'entity-not-really-used) => :ok)
