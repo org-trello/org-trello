@@ -16,11 +16,12 @@
 
 * IN-PROGRESS 0.5.3 [40%]
 - [X] Backlog
-- [ ] Deferred the sync/delete actions [0%]
-  - [ ] Sync to
-  - [ ] Sync from
-  - [ ] Delete
-  - [ ] Cancel running actions
+- [-] Deferred the sync/delete actions [80%]
+  - [X] Sync to
+  - [X] Sync from
+  - [X] Delete
+  - [X] Cancel running actions
+  - [ ] Render the execution asynchronous
 - [X] Fix caret movement problem (At the end of an action, the caret must be at the same position as before)
 - [ ] Update version
 - [ ] Release notes
