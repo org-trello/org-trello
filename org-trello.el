@@ -115,7 +115,7 @@ Please consider upgrading Emacs." emacs-version) "Error message when installing 
 
 
 
-(defun org-trello/proxy-do (action-label action-fn &optional with-save-flag)
+(defun org-trello/log-and-do (action-label action-fn &optional with-save-flag)
   "Given an ACTION-LABEL and an ACTION-FN, execute sync action.
 If WITH-SAVE-FLAG is set, will do a buffer save and reload the org setup."
   (orgtrello-action/msg-controls-or-actions-then-do
@@ -157,23 +157,23 @@ If NO-CHECK-FLAG is set, no controls are done."
 (defun org-trello/add-card-comments ()
   "Control first, then if ok, add a comment to the current card."
   (interactive)
-  (org-trello/proxy-do "Add card comment" 'orgtrello-controller/do-add-card-comment!))
+  (org-trello/log-and-do "Add card comment" 'orgtrello-controller/do-add-card-comment!))
 
 (defun org-trello/show-card-comments ()
   "Control first, then if ok, show a simple buffer with the current card's last comments."
   (interactive)
-  (org-trello/proxy-do "Display current card's last comments" 'orgtrello-controller/do-show-card-comments!))
+  (org-trello/log-and-do "Display current card's last comments" 'orgtrello-controller/do-show-card-comments!))
 
 (defun org-trello/show-board-labels ()
   "Control first, then if ok, show a simple buffer with the current board's labels."
   (interactive)
-  (org-trello/proxy-do "Display current board's labels" 'orgtrello-controller/do-show-board-labels!))
+  (org-trello/log-and-do "Display current board's labels" 'orgtrello-controller/do-show-board-labels!))
 
 (defun org-trello/sync-entity (&optional modifier)
   "Execute the sync of an entity to trello.
 If MODIFIER is non nil, execute the sync entity from trello."
   (interactive "P")
-  (apply 'org-trello/proxy-do
+  (apply 'org-trello/log-and-do
          (if modifier
              '("Request 'sync entity from trello'" orgtrello-controller/do-sync-entity-from-trello! 'save)
            '("Request 'sync entity to trello'" orgtrello-controller/do-sync-entity-to-trello! 'save))))
@@ -182,7 +182,7 @@ If MODIFIER is non nil, execute the sync entity from trello."
   "Execute the sync of an entity and its structure to trello.
 If MODIFIER is non nil, execute the sync entity and its structure from trello."
   (interactive "P")
-  (apply 'org-trello/proxy-do
+  (apply 'org-trello/log-and-do
          (if modifier
              '("Request 'sync entity with structure from trello" orgtrello-controller/do-sync-entity-and-structure-from-trello! 'save)
            '("Request 'sync entity with structure to trello" orgtrello-controller/do-sync-full-entity-to-trello! 'save))))
@@ -191,7 +191,7 @@ If MODIFIER is non nil, execute the sync entity and its structure from trello."
   "Execute the sync of the entire buffer to trello.
 If MODIFIER is non nil, execute the sync of the entire buffer from trello."
   (interactive "P")
-  (apply 'org-trello/proxy-do
+  (apply 'org-trello/log-and-do
          (if modifier
              '("Request 'sync org buffer from trello board'" orgtrello-controller/do-sync-full-file-from-trello! 'save)
            '("Request 'sync org buffer to trello board'" orgtrello-controller/do-sync-full-file-to-trello! 'save))))
@@ -200,7 +200,7 @@ If MODIFIER is non nil, execute the sync of the entire buffer from trello."
   "Execute the entity removal from trello and the buffer.
 If MODIFIER is non nil, execute all entities removal from trello and buffer."
   (interactive "P")
-  (apply 'org-trello/proxy-do
+  (apply 'org-trello/log-and-do
          (if modifier
              '("Request - 'delete entities'" orgtrello-controller/do-delete-entities 'save)
            '("Request 'delete entity'" orgtrello-controller/do-delete-simple 'save))))
@@ -208,7 +208,7 @@ If MODIFIER is non nil, execute all entities removal from trello and buffer."
 (defun org-trello/kill-all-entities ()
   "Execute all entities removal from trello and buffer."
   (interactive)
-  (org-trello/proxy-do "Request - 'delete entities'" 'orgtrello-controller/do-delete-entities 'save))
+  (org-trello/log-and-do "Request - 'delete entities'" 'orgtrello-controller/do-delete-entities 'save))
 
 (defun org-trello/install-key-and-token ()
   "No control, trigger the setup installation of the key and the read/write token."
@@ -260,7 +260,7 @@ If MODIFIER is not nil, unassign oneself from the card."
 (defun org-trello/delete-setup ()
   "Delete the current setup."
   (interactive)
-  (org-trello/proxy-do "Delete current org-trello setup" 'orgtrello-controller/delete-setup! 'do-save-buffer))
+  (org-trello/log-and-do "Delete current org-trello setup" 'orgtrello-controller/delete-setup! 'do-save-buffer))
 
 (defun org-trello/--startup-message (prefix-keybinding)
   "Compute org-trello's startup message with the PREFIX-KEYBINDING."
