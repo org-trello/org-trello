@@ -29,14 +29,15 @@
 (defun org-trello/dev-find-unused-definitions! ()
   "Find unused definitions."
   (interactive)
-  (with-temp-file "/tmp/org-trello-find-unused-definitions.el"
-    (erase-buffer)
-    (mapc (lambda (it)
-            (insert-file-contents it)
-            (goto-char (point-max))) *ORGTRELLO-NAMESPACES*)
-    (write-file "/tmp/org-trello-find-unused-definitions.el")
-    (emacs-lisp-mode)
-    (call-interactively 'emr-el-find-unused-definitions)))
+  (let ((filename "/tmp/org-trello-find-unused-definitions.el"))
+    (with-temp-file filename
+      (erase-buffer)
+      (mapc (lambda (it)
+              (insert-file-contents it)
+              (goto-char (point-max))) *ORGTRELLO-NAMESPACES*)
+      (emacs-lisp-mode)
+      (write-file filename)
+      (call-interactively 'emr-el-find-unused-definitions))))
 
 (global-set-key (kbd "C-c o n") 'org-trello/dev-load-namespaces!)
 (global-set-key (kbd "C-c o f") 'org-trello/dev-find-unused-definitions!)
