@@ -253,7 +253,7 @@ If the checks are ko, the error message is returned."
         (orgtrello-proxy/--cleanup-meta entity-full-metadata)
         (throw 'org-trello-timer-go-to-sleep t)))))
 
-(defun orgtrello-proxy/--deal-with-entity-action (entity-data)
+(defun orgtrello-proxy/do-action-on-entity (entity-data)
   "Compute the synchronization of an entity ENTITY-DATA (retrieving latest information from buffer)."
   (let* ((position    (orgtrello-data/entity-position entity-data))   ;; position is mandatory
          (buffer-name (orgtrello-data/entity-buffername entity-data))    ;; buffer-name too

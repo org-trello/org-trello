@@ -113,7 +113,7 @@ ARGS is not used."
     (orgtrello-buffer/set-marker-if-not-present! current marker)
     (orgtrello-data/put-entity-id     marker current)
     (orgtrello-data/put-entity-action action current)
-    (orgtrello-proxy/--deal-with-entity-action current)))
+    (orgtrello-proxy/do-action-on-entity current)))
 
 (defun orgtrello-controller/--checks-then-delegate-action-on-entity-to-proxy (functional-controls action)
   "Execute the FUNCTIONAL-CONTROLS then if all pass, delegate the ACTION to the proxy."
