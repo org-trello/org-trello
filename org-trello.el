@@ -132,7 +132,7 @@ When RELOAD-ORG-SETUP is provided, reload the org setup."
         (lambda ()
           (when buffer-to-save (with-current-buffer buffer-to-save
                                  (call-interactively 'save-buffer)))
-          (when reload-setup (orgtrello-action/reload-setup))
+          (when reload-setup (orgtrello-action/reload-setup!))
           (orgtrello-log/msg *OT/INFO* "org-trello - Done!")))
       (deferred:error it
         (lambda (x) (orgtrello-log/msg *OT/ERROR* "org-trello - Problem during execution - '%s'!" x))))))

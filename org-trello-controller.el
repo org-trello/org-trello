@@ -26,7 +26,7 @@
 Return :ok.
 ARGS is not used."
   ;; read the setup
-  (orgtrello-action/reload-setup)
+  (orgtrello-action/reload-setup!)
   ;; now exploit some
   (let* ((list-keywords (reverse (orgtrello-buffer/filtered-kwds!)))
          (hmap-id-name (--reduce-from (orgtrello-hash/puthash-data (orgtrello-buffer/org-file-get-property! it) it acc)

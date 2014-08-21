@@ -6,8 +6,8 @@
 (require 'org-trello-setup)
 (require 'org-trello-log)
 
-(defun orgtrello-action/reload-setup ()
-  "Reload orgtrello setup."
+(defun orgtrello-action/reload-setup! ()
+  "Reload org-trello setup."
   (org-set-regexps-and-options))
 
 (defmacro orgtrello-action/safe-wrap (fn &rest clean-up)
