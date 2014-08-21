@@ -244,14 +244,12 @@ If the checks are ko, the error message is returned."
          'synchronous-query
          (orgtrello-proxy/--standard-post-or-put-success-callback entity-data)
          (function* (lambda (&key error-thrown &allow-other-keys)
-                      (orgtrello-log/msg *OT/ERROR* "client - Problem during the sync request to the proxy- error-thrown: %s" error-thrown)
                       (orgtrello-proxy/--cleanup-meta entity-full-meta)
-                      (throw 'org-trello-timer-go-to-sleep t))))
+                      (orgtrello-log/msg *OT/ERROR* "client - Problem during the sync request to the proxy- error-thrown: %s" error-thrown))))
       ;; cannot execute the request
       (progn
-        (orgtrello-log/msg *OT/INFO* query-map)
         (orgtrello-proxy/--cleanup-meta entity-full-metadata)
-        (throw 'org-trello-timer-go-to-sleep t)))))
+        (orgtrello-log/msg *OT/ERROR* query-map)))))
 
 (defun orgtrello-proxy/do-action-on-entity (entity-data)
   "Compute the synchronization of an entity ENTITY-DATA (retrieving latest information from buffer)."
@@ -356,11 +354,8 @@ Optionally, PARENT-META is a parameter of the function dispatched."
          (orgtrello-proxy/--standard-delete-success-callback entity-data)
          (function* (lambda (&key error-thrown &allow-other-keys)
                       (orgtrello-log/msg *OT/ERROR* "client - Problem during the deletion request to the proxy- error-thrown: %s" error-thrown)
-                      (orgtrello-proxy/--cleanup-meta entity-full-meta)
-                      (throw 'org-trello-timer-go-to-sleep t))))
-      (progn
-        (orgtrello-log/msg *OT/INFO* query-map)
-        (throw 'org-trello-timer-go-to-sleep t)))))
+                      (orgtrello-proxy/--cleanup-meta entity-full-meta))))
+      (orgtrello-log/msg *OT/ERROR* query-map))))
 
 (orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-proxy loaded!")
 
