@@ -284,7 +284,7 @@ If MODIFIER is not nil, unassign oneself from the card."
 (defun org-trello/help-describing-bindings ()
   "A simple message to describe the standard bindings used."
   (interactive)
-  (org-trello/apply `(orgtrello-log/msg 0 ,(org-trello/--help-describing-bindings-template *ORGTRELLO/MODE-PREFIX-KEYBINDING* *org-trello-interactive-command-binding-couples*)) nil nil 'no-log))
+  (org-trello/apply `(message ,(org-trello/--help-describing-bindings-template *ORGTRELLO/MODE-PREFIX-KEYBINDING* *org-trello-interactive-command-binding-couples*)) nil nil 'no-log))
 
 ;;;;;; End interactive commands
 
