@@ -585,7 +585,7 @@ In any case, execute ORG-FN."
     sha1
     (concat *ORGTRELLO/MARKER* "-")))
 
-(orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-buffer loaded!")
+(orgtrello-log/msg *OT/DEBUG* "orgtrello-buffer loaded!")
 
 (provide 'org-trello-buffer)
 ;;; org-trello-buffer.el ends here

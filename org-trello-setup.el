@@ -186,7 +186,7 @@ This use the standard 'org-todo-keywords property from 'org-mode'.")
       (defalias 'cl-defun 'defun*)
       (defalias 'cl-destructuring-bind 'destructuring-bind))))
 
-(orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-setup loaded!")
+(orgtrello-log/msg *OT/DEBUG* "orgtrello-setup loaded!")
 
 (provide 'org-trello-setup)
 ;;; org-trello-setup.el ends here

@@ -63,7 +63,7 @@ if NOLOG-P is set, this will not log anything."
   "Given a META and optional PARENT-META and GRANDPARENT-META, deal with too deep level."
   "Your arborescence depth is too deep. We only support up to depth 3.\nLevel 1 - card\nLevel 2 - checklist\nLevel 3 - items")
 
-(orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-action loaded!")
+(orgtrello-log/msg *OT/DEBUG* "orgtrello-action loaded!")
 
 (provide 'org-trello-action)
 ;;; org-trello-action.el ends here

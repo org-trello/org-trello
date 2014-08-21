@@ -131,13 +131,13 @@ when NOLOG-P is specified, no output log."
                      (with-local-quit
                        (apply (car computation) (cdr computation))))))
       (deferred:error it
-        (lambda (x) (orgtrello-log/msg *OT/ERROR* "org-trello - Problem during execution - '%s'!" x)))
+        (lambda (x) (orgtrello-log/msg *OT/ERROR* "Problem during execution - '%s'!" x)))
       (deferred:nextc it
         (lambda ()
           (when buffer-to-save (with-current-buffer buffer-to-save
                                  (call-interactively 'save-buffer)))
           (when reload-setup (orgtrello-action/reload-setup!))
-          (unless nolog-flag (orgtrello-log/msg *OT/INFO* "org-trello - Done!")))))))
+          (unless nolog-flag (orgtrello-log/msg *OT/INFO* "Done!")))))))
 
 (defun org-trello/log-strict-checks-and-do (action-label action-fn &optional with-save-flag)
   "Given an ACTION-LABEL and an ACTION-FN, execute sync action.
@@ -245,14 +245,14 @@ If MODIFIER is not nil, jump from current card to board."
   (interactive "P")
   (org-trello/apply (cons 'org-trello/log-strict-checks-and-do
                           (if modifier
-                              '("org-trello - Jump to board" orgtrello-controller/jump-to-board!)
-                            '("org-trello - Jump to card" orgtrello-controller/jump-to-card!)))
+                              '("Jump to board" orgtrello-controller/jump-to-board!)
+                            '("Jump to card" orgtrello-controller/jump-to-card!)))
                     nil nil 'no-log))
 
 (defun org-trello/jump-to-trello-board ()
   "Jump to current trello board."
   (interactive)
-  (org-trello/apply '(org-trello/log-strict-checks-and-do "org-trello - Jump to board" orgtrello-controller/jump-to-board!) nil nil 'no-log))
+  (org-trello/apply '(org-trello/log-strict-checks-and-do "Jump to board" orgtrello-controller/jump-to-board!) nil nil 'no-log))
 
 (defun org-trello/create-board ()
   "Control first, then if ok, trigger the board creation."
@@ -272,7 +272,7 @@ If MODIFIER is not nil, unassign oneself from the card."
 (defun org-trello/check-setup ()
   "Check the current setup."
   (interactive)
-  (org-trello/apply '(org-trello/log-strict-checks-and-do "org-trello - Checking setup." (lambda () (orgtrello-log/msg *OT/NOLOG* "org-trello - Setup ok!"))) nil nil 'no-log))
+  (org-trello/apply '(org-trello/log-strict-checks-and-do "Checking setup." (lambda () (orgtrello-log/msg *OT/NOLOG* "Setup ok!"))) nil nil 'no-log))
 
 (defun org-trello/delete-setup ()
   "Delete the current setup."

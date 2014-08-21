@@ -333,7 +333,7 @@ Optionally, PARENT-META is a parameter of the function dispatched."
                       (orgtrello-proxy/--cleanup-meta entity-full-meta))))
       (orgtrello-log/msg *OT/ERROR* query-map))))
 
-(orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-proxy loaded!")
+(orgtrello-log/msg *OT/DEBUG* "orgtrello-proxy loaded!")
 
 (provide 'org-trello-proxy)
 ;;; org-trello-proxy.el ends here

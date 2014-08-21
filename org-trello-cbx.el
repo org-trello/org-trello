@@ -270,7 +270,7 @@ Do not exceed the max size of buffer."
       next-checklist-point
     (orgtrello-cbx/compute-next-card-point!)))
 
-(orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-cbx loaded!")
+(orgtrello-log/msg *OT/DEBUG* "orgtrello-cbx loaded!")
 
 (provide 'org-trello-cbx)
 ;;; org-trello-cbx.el ends here

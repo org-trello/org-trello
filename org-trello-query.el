@@ -91,7 +91,7 @@
   "Execute an HTTP query to trello with QUERY-MAP and optional SYNC, SUCCESS-CALLBACK, ERROR-CALLBACK."
   (orgtrello-query/http *ORGTRELLO/TRELLO-URL* query-map sync success-callback error-callback 'with-authentication))
 
-(orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-query loaded!")
+(orgtrello-log/msg *OT/DEBUG* "orgtrello-query loaded!")
 
 (provide 'org-trello-query)
 ;;; org-trello-query.el ends here

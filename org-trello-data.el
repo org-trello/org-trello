@@ -370,7 +370,7 @@ If state is \"complete\" or \"DONE\", the first element is returned, otherwise t
   "Given a list of USERS, compute the comma separated string of users."
   (if users (mapconcat 'identity users ",") ""))
 
-(orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-data loaded!")
+(orgtrello-log/msg *OT/DEBUG* "orgtrello-data loaded!")
 
 (provide 'org-trello-data)
 ;;; org-trello-data.el ends here

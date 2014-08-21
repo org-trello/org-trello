@@ -138,7 +138,7 @@ Return entries updated with value if entry, entries untouched otherwise."
   "Create a add a card comment to the card with id CARD-ID with the COMMENT-TEXT."
   (orgtrello-api/make-query "POST" (format "/cards/%s/actions/comments" card-id) `(("text" . ,comment-text))))
 
-(orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-api loaded!")
+(orgtrello-log/msg *OT/DEBUG* "orgtrello-api loaded!")
 
 (provide 'org-trello-api)
 ;;; org-trello-api.el ends here

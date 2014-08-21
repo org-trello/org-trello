@@ -84,7 +84,7 @@ Return result is the list of entities and adjacency in this order."
         (parent-entity  (orgtrello-data/parent current-meta)))
     (list (orgtrello-backend/--add-entity-to-entities current-entity entities) (orgtrello-backend/--add-entity-to-adjacency current-entity parent-entity adjacency))))
 
-(orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-backend loaded!")
+(orgtrello-log/msg *OT/DEBUG* "orgtrello-backend loaded!")
 
 (provide 'org-trello-backend)
 ;;; org-trello-backend.el ends here

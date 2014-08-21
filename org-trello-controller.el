@@ -708,7 +708,7 @@ Return the hashmap (name, id) of the new lists created."
   ;; remove org-trello overlays
   (orgtrello-buffer/remove-overlays!))
 
-(orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-controller loaded!")
+(orgtrello-log/msg *OT/DEBUG* "orgtrello-controller loaded!")
 
 (provide 'org-trello-controller)
 ;;; org-trello-controller.el ends here
