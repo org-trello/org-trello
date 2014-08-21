@@ -14,8 +14,13 @@
 - [ ] POC: Investigate webhooks - #137
 - [ ] POC: Leverage elnode and clojurescript core.async - #97
 
-* TODO 0.5.3 [0%]
-- [ ] Deferred the sync/delete actions
+* IN-PROGRESS 0.5.3 [25%]
+- [X] Backlog
+- [ ] Deferred the sync/delete actions [0%]
+  - [ ] Sync to
+  - [ ] Sync from
+  - [ ] Delete
+  - [ ] Cancel running actions
 - [ ] Update version
 - [ ] Release notes
 * DONE 0.5.2 [100%]
