@@ -4,8 +4,8 @@
 
 ;; Author: Antoine R. Dumont <eniotna.t AT gmail.com>
 ;; Maintainer: Antoine R. Dumont <eniotna.t AT gmail.com>
-;; Version: 0.5.1
-;; Package-Requires: ((dash "2.7.0") (request "0.2.0") (elnode "0.9.9.8.1") (esxml "0.3.0") (s "1.9.0") (db "0.0.6"))
+;; Version: 0.5.2
+;; Package-Requires: ((dash "2.8.0") (request "0.2.0") (s "1.9.0"))
 ;; Keywords: org-mode trello sync org-trello
 ;; URL: https://github.com/org-trello/org-trello
 
@@ -93,12 +93,9 @@ Please consider upgrading Emacs." emacs-version) "Error message when installing 
 ;; Dependency on external Emacs libs
 (require 'dash)
 (require 'request)
-(require 'elnode)
 (require 's)
-(require 'esxml)
-(require 'db)
 
-(defconst *ORGTRELLO/VERSION* "0.5.1" "Current org-trello version installed.")
+(defconst *ORGTRELLO/VERSION* "0.5.2" "Current org-trello version installed.")
 
 (defun org-trello/version ()
   "Org-trello version."
@@ -111,10 +108,7 @@ Please consider upgrading Emacs." emacs-version) "Error message when installing 
 (require 'org-trello-utils)
 (require 'org-trello-setup)
 (require 'org-trello-action)
-(require 'org-trello-server)
-(require 'org-trello-proxy)
 (require 'org-trello-controller)
-(require 'org-trello-db)
 (require 'org-trello-buffer)
 
 (org-trello/require-cl)
@@ -124,14 +118,13 @@ Please consider upgrading Emacs." emacs-version) "Error message when installing 
 (defun org-trello/proxy-do (action-label action-fn &optional with-save-flag)
   "Given an ACTION-LABEL and an ACTION-FN, execute sync action.
 If WITH-SAVE-FLAG is set, will do a buffer save and reload the org setup."
-  (orgtrello-proxy/deal-with-consumer-msg-controls-or-actions-then-do
+  (orgtrello-action/msg-controls-or-actions-then-do
    action-label
    '(orgtrello-controller/load-keys!
      orgtrello-controller/control-keys!
      orgtrello-controller/setup-properties!
      orgtrello-controller/control-properties!
-     orgtrello-controller/control-encoding!
-     orgtrello-controller/reload-proxy-if-not-running!)
+     orgtrello-controller/control-encoding!)
    action-fn
    (when with-save-flag 'do-save-buffer)
    (when with-save-flag 'do-reload-setup)))
@@ -139,9 +132,9 @@ If WITH-SAVE-FLAG is set, will do a buffer save and reload the org setup."
 (defun org-trello/proxy-do-and-save (action-label action-fn &optional no-check-flag)
   "Given an ACTION-LABEL and an ACTION-FN, execute sync action.
 If NO-CHECK-FLAG is set, no controls are done."
-  (orgtrello-proxy/deal-with-consumer-msg-controls-or-actions-then-do
+  (orgtrello-action/msg-controls-or-actions-then-do
    action-label
-   (if no-check-flag nil '(orgtrello-controller/load-keys! orgtrello-controller/control-keys! orgtrello-controller/setup-properties! orgtrello-controller/reload-proxy-if-not-running!))
+   (if no-check-flag nil '(orgtrello-controller/load-keys! orgtrello-controller/control-keys! orgtrello-controller/setup-properties!))
    action-fn
    'do-save-buffer
    'do-reload-setup))
@@ -153,19 +146,13 @@ If NO-CHECK-FLAG is set, no controls are done."
      orgtrello-controller/control-keys!
      orgtrello-controller/setup-properties!
      orgtrello-controller/control-properties!
-     orgtrello-controller/control-encoding!
-     orgtrello-controller/reload-proxy-if-not-running!)
+     orgtrello-controller/control-encoding!)
    action-fn))
-
-(defun org-trello/reload-server ()
-  "Reload the proxy and the webadmin server."
-  (interactive)
-  (orgtrello-server/reload))
 
 (defun org-trello/abort-sync ()
   "Control first, then if ok, add a comment to the current card."
   (interactive)
-  (org-trello/proxy-do "Abort sync activities" 'orgtrello-webadmin/delete-entities!))
+  (message "Transitioning - Not implemented yet!"))
 
 (defun org-trello/add-card-comments ()
   "Control first, then if ok, add a comment to the current card."
@@ -188,8 +175,8 @@ If MODIFIER is non nil, execute the sync entity from trello."
   (interactive "P")
   (apply 'org-trello/proxy-do
          (if modifier
-             '("Request 'sync entity from trello'" orgtrello-controller/do-sync-entity-from-trello!)
-           '("Request 'sync entity to trello'" orgtrello-controller/do-sync-entity-to-trello!))))
+             '("Request 'sync entity from trello'" orgtrello-controller/do-sync-entity-from-trello! 'save)
+           '("Request 'sync entity to trello'" orgtrello-controller/do-sync-entity-to-trello! 'save))))
 
 (defun org-trello/sync-full-entity (&optional modifier)
   "Execute the sync of an entity and its structure to trello.
@@ -197,8 +184,8 @@ If MODIFIER is non nil, execute the sync entity and its structure from trello."
   (interactive "P")
   (apply 'org-trello/proxy-do
          (if modifier
-             '("Request 'sync entity with structure from trello" orgtrello-controller/do-sync-entity-and-structure-from-trello!)
-           '("Request 'sync entity with structure to trello" orgtrello-controller/do-sync-full-entity-to-trello!))))
+             '("Request 'sync entity with structure from trello" orgtrello-controller/do-sync-entity-and-structure-from-trello! 'save)
+           '("Request 'sync entity with structure to trello" orgtrello-controller/do-sync-full-entity-to-trello! 'save))))
 
 (defun org-trello/sync-buffer (&optional modifier)
   "Execute the sync of the entire buffer to trello.
@@ -206,8 +193,8 @@ If MODIFIER is non nil, execute the sync of the entire buffer from trello."
   (interactive "P")
   (apply 'org-trello/proxy-do
          (if modifier
-             '("Request 'sync org buffer from trello board'" orgtrello-controller/do-sync-full-file-from-trello!)
-           '("Request 'sync org buffer to trello board'" orgtrello-controller/do-sync-full-file-to-trello!))))
+             '("Request 'sync org buffer from trello board'" orgtrello-controller/do-sync-full-file-from-trello! 'save)
+           '("Request 'sync org buffer to trello board'" orgtrello-controller/do-sync-full-file-to-trello! 'save))))
 
 (defun org-trello/kill-entity (&optional modifier)
   "Execute the entity removal from trello and the buffer.
@@ -215,13 +202,13 @@ If MODIFIER is non nil, execute all entities removal from trello and buffer."
   (interactive "P")
   (apply 'org-trello/proxy-do
          (if modifier
-             '("Request - 'delete entities'" orgtrello-controller/do-delete-entities)
-           '("Request 'delete entity'" orgtrello-controller/do-delete-simple))))
+             '("Request - 'delete entities'" orgtrello-controller/do-delete-entities 'save)
+           '("Request 'delete entity'" orgtrello-controller/do-delete-simple 'save))))
 
 (defun org-trello/kill-all-entities ()
   "Execute all entities removal from trello and buffer."
   (interactive)
-  (org-trello/proxy-do "Request - 'delete entities'" 'orgtrello-controller/do-delete-entities))
+  (org-trello/proxy-do "Request - 'delete entities'" 'orgtrello-controller/do-delete-entities 'save))
 
 (defun org-trello/install-key-and-token ()
   "No control, trigger the setup installation of the key and the read/write token."

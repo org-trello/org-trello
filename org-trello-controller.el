@@ -13,8 +13,6 @@
 (require 'org-trello-backend)
 (require 'org-trello-buffer)
 (require 'org-trello-input)
-(require 'org-trello-db)
-(require 'org-trello-server)
 (require 'org-trello-proxy)
 
 (org-trello/require-cl)
@@ -81,17 +79,6 @@ ARGS is not used."
       :ok
     "Setup problem - You need to install the consumer-key and the read/write access-token - C-c o i or M-x org-trello/install-key-and-token"))
 
-(defun orgtrello-controller/reload-proxy-if-not-running! (&optional args)
-  "Check whether the org-trello proxy is running or not.
-ARGS is present as an implementation detail, not used here."
-  (let ((http-status (orgtrello-proxy/http-status!)))
-    (if (and http-status (not (string= http-status "")))
-        :ok
-      (progn
-        (orgtrello-server/reload)
-        (orgtrello-log/msg *OT/WARN* "Proxy was not running!\nThis should not have happened.\nWe restarted it.\nIf this does not work, please open an issue on the github tracker https://github.com/org-trello/org-trello/issues.")
-        :ok))))
-
 (defun orgtrello-controller/--update-query-with-org-metadata (query-map position buffer-name &optional name success-callback sync)
   "Given a trello QUERY-MAP, POSITION, BUFFER-NAME and optional NAME, SUCCESS-CALLBACK and SYNC, add proxy metadata needed to work."
   (when success-callback (orgtrello-data/put-entity-callback success-callback query-map))
@@ -126,7 +113,7 @@ ARGS is present as an implementation detail, not used here."
     (orgtrello-buffer/set-marker-if-not-present! current marker)
     (orgtrello-data/put-entity-id     marker current)
     (orgtrello-data/put-entity-action action current)
-    (orgtrello-proxy/http-producer current)))
+    (orgtrello-proxy/--deal-with-entity-action current)))
 
 (defun orgtrello-controller/--checks-then-delegate-action-on-entity-to-proxy (functional-controls action)
   "Execute the FUNCTIONAL-CONTROLS then if all pass, delegate the ACTION to the proxy."
@@ -146,12 +133,12 @@ SYNC is not used."
   (orgtrello-log/msg *OT/INFO* "Synchronizing full entity with its structure on board '%s'..." (orgtrello-buffer/board-name!))
   ;; in any case, we need to show the subtree, otherwise https://github.com/org-trello/org-trello/issues/53
   (org-show-subtree)
-  (if (org-at-heading-p)
-      (org-map-tree (lambda () (orgtrello-controller/do-sync-entity-to-trello!) (orgtrello-controller/map-sync-checkboxes)))
-    (orgtrello-controller/map-sync-checkboxes)))
+  (when (orgtrello-buffer/card-at-pt!)
+    (orgtrello-controller/do-sync-entity-to-trello!))
+  (orgtrello-controller/map-sync-checkboxes))
 
 (defun orgtrello-controller/map-sync-checkboxes ()
-  "Map the sync to checkboxes."
+  "Map the sync operation to checkboxes."
   (save-excursion
     (orgtrello-cbx/map-checkboxes 'orgtrello-controller/do-sync-entity-to-trello!)))
 
@@ -205,7 +192,7 @@ This callback must take a BUFFERNAME, a POSITION and a NAME."
   (--> (orgtrello-buffer/board-id!)
     (orgtrello-api/get-cards it)
     (orgtrello-controller/--update-query-with-org-metadata it (point) (buffer-name) nil 'orgtrello-controller/--sync-buffer-with-trello-data-callback)
-    (orgtrello-proxy/http it sync)))
+    (orgtrello-proxy/sync-from it sync)))
 
 (defun orgtrello-controller/--sync-entity-to-buffer-with-trello-data-callback (buffername &optional position name)
   "Generate a callback which knows the BUFFERNAME with which it must work.
@@ -296,7 +283,7 @@ If WITH-FILTER is set, only the checklist is returned (without its items)."
     (-> (orgtrello-buffer/entry-get-full-metadata!)
       (orgtrello-controller/--dispatch-sync-request 'with-filter)
       (orgtrello-controller/--update-query-with-org-metadata (point) (buffer-name) nil 'orgtrello-controller/--sync-entity-to-buffer-with-trello-data-callback)
-      (orgtrello-proxy/http sync))))
+      (orgtrello-proxy/sync-from sync))))
 
 (defun orgtrello-controller/do-sync-entity-and-structure-from-trello! (&optional sync)
   "Entity (card/checklist/item) synchronization (with its structure) from trello.
@@ -306,7 +293,7 @@ Optionally, SYNC permits to synchronize the query."
     (-> (orgtrello-buffer/entry-get-full-metadata!)
       orgtrello-controller/--dispatch-sync-request
       (orgtrello-controller/--update-query-with-org-metadata (point) (buffer-name) nil 'orgtrello-controller/--sync-entity-and-structure-to-buffer-with-trello-data-callback)
-      (orgtrello-proxy/http sync))))
+      (orgtrello-proxy/sync-from sync))))
 
 (defun orgtrello-controller/--do-delete-card (&optional sync)
   "Delete the card.
@@ -713,10 +700,6 @@ Return the hashmap (name, id) of the new lists created."
 
 (defun orgtrello-controller/mode-on-hook-fn ()
   "Start org-trello hook function to install some org-trello setup."
-  ;; start the server which does some initialization on its own
-  (orgtrello-server/start)
-  ;; increment the number of buffers with org-trello mode on
-  (orgtrello-db/increment-buffer-size *ORGTRELLO-SERVER/DB*)
   ;; buffer-invisibility-spec
   (add-to-invisibility-spec '(org-trello-cbx-property)) ;; for an ellipsis (...) change to '(org-trello-cbx-property . t)
   ;; installing hooks
@@ -731,10 +714,6 @@ Return the hashmap (name, id) of the new lists created."
 
 (defun orgtrello-controller/mode-off-hook-fn ()
   "Stop org-trello hook function to deinstall some org-trello setup."
-  ;; decrement the number of buffers of 1
-  (orgtrello-db/decrement-buffer-size *ORGTRELLO-SERVER/DB*)
-  ;; stop the proxy server and webadmin
-  (orgtrello-server/stop)
   ;; remove the invisible property names
   (remove-from-invisibility-spec '(org-trello-cbx-property)) ;; for an ellipsis (...) change to '(org-trello-cbx-property . t)
   ;; removing hooks

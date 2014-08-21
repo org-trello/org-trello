@@ -67,16 +67,12 @@ org-trello-log.el            | Provide log facilities
 org-trello-setup.el          | Main variable definition that permits internal org-trello functions customization
 org-trello-hash.el           | Hash-map manipulation utilities
 org-trello-action.el         | Higher-order functions helper
-org-trello-db.el             | RAM Database abstraction
 org-trello-data.el           | Internal org-trello data manipulation
 org-trello-cbx.el            | Checkbox manipulation utilities
 org-trello-api.el            | Trello API abstraction DSL
 org-trello-query.el          | HTTP query utilities
 org-trello-backend.el        | Deals with trello requests
-org-trello-elnode.el         | Elnode utilities (common namespace between proxy.el and webadmin.el)
-org-trello-proxy.el          | Proxy utilities - Namespace in charge of dealing with the trello requests
-org-trello-webadmin.el       | Web admin front utilities. Namespace in charge of web admin interface
-org-trello-server.el         | Main namespace that hides the webadmin and the proxy (start/stop functionality)
+org-trello-proxy.el          | Proxy utilities - Namespace in charge of dealing with the orchestration of trello requests
 org-trello-buffer.el         | Buffer manipulation functions
 org-trello-input.el          | Text input functions
 org-trello-controller.el     | Controller used by org-trello.el
@@ -118,23 +114,22 @@ This will trigger:
 To test that the package, once created, can be installed (using the repository to fetch the dependencies).
 
 ```sh
-make install-file-with-deps-from-marmalade install-file-with-deps-from-melpa
+make install-file-with-deps-from-melpa
 ```
 
 *Note*:
 This will trigger the installation from a local package `org-trello-<VERSION>.tar`.
-First the installation is used with the dependencies fetch from marmalade `make install-file-with-deps-from-marmalade`.
-Second with melpa's - `make install-file-with-deps-from-marmalade`.
+The installation is used with the dependencies fetched from melpa.
 
 *Note 2*
 These are the targets used by the CI (cf. [.travis.yml](./.travis.yml))
 
 ## Full install testing
 
-As we deploy both in marmalade and in melpa, we can ensure that once delivered, the installation is ok using those targets.
+As we deploy in melpa, we can ensure that once delivered, the installation is ok using those targets.
 
 ```sh
-make install-package-from-marmalade install-package-from-melpa
+make install-package-from-melpa
 ```
 
 ## Release
@@ -161,7 +156,7 @@ This will:
 - tag the latest commit from master using the $VERSION you submit to the script (defaulting to the version from the org-trello.el header)
 - push the tag to the upstream branch repository
 - trigger the package target from the Makefile (thus building a new package to the latest version)
-- push the package to marmalade (if you did the configuration for this, otherwise it will fail)
+- Then manual delivery of the tar to the github release page
 
 Note:
 - this is an orchestration of the [release.sh](./release.sh) script

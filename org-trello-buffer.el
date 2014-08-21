@@ -41,6 +41,11 @@ If the VALUE is nil or empty, remove such PROPERTY."
     (orgtrello-cbx/--goto-next-checkbox)
     (1- (point))))
 
+(defun orgtrello-buffer/card-at-pt! ()
+  "Determine if currently on the card region."
+  (let ((pt (point)))
+    (and (<= (orgtrello-buffer/--card-start-point!) pt) (<= pt (orgtrello-buffer/--card-metadata-end-point!)))))
+
 (defun orgtrello-buffer/extract-description-from-current-position! ()
   "Given the current position, extract the text content of current card."
   (let* ((start (orgtrello-buffer/--card-description-start-point!))

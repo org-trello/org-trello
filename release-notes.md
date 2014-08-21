@@ -1,3 +1,34 @@
+# 0.5.2
+
+- [X] Remove org-trello's over engineered bricks (proxy, elnode, webadmin) -> this will render it synchronous again. [100%]
+  - [X] Is proxy useful since emacs still blocks? -> The only thing interesting seems to be the ability to watch running actions. As no one seem to care about it, we can remove it.
+  - [X] Can't we simply use 'deferred (or 'async library) to defer computations? -> Yes, building actions (sync, delete) as 'lazy' list (macro) of deferred computations.
+  - [X] What about concurrency then? There will be indeed possibilities of concurrent requests.
+  - [X] What about race conditions then? We need to find a way to compose deferred computations -> [[https://github.com/kiwanami/emacs-deferred][deferred]] seems able to do so
+  - [X] Remove db dependency
+  - [X] Remove elnode dependency
+  - [X] Remove esxml dependency
+  - [X] Remove orgtrello-db.el
+  - [X] Remove orgtrello-webadmin.el
+  - [X] Remove orgtrello-elnode.el
+  - [X] Remove orgtrello-server.el
+  - [X] Clean orgtrello-proxy.el up
+  - [X] Get back to synchronous query (sync to + delete)
+  - [X] Get back to synchronous query for sync from trello routines
+  - [X] Clean load-org-trello.el up
+  - [X] Update README-dev.md about namespace removal
+  - [X] Fix loading of load-org-trello.el code
+  - [X] Clean tests up
+  - [X] Update org-trello package
+- [X] Fix bug regarding sync-entity and structure (apparently, there is a bad limit computation and this syncs the all buffer)
+- [X] Fix save buffer at the end of the sync actions
+- [X] Clean README-dev.md about marmalade
+- [X] Update dependencies version
+- [X] Now that elnode, esxml, db dependencies' are out of the way, org-trello can be fully built on melpa-stable.
+- [X] Update version
+- [X] Clean dead code
+- [X] Release notes
+
 # 0.5.1
 
 - [X] Remove marmalade remains (release.sh + Makefile)

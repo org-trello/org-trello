@@ -36,14 +36,10 @@
                       "test/org-trello-cbx-tests.el"
                       "test/org-trello-controller-tests.el"
                       "test/org-trello-data-tests.el"
-                      "test/org-trello-db-tests.el"
-                      "test/org-trello-elnode-tests.el"
                       "test/org-trello-hash-tests.el"
                       "test/org-trello-proxy-tests.el"
                       "test/org-trello-query-tests.el"
-                      "test/org-trello-server-tests.el"
-                      "test/org-trello-utils-tests.el"
-                      "test/org-trello-webadmin-tests.el")))
+                      "test/org-trello-utils-tests.el")))
 
 (org-trello/test-load-namespaces!)
 
@@ -54,8 +50,6 @@
 (require 'org-trello-cbx-tests)
 (require 'org-trello-controller-tests)
 (require 'org-trello-data-tests)
-(require 'org-trello-db-tests)
-(require 'org-trello-elnode-tests)
 (require 'org-trello-hash-tests)
 (require 'org-trello-tests)
 (require 'org-trello-proxy-tests)

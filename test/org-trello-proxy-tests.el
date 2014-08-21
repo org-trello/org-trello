@@ -23,33 +23,6 @@
               (expect '(:a) (orgtrello-proxy/update-buffer-to-save! :a))
               (expect '(:b :a) (orgtrello-proxy/update-buffer-to-save! :b)))
 
-(expectations
- (expect t
-         (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
-                                   (:callback "orgtrello-controller/--sync-buffer-with-trello-data-callback" :buffername "todo-TESTS-simple.org" :position nil :params
-                                              ((actions . "commentCard")
-                                               (field . "closed,desc,due,idBoard,idChecklists,idList,idMembers,name,pos"))
-                                              :uri "/boards/51d99bbc1e1d8988390047f2/cards"
-                                              :method "GET"
-                                              :sync t
-                                              :name "some name"
-                                              :id "some id"
-                                              :action "some action"
-                                              :level 3
-                                              :start nil))
-                     (orgtrello-proxy/parse-query '((callback . "orgtrello-controller/--sync-buffer-with-trello-data-callback")
-                                                    (buffername . "todo-TESTS-simple.org")
-                                                    (position)
-                                                    (params (actions . "commentCard") (field . "closed,desc,due,idBoard,idChecklists,idList,idMembers,name,pos"))
-                                                    (uri . "/boards/51d99bbc1e1d8988390047f2/cards")
-                                                    (method . "GET")
-                                                    (sync . t)
-                                                    (name . "some name")
-                                                    (id . "some id")
-                                                    (action . "some action")
-                                                    (level . 3)
-                                                    (start . nil))))))
-
 (expectations (desc "map-dispatch-delete")
               (expect 'orgtrello-proxy/--card-delete      (gethash *ORGTRELLO/CARD-LEVEL* *MAP-DISPATCH-DELETE*))
               (expect 'orgtrello-proxy/--checklist-delete (gethash *ORGTRELLO/CHECKLIST-LEVEL* *MAP-DISPATCH-DELETE*))

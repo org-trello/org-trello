@@ -75,44 +75,6 @@
         ((or (string= "POST" method) (string= "PUT" method)) 'orgtrello-query/--post-or-put)
         ((string= "DELETE" method)                           'orgtrello-query/--delete)))
 
-(defvar orgtrello-query/--hexify (if (version< emacs-version "24.3") 'orgtrello-query/url-hexify-string 'url-hexify-string)
-  "Function to use to hexify depending on Emacs version.")
-
-(defun orgtrello-query/url-hexify-string (value)
-  "Wrapper around 'url-hexify-string' VALUE (older Emacs 24 version do not map some symbols)."
-  (->> value
-    url-hexify-string
-    (replace-regexp-in-string "!" "%21")
-    (replace-regexp-in-string "'" "%27")
-    (replace-regexp-in-string "(" "%28")
-    (replace-regexp-in-string ")" "%29")
-    (replace-regexp-in-string "*" "%2A")))
-
-(defun orgtrello-query/--prepare-params-assoc! (params)
-  "Prepare PARAMS as association list (deal with nested list too)."
-  (--map (let ((key   (car it))
-               (value (cdr it)))
-           (cond ((and value (stringp value)) `(,key . ,(funcall orgtrello-query/--hexify value)))
-                 ((and value (listp value))   `(,key . ,(orgtrello-query/--prepare-params-assoc! value)))
-                 (t                            it)))
-         params))
-
-(defun orgtrello-query/read-data (data)
-  "Read the association list DATA (association list of query params)."
-  (--map (let ((key   (car it))
-               (value (cdr it)))
-           (cond ((and value (stringp value)) `(,key . ,(url-unhex-string value)))
-                 ((and value (listp value))   `(,key . ,(orgtrello-query/read-data value)))
-                 (t  it)))
-         data))
-
-(defun orgtrello-query/--prepare-query-params! (params)
-  "Given an association list of data, prepare the values of the PARAMS."
-  (-> params
-    json-encode                               ;; hashtable and association list renders the same result in json
-    json-read-from-string                     ;; now getting back an association list
-    orgtrello-query/--prepare-params-assoc!))
-
 (defun orgtrello-query/http (server query-map &optional sync success-callback error-callback authentication-p)
   "Execute an HTTP query to the SERVER with QUERY-MAP and optional SYNC, SUCCESS-CALLBACK, ERROR-CALLBACK and AUTHENTICATION-P."
   (let* ((dispatch-http-query-fn (-> query-map
