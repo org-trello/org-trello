@@ -20,12 +20,11 @@
   "Deal with request QUERY-MAP-DATA from trello.
 The query can be synchronous depending on SYNC variable."
   (orgtrello-log/msg *OT/TRACE* "Proxy - Request received. Transmitting...")
-  (let* ((position (orgtrello-data/entity-position query-map-data))          ;; position is mandatory
-         (buffer-name (orgtrello-data/entity-buffername query-map-data))     ;; buffer-name is mandatory
-         (standard-callback (orgtrello-data/entity-callback query-map-data)) ;; there is the possibility to transmit the callback from the client to the proxy
-         (standard-callback-fn (when standard-callback standard-callback))   ;; the callback is passed as a string, we want it as a function when defined
-         (query-map (orgtrello-proxy/--compute-trello-query query-map-data)) ;; extracting the query
-         (name (orgtrello-data/entity-name query-map-data)))                 ;; extracting the name of the entity (optional)
+  (let* ((position (orgtrello-data/entity-position query-map-data))
+         (buffer-name (orgtrello-data/entity-buffername query-map-data))
+         (standard-callback-fn (orgtrello-data/entity-callback query-map-data))
+         (query-map (orgtrello-proxy/--compute-trello-query query-map-data))
+         (name (orgtrello-data/entity-name query-map-data)))
     (orgtrello-query/http-trello query-map sync (when standard-callback-fn (funcall standard-callback-fn buffer-name position name)))))
 
 (defun orgtrello-proxy/--getting-back-to-headline (data)
