@@ -115,12 +115,7 @@
   (expect :some-result
     (with-mock
       (mock (orgtrello-action/controls-or-actions-then-do :control-or-action-fns :fn-to-execute 'no-log) => :some-result)
-      (orgtrello-action/msg-controls-or-actions-then-do "some-msg" :control-or-action-fns :fn-to-execute 'no-log)))
-  ;; control is ok, but the execution goes awry, an exception is thrown and caught but does not break the call
-  (expect '(exception (no-catch some-exception :value))
-    (with-mock
-      (mock (control0) => :ok)
-      (orgtrello-action/msg-controls-or-actions-then-do "some-msg" '(control0) (lambda () (throw 'some-exception :value))))))
+      (orgtrello-action/msg-controls-or-actions-then-do "some-msg" :control-or-action-fns :fn-to-execute 'no-log))))
 
 (provide 'org-trello-action-tests)
 ;;; org-trello-action-tests.el ends here
