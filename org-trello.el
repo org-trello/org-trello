@@ -5,7 +5,7 @@
 ;; Author: Antoine R. Dumont <eniotna.t AT gmail.com>
 ;; Maintainer: Antoine R. Dumont <eniotna.t AT gmail.com>
 ;; Version: 0.5.2
-;; Package-Requires: ((dash "2.8.0") (request "0.2.0") (s "1.9.0"))
+;; Package-Requires: ((dash "2.8.0") (request "0.2.0") (s "1.9.0") (concurrent "0.3.2"))
 ;; Keywords: org-mode trello sync org-trello
 ;; URL: https://github.com/org-trello/org-trello
 
@@ -89,6 +89,7 @@ Please consider upgrading Emacs." emacs-version) "Error message when installing 
 (require 'parse-time)
 (require 'timer)
 (require 'align)
+(require 'deferred)
 
 ;; Dependency on external Emacs libs
 (require 'dash)
@@ -116,10 +117,14 @@ Please consider upgrading Emacs." emacs-version) "Error message when installing 
 
 
 
-
 (defun org-trello/apply (comp)
   "Apply org-trello computation COMP."
-  (apply (car comp) (cdr comp)))
+  (lexical-let ((computation comp))
+    (deferred:$
+      (deferred:next
+        (lambda () (apply (car computation) (cdr computation))))
+      (deferred:nextc it
+        (lambda () (orgtrello-log/msg *OT/INFO* "computation done!"))))))
 
 (defun org-trello/log-and-do (action-label action-fn &optional with-save-flag)
   "Given an ACTION-LABEL and an ACTION-FN, execute sync action.
