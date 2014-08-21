@@ -63,21 +63,17 @@ If any errors are thrown during controls, then display them."
     ;; no control, we simply execute the function
     (funcall fn-to-execute entity args)))
 
-(defun orgtrello-action/msg-controls-or-actions-then-do (msg control-or-action-fns fn-to-execute &optional save-buffer-p reload-setup-p nolog-p)
+(defun orgtrello-action/msg-controls-or-actions-then-do (msg control-or-action-fns fn-to-execute &optional nolog-p)
   "A decorator fn to display some log MSG.
 Then execute some CONTROL-OR-ACTION-FNS.
 If all controls are ok, then execute the parameter-less FN-TO-EXECUTE.
-`(Optionally)` If SAVE-BUFFER-P is set, this will safe the buffer.
-If RELOAD-SETUP-P is set, this will reload org-mode's setup.
+`(Optionally)`
 if NOLOG-P is set, this will not log anything."
   (unless nolog-p (orgtrello-log/msg *OT/INFO* (concat msg "...")))
   ;; now execute the controls and the main action
   (orgtrello-action/safe-wrap
    (orgtrello-action/controls-or-actions-then-do control-or-action-fns fn-to-execute nolog-p)
-   (progn
-     (when save-buffer-p  (save-buffer))
-     (when reload-setup-p (orgtrello-action/reload-setup))
-     (unless nolog-p (orgtrello-log/msg *OT/INFO* (concat msg " - done!"))))))
+   (unless nolog-p (orgtrello-log/msg *OT/INFO* (concat msg " - done!")))))
 
 (defun orgtrello-action/delete-file! (file-to-remove)
   "Remove metadata file."
