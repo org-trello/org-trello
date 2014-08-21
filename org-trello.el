@@ -116,14 +116,13 @@ Please consider upgrading Emacs." emacs-version) "Error message when installing 
 
 
 
-
 (defun org-trello/apply (comp &optional current-buffer-to-save reload-org-setup)
   "Apply org-trello computation COMP.
 When CURRENT-BUFFER-TO-SAVE (buffer name) is provided, save such buffer.
 When RELOAD-ORG-SETUP is provided, reload the org setup."
-  (lexical-let ((computation      comp)
-                (buffer-to-save   current-buffer-to-save)
-                (reload-setup     reload-org-setup))
+  (lexical-let ((computation    comp)
+                (buffer-to-save current-buffer-to-save)
+                (reload-setup   reload-org-setup))
     (deferred:$
       (deferred:next
         (lambda () (save-excursion
