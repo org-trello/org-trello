@@ -259,15 +259,13 @@ If the checks are ko, the error message is returned."
          (buffer-name (orgtrello-data/entity-buffername entity-data))    ;; buffer-name too
          (marker      (orgtrello-data/entity-id-or-marker entity-data))  ;; retrieve the id (which serves as a marker too)
          (level       (orgtrello-data/entity-level entity-data)))
-    (orgtrello-log/msg *OT/TRACE* "Proxy-consumer - Searching entity metadata from buffer '%s' at point '%s' to sync..." buffer-name position)
-    (orgtrello-action/--safe-wrap-or-throw-error ;; will update via tag the trello id of the new persisted data (if needed)
-     (with-silent-modifications
-       (with-current-buffer buffer-name
-         (when (orgtrello-proxy/--get-back-to-marker marker entity-data)
-           (-> entity-data
-             orgtrello-data/entity-action
-             orgtrello-proxy/--dispatch-action
-             (funcall entity-data (orgtrello-buffer/entry-get-full-metadata!)))))))))
+    (orgtrello-log/msg *OT/TRACE* "do-action-on-entity - Searching entity metadata from buffer '%s' at point '%s' to sync..." buffer-name position)
+    (with-current-buffer buffer-name
+      (when (orgtrello-proxy/--get-back-to-marker marker entity-data)
+        (-> entity-data
+          orgtrello-data/entity-action
+          orgtrello-proxy/--dispatch-action
+          (funcall entity-data (orgtrello-buffer/entry-get-full-metadata!)))))))
 
 (defun orgtrello-proxy/--delete-region (start end)
   "Delete a region defined by START and END bound."
