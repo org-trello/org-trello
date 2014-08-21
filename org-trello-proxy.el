@@ -34,26 +34,6 @@ The query can be synchronous depending on SYNC variable."
       buffers-to-save
     (cons buffer-name buffers-to-save)))
 
-(defvar *ORGTRELLO/LIST-BUFFERS-TO-SAVE* nil "A simple flag to order the saving of buffer when needed.")
-
-(defun orgtrello-proxy/update-buffer-to-save! (buffer-name)
-  "Side-effect - Mutate the *ORGTRELLO/LIST-BUFFERS-TO-SAVE* by adding BUFFER-NAME to it if not already present."
-  (setq *ORGTRELLO/LIST-BUFFERS-TO-SAVE* (orgtrello-proxy/--update-buffer-to-save buffer-name *ORGTRELLO/LIST-BUFFERS-TO-SAVE*)))
-
-(defun orgtrello-proxy/--cleanup-and-save-buffer-metadata (level buffer-name)
-  "To cleanup metadata (LEVEL, BUFFER-NAME) after all the actions are done!"
-  (orgtrello-proxy/update-buffer-to-save! buffer-name)) ;; register the buffer for later saving
-
-(defun orgtrello-proxy/batch-save (buffers)
-  "Save sequentially a list of BUFFERS."
-  (-each buffers (lambda (buffername)
-                   (with-current-buffer buffername
-                     (call-interactively 'save-buffer)))))
-
-(defun orgtrello-proxy/batch-save! ()
-  "Save sequentially the org-trello list of modified buffers."
-  (setq *ORGTRELLO/LIST-BUFFERS-TO-SAVE* (orgtrello-proxy/batch-save *ORGTRELLO/LIST-BUFFERS-TO-SAVE*)))
-
 (defun orgtrello-proxy/--getting-back-to-headline (data)
   "Trying another approach to getting back to header computing the normal form of the entry DATA in the buffer."
   (orgtrello-proxy/--getting-back-to-marker (orgtrello-buffer/--compute-entity-to-org-entry data)))
@@ -95,8 +75,7 @@ Move the cursor position."
                                                 (let ((entry-name (orgtrello-data/entity-name data))) ;; not present, this was just created, we add a simple property
                                                   (orgtrello-buffer/set-property *ORGTRELLO/ID* entry-new-id)
                                                   (format "Newly entity '%s' with id '%s' synced!" entry-name entry-new-id)))))
-                          (orgtrello-log/msg *OT/INFO* str-msg)))))
-                  (orgtrello-proxy/--cleanup-and-save-buffer-metadata level entry-buffer-name))))))
+                          (orgtrello-log/msg *OT/INFO* str-msg))))))))))
 
 (defun orgtrello-proxy/--dispatch-action (action)
   "Compute the action function depending on the ACTION (sync, delete) to execute."
@@ -312,8 +291,7 @@ If the checks are ko, the error message is returned."
              (-> (orgtrello-buffer/entry-get-full-metadata!)
                orgtrello-data/current
                orgtrello-proxy/delete-region
-               funcall))))
-       (orgtrello-proxy/--cleanup-and-save-buffer-metadata level entry-buffer-name)))))
+               funcall))))))))
 
 (defun orgtrello-proxy/--card-delete (card-meta &optional parent-meta)
   "Deal with the deletion query of a CARD-META.

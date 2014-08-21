@@ -17,12 +17,6 @@
               (expect '(:a) (orgtrello-proxy/--update-buffer-to-save :a '(:a)))
               (expect '(:a :b) (orgtrello-proxy/--update-buffer-to-save :a '(:b))))
 
-(expectations (desc "orgtrello-proxy/update-buffer-to-save!")
-              (setq *ORGTRELLO/LIST-BUFFERS-TO-SAVE* nil)
-              (expect '(:a) (orgtrello-proxy/update-buffer-to-save! :a))
-              (expect '(:a) (orgtrello-proxy/update-buffer-to-save! :a))
-              (expect '(:b :a) (orgtrello-proxy/update-buffer-to-save! :b)))
-
 (expectations (desc "map-dispatch-delete")
               (expect 'orgtrello-proxy/--card-delete      (gethash *ORGTRELLO/CARD-LEVEL* *MAP-DISPATCH-DELETE*))
               (expect 'orgtrello-proxy/--checklist-delete (gethash *ORGTRELLO/CHECKLIST-LEVEL* *MAP-DISPATCH-DELETE*))

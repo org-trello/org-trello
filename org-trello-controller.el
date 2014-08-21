@@ -210,8 +210,7 @@ This callback must take a BUFFERNAME, a POSITION and a NAME."
                      (cond ((orgtrello-data/entity-card-p data)      'orgtrello-buffer/overwrite-and-merge-card-header!)
                            ((orgtrello-data/entity-checklist-p data) 'orgtrello-buffer/overwrite-checklist-header!)
                            ((orgtrello-data/entity-item-p data)      'orgtrello-buffer/overwrite-item!))
-                     data)
-                    (save-buffer))
+                     data))
                   (progn
                     (goto-char pos)
                     (orgtrello-log/msg *OT/INFO* "Synchronizing the trello and org data merge - done!")))))))
@@ -258,9 +257,7 @@ This callback must take a BUFFERNAME, a POSITION and a NAME."
                      (cond ((orgtrello-data/entity-card-p data)      'orgtrello-controller/fetch-and-overwrite-card!)
                            ((orgtrello-data/entity-checklist-p data) 'orgtrello-controller/fetch-and-overwrite-checklist!)
                            ((orgtrello-data/entity-item-p data)      'orgtrello-buffer/overwrite-item!))
-                     data)
-                    ;; at last
-                    (save-buffer))
+                     data))
                   (progn
                     (goto-char pos)
                     (orgtrello-log/msg *OT/INFO* "Synchronizing the trello and org data merge - done!")))))))
