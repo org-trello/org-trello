@@ -133,12 +133,12 @@ SYNC is not used."
   (orgtrello-log/msg *OT/INFO* "Synchronizing full entity with its structure on board '%s'..." (orgtrello-buffer/board-name!))
   ;; in any case, we need to show the subtree, otherwise https://github.com/org-trello/org-trello/issues/53
   (org-show-subtree)
-  (if (org-at-heading-p)
-      (org-map-tree (lambda () (orgtrello-controller/do-sync-entity-to-trello!) (orgtrello-controller/map-sync-checkboxes)))
-    (orgtrello-controller/map-sync-checkboxes)))
+  (when (orgtrello-buffer/card-at-pt!)
+    (orgtrello-controller/do-sync-entity-to-trello!))
+  (orgtrello-controller/map-sync-checkboxes))
 
 (defun orgtrello-controller/map-sync-checkboxes ()
-  "Map the sync to checkboxes."
+  "Map the sync operation to checkboxes."
   (save-excursion
     (orgtrello-cbx/map-checkboxes 'orgtrello-controller/do-sync-entity-to-trello!)))
 

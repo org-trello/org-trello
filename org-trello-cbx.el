@@ -229,11 +229,11 @@ If a sibling is found, return the point-at-bol, otherwise return the max point i
     (if (org-goto-sibling) (point-at-bol) (point-max))))
 
 (defun orgtrello-cbx/--goto-next-checkbox ()
-  "Compute the next checkbox's beginning of line.
+  "Go to the next checkbox.
 Does not preserve the current position.
 If hitting a heading or the end of the file, return nil."
   (forward-line)
-  (when (and (not (org-at-heading-p)) (< (point) (point-max)) (not (orgtrello-cbx/checkbox-p)))
+  (when (and (not (= *ORGTRELLO/CARD-LEVEL* (orgtrello-cbx/--level!))) (< (point) (point-max)) (not (orgtrello-cbx/checkbox-p)))
     (orgtrello-cbx/--goto-next-checkbox)))
 
 (defun orgtrello-cbx/--goto-next-checkbox-with-same-level! (level)
@@ -259,9 +259,10 @@ Do not exceed the max size of buffer."
 
 (defun orgtrello-cbx/map-checkboxes (fn-to-execute)
   "Map over the current checkbox and execute FN-TO-EXECUTE."
-  (let ((level (orgtrello-cbx/current-level!)))
+  (let* ((level      (orgtrello-cbx/current-level!))
+         (scan-level (if (<= level *ORGTRELLO/CARD-LEVEL*) *ORGTRELLO/CARD-LEVEL* level))) ;; hack to take into account -1 (card metadata) as card level
     (when (= level *ORGTRELLO/CHECKLIST-LEVEL*) (funcall fn-to-execute))
-    (save-excursion (orgtrello-cbx/--map-checkboxes level fn-to-execute)))) ;; then map over the next checkboxes and sync them
+    (save-excursion (orgtrello-cbx/--map-checkboxes scan-level fn-to-execute))))
 
 (defun orgtrello-cbx/next-checklist-point! ()
   "Compute the next checklist position."
