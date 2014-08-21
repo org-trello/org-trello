@@ -106,7 +106,7 @@ ARGS is not used."
             ((= level *ORGTRELLO/CHECKLIST-LEVEL*) *ORGTRELLO/ERROR-SYNC-CHECKLIST-MISSING-NAME*)
             ((= level *ORGTRELLO/ITEM-LEVEL*)      *ORGTRELLO/ERROR-SYNC-ITEM-MISSING-NAME*)))))
 
-(defun orgtrello-controller/--delegate-to-the-proxy (full-meta action)
+(defun orgtrello-controller/--do-action! (full-meta action)
   "Delegate the FULL-META ACTION to execute on it to the consumer."
   (let* ((current (orgtrello-data/current full-meta))
          (marker  (orgtrello-buffer/--compute-marker-from-entry current)))
@@ -115,18 +115,18 @@ ARGS is not used."
     (orgtrello-data/put-entity-action action current)
     (orgtrello-proxy/do-action-on-entity current)))
 
-(defun orgtrello-controller/--checks-then-delegate-action-on-entity-to-proxy (functional-controls action)
+(defun orgtrello-controller/--check-then-action-on-entity! (functional-controls action)
   "Execute the FUNCTIONAL-CONTROLS then if all pass, delegate the ACTION to the proxy."
-  (orgtrello-action/functional-controls-then-do functional-controls (orgtrello-buffer/entry-get-full-metadata!) 'orgtrello-controller/--delegate-to-the-proxy action))
+  (orgtrello-action/functional-controls-then-do functional-controls (orgtrello-buffer/entry-get-full-metadata!) 'orgtrello-controller/--do-action! action))
 
 (defun orgtrello-controller/do-delete-simple (&optional sync)
   "Do the deletion of an entity.
 SYNC is not used."
-  (orgtrello-controller/--checks-then-delegate-action-on-entity-to-proxy '(orgtrello-controller/--right-level-p orgtrello-controller/--already-synced-p) *ORGTRELLO/ACTION-DELETE*))
+  (orgtrello-controller/--check-then-action-on-entity! '(orgtrello-controller/--right-level-p orgtrello-controller/--already-synced-p) *ORGTRELLO/ACTION-DELETE*))
 
 (defun orgtrello-controller/do-sync-entity-to-trello! ()
   "Do the entity synchronization (if never synchronized, will create it, update it otherwise)."
-  (orgtrello-controller/--checks-then-delegate-action-on-entity-to-proxy '(orgtrello-controller/--right-level-p orgtrello-controller/--mandatory-name-ok-p) *ORGTRELLO/ACTION-SYNC*))
+  (orgtrello-controller/--check-then-action-on-entity! '(orgtrello-controller/--right-level-p orgtrello-controller/--mandatory-name-ok-p) *ORGTRELLO/ACTION-SYNC*))
 
 (defun orgtrello-controller/do-sync-full-entity-to-trello! ()
   "Do the actual full card creation - from card to item. Beware full side effects..."
