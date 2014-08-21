@@ -75,10 +75,6 @@ if NOLOG-P is set, this will not log anything."
    (orgtrello-action/controls-or-actions-then-do control-or-action-fns fn-to-execute nolog-p)
    (unless nolog-p (orgtrello-log/msg *OT/INFO* (concat msg " - done!")))))
 
-(defun orgtrello-action/delete-file! (file-to-remove)
-  "Remove metadata file."
-  (when (file-exists-p file-to-remove) (delete-file file-to-remove)))
-
 (defun orgtrello-action/--too-deep-level (meta &optional parent-meta grandparent-meta)
   "Given a META and optional PARENT-META and GRANDPARENT-META, deal with too deep level."
   "Your arborescence depth is too deep. We only support up to depth 3.\nLevel 1 - card\nLevel 2 - checklist\nLevel 3 - items")
