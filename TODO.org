@@ -73,8 +73,8 @@ CLOSED: [2014-08-20 Wed 19:21]
 - [X] Update version
 - [X] Release notes
 
-* FAIL 0.4.9 [100%]
-CLOSED: [2014-08-17 Sun 18:11]
+* FAILED 0.4.9 [100%]
+CLOSED: [2014-08-21 Thu 21:36]
 - [X] Backlog
 - [X] Emacs blocks when sync - #164
   - [X] deferred dependency - 0.3.1 chosen because it's the common denominator between marmalade and melpa
