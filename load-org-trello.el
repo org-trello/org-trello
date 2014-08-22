@@ -39,8 +39,8 @@
       (write-file filename)
       (call-interactively 'emr-el-find-unused-definitions))))
 
-(global-set-key (kbd "C-c o n") 'org-trello/dev-load-namespaces!)
-(global-set-key (kbd "C-c o f") 'org-trello/dev-find-unused-definitions!)
+(define emacs-lisp-mode-map (kbd "C-c o n") 'org-trello/dev-load-namespaces!)
+(define emacs-lisp-mode-map (kbd "C-c o f") 'org-trello/dev-find-unused-definitions!)
 
 (org-trello/dev-load-namespaces!)
 (message "org-trello loaded!")
