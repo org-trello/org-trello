@@ -164,7 +164,7 @@ If NO-CHECK-FLAG is set, no controls are done."
 (defun org-trello/abort-sync ()
   "Control first, then if ok, add a comment to the current card."
   (interactive)
-  (orgtrello-log/msg *OT/NOLOG* "Transitioning - Not implemented yet!"))
+  (deferred:clear-queue))
 
 (defun org-trello/add-card-comments ()
   "Control first, then if ok, add a comment to the current card."
