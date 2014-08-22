@@ -171,7 +171,7 @@ Write the new properties at current position."
   (-when-let (s (buffer-substring-no-properties (point-at-bol) (point-at-eol)))
     (->> s
       s-trim-left
-      (string-match-p "^- .*"))))
+      (string-match-p "^- \\\[.?\\\].*"))))
 
 (defun orgtrello-cbx/--level! ()
   "Compute the levels from the current position (which is `bol`)"
