@@ -46,6 +46,26 @@ If the VALUE is nil or empty, remove such PROPERTY."
   (let ((pt (point)))
     (and (<= (orgtrello-buffer/--card-start-point!) pt) (<= pt (orgtrello-buffer/--card-metadata-end-point!)))))
 
+(defun orgtrello-buffer/checklist-at-pt! ()
+  "Determine if currently on the checklist region."
+  (= (orgtrello-cbx/--level!) *ORGTRELLO/CHECKLIST-LEVEL*))
+
+(defun orgtrello-buffer/item-at-pt! ()
+  "Determine if currently on the item region."
+  (= (orgtrello-cbx/--level!) *ORGTRELLO/ITEM-LEVEL*))
+
+(defun orgtrello-buffer/compute-header-entity-region! ()
+  "Given the current position, compute the entity header only region."
+  (cond ((orgtrello-buffer/card-at-pt!)      (orgtrello-buffer/compute-card-metadata-region!))
+        ((orgtrello-buffer/checklist-at-pt!) (orgtrello-buffer/compute-checklist-header-region!))
+        ((orgtrello-buffer/item-at-pt!)      (orgtrello-buffer/compute-item-region!))))
+
+(defun orgtrello-buffer/compute-full-entity-region! ()
+  "Compute the full entity region from the current position."
+  (cond ((orgtrello-buffer/card-at-pt!)      (orgtrello-buffer/compute-card-region!))
+        ((orgtrello-buffer/checklist-at-pt!) (orgtrello-buffer/compute-checklist-region!))
+        ((orgtrello-buffer/item-at-pt!)      (orgtrello-buffer/compute-item-region!))))
+
 (defun orgtrello-buffer/extract-description-from-current-position! ()
   "Given the current position, extract the text content of current card."
   (let* ((start (orgtrello-buffer/--card-description-start-point!))

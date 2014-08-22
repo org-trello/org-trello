@@ -4,7 +4,277 @@
 (require 'el-mock)
 
 (expectations
-  (desc "orgtrello-buffer/extract-description-from-current-position! - standard org-trello properties without blanks before them.")
+  (desc "orgtrello-buffer/card-at-pt!")
+  (expect t
+    (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
+   DEADLINE: <2014-04-01T00:00:00.000Z>
+:PROPERTIES:
+:orgtrello-id: 52c945143004d4617c012528
+:END:
+hello there
+"
+                                      (orgtrello-buffer/card-at-pt!)))
+
+  (expect nil
+    (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
+:PROPERTIES:
+:orgtrello-id: 52c945143004d4617c012528
+:END:
+  hello there
+- [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}"
+                                      (orgtrello-buffer/card-at-pt!)
+                                      0))
+  (expect nil
+    (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
+:PROPERTIES:
+:orgtrello-id: 52c945143004d4617c012528
+:END:
+  hello there
+- [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}
+  - [X] Emacs-Lisp  :PROPERTIES: {\"orgtrello-id\":\"52c9451784251e1b260127f8\"}"
+                                      (orgtrello-buffer/card-at-pt!)
+                                      0)))
+
+(expectations
+  (desc "orgtrello-buffer/checklist-at-pt!")
+  (expect nil
+    (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
+   DEADLINE: <2014-04-01T00:00:00.000Z>
+:PROPERTIES:
+:orgtrello-id: 52c945143004d4617c012528
+:END:
+hello there
+"
+                                      (orgtrello-buffer/checklist-at-pt!)))
+
+  (expect t
+    (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
+:PROPERTIES:
+:orgtrello-id: 52c945143004d4617c012528
+:END:
+  hello there
+- [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}"
+                                      (orgtrello-buffer/checklist-at-pt!)
+                                      0))
+  (expect nil
+    (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
+:PROPERTIES:
+:orgtrello-id: 52c945143004d4617c012528
+:END:
+  hello there
+- [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}
+  - [X] Emacs-Lisp  :PROPERTIES: {\"orgtrello-id\":\"52c9451784251e1b260127f8\"}"
+                                      (orgtrello-buffer/checklist-at-pt!)
+                                      0)))
+
+(expectations
+  (desc "orgtrello-buffer/item-at-pt!")
+  (expect nil
+    (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
+   DEADLINE: <2014-04-01T00:00:00.000Z>
+:PROPERTIES:
+:orgtrello-id: 52c945143004d4617c012528
+:END:
+hello there
+"
+                                      (orgtrello-buffer/item-at-pt!)))
+
+  (expect nil
+    (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
+:PROPERTIES:
+:orgtrello-id: 52c945143004d4617c012528
+:END:
+  hello there
+- [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}"
+                                      (orgtrello-buffer/item-at-pt!)
+                                      0))
+  (expect t
+    (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
+:PROPERTIES:
+:orgtrello-id: 52c945143004d4617c012528
+:END:
+  hello there
+- [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}
+  - [X] Emacs-Lisp  :PROPERTIES: {\"orgtrello-id\":\"52c9451784251e1b260127f8\"}"
+                                      (orgtrello-buffer/item-at-pt!)
+                                      0)))
+
+(expectations
+  (desc "orgtrello-buffer/compute-header-entity-region!")
+  (expect '(1 207) ;; card region
+    (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
+:PROPERTIES:
+:END:
+  hello description
+  - with many
+  - lines
+
+  - including
+
+  - blanks lines
+  - lists
+  - with start or dash  are now possible
+    - indentation too
+
+- [-] LISP family
+  - [X] Emacs-Lisp
+  - [X] Common-Lisp
+  - [ ] Scheme
+  - [X] Clojure
+- [-] ML family
+  - [X] Haskell
+  - [X] Ocaml
+- [-] hybrid family
+  - [X] Scala
+* Another card"
+                                      (progn (goto-char (point-min))
+                                             (orgtrello-buffer/compute-header-entity-region!))))
+  (expect '(208 226) ;; checklist region
+    (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
+:PROPERTIES:
+:END:
+  hello description
+  - with many
+  - lines
+
+  - including
+
+  - blanks lines
+  - lists
+  - with start or dash  are now possible
+    - indentation too
+
+- [-] LISP family
+  - [X] Emacs-Lisp
+  - [X] Common-Lisp
+  - [ ] Scheme
+  - [X] Clojure
+- [-] ML family
+  - [X] Haskell
+  - [X] Ocaml
+- [-] hybrid family
+  - [X] Scala
+* Another card"
+                                      (progn (goto-char 208)
+                                             (orgtrello-buffer/compute-header-entity-region!))))
+  (expect '(226 245) ;; item region
+    (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
+:PROPERTIES:
+:END:
+  hello description
+  - with many
+  - lines
+
+  - including
+
+  - blanks lines
+  - lists
+  - with start or dash  are now possible
+    - indentation too
+
+- [-] LISP family
+  - [X] Emacs-Lisp
+  - [X] Common-Lisp
+  - [ ] Scheme
+  - [X] Clojure
+- [-] ML family
+  - [X] Haskell
+  - [X] Ocaml
+- [-] hybrid family
+  - [X] Scala
+* Another card"
+                                      (progn (goto-char 226)
+                                             (orgtrello-buffer/compute-header-entity-region!)))))
+(expectations
+  (desc "orgtrello-buffer/compute-full-entity-region!")
+  (expect '(1 375) ;; card region
+    (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
+:PROPERTIES:
+:END:
+  hello description
+  - with many
+  - lines
+
+  - including
+
+  - blanks lines
+  - lists
+  - with start or dash  are now possible
+    - indentation too
+
+- [-] LISP family
+  - [X] Emacs-Lisp
+  - [X] Common-Lisp
+  - [ ] Scheme
+  - [X] Clojure
+- [-] ML family
+  - [X] Haskell
+  - [X] Ocaml
+- [-] hybrid family
+  - [X] Scala
+* Another card"
+                                      (progn (goto-char (point-min))
+                                             (orgtrello-buffer/compute-full-entity-region!))))
+  (expect '(208 296) ;; checklist region
+    (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
+:PROPERTIES:
+:END:
+  hello description
+  - with many
+  - lines
+
+  - including
+
+  - blanks lines
+  - lists
+  - with start or dash  are now possible
+    - indentation too
+
+- [-] LISP family
+  - [X] Emacs-Lisp
+  - [X] Common-Lisp
+  - [ ] Scheme
+  - [X] Clojure
+- [-] ML family
+  - [X] Haskell
+  - [X] Ocaml
+- [-] hybrid family
+  - [X] Scala
+* Another card"
+                                      (progn (goto-char 208)
+                                             (orgtrello-buffer/compute-full-entity-region!))))
+  (expect '(226 245) ;; item region
+    (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
+:PROPERTIES:
+:END:
+  hello description
+  - with many
+  - lines
+
+  - including
+
+  - blanks lines
+  - lists
+  - with start or dash  are now possible
+    - indentation too
+
+- [-] LISP family
+  - [X] Emacs-Lisp
+  - [X] Common-Lisp
+  - [ ] Scheme
+  - [X] Clojure
+- [-] ML family
+  - [X] Haskell
+  - [X] Ocaml
+- [-] hybrid family
+  - [X] Scala
+* Another card"
+                                      (progn (goto-char 226)
+                                             (orgtrello-buffer/compute-full-entity-region!)))))
+
+(expectations (desc "orgtrello-buffer/compute-full-entity-region!"))
+
+(expectations
   (expect "llo there"
     (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
    DEADLINE: <2014-04-01T00:00:00.000Z>
@@ -160,58 +430,58 @@ some-description
 #+PROPERTY: orgtrello-user-ardumont ardumont-id
 #+PROPERTY: orgtrello-user-dude dude-id
 :END:
-* TODO some card name
-  :PROPERTIES:
-  :orgtrello-id: some-card-id
-  :orgtrello-users: ardumont,dude
-  :orgtrello-card-comments: ardumont: some comment
+   * TODO some card name
+    :PROPERTIES:
+    :orgtrello-id: some-card-id
+    :orgtrello-users: ardumont,dude
+    :orgtrello-card-comments: ardumont: some comment
+    :END:
+    some description"
+      (orgtrello-tests/with-temp-buffer-and-return-buffer-content
+       ":PROPERTIES:
+  #+PROPERTY: orgtrello-user-ardumont ardumont-id
+  #+PROPERTY: orgtrello-user-dude dude-id
   :END:
-  some description"
-    (orgtrello-tests/with-temp-buffer-and-return-buffer-content
-     ":PROPERTIES:
-#+PROPERTY: orgtrello-user-ardumont ardumont-id
-#+PROPERTY: orgtrello-user-dude dude-id
-:END:
-"
-     (orgtrello-buffer/write-card-header! "some-card-id" (orgtrello-hash/make-properties `((:keyword . "TODO")
-                                                                                           (:member-ids . "ardumont-id,dude-id")
-                                                                                           (:comments . ,(list (orgtrello-hash/make-properties '((:comment-user . "ardumont")
-                                                                                                                                                 (:comment-text . "some comment")))))
-                                                                                           (:desc . "some description")
-                                                                                           (:level . ,*ORGTRELLO/CARD-LEVEL*)
-                                                                                           (:name . "some card name"))))
+  "
+       (orgtrello-buffer/write-card-header! "some-card-id" (orgtrello-hash/make-properties `((:keyword . "TODO")
+                                                                                             (:member-ids . "ardumont-id,dude-id")
+                                                                                             (:comments . ,(list (orgtrello-hash/make-properties '((:comment-user . "ardumont")
+                                                                                                                                                   (:comment-text . "some comment")))))
+                                                                                             (:desc . "some description")
+                                                                                             (:level . ,*ORGTRELLO/CARD-LEVEL*)
+                                                                                             (:name . "some card name"))))
 
-     0))
+       0))
 
-  (expect ":PROPERTIES:
-#+PROPERTY: orgtrello-user-ardumont ardumont-id
-#+PROPERTY: orgtrello-user-dude dude-id
-:END:
-* TODO some card name                                                   :red:green:
-DEADLINE: <some-due-date>
-  :PROPERTIES:
-  :orgtrello-id: some-card-id
-  :orgtrello-users: ardumont,dude
-  :orgtrello-card-comments: ardumont: some comment
+    (expect ":PROPERTIES:
+  #+PROPERTY: orgtrello-user-ardumont ardumont-id
+  #+PROPERTY: orgtrello-user-dude dude-id
   :END:
-  some description"
-    (orgtrello-tests/with-temp-buffer-and-return-buffer-content
-     ":PROPERTIES:
-#+PROPERTY: orgtrello-user-ardumont ardumont-id
-#+PROPERTY: orgtrello-user-dude dude-id
-:END:
-"
-     (orgtrello-buffer/write-card-header! "some-card-id" (orgtrello-hash/make-properties `((:keyword . "TODO")
-                                                                                           (:member-ids . "ardumont-id,dude-id")
-                                                                                           (:comments . ,(list (orgtrello-hash/make-properties '((:comment-user . "ardumont")
-                                                                                                                                                 (:comment-text . "some comment")))))
-                                                                                           (:tags . ":red:green:")
-                                                                                           (:desc . "some description")
-                                                                                           (:level . ,*ORGTRELLO/CARD-LEVEL*)
-                                                                                           (:name . "some card name")
-                                                                                           (:due . "some-due-date"))))
+  * TODO some card name                                                   :red:green:
+  DEADLINE: <some-due-date>
+    :PROPERTIES:
+    :orgtrello-id: some-card-id
+    :orgtrello-users: ardumont,dude
+    :orgtrello-card-comments: ardumont: some comment
+    :END:
+    some description"
+      (orgtrello-tests/with-temp-buffer-and-return-buffer-content
+       ":PROPERTIES:
+  #+PROPERTY: orgtrello-user-ardumont ardumont-id
+  #+PROPERTY: orgtrello-user-dude dude-id
+  :END:
+  "
+       (orgtrello-buffer/write-card-header! "some-card-id" (orgtrello-hash/make-properties `((:keyword . "TODO")
+                                                                                             (:member-ids . "ardumont-id,dude-id")
+                                                                                             (:comments . ,(list (orgtrello-hash/make-properties '((:comment-user . "ardumont")
+                                                                                                                                                   (:comment-text . "some comment")))))
+                                                                                             (:tags . ":red:green:")
+                                                                                             (:desc . "some description")
+                                                                                             (:level . ,*ORGTRELLO/CARD-LEVEL*)
+                                                                                             (:name . "some card name")
+                                                                                             (:due . "some-due-date"))))
 
-     0)))
+       0)))
 
 (expectations
   (expect ":PROPERTIES:
@@ -887,4 +1157,3 @@ DEADLINE: <2014-05-17 Sat>
 
 (provide 'org-trello-buffer-tests)
 ;;; org-trello-buffer-tests.el ends here
-

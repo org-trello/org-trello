@@ -209,6 +209,27 @@ This callback must take a BUFFERNAME, a POSITION and a NAME."
                           ((orgtrello-data/entity-item-p data)      'orgtrello-buffer/overwrite-item!))
                     data))))))
 
+(defun orgtrello-controller/build-entity-structure! ()
+  "Build the current entity as entity structure.
+No synchronization is done."
+  (->> (orgtrello-buffer/compute-header-entity-region!)
+    (cons nil) ;; no need for buffer name
+    (apply 'orgtrello-buffer/compute-entities-from-org-buffer!)))
+
+(defun orgtrello-controller/build-full-entity-structure! ()
+  "Build a full entity-structure from current point.
+No synchronization is done."
+  (->> (orgtrello-buffer/compute-full-entity-region!)
+    (cons nil) ;; no need for buffer name
+    (apply 'orgtrello-buffer/compute-entities-from-org-buffer!)))
+
+(defun orgtrello-controller/execute-sync-entity-structure! (entity-structure buffer-name)
+  "Execute synchronization of ENTITY-STRUCTURE (card, checklists, items).
+The entity-structure is self contained.
+Synchronization is done here.
+Along the way, the buffer BUFFER-NAME is written with new informations."
+  )
+
 (defun orgtrello-controller/fetch-and-overwrite-card! (card)
   "Given a card, retrieve latest information from trello and overwrite in current buffer."
   (let* ((card-id                  (orgtrello-data/entity-id card))
