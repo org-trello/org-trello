@@ -56,10 +56,10 @@
 ;; Now you can work with trello from the comfort of org-mode and Emacs
 ;;
 ;; 8) Sync a card from Org to Trello (C-c o c/C-c o C)
-;; M-x org-trello/sync-full-card
+;; M-x org-trello/sync-card
 ;;
 ;; 9) Sync a card from Trello to Org (C-u C-c o c/C-u C-c o C)
-;; C-u M-x org-trello/sync-entity
+;; C-u M-x org-trello/sync-card
 ;;
 ;; 10) Sync all the org buffer to trello (C-c o s)
 ;; M-x org-trello/sync-buffer
@@ -189,7 +189,7 @@ If NO-CHECK-FLAG is set, no controls are done."
   (interactive)
   (org-trello/apply '(org-trello/log-strict-checks-and-do "Display current board's labels" orgtrello-controller/do-show-board-labels!)))
 
-(defun org-trello/sync-full-card (&optional modifier)
+(defun org-trello/sync-card (&optional modifier)
   "Execute the sync of an entity and its structure to trello.
 If MODIFIER is non nil, execute the sync entity and its structure from trello."
   (interactive "P")
