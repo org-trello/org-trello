@@ -16,8 +16,8 @@ C-c o d - M-x org-trello/check-setup - Check that the setup is ok. If everything
 C-c o a - M-x org-trello/assign-me - Assign oneself to the card. With C-u modifier, unassign oneself from the card.
 C-c o D - M-x org-trello/delete-setup - Clean up the org buffer from all org-trello informations.
 C-c o b - M-x org-trello/create-board - Create interactively a board and attach the org-mode file to this trello board.
-C-c o c - M-x org-trello/sync-entity - Create/Update an entity (card/checklist/item) depending on its level and status. Do not deal with level superior to 4.
-C-c o C - M-x org-trello/sync-full-entity - Create/Update a complete entity card/checklist/item and its subtree (depending on its level).
+C-c o c - M-x org-trello/sync-full-card - Create/Update a complete card.
+C-c o C - M-x org-trello/sync-full-card - Create/Update a complete card.
 C-c o k - M-x org-trello/kill-entity - Kill the entity (and its arborescence tree) from the trello board and the org buffer.
 C-c o K - M-x org-trello/kill-all-entities - Kill all the entities (and their arborescence tree) from the trello board and the org buffer.
 C-c o s - M-x org-trello/sync-buffer - Synchronize the org-mode file to the trello board (org-mode -> trello). With prefix C-u, sync-from-trello (org-mode <- trello).

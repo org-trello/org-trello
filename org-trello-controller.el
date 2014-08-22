@@ -128,7 +128,7 @@ SYNC is not used."
   "Do the entity synchronization (if never synchronized, will create it, update it otherwise)."
   (orgtrello-controller/--check-then-action-on-entity! '(orgtrello-controller/--right-level-p orgtrello-controller/--mandatory-name-ok-p) *ORGTRELLO/ACTION-SYNC*))
 
-(defun orgtrello-controller/do-sync-full-entity-to-trello! ()
+(defun orgtrello-controller/do-sync-card-to-trello! ()
   "Do the actual full card creation - from card to item. Beware full side effects..."
   (orgtrello-log/msg *OT/INFO* "Synchronizing full entity with its structure on board '%s'..." (orgtrello-buffer/board-name!))
   ;; in any case, we need to show the subtree, otherwise https://github.com/org-trello/org-trello/issues/53
@@ -144,7 +144,7 @@ SYNC is not used."
 (defun orgtrello-controller/do-sync-full-file-to-trello! ()
   "Full org-mode file synchronisation."
   (orgtrello-log/msg *OT/WARN* "Synchronizing org-mode file to the board '%s'. This may take some time, some coffee may be a good idea..." (orgtrello-buffer/board-name!))
-  (orgtrello-buffer/org-map-entries *ORGTRELLO/CARD-LEVEL* 'orgtrello-controller/do-sync-full-entity-to-trello!))
+  (orgtrello-buffer/org-map-entries *ORGTRELLO/CARD-LEVEL* 'orgtrello-controller/do-sync-card-to-trello!))
 
 (defun orgtrello-controller/--sync-buffer-with-trello-data (data buffer-name)
   "Given all the entities and adjacency present in DATA, update the current buffer BUFFER-NAME with those."
@@ -292,7 +292,7 @@ If WITH-FILTER is set, only the checklist is returned (without its items)."
       (orgtrello-controller/--update-query-with-org-metadata (point) (buffer-name) nil 'orgtrello-controller/--sync-entity-to-buffer-with-trello-data-callback)
       (orgtrello-proxy/sync-from sync))))
 
-(defun orgtrello-controller/do-sync-entity-and-structure-from-trello! (&optional sync)
+(defun orgtrello-controller/do-sync-card-from-trello! (&optional sync)
   "Entity (card/checklist/item) synchronization (with its structure) from trello.
 Optionally, SYNC permits to synchronize the query."
   (orgtrello-log/msg *OT/INFO* "Synchronizing the trello entity and its structure to the org-mode file...")

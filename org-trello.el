@@ -54,22 +54,17 @@
 ;; C-u M-x org-trello/sync-buffer
 ;;
 ;; Now you can work with trello from the comfort of org-mode and Emacs
-;; 8) Sync an entity from org to trello (C-c o c)
-;; M-x org-trello/sync-entity
 ;;
-;; 9) Sync an entity and its structure from org to trello (C-c o C)
-;; M-x org-trello/sync-full-entity
+;; 8) Sync a card from Org to Trello (C-c o c/C-c o C)
+;; M-x org-trello/sync-full-card
 ;;
-;; 10) Sync an entity from trello to org (C-u C-c o c)
+;; 9) Sync a card from Trello to Org (C-u C-c o c/C-u C-c o C)
 ;; C-u M-x org-trello/sync-entity
 ;;
-;; 11) Sync an entity and its structure from trello to org (C-u C-c o C)
-;; C-u M-x org-trello/sync-full-entity
-;;
-;; 12) Sync all the org buffer to trello (C-c o s)
+;; 10) Sync all the org buffer to trello (C-c o s)
 ;; M-x org-trello/sync-buffer
 ;;
-;; 13) As already mentionned, you can sync all the org buffer from trello (C-u C-c o s)
+;; 11) As already mentioned, you can sync all the org buffer from trello (C-u C-c o s)
 ;; C-u M-x org-trello/sync-buffer
 ;;
 ;; Enjoy!
@@ -194,24 +189,14 @@ If NO-CHECK-FLAG is set, no controls are done."
   (interactive)
   (org-trello/apply '(org-trello/log-strict-checks-and-do "Display current board's labels" orgtrello-controller/do-show-board-labels!)))
 
-(defun org-trello/sync-entity (&optional modifier)
-  "Execute the sync of an entity to trello.
-If MODIFIER is non nil, execute the sync entity from trello."
-  (interactive "P")
-  (org-trello/apply (cons 'org-trello/log-strict-checks-and-do
-                          (if modifier
-                              '("Request 'sync entity from trello'" orgtrello-controller/do-sync-entity-from-trello!)
-                            '("Request 'sync entity to trello'" orgtrello-controller/do-sync-entity-to-trello!)))
-                    (current-buffer)))
-
-(defun org-trello/sync-full-entity (&optional modifier)
+(defun org-trello/sync-full-card (&optional modifier)
   "Execute the sync of an entity and its structure to trello.
 If MODIFIER is non nil, execute the sync entity and its structure from trello."
   (interactive "P")
   (org-trello/apply (cons 'org-trello/log-strict-checks-and-do
                           (if modifier
-                              '("Request 'sync entity with structure from trello" orgtrello-controller/do-sync-entity-and-structure-from-trello!)
-                            '("Request 'sync entity with structure to trello" orgtrello-controller/do-sync-full-entity-to-trello!)))
+                              '("Request 'sync entity with structure from trello" orgtrello-controller/do-sync-card-from-trello!)
+                            '("Request 'sync entity with structure to trello" orgtrello-controller/do-sync-card-to-trello!)))
                     (current-buffer)))
 
 (defun org-trello/sync-buffer (&optional modifier)
