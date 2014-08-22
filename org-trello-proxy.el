@@ -112,12 +112,13 @@ If the checks are ko, the error message is returned."
                (card-due                (orgtrello-data/entity-due         card-meta))
                (card-desc               (orgtrello-data/entity-description card-meta))
                (card-user-ids-assigned  (orgtrello-data/entity-member-ids  card-meta))
-               (card-labels             (orgtrello-proxy/--tags-to-labels (orgtrello-data/entity-tags card-meta))))
+               (card-labels             (orgtrello-proxy/--tags-to-labels (orgtrello-data/entity-tags card-meta)))
+               (card-pos                (orgtrello-data/entity-position   (orgtrello-data/entity-tags card-meta))))
           (if card-id
               ;; update
-              (orgtrello-api/move-card card-id list-id card-name card-due card-user-ids-assigned card-desc card-labels)
+              (orgtrello-api/move-card card-id list-id card-name card-due card-user-ids-assigned card-desc card-labels card-pos)
             ;; create
-            (orgtrello-api/add-card card-name list-id card-due card-user-ids-assigned card-desc card-labels)))
+            (orgtrello-api/add-card card-name list-id card-due card-user-ids-assigned card-desc card-labels card-pos)))
       checks-ok-or-error-message)))
 
 (defun orgtrello-proxy/--checks-before-sync-checklist (checklist-meta card-meta)
@@ -137,12 +138,13 @@ If the checks are ko, the error message is returned."
     (if (equal :ok checks-ok-or-error-message)
         ;; grandparent is useless here
         (let ((card-id        (orgtrello-data/entity-id card-meta))
-              (checklist-name (orgtrello-data/entity-name checklist-meta)))
+              (checklist-name (orgtrello-data/entity-name checklist-meta))
+              (checklist-pos  (orgtrello-data/entity-position checklist-meta)))
           (-if-let (checklist-id (orgtrello-data/entity-id checklist-meta))
               ;; update
-              (orgtrello-api/update-checklist checklist-id checklist-name)
+              (orgtrello-api/update-checklist checklist-id checklist-name checklist-pos)
             ;; create
-            (orgtrello-api/add-checklist card-id checklist-name)))
+            (orgtrello-api/add-checklist card-id checklist-name checklist-pos)))
       checks-ok-or-error-message)))
 
 (defun orgtrello-proxy/--compute-state (state)
@@ -176,7 +178,8 @@ If the checks are ko, the error message is returned."
                (checklist-id    (orgtrello-data/entity-id checklist-meta))
                (card-id         (orgtrello-data/entity-id card-meta))
                (item-name       (orgtrello-data/entity-name item-meta))
-               (item-state      (orgtrello-data/entity-keyword item-meta)))
+               (item-state      (orgtrello-data/entity-keyword item-meta))
+               (item-pos        (orgtrello-data/entity-position item-meta)))
           ;; update/create items
           (if item-id
               ;; update - rename, check or uncheck the item
@@ -184,11 +187,13 @@ If the checks are ko, the error message is returned."
                                          checklist-id
                                          item-id
                                          item-name
-                                         (orgtrello-proxy/--compute-state item-state))
+                                         (orgtrello-proxy/--compute-state item-state)
+                                         item-pos)
             ;; create
             (orgtrello-api/add-items checklist-id
                                      item-name
-                                     (orgtrello-proxy/--compute-check item-state))))
+                                     (orgtrello-proxy/--compute-check item-state)
+                                     item-pos)))
       checks-ok-or-error-message)))
 
 (defvar *MAP-DISPATCH-CREATE-UPDATE* (orgtrello-hash/make-properties `((,*ORGTRELLO/CARD-LEVEL*      . orgtrello-proxy/--card)
