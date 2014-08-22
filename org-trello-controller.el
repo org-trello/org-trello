@@ -298,18 +298,18 @@ Optionally, SYNC permits to synchronize the query."
       (orgtrello-controller/--update-query-with-org-metadata (point) (buffer-name) nil 'orgtrello-controller/--sync-entity-and-structure-to-buffer-with-trello-data-callback)
       (orgtrello-proxy/sync-from sync))))
 
-(defun orgtrello-controller/--do-delete-card (&optional sync)
+(defun orgtrello-controller/--do-delete-card ()
   "Delete the card.
 SYNC flag permit to synchronize the http query."
   (when (= *ORGTRELLO/CARD-LEVEL* (-> (orgtrello-buffer/entry-get-full-metadata!)
                           orgtrello-data/current
                           orgtrello-data/entity-level))
-    (orgtrello-controller/do-delete-simple sync)))
+    (orgtrello-controller/do-delete-simple)))
 
-(defun orgtrello-controller/do-delete-entities (&optional sync)
+(defun orgtrello-controller/do-delete-entities ()
   "Launch a batch deletion of every single entities present on the buffer.
 SYNC flag permit to synchronize the http query."
-  (org-map-entries (lambda () (orgtrello-controller/--do-delete-card sync)) t 'file))
+  (org-map-entries 'orgtrello-controller/--do-delete-card  t 'file))
 
 (defun orgtrello-controller/--do-install-config-file (consumer-key access-token)
   "Persist the file config-file with the CONSUMER-KEY and ACCESS-TOKEN."
