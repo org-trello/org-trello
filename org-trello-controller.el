@@ -203,11 +203,21 @@ No synchronization is done."
 The entity-structure is self contained.
 Synchronization is done here.
 Along the way, the buffer BUFFER-NAME is written with new informations."
-  (let ((entities (car entity-structure)))
+  (let ((entities (car entity-structure))
+        (card-computations)
+        (checklist-computations)
+        (item-computations))
+
     (maphash (lambda (id entity)
-               (-> entity
-                 (orgtrello-controller/--do-action-on-entity! *ORGTRELLO/ACTION-SYNC*)))
-             entities)))
+               (lexical-let ((entity-sync entity))
+                 (push (lambda () (orgtrello-controller/--do-action-on-entity! entity-sync *ORGTRELLO/ACTION-SYNC*))
+                       (cond ((orgtrello-data/entity-card-p entity)      card-computations)
+                             ((orgtrello-data/entity-checklist-p entity) checklist-computations)
+                             ((orgtrello-data/entity-item-p entity)      item-computations)))))
+             entities)
+    (->> (list card-computations checklist-computations item-computations)
+      (--mapcat (reverse it))
+      (--map (funcall it) item-computations))))
 
 (defun orgtrello-controller/fetch-and-overwrite-card! (card)
   "Given a card, retrieve latest information from trello and overwrite in current buffer."
