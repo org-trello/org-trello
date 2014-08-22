@@ -77,15 +77,12 @@
 
 (defun orgtrello-query/http (server query-map &optional sync success-callback error-callback authentication-p)
   "Execute an HTTP query to the SERVER with QUERY-MAP and optional SYNC, SUCCESS-CALLBACK, ERROR-CALLBACK and AUTHENTICATION-P."
-  (let* ((dispatch-http-query-fn (-> query-map
-                                   orgtrello-data/entity-method
-                                   orgtrello-query/--dispatch-http-query)))
-    (if sync
-        (--> query-map
-          (orgtrello-data/put-entity-sync t it)
-          (funcall dispatch-http-query-fn server it success-callback error-callback authentication-p)
-          (request-response-data it))
-      (funcall dispatch-http-query-fn server query-map success-callback error-callback authentication-p))))
+  (let ((dispatch-http-query-fn (-> query-map
+                                  orgtrello-data/entity-method
+                                  orgtrello-query/--dispatch-http-query)))
+    (--> query-map
+      (orgtrello-data/put-entity-sync sync it)
+      (funcall dispatch-http-query-fn server it success-callback error-callback authentication-p))))
 
 (defun orgtrello-query/http-trello (query-map &optional sync success-callback error-callback)
   "Execute an HTTP query to trello with QUERY-MAP and optional SYNC, SUCCESS-CALLBACK, ERROR-CALLBACK."
