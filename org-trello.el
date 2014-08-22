@@ -136,19 +136,6 @@ when NOLOG-P is specified, no output log."
           (when reload-setup (orgtrello-action/reload-setup!))
           (unless nolog-flag (orgtrello-log/msg *OT/INFO* "Done!")))))))
 
-;; (catch 'org-trello-timer-go-to-sleep
-;;   (-when-let (level-fns (->> *ORGTRELLO/LEVELS*
-;;                           (-mapcat 'orgtrello-proxy/--deal-with-level)
-;;                           (-filter 'identity)))
-;;     (--> level-fns
-;;       (mapcar (lambda (level-fn) `(deferred:nextc it ,level-fn)) it)
-;;       (-snoc it '(deferred:nextc it (lambda ()
-;;                                       (orgtrello-proxy/batch-save!)
-;;                                       (message "Actions on cards, checklists, items done!"))))
-;;       (cons '(deferred:next (lambda () (message "Actions on cards, checklists, items..."))) it)
-;;       (cons 'deferred:$ it)
-;;       (eval it))))
-
 (defun org-trello/log-strict-checks-and-do (action-label action-fn &optional with-save-flag)
   "Given an ACTION-LABEL and an ACTION-FN, execute sync action.
 If WITH-SAVE-FLAG is set, will do a buffer save and reload the org setup."
