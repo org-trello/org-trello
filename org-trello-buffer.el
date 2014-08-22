@@ -313,12 +313,15 @@ The optional ORGCHECKBOX-P is not used."
   (if (orgtrello-data/entity-card-p entity) 'orgtrello-buffer/--put-card-with-adjacency 'orgtrello-backend/--put-entities-with-adjacency))
 
 (defun orgtrello-buffer/--compute-entities-from-org! (&optional region-end)
-  "Compute the full entities present in the org buffer which already had been sync'ed previously. Return the list of entities map and adjacency map in this order. If region-end is specified, will work on the region (current-point, region-end), otherwise, work on all buffer."
+  "Compute the full entities present in the org buffer.
+Return the list of entities map and adjacency map in this order.
+If REGION-END is specified, will work on the region (current-point, REGION-END), otherwise, work on all buffer."
   (let ((entities (orgtrello-hash/empty-hash))
         (adjacency (orgtrello-hash/empty-hash)))
     (orgtrello-buffer/org-map-entities-without-params!
      (lambda ()
-       ;; either the region-end is null, so we work on all the buffer, or the region-end is specified and we need to filter out entities that are after the specified point.
+       ;; either the region-end is null, so we work on all the buffer,
+       ;; or the region-end is specified and we need to filter out entities that are after the specified point.
        (when (or (null region-end) (< (point) region-end))
          ;; first will unfold every entries, otherwise https://github.com/org-trello/org-trello/issues/53
          (org-show-subtree)
@@ -326,7 +329,7 @@ The optional ORGCHECKBOX-P is not used."
            (unless (-> current-entity orgtrello-data/entity-id orgtrello-data/id-p) ;; if no id, we set one
              (orgtrello-buffer/--set-marker! (orgtrello-buffer/--compute-marker-from-entry current-entity)))
            (let ((current-meta (orgtrello-buffer/entry-get-full-metadata!)))
-             (-> current-meta ;; we recompute the metadata because they may have changed
+             (-> current-meta ;; we recompute the metadata because they may have been updated
                orgtrello-data/current
                orgtrello-buffer/--dispatch-create-entities-map-with-adjacency
                (funcall current-meta entities adjacency)))))))
