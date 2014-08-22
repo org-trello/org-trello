@@ -332,7 +332,7 @@ The optional ORGCHECKBOX-P is not used."
   "Given the ENTITY, return the function to add the entity and adjacency."
   (if (orgtrello-data/entity-card-p entity) 'orgtrello-buffer/--put-card-with-adjacency 'orgtrello-backend/--put-entities-with-adjacency))
 
-(defun orgtrello-buffer/--compute-entities-from-org! (&optional region-end)
+(defun orgtrello-buffer/--compute-entities-from-org! ()
   "Compute the full entities present in the org buffer.
 Return the list of entities map and adjacency map in this order.
 If REGION-END is specified, will work on the region (current-point, REGION-END), otherwise, work on all buffer."
@@ -342,26 +342,32 @@ If REGION-END is specified, will work on the region (current-point, REGION-END),
      (lambda ()
        ;; either the region-end is null, so we work on all the buffer,
        ;; or the region-end is specified and we need to filter out entities that are after the specified point.
-       (when (or (null region-end) (< (point) region-end))
-         ;; first will unfold every entries, otherwise https://github.com/org-trello/org-trello/issues/53
-         (org-show-subtree)
-         (let ((current-entity (-> (orgtrello-buffer/entry-get-full-metadata!) orgtrello-data/current)))
-           (unless (-> current-entity orgtrello-data/entity-id orgtrello-data/id-p) ;; if no id, we set one
-             (orgtrello-buffer/--set-marker! (orgtrello-buffer/--compute-marker-from-entry current-entity)))
-           (let ((current-meta (orgtrello-buffer/entry-get-full-metadata!)))
-             (-> current-meta ;; we recompute the metadata because they may have been updated
-               orgtrello-data/current
-               orgtrello-buffer/--dispatch-create-entities-map-with-adjacency
-               (funcall current-meta entities adjacency)))))))
+       ;; first will unfold every entries, otherwise https://github.com/org-trello/org-trello/issues/53
+       (org-show-subtree)
+       (let ((current-entity (-> (orgtrello-buffer/entry-get-full-metadata!) orgtrello-data/current)))
+         (unless (-> current-entity orgtrello-data/entity-id orgtrello-data/id-p) ;; if no id, we set one
+           (orgtrello-buffer/--set-marker! (orgtrello-buffer/--compute-marker-from-entry current-entity)))
+         (let ((current-meta (orgtrello-buffer/entry-get-full-metadata!)))
+           (-> current-meta ;; we recompute the metadata because they may have been updated
+             orgtrello-data/current
+             orgtrello-buffer/--dispatch-create-entities-map-with-adjacency
+             (funcall current-meta entities adjacency))))))
     (list entities adjacency)))
 
-(defun orgtrello-buffer/compute-entities-from-org-buffer! (&optional buffername region-start region-end)
-  "Compute the current entities hash from the buffer in the same format as the sync-from-trello routine. Return the list of entities map and adjacency map in this order."
-  (when buffername
-    (set-buffer buffername))
-  (save-excursion
-    (goto-char (if region-start region-start (point-min))) ;; start from start-region if specified, otherwise, start from the start of the file
-    (orgtrello-buffer/--compute-entities-from-org! region-end)))
+(defun orgtrello-buffer/activate-region! (region-start region-end)
+  "Activate the region between REGION-START and REGION-END."
+  (goto-char region-start)
+  (push-mark region-end)
+  (setq mark-active t))
+
+(defun orgtrello-buffer/compute-entities-from-org-buffer! (buffer-name &optional region-start region-end)
+  "Compute the current entities hash from the BUFFER-NAME.
+Return the list of entities map and adjacency map in this order.
+If REGION-START and REGION-END are provided, this will work on such defined region."
+  (with-current-buffer buffer-name
+    (save-excursion
+      (when (and region-start region-end) (orgtrello-buffer/activate-region! region-start region-end))
+      (orgtrello-buffer/--compute-entities-from-org!))))
 
 (defun orgtrello-buffer/--put-entities (current-meta entities)
   "Deal with adding a the current entry from CURRENT-META in ENTITIES."
@@ -389,11 +395,10 @@ Move the cursor position."
 
 (defun orgtrello-buffer/org-map-entities-without-params! (fn-to-execute)
   "Execute fn-to-execute function for all entities from buffer - fn-to-execute is a function without any parameters."
-  (save-excursion
-    (org-map-entries
-     (lambda ()
-       (funcall fn-to-execute) ;; execute on heading entry
-       (orgtrello-cbx/map-checkboxes fn-to-execute)) t 'file)))
+  (org-map-entries
+   (lambda ()
+     (funcall fn-to-execute) ;; execute on heading entry
+     (orgtrello-cbx/map-checkboxes fn-to-execute)) t (if (use-region-p) 'region 'file)))
 
 (defun orgtrello-buffer/get-usernames-assigned-property! ()
   "Read the org users property from the current entry."

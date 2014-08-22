@@ -107,13 +107,20 @@ ARGS is not used."
             ((= level *ORGTRELLO/ITEM-LEVEL*)      *ORGTRELLO/ERROR-SYNC-ITEM-MISSING-NAME*)))))
 
 (defun orgtrello-controller/--do-action! (full-meta action)
-  "Delegate the FULL-META ACTION to execute on it to the consumer."
+  "Execute the ACTION on FULL-META."
   (let* ((current (orgtrello-data/current full-meta))
          (marker  (orgtrello-buffer/--compute-marker-from-entry current)))
     (orgtrello-buffer/set-marker-if-not-present! current marker)
     (orgtrello-data/put-entity-id     marker current)
     (orgtrello-data/put-entity-action action current)
     (orgtrello-proxy/do-action-on-entity current)))
+
+(defun orgtrello-controller/--do-action-on-entity! (entity action)
+  "Execute the ACTION to ENTITY."
+  (let ((marker (orgtrello-buffer/--compute-marker-from-entry entity)))
+    (orgtrello-data/put-entity-id     marker entity)
+    (orgtrello-data/put-entity-action action entity)
+    (orgtrello-proxy/do-action-on-entity entity)))
 
 (defun orgtrello-controller/--check-then-action-on-entity! (functional-controls action)
   "Execute the FUNCTIONAL-CONTROLS then if all pass, delegate the ACTION to the proxy."
@@ -124,22 +131,14 @@ ARGS is not used."
 SYNC is not used."
   (orgtrello-controller/--check-then-action-on-entity! '(orgtrello-controller/--right-level-p orgtrello-controller/--already-synced-p) *ORGTRELLO/ACTION-DELETE*))
 
-(defun orgtrello-controller/do-sync-entity-to-trello! ()
-  "Do the entity synchronization (if never synchronized, will create it, update it otherwise)."
-  (orgtrello-controller/--check-then-action-on-entity! '(orgtrello-controller/--right-level-p orgtrello-controller/--mandatory-name-ok-p) *ORGTRELLO/ACTION-SYNC*))
-
 (defun orgtrello-controller/do-sync-card-to-trello! ()
-  "Do the actual full card creation - from card to item. Beware full side effects..."
+  "Do the actual card creation/update - from card to item."
   (orgtrello-log/msg *OT/INFO* "Synchronizing full entity with its structure on board '%s'..." (orgtrello-buffer/board-name!))
   ;; in any case, we need to show the subtree, otherwise https://github.com/org-trello/org-trello/issues/53
   (org-show-subtree)
-  (orgtrello-controller/do-sync-entity-to-trello!)
-  (orgtrello-controller/map-sync-checkboxes))
-
-(defun orgtrello-controller/map-sync-checkboxes ()
-  "Map the sync operation to checkboxes."
-  (save-excursion
-    (orgtrello-cbx/map-checkboxes 'orgtrello-controller/do-sync-entity-to-trello!)))
+  (-> (current-buffer)
+    orgtrello-controller/build-card-structure!
+    orgtrello-controller/execute-sync-entity-structure!))
 
 (defun orgtrello-controller/do-sync-full-file-to-trello! ()
   "Full org-mode file synchronisation."
@@ -209,26 +208,23 @@ This callback must take a BUFFERNAME, a POSITION and a NAME."
                           ((orgtrello-data/entity-item-p data)      'orgtrello-buffer/overwrite-item!))
                     data))))))
 
-(defun orgtrello-controller/build-entity-structure! ()
-  "Build the current entity as entity structure.
+(defun orgtrello-controller/build-card-structure! (buffer-name)
+  "Build the card structure on the current BUFFER-NAME at current point.
 No synchronization is done."
-  (->> (orgtrello-buffer/compute-header-entity-region!)
-    (cons nil) ;; no need for buffer name
+  (->> (orgtrello-buffer/compute-card-region!)
+    (cons buffer-name)
     (apply 'orgtrello-buffer/compute-entities-from-org-buffer!)))
 
-(defun orgtrello-controller/build-full-entity-structure! ()
-  "Build a full entity-structure from current point.
-No synchronization is done."
-  (->> (orgtrello-buffer/compute-full-entity-region!)
-    (cons nil) ;; no need for buffer name
-    (apply 'orgtrello-buffer/compute-entities-from-org-buffer!)))
-
-(defun orgtrello-controller/execute-sync-entity-structure! (entity-structure buffer-name)
-  "Execute synchronization of ENTITY-STRUCTURE (card, checklists, items).
+(defun orgtrello-controller/execute-sync-entity-structure! (entity-structure)
+  "Execute synchronization of ENTITY-STRUCTURE (entities at first position, adjacency list in second position).
 The entity-structure is self contained.
 Synchronization is done here.
 Along the way, the buffer BUFFER-NAME is written with new informations."
-  )
+  (let ((entities (car entity-structure)))
+    (maphash (lambda (id entity)
+               (-> entity
+                 (orgtrello-controller/--do-action-on-entity! *ORGTRELLO/ACTION-SYNC*)))
+             entities)))
 
 (defun orgtrello-controller/fetch-and-overwrite-card! (card)
   "Given a card, retrieve latest information from trello and overwrite in current buffer."
