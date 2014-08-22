@@ -133,7 +133,7 @@ SYNC is not used."
 
 (defun orgtrello-controller/do-sync-card-to-trello! ()
   "Do the actual card creation/update - from card to item."
-  (orgtrello-log/msg *OT/INFO* "Synchronizing full entity with its structure on board '%s'..." (orgtrello-buffer/board-name!))
+  (orgtrello-log/msg *OT/INFO* "Synchronizing card on board '%s'..." (orgtrello-buffer/board-name!))
   ;; in any case, we need to show the subtree, otherwise https://github.com/org-trello/org-trello/issues/53
   (org-show-subtree)
   (-> (current-buffer)
@@ -265,7 +265,7 @@ If WITH-FILTER is set, only the checklist is returned (without its items)."
 (defun orgtrello-controller/do-sync-card-from-trello! (&optional sync)
   "Entity (card/checklist/item) synchronization (with its structure) from trello.
 Optionally, SYNC permits to synchronize the query."
-  (orgtrello-log/msg *OT/INFO* "Synchronizing the trello entity and its structure to the org-mode file...")
+  (orgtrello-log/msg *OT/INFO* "Synchronizing the trello card to the org-mode file...")
   (save-excursion
     (-> (orgtrello-buffer/entry-get-full-metadata!)
       orgtrello-controller/--dispatch-sync-request
