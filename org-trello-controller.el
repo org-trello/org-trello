@@ -240,17 +240,16 @@ This callback must take a BUFFERNAME, a POSITION and a NAME."
                 (pos         position))
     (function* (lambda (&key data &allow-other-keys) "Synchronize the buffer with the response data."
                  (orgtrello-log/msg *OT/TRACE* "proxy - response data: %S" data)
-                 (save-excursion
-                   ;; buffer manipulation
-                   (goto-char pos)
-                   (point-at-bol)
-                   (org-show-subtree)
-                   ;; data manipulation + computations
-                   (funcall
-                    (cond ((orgtrello-data/entity-card-p data)      'orgtrello-controller/fetch-and-overwrite-card!)
-                          ((orgtrello-data/entity-checklist-p data) 'orgtrello-controller/fetch-and-overwrite-checklist!)
-                          ((orgtrello-data/entity-item-p data)      'orgtrello-buffer/overwrite-item!))
-                    data))))))
+                 (with-current-buffer buffer-name
+                   (save-excursion
+                     (goto-char pos)
+                     (point-at-bol)
+                     (org-show-subtree)
+                     (funcall
+                      (cond ((orgtrello-data/entity-card-p data)      'orgtrello-controller/fetch-and-overwrite-card!)
+                            ((orgtrello-data/entity-checklist-p data) 'orgtrello-controller/fetch-and-overwrite-checklist!)
+                            ((orgtrello-data/entity-item-p data)      'orgtrello-buffer/overwrite-item!))
+                      data)))))))
 
 (defun orgtrello-controller/--dispatch-sync-request (entity &optional with-filter)
   "Dispatch the sync request creation depending on the nature of the ENTITY.
