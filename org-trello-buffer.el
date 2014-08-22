@@ -551,11 +551,9 @@ Make it a hashmap with key :level,  :keyword,  :name and their respective value.
 (defun orgtrello-buffer/org-file-properties! ()
   org-file-properties)
 
-(defun orgtrello-buffer/org-map-entries (level fn-to-execute)
-  "For a specific checkbox LEVEL, map FN-TO-EXECUTE to the given entities.
-FN-TO-EXECUTE is a function without any parameter."
-  (save-excursion
-    (org-map-entries (lambda () (when (= level (orgtrello-buffer/current-level!)) (funcall fn-to-execute))))))
+(defun orgtrello-buffer/org-map-entries (fn-to-execute)
+  "Execute for each heading the FN-TO-EXECUTE."
+  (org-map-entries fn-to-execute))
 
 (defun orgtrello-buffer/org-checkbox-p! ()
   "Predicate to determine if actual position is on org-trello checkbox."
