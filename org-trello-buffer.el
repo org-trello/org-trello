@@ -54,18 +54,6 @@ If the VALUE is nil or empty, remove such PROPERTY."
   "Determine if currently on the item region."
   (= (orgtrello-cbx/--level!) *ORGTRELLO/ITEM-LEVEL*))
 
-(defun orgtrello-buffer/compute-header-entity-region! ()
-  "Given the current position, compute the entity header only region."
-  (cond ((orgtrello-buffer/card-at-pt!)      (orgtrello-buffer/compute-card-metadata-region!))
-        ((orgtrello-buffer/checklist-at-pt!) (orgtrello-buffer/compute-checklist-header-region!))
-        ((orgtrello-buffer/item-at-pt!)      (orgtrello-buffer/compute-item-region!))))
-
-(defun orgtrello-buffer/compute-full-entity-region! ()
-  "Compute the full entity region from the current position."
-  (cond ((orgtrello-buffer/card-at-pt!)      (orgtrello-buffer/compute-card-region!))
-        ((orgtrello-buffer/checklist-at-pt!) (orgtrello-buffer/compute-checklist-region!))
-        ((orgtrello-buffer/item-at-pt!)      (orgtrello-buffer/compute-item-region!))))
-
 (defun orgtrello-buffer/extract-description-from-current-position! ()
   "Given the current position, extract the text content of current card."
   (let* ((start (orgtrello-buffer/--card-description-start-point!))
@@ -114,10 +102,6 @@ If the VALUE is nil or empty, remove such PROPERTY."
 (defun orgtrello-buffer/set-property-comment! (comments)
   "Update comments property."
   (orgtrello-buffer/org-entry-put! nil *ORGTRELLO/CARD-COMMENTS* comments))
-
-(defun orgtrello-buffer/compute-card-metadata-region! ()
-  "Compute the card region zone (only the card headers + description) couple '(start end)."
-  `(,(orgtrello-buffer/--card-start-point!) ,(orgtrello-buffer/--card-metadata-end-point!)))
 
 (defun orgtrello-buffer/compute-checklist-header-region! ()
   "Compute the checklist's region (only the header, without computing the zone occupied by items) couple '(start end)."
@@ -210,24 +194,6 @@ If the VALUE is nil or empty, remove such PROPERTY."
   "Given a region, remove everything in this region, including text and overlays"
   (apply 'orgtrello-cbx/remove-overlays! region)
   (apply 'delete-region region))
-
-(defun orgtrello-buffer/overwrite-and-merge-card-header! (trello-card)
-  "Given a card, compute the merge and then overwrite it locally"
-  (->> (orgtrello-buffer/metadata!)
-    (orgtrello-data/--merge-card trello-card)
-    orgtrello-buffer/overwrite-card-header!))
-
-(defun orgtrello-buffer/overwrite-card-header! (card)
-  "Given an updated card 'card' and the current position, overwrite the current position with the updated card data."
-  (let ((region (orgtrello-buffer/compute-card-metadata-region!)))
-    (orgtrello-buffer/clean-region! region)
-    (orgtrello-buffer/write-card-header! (orgtrello-data/entity-id card) card)))
-
-(defun orgtrello-buffer/overwrite-checklist-header! (checklist)
-  "Given an updated checklist 'checklist' and the current position, overwrite the current position with the updated checklist data."
-  (let ((region (orgtrello-buffer/compute-checklist-header-region!)))
-    (orgtrello-buffer/clean-region! region)
-    (orgtrello-buffer/write-checklist-header! (orgtrello-data/entity-id checklist) checklist)))
 
 (defun orgtrello-buffer/overwrite-item! (item)
   "Given an updated item 'item' and the current position, overwrite the current position with the updated item data."
@@ -539,10 +505,6 @@ Deal with org entities and checkbox as well."
 Make it a hashmap with key :level,  :keyword,  :name and their respective value."
   (cl-destructuring-bind (unknown-properties comments description member-ids buffer-name point id due level _ keyword _ name tags) heading-metadata
     (orgtrello-data/make-hash-org member-ids level keyword name id due point buffer-name description comments tags unknown-properties)))
-
-(defun orgtrello-buffer/current-level! ()
-  "Compute the current level's position."
-  (-> (orgtrello-buffer/metadata!) orgtrello-data/entity-level))
 
 (defun orgtrello-buffer/filtered-kwds! ()
   "org keywords used (based on org-todo-keywords-1)."

@@ -191,23 +191,6 @@ This callback must take a BUFFERNAME, a POSITION and a NAME."
     (orgtrello-controller/--update-query-with-org-metadata it (point) (buffer-name) nil 'orgtrello-controller/--sync-buffer-with-trello-data-callback)
     (orgtrello-proxy/sync-from it sync)))
 
-(defun orgtrello-controller/--sync-entity-to-buffer-with-trello-data-callback (buffername &optional position name)
-  "Generate a callback which knows the BUFFERNAME with which it must work.
-This callback must take a BUFFERNAME, a POSITION and a NAME."
-  (lexical-let ((buffer-name buffername)
-                (pos         position))
-    (function* (lambda (&key data &allow-other-keys) "Synchronize the buffer with the response data."
-                 (orgtrello-log/msg *OT/TRACE* "proxy - response data: %S" data)
-                 (save-excursion
-                   (goto-char pos)
-                   (point-at-bol)
-                   (org-show-subtree)
-                   (funcall
-                    (cond ((orgtrello-data/entity-card-p data)      'orgtrello-buffer/overwrite-and-merge-card-header!)
-                          ((orgtrello-data/entity-checklist-p data) 'orgtrello-buffer/overwrite-checklist-header!)
-                          ((orgtrello-data/entity-item-p data)      'orgtrello-buffer/overwrite-item!))
-                    data))))))
-
 (defun orgtrello-controller/build-card-structure! (buffer-name)
   "Build the card structure on the current BUFFER-NAME at current point.
 No synchronization is done."
@@ -278,15 +261,6 @@ If WITH-FILTER is set, only the checklist is returned (without its items)."
     (cond ((= level *ORGTRELLO/CARD-LEVEL*)      (orgtrello-api/get-card entity-id))
           ((= level *ORGTRELLO/CHECKLIST-LEVEL*) (orgtrello-api/get-checklist entity-id with-filter))
           ((= level *ORGTRELLO/ITEM-LEVEL*)      (orgtrello-api/get-item parent-id entity-id)))))
-
-(defun orgtrello-controller/do-sync-entity-from-trello! (&optional sync)
-  "Entity (card/checklist/item) synchronization (without its structure) from trello."
-  (orgtrello-log/msg *OT/INFO* "Synchronizing the trello entity to the org-mode file...")
-  (save-excursion
-    (-> (orgtrello-buffer/entry-get-full-metadata!)
-      (orgtrello-controller/--dispatch-sync-request 'with-filter)
-      (orgtrello-controller/--update-query-with-org-metadata (point) (buffer-name) nil 'orgtrello-controller/--sync-entity-to-buffer-with-trello-data-callback)
-      (orgtrello-proxy/sync-from sync))))
 
 (defun orgtrello-controller/do-sync-card-from-trello! (&optional sync)
   "Entity (card/checklist/item) synchronization (with its structure) from trello.
