@@ -219,7 +219,7 @@ If MODIFIER is non nil, execute all entities removal from trello and buffer."
                             '("Request 'delete entity'" orgtrello-controller/do-delete-simple)))
                     (current-buffer)))
 
-(defun org-trello/kill-all-entities ()
+(defun org-trello/kill-cards ()
   "Execute all entities removal from trello and buffer."
   (interactive)
   (org-trello/apply '(org-trello/log-strict-checks-and-do "Request - 'delete entities'" orgtrello-controller/do-delete-entities) (current-buffer)))
