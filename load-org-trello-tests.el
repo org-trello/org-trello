@@ -43,6 +43,8 @@
 
 (org-trello/test-load-namespaces!)
 
+(define-key emacs-lisp-mode-map (kbd "C-c o d") 'org-trello/test-load-namespaces!)
+
 (require 'org-trello-action-tests)
 (require 'org-trello-api-tests)
 (require 'org-trello-backend-tests)
