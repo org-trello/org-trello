@@ -117,7 +117,7 @@ If the VALUE is nil or empty, remove such PROPERTY."
   `(,(point-at-bol) ,(1+ (point-at-eol))))
 
 (defun orgtrello-buffer/compute-card-region! ()
-  "Compute the card region zone (only the card headers + description) couple '(start end)."
+  "Compute the card region zone couple '(start end)."
   `(,(orgtrello-buffer/--card-start-point!) ,(1- (orgtrello-cbx/compute-next-card-point!))))
 
 (defun orgtrello-buffer/write-item! (item-id entities)
