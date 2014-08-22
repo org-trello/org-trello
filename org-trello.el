@@ -123,18 +123,15 @@ when NOLOG-P is specified, no output log."
                 (reload-setup   reload-org-setup)
                 (nolog-flag     nolog-p))
     (deferred:$
-      (deferred:next
-        (lambda () (save-excursion
-                     (with-local-quit
-                       (apply (car computation) (cdr computation))))))
-      (deferred:error it
-        (lambda (x) (orgtrello-log/msg *OT/ERROR* "Problem during execution - '%s'!" x)))
-      (deferred:nextc it
-        (lambda ()
-          (when buffer-to-save (with-current-buffer buffer-to-save
-                                 (call-interactively 'save-buffer)))
-          (when reload-setup (orgtrello-action/reload-setup!))
-          (unless nolog-flag (orgtrello-log/msg *OT/INFO* "Done!")))))))
+      (deferred:next (lambda () (save-excursion
+                                  (with-local-quit
+                                    (apply (car computation) (cdr computation))))))
+      (deferred:nextc it (lambda ()
+                           (when buffer-to-save (with-current-buffer buffer-to-save
+                                                  (call-interactively 'save-buffer)))
+                           (when reload-setup (orgtrello-action/reload-setup!))
+                           (unless nolog-flag (orgtrello-log/msg *OT/INFO* "Done!"))))
+      (deferred:error it (lambda (x) (orgtrello-log/msg *OT/ERROR* "Problem during execution - '%s'!" x))))))
 
 (defun org-trello/log-strict-checks-and-do (action-label action-fn &optional with-save-flag)
   "Given an ACTION-LABEL and an ACTION-FN, execute sync action.
