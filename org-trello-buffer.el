@@ -306,10 +306,7 @@ If REGION-END is specified, will work on the region (current-point, REGION-END),
         (adjacency (orgtrello-hash/empty-hash)))
     (orgtrello-buffer/org-map-entities-without-params!
      (lambda ()
-       ;; either the region-end is null, so we work on all the buffer,
-       ;; or the region-end is specified and we need to filter out entities that are after the specified point.
-       ;; first will unfold every entries, otherwise https://github.com/org-trello/org-trello/issues/53
-       (org-show-subtree)
+       (org-show-subtree) ;; unfold every entries, otherwise https://github.com/org-trello/org-trello/issues/53
        (let ((current-entity (-> (orgtrello-buffer/entry-get-full-metadata!) orgtrello-data/current)))
          (unless (-> current-entity orgtrello-data/entity-id orgtrello-data/id-p) ;; if no id, we set one
            (orgtrello-buffer/--set-marker! (orgtrello-buffer/--compute-marker-from-entry current-entity)))
