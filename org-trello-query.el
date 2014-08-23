@@ -85,7 +85,7 @@
           (orgtrello-data/put-entity-sync t it)
           (funcall dispatch-http-query-fn server it success-callback error-callback authentication-p)
           (request-response-data it))
-      (funcall dispatch-http-query-fn server query-map success-callback error-callback authentication-p)))))
+      (funcall dispatch-http-query-fn server query-map success-callback error-callback authentication-p))))
 
 (defun orgtrello-query/http-trello (query-map &optional sync success-callback error-callback)
   "Execute an HTTP query to trello with QUERY-MAP and optional SYNC, SUCCESS-CALLBACK, ERROR-CALLBACK."
