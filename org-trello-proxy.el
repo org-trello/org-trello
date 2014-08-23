@@ -55,19 +55,20 @@ Move the cursor position."
                 (level             (orgtrello-data/entity-level entity-to-sync))
                 (marker-id         (orgtrello-data/entity-id-or-marker entity-to-sync))
                 (entity-name       (orgtrello-data/entity-name entity-to-sync)))
-    (function* (lambda (&key data &allow-other-keys)
-                 (let ((entry-new-id (orgtrello-data/entity-id data)))
-                   (with-current-buffer entry-buffer-name
-                     ;; will update via tag the trello id of the new persisted data (if needed)
-                     (save-excursion
-                       ;; get back to the buffer and update the id if need be
-                       (-when-let (str-msg (when (orgtrello-proxy/--get-back-to-marker marker-id data)
-                                             (-if-let (entry-id (when (orgtrello-data/id-p marker-id) marker-id)) ;; Already present, we do nothing on the buffer
-                                                 (format "Entity '%s' with id '%s' synced!" entity-name entry-id)
-                                               (let ((entry-name (orgtrello-data/entity-name data))) ;; not present, this was just created, we add a simple property
-                                                 (orgtrello-buffer/set-property *ORGTRELLO/ID* entry-new-id)
-                                                 (format "Newly entity '%s' with id '%s' synced!" entry-name entry-new-id)))))
-                         (orgtrello-log/msg *OT/INFO* str-msg)))))))))
+    (lambda (response)
+      (let* ((data         (request-response-data response))
+             (entry-new-id (orgtrello-data/entity-id data)))
+        (with-current-buffer entry-buffer-name
+          ;; will update via tag the trello id of the new persisted data (if needed)
+          (save-excursion
+            ;; get back to the buffer and update the id if need be
+            (-when-let (str-msg (when (orgtrello-proxy/--get-back-to-marker marker-id data)
+                                  (-if-let (entry-id (when (orgtrello-data/id-p marker-id) marker-id)) ;; Already present, we do nothing on the buffer
+                                      (format "Entity '%s' with id '%s' synced!" entity-name entry-id)
+                                    (let ((entry-name (orgtrello-data/entity-name data))) ;; not present, this was just created, we add a simple property
+                                      (orgtrello-buffer/set-property *ORGTRELLO/ID* entry-new-id)
+                                      (format "Newly entity '%s' with id '%s' synced!" entry-name entry-new-id)))))
+              (orgtrello-log/msg *OT/INFO* str-msg))))))))
 
 (defun orgtrello-proxy/--dispatch-action (action)
   "Compute the action function depending on the ACTION (sync, delete) to execute."
@@ -219,9 +220,9 @@ If the checks are ko, the error message is returned."
          query-map
          nil ; async
          (orgtrello-proxy/--standard-post-or-put-success-callback entity-data)
-         (function* (lambda (&key error-thrown &allow-other-keys)
-                      (orgtrello-proxy/--cleanup-meta entity-full-meta)
-                      (orgtrello-log/msg *OT/ERROR* "client - Problem during the sync request to the proxy- error-thrown: %s" error-thrown))))
+         (lambda (response)
+           (orgtrello-proxy/--cleanup-meta entity-full-meta)
+           (orgtrello-log/msg *OT/ERROR* "client - Problem during the sync request to the proxy- error-thrown: %s" (request-response-error-thrown response))))
       ;; cannot execute the request
       (progn
         (orgtrello-proxy/--cleanup-meta entity-full-metadata)
@@ -280,7 +281,7 @@ If the checks are ko, the error message is returned."
                 (entry-level       (orgtrello-data/entity-level entity-to-del))
                 (marker            (orgtrello-data/entity-id entity-to-del))
                 (level             (orgtrello-data/entity-level entity-to-del)))
-    (lambda (&rest response)
+    (lambda (response)
       (with-current-buffer entry-buffer-name
         (save-excursion
           (when (orgtrello-proxy/--getting-back-to-marker marker)
@@ -326,9 +327,9 @@ Optionally, PARENT-META is a parameter of the function dispatched."
          query-map
          nil ; async
          (orgtrello-proxy/--standard-delete-success-callback entity-data)
-         (function* (lambda (&key error-thrown &allow-other-keys)
-                      (orgtrello-log/msg *OT/ERROR* "client - Problem during the deletion request to the proxy- error-thrown: %s" error-thrown)
-                      (orgtrello-proxy/--cleanup-meta entity-full-meta))))
+         (lambda (response)
+           (orgtrello-log/msg *OT/ERROR* "client - Problem during the deletion request to the proxy - error-thrown: %s" (request-response-error-thrown response))
+           (orgtrello-proxy/--cleanup-meta entity-full-meta)))
       (orgtrello-log/msg *OT/ERROR* query-map))))
 
 (orgtrello-log/msg *OT/DEBUG* "orgtrello-proxy loaded!")
