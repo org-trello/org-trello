@@ -310,11 +310,13 @@ If REGION-END is specified, will work on the region (current-point, REGION-END),
        (let ((current-entity (-> (orgtrello-buffer/entry-get-full-metadata!) orgtrello-data/current)))
          (unless (-> current-entity orgtrello-data/entity-id orgtrello-data/id-p) ;; if no id, we set one
            (orgtrello-buffer/--set-marker! (orgtrello-buffer/--compute-marker-from-entry current-entity)))
-         (let ((current-meta (orgtrello-buffer/entry-get-full-metadata!)))
-           (-> current-meta ;; we recompute the metadata because they may have been updated
-             orgtrello-data/current
-             orgtrello-buffer/--dispatch-create-entities-map-with-adjacency
-             (funcall current-meta entities adjacency))))))
+         (let* ((full-meta (orgtrello-buffer/entry-get-full-metadata!))
+                (current-meta (orgtrello-data/current full-meta))
+                (parent-meta (orgtrello-data/parent full-meta)))
+           (--> current-meta
+             (orgtrello-data/put-parent parent-meta it) ;; add link to current entry's parent
+             (orgtrello-buffer/--dispatch-create-entities-map-with-adjacency it)
+             (funcall it full-meta entities adjacency))))))
     (list entities adjacency)))
 
 (defun orgtrello-buffer/activate-region! (region-start region-end)
