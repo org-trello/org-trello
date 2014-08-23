@@ -219,12 +219,16 @@ Along the way, the buffer BUFFER-NAME is written with new informations."
     (eval `(deferred:$
              (deferred:parallel
                ,@card-computations)
+             (deferred:nextc it
+               (lambda () (orgtrello-log/msg *OT/INFO* "Sync card(s) ok.")))
              (deferred:parallel
                ,@checklist-computations)
+             (deferred:nextc it
+               (lambda () (orgtrello-log/msg *OT/INFO* "Sync checklists ok.")))
              (deferred:parallel
                ,@item-computations)
              (deferred:nextc it
-               (lambda () (orgtrello-log/msg *OT/INFO* "Sync in order done!")))))))
+               (lambda () (orgtrello-log/msg *OT/INFO* "Sync items ok.")))))))
 
 (defun orgtrello-controller/fetch-and-overwrite-card! (card)
   "Given a card, retrieve latest information from trello and overwrite in current buffer."
