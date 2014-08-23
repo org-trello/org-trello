@@ -210,7 +210,7 @@ Along the way, the buffer BUFFER-NAME is written with new informations."
 
     (maphash (lambda (id entity)
                (lexical-let ((entity-sync entity))
-                 (push (orgtrello-controller/--do-action-on-entity! entity-sync *ORGTRELLO/ACTION-SYNC*)
+                 (push (lambda () (orgtrello-controller/--do-action-on-entity! entity-sync *ORGTRELLO/ACTION-SYNC*))
                        (cond ((orgtrello-data/entity-card-p entity)      card-computations)
                              ((orgtrello-data/entity-checklist-p entity) checklist-computations)
                              ((orgtrello-data/entity-item-p entity)      item-computations)))))

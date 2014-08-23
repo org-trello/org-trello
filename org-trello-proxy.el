@@ -48,8 +48,34 @@ Move the cursor position."
       goto-ok
     (orgtrello-proxy/--getting-back-to-headline data)))
 
-(defun orgtrello-proxy/--standard-post-or-put-success-callback (entity-to-sync)
-  "Return a callback function able to deal with the update query of ENTITY-TO-SYNC the buffer at a given position."
+(defun orgtrello-proxy/update-entities-adjacencies! (old-entity-id new-entity entities-adjacencies)
+  "Given OLD-ENTITY-ID and NEW-ENTITY, update ENTITIES-ADJACENCIES structure.
+This will remove the OLD-ENTITY-ID and update with the NEW-ENTITY (after sync).
+This will also update the references in arborescence."
+  (let ((entities     (car entities-adjacencies))
+        (adjacencies  (car (cdr entities-adjacencies)))
+        (entry-new-id (orgtrello-data/id new-entity))
+        (children-ids (gethash old-entity adjacencies)))
+    ;; update new entries
+    (puthash entry-new-id new-entity entities)
+    ;; update children that have now the reference in children
+    (puthash entry-new-id children-ids adjacencies)
+    ;; update the reference children with the parent
+    (mapcar (lambda (child-id)
+              (let ((child (gethash child-id entities)))
+                (--> child
+                  (orgtrello-data/put-parent new-entity it)
+                  (puthash child-id it entities))))
+            children-ids)
+
+    ;; remove old entries
+    (puthash old-entity-id nil entities)
+    (puthash old-entity-id nil adjacencies)))
+
+(defun orgtrello-proxy/--standard-post-or-put-success-callback (entity-to-sync entities-adjacencies)
+  "Return a callback fn able to deal with the update of ENTITY-TO-SYNC.
+This will update the buffer at the entity synced.
+This will also update in place the ENTITIES-ADJACENCIES map lists with new entity information."
   (lexical-let ((entry-position    (orgtrello-data/entity-position entity-to-sync))
                 (entry-buffer-name (orgtrello-data/entity-buffername entity-to-sync))
                 (level             (orgtrello-data/entity-level entity-to-sync))
@@ -66,7 +92,10 @@ Move the cursor position."
                                   (-if-let (entry-id (when (orgtrello-data/id-p marker-id) marker-id)) ;; Already present, we do nothing on the buffer
                                       (format "Entity '%s' with id '%s' synced!" entity-name entry-id)
                                     (let ((entry-name (orgtrello-data/entity-name data))) ;; not present, this was just created, we add a simple property
+                                      ;; update the buffer with new id
                                       (orgtrello-buffer/set-property *ORGTRELLO/ID* entry-new-id)
+                                      ;; update in place the entities-adjacencies
+                                      (orgtrello-proxy/update-entities-adjacencies! entity-to-sync data entities-adjacencies)
                                       (format "Newly entity '%s' with id '%s' synced!" entry-name entry-new-id)))))
               (orgtrello-log/msg *OT/INFO* str-msg))))))))
 
@@ -204,14 +233,15 @@ If the checks are ko, the error message is returned."
 
 (defun orgtrello-proxy/--dispatch-create (entry-metadata)
   "Dispatch the ENTRY-METADATA creation depending on the nature of the entry."
-  (let ((current-meta        (orgtrello-data/current entry-metadata)))
+  (let ((current-meta (orgtrello-data/current entry-metadata)))
     (-> current-meta
       orgtrello-data/entity-level
       (gethash *MAP-DISPATCH-CREATE-UPDATE* 'orgtrello-action/--too-deep-level)
       (funcall current-meta (orgtrello-data/parent entry-metadata) (orgtrello-data/grandparent entry-metadata)))))
 
-(defun orgtrello-proxy/--sync-entity (entity-data entity-full-metadata)
-  "Execute the entity ENTITY-DATA and ENTITY-FULL-METADATA synchronization."
+(defun orgtrello-proxy/--sync-entity (entity-data entity-full-metadata entities-adjacencies)
+  "Compute the sync action on entity ENTITY-DATA.
+Use ENTITY-FULL-METADATA and ENTITIES-ADJACENCIES to provide further information."
   (lexical-let ((query-map           (orgtrello-proxy/--dispatch-create entity-full-metadata))
                 (entity-full-meta    entity-full-metadata)
                 (level               (orgtrello-data/entity-level entity-data)))
@@ -219,7 +249,7 @@ If the checks are ko, the error message is returned."
         (orgtrello-query/http-trello
          query-map
          nil ; async
-         (orgtrello-proxy/--standard-post-or-put-success-callback entity-data)
+         (orgtrello-proxy/--standard-post-or-put-success-callback entity-data entities-adjacencies)
          (lambda (response)
            (orgtrello-proxy/--cleanup-meta entity-full-meta)
            (orgtrello-log/msg *OT/ERROR* "client - Problem during the sync request to the proxy- error-thrown: %s" (request-response-error-thrown response))))
@@ -317,8 +347,9 @@ Optionally, PARENT-META is a parameter of the function dispatched."
     (gethash *MAP-DISPATCH-DELETE* 'orgtrello-action/--too-deep-level)
     (funcall meta parent-meta)))
 
-(defun orgtrello-proxy/--delete (entity-data entity-full-metadata)
-  "Execute the delete query to remove ENTITY-DATA and ENTITY-FULL-METADATA."
+(defun orgtrello-proxy/--delete (entity-data entity-full-metadata entities-adjacencies)
+  "Compute the delete action to remove ENTITY-DATA.
+This uses ENTITY-FULL-METADATA and ENTITIES-ADJACENCIES to help provide further information."
   (lexical-let ((query-map        (orgtrello-proxy/--dispatch-delete (orgtrello-data/current entity-full-metadata) (orgtrello-data/parent entity-full-metadata)))
                 (entity-full-meta entity-full-metadata)
                 (level            (orgtrello-data/entity-level entity-data)))
