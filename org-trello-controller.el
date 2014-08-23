@@ -215,9 +215,16 @@ Along the way, the buffer BUFFER-NAME is written with new informations."
                              ((orgtrello-data/entity-checklist-p entity) checklist-computations)
                              ((orgtrello-data/entity-item-p entity)      item-computations)))))
              entities)
-    (->> (list card-computations checklist-computations item-computations)
-      (--mapcat (reverse it))
-      (--map (funcall it) item-computations))))
+
+    (eval `(deferred:$
+             (deferred:parallel
+               ,@card-computations)
+             (deferred:parallel
+               ,@checklist-computations)
+             (deferred:parallel
+               ,@item-computations)
+             (deferred:nextc it
+               (lambda () (message "sync in order done!")))))))
 
 (defun orgtrello-controller/fetch-and-overwrite-card! (card)
   "Given a card, retrieve latest information from trello and overwrite in current buffer."
