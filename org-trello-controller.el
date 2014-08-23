@@ -106,14 +106,23 @@ ARGS is not used."
             ((= level *ORGTRELLO/CHECKLIST-LEVEL*) *ORGTRELLO/ERROR-SYNC-CHECKLIST-MISSING-NAME*)
             ((= level *ORGTRELLO/ITEM-LEVEL*)      *ORGTRELLO/ERROR-SYNC-ITEM-MISSING-NAME*)))))
 
-(defun orgtrello-controller/--do-action! (full-meta action)
+(defun orgtrello-controller/--do-delete! (full-meta action)
   "Execute the ACTION on FULL-META."
   (let* ((current (orgtrello-data/current full-meta))
          (marker  (orgtrello-buffer/--compute-marker-from-entry current)))
     (orgtrello-buffer/set-marker-if-not-present! current marker)
     (orgtrello-data/put-entity-id     marker current)
     (orgtrello-data/put-entity-action action current)
-    (orgtrello-proxy/do-action-on-entity current)))
+
+    (eval (orgtrello-proxy/do-action-on-entity current))))
+
+(defun orgtrello-controller/do-delete-simple (&optional sync)
+  "Do the deletion of an entity.
+SYNC is not used."
+  (orgtrello-action/functional-controls-then-do '(orgtrello-controller/--right-level-p orgtrello-controller/--already-synced-p)
+                                                (orgtrello-buffer/entry-get-full-metadata!)
+                                                'orgtrello-controller/--do-delete!
+                                                *ORGTRELLO/ACTION-DELETE*))
 
 (defun orgtrello-controller/--do-action-on-entity! (entity action)
   "Execute the ACTION to ENTITY."
@@ -121,15 +130,6 @@ ARGS is not used."
     (orgtrello-data/put-entity-id     marker entity)
     (orgtrello-data/put-entity-action action entity)
     (orgtrello-proxy/do-action-on-entity entity)))
-
-(defun orgtrello-controller/--check-then-action-on-entity! (functional-controls action)
-  "Execute the FUNCTIONAL-CONTROLS then if all pass, delegate the ACTION to the proxy."
-  (orgtrello-action/functional-controls-then-do functional-controls (orgtrello-buffer/entry-get-full-metadata!) 'orgtrello-controller/--do-action! action))
-
-(defun orgtrello-controller/do-delete-simple (&optional sync)
-  "Do the deletion of an entity.
-SYNC is not used."
-  (orgtrello-controller/--check-then-action-on-entity! '(orgtrello-controller/--right-level-p orgtrello-controller/--already-synced-p) *ORGTRELLO/ACTION-DELETE*))
 
 (defun orgtrello-controller/do-sync-card-to-trello! ()
   "Do the actual card creation/update - from card to item."
@@ -224,7 +224,7 @@ Along the way, the buffer BUFFER-NAME is written with new informations."
              (deferred:parallel
                ,@item-computations)
              (deferred:nextc it
-               (lambda () (message "sync in order done!")))))))
+               (lambda () (orgtrello-log/msg *OT/INFO* "Sync in order done!")))))))
 
 (defun orgtrello-controller/fetch-and-overwrite-card! (card)
   "Given a card, retrieve latest information from trello and overwrite in current buffer."
