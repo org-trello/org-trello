@@ -221,6 +221,14 @@ If the checks are ko, the error message is returned."
                                      item-pos)))
       checks-ok-or-error-message)))
 
+(defun orgtrello-proxy/compute-dispatch-fn (map-dispatch-fn entity)
+  "Generic function to dispatch, depending on the ENTITY level, functions.
+MAP-DISPATCH-FN is a map of function taking the one parameter ENTITY."
+  (-> entity
+    orgtrello-data/entity-level
+    (gethash map-dispatch-fn 'orgtrello-action/--too-deep-level)
+    (funcall entity)))
+
 (defvar *MAP-DISPATCH-CREATE-UPDATE* (orgtrello-hash/make-properties `((,*ORGTRELLO/CARD-LEVEL*      . orgtrello-proxy/--card)
                                                                        (,*ORGTRELLO/CHECKLIST-LEVEL* . orgtrello-proxy/--checklist)
                                                                        (,*ORGTRELLO/ITEM-LEVEL*      . orgtrello-proxy/--item)))
@@ -228,10 +236,7 @@ If the checks are ko, the error message is returned."
 
 (defun orgtrello-proxy/--compute-sync-query-request (entity)
   "Dispatch the ENTITY creation/update depending on the nature of the entry."
-  (-> entity
-    orgtrello-data/entity-level
-    (gethash *MAP-DISPATCH-CREATE-UPDATE* 'orgtrello-action/--too-deep-level)
-    (funcall entity-data)))
+  (orgtrello-proxy/compute-dispatch-fn entity *MAP-DISPATCH-CREATE-UPDATE*))
 
 (defun orgtrello-proxy/--sync-entity (entity-data entities-adjacencies)
   "Compute the sync action on entity ENTITY-DATA.
@@ -334,10 +339,7 @@ Retrieve needed information from the buffer and/or ENTITIES-ADJACENCIES if neede
 
 (defun orgtrello-proxy/--dispatch-delete (entity)
   "Dispatch the call to the delete function depending on ENTITY level info."
-  (-> entity
-    orgtrello-data/entity-level
-    (gethash *MAP-DISPATCH-DELETE* 'orgtrello-action/--too-deep-level)
-    (funcall entity)))
+  (orgtrello-proxy/compute-dispatch-fn entity *MAP-DISPATCH-DELETE*))
 
 (defun orgtrello-proxy/--delete (entity-data &optional entities-adjacencies)
   "Compute the delete action to remove ENTITY-DATA.
