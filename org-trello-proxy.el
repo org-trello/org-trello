@@ -221,7 +221,7 @@ If the checks are ko, the error message is returned."
                                      item-pos)))
       checks-ok-or-error-message)))
 
-(defun orgtrello-proxy/compute-dispatch-fn (map-dispatch-fn entity)
+(defun orgtrello-proxy/compute-dispatch-fn (entity map-dispatch-fn)
   "Generic function to dispatch, depending on the ENTITY level, functions.
 MAP-DISPATCH-FN is a map of function taking the one parameter ENTITY."
   (-> entity
