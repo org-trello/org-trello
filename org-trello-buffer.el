@@ -310,11 +310,9 @@ If REGION-END is specified, will work on the region (current-point, REGION-END),
        (let ((current-entity (-> (orgtrello-buffer/entry-get-full-metadata!) orgtrello-data/current)))
          (unless (-> current-entity orgtrello-data/entity-id orgtrello-data/id-p) ;; if no id, we set one
            (orgtrello-buffer/--set-marker! (orgtrello-buffer/--compute-marker-from-entry current-entity)))
-         (let* ((full-meta (orgtrello-buffer/entry-get-full-metadata!))
-                (current-meta (orgtrello-data/current full-meta))
-                (parent-meta (orgtrello-data/parent full-meta)))
-           (--> current-meta
-             (orgtrello-data/put-parent parent-meta it) ;; add link to current entry's parent
+         (let* ((full-meta (orgtrello-buffer/entry-get-full-metadata!)))
+           (--> full-meta
+             orgtrello-data/current
              (orgtrello-buffer/--dispatch-create-entities-map-with-adjacency it)
              (funcall it full-meta entities adjacency))))))
     (list entities adjacency)))
@@ -494,10 +492,14 @@ Deal with org entities and checkbox as well."
     (let* ((current   (orgtrello-buffer/metadata!))
            (level     (orgtrello-data/entity-level current)))
       (when (< level *ORGTRELLO/OUTOFBOUNDS-LEVEL*)
-        (let ((ancestors (cond ((= level *ORGTRELLO/CARD-LEVEL*)      '(nil nil))
-                               ((= level *ORGTRELLO/CHECKLIST-LEVEL*) `(,(orgtrello-buffer/--parent-metadata!) nil))
-                               ((= level *ORGTRELLO/ITEM-LEVEL*)      `(,(orgtrello-buffer/--parent-metadata!) ,(orgtrello-buffer/--grandparent-metadata!))))))
-          (orgtrello-data/make-hierarchy current (car ancestors) (cadr ancestors)))))))
+        (let* ((ancestors (cond ((= level *ORGTRELLO/CARD-LEVEL*)      '(nil nil))
+                                ((= level *ORGTRELLO/CHECKLIST-LEVEL*) `(,(orgtrello-buffer/--parent-metadata!) nil))
+                                ((= level *ORGTRELLO/ITEM-LEVEL*)      `(,(orgtrello-buffer/--parent-metadata!) ,(orgtrello-buffer/--grandparent-metadata!)))))
+               (parent      (car ancestors))
+               (grandparent (cadr ancestors)))
+          (orgtrello-data/put-parent grandparent parent)
+          (orgtrello-data/put-parent parent current)
+          (orgtrello-data/make-hierarchy current parent grandparent))))))
 
 (defun orgtrello-buffer/--to-orgtrello-metadata (heading-metadata)
   "Given the HEADING-METADATA returned by the function 'org-heading-components.
