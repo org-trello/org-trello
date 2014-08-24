@@ -146,21 +146,20 @@ Use ENTITIES-ADJACENCIES to provide more information."
   (orgtrello-log/msg *OT/WARN* "Synchronizing org-mode file to the board '%s'. This may take some time, some coffee may be a good idea..." (orgtrello-buffer/board-name!))
   (orgtrello-buffer/org-map-entries 'orgtrello-controller/do-sync-card-to-trello!))
 
-(defun orgtrello-controller/--sync-buffer-with-trello-data (data buffer-name)
-  "Given all the entities and adjacency present in DATA, update the current buffer BUFFER-NAME with those."
+(defun orgtrello-controller/--sync-buffer-with-trello-data (data)
+  "Update the current buffer with DATA (entities and adjacency)."
   (let ((entities (car data))
         (adjacency (cadr data)))
-    (with-current-buffer buffer-name
-      (goto-char (point-max)) ;; go at the end of the file
-      (maphash
-       (lambda (new-id entity)
-         (when (orgtrello-data/entity-card-p entity)
-           (orgtrello-buffer/write-card! new-id entity entities adjacency)))
-       entities)
-      (goto-char (point-min)) ;; go back to the beginning of file
-      (org-sort-entries t ?o) ;; sort the entries on their keywords
-      ;;(org-global-cycle '(4)) ;; fold all entries
-      )))
+    (goto-char (point-max)) ;; go at the end of the file
+    (maphash
+     (lambda (new-id entity)
+       (when (orgtrello-data/entity-card-p entity)
+         (orgtrello-buffer/write-card! new-id entity entities adjacency)))
+     entities)
+    (goto-char (point-min)) ;; go back to the beginning of file
+    (org-sort-entries t ?o) ;; sort the entries on their keywords
+    ;;(org-global-cycle '(4)) ;; fold all entries
+    ))
 
 (defun orgtrello-controller/--cleanup-org-entries ()
   "Cleanup org-entries from the buffer.
@@ -176,13 +175,15 @@ This callback must take a BUFFERNAME, a POSITION and a NAME."
   (lexical-let ((buffer-name              buffername)
                 (position                 position)
                 (entities-from-org-buffer (orgtrello-buffer/compute-entities-from-org-buffer! buffername)))
-    (defun* (&key data &allow-other-keys) "Synchronize the buffer with the response data."
-      (orgtrello-log/msg *OT/TRACE* "proxy - response data: %S" data)
-      (-> data                                                                  ;; compute merge between already sync'ed entries and the trello data
-        orgtrello-backend/compute-full-cards-from-trello!                       ;; slow computation with network access
-        (orgtrello-data/merge-entities-trello-and-org entities-from-org-buffer) ;; slow merge computation
-        ((lambda (entry) (orgtrello-controller/--cleanup-org-entries) entry))   ;; hack to clean the org entries just before synchronizing the buffer
-        (orgtrello-controller/--sync-buffer-with-trello-data buffer-name)))))
+    (function*
+     (lambda (&key data &allow-other-keys) "Synchronize the buffer with the response data."
+       (orgtrello-log/msg *OT/TRACE* "proxy - response data: %S" data)
+       (with-current-buffer buffer-name
+         (-> data                                                                  ;; compute merge between already sync'ed entries and the trello data
+           orgtrello-backend/compute-full-cards-from-trello!                       ;; slow computation with network access
+           (orgtrello-data/merge-entities-trello-and-org entities-from-org-buffer) ;; slow merge computation
+           ((lambda (entry) (orgtrello-controller/--cleanup-org-entries) entry))   ;; hack to clean the org entries just before synchronizing the buffer
+           orgtrello-controller/--sync-buffer-with-trello-data))))))
 
 (defun orgtrello-controller/do-sync-full-file-from-trello! (&optional sync)
   "Full org-mode file synchronisation. Beware, this will block emacs as the request is synchronous."
