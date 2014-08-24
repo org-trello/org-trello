@@ -51,17 +51,13 @@ Move the cursor position."
 (defun orgtrello-proxy/--compute-sync-next-level (entity entities-adjacencies)
   "Trigger the sync for ENTITY's children.
 ENTITIES-ADJACENCIES provides needed information."
-  (let* ((entities     (car entities-adjacencies))
-         (adjacencies  (cadr entities-adjacencies))
-         (entity-id    (orgtrello-data/entity-id entity))
-         (children-ids (gethash entity-id adjacencies)))
-    (mapcar (lambda (child-id)
-              (--> child-id
-                (gethash it entities)
-                (orgtrello-data/put-entity-action *ORGTRELLO/ACTION-SYNC* it)
-                (orgtrello-proxy/do-action-on-entity it entities-adjacencies)
-                (eval it)))
-            children-ids)))
+  (-map (lambda (child-id)
+          (--> child-id
+            (orgtrello-data/get-entity it entities-adjacencies)
+            (orgtrello-data/put-entity-action *ORGTRELLO/ACTION-SYNC* it)
+            (orgtrello-proxy/--sync-entity it entities-adjacencies)
+            (eval it)))
+        (orgtrello-data/get-children entity entities-adjacencies)))
 
 (defun orgtrello-proxy/--standard-post-or-put-success-callback (entity-to-sync entities-adjacencies)
   "Return a callback fn able to deal with the update of ENTITY-TO-SYNC.
@@ -228,9 +224,9 @@ MAP-DISPATCH-FN is a map of function taking the one parameter ENTITY."
 
 (defun orgtrello-proxy/--sync-entity (entity-data entities-adjacencies)
   "Compute the sync action on entity ENTITY-DATA.
-Use ENTITY-FULL-METADATA and ENTITIES-ADJACENCIES to provide further information."
-  (lexical-let ((query-map        (orgtrello-proxy/--compute-sync-query-request entity-data))
-                (entity-to-sync   entity-data))
+Use ENTITIES-ADJACENCIES to provide further information."
+  (lexical-let ((query-map      (orgtrello-proxy/--compute-sync-query-request entity-data))
+                (entity-to-sync entity-data))
     (if (hash-table-p query-map)
         (orgtrello-query/http-trello
          query-map

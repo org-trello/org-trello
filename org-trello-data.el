@@ -370,6 +370,19 @@ If state is \"complete\" or \"DONE\", the first element is returned, otherwise t
   "Given a list of USERS, compute the comma separated string of users."
   (if users (mapconcat 'identity users ",") ""))
 
+(defun orgtrello-data/get-children (entity entities-adjacencies)
+  "Given ENTITY and ENTITIES-ADJACENCIES, return the children of the entity."
+  (cl-destructuring-bind (_ adjacencies) entities-adjacencies
+    (-> entity
+      orgtrello-data/entity-id
+      (orgtrello-data/--get-entity adjacencies))))
+
+(defun orgtrello-data/get-entity (entity-id entities-adjacencies)
+  "Given ENTITY-ID, return the complete entity.
+ENTITIES-ADJACENCIES provides needed information."
+  (cl-destructuring-bind (entities _) entities-adjacencies
+    (orgtrello-data/--get-entity entity-id entities)))
+
 (orgtrello-log/msg *OT/DEBUG* "orgtrello-data loaded!")
 
 (provide 'org-trello-data)
