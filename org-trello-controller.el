@@ -208,36 +208,23 @@ Synchronization is done here.
 Along the way, the buffer BUFFER-NAME is written with new informations."
   (lexical-let ((entities             (car entity-structure))
                 (entities-adjacencies entity-structure)
-                (card-computations)
-                (checklist-computations)
-                (item-computations))
+                (card-computations))
+    ;; compute the card to sync
     (maphash (lambda (id entity)
-               (lexical-let ((entity-sync entity))
-                 (push (orgtrello-controller/--do-action-on-entity! entity-sync *ORGTRELLO/ACTION-SYNC* entities-adjacencies)
-                       (cond ((orgtrello-data/entity-card-p entity)      card-computations)
-                             ((orgtrello-data/entity-checklist-p entity) checklist-computations)
-                             ((orgtrello-data/entity-item-p entity)      item-computations)))))
+               (when (orgtrello-data/entity-card-p entity)
+                 (-> entity
+                   (orgtrello-controller/--do-action-on-entity! *ORGTRELLO/ACTION-SYNC* entities-adjacencies)
+                   (push card-computations))))
              entities)
 
+    ;; Trigger the sync
     (eval `(deferred:$
              (deferred:parallel
                ,@(nreverse card-computations))
              (deferred:error it
                (lambda () (orgtrello-log/msg *OT/ERROR* "FAILURE! Sync card(s) KO!")))
              (deferred:nextc it
-               (lambda () (orgtrello-log/msg *OT/INFO* "Sync card(s) ok.")))
-             (deferred:parallel
-               ,@(nreverse checklist-computations))
-             (deferred:error it
-               (lambda () (orgtrello-log/msg *OT/ERROR* "FAILURE! Sync checklist(s) KO!")))
-             (deferred:nextc it
-               (lambda () (orgtrello-log/msg *OT/INFO* "Sync checklist(s) ok.")))
-             (deferred:parallel
-               ,@(nreverse item-computations))
-             (deferred:error it
-               (lambda () (orgtrello-log/msg *OT/ERROR* "FAILURE! Sync item(s) KO!")))
-             (deferred:nextc it
-               (lambda () (orgtrello-log/msg *OT/INFO* "Sync item(s) ok.")))))))
+               (lambda () (orgtrello-log/msg *OT/INFO* "Sync card(s) ok.")))))))
 
 (defun orgtrello-controller/fetch-and-overwrite-card! (card)
   "Given a card, retrieve latest information from trello and overwrite in current buffer."
