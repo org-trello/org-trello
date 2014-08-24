@@ -218,17 +218,23 @@ Along the way, the buffer BUFFER-NAME is written with new informations."
 
     (eval `(deferred:$
              (deferred:parallel
-               ,@card-computations)
+               ,@(nreverse card-computations))
+             (deferred:error it
+               (lambda () (orgtrello-log/msg *OT/ERROR* "FAILURE! Sync card(s) KO!")))
              (deferred:nextc it
                (lambda () (orgtrello-log/msg *OT/INFO* "Sync card(s) ok.")))
              (deferred:parallel
-               ,@checklist-computations)
+               ,@(nreverse checklist-computations))
+             (deferred:error it
+               (lambda () (orgtrello-log/msg *OT/ERROR* "FAILURE! Sync checklist(s) KO!")))
              (deferred:nextc it
-               (lambda () (orgtrello-log/msg *OT/INFO* "Sync checklists ok.")))
+               (lambda () (orgtrello-log/msg *OT/INFO* "Sync checklist(s) ok.")))
              (deferred:parallel
-               ,@item-computations)
+               ,@(nreverse item-computations))
+             (deferred:error it
+               (lambda () (orgtrello-log/msg *OT/ERROR* "FAILURE! Sync item(s) KO!")))
              (deferred:nextc it
-               (lambda () (orgtrello-log/msg *OT/INFO* "Sync items ok.")))))))
+               (lambda () (orgtrello-log/msg *OT/INFO* "Sync item(s) ok.")))))))
 
 (defun orgtrello-controller/fetch-and-overwrite-card! (card)
   "Given a card, retrieve latest information from trello and overwrite in current buffer."
