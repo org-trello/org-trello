@@ -316,39 +316,37 @@ Retrieve needed information from the buffer and/or ENTITIES-ADJACENCIES if neede
               orgtrello-proxy/delete-region
               funcall)))))))
 
-(defun orgtrello-proxy/--card-delete (card-meta &optional parent-meta)
-  "Deal with the deletion query of a CARD-META.
-PARENT-META is not used here."
+(defun orgtrello-proxy/--card-delete (card-meta)
+  "Deal with the deletion query of a CARD-META."
   (orgtrello-api/delete-card (orgtrello-data/entity-id card-meta)))
 
-(defun orgtrello-proxy/--checklist-delete (checklist-meta &optional parent-meta)
-  "Deal with the deletion query of a CHECKLIST-META.
-PARENT-META is not used here."
+(defun orgtrello-proxy/--checklist-delete (checklist-meta)
+  "Deal with the deletion query of a CHECKLIST-META."
   (orgtrello-api/delete-checklist (orgtrello-data/entity-id checklist-meta)))
 
-(defun orgtrello-proxy/--item-delete (item-meta &optional checklist-meta)
+(defun orgtrello-proxy/--item-delete (item-meta)
   "Deal with create/update query of an ITEM-META in CHECKLIST-META."
-  (orgtrello-api/delete-item (orgtrello-data/entity-id checklist-meta) (orgtrello-data/entity-id item-meta)))
+  (let ((checklist-meta (orgtrello-data/parent item-meta)))
+    (orgtrello-api/delete-item (orgtrello-data/entity-id checklist-meta) (orgtrello-data/entity-id item-meta))))
 
 (defvar *MAP-DISPATCH-DELETE* (orgtrello-hash/make-properties `((,*ORGTRELLO/CARD-LEVEL*      . orgtrello-proxy/--card-delete)
                                                                 (,*ORGTRELLO/CHECKLIST-LEVEL* . orgtrello-proxy/--checklist-delete)
                                                                 (,*ORGTRELLO/ITEM-LEVEL*      . orgtrello-proxy/--item-delete)))
   "Dispatch map for the deletion query of card/checklist/item.")
 
-(defun orgtrello-proxy/--dispatch-delete (meta &optional parent-meta)
-  "Dispatch the call to the delete function depending on META level info.
-Optionally, PARENT-META is a parameter of the function dispatched."
-  (-> meta
+(defun orgtrello-proxy/--dispatch-delete (entity)
+  "Dispatch the call to the delete function depending on ENTITY level info."
+  (-> entity
     orgtrello-data/entity-level
     (gethash *MAP-DISPATCH-DELETE* 'orgtrello-action/--too-deep-level)
-    (funcall meta parent-meta)))
+    (funcall entity)))
 
 (defun orgtrello-proxy/--delete (entity-data entity-full-metadata &optional entities-adjacencies)
   "Compute the delete action to remove ENTITY-DATA.
 This uses ENTITY-FULL-METADATA to help provide further information.
 ENTITIES-ADJACENCIES is not used."
-  (lexical-let ((query-map        (orgtrello-proxy/--dispatch-delete (orgtrello-data/current entity-full-metadata) (orgtrello-data/parent entity-full-metadata)))
-                (entity-full-meta entity-full-metadata)
+  (lexical-let ((query-map        (orgtrello-proxy/--dispatch-delete entity-data))
+                (entity-to-delete entity-data)
                 (level            (orgtrello-data/entity-level entity-data)))
     (if (hash-table-p query-map)
         (orgtrello-query/http-trello
