@@ -104,11 +104,9 @@ This will also update in place the ENTITIES-ADJACENCIES map lists with new entit
   (cond ((string= *ORGTRELLO/ACTION-DELETE* action) 'orgtrello-proxy/--delete)
         ((string= *ORGTRELLO/ACTION-SYNC*   action) 'orgtrello-proxy/--sync-entity)))
 
-(defun orgtrello-proxy/--cleanup-meta (entity-full-metadata)
-  "Clean the ENTITY-FULL-METADATA meta up."
-  (unless (-> entity-full-metadata
-            orgtrello-data/current
-            orgtrello-data/entity-id)
+(defun orgtrello-proxy/--cleanup-meta (entity)
+  "Clean the ENTITY metadata up."
+  (unless (orgtrello-data/entity-id entity)
     (orgtrello-cbx/org-delete-property *ORGTRELLO/ID*)))
 
 (defun orgtrello-proxy/--retrieve-state-of-card (card-meta)
@@ -235,23 +233,23 @@ If the checks are ko, the error message is returned."
     (gethash *MAP-DISPATCH-CREATE-UPDATE* 'orgtrello-action/--too-deep-level)
     (funcall entity-data)))
 
-(defun orgtrello-proxy/--sync-entity (entity-data entity-full-metadata entities-adjacencies)
+(defun orgtrello-proxy/--sync-entity (entity-data entities-adjacencies)
   "Compute the sync action on entity ENTITY-DATA.
 Use ENTITY-FULL-METADATA and ENTITIES-ADJACENCIES to provide further information."
-  (lexical-let ((query-map           (orgtrello-proxy/--compute-sync-query-request entity-data))
-                (entity-full-meta    entity-full-metadata))
+  (lexical-let ((query-map        (orgtrello-proxy/--compute-sync-query-request entity-data))
+                (entity-to-sync   entity-data))
     (if (hash-table-p query-map)
         (orgtrello-query/http-trello
          query-map
          nil ; async
          (orgtrello-proxy/--standard-post-or-put-success-callback entity-data entities-adjacencies)
          (lambda (response)
-           (orgtrello-proxy/--cleanup-meta entity-full-meta)
+           (orgtrello-proxy/--cleanup-meta entity-to-sync)
            (orgtrello-log/msg *OT/ERROR* "client - Problem during the sync request to the proxy- error-thrown: %s" (request-response-error-thrown response))))
-      ;; cannot execute the request
-      (progn
-        (orgtrello-proxy/--cleanup-meta entity-full-metadata)
-        (orgtrello-log/msg *OT/ERROR* query-map)))))
+      (progn ;; cannot execute the request
+        (orgtrello-proxy/--cleanup-meta entity-to-sync)
+        (orgtrello-log/msg *OT/ERROR* query-map)
+        query-map))))
 
 (defun orgtrello-proxy/do-action-on-entity (entity-data entities-adjacencies)
   "Compute the action on an entity ENTITY-DATA.
@@ -266,7 +264,7 @@ Retrieve needed information from the buffer and/or ENTITIES-ADJACENCIES if neede
         (-> entity-data
           orgtrello-data/entity-action
           orgtrello-proxy/--dispatch-action
-          (funcall entity-data (orgtrello-buffer/entry-get-full-metadata!) entities-adjacencies))))))
+          (funcall entity-data entities-adjacencies))))))
 
 (defun orgtrello-proxy/--delete-region (start end)
   "Delete a region defined by START and END bound."
@@ -341,7 +339,7 @@ Retrieve needed information from the buffer and/or ENTITIES-ADJACENCIES if neede
     (gethash *MAP-DISPATCH-DELETE* 'orgtrello-action/--too-deep-level)
     (funcall entity)))
 
-(defun orgtrello-proxy/--delete (entity-data entity-full-metadata &optional entities-adjacencies)
+(defun orgtrello-proxy/--delete (entity-data &optional entities-adjacencies)
   "Compute the delete action to remove ENTITY-DATA.
 This uses ENTITY-FULL-METADATA to help provide further information.
 ENTITIES-ADJACENCIES is not used."
@@ -355,7 +353,7 @@ ENTITIES-ADJACENCIES is not used."
          (orgtrello-proxy/--standard-delete-success-callback entity-data)
          (lambda (response)
            (orgtrello-log/msg *OT/ERROR* "client - Problem during the deletion request to the proxy - error-thrown: %s" (request-response-error-thrown response))
-           (orgtrello-proxy/--cleanup-meta entity-full-meta)))
+           (orgtrello-proxy/--cleanup-meta entity-to-delete)))
       (orgtrello-log/msg *OT/ERROR* query-map))))
 
 (orgtrello-log/msg *OT/DEBUG* "orgtrello-proxy loaded!")
