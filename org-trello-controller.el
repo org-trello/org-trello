@@ -163,7 +163,8 @@ Use ENTITIES-ADJACENCIES to provide more information."
       )))
 
 (defun orgtrello-controller/--cleanup-org-entries ()
-  "Cleanup org-entries from the buffer."
+  "Cleanup org-entries from the buffer.
+Does not preserve position."
   (goto-char (point-min))
   (outline-next-heading)
   (orgtrello-cbx/remove-overlays! (point-at-bol) (point-max))
