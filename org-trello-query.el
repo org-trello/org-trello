@@ -21,12 +21,15 @@
   "Compute the trello url from the given SERVER and URI."
   (format "%s%s" server uri))
 
-(lambda orgtrello-query/--standard-error-callback (response)
-  "Standard error callback. Simply displays a message in the minibuffer with the error code."
-  (orgtrello-log/msg *OT/DEBUG* "client - Problem during the request to the proxy- error-thrown: %s" (request-response-error-thrown response)))
+(defun* orgtrello-query/--standard-error-callback (&key error-thrown &allow-other-keys)
+  "Standard error callback which expects a RESPONSE.
+Simply displays an error message in the minibuffer with the error code."
+  (orgtrello-log/msg *OT/DEBUG* "client - Problem during the request to the proxy- error-thrown: %s" error-thrown)
+  (orgtrello-log/msg *OT/DEBUG* "Detailed response: %S" response))
 
-(lambda orgtrello-query/--standard-success-callback (response)
-  "Standard success callback. Simply displays a \"Success\" message in the minibuffer."
+(defun* orgtrello-query/--standard-success-callback (&key response &allow-other-keys)
+  "Standard success callback with expects a RESPONSE.
+Simply displays a success message in the minibuffer."
   (let ((data (request-response-data response)))
     (orgtrello-log/msg *OT/DEBUG* "client - Proxy received and acknowledged the request%s" (if data (format " - response data: %S." data) "."))))
 
