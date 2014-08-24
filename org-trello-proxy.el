@@ -48,26 +48,25 @@ Move the cursor position."
       goto-ok
     (orgtrello-proxy/--getting-back-to-headline data)))
 
-(defun orgtrello-proxy/update-entities-adjacencies! (old-entity-id new-entity entities-adjacencies)
+(defun orgtrello-proxy/update-entities-adjacencies! (old-entity-id entity-synced entities-adjacencies)
   "Given OLD-ENTITY-ID and NEW-ENTITY, update ENTITIES-ADJACENCIES structure.
 This will remove the OLD-ENTITY-ID and update with the NEW-ENTITY (after sync).
 This will also update the references in arborescence."
   (let ((entities     (car entities-adjacencies))
         (adjacencies  (car (cdr entities-adjacencies)))
-        (entry-new-id (orgtrello-data/id new-entity))
+        (entry-new-id (orgtrello-data/entity-id entity-synced))
         (children-ids (gethash old-entity adjacencies)))
     ;; update new entries
-    (puthash entry-new-id new-entity entities)
+    (puthash entry-new-id entity-synced entities)
     ;; update children that have now the reference in children
     (puthash entry-new-id children-ids adjacencies)
     ;; update the reference children with the parent
     (mapcar (lambda (child-id)
               (let ((child (gethash child-id entities)))
                 (--> child
-                  (orgtrello-data/put-parent new-entity it)
+                  (orgtrello-data/put-parent entity-synced it)
                   (puthash child-id it entities))))
             children-ids)
-
     ;; remove old entries
     (puthash old-entity-id nil entities)
     (puthash old-entity-id nil adjacencies)))
@@ -80,22 +79,23 @@ This will also update in place the ENTITIES-ADJACENCIES map lists with new entit
                 (entry-buffer-name (orgtrello-data/entity-buffername entity-to-sync))
                 (level             (orgtrello-data/entity-level entity-to-sync))
                 (marker-id         (orgtrello-data/entity-id-or-marker entity-to-sync))
-                (entity-name       (orgtrello-data/entity-name entity-to-sync)))
+                (entity-name       (orgtrello-data/entity-name entity-to-sync))
+                (entities-adj      entities-adjacencies))
     (lambda (response)
-      (let* ((data         (request-response-data response))
-             (entry-new-id (orgtrello-data/entity-id data)))
+      (let* ((entity-synced (request-response-data response))
+             (entry-new-id  (orgtrello-data/entity-id entity-synced)))
         (with-current-buffer entry-buffer-name
-          ;; will update via tag the trello id of the new persisted data (if needed)
+          ;; will update via tag the trello id of the new persisted entity-synced (if needed)
           (save-excursion
             ;; get back to the buffer and update the id if need be
-            (-when-let (str-msg (when (orgtrello-proxy/--get-back-to-marker marker-id data)
+            (-when-let (str-msg (when (orgtrello-proxy/--get-back-to-marker marker-id entity-synced)
                                   (-if-let (entry-id (when (orgtrello-data/id-p marker-id) marker-id)) ;; Already present, we do nothing on the buffer
                                       (format "Entity '%s' with id '%s' synced!" entity-name entry-id)
-                                    (let ((entry-name (orgtrello-data/entity-name data))) ;; not present, this was just created, we add a simple property
+                                    (let ((entry-name (orgtrello-data/entity-name entity-synced))) ;; not present, this was just created, we add a simple property
                                       ;; update the buffer with new id
                                       (orgtrello-buffer/set-property *ORGTRELLO/ID* entry-new-id)
                                       ;; update in place the entities-adjacencies
-                                      (orgtrello-proxy/update-entities-adjacencies! entity-to-sync data entities-adjacencies)
+            ;;                          (orgtrello-proxy/update-entities-adjacencies! marker-id entity-synced entities-adj)
                                       (format "Newly entity '%s' with id '%s' synced!" entry-name entry-new-id)))))
               (orgtrello-log/msg *OT/INFO* str-msg))))))))
 
