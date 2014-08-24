@@ -106,15 +106,15 @@ ARGS is not used."
             ((= level *ORGTRELLO/CHECKLIST-LEVEL*) *ORGTRELLO/ERROR-SYNC-CHECKLIST-MISSING-NAME*)
             ((= level *ORGTRELLO/ITEM-LEVEL*)      *ORGTRELLO/ERROR-SYNC-ITEM-MISSING-NAME*)))))
 
-(defun orgtrello-controller/--do-delete! (full-meta action)
-  "Execute the ACTION on FULL-META."
+(defun orgtrello-controller/--do-delete! (full-meta action &optional entities-adjacencies)
+  "Execute on FULL-META the ACTION.
+Provide entities-adjacencies for more information."
   (let* ((current (orgtrello-data/current full-meta))
          (marker  (orgtrello-buffer/--compute-marker-from-entry current)))
     (orgtrello-buffer/set-marker-if-not-present! current marker)
     (orgtrello-data/put-entity-id     marker current)
     (orgtrello-data/put-entity-action action current)
-
-    (eval (orgtrello-proxy/do-action-on-entity current))))
+    (eval (orgtrello-proxy/do-action-on-entity current entities-adjacencies))))
 
 (defun orgtrello-controller/do-delete-simple (&optional sync)
   "Do the deletion of an entity.
@@ -124,12 +124,13 @@ SYNC is not used."
                                                 'orgtrello-controller/--do-delete!
                                                 *ORGTRELLO/ACTION-DELETE*))
 
-(defun orgtrello-controller/--do-action-on-entity! (entity action)
-  "Execute the ACTION to ENTITY."
+(defun orgtrello-controller/--do-action-on-entity! (entity action &optional entities-adjacencies)
+  "Execute on ENTITY the ACTION.
+Use ENTITIES-ADJACENCIES to provide more information."
   (let ((marker (orgtrello-buffer/--compute-marker-from-entry entity)))
     (orgtrello-data/put-entity-id     marker entity)
     (orgtrello-data/put-entity-action action entity)
-    (orgtrello-proxy/do-action-on-entity entity)))
+    (orgtrello-proxy/do-action-on-entity entity entities-adjacencies)))
 
 (defun orgtrello-controller/do-sync-card-to-trello! ()
   "Do the actual card creation/update - from card to item."
@@ -203,14 +204,14 @@ No synchronization is done."
 The entity-structure is self contained.
 Synchronization is done here.
 Along the way, the buffer BUFFER-NAME is written with new informations."
-  (let ((entities (car entity-structure))
-        (card-computations)
-        (checklist-computations)
-        (item-computations))
-
+  (lexical-let ((entities             (car entity-structure))
+                (entities-adjacencies entity-structure)
+                (card-computations)
+                (checklist-computations)
+                (item-computations))
     (maphash (lambda (id entity)
                (lexical-let ((entity-sync entity))
-                 (push (lambda () (orgtrello-controller/--do-action-on-entity! entity-sync *ORGTRELLO/ACTION-SYNC*))
+                 (push (orgtrello-controller/--do-action-on-entity! entity-sync *ORGTRELLO/ACTION-SYNC* entities-adjacencies)
                        (cond ((orgtrello-data/entity-card-p entity)      card-computations)
                              ((orgtrello-data/entity-checklist-p entity) checklist-computations)
                              ((orgtrello-data/entity-item-p entity)      item-computations)))))

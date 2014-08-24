@@ -253,8 +253,9 @@ Use ENTITY-FULL-METADATA and ENTITIES-ADJACENCIES to provide further information
         (orgtrello-proxy/--cleanup-meta entity-full-metadata)
         (orgtrello-log/msg *OT/ERROR* query-map)))))
 
-(defun orgtrello-proxy/do-action-on-entity (entity-data)
-  "Compute the synchronization of an entity ENTITY-DATA (retrieving latest information from buffer)."
+(defun orgtrello-proxy/do-action-on-entity (entity-data entities-adjacencies)
+  "Compute the action on an entity ENTITY-DATA.
+Retrieve needed information from the buffer and/or ENTITIES-ADJACENCIES if needed."
   (let* ((position    (orgtrello-data/entity-position entity-data))   ;; position is mandatory
          (buffer-name (orgtrello-data/entity-buffername entity-data))    ;; buffer-name too
          (marker      (orgtrello-data/entity-id-or-marker entity-data))  ;; retrieve the id (which serves as a marker too)
@@ -265,7 +266,7 @@ Use ENTITY-FULL-METADATA and ENTITIES-ADJACENCIES to provide further information
         (-> entity-data
           orgtrello-data/entity-action
           orgtrello-proxy/--dispatch-action
-          (funcall entity-data (orgtrello-buffer/entry-get-full-metadata!)))))))
+          (funcall entity-data (orgtrello-buffer/entry-get-full-metadata!) entities-adjacencies))))))
 
 (defun orgtrello-proxy/--delete-region (start end)
   "Delete a region defined by START and END bound."
@@ -342,9 +343,10 @@ Optionally, PARENT-META is a parameter of the function dispatched."
     (gethash *MAP-DISPATCH-DELETE* 'orgtrello-action/--too-deep-level)
     (funcall meta parent-meta)))
 
-(defun orgtrello-proxy/--delete (entity-data entity-full-metadata entities-adjacencies)
+(defun orgtrello-proxy/--delete (entity-data entity-full-metadata &optional entities-adjacencies)
   "Compute the delete action to remove ENTITY-DATA.
-This uses ENTITY-FULL-METADATA and ENTITIES-ADJACENCIES to help provide further information."
+This uses ENTITY-FULL-METADATA to help provide further information.
+ENTITIES-ADJACENCIES is not used."
   (lexical-let ((query-map        (orgtrello-proxy/--dispatch-delete (orgtrello-data/current entity-full-metadata) (orgtrello-data/parent entity-full-metadata)))
                 (entity-full-meta entity-full-metadata)
                 (level            (orgtrello-data/entity-level entity-data)))
