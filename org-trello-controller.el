@@ -175,13 +175,13 @@ This callback must take a BUFFERNAME, a POSITION and a NAME."
   (lexical-let ((buffer-name              buffername)
                 (position                 position)
                 (entities-from-org-buffer (orgtrello-buffer/compute-entities-from-org-buffer! buffername)))
-    (function* (lambda (&key data &allow-other-keys) "Synchronize the buffer with the response data."
-                 (orgtrello-log/msg *OT/TRACE* "proxy - response data: %S" data)
-                 (-> data                                                                  ;; compute merge between already sync'ed entries and the trello data
-                   orgtrello-backend/compute-full-cards-from-trello!                       ;; slow computation with network access
-                   (orgtrello-data/merge-entities-trello-and-org entities-from-org-buffer) ;; slow merge computation
-                   ((lambda (entry) (orgtrello-controller/--cleanup-org-entries) entry))   ;; hack to clean the org entries just before synchronizing the buffer
-                   (orgtrello-controller/--sync-buffer-with-trello-data buffer-name))))))
+    (defun* (&key data &allow-other-keys) "Synchronize the buffer with the response data."
+      (orgtrello-log/msg *OT/TRACE* "proxy - response data: %S" data)
+      (-> data                                                                  ;; compute merge between already sync'ed entries and the trello data
+        orgtrello-backend/compute-full-cards-from-trello!                       ;; slow computation with network access
+        (orgtrello-data/merge-entities-trello-and-org entities-from-org-buffer) ;; slow merge computation
+        ((lambda (entry) (orgtrello-controller/--cleanup-org-entries) entry))   ;; hack to clean the org entries just before synchronizing the buffer
+        (orgtrello-controller/--sync-buffer-with-trello-data buffer-name)))))
 
 (defun orgtrello-controller/do-sync-full-file-from-trello! (&optional sync)
   "Full org-mode file synchronisation. Beware, this will block emacs as the request is synchronous."
