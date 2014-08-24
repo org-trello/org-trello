@@ -127,9 +127,8 @@ If empty or no keyword then, its equivalence is *ORGTRELLO/TODO*, otherwise, ret
            (ns (if (string= "" (car s)) (cdr s) s)))
       (s-join "," ns))))
 
-(defun orgtrello-proxy/--card (card-meta &optional parent-meta grandparent-meta)
+(defun orgtrello-proxy/--card (card-meta)
   "Deal with create/update CARD-META query build.
-PARENT-META and GRANDPARENT-META are indispensable.
 If the checks are ko, the error message is returned."
   (let ((checks-ok-or-error-message (orgtrello-proxy/--checks-before-sync-card card-meta)))
     ;; name is mandatory
@@ -159,14 +158,12 @@ If the checks are ko, the error message is returned."
         *ORGTRELLO/ERROR-SYNC-CHECKLIST-SYNC-CARD-FIRST*)
     *ORGTRELLO/ERROR-SYNC-CHECKLIST-MISSING-NAME*))
 
-(defun orgtrello-proxy/--checklist (checklist-meta &optional card-meta grandparent-meta)
+(defun orgtrello-proxy/--checklist (checklist-meta)
   "Deal with create/update CHECKLIST-META query build.
-CARD-META, GRANDPARENT-META are indispensable.
 If the checks are ko, the error message is returned."
-  (let ((checks-ok-or-error-message (orgtrello-proxy/--checks-before-sync-checklist checklist-meta card-meta)))
-    ;; name is mandatory
+  (let* ((card-meta                  (orgtrello-data/parent checklist-meta))
+         (checks-ok-or-error-message (orgtrello-proxy/--checks-before-sync-checklist checklist-meta card-meta)))
     (if (equal :ok checks-ok-or-error-message)
-        ;; grandparent is useless here
         (let ((card-id        (orgtrello-data/entity-id card-meta))
               (checklist-name (orgtrello-data/entity-name checklist-meta))
               (checklist-pos  (orgtrello-data/entity-position checklist-meta)))
@@ -196,14 +193,14 @@ If the checks are ko, the error message is returned."
           *ORGTRELLO/ERROR-SYNC-ITEM-SYNC-CHECKLIST-FIRST*)
       *ORGTRELLO/ERROR-SYNC-ITEM-MISSING-NAME*)))
 
-(defun orgtrello-proxy/--item (item-meta &optional checklist-meta card-meta)
+(defun orgtrello-proxy/--item (item-meta)
   "Deal with create/update ITEM-META query build.
-CHECKLIST-META and CARD-META are indispensable data to compute the query.
 If the checks are ko, the error message is returned."
-  (let ((checks-ok-or-error-message (orgtrello-proxy/--checks-before-sync-item item-meta checklist-meta card-meta)))
+  (let* ((checklist-meta (orgtrello-data/parent item-meta))
+         (card-meta      (orgtrello-data/parent checklist-meta))
+         (checks-ok-or-error-message (orgtrello-proxy/--checks-before-sync-item item-meta checklist-meta card-meta)))
     ;; name is mandatory
     (if (equal :ok checks-ok-or-error-message)
-        ;; card-meta is only usefull for the update part
         (let* ((item-id         (orgtrello-data/entity-id item-meta))
                (checklist-id    (orgtrello-data/entity-id checklist-meta))
                (card-id         (orgtrello-data/entity-id card-meta))
@@ -231,20 +228,18 @@ If the checks are ko, the error message is returned."
                                                                        (,*ORGTRELLO/ITEM-LEVEL*      . orgtrello-proxy/--item)))
   "Dispatch map for the creation/update of card/checklist/item.")
 
-(defun orgtrello-proxy/--dispatch-create (entry-metadata)
-  "Dispatch the ENTRY-METADATA creation depending on the nature of the entry."
-  (let ((current-meta (orgtrello-data/current entry-metadata)))
-    (-> current-meta
-      orgtrello-data/entity-level
-      (gethash *MAP-DISPATCH-CREATE-UPDATE* 'orgtrello-action/--too-deep-level)
-      (funcall current-meta (orgtrello-data/parent entry-metadata) (orgtrello-data/grandparent entry-metadata)))))
+(defun orgtrello-proxy/--compute-sync-query-request (entity)
+  "Dispatch the ENTITY creation/update depending on the nature of the entry."
+  (-> entity
+    orgtrello-data/entity-level
+    (gethash *MAP-DISPATCH-CREATE-UPDATE* 'orgtrello-action/--too-deep-level)
+    (funcall entity-data)))
 
 (defun orgtrello-proxy/--sync-entity (entity-data entity-full-metadata entities-adjacencies)
   "Compute the sync action on entity ENTITY-DATA.
 Use ENTITY-FULL-METADATA and ENTITIES-ADJACENCIES to provide further information."
-  (lexical-let ((query-map           (orgtrello-proxy/--dispatch-create entity-full-metadata))
-                (entity-full-meta    entity-full-metadata)
-                (level               (orgtrello-data/entity-level entity-data)))
+  (lexical-let ((query-map           (orgtrello-proxy/--compute-sync-query-request entity-data))
+                (entity-full-meta    entity-full-metadata))
     (if (hash-table-p query-map)
         (orgtrello-query/http-trello
          query-map
