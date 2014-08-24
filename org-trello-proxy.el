@@ -259,17 +259,10 @@ Use ENTITY-FULL-METADATA and ENTITIES-ADJACENCIES to provide further information
 (defun orgtrello-proxy/do-action-on-entity (entity-data entities-adjacencies)
   "Compute the action on an entity ENTITY-DATA.
 Retrieve needed information from the buffer and/or ENTITIES-ADJACENCIES if needed."
-  (let* ((position    (orgtrello-data/entity-position entity-data))   ;; position is mandatory
-         (buffer-name (orgtrello-data/entity-buffername entity-data))    ;; buffer-name too
-         (marker      (orgtrello-data/entity-id-or-marker entity-data))  ;; retrieve the id (which serves as a marker too)
-         (level       (orgtrello-data/entity-level entity-data)))
-    (orgtrello-log/msg *OT/TRACE* "do-action-on-entity - Searching entity metadata from buffer '%s' at point '%s' to sync..." buffer-name position)
-    (with-current-buffer buffer-name
-      (when (orgtrello-proxy/--get-back-to-marker marker entity-data)
-        (-> entity-data
-          orgtrello-data/entity-action
-          orgtrello-proxy/--dispatch-action
-          (funcall entity-data entities-adjacencies))))))
+  (-> entity-data
+    orgtrello-data/entity-action
+    orgtrello-proxy/--dispatch-action
+    (funcall entity-data entities-adjacencies)))
 
 (defun orgtrello-proxy/--delete-region (start end)
   "Delete a region defined by START and END bound."
