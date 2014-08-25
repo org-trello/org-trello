@@ -71,9 +71,11 @@ ENTITIES-ADJACENCIES provides needed information."
         (orgtrello-data/get-children entity entities-adjacencies)))
 
 (defun orgtrello-proxy/update-entities-adjacencies! (old-entity entity-synced entities-adjacencies)
-  "Given OLD-ENTITY and NEW-ENTITY, update in place ENTITIES-ADJACENCIES.
-This will remove the OLD-ENTITY's id and update with the NEW-ENTITY (after sync).
-This will also update the references in arborescence."
+  "Given OLD-ENTITY and ENTITY-SYNCED, update in place ENTITIES-ADJACENCIES.
+This will also update ENTITY-SYNCED with its parent (lost since not present in trello data).
+This will remove OLD-ENTITY's id and update with the ENTITY-SYNCED's one (after sync).
+This will also update the references in arborescence (children with ENTITY-SYNCED).
+This returns a list (updated-entity-synced, updated-entities, updated-adjacencies)."
   (let* ((entities      (car entities-adjacencies))
          (adjacencies   (cadr entities-adjacencies))
          (old-entity-id (orgtrello-data/entity-id-or-marker old-entity))
@@ -95,7 +97,8 @@ This will also update the references in arborescence."
     ;; dismiss old values
     (puthash old-entity-id nil entities)
     (puthash old-entity-id nil adjacencies)
-    (list entities adjacencies)))
+    ;; return updated values
+    (list entity-synced entities adjacencies)))
 
 (defun orgtrello-proxy/--standard-post-or-put-success-callback (entity-to-sync entities-adjacencies)
   "Return a callback fn able to deal with the update of ENTITY-TO-SYNC.
@@ -117,9 +120,10 @@ ENTITIES-ADJACENCIES provides needed information about entities and adjacency."
                                     (progn ;; not present, this was just created, we update with the trello id
                                       (orgtrello-buffer/set-property *ORGTRELLO/ID* entry-new-id)
                                       (format "Newly entity '%s' with id '%s' synced!" entity-name entry-new-id)))))
-              (->> entities-adj
-                (orgtrello-proxy/update-entities-adjacencies! entity-not-yet-synced entity-synced)
-                (orgtrello-proxy/--compute-sync-next-level entity-synced))
+              (let* ((updates (orgtrello-proxy/update-entities-adjacencies! entity-not-yet-synced entity-synced entities-adj))
+                     (updated-entity-synced (car updates))
+                     (updated-entities-adj  (cdr updates)))
+                (orgtrello-proxy/--compute-sync-next-level updated-entity-synced updated-entities-adj))
               (orgtrello-log/msg *OT/INFO* str-msg))))))))
 
 (defun orgtrello-proxy/--dispatch-action (action)
