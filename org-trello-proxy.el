@@ -70,6 +70,33 @@ ENTITIES-ADJACENCIES provides needed information."
             (eval it)))
         (orgtrello-data/get-children entity entities-adjacencies)))
 
+(defun orgtrello-proxy/update-entities-adjacencies! (old-entity entity-synced entities-adjacencies)
+  "Given OLD-ENTITY and NEW-ENTITY, update in place ENTITIES-ADJACENCIES.
+This will remove the OLD-ENTITY's id and update with the NEW-ENTITY (after sync).
+This will also update the references in arborescence."
+  (let* ((entities      (car entities-adjacencies))
+         (adjacencies   (cadr entities-adjacencies))
+         (old-entity-id (orgtrello-data/entity-id-or-marker old-entity))
+         (entry-new-id  (orgtrello-data/entity-id-or-marker entity-synced))
+         (children-ids  (gethash old-entity-id adjacencies)))
+    ;; keep the parent (which is not present as trello's return)
+    (orgtrello-data/put-parent (orgtrello-data/parent old-entity) entity-synced)
+    ;; update parent reference in children in entities
+    (mapcar (lambda (child-id)
+              (let ((child (gethash child-id entities)))
+                (--> child
+                  (orgtrello-data/put-parent entity-synced it)
+                  (puthash child-id it entities))))
+            children-ids)
+
+    ;; update in-place with new entries...
+    (puthash entry-new-id entity-synced entities)
+    (puthash entry-new-id children-ids adjacencies)
+    ;; dismiss old values
+    (puthash old-entity-id nil entities)
+    (puthash old-entity-id nil adjacencies)
+    (list entities adjacencies)))
+
 (defun orgtrello-proxy/--standard-post-or-put-success-callback (entity-to-sync entities-adjacencies)
   "Return a callback fn able to deal with the update of ENTITY-TO-SYNC.
 This will update the buffer at the entity synced.
@@ -90,7 +117,9 @@ ENTITIES-ADJACENCIES provides needed information about entities and adjacency."
                                     (progn ;; not present, this was just created, we update with the trello id
                                       (orgtrello-buffer/set-property *ORGTRELLO/ID* entry-new-id)
                                       (format "Newly entity '%s' with id '%s' synced!" entity-name entry-new-id)))))
-              (orgtrello-proxy/--compute-sync-next-level entity-not-yet-synced entities-adj)
+              (->> entities-adj
+                (orgtrello-proxy/update-entities-adjacencies! entity-not-yet-synced entity-synced)
+                (orgtrello-proxy/--compute-sync-next-level entity-synced))
               (orgtrello-log/msg *OT/INFO* str-msg))))))))
 
 (defun orgtrello-proxy/--dispatch-action (action)
