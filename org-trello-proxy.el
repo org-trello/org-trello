@@ -90,7 +90,6 @@ ENTITIES-ADJACENCIES provides needed information about entities and adjacency."
                                     (progn ;; not present, this was just created, we update with the trello id
                                       (orgtrello-buffer/set-property *ORGTRELLO/ID* entry-new-id)
                                       (format "Newly entity '%s' with id '%s' synced!" entity-name entry-new-id)))))
-              ;; Sync the children of the entity if any (card -> checklists, checklist -> items)
               (orgtrello-proxy/--compute-sync-next-level entity-not-yet-synced entities-adj)
               (orgtrello-log/msg *OT/INFO* str-msg))))))))
 
