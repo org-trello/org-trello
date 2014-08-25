@@ -167,29 +167,34 @@ Does not preserve position."
   (orgtrello-cbx/remove-overlays! (point-at-bol) (point-max))
   (kill-region (point-at-bol) (point-max)))
 
-(defun orgtrello-controller/--sync-buffer-with-trello-data-callback (buffername)
-  "Generate a callback which knows the BUFFERNAME with which it must work.
-This callback must take a BUFFERNAME, a POSITION and a NAME."
-  (lexical-let ((buffer-name              buffername)
-                (entities-from-org-buffer (orgtrello-buffer/compute-entities-from-org-buffer! buffername)))
-    (lambda (response)
-      (let ((data (request-response-data response)))
-        (orgtrello-log/msg *OT/TRACE* "proxy - response data: %S" response)
-        (with-current-buffer buffer-name
-          (-> data                                                                  ;; compute merge between already sync'ed entries and the trello data
-            orgtrello-backend/compute-full-cards-from-trello!                       ;; slow computation with network access
-            (orgtrello-data/merge-entities-trello-and-org entities-from-org-buffer) ;; slow merge computation
-            ((lambda (entry) (orgtrello-controller/--cleanup-org-entries) entry))   ;; hack to clean the org entries just before synchronizing the buffer
-            orgtrello-controller/--sync-buffer-with-trello-data))))))
+(defun orgtrello-controller/--sync-buffer-with-trello-cards (buffer-name trello-cards)
+  "Synchronize the buffer BUFFER-NAME with the TRELLO-CARDS."
+  (with-local-quit
+    (with-current-buffer buffer-name
+      (let ((entities-from-org-buffer (orgtrello-buffer/compute-entities-from-org-buffer! buffer-name)))
+        (-> trello-cards
+          orgtrello-backend/compute-org-trello-card-from
+          (orgtrello-data/merge-entities-trello-and-org entities-from-org-buffer)
+          ((lambda (entry) (orgtrello-controller/--cleanup-org-entries) entry))   ;; hack to clean the org entries just before synchronizing the buffer
+          orgtrello-controller/--sync-buffer-with-trello-data)))))
 
 (defun orgtrello-controller/do-sync-full-file-from-trello! ()
   "Full org-mode file synchronisation. Beware, this will block emacs as the request is synchronous."
   (orgtrello-log/msg *OT/INFO* "Synchronizing the trello board '%s' to the org-mode file. This may take a moment, some coffee may be a good idea..." (orgtrello-buffer/board-name!))
-  ;; then start the sync computations
-  (--> (orgtrello-buffer/board-id!)
-    (orgtrello-api/get-cards it)
-    (orgtrello-controller/--update-query-with-org-metadata it (point) (buffer-name) 'orgtrello-controller/--sync-buffer-with-trello-data-callback)
-    (orgtrello-proxy/sync-from it)))
+  (save-excursion
+    (lexical-let* ((board-id (orgtrello-buffer/board-id!)))
+      (deferred:$
+        (deferred:next
+          (lambda ()
+            (-> board-id
+              orgtrello-api/get-full-cards
+              (orgtrello-query/http-trello 'sync))))
+        (deferred:nextc it
+          (lambda (trello-cards) ;; We have the full result in one query, now we can compute the translation in org-trello model
+            (orgtrello-log/msg *OT/DEBUG* "trello-card: %S" trello-cards)
+            (orgtrello-controller/--sync-buffer-with-trello-cards (current-buffer) trello-cards)))
+        (deferred:error it
+          (lambda (err) (orgtrello-log/msg *OT/ERROR* "Sync buffer from trello - Catch error: %S" err)))))))
 
 (defun orgtrello-controller/build-card-structure! (buffer-name)
   "Build the card structure on the current BUFFER-NAME at current point.

@@ -48,6 +48,15 @@ Return entries updated with value if entry, entries untouched otherwise."
                             '(("actions" .  "commentCard")
                               ("fields" . "closed,desc,due,idBoard,idChecklists,idList,idMembers,name,pos"))))
 
+(defun orgtrello-api/get-full-cards (board-id)
+  "Create a cards retrieval from the board with BOARD-ID query."
+  (orgtrello-api/make-query "GET" (format "/boards/%s/cards" board-id)
+                            '(("actions" .  "commentCard")
+                              ("checklists" . "all")
+                              ;;("checkItemStates" . "true")
+                              ("filter" . "open")
+                              ("fields" . "closed,desc,due,idBoard,idList,idMembers,name,pos"))))
+
 (defun orgtrello-api/get-card (card-id)
   "Create a get-card with CARD-ID query."
   (orgtrello-api/make-query "GET" (format "/cards/%s" card-id)
