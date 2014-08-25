@@ -167,21 +167,20 @@ Does not preserve position."
   (orgtrello-cbx/remove-overlays! (point-at-bol) (point-max))
   (kill-region (point-at-bol) (point-max)))
 
-(defun orgtrello-controller/--sync-buffer-with-trello-data-callback (buffername &optional position name)
+(defun orgtrello-controller/--sync-buffer-with-trello-data-callback (buffername)
   "Generate a callback which knows the BUFFERNAME with which it must work.
 This callback must take a BUFFERNAME, a POSITION and a NAME."
   (lexical-let ((buffer-name              buffername)
-                (position                 position)
                 (entities-from-org-buffer (orgtrello-buffer/compute-entities-from-org-buffer! buffername)))
-    (function*
-     (lambda (&key data &allow-other-keys) "Synchronize the buffer with the response data."
-       (orgtrello-log/msg *OT/TRACE* "proxy - response data: %S" data)
-       (with-current-buffer buffer-name
-         (-> data                                                                  ;; compute merge between already sync'ed entries and the trello data
-           orgtrello-backend/compute-full-cards-from-trello!                       ;; slow computation with network access
-           (orgtrello-data/merge-entities-trello-and-org entities-from-org-buffer) ;; slow merge computation
-           ((lambda (entry) (orgtrello-controller/--cleanup-org-entries) entry))   ;; hack to clean the org entries just before synchronizing the buffer
-           orgtrello-controller/--sync-buffer-with-trello-data))))))
+    (lambda (response)
+      (let ((data (request-response-data response)))
+        (orgtrello-log/msg *OT/TRACE* "proxy - response data: %S" response)
+        (with-current-buffer buffer-name
+          (-> data                                                                  ;; compute merge between already sync'ed entries and the trello data
+            orgtrello-backend/compute-full-cards-from-trello!                       ;; slow computation with network access
+            (orgtrello-data/merge-entities-trello-and-org entities-from-org-buffer) ;; slow merge computation
+            ((lambda (entry) (orgtrello-controller/--cleanup-org-entries) entry))   ;; hack to clean the org entries just before synchronizing the buffer
+            orgtrello-controller/--sync-buffer-with-trello-data))))))
 
 (defun orgtrello-controller/do-sync-full-file-from-trello! ()
   "Full org-mode file synchronisation. Beware, this will block emacs as the request is synchronous."
