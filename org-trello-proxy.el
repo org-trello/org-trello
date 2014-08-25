@@ -244,7 +244,7 @@ Use ENTITIES-ADJACENCIES to provide further information."
          (orgtrello-proxy/--standard-post-or-put-success-callback entity-data entities-adjacencies)
          (lambda (response)
            (orgtrello-proxy/--cleanup-meta entity-to-sync)
-           (orgtrello-log/msg *OT/ERROR* "client - Problem during the sync request to the proxy- error-thrown: %s" (request-response-error-thrown response))))
+           (orgtrello-log/msg *OT/ERROR* "client - Problem during the sync request to the proxy - error-thrown: %s" (request-response-error-thrown response))))
       (progn ;; cannot execute the request
         (orgtrello-proxy/--cleanup-meta entity-to-sync)
         (orgtrello-log/msg *OT/ERROR* query-map)
