@@ -94,9 +94,6 @@ This returns a list (updated-entity-synced, updated-entities, updated-adjacencie
     ;; update in-place with new entries...
     (puthash entry-new-id entity-synced entities)
     (puthash entry-new-id children-ids adjacencies)
-    ;; dismiss old values
-    (puthash old-entity-id nil entities)
-    (puthash old-entity-id nil adjacencies)
     ;; return updated values
     (list entity-synced entities adjacencies)))
 
