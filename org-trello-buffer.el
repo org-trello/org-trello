@@ -454,7 +454,7 @@ Deal with org entities and checkbox as well."
       (cons current-point)
       (cons (buffer-name))
       (cons (orgtrello-buffer/--user-ids-assigned-to-current-card))
-      (cons (orgtrello-buffer/extract-description-from-current-position!))
+      (cons (when (orgtrello-buffer/card-at-pt!) (orgtrello-buffer/extract-description-from-current-position!)))
       (cons (orgtrello-buffer/org-entry-get current-point *ORGTRELLO/CARD-COMMENTS*))
       (cons (orgtrello-buffer/org-unknown-drawer-properties!))
       orgtrello-buffer/--to-orgtrello-metadata)))
