@@ -15,14 +15,14 @@
 
 * IN-PROGRESS 0.5.3 [57%]
 - [X] Backlog
-- [-] Emacs blocks when sync - #164 - Deferred the sync/delete actions [83%]
+- [-] Emacs blocks when sync - #164 - Deferred the sync/delete actions [50%]
   - [X] Align execution of code regarding
     - [X] Sync to
     - [X] Sync from
     - [X] Delete
-  - [-] Render the execution asynchronous
+  - [-] Render the execution asynchronous [66%]
     - [X] Delete
-    - [ ] Sync to
+    - [X] Sync to
     - [ ] Sync from
 - [X] Fix caret movement problem (At the end of an action, the caret must be at the same position as before)
 - [X] Improve logging system to prefix org-trello message with 'org-trello - '
