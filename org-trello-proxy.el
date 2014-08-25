@@ -48,6 +48,17 @@ Move the cursor position."
       goto-ok
     (orgtrello-proxy/--getting-back-to-headline data)))
 
+(defun orgtrello-proxy/execute-sync-computations (computations log-ok log-ko)
+  "Compute the deferred COMPUTATIONS.
+Display LOG-OK or LOG-KO depending on the result."
+  (eval `(deferred:$
+           (deferred:parallel
+             ,@computations)
+           (deferred:error it
+             (lambda () (orgtrello-log/msg *OT/ERROR* ,log-ko)))
+           (deferred:nextc it
+             (lambda () (orgtrello-log/msg *OT/DEBUG* ,log-ok))))))
+
 (defun orgtrello-proxy/--compute-sync-next-level (entity entities-adjacencies)
   "Trigger the sync for ENTITY's children.
 ENTITIES-ADJACENCIES provides needed information."

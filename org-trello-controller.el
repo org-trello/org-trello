@@ -209,7 +209,7 @@ Along the way, the buffer BUFFER-NAME is written with new informations."
   (lexical-let ((entities             (car entity-structure))
                 (entities-adjacencies entity-structure)
                 (card-computations))
-    ;; compute the card to sync
+    ;; compute the card to sync computations
     (maphash (lambda (id entity)
                (when (orgtrello-data/entity-card-p entity)
                  (-> entity
@@ -217,14 +217,9 @@ Along the way, the buffer BUFFER-NAME is written with new informations."
                    (push card-computations))))
              entities)
 
-    ;; Trigger the sync
-    (eval `(deferred:$
-             (deferred:parallel
-               ,@(nreverse card-computations))
-             (deferred:error it
-               (lambda () (orgtrello-log/msg *OT/ERROR* "FAILURE! Sync card(s) KO!")))
-             (deferred:nextc it
-               (lambda () (orgtrello-log/msg *OT/INFO* "Sync card(s) ok.")))))))
+    (-> card-computations
+      nreverse
+      (orgtrello-proxy/execute-sync-computations "card(s) sync ok!" "FAILURE! cards(s) sync KO!"))))
 
 (defun orgtrello-controller/fetch-and-overwrite-card! (card)
   "Given a card, retrieve latest information from trello and overwrite in current buffer."
