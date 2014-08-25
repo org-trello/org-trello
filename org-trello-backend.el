@@ -15,11 +15,14 @@
 (defun orgtrello-backend/compute-items-from-checklist! (checklist entities adjacencies)
   "Given a CHECKLIST, retrieve its items and update the ENTITIES hash and the ADJACENCY list."
   (let ((checklist-id (orgtrello-data/entity-id checklist)))
-    (--reduce-from (cl-destructuring-bind (ents adjs) acc
-                     (list (orgtrello-backend/--add-entity-to-entities it ents)
-                           (orgtrello-backend/--add-entity-to-adjacency it checklist adjs)))
-                   (list entities adjacencies)
-                   (orgtrello-data/entity-items checklist))))
+    (--> checklist
+      (orgtrello-data/entity-items it)
+      (sort it (lambda (a b) (when (<= (orgtrello-data/entity-position a) (orgtrello-data/entity-position b)) 1)))
+      (--reduce-from (cl-destructuring-bind (ents adjs) acc
+                       (list (orgtrello-backend/--add-entity-to-entities it ents)
+                             (orgtrello-backend/--add-entity-to-adjacency it checklist adjs)))
+                     (list entities adjacencies)
+                     it))))
 
 (defun orgtrello-backend/retrieve-checklist-from-card! (card)
   "Given a CARD, retrieve the checklist of the card (using trello).
@@ -91,6 +94,7 @@ Hash result is of the form: {entity-id '(entity-card {checklist-id (checklist (i
   (let ((card-id (orgtrello-data/entity-id trello-card)))
     (--> trello-card
       (orgtrello-data/entity-checklists it)
+      (sort it (lambda (a b) (when (<= (orgtrello-data/entity-position a) (orgtrello-data/entity-position b)) 1)))
       (-reduce-from (lambda (acc-entities-adj checklist)
                       (cl-destructuring-bind (ents adjs) acc-entities-adj
                         (orgtrello-backend/compute-items-from-checklist!

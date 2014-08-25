@@ -16,7 +16,7 @@
 * IN-PROGRESS 0.5.3 [71%]
 - [X] Backlog
 - [X] Emacs blocks when sync - #164 - Deferred the sync/delete actions [100%]
-  - [X] Align execution of code regarding
+  - [X] Align execution of code regarding [100%]
     - [X] Sync to
     - [X] Sync from
     - [X] Delete
@@ -26,6 +26,7 @@
     - [X] Sync buffer to trello
     - [X] Sync card from trello
     - [X] Sync buffer from trello
+  - [X] Fix alignment problem (sync a card from trello must enforce order on position)
 - [X] Fix caret movement problem (At the end of an action, the caret must be at the same position as before)
 - [X] Improve logging system to prefix org-trello message with 'org-trello - '
 - [X] Remove dead code
