@@ -12,18 +12,6 @@
 (require 'org-trello-cbx)
 (require 'org-trello-action)
 
-(defun orgtrello-proxy/--compute-trello-query (query-map-data)
-  "Build a trello query from the content of QUERY-MAP-DATA."
-  (orgtrello-api/make-query (orgtrello-data/entity-method query-map-data) (orgtrello-data/entity-uri query-map-data) (orgtrello-data/entity-params query-map-data)))
-
-(defun orgtrello-proxy/sync-from (query-map-data)
-  "Deal with request QUERY-MAP-DATA from trello.
-The query can be synchronous depending on SYNC variable."
-  (let* ((buffer-name (orgtrello-data/entity-buffername query-map-data))
-         (standard-callback-fn (orgtrello-data/entity-callback query-map-data))
-         (query-map (orgtrello-proxy/--compute-trello-query query-map-data)))
-    (orgtrello-query/http-trello query-map 'sync (when standard-callback-fn (funcall standard-callback-fn buffer-name)))))
-
 (defun orgtrello-proxy/--getting-back-to-headline (data)
   "Trying another approach to getting back to header computing the normal form of the entry DATA in the buffer."
   (orgtrello-proxy/--getting-back-to-marker (orgtrello-buffer/--compute-entity-to-org-entry data)))

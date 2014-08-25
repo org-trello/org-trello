@@ -79,12 +79,6 @@ ARGS is not used."
       :ok
     "Setup problem - You need to install the consumer-key and the read/write access-token - C-c o i or M-x org-trello/install-key-and-token"))
 
-(defun orgtrello-controller/--update-query-with-org-metadata (query-map position buffer-name &optional success-callback)
-  "Given a trello QUERY-MAP, POSITION, BUFFER-NAME and optional NAME, SUCCESS-CALLBACK and SYNC, add proxy metadata needed to work."
-  (when success-callback (orgtrello-data/put-entity-callback success-callback query-map))
-  (orgtrello-data/put-entity-position   position    query-map)
-  (orgtrello-data/put-entity-buffername buffer-name query-map))
-
 (defun orgtrello-controller/--right-level-p (entity)
   "Compute if the ENTITY level is correct (not higher than level 4)."
   (if (< (-> entity orgtrello-data/current orgtrello-data/entity-level) *ORGTRELLO/OUTOFBOUNDS-LEVEL*) :ok "Level too high. Do not deal with entity other than card/checklist/items!"))

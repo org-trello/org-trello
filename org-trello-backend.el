@@ -24,42 +24,6 @@
                      (list entities adjacencies)
                      it))))
 
-(defun orgtrello-backend/retrieve-checklist-from-card! (card)
-  "Given a CARD, retrieve the checklist of the card (using trello).
-This gives a list of checklist in the trello order."
-  (--> card
-    (orgtrello-data/entity-checklists it)                                                            ;; retrieve checklist ids
-    (-reduce-from (lambda (acc-list checklist-id)
-                    (cons (-> checklist-id
-                            orgtrello-api/get-checklist
-                            (orgtrello-query/http-trello 'synchronous-query)) acc-list))
-                  nil
-                  it)                                                                         ;; retrieve the trello checklist
-    (sort it (lambda (a b) (when (<= (orgtrello-data/entity-position a) (orgtrello-data/entity-position b)) 1)))))          ;; sort them by pos to get back to the right order (reversed)
-
-(defun orgtrello-backend/compute-checklist-entities-from-card! (card entities adjacency)
-  "Given a CARD, retrieve from ENTITIES and ADJACENCY its checklists (with their items) in the right order."
-  (let ((card-id (orgtrello-data/entity-id card)))
-    (--> card
-      (orgtrello-backend/retrieve-checklist-from-card! it)
-      (-reduce-from (lambda (acc-entities-adj checklist)
-                      (cl-destructuring-bind (entities adjacency) acc-entities-adj
-                        (orgtrello-backend/compute-items-from-checklist! checklist (orgtrello-backend/--add-entity-to-entities checklist entities) (orgtrello-backend/--add-entity-to-adjacency checklist card adjacency))))
-                    (list entities adjacency)
-                    it))));; at last complete checklist with item
-
-(defun orgtrello-backend/compute-full-cards-from-trello! (cards)
-  "Given a CARDS list, compute the full cards data from the trello board.
-The order from the trello board is kept.
-Hash result is of the form: {entity-id '(entity-card {checklist-id (checklist (item))})}"
-  (--reduce-from (progn
-                   (orgtrello-log/msg *OT/INFO* "Computing card '%s' data..."
-                                      (orgtrello-data/entity-name it))
-                   (cl-destructuring-bind (entities adjacency) acc
-                     (orgtrello-backend/compute-checklist-entities-from-card! it (orgtrello-backend/--add-entity-to-entities it entities) adjacency)))
-                 (list (orgtrello-hash/empty-hash) (orgtrello-hash/empty-hash))
-                 cards))
-
 (defun orgtrello-backend/--add-entity-to-entities (entity entities)
   "Adding ENTITY to the hash ENTITIES."
   (-> (orgtrello-data/entity-id-or-marker entity)
