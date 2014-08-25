@@ -221,7 +221,7 @@ Along the way, the buffer BUFFER-NAME is written with new informations."
 (defun orgtrello-controller/fetch-and-overwrite-card! (buffer-name card)
   "Given a card, retrieve latest information from trello and overwrite in current buffer."
   (let* ((card-id                  (orgtrello-data/entity-id card))
-         (region                   (orgtrello-buffer/compute-entity-region! card))
+         (region                   (orgtrello-buffer/compute-card-region!))
          (entities-from-org-buffer (apply 'orgtrello-buffer/compute-entities-from-org-buffer! (cons buffer-name region)))
          (entities-from-trello     (orgtrello-backend/compute-full-cards-from-trello! (list card)))
          (merged-entities          (orgtrello-data/merge-entities-trello-and-org entities-from-trello entities-from-org-buffer))
@@ -229,18 +229,6 @@ Along the way, the buffer BUFFER-NAME is written with new informations."
          (entities-adj             (cadr merged-entities)))
     (orgtrello-buffer/clean-region! region)
     (orgtrello-buffer/write-card! card-id (gethash card-id entities) entities entities-adj)))
-
-(defun orgtrello-controller/fetch-and-overwrite-checklist! (buffer-name checklist)
-  "Given a checklist, retrieve latest information from trello and overwrite in current buffer."
-  (let* ((checklist-id             (orgtrello-data/entity-id checklist))
-         (region                   (orgtrello-buffer/compute-entity-region! checklist))
-         (entities-from-org-buffer (apply 'orgtrello-buffer/compute-entities-from-org-buffer! (cons buffer-name region)))
-         (entities-from-trello     (orgtrello-backend/compute-full-checklist-from-trello! checklist))
-         (merged-entities          (orgtrello-data/merge-entities-trello-and-org entities-from-trello entities-from-org-buffer))
-         (entities                 (car merged-entities))
-         (entities-adj             (cadr merged-entities)))
-    (orgtrello-buffer/clean-region! region)
-    (orgtrello-buffer/write-checklist! checklist-id entities entities-adj)))
 
 (defun orgtrello-controller/--sync-entity-and-structure-to-buffer-with-trello-data-callback (buffername &optional position name)
   "Generate a callback which knows the BUFFERNAME with which it must work.
@@ -255,33 +243,39 @@ This callback must take a BUFFERNAME, a POSITION and a NAME."
             (goto-char pos)
             (point-at-bol)
             (org-show-subtree)
-            (funcall
-             (cond ((orgtrello-data/entity-card-p data)      'orgtrello-controller/fetch-and-overwrite-card!)
-                   ((orgtrello-data/entity-checklist-p data) 'orgtrello-controller/fetch-and-overwrite-checklist!)
-                   ((orgtrello-data/entity-item-p data)      'orgtrello-buffer/overwrite-item!))
-             buffer-name
-             data)))))))
+            (orgtrello-controller/fetch-and-overwrite-card! buffer-name data)))))))
 
-(defun orgtrello-controller/--dispatch-sync-request (entity &optional with-filter)
-  "Dispatch the sync request creation depending on the nature of the ENTITY.
-If WITH-FILTER is set, only the checklist is returned (without its items)."
-  (let* ((current-meta (orgtrello-data/current entity))
-         (entity-id    (orgtrello-data/entity-id current-meta))
-         (parent-id    (-> entity orgtrello-data/parent orgtrello-data/entity-id))
-         (level        (orgtrello-data/entity-level current-meta)))
-    (cond ((= level *ORGTRELLO/CARD-LEVEL*)      (orgtrello-api/get-card entity-id))
-          ((= level *ORGTRELLO/CHECKLIST-LEVEL*) (orgtrello-api/get-checklist entity-id with-filter))
-          ((= level *ORGTRELLO/ITEM-LEVEL*)      (orgtrello-api/get-item parent-id entity-id)))))
+(defun orgtrello-controller/compute-and-overwrite-card! (buffer-name trello-card)
+  (let* ((card-id                  (orgtrello-data/entity-id trello-card))
+         (region                   (orgtrello-buffer/compute-card-region!))
+         (entities-from-org-buffer (apply 'orgtrello-buffer/compute-entities-from-org-buffer! (cons buffer-name region)))
+         (entities-from-trello     (orgtrello-backend/compute-org-trello-card-from (list trello-card)))
+         (merged-entities          (orgtrello-data/merge-entities-trello-and-org entities-from-trello entities-from-org-buffer))
+         (entities                 (car merged-entities))
+         (entities-adj             (cadr merged-entities)))
+    (orgtrello-buffer/clean-region! region)
+    (orgtrello-buffer/write-card! card-id (gethash card-id entities) entities entities-adj)))
 
 (defun orgtrello-controller/do-sync-card-from-trello! ()
   "Entity (card/checklist/item) synchronization (with its structure) from trello.
 Optionally, SYNC permits to synchronize the query."
   (orgtrello-log/msg *OT/INFO* "Synchronizing the trello card to the org-mode file...")
   (save-excursion
-    (-> (orgtrello-buffer/entry-get-full-metadata!)
-      orgtrello-controller/--dispatch-sync-request
-      (orgtrello-controller/--update-query-with-org-metadata (point) (buffer-name) 'orgtrello-controller/--sync-entity-and-structure-to-buffer-with-trello-data-callback)
-      orgtrello-proxy/sync-from)))
+    (lexical-let* ((card-meta (orgtrello-data/current (orgtrello-buffer/entry-get-full-metadata!))))
+      (deferred:$
+        (deferred:next
+          (lambda ()
+            (with-local-quit
+              (-> card-meta
+                orgtrello-data/entity-id
+                orgtrello-api/get-full-card
+                (orgtrello-query/http-trello 'sync)))))
+        (deferred:nextc it
+          (lambda (trello-card) ;; We have the full result in one query, now we can compute the translation in org-trello model
+            (orgtrello-log/msg *OT/DEBUG* "trello-card: %S" trello-card)
+            (orgtrello-controller/compute-and-overwrite-card! (current-buffer) trello-card)))
+        (deferred:error it
+          (lambda (err) (orgtrello-log/msg *OT/ERROR* "Catch error: %S" err)))))))
 
 (defun orgtrello-controller/--do-delete-card ()
   "Delete the card.

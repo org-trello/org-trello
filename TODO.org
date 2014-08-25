@@ -20,10 +20,12 @@
     - [X] Sync to
     - [X] Sync from
     - [X] Delete
-  - [-] Render the execution asynchronous [66%]
+  - [-] Render the execution asynchronous [80%]
     - [X] Delete
-    - [X] Sync to
-    - [ ] Sync from
+    - [X] Sync card to trello
+    - [X] Sync buffer to trello
+    - [X] Sync card from trello
+    - [ ] Sync buffer from trello
 - [X] Fix caret movement problem (At the end of an action, the caret must be at the same position as before)
 - [X] Improve logging system to prefix org-trello message with 'org-trello - '
 - [X] Remove dead code

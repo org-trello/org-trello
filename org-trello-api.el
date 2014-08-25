@@ -56,6 +56,15 @@ Return entries updated with value if entry, entries untouched otherwise."
                               ("action_memberCreator_fields" . "username")
                               ("fields" .  "closed,dateLastActivity,desc,due,idChecklists,idList,idMembers,labels,name,pos"))))
 
+(defun orgtrello-api/get-full-card (card-id)
+  "Create a get-card with details query with CARD-ID query."
+  (orgtrello-api/make-query "GET" (format "/cards/%s" card-id)
+                            '(("actions" . "commentCard")
+                              ("action_fields" . "data")
+                              ("checklists" . "all")
+                              ("action_memberCreator_fields" . "username")
+                              ("fields" .  "closed,dateLastActivity,desc,due,idList,idMembers,labels,name,pos"))))
+
 (defun orgtrello-api/delete-card (card-id)
   "Create a delete card with id CARD-ID query."
   (orgtrello-api/make-query "DELETE" (format "/cards/%s" card-id)))

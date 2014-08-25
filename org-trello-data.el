@@ -137,7 +137,8 @@ If the keyword is nil, return the optional DEFAULT-VALUE."
                                                                         (name           . :name)
                                                                         (idMembers      . :member-ids)
                                                                         (idList         . :list-id)
-                                                                        (idChecklists   . :checklists)
+                                                                        (checklists     . :checklists) ;; for full data
+                                                                        (idChecklists   . :checklists) ;; for checklist ids (those 2 keywords are mutually exclusive and are dealt at request level)
                                                                         (idBoard        . :board-id)
                                                                         (due            . :due)
                                                                         (desc           . :desc)
@@ -333,8 +334,14 @@ If TRELLO-CARD is nil, return ORG-CARD."
         (org-adjacency    (cadr org-data)))
 
     (maphash (lambda (id trello-entity)
-               (orgtrello-hash/puthash-data id (funcall (orgtrello-data/--dispatch-merge-fn trello-entity) trello-entity (orgtrello-data/--get-entity id org-entities)) trello-entities) ;; updating entity to trello
-               (orgtrello-hash/puthash-data id (orgtrello-data/merge-2-lists-without-duplicates (gethash id trello-adjacency) (gethash id org-adjacency))     trello-adjacency)) ;; update entity adjacency to trello
+               (orgtrello-hash/puthash-data id
+                                            (funcall (orgtrello-data/--dispatch-merge-fn trello-entity)
+                                                     trello-entity
+                                                     (orgtrello-data/--get-entity id org-entities))
+                                            trello-entities) ;; updating entity to trello
+               (orgtrello-hash/puthash-data id
+                                            (orgtrello-data/merge-2-lists-without-duplicates (gethash id trello-adjacency) (gethash id org-adjacency))
+                                            trello-adjacency)) ;; update entity adjacency to trello
              trello-entities)
 
     ;; copy the entities only present on org files to the trello entities.
