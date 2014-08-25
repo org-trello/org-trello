@@ -102,7 +102,7 @@ Return entries updated with value if entry, entries untouched otherwise."
                                                                          ("idList" . ,idList)))))
 
 (defun orgtrello-api/move-card (card-id idList &optional name due id-members desc labels pos)
-  "Create an update a card CARD-ID to IDLIST with optional NAME, DUE date, ID-MEMBERS, DESC and LABELS query."
+  "Create an update a card CARD-ID to IDLIST with optional NAME, DUE date, ID-MEMBERS, DESC, LABELS, POS query."
   (->> (orgtrello-api/--deal-with-optional-values `((,name . ("name" . ,name))
                                                     (,id-members . ("idMembers" . ,id-members))
                                                     (,due . ("due" . ,due))
@@ -113,12 +113,12 @@ Return entries updated with value if entry, entries untouched otherwise."
     (orgtrello-api/make-query "PUT" (format "/cards/%s" card-id))))
 
 (defun orgtrello-api/add-checklist (card-id name pos)
-  "Create an add a checklist to a card CARD-ID, checklist with NAME query."
+  "Create an add a checklist to a card CARD-ID, checklist with NAME, POS query."
   (orgtrello-api/make-query "POST" (format "/cards/%s/checklists" card-id) `(("name" . ,name)
                                                                              ("pos" . ,pos))))
 
 (defun orgtrello-api/update-checklist (checklist-id name pos)
-  "Create an update the checklist CHECKLIST-ID with NAME query."
+  "Create an update the checklist CHECKLIST-ID with NAME, POS query."
   (orgtrello-api/make-query "PUT" (format "/checklists/%s" checklist-id) `(("name" . ,name)
                                                                            ("pos" . ,pos))))
 
@@ -135,14 +135,14 @@ Return entries updated with value if entry, entries untouched otherwise."
   (orgtrello-api/make-query "DELETE" (format "/checklists/%s" checklist-id)))
 
 (defun orgtrello-api/add-items (checklist-id name &optional checked pos)
-  "Create an add items to a checklist CHECKLIST-ID with NAME and optional CHECKED state query."
+  "Create an add items to a checklist CHECKLIST-ID with NAME and optional CHECKED state query and POS."
   (->> (orgtrello-api/--deal-with-optional-values `((,checked . ("checked" . ,checked))
                                                     (,pos     . ("pos" . ,pos)))
                                                   `(("name" . ,name)))
     (orgtrello-api/make-query "POST" (format "/checklists/%s/checkItems" checklist-id) )))
 
 (defun orgtrello-api/update-item (card-id checklist-id item-id name &optional state pos)
-  "Create an update an item from the CARD-ID, CHECKLIST-ID and ITEM-ID with NAME and optional STATE query."
+  "Create an update an item from the CARD-ID, CHECKLIST-ID and ITEM-ID with NAME and optional STATE query, POS."
   (->> (orgtrello-api/--deal-with-optional-values `((,state . ("state" . ,state))
                                                     (,pos   . ("pos" . ,pos)))
                                                   `(("name" . ,name)))
