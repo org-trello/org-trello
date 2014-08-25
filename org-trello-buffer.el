@@ -195,8 +195,9 @@ If the VALUE is nil or empty, remove such PROPERTY."
   (apply 'orgtrello-cbx/remove-overlays! region)
   (apply 'delete-region region))
 
-(defun orgtrello-buffer/overwrite-item! (item)
-  "Given an updated item 'item' and the current position, overwrite the current position with the updated item data."
+(defun orgtrello-buffer/overwrite-item! (buffer-name item)
+  "BUFFER-NAME is not used.
+Overwrite the item in the buffer at current position."
   (let ((region (orgtrello-buffer/compute-item-region!)))
     (orgtrello-buffer/clean-region! region)
     (orgtrello-buffer/write-entity! (orgtrello-data/entity-id item) (orgtrello-data/merge-item item item)))) ;; hack to merge item to itself to map to the org-trello world, otherwise we lose status for example

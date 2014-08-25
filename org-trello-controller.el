@@ -219,11 +219,11 @@ Along the way, the buffer BUFFER-NAME is written with new informations."
       nreverse
       (orgtrello-proxy/execute-sync-computations "card(s) sync ok!" "FAILURE! cards(s) sync KO!"))))
 
-(defun orgtrello-controller/fetch-and-overwrite-card! (card)
+(defun orgtrello-controller/fetch-and-overwrite-card! (buffer-name card)
   "Given a card, retrieve latest information from trello and overwrite in current buffer."
   (let* ((card-id                  (orgtrello-data/entity-id card))
          (region                   (orgtrello-buffer/compute-entity-region! card))
-         (entities-from-org-buffer (apply 'orgtrello-buffer/compute-entities-from-org-buffer! (cons nil region)))
+         (entities-from-org-buffer (apply 'orgtrello-buffer/compute-entities-from-org-buffer! (cons buffer-name region)))
          (entities-from-trello     (orgtrello-backend/compute-full-cards-from-trello! (list card)))
          (merged-entities          (orgtrello-data/merge-entities-trello-and-org entities-from-trello entities-from-org-buffer))
          (entities                 (car merged-entities))
@@ -231,11 +231,11 @@ Along the way, the buffer BUFFER-NAME is written with new informations."
     (orgtrello-buffer/clean-region! region)
     (orgtrello-buffer/write-card! card-id (gethash card-id entities) entities entities-adj)))
 
-(defun orgtrello-controller/fetch-and-overwrite-checklist! (checklist)
+(defun orgtrello-controller/fetch-and-overwrite-checklist! (buffer-name checklist)
   "Given a checklist, retrieve latest information from trello and overwrite in current buffer."
   (let* ((checklist-id             (orgtrello-data/entity-id checklist))
          (region                   (orgtrello-buffer/compute-entity-region! checklist))
-         (entities-from-org-buffer (apply 'orgtrello-buffer/compute-entities-from-org-buffer! (cons nil region)))
+         (entities-from-org-buffer (apply 'orgtrello-buffer/compute-entities-from-org-buffer! (cons buffer-name region)))
          (entities-from-trello     (orgtrello-backend/compute-full-checklist-from-trello! checklist))
          (merged-entities          (orgtrello-data/merge-entities-trello-and-org entities-from-trello entities-from-org-buffer))
          (entities                 (car merged-entities))
@@ -248,18 +248,20 @@ Along the way, the buffer BUFFER-NAME is written with new informations."
 This callback must take a BUFFERNAME, a POSITION and a NAME."
   (lexical-let ((buffer-name buffername)
                 (pos         position))
-    (function* (lambda (&key data &allow-other-keys) "Synchronize the buffer with the response data."
-                 (orgtrello-log/msg *OT/TRACE* "proxy - response data: %S" data)
-                 (with-current-buffer buffer-name
-                   (save-excursion
-                     (goto-char pos)
-                     (point-at-bol)
-                     (org-show-subtree)
-                     (funcall
-                      (cond ((orgtrello-data/entity-card-p data)      'orgtrello-controller/fetch-and-overwrite-card!)
-                            ((orgtrello-data/entity-checklist-p data) 'orgtrello-controller/fetch-and-overwrite-checklist!)
-                            ((orgtrello-data/entity-item-p data)      'orgtrello-buffer/overwrite-item!))
-                      data)))))))
+    (lambda (response)
+      (let ((data (request-response-data response)))
+        (orgtrello-log/msg *OT/TRACE* "proxy - response data: %S" response)
+        (with-current-buffer buffer-name
+          (save-excursion
+            (goto-char pos)
+            (point-at-bol)
+            (org-show-subtree)
+            (funcall
+             (cond ((orgtrello-data/entity-card-p data)      'orgtrello-controller/fetch-and-overwrite-card!)
+                   ((orgtrello-data/entity-checklist-p data) 'orgtrello-controller/fetch-and-overwrite-checklist!)
+                   ((orgtrello-data/entity-item-p data)      'orgtrello-buffer/overwrite-item!))
+             buffer-name
+             data)))))))
 
 (defun orgtrello-controller/--dispatch-sync-request (entity &optional with-filter)
   "Dispatch the sync request creation depending on the nature of the ENTITY.
