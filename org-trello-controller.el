@@ -79,13 +79,11 @@ ARGS is not used."
       :ok
     "Setup problem - You need to install the consumer-key and the read/write access-token - C-c o i or M-x org-trello/install-key-and-token"))
 
-(defun orgtrello-controller/--update-query-with-org-metadata (query-map position buffer-name &optional name success-callback sync)
+(defun orgtrello-controller/--update-query-with-org-metadata (query-map position buffer-name &optional success-callback)
   "Given a trello QUERY-MAP, POSITION, BUFFER-NAME and optional NAME, SUCCESS-CALLBACK and SYNC, add proxy metadata needed to work."
   (when success-callback (orgtrello-data/put-entity-callback success-callback query-map))
-  (when sync             (orgtrello-data/put-entity-sync     sync             query-map))
-  (when name             (orgtrello-data/put-entity-name     name             query-map))
-  (orgtrello-data/put-entity-position     position                            query-map)
-  (orgtrello-data/put-entity-buffername   buffer-name                         query-map))
+  (orgtrello-data/put-entity-position   position    query-map)
+  (orgtrello-data/put-entity-buffername buffer-name query-map))
 
 (defun orgtrello-controller/--right-level-p (entity)
   "Compute if the ENTITY level is correct (not higher than level 4)."
@@ -191,7 +189,7 @@ This callback must take a BUFFERNAME, a POSITION and a NAME."
   ;; then start the sync computations
   (--> (orgtrello-buffer/board-id!)
     (orgtrello-api/get-cards it)
-    (orgtrello-controller/--update-query-with-org-metadata it (point) (buffer-name) nil 'orgtrello-controller/--sync-buffer-with-trello-data-callback)
+    (orgtrello-controller/--update-query-with-org-metadata it (point) (buffer-name) 'orgtrello-controller/--sync-buffer-with-trello-data-callback)
     (orgtrello-proxy/sync-from it sync)))
 
 (defun orgtrello-controller/build-card-structure! (buffer-name)
@@ -281,8 +279,8 @@ Optionally, SYNC permits to synchronize the query."
   (save-excursion
     (-> (orgtrello-buffer/entry-get-full-metadata!)
       orgtrello-controller/--dispatch-sync-request
-      (orgtrello-controller/--update-query-with-org-metadata (point) (buffer-name) nil 'orgtrello-controller/--sync-entity-and-structure-to-buffer-with-trello-data-callback)
       (orgtrello-proxy/sync-from sync))))
+      (orgtrello-controller/--update-query-with-org-metadata (point) (buffer-name) 'orgtrello-controller/--sync-entity-and-structure-to-buffer-with-trello-data-callback)
 
 (defun orgtrello-controller/--do-delete-card ()
   "Delete the card.
