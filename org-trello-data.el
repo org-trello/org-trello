@@ -374,7 +374,7 @@ If state is \"complete\" or \"DONE\", the first element is returned, otherwise t
   "Given ENTITY and ENTITIES-ADJACENCIES, return the children of the entity."
   (cl-destructuring-bind (_ adjacencies) entities-adjacencies
     (-> entity
-      orgtrello-data/entity-id
+      orgtrello-data/entity-id-or-marker
       (orgtrello-data/--get-entity adjacencies))))
 
 (defun orgtrello-data/get-entity (entity-id entities-adjacencies)
