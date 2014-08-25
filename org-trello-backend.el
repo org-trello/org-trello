@@ -57,16 +57,6 @@ Hash result is of the form: {entity-id '(entity-card {checklist-id (checklist (i
                  (list (orgtrello-hash/empty-hash) (orgtrello-hash/empty-hash))
                  cards))
 
-(defun orgtrello-backend/compute-full-checklist-from-trello! (checklist)
-  "Given a CHECKLIST, compute the full items data from trello.
-The order from the trello board is kept.
-Return result is the list of entities and adjacency in this order."
-  (let ((adjacency (orgtrello-hash/empty-hash)))
-    (orgtrello-log/msg *OT/INFO* "Computing checklist '%s' data..." (orgtrello-data/entity-name checklist))
-    (--> (orgtrello-hash/empty-hash)
-      (orgtrello-hash/puthash-data (orgtrello-data/entity-id checklist) checklist it)
-      (orgtrello-backend/compute-items-from-checklist! checklist it adjacency))))
-
 (defun orgtrello-backend/--add-entity-to-entities (entity entities)
   "Adding ENTITY to the hash ENTITIES."
   (-> (orgtrello-data/entity-id-or-marker entity)

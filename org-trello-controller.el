@@ -218,33 +218,6 @@ Along the way, the buffer BUFFER-NAME is written with new informations."
       nreverse
       (orgtrello-proxy/execute-sync-computations "card(s) sync ok!" "FAILURE! cards(s) sync KO!"))))
 
-(defun orgtrello-controller/fetch-and-overwrite-card! (buffer-name card)
-  "Given a card, retrieve latest information from trello and overwrite in current buffer."
-  (let* ((card-id                  (orgtrello-data/entity-id card))
-         (region                   (orgtrello-buffer/compute-card-region!))
-         (entities-from-org-buffer (apply 'orgtrello-buffer/compute-entities-from-org-buffer! (cons buffer-name region)))
-         (entities-from-trello     (orgtrello-backend/compute-full-cards-from-trello! (list card)))
-         (merged-entities          (orgtrello-data/merge-entities-trello-and-org entities-from-trello entities-from-org-buffer))
-         (entities                 (car merged-entities))
-         (entities-adj             (cadr merged-entities)))
-    (orgtrello-buffer/clean-region! region)
-    (orgtrello-buffer/write-card! card-id (gethash card-id entities) entities entities-adj)))
-
-(defun orgtrello-controller/--sync-entity-and-structure-to-buffer-with-trello-data-callback (buffername &optional position name)
-  "Generate a callback which knows the BUFFERNAME with which it must work.
-This callback must take a BUFFERNAME, a POSITION and a NAME."
-  (lexical-let ((buffer-name buffername)
-                (pos         position))
-    (lambda (response)
-      (let ((data (request-response-data response)))
-        (orgtrello-log/msg *OT/TRACE* "proxy - response data: %S" response)
-        (with-current-buffer buffer-name
-          (save-excursion
-            (goto-char pos)
-            (point-at-bol)
-            (org-show-subtree)
-            (orgtrello-controller/fetch-and-overwrite-card! buffer-name data)))))))
-
 (defun orgtrello-controller/compute-and-overwrite-card! (buffer-name trello-card)
   (let* ((card-id                  (orgtrello-data/entity-id trello-card))
          (region                   (orgtrello-buffer/compute-card-region!))

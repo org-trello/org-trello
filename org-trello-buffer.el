@@ -107,11 +107,6 @@ If the VALUE is nil or empty, remove such PROPERTY."
   "Compute the checklist's region (only the header, without computing the zone occupied by items) couple '(start end)."
   `(,(point-at-bol) ,(1+ (point-at-eol))))
 
-(defun orgtrello-buffer/compute-entity-region! (entity)
-  (cond ((orgtrello-data/entity-card-p entity)      (orgtrello-buffer/compute-card-region!))
-        ((orgtrello-data/entity-checklist-p entity) (orgtrello-buffer/compute-checklist-region!))
-        ((orgtrello-data/entity-item-p entity)      (orgtrello-buffer/compute-item-region!))))
-
 (defun orgtrello-buffer/compute-checklist-region! ()
   "Compute the checklist's region (including the items) couple '(start end)."
   `(,(point-at-bol) ,(orgtrello-cbx/next-checklist-point!)))
@@ -194,13 +189,6 @@ If the VALUE is nil or empty, remove such PROPERTY."
   "Given a region, remove everything in this region, including text and overlays"
   (apply 'orgtrello-cbx/remove-overlays! region)
   (apply 'delete-region region))
-
-(defun orgtrello-buffer/overwrite-item! (buffer-name item)
-  "BUFFER-NAME is not used.
-Overwrite the item in the buffer at current position."
-  (let ((region (orgtrello-buffer/compute-item-region!)))
-    (orgtrello-buffer/clean-region! region)
-    (orgtrello-buffer/write-entity! (orgtrello-data/entity-id item) (orgtrello-data/merge-item item item)))) ;; hack to merge item to itself to map to the org-trello world, otherwise we lose status for example
 
 (defun orgtrello-buffer/--csv-user-ids-to-csv-user-names (csv-users-id users-id-name)
   "Given a CSV-USERS-ID and a USERS-ID-NAME map, return a csv usernames."
