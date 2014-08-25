@@ -183,14 +183,14 @@ This callback must take a BUFFERNAME, a POSITION and a NAME."
            ((lambda (entry) (orgtrello-controller/--cleanup-org-entries) entry))   ;; hack to clean the org entries just before synchronizing the buffer
            orgtrello-controller/--sync-buffer-with-trello-data))))))
 
-(defun orgtrello-controller/do-sync-full-file-from-trello! (&optional sync)
+(defun orgtrello-controller/do-sync-full-file-from-trello! ()
   "Full org-mode file synchronisation. Beware, this will block emacs as the request is synchronous."
   (orgtrello-log/msg *OT/INFO* "Synchronizing the trello board '%s' to the org-mode file. This may take a moment, some coffee may be a good idea..." (orgtrello-buffer/board-name!))
   ;; then start the sync computations
   (--> (orgtrello-buffer/board-id!)
     (orgtrello-api/get-cards it)
     (orgtrello-controller/--update-query-with-org-metadata it (point) (buffer-name) 'orgtrello-controller/--sync-buffer-with-trello-data-callback)
-    (orgtrello-proxy/sync-from it sync)))
+    (orgtrello-proxy/sync-from it)))
 
 (defun orgtrello-controller/build-card-structure! (buffer-name)
   "Build the card structure on the current BUFFER-NAME at current point.
@@ -272,15 +272,15 @@ If WITH-FILTER is set, only the checklist is returned (without its items)."
           ((= level *ORGTRELLO/CHECKLIST-LEVEL*) (orgtrello-api/get-checklist entity-id with-filter))
           ((= level *ORGTRELLO/ITEM-LEVEL*)      (orgtrello-api/get-item parent-id entity-id)))))
 
-(defun orgtrello-controller/do-sync-card-from-trello! (&optional sync)
+(defun orgtrello-controller/do-sync-card-from-trello! ()
   "Entity (card/checklist/item) synchronization (with its structure) from trello.
 Optionally, SYNC permits to synchronize the query."
   (orgtrello-log/msg *OT/INFO* "Synchronizing the trello card to the org-mode file...")
   (save-excursion
     (-> (orgtrello-buffer/entry-get-full-metadata!)
       orgtrello-controller/--dispatch-sync-request
-      (orgtrello-proxy/sync-from sync))))
       (orgtrello-controller/--update-query-with-org-metadata (point) (buffer-name) 'orgtrello-controller/--sync-entity-and-structure-to-buffer-with-trello-data-callback)
+      orgtrello-proxy/sync-from)))
 
 (defun orgtrello-controller/--do-delete-card ()
   "Delete the card.
