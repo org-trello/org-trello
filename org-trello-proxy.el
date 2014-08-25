@@ -19,7 +19,6 @@
 (defun orgtrello-proxy/sync-from (query-map-data &optional sync)
   "Deal with request QUERY-MAP-DATA from trello.
 The query can be synchronous depending on SYNC variable."
-  (orgtrello-log/msg *OT/TRACE* "Proxy - Request received. Transmitting...")
   (let* ((position (orgtrello-data/entity-position query-map-data))
          (buffer-name (orgtrello-data/entity-buffername query-map-data))
          (standard-callback-fn (orgtrello-data/entity-callback query-map-data))
