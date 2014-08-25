@@ -127,8 +127,7 @@ when NOLOG-P is specified, no output log."
                                   (with-local-quit
                                     (apply (car computation) (cdr computation))))))
       (deferred:nextc it (lambda ()
-                           (when buffer-to-save (with-current-buffer buffer-to-save
-                                                  (call-interactively 'save-buffer)))
+                           (when buffer-to-save (orgtrello-buffer/save-buffer buffer-to-save))
                            (when reload-setup (orgtrello-action/reload-setup!))
                            (unless nolog-flag (orgtrello-log/msg *OT/INFO* "Done!"))))
       (deferred:error it (lambda (x) (orgtrello-log/msg *OT/ERROR* "Main apply function - Problem during execution - '%s'!" x))))))

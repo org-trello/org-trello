@@ -563,6 +563,11 @@ In any case, execute ORG-FN."
     sha1
     (concat *ORGTRELLO/MARKER* "-")))
 
+(defun orgtrello-buffer/save-buffer (buffer-name)
+  "Given a BUFFER-NAME, save it."
+  (with-current-buffer buffer-name
+    (call-interactively 'save-buffer)))
+
 (orgtrello-log/msg *OT/DEBUG* "orgtrello-buffer loaded!")
 
 (provide 'org-trello-buffer)
