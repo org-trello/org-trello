@@ -181,7 +181,9 @@ If MODIFIER is non nil, execute the sync entity and its structure from trello."
                           (if modifier
                               '("Request 'sync entity with structure from trello" orgtrello-controller/do-sync-card-from-trello!)
                             '("Request 'sync entity with structure to trello" orgtrello-controller/do-sync-card-to-trello!)))
-                    (current-buffer)))
+                    (current-buffer)
+                    nil
+                    'nolog))
 
 (defun org-trello/sync-buffer (&optional modifier)
   "Execute the sync of the entire buffer to trello.
@@ -191,7 +193,9 @@ If MODIFIER is non nil, execute the sync of the entire buffer from trello."
                           (if modifier
                               '("Request 'sync org buffer from trello board'" orgtrello-controller/do-sync-full-file-from-trello!)
                             '("Request 'sync org buffer to trello board'" orgtrello-controller/do-sync-full-file-to-trello!)))
-                    (current-buffer)))
+                    (current-buffer)
+                    nil
+                    'nolog))
 
 (defun org-trello/kill-entity (&optional modifier)
   "Execute the entity removal from trello and the buffer.
