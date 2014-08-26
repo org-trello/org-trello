@@ -21,11 +21,12 @@ Levels:
 To change such level, add this to your init.el file: (setq *orgtrello-log/level* *OT/TRACE*)") ;;(setq *orgtrello-log/level* *OT/TRACE*) (setq *orgtrello-log/level* *OT/INFO*)
 
 (defun orgtrello-log/msg (level &rest args)
-  "Log message."
+  "Log message with LEVEL.
+ARGS constitutes the parameters to feed to message."
   (when (<= level *orgtrello-log/level*)
-    (apply 'message args)))
+    (apply 'message (format "org-trello - %s" (car args)) (cdr args))))
 
-(orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-log loaded!")
+(orgtrello-log/msg *OT/DEBUG* "orgtrello-log loaded!")
 
 (provide 'org-trello-log)
 ;;; org-trello-log.el ends here

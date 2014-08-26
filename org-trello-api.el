@@ -32,21 +32,41 @@ Return entries updated with value if entry, entries untouched otherwise."
   "Create a board query from NAME and optional DESCRIPTION."
   (orgtrello-api/make-query "POST" "/boards" (orgtrello-api/--deal-with-optional-value description `("desc" . ,description) `(("name" . ,name)))))
 
-(defun orgtrello-api/get-boards ()
-  "Create a retrieve boards of the current user query."
-  (orgtrello-api/make-query "GET" "/members/me/boards"))
+(defun orgtrello-api/get-boards (&optional filter)
+  "Retrieve the current boards of the user.
+If FILTER is specified, this will filter on this."
+  (orgtrello-api/make-query "GET" "/members/me/boards" (orgtrello-api/--deal-with-optional-values `((,filter . ("filter" . ,filter)))
+                                                                                                  `(("lists" . "open")))))
 
 (defun orgtrello-api/get-board (id)
   "Create a retrieve board with board ID query."
   (orgtrello-api/make-query "GET" (format "/boards/%s" id) '(("memberships" . "active")
                                                              ("memberships_member" . "true")
+                                                             ("lists" . "open")
                                                              ("fields" . "name,memberships,closed,labelNames"))))
+
+(defun orgtrello-api/close-board (board-id)
+  "Close a board with id BOARD-ID."
+  (orgtrello-api/make-query "PUT" (format "/boards/%s/closed" board-id) '(("value" . "true"))))
+
+(defun orgtrello-api/get-members (board-id)
+  "Retrieve the memberships from a BOARD-ID."
+  (orgtrello-api/make-query "GET" (format "/boards/%s/members" board-id)))
 
 (defun orgtrello-api/get-cards (board-id)
   "Create a cards retrieval from the board with BOARD-ID query."
   (orgtrello-api/make-query "GET" (format "/boards/%s/cards" board-id)
                             '(("actions" .  "commentCard")
                               ("fields" . "closed,desc,due,idBoard,idChecklists,idList,idMembers,name,pos"))))
+
+(defun orgtrello-api/get-full-cards (board-id)
+  "Create a cards retrieval from the board with BOARD-ID query."
+  (orgtrello-api/make-query "GET" (format "/boards/%s/cards" board-id)
+                            '(("actions" .  "commentCard")
+                              ("checklists" . "all")
+                              ;;("checkItemStates" . "true")
+                              ("filter" . "open")
+                              ("fields" . "closed,desc,due,idBoard,idList,idMembers,name,pos"))))
 
 (defun orgtrello-api/get-card (card-id)
   "Create a get-card with CARD-ID query."
@@ -55,6 +75,15 @@ Return entries updated with value if entry, entries untouched otherwise."
                               ("action_fields" . "data")
                               ("action_memberCreator_fields" . "username")
                               ("fields" .  "closed,dateLastActivity,desc,due,idChecklists,idList,idMembers,labels,name,pos"))))
+
+(defun orgtrello-api/get-full-card (card-id)
+  "Create a get-card with details query with CARD-ID query."
+  (orgtrello-api/make-query "GET" (format "/cards/%s" card-id)
+                            '(("actions" . "commentCard")
+                              ("action_fields" . "data")
+                              ("checklists" . "all")
+                              ("action_memberCreator_fields" . "username")
+                              ("fields" .  "closed,dateLastActivity,desc,due,idList,idMembers,labels,name,pos"))))
 
 (defun orgtrello-api/delete-card (card-id)
   "Create a delete card with id CARD-ID query."
@@ -68,37 +97,42 @@ Return entries updated with value if entry, entries untouched otherwise."
   "Create a close list with id LIST-ID query."
   (orgtrello-api/make-query "PUT" (format "/lists/%s/closed" list-id) '((value . t))))
 
-(defun orgtrello-api/add-list (name idBoard)
-  "Create an add a list with NAME and the IDBOARD."
-  (orgtrello-api/make-query "POST" "/lists/" `(("name" . ,name) ("idBoard" . ,idBoard))))
+(defun orgtrello-api/add-list (name idBoard &optional pos)
+  "Create an add a list with NAME, IDBOARD and optional POS."
+  (orgtrello-api/make-query "POST" "/lists/"
+                            (orgtrello-api/--deal-with-optional-value pos `("pos" . ,pos) `(("name" . ,name) ("idBoard" . ,idBoard)))))
 
-(defun orgtrello-api/add-card (name idList &optional due id-members desc labels)
-  "Create an add a card with NAME to the list IDLIST, with optional DUE, ID-MEMBERS, DESC and LABELS query."
+(defun orgtrello-api/add-card (name idList &optional due id-members desc labels pos)
+  "Create an add a card with NAME to the list IDLIST, with optional DUE, ID-MEMBERS, DESC, LABELS, POS query."
   (orgtrello-api/make-query "POST" "/cards/"
                             (orgtrello-api/--deal-with-optional-values `((,id-members . ("idMembers" . ,id-members))
                                                                          (,due . ("due" . ,due))
                                                                          (,desc . ("desc" . ,desc))
-                                                                         (,labels . ("labels" . ,labels)))
+                                                                         (,labels . ("labels" . ,labels))
+                                                                         (,pos . ("pos" . ,pos)))
                                                                        `(("name" . ,name)
                                                                          ("idList" . ,idList)))))
 
-(defun orgtrello-api/move-card (card-id idList &optional name due id-members desc labels)
-  "Create an update a card CARD-ID to IDLIST with optional NAME, DUE date, ID-MEMBERS, DESC and LABELS query."
+(defun orgtrello-api/move-card (card-id idList &optional name due id-members desc labels pos)
+  "Create an update a card CARD-ID to IDLIST with optional NAME, DUE date, ID-MEMBERS, DESC, LABELS, POS query."
   (->> (orgtrello-api/--deal-with-optional-values `((,name . ("name" . ,name))
                                                     (,id-members . ("idMembers" . ,id-members))
                                                     (,due . ("due" . ,due))
                                                     (,desc . ("desc" . ,desc))
-                                                    (,labels . ("labels" . ,labels)))
+                                                    (,labels . ("labels" . ,labels))
+                                                    (,pos . ("pos" . ,pos)))
                                                   `(("idList" . ,idList)))
     (orgtrello-api/make-query "PUT" (format "/cards/%s" card-id))))
 
-(defun orgtrello-api/add-checklist (card-id name)
-  "Create an add a checklist to a card CARD-ID, checklist with NAME query."
-  (orgtrello-api/make-query "POST" (format "/cards/%s/checklists" card-id) `(("name" . ,name))))
+(defun orgtrello-api/add-checklist (card-id name pos)
+  "Create an add a checklist to a card CARD-ID, checklist with NAME, POS query."
+  (orgtrello-api/make-query "POST" (format "/cards/%s/checklists" card-id) `(("name" . ,name)
+                                                                             ("pos" . ,pos))))
 
-(defun orgtrello-api/update-checklist (checklist-id name)
-  "Create an update the checklist CHECKLIST-ID with NAME query."
-  (orgtrello-api/make-query "PUT" (format "/checklists/%s" checklist-id) `(("name" . ,name))))
+(defun orgtrello-api/update-checklist (checklist-id name pos)
+  "Create an update the checklist CHECKLIST-ID with NAME, POS query."
+  (orgtrello-api/make-query "PUT" (format "/checklists/%s" checklist-id) `(("name" . ,name)
+                                                                           ("pos" . ,pos))))
 
 (defun orgtrello-api/get-checklist (checklist-id &optional without-items)
   "Create a retrieve a checklist CHECKLIST-ID with optional WITHOUT-ITEMS flag query."
@@ -112,14 +146,18 @@ Return entries updated with value if entry, entries untouched otherwise."
   "Create a delete a checklist CHECKLIST-ID."
   (orgtrello-api/make-query "DELETE" (format "/checklists/%s" checklist-id)))
 
-(defun orgtrello-api/add-items (checklist-id name &optional checked)
-  "Create an add items to a checklist CHECKLIST-ID with NAME and optional CHECKED state query."
-  (->> (orgtrello-api/--deal-with-optional-value checked `("checked" . ,checked) `(("name" . ,name)))
+(defun orgtrello-api/add-items (checklist-id name &optional checked pos)
+  "Create an add items to a checklist CHECKLIST-ID with NAME and optional CHECKED state query and POS."
+  (->> (orgtrello-api/--deal-with-optional-values `((,checked . ("checked" . ,checked))
+                                                    (,pos     . ("pos" . ,pos)))
+                                                  `(("name" . ,name)))
     (orgtrello-api/make-query "POST" (format "/checklists/%s/checkItems" checklist-id) )))
 
-(defun orgtrello-api/update-item (card-id checklist-id item-id name &optional state)
-  "Create an update an item from the CARD-ID, CHECKLIST-ID and ITEM-ID with NAME and optional STATE query."
-  (->> (orgtrello-api/--deal-with-optional-value state `("state" . ,state) `(("name" . ,name)))
+(defun orgtrello-api/update-item (card-id checklist-id item-id name &optional state pos)
+  "Create an update an item from the CARD-ID, CHECKLIST-ID and ITEM-ID with NAME and optional STATE query, POS."
+  (->> (orgtrello-api/--deal-with-optional-values `((,state . ("state" . ,state))
+                                                    (,pos   . ("pos" . ,pos)))
+                                                  `(("name" . ,name)))
     (orgtrello-api/make-query "PUT" (format "/cards/%s/checklist/%s/checkItem/%s" card-id checklist-id item-id))))
 
 (defun orgtrello-api/get-item (checklist-id item-id)
@@ -138,7 +176,7 @@ Return entries updated with value if entry, entries untouched otherwise."
   "Create a add a card comment to the card with id CARD-ID with the COMMENT-TEXT."
   (orgtrello-api/make-query "POST" (format "/cards/%s/actions/comments" card-id) `(("text" . ,comment-text))))
 
-(orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-api loaded!")
+(orgtrello-log/msg *OT/DEBUG* "orgtrello-api loaded!")
 
 (provide 'org-trello-api)
 ;;; org-trello-api.el ends here

@@ -25,9 +25,6 @@
 (defconst *ORGTRELLO/OUTOFBOUNDS-LEVEL* 4
   "Out of bounds level.")
 
-(defconst *ORGTRELLO/LEVELS* `(,*ORGTRELLO/CARD-LEVEL* ,*ORGTRELLO/CHECKLIST-LEVEL* ,*ORGTRELLO/ITEM-LEVEL*)
-  "Current levels 1 is card, 2 is checklist, 3 is item.")
-
 (defconst *ORGTRELLO/ACTION-SYNC* "sync-entity"
   "Possible action regarding the entity synchronization.")
 
@@ -97,7 +94,7 @@
 (defconst *ORGTRELLO/BOARD-NAME* "board-name"
   "Org-trello property board-name entry.")
 
-(defvar *ORGTRELLO/LIST-NAMES* nil
+(defvar *ORGTRELLO/ORG-KEYWORD-TRELLO-LIST-NAMES* nil
   "Org-trello property names of the different lists.
 This use the standard 'org-todo-keywords property from 'org-mode'.")
 
@@ -110,6 +107,15 @@ This use the standard 'org-todo-keywords property from 'org-mode'.")
 (defvar *ORGTRELLO/HMAP-USERS-NAME-ID* nil
   "Org-trello hash map containing for each user id, the associated name.")
 
+;; make variable buffer-local
+(mapc (lambda (var)
+        (make-variable-buffer-local var))
+      '(*ORGTRELLO/ORG-KEYWORD-TRELLO-LIST-NAMES*
+        *ORGTRELLO/HMAP-LIST-ORGKEYWORD-ID-NAME*
+        *ORGTRELLO/HMAP-USERS-ID-NAME*
+        *ORGTRELLO/HMAP-USERS-NAME-ID*
+        *ORGTRELLO/USER-LOGGED-IN*))
+
 (defconst *ORGTRELLO/CONFIG-DIR*
   (concat (getenv "HOME") "/" ".trello"))
 
@@ -118,25 +124,6 @@ This use the standard 'org-todo-keywords property from 'org-mode'.")
 
 (defconst *ORGTRELLO/ID* "orgtrello-id"
   "Key entry used for the trello identifier and the trello marker (the first sync).")
-
-(defconst *ORGTRELLO/BUFFER-NUMBER* "org-trello-buffer-number"
-  "Key in the database referencing the number of org-trello buffer opened.")
-
-(defvar *ORGTRELLO-SERVER/DB* nil
-  "Database reference to orgtrello-proxy.")
-
-(defvar *ORGTRELLO/SERVER-HOST* "localhost"
-  "Proxy host.")
-
-(defvar *ORGTRELLO/SERVER-PORT* nil
-  "Proxy port.")
-
-(defvar *ORGTRELLO/SERVER-URL*  nil
-  "Proxy url.")
-
-(defvar *ORGTRELLO/SERVER-DEFAULT-PORT* 9876
-  "Default proxy port.")
-(setq *ORGTRELLO/SERVER-PORT* *ORGTRELLO/SERVER-DEFAULT-PORT*)
 
 (defvar *ORGTRELLO/MODE-PREFIX-KEYBINDING*          "C-c o"
   "The default prefix keybinding.")
@@ -150,17 +137,17 @@ This use the standard 'org-todo-keywords property from 'org-mode'.")
 (defvar *org-trello-interactive-command-binding-couples*
   '((org-trello/version                      "v" "Display the current version installed.")
     (org-trello/install-key-and-token        "i" "Install the keys and the access-token.")
-    (org-trello/install-board-and-lists-ids  "I" "Select the board and attach the todo, doing and done list.")
+    (org-trello/install-board-metadata       "I" "Select the board and attach the todo, doing and done list.")
     (org-trello/check-setup                  "d" "Check that the setup is ok. If everything is ok, will simply display 'Setup ok!'.")
     (org-trello/assign-me                    "a" "Assign oneself to the card. With C-u modifier, unassign oneself from the card.")
     (org-trello/delete-setup                 "D" "Clean up the org buffer from all org-trello informations.")
-    (org-trello/create-board                 "b" "Create interactively a board and attach the org-mode file to this trello board.")
-    (org-trello/sync-entity                  "c" "Create/Update an entity (card/checklist/item) depending on its level and status. Do not deal with level superior to 4.")
-    (org-trello/sync-full-entity             "C" "Create/Update a complete entity card/checklist/item and its subtree (depending on its level).")
+    (org-trello/create-board-and-install-metadata                 "b" "Create interactively a board and attach the newly created trello board with the current org file.")
+    (org-trello/sync-card                    "c" "Create/Update a complete card.")
+    (org-trello/sync-card                    "C" "Create/Update a complete card.")
     (org-trello/kill-entity                  "k" "Kill the entity (and its arborescence tree) from the trello board and the org buffer.")
-    (org-trello/kill-all-entities            "K" "Kill all the entities (and their arborescence tree) from the trello board and the org buffer.")
+    (org-trello/kill-cards                   "K" "Kill all the entities (and their arborescence tree) from the trello board and the org buffer.")
     (org-trello/sync-buffer                  "s" "Synchronize the org-mode file to the trello board (org-mode -> trello). With prefix C-u, sync-from-trello (org-mode <- trello).")
-    (org-trello/jump-to-card                 "j" "Jump to card in browser.")
+    (org-trello/jump-to-trello-card          "j" "Jump to card in browser.")
     (org-trello/jump-to-trello-board         "J" "Open the browser to your current trello board.")
     (org-trello/show-card-comments           "o" "Display the card's comments in a pop-up buffer.")
     (org-trello/add-card-comments            "A" "Add a comment to the card.")
@@ -186,7 +173,7 @@ This use the standard 'org-todo-keywords property from 'org-mode'.")
       (defalias 'cl-defun 'defun*)
       (defalias 'cl-destructuring-bind 'destructuring-bind))))
 
-(orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-setup loaded!")
+(orgtrello-log/msg *OT/DEBUG* "orgtrello-setup loaded!")
 
 (provide 'org-trello-setup)
 ;;; org-trello-setup.el ends here

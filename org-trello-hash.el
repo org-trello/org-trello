@@ -37,7 +37,7 @@ Return the entity updated or nil if the entity is nil."
 If data is nil, return an empty hash table."
   (if data data (orgtrello-hash/empty-hash)))
 
-(orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-hash loaded!")
+(orgtrello-log/msg *OT/DEBUG* "orgtrello-hash loaded!")
 
 (provide 'org-trello-hash)
 ;;; org-trello-hash.el ends here

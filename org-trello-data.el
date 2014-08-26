@@ -56,6 +56,7 @@ If the keyword is nil, return the optional DEFAULT-VALUE."
 (defun orgtrello-data/entity-comment-text (entity)     "Retrieve the ENTITY's COMMENT-text."     (orgtrello-hash/gethash-data :comment-text entity))
 (defun orgtrello-data/entity-comment-user (entity)     "Retrieve the ENTITY's COMMENT-user."     (orgtrello-hash/gethash-data :comment-user entity))
 (defun orgtrello-data/entity-color        (entity)     "Retrieve the ENTITY's COLOR."            (orgtrello-hash/gethash-data :color        entity))
+(defun orgtrello-data/entity-lists        (entity)     "Retrieve the ENTITY's LISTS."            (orgtrello-hash/gethash-data :lists        entity))
 (defun orgtrello-data/entity-unknown-properties (entity) "Retrieve the ENTITY's UNKNOWN-PROPERTIES." (orgtrello-hash/gethash-data :unknown-properties entity))
 (defun orgtrello-data/entity-method       (query-map)  "Retrieve the QUERY-MAP's METHOD."        (orgtrello-hash/gethash-data :method query-map))
 (defun orgtrello-data/entity-uri          (query-map)  "Retrieve the QUERY-MAP's URI."           (orgtrello-hash/gethash-data :uri    query-map))
@@ -137,7 +138,8 @@ If the keyword is nil, return the optional DEFAULT-VALUE."
                                                                         (name           . :name)
                                                                         (idMembers      . :member-ids)
                                                                         (idList         . :list-id)
-                                                                        (idChecklists   . :checklists)
+                                                                        (checklists     . :checklists) ;; for full data
+                                                                        (idChecklists   . :checklists) ;; for checklist ids (those 2 keywords are mutually exclusive and are dealt at request level)
                                                                         (idBoard        . :board-id)
                                                                         (due            . :due)
                                                                         (desc           . :desc)
@@ -155,6 +157,7 @@ If the keyword is nil, return the optional DEFAULT-VALUE."
                                                                         (fullName       . :full-name)
                                                                         (actions        . :comments)
                                                                         (labelNames     . :labels)
+                                                                        (lists          . :lists)
                                                                         (red            . :red)
                                                                         (yellow         . :yellow)
                                                                         (blue           . :blue)
@@ -333,8 +336,14 @@ If TRELLO-CARD is nil, return ORG-CARD."
         (org-adjacency    (cadr org-data)))
 
     (maphash (lambda (id trello-entity)
-               (orgtrello-hash/puthash-data id (funcall (orgtrello-data/--dispatch-merge-fn trello-entity) trello-entity (orgtrello-data/--get-entity id org-entities)) trello-entities) ;; updating entity to trello
-               (orgtrello-hash/puthash-data id (orgtrello-data/merge-2-lists-without-duplicates (gethash id trello-adjacency) (gethash id org-adjacency))     trello-adjacency)) ;; update entity adjacency to trello
+               (orgtrello-hash/puthash-data id
+                                            (funcall (orgtrello-data/--dispatch-merge-fn trello-entity)
+                                                     trello-entity
+                                                     (orgtrello-data/--get-entity id org-entities))
+                                            trello-entities) ;; updating entity to trello
+               (orgtrello-hash/puthash-data id
+                                            (orgtrello-data/merge-2-lists-without-duplicates (gethash id trello-adjacency) (gethash id org-adjacency))
+                                            trello-adjacency)) ;; update entity adjacency to trello
              trello-entities)
 
     ;; copy the entities only present on org files to the trello entities.
@@ -370,7 +379,20 @@ If state is \"complete\" or \"DONE\", the first element is returned, otherwise t
   "Given a list of USERS, compute the comma separated string of users."
   (if users (mapconcat 'identity users ",") ""))
 
-(orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-data loaded!")
+(defun orgtrello-data/get-children (entity entities-adjacencies)
+  "Given ENTITY and ENTITIES-ADJACENCIES, return the children of the entity."
+  (cl-destructuring-bind (_ adjacencies) entities-adjacencies
+    (-> entity
+      orgtrello-data/entity-id-or-marker
+      (orgtrello-data/--get-entity adjacencies))))
+
+(defun orgtrello-data/get-entity (entity-id entities-adjacencies)
+  "Given ENTITY-ID, return the complete entity.
+ENTITIES-ADJACENCIES provides needed information."
+  (cl-destructuring-bind (entities _) entities-adjacencies
+    (orgtrello-data/--get-entity entity-id entities)))
+
+(orgtrello-log/msg *OT/DEBUG* "orgtrello-data loaded!")
 
 (provide 'org-trello-data)
 ;;; org-trello-data.el ends here

@@ -6,31 +6,9 @@
 (require 'org-trello-setup)
 (require 'org-trello-log)
 
-(defun orgtrello-action/reload-setup ()
-  "Reload orgtrello setup."
+(defun orgtrello-action/reload-setup! ()
+  "Reload org-trello setup."
   (org-set-regexps-and-options))
-
-(defmacro orgtrello-action/--safe-wrap-or-throw-error (fn)
-  "Macro to catch uncaught error when executing the FN call.
-If error is thrown, send the 'org-trello-timer-go-to-sleep flag."
-  `(condition-case ex
-       (progn ,fn)
-     ('error
-      (orgtrello-log/msg *OT/ERROR* (concat "### org-trello - consumer ### Caught exception: [" ex "]"))
-      (throw 'org-trello-timer-go-to-sleep t))))
-
-(defmacro orgtrello-action/safe-wrap (fn &rest clean-up)
-  "A macro to deal with intercept uncaught error when executing the FN call.
-The CLEAN-UP body is done whether error are caught or not."
-  `(unwind-protect
-       (let (retval)
-         (condition-case ex
-             (setq retval (progn ,fn))
-           ('error
-            (message (format "### org-trello ### Caught exception: [%s]" ex))
-            (setq retval (cons 'exception (list ex)))))
-         retval)
-     ,@clean-up))
 
 (defun orgtrello-action/--execute-controls (controls-or-actions-fns &optional entity)
   "Given CONTROLS-OR-ACTIONS-FNS, execute them and return the results.
@@ -72,31 +50,20 @@ If any errors are thrown during controls, then display them."
     ;; no control, we simply execute the function
     (funcall fn-to-execute entity args)))
 
-(defun orgtrello-action/msg-controls-or-actions-then-do (msg control-or-action-fns fn-to-execute &optional save-buffer-p reload-setup-p nolog-p)
+(defun orgtrello-action/msg-controls-or-actions-then-do (msg control-or-action-fns fn-to-execute &optional nolog-p)
   "A decorator fn to display some log MSG.
 Then execute some CONTROL-OR-ACTION-FNS.
 If all controls are ok, then execute the parameter-less FN-TO-EXECUTE.
-`(Optionally)` If SAVE-BUFFER-P is set, this will safe the buffer.
-If RELOAD-SETUP-P is set, this will reload org-mode's setup.
+`(Optionally)`
 if NOLOG-P is set, this will not log anything."
   (unless nolog-p (orgtrello-log/msg *OT/INFO* (concat msg "...")))
-  ;; now execute the controls and the main action
-  (orgtrello-action/safe-wrap
-   (orgtrello-action/controls-or-actions-then-do control-or-action-fns fn-to-execute nolog-p)
-   (progn
-     (when save-buffer-p  (save-buffer))
-     (when reload-setup-p (orgtrello-action/reload-setup))
-     (unless nolog-p (orgtrello-log/msg *OT/INFO* (concat msg " - done!"))))))
+  (orgtrello-action/controls-or-actions-then-do control-or-action-fns fn-to-execute nolog-p))
 
-(defun orgtrello-action/delete-file! (file-to-remove)
-  "Remove metadata file."
-  (when (file-exists-p file-to-remove) (delete-file file-to-remove)))
-
-(defun orgtrello-action/--too-deep-level (meta &optional parent-meta grandparent-meta)
-  "Given a META and optional PARENT-META and GRANDPARENT-META, deal with too deep level."
+(defun orgtrello-action/--too-deep-level (entity)
+  "Given an ENTITY with level too deep, display an error message about it."
   "Your arborescence depth is too deep. We only support up to depth 3.\nLevel 1 - card\nLevel 2 - checklist\nLevel 3 - items")
 
-(orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-action loaded!")
+(orgtrello-log/msg *OT/DEBUG* "orgtrello-action loaded!")
 
 (provide 'org-trello-action)
 ;;; org-trello-action.el ends here

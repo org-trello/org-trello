@@ -23,9 +23,11 @@
 
 (defun org-trello-mode-test ()
   "Trigger org-trello-mode but shaped for the tests (without hooks)."
+  (remove-hook 'org-trello-mode-on-hook 'orgtrello-controller/mode-on-hook-fn)
+  (remove-hook 'org-trello-mode-off-hook 'orgtrello-controller/mode-off-hook-fn)
   (setq org-trello-mode-on-hook)
   (setq org-trello-mode-off-hook)
-  (org-trello-mode))
+  (call-interactively 'org-trello-mode))
 
 (defmacro orgtrello-tests/with-temp-buffer (text body-test &optional nb-lines-forward)
   `(with-temp-buffer

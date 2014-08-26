@@ -12,48 +12,6 @@
 (require 'org-trello-cbx)
 (require 'org-trello-action)
 
-(defun orgtrello-proxy/--compute-trello-query (query-map-data)
-  "Build a trello query from the content of QUERY-MAP-DATA."
-  (orgtrello-api/make-query (orgtrello-data/entity-method query-map-data) (orgtrello-data/entity-uri query-map-data) (orgtrello-data/entity-params query-map-data)))
-
-(defun orgtrello-proxy/sync-from (query-map-data &optional sync)
-  "Deal with request QUERY-MAP-DATA from trello.
-The query can be synchronous depending on SYNC variable."
-  (orgtrello-log/msg *OT/TRACE* "Proxy - Request received. Transmitting...")
-  (let* ((position (orgtrello-data/entity-position query-map-data))          ;; position is mandatory
-         (buffer-name (orgtrello-data/entity-buffername query-map-data))     ;; buffer-name is mandatory
-         (standard-callback (orgtrello-data/entity-callback query-map-data)) ;; there is the possibility to transmit the callback from the client to the proxy
-         (standard-callback-fn (when standard-callback standard-callback))   ;; the callback is passed as a string, we want it as a function when defined
-         (query-map (orgtrello-proxy/--compute-trello-query query-map-data)) ;; extracting the query
-         (name (orgtrello-data/entity-name query-map-data)))                 ;; extracting the name of the entity (optional)
-    (orgtrello-query/http-trello query-map sync (when standard-callback-fn (funcall standard-callback-fn buffer-name position name)))))
-
-(defun orgtrello-proxy/--update-buffer-to-save (buffer-name buffers-to-save)
-  "Add the BUFFER-NAME to the list of BUFFERS-TO-SAVE if not already present."
-  (if (member buffer-name buffers-to-save)
-      buffers-to-save
-    (cons buffer-name buffers-to-save)))
-
-(defvar *ORGTRELLO/LIST-BUFFERS-TO-SAVE* nil "A simple flag to order the saving of buffer when needed.")
-
-(defun orgtrello-proxy/update-buffer-to-save! (buffer-name)
-  "Side-effect - Mutate the *ORGTRELLO/LIST-BUFFERS-TO-SAVE* by adding BUFFER-NAME to it if not already present."
-  (setq *ORGTRELLO/LIST-BUFFERS-TO-SAVE* (orgtrello-proxy/--update-buffer-to-save buffer-name *ORGTRELLO/LIST-BUFFERS-TO-SAVE*)))
-
-(defun orgtrello-proxy/--cleanup-and-save-buffer-metadata (level buffer-name)
-  "To cleanup metadata (LEVEL, BUFFER-NAME) after all the actions are done!"
-  (orgtrello-proxy/update-buffer-to-save! buffer-name)) ;; register the buffer for later saving
-
-(defun orgtrello-proxy/batch-save (buffers)
-  "Save sequentially a list of BUFFERS."
-  (-each buffers (lambda (buffername)
-                   (with-current-buffer buffername
-                     (call-interactively 'save-buffer)))))
-
-(defun orgtrello-proxy/batch-save! ()
-  "Save sequentially the org-trello list of modified buffers."
-  (setq *ORGTRELLO/LIST-BUFFERS-TO-SAVE* (orgtrello-proxy/batch-save *ORGTRELLO/LIST-BUFFERS-TO-SAVE*)))
-
 (defun orgtrello-proxy/--getting-back-to-headline (data)
   "Trying another approach to getting back to header computing the normal form of the entry DATA in the buffer."
   (orgtrello-proxy/--getting-back-to-marker (orgtrello-buffer/--compute-entity-to-org-entry data)))
@@ -75,39 +33,84 @@ Move the cursor position."
       goto-ok
     (orgtrello-proxy/--getting-back-to-headline data)))
 
-(defun orgtrello-proxy/--standard-post-or-put-success-callback (entity-to-sync)
-  "Return a callback function able to deal with the update query of ENTITY-TO-SYNC the buffer at a given position."
-  (lexical-let ((entry-position    (orgtrello-data/entity-position entity-to-sync))
-                (entry-buffer-name (orgtrello-data/entity-buffername entity-to-sync))
-                (level             (orgtrello-data/entity-level entity-to-sync))
-                (marker-id         (orgtrello-data/entity-id-or-marker entity-to-sync))
-                (entity-name       (orgtrello-data/entity-name entity-to-sync)))
-    (function* (lambda (&key data &allow-other-keys)
-                 (orgtrello-action/safe-wrap
-                  (let ((entry-new-id (orgtrello-data/entity-id data)))
-                    (with-current-buffer entry-buffer-name
-                      ;; will update via tag the trello id of the new persisted data (if needed)
-                      (save-excursion
-                        ;; get back to the buffer and update the id if need be
-                        (-when-let (str-msg (when (orgtrello-proxy/--get-back-to-marker marker-id data)
-                                              (-if-let (entry-id (when (orgtrello-data/id-p marker-id) marker-id)) ;; Already present, we do nothing on the buffer
-                                                  (format "Entity '%s' with id '%s' synced!" entity-name entry-id)
-                                                (let ((entry-name (orgtrello-data/entity-name data))) ;; not present, this was just created, we add a simple property
-                                                  (orgtrello-buffer/set-property *ORGTRELLO/ID* entry-new-id)
-                                                  (format "Newly entity '%s' with id '%s' synced!" entry-name entry-new-id)))))
-                          (orgtrello-log/msg *OT/INFO* str-msg)))))
-                  (orgtrello-proxy/--cleanup-and-save-buffer-metadata level entry-buffer-name))))))
+(defun orgtrello-proxy/execute-async-computations (computations log-ok log-ko)
+  "Compute the deferred COMPUTATIONS.
+Display LOG-OK or LOG-KO depending on the result."
+  (eval `(deferred:$
+           (deferred:parallel
+             ,@computations)
+           (deferred:error it
+             (lambda () (orgtrello-log/msg *OT/ERROR* ,log-ko)))
+           (deferred:nextc it
+             (lambda () (orgtrello-log/msg *OT/DEBUG* ,log-ok))))))
 
-(defun orgtrello-proxy/--dispatch-action (action)
-  "Compute the action function depending on the ACTION (sync, delete) to execute."
-  (cond ((string= *ORGTRELLO/ACTION-DELETE* action) 'orgtrello-proxy/--delete)
-        ((string= *ORGTRELLO/ACTION-SYNC*   action) 'orgtrello-proxy/--sync-entity)))
+(defun orgtrello-proxy/--compute-sync-next-level (entity entities-adjacencies)
+  "Trigger the sync for ENTITY's children.
+ENTITIES-ADJACENCIES provides needed information."
+  (-map (lambda (child-id)
+          (--> child-id
+            (orgtrello-data/get-entity it entities-adjacencies)
+            (orgtrello-data/put-entity-action *ORGTRELLO/ACTION-SYNC* it)
+            (orgtrello-proxy/--sync-entity it entities-adjacencies)
+            (eval it)))
+        (orgtrello-data/get-children entity entities-adjacencies)))
 
-(defun orgtrello-proxy/--cleanup-meta (entity-full-metadata)
-  "Clean the ENTITY-FULL-METADATA meta up."
-  (unless (-> entity-full-metadata
-            orgtrello-data/current
-            orgtrello-data/entity-id)
+(defun orgtrello-proxy/update-entities-adjacencies! (old-entity entity-synced entities-adjacencies)
+  "Given OLD-ENTITY and ENTITY-SYNCED, update in place ENTITIES-ADJACENCIES.
+This will also update ENTITY-SYNCED with its parent (lost since not present in trello data).
+This will remove OLD-ENTITY's id and update with the ENTITY-SYNCED's one (after sync).
+This will also update the references in arborescence (children with ENTITY-SYNCED).
+This returns a list (updated-entity-synced, updated-entities, updated-adjacencies)."
+  (let* ((entities      (car entities-adjacencies))
+         (adjacencies   (cadr entities-adjacencies))
+         (old-entity-id (orgtrello-data/entity-id-or-marker old-entity))
+         (entry-new-id  (orgtrello-data/entity-id-or-marker entity-synced))
+         (children-ids  (gethash old-entity-id adjacencies)))
+    ;; keep the parent (which is not present as trello's return)
+    (orgtrello-data/put-parent (orgtrello-data/parent old-entity) entity-synced)
+    ;; update parent reference in children in entities
+    (mapcar (lambda (child-id)
+              (let ((child (gethash child-id entities)))
+                (--> child
+                  (orgtrello-data/put-parent entity-synced it)
+                  (puthash child-id it entities))))
+            children-ids)
+
+    ;; update in-place with new entries...
+    (puthash entry-new-id entity-synced entities)
+    (puthash entry-new-id children-ids adjacencies)
+    ;; return updated values
+    (list entity-synced entities adjacencies)))
+
+(defun orgtrello-proxy/--standard-post-or-put-success-callback (entity-to-sync entities-adjacencies)
+  "Return a callback fn able to deal with the update of ENTITY-TO-SYNC.
+This will update the buffer at the entity synced.
+ENTITIES-ADJACENCIES provides needed information about entities and adjacency."
+  (lexical-let ((buffer-name           (orgtrello-data/entity-buffername entity-to-sync))
+                (marker-id             (orgtrello-data/entity-id-or-marker entity-to-sync))
+                (entity-name           (orgtrello-data/entity-name entity-to-sync))
+                (entities-adj          entities-adjacencies)
+                (entity-not-yet-synced entity-to-sync))
+    (lambda (response)
+      (let* ((entity-synced (request-response-data response))
+             (entry-new-id  (orgtrello-data/entity-id entity-synced)))
+        (with-current-buffer buffer-name
+          (save-excursion
+            (-when-let (str-msg (when (orgtrello-proxy/--get-back-to-marker marker-id entity-synced)
+                                  (-if-let (entry-id (when (orgtrello-data/id-p marker-id) marker-id)) ;; Already present, we do nothing on the buffer
+                                      (format "Entity '%s' with id '%s' synced!" entity-name entry-id)
+                                    (progn ;; not present, this was just created, we update with the trello id
+                                      (orgtrello-buffer/set-property *ORGTRELLO/ID* entry-new-id)
+                                      (format "Newly entity '%s' with id '%s' synced!" entity-name entry-new-id)))))
+              (let* ((updates (orgtrello-proxy/update-entities-adjacencies! entity-not-yet-synced entity-synced entities-adj))
+                     (updated-entity-synced (car updates))
+                     (updated-entities-adj  (cdr updates)))
+                (orgtrello-proxy/--compute-sync-next-level updated-entity-synced updated-entities-adj))
+              (orgtrello-log/msg *OT/INFO* str-msg))))))))
+
+(defun orgtrello-proxy/--cleanup-meta (entity)
+  "Clean the ENTITY metadata up."
+  (unless (orgtrello-data/entity-id entity)
     (orgtrello-cbx/org-delete-property *ORGTRELLO/ID*)))
 
 (defun orgtrello-proxy/--retrieve-state-of-card (card-meta)
@@ -126,9 +129,8 @@ If empty or no keyword then, its equivalence is *ORGTRELLO/TODO*, otherwise, ret
            (ns (if (string= "" (car s)) (cdr s) s)))
       (s-join "," ns))))
 
-(defun orgtrello-proxy/--card (card-meta &optional parent-meta grandparent-meta)
+(defun orgtrello-proxy/--card (card-meta)
   "Deal with create/update CARD-META query build.
-PARENT-META and GRANDPARENT-META are indispensable.
 If the checks are ko, the error message is returned."
   (let ((checks-ok-or-error-message (orgtrello-proxy/--checks-before-sync-card card-meta)))
     ;; name is mandatory
@@ -141,12 +143,13 @@ If the checks are ko, the error message is returned."
                (card-due                (orgtrello-data/entity-due         card-meta))
                (card-desc               (orgtrello-data/entity-description card-meta))
                (card-user-ids-assigned  (orgtrello-data/entity-member-ids  card-meta))
-               (card-labels             (orgtrello-proxy/--tags-to-labels (orgtrello-data/entity-tags card-meta))))
+               (card-labels             (orgtrello-proxy/--tags-to-labels (orgtrello-data/entity-tags card-meta)))
+               (card-pos                (orgtrello-data/entity-position   card-meta)))
           (if card-id
               ;; update
-              (orgtrello-api/move-card card-id list-id card-name card-due card-user-ids-assigned card-desc card-labels)
+              (orgtrello-api/move-card card-id list-id card-name card-due card-user-ids-assigned card-desc card-labels card-pos)
             ;; create
-            (orgtrello-api/add-card card-name list-id card-due card-user-ids-assigned card-desc card-labels)))
+            (orgtrello-api/add-card card-name list-id card-due card-user-ids-assigned card-desc card-labels card-pos)))
       checks-ok-or-error-message)))
 
 (defun orgtrello-proxy/--checks-before-sync-checklist (checklist-meta card-meta)
@@ -157,21 +160,20 @@ If the checks are ko, the error message is returned."
         *ORGTRELLO/ERROR-SYNC-CHECKLIST-SYNC-CARD-FIRST*)
     *ORGTRELLO/ERROR-SYNC-CHECKLIST-MISSING-NAME*))
 
-(defun orgtrello-proxy/--checklist (checklist-meta &optional card-meta grandparent-meta)
+(defun orgtrello-proxy/--checklist (checklist-meta)
   "Deal with create/update CHECKLIST-META query build.
-CARD-META, GRANDPARENT-META are indispensable.
 If the checks are ko, the error message is returned."
-  (let ((checks-ok-or-error-message (orgtrello-proxy/--checks-before-sync-checklist checklist-meta card-meta)))
-    ;; name is mandatory
+  (let* ((card-meta                  (orgtrello-data/parent checklist-meta))
+         (checks-ok-or-error-message (orgtrello-proxy/--checks-before-sync-checklist checklist-meta card-meta)))
     (if (equal :ok checks-ok-or-error-message)
-        ;; grandparent is useless here
         (let ((card-id        (orgtrello-data/entity-id card-meta))
-              (checklist-name (orgtrello-data/entity-name checklist-meta)))
+              (checklist-name (orgtrello-data/entity-name checklist-meta))
+              (checklist-pos  (orgtrello-data/entity-position checklist-meta)))
           (-if-let (checklist-id (orgtrello-data/entity-id checklist-meta))
               ;; update
-              (orgtrello-api/update-checklist checklist-id checklist-name)
+              (orgtrello-api/update-checklist checklist-id checklist-name checklist-pos)
             ;; create
-            (orgtrello-api/add-checklist card-id checklist-name)))
+            (orgtrello-api/add-checklist card-id checklist-name checklist-pos)))
       checks-ok-or-error-message)))
 
 (defun orgtrello-proxy/--compute-state (state)
@@ -193,19 +195,20 @@ If the checks are ko, the error message is returned."
           *ORGTRELLO/ERROR-SYNC-ITEM-SYNC-CHECKLIST-FIRST*)
       *ORGTRELLO/ERROR-SYNC-ITEM-MISSING-NAME*)))
 
-(defun orgtrello-proxy/--item (item-meta &optional checklist-meta card-meta)
+(defun orgtrello-proxy/--item (item-meta)
   "Deal with create/update ITEM-META query build.
-CHECKLIST-META and CARD-META are indispensable data to compute the query.
 If the checks are ko, the error message is returned."
-  (let ((checks-ok-or-error-message (orgtrello-proxy/--checks-before-sync-item item-meta checklist-meta card-meta)))
+  (let* ((checklist-meta (orgtrello-data/parent item-meta))
+         (card-meta      (orgtrello-data/parent checklist-meta))
+         (checks-ok-or-error-message (orgtrello-proxy/--checks-before-sync-item item-meta checklist-meta card-meta)))
     ;; name is mandatory
     (if (equal :ok checks-ok-or-error-message)
-        ;; card-meta is only usefull for the update part
         (let* ((item-id         (orgtrello-data/entity-id item-meta))
                (checklist-id    (orgtrello-data/entity-id checklist-meta))
                (card-id         (orgtrello-data/entity-id card-meta))
                (item-name       (orgtrello-data/entity-name item-meta))
-               (item-state      (orgtrello-data/entity-keyword item-meta)))
+               (item-state      (orgtrello-data/entity-keyword item-meta))
+               (item-pos        (orgtrello-data/entity-position item-meta)))
           ;; update/create items
           (if item-id
               ;; update - rename, check or uncheck the item
@@ -213,61 +216,49 @@ If the checks are ko, the error message is returned."
                                          checklist-id
                                          item-id
                                          item-name
-                                         (orgtrello-proxy/--compute-state item-state))
+                                         (orgtrello-proxy/--compute-state item-state)
+                                         item-pos)
             ;; create
             (orgtrello-api/add-items checklist-id
                                      item-name
-                                     (orgtrello-proxy/--compute-check item-state))))
+                                     (orgtrello-proxy/--compute-check item-state)
+                                     item-pos)))
       checks-ok-or-error-message)))
+
+(defun orgtrello-proxy/compute-dispatch-fn (entity map-dispatch-fn)
+  "Generic function to dispatch, depending on the ENTITY level, functions.
+MAP-DISPATCH-FN is a map of function taking the one parameter ENTITY."
+  (-> entity
+    orgtrello-data/entity-level
+    (gethash map-dispatch-fn 'orgtrello-action/--too-deep-level)
+    (funcall entity)))
 
 (defvar *MAP-DISPATCH-CREATE-UPDATE* (orgtrello-hash/make-properties `((,*ORGTRELLO/CARD-LEVEL*      . orgtrello-proxy/--card)
                                                                        (,*ORGTRELLO/CHECKLIST-LEVEL* . orgtrello-proxy/--checklist)
                                                                        (,*ORGTRELLO/ITEM-LEVEL*      . orgtrello-proxy/--item)))
   "Dispatch map for the creation/update of card/checklist/item.")
 
-(defun orgtrello-proxy/--dispatch-create (entry-metadata)
-  "Dispatch the ENTRY-METADATA creation depending on the nature of the entry."
-  (let ((current-meta        (orgtrello-data/current entry-metadata)))
-    (-> current-meta
-      orgtrello-data/entity-level
-      (gethash *MAP-DISPATCH-CREATE-UPDATE* 'orgtrello-action/--too-deep-level)
-      (funcall current-meta (orgtrello-data/parent entry-metadata) (orgtrello-data/grandparent entry-metadata)))))
+(defun orgtrello-proxy/--compute-sync-query-request (entity)
+  "Dispatch the ENTITY creation/update depending on the nature of the entry."
+  (orgtrello-proxy/compute-dispatch-fn entity *MAP-DISPATCH-CREATE-UPDATE*))
 
-(defun orgtrello-proxy/--sync-entity (entity-data entity-full-metadata)
-  "Execute the entity ENTITY-DATA and ENTITY-FULL-METADATA synchronization."
-  (lexical-let ((query-map           (orgtrello-proxy/--dispatch-create entity-full-metadata))
-                (entity-full-meta    entity-full-metadata)
-                (level               (orgtrello-data/entity-level entity-data)))
+(defun orgtrello-proxy/--sync-entity (entity-data entities-adjacencies)
+  "Compute the sync action on entity ENTITY-DATA.
+Use ENTITIES-ADJACENCIES to provide further information."
+  (lexical-let ((query-map      (orgtrello-proxy/--compute-sync-query-request entity-data))
+                (entity-to-sync entity-data))
     (if (hash-table-p query-map)
         (orgtrello-query/http-trello
          query-map
-         'synchronous-query
-         (orgtrello-proxy/--standard-post-or-put-success-callback entity-data)
-         (function* (lambda (&key error-thrown &allow-other-keys)
-                      (orgtrello-log/msg *OT/ERROR* "client - Problem during the sync request to the proxy- error-thrown: %s" error-thrown)
-                      (orgtrello-proxy/--cleanup-meta entity-full-meta)
-                      (throw 'org-trello-timer-go-to-sleep t))))
-      ;; cannot execute the request
-      (progn
-        (orgtrello-log/msg *OT/INFO* query-map)
-        (orgtrello-proxy/--cleanup-meta entity-full-metadata)
-        (throw 'org-trello-timer-go-to-sleep t)))))
-
-(defun orgtrello-proxy/--deal-with-entity-action (entity-data)
-  "Compute the synchronization of an entity ENTITY-DATA (retrieving latest information from buffer)."
-  (let* ((position    (orgtrello-data/entity-position entity-data))   ;; position is mandatory
-         (buffer-name (orgtrello-data/entity-buffername entity-data))    ;; buffer-name too
-         (marker      (orgtrello-data/entity-id-or-marker entity-data))  ;; retrieve the id (which serves as a marker too)
-         (level       (orgtrello-data/entity-level entity-data)))
-    (orgtrello-log/msg *OT/TRACE* "Proxy-consumer - Searching entity metadata from buffer '%s' at point '%s' to sync..." buffer-name position)
-    (orgtrello-action/--safe-wrap-or-throw-error ;; will update via tag the trello id of the new persisted data (if needed)
-     (with-silent-modifications
-       (with-current-buffer buffer-name
-         (when (orgtrello-proxy/--get-back-to-marker marker entity-data)
-           (-> entity-data
-             orgtrello-data/entity-action
-             orgtrello-proxy/--dispatch-action
-             (funcall entity-data (orgtrello-buffer/entry-get-full-metadata!)))))))))
+         nil ; async
+         (orgtrello-proxy/--standard-post-or-put-success-callback entity-data entities-adjacencies)
+         (lambda (response)
+           (orgtrello-proxy/--cleanup-meta entity-to-sync)
+           (orgtrello-log/msg *OT/ERROR* "client - Problem during the sync request to the proxy - error-thrown: %s" (request-response-error-thrown response))))
+      (progn ;; cannot execute the request
+        (orgtrello-proxy/--cleanup-meta entity-to-sync)
+        (orgtrello-log/msg *OT/ERROR* query-map)
+        query-map))))
 
 (defun orgtrello-proxy/--delete-region (start end)
   "Delete a region defined by START and END bound."
@@ -308,63 +299,55 @@ If the checks are ko, the error message is returned."
                 (entry-level       (orgtrello-data/entity-level entity-to-del))
                 (marker            (orgtrello-data/entity-id entity-to-del))
                 (level             (orgtrello-data/entity-level entity-to-del)))
-    (lambda (&rest response)
-      (orgtrello-action/safe-wrap
-       (with-current-buffer entry-buffer-name
-         (save-excursion
-           (when (orgtrello-proxy/--getting-back-to-marker marker)
-             (-> (orgtrello-buffer/entry-get-full-metadata!)
-               orgtrello-data/current
-               orgtrello-proxy/delete-region
-               funcall))))
-       (orgtrello-proxy/--cleanup-and-save-buffer-metadata level entry-buffer-name)))))
+    (lambda (response)
+      (with-current-buffer entry-buffer-name
+        (save-excursion
+          (when (orgtrello-proxy/--getting-back-to-marker marker)
+            (-> (orgtrello-buffer/entry-get-full-metadata!)
+              orgtrello-data/current
+              orgtrello-proxy/delete-region
+              funcall)))))))
 
-(defun orgtrello-proxy/--card-delete (card-meta &optional parent-meta)
-  "Deal with the deletion query of a CARD-META.
-PARENT-META is not used here."
+(defun orgtrello-proxy/--card-delete (card-meta)
+  "Deal with the deletion query of a CARD-META."
   (orgtrello-api/delete-card (orgtrello-data/entity-id card-meta)))
 
-(defun orgtrello-proxy/--checklist-delete (checklist-meta &optional parent-meta)
-  "Deal with the deletion query of a CHECKLIST-META.
-PARENT-META is not used here."
+(defun orgtrello-proxy/--checklist-delete (checklist-meta)
+  "Deal with the deletion query of a CHECKLIST-META."
   (orgtrello-api/delete-checklist (orgtrello-data/entity-id checklist-meta)))
 
-(defun orgtrello-proxy/--item-delete (item-meta &optional checklist-meta)
+(defun orgtrello-proxy/--item-delete (item-meta)
   "Deal with create/update query of an ITEM-META in CHECKLIST-META."
-  (orgtrello-api/delete-item (orgtrello-data/entity-id checklist-meta) (orgtrello-data/entity-id item-meta)))
+  (let ((checklist-meta (orgtrello-data/parent item-meta)))
+    (orgtrello-api/delete-item (orgtrello-data/entity-id checklist-meta) (orgtrello-data/entity-id item-meta))))
 
 (defvar *MAP-DISPATCH-DELETE* (orgtrello-hash/make-properties `((,*ORGTRELLO/CARD-LEVEL*      . orgtrello-proxy/--card-delete)
                                                                 (,*ORGTRELLO/CHECKLIST-LEVEL* . orgtrello-proxy/--checklist-delete)
                                                                 (,*ORGTRELLO/ITEM-LEVEL*      . orgtrello-proxy/--item-delete)))
   "Dispatch map for the deletion query of card/checklist/item.")
 
-(defun orgtrello-proxy/--dispatch-delete (meta &optional parent-meta)
-  "Dispatch the call to the delete function depending on META level info.
-Optionally, PARENT-META is a parameter of the function dispatched."
-  (-> meta
-    orgtrello-data/entity-level
-    (gethash *MAP-DISPATCH-DELETE* 'orgtrello-action/--too-deep-level)
-    (funcall meta parent-meta)))
+(defun orgtrello-proxy/--dispatch-delete (entity)
+  "Dispatch the call to the delete function depending on ENTITY level info."
+  (orgtrello-proxy/compute-dispatch-fn entity *MAP-DISPATCH-DELETE*))
 
-(defun orgtrello-proxy/--delete (entity-data entity-full-metadata)
-  "Execute the delete query to remove ENTITY-DATA and ENTITY-FULL-METADATA."
-  (lexical-let ((query-map        (orgtrello-proxy/--dispatch-delete (orgtrello-data/current entity-full-metadata) (orgtrello-data/parent entity-full-metadata)))
-                (entity-full-meta entity-full-metadata)
+(defun orgtrello-proxy/--delete (entity-data &optional entities-adjacencies)
+  "Compute the delete action to remove ENTITY-DATA.
+This uses ENTITY-FULL-METADATA to help provide further information.
+ENTITIES-ADJACENCIES is not used."
+  (lexical-let ((query-map        (orgtrello-proxy/--dispatch-delete entity-data))
+                (entity-to-delete entity-data)
                 (level            (orgtrello-data/entity-level entity-data)))
     (if (hash-table-p query-map)
         (orgtrello-query/http-trello
          query-map
-         nil ;; asynchronous-query
+         nil ; async
          (orgtrello-proxy/--standard-delete-success-callback entity-data)
-         (function* (lambda (&key error-thrown &allow-other-keys)
-                      (orgtrello-log/msg *OT/ERROR* "client - Problem during the deletion request to the proxy- error-thrown: %s" error-thrown)
-                      (orgtrello-proxy/--cleanup-meta entity-full-meta)
-                      (throw 'org-trello-timer-go-to-sleep t))))
-      (progn
-        (orgtrello-log/msg *OT/INFO* query-map)
-        (throw 'org-trello-timer-go-to-sleep t)))))
+         (lambda (response)
+           (orgtrello-log/msg *OT/ERROR* "client - Problem during the deletion request to the proxy - error-thrown: %s" (request-response-error-thrown response))
+           (orgtrello-proxy/--cleanup-meta entity-to-delete)))
+      (orgtrello-log/msg *OT/ERROR* query-map))))
 
-(orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-proxy loaded!")
+(orgtrello-log/msg *OT/DEBUG* "orgtrello-proxy loaded!")
 
 (provide 'org-trello-proxy)
 ;;; org-trello-proxy.el ends here

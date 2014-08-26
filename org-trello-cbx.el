@@ -171,7 +171,7 @@ Write the new properties at current position."
   (-when-let (s (buffer-substring-no-properties (point-at-bol) (point-at-eol)))
     (->> s
       s-trim-left
-      (string-match-p "^- .*"))))
+      (string-match-p "^- \\\[.?\\\].*"))))
 
 (defun orgtrello-cbx/--level! ()
   "Compute the levels from the current position (which is `bol`)"
@@ -270,7 +270,7 @@ Do not exceed the max size of buffer."
       next-checklist-point
     (orgtrello-cbx/compute-next-card-point!)))
 
-(orgtrello-log/msg *OT/DEBUG* "org-trello - orgtrello-cbx loaded!")
+(orgtrello-log/msg *OT/DEBUG* "orgtrello-cbx loaded!")
 
 (provide 'org-trello-cbx)
 ;;; org-trello-cbx.el ends here

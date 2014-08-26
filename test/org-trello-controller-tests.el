@@ -92,23 +92,6 @@
                                                                       #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
                                                                                     (:username "orgmode" :full-name "org trello" :id "5203a0c833fc36360800177f")))))))
 
-(expectations (desc "orgtrello-controller/--compute-user-properties-hash-from-board")
-  (expect t (hash-equal
-             #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
-                           ("ardumont" "4f2baa2f72b7c1293501cad3"
-                            "orgmode" "5203a0c833fc36360800177f"))
-             (orgtrello-controller/--compute-user-properties-hash-from-board #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
-                                                                                (:closed nil :memberships
-                                                                                         (#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
-                                                                                                        (:member #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
-                                                                                                                               (:username "ardumont" :full-name "Antoine R. Dumont" :id "4f2baa2f72b7c1293501cad3"))
-                                                                                                                 :id "51d99bbc1e1d8988390047f6"))
-                                                                                            #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
-                                                                                                          (:member #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
-                                                                                                                                 (:username "orgmode" :full-name "org trello" :id "5203a0c833fc36360800177f"))
-                                                                                                                   :id "524855ff8193aec160002cfa")))
-                                                                                         :name "api test board" :id "51d99bbc1e1d8988390047f2"))))))
-
 (expectations (desc "orgtrello-controller/--list-user-entries")
  (expect
   '(("orgtrello-user-ardumont" . "4f2baa2f72b7c1293501cad3") ("orgtrello-user-orgmode" . "5203a0c833fc36360800177f"))
@@ -218,11 +201,11 @@
       (orgtrello-controller/control-keys!))))
 
 (expectations
-  (expect '(:id-board0 "board0-name")
+  (expect :id-board0
     (with-mock
       (mock (read-string *) => "0")
       (orgtrello-controller/choose-board! (orgtrello-hash/make-properties '((:id-board0 . "board0-name") (:id-board1 . "board1-name"))))))
-  (expect '(:id-board1 "board1-name")
+  (expect :id-board1
     (with-mock
       (mock (read-string *) => "1")
       (orgtrello-controller/choose-board! (orgtrello-hash/make-properties '((:id-board0 . "board0-name") (:id-board1 . "board1-name")))))))
@@ -233,9 +216,9 @@
      #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:id "id0" :name "name0" :closed nil))
      (car (with-mock
             (mock (orgtrello-api/get-boards)                          => :query)
-            (mock (orgtrello-query/http-trello :query 'synchronous-query) => `(,(orgtrello-hash/make-properties '((:id . "id0") (:name . "name0") (:closed)))
-                                                                           ,(orgtrello-hash/make-properties '((:id . "id1") (:name . "name1") (:closed)))
-                                                                           ,(orgtrello-hash/make-properties '((:id . "id1") (:name . "name1") (:closed . t)))))
+            (mock (orgtrello-query/http-trello :query 'sync) => `(,(orgtrello-hash/make-properties '((:id . "id0") (:name . "name0") (:closed)))
+                                                                  ,(orgtrello-hash/make-properties '((:id . "id1") (:name . "name1") (:closed)))
+                                                                  ,(orgtrello-hash/make-properties '((:id . "id1") (:name . "name1") (:closed . t)))))
             (orgtrello-controller/--list-boards!)))))
   (expect
       t
@@ -243,7 +226,7 @@
      #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:id "id1" :name "name1" :closed nil))
      (cadr (with-mock
              (mock (orgtrello-api/get-boards)                          => :query)
-             (mock (orgtrello-query/http-trello :query 'synchronous-query) => `(,(orgtrello-hash/make-properties '((:id . "id0") (:name . "name0") (:closed)))
+             (mock (orgtrello-query/http-trello :query 'sync) => `(,(orgtrello-hash/make-properties '((:id . "id0") (:name . "name0") (:closed)))
                                                                             ,(orgtrello-hash/make-properties '((:id . "id1") (:name . "name1") (:closed)))
                                                                             ,(orgtrello-hash/make-properties '((:id . "id1") (:name . "name1") (:closed . t)))))
              (orgtrello-controller/--list-boards!))))))
@@ -252,8 +235,105 @@
   (expect :some-result
     (with-mock
       (mock (orgtrello-api/get-lists :board-id)                 => :query)
-      (mock (orgtrello-query/http-trello :query 'synchronous-query) => :some-result)
+      (mock (orgtrello-query/http-trello :query 'sync) => :some-result)
       (orgtrello-controller/--list-board-lists! :board-id))))
+
+(expectations
+  (expect t
+    (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
+                              ("786" "CANCELLED" "456" "FAILED" "ijk" "DONE" "abc" "TODO"))
+                (orgtrello-controller/hmap-id-name '("CANCELLED" "FAILED" "DONE" "TODO")
+                                                   '(("board-name" . "some board")
+                                                     ("board-id" . "10223")
+                                                     ("CANCELLED" . "786")
+                                                     ("FAILED" . "456")
+                                                     ("DELEGATED" . "123")
+                                                     ("PENDING" . "efg")
+                                                     ("DONE" . "ijk")
+                                                     ("IN-PROGRESS" . "def")
+                                                     ("TODO" . "abc")))))
+  (expect t
+    (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data ())
+                (orgtrello-controller/hmap-id-name '("CANCELLED" "FAILED" "DONE" "TODO")
+                                                   '())))
+  (expect t
+    (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data ())
+                (orgtrello-controller/hmap-id-name '()
+                                                   '(("board-name" . "some board")))))
+  (expect t
+    (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data ())
+                (orgtrello-controller/hmap-id-name '()
+                                                   '()))))
+
+(expectations
+  (expect
+      '("TODO" "IN-PROGRESS" "DONE" "PENDING" "DELEGATED" "FAILED" "CANCELLED")
+    (orgtrello-tests/with-temp-buffer
+     ":PROPERTIES:
+#+property: board-name api test board
+#+property: board-id abc
+#+PROPERTY: CANCELLED def
+#+PROPERTY: FAILED ijk
+#+PROPERTY: DELEGATED lmn
+#+PROPERTY: PENDING opq
+#+PROPERTY: DONE rst
+#+PROPERTY: IN-PROGRESS uvw
+#+PROPERTY: TODO xyz
+#+TODO: TODO IN-PROGRESS DONE | PENDING DELEGATED FAILED CANCELLED
+#+PROPERTY: orgtrello-user-orgmode 888
+#+PROPERTY: orgtrello-user-ardumont 999
+#+PROPERTY: :yellow yellow label
+#+PROPERTY: :red red label
+#+PROPERTY: :purple this is the purple label
+#+PROPERTY: :orange orange label
+#+PROPERTY: :green green label with & char
+#+PROPERTY: :blue
+#+PROPERTY: orgtrello-user-me ardumont
+:END:"
+     (orgtrello-buffer/filtered-kwds!))))
+
+(expectations
+  (expect
+      '(("board-name" . "api test board")
+        ("board-id" . "abc")
+        ("CANCELLED" . "def")
+        ("FAILED" . "ijk")
+        ("DELEGATED" . "lmn")
+        ("PENDING" . "opq")
+        ("DONE" . "rst")
+        ("IN-PROGRESS" . "uvw")
+        ("TODO" . "xyz")
+        ("orgtrello-user-orgmode" . "888")
+        ("orgtrello-user-ardumont" . "999")
+        (":yellow" . "yellow label")
+        (":red" . "red label")
+        (":purple" . "this is the purple label")
+        (":orange" . "orange label")
+        (":green" . "green label with & char")
+        ("orgtrello-user-me" . "ardumont"))
+    (orgtrello-tests/with-temp-buffer
+     ":PROPERTIES:
+#+property: board-name api test board
+#+property: board-id abc
+#+PROPERTY: CANCELLED def
+#+PROPERTY: FAILED ijk
+#+PROPERTY: DELEGATED lmn
+#+PROPERTY: PENDING opq
+#+PROPERTY: DONE rst
+#+PROPERTY: IN-PROGRESS uvw
+#+PROPERTY: TODO xyz
+#+TODO: TODO IN-PROGRESS DONE | PENDING DELEGATED FAILED CANCELLED
+#+PROPERTY: orgtrello-user-orgmode 888
+#+PROPERTY: orgtrello-user-ardumont 999
+#+PROPERTY: :yellow yellow label
+#+PROPERTY: :red red label
+#+PROPERTY: :purple this is the purple label
+#+PROPERTY: :orange orange label
+#+PROPERTY: :green green label with & char
+#+PROPERTY: :blue
+#+PROPERTY: orgtrello-user-me ardumont
+:END:"
+     (orgtrello-buffer/org-file-properties!))))
 
 (provide 'org-trello-controller-tests)
 ;;; org-trello-controller-tests.el ends here

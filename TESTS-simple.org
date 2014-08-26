@@ -1,22 +1,22 @@
 :PROPERTIES:
 #+property: board-name api test board
-#+property: board-id 51d99bbc1e1d8988390047f2
-#+PROPERTY: CANCELLED 51e538e6c7a68fa0510014ee
-#+PROPERTY: FAIL 51e538a26f75d07902002d25
-#+PROPERTY: DELEGATED 51e538a89c05f1e25c0027c6
-#+PROPERTY: PENDING 51e53898ea3d1780690015ca
-#+PROPERTY: DONE 51d99bbc1e1d8988390047f5
-#+PROPERTY: IN-PROGRESS 51d99bbc1e1d8988390047f4
-#+PROPERTY: TODO 51d99bbc1e1d8988390047f3
-#+TODO: TODO IN-PROGRESS DONE | PENDING DELEGATED FAIL CANCELLED
+#+property: board-id 53fc6e11d9955d1d4b33aaab
+#+PROPERTY: CANCELLED 53fc6e13f83a2cd99386dc6d
+#+PROPERTY: FAILED 53fc6e134523f050b5d813ad
+#+PROPERTY: DELEGATED 53fc6e14c8d91df93fa57fb2
+#+PROPERTY: PENDING 53fc6e154208f410f575f105
+#+PROPERTY: DONE 53fc6e16ba9b332db5230132
+#+PROPERTY: IN-PROGRESS 53fc6e17b928efc254b028fa
+#+PROPERTY: TODO 53fc6e1754c24b2ab5d5eef5
+#+TODO: TODO IN-PROGRESS | DONE PENDING DELEGATED FAILED CANCELLED
 #+PROPERTY: orgtrello-user-orgmode 5203a0c833fc36360800177f
 #+PROPERTY: orgtrello-user-ardumont 4f2baa2f72b7c1293501cad3
-#+PROPERTY: :yellow yellow label
-#+PROPERTY: :red red label
-#+PROPERTY: :purple this is the purple label
-#+PROPERTY: :orange orange label
+#+PROPERTY: :yellow yello
+#+PROPERTY: :red red
+#+PROPERTY: :purple violet
+#+PROPERTY: :orange range
 #+PROPERTY: :green green label with & char
-#+PROPERTY: :blue
+#+PROPERTY: :blue blue
 #+PROPERTY: orgtrello-user-me ardumont
 :END:
 #+title: dummy sample to sync with trello

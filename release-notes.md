@@ -1,3 +1,49 @@
+# 0.5.3
+
+- [X] Backlog
+- [X] Emacs blocks when sync - CLOSE #164 - Deferred the sync/delete actions [100%]
+  - [X] Align execution of code regarding [100%]
+    - [X] Sync to
+    - [X] Sync from
+    - [X] Delete
+  - [X] Render the execution asynchronous [100%]
+    - [X] Delete
+    - [X] Sync card to trello
+    - [X] Sync buffer to trello
+    - [X] Sync card from trello
+    - [X] Sync buffer from trello
+  - [X] Fix alignment problem (sync a card from trello must enforce order on position)
+  - [X] Remove dead code
+  - [X] Refactor behavior between sync card and sync buffer [100%]
+    - [X] Refactor behavior
+    - [X] Refactor names
+  - [X] Trigger save after sync action - cannot do this because all requests are asynchronous. So emacs will do it on his own.
+  - [X] Caret must remain where it stands after `sync from card` action
+  - [X] Fix - Keep the order when synchronizing the buffer
+  - [X] Improve orgtrello-controller/do-install-key-and-token
+  - [X] Improve org-trello/install-board-and-lists-ids [100%]
+    - [X] Let trello do the filtering on listing the boards
+    - [X] Resequence the actions and use parallel requests to improve speed
+    - [X] Improve some more regarding the sequencing
+  - [X] Improve org-trello/update-board-metadata [100%]
+    - [X] Rework the sequencing
+    - [X] Remove intermediary sync request
+  - [X] Clean new dead code
+  - [X] Improve orgtrello-controller/do-create-board-and-lists [100%]
+    - [X] Rename org-trello/create-board to org-trello/create-board-and-install-metadata
+    - [X] Resequence the trello requests
+    - [X] Clean up some dead code
+- [X] Fix caret movement problem (At the end of an action, the caret must be at the same position as before)
+- [X] Improve logging system to prefix org-trello message with 'org-trello - '
+- [X] Fix create board issue (regarding org keyword list + order + closing list)
+- [X] Rename org-trello/install-board-and-lists to org-trello/install-board-metadata
+- [X] Rename org-trello/jump-to-card to org-trello/jump-to-trello-card
+- [X] Update package doc installation in org-trello.el
+- [X] Check package dependencies and adapt them if need be
+- [X] Fix problem with org-trello/end-of-line! when there is no org information at point
+- [X] Update version
+- [X] Release notes
+
 # 0.5.2
 
 - [X] Remove org-trello's over engineered bricks (proxy, elnode, webadmin) -> this will render it synchronous again. [100%]
