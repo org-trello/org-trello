@@ -11,7 +11,7 @@ C-c o 2 - M-x action2 - some other description" (org-trello/--help-describing-bi
   (expect
       "C-c o v - M-x org-trello/version - Display the current version installed.
 C-c o i - M-x org-trello/install-key-and-token - Install the keys and the access-token.
-C-c o I - M-x org-trello/install-board-and-lists-ids - Select the board and attach the todo, doing and done list.
+C-c o I - M-x org-trello/install-board-metadata - Select the board and attach the todo, doing and done list.
 C-c o d - M-x org-trello/check-setup - Check that the setup is ok. If everything is ok, will simply display 'Setup ok!'.
 C-c o a - M-x org-trello/assign-me - Assign oneself to the card. With C-u modifier, unassign oneself from the card.
 C-c o D - M-x org-trello/delete-setup - Clean up the org buffer from all org-trello informations.

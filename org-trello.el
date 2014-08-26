@@ -39,7 +39,7 @@
 ;;
 ;; You may want:
 ;; - to connect your org buffer to an existing board (C-c o I).  Beware that this will only install properties needed to speak with trello board (nothing else).
-;; M-x org-trello/install-board-and-lists-ids
+;; M-x org-trello/install-board-metadata
 ;;
 ;; - to create an empty board directly from a org-mode buffer (C-c o b)
 ;; M-x org-trello/create-board
@@ -219,7 +219,7 @@ If MODIFIER is non nil, execute all entities removal from trello and buffer."
   (interactive)
   (org-trello/apply-deferred '(org-trello/log-light-checks-and-do "Setup key and token" orgtrello-controller/do-install-key-and-token 'do-no-checks)))
 
-(defun org-trello/install-board-and-lists-ids ()
+(defun org-trello/install-board-metadata ()
   "Control first, then if ok, trigger the setup installation of the trello board to sync with."
   (interactive)
   (org-trello/apply-deferred '(org-trello/log-light-checks-and-do "Install boards and lists" orgtrello-controller/do-install-board-and-lists)))

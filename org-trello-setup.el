@@ -137,7 +137,7 @@ This use the standard 'org-todo-keywords property from 'org-mode'.")
 (defvar *org-trello-interactive-command-binding-couples*
   '((org-trello/version                      "v" "Display the current version installed.")
     (org-trello/install-key-and-token        "i" "Install the keys and the access-token.")
-    (org-trello/install-board-and-lists-ids  "I" "Select the board and attach the todo, doing and done list.")
+    (org-trello/install-board-metadata       "I" "Select the board and attach the todo, doing and done list.")
     (org-trello/check-setup                  "d" "Check that the setup is ok. If everything is ok, will simply display 'Setup ok!'.")
     (org-trello/assign-me                    "a" "Assign oneself to the card. With C-u modifier, unassign oneself from the card.")
     (org-trello/delete-setup                 "D" "Clean up the org buffer from all org-trello informations.")
