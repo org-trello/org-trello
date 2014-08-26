@@ -48,7 +48,7 @@
 ;; M-x org-trello/update-board-metadata
 ;;
 ;; - to create an empty board directly from a org-mode buffer (C-c o b)
-;; M-x org-trello/create-board
+;; M-x org-trello/create-board-and-install-metadata
 ;;
 ;; 3) Now check your setup is ok (C-c o d)
 ;; M-x org-trello/check-setup
@@ -261,7 +261,7 @@ If MODIFIER is not nil, jump from current card to board."
   (interactive)
   (org-trello/apply '(org-trello/log-strict-checks-and-do "Jump to board" orgtrello-controller/jump-to-board!)))
 
-(defun org-trello/create-board ()
+(defun org-trello/create-board-and-install-metadata ()
   "Control first, then if ok, trigger the board creation."
   (interactive)
   (org-trello/apply '(org-trello/log-light-checks-and-do "Create board and lists" orgtrello-controller/do-create-board-and-lists) (current-buffer) 'reload-setup))

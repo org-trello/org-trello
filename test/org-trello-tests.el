@@ -15,7 +15,7 @@ C-c o I - M-x org-trello/install-board-metadata - Select the board and attach th
 C-c o d - M-x org-trello/check-setup - Check that the setup is ok. If everything is ok, will simply display 'Setup ok!'.
 C-c o a - M-x org-trello/assign-me - Assign oneself to the card. With C-u modifier, unassign oneself from the card.
 C-c o D - M-x org-trello/delete-setup - Clean up the org buffer from all org-trello informations.
-C-c o b - M-x org-trello/create-board - Create interactively a board and attach the org-mode file to this trello board.
+C-c o b - M-x org-trello/create-board-and-install-metadata - Create interactively a board and attach the newly created trello board with the current org file.
 C-c o c - M-x org-trello/sync-card - Create/Update a complete card.
 C-c o C - M-x org-trello/sync-card - Create/Update a complete card.
 C-c o k - M-x org-trello/kill-entity - Kill the entity (and its arborescence tree) from the trello board and the org buffer.
