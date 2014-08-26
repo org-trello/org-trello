@@ -710,7 +710,10 @@ When GLOBALLY-FLAG is not nil, remove also local entities properties."
 
 (defun orgtrello-controller/jump-to-board! ()
   "Given the current position, execute the information extraction and jump to board action."
-  (browse-url (org-trello/compute-url (format "/b/%s" (orgtrello-buffer/board-id!)))))
+  (->> (orgtrello-buffer/board-id!)
+    (format "/b/%s")
+    org-trello/compute-url
+    browse-url))
 
 (defun orgtrello-controller/delete-setup! ()
   "Global org-trello metadata clean up."

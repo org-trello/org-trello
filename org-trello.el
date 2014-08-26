@@ -124,10 +124,11 @@ Please consider upgrading Emacs." emacs-version) "Error message when installing 
 When CURRENT-BUFFER-TO-SAVE (buffer name) is provided, save such buffer.
 When RELOAD-ORG-SETUP is provided, reload the org setup.
 when NOLOG-P is specified, no output log."
-  (lexical-let ((computation    comp)
-                (buffer-to-save current-buffer-to-save)
-                (reload-setup   reload-org-setup)
-                (nolog-flag     nolog-p))
+  (lexical-let ((computation        comp)
+                (prefix-log-message (cadr comp))
+                (buffer-to-save     current-buffer-to-save)
+                (reload-setup       reload-org-setup)
+                (nolog-flag         nolog-p))
     (deferred:$
       (deferred:next (lambda () (save-excursion
                                   (with-local-quit
@@ -135,7 +136,7 @@ when NOLOG-P is specified, no output log."
       (deferred:nextc it (lambda ()
                            (when buffer-to-save (orgtrello-buffer/save-buffer buffer-to-save))
                            (when reload-setup (orgtrello-action/reload-setup!))
-                           (unless nolog-flag (orgtrello-log/msg *OT/INFO* "Done!"))))
+                           (unless nolog-flag (orgtrello-log/msg *OT/INFO* "%s - Done!" prefix-log-message))))
       (deferred:error it (lambda (x) (orgtrello-log/msg *OT/ERROR* "Main apply function - Problem during execution - '%s'!" x))))))
 
 (defun org-trello/log-strict-checks-and-do (action-label action-fn &optional with-save-flag)
@@ -235,13 +236,12 @@ If MODIFIER is not nil, jump from current card to board."
   (org-trello/apply (cons 'org-trello/log-strict-checks-and-do
                           (if modifier
                               '("Jump to board" orgtrello-controller/jump-to-board!)
-                            '("Jump to card" orgtrello-controller/jump-to-card!)))
-                    nil nil 'no-log))
+                            '("Jump to card" orgtrello-controller/jump-to-card!)))))
 
 (defun org-trello/jump-to-trello-board ()
   "Jump to current trello board."
   (interactive)
-  (org-trello/apply '(org-trello/log-strict-checks-and-do "Jump to board" orgtrello-controller/jump-to-board!) nil nil 'no-log))
+  (org-trello/apply '(org-trello/log-strict-checks-and-do "Jump to board" orgtrello-controller/jump-to-board!)))
 
 (defun org-trello/create-board ()
   "Control first, then if ok, trigger the board creation."
