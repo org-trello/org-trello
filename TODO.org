@@ -15,7 +15,7 @@
 
 * IN-PROGRESS 0.5.3 [57%]
 - [X] Backlog
-- [-] Emacs blocks when sync - #164 - Deferred the sync/delete actions [75%]
+- [-] Emacs blocks when sync - #164 - Deferred the sync/delete actions [83%]
   - [X] Align execution of code regarding [100%]
     - [X] Sync to
     - [X] Sync from
@@ -35,10 +35,10 @@
   - [X] Caret must remain where it stands after `sync from card` action
   - [X] Fix - Keep the order when synchronizing the buffer
   - [X] Improve orgtrello-controller/do-install-key-and-token
-  - [-] Improve org-trello/install-board-and-lists-ids [66%]
+  - [X] Improve org-trello/install-board-and-lists-ids [100%]
     - [X] Let trello do the filtering on listing the boards
     - [X] Resequence the actions and use parallel requests to improve speed
-    - [ ] Refactor some more
+    - [X] Improve some more regarding the sequencing
   - [ ] Improve org-trello/update-board-metadata
   - [ ] Improve org-trello/update-board-metadata
 - [X] Fix caret movement problem (At the end of an action, the caret must be at the same position as before)

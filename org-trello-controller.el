@@ -479,27 +479,27 @@ This returns the identifier of such board."
   "Command to install the list boards."
   (lexical-let ((buffer-name (current-buffer)))
     (deferred:$
-      (deferred:next
-        (lambda ()
-          (orgtrello-controller/--list-boards!)))
-      (deferred:parallel
-        (deferred:nextc it
-          (lambda (boards)
-            (let ((selected-id-board (->> boards
-                                       orgtrello-controller/--id-name
-                                       orgtrello-controller/choose-board!)))
-              (car (--filter (string= selected-id-board (orgtrello-data/entity-id it)) boards)))))
-        (lambda ()
-          (orgtrello-controller/--user-logged-in!)))
+      (deferred:parallel ;; retrieve in parallel the open boards and the currently logged in user
+        (deferred:next
+          'orgtrello-controller/--list-boards!)
+        (deferred:next
+          'orgtrello-controller/--user-logged-in!))
+      (deferred:nextc it
+        (lambda (boards-and-user-logged-in)
+          (let* ((boards         (elt boards-and-user-logged-in 0))
+                 (user-logged-in (elt boards-and-user-logged-in 1))
+                 (selected-id-board (->> boards
+                                      orgtrello-controller/--id-name
+                                      orgtrello-controller/choose-board!)))
+            (list (car (--filter (string= selected-id-board (orgtrello-data/entity-id it)) boards)) user-logged-in))))
       (deferred:nextc it
         (lambda (chosen-board-and-user)
-          (let* ((chosen-board      (elt chosen-board-and-user 0))
-                 (user-logged-in    (elt chosen-board-and-user 1))
-                 (chosen-board-id   (orgtrello-data/entity-id chosen-board))
-                 (chosen-board-name (orgtrello-data/entity-name chosen-board))
-                 (board-lists       (orgtrello-data/entity-lists chosen-board))
-                 (board-labels      (orgtrello-data/entity-labels chosen-board)))
-            (orgtrello-controller/do-write-board-metadata! chosen-board-id chosen-board-name user-logged-in board-lists board-labels))))
+          (let ((chosen-board (car chosen-board-and-user)))
+            (orgtrello-controller/do-write-board-metadata! (orgtrello-data/entity-id chosen-board)
+                                                           (orgtrello-data/entity-name chosen-board)
+                                                           (cadr chosen-board-and-user)
+                                                           (orgtrello-data/entity-lists chosen-board)
+                                                           (orgtrello-data/entity-labels chosen-board)))))
       (deferred:nextc it
         (lambda ()
           (orgtrello-buffer/save-buffer buffer-name)
