@@ -647,7 +647,8 @@ Return the hashmap (name, id) of the new lists created."
                                                     (orgtrello-controller/do-show-card-comments!)))))))))
 
 (defun orgtrello-controller/do-cleanup-from-buffer! (&optional globally-flag)
-  "Permit to clean the buffer from trello data."
+  "Clean org-trello data in current buffer.
+When GLOBALLY-FLAG is not nil, remove also local entities properties."
   (orgtrello-controller/--remove-properties-file! *ORGTRELLO/ORG-KEYWORD-TRELLO-LIST-NAMES* *ORGTRELLO/HMAP-USERS-NAME-ID* *ORGTRELLO/USER-LOGGED-IN* t) ;; remove any orgtrello relative entries
   (when globally-flag
     (mapc 'orgtrello-buffer/delete-property! `(,*ORGTRELLO/ID* ,*ORGTRELLO/USERS-ENTRY* ,*ORGTRELLO/CARD-COMMENTS*))))
@@ -656,17 +657,14 @@ Return the hashmap (name, id) of the new lists created."
   "Given a board id, write in the current buffer the updated data."
   (let* ((board-lists-hname-id (orgtrello-controller/--name-id board-lists))
          (board-list-keywords  (orgtrello-controller/--hash-table-keys board-lists-hname-id)))
-    ;; remove any eventual present entry
     (orgtrello-controller/do-cleanup-from-buffer!)
-    ;; update with new ones
-    (orgtrello-controller/--update-orgmode-file-with-properties!
-     board-name
-     board-id
-     board-lists-hname-id
-     board-users-name-id
-     user-logged-in
-     board-labels
-     board-list-keywords)))
+    (orgtrello-controller/--update-orgmode-file-with-properties! board-name
+                                                                 board-id
+                                                                 board-lists-hname-id
+                                                                 board-users-name-id
+                                                                 user-logged-in
+                                                                 board-labels
+                                                                 board-list-keywords)))
 
 (defun orgtrello-controller/do-update-board-metadata! ()
   "Update metadata about the current board we are connected to."
