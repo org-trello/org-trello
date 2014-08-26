@@ -392,14 +392,15 @@ Move the cursor position."
 
 (defun orgtrello-buffer/indent-card-descriptions! ()
   "Indent the card descriptions rigidly starting at 2."
-  (save-excursion
-    (org-map-entries (lambda () "Indent the description from the current card if need be."
-                       (let ((start (orgtrello-buffer/--card-description-start-point!))
-                             (end   (orgtrello-buffer/--card-metadata-end-point!)))
-                         (narrow-to-region start end)        ;; only edit the region start end
-                         (goto-char (point-min))
-                         (unless (<= 2 (org-get-indentation));; if need be
-                           (indent-rigidly start end *ORGTRELLO-BUFFER/INDENT-DESCRIPTION*)))))));; now indent with the rightful indentation
+  (when (eq major-mode 'org-mode)
+    (save-excursion
+      (org-map-entries (lambda () "Indent the description from the current card if need be."
+                         (let ((start (orgtrello-buffer/--card-description-start-point!))
+                               (end   (orgtrello-buffer/--card-metadata-end-point!)))
+                           (narrow-to-region start end)        ;; only edit the region start end
+                           (goto-char (point-min))
+                           (unless (<= 2 (org-get-indentation));; if need be
+                             (indent-rigidly start end *ORGTRELLO-BUFFER/INDENT-DESCRIPTION*))))))));; now indent with the rightful indentation
 
 (defun orgtrello-buffer/--convert-orgmode-date-to-trello-date (orgmode-date)
   "Convert the 'org-mode' deadline ORGMODE-DATE into a time adapted for trello."
