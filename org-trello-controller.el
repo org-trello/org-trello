@@ -697,7 +697,7 @@ Return the hashmap (name, id) of the new lists created."
          (right-entity-fn (cond ((orgtrello-data/entity-item-p entity)      'orgtrello-data/grandparent)
                                 ((orgtrello-data/entity-checklist-p entity) 'orgtrello-data/parent)
                                 ((orgtrello-data/entity-card-p entity)      'orgtrello-data/current))))
-    (-if-let (card-id (->> full-meta (funcall right-entity-fn) orgtrello-data/entity-id))
+    (-when-let (card-id (->> full-meta (funcall right-entity-fn) orgtrello-data/entity-id))
         (browse-url (org-trello/compute-url (format "/c/%s" card-id))))))
 
 (defun orgtrello-controller/jump-to-board! ()
