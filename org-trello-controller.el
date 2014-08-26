@@ -301,15 +301,15 @@ SYNC flag permit to synchronize the http query."
 
 (defun orgtrello-controller/--list-boards! ()
   "Return the map of the existing boards associated to the current account. (Synchronous request)"
-  (--remove (orgtrello-data/entity-closed it) (orgtrello-query/http-trello (orgtrello-api/get-boards) 'synchronous-query)))
+  (--remove (orgtrello-data/entity-closed it) (orgtrello-query/http-trello (orgtrello-api/get-boards) 'sync)))
 
 (defun orgtrello-controller/--list-board-lists! (board-id)
   "Return the map of the existing list of the board with id board-id. (Synchronous request)"
-  (orgtrello-query/http-trello (orgtrello-api/get-lists board-id) 'synchronous-query))
+  (orgtrello-query/http-trello (orgtrello-api/get-lists board-id) 'sync))
 
 (defun orgtrello-controller/--board! (board-id)
   "Return the board with id board-id. (Synchronous request)"
-  (orgtrello-query/http-trello (orgtrello-api/get-board board-id) 'synchronous-query))
+  (orgtrello-query/http-trello (orgtrello-api/get-board board-id) 'sync))
 
 (defun orgtrello-controller/--index-board-map (boards)
   "Given BOARDS, a map of board (id . name), return a map of (position . name)."
@@ -460,7 +460,7 @@ SYNC flag permit to synchronize the http query."
 (defun orgtrello-controller/--user-logged-in! ()
   "Compute the current user."
   (-> (orgtrello-api/get-me)
-    (orgtrello-query/http-trello 'synchronous-query)
+    (orgtrello-query/http-trello 'sync)
     orgtrello-data/entity-username))
 
 (defun orgtrello-controller/do-install-board-and-lists ()
@@ -496,13 +496,13 @@ SYNC flag permit to synchronize the http query."
   "Compute board users' informations."
   (--> board-id
     (orgtrello-api/get-board it)
-    (orgtrello-query/http-trello it 'synchronous-query)
+    (orgtrello-query/http-trello it 'sync)
     (orgtrello-controller/--compute-user-properties-hash-from-board it)))
 
 (defun orgtrello-controller/--create-board (board-name &optional board-description)
   "Create a board with name BOARD-NAME and optionally a BOARD-DESCRIPTION."
   (orgtrello-log/msg *OT/INFO* "Creating board '%s'" board-name)
-  (let ((board-data (orgtrello-query/http-trello (orgtrello-api/add-board board-name board-description) 'synchronous-query)))
+  (let ((board-data (orgtrello-query/http-trello (orgtrello-api/add-board board-name board-description) 'sync)))
     (list (orgtrello-data/entity-id board-data) (orgtrello-data/entity-name board-data))))
 
 (defun orgtrello-controller/--close-lists (list-ids)
