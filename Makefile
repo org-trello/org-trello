@@ -2,6 +2,7 @@ VERSION=$$(grep "^;; Version: " org-trello.el | cut -f3 -d' ')
 PACKAGE_FOLDER=org-trello-$(VERSION)
 ARCHIVE=$(PACKAGE_FOLDER).tar
 EMACS=emacs
+LOG_TEST_FILE=./run-org-trello-tests.log
 
 .PHONY: clean
 
@@ -28,7 +29,11 @@ test: clean
 	cask exec $(EMACS) --batch \
 			-l ert \
 			-l ./launch-tests.el \
-			-f ert-run-tests-batch-and-exit
+			-f ert-run-tests-batch-and-exit \
+	  2>&1 | tee $(LOG_TEST_FILE)
+
+test-log:
+	less $(LOG_TEST_FILE)
 
 pkg-file:
 	cask pkg-file
