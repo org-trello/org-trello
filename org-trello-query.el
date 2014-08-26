@@ -31,7 +31,8 @@ Simply displays an error message in the minibuffer with the error code."
   "Standard success callback with expects a RESPONSE.
 Simply displays a success message in the minibuffer."
   (let ((data (request-response-data response)))
-    (orgtrello-log/msg *OT/DEBUG* "client - Proxy received and acknowledged the request%s" (if data (format " - response data: %S." data) "."))))
+    (orgtrello-log/msg *OT/DEBUG* "Response: %S" response)
+    (orgtrello-log/msg *OT/DEBUG* "Data: %S" data)))
 
 (defun orgtrello-query/--authentication-params ()
   "Generate the list of http authentication parameters."
