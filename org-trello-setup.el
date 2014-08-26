@@ -94,7 +94,7 @@
 (defconst *ORGTRELLO/BOARD-NAME* "board-name"
   "Org-trello property board-name entry.")
 
-(defvar *ORGTRELLO/LIST-NAMES* nil
+(defvar *ORGTRELLO/ORG-KEYWORD-TRELLO-LIST-NAMES* nil
   "Org-trello property names of the different lists.
 This use the standard 'org-todo-keywords property from 'org-mode'.")
 
@@ -110,7 +110,7 @@ This use the standard 'org-todo-keywords property from 'org-mode'.")
 ;; make variable buffer-local
 (mapc (lambda (var)
         (make-variable-buffer-local var))
-      '(*ORGTRELLO/LIST-NAMES*
+      '(*ORGTRELLO/ORG-KEYWORD-TRELLO-LIST-NAMES*
         *ORGTRELLO/HMAP-LIST-ORGKEYWORD-ID-NAME*
         *ORGTRELLO/HMAP-USERS-ID-NAME*
         *ORGTRELLO/HMAP-USERS-NAME-ID*

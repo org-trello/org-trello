@@ -42,11 +42,11 @@ ARGS is not used."
          (org-file-properties (orgtrello-buffer/org-file-properties!))
          (org-trello-users    (orgtrello-controller/--list-user-entries org-file-properties)))
 
-    (setq *ORGTRELLO/LIST-NAMES*                   (reverse org-keywords))
-    (setq *ORGTRELLO/HMAP-LIST-ORGKEYWORD-ID-NAME* (orgtrello-controller/hmap-id-name org-keywords org-file-properties))
-    (setq *ORGTRELLO/HMAP-USERS-ID-NAME*           (orgtrello-hash/make-transpose-properties org-trello-users))
-    (setq *ORGTRELLO/HMAP-USERS-NAME-ID*           (orgtrello-hash/make-properties org-trello-users))
-    (setq *ORGTRELLO/USER-LOGGED-IN*               (orgtrello-buffer/me!))
+    (setq *ORGTRELLO/ORG-KEYWORD-TRELLO-LIST-NAMES* org-keywords)
+    (setq *ORGTRELLO/HMAP-LIST-ORGKEYWORD-ID-NAME*  (orgtrello-controller/hmap-id-name org-keywords org-file-properties))
+    (setq *ORGTRELLO/HMAP-USERS-ID-NAME*            (orgtrello-hash/make-transpose-properties org-trello-users))
+    (setq *ORGTRELLO/HMAP-USERS-NAME-ID*            (orgtrello-hash/make-properties org-trello-users))
+    (setq *ORGTRELLO/USER-LOGGED-IN*                (orgtrello-buffer/me!))
 
     (mapc (lambda (color) (add-to-list 'org-tag-alist color))
           '(("red" . ?r) ("green" . ?g) ("yellow" . ?y) ("blue" . ?b) ("purple" . ?p) ("orange" . ?o)))
@@ -64,7 +64,7 @@ ARGS is not used."
 Return :ok if ok, or the error message if problems.
 ARGS is not used."
   (let ((hmap-count (hash-table-count *ORGTRELLO/HMAP-LIST-ORGKEYWORD-ID-NAME*)))
-    (if (and (orgtrello-buffer/org-file-properties!) (orgtrello-buffer/board-id!) (= (length *ORGTRELLO/LIST-NAMES*) hmap-count))
+    (if (and (orgtrello-buffer/org-file-properties!) (orgtrello-buffer/board-id!) (= (length *ORGTRELLO/ORG-KEYWORD-TRELLO-LIST-NAMES*) hmap-count))
         :ok
       "Setup problem.\nEither you did not connect your org-mode buffer with a trello board, to correct this:\n  * attach to a board through C-c o I or M-x org-trello/install-board-and-lists-ids\n  * or create a board from scratch with C-c o b or M-x org-trello/create-board).\nEither your org-mode's todo keyword list and your trello board lists are not named the same way (which they must).\nFor this, connect to trello and rename your board's list according to your org-mode's todo list.\nAlso, you can specify on your org-mode buffer the todo list you want to work with, for example: #+TODO: TODO DOING | DONE FAIL (hit C-c C-c to refresh the setup)")))
 
@@ -533,7 +533,7 @@ Return the hashmap (name, id) of the new lists created."
              ;; close those lists (they may surely not match the name we want)
              (lists-to-close       (orgtrello-controller/--close-lists board-list-ids))
              ;; create the list, this returns the ids list
-             (board-lists-hname-id (orgtrello-controller/--create-lists-according-to-keywords board-id *ORGTRELLO/LIST-NAMES*))
+             (board-lists-hname-id (orgtrello-controller/--create-lists-according-to-keywords board-id *ORGTRELLO/ORG-KEYWORD-TRELLO-LIST-NAMES*))
              ;; retrieve user informations
              (board-users-name-id  (orgtrello-controller/--board-users-information-from-board-id! board-id))
              ;; compute the current user's information
@@ -608,7 +608,7 @@ Return the hashmap (name, id) of the new lists created."
 
 (defun orgtrello-controller/do-cleanup-from-buffer! (&optional globally-flag)
   "Permit to clean the buffer from trello data."
-  (orgtrello-controller/--remove-properties-file! *ORGTRELLO/LIST-NAMES* *ORGTRELLO/HMAP-USERS-NAME-ID* *ORGTRELLO/USER-LOGGED-IN* t) ;; remove any orgtrello relative entries
+  (orgtrello-controller/--remove-properties-file! *ORGTRELLO/ORG-KEYWORD-TRELLO-LIST-NAMES* *ORGTRELLO/HMAP-USERS-NAME-ID* *ORGTRELLO/USER-LOGGED-IN* t) ;; remove any orgtrello relative entries
   (when globally-flag
     (mapc 'orgtrello-buffer/delete-property! `(,*ORGTRELLO/ID* ,*ORGTRELLO/USERS-ENTRY* ,*ORGTRELLO/CARD-COMMENTS*))))
 
