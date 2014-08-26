@@ -91,7 +91,7 @@ Return entries updated with value if entry, entries untouched otherwise."
   (orgtrello-api/make-query "POST" "/lists/" `(("name" . ,name) ("idBoard" . ,idBoard))))
 
 (defun orgtrello-api/add-card (name idList &optional due id-members desc labels pos)
-  "Create an add a card with NAME to the list IDLIST, with optional DUE, ID-MEMBERS, DESC and LABELS query."
+  "Create an add a card with NAME to the list IDLIST, with optional DUE, ID-MEMBERS, DESC, LABELS, POS query."
   (orgtrello-api/make-query "POST" "/cards/"
                             (orgtrello-api/--deal-with-optional-values `((,id-members . ("idMembers" . ,id-members))
                                                                          (,due . ("due" . ,due))
