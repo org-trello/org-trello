@@ -13,9 +13,9 @@
 - [ ] POC: Investigate webhooks - #137
 - [ ] POC: Leverage elnode and clojurescript core.async - #97
 
-* IN-PROGRESS 0.5.3 [62%]
+* IN-PROGRESS 0.5.3 [50%]
 - [X] Backlog
-- [-] Emacs blocks when sync - #164 - Deferred the sync/delete actions [50%]
+- [-] Emacs blocks when sync - #164 - Deferred the sync/delete actions [85%]
   - [X] Align execution of code regarding [100%]
     - [X] Sync to
     - [X] Sync from
@@ -31,8 +31,8 @@
   - [X] Refactor behavior between sync card and sync buffer [100%]
     - [X] Refactor behavior
     - [X] Refactor names
-  - [ ] Trigger save after sync action
-  - [ ] Caret must remain where it stands after sync from action
+  - [X] Trigger save after sync action - cannot do this because all requests are asynchronous. So emacs will do it on his own.
+  - [ ] Caret must remain where it stands after `sync from` action
 - [X] Fix caret movement problem (At the end of an action, the caret must be at the same position as before)
 - [X] Improve logging system to prefix org-trello message with 'org-trello - '
 - [ ] Update version
