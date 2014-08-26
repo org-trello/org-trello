@@ -107,6 +107,15 @@ This use the standard 'org-todo-keywords property from 'org-mode'.")
 (defvar *ORGTRELLO/HMAP-USERS-NAME-ID* nil
   "Org-trello hash map containing for each user id, the associated name.")
 
+;; make variable buffer-local
+(mapc (lambda (var)
+        (make-variable-buffer-local var))
+      '(*ORGTRELLO/LIST-NAMES*
+        *ORGTRELLO/HMAP-LIST-ORGKEYWORD-ID-NAME*
+        *ORGTRELLO/HMAP-USERS-ID-NAME*
+        *ORGTRELLO/HMAP-USERS-NAME-ID*
+        *ORGTRELLO/USER-LOGGED-IN*))
+
 (defconst *ORGTRELLO/CONFIG-DIR*
   (concat (getenv "HOME") "/" ".trello"))
 

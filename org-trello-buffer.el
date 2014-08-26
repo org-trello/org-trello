@@ -72,8 +72,13 @@ If the VALUE is nil or empty, remove such PROPERTY."
   "Retrieve the card's comments. Can be nil if not on a card."
   (orgtrello-buffer/org-entry-put! (point) *ORGTRELLO/CARD-COMMENTS* comments))
 
+(defun orgtrello-buffer/org-get-property (property-key properties)
+  "Retrieve the PROPERTY-KEY in PROPERTIES."
+  (assoc-default property-key properties))
+
 (defun orgtrello-buffer/org-file-get-property! (property-key)
-  (assoc-default property-key (orgtrello-buffer/org-file-properties!)))
+  "Return the property key present in the org buffer."
+  (orgtrello-buffer/org-get-property property-key (orgtrello-buffer/org-file-properties!)))
 
 (defun orgtrello-buffer/board-name! ()
   "Compute the board's name"
@@ -498,7 +503,8 @@ Make it a hashmap with key :level,  :keyword,  :name and their respective value.
 
 (defun orgtrello-buffer/filtered-kwds! ()
   "org keywords used (based on org-todo-keywords-1)."
-  org-todo-keywords-1)
+  (let ((keywords org-todo-keywords-1))
+    keywords))
 
 (defun orgtrello-buffer/org-file-properties! ()
   org-file-properties)

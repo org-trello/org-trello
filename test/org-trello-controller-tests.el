@@ -255,5 +255,102 @@
       (mock (orgtrello-query/http-trello :query 'synchronous-query) => :some-result)
       (orgtrello-controller/--list-board-lists! :board-id))))
 
+(expectations
+  (expect t
+    (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
+                              ("786" "CANCELLED" "456" "FAILED" "ijk" "DONE" "abc" "TODO"))
+                (orgtrello-controller/hmap-id-name '("CANCELLED" "FAILED" "DONE" "TODO")
+                                                   '(("board-name" . "some board")
+                                                     ("board-id" . "10223")
+                                                     ("CANCELLED" . "786")
+                                                     ("FAILED" . "456")
+                                                     ("DELEGATED" . "123")
+                                                     ("PENDING" . "efg")
+                                                     ("DONE" . "ijk")
+                                                     ("IN-PROGRESS" . "def")
+                                                     ("TODO" . "abc")))))
+  (expect t
+    (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data ())
+                (orgtrello-controller/hmap-id-name '("CANCELLED" "FAILED" "DONE" "TODO")
+                                                   '())))
+  (expect t
+    (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data ())
+                (orgtrello-controller/hmap-id-name '()
+                                                   '(("board-name" . "some board")))))
+  (expect t
+    (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data ())
+                (orgtrello-controller/hmap-id-name '()
+                                                   '()))))
+
+(expectations
+  (expect
+      '("TODO" "IN-PROGRESS" "DONE" "PENDING" "DELEGATED" "FAILED" "CANCELLED")
+    (orgtrello-tests/with-temp-buffer
+     ":PROPERTIES:
+#+property: board-name api test board
+#+property: board-id abc
+#+PROPERTY: CANCELLED def
+#+PROPERTY: FAILED ijk
+#+PROPERTY: DELEGATED lmn
+#+PROPERTY: PENDING opq
+#+PROPERTY: DONE rst
+#+PROPERTY: IN-PROGRESS uvw
+#+PROPERTY: TODO xyz
+#+TODO: TODO IN-PROGRESS DONE | PENDING DELEGATED FAILED CANCELLED
+#+PROPERTY: orgtrello-user-orgmode 888
+#+PROPERTY: orgtrello-user-ardumont 999
+#+PROPERTY: :yellow yellow label
+#+PROPERTY: :red red label
+#+PROPERTY: :purple this is the purple label
+#+PROPERTY: :orange orange label
+#+PROPERTY: :green green label with & char
+#+PROPERTY: :blue
+#+PROPERTY: orgtrello-user-me ardumont
+:END:"
+     (orgtrello-buffer/filtered-kwds!))))
+
+(expectations
+  (expect
+      '(("board-name" . "api test board")
+        ("board-id" . "abc")
+        ("CANCELLED" . "def")
+        ("FAILED" . "ijk")
+        ("DELEGATED" . "lmn")
+        ("PENDING" . "opq")
+        ("DONE" . "rst")
+        ("IN-PROGRESS" . "uvw")
+        ("TODO" . "xyz")
+        ("orgtrello-user-orgmode" . "888")
+        ("orgtrello-user-ardumont" . "999")
+        (":yellow" . "yellow label")
+        (":red" . "red label")
+        (":purple" . "this is the purple label")
+        (":orange" . "orange label")
+        (":green" . "green label with & char")
+        ("orgtrello-user-me" . "ardumont"))
+    (orgtrello-tests/with-temp-buffer
+     ":PROPERTIES:
+#+property: board-name api test board
+#+property: board-id abc
+#+PROPERTY: CANCELLED def
+#+PROPERTY: FAILED ijk
+#+PROPERTY: DELEGATED lmn
+#+PROPERTY: PENDING opq
+#+PROPERTY: DONE rst
+#+PROPERTY: IN-PROGRESS uvw
+#+PROPERTY: TODO xyz
+#+TODO: TODO IN-PROGRESS DONE | PENDING DELEGATED FAILED CANCELLED
+#+PROPERTY: orgtrello-user-orgmode 888
+#+PROPERTY: orgtrello-user-ardumont 999
+#+PROPERTY: :yellow yellow label
+#+PROPERTY: :red red label
+#+PROPERTY: :purple this is the purple label
+#+PROPERTY: :orange orange label
+#+PROPERTY: :green green label with & char
+#+PROPERTY: :blue
+#+PROPERTY: orgtrello-user-me ardumont
+:END:"
+     (orgtrello-buffer/org-file-properties!))))
+
 (provide 'org-trello-controller-tests)
 ;;; org-trello-controller-tests.el ends here

@@ -21,31 +21,35 @@
   "List the users entries from PROPERTIES."
   (--filter (string-match-p *ORGTRELLO/USER-PREFIX* (car it)) properties))
 
+(defun orgtrello-controller/hmap-id-name (org-keywords properties)
+  "Given an ORG-KEYWORDS and a PROPERTIES, return a map.
+This map is a key/value of (trello-id, trello-list-name-and-org-keyword-name).
+If either org-keywords or properties is nil, return an empty hash-map."
+  (if (or (null org-keywords) (null properties))
+      (orgtrello-hash/empty-hash)
+    (--reduce-from (orgtrello-hash/puthash-data (orgtrello-buffer/org-get-property it properties) it acc)
+                   (orgtrello-hash/empty-hash)
+                   org-keywords)))
+
 (defun orgtrello-controller/setup-properties! (&optional args)
-  "Setup the properties according to the 'org-mode' setup.
+  "Setup the org-trello properties according to the 'org-mode' setup in the current buffer.
 Return :ok.
 ARGS is not used."
   ;; read the setup
   (orgtrello-action/reload-setup!)
   ;; now exploit some
-  (let* ((list-keywords (reverse (orgtrello-buffer/filtered-kwds!)))
-         (hmap-id-name (--reduce-from (orgtrello-hash/puthash-data (orgtrello-buffer/org-file-get-property! it) it acc)
-                                      (orgtrello-hash/empty-hash)
-                                      list-keywords))
-         (list-users (orgtrello-controller/--list-user-entries (orgtrello-buffer/org-file-properties!)))
-         (hmap-user-id-name (orgtrello-hash/make-transpose-properties list-users))
-         (hmap-user-name-id (orgtrello-hash/make-properties list-users)))
-    (setq *ORGTRELLO/LIST-NAMES*   list-keywords)
-    (setq *ORGTRELLO/HMAP-LIST-ORGKEYWORD-ID-NAME* hmap-id-name)
-    (setq *ORGTRELLO/HMAP-USERS-ID-NAME* hmap-user-id-name)
-    (setq *ORGTRELLO/HMAP-USERS-NAME-ID* hmap-user-name-id)
-    (setq *ORGTRELLO/USER-LOGGED-IN* (orgtrello-buffer/me!))
-    (add-to-list 'org-tag-alist '("red" . ?r))
-    (add-to-list 'org-tag-alist '("green" . ?g))
-    (add-to-list 'org-tag-alist '("yellow" . ?y))
-    (add-to-list 'org-tag-alist '("blue" . ?b))
-    (add-to-list 'org-tag-alist '("purple" . ?p))
-    (add-to-list 'org-tag-alist '("orange" . ?o))
+  (let* ((org-keywords        (orgtrello-buffer/filtered-kwds!))
+         (org-file-properties (orgtrello-buffer/org-file-properties!))
+         (org-trello-users    (orgtrello-controller/--list-user-entries org-file-properties)))
+
+    (setq *ORGTRELLO/LIST-NAMES*                   (reverse org-keywords))
+    (setq *ORGTRELLO/HMAP-LIST-ORGKEYWORD-ID-NAME* (orgtrello-controller/hmap-id-name org-keywords org-file-properties))
+    (setq *ORGTRELLO/HMAP-USERS-ID-NAME*           (orgtrello-hash/make-transpose-properties org-trello-users))
+    (setq *ORGTRELLO/HMAP-USERS-NAME-ID*           (orgtrello-hash/make-properties org-trello-users))
+    (setq *ORGTRELLO/USER-LOGGED-IN*               (orgtrello-buffer/me!))
+
+    (mapc (lambda (color) (add-to-list 'org-tag-alist color))
+          '(("red" . ?r) ("green" . ?g) ("yellow" . ?y) ("blue" . ?b) ("purple" . ?p) ("orange" . ?o)))
     :ok))
 
 (defun orgtrello-controller/control-encoding! (&optional args)
@@ -372,14 +376,14 @@ SYNC flag permit to synchronize the http query."
              users-hash-name-id)
     res-list))
 
-(defun orgtrello-controller/--remove-properties-file! (list-keywords users-hash-name-id user-me &optional update-todo-keywords)
+(defun orgtrello-controller/--remove-properties-file! (org-keywords users-hash-name-id user-me &optional update-todo-keywords)
   "Remove the current org-trello header metadata."
   (with-current-buffer (current-buffer)
     ;; compute the list of properties to purge
     (->> `(":PROPERTIES"
            ,(orgtrello-controller/compute-property *ORGTRELLO/BOARD-NAME*)
            ,(orgtrello-controller/compute-property *ORGTRELLO/BOARD-ID*)
-           ,@(--map (orgtrello-controller/compute-property (orgtrello-controller/--convention-property-name it)) list-keywords)
+           ,@(--map (orgtrello-controller/compute-property (orgtrello-controller/--convention-property-name it)) org-keywords)
            ,@(orgtrello-controller/--compute-hash-name-id-to-list users-hash-name-id)
            ,(orgtrello-controller/compute-property *ORGTRELLO/USER-ME* user-me)
            ,(when update-todo-keywords "#+TODO: ")
@@ -512,14 +516,14 @@ SYNC flag permit to synchronize the http query."
           (orgtrello-query/http-trello (orgtrello-api/close-list list-id)))
         list-ids))
 
-(defun orgtrello-controller/--create-lists-according-to-keywords (board-id list-keywords)
+(defun orgtrello-controller/--create-lists-according-to-keywords (board-id org-keywords)
   "For the BOARD-ID, create the list names from LIST-KEYWORDS.
 Return the hashmap (name, id) of the new lists created."
   (--reduce-from (progn
                    (orgtrello-log/msg *OT/INFO* "Board id %s - Creating list '%s'" board-id it)
                    (orgtrello-hash/puthash-data it (orgtrello-data/entity-id (orgtrello-query/http-trello (orgtrello-api/add-list it board-id) 'synchronous-query)) acc))
                  (orgtrello-hash/empty-hash)
-                 list-keywords))
+                 org-keywords))
 
 (defun orgtrello-controller/do-create-board-and-lists ()
   "Command to create a board and the lists."
