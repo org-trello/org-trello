@@ -45,6 +45,10 @@ If FILTER is specified, this will filter on this."
                                                              ("lists" . "open")
                                                              ("fields" . "name,memberships,closed,labelNames"))))
 
+(defun orgtrello-api/close-board (board-id)
+  "Close a board with id BOARD-ID."
+  (orgtrello-api/make-query "PUT" (format "/boards/%s/closed" board-id) '(("value" . "true"))))
+
 (defun orgtrello-api/get-members (board-id)
   "Retrieve the memberships from a BOARD-ID."
   (orgtrello-api/make-query "GET" (format "/boards/%s/members" board-id)))
