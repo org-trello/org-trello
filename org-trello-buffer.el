@@ -317,7 +317,14 @@ If REGION-END is specified, will work on the region (current-point, REGION-END),
   (push-mark region-end)
   (setq mark-active t))
 
-(defun orgtrello-buffer/compute-entities-from-org-buffer! (buffer-name &optional region-start region-end)
+(defun orgtrello-buffer/build-org-card-structure! (buffer-name)
+  "Build the card structure on the current BUFFER-NAME at current point.
+No synchronization is done."
+  (->> (orgtrello-buffer/compute-card-region!)
+    (cons buffer-name)
+    (apply 'orgtrello-buffer/build-org-entities!)))
+
+(defun orgtrello-buffer/build-org-entities! (buffer-name &optional region-start region-end)
   "Compute the current entities hash from the BUFFER-NAME.
 Return the list of entities map and adjacency map in this order.
 If REGION-START and REGION-END are provided, this will work on such defined region."

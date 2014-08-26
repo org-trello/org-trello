@@ -126,14 +126,14 @@ SYNC is not used."
   ;; in any case, we need to show the subtree, otherwise https://github.com/org-trello/org-trello/issues/53
   (org-show-subtree)
   (-> (current-buffer)
-    orgtrello-controller/build-card-structure!
+    orgtrello-buffer/build-org-card-structure!
     orgtrello-controller/execute-sync-entity-structure!))
 
-(defun orgtrello-controller/do-sync-full-file-to-trello! ()
+(defun orgtrello-controller/do-sync-buffer-to-trello! ()
   "Full org-mode file synchronisation."
   (orgtrello-log/msg *OT/WARN* "Synchronizing org-mode file to the board '%s'. This may take some time, some coffee may be a good idea..." (orgtrello-buffer/board-name!))
   (-> (current-buffer)
-    orgtrello-buffer/compute-entities-from-org-buffer!
+    orgtrello-buffer/build-org-entities!
     orgtrello-controller/execute-sync-entity-structure!))
 
 (defun orgtrello-controller/--sync-buffer-with-trello-data (data)
@@ -163,14 +163,14 @@ Does not preserve position."
   "Synchronize the buffer BUFFER-NAME with the TRELLO-CARDS."
   (with-local-quit
     (with-current-buffer buffer-name
-      (let ((entities-from-org-buffer (orgtrello-buffer/compute-entities-from-org-buffer! buffer-name)))
+      (let ((entities-from-org-buffer (orgtrello-buffer/build-org-entities! buffer-name)))
         (-> trello-cards
           orgtrello-backend/compute-org-trello-card-from
           (orgtrello-data/merge-entities-trello-and-org entities-from-org-buffer)
           ((lambda (entry) (orgtrello-controller/--cleanup-org-entries) entry))   ;; hack to clean the org entries just before synchronizing the buffer
           orgtrello-controller/--sync-buffer-with-trello-data)))))
 
-(defun orgtrello-controller/do-sync-full-file-from-trello! ()
+(defun orgtrello-controller/do-sync-buffer-from-trello! ()
   "Full org-mode file synchronisation. Beware, this will block emacs as the request is synchronous."
   (orgtrello-log/msg *OT/INFO* "Synchronizing the trello board '%s' to the org-mode file. This may take a moment, some coffee may be a good idea..." (orgtrello-buffer/board-name!))
   (lexical-let ((buffer-name (current-buffer)))
@@ -192,13 +192,6 @@ Does not preserve position."
               (orgtrello-log/msg *OT/INFO* "Sync buffer '%s' from trello done!" buffer-name)))
           (deferred:error it
             (lambda (err) (orgtrello-log/msg *OT/ERROR* "Sync buffer from trello - Catch error: %S" err))))))))
-
-(defun orgtrello-controller/build-card-structure! (buffer-name)
-  "Build the card structure on the current BUFFER-NAME at current point.
-No synchronization is done."
-  (->> (orgtrello-buffer/compute-card-region!)
-    (cons buffer-name)
-    (apply 'orgtrello-buffer/compute-entities-from-org-buffer!)))
 
 (defun orgtrello-controller/execute-sync-entity-structure! (entity-structure)
   "Execute synchronization of ENTITY-STRUCTURE (entities at first position, adjacency list in second position).
@@ -225,7 +218,7 @@ Along the way, the buffer BUFFER-NAME is written with new informations."
     (with-current-buffer buffer-name
       (let* ((card-id                  (orgtrello-data/entity-id trello-card))
              (region                   (orgtrello-buffer/compute-card-region!))
-             (entities-from-org-buffer (apply 'orgtrello-buffer/compute-entities-from-org-buffer! (cons buffer-name region)))
+             (entities-from-org-buffer (apply 'orgtrello-buffer/build-org-entities! (cons buffer-name region)))
              (entities-from-trello     (orgtrello-backend/compute-org-trello-card-from (list trello-card)))
              (merged-entities          (orgtrello-data/merge-entities-trello-and-org entities-from-trello entities-from-org-buffer))
              (entities                 (car merged-entities))

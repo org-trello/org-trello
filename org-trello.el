@@ -195,8 +195,8 @@ If MODIFIER is non nil, execute the sync of the entire buffer from trello."
   (org-trello/apply-deferred
    (cons 'org-trello/log-strict-checks-and-do
          (if modifier
-             '("Request 'sync org buffer from trello board'" orgtrello-controller/do-sync-full-file-from-trello!)
-           '("Request 'sync org buffer to trello board'" orgtrello-controller/do-sync-full-file-to-trello!)))))
+             '("Request 'sync org buffer from trello board'" orgtrello-controller/do-sync-buffer-from-trello!)
+           '("Request 'sync org buffer to trello board'" orgtrello-controller/do-sync-buffer-to-trello!)))))
 
 (defun org-trello/kill-entity (&optional modifier)
   "Execute the entity removal from trello and the buffer.
