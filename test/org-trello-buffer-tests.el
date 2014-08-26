@@ -338,43 +338,6 @@ some old description
 #+PROPERTY: orgtrello-user-ardumont ardumont-id
 #+PROPERTY: orgtrello-user-dude dude-id
 :END:
-
-* TODO some old card name
-  :PROPERTIES:
-  :orgtrello-id: some-id
-  :orgtrello-users: ardumont,dude
-  :orgtrello-card-comments:
-  :END:
-some old description
-- [ ] some old checklist name
-  - [X] some item name :PROPERTIES: {\"orgtrello-id\":\"some-item-id\"}
-"
-    (orgtrello-tests/with-temp-buffer-and-return-buffer-content
-     ":PROPERTIES:
-#+PROPERTY: orgtrello-user-ardumont ardumont-id
-#+PROPERTY: orgtrello-user-dude dude-id
-:END:
-
-* TODO some old card name
-  :PROPERTIES:
-  :orgtrello-id: some-id
-  :orgtrello-users: ardumont,dude
-  :orgtrello-card-comments:
-  :END:
-some old description
-- [ ] some old checklist name
-  - [ ] some old item\n"
-     (orgtrello-buffer/overwrite-item! (orgtrello-hash/make-properties `((:checked . "complete")
-                                                                         (:level . ,*ORGTRELLO/ITEM-LEVEL*)
-                                                                         (:name . "some item name")
-                                                                         (:id . "some-item-id"))))
-     -1)))
-
-(expectations
-  (expect ":PROPERTIES:
-#+PROPERTY: orgtrello-user-ardumont ardumont-id
-#+PROPERTY: orgtrello-user-dude dude-id
-:END:
 * TODO some card name
   :PROPERTIES:
   :orgtrello-id: some-card-id
