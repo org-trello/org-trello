@@ -13,7 +13,7 @@
 - [ ] POC: Investigate webhooks - #137
 - [ ] POC: Leverage elnode and clojurescript core.async - #97
 
-* IN-PROGRESS 0.5.3 [83%]
+* IN-PROGRESS 0.5.3 [91%]
 - [X] Backlog
 - [X] Emacs blocks when sync - #164 - Deferred the sync/delete actions [100%]
   - [X] Align execution of code regarding [100%]
@@ -55,7 +55,7 @@
 - [X] Update package doc installation in org-trello.el
 - [X] Check package dependencies and adapt them if need be
 - [X] Fix problem with org-trello/end-of-line! when there is no org information at point
-- [ ] Update version
+- [X] Update version
 - [ ] Release notes
 * DONE 0.5.2 [100%]
 CLOSED: [2014-08-21 Thu 03:41]
