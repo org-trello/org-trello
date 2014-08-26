@@ -214,7 +214,7 @@ Along the way, the buffer BUFFER-NAME is written with new informations."
 
     (-> card-computations
       nreverse
-      (orgtrello-proxy/execute-sync-computations "card(s) sync ok!" "FAILURE! cards(s) sync KO!"))))
+      (orgtrello-proxy/execute-async-computations "card(s) sync ok!" "FAILURE! cards(s) sync KO!"))))
 
 (defun orgtrello-controller/compute-and-overwrite-card! (buffer-name trello-card)
   (with-local-quit
@@ -507,10 +507,12 @@ SYNC flag permit to synchronize the http query."
 
 (defun orgtrello-controller/--close-lists (list-ids)
   "Given a list of ids LIST-IDS, close those lists."
-  (mapc (lambda (list-id)
-          (orgtrello-log/msg *OT/INFO* "Closing default list with id %s" list-id)
-          (orgtrello-query/http-trello (orgtrello-api/close-list list-id)))
-        list-ids))
+  (orgtrello-proxy/execute-async-computations
+   (--map (lexical-let ((list-id it))
+            (orgtrello-query/http-trello (orgtrello-api/close-list it) nil (lambda (response) (orgtrello-log/msg *OT/INFO* "Closed list with id %s" list-id)) (lambda ())))
+         list-ids)
+   "List(s) closed."
+   "FAILURE - Problem during closing list."))
 
 (defun orgtrello-controller/--create-lists-according-to-keywords (board-id org-keywords)
   "For the BOARD-ID, create the list names from ORG-KEYWORDS.

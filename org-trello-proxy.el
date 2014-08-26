@@ -33,7 +33,7 @@ Move the cursor position."
       goto-ok
     (orgtrello-proxy/--getting-back-to-headline data)))
 
-(defun orgtrello-proxy/execute-sync-computations (computations log-ok log-ko)
+(defun orgtrello-proxy/execute-async-computations (computations log-ok log-ko)
   "Compute the deferred COMPUTATIONS.
 Display LOG-OK or LOG-KO depending on the result."
   (eval `(deferred:$
