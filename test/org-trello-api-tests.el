@@ -16,6 +16,12 @@
   (expect nil                  (gethash :params (orgtrello-api/get-boards))))
 
 (expectations
+  (desc "testing orgtrello-api/get-boards")
+  (expect "GET"                  (gethash :method (orgtrello-api/get-boards "open")))
+  (expect "/members/me/boards/"  (gethash :uri    (orgtrello-api/get-boards "open")))
+  (expect '(("filter" . "open")) (gethash :params (orgtrello-api/get-boards "open"))))
+
+(expectations
   (desc "testing orgtrello-api/get-board")
   (expect "GET"                                                                                                           (gethash :method (orgtrello-api/get-board :id)))
   (expect "/boards/:id"                                                                                                   (gethash :uri    (orgtrello-api/get-board :id)))

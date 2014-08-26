@@ -314,7 +314,7 @@ SYNC flag permit to synchronize the http query."
 
 (defun orgtrello-controller/--list-boards! ()
   "Return the map of the existing boards associated to the current account. (Synchronous request)"
-  (--remove (orgtrello-data/entity-closed it) (orgtrello-query/http-trello (orgtrello-api/get-boards) 'sync)))
+  (orgtrello-query/http-trello (orgtrello-api/get-boards "open") 'sync))
 
 (defun orgtrello-controller/--list-board-lists! (board-id)
   "Return the map of the existing list of the board with id board-id. (Synchronous request)"

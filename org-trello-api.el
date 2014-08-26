@@ -32,9 +32,12 @@ Return entries updated with value if entry, entries untouched otherwise."
   "Create a board query from NAME and optional DESCRIPTION."
   (orgtrello-api/make-query "POST" "/boards" (orgtrello-api/--deal-with-optional-value description `("desc" . ,description) `(("name" . ,name)))))
 
-(defun orgtrello-api/get-boards ()
-  "Create a retrieve boards of the current user query."
-  (orgtrello-api/make-query "GET" "/members/me/boards"))
+(defun orgtrello-api/get-boards (&optional filter)
+  "Retrieve the current boards of the user.
+If FILTER is specified, this will filter on this."
+  (if filter
+      (orgtrello-api/make-query "GET" "/members/me/boards/" `(("filter" . ,filter)))
+    (orgtrello-api/make-query "GET" "/members/me/boards")))
 
 (defun orgtrello-api/get-board (id)
   "Create a retrieve board with board ID query."
