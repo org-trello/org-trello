@@ -163,12 +163,13 @@ Does not preserve position."
   "Synchronize the buffer BUFFER-NAME with the TRELLO-CARDS."
   (with-local-quit
     (with-current-buffer buffer-name
-      (let ((entities-from-org-buffer (orgtrello-buffer/build-org-entities! buffer-name)))
-        (-> trello-cards
-          orgtrello-backend/compute-org-trello-card-from
-          (orgtrello-data/merge-entities-trello-and-org entities-from-org-buffer)
-          ((lambda (entry) (orgtrello-controller/--cleanup-org-entries) entry))   ;; hack to clean the org entries just before synchronizing the buffer
-          orgtrello-controller/--sync-buffer-with-trello-data)))))
+      (save-excursion
+        (let ((entities-from-org-buffer (orgtrello-buffer/build-org-entities! buffer-name)))
+          (-> trello-cards
+            orgtrello-backend/compute-org-trello-card-from
+            (orgtrello-data/merge-entities-trello-and-org entities-from-org-buffer)
+            ((lambda (entry) (orgtrello-controller/--cleanup-org-entries) entry))   ;; hack to clean the org entries just before synchronizing the buffer
+            orgtrello-controller/--sync-buffer-with-trello-data))))))
 
 (defun orgtrello-controller/do-sync-buffer-from-trello! ()
   "Full org-mode file synchronisation. Beware, this will block emacs as the request is synchronous."
