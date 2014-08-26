@@ -113,6 +113,12 @@ Please consider upgrading Emacs." emacs-version) "Error message when installing 
 
 
 
+(defun org-trello/apply-deferred (computation)
+  "Apply the deferred COMPUTATION."
+  (with-current-buffer (current-buffer)
+    (save-excursion
+      (apply (car computation) (cdr computation)))))
+
 (defun org-trello/apply (comp &optional current-buffer-to-save reload-org-setup nolog-p)
   "Apply org-trello computation COMP.
 When CURRENT-BUFFER-TO-SAVE (buffer name) is provided, save such buffer.
@@ -176,40 +182,36 @@ If NO-CHECK-FLAG is set, no controls are done."
   "Execute the sync of an entity and its structure to trello.
 If MODIFIER is non nil, execute the sync entity and its structure from trello."
   (interactive "P")
-  (org-trello/apply (cons 'org-trello/log-strict-checks-and-do
-                          (if modifier
-                              '("Request 'sync entity with structure from trello" orgtrello-controller/do-sync-card-from-trello!)
-                            '("Request 'sync entity with structure to trello" orgtrello-controller/do-sync-card-to-trello!)))
-                    (current-buffer)
-                    nil
-                    'nolog))
+  (org-trello/apply-deferred
+   (cons 'org-trello/log-strict-checks-and-do
+         (if modifier
+             '("Request 'sync entity with structure from trello" orgtrello-controller/do-sync-card-from-trello!)
+           '("Request 'sync entity with structure to trello" orgtrello-controller/do-sync-card-to-trello!)))))
 
 (defun org-trello/sync-buffer (&optional modifier)
   "Execute the sync of the entire buffer to trello.
 If MODIFIER is non nil, execute the sync of the entire buffer from trello."
   (interactive "P")
-  (org-trello/apply (cons 'org-trello/log-strict-checks-and-do
-                          (if modifier
-                              '("Request 'sync org buffer from trello board'" orgtrello-controller/do-sync-full-file-from-trello!)
-                            '("Request 'sync org buffer to trello board'" orgtrello-controller/do-sync-full-file-to-trello!)))
-                    (current-buffer)
-                    nil
-                    'nolog))
+  (org-trello/apply-deferred
+   (cons 'org-trello/log-strict-checks-and-do
+         (if modifier
+             '("Request 'sync org buffer from trello board'" orgtrello-controller/do-sync-full-file-from-trello!)
+           '("Request 'sync org buffer to trello board'" orgtrello-controller/do-sync-full-file-to-trello!)))))
 
 (defun org-trello/kill-entity (&optional modifier)
   "Execute the entity removal from trello and the buffer.
 If MODIFIER is non nil, execute all entities removal from trello and buffer."
   (interactive "P")
-  (org-trello/apply (cons 'org-trello/log-strict-checks-and-do
-                          (if modifier
-                              '("Request - 'delete entities'" orgtrello-controller/do-delete-entities)
-                            '("Request 'delete entity'" orgtrello-controller/do-delete-simple)))
-                    (current-buffer)))
+  (org-trello/apply-deferred
+   (cons 'org-trello/log-strict-checks-and-do
+         (if modifier
+             '("Request - 'delete entities'" orgtrello-controller/do-delete-entities)
+           '("Request 'delete entity'" orgtrello-controller/do-delete-simple)))))
 
 (defun org-trello/kill-cards ()
   "Execute all entities removal from trello and buffer."
   (interactive)
-  (org-trello/apply '(org-trello/log-strict-checks-and-do "Request - 'delete entities'" orgtrello-controller/do-delete-entities) (current-buffer)))
+  (org-trello/apply-deferred '(org-trello/log-strict-checks-and-do "Request - 'delete entities'" orgtrello-controller/do-delete-entities)))
 
 (defun org-trello/install-key-and-token ()
   "No control, trigger the setup installation of the key and the read/write token."
