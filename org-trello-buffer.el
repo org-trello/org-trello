@@ -512,7 +512,7 @@ Make it a hashmap with key :level,  :keyword,  :name and their respective value.
 (defun orgtrello-buffer/filtered-kwds! ()
   "org keywords used (based on org-todo-keywords-1)."
   (let ((keywords org-todo-keywords-1))
-    keywords))
+    (nreverse (reverse keywords))))
 
 (defun orgtrello-buffer/org-file-properties! ()
   (let ((org-trello-file-properties org-file-properties))
