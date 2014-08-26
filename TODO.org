@@ -13,9 +13,9 @@
 - [ ] POC: Investigate webhooks - #137
 - [ ] POC: Leverage elnode and clojurescript core.async - #97
 
-* IN-PROGRESS 0.5.3 [75%]
+* IN-PROGRESS 0.5.3 [83%]
 - [X] Backlog
-- [-] Emacs blocks when sync - #164 - Deferred the sync/delete actions [92%]
+- [X] Emacs blocks when sync - #164 - Deferred the sync/delete actions [100%]
   - [X] Align execution of code regarding [100%]
     - [X] Sync to
     - [X] Sync from
@@ -43,11 +43,10 @@
     - [X] Rework the sequencing
     - [X] Remove intermediary sync request
   - [X] Clean new dead code
-  - [-] Improve orgtrello-controller/do-create-board-and-lists [50%]
+  - [X] Improve orgtrello-controller/do-create-board-and-lists [100%]
     - [X] Rename org-trello/create-board to org-trello/create-board-and-install-metadata
     - [X] Resequence the trello requests
-    - [ ] Some refactoring
-    - [ ] Clean up some dead code
+    - [X] Clean up some dead code
 - [X] Fix caret movement problem (At the end of an action, the caret must be at the same position as before)
 - [X] Improve logging system to prefix org-trello message with 'org-trello - '
 - [X] Fix create board issue (regarding org keyword list + order + closing list)

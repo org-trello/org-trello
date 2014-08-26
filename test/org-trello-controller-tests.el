@@ -92,23 +92,6 @@
                                                                       #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
                                                                                     (:username "orgmode" :full-name "org trello" :id "5203a0c833fc36360800177f")))))))
 
-(expectations (desc "orgtrello-controller/--compute-user-properties-hash-from-board")
-  (expect t (hash-equal
-             #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
-                           ("ardumont" "4f2baa2f72b7c1293501cad3"
-                            "orgmode" "5203a0c833fc36360800177f"))
-             (orgtrello-controller/--compute-user-properties-hash-from-board #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
-                                                                                (:closed nil :memberships
-                                                                                         (#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
-                                                                                                        (:member #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
-                                                                                                                               (:username "ardumont" :full-name "Antoine R. Dumont" :id "4f2baa2f72b7c1293501cad3"))
-                                                                                                                 :id "51d99bbc1e1d8988390047f6"))
-                                                                                            #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
-                                                                                                          (:member #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
-                                                                                                                                 (:username "orgmode" :full-name "org trello" :id "5203a0c833fc36360800177f"))
-                                                                                                                   :id "524855ff8193aec160002cfa")))
-                                                                                         :name "api test board" :id "51d99bbc1e1d8988390047f2"))))))
-
 (expectations (desc "orgtrello-controller/--list-user-entries")
  (expect
   '(("orgtrello-user-ardumont" . "4f2baa2f72b7c1293501cad3") ("orgtrello-user-orgmode" . "5203a0c833fc36360800177f"))

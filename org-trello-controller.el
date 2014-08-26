@@ -510,20 +510,6 @@ This returns the identifier of such board."
   "Compute user's properties from USER-PROPERTIES."
   (--reduce-from (orgtrello-hash/puthash-data (orgtrello-data/entity-username it) (orgtrello-data/entity-id it) acc) (orgtrello-hash/empty-hash) user-properties))
 
-(defun orgtrello-controller/--compute-user-properties-hash-from-board (board-info)
-  "Compute user properties given board's informations BOARD-INFO."
-  (->> board-info
-    orgtrello-data/entity-memberships
-    orgtrello-controller/--compute-user-properties
-    orgtrello-controller/--compute-user-properties-hash))
-
-(defun orgtrello-controller/--board-users-information-from-board-id! (board-id)
-  "Compute board users' informations."
-  (--> board-id
-    (orgtrello-api/get-board it)
-    (orgtrello-query/http-trello it 'sync)
-    (orgtrello-controller/--compute-user-properties-hash-from-board it)))
-
 (defun orgtrello-controller/--create-board (board-name &optional board-description)
   "Create a board with name BOARD-NAME and optionally a BOARD-DESCRIPTION."
   (orgtrello-log/msg *OT/INFO* "Creating board '%s' with description '%s'" board-name board-description)
