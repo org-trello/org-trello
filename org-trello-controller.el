@@ -320,10 +320,6 @@ SYNC flag permit to synchronize the http query."
   "Return the map of the existing list of the board with id board-id. (Synchronous request)"
   (orgtrello-query/http-trello (orgtrello-api/get-lists board-id) 'sync))
 
-(defun orgtrello-controller/--board! (board-id)
-  "Return the board with id board-id. (Synchronous request)"
-  (orgtrello-query/http-trello (orgtrello-api/get-board board-id) 'sync))
-
 (defun orgtrello-controller/--index-board-map (boards)
   "Given BOARDS, a map of board (id . name), return a map of (position . name)."
   (let ((i               0)
@@ -653,12 +649,6 @@ Return the hashmap (name, id) of the new lists created."
   (orgtrello-controller/--remove-properties-file! *ORGTRELLO/ORG-KEYWORD-TRELLO-LIST-NAMES* *ORGTRELLO/HMAP-USERS-NAME-ID* *ORGTRELLO/USER-LOGGED-IN* t) ;; remove any orgtrello relative entries
   (when globally-flag
     (mapc 'orgtrello-buffer/delete-property! `(,*ORGTRELLO/ID* ,*ORGTRELLO/USERS-ENTRY* ,*ORGTRELLO/CARD-COMMENTS*))))
-
-(defun orgtrello-controller/--board-users-information-from-board-memberships (board-memberships)
-  "Compute board users' informations from the BOARD-MEMBERSHIPS."
-  (->> board-memberships
-    orgtrello-controller/--compute-user-properties
-    orgtrello-controller/--compute-user-properties-hash))
 
 (defun orgtrello-controller/do-write-board-metadata! (board-id board-name user-logged-in board-lists board-labels board-users-name-id)
   "Given a board id, write in the current buffer the updated data."
