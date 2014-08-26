@@ -284,12 +284,25 @@ SYNC flag permit to synchronize the http query."
 
 (defun orgtrello-controller/do-install-key-and-token ()
   "Procedure to install the *consumer-key* and the token for the user in the config-file."
-  (browse-url (org-trello/compute-url "/1/appKey/generate"))
-  (let ((consumer-key (read-string "Consumer key: ")))
-    (browse-url (org-trello/compute-url (format "/1/authorize?response_type=token&name=org-trello&scope=read,write&expiration=never&key=%s" consumer-key)))
-    (let ((access-token (read-string "Access token: ")))
-      (orgtrello-controller/--do-install-config-file consumer-key access-token)
-      "Install key and read/write access token done!")))
+  (deferred:$
+    (deferred:next
+      (lambda () (browse-url (org-trello/compute-url "/1/appKey/generate"))))
+    (deferred:nextc it
+      (lambda ()
+        (let ((consumer-key (read-string "Consumer key: ")))
+          (browse-url (org-trello/compute-url (format "/1/authorize?response_type=token&name=org-trello&scope=read,write&expiration=never&key=%s" consumer-key)))
+          consumer-key)))
+    (deferred:nextc it
+      (lambda (consumer-key)
+        (orgtrello-log/msg *OT/DEBUG* "consumer-key: %S" consumer-key)
+        (let ((access-token (read-string "Access token: ")))
+          `(,consumer-key ,access-token))))
+    (deferred:nextc it
+      (lambda (consumer-key-and-access-token)
+        (orgtrello-log/msg *OT/DEBUG* "consumer-key-and-access-token: %S" consumer-key-and-access-token)
+        (apply 'orgtrello-controller/--do-install-config-file consumer-key-and-access-token)))
+    (deferred:nextc it
+      (lambda () (orgtrello-log/msg *OT/INFO* "Setup key and token done!")))))
 
 (defun orgtrello-controller/--id-name (entities)
   "Given a list of ENTITIES, return a map of (id, name)."
