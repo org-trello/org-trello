@@ -460,8 +460,7 @@ This returns the identifier of such board."
 (defun orgtrello-controller/--user-logged-in! ()
   "Compute the current user."
   (-> (orgtrello-api/get-me)
-    (orgtrello-query/http-trello 'sync)
-    orgtrello-data/entity-username))
+    (orgtrello-query/http-trello 'sync)))
 
 (defun orgtrello-controller/do-install-board-and-lists ()
   "Command to install the list boards."
@@ -475,7 +474,7 @@ This returns the identifier of such board."
       (deferred:nextc it
         (lambda (boards-and-user-logged-in)
           (let* ((boards         (elt boards-and-user-logged-in 0))
-                 (user-logged-in (elt boards-and-user-logged-in 1))
+                 (user-logged-in (orgtrello-data/entity-username (elt boards-and-user-logged-in 1)))
                  (selected-id-board (->> boards
                                       orgtrello-controller/--id-name
                                       orgtrello-controller/choose-board!)))
@@ -527,9 +526,8 @@ This returns the identifier of such board."
 
 (defun orgtrello-controller/--create-board (board-name &optional board-description)
   "Create a board with name BOARD-NAME and optionally a BOARD-DESCRIPTION."
-  (orgtrello-log/msg *OT/INFO* "Creating board '%s'" board-name)
-  (let ((board-data (orgtrello-query/http-trello (orgtrello-api/add-board board-name board-description) 'sync)))
-    (list (orgtrello-data/entity-id board-data) (orgtrello-data/entity-name board-data))))
+  (orgtrello-log/msg *OT/INFO* "Creating board '%s' with description '%s'" board-name board-description)
+  (orgtrello-query/http-trello (orgtrello-api/add-board board-name board-description) 'sync))
 
 (defun orgtrello-controller/--close-lists (list-ids)
   "Given a list of ids LIST-IDS, close those lists."
@@ -551,35 +549,67 @@ Return the hashmap (name, id) of the new lists created."
                   (list (orgtrello-hash/empty-hash) 1)
                   org-keywords)))
 
-(defun orgtrello-controller/do-create-board-and-lists ()
+(defun orgtrello-controller/do-create-board-and-install-metadata ()
   "Command to create a board and the lists."
-  ;; now exploit some
-  (let ((input-board-name        (orgtrello-input/read-not-empty! "Please, input the desired board name: "))
-        (input-board-description (read-string "Please, input the board description (empty for none): ")))
-    (cl-destructuring-bind (board-id board-name) (orgtrello-controller/--create-board input-board-name input-board-description)
-      (let* ((org-keywords         (orgtrello-buffer/filtered-kwds!))
-             ;; first retrieve the existing lists (created by default on trello)
-             (board-list-ids       (mapcar 'orgtrello-data/entity-id (orgtrello-controller/--list-board-lists! board-id)))
-             ;; close those lists (they may surely not match the name we want)
-             (lists-to-close       (orgtrello-controller/--close-lists board-list-ids))
-             ;; create the list, this returns the ids list
-             (board-lists-hname-id (orgtrello-controller/--create-lists-according-to-keywords board-id org-keywords))
-             ;; retrieve user informations
-             (board-users-name-id  (orgtrello-controller/--board-users-information-from-board-id! board-id))
-             ;; compute the current user's information
-             (user-logged-in       (orgtrello-controller/--user-logged-in!)))
-        ;; clean the buffer's old metadata
-        (orgtrello-controller/do-cleanup-from-buffer!)
-        ;; update org buffer with new ones
-        (orgtrello-controller/--update-orgmode-file-with-properties!
-         board-name
-         board-id
-         board-lists-hname-id
-         board-users-name-id
-         user-logged-in
-         (orgtrello-hash/make-properties '((:red) (:green) (:yellow) (:purple) (:blue) (:orange)))
-         org-keywords))))
-  "Create board and lists done!")
+  (lexical-let ((org-keywords (orgtrello-buffer/filtered-kwds!))
+                (buffer-name  (current-buffer)))
+    (deferred:$
+      (deferred:next
+        (lambda ()
+          (orgtrello-log/msg *OT/DEBUG* "Input from the user.")
+          (let ((input-board-name        (orgtrello-input/read-not-empty! "Please, input the desired board name: "))
+                (input-board-description (read-string "Please, input the board description (empty for none): ")))
+            (list input-board-name input-board-description))))
+      (deferred:parallel
+        (deferred:nextc it
+          (lambda (input-board-name-and-description) ;; compute the current board's information
+            (orgtrello-log/msg *OT/DEBUG* "Create the board. - %S" input-board-name-and-description)
+            (apply 'orgtrello-controller/--create-board input-board-name-and-description)))
+        (deferred:next
+          (lambda () ;; compute the current user's information
+            (orgtrello-log/msg *OT/DEBUG* "Computer user information.")
+            (orgtrello-controller/--user-logged-in!))))
+      (deferred:nextc it
+        (lambda (board-and-user-logged-in)
+          (orgtrello-log/msg *OT/DEBUG* "Computer default board lists - %S" board-and-user-logged-in)
+          (let ((board (elt board-and-user-logged-in 0))
+                (user  (elt board-and-user-logged-in 1)))
+            (->> board
+              orgtrello-data/entity-id
+              orgtrello-controller/--list-board-lists!
+              (mapcar 'orgtrello-data/entity-id)
+              (list board user)))))
+      (deferred:nextc it
+        (lambda (board-user-list-ids)
+          (orgtrello-log/msg *OT/DEBUG* "Close default lists - %S" board-user-list-ids)
+          (cl-destructuring-bind (_ _ list-ids) board-user-list-ids
+            (orgtrello-controller/--close-lists list-ids))
+          board-user-list-ids))
+      (deferred:nextc it
+        (lambda (board-user-list-ids)
+          (orgtrello-log/msg *OT/DEBUG* "Create user's list in board - %S" board-user-list-ids)
+          (cl-destructuring-bind (board user list-ids) board-user-list-ids
+            (--> board
+              (orgtrello-data/entity-id it)
+              (orgtrello-controller/--create-lists-according-to-keywords it org-keywords)
+              (list board user it)))))
+      (deferred:nextc it
+        (lambda (board-user-list-ids)
+          (orgtrello-log/msg *OT/DEBUG* "Update buffer with metadata - %S" board-user-list-ids)
+          (cl-destructuring-bind (board user board-lists-hname-id) board-user-list-ids
+            (orgtrello-controller/do-cleanup-from-buffer!)
+            (orgtrello-controller/--update-orgmode-file-with-properties! (orgtrello-data/entity-name board)
+                                                                         (orgtrello-data/entity-id board)
+                                                                         board-lists-hname-id
+                                                                         (orgtrello-hash/make-properties `((,(orgtrello-data/entity-username user) . ,(orgtrello-data/entity-id user))))
+                                                                         (orgtrello-data/entity-username user)
+                                                                         (orgtrello-hash/make-properties '((:red . "") (:green . "") (:yellow . "") (:purple . "") (:blue . "") (:orange . "")))
+                                                                         org-keywords))))
+      (deferred:nextc it
+        (lambda ()
+          (orgtrello-buffer/save-buffer buffer-name)
+          (orgtrello-action/reload-setup!)
+          (orgtrello-log/msg *OT/INFO* "Create board and lists done!"))))))
 
 (defun orgtrello-controller/--add-user (user users)
   "Add the USER to the USERS list."

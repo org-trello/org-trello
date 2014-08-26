@@ -264,7 +264,7 @@ If MODIFIER is not nil, jump from current card to board."
 (defun org-trello/create-board-and-install-metadata ()
   "Control first, then if ok, trigger the board creation."
   (interactive)
-  (org-trello/apply '(org-trello/log-light-checks-and-do "Create board and lists" orgtrello-controller/do-create-board-and-lists) (current-buffer) 'reload-setup))
+  (org-trello/apply-deferred '(org-trello/log-light-checks-and-do "Create board and lists" orgtrello-controller/do-create-board-and-install-metadata)))
 
 (defun org-trello/assign-me (&optional modifier)
   "Assign oneself to the card.

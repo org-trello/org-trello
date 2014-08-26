@@ -43,9 +43,9 @@
     - [X] Rework the sequencing
     - [X] Remove intermediary sync request
   - [X] Clean new dead code
-  - [-] Improve orgtrello-controller/do-create-board-and-lists [25%]
+  - [-] Improve orgtrello-controller/do-create-board-and-lists [50%]
     - [X] Rename org-trello/create-board to org-trello/create-board-and-install-metadata
-    - [ ] Resequence the trello requests
+    - [X] Resequence the trello requests
     - [ ] Some refactoring
     - [ ] Clean up some dead code
 - [X] Fix caret movement problem (At the end of an action, the caret must be at the same position as before)
