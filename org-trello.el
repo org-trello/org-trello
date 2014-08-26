@@ -206,13 +206,13 @@ If MODIFIER is non nil, execute all entities removal from trello and buffer."
   (org-trello/apply-deferred
    (cons 'org-trello/log-strict-checks-and-do
          (if modifier
-             '("Request - 'delete entities'" orgtrello-controller/do-delete-entities)
-           '("Request 'delete entity'" orgtrello-controller/do-delete-simple)))))
+             '("Delete all cards" orgtrello-controller/do-delete-entities)
+           '("Delete entity at point (card/checklist/item)" orgtrello-controller/do-delete-simple)))))
 
 (defun org-trello/kill-cards ()
   "Execute all entities removal from trello and buffer."
   (interactive)
-  (org-trello/apply-deferred '(org-trello/log-strict-checks-and-do "Request - 'delete entities'" orgtrello-controller/do-delete-entities)))
+  (org-trello/apply-deferred '(org-trello/log-strict-checks-and-do "Delete Cards" orgtrello-controller/do-delete-entities)))
 
 (defun org-trello/install-key-and-token ()
   "No control, trigger the setup installation of the key and the read/write token."
