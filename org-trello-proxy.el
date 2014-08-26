@@ -144,7 +144,7 @@ If the checks are ko, the error message is returned."
                (card-desc               (orgtrello-data/entity-description card-meta))
                (card-user-ids-assigned  (orgtrello-data/entity-member-ids  card-meta))
                (card-labels             (orgtrello-proxy/--tags-to-labels (orgtrello-data/entity-tags card-meta)))
-               (card-pos                (orgtrello-data/entity-position   (orgtrello-data/entity-tags card-meta))))
+               (card-pos                (orgtrello-data/entity-position   card-meta)))
           (if card-id
               ;; update
               (orgtrello-api/move-card card-id list-id card-name card-due card-user-ids-assigned card-desc card-labels card-pos)
