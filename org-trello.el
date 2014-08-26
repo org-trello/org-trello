@@ -166,8 +166,7 @@ If WITH-SAVE-FLAG is set, will do a buffer save and reload the org setup."
    '(orgtrello-controller/load-keys!
      orgtrello-controller/control-keys!
      orgtrello-controller/setup-properties!
-     orgtrello-controller/control-properties!
-     orgtrello-controller/control-encoding!)
+     orgtrello-controller/control-properties!)
    action-fn))
 
 (defun org-trello/log-light-checks-and-do (action-label action-fn &optional no-check-flag)

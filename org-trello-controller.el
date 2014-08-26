@@ -52,13 +52,6 @@ ARGS is not used."
           '(("red" . ?r) ("green" . ?g) ("yellow" . ?y) ("blue" . ?b) ("purple" . ?p) ("orange" . ?o)))
     :ok))
 
-(defun orgtrello-controller/control-encoding! (&optional args)
-  "Use utf-8, otherwise, there will be trouble.
-ARGS is not used."
-  (progn
-    (orgtrello-log/msg *OT/ERROR* "Ensure you use utf-8 encoding for your org buffer.")
-    :ok))
-
 (defun orgtrello-controller/control-properties! (&optional args)
   "Org-trello needs some header buffer properties set (board id, list ids, ...).
 Return :ok if ok, or the error message if problems.
