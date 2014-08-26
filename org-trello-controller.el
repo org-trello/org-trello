@@ -660,7 +660,7 @@ Return the hashmap (name, id) of the new lists created."
      board-users-name-id
      user-logged-in
      board-labels
-     t)))
+     board-list-keywords)))
 
 (defun orgtrello-controller/do-update-board-metadata! ()
   "Update metadata about the current board we are connected to."
