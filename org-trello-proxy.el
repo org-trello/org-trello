@@ -108,11 +108,6 @@ ENTITIES-ADJACENCIES provides needed information about entities and adjacency."
                 (orgtrello-proxy/--compute-sync-next-level updated-entity-synced updated-entities-adj))
               (orgtrello-log/msg *OT/INFO* str-msg))))))))
 
-(defun orgtrello-proxy/--dispatch-action (action)
-  "Compute the action function depending on the ACTION (sync, delete) to execute."
-  (cond ((string= *ORGTRELLO/ACTION-DELETE* action) 'orgtrello-proxy/--delete)
-        ((string= *ORGTRELLO/ACTION-SYNC*   action) 'orgtrello-proxy/--sync-entity)))
-
 (defun orgtrello-proxy/--cleanup-meta (entity)
   "Clean the ENTITY metadata up."
   (unless (orgtrello-data/entity-id entity)
@@ -264,14 +259,6 @@ Use ENTITIES-ADJACENCIES to provide further information."
         (orgtrello-proxy/--cleanup-meta entity-to-sync)
         (orgtrello-log/msg *OT/ERROR* query-map)
         query-map))))
-
-(defun orgtrello-proxy/do-action-on-entity (entity-data entities-adjacencies)
-  "Compute the action on an entity ENTITY-DATA.
-Retrieve needed information from the buffer and/or ENTITIES-ADJACENCIES if needed."
-  (-> entity-data
-    orgtrello-data/entity-action
-    orgtrello-proxy/--dispatch-action
-    (funcall entity-data entities-adjacencies)))
 
 (defun orgtrello-proxy/--delete-region (start end)
   "Delete a region defined by START and END bound."

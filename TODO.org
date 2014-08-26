@@ -27,6 +27,7 @@
     - [X] Sync card from trello
     - [X] Sync buffer from trello
   - [X] Fix alignment problem (sync a card from trello must enforce order on position)
+  - [X] Cleanup dead code
 - [X] Fix caret movement problem (At the end of an action, the caret must be at the same position as before)
 - [X] Improve logging system to prefix org-trello message with 'org-trello - '
 - [X] Remove dead code

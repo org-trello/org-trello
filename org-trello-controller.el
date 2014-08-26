@@ -120,14 +120,6 @@ SYNC is not used."
                                                 'orgtrello-controller/--do-delete!
                                                 *ORGTRELLO/ACTION-DELETE*))
 
-(defun orgtrello-controller/--do-action-on-entity! (entity action &optional entities-adjacencies)
-  "Execute on ENTITY the ACTION.
-Use ENTITIES-ADJACENCIES to provide more information."
-  (let ((marker (orgtrello-buffer/--compute-marker-from-entry entity)))
-    (orgtrello-data/put-entity-id     marker entity)
-    (orgtrello-data/put-entity-action action entity)
-    (orgtrello-proxy/do-action-on-entity entity entities-adjacencies)))
-
 (defun orgtrello-controller/do-sync-card-to-trello! ()
   "Do the actual card creation/update - from card to item."
   (orgtrello-log/msg *OT/INFO* "Synchronizing card on board '%s'..." (orgtrello-buffer/board-name!))
