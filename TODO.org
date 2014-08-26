@@ -13,7 +13,7 @@
 - [ ] POC: Investigate webhooks - #137
 - [ ] POC: Leverage elnode and clojurescript core.async - #97
 
-* IN-PROGRESS 0.5.3 [71%]
+* IN-PROGRESS 0.5.3 [77%]
 - [X] Backlog
 - [X] Emacs blocks when sync - #164 - Deferred the sync/delete actions [100%]
   - [X] Align execution of code regarding [100%]
@@ -46,6 +46,8 @@
 - [X] Fix caret movement problem (At the end of an action, the caret must be at the same position as before)
 - [X] Improve logging system to prefix org-trello message with 'org-trello - '
 - [X] Fix create board issue (regarding org keyword list + order + closing list)
+- [X] Rename org-trello/install-board-and-lists to org-trello/install-board-metadata
+- [X] Rename org-trello/jump-to-card to org-trello/jump-to-trello-card
 - [ ] Update version
 - [ ] Release notes
 * DONE 0.5.2 [100%]

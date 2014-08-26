@@ -21,7 +21,7 @@ C-c o C - M-x org-trello/sync-card - Create/Update a complete card.
 C-c o k - M-x org-trello/kill-entity - Kill the entity (and its arborescence tree) from the trello board and the org buffer.
 C-c o K - M-x org-trello/kill-cards - Kill all the entities (and their arborescence tree) from the trello board and the org buffer.
 C-c o s - M-x org-trello/sync-buffer - Synchronize the org-mode file to the trello board (org-mode -> trello). With prefix C-u, sync-from-trello (org-mode <- trello).
-C-c o j - M-x org-trello/jump-to-card - Jump to card in browser.
+C-c o j - M-x org-trello/jump-to-trello-card - Jump to card in browser.
 C-c o J - M-x org-trello/jump-to-trello-board - Open the browser to your current trello board.
 C-c o o - M-x org-trello/show-card-comments - Display the card's comments in a pop-up buffer.
 C-c o A - M-x org-trello/add-card-comments - Add a comment to the card.
