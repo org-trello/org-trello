@@ -524,9 +524,7 @@ Make it a hashmap with key :level,  :keyword,  :name and their respective value.
 
 (defun orgtrello-buffer/org-checkbox-p! ()
   "Predicate to determine if actual position is on org-trello checkbox."
-  (let ((entity-level (-> (orgtrello-buffer/entry-get-full-metadata!) orgtrello-data/current orgtrello-data/entity-level)))
-    (or (= entity-level *ORGTRELLO/CHECKLIST-LEVEL*)
-        (= entity-level *ORGTRELLO/ITEM-LEVEL*))))
+  (or (orgtrello-buffer/checklist-at-pt!) (orgtrello-buffer/item-at-pt!)))
 
 (defun orgtrello-buffer/end-of-line-point! ()
   "Compute the end of line for an org-trello buffer."
