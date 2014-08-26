@@ -596,19 +596,21 @@ Return the hashmap (name, id) of the new lists created."
   "Remove the USER from the USERS list."
   (if (member user users) (remove user users) users users))
 
-(defun orgtrello-controller/do-assign-me () "Command to assign oneself to the card."
-       (--> (orgtrello-buffer/get-usernames-assigned-property!)
-         (orgtrello-data/--users-from it)
-         (orgtrello-controller/--add-user *ORGTRELLO/USER-LOGGED-IN* it)
-         (orgtrello-data/--users-to it)
-         (orgtrello-buffer/set-usernames-assigned-property! it)))
+(defun orgtrello-controller/do-assign-me ()
+  "Command to assign oneself to the card."
+  (--> (orgtrello-buffer/get-usernames-assigned-property!)
+    (orgtrello-data/--users-from it)
+    (orgtrello-controller/--add-user *ORGTRELLO/USER-LOGGED-IN* it)
+    (orgtrello-data/--users-to it)
+    (orgtrello-buffer/set-usernames-assigned-property! it)))
 
-(defun orgtrello-controller/do-unassign-me () "Command to unassign oneself of the card."
-       (--> (orgtrello-buffer/get-usernames-assigned-property!)
-         (orgtrello-data/--users-from it)
-         (orgtrello-controller/--remove-user *ORGTRELLO/USER-LOGGED-IN* it)
-         (orgtrello-data/--users-to it)
-         (orgtrello-buffer/set-usernames-assigned-property! it)))
+(defun orgtrello-controller/do-unassign-me ()
+  "Command to unassign oneself of the card."
+  (--> (orgtrello-buffer/get-usernames-assigned-property!)
+    (orgtrello-data/--users-from it)
+    (orgtrello-controller/--remove-user *ORGTRELLO/USER-LOGGED-IN* it)
+    (orgtrello-data/--users-to it)
+    (orgtrello-buffer/set-usernames-assigned-property! it)))
 
 (defun orgtrello-controller/do-show-card-comments! ()
   "Show the card comments in a temporary buffer."
