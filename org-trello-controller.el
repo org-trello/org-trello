@@ -173,9 +173,11 @@ Does not preserve position."
 
 (defun orgtrello-controller/do-sync-buffer-from-trello! ()
   "Full org-mode file synchronisation. Beware, this will block emacs as the request is synchronous."
-  (orgtrello-log/msg *OT/INFO* "Synchronizing the trello board '%s' to the org-mode file. This may take a moment, some coffee may be a good idea..." (orgtrello-buffer/board-name!))
   (lexical-let ((buffer-name (current-buffer))
+                (board-name  (orgtrello-buffer/board-name!))
+                (point-start (point))
                 (board-id (orgtrello-buffer/board-id!)))
+    (orgtrello-log/msg *OT/INFO* "Synchronizing the trello board '%s' to the org-mode file..." board-name)
     (deferred:$
       (deferred:next
         (lambda ()
@@ -189,7 +191,8 @@ Does not preserve position."
       (deferred:nextc it
         (lambda ()
           (orgtrello-buffer/save-buffer buffer-name)
-          (orgtrello-log/msg *OT/INFO* "Sync buffer '%s' from trello done!" buffer-name)))
+          (goto-char point-start)
+          (orgtrello-log/msg *OT/INFO* "Synchronizing the trello board '%s' to the org-mode file '%s' done!" board-name buffer-name)))
       (deferred:error it
         (lambda (err) (orgtrello-log/msg *OT/ERROR* "Sync buffer from trello - Catch error: %S" err))))))
 
@@ -231,28 +234,30 @@ Along the way, the buffer BUFFER-NAME is written with new informations."
 (defun orgtrello-controller/do-sync-card-from-trello! ()
   "Entity (card/checklist/item) synchronization (with its structure) from trello.
 Optionally, SYNC permits to synchronize the query."
-  (orgtrello-log/msg *OT/INFO* "Synchronizing the trello card to the org-mode file...")
-  (lexical-let ((buffer-name (current-buffer)))
-    (save-excursion
-      (lexical-let* ((card-meta (orgtrello-data/current (orgtrello-buffer/entry-get-full-metadata!)))
-                     (card-name (orgtrello-data/entity-name card-meta)))
-        (deferred:$
-          (deferred:next
-            (lambda ()
-              (-> card-meta
-                orgtrello-data/entity-id
-                orgtrello-api/get-full-card
-                (orgtrello-query/http-trello 'sync))))
-          (deferred:nextc it
-            (lambda (trello-card) ;; We have the full result in one query, now we can compute the translation in org-trello model
-              (orgtrello-log/msg *OT/DEBUG* "trello-card: %S" trello-card)
-              (orgtrello-controller/compute-and-overwrite-card! buffer-name trello-card)))
-          (deferred:nextc it
-            (lambda ()
-              (orgtrello-buffer/save-buffer buffer-name)
-              (orgtrello-log/msg *OT/INFO* "Sync card '%s' from trello done!" card-name)))
-          (deferred:error it
-            (lambda (err) (orgtrello-log/msg *OT/ERROR* "Catch error: %S" err))))))))
+  (lexical-let* ((buffer-name (current-buffer))
+                 (point-start (point))
+                 (card-meta (progn (when (not (orgtrello-buffer/card-at-pt!)) (orgtrello-buffer/back-to-card!))
+                                   (orgtrello-data/current (orgtrello-buffer/entry-get-full-metadata!))))
+                 (card-name (orgtrello-data/entity-name card-meta)))
+    (orgtrello-log/msg *OT/INFO* "Synchronizing the trello card to the org-mode file...")
+    (deferred:$
+      (deferred:next
+        (lambda ()
+          (-> card-meta
+            orgtrello-data/entity-id
+            orgtrello-api/get-full-card
+            (orgtrello-query/http-trello 'sync))))
+      (deferred:nextc it
+        (lambda (trello-card) ;; We have the full result in one query, now we can compute the translation in org-trello model
+          (orgtrello-log/msg *OT/DEBUG* "trello-card: %S" trello-card)
+          (orgtrello-controller/compute-and-overwrite-card! buffer-name trello-card)))
+      (deferred:nextc it
+        (lambda ()
+          (orgtrello-buffer/save-buffer buffer-name)
+          (goto-char point-start)
+          (orgtrello-log/msg *OT/INFO* "Synchronizing the trello card '%s' to the org-mode file done!" card-name)))
+      (deferred:error it
+        (lambda (err) (orgtrello-log/msg *OT/ERROR* "Catch error: %S" err))))))
 
 (defun orgtrello-controller/--do-delete-card ()
   "Delete the card.
