@@ -513,27 +513,29 @@ SYNC flag permit to synchronize the http query."
         list-ids))
 
 (defun orgtrello-controller/--create-lists-according-to-keywords (board-id org-keywords)
-  "For the BOARD-ID, create the list names from LIST-KEYWORDS.
+  "For the BOARD-ID, create the list names from ORG-KEYWORDS.
+The list order in the trello board is the same as the ORG-KEYWORDS.
 Return the hashmap (name, id) of the new lists created."
-  (--reduce-from (progn
-                   (orgtrello-log/msg *OT/INFO* "Board id %s - Creating list '%s'" board-id it)
-                   (orgtrello-hash/puthash-data it (orgtrello-data/entity-id (orgtrello-query/http-trello (orgtrello-api/add-list it board-id) 'synchronous-query)) acc))
-                 (orgtrello-hash/empty-hash)
-                 org-keywords))
+  (car
+   (--reduce-from (cl-destructuring-bind (hash pos) acc
+                    (orgtrello-log/msg *OT/INFO* "Board id %s - Creating list '%s'" board-id it)
+                    (list (orgtrello-hash/puthash-data it (orgtrello-data/entity-id (orgtrello-query/http-trello (orgtrello-api/add-list it board-id pos) 'sync)) hash) (+ pos 1)))
+                  (list (orgtrello-hash/empty-hash) 1)
+                  org-keywords)))
 
 (defun orgtrello-controller/do-create-board-and-lists ()
   "Command to create a board and the lists."
+  ;; now exploit some
   (let ((input-board-name        (orgtrello-input/read-not-empty! "Please, input the desired board name: "))
         (input-board-description (read-string "Please, input the board description (empty for none): ")))
-
-    ;; do create the board and more
     (cl-destructuring-bind (board-id board-name) (orgtrello-controller/--create-board input-board-name input-board-description)
-      (let* (;; first retrieve the existing lists (created by default on trello)
+      (let* ((org-keywords         *ORGTRELLO/ORG-KEYWORD-TRELLO-LIST-NAMES*)
+             ;; first retrieve the existing lists (created by default on trello)
              (board-list-ids       (mapcar 'orgtrello-data/entity-id (orgtrello-controller/--list-board-lists! board-id)))
              ;; close those lists (they may surely not match the name we want)
              (lists-to-close       (orgtrello-controller/--close-lists board-list-ids))
              ;; create the list, this returns the ids list
-             (board-lists-hname-id (orgtrello-controller/--create-lists-according-to-keywords board-id *ORGTRELLO/ORG-KEYWORD-TRELLO-LIST-NAMES*))
+             (board-lists-hname-id (orgtrello-controller/--create-lists-according-to-keywords board-id org-keywords))
              ;; retrieve user informations
              (board-users-name-id  (orgtrello-controller/--board-users-information-from-board-id! board-id))
              ;; compute the current user's information
@@ -547,7 +549,8 @@ Return the hashmap (name, id) of the new lists created."
          board-lists-hname-id
          board-users-name-id
          user-logged-in
-         (orgtrello-hash/make-properties '((:red) (:green) (:yellow) (:purple) (:blue) (:orange)))))))
+         (orgtrello-hash/make-properties '((:red) (:green) (:yellow) (:purple) (:blue) (:orange)))
+         org-keywords))))
   "Create board and lists done!")
 
 (defun orgtrello-controller/--add-user (user users)

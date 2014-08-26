@@ -86,9 +86,10 @@ Return entries updated with value if entry, entries untouched otherwise."
   "Create a close list with id LIST-ID query."
   (orgtrello-api/make-query "PUT" (format "/lists/%s/closed" list-id) '((value . t))))
 
-(defun orgtrello-api/add-list (name idBoard)
-  "Create an add a list with NAME and the IDBOARD."
-  (orgtrello-api/make-query "POST" "/lists/" `(("name" . ,name) ("idBoard" . ,idBoard))))
+(defun orgtrello-api/add-list (name idBoard &optional pos)
+  "Create an add a list with NAME, IDBOARD and optional POS."
+  (orgtrello-api/make-query "POST" "/lists/"
+                            (orgtrello-api/--deal-with-optional-value pos `("pos" . ,pos) `(("name" . ,name) ("idBoard" . ,idBoard)))))
 
 (defun orgtrello-api/add-card (name idList &optional due id-members desc labels pos)
   "Create an add a card with NAME to the list IDLIST, with optional DUE, ID-MEMBERS, DESC, LABELS, POS query."
