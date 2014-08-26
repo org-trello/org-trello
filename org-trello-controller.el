@@ -194,7 +194,8 @@ Does not preserve position."
               (orgtrello-controller/--sync-buffer-with-trello-cards buffer-name trello-cards)))
           (deferred:nextc it
             (lambda ()
-              (orgtrello-buffer/save-buffer buffer-name)))
+              (orgtrello-buffer/save-buffer buffer-name)
+              (orgtrello-log/msg *OT/INFO* "Sync buffer '%s' from trello done!" buffer-name)))
           (deferred:error it
             (lambda (err) (orgtrello-log/msg *OT/ERROR* "Sync buffer from trello - Catch error: %S" err))))))))
 
@@ -245,7 +246,8 @@ Optionally, SYNC permits to synchronize the query."
   (orgtrello-log/msg *OT/INFO* "Synchronizing the trello card to the org-mode file...")
   (lexical-let ((buffer-name (current-buffer)))
     (save-excursion
-      (lexical-let* ((card-meta (orgtrello-data/current (orgtrello-buffer/entry-get-full-metadata!))))
+      (lexical-let* ((card-meta (orgtrello-data/current (orgtrello-buffer/entry-get-full-metadata!)))
+                     (card-name (orgtrello-data/entity-name card-meta)))
         (deferred:$
           (deferred:next
             (lambda ()
@@ -259,7 +261,8 @@ Optionally, SYNC permits to synchronize the query."
               (orgtrello-controller/compute-and-overwrite-card! buffer-name trello-card)))
           (deferred:nextc it
             (lambda ()
-              (orgtrello-buffer/save-buffer buffer-name)))
+              (orgtrello-buffer/save-buffer buffer-name)
+              (orgtrello-log/msg *OT/INFO* "Sync card '%s' from trello done!" card-name)))
           (deferred:error it
             (lambda (err) (orgtrello-log/msg *OT/ERROR* "Catch error: %S" err))))))))
 
