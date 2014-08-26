@@ -665,10 +665,25 @@ Return the hashmap (name, id) of the new lists created."
 
 (defun orgtrello-controller/do-update-board-metadata! ()
   "Update metadata about the current board we are connected to."
-  (let* ((board-id (orgtrello-buffer/board-id!))
-         (board-lists (orgtrello-controller/--list-board-lists! board-id))
-         (board-labels (->> board-id orgtrello-controller/--board! orgtrello-data/entity-labels)))
-    (orgtrello-controller/do-write-board-metadata! board-id (orgtrello-buffer/board-name!) (orgtrello-buffer/me!) board-lists board-labels)))
+  (lexical-let ((buffer-name (current-buffer)))
+    (deferred:$
+      (deferred:next
+        (lambda ()
+          (-> (orgtrello-buffer/board-id!)
+            orgtrello-api/get-board
+            (orgtrello-query/http-trello 'sync))))
+      (deferred:nextc it
+        (lambda (board)
+          (orgtrello-controller/do-write-board-metadata! (orgtrello-data/entity-id board)
+                                                         (orgtrello-data/entity-name board)
+                                                         (orgtrello-buffer/me!)
+                                                         (orgtrello-data/entity-lists board)
+                                                         (orgtrello-data/entity-labels board))))
+      (deferred:nextc it
+        (lambda ()
+          (orgtrello-buffer/save-buffer buffer-name)
+          (orgtrello-action/reload-setup!)
+          (orgtrello-log/msg *OT/INFO* "Update board information done!"))))))
 
 (defun orgtrello-controller/do-show-board-labels! ()
   (->> (orgtrello-buffer/labels!)

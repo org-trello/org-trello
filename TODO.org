@@ -39,8 +39,10 @@
     - [X] Let trello do the filtering on listing the boards
     - [X] Resequence the actions and use parallel requests to improve speed
     - [X] Improve some more regarding the sequencing
-  - [ ] Improve org-trello/update-board-metadata
-  - [ ] Improve org-trello/update-board-metadata
+  - [-] Improve org-trello/update-board-metadata [50%]
+    - [X] Rework the sequencing
+    - [ ] Remove intermediary sync request
+  - [ ] Clean new dead code
 - [X] Fix caret movement problem (At the end of an action, the caret must be at the same position as before)
 - [X] Improve logging system to prefix org-trello message with 'org-trello - '
 - [X] Fix create board issue (regarding org keyword list + order + closing list)

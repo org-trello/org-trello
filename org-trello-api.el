@@ -42,6 +42,7 @@ If FILTER is specified, this will filter on this."
   "Create a retrieve board with board ID query."
   (orgtrello-api/make-query "GET" (format "/boards/%s" id) '(("memberships" . "active")
                                                              ("memberships_member" . "true")
+                                                             ("lists" . "open")
                                                              ("fields" . "name,memberships,closed,labelNames"))))
 
 (defun orgtrello-api/get-cards (board-id)
