@@ -216,16 +216,17 @@ Along the way, the buffer BUFFER-NAME is written with new informations."
 (defun orgtrello-controller/compute-and-overwrite-card! (buffer-name trello-card)
   (with-local-quit
     (with-current-buffer buffer-name
-      (let* ((card-id                  (orgtrello-data/entity-id trello-card))
-             (region                   (orgtrello-buffer/compute-card-region!))
-             (entities-from-org-buffer (apply 'orgtrello-buffer/build-org-entities! (cons buffer-name region)))
-             (entities-from-trello     (orgtrello-backend/compute-org-trello-card-from (list trello-card)))
-             (merged-entities          (orgtrello-data/merge-entities-trello-and-org entities-from-trello entities-from-org-buffer))
-             (entities                 (car merged-entities))
-             (entities-adj             (cadr merged-entities)))
-        (goto-char (car region))
-        (orgtrello-buffer/clean-region! region)
-        (orgtrello-buffer/write-card! card-id (gethash card-id entities) entities entities-adj)))))
+      (save-excursion
+        (let* ((card-id                  (orgtrello-data/entity-id trello-card))
+               (region                   (orgtrello-buffer/compute-card-region!))
+               (entities-from-org-buffer (apply 'orgtrello-buffer/build-org-entities! (cons buffer-name region)))
+               (entities-from-trello     (orgtrello-backend/compute-org-trello-card-from (list trello-card)))
+               (merged-entities          (orgtrello-data/merge-entities-trello-and-org entities-from-trello entities-from-org-buffer))
+               (entities                 (car merged-entities))
+               (entities-adj             (cadr merged-entities)))
+          (goto-char (car region))
+          (orgtrello-buffer/clean-region! region)
+          (orgtrello-buffer/write-card! card-id (gethash card-id entities) entities entities-adj))))))
 
 (defun orgtrello-controller/do-sync-card-from-trello! ()
   "Entity (card/checklist/item) synchronization (with its structure) from trello.
