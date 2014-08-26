@@ -110,7 +110,7 @@ Provide entities-adjacencies for more information."
     (orgtrello-buffer/set-marker-if-not-present! current marker)
     (orgtrello-data/put-entity-id     marker current)
     (orgtrello-data/put-entity-action action current)
-    (eval (orgtrello-proxy/do-action-on-entity current entities-adjacencies))))
+    (eval (orgtrello-proxy/--delete current entities-adjacencies))))
 
 (defun orgtrello-controller/do-delete-simple (&optional sync)
   "Do the deletion of an entity.
@@ -218,7 +218,7 @@ Along the way, the buffer BUFFER-NAME is written with new informations."
     (maphash (lambda (id entity)
                (when (orgtrello-data/entity-card-p entity)
                  (-> entity
-                   (orgtrello-controller/--do-action-on-entity! *ORGTRELLO/ACTION-SYNC* entities-adjacencies)
+                   (orgtrello-proxy/--sync-entity entities-adjacencies)
                    (push card-computations))))
              entities)
 
