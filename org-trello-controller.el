@@ -452,8 +452,7 @@ This returns the identifier of such board."
              board-users-hash-name-id)
     res-list))
 
-(defun orgtrello-controller/--update-orgmode-file-with-properties!
-    (board-name board-id board-lists-hash-name-id board-users-hash-name-id user-me board-labels &optional update-todo-keywords)
+(defun orgtrello-controller/--update-orgmode-file-with-properties! (board-name board-id board-lists-hash-name-id board-users-hash-name-id user-me board-labels &optional update-todo-keywords)
   "Update the orgmode file with the needed headers for org-trello to work."
   (with-current-buffer (current-buffer)
     (goto-char (point-min))
