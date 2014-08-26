@@ -173,25 +173,24 @@ Does not preserve position."
 (defun orgtrello-controller/do-sync-buffer-from-trello! ()
   "Full org-mode file synchronisation. Beware, this will block emacs as the request is synchronous."
   (orgtrello-log/msg *OT/INFO* "Synchronizing the trello board '%s' to the org-mode file. This may take a moment, some coffee may be a good idea..." (orgtrello-buffer/board-name!))
-  (lexical-let ((buffer-name (current-buffer)))
-    (save-excursion
-      (lexical-let* ((board-id (orgtrello-buffer/board-id!)))
-        (deferred:$
-          (deferred:next
-            (lambda ()
-              (-> board-id
-                orgtrello-api/get-full-cards
-                (orgtrello-query/http-trello 'sync))))
-          (deferred:nextc it
-            (lambda (trello-cards) ;; We have the full result in one query, now we can compute the translation in org-trello model
-              (orgtrello-log/msg *OT/DEBUG* "trello-card: %S" trello-cards)
-              (orgtrello-controller/--sync-buffer-with-trello-cards buffer-name trello-cards)))
-          (deferred:nextc it
-            (lambda ()
-              (orgtrello-buffer/save-buffer buffer-name)
-              (orgtrello-log/msg *OT/INFO* "Sync buffer '%s' from trello done!" buffer-name)))
-          (deferred:error it
-            (lambda (err) (orgtrello-log/msg *OT/ERROR* "Sync buffer from trello - Catch error: %S" err))))))))
+  (lexical-let ((buffer-name (current-buffer))
+                (board-id (orgtrello-buffer/board-id!)))
+    (deferred:$
+      (deferred:next
+        (lambda ()
+          (-> board-id
+            orgtrello-api/get-full-cards
+            (orgtrello-query/http-trello 'sync))))
+      (deferred:nextc it
+        (lambda (trello-cards) ;; We have the full result in one query, now we can compute the translation in org-trello model
+          (orgtrello-log/msg *OT/DEBUG* "trello-card: %S" trello-cards)
+          (orgtrello-controller/--sync-buffer-with-trello-cards buffer-name trello-cards)))
+      (deferred:nextc it
+        (lambda ()
+          (orgtrello-buffer/save-buffer buffer-name)
+          (orgtrello-log/msg *OT/INFO* "Sync buffer '%s' from trello done!" buffer-name)))
+      (deferred:error it
+        (lambda (err) (orgtrello-log/msg *OT/ERROR* "Sync buffer from trello - Catch error: %S" err))))))
 
 (defun orgtrello-controller/execute-sync-entity-structure! (entity-structure)
   "Execute synchronization of ENTITY-STRUCTURE (entities at first position, adjacency list in second position).
