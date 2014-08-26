@@ -270,7 +270,7 @@ SYNC flag permit to synchronize the http query."
 (defun orgtrello-controller/do-delete-entities ()
   "Launch a batch deletion of every single entities present on the buffer.
 SYNC flag permit to synchronize the http query."
-  (org-map-entries 'orgtrello-controller/--do-delete-card  t 'file))
+  (org-map-entries 'orgtrello-controller/--do-delete-card t 'file))
 
 (defun orgtrello-controller/--do-install-config-file (consumer-key access-token)
   "Persist the file config-file with the CONSUMER-KEY and ACCESS-TOKEN."
