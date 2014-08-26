@@ -15,7 +15,7 @@
 
 * IN-PROGRESS 0.5.3 [57%]
 - [X] Backlog
-- [-] Emacs blocks when sync - #164 - Deferred the sync/delete actions [83%]
+- [-] Emacs blocks when sync - #164 - Deferred the sync/delete actions [91%]
   - [X] Align execution of code regarding [100%]
     - [X] Sync to
     - [X] Sync from
@@ -39,9 +39,9 @@
     - [X] Let trello do the filtering on listing the boards
     - [X] Resequence the actions and use parallel requests to improve speed
     - [X] Improve some more regarding the sequencing
-  - [-] Improve org-trello/update-board-metadata [50%]
+  - [X] Improve org-trello/update-board-metadata [100%]
     - [X] Rework the sequencing
-    - [ ] Remove intermediary sync request
+    - [X] Remove intermediary sync request
   - [ ] Clean new dead code
 - [X] Fix caret movement problem (At the end of an action, the caret must be at the same position as before)
 - [X] Improve logging system to prefix org-trello message with 'org-trello - '

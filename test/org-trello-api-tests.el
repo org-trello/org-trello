@@ -276,10 +276,17 @@
   (expect '(("text" . "some comment text"))  (gethash :params (orgtrello-api/add-card-comment :card-id "some comment text"))))
 
 (expectations
- (desc "orgtrello-api/get-lists")
- (expect "GET"                      (gethash :method (orgtrello-api/get-lists :board-id)))
- (expect "/boards/:board-id/lists" (gethash :uri    (orgtrello-api/get-lists :board-id)))
- (expect nil                       (gethash :params (orgtrello-api/get-lists :board-id))))
+  (desc "orgtrello-api/get-lists")
+  (expect "GET"                     (gethash :method (orgtrello-api/get-lists :board-id)))
+  (expect "/boards/:board-id/lists" (gethash :uri    (orgtrello-api/get-lists :board-id)))
+  (expect nil                       (gethash :params (orgtrello-api/get-lists :board-id))))
+
+(expectations
+  (desc "orgtrello-api/get-members")
+  (expect "GET"                       (gethash :method (orgtrello-api/get-members :board-id)))
+  (expect "/boards/:board-id/members" (gethash :uri    (orgtrello-api/get-members :board-id)))
+  (expect nil                         (gethash :params (orgtrello-api/get-members :board-id))))
+
 
 (provide 'org-trello-api-tests)
 ;;; org-trello-api-tests.el ends here

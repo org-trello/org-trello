@@ -45,6 +45,10 @@ If FILTER is specified, this will filter on this."
                                                              ("lists" . "open")
                                                              ("fields" . "name,memberships,closed,labelNames"))))
 
+(defun orgtrello-api/get-members (board-id)
+  "Retrieve the memberships from a BOARD-ID."
+  (orgtrello-api/make-query "GET" (format "/boards/%s/members" board-id)))
+
 (defun orgtrello-api/get-cards (board-id)
   "Create a cards retrieval from the board with BOARD-ID query."
   (orgtrello-api/make-query "GET" (format "/boards/%s/cards" board-id)

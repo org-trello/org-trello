@@ -491,14 +491,23 @@ This returns the identifier of such board."
                                       orgtrello-controller/--id-name
                                       orgtrello-controller/choose-board!)))
             (list (car (--filter (string= selected-id-board (orgtrello-data/entity-id it)) boards)) user-logged-in))))
+      (deferred:nextc it ;; hack everything has been retrieved with the first requests except for the members
+        (lambda (board-and-user-logged-in)
+          (-> board-and-user-logged-in
+            car
+            orgtrello-data/entity-id
+            orgtrello-api/get-members
+            (orgtrello-query/http-trello 'sync)
+            (cons board-and-user-logged-in))))
       (deferred:nextc it
-        (lambda (chosen-board-and-user)
-          (let ((chosen-board (car chosen-board-and-user)))
+        (lambda (members-board-and-user)
+          (cl-destructuring-bind (members chosen-board user-logged-in) members-board-and-user
             (orgtrello-controller/do-write-board-metadata! (orgtrello-data/entity-id chosen-board)
                                                            (orgtrello-data/entity-name chosen-board)
-                                                           (cadr chosen-board-and-user)
+                                                           user-logged-in
                                                            (orgtrello-data/entity-lists chosen-board)
-                                                           (orgtrello-data/entity-labels chosen-board)))))
+                                                           (orgtrello-data/entity-labels chosen-board)
+                                                           (orgtrello-controller/--compute-user-properties-hash members)))))
       (deferred:nextc it
         (lambda ()
           (orgtrello-buffer/save-buffer buffer-name)
@@ -645,11 +654,16 @@ Return the hashmap (name, id) of the new lists created."
   (when globally-flag
     (mapc 'orgtrello-buffer/delete-property! `(,*ORGTRELLO/ID* ,*ORGTRELLO/USERS-ENTRY* ,*ORGTRELLO/CARD-COMMENTS*))))
 
-(defun orgtrello-controller/do-write-board-metadata! (board-id board-name user-logged-in board-lists board-labels)
+(defun orgtrello-controller/--board-users-information-from-board-memberships (board-memberships)
+  "Compute board users' informations from the BOARD-MEMBERSHIPS."
+  (->> board-memberships
+    orgtrello-controller/--compute-user-properties
+    orgtrello-controller/--compute-user-properties-hash))
+
+(defun orgtrello-controller/do-write-board-metadata! (board-id board-name user-logged-in board-lists board-labels board-users-name-id)
   "Given a board id, write in the current buffer the updated data."
   (let* ((board-lists-hname-id (orgtrello-controller/--name-id board-lists))
-         (board-list-keywords  (orgtrello-controller/--hash-table-keys board-lists-hname-id))
-         (board-users-name-id  (orgtrello-controller/--board-users-information-from-board-id! board-id)))
+         (board-list-keywords  (orgtrello-controller/--hash-table-keys board-lists-hname-id)))
     ;; remove any eventual present entry
     (orgtrello-controller/do-cleanup-from-buffer!)
     ;; update with new ones
@@ -673,11 +687,16 @@ Return the hashmap (name, id) of the new lists created."
             (orgtrello-query/http-trello 'sync))))
       (deferred:nextc it
         (lambda (board)
-          (orgtrello-controller/do-write-board-metadata! (orgtrello-data/entity-id board)
-                                                         (orgtrello-data/entity-name board)
-                                                         (orgtrello-buffer/me!)
-                                                         (orgtrello-data/entity-lists board)
-                                                         (orgtrello-data/entity-labels board))))
+          (let ((members (->> board
+                           orgtrello-data/entity-memberships
+                           orgtrello-controller/--compute-user-properties
+                           orgtrello-controller/--compute-user-properties-hash)))
+            (orgtrello-controller/do-write-board-metadata! (orgtrello-data/entity-id board)
+                                                           (orgtrello-data/entity-name board)
+                                                           (orgtrello-buffer/me!)
+                                                           (orgtrello-data/entity-lists board)
+                                                           (orgtrello-data/entity-labels board)
+                                                           members))))
       (deferred:nextc it
         (lambda ()
           (orgtrello-buffer/save-buffer buffer-name)
