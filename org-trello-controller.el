@@ -345,16 +345,15 @@ SYNC flag permit to synchronize the http query."
     string-result))
 
 (defun orgtrello-controller/choose-board! (boards)
-  "Given a map of boards, display the possible boards for the user to choose which one he wants to work with."  ;; ugliest ever
+  "Given a map of boards, ask the user to choose the boards.
+This returns the identifier of such board."
   (let* ((index-selected-board    nil)
          (display-board-to-choose (orgtrello-controller/--display-boards-to-choose boards))
          (index-board-map         (orgtrello-controller/--index-board-map boards)))
     ;; keep asking the selection until the choice is possible
     (while (not (gethash index-selected-board index-board-map))
       (setq index-selected-board (read-string (format "%s\nInput the number of the board desired: " display-board-to-choose))))
-    ;; when we are good
-    (let ((selected-id-board (gethash index-selected-board index-board-map)))
-      (list selected-id-board (gethash selected-id-board boards)))))
+    (gethash index-selected-board index-board-map)))
 
 (defun orgtrello-controller/--convention-property-name (name)
   "Given a NAME, use the right convention for the property used in the headers of the 'org-mode' file."
@@ -478,17 +477,34 @@ SYNC flag permit to synchronize the http query."
 
 (defun orgtrello-controller/do-install-board-and-lists ()
   "Command to install the list boards."
-  (let* ((board-info        (-> (orgtrello-controller/--list-boards!)
-                              orgtrello-controller/--id-name
-                              orgtrello-controller/choose-board!))
-         (chosen-board-id   (car board-info))
-         (chosen-board-name (cadr board-info))
-         (board-lists       (orgtrello-controller/--list-board-lists! chosen-board-id))
-         (board-labels      (->> chosen-board-id orgtrello-controller/--board! orgtrello-data/entity-labels))
-         (user-logged-in    (orgtrello-controller/--user-logged-in!)))
-    ;; Update metadata about the board
-    (orgtrello-controller/do-write-board-metadata! chosen-board-id chosen-board-name user-logged-in board-lists board-labels))
-  "Install board and list ids done!")
+  (lexical-let ((buffer-name (current-buffer)))
+    (deferred:$
+      (deferred:next
+        (lambda ()
+          (orgtrello-controller/--list-boards!)))
+      (deferred:parallel
+        (deferred:nextc it
+          (lambda (boards)
+            (let ((selected-id-board (->> boards
+                                       orgtrello-controller/--id-name
+                                       orgtrello-controller/choose-board!)))
+              (car (--filter (string= selected-id-board (orgtrello-data/entity-id it)) boards)))))
+        (lambda ()
+          (orgtrello-controller/--user-logged-in!)))
+      (deferred:nextc it
+        (lambda (chosen-board-and-user)
+          (let* ((chosen-board      (elt chosen-board-and-user 0))
+                 (user-logged-in    (elt chosen-board-and-user 1))
+                 (chosen-board-id   (orgtrello-data/entity-id chosen-board))
+                 (chosen-board-name (orgtrello-data/entity-name chosen-board))
+                 (board-lists       (orgtrello-data/entity-lists chosen-board))
+                 (board-labels      (orgtrello-data/entity-labels chosen-board)))
+            (orgtrello-controller/do-write-board-metadata! chosen-board-id chosen-board-name user-logged-in board-lists board-labels))))
+      (deferred:nextc it
+        (lambda ()
+          (orgtrello-buffer/save-buffer buffer-name)
+          (orgtrello-action/reload-setup!)
+          (orgtrello-log/msg *OT/INFO* "Install board and list ids done!"))))))
 
 (defun orgtrello-controller/--compute-user-properties (memberships-map)
   "Given a map MEMBERSHIPS-MAP, extract the map of user information."

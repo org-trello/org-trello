@@ -218,11 +218,11 @@
       (orgtrello-controller/control-keys!))))
 
 (expectations
-  (expect '(:id-board0 "board0-name")
+  (expect :id-board0
     (with-mock
       (mock (read-string *) => "0")
       (orgtrello-controller/choose-board! (orgtrello-hash/make-properties '((:id-board0 . "board0-name") (:id-board1 . "board1-name"))))))
-  (expect '(:id-board1 "board1-name")
+  (expect :id-board1
     (with-mock
       (mock (read-string *) => "1")
       (orgtrello-controller/choose-board! (orgtrello-hash/make-properties '((:id-board0 . "board0-name") (:id-board1 . "board1-name")))))))

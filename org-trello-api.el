@@ -35,9 +35,8 @@ Return entries updated with value if entry, entries untouched otherwise."
 (defun orgtrello-api/get-boards (&optional filter)
   "Retrieve the current boards of the user.
 If FILTER is specified, this will filter on this."
-  (if filter
-      (orgtrello-api/make-query "GET" "/members/me/boards/" `(("filter" . ,filter)))
-    (orgtrello-api/make-query "GET" "/members/me/boards")))
+  (orgtrello-api/make-query "GET" "/members/me/boards" (orgtrello-api/--deal-with-optional-values `((,filter . ("filter" . ,filter)))
+                                                                                                  `(("lists" . "open")))))
 
 (defun orgtrello-api/get-board (id)
   "Create a retrieve board with board ID query."
