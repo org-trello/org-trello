@@ -507,7 +507,8 @@ Make it a hashmap with key :level,  :keyword,  :name and their respective value.
     keywords))
 
 (defun orgtrello-buffer/org-file-properties! ()
-  org-file-properties)
+  (let ((org-trello-file-properties org-file-properties))
+    org-trello-file-properties))
 
 (defun orgtrello-buffer/org-map-entries (fn-to-execute)
   "Execute for each heading the FN-TO-EXECUTE."
