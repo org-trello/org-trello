@@ -226,7 +226,7 @@ If MODIFIER is non nil, execute all entities removal from trello and buffer."
 (defun org-trello/update-board-metadata ()
   "Control first, then if ok, trigger the update of the informations about the board."
   (interactive)
-  (org-trello/apply '(org-trello/log-light-checks-and-do "Update board information" orgtrello-controller/do-update-board-metadata!) (current-buffer) 'reload-setup))
+  (org-trello/apply-deferred '(org-trello/log-light-checks-and-do "Update board information" orgtrello-controller/do-update-board-metadata!)))
 
 (defun org-trello/jump-to-card (&optional modifier)
   "Jump from current card to trello card in browser.
