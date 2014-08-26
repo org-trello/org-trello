@@ -531,7 +531,7 @@ Return the hashmap (name, id) of the new lists created."
   (let ((input-board-name        (orgtrello-input/read-not-empty! "Please, input the desired board name: "))
         (input-board-description (read-string "Please, input the board description (empty for none): ")))
     (cl-destructuring-bind (board-id board-name) (orgtrello-controller/--create-board input-board-name input-board-description)
-      (let* ((org-keywords         *ORGTRELLO/ORG-KEYWORD-TRELLO-LIST-NAMES*)
+      (let* ((org-keywords         (orgtrello-buffer/filtered-kwds!))
              ;; first retrieve the existing lists (created by default on trello)
              (board-list-ids       (mapcar 'orgtrello-data/entity-id (orgtrello-controller/--list-board-lists! board-id)))
              ;; close those lists (they may surely not match the name we want)
