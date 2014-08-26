@@ -132,7 +132,9 @@ SYNC is not used."
 (defun orgtrello-controller/do-sync-full-file-to-trello! ()
   "Full org-mode file synchronisation."
   (orgtrello-log/msg *OT/WARN* "Synchronizing org-mode file to the board '%s'. This may take some time, some coffee may be a good idea..." (orgtrello-buffer/board-name!))
-  (orgtrello-buffer/org-map-entries 'orgtrello-controller/do-sync-card-to-trello!))
+  (-> (current-buffer)
+    orgtrello-buffer/compute-entities-from-org-buffer!
+    orgtrello-controller/execute-sync-entity-structure!))
 
 (defun orgtrello-controller/--sync-buffer-with-trello-data (data)
   "Update the current buffer with DATA (entities and adjacency)."
