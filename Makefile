@@ -64,3 +64,6 @@ release:
 
 install-cask:
 	curl -fsSkL https://raw.github.com/cask/cask/master/go | python
+
+emacs-install-clean: package
+	~/bin/emacs/emacs-install-clean.sh ./$(ARCHIVE)

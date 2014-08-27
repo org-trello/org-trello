@@ -8,7 +8,7 @@
 - [ ] Use active region - [[https://github.com/org-trello/org-trello/issues/130][#130]]
 - [ ] Another Disposition about org's buffer - [[https://github.com/org-trello/org-trello/issues/33][#33]]
 - [ ] POC: use a temporary buffer to sync with trello, when done, merge with the user's buffer.
-* IN-PROGRESS 0.5.4 [66%]
+* IN-PROGRESS 0.5.4 [83%]
 - [X] Backlog
 - [X] Archive cards - CLOSE #181
   - [X] Open trello api about (un)archive card
@@ -21,7 +21,7 @@
     - [X] Add Archive DONE cards interactive command
 - [X] Fix `Most actions not working` issue - CLOSE #192
 - [X] Update version
-- [ ] Fix compilation warning(s)
+- [X] Fix compilation warning(s)
 - [ ] Release notes
 * DONE 0.5.3 [100%]
 CLOSED: [2014-08-26 Tue 23:27]
