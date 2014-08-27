@@ -66,16 +66,13 @@ This returns a list (updated-entity-synced, updated-entities, updated-adjacencie
          (old-entity-id (orgtrello-data/entity-id-or-marker old-entity))
          (entry-new-id  (orgtrello-data/entity-id-or-marker entity-synced))
          (children-ids  (gethash old-entity-id adjacencies)))
-    ;; keep the parent (which is not present as trello's return)
-    (orgtrello-data/put-parent (orgtrello-data/parent old-entity) entity-synced)
-    ;; update parent reference in children in entities
-    (mapcar (lambda (child-id)
-              (let ((child (gethash child-id entities)))
-                (--> child
-                  (orgtrello-data/put-parent entity-synced it)
-                  (puthash child-id it entities))))
-            children-ids)
-
+    (orgtrello-data/put-parent (orgtrello-data/parent old-entity) entity-synced) ;; keep the parent (which is not present as trello's return)
+    (mapc (lambda (child-id) ;; update parent reference in children in entities
+            (let ((child (gethash child-id entities)))
+              (--> child
+                (orgtrello-data/put-parent entity-synced it)
+                (puthash child-id it entities))))
+          children-ids)
     ;; update in-place with new entries...
     (puthash entry-new-id entity-synced entities)
     (puthash entry-new-id children-ids adjacencies)
@@ -330,10 +327,8 @@ Use ENTITIES-ADJACENCIES to provide further information."
   "Dispatch the call to the delete function depending on ENTITY level info."
   (orgtrello-proxy/compute-dispatch-fn entity *MAP-DISPATCH-DELETE*))
 
-(defun orgtrello-proxy/--delete (entity-data &optional entities-adjacencies)
-  "Compute the delete action to remove ENTITY-DATA.
-This uses ENTITY-FULL-METADATA to help provide further information.
-ENTITIES-ADJACENCIES is not used."
+(defun orgtrello-proxy/--delete (entity-data)
+  "Compute the delete action to remove ENTITY-DATA."
   (lexical-let ((query-map        (orgtrello-proxy/--dispatch-delete entity-data))
                 (entity-to-delete entity-data)
                 (level            (orgtrello-data/entity-level entity-data)))

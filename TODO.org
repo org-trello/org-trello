@@ -3,16 +3,27 @@
 #+STYLE: <style> h1,h2,h3 {font-family: arial, helvetica, sans-serif} </style>
 
 * TODO 0.5.x [0%]
-- [ ] Archive cards - #181
-- [ ] Improve sync request policy - #58
-- [ ] Use active region - #130
-- [ ] One command to sync them all - #59
-- [ ] Another Disposition about org's buffer - #33
-- [ ] Fake trello server to help in testing.
+- [ ] One command to sync them all - [[https://github.com/org-trello/org-trello/issues/59][#59]]
+- [ ] Improve sync request policy - [[https://github.com/org-trello/org-trello/issues/58][#58]]
+- [ ] Use active region - [[https://github.com/org-trello/org-trello/issues/130][#130]]
+- [ ] Another Disposition about org's buffer - [[https://github.com/org-trello/org-trello/issues/33][#33]]
 - [ ] POC: use a temporary buffer to sync with trello, when done, merge with the user's buffer.
-- [ ] POC: Investigate webhooks - #137
-- [ ] POC: Leverage elnode and clojurescript core.async - #97
-
+* DONE 0.5.4 [100%]
+CLOSED: [2014-08-27 Wed 23:58]
+- [X] Backlog
+- [X] Archive cards - CLOSE #181
+  - [X] Open trello api about (un)archive card
+  - [X] Refactor API to factorize behavior
+  - [X] Install org-trello archive binding [100%]
+    - [X] Archive card interactive command
+    - [X] Ensure sync-from trello does not retrieve archive cards too
+    - [X] Remap org's default archive binding `C-c $` to use org-trello's
+    - [X] Functional checks before executing archive
+    - [X] Add Archive DONE cards interactive command
+- [X] Fix `Most actions not working` issue - CLOSE #192
+- [X] Update version
+- [X] Fix compilation warning(s)
+- [X] Release notes
 * DONE 0.5.3 [100%]
 CLOSED: [2014-08-26 Tue 23:27]
 - [X] Backlog
@@ -374,7 +385,7 @@ CLOSED: [2014-01-21 mar. 19:43]
 - [X] Add the important information about emacs 24.3+ (org-trello is only supported from this version range)
 - [X] Clean the code regarding the old checklist/item entities (with stars) - https://github.com/org-trello/org-trello/issues/105
 - [X] Sometimes, multiple cards are created more than once. Improve the proxy policy regarding this - Unable to reproduce so do nothing.
-- [X] Release notes
+- [X] Release notesj
 * DONE 0.3.0 [100%]
 CLOSED: [2014-01-20 lun. 22:02]
 - [X] Backlog

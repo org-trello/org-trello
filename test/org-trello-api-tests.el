@@ -54,9 +54,15 @@
 
 (expectations
   (desc "orgtrello-api/close-list")
-  (expect "PUT"                     (gethash :method (orgtrello-api/close-list :list-id)))
+  (expect "PUT"                    (gethash :method (orgtrello-api/close-list :list-id)))
   (expect "/lists/:list-id/closed" (gethash :uri    (orgtrello-api/close-list :list-id)))
-  (expect '((value . t))           (gethash :params (orgtrello-api/close-list :list-id))))
+  (expect '(("value" . "true"))       (gethash :params (orgtrello-api/close-list :list-id))))
+
+(expectations
+  (desc "orgtrello-api/open-list")
+  (expect "PUT"                    (gethash :method (orgtrello-api/open-list :list-id)))
+  (expect "/lists/:list-id/closed" (gethash :uri    (orgtrello-api/open-list :list-id)))
+  (expect '(("value" . "false"))     (gethash :params (orgtrello-api/open-list :list-id))))
 
 (expectations
   (desc "orgtrello-api/add-list")
@@ -287,6 +293,41 @@
   (expect "/boards/:board-id/members" (gethash :uri    (orgtrello-api/get-members :board-id)))
   (expect nil                         (gethash :params (orgtrello-api/get-members :board-id))))
 
+(expectations
+ (desc "orgtrello-api/archive-card")
+ (expect "PUT"                    (gethash :method (orgtrello-api/archive-card :card-id)))
+ (expect "/cards/:card-id/closed" (gethash :uri    (orgtrello-api/archive-card :card-id)))
+ (expect '(("value" . "true"))    (gethash :params (orgtrello-api/archive-card :card-id))))
+
+(expectations
+ (desc "orgtrello-api/unarchive-card")
+ (expect "PUT"                    (gethash :method (orgtrello-api/unarchive-card :card-id)))
+ (expect "/cards/:card-id/closed" (gethash :uri    (orgtrello-api/unarchive-card :card-id)))
+ (expect '(("value" . "false"))   (gethash :params (orgtrello-api/unarchive-card :card-id))))
+
+(expectations
+  (desc "orgtrello-api/do - do")
+  (expect "PUT"                      (gethash :method (orgtrello-api/do "/boards/%s/closed" :board-id)))
+  (expect "/boards/:board-id/closed" (gethash :uri    (orgtrello-api/do "/boards/%s/closed" :board-id)))
+  (expect '(("value" . "true"))      (gethash :params (orgtrello-api/do "/boards/%s/closed" :board-id))))
+
+(expectations
+  (desc "orgtrello-api/do - do")
+  (expect "PUT"                      (gethash :method (orgtrello-api/do "/boards/%s/closed" :board-id 'undo)))
+  (expect "/boards/:board-id/closed" (gethash :uri    (orgtrello-api/do "/boards/%s/closed" :board-id 'undo)))
+  (expect '(("value" . "false"))     (gethash :params (orgtrello-api/do "/boards/%s/closed" :board-id 'undo))))
+
+(expectations
+  (desc "orgtrello-api/close-board")
+  (expect "PUT"                      (gethash :method (orgtrello-api/close-board :board-id)))
+  (expect "/boards/:board-id/closed" (gethash :uri    (orgtrello-api/close-board :board-id)))
+  (expect '(("value" . "true"))      (gethash :params (orgtrello-api/close-board :board-id))))
+
+(expectations
+  (desc "orgtrello-api/open-board")
+  (expect "PUT"                      (gethash :method (orgtrello-api/open-board :board-id)))
+  (expect "/boards/:board-id/closed" (gethash :uri    (orgtrello-api/open-board :board-id)))
+  (expect '(("value" . "false"))     (gethash :params (orgtrello-api/open-board :board-id))))
 
 (provide 'org-trello-api-tests)
 ;;; org-trello-api-tests.el ends here

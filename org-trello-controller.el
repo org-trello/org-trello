@@ -95,23 +95,22 @@ ARGS is not used."
             ((= level *ORGTRELLO/CHECKLIST-LEVEL*) *ORGTRELLO/ERROR-SYNC-CHECKLIST-MISSING-NAME*)
             ((= level *ORGTRELLO/ITEM-LEVEL*)      *ORGTRELLO/ERROR-SYNC-ITEM-MISSING-NAME*)))))
 
-(defun orgtrello-controller/--do-delete! (full-meta action &optional entities-adjacencies)
+(defun orgtrello-controller/--do-delete! (full-meta &optional buffer-name)
   "Execute on FULL-META the ACTION.
-Provide entities-adjacencies for more information."
-  (let* ((current (orgtrello-data/current full-meta))
-         (marker  (orgtrello-buffer/--compute-marker-from-entry current)))
-    (orgtrello-buffer/set-marker-if-not-present! current marker)
-    (orgtrello-data/put-entity-id     marker current)
-    (orgtrello-data/put-entity-action action current)
-    (eval (orgtrello-proxy/--delete current entities-adjacencies))))
+BUFFER-NAME to specify the buffer with which we currently work."
+  (with-current-buffer buffer-name
+    (let* ((current (orgtrello-data/current full-meta))
+           (marker  (orgtrello-buffer/--compute-marker-from-entry current)))
+      (orgtrello-buffer/set-marker-if-not-present! current marker)
+      (orgtrello-data/put-entity-id marker current)
+      (eval (orgtrello-proxy/--delete current)))))
 
-(defun orgtrello-controller/do-delete-simple (&optional sync)
-  "Do the deletion of an entity.
-SYNC is not used."
+(defun orgtrello-controller/do-delete-simple ()
+  "Do the deletion of an entity."
   (orgtrello-action/functional-controls-then-do '(orgtrello-controller/--right-level-p orgtrello-controller/--already-synced-p)
                                                 (orgtrello-buffer/entry-get-full-metadata!)
                                                 'orgtrello-controller/--do-delete!
-                                                *ORGTRELLO/ACTION-DELETE*))
+                                                (current-buffer)))
 
 (defun orgtrello-controller/do-sync-card-to-trello! ()
   "Do the actual card creation/update - from card to item."
@@ -253,17 +252,54 @@ Optionally, SYNC permits to synchronize the query."
         (lambda (err) (orgtrello-log/msg *OT/ERROR* "Catch error: %S" err))))))
 
 (defun orgtrello-controller/--do-delete-card ()
-  "Delete the card.
-SYNC flag permit to synchronize the http query."
-  (when (= *ORGTRELLO/CARD-LEVEL* (-> (orgtrello-buffer/entry-get-full-metadata!)
-                          orgtrello-data/current
-                          orgtrello-data/entity-level))
+  "Delete the card."
+  (when (orgtrello-buffer/card-at-pt!)
     (orgtrello-controller/do-delete-simple)))
 
 (defun orgtrello-controller/do-delete-entities ()
   "Launch a batch deletion of every single entities present on the buffer.
 SYNC flag permit to synchronize the http query."
   (org-map-entries 'orgtrello-controller/--do-delete-card t 'file))
+
+(defun orgtrello-controller/checks-and-do-archive-card ()
+  "Check the functional requirements, then if everything is ok, archive the card."
+  (let ((buffer-name (current-buffer)))
+    (with-current-buffer buffer-name
+      (save-excursion
+        (let ((card-meta (progn (when (orgtrello-buffer/org-checkbox-p!) (orgtrello-buffer/back-to-card!))
+                                (orgtrello-buffer/entry-get-full-metadata!))))
+          (orgtrello-action/functional-controls-then-do '(orgtrello-controller/--right-level-p orgtrello-controller/--already-synced-p)
+                                                        card-meta
+                                                        'orgtrello-controller/do-archive-card
+                                                        buffer-name))))))
+
+(defun orgtrello-controller/do-archive-card (card-meta &optional buffer-name)
+  "Archive current CARD-META at point.
+BUFFER-NAME specifies the buffer onto which we work."
+  (save-excursion
+    (lexical-let* ((buffer-name buffer-name)
+                   (point-start (point))
+                   (card-meta   (orgtrello-data/current card-meta))
+                   (card-name   (orgtrello-data/entity-name card-meta)))
+      (deferred:$
+        (deferred:next
+          (lambda () ;; trello archive
+            (orgtrello-log/msg *OT/INFO* "Archive card '%s'..." card-name)
+            (orgtrello-log/msg *OT/DEBUG* "Archive card '%s' in trello...\n" card-name)
+            (-> card-meta
+              orgtrello-data/entity-id
+              orgtrello-api/archive-card
+              (orgtrello-query/http-trello 'sync))))
+        (deferred:nextc it
+          (lambda (card-result) ;; org archive
+            (orgtrello-log/msg *OT/DEBUG* "Archive card '%s' in org..." card-name)
+            (with-current-buffer buffer-name
+              (goto-char point-start)
+              (org-archive-subtree))))
+        (deferred:nextc it
+          (lambda () ;; save buffer
+            (orgtrello-buffer/save-buffer buffer-name)
+            (orgtrello-log/msg *OT/INFO* "Archive card '%s' done!" card-name)))))))
 
 (defun orgtrello-controller/--do-install-config-file (consumer-key access-token)
   "Persist the file config-file with the CONSUMER-KEY and ACCESS-TOKEN."

@@ -4,8 +4,8 @@
 
 ;; Author: Antoine R. Dumont <eniotna.t AT gmail.com>
 ;; Maintainer: Antoine R. Dumont <eniotna.t AT gmail.com>
-;; Version: 0.5.3
-;; Package-Requires: ((dash "2.8.0") (request-deferred "0.2.0") (s "1.9.0") (deferred "0.3.2"))
+;; Version: 0.5.4
+;; Package-Requires: ((dash "2.8.0") (s "1.9.0") (deferred "0.3.2") (request-deferred "0.2.0"))
 ;; Keywords: org-mode trello sync org-trello
 ;; URL: https://github.com/org-trello/org-trello
 
@@ -103,14 +103,8 @@ Please consider upgrading Emacs." emacs-version) "Error message when installing 
 (require 'parse-time)
 (require 'timer)
 (require 'align)
-(require 'deferred)
 
-;; Dependency on external Emacs libs
-(require 'dash)
-(require 'request-deferred)
-(require 's)
-
-(defconst *ORGTRELLO/VERSION* "0.5.3" "Current org-trello version installed.")
+(defconst *ORGTRELLO/VERSION* "0.5.4" "Current org-trello version installed.")
 
 
 
@@ -232,6 +226,16 @@ If MODIFIER is non nil, execute all entities removal from trello and buffer."
   (interactive)
   (org-trello/apply-deferred '(org-trello/log-strict-checks-and-do "Delete Cards" orgtrello-controller/do-delete-entities)))
 
+(defun org-trello/archive-card ()
+  "Execute archive card at point."
+  (interactive)
+  (org-trello/apply-deferred '(org-trello/log-strict-checks-and-do "Archive Card at point" orgtrello-controller/checks-and-do-archive-card)))
+
+(defun org-trello/archive-cards ()
+  "Execute archive all the DONE cards from buffer."
+  (interactive)
+  (org-map-entries 'org-trello/archive-card "/DONE" 'file))
+
 (defun org-trello/install-key-and-token ()
   "No control, trigger the setup installation of the key and the read/write token."
   (interactive)
@@ -352,6 +356,7 @@ If MODIFIER is not nil, unassign oneself from the card."
                                      (define-key org-trello-mode-map [remap org-end-of-line] 'orgtrello-buffer/end-of-line!)
                                      (define-key org-trello-mode-map [remap org-return] 'orgtrello-buffer/org-return!)
                                      (define-key org-trello-mode-map [remap org-ctrl-c-ret] 'orgtrello-buffer/org-ctrl-c-ret!)
+                                     (define-key org-trello-mode-map [remap org-archive-subtree] 'org-trello/archive-card)
                                      ;; a little message in the minibuffer to notify the user
                                      (orgtrello-log/msg *OT/NOLOG* (org-trello/--startup-message *ORGTRELLO/MODE-PREFIX-KEYBINDING*)))
           'do-append)
@@ -365,6 +370,7 @@ If MODIFIER is not nil, unassign oneself from the card."
                                       (define-key org-trello-mode-map [remap org-end-of-line] nil)
                                       (define-key org-trello-mode-map [remap org-return] nil)
                                       (define-key org-trello-mode-map [remap org-ctrl-c-ret] nil)
+                                      (define-key org-trello-mode-map [remap org-archive-subtree] nil)
                                       ;; a little message in the minibuffer to notify the user
                                       (orgtrello-log/msg *OT/NOLOG* "org-trello/ot is off!"))
           'do-append)

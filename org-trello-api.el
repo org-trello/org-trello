@@ -45,9 +45,18 @@ If FILTER is specified, this will filter on this."
                                                              ("lists" . "open")
                                                              ("fields" . "name,memberships,closed,labelNames"))))
 
+(defun orgtrello-api/do (api-uri id &optional undo-flag)
+  "Compute the query to do/undo thing using API-URI and ID.
+When UNDO-FLAG is set, trigger the undo computation."
+  (orgtrello-api/make-query "PUT" (format api-uri id) `(("value" . ,(if undo-flag "false" "true")))))
+
 (defun orgtrello-api/close-board (board-id)
   "Close a board with id BOARD-ID."
-  (orgtrello-api/make-query "PUT" (format "/boards/%s/closed" board-id) '(("value" . "true"))))
+  (orgtrello-api/do "/boards/%s/closed" board-id))
+
+(defun orgtrello-api/open-board (board-id)
+  "Open a board with id BOARD-ID."
+  (orgtrello-api/do "/boards/%s/closed" board-id 'open))
 
 (defun orgtrello-api/get-members (board-id)
   "Retrieve the memberships from a BOARD-ID."
@@ -89,13 +98,25 @@ If FILTER is specified, this will filter on this."
   "Create a delete card with id CARD-ID query."
   (orgtrello-api/make-query "DELETE" (format "/cards/%s" card-id)))
 
+(defun orgtrello-api/archive-card (card-id)
+  "Archive a card with id CARD-ID."
+  (orgtrello-api/do "/cards/%s/closed" card-id))
+
+(defun orgtrello-api/unarchive-card (card-id)
+  "Unarchive a card with id CARD-ID."
+  (orgtrello-api/do "/cards/%s/closed" card-id 'unarchive))
+
 (defun orgtrello-api/get-lists (board-id)
   "Create a get-lists of the board with BOARD-ID."
   (orgtrello-api/make-query "GET" (format "/boards/%s/lists" board-id)))
 
 (defun orgtrello-api/close-list (list-id)
   "Create a close list with id LIST-ID query."
-  (orgtrello-api/make-query "PUT" (format "/lists/%s/closed" list-id) '((value . t))))
+  (orgtrello-api/do "/lists/%s/closed" list-id))
+
+(defun orgtrello-api/open-list (list-id)
+  "Create a close list with id LIST-ID query."
+  (orgtrello-api/do "/lists/%s/closed" list-id 'open))
 
 (defun orgtrello-api/add-list (name idBoard &optional pos)
   "Create an add a list with NAME, IDBOARD and optional POS."
