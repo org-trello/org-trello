@@ -37,7 +37,7 @@ If there are errors, display them (unless NOLOG-P is set)."
     ;; no control, we simply execute the function
     (funcall fn-to-execute)))
 
-(defun orgtrello-action/functional-controls-then-do (control-fns entity fn-to-execute args)
+(defun orgtrello-action/functional-controls-then-do (control-fns entity fn-to-execute &optional args)
   "If CONTROL-FNS are ok, pass ENTITY as parameter to FN-TO-EXECUTE.
 ENTITY and ARGS are function parameter of FN-TO-EXECUTE.
 If any errors are thrown during controls, then display them."
