@@ -356,6 +356,7 @@ If MODIFIER is not nil, unassign oneself from the card."
                                      (define-key org-trello-mode-map [remap org-end-of-line] 'orgtrello-buffer/end-of-line!)
                                      (define-key org-trello-mode-map [remap org-return] 'orgtrello-buffer/org-return!)
                                      (define-key org-trello-mode-map [remap org-ctrl-c-ret] 'orgtrello-buffer/org-ctrl-c-ret!)
+                                     (define-key org-trello-mode-map [remap org-archive-subtree] 'org-trello/archive-card)
                                      ;; a little message in the minibuffer to notify the user
                                      (orgtrello-log/msg *OT/NOLOG* (org-trello/--startup-message *ORGTRELLO/MODE-PREFIX-KEYBINDING*)))
           'do-append)
@@ -369,6 +370,7 @@ If MODIFIER is not nil, unassign oneself from the card."
                                       (define-key org-trello-mode-map [remap org-end-of-line] nil)
                                       (define-key org-trello-mode-map [remap org-return] nil)
                                       (define-key org-trello-mode-map [remap org-ctrl-c-ret] nil)
+                                      (define-key org-trello-mode-map [remap org-archive-subtree] nil)
                                       ;; a little message in the minibuffer to notify the user
                                       (orgtrello-log/msg *OT/NOLOG* "org-trello/ot is off!"))
           'do-append)
