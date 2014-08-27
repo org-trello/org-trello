@@ -287,6 +287,29 @@
   (expect "/boards/:board-id/members" (gethash :uri    (orgtrello-api/get-members :board-id)))
   (expect nil                         (gethash :params (orgtrello-api/get-members :board-id))))
 
+(expectations
+ (desc "orgtrello-api/--archive-card ; archive the card")
+ (expect "PUT"                    (gethash :method (orgtrello-api/--archive-card :card-id)))
+ (expect "/cards/:card-id/closed" (gethash :uri    (orgtrello-api/--archive-card :card-id)))
+ (expect '(("value" . "true"))    (gethash :params (orgtrello-api/--archive-card :card-id))))
+
+(expectations
+ (desc "orgtrello-api/--archive-card ; unarchive the card")
+ (expect "PUT"                    (gethash :method (orgtrello-api/--archive-card :card-id 'unarchive)))
+ (expect "/cards/:card-id/closed" (gethash :uri    (orgtrello-api/--archive-card :card-id 'unarchive)))
+ (expect '(("value" . "false"))   (gethash :params (orgtrello-api/--archive-card :card-id 'unarchive))))
+
+(expectations
+ (desc "orgtrello-api/archive-card")
+ (expect "PUT"                    (gethash :method (orgtrello-api/archive-card :card-id)))
+ (expect "/cards/:card-id/closed" (gethash :uri    (orgtrello-api/archive-card :card-id)))
+ (expect '(("value" . "true"))    (gethash :params (orgtrello-api/archive-card :card-id))))
+
+(expectations
+ (desc "orgtrello-api/unarchive-card")
+ (expect "PUT"                    (gethash :method (orgtrello-api/unarchive-card :card-id)))
+ (expect "/cards/:card-id/closed" (gethash :uri    (orgtrello-api/unarchive-card :card-id)))
+ (expect '(("value" . "false"))   (gethash :params (orgtrello-api/unarchive-card :card-id))))
 
 (provide 'org-trello-api-tests)
 ;;; org-trello-api-tests.el ends here

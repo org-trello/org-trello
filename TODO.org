@@ -10,7 +10,11 @@
 - [ ] POC: use a temporary buffer to sync with trello, when done, merge with the user's buffer.
 * IN-PROGRESS 0.5.4 [25%]
 - [X] Backlog
-- [ ] Archive cards - #181
+- [-] Archive cards - #181
+  - [X] Open trello api about (un)archive card
+  - [ ] Refactor API to factorize behavior
+  - [ ] Open org api about (un)archive card
+  - [ ] Open binding that bind them
 - [ ] Update version
 - [ ] Release notes
 * DONE 0.5.3 [100%]

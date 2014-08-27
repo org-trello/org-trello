@@ -89,6 +89,19 @@ If FILTER is specified, this will filter on this."
   "Create a delete card with id CARD-ID query."
   (orgtrello-api/make-query "DELETE" (format "/cards/%s" card-id)))
 
+(defun orgtrello-api/--archive-card (card-id &optional unarchive-flag)
+  "Compute archive card CARD-ID query.
+When UNARCHIVE-FLAG is set, create an unarchive query."
+  (orgtrello-api/make-query "PUT" (format "/cards/%s/closed" card-id) `(("value" . ,(if unarchive-flag "false" "true")))))
+
+(defun orgtrello-api/archive-card (card-id)
+  "Archive a card with id CARD-ID."
+  (orgtrello-api/--archive-card card-id))
+
+(defun orgtrello-api/unarchive-card (card-id)
+  "Unarchive a card with id CARD-ID."
+  (orgtrello-api/--archive-card card-id 'unarchive))
+
 (defun orgtrello-api/get-lists (board-id)
   "Create a get-lists of the board with BOARD-ID."
   (orgtrello-api/make-query "GET" (format "/boards/%s/lists" board-id)))
