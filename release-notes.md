@@ -1,3 +1,20 @@
+# 0.5.4
+
+- [X] Backlog
+- [X] Archive cards - CLOSE #181
+  - [X] Open trello api about (un)archive card
+  - [X] Refactor API to factorize behavior
+  - [X] Install org-trello archive binding [100%]
+    - [X] Archive card interactive command
+    - [X] Ensure sync-from trello does not retrieve archive cards too
+    - [X] Remap org's default archive binding `C-c $` to use org-trello's
+    - [X] Functional checks before executing archive
+    - [X] Add Archive DONE cards interactive command
+- [X] Fix `Most actions not working` issue - CLOSE #192
+- [X] Update version
+- [X] Fix compilation warning(s)
+- [X] Release notes
+
 # 0.5.3
 
 - [X] Backlog
