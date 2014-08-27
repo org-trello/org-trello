@@ -12,7 +12,7 @@
 - [X] Backlog
 - [-] Archive cards - #181
   - [X] Open trello api about (un)archive card
-  - [ ] Refactor API to factorize behavior
+  - [X] Refactor API to factorize behavior
   - [ ] Open org api about (un)archive card
   - [ ] Open binding that bind them
 - [ ] Update version
