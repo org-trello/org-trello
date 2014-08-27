@@ -5,6 +5,7 @@
 (require 'org)
 (require 'org-trello-setup)
 (require 'org-trello-log)
+(require 'dash)
 
 (defun orgtrello-action/reload-setup! ()
   "Reload org-trello setup."

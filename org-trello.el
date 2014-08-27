@@ -5,7 +5,7 @@
 ;; Author: Antoine R. Dumont <eniotna.t AT gmail.com>
 ;; Maintainer: Antoine R. Dumont <eniotna.t AT gmail.com>
 ;; Version: 0.5.3
-;; Package-Requires: ((dash "2.8.0") (request-deferred "0.2.0") (s "1.9.0") (deferred "0.3.2"))
+;; Package-Requires: ((dash "2.8.0") (s "1.9.0") (deferred "0.3.2") (request-deferred "0.2.0"))
 ;; Keywords: org-mode trello sync org-trello
 ;; URL: https://github.com/org-trello/org-trello
 
@@ -103,12 +103,6 @@ Please consider upgrading Emacs." emacs-version) "Error message when installing 
 (require 'parse-time)
 (require 'timer)
 (require 'align)
-(require 'deferred)
-
-;; Dependency on external Emacs libs
-(require 'dash)
-(require 'request-deferred)
-(require 's)
 
 (defconst *ORGTRELLO/VERSION* "0.5.3" "Current org-trello version installed.")
 
