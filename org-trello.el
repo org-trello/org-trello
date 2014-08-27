@@ -237,6 +237,11 @@ If MODIFIER is non nil, execute all entities removal from trello and buffer."
   (interactive)
   (org-trello/apply-deferred '(org-trello/log-strict-checks-and-do "Archive Card at point" orgtrello-controller/checks-and-do-archive-card)))
 
+(defun org-trello/archive-cards ()
+  "Execute archive all the DONE cards from buffer."
+  (interactive)
+  (org-map-entries 'org-trello/archive-card "/DONE" 'file))
+
 (defun org-trello/install-key-and-token ()
   "No control, trigger the setup installation of the key and the read/write token."
   (interactive)
