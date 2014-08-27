@@ -8,13 +8,17 @@
 - [ ] Use active region - [[https://github.com/org-trello/org-trello/issues/130][#130]]
 - [ ] Another Disposition about org's buffer - [[https://github.com/org-trello/org-trello/issues/33][#33]]
 - [ ] POC: use a temporary buffer to sync with trello, when done, merge with the user's buffer.
-* IN-PROGRESS 0.5.4 [25%]
+* IN-PROGRESS 0.5.4 [20%]
 - [X] Backlog
 - [-] Archive cards - [[https://github.com/org-trello/org-trello/issues/181][#181]]
   - [X] Open trello api about (un)archive card
   - [X] Refactor API to factorize behavior
-  - [ ] Open org api about (un)archive card
-  - [ ] Open binding that bind them
+  - [-] Install org-trello archive binding [25%]
+    - [X] Archive card interactive command
+    - [ ] Archive all cards interactive command
+    - [ ] Remap org's default archive binding `C-c $` to use org-trello's
+    - [ ] Ensure sync-from trello does not retrieve archive cards too
+- [ ] Fix potential deferred problem version that triggers shitstorm during installation [[https://github.com/org-trello/org-trello/issues/192][#192]]
 - [ ] Update version
 - [ ] Release notes
 * DONE 0.5.3 [100%]

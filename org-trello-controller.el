@@ -265,6 +265,34 @@ SYNC flag permit to synchronize the http query."
 SYNC flag permit to synchronize the http query."
   (org-map-entries 'orgtrello-controller/--do-delete-card t 'file))
 
+(defun orgtrello-controller/do-archive-card ()
+  "Archive current card at point."
+  (save-excursion
+    (lexical-let* ((buffer-name (current-buffer))
+                   (point-start (point))
+                   (card-meta   (progn (when (orgtrello-buffer/org-checkbox-p!) (orgtrello-buffer/back-to-card!))
+                                       (orgtrello-data/current (orgtrello-buffer/entry-get-full-metadata!))))
+                   (card-name   (orgtrello-data/entity-name card-meta)))
+      (deferred:$
+        (deferred:next
+          (lambda () ;; trello archive
+            (orgtrello-log/msg *OT/INFO* "Archive card '%s'..." card-name)
+            (orgtrello-log/msg *OT/DEBUG* "Archive card '%s' in trello...\n" card-name)
+            (-> card-meta
+              orgtrello-data/entity-id
+              orgtrello-api/archive-card
+              (orgtrello-query/http-trello 'sync))))
+        (deferred:nextc it
+          (lambda (card-result) ;; org archive
+            (orgtrello-log/msg *OT/DEBUG* "Archive card '%s' in org..." card-name)
+            (with-current-buffer buffer-name
+              (goto-char point-start)
+              (org-archive-subtree))))
+        (deferred:nextc it
+          (lambda () ;; save buffer
+            (orgtrello-buffer/save-buffer buffer-name)
+            (orgtrello-log/msg *OT/INFO* "Archive card '%s' done!" card-name)))))))
+
 (defun orgtrello-controller/--do-install-config-file (consumer-key access-token)
   "Persist the file config-file with the CONSUMER-KEY and ACCESS-TOKEN."
   (make-directory *ORGTRELLO/CONFIG-DIR* t)
