@@ -13,11 +13,11 @@
 - [-] Archive cards - [[https://github.com/org-trello/org-trello/issues/181][#181]]
   - [X] Open trello api about (un)archive card
   - [X] Refactor API to factorize behavior
-  - [-] Install org-trello archive binding [25%]
+  - [-] Install org-trello archive binding [50%]
     - [X] Archive card interactive command
-    - [ ] Archive all cards interactive command
+    - [X] Ensure sync-from trello does not retrieve archive cards too
     - [ ] Remap org's default archive binding `C-c $` to use org-trello's
-    - [ ] Ensure sync-from trello does not retrieve archive cards too
+    - [ ] Archive all cards interactive command
 - [ ] Fix potential deferred problem version that triggers shitstorm during installation [[https://github.com/org-trello/org-trello/issues/192][#192]]
 - [ ] Update version
 - [ ] Release notes
