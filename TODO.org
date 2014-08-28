@@ -8,7 +8,7 @@
 - [ ] Use active region - [[https://github.com/org-trello/org-trello/issues/130][#130]]
 - [ ] Another Disposition about org's buffer - [[https://github.com/org-trello/org-trello/issues/33][#33]]
 - [ ] POC: use a temporary buffer to sync with trello, when done, merge with the user's buffer.
-* IN-PROGRESS 0.5.5 [76%]
+* IN-PROGRESS 0.5.5 [84%]
 - [X] Backlog
 - [X] Update version
 - [X] Update main github's readme to static link to the main documentation site.
@@ -19,7 +19,7 @@
 - [X] Update bindings to show comments as `C-u C-c o A` and remove the old one `C-c o o`
 - [X] Check everything is ok from test point of view
 - [X] Fix Synchronization problem - #183
-- [ ] Some refactoring to reduce multiple buffer readings
+- [X] Some refactoring to reduce multiple buffer readings
 - [ ] Check package installation
 - [ ] Release notes
 * DONE 0.5.4 [100%]

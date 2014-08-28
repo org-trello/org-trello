@@ -242,24 +242,27 @@ The optional ORGCHECKBOX-P is not used."
   "Given the ENTITY, return the function to add the entity and adjacency."
   (if (orgtrello-data/entity-card-p entity) 'orgtrello-buffer/--put-card-with-adjacency 'orgtrello-backend/--put-entities-with-adjacency))
 
-(defun orgtrello-buffer/--compute-entities-from-org! ()
-  "Compute the full entities present in the org buffer.
+(defun orgtrello-buffer/--compute-entities-from-org! (buffer-name)
+  "Compute the full entities present in the org buffer BUFFER-NAME.
 Return the list of entities map and adjacency map in this order.
 If REGION-END is specified, will work on the region (current-point, REGION-END), otherwise, work on all buffer."
-  (let ((entities (orgtrello-hash/empty-hash))
-        (adjacency (orgtrello-hash/empty-hash)))
-    (orgtrello-buffer/org-map-entities-without-params!
-     (lambda ()
-       (org-show-subtree) ;; unfold every entries, otherwise https://github.com/org-trello/org-trello/issues/53
-       (let ((current-entity (-> (orgtrello-buffer/entry-get-full-metadata!) orgtrello-data/current)))
-         (unless (-> current-entity orgtrello-data/entity-id orgtrello-data/id-p) ;; if no id, we set one
-           (orgtrello-buffer/--set-marker! (orgtrello-buffer/--compute-marker-from-entry current-entity)))
-         (let* ((full-meta (orgtrello-buffer/entry-get-full-metadata!)))
-           (--> full-meta
-             orgtrello-data/current
+  (with-current-buffer buffer-name
+    (let ((entities (orgtrello-hash/empty-hash))
+          (adjacency (orgtrello-hash/empty-hash)))
+      (orgtrello-buffer/org-map-entities-without-params!
+       (lambda ()
+         (org-show-subtree) ;; unfold every entries, otherwise https://github.com/org-trello/org-trello/issues/53
+         (let* ((full-meta      (orgtrello-buffer/entry-get-full-metadata!))
+                (entity (orgtrello-data/current full-meta)))
+           (unless (-> entity orgtrello-data/entity-id orgtrello-data/id-p) ;; if no id, we set one
+             (let ((marker (orgtrello-buffer/--compute-marker-from-entry entity)))
+               (orgtrello-buffer/--set-marker! marker)        ;; set the marker
+               (orgtrello-data/put-entity-id marker entity)   ;; update the entity with its id/marker
+               (orgtrello-data/put-current entity full-meta)));; update the full-meta data with the new entity
+           (--> entity
              (orgtrello-buffer/--dispatch-create-entities-map-with-adjacency it)
-             (funcall it full-meta entities adjacency))))))
-    (list entities adjacency)))
+             (funcall it full-meta entities adjacency)))))
+      (list entities adjacency))))
 
 (defun orgtrello-buffer/activate-region! (region-start region-end)
   "Activate the region between REGION-START and REGION-END."
@@ -281,7 +284,7 @@ If REGION-START and REGION-END are provided, this will work on such defined regi
   (with-current-buffer buffer-name
     (save-excursion
       (when (and region-start region-end) (orgtrello-buffer/activate-region! region-start region-end))
-      (orgtrello-buffer/--compute-entities-from-org!))))
+      (orgtrello-buffer/--compute-entities-from-org! buffer-name))))
 
 (defun orgtrello-buffer/--put-entities (current-meta entities)
   "Deal with adding a the current entry from CURRENT-META in ENTITIES."
@@ -302,9 +305,9 @@ Move the cursor position."
   "Set a MARKER to get back to later."
   (orgtrello-buffer/set-property *ORGTRELLO/ID* marker))
 
-(defun orgtrello-buffer/set-marker-if-not-present! (current-entity marker)
+(defun orgtrello-buffer/set-marker-if-not-present! (entity marker)
   "Set the CURRENT-ENTITY with MARKER to the entry if we never did."
-  (unless (string= (orgtrello-data/entity-id current-entity) marker) ;; if never created before, we need a marker to add inside the file
+  (unless (string= (orgtrello-data/entity-id entity) marker) ;; if never created before, we need a marker to add inside the file
     (orgtrello-buffer/--set-marker! marker)))
 
 (defun orgtrello-buffer/org-map-entities-without-params! (fn-to-execute)
