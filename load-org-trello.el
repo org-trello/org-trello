@@ -24,7 +24,10 @@
 (defun org-trello/dev-load-namespaces! ()
   "Load the org-trello namespaces."
   (interactive)
-  (mapc (lambda (it) (load-with-code-conversion it it)) *ORGTRELLO-NAMESPACES*))
+  ;; recompile code
+  (mapc (lambda (it) (load-with-code-conversion it it)) *ORGTRELLO-NAMESPACES*)
+  ;; reload bindings
+  (org-trello/install-local-prefix-mode-keybinding! *ORGTRELLO/MODE-PREFIX-KEYBINDING*))
 
 (defun org-trello/dev-find-unused-definitions! ()
   "Find unused definitions."
@@ -44,8 +47,8 @@
 
 (require 'org-trello)
 
-(define-key emacs-lisp-mode-map (kbd "C-c o n") 'org-trello/dev-load-namespaces!)
-(define-key org-trello-mode-map (kbd "C-c o n") 'org-trello/dev-load-namespaces!)
+(define-key emacs-lisp-mode-map (kbd "C-c o r") 'org-trello/dev-load-namespaces!)
+(define-key org-trello-mode-map (kbd "C-c o r") 'org-trello/dev-load-namespaces!)
 (define-key emacs-lisp-mode-map (kbd "C-c o f") 'org-trello/dev-find-unused-definitions!)
 (define-key org-trello-mode-map (kbd "C-c o f") 'org-trello/dev-find-unused-definitions!)
 
