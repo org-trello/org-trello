@@ -684,7 +684,7 @@ Return the hashmap (name, id) of the new lists created."
            (comment (read-string "Add a comment: ")))
       (if (or (null card-id) (string= "" card-id) (string= "" comment))
           (message "Empty comment - skip.")
-        (orgtrello-query/http-trello (orgtrello-api/add-card-comment card-id comment) t
+        (orgtrello-query/http-trello (orgtrello-api/add-card-comment card-id comment) 'sync
                                      (function* (lambda (&key data &allow-other-keys) "Synchronize the buffer with the response data."
                                                   (orgtrello-log/msg *OT/TRACE* "proxy - response data: %S" data)
                                                   (orgtrello-controller/--update-comments! comment)
