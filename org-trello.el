@@ -176,10 +176,14 @@ If NO-CHECK-FLAG is set, no controls are done."
   (interactive)
   (deferred:clear-queue))
 
-(defun org-trello/add-card-comments ()
-  "Control first, then if ok, add a comment to the current card."
-  (interactive)
-  (org-trello/apply '(org-trello/log-strict-checks-and-do "Add card comment" orgtrello-controller/do-add-card-comment!)))
+(defun org-trello/add-card-comments (&optional modifier)
+  "Control first, then if ok, add a comment to the current card.
+When MODIFIER is set, this will show the current card's comments."
+  (interactive "P")
+  (org-trello/apply (cons 'org-trello/log-strict-checks-and-do
+                          (if modifier
+                              '("Display current card's last comments" orgtrello-controller/do-show-card-comments!)
+                            '("Add card comment" orgtrello-controller/do-add-card-comment!)))))
 
 (defun org-trello/show-card-comments ()
   "Control first, then if ok, show a simple buffer with the current card's last comments."
