@@ -10,6 +10,7 @@
        "org-trello-hash.el"
        "org-trello-action.el"
        "org-trello-data.el"
+       "org-trello-entity.el"
        "org-trello-cbx.el"
        "org-trello-api.el"
        "org-trello-query.el"

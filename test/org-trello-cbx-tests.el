@@ -136,15 +136,6 @@
   (expect "- [X] some checkbox :PROPERTIES: {}"
           (orgtrello-tests/with-temp-buffer-and-return-buffer-content "- [X] some checkbox" (orgtrello-cbx/org-delete-property "inexistant"))))
 
-(expectations (desc "orgtrello-cbx/compute-next-card-point!")
-  (expect 50 (orgtrello-tests/with-temp-buffer "* heading\n- [ ] some checklist\n  - [ ] some item\n"                                      (orgtrello-cbx/compute-next-card-point!))) ;; return the max point
-  (expect 70 (orgtrello-tests/with-temp-buffer "#+TODO: TODO | DONE\n* heading\n- [ ] some checklist\n  - [ ] some item\n"                 (orgtrello-cbx/compute-next-card-point!))) ;; return the max point
-  (expect 65 (orgtrello-tests/with-temp-buffer "* heading\n- [ ] some checklist\n  - [ ] some item\n* next heading\n"                      (orgtrello-cbx/compute-next-card-point!)))
-  (expect 85 (orgtrello-tests/with-temp-buffer "#+TODO: TODO | DONE\n* heading\n- [ ] some checklist\n  - [ ] some item\n* next heading\n" (orgtrello-cbx/compute-next-card-point!)))
-  (expect 70 (orgtrello-tests/with-temp-buffer "#+TODO: TODO | DONE\n* heading\n- [ ] some checklist\n  - [ ] some item\n* next heading\n" (orgtrello-cbx/compute-next-card-point!) -3))
-  (expect 70 (orgtrello-tests/with-temp-buffer "#+TODO: TODO | DONE\n* heading\n- [ ] some checklist\n  - [ ] some item\n* next heading\n" (orgtrello-cbx/compute-next-card-point!) -4)))
-
-
 (expectations (desc "orgtrello-cbx/--read-properties-from-point")
   (expect '((orgtrello-id . "orgtrello-marker-123")) (with-temp-buffer
                                                        (org-mode)
@@ -175,24 +166,11 @@
   (expect "- [X] some checkbox"
     (orgtrello-tests/with-temp-buffer "- [X] some checkbox" (orgtrello-cbx/--read-checkbox!))))
 
-(expectations
-  (desc "orgtrello-cbx/--level!")
-  (expect 1  (orgtrello-tests/with-temp-buffer "* some card" (orgtrello-cbx/--level!)))
-  (expect 2  (orgtrello-tests/with-temp-buffer "- [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}" (orgtrello-cbx/--level!)))
-  (expect 3  (orgtrello-tests/with-temp-buffer "  - [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}" (orgtrello-cbx/--level!)))
-  (expect 3  (orgtrello-tests/with-temp-buffer " - [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}" (orgtrello-cbx/--level!)))
-  (expect 3  (orgtrello-tests/with-temp-buffer "     - [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}" (orgtrello-cbx/--level!)))
-  (expect -1 (orgtrello-tests/with-temp-buffer "something else" (orgtrello-cbx/--level!))))
-
 (expectations (desc "orgtrello-cbx/org-checkbox-metadata!")
   (expect '(2 nil "DONE" nil "some checkbox" nil)
     (orgtrello-tests/with-temp-buffer "- [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}" (orgtrello-cbx/org-checkbox-metadata!)))
   (expect '(3 nil "TODO" nil "some other checkbox" nil)
     (orgtrello-tests/with-temp-buffer " - [ ] some other checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}" (orgtrello-cbx/org-checkbox-metadata!))))
-
-(expectations
-  (expect 25 (orgtrello-tests/with-temp-buffer "* card\n- [ ] checkbox 0\n- [ ] checkbox 1\n" (orgtrello-cbx/next-checklist-point!) -2))
-  (expect 56 (orgtrello-tests/with-temp-buffer "* card\n- [ ] checkbox 0\n  - [ ] item0\n- [ ] checkbox 1\n" (orgtrello-cbx/next-checklist-point!) -1)))
 
 (provide 'org-trello-cbx-tests)
 ;;; org-trello-cbx-tests.el ends here

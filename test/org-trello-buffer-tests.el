@@ -4,102 +4,6 @@
 (require 'el-mock)
 
 (expectations
-  (desc "orgtrello-buffer/card-at-pt!")
-  (expect t
-    (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
-   DEADLINE: <2014-04-01T00:00:00.000Z>
-:PROPERTIES:
-:orgtrello-id: 52c945143004d4617c012528
-:END:
-hello there
-"
-                                      (orgtrello-buffer/card-at-pt!)))
-
-  (expect nil
-    (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
-:PROPERTIES:
-:orgtrello-id: 52c945143004d4617c012528
-:END:
-  hello there
-- [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}"
-                                      (orgtrello-buffer/card-at-pt!)
-                                      0))
-  (expect nil
-    (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
-:PROPERTIES:
-:orgtrello-id: 52c945143004d4617c012528
-:END:
-  hello there
-- [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}
-  - [X] Emacs-Lisp  :PROPERTIES: {\"orgtrello-id\":\"52c9451784251e1b260127f8\"}"
-                                      (orgtrello-buffer/card-at-pt!)
-                                      0)))
-
-(expectations
-  (desc "orgtrello-buffer/checklist-at-pt!")
-  (expect nil
-    (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
-   DEADLINE: <2014-04-01T00:00:00.000Z>
-:PROPERTIES:
-:orgtrello-id: 52c945143004d4617c012528
-:END:
-hello there
-"
-                                      (orgtrello-buffer/checklist-at-pt!)))
-
-  (expect t
-    (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
-:PROPERTIES:
-:orgtrello-id: 52c945143004d4617c012528
-:END:
-  hello there
-- [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}"
-                                      (orgtrello-buffer/checklist-at-pt!)
-                                      0))
-  (expect nil
-    (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
-:PROPERTIES:
-:orgtrello-id: 52c945143004d4617c012528
-:END:
-  hello there
-- [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}
-  - [X] Emacs-Lisp  :PROPERTIES: {\"orgtrello-id\":\"52c9451784251e1b260127f8\"}"
-                                      (orgtrello-buffer/checklist-at-pt!)
-                                      0)))
-
-(expectations
-  (desc "orgtrello-buffer/item-at-pt!")
-  (expect nil
-    (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
-   DEADLINE: <2014-04-01T00:00:00.000Z>
-:PROPERTIES:
-:orgtrello-id: 52c945143004d4617c012528
-:END:
-hello there
-"
-                                      (orgtrello-buffer/item-at-pt!)))
-
-  (expect nil
-    (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
-:PROPERTIES:
-:orgtrello-id: 52c945143004d4617c012528
-:END:
-  hello there
-- [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}"
-                                      (orgtrello-buffer/item-at-pt!)
-                                      0))
-  (expect t
-    (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
-:PROPERTIES:
-:orgtrello-id: 52c945143004d4617c012528
-:END:
-  hello there
-- [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}
-  - [X] Emacs-Lisp  :PROPERTIES: {\"orgtrello-id\":\"52c9451784251e1b260127f8\"}"
-                                      (orgtrello-buffer/item-at-pt!)
-                                      0)))
-
-(expectations
   (expect "llo there"
     (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
    DEADLINE: <2014-04-01T00:00:00.000Z>
@@ -221,24 +125,6 @@ hello there
     (orgtrello-tests/with-org-buffer
      (format ":PROPERTIES:\n#+PROPERTY: %s this-is-the-user\n:END:\n* card\n" *ORGTRELLO/USER-ME*)
      (orgtrello-buffer/me!))))
-
-(expectations
-  (expect '(8 24)
-    (orgtrello-tests/with-temp-buffer "* card\n- [ ] checklist\n- [ ] another" (orgtrello-buffer/compute-checklist-header-region!))))
-
-(expectations
-  (expect '(8 24)
-    (orgtrello-tests/with-temp-buffer "* card\n- [ ] checklist\n- [ ] item" (orgtrello-buffer/compute-checklist-region!)))
-  (expect '(8 36)
-    (orgtrello-tests/with-temp-buffer "* card\n- [ ] checklist\n  - [ ] item" (orgtrello-buffer/compute-checklist-region!)))
-  (expect '(8 48)
-    (orgtrello-tests/with-temp-buffer "* card\n- [ ] checklist\n  - [ ] item\n  - item 2\n" (orgtrello-buffer/compute-checklist-region!) -3))
-  (expect '(8 48)
-    (orgtrello-tests/with-temp-buffer "* card\n- [ ] checklist\n  - [ ] item\n  - item 2\n* another card" (orgtrello-buffer/compute-checklist-region!) -3)))
-
-(expectations
-  (expect '(17 33)
-    (orgtrello-tests/with-temp-buffer "- [ ] checklist\n  - [ ] another" (orgtrello-buffer/compute-item-region!) 0)))
 
 (expectations
   (expect ":PROPERTIES:

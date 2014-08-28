@@ -24,22 +24,29 @@
 
 (require 'load-org-trello)
 
+(defvar *ORGTRELLO-TEST-NAMESPACES* '() "Org-trello test namespaces for development purposes.")
+(setq *ORGTRELLO-TEST-NAMESPACES* '("test/utilities-tests.el"
+                                    "test/org-trello-tests.el"
+                                    "test/org-trello-action-tests.el"
+                                    "test/org-trello-api-tests.el"
+                                    "test/org-trello-backend-tests.el"
+                                    "test/org-trello-entity-tests.el"
+                                    "test/org-trello-entity-tests.el"
+                                    "test/org-trello-cbx-tests.el"
+                                    "test/org-trello-buffer-tests.el"
+                                    "test/org-trello-controller-tests.el"
+                                    "test/org-trello-data-tests.el"
+                                    "test/org-trello-hash-tests.el"
+                                    "test/org-trello-proxy-tests.el"
+                                    "test/org-trello-query-tests.el"
+                                    "test/org-trello-utils-tests.el"))
+
 (defun org-trello/test-load-namespaces! ()
   "Load the org-trello namespaces."
   (interactive)
-  (mapc #'load-file '("test/utilities-tests.el"
-                      "test/org-trello-tests.el"
-                      "test/org-trello-action-tests.el"
-                      "test/org-trello-api-tests.el"
-                      "test/org-trello-backend-tests.el"
-                      "test/org-trello-buffer-tests.el"
-                      "test/org-trello-cbx-tests.el"
-                      "test/org-trello-controller-tests.el"
-                      "test/org-trello-data-tests.el"
-                      "test/org-trello-hash-tests.el"
-                      "test/org-trello-proxy-tests.el"
-                      "test/org-trello-query-tests.el"
-                      "test/org-trello-utils-tests.el")))
+  (mapc #'load-file *ORGTRELLO-TEST-NAMESPACES*)
+  (require 'org-trello)
+  (orgtrello-log/msg *OT/INFO* "Tests loaded!"))
 
 (org-trello/test-load-namespaces!)
 

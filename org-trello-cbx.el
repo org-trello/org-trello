@@ -5,11 +5,8 @@
 (require 'org-trello-setup)
 (require 'org-trello-log)
 (require 'org-trello-hash)
+(require 'org-trello-entity)
 (require 's)
-
-(defun orgtrello-cbx/checkbox-p ()
-  "Is there a checkbox at point?"
-  (org-at-item-checkbox-p))
 
 (defun orgtrello-cbx/serialize-hashmap (hash-table)
   "Return a json representation of HASH-TABLE."
@@ -167,20 +164,6 @@ Write the new properties at current position."
          (status-retrieved (orgtrello-cbx/--retrieve-status meta)))
     (list nil (orgtrello-cbx/--status status-retrieved) nil (orgtrello-cbx/--name checklist-data status-retrieved) nil)))
 
-(defun orgtrello-cbx/--item-p! ()
-  "Given the current position, determine if we are on an item."
-  (-when-let (s (buffer-substring-no-properties (point-at-bol) (point-at-eol)))
-    (->> s
-      s-trim-left
-      (string-match-p "^- \\\[.?\\\].*"))))
-
-(defun orgtrello-cbx/--level! ()
-  "Compute the levels from the current position (which is `bol`)"
-  (cond ((org-at-heading-p)        *ORGTRELLO/CARD-LEVEL*)
-        ((org-at-item-bullet-p)    *ORGTRELLO/CHECKLIST-LEVEL*)
-        ((orgtrello-cbx/--item-p!) *ORGTRELLO/ITEM-LEVEL*)
-        (t                         -1)))
-
 (defun orgtrello-cbx/org-checkbox-metadata! ()
   "Extract the metadata about the checklist - this is the symmetrical with `org-heading-components` but for the checklist.
 Return the components of the current heading.
@@ -193,7 +176,7 @@ This is a list with the following elements:
 - the tags string, or nil.                                         - nil"
   (save-excursion
     (beginning-of-line)
-    (cons (orgtrello-cbx/--level!)
+    (cons (orgtrello-entity/level!)
           (orgtrello-cbx/--metadata-from-checklist (orgtrello-cbx/--read-checkbox!)))))
 
 (defun orgtrello-cbx/--get-level (meta)
@@ -221,39 +204,11 @@ Return the level found or nil if the level found is a card."
     1-
     orgtrello-cbx/--org-up!))
 
-(defun orgtrello-cbx/compute-next-card-point! ()
-  "Compute the next card's position.
-Does preserve position.
-If a sibling is found, return the point-at-bol, otherwise return the max point in buffer."
-  (save-excursion
-    (org-back-to-heading)
-    (if (org-goto-sibling) (point-at-bol) (point-max))))
-
-(defun orgtrello-cbx/--goto-next-checkbox ()
-  "Go to the next checkbox.
-Does not preserve the current position.
-If hitting a heading or the end of the file, return nil."
-  (forward-line)
-  (when (and (not (= *ORGTRELLO/CARD-LEVEL* (orgtrello-cbx/--level!))) (< (point) (point-max)) (not (orgtrello-cbx/checkbox-p)))
-    (orgtrello-cbx/--goto-next-checkbox)))
-
-(defun orgtrello-cbx/--goto-next-checkbox-with-same-level! (level)
-  "Compute the next checkbox's beginning of line (with the same LEVEL).
- Does not preserve the current position.
-If hitting a heading or the end of the file, return nil.
-Otherwise, return the current position."
-  (forward-line)
-  (if (= level (orgtrello-cbx/current-level!))
-      (point)
-    (if (or (org-at-heading-p) (<= (point-max) (point)))
-        nil
-      (orgtrello-cbx/--goto-next-checkbox-with-same-level! level))))
-
 (defun orgtrello-cbx/--map-checkboxes (level fn-to-execute)
   "Map over the checkboxes with level > to LEVEL and execute FN-TO-EXECUTE.
 Does not preserve the cursor position.
 Do not exceed the max size of buffer."
-  (orgtrello-cbx/--goto-next-checkbox)
+  (orgtrello-entity/goto-next-checkbox)
   (when (< level (orgtrello-cbx/current-level!))
     (funcall fn-to-execute)
     (orgtrello-cbx/--map-checkboxes level fn-to-execute)))
@@ -264,12 +219,6 @@ Do not exceed the max size of buffer."
          (scan-level (if (<= level *ORGTRELLO/CARD-LEVEL*) *ORGTRELLO/CARD-LEVEL* level))) ;; hack to take into account -1 (card metadata) as card level
     (when (= level *ORGTRELLO/CHECKLIST-LEVEL*) (funcall fn-to-execute))
     (save-excursion (orgtrello-cbx/--map-checkboxes scan-level fn-to-execute))))
-
-(defun orgtrello-cbx/next-checklist-point! ()
-  "Compute the next checklist position."
-  (-if-let (next-checklist-point (save-excursion (orgtrello-cbx/--goto-next-checkbox-with-same-level! *ORGTRELLO/CHECKLIST-LEVEL*) (point)))
-      next-checklist-point
-    (orgtrello-cbx/compute-next-card-point!)))
 
 (orgtrello-log/msg *OT/DEBUG* "orgtrello-cbx loaded!")
 

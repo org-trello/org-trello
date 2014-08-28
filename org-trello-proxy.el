@@ -8,8 +8,9 @@
 (require 'org-trello-api)
 (require 'org-trello-data)
 (require 'org-trello-hash)
-(require 'org-trello-buffer)
+(require 'org-trello-entity)
 (require 'org-trello-cbx)
+(require 'org-trello-buffer)
 (require 'org-trello-action)
 
 (defun orgtrello-proxy/--getting-back-to-headline (data)
@@ -272,9 +273,9 @@ Use ENTITIES-ADJACENCIES to provide further information."
 (defun orgtrello-proxy/--delete-checkbox-checklist-region ()
   "Delete the checklist region."
   (let ((starting-point (point-at-bol))
-        (ending-point (save-excursion (-if-let (result (orgtrello-cbx/--goto-next-checkbox-with-same-level! *ORGTRELLO/CHECKLIST-LEVEL*))
+        (ending-point (save-excursion (-if-let (result (orgtrello-entity/goto-next-checkbox-with-same-level! *ORGTRELLO/CHECKLIST-LEVEL*))
                                           result
-                                        (orgtrello-cbx/compute-next-card-point!))))) ;; next checkbox or next card or point-max
+                                        (orgtrello-entity/compute-next-card-point!))))) ;; next checkbox or next card or point-max
     (orgtrello-proxy/--delete-region starting-point ending-point)))
 
 (defun orgtrello-proxy/--delete-checkbox-item-region ()

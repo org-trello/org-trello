@@ -4,7 +4,7 @@
 
 ;; Author: Antoine R. Dumont <eniotna.t AT gmail.com>
 ;; Maintainer: Antoine R. Dumont <eniotna.t AT gmail.com>
-;; Version: 0.5.4
+;; Version: 0.5.5
 ;; Package-Requires: ((dash "2.8.0") (s "1.9.0") (deferred "0.3.2") (request-deferred "0.2.0"))
 ;; Keywords: org-mode trello sync org-trello
 ;; URL: https://github.com/org-trello/org-trello
@@ -104,7 +104,7 @@ Please consider upgrading Emacs." emacs-version) "Error message when installing 
 (require 'timer)
 (require 'align)
 
-(defconst *ORGTRELLO/VERSION* "0.5.4" "Current org-trello version installed.")
+(defconst *ORGTRELLO/VERSION* "0.5.5" "Current org-trello version installed.")
 
 
 
@@ -176,10 +176,14 @@ If NO-CHECK-FLAG is set, no controls are done."
   (interactive)
   (deferred:clear-queue))
 
-(defun org-trello/add-card-comments ()
-  "Control first, then if ok, add a comment to the current card."
-  (interactive)
-  (org-trello/apply '(org-trello/log-strict-checks-and-do "Add card comment" orgtrello-controller/do-add-card-comment!)))
+(defun org-trello/add-card-comments (&optional modifier)
+  "Control first, then if ok, add a comment to the current card.
+When MODIFIER is set, this will show the current card's comments."
+  (interactive "P")
+  (org-trello/apply (cons 'org-trello/log-strict-checks-and-do
+                          (if modifier
+                              '("Display current card's last comments" orgtrello-controller/do-show-card-comments!)
+                            '("Add card comment" orgtrello-controller/do-add-card-comment!)))))
 
 (defun org-trello/show-card-comments ()
   "Control first, then if ok, show a simple buffer with the current card's last comments."

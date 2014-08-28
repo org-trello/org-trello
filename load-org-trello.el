@@ -4,27 +4,33 @@
 
 (add-to-list 'load-path (expand-file-name "."))
 
-(defvar *ORGTRELLO-NAMESPACES* '("org-trello-action.el"
-                                 "org-trello-api.el"
-                                 "org-trello-backend.el"
-                                 "org-trello-buffer.el"
-                                 "org-trello-cbx.el"
-                                 "org-trello-controller.el"
-                                 "org-trello-data.el"
-                                 "org-trello-hash.el"
-                                 "org-trello-input.el"
-                                 "org-trello-log.el"
-                                 "org-trello-proxy.el"
-                                 "org-trello-query.el"
-                                 "org-trello-setup.el"
-                                 "org-trello-utils.el"
-                                 "org-trello.el")
-  "Org-trello namespaces for development purposes.")
+(defvar *ORGTRELLO-NAMESPACES* '() "Org-trello namespaces for development purposes.")
+(setq *ORGTRELLO-NAMESPACES* '("org-trello-action.el"
+                               "org-trello-api.el"
+                               "org-trello-backend.el"
+                               "org-trello-entity.el"
+                               "org-trello-cbx.el"
+                               "org-trello-buffer.el"
+                               "org-trello-controller.el"
+                               "org-trello-data.el"
+                               "org-trello-hash.el"
+                               "org-trello-input.el"
+                               "org-trello-log.el"
+                               "org-trello-proxy.el"
+                               "org-trello-query.el"
+                               "org-trello-setup.el"
+                               "org-trello-utils.el"
+                               "org-trello.el"))
 
 (defun org-trello/dev-load-namespaces! ()
   "Load the org-trello namespaces."
   (interactive)
-  (mapc (lambda (it) (load-with-code-conversion it it)) *ORGTRELLO-NAMESPACES*))
+  ;; recompile code
+  (mapc (lambda (it) (load-with-code-conversion it it)) *ORGTRELLO-NAMESPACES*)
+  (require 'org-trello)
+  ;; reload bindings
+  (org-trello/install-local-prefix-mode-keybinding! *ORGTRELLO/MODE-PREFIX-KEYBINDING*)
+  (orgtrello-log/msg *OT/INFO* "Code loaded!"))
 
 (defun org-trello/dev-find-unused-definitions! ()
   "Find unused definitions."
@@ -44,8 +50,8 @@
 
 (require 'org-trello)
 
-(define-key emacs-lisp-mode-map (kbd "C-c o n") 'org-trello/dev-load-namespaces!)
-(define-key org-trello-mode-map (kbd "C-c o n") 'org-trello/dev-load-namespaces!)
+(define-key emacs-lisp-mode-map (kbd "C-c o r") 'org-trello/dev-load-namespaces!)
+(define-key org-trello-mode-map (kbd "C-c o r") 'org-trello/dev-load-namespaces!)
 (define-key emacs-lisp-mode-map (kbd "C-c o f") 'org-trello/dev-find-unused-definitions!)
 (define-key org-trello-mode-map (kbd "C-c o f") 'org-trello/dev-find-unused-definitions!)
 
