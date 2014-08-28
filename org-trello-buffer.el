@@ -7,6 +7,7 @@
 (require 'org-trello-hash)
 (require 'org-trello-data)
 (require 'org-trello-query)
+(require 'org-trello-entity)
 (require 'org-trello-cbx)
 (require 'org-trello-backend)
 
@@ -19,45 +20,10 @@ If the VALUE is nil or empty, remove such PROPERTY."
       (orgtrello-buffer/delete-property-from-entry! property)
     (org-entry-put point property value)))
 
-(defun orgtrello-buffer/back-to-card! ()
-  "Given the current position, goes on the card's heading"
-  (org-back-to-heading))
-
-(defun orgtrello-buffer/--card-description-start-point! ()
-  "Compute the first character of the card's description content."
-  (save-excursion
-    (orgtrello-buffer/back-to-card!)
-    (search-forward ":END:" nil t) ;; if not found, return nil and do not move point
-    (1+ (point-at-eol))));; in any case, the description is then just 1 point more than the current position
-
-(defun orgtrello-buffer/--card-start-point! ()
-  "Compute the first character of the card."
-  (save-excursion (orgtrello-buffer/back-to-card!) (point-at-bol)))
-
-(defun orgtrello-buffer/--card-metadata-end-point! ()
-  "Compute the first position of the card's next checkbox."
-  (save-excursion
-    (orgtrello-buffer/back-to-card!)
-    (orgtrello-cbx/--goto-next-checkbox)
-    (1- (point))))
-
-(defun orgtrello-buffer/card-at-pt! ()
-  "Determine if currently on the card region."
-  (let ((pt (point)))
-    (and (<= (orgtrello-buffer/--card-start-point!) pt) (<= pt (orgtrello-buffer/--card-metadata-end-point!)))))
-
-(defun orgtrello-buffer/checklist-at-pt! ()
-  "Determine if currently on the checklist region."
-  (= (orgtrello-cbx/--level!) *ORGTRELLO/CHECKLIST-LEVEL*))
-
-(defun orgtrello-buffer/item-at-pt! ()
-  "Determine if currently on the item region."
-  (= (orgtrello-cbx/--level!) *ORGTRELLO/ITEM-LEVEL*))
-
 (defun orgtrello-buffer/extract-description-from-current-position! ()
   "Given the current position, extract the text content of current card."
-  (let* ((start (orgtrello-buffer/--card-description-start-point!))
-         (end   (orgtrello-buffer/--card-metadata-end-point!)))
+  (let* ((start (orgtrello-entity/card-description-start-point!))
+         (end   (orgtrello-entity/card-metadata-end-point!)))
     (when (< start end)
       (->> (buffer-substring-no-properties start end)
         s-lines
@@ -107,22 +73,6 @@ If the VALUE is nil or empty, remove such PROPERTY."
 (defun orgtrello-buffer/set-property-comment! (comments)
   "Update comments property."
   (orgtrello-buffer/org-entry-put! nil *ORGTRELLO/CARD-COMMENTS* comments))
-
-(defun orgtrello-buffer/compute-checklist-header-region! ()
-  "Compute the checklist's region (only the header, without computing the zone occupied by items) couple '(start end)."
-  `(,(point-at-bol) ,(1+ (point-at-eol))))
-
-(defun orgtrello-buffer/compute-checklist-region! ()
-  "Compute the checklist's region (including the items) couple '(start end)."
-  `(,(point-at-bol) ,(orgtrello-cbx/next-checklist-point!)))
-
-(defun orgtrello-buffer/compute-item-region! ()
-  "Compute the item region couple '(start end)."
-  `(,(point-at-bol) ,(1+ (point-at-eol))))
-
-(defun orgtrello-buffer/compute-card-region! ()
-  "Compute the card region zone couple '(start end)."
-  `(,(orgtrello-buffer/--card-start-point!) ,(1- (orgtrello-cbx/compute-next-card-point!))))
 
 (defun orgtrello-buffer/write-item! (item-id entities)
   "Write the item to the org buffer."
@@ -320,7 +270,7 @@ If REGION-END is specified, will work on the region (current-point, REGION-END),
 (defun orgtrello-buffer/build-org-card-structure! (buffer-name)
   "Build the card structure on the current BUFFER-NAME at current point.
 No synchronization is done."
-  (->> (orgtrello-buffer/compute-card-region!)
+  (->> (orgtrello-entity/compute-card-region!)
     (cons buffer-name)
     (apply 'orgtrello-buffer/build-org-entities!)))
 
@@ -402,8 +352,8 @@ Move the cursor position."
   (when (eq major-mode 'org-mode)
     (save-excursion
       (org-map-entries (lambda () "Indent the description from the current card if need be."
-                         (let ((start (orgtrello-buffer/--card-description-start-point!))
-                               (end   (orgtrello-buffer/--card-metadata-end-point!)))
+                         (let ((start (orgtrello-entity/card-description-start-point!))
+                               (end   (orgtrello-entity/card-metadata-end-point!)))
                            (narrow-to-region start end)        ;; only edit the region start end
                            (goto-char (point-min))
                            (unless (<= 2 (org-get-indentation));; if need be
@@ -424,7 +374,7 @@ Move the cursor position."
 
 (defun orgtrello-buffer/--extract-metadata! ()
   "Extract the current metadata depending on the org-trello's checklist policy."
-  (funcall (if (orgtrello-cbx/checkbox-p) 'orgtrello-cbx/org-checkbox-metadata! 'orgtrello-buffer/org-entity-metadata!)))
+  (funcall (if (orgtrello-entity/org-checkbox-p!) 'orgtrello-cbx/org-checkbox-metadata! 'orgtrello-buffer/org-entity-metadata!)))
 
 (defun orgtrello-buffer/extract-identifier! (point)
   "Extract the identifier from POINT."
@@ -433,12 +383,12 @@ Move the cursor position."
 (defun orgtrello-buffer/set-property (key value)
   "Either set the property normally at KEY with VALUE.
 Deal with org entities and checkbox as well."
-  (funcall (if (orgtrello-cbx/checkbox-p) 'orgtrello-cbx/org-set-property 'org-set-property) key value))
+  (funcall (if (orgtrello-entity/org-checkbox-p!) 'orgtrello-cbx/org-set-property 'org-set-property) key value))
 
 (defun orgtrello-buffer/org-entry-get (point key)
   "Extract the identifier from the POINT at KEY.
 Deal with org entities and checkbox as well."
-  (funcall (if (orgtrello-cbx/checkbox-p) 'orgtrello-cbx/org-get-property 'org-entry-get) point key))
+  (funcall (if (orgtrello-entity/org-checkbox-p!) 'orgtrello-cbx/org-get-property 'org-entry-get) point key))
 
 (defun orgtrello-buffer/--user-ids-assigned-to-current-card ()
   "Compute the user ids assigned to the current card."
@@ -456,7 +406,7 @@ Deal with org entities and checkbox as well."
       (cons current-point)
       (cons (buffer-name))
       (cons (orgtrello-buffer/--user-ids-assigned-to-current-card))
-      (cons (when (orgtrello-buffer/card-at-pt!) (orgtrello-buffer/extract-description-from-current-position!)))
+      (cons (when (orgtrello-entity/card-at-pt!) (orgtrello-buffer/extract-description-from-current-position!)))
       (cons (orgtrello-buffer/org-entry-get current-point *ORGTRELLO/CARD-COMMENTS*))
       (cons (orgtrello-buffer/org-unknown-drawer-properties!))
       orgtrello-buffer/--to-orgtrello-metadata)))
@@ -473,7 +423,7 @@ Deal with org entities and checkbox as well."
 
 (defun orgtrello-buffer/org-up-parent! ()
   "A function to get back to the current entry's parent"
-  (funcall (if (orgtrello-cbx/checkbox-p) 'orgtrello-cbx/org-up! 'org-up-heading-safe)))
+  (funcall (if (orgtrello-entity/org-checkbox-p!) 'orgtrello-cbx/org-up! 'org-up-heading-safe)))
 
 (defun orgtrello-buffer/--parent-metadata! ()
   "Extract the metadata from the current heading's parent."
@@ -522,14 +472,10 @@ Make it a hashmap with key :level,  :keyword,  :name and their respective value.
   "Execute for each heading the FN-TO-EXECUTE."
   (org-map-entries fn-to-execute))
 
-(defun orgtrello-buffer/org-checkbox-p! ()
-  "Predicate to determine if actual position is on org-trello checkbox."
-  (or (orgtrello-buffer/checklist-at-pt!) (orgtrello-buffer/item-at-pt!)))
-
 (defun orgtrello-buffer/end-of-line-point! ()
   "Compute the end of line for an org-trello buffer."
   (let* ((pt (save-excursion (org-end-of-line) (point))))
-    (if (orgtrello-buffer/org-checkbox-p!)
+    (if (orgtrello-entity/org-checkbox-p!)
         (-if-let (s (orgtrello-buffer/compute-overlay-size!))
             (- pt s 1)
           pt)
@@ -543,7 +489,7 @@ Make it a hashmap with key :level,  :keyword,  :name and their respective value.
 (defun orgtrello-buffer/org-decorator (org-fn)
   "If on org-trello checkbox move to the org end of the line.
 In any case, execute ORG-FN."
-  (when (orgtrello-buffer/org-checkbox-p!)
+  (when (orgtrello-entity/org-checkbox-p!)
     (org-end-of-line))
   (funcall org-fn))
 

@@ -8,6 +8,7 @@
 (require 'org-trello-data)
 (require 'org-trello-hash)
 (require 'org-trello-api)
+(require 'org-trello-entity)
 (require 'org-trello-cbx)
 (require 'org-trello-action)
 (require 'org-trello-backend)
@@ -115,8 +116,7 @@ BUFFER-NAME to specify the buffer with which we currently work."
 (defun orgtrello-controller/do-sync-card-to-trello! ()
   "Do the actual card creation/update - from card to item."
   (orgtrello-log/msg *OT/INFO* "Synchronizing card on board '%s'..." (orgtrello-buffer/board-name!))
-  ;; in any case, we need to show the subtree, otherwise https://github.com/org-trello/org-trello/issues/53
-  (org-show-subtree)
+  (org-show-subtree) ;; in any case, we need to show the subtree, otherwise https://github.com/org-trello/org-trello/issues/53
   (-> (current-buffer)
     orgtrello-buffer/build-org-card-structure!
     orgtrello-controller/execute-sync-entity-structure!))
@@ -213,7 +213,7 @@ Along the way, the buffer BUFFER-NAME is written with new informations."
     (with-current-buffer buffer-name
       (save-excursion
         (let* ((card-id                  (orgtrello-data/entity-id trello-card))
-               (region                   (orgtrello-buffer/compute-card-region!))
+               (region                   (orgtrello-entity/compute-card-region!))
                (entities-from-org-buffer (apply 'orgtrello-buffer/build-org-entities! (cons buffer-name region)))
                (entities-from-trello     (orgtrello-backend/compute-org-trello-card-from (list trello-card)))
                (merged-entities          (orgtrello-data/merge-entities-trello-and-org entities-from-trello entities-from-org-buffer))
@@ -228,7 +228,7 @@ Along the way, the buffer BUFFER-NAME is written with new informations."
 Optionally, SYNC permits to synchronize the query."
   (lexical-let* ((buffer-name (current-buffer))
                  (point-start (point))
-                 (card-meta (progn (when (not (orgtrello-buffer/card-at-pt!)) (orgtrello-buffer/back-to-card!))
+                 (card-meta (progn (when (not (orgtrello-entity/card-at-pt!)) (orgtrello-entity/back-to-card!))
                                    (orgtrello-data/current (orgtrello-buffer/entry-get-full-metadata!))))
                  (card-name (orgtrello-data/entity-name card-meta)))
     (orgtrello-log/msg *OT/INFO* "Synchronizing the trello card to the org-mode file...")
@@ -253,7 +253,7 @@ Optionally, SYNC permits to synchronize the query."
 
 (defun orgtrello-controller/--do-delete-card ()
   "Delete the card."
-  (when (orgtrello-buffer/card-at-pt!)
+  (when (orgtrello-entity/card-at-pt!)
     (orgtrello-controller/do-delete-simple)))
 
 (defun orgtrello-controller/do-delete-entities ()
@@ -266,7 +266,7 @@ SYNC flag permit to synchronize the http query."
   (let ((buffer-name (current-buffer)))
     (with-current-buffer buffer-name
       (save-excursion
-        (let ((card-meta (progn (when (orgtrello-buffer/org-checkbox-p!) (orgtrello-buffer/back-to-card!))
+        (let ((card-meta (progn (when (orgtrello-entity/org-checkbox-p!) (orgtrello-entity/back-to-card!))
                                 (orgtrello-buffer/entry-get-full-metadata!))))
           (orgtrello-action/functional-controls-then-do '(orgtrello-controller/--right-level-p orgtrello-controller/--already-synced-p)
                                                         card-meta
@@ -660,7 +660,7 @@ Return the hashmap (name, id) of the new lists created."
 (defun orgtrello-controller/do-show-card-comments! ()
   "Show the card comments in a temporary buffer."
   (save-excursion
-    (orgtrello-buffer/back-to-card!)
+    (orgtrello-entity/back-to-card!)
     (let* ((current-card-name (-> (orgtrello-buffer/metadata!) orgtrello-data/entity-name))
            (comments-title (format "comments for card '%s'" current-card-name))
            (comments-formatted (-> (orgtrello-buffer/get-card-comments!)
@@ -679,7 +679,7 @@ Return the hashmap (name, id) of the new lists created."
 (defun orgtrello-controller/do-add-card-comment! ()
   "Wait for the input to add a comment to the current card."
   (save-excursion
-    (orgtrello-buffer/back-to-card!)
+    (orgtrello-entity/back-to-card!)
     (let* ((card-id (-> (orgtrello-buffer/metadata!) orgtrello-data/entity-id))
            (comment (read-string "Add a comment: ")))
       (if (or (null card-id) (string= "" card-id) (string= "" comment))
