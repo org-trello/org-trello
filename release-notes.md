@@ -1,3 +1,19 @@
+# 0.5.5
+
+- [X] Backlog
+- [X] Update version
+- [X] Update main github's readme to static link to the main documentation site.
+- [X] Update bindings order to regroup them
+- [X] Add bindings for archiving cards `C-c o A`
+- [X] Remove old bindings `C-c o C` that synced the card.
+- [X] Update bindings `C-c o A` to add comments to the card to `C-c o A`
+- [X] Update bindings to show comments as `C-u C-c o A` and remove the old one `C-c o o`
+- [X] Check everything is ok from test point of view
+- [X] Fix Synchronization problem - #183
+- [X] Some refactoring to reduce multiple buffer readings
+- [X] Check package installation
+- [X] Release notes
+
 # 0.5.4
 
 - [X] Backlog
