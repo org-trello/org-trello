@@ -100,10 +100,10 @@ Otherwise, return the current position."
       (orgtrello-entity/goto-next-checkbox-with-same-level! level))))
 
 (defun orgtrello-entity/next-checklist-point! ()
-  "Compute the next checklist position."
-  (-if-let (next-checklist-point (save-excursion (orgtrello-entity/goto-next-checkbox-with-same-level! *ORGTRELLO/CHECKLIST-LEVEL*) (point)))
-      next-checklist-point
-    (orgtrello-entity/compute-next-card-point!)))
+  "Compute the next checklist position from the current position."
+  (save-excursion
+    (org-end-of-item)
+    (point)))
 
 (defun orgtrello-entity/compute-checklist-region! ()
   "Compute the checklist's region (including the items) couple '(start end)."

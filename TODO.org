@@ -3,13 +3,23 @@
 #+STYLE: <style> h1,h2,h3 {font-family: arial, helvetica, sans-serif} </style>
 
 * TODO 0.5.x [0%]
-- [ ] One command to sync them all - [[https://github.com/org-trello/org-trello/issues/59][#59]]
-- [ ] Improve sync request policy - [[https://github.com/org-trello/org-trello/issues/58][#58]]
 - [ ] Use active region - [[https://github.com/org-trello/org-trello/issues/130][#130]]
 - [ ] Another Disposition about org's buffer - [[https://github.com/org-trello/org-trello/issues/33][#33]]
-- [ ] POC: use a temporary buffer to sync with trello, when done, merge with the user's buffer.
+- [ ] Use defcustom instead of defvar for user customisation - [[https://github.com/org-trello/org-trello/issues/196][#196]]
+- [ ] See to use primitives org-next-item/org-end-of-item-list/org-list-use-circular-motion to move in checkbox
+- [ ] One command to sync them all - [[https://github.com/org-trello/org-trello/issues/59][#59]]
+- [ ] Improve sync request policy - [[https://github.com/org-trello/org-trello/issues/58][#58]]
+
+* DONE 0.5.6 [100%]
+  CLOSED: [2014-08-31 Sun 13:47]
+- [X] backlog
+- [X] Update version
+- [X] Use save-excursion - save-restriction - narrow-to-region instead of using region
+- [X] Fix behavior orgtrello-buffer/end-of-line! When going to end of line in checkbox, we need to do it twice, fix.
+- [X] Small refactoring about overlays
+- [X] Release notes
 * DONE 0.5.5 [100%]
-CLOSED: [2014-08-28 Thu 16:02]
+  CLOSED: [2014-08-28 Thu 16:02]
 - [X] Backlog
 - [X] Update version
 - [X] Update main github's readme to static link to the main documentation site.
@@ -24,7 +34,7 @@ CLOSED: [2014-08-28 Thu 16:02]
 - [X] Check package installation
 - [X] Release notes
 * DONE 0.5.4 [100%]
-CLOSED: [2014-08-27 Wed 23:58]
+  CLOSED: [2014-08-27 Wed 23:58]
 - [X] Backlog
 - [X] Archive cards - CLOSE #181
   - [X] Open trello api about (un)archive card
@@ -40,7 +50,7 @@ CLOSED: [2014-08-27 Wed 23:58]
 - [X] Fix compilation warning(s)
 - [X] Release notes
 * DONE 0.5.3 [100%]
-CLOSED: [2014-08-26 Tue 23:27]
+  CLOSED: [2014-08-26 Tue 23:27]
 - [X] Backlog
 - [X] Emacs blocks when sync - CLOSE #164 - Deferred the sync/delete actions [100%]
   - [X] Align execution of code regarding [100%]
@@ -85,7 +95,7 @@ CLOSED: [2014-08-26 Tue 23:27]
 - [X] Update version
 - [X] Release notes
 * DONE 0.5.2 [100%]
-CLOSED: [2014-08-21 Thu 03:41]
+  CLOSED: [2014-08-21 Thu 03:41]
 - [X] Remove org-trello's over engineered bricks (proxy, elnode, webadmin) -> this will render it synchronous again. [100%]
   - [X] Is proxy useful since emacs still blocks? -> The only thing interesting seems to be the ability to watch running actions. As no one seem to care about it, we can remove it.
   - [X] Can't we simply use 'deferred (or 'async library) to defer computations? -> Yes, building actions (sync, delete) as 'lazy' list (macro) of deferred computations.
@@ -115,21 +125,21 @@ CLOSED: [2014-08-21 Thu 03:41]
 - [X] Clean dead code
 - [X] Release notes
 * DONE 0.5.1 [100%]
-CLOSED: [2014-08-20 Wed 21:00]
+  CLOSED: [2014-08-20 Wed 21:00]
 - [X] Remove marmalade remains (release.sh + Makefile)
 - [X] Small refactoring of the main contract
 - [X] Fix bad code (typo caddr)
 - [X] Update version
 - [X] Release notes
 * DONE 0.5.0 [100%]
-CLOSED: [2014-08-20 Wed 19:21]
+  CLOSED: [2014-08-20 Wed 19:21]
 - [X] Revert 0.4.9 #187 which introduced regressions #186#issuecomment-52423783 and maybe #185
 - [X] Retrieve interesting code from 0.4.9 (for example, start proxy during actions if stopped and warn about it, etc...)
 - [X] Update version
 - [X] Release notes
 
 * FAILED 0.4.9 [100%]
-CLOSED: [2014-08-21 Thu 21:36]
+  CLOSED: [2014-08-21 Thu 21:36]
 - [X] Backlog
 - [X] Emacs blocks when sync - #164
   - [X] deferred dependency - 0.3.1 chosen because it's the common denominator between marmalade and melpa
@@ -142,7 +152,7 @@ CLOSED: [2014-08-21 Thu 21:36]
 - [X] Release notes
 
 * DONE 0.4.8 [100%]
-CLOSED: [2014-06-08 Sun 19:24]
+  CLOSED: [2014-06-08 Sun 19:24]
 - [X] Backlog
 - [X] mad caret syndrom - Close #177
   - [X] mad caret - fix sync to
@@ -152,14 +162,14 @@ CLOSED: [2014-06-08 Sun 19:24]
 - [X] Update release notes
 
 * DONE 0.4.7 [100%]
-CLOSED: [2014-06-08 Sun 12:28]
+  CLOSED: [2014-06-08 Sun 12:28]
 - [X] Backlog
 - [X] Improve the description management in org and trello - #89 #175
 - [X] Revert to the block json-encode-hash-table
 - [X] Upgrade version
 - [X] Update release notes
 * DONE 0.4.6 [100%]
-CLOSED: [2014-05-30 Fri 14:02]
+  CLOSED: [2014-05-30 Fri 14:02]
 - [X] Prepare Backlog
 - [X] Fix - CLOSE https://github.com/org-trello/org-trello/issues/172
 - [X] Fix - prelude does some monkey-patching on json-encode-hash-table which is used by org-trello - reimplement this function
@@ -167,7 +177,7 @@ CLOSED: [2014-05-30 Fri 14:02]
 - [X] Update version
 - [X] Update release notes
 * DONE 0.4.5 [100%]
-CLOSED: [2014-05-17 Sat 21:57]
+  CLOSED: [2014-05-17 Sat 21:57]
 - [X] Backlog
 - [X] 'Sync from trello' must preserve unknown data card in drawer - CLOSE #167
   - [X] Extract unknown information and store them in org entity representation
@@ -176,7 +186,7 @@ CLOSED: [2014-05-17 Sat 21:57]
 - [X] Update version
 - [X] Release notes
 * DONE 0.4.4 [100%]
-CLOSED: [2014-05-11 Sun 23:05]
+  CLOSED: [2014-05-11 Sun 23:05]
 - [X] Multiple files packaging - CLOSE #163
   - [X] Move src/*.el files to /org-trello
   - [X] Add 'provide statements for each of those files
@@ -201,7 +211,7 @@ CLOSED: [2014-05-11 Sun 23:05]
 - [X] Update version
 - [X] Release notes
 * DONE 0.4.3 [100%]
-CLOSED: [2014-04-25 Fri 12:20]
+  CLOSED: [2014-04-25 Fri 12:20]
 - [X] Prepare backlog
 - [X] Replace local back-end (file implementation) with a RAM database [100%]
   - [X] Install 'db dependencies
@@ -229,7 +239,7 @@ CLOSED: [2014-04-25 Fri 12:20]
 - [X] Some Refactoring
 - [X] Release notes
 * DONE 0.4.2 [100%]
-CLOSED: [2014-04-12 Sat 08:51]
+  CLOSED: [2014-04-12 Sat 08:51]
 - [X] Refactoring - Remove dead code
 - [X] Refactoring - Remove duplicated code already existing in dependency library
 - [X] Improve - Fold all entries when sync full file from trello is done
@@ -237,7 +247,7 @@ CLOSED: [2014-04-12 Sat 08:51]
 - [X] Version
 - [X] Release notes
 * DONE 0.4.1.1 [100%]
-CLOSED: [2014-04-09 Wed 20:31]
+  CLOSED: [2014-04-09 Wed 20:31]
 - [X] Remove non interactive commands
 - [X] Create board does not work - Close #157
 - [X] Improve loading keys policy - #156
@@ -245,7 +255,7 @@ CLOSED: [2014-04-09 Wed 20:31]
 - [X] Version
 - [X] Release notes
 * DONE 0.4.1 [100%]
-CLOSED: [2014-04-07 Mon 14:29]
+  CLOSED: [2014-04-07 Mon 14:29]
 - [X] Fix deadline/description problem - #154
 - [X] Fix deadline/due date problem - #153
 - [X] When sync from trello, merge non trello org tags with trello tags (to avoid loss for the user)
@@ -255,12 +265,12 @@ CLOSED: [2014-04-07 Mon 14:29]
 - [X] Release notes
 
 * DONE 0.4.0.1 [100%]
-CLOSED: [2014-04-02 Wed 14:48]
+  CLOSED: [2014-04-02 Wed 14:48]
 - [X] Fix 'Sync doesn't work if org buffer name contains special characters' - Close #147
 - [X] Version
 - [X] Release notes
 * DONE 0.4.0 [100%]
-CLOSED: [2014-03-31 Mon 21:44]
+  CLOSED: [2014-03-31 Mon 21:44]
 - [X] Refactor
 - [X] Fix - Close https://github.com/org-trello/org-trello/issues/145
 - [X] Remove unused dependency
@@ -268,7 +278,7 @@ CLOSED: [2014-03-31 Mon 21:44]
 - [X] Version
 - [X] Release notes
 * DONE 0.3.9 [100%]
-CLOSED: [2014-03-28 Fri 17:05]
+  CLOSED: [2014-03-28 Fri 17:05]
 - [X] Refactor - Symmetry for all commands where that makes sense (without C-u/with C-u)
 - [X] Refactor - Enforce the api request creation usage with the params as usual
 - [X] Let trello filter out needless data - CLOSE https://github.com/org-trello/org-trello/issues/69
@@ -279,7 +289,7 @@ CLOSED: [2014-03-28 Fri 17:05]
 - [X] Release notes
 
 * DONE 0.3.8 [100%]
-CLOSED: [2014-03-27 Thu 18:20]
+  CLOSED: [2014-03-27 Thu 18:20]
 - [X] Some refactoring
   - [X] Align sync from trello card tags/labels serialization with org's tags behavior
   - [X] Refactor open org-trello buffer with title/content
@@ -300,7 +310,7 @@ CLOSED: [2014-03-27 Thu 18:20]
 - [X] Release notes
 
 * DONE 0.3.7 [100%]
-CLOSED: [2014-03-24 Mon 00:58]
+  CLOSED: [2014-03-24 Mon 00:58]
 - [X] Use `defconst` keyword instead of defvar
 - [X] Use trello labels and org tags as one - CLOSE https://github.com/org-trello/org-trello/issues/70
   - [X] Open information 'labelNames' in get-board API call
@@ -320,14 +330,14 @@ CLOSED: [2014-03-24 Mon 00:58]
 - [X] Release notes
 - [X] Version
 * DONE 0.3.6.1 [100%]
-CLOSED: [2014-03-22 Sat 23:53]
+  CLOSED: [2014-03-22 Sat 23:53]
 - [X] Fix already used bindings
 - [X] Fix edge case about adding comments
 - [X] Version
 - [X] Release notes
 
 * DONE 0.3.6 [100%]
-CLOSED: [2014-03-22 Sat 22:51]
+  CLOSED: [2014-03-22 Sat 22:51]
 - [X] Test multiple emacs version - https://github.com/org-trello/org-trello/issues/52
 - [X] Add a logo to website - https://github.com/org-trello/org-trello/issues/129
 - [X] Synchronize user comments - https://github.com/org-trello/org-trello/issues/86
@@ -345,14 +355,14 @@ CLOSED: [2014-03-22 Sat 22:51]
 - [X] Version
 - [X] Release notes
 * DONE 0.3.5 [100%]
-CLOSED: [2014-03-15 sam. 23:13]
+  CLOSED: [2014-03-15 sam. 23:13]
 - [X] Test multiple emacs version - https://github.com/org-trello/org-trello/issues/52
 - [X] Version
 - [X] Update documentation note for the package view
 - [X] Release note
 
 * DONE 0.3.4 [100%]
-CLOSED: [2014-03-15 sam. 11:59]
+  CLOSED: [2014-03-15 sam. 11:59]
 - [X] PR fix typo in readme - https://github.com/org-trello/org-trello/pull/120
 - [X] Fix webadmin button to delete running action
 - [X] Add version emacs 24.3.50 in documentation
@@ -362,7 +372,7 @@ CLOSED: [2014-03-15 sam. 11:59]
 - [X] Release notes
 - [X] Improve computation level for checkbox (checklist/items) - https://github.com/org-trello/org-trello/issues/121#issuecomment-37559929
 * DONE 0.3.3 [100%]
-CLOSED: [2014-03-08 sam. 17:27]
+  CLOSED: [2014-03-08 sam. 17:27]
 - [X] Issue when installing on melpa reported wrongly on melpa and reported back https://github.com/org-trello/org-trello/issues/117
 - [X] Fix typo when-let in -when-let
 - [X] Remove org as a dependency, the plugins org- do not seem to declare it + problem in dependency
@@ -379,7 +389,7 @@ CLOSED: [2014-03-08 sam. 17:27]
 - [X] Ensure org-trello works with emacs 24.4 (how do i install it...)
 - [X] Release note
 * DONE 0.3.2 [100%]
-CLOSED: [2014-02-03 lun. 11:48]
+  CLOSED: [2014-02-03 lun. 11:48]
 - [X] Use standard remapping to override the org-end-of-line routine - https://www.gnu.org/software/emacs/manual/html_node/elisp/Remapping-Commands.html
 - [X] Clean some dead code
 - [X] Use standard mode map definition for the org-trello bindings
@@ -387,13 +397,13 @@ CLOSED: [2014-02-03 lun. 11:48]
 - [X] Version
 - [X] Release notes
 * DONE 0.3.1.1 [100%]
-CLOSED: [2014-01-23 jeu. 21:11]
+  CLOSED: [2014-01-23 jeu. 21:11]
 - [X] Installation failure - https://github.com/org-trello/org-trello/issues/112
 - [X] Version
 - [X] Release notes
 
 * DONE 0.3.1 [100%]
-CLOSED: [2014-01-21 mar. 19:43]
+  CLOSED: [2014-01-21 mar. 19:43]
 - [X] Backlog
 - [X] Version
 - [X] Avoid duplication in declaring the org-trello version
@@ -402,7 +412,7 @@ CLOSED: [2014-01-21 mar. 19:43]
 - [X] Sometimes, multiple cards are created more than once. Improve the proxy policy regarding this - Unable to reproduce so do nothing.
 - [X] Release notesj
 * DONE 0.3.0 [100%]
-CLOSED: [2014-01-20 lun. 22:02]
+  CLOSED: [2014-01-20 lun. 22:02]
 - [X] Backlog
 - [X] Upgrade Version
 - [X] org-trello bindings remains present when org-trello is switched off. Fix it.
@@ -410,12 +420,12 @@ CLOSED: [2014-01-20 lun. 22:02]
 - [X] Release notes
 
 * DONE 0.2.9.1 [100%]
-CLOSED: [2014-01-20 lun. 18:47]
+  CLOSED: [2014-01-20 lun. 18:47]
 - [X] Forgot to ship code
 - [X] Update version
 - [X] Release notes
 * DONE 0.2.9 [100%]
-CLOSED: [2014-01-19 dim. 22:34]
+  CLOSED: [2014-01-19 dim. 22:34]
 - [X] Remove org-trello.el at the root of the code (as the package generates this file and the test load without it, no longer needs to be gitted)
 - [X] Invisible checkbox identifier - https://github.com/org-trello/org-trello/issues/98
   - [X] text properties to hide properties
@@ -436,13 +446,13 @@ CLOSED: [2014-01-19 dim. 22:34]
 - [X] Update version
 - [X] Release
 * DONE 0.2.8.2 [100%]
-CLOSED: [2014-01-16 jeu. 21:15]
+  CLOSED: [2014-01-16 jeu. 21:15]
 - [X] Fix another error on sync from trello routine
 * DONE 0.2.8.1 [100%]
-CLOSED: [2014-01-16 jeu. 21:15]
+  CLOSED: [2014-01-16 jeu. 21:15]
 - [X] Fix error on sync from trello routine
 * DONE 0.2.8 [100%]
-CLOSED: [2014-01-05 dim. 17:32]
+  CLOSED: [2014-01-05 dim. 17:32]
 - [X] Backlog
 - [X] Synchronize description - https://github.com/org-trello/org-trello/issues/80
 - [X] Use --reduce-from from dash instead of cl-reduce to reduce the cl deps
@@ -450,7 +460,7 @@ CLOSED: [2014-01-05 dim. 17:32]
 - [X] Update doc
 - [X] Release notes
 * DONE 0.2.7 [100%]
-CLOSED: [2014-01-04 sam. 19:26]
+  CLOSED: [2014-01-04 sam. 19:26]
 - [X] Backlog
 - [X] Create TODO template for the backlog start
 - [X] Clean obsolete files (org-trello.org is no longer maintained, TODO-tests.org is no longer used)
@@ -467,14 +477,14 @@ CLOSED: [2014-01-04 sam. 19:26]
 - [X] Version
 - [X] Release notes
 * DONE 0.2.6 [100%]
-CLOSED: [2013-12-01 dim. 16:40]
+  CLOSED: [2013-12-01 dim. 16:40]
 - [X] Jump to card - https://github.com/org-trello/org-trello/issues/88
 - [X] Rewrite convention for the "goto board" action into "jump to board"
 - [X] Update README.md
 - [X] Version
 - [X] Release Note
 * DONE 0.2.5 [100%]
-CLOSED: [2013-11-24 dim. 00:18]
+  CLOSED: [2013-11-24 dim. 00:18]
 - [X] Backlog updates
 - [X] Global properties in upper case - https://github.com/org-trello/org-trello/issues/83
 - [X] Hide the global properties - https://github.com/org-trello/org-trello/issues/77
@@ -485,7 +495,7 @@ CLOSED: [2013-11-24 dim. 00:18]
 - [X] Version
 - [X] Release notes
 * DONE 0.2.4 [100%]
-CLOSED: [2013-11-23 sam. 15:27]
+  CLOSED: [2013-11-23 sam. 15:27]
 - [X] Sprint backlog
 - [X] Some refactoring + tests coverage
 - [X] Fix sync-from-trello - Merge org card's users assigned list and the trello one
@@ -496,14 +506,14 @@ CLOSED: [2013-11-23 sam. 15:27]
 - [X] Release notes
 
 * DONE 0.2.3 [100%]
-CLOSED: [2013-11-18 lun. 18:57]
+  CLOSED: [2013-11-18 lun. 18:57]
 - [X] Version
 - [X] Fix discrepancy between docstring and binding to delete the setup - https://github.com/org-trello/org-trello/issues/74
 - [X] Use a prefix binding which does not override the emacs's default user prefix (keep the original for the moment to avoid disturbing people which already use it) - https://github.com/org-trello/org-trello/issues/72
 - [X] Update documentation about the possibility to change the default prefix key
 - [ ] Release
 * DONE 0.2.2 [100%]
-CLOSED: [2013-09-30 lun. 22:32]
+  CLOSED: [2013-09-30 lun. 22:32]
 - [X] Version
 - [X] Improve abstraction around data from trello (not complete yet)
 - [X] Show people assigned to card - https://github.com/org-trello/org-trello/issues/67
@@ -523,16 +533,16 @@ CLOSED: [2013-09-30 lun. 22:32]
 - [X] Fix error during initialization org-trello setup buffer
 - [X] Release notes
 * DONE 0.2.1.2 [100%]
-CLOSED: [2013-09-19 jeu. 19:05]
+  CLOSED: [2013-09-19 jeu. 19:05]
 - [X] Version
 - [X] Release notes
 - [X] Fix typography in naming windows-nt system - https://github.com/org-trello/org-trello/issues/62#issuecomment-24735681
 * DONE 0.2.1.1 [100%]
-CLOSED: [2013-09-18 mer. 21:37]
+  CLOSED: [2013-09-18 mer. 21:37]
 - [X] Version
 - [X] Release notes
 * DONE 0.2.1 [100%]
-CLOSED: [2013-09-18 mer. 21:26]
+  CLOSED: [2013-09-18 mer. 21:26]
 - [X] Version
 - [X] Improve sync from trello - In case of new item/checklist, the entry will be added at the end of the buffer instead of its rightful place.
   - [X] Change the trello representation
@@ -542,7 +552,7 @@ CLOSED: [2013-09-18 mer. 21:26]
 - [X] Problem regarding some function on windows system - https://github.com/org-trello/org-trello/issues/62
 - [X] Release notes
 * DONE 0.2.0 [100%]
-CLOSED: [2013-09-11 mer. 21:45]
+  CLOSED: [2013-09-11 mer. 21:45]
 - [X] Version
 - [X] Improve cleanup of the org-trello metadata
 - [X] Videos about org-trello
@@ -555,13 +565,13 @@ CLOSED: [2013-09-11 mer. 21:45]
 - [X] Improve sync to trello
 - [X] Release notes
 * DONE 0.1.9 [100%]
-CLOSED: [2013-09-05 jeu. 21:33]
+  CLOSED: [2013-09-05 jeu. 21:33]
 - [X] Clean install org-trello
 - [X] Ensure sync-from-trello keep the order of the checklists clean
 - [X] Version
 - [X] Release notes
 * DONE 0.1.8 [100%]
-CLOSED: [2013-09-03 mar. 22:31]
+  CLOSED: [2013-09-03 mar. 22:31]
 - [X] Simplify Cask file
 - [X] webadmin: Improve rendering [2/2]
   - [X] Better display for the delete buttons.
@@ -585,7 +595,7 @@ CLOSED: [2013-09-03 mar. 22:31]
 - [X] Release notes
 
 * DONE 0.1.7 [100%]
-CLOSED: [2013-08-31 sam. 10:55]
+  CLOSED: [2013-08-31 sam. 10:55]
 - [X] webadmin: Add an action button on action to stop it
 - [X] webadmin: Add an action button to stop every running actions on entities
 - [X] URLencode/Protect the data from the query before executing the query - https://github.com/org-trello/org-trello/issues/46
@@ -603,7 +613,7 @@ CLOSED: [2013-08-31 sam. 10:55]
 - [X] Release notes
 
 * DONE 0.1.6 [100%]
-CLOSED: [2013-08-28 mer. 02:41]
+  CLOSED: [2013-08-28 mer. 02:41]
 - [X] Use the native org checklist to sync to trello [3/3]
   - [X] Extract the informations from the checklist and item and plug them in the current synchronization (org-entry-get (point) "orgtrello-id")
   - [X] Set the metadata information on the checklist level (org does only the heading level)
@@ -624,7 +634,7 @@ CLOSED: [2013-08-28 mer. 02:41]
 - [X] Release
 
 * DONE 0.1.5 [100%]
-CLOSED: [2013-08-25 dim. 15:43]
+  CLOSED: [2013-08-25 dim. 15:43]
 ** DONE Symmetry in the architecture - the deletion must pass through the consumer too.
 CLOSED: [2013-08-25 dim. 10:12]
 ** DONE Upgrade version
@@ -642,7 +652,7 @@ CLOSED: [2013-08-25 dim. 15:43]
 ** DONE Release
 CLOSED: [2013-08-25 dim. 15:43]
 * DONE 0.1.4 [100%]
-CLOSED: [2013-08-24 sam. 09:44]
+  CLOSED: [2013-08-24 sam. 09:44]
 ** DONE Prepare the hierarchy files to avoid problem like https://github.com/org-trello/org-trello/issues/37#issuecomment-23151353
 CLOSED: [2013-08-23 ven. 20:37]
 ** DONE Adding a version interactive command (it will help for asking people the version they use).
@@ -670,7 +680,7 @@ CLOSED: [2013-08-24 sam. 15:41]
 ** DONE Order when syncing to trello
 CLOSED: [2013-08-24 sam. 18:35]
 * DONE 0.1.3 [100%]
-CLOSED: [2013-08-23 ven. 10:12]
+  CLOSED: [2013-08-23 ven. 10:12]
 ** DONE Leverage elnode's webserver capacity to display some basic monitoring about the synchronization
 CLOSED: [2013-08-20 mar. 17:34]
 ** DONE Install bootstrap and jquery.js directly to avoid the user's manual installation (the first query to static files install bootstrap and jquery now)
@@ -690,7 +700,7 @@ CLOSED: [2013-08-23 ven. 10:01]
 ** DONE Update doc
 CLOSED: [2013-08-23 ven. 10:12]
 * DONE 0.1.2 [100%]
-CLOSED: [2013-08-21 mer. 10:03]
+  CLOSED: [2013-08-21 mer. 10:03]
 ** DONE Use an intermediary server between org and trello to permit asynchronous actions
 CLOSED: [2013-08-14 mer. 16:53]
 ** DONE Change org-trello's loading policy + update the readme about it
@@ -730,7 +740,7 @@ CLOSED: [2013-08-20 mar. 02:05]
 ** DONE Release
 CLOSED: [2013-08-21 mer. 10:03]
 * DONE 0.1.1 [100%]
-CLOSED: [2013-08-11 dim. 13:45]
+  CLOSED: [2013-08-11 dim. 13:45]
 ** DONE Literate org-trello
 CLOSED: [2013-08-09 ven. 16:16]
 ** DONE Testing the packaging, at the moment, this is done manually (make package & M-x package-install-file)
@@ -772,7 +782,7 @@ CLOSED: [2013-08-11 dim. 13:44]
 ** DONE Release
 CLOSED: [2013-08-11 dim. 13:44]
 * DONE 0.1.0 [100%]
-CLOSED: [2013-08-07 mer. 13:19]
+  CLOSED: [2013-08-07 mer. 13:19]
 ** DONE Fix importing of cards with due date - https://github.com/org-trello/org-trello/pull/22
 Thanks @wordempire
 ** DONE Migrate carton to card.el (travis-ci builds break because of this)
@@ -800,7 +810,7 @@ CLOSED: [2013-08-07 mer. 13:16]
 ** DONE Release on marmalade/melpa
 CLOSED: [2013-08-07 mer. 13:19]
 * DONE 0.0.9 [100%]
-CLOSED: [2013-08-06 mar. 16:44]
+  CLOSED: [2013-08-06 mar. 16:44]
 ** DONE Update videos with the new features in the readme
 CLOSED: [2013-08-06 mar. 16:25]
 ** DONE Fix bug regarding the saving buffer routine
@@ -818,7 +828,7 @@ CLOSED: [2013-08-06 mar. 16:24]
 ** DONE Release on marmalade/melpa
 CLOSED: [2013-08-06 mar. 16:44]
 * DONE 0.0.8 [100%]
-CLOSED: [2013-07-31 mer. 01:42] DEADLINE: <2013-07-30 mar.>
+  CLOSED: [2013-07-31 mer. 01:42] DEADLINE: <2013-07-30 mar.>
 ** DONE Fix the cl-lib dependency
 CLOSED: [2013-07-30 mar. 17:13]
 ** DONE Improve the message when an action is done to let the user know when the action is done!
@@ -842,7 +852,7 @@ CLOSED: [2013-07-31 mer. 02:06]
 ** DONE Cleanup the debugging functions
 CLOSED: [2013-07-31 mer. 02:06]
 * DONE 0.0.7 [100%]
-CLOSED: [2013-07-25 jeu. 20:40]
+  CLOSED: [2013-07-25 jeu. 20:40]
 ** DONE Reference missing bindings in documentation
 CLOSED: [2013-07-25 jeu. 19:44]
 ** DONE Upgrade version
@@ -854,7 +864,7 @@ CLOSED: [2013-07-25 jeu. 20:40]
 ** DONE Release
 CLOSED: [2013-07-25 jeu. 20:40]
 * DONE 0.0.6.1 [100%]
-CLOSED: [2013-07-25 jeu. 10:44]
+  CLOSED: [2013-07-25 jeu. 10:44]
 ** DONE Fix the json-1.3 dependency, sometimes only 1.2 is available
 CLOSED: [2013-07-25 jeu. 10:43]
 ** DONE Update version
@@ -862,7 +872,7 @@ CLOSED: [2013-07-25 jeu. 10:44]
 ** DONE Release
 CLOSED: [2013-07-25 jeu. 10:44]
 * DONE 0.0.6 [100%]
-CLOSED: [2013-07-24 mer. 21:22]
+  CLOSED: [2013-07-24 mer. 21:22]
 ** DONE Test that the title/label of the entity is set when syncing to avoid a 400 error
 CLOSED: [2013-07-24 mer. 19:46]
 ** DONE Before making the request, ensure that everything is ok (checklist needs the card id, items needs the checklist id, etc...)
@@ -884,7 +894,7 @@ CLOSED: [2013-07-24 mer. 21:26]
 ** DONE Make a release
 CLOSED: [2013-07-24 mer. 21:22]
 * DONE 0.0.5 [100%]
-CLOSED: [2013-07-18 jeu. 16:06]
+  CLOSED: [2013-07-18 jeu. 16:06]
 ** DONE Synchronizing from the trello board must simply computes and add/remove what's changed [100%]
 CLOSED: [2013-07-18 jeu. 15:30]
 *** DONE Refactor current sync-from-trello function to let emerge the contract
@@ -904,7 +914,7 @@ CLOSED: [2013-07-18 jeu. 16:04]
 ** DONE Release on github, marmalade, melpa
 CLOSED: [2013-07-18 jeu. 16:06]
 * DONE 0.0.4.1 [100%]
-CLOSED: [2013-07-16 mar. 20:28]
+  CLOSED: [2013-07-16 mar. 20:28]
 ** DONE Fix the creation board routine regarding the org-mode keywords (dynamic typing hell!)
 CLOSED: [2013-07-16 mar. 20:03]
 ** DONE Improve documentation regarding the possibilities to setup the org-mode keyword
@@ -914,7 +924,7 @@ CLOSED: [2013-07-16 mar. 20:03]
 ** DONE Release on github
 CLOSED: [2013-07-16 mar. 20:04]
 * DONE 0.0.4 [100%]
-CLOSED: [2013-07-16 mar. 16:16]
+  CLOSED: [2013-07-16 mar. 16:16]
 ** DONE Deploy on marmalade the stable version (and update the readme about it)
 CLOSED: [2013-07-11 jeu. 18:42]
 ** DONE Rewrite tests using `expectations`
@@ -942,7 +952,7 @@ CLOSED: [2013-07-16 mar. 16:03]
 ** DONE Update documentation
 CLOSED: [2013-07-16 mar. 16:16]
 * DONE 0.0.3 [100%]
-CLOSED: [2013-07-08 lun. 14:07]
+  CLOSED: [2013-07-08 lun. 14:07]
 ** DONE Syncing complex entities
 CLOSED: [2013-07-07 dim. 10:55]
 ** DONE cleanup useless tests
@@ -972,7 +982,7 @@ CLOSED: [2013-07-07 dim. 23:03]
 CLOSED: [2013-07-08 Lin. 14:07]
 
 * DONE 0.0.2 [100%]
-CLOSED: [2013-07-07 dim. 10:54]
+  CLOSED: [2013-07-07 dim. 10:54]
 ** DONE Technical release fixing technical details
 CLOSED: [2013-07-07 dim. 10:54]
 ** DONE Fixing the packaging (inlining into org-trello.el)
@@ -983,7 +993,7 @@ CLOSED: [2013-07-07 dim. 10:54]
 CLOSED: [2013-07-07 dim. 10:54]
 
 * DONE 0.0.1 [100%]
-CLOSED: [2013-07-04 jeu. 20:19]
+  CLOSED: [2013-07-04 jeu. 20:19]
 ** DONE emacs-lisp HTTP Client
 CLOSED: [2013-06-29 sam. 15:29]
 ** DONE authentication in trello
@@ -1224,7 +1234,7 @@ https://github.com/milkypostman/melpa
 http://nic.ferrier.me.uk/blog/2012_07/emacs-packages-for-programmers
 
 * Integration tests
-Mock `(json-read)` (heart of the http process returned for everything) to:
+  Mock `(json-read)` (heart of the http process returned for everything) to:
 
 ** write cards
 

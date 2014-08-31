@@ -142,7 +142,7 @@ If the VALUE is nil or empty, remove such PROPERTY."
 
 (defun orgtrello-buffer/clean-region! (region)
   "Given a region, remove everything in this region, including text and overlays"
-  (apply 'orgtrello-cbx/remove-overlays! region)
+  (apply 'orgtrello-buffer/remove-overlays! region)
   (apply 'delete-region region))
 
 (defun orgtrello-buffer/--csv-user-ids-to-csv-user-names (csv-users-id users-id-name)
@@ -242,34 +242,6 @@ The optional ORGCHECKBOX-P is not used."
   "Given the ENTITY, return the function to add the entity and adjacency."
   (if (orgtrello-data/entity-card-p entity) 'orgtrello-buffer/--put-card-with-adjacency 'orgtrello-backend/--put-entities-with-adjacency))
 
-(defun orgtrello-buffer/--compute-entities-from-org! (buffer-name)
-  "Compute the full entities present in the org buffer BUFFER-NAME.
-Return the list of entities map and adjacency map in this order.
-If REGION-END is specified, will work on the region (current-point, REGION-END), otherwise, work on all buffer."
-  (with-current-buffer buffer-name
-    (let ((entities (orgtrello-hash/empty-hash))
-          (adjacency (orgtrello-hash/empty-hash)))
-      (orgtrello-buffer/org-map-entities-without-params!
-       (lambda ()
-         (org-show-subtree) ;; unfold every entries, otherwise https://github.com/org-trello/org-trello/issues/53
-         (let* ((full-meta      (orgtrello-buffer/entry-get-full-metadata!))
-                (entity (orgtrello-data/current full-meta)))
-           (unless (-> entity orgtrello-data/entity-id orgtrello-data/id-p) ;; if no id, we set one
-             (let ((marker (orgtrello-buffer/--compute-marker-from-entry entity)))
-               (orgtrello-buffer/--set-marker! marker)        ;; set the marker
-               (orgtrello-data/put-entity-id marker entity)   ;; update the entity with its id/marker
-               (orgtrello-data/put-current entity full-meta)));; update the full-meta data with the new entity
-           (--> entity
-             (orgtrello-buffer/--dispatch-create-entities-map-with-adjacency it)
-             (funcall it full-meta entities adjacency)))))
-      (list entities adjacency))))
-
-(defun orgtrello-buffer/activate-region! (region-start region-end)
-  "Activate the region between REGION-START and REGION-END."
-  (goto-char region-start)
-  (push-mark region-end)
-  (setq mark-active t))
-
 (defun orgtrello-buffer/build-org-card-structure! (buffer-name)
   "Build the card structure on the current BUFFER-NAME at current point.
 No synchronization is done."
@@ -283,8 +255,24 @@ Return the list of entities map and adjacency map in this order.
 If REGION-START and REGION-END are provided, this will work on such defined region."
   (with-current-buffer buffer-name
     (save-excursion
-      (when (and region-start region-end) (orgtrello-buffer/activate-region! region-start region-end))
-      (orgtrello-buffer/--compute-entities-from-org! buffer-name))))
+      (save-restriction
+        (let ((entities (orgtrello-hash/empty-hash))
+              (adjacency (orgtrello-hash/empty-hash)))
+          (when (and region-start region-end) (narrow-to-region region-start region-end))
+          (orgtrello-buffer/org-map-entities-without-params!
+           (lambda ()
+             (org-show-subtree) ;; unfold every entries, otherwise https://github.com/org-trello/org-trello/issues/53
+             (let* ((full-meta (orgtrello-buffer/entry-get-full-metadata!))
+                    (entity    (orgtrello-data/current full-meta)))
+               (unless (-> entity orgtrello-data/entity-id orgtrello-data/id-p) ;; if no id, we set one
+                 (let ((marker (orgtrello-buffer/--compute-marker-from-entry entity)))
+                   (orgtrello-buffer/--set-marker! marker)        ;; set the marker
+                   (orgtrello-data/put-entity-id marker entity)   ;; update the entity with its id/marker
+                   (orgtrello-data/put-current entity full-meta)));; update the full-meta data with the new entity
+               (--> entity
+                 (orgtrello-buffer/--dispatch-create-entities-map-with-adjacency it)
+                 (funcall it full-meta entities adjacency)))))
+          (list entities adjacency))))))
 
 (defun orgtrello-buffer/--put-entities (current-meta entities)
   "Deal with adding a the current entry from CURRENT-META in ENTITIES."
@@ -315,7 +303,7 @@ Move the cursor position."
   (org-map-entries
    (lambda ()
      (funcall fn-to-execute) ;; execute on heading entry
-     (orgtrello-cbx/map-checkboxes fn-to-execute)) t (if (use-region-p) 'region 'file)))
+     (orgtrello-cbx/map-checkboxes fn-to-execute))))
 
 (defun orgtrello-buffer/get-usernames-assigned-property! ()
   "Read the org users property from the current entry."
@@ -338,9 +326,11 @@ Move the cursor position."
       (remove-overlays (point-at-bol) (point-at-eol)) ;; the current overlay on this line
       (replace-match "" nil t))))                     ;; then remove the property
 
-(defun orgtrello-buffer/remove-overlays! ()
-  "Remove every org-trello overlays from the current buffer."
-  (orgtrello-cbx/remove-overlays! (point-min) (point-max)))
+(defun orgtrello-buffer/remove-overlays! (&optional start end)
+  "Remove every org-trello overlays from the current buffer.
+When START/END are specified, use those boundaries.
+Otherwise, work on the all buffer."
+  (remove-overlays (if start start (point-min)) (if end end (point-max)) 'invisible 'org-trello-cbx-property))
 
 (defun orgtrello-buffer/install-overlays! ()
   "Install overlays throughout the all buffers."
@@ -348,7 +338,7 @@ Move the cursor position."
   (save-excursion
     (goto-char (point-min))
     (while (re-search-forward ":PROPERTIES: {.*" nil t)
-      (orgtrello-cbx/install-overlays! (match-beginning 0)))))
+      (orgtrello-buffer/install-overlay! (match-beginning 0)))))
 
 (defun orgtrello-buffer/indent-card-descriptions! ()
   "Indent the card descriptions rigidly starting at 2."
@@ -357,10 +347,11 @@ Move the cursor position."
       (org-map-entries (lambda () "Indent the description from the current card if need be."
                          (let ((start (orgtrello-entity/card-description-start-point!))
                                (end   (orgtrello-entity/card-metadata-end-point!)))
-                           (narrow-to-region start end)        ;; only edit the region start end
-                           (goto-char (point-min))
-                           (unless (<= 2 (org-get-indentation));; if need be
-                             (indent-rigidly start end *ORGTRELLO-BUFFER/INDENT-DESCRIPTION*))))))));; now indent with the rightful indentation
+                           (save-restriction
+                             (narrow-to-region start end)
+                             (goto-char (point-min))
+                             (unless (<= 2 (org-get-indentation));; if need be
+                               (indent-rigidly start end *ORGTRELLO-BUFFER/INDENT-DESCRIPTION*)))))))));; now indent with the rightful indentation
 
 (defun orgtrello-buffer/--convert-orgmode-date-to-trello-date (orgmode-date)
   "Convert the 'org-mode' deadline ORGMODE-DATE into a time adapted for trello."
@@ -506,9 +497,26 @@ In any case, execute ORG-FN."
   (interactive)
   (orgtrello-buffer/org-decorator 'org-ctrl-c-ret))
 
+(defun orgtrello-buffer/install-overlay! (start-position)
+  "Install org-trello overlay from START-POSITION.
+First, it removes the current org-trello overlay on actual line.
+Then install the new one."
+  ;; remove overlay present on current position
+  (orgtrello-buffer/remove-overlays! (point-at-bol) (point-at-eol))
+  ;; build an overlay to hide the cbx properties
+  (overlay-put (make-overlay start-position (point-at-eol) (current-buffer) t nil)
+               'invisible 'org-trello-cbx-property))
+
+(defun orgtrello-buffer/get-overlay-at-pos! ()
+  "Retrieve overlay at current position.
+Return nil if none."
+  (->> (overlays-in (point-at-bol) (point-at-eol))
+    (--filter (eq (overlay-get it 'invisible) 'org-trello-cbx-property))
+    car))
+
 (defun orgtrello-buffer/compute-overlay-size! ()
   "Compute the overlay size to the current position"
-  (-when-let (o (car (overlays-in (point-at-bol) (point-at-eol))))
+  (-when-let (o (orgtrello-buffer/get-overlay-at-pos!))
     (- (overlay-end o) (overlay-start o))))
 
 (defun orgtrello-buffer/--compute-marker-from-entry (entry)

@@ -148,7 +148,7 @@ BUFFER-NAME to specify the buffer with which we currently work."
 Does not preserve position."
   (goto-char (point-min))
   (outline-next-heading)
-  (orgtrello-cbx/remove-overlays! (point-at-bol) (point-max))
+  (orgtrello-buffer/remove-overlays! (point-at-bol) (point-max))
   (kill-region (point-at-bol) (point-max)))
 
 (defun orgtrello-controller/--sync-buffer-with-trello-cards (buffer-name trello-cards)

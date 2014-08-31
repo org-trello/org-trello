@@ -1,3 +1,12 @@
+# 0.5.6
+
+- [X] backlog
+- [X] Update version
+- [X] Use save-excursion - save-restriction - narrow-to-region instead of using region
+- [X] Fix behavior orgtrello-buffer/end-of-line! When going to end of line in checkbox, we need to do it twice, fix.
+- [X] Small refactoring about overlays
+- [X] Release notes
+
 # 0.5.5
 
 - [X] Backlog
