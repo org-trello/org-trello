@@ -7,16 +7,16 @@
 - [ ] Another Disposition about org's buffer - [[https://github.com/org-trello/org-trello/issues/33][#33]]
 - [ ] Use defcustom instead of defvar for user customisation - [[https://github.com/org-trello/org-trello/issues/196][#196]]
 - [ ] See to use primitives org-next-item/org-end-of-item-list/org-list-use-circular-motion to move in checkbox
+- [ ] One command to sync them all - [[https://github.com/org-trello/org-trello/issues/59][#59]]
+- [ ] Improve sync request policy - [[https://github.com/org-trello/org-trello/issues/58][#58]]
 
-* IN-PROGRESS 0.5.6 [62%]
+* IN-PROGRESS 0.5.6 [100%]
 - [X] backlog
 - [X] Update version
 - [X] Use save-excursion - save-restriction - narrow-to-region instead of using region
 - [X] Fix behavior orgtrello-buffer/end-of-line! When going to end of line in checkbox, we need to do it twice, fix.
 - [X] Small refactoring about overlays
-- [ ] One command to sync them all - [[https://github.com/org-trello/org-trello/issues/59][#59]]
-- [ ] Improve sync request policy - [[https://github.com/org-trello/org-trello/issues/58][#58]]
-- [ ] Release notes
+- [X] Release notes
 * DONE 0.5.5 [100%]
   CLOSED: [2014-08-28 Thu 16:02]
 - [X] Backlog
