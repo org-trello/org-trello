@@ -208,17 +208,21 @@ Return the level found or nil if the level found is a card."
   "Map over the checkboxes with level > to LEVEL and execute FN-TO-EXECUTE.
 Does not preserve the cursor position.
 Do not exceed the max size of buffer."
-  (orgtrello-entity/goto-next-checkbox)
-  (when (< level (orgtrello-cbx/current-level!))
-    (funcall fn-to-execute)
-    (orgtrello-cbx/--map-checkboxes level fn-to-execute)))
+  (let ((current-point (point-at-eol)))
+    (orgtrello-entity/goto-next-checkbox)
+    (let ((new-pt (point-at-eol)))
+      (when (and (not (= current-point new-pt)) (< level (orgtrello-entity/level!)))
+        (funcall fn-to-execute)
+        (orgtrello-cbx/--map-checkboxes level fn-to-execute)))))
 
 (defun orgtrello-cbx/map-checkboxes (fn-to-execute)
   "Map over the current checkbox and execute FN-TO-EXECUTE."
-  (let* ((level      (orgtrello-cbx/current-level!))
-         (scan-level (if (<= level *ORGTRELLO/CARD-LEVEL*) *ORGTRELLO/CARD-LEVEL* level))) ;; hack to take into account -1 (card metadata) as card level
-    (when (= level *ORGTRELLO/CHECKLIST-LEVEL*) (funcall fn-to-execute))
-    (save-excursion (orgtrello-cbx/--map-checkboxes scan-level fn-to-execute))))
+  (save-excursion
+    (orgtrello-entity/back-to-card!)                                 ;; go back to the card
+    (-when-let (fst-cbx (orgtrello-entity/goto-next-checkbox-with-same-level! *ORGTRELLO/CHECKLIST-LEVEL*))
+      (goto-char fst-cbx)                                            ;; then first checklist
+      (funcall fn-to-execute)                                        ;; execute the function on it
+      (orgtrello-cbx/--map-checkboxes *ORGTRELLO/CARD-LEVEL* fn-to-execute))))
 
 (orgtrello-log/msg *OT/DEBUG* "orgtrello-cbx loaded!")
 
