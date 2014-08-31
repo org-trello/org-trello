@@ -60,19 +60,6 @@
   "Serialize the PROPERTIES to checkbox string."
   (format ":PROPERTIES: %s" (orgtrello-cbx/--to-properties properties)))
 
-(defun orgtrello-cbx/remove-overlays! (start end)
-  "Remove the overlays presents between START and END in the current buffer"
-  (remove-overlays start end 'invisible 'org-trello-cbx-property))
-
-(defun orgtrello-cbx/install-overlays! (start-position)
-  "Install org-trello overlays from START-POSITION.
-First, it removes the current overlay on line and then install the new."
-  ;; remove overlay present on current position
-  (orgtrello-cbx/remove-overlays! (point-at-bol) (point-at-eol))
-  ;; build an overlay to hide the cbx properties
-  (overlay-put (make-overlay start-position (point-at-eol) (current-buffer) t nil)
-               'invisible 'org-trello-cbx-property))
-
 (defun orgtrello-cbx/--write-properties-at-point (pt properties)
   "Overwrite the current properties at point PT with new PROPERTIES."
   (save-excursion

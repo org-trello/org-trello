@@ -142,7 +142,7 @@ If the VALUE is nil or empty, remove such PROPERTY."
 
 (defun orgtrello-buffer/clean-region! (region)
   "Given a region, remove everything in this region, including text and overlays"
-  (apply 'orgtrello-cbx/remove-overlays! region)
+  (apply 'orgtrello-buffer/remove-overlays! region)
   (apply 'delete-region region))
 
 (defun orgtrello-buffer/--csv-user-ids-to-csv-user-names (csv-users-id users-id-name)
@@ -326,9 +326,11 @@ Move the cursor position."
       (remove-overlays (point-at-bol) (point-at-eol)) ;; the current overlay on this line
       (replace-match "" nil t))))                     ;; then remove the property
 
-(defun orgtrello-buffer/remove-overlays! ()
-  "Remove every org-trello overlays from the current buffer."
-  (orgtrello-cbx/remove-overlays! (point-min) (point-max)))
+(defun orgtrello-buffer/remove-overlays! (&optional start end)
+  "Remove every org-trello overlays from the current buffer.
+When START/END are specified, use those boundaries.
+Otherwise, work on the all buffer."
+  (remove-overlays (if start start (point-min)) (if end end (point-max)) 'invisible 'org-trello-cbx-property))
 
 (defun orgtrello-buffer/install-overlays! ()
   "Install overlays throughout the all buffers."
@@ -336,7 +338,7 @@ Move the cursor position."
   (save-excursion
     (goto-char (point-min))
     (while (re-search-forward ":PROPERTIES: {.*" nil t)
-      (orgtrello-cbx/install-overlays! (match-beginning 0)))))
+      (orgtrello-buffer/install-overlay! (match-beginning 0)))))
 
 (defun orgtrello-buffer/indent-card-descriptions! ()
   "Indent the card descriptions rigidly starting at 2."
@@ -494,6 +496,16 @@ In any case, execute ORG-FN."
   "Move the cursor at the end of the line. For a checkbox, move to the 1- point (because of overlays)."
   (interactive)
   (orgtrello-buffer/org-decorator 'org-ctrl-c-ret))
+
+(defun orgtrello-buffer/install-overlay! (start-position)
+  "Install org-trello overlay from START-POSITION.
+First, it removes the current org-trello overlay on actual line.
+Then install the new one."
+  ;; remove overlay present on current position
+  (orgtrello-buffer/remove-overlays! (point-at-bol) (point-at-eol))
+  ;; build an overlay to hide the cbx properties
+  (overlay-put (make-overlay start-position (point-at-eol) (current-buffer) t nil)
+               'invisible 'org-trello-cbx-property))
 
 (defun orgtrello-buffer/get-overlay-at-pos! ()
   "Retrieve overlay at current position.
