@@ -8,11 +8,12 @@
 - [ ] Use defcustom instead of defvar for user customisation - [[https://github.com/org-trello/org-trello/issues/196][#196]]
 - [ ] See to use primitives org-next-item/org-end-of-item-list/org-list-use-circular-motion to move in checkbox
 
-* IN-PROGRESS 0.5.6 [37%]
+* IN-PROGRESS 0.5.6 [50%]
 - [X] backlog
 - [X] Update version
 - [X] Use save-excursion - save-restriction - narrow-to-region instead of using region
-- [ ] Fix behavior orgtrello-buffer/goto-end-of-line! When going to end of line in checkbox, we need to do it twice, fix.
+- [X] Fix behavior orgtrello-buffer/end-of-line! When going to end of line in checkbox, we need to do it twice, fix.
+- [ ] Small refactoring
 - [ ] One command to sync them all - [[https://github.com/org-trello/org-trello/issues/59][#59]]
 - [ ] Improve sync request policy - [[https://github.com/org-trello/org-trello/issues/58][#58]]
 - [ ] Release notes

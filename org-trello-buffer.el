@@ -495,9 +495,16 @@ In any case, execute ORG-FN."
   (interactive)
   (orgtrello-buffer/org-decorator 'org-ctrl-c-ret))
 
+(defun orgtrello-buffer/get-overlay-at-pos! ()
+  "Retrieve overlay at current position.
+Return nil if none."
+  (->> (overlays-in (point-at-bol) (point-at-eol))
+    (--filter (eq (overlay-get it 'invisible) 'org-trello-cbx-property))
+    car))
+
 (defun orgtrello-buffer/compute-overlay-size! ()
   "Compute the overlay size to the current position"
-  (-when-let (o (car (overlays-in (point-at-bol) (point-at-eol))))
+  (-when-let (o (orgtrello-buffer/get-overlay-at-pos!))
     (- (overlay-end o) (overlay-start o))))
 
 (defun orgtrello-buffer/--compute-marker-from-entry (entry)
