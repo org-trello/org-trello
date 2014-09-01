@@ -9,9 +9,9 @@
 - [ ] See to use primitives org-next-item/org-end-of-item-list/org-list-use-circular-motion to move in checkbox
 - [ ] One command to sync them all - [[https://github.com/org-trello/org-trello/issues/59][#59]]
 - [ ] Improve sync request policy - [[https://github.com/org-trello/org-trello/issues/58][#58]]
-* IN-PROGRESS 0.5.7 [20%]
+* IN-PROGRESS 0.5.7 [40%]
 - [X] Backlog
-- [ ] Update version
+- [X] Update version
 - [ ] One command to sync them all - [[https://github.com/org-trello/org-trello/issues/59][#59]]
 - [ ] Improve sync request policy - [[https://github.com/org-trello/org-trello/issues/58][#58]]
 - [ ] Release notes
