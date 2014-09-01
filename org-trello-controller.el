@@ -138,10 +138,9 @@ BUFFER-NAME to specify the buffer with which we currently work."
        (when (orgtrello-data/entity-card-p entity)
          (orgtrello-buffer/write-card! new-id entity entities adjacency)))
      entities)
-    (goto-char (point-min)) ;; go back to the beginning of file
-    ;;(org-global-cycle '(4)) ;; fold all entries
-    ))
+    (goto-char (point-min))                 ;; go back to the beginning of file
     (ignore-errors (org-sort-entries t ?o)) ;; sort the entries on their keywords and ignore if there are errors (if nothing to sort for example)
+    (org-global-cycle '(4))))               ;; fold all entries
 
 (defun orgtrello-controller/--cleanup-org-entries ()
   "Cleanup org-entries from the buffer.
