@@ -138,5 +138,64 @@ hello there
   (expect 70 (orgtrello-tests/with-temp-buffer "#+TODO: TODO | DONE\n* heading\n- [ ] some checklist\n  - [ ] some item\n* next heading\n" (orgtrello-entity/compute-next-card-point!) -3))
   (expect 70 (orgtrello-tests/with-temp-buffer "#+TODO: TODO | DONE\n* heading\n- [ ] some checklist\n  - [ ] some item\n* next heading\n" (orgtrello-entity/compute-next-card-point!) -4)))
 
+(expectations
+  (desc "orgtrello-entity/compute-card-region! - compute the region of the card.")
+  (expect
+      '(1 265)
+    (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
+:PROPERTIES:
+:orgtrello-id: 52c945143004d4617c012528
+:END:
+  hello there
+- [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}
+  - [X] Emacs-Lisp  :PROPERTIES: {\"orgtrello-id\":\"52c9451784251e1b260127f8\"}
+* another card"
+                                      (orgtrello-entity/compute-card-region!)
+                                      -2))
+  (expect
+      '(265 279)
+    (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
+:PROPERTIES:
+:orgtrello-id: 52c945143004d4617c012528
+:END:
+  hello there
+- [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}
+  - [X] Emacs-Lisp  :PROPERTIES: {\"orgtrello-id\":\"52c9451784251e1b260127f8\"}
+* another card"
+                                      (orgtrello-entity/compute-card-region!)
+                                      0))
+  (expect
+      "* TODO Joy of FUN(ctional) LANGUAGES
+:PROPERTIES:
+:orgtrello-id: 52c945143004d4617c012528
+:END:
+  hello there
+- [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}
+  - [X] Emacs-Lisp  :PROPERTIES: {\"orgtrello-id\":\"52c9451784251e1b260127f8\"}
+"
+    (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
+:PROPERTIES:
+:orgtrello-id: 52c945143004d4617c012528
+:END:
+  hello there
+- [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}
+  - [X] Emacs-Lisp  :PROPERTIES: {\"orgtrello-id\":\"52c9451784251e1b260127f8\"}
+* another card"
+                                      (apply 'buffer-substring-no-properties (orgtrello-entity/compute-card-region!))
+                                      -2))
+  (expect
+      "* another card"
+    (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
+:PROPERTIES:
+:orgtrello-id: 52c945143004d4617c012528
+:END:
+  hello there
+- [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}
+  - [X] Emacs-Lisp  :PROPERTIES: {\"orgtrello-id\":\"52c9451784251e1b260127f8\"}
+* another card"
+                                      (apply 'buffer-substring-no-properties (orgtrello-entity/compute-card-region!))
+                                      0)))
+
+
 (provide 'org-trello-entity-tests)
 ;;; org-trello-cbx-tests.el ends here

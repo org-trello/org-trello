@@ -115,7 +115,7 @@ Otherwise, return the current position."
 
 (defun orgtrello-entity/compute-card-region! ()
   "Compute the card region zone couple '(start end)."
-  `(,(orgtrello-entity/card-start-point!) ,(1- (orgtrello-entity/compute-next-card-point!))))
+  `(,(orgtrello-entity/card-start-point!) ,(orgtrello-entity/compute-next-card-point!)))
 
 (provide 'org-trello-entity)
 ;;; org-trello-entity.el ends here

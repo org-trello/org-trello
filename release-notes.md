@@ -1,3 +1,14 @@
+# 0.5.7
+
+- [X] Backlog
+- [X] Update version
+- [X] Fix default keyword when not specified (trello list name) - [[https://github.com/org-trello/org-trello/issues/183][#183]]
+- [X] Remove reference to proxy in log messages
+- [X] Sync buffer from trello - Ignore errors when there is nothing to sort.
+- [X] Sync buffer from trello - Fold buffer entries when done.
+- [X] Fix bug on (orgtrello-entity/compute-card-region!)
+- [X] Release notes
+
 # 0.5.6
 
 - [X] backlog
