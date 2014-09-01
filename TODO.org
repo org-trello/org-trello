@@ -9,6 +9,12 @@
 - [ ] See to use primitives org-next-item/org-end-of-item-list/org-list-use-circular-motion to move in checkbox
 - [ ] One command to sync them all - [[https://github.com/org-trello/org-trello/issues/59][#59]]
 - [ ] Improve sync request policy - [[https://github.com/org-trello/org-trello/issues/58][#58]]
+* IN-PROGRESS 0.5.8 [20%]
+- [X] Backlog
+- [ ] Update version
+- [ ] Add emacs24 dependencies
+- [ ] Downgrade request dependency to 0.3.1 to make org-trello installation in melpa-stable -
+- [ ] Release notes
 * DONE 0.5.7 [100%]
   CLOSED: [2014-09-01 Mon 22:13]
 - [X] Backlog
