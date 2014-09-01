@@ -451,7 +451,7 @@ Deal with org entities and checkbox as well."
   "Given the HEADING-METADATA returned by the function 'org-heading-components.
 Make it a hashmap with key :level,  :keyword,  :name and their respective value."
   (cl-destructuring-bind (unknown-properties comments description member-ids buffer-name point id due level _ keyword _ name tags) heading-metadata
-    (orgtrello-data/make-hash-org member-ids level keyword name id due point buffer-name description comments tags unknown-properties)))
+    (orgtrello-data/make-hash-org member-ids level (if keyword keyword (car *ORGTRELLO/ORG-KEYWORD-TRELLO-LIST-NAMES*)) name id due point buffer-name description comments tags unknown-properties)))
 
 (defun orgtrello-buffer/filtered-kwds! ()
   "org keywords used (based on org-todo-keywords-1)."
