@@ -195,12 +195,10 @@ Return the level found or nil if the level found is a card."
   "Map over the checkboxes with level > to LEVEL and execute FN-TO-EXECUTE.
 Does not preserve the cursor position.
 Do not exceed the max size of buffer."
-  (let ((current-point (point-at-eol)))
-    (orgtrello-entity/goto-next-checkbox)
-    (let ((new-pt (point-at-eol)))
-      (when (and (not (= current-point new-pt)) (< level (orgtrello-entity/level!)))
-        (funcall fn-to-execute)
-        (orgtrello-cbx/--map-checkboxes level fn-to-execute)))))
+  (orgtrello-entity/goto-next-checkbox)
+  (when (and (not (eobp)) (< level (orgtrello-entity/level!)))
+    (funcall fn-to-execute)
+    (orgtrello-cbx/--map-checkboxes level fn-to-execute)))
 
 (defun orgtrello-cbx/map-checkboxes (fn-to-execute)
   "Map over the current checkbox and execute FN-TO-EXECUTE."
