@@ -1,3 +1,11 @@
+# 0.5.8
+
+- [X] Backlog
+- [X] Update version
+- [X] Add emacs24 dependencies - https://github.com/purcell/org-trello/commit/0fef27e83d5b1c68af03213354ddd97448c802d2 + http://www.gnu.org/software/emacs/manual/html_node/elisp/Library-Headers.html#Library-Headers + http://stackoverflow.com/questions/16805645/how-can-i-gracefully-drop-support-for-older-emacsen-in-my-elisp-package
+- [X] Downgrade request dependency to 0.3.1 to make org-trello installation possible in melpa-stable (no answer from `request` maintainer) + https://github.com/org-trello/org-trello/issues/195
+- [X] Release notes
+
 # 0.5.7
 
 - [X] Backlog
