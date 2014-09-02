@@ -140,10 +140,11 @@ If the VALUE is nil or empty, remove such PROPERTY."
   (insert (orgtrello-buffer/--compute-entity-to-org-entry entity))
   (when entity-id (orgtrello-buffer/--update-property entity-id (not (orgtrello-data/entity-card-p entity)))))
 
-(defun orgtrello-buffer/clean-region! (region)
-  "Given a region, remove everything in this region, including text and overlays"
-  (apply 'orgtrello-buffer/remove-overlays! region)
-  (apply 'delete-region region))
+(defun orgtrello-buffer/clean-region! (region-start region-end)
+  "Clean region delimited by REGION-START and REGION-END.
+Remove text and overlays."
+  (orgtrello-buffer/remove-overlays! region-start region-end)
+  (delete-region region-start region-end))
 
 (defun orgtrello-buffer/--csv-user-ids-to-csv-user-names (csv-users-id users-id-name)
   "Given a CSV-USERS-ID and a USERS-ID-NAME map, return a csv usernames."
