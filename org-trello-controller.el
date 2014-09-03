@@ -219,6 +219,7 @@ Along the way, the buffer BUFFER-NAME is written with new informations."
                  (merged-entities          (orgtrello-data/merge-entities-trello-and-org entities-from-trello entities-from-org-buffer))
                  (entities                 (car merged-entities))
                  (entities-adj             (cadr merged-entities)))
+            ;;(orgtrello-buffer/overwrite-card! region (gethash card-id entities) entities entities-adj)
             (orgtrello-buffer/clean-region! (car region) (1- (cadr region)))
             (orgtrello-buffer/write-card! card-id (gethash card-id entities) entities entities-adj)))))))
 

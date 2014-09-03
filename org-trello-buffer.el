@@ -539,6 +539,15 @@ Return nil if none."
   (with-current-buffer buffer-name
     (call-interactively 'save-buffer)))
 
+(defun orgtrello-buffer/overwrite-card! (card-region entity entities entities-adj)
+  "At current position, overwrite the CARD-REGION with new card ENTITY.
+ENTITIES and ENTITIES-ADJ provide information on card's structure."
+  (let ((region-start (car card-region))
+        (region-end   (1- (cadr card-region)))
+        (card-id      (orgtrello-data/entity-id entity)))
+    (orgtrello-buffer/clean-region! region-start region-end)
+    (orgtrello-buffer/write-card! card-id entity entities entities-adj)))
+
 (orgtrello-log/msg *OT/DEBUG* "orgtrello-buffer loaded!")
 
 (provide 'org-trello-buffer)
