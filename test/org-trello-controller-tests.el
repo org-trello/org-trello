@@ -424,7 +424,7 @@ some description
      -2)))
 
 (expectations
-  (desc "orgtrello-controller/--sync-buffer-with-trello-cards")
+  (desc "orgtrello-controller/sync-buffer-with-trello-cards!")
   (expect
       ":PROPERTIES:
 #+property: board-name api test board
@@ -513,7 +513,7 @@ some description
                                                               (:level . ,*ORGTRELLO/CARD-LEVEL*)
                                                               (:name . "updated card title")
                                                               (:id . "some-card-id")))))
-         (orgtrello-controller/--sync-buffer-with-trello-cards (current-buffer) (list trello-card0)))))))
+         (orgtrello-controller/sync-buffer-with-trello-cards! (current-buffer) (list trello-card0)))))))
 
 (provide 'org-trello-controller-tests)
 ;;; org-trello-controller-tests.el ends here

@@ -150,7 +150,7 @@ Does not preserve position."
   (orgtrello-buffer/remove-overlays! (point-at-bol) (point-max))
   (kill-region (point-at-bol) (point-max)))
 
-(defun orgtrello-controller/--sync-buffer-with-trello-cards (buffer-name trello-cards)
+(defun orgtrello-controller/sync-buffer-with-trello-cards! (buffer-name trello-cards)
   "Synchronize the buffer BUFFER-NAME with the TRELLO-CARDS."
   (with-local-quit
     (with-current-buffer buffer-name
@@ -178,7 +178,7 @@ Does not preserve position."
       (deferred:nextc it
         (lambda (trello-cards) ;; We have the full result in one query, now we can compute the translation in org-trello model
           (orgtrello-log/msg *OT/DEBUG* "trello-card: %S" trello-cards)
-          (orgtrello-controller/--sync-buffer-with-trello-cards buffer-name trello-cards)))
+          (orgtrello-controller/sync-buffer-with-trello-cards! buffer-name trello-cards)))
       (deferred:nextc it
         (lambda ()
           (orgtrello-buffer/save-buffer buffer-name)
