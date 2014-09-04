@@ -87,7 +87,7 @@ If the VALUE is nil or empty, remove such PROPERTY."
 (defun orgtrello-buffer/write-checklist! (checklist-id entities adjacency)
   "Write the checklist and its structure inside the org buffer."
   (orgtrello-buffer/write-checklist-header! checklist-id (gethash checklist-id entities))
-  (--map (orgtrello-buffer/write-item! it entities) (gethash checklist-id adjacency)))
+  (mapc (lambda (it) (orgtrello-buffer/write-item! it entities)) (gethash checklist-id adjacency)))
 
 (defun orgtrello-buffer/update-member-ids-property! (entity)
   "Update the users assigned property card entry."
@@ -132,7 +132,7 @@ If the VALUE is nil or empty, remove such PROPERTY."
   (orgtrello-buffer/write-card-header! card-id card)
   (insert "\n")
   (-when-let (checklists (gethash card-id adjacency))
-    (--map (orgtrello-buffer/write-checklist! it entities adjacency) checklists)))
+    (mapc (lambda (it) (orgtrello-buffer/write-checklist! it entities adjacency)) checklists)))
 
 (defun orgtrello-buffer/write-entity! (entity-id entity)
   "Write the entity in the buffer to the current position. Move the cursor position."
