@@ -622,5 +622,110 @@ some description
                                                               (:name . "other card name")
                                                               (:id . "some-card-id2")))))
          (orgtrello-controller/sync-buffer-with-trello-cards! (current-buffer) (list trello-card0 trello-card1)))))))
+
+(expectations
+  (desc "orgtrello-controller/sync-buffer-with-trello-cards!")
+  (expect
+      ":PROPERTIES:
+#+property: board-name api test board
+#+property: board-id abc
+#+PROPERTY: CANCELLED def
+#+PROPERTY: FAILED ijk
+#+PROPERTY: DELEGATED lmn
+#+PROPERTY: PENDING opq
+#+PROPERTY: DONE rst
+#+PROPERTY: IN-PROGRESS uvw
+#+PROPERTY: TODO xyz
+#+TODO: TODO IN-PROGRESS DONE | PENDING DELEGATED FAILED CANCELLED
+#+PROPERTY: orgtrello-user-dude 888
+#+PROPERTY: orgtrello-user-ardumont 999
+#+PROPERTY: :yellow yellow label
+#+PROPERTY: :red red label
+#+PROPERTY: :purple this is the purple label
+#+PROPERTY: :orange orange label
+#+PROPERTY: :green green label with & char
+#+PROPERTY: :blue
+#+PROPERTY: orgtrello-user-me ardumont
+:END:
+* TODO updated card title                                               :orange:red:green:
+  :PROPERTIES:
+  :orgtrello-id: some-card-id
+  :orgtrello-users: dude,ardumont
+  :orgtrello-card-comments: ardumont: some comment###ardumont: some second comment
+  :END:
+  updated description
+- [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}
+  - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\"}
+  - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\"}
+- [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\"}
+* TODO other card name                                                  :green:
+  :PROPERTIES:
+  :orgtrello-id: some-card-id2
+  :orgtrello-users: dude
+  :orgtrello-card-comments: ardumont: great
+  :END:
+  this is a description
+"
+    (orgtrello-tests/with-temp-buffer-and-return-buffer-content
+     ":PROPERTIES:
+#+property: board-name api test board
+#+property: board-id abc
+#+PROPERTY: CANCELLED def
+#+PROPERTY: FAILED ijk
+#+PROPERTY: DELEGATED lmn
+#+PROPERTY: PENDING opq
+#+PROPERTY: DONE rst
+#+PROPERTY: IN-PROGRESS uvw
+#+PROPERTY: TODO xyz
+#+TODO: TODO IN-PROGRESS DONE | PENDING DELEGATED FAILED CANCELLED
+#+PROPERTY: orgtrello-user-dude 888
+#+PROPERTY: orgtrello-user-ardumont 999
+#+PROPERTY: :yellow yellow label
+#+PROPERTY: :red red label
+#+PROPERTY: :purple this is the purple label
+#+PROPERTY: :orange orange label
+#+PROPERTY: :green green label with & char
+#+PROPERTY: :blue
+#+PROPERTY: orgtrello-user-me ardumont
+:END:
+* TODO some card name                                                   :orange:
+:PROPERTIES:
+:orgtrello-id: some-card-id
+:orgtrello-card-comments: ardumont: some comment
+:END:
+some description
+- [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}
+  - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\"}
+  - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\"}
+- [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\"}
+
+* other card name
+:PROPERTIES:
+:orgtrello-id: some-card-id2
+:END:
+"
+     (let* ((trello-card0 (orgtrello-hash/make-properties `((:keyword . "TODO")
+                                                            (:member-ids . ("888" "999"))
+                                                            (:comments . ,(list (orgtrello-hash/make-properties '((:comment-user . "ardumont")
+                                                                                                                  (:comment-text . "some comment")))
+                                                                                (orgtrello-hash/make-properties '((:comment-user . "ardumont")
+                                                                                                                  (:comment-text . "some second comment")))))
+                                                            (:labels . ,(list (orgtrello-hash/make-properties '((:color . "red")))
+                                                                              (orgtrello-hash/make-properties '((:color . "green")))))
+                                                            (:desc . "updated description")
+                                                            (:level . ,*ORGTRELLO/CARD-LEVEL*)
+                                                            (:name . "updated card title")
+                                                            (:id . "some-card-id"))))
+            (trello-card1 (orgtrello-hash/make-properties `((:keyword . "DONE")
+                                                            (:member-ids . ("888"))
+                                                            (:comments . ,(list (orgtrello-hash/make-properties '((:comment-user . "ardumont")
+                                                                                                                  (:comment-text . "great")))))
+                                                            (:labels . ,(list (orgtrello-hash/make-properties '((:color . "green")))))
+                                                            (:desc . "this is a description")
+                                                            (:level . ,*ORGTRELLO/CARD-LEVEL*)
+                                                            (:name . "other card name")
+                                                            (:id . "some-card-id2")))))
+       (orgtrello-controller/sync-buffer-with-trello-cards! (current-buffer) (list trello-card0 trello-card1))))))
+
 (provide 'org-trello-controller-tests)
 ;;; org-trello-controller-tests.el ends here
