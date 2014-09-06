@@ -203,8 +203,8 @@ If MODIFIER is non nil, execute the sync entity and its structure from trello."
   (org-trello/apply-deferred
    (cons 'org-trello/log-strict-checks-and-do
          (if modifier
-             '("Request 'sync entity with structure from trello" orgtrello-controller/do-sync-card-from-trello!)
-           '("Request 'sync entity with structure to trello" orgtrello-controller/do-sync-card-to-trello!)))))
+             '("Request 'sync entity with structure from trello" orgtrello-controller/checks-then-sync-card-from-trello!)
+           '("Request 'sync entity with structure to trello" orgtrello-controller/checks-then-sync-card-to-trello!)))))
 
 (defun org-trello/sync-buffer (&optional modifier)
   "Execute the sync of the entire buffer to trello.
@@ -224,7 +224,7 @@ If MODIFIER is non nil, execute all entities removal from trello and buffer."
    (cons 'org-trello/log-strict-checks-and-do
          (if modifier
              '("Delete all cards" orgtrello-controller/do-delete-entities)
-           '("Delete entity at point (card/checklist/item)" orgtrello-controller/do-delete-simple)))))
+           '("Delete entity at point (card/checklist/item)" orgtrello-controller/checks-then-delete-simple)))))
 
 (defun org-trello/kill-cards ()
   "Execute all entities removal from trello and buffer."

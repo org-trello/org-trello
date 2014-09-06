@@ -77,9 +77,14 @@ ARGS is not used."
       :ok
     "Setup problem - You need to install the consumer-key and the read/write access-token - C-c o i or M-x org-trello/install-key-and-token"))
 
+(defun orgtrello-controller/--on-entity-p (entity)
+  "Compute if the org-trello ENTITY exists.
+If it does not not, error."
+  (if entity :ok "You need to be on an org-trello entity (card/checklist/item) for this action to occur!"))
+
 (defun orgtrello-controller/--right-level-p (entity)
   "Compute if the ENTITY level is correct (not higher than level 4)."
-  (if (< (-> entity orgtrello-data/current orgtrello-data/entity-level) *ORGTRELLO/OUTOFBOUNDS-LEVEL*) :ok "Level too high. Do not deal with entity other than card/checklist/items!"))
+  (if (and entity (< (-> entity orgtrello-data/current orgtrello-data/entity-level) *ORGTRELLO/OUTOFBOUNDS-LEVEL*)) :ok "Wrong level. Do not deal with entity other than card/checklist/item!"))
 
 (defun orgtrello-controller/--already-synced-p (entity)
   "Compute if the ENTITY has already been synchronized."
@@ -96,7 +101,14 @@ ARGS is not used."
             ((= level *ORGTRELLO/CHECKLIST-LEVEL*) *ORGTRELLO/ERROR-SYNC-CHECKLIST-MISSING-NAME*)
             ((= level *ORGTRELLO/ITEM-LEVEL*)      *ORGTRELLO/ERROR-SYNC-ITEM-MISSING-NAME*)))))
 
-(defun orgtrello-controller/--do-delete! (full-meta &optional buffer-name)
+(defun orgtrello-controller/checks-then-delete-simple ()
+  "Do the deletion of an entity."
+  (orgtrello-action/functional-controls-then-do '(orgtrello-controller/--on-entity-p orgtrello-controller/--right-level-p orgtrello-controller/--already-synced-p)
+                                                (orgtrello-buffer/safe-entry-full-metadata!)
+                                                'orgtrello-controller/delete-card!
+                                                (current-buffer)))
+
+(defun orgtrello-controller/delete-card! (full-meta &optional buffer-name)
   "Execute on FULL-META the ACTION.
 BUFFER-NAME to specify the buffer with which we currently work."
   (with-current-buffer buffer-name
@@ -106,18 +118,18 @@ BUFFER-NAME to specify the buffer with which we currently work."
       (orgtrello-data/put-entity-id marker current)
       (eval (orgtrello-proxy/--delete current)))))
 
-(defun orgtrello-controller/do-delete-simple ()
-  "Do the deletion of an entity."
-  (orgtrello-action/functional-controls-then-do '(orgtrello-controller/--right-level-p orgtrello-controller/--already-synced-p)
-                                                (orgtrello-buffer/entry-get-full-metadata!)
-                                                'orgtrello-controller/--do-delete!
+(defun orgtrello-controller/checks-then-sync-card-to-trello! ()
+  "Execute checks then do the actual sync if everything is ok."
+  (orgtrello-action/functional-controls-then-do '(orgtrello-controller/--on-entity-p orgtrello-controller/--right-level-p)
+                                                (orgtrello-buffer/safe-entry-full-metadata!)
+                                                'orgtrello-controller/sync-card-to-trello!
                                                 (current-buffer)))
 
-(defun orgtrello-controller/do-sync-card-to-trello! ()
+(defun orgtrello-controller/sync-card-to-trello! (full-meta &optional buffer-name)
   "Do the actual card creation/update - from card to item."
   (orgtrello-log/msg *OT/INFO* "Synchronizing card on board '%s'..." (orgtrello-buffer/board-name!))
   (org-show-subtree) ;; in any case, we need to show the subtree, otherwise https://github.com/org-trello/org-trello/issues/53
-  (-> (current-buffer)
+  (-> buffer-name
     orgtrello-buffer/build-org-card-structure!
     orgtrello-controller/execute-sync-entity-structure!))
 
@@ -222,10 +234,17 @@ Along the way, the buffer BUFFER-NAME is written with new informations."
                  (entities-adj             (cadr merged-entities)))
             (orgtrello-buffer/overwrite-card! region (gethash card-id entities) entities entities-adj)))))))
 
-(defun orgtrello-controller/do-sync-card-from-trello! ()
+(defun orgtrello-controller/checks-then-sync-card-from-trello! ()
+  "Execute checks then do the actual sync if everything is ok."
+  (orgtrello-action/functional-controls-then-do '(orgtrello-controller/--on-entity-p orgtrello-controller/--right-level-p orgtrello-controller/--already-synced-p)
+                                                (orgtrello-buffer/safe-entry-full-metadata!)
+                                                'orgtrello-controller/sync-card-from-trello!
+                                                (current-buffer)))
+
+(defun orgtrello-controller/sync-card-from-trello! (full-meta &optional buffer-name)
   "Entity (card/checklist/item) synchronization (with its structure) from trello.
 Optionally, SYNC permits to synchronize the query."
-  (lexical-let* ((buffer-name (current-buffer))
+  (lexical-let* ((buffer-name buffer-name)
                  (point-start (point))
                  (card-meta (progn (when (not (orgtrello-entity/card-at-pt!)) (orgtrello-entity/back-to-card!))
                                    (orgtrello-data/current (orgtrello-buffer/entry-get-full-metadata!))))
@@ -253,7 +272,7 @@ Optionally, SYNC permits to synchronize the query."
 (defun orgtrello-controller/--do-delete-card ()
   "Delete the card."
   (when (orgtrello-entity/card-at-pt!)
-    (orgtrello-controller/do-delete-simple)))
+    (orgtrello-controller/checks-then-delete-simple)))
 
 (defun orgtrello-controller/do-delete-entities ()
   "Launch a batch deletion of every single entities present on the buffer.

@@ -433,6 +433,13 @@ Deal with org entities and checkbox as well."
     (orgtrello-buffer/org-up-parent!)
     (orgtrello-buffer/metadata!)))
 
+(defun orgtrello-buffer/safe-entry-full-metadata! ()
+  "Compute the full entry's metadata without any underlying error.
+Return nil if entry is not correct, otherwise return the full entity metadata structure."
+  (condition-case nil
+      (orgtrello-buffer/entry-get-full-metadata!)
+    ('error nil)))
+
 (defun orgtrello-buffer/entry-get-full-metadata! ()
   "Compute metadata needed for entry into a map with keys :current, :parent, :grandparent. Returns nil if the level is superior to 4."
   (save-excursion
