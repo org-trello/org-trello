@@ -87,7 +87,7 @@ If the VALUE is nil or empty, remove such PROPERTY."
 (defun orgtrello-buffer/write-checklist! (checklist-id entities adjacency)
   "Write the checklist and its structure inside the org buffer."
   (orgtrello-buffer/write-checklist-header! checklist-id (gethash checklist-id entities))
-  (--map (orgtrello-buffer/write-item! it entities) (gethash checklist-id adjacency)))
+  (mapc (lambda (it) (orgtrello-buffer/write-item! it entities)) (gethash checklist-id adjacency)))
 
 (defun orgtrello-buffer/update-member-ids-property! (entity)
   "Update the users assigned property card entry."
@@ -132,7 +132,7 @@ If the VALUE is nil or empty, remove such PROPERTY."
   (orgtrello-buffer/write-card-header! card-id card)
   (insert "\n")
   (-when-let (checklists (gethash card-id adjacency))
-    (--map (orgtrello-buffer/write-checklist! it entities adjacency) checklists)))
+    (mapc (lambda (it) (orgtrello-buffer/write-checklist! it entities adjacency)) checklists)))
 
 (defun orgtrello-buffer/write-entity! (entity-id entity)
   "Write the entity in the buffer to the current position. Move the cursor position."
@@ -140,10 +140,11 @@ If the VALUE is nil or empty, remove such PROPERTY."
   (insert (orgtrello-buffer/--compute-entity-to-org-entry entity))
   (when entity-id (orgtrello-buffer/--update-property entity-id (not (orgtrello-data/entity-card-p entity)))))
 
-(defun orgtrello-buffer/clean-region! (region)
-  "Given a region, remove everything in this region, including text and overlays"
-  (apply 'orgtrello-buffer/remove-overlays! region)
-  (apply 'delete-region region))
+(defun orgtrello-buffer/clean-region! (region-start region-end)
+  "Clean region delimited by REGION-START and REGION-END.
+Remove text and overlays."
+  (orgtrello-buffer/remove-overlays! region-start region-end)
+  (delete-region region-start region-end))
 
 (defun orgtrello-buffer/--csv-user-ids-to-csv-user-names (csv-users-id users-id-name)
   "Given a CSV-USERS-ID and a USERS-ID-NAME map, return a csv usernames."
@@ -432,6 +433,13 @@ Deal with org entities and checkbox as well."
     (orgtrello-buffer/org-up-parent!)
     (orgtrello-buffer/metadata!)))
 
+(defun orgtrello-buffer/safe-entry-full-metadata! ()
+  "Compute the full entry's metadata without any underlying error.
+Return nil if entry is not correct, otherwise return the full entity metadata structure."
+  (condition-case nil
+      (orgtrello-buffer/entry-get-full-metadata!)
+    ('error nil)))
+
 (defun orgtrello-buffer/entry-get-full-metadata! ()
   "Compute metadata needed for entry into a map with keys :current, :parent, :grandparent. Returns nil if the level is superior to 4."
   (save-excursion
@@ -537,6 +545,15 @@ Return nil if none."
   "Given a BUFFER-NAME, save it."
   (with-current-buffer buffer-name
     (call-interactively 'save-buffer)))
+
+(defun orgtrello-buffer/overwrite-card! (card-region entity entities entities-adj)
+  "At current position, overwrite the CARD-REGION with new card ENTITY.
+ENTITIES and ENTITIES-ADJ provide information on card's structure."
+  (let ((region-start (car card-region))
+        (region-end   (1- (cadr card-region)))
+        (card-id      (orgtrello-data/entity-id entity)))
+    (orgtrello-buffer/clean-region! region-start region-end)
+    (orgtrello-buffer/write-card! card-id entity entities entities-adj)))
 
 (orgtrello-log/msg *OT/DEBUG* "orgtrello-buffer loaded!")
 

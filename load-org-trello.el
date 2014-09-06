@@ -18,9 +18,9 @@
                                "org-trello-log.el"
                                "org-trello-proxy.el"
                                "org-trello-query.el"
-                               "org-trello-setup.el"
                                "org-trello-utils.el"
-                               "org-trello.el"))
+                               "org-trello.el"
+                               "org-trello-setup.el"))
 
 (defun org-trello/dev-load-namespaces! ()
   "Load the org-trello namespaces."
@@ -29,7 +29,9 @@
   (mapc (lambda (it) (load-with-code-conversion it it)) *ORGTRELLO-NAMESPACES*)
   (require 'org-trello)
   ;; reload bindings
-  (org-trello/install-local-prefix-mode-keybinding! *ORGTRELLO/MODE-PREFIX-KEYBINDING*)
+  (custom-set-variables
+   '(*ORGTRELLO/MODE-PREFIX-KEYBINDING* "C-c z")
+   '(*orgtrello-log/level* *OT/TRACE*))
   (orgtrello-log/msg *OT/INFO* "Code loaded!"))
 
 (defun org-trello/dev-find-unused-definitions! ()

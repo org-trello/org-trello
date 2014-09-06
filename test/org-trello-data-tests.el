@@ -484,9 +484,6 @@
                                                                                        (:tags . ":other-stuff:not-trello-flag:"))))))))
 
 (expectations (desc "orgtrello-data/--merge-member-ids")
-              (expect "org-trello/ot is on! To begin with, hit C-c o h or M-x 'org-trello/help-describing-bindings" (org-trello/--startup-message "C-c o")))
-
-(expectations (desc "orgtrello-data/--merge-member-ids")
               (expect "1,5,2,3,4"
                 (orgtrello-data/--merge-member-ids (orgtrello-hash/make-properties `((:member-ids . ("1" "5"))))
                                                    (orgtrello-hash/make-properties `((:member-ids . "2,3,4"))))))

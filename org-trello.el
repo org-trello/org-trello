@@ -4,7 +4,7 @@
 
 ;; Author: Antoine R. Dumont <eniotna.t AT gmail.com>
 ;; Maintainer: Antoine R. Dumont <eniotna.t AT gmail.com>
-;; Version: 0.5.8
+;; Version: 0.5.9
 ;; Package-Requires: ((emacs "24") (dash "2.8.0") (s "1.9.0") (deferred "0.3.2") (request-deferred "0.1.0"))
 ;; Keywords: org-mode trello sync org-trello
 ;; URL: https://github.com/org-trello/org-trello
@@ -104,13 +104,14 @@ Please consider upgrading Emacs." emacs-version) "Error message when installing 
 (require 'timer)
 (require 'align)
 
-(defconst *ORGTRELLO/VERSION* "0.5.8" "Current org-trello version installed.")
+(defconst *ORGTRELLO/VERSION* "0.5.9" "Current org-trello version installed.")
 
 
 
-(require 'org-trello-log)
 (require 'org-trello-utils)
 (require 'org-trello-setup)
+
+(require 'org-trello-log)
 (require 'org-trello-action)
 (require 'org-trello-controller)
 (require 'org-trello-buffer)
@@ -202,8 +203,8 @@ If MODIFIER is non nil, execute the sync entity and its structure from trello."
   (org-trello/apply-deferred
    (cons 'org-trello/log-strict-checks-and-do
          (if modifier
-             '("Request 'sync entity with structure from trello" orgtrello-controller/do-sync-card-from-trello!)
-           '("Request 'sync entity with structure to trello" orgtrello-controller/do-sync-card-to-trello!)))))
+             '("Request 'sync entity with structure from trello" orgtrello-controller/checks-then-sync-card-from-trello!)
+           '("Request 'sync entity with structure to trello" orgtrello-controller/checks-then-sync-card-to-trello!)))))
 
 (defun org-trello/sync-buffer (&optional modifier)
   "Execute the sync of the entire buffer to trello.
@@ -223,7 +224,7 @@ If MODIFIER is non nil, execute all entities removal from trello and buffer."
    (cons 'org-trello/log-strict-checks-and-do
          (if modifier
              '("Delete all cards" orgtrello-controller/do-delete-entities)
-           '("Delete entity at point (card/checklist/item)" orgtrello-controller/do-delete-simple)))))
+           '("Delete entity at point (card/checklist/item)" orgtrello-controller/checks-then-delete-simple)))))
 
 (defun org-trello/kill-cards ()
   "Execute all entities removal from trello and buffer."
@@ -297,79 +298,40 @@ If MODIFIER is not nil, unassign oneself from the card."
 (defun org-trello/help-describing-bindings ()
   "A simple message to describe the standard bindings used."
   (interactive)
-  (org-trello/apply `(message ,(org-trello/--help-describing-bindings-template *ORGTRELLO/MODE-PREFIX-KEYBINDING* *org-trello-interactive-command-binding-couples*)) nil nil 'no-log))
+  (org-trello/apply `(message ,(orgtrello-setup/help-describing-bindings-template *ORGTRELLO/MODE-PREFIX-KEYBINDING* *org-trello-interactive-command-binding-couples*)) nil nil 'no-log))
 
-;;;;;; End interactive commands
-
-(defun org-trello/--startup-message (prefix-keybinding)
-  "Compute org-trello's startup message with the PREFIX-KEYBINDING."
-  (orgtrello-utils/replace-in-string "#PREFIX#" prefix-keybinding "org-trello/ot is on! To begin with, hit #PREFIX# h or M-x 'org-trello/help-describing-bindings"))
-
-(defun org-trello/--help-describing-bindings-template (keybinding list-command-binding-description)
-  "Standard Help message template from KEYBINDING and LIST-COMMAND-BINDING-DESCRIPTION."
-  (->> list-command-binding-description
-    (--map (let ((command        (car it))
-                 (prefix-binding (cadr it))
-                 (help-msg       (cadr (cdr it))))
-             (concat keybinding " " prefix-binding " - M-x " (symbol-name command) " - " help-msg)))
-    (s-join "\n")))
-
-(defun org-trello/--install-local-keybinding-map! (previous-org-trello-mode-prefix-keybinding org-trello-mode-prefix-keybinding interactive-command-binding-to-install)
-  "Install locally the default binding map with the prefix binding of org-trello-mode-prefix-keybinding."
-  (mapc (lambda (command-and-binding)
-          (let ((command (car command-and-binding))
-                (binding (cadr command-and-binding)))
-            ;; unset previous binding
-            (define-key org-trello-mode-map (kbd (concat previous-org-trello-mode-prefix-keybinding binding)) nil)
-            ;; set new binding
-            (define-key org-trello-mode-map (kbd (concat org-trello-mode-prefix-keybinding binding)) command)))
-        interactive-command-binding-to-install))
-
-(defun org-trello/--remove-local-keybinding-map! (previous-org-trello-mode-prefix-keybinding interactive-command-binding-to-install)
-  "Remove the default org-trello bindings."
-  (mapc (lambda (command-and-binding)
-          (let ((command (car command-and-binding))
-                (binding (cadr command-and-binding)))
-            (define-key org-trello-mode-map (kbd (concat previous-org-trello-mode-prefix-keybinding binding)) nil)))
-        interactive-command-binding-to-install))
-
-(defun org-trello/install-local-prefix-mode-keybinding! (keybinding)
-  "Install the new default org-trello mode keybinding."
-  (setq *PREVIOUS-ORGTRELLO/MODE-PREFIX-KEYBINDING* *ORGTRELLO/MODE-PREFIX-KEYBINDING*)
-  (setq *ORGTRELLO/MODE-PREFIX-KEYBINDING* keybinding)
-  (org-trello/--install-local-keybinding-map! *PREVIOUS-ORGTRELLO/MODE-PREFIX-KEYBINDING* *ORGTRELLO/MODE-PREFIX-KEYBINDING* *org-trello-interactive-command-binding-couples*))
-
-(defun org-trello/remove-local-prefix-mode-keybinding! (keybinding)
-  "Install the new default org-trello mode keybinding."
-  (org-trello/--remove-local-keybinding-map! *PREVIOUS-ORGTRELLO/MODE-PREFIX-KEYBINDING* *org-trello-interactive-command-binding-couples*))
+
 
 ;;;###autoload
 (define-minor-mode org-trello-mode "Sync your org-mode and your trello together."
   :lighter " ot"
-  :keymap org-trello-mode-map)
+  :keymap org-trello-mode-map
+  :group 'org-trello)
 
-(defvar org-trello-mode-hook '()
-  "Define one org-trello hook for user to extend org-trello with their own behavior.")
+(defcustom org-trello-mode-hook nil
+  "Define one org-trello hook for user to extend org-trello with their own behavior."
+  :type 'hook
+  :group 'org-trello)
 
 (add-hook 'org-trello-mode-on-hook 'orgtrello-controller/mode-on-hook-fn)
 
 (add-hook 'org-trello-mode-on-hook (lambda ()
                                      ;; install the bindings
-                                     (org-trello/install-local-prefix-mode-keybinding! *ORGTRELLO/MODE-PREFIX-KEYBINDING*)
+                                     (orgtrello-setup/install-local-prefix-mode-keybinding! *ORGTRELLO/MODE-PREFIX-KEYBINDING*)
                                      ;; Overwrite the org-mode-map
                                      (define-key org-trello-mode-map [remap org-end-of-line] 'orgtrello-buffer/end-of-line!)
                                      (define-key org-trello-mode-map [remap org-return] 'orgtrello-buffer/org-return!)
                                      (define-key org-trello-mode-map [remap org-ctrl-c-ret] 'orgtrello-buffer/org-ctrl-c-ret!)
                                      (define-key org-trello-mode-map [remap org-archive-subtree] 'org-trello/archive-card)
                                      ;; a little message in the minibuffer to notify the user
-                                     (orgtrello-log/msg *OT/NOLOG* (org-trello/--startup-message *ORGTRELLO/MODE-PREFIX-KEYBINDING*)))
+                                     (orgtrello-log/msg *OT/NOLOG* (orgtrello-setup/startup-message *ORGTRELLO/MODE-PREFIX-KEYBINDING*)))
           'do-append)
 
 (add-hook 'org-trello-mode-off-hook 'orgtrello-controller/mode-off-hook-fn)
 
 (add-hook 'org-trello-mode-off-hook (lambda ()
                                       ;; remove the bindings when org-trello mode off
-                                      (org-trello/remove-local-prefix-mode-keybinding! *ORGTRELLO/MODE-PREFIX-KEYBINDING*)
+                                      (orgtrello-setup/remove-local-prefix-mode-keybinding! *ORGTRELLO/MODE-PREFIX-KEYBINDING*)
                                       ;; remove mapping override
                                       (define-key org-trello-mode-map [remap org-end-of-line] nil)
                                       (define-key org-trello-mode-map [remap org-return] nil)

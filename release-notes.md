@@ -1,3 +1,15 @@
+# 0.5.9
+
+- [X] Backlog
+- [X] Update version
+- [X] Improve region card computation for sync card from trello.
+- [X] Fix error on sync card from trello when nothing to sync.
+- [X] Use defcustom instead of defvar for user customisation - CLOSE [[https://github.com/org-trello/org-trello/issues/196][#196]]
+- [X] When not in card, explain why you cannot do the current action
+- [X] Improve display of error when sync a card without title
+- [X] Check package installation and fix what's needed
+- [X] Release notes
+
 # 0.5.8
 
 - [X] Backlog

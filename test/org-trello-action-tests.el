@@ -15,20 +15,39 @@
   (expect '(:ok "ko") (orgtrello-action/--execute-controls '((lambda (a) :ok)
                                                        (lambda (a) "ko")) 'arg0)))
 
-(expectations  (desc "orgtrello-action/--function-controls-then-do - 1")
-  (expect   "org-trello - List of errors:
- - Level too high. Do not deal with entity other than card/checklist/items!
+(expectations
+  (desc "orgtrello-action/--function-controls-then-do - 1")
+  (expect "org-trello - List of errors:
+ - Wrong level. Do not deal with entity other than card/checklist/item!
 "
-      (orgtrello-action/functional-controls-then-do
-       '(orgtrello-controller/--right-level-p)
-       (orgtrello-data/make-hierarchy (orgtrello-data/make-hash-org :users 4 :kwd :name nil :due :position :buffer-name :desc :comments :tags :unknown))
-       (lambda (entity s) (format "%S %s" entity s))
-       "- hello"))
+    (orgtrello-action/functional-controls-then-do
+     '(orgtrello-controller/--right-level-p)
+     (orgtrello-data/make-hierarchy (orgtrello-data/make-hash-org :users 4 :kwd :name nil :due :position :buffer-name :desc :comments :tags :unknown))
+     (lambda (entity s) (format "%S %s" entity s))
+     "- hello"))
 
   (expect "#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:current #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:buffername :buffer-name :position :position :level 3 :keyword :kwd :name :name :id nil :due :due :member-ids :users :desc :desc :comments :comments :tags :tags :unknown-properties :unknown)) :parent nil :grandparent nil)) - hello"
     (orgtrello-action/functional-controls-then-do
      '(orgtrello-controller/--right-level-p)
      (orgtrello-data/make-hierarchy (orgtrello-data/make-hash-org :users 3 :kwd :name nil :due :position :buffer-name :desc :comments :tags :unknown))
+     (lambda (entity s) (format "%S %s" entity s))
+     "- hello")))
+
+(expectations
+  (desc "orgtrello-action/--function-controls-then-do - 1")
+  (expect "org-trello - List of errors:
+ - Cannot synchronize the card - missing mandatory name. Skip it...
+"
+    (orgtrello-action/functional-controls-then-do
+     '(orgtrello-controller/--mandatory-name-ok-p)
+     (orgtrello-data/make-hierarchy (orgtrello-data/make-hash-org :users 1 :kwd nil :level :due :position :buffer-name :desc :comments :tags :unknown))
+     (lambda (entity s) (format "%S %s" entity s))
+     "- hello"))
+
+  (expect "#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:current #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:buffername :buffer-name :position :position :level 3 :keyword :kwd :name \"name\" :id :level :due :due :member-ids :users :desc :desc :comments :comments :tags :tags :unknown-properties :unknown)) :parent nil :grandparent nil)) - hello"
+    (orgtrello-action/functional-controls-then-do
+     '(orgtrello-controller/--right-level-p)
+     (orgtrello-data/make-hierarchy (orgtrello-data/make-hash-org :users 3 :kwd "name" :level :due :position :buffer-name :desc :comments :tags :unknown))
      (lambda (entity s) (format "%S %s" entity s))
      "- hello")))
 

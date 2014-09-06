@@ -9,7 +9,7 @@
 (defconst *OT/DEBUG* 4)
 (defconst *OT/TRACE* 5)
 
-(defvar *orgtrello-log/level* *OT/INFO*
+(defcustom *orgtrello-log/level* *OT/INFO*
   "Set log level.
 Levels:
 0 - no logging   (*OT/NOLOG*)
@@ -18,7 +18,11 @@ Levels:
 3 - log info     (*OT/INFO*)
 4 - log debug    (*OT/DEBUG*)
 5 - log trace    (*OT/TRACE*)
-To change such level, add this to your init.el file: (setq *orgtrello-log/level* *OT/TRACE*)") ;;(setq *orgtrello-log/level* *OT/TRACE*) (setq *orgtrello-log/level* *OT/INFO*)
+To change such level, add this to your init.el file: (setq *orgtrello-log/level* *OT/TRACE*)"
+  :options (list *OT/NOLOG* *OT/ERROR* *OT/WARN* *OT/INFO* *OT/DEBUG* *OT/TRACE*)
+  :type 'integer
+  :require 'org-trello
+  :group 'org-trello)
 
 (defun orgtrello-log/msg (level &rest args)
   "Log message with LEVEL.

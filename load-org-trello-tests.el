@@ -27,6 +27,7 @@
 (defvar *ORGTRELLO-TEST-NAMESPACES* '() "Org-trello test namespaces for development purposes.")
 (setq *ORGTRELLO-TEST-NAMESPACES* '("test/utilities-tests.el"
                                     "test/org-trello-tests.el"
+                                    "test/org-trello-setup-tests.el"
                                     "test/org-trello-action-tests.el"
                                     "test/org-trello-api-tests.el"
                                     "test/org-trello-backend-tests.el"
