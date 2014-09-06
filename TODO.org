@@ -8,14 +8,14 @@
 - [ ] See to use primitives org-next-item/org-end-of-item-list/org-list-use-circular-motion to move in checkbox
 - [ ] One command to sync them all - [[https://github.com/org-trello/org-trello/issues/59][#59]]
 - [ ] Improve sync request policy - [[https://github.com/org-trello/org-trello/issues/58][#58]]
-* IN-PROGRESS 0.5.9 [75%]
+* IN-PROGRESS 0.5.9 [87%]
 - [X] Backlog
 - [X] Update version
 - [X] Improve region card computation for sync card from trello.
 - [X] Fix error on sync card from trello when nothing to sync.
 - [X] Use defcustom instead of defvar for user customisation - CLOSE [[https://github.com/org-trello/org-trello/issues/196][#196]]
 - [X] When not in card, explain why you cannot do the current action
-- [ ] Improve display of error when sync a card without title
+- [X] Improve display of error when sync a card without title
 - [ ] Release notes
 * DONE 0.5.8 [100%]
   CLOSED: [2014-09-01 Mon 22:54]

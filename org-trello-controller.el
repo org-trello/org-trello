@@ -90,16 +90,23 @@ If it does not not, error."
   "Compute if the ENTITY has already been synchronized."
   (if (-> entity orgtrello-data/current orgtrello-data/entity-id) :ok "Entity must been synchronized with trello first!"))
 
+(defun orgtrello-controller/--entity-mandatory-name-ok-p (simple-entity)
+  "Ensure SIMPLE-ENTITY can be synced regarding the mandatory data."
+  (if simple-entity
+    (let* ((level   (orgtrello-data/entity-level simple-entity))
+           (name    (orgtrello-data/entity-name simple-entity)))
+      (if (and name (< 0 (length name)))
+          :ok
+        (cond ((= level *ORGTRELLO/CARD-LEVEL*)      *ORGTRELLO/ERROR-SYNC-CARD-MISSING-NAME*)
+              ((= level *ORGTRELLO/CHECKLIST-LEVEL*) *ORGTRELLO/ERROR-SYNC-CHECKLIST-MISSING-NAME*)
+              ((= level *ORGTRELLO/ITEM-LEVEL*)      *ORGTRELLO/ERROR-SYNC-ITEM-MISSING-NAME*))))
+    :ok))
+
 (defun orgtrello-controller/--mandatory-name-ok-p (entity)
   "Ensure ENTITY can be synced regarding the mandatory data."
-  (let* ((current (orgtrello-data/current entity))
-         (level   (orgtrello-data/entity-level current))
-         (name    (orgtrello-data/entity-name current)))
-    (if (and name (< 0 (length name)))
-        :ok
-      (cond ((= level *ORGTRELLO/CARD-LEVEL*)      *ORGTRELLO/ERROR-SYNC-CARD-MISSING-NAME*)
-            ((= level *ORGTRELLO/CHECKLIST-LEVEL*) *ORGTRELLO/ERROR-SYNC-CHECKLIST-MISSING-NAME*)
-            ((= level *ORGTRELLO/ITEM-LEVEL*)      *ORGTRELLO/ERROR-SYNC-ITEM-MISSING-NAME*)))))
+  (-> entity
+    orgtrello-data/current
+    orgtrello-controller/--entity-mandatory-name-ok-p))
 
 (defun orgtrello-controller/checks-then-delete-simple ()
   "Do the deletion of an entity."
@@ -120,7 +127,7 @@ BUFFER-NAME to specify the buffer with which we currently work."
 
 (defun orgtrello-controller/checks-then-sync-card-to-trello! ()
   "Execute checks then do the actual sync if everything is ok."
-  (orgtrello-action/functional-controls-then-do '(orgtrello-controller/--on-entity-p orgtrello-controller/--right-level-p)
+  (orgtrello-action/functional-controls-then-do '(orgtrello-controller/--on-entity-p orgtrello-controller/--right-level-p orgtrello-controller/--mandatory-name-ok-p)
                                                 (orgtrello-buffer/safe-entry-full-metadata!)
                                                 'orgtrello-controller/sync-card-to-trello!
                                                 (current-buffer)))
@@ -209,7 +216,7 @@ Along the way, the buffer BUFFER-NAME is written with new informations."
                 (card-computations))
     ;; compute the card to sync computations
     (maphash (lambda (id entity)
-               (when (orgtrello-data/entity-card-p entity)
+               (when (and (orgtrello-data/entity-card-p entity) (eq :ok (orgtrello-controller/--entity-mandatory-name-ok-p entity)))
                  (-> entity
                    (orgtrello-proxy/--sync-entity entities-adjacencies)
                    (push card-computations))))
