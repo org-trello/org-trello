@@ -108,10 +108,10 @@ Please consider upgrading Emacs." emacs-version) "Error message when installing 
 
 
 
+(require 'org-trello-utils)
 (require 'org-trello-setup)
 
 (require 'org-trello-log)
-(require 'org-trello-utils)
 (require 'org-trello-action)
 (require 'org-trello-controller)
 (require 'org-trello-buffer)

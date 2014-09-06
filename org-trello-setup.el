@@ -2,9 +2,12 @@
 ;;; Commentary:
 ;;; Code:
 
+(require 'org-trello-utils)
+
 (defgroup org-trello nil " Org-trello customisation group."
   :tag "Org-trello"
-  :version "0.5.9")
+  :version "0.5.9"
+  :group 'org)
 
 (defconst *consumer-key* nil
   "Id representing the user.")
