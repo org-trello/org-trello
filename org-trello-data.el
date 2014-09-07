@@ -394,6 +394,29 @@ ENTITIES-ADJACENCIES provides needed information."
   (cl-destructuring-bind (entities _) entities-adjacencies
     (orgtrello-data/--get-entity entity-id entities)))
 
+(defun orgtrello-data/to-org-trello-card (trello-card)
+  "Map a TRELLO-CARD to an org-trello one."
+  (->> trello-card
+    (orgtrello-data/put-entity-tags (orgtrello-data/--labels-hash-to-tags (orgtrello-data/entity-labels trello-card)))
+    (orgtrello-data/put-entity-labels nil)
+    (orgtrello-data/put-entity-level *ORGTRELLO/CARD-LEVEL*)
+    (orgtrello-data/put-entity-keyword (-> trello-card orgtrello-data/entity-list-id orgtrello-data/--compute-card-status))
+    (orgtrello-data/put-entity-list-id nil)
+    (orgtrello-data/put-entity-member-ids (-> trello-card orgtrello-data/entity-member-ids orgtrello-data/--users-to))
+    (orgtrello-data/put-entity-comments (-> trello-card orgtrello-data/entity-comments orgtrello-data/comments-to-list))))
+
+(defun orgtrello-data/to-org-trello-checklist (trello-checklist)
+  "Map a TRELLO-CHECKLIST to an org-trello one."
+  (->> trello-checklist
+    (orgtrello-data/put-entity-level *ORGTRELLO/CHECKLIST-LEVEL*)))
+
+(defun orgtrello-data/to-org-trello-item (trello-item)
+  "Map a TRELLO-ITEM to an org-trello one."
+  (->> trello-item
+    (orgtrello-data/put-entity-level *ORGTRELLO/ITEM-LEVEL*)
+    (orgtrello-data/put-entity-keyword (-> trello-item orgtrello-data/entity-checked orgtrello-data/--compute-state-item))
+    (orgtrello-data/put-entity-checked nil)))
+
 (orgtrello-log/msg *OT/DEBUG* "orgtrello-data loaded!")
 
 (provide 'org-trello-data)

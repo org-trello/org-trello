@@ -628,5 +628,88 @@
                                                   orgtrello-data/make-hierarchy
                                                   orgtrello-controller/--mandatory-name-ok-p)))
 
+(expectations
+ (desc "convert trello card to org-trello")
+ (expect t
+         (orgtrello-tests/hash-equal
+          #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
+                        (:comments "ardumont: hello"
+                         :position 884
+                         :name "Joy of FUN(ctional) LANGUAGES"
+                         :member-ids "user-ardumont-id,user-orgmode-id"
+                         :due "2014-09-07T00:00:00.000Z"
+                         :desc "hello description\n- with many\n- lines\n\n- including\n\n- blanks lines\n- lists\n- with start or dash  are now possible\n  - indentation too\n"
+                         :id "card-joy-id"
+                         :level 1
+                         :tags ":orange:blue:"
+                         :keyword "IN-PROGRESS"
+                         :closed nil
+                         :labels nil
+                         :list-id nil))
+          (let* ((*ORGTRELLO/HMAP-USERS-ID-NAME* #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data ("user-orgmode-id" "orgtrello-user-orgmode"
+                                                                                                                             "user-ardumont-id" "orgtrello-user-ardumont"
+                                                                                                                             "ardumont" "orgtrello-user-me")))
+                 (*ORGTRELLO/HMAP-USERS-NAME-ID* #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data ("orgtrello-user-orgmode" "user-orgmode-id"
+                                                                                                                             "orgtrello-user-ardumont" "user-ardumont-id"
+                                                                                                                             "orgtrello-user-me" "ardumont")))
+                 (*ORGTRELLO/USER-LOGGED-IN* "ardumont")
+                 (*ORGTRELLO/HMAP-LIST-ORGKEYWORD-ID-NAME* '("TODO" "IN-PROGRESS" "DONE" "PENDING" "DELEGATED" "FAILED" "CANCELLED"))
+                 (*ORGTRELLO/HMAP-LIST-ORGKEYWORD-ID-NAME* #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data ("abc" "TODO"
+                                                                                                                                       "def" "IN-PROGRESS"
+                                                                                                                                       "ghi" "DONE"
+                                                                                                                                       "jkl" "PENDING"
+                                                                                                                                       "mno" "DELEGATED"
+                                                                                                                                       "pqr" "FAILED"
+                                                                                                                                       "stu" "CANCELLED")))
+                 (trello-card #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
+                                            (:comments (#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:comment-id "comment-id-0" :comment-text "hello" :comment-user "ardumont")))
+                                             :position 884
+                                             :name "Joy of FUN(ctional) LANGUAGES"
+                                             :labels (#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "range" :color "orange"))
+                                                      #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "blue" :color "blue")))
+                                             :member-ids ("user-ardumont-id" "user-orgmode-id")
+                                             :list-id "def"
+                                             :due "2014-09-07T00:00:00.000Z"
+                                             :desc "hello description\n- with many\n- lines\n\n- including\n\n- blanks lines\n- lists\n- with start or dash  are now possible\n  - indentation too\n"
+                                             :closed nil
+                                             :id "card-joy-id"
+                                             :level 1))))
+            (orgtrello-data/to-org-trello-card trello-card)))))
+
+(expectations
+ (expect t
+         (orgtrello-tests/hash-equal
+          #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
+                        (:position 32768
+                         :card-id "card-joy-id"
+                         :board-id "board-id"
+                         :name "hybrid family"
+                         :id "checklist-hybrid-id"
+                         :level 2))
+          (let ((trello-checklist #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
+                                                (:position 32768
+                                                 :card-id "card-joy-id"
+                                                 :board-id "board-id"
+                                                 :name "hybrid family"
+                                                 :id "checklist-hybrid-id"))))
+            (orgtrello-data/to-org-trello-checklist trello-checklist)))))
+
+(expectations
+ (expect t
+         (orgtrello-tests/hash-equal
+          #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
+                        (:position 2128
+                         :name "Scala"
+                         :id "scala-id"
+                         :keyword "DONE"
+                         :level 3
+                         :checked nil))
+          (let ((trello-item #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
+                                           (:position 2128
+                                            :name "Scala"
+                                            :id "scala-id"
+                                            :checked "complete"))))
+            (orgtrello-data/to-org-trello-item trello-item)))))
+
 (provide 'org-trello-data-tests)
 ;;; org-trello-data-tests.el ends here
