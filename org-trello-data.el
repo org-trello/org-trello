@@ -403,12 +403,14 @@ ENTITIES-ADJACENCIES provides needed information."
     (orgtrello-data/put-entity-keyword (-> trello-card orgtrello-data/entity-list-id orgtrello-data/--compute-card-status))
     (orgtrello-data/put-entity-list-id nil)
     (orgtrello-data/put-entity-member-ids (-> trello-card orgtrello-data/entity-member-ids orgtrello-data/--users-to))
-    (orgtrello-data/put-entity-comments (-> trello-card orgtrello-data/entity-comments orgtrello-data/comments-to-list))))
+    (orgtrello-data/put-entity-comments (-> trello-card orgtrello-data/entity-comments orgtrello-data/comments-to-list))
+    (orgtrello-data/put-entity-checklists (->> trello-card orgtrello-data/entity-checklists (mapcar #'orgtrello-data/to-org-trello-checklist)))))
 
 (defun orgtrello-data/to-org-trello-checklist (trello-checklist)
   "Map a TRELLO-CHECKLIST to an org-trello one."
   (->> trello-checklist
-    (orgtrello-data/put-entity-level *ORGTRELLO/CHECKLIST-LEVEL*)))
+    (orgtrello-data/put-entity-level *ORGTRELLO/CHECKLIST-LEVEL*)
+    (orgtrello-data/put-entity-items (->> trello-checklist orgtrello-data/entity-items (mapcar #'orgtrello-data/to-org-trello-item)))))
 
 (defun orgtrello-data/to-org-trello-item (trello-item)
   "Map a TRELLO-ITEM to an org-trello one."
