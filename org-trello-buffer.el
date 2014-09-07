@@ -144,13 +144,6 @@ Remove text and overlays."
   (orgtrello-buffer/remove-overlays! region-start region-end)
   (delete-region region-start region-end))
 
-(defun orgtrello-buffer/--csv-user-ids-to-csv-user-names (csv-users-id users-id-name)
-  "Given a CSV-USERS-ID and a USERS-ID-NAME map, return a csv usernames."
-  (->> csv-users-id
-    orgtrello-data/--users-from
-    (--map (gethash it users-id-name))
-    orgtrello-data/--users-to))
-
 (defun orgtrello-buffer/--compute-entity-to-org-entry (entity)
   "Given an ENTITY, compute its org representation."
   (funcall
@@ -552,6 +545,13 @@ ENTITIES and ENTITIES-ADJ provide information on card's structure."
         (card-id      (orgtrello-data/entity-id entity)))
     (orgtrello-buffer/clean-region! region-start region-end)
     (orgtrello-buffer/write-card! card-id entity entities entities-adj)))
+
+(defun orgtrello-buffer/card-checksum! ()
+  "Compute the card's checksum at point."
+  (->> (orgtrello-entity/compute-card-region!)
+    (cons (current-buffer))
+    (cons 'sha256)
+    (apply 'secure-hash)))
 
 (orgtrello-log/msg *OT/DEBUG* "orgtrello-buffer loaded!")
 

@@ -51,7 +51,6 @@ ENTITIES-ADJACENCIES provides needed information."
   (-map (lambda (child-id)
           (--> child-id
             (orgtrello-data/get-entity it entities-adjacencies)
-            (orgtrello-data/put-entity-action *ORGTRELLO/ACTION-SYNC* it)
             (orgtrello-proxy/--sync-entity it entities-adjacencies)
             (eval it)))
         (orgtrello-data/get-children entity entities-adjacencies)))

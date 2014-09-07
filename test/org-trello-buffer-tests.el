@@ -440,12 +440,6 @@ some description
      0)))
 
 (expectations
-  (desc "orgtrello-buffer/--csv-user-ids-to-csv-user-names")
-  (expect "user0,user1,user2" (orgtrello-buffer/--csv-user-ids-to-csv-user-names "id0,id1,id2" (orgtrello-hash/make-properties '(("id0". "user0") ("id1". "user1") ("id2". "user2")))))
-  (expect "user0,user1," (orgtrello-buffer/--csv-user-ids-to-csv-user-names "id0,id1,id2" (orgtrello-hash/make-properties '(("id0". "user0") ("id1". "user1")))))
-  (expect "user0" (orgtrello-buffer/--csv-user-ids-to-csv-user-names "id0" (orgtrello-hash/make-properties '(("id0". "user0"))))))
-
-(expectations
   (desc "orgtrello-buffer/--compute-checklist-to-org-entry")
   (expect "- [-] name\n" (orgtrello-buffer/--compute-checklist-to-org-entry (orgtrello-hash/make-properties `((:name . "name"))) t))
   (expect "- [-] name\n" (orgtrello-buffer/--compute-checklist-to-org-entry (orgtrello-hash/make-properties `((:name . "name"))) t)))
