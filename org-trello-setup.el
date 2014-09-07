@@ -33,9 +33,6 @@
 (defconst *ORGTRELLO/ACTION-SYNC* "sync-entity"
   "Possible action regarding the entity synchronization.")
 
-(defconst *ORGTRELLO/ACTION-DELETE* "delete"
-  "Possible action regarding the entity deletion.")
-
 (defconst *ORGTRELLO/USER-PREFIX* "orgtrello-user-"
   "Org-trello prefix to define user to a 'org-mode' level.")
 
