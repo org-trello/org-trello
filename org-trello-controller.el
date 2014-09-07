@@ -177,13 +177,13 @@ Does not preserve position."
   (orgtrello-buffer/remove-overlays! (point-at-bol) (point-max))
   (kill-region (point-at-bol) (point-max)))
 
-(defun orgtrello-controller/sync-buffer-with-trello-cards! (buffer-name trello-cards)
+(defun orgtrello-controller/sync-buffer-with-trello-cards! (buffer-name org-trello-cards)
   "Synchronize the buffer BUFFER-NAME with the TRELLO-CARDS."
   (with-local-quit
     (with-current-buffer buffer-name
       (save-excursion
         (let ((entities-from-org-buffer (orgtrello-buffer/build-org-entities! buffer-name)))
-          (-> trello-cards
+          (-> org-trello-cards
             orgtrello-backend/compute-org-trello-card-from
             (orgtrello-data/merge-entities-trello-and-org entities-from-org-buffer)
             ((lambda (entry) (orgtrello-controller/--cleanup-org-entries) entry))   ;; hack to clean the org entries just before synchronizing the buffer
@@ -205,7 +205,9 @@ Does not preserve position."
       (deferred:nextc it
         (lambda (trello-cards) ;; We have the full result in one query, now we can compute the translation in org-trello model
           (orgtrello-log/msg *OT/DEBUG* "trello-card: %S" trello-cards)
-          (orgtrello-controller/sync-buffer-with-trello-cards! buffer-name trello-cards)))
+          (->> trello-cards
+            (mapcar 'orgtrello-data/to-org-trello-card)
+            (orgtrello-controller/sync-buffer-with-trello-cards! buffer-name))))
       (deferred:nextc it
         (lambda ()
           (orgtrello-buffer/save-buffer buffer-name)
@@ -234,16 +236,16 @@ Along the way, the buffer BUFFER-NAME is written with new informations."
       nreverse
       (orgtrello-proxy/execute-async-computations "card(s) sync ok!" "FAILURE! cards(s) sync KO!"))))
 
-(defun orgtrello-controller/compute-and-overwrite-card! (buffer-name trello-card)
+(defun orgtrello-controller/compute-and-overwrite-card! (buffer-name org-trello-card)
   "Given BUFFER-NAME and TRELLO-CARD, compute, merge and update the buffer-name."
-  (when trello-card
+  (when org-trello-card
     (with-local-quit
       (with-current-buffer buffer-name
         (save-excursion
-          (let* ((card-id                  (orgtrello-data/entity-id trello-card))
+          (let* ((card-id                  (orgtrello-data/entity-id org-trello-card))
                  (region                   (orgtrello-entity/compute-card-region!))
                  (entities-from-org-buffer (apply 'orgtrello-buffer/build-org-entities! (cons buffer-name region)))
-                 (entities-from-trello     (orgtrello-backend/compute-org-trello-card-from (list trello-card)))
+                 (entities-from-trello     (orgtrello-backend/compute-org-trello-card-from (list org-trello-card)))
                  (merged-entities          (orgtrello-data/merge-entities-trello-and-org entities-from-trello entities-from-org-buffer))
                  (entities                 (car merged-entities))
                  (entities-adj             (cadr merged-entities)))
@@ -275,7 +277,9 @@ Optionally, SYNC permits to synchronize the query."
       (deferred:nextc it
         (lambda (trello-card) ;; We have the full result in one query, now we can compute the translation in org-trello model
           (orgtrello-log/msg *OT/DEBUG* "trello-card: %S" trello-card)
-          (orgtrello-controller/compute-and-overwrite-card! buffer-name trello-card)))
+          (->> trello-card
+            orgtrello-data/to-org-trello-card
+            (orgtrello-controller/compute-and-overwrite-card! buffer-name))))
       (deferred:nextc it
         (lambda ()
           (orgtrello-buffer/save-buffer buffer-name)

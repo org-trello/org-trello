@@ -148,28 +148,6 @@
       '("#+PROPERTY: :green green label" "#+PROPERTY: :red red label")
     (orgtrello-controller/--properties-labels (orgtrello-hash/make-properties '((:red . "red label") (:green . "green label"))))))
 
-;; cannot keep this test because the prod code does save the buffer
-;; (expectations
-;;   (expect
-;;       ":PROPERTIES:
-;; #+PROPERTY: board-name    some-board-name
-;; #+PROPERTY: board-id      some-board-id
-;; #+PROPERTY: DONE done-id
-;; #+PROPERTY: TODO todo-id
-
-;; #+PROPERTY: orgtrello-user-some-other-user some-other-user-id
-;; #+PROPERTY: orgtrello-user-user user-id
-;; #+PROPERTY: orgtrello-user-me user
-;; :END:"
-;;     (orgtrello-tests/with-temp-buffer ""
-;;                                       (orgtrello-controller/--update-orgmode-file-with-properties!
-;;                                        "some-board-name"
-;;                                        "some-board-id"
-;;                                        (orgtrello-hash/make-properties '(("TODO" . "todo-id") ("DONE" . "done-id")))
-;;                                        (orgtrello-hash/make-properties '(("user" . "user-id") ("some-other-user" . "some-other-user-id")))
-;;                                        "user"
-;;                                        (orgtrello-hash/make-properties '((:red . "red label") (:green . "green label")))))))
-
 (expectations
  (expect :ok
          (with-mock
@@ -409,15 +387,11 @@ some description
 * other card name
 "
      (let* ((trello-card (orgtrello-hash/make-properties `((:keyword . "TODO")
-                                                           (:member-ids . ("888" "999"))
-                                                           (:comments . ,(list (orgtrello-hash/make-properties '((:comment-user . "ardumont")
-                                                                                                                 (:comment-text . "some comment")))
-                                                                               (orgtrello-hash/make-properties '((:comment-user . "ardumont")
-                                                                                                                 (:comment-text . "some second comment")))))
-                                                           (:labels . ,(list (orgtrello-hash/make-properties '((:color . "red")))
-                                                                             (orgtrello-hash/make-properties '((:color . "green")))))
+                                                           (:member-ids . "dude,ardumont")
+                                                           (:comments . "ardumont: some comment###ardumont: some second comment")
+                                                           (:tags . ":red:green:")
                                                            (:desc . "updated description")
-                                                           (:level . ,*ORGTRELLO/CARD-LEVEL*)
+                                                           (:level . 1)
                                                            (:name . "updated card title")
                                                            (:id . "some-card-id")))))
        (orgtrello-controller/compute-and-overwrite-card! (current-buffer) trello-card))
@@ -502,13 +476,9 @@ some description
 * other card name
 "
        (let* ((trello-card0 (orgtrello-hash/make-properties `((:keyword . "TODO")
-                                                              (:member-ids . ("888" "999"))
-                                                              (:comments . ,(list (orgtrello-hash/make-properties '((:comment-user . "ardumont")
-                                                                                                                    (:comment-text . "some comment")))
-                                                                                  (orgtrello-hash/make-properties '((:comment-user . "ardumont")
-                                                                                                                    (:comment-text . "some second comment")))))
-                                                              (:labels . ,(list (orgtrello-hash/make-properties '((:color . "red")))
-                                                                                (orgtrello-hash/make-properties '((:color . "green")))))
+                                                              (:member-ids . "orgtrello-user-dude,orgtrello-user-ardumont")
+                                                              (:comments . "ardumont: some comment###ardumont: some second comment")
+                                                              (:tags . ":red:green:")
                                                               (:desc . "updated description")
                                                               (:level . ,*ORGTRELLO/CARD-LEVEL*)
                                                               (:name . "updated card title")
@@ -601,22 +571,17 @@ some description
 * other card name
 "
        (let* ((trello-card0 (orgtrello-hash/make-properties `((:keyword . "TODO")
-                                                              (:member-ids . ("888" "999"))
-                                                              (:comments . ,(list (orgtrello-hash/make-properties '((:comment-user . "ardumont")
-                                                                                                                    (:comment-text . "some comment")))
-                                                                                  (orgtrello-hash/make-properties '((:comment-user . "ardumont")
-                                                                                                                    (:comment-text . "some second comment")))))
-                                                              (:labels . ,(list (orgtrello-hash/make-properties '((:color . "red")))
-                                                                                (orgtrello-hash/make-properties '((:color . "green")))))
+                                                              (:member-ids . "orgtrello-user-dude,orgtrello-user-ardumont")
+                                                              (:comments . "ardumont: some comment###ardumont: some second comment")
+                                                              (:tags . ":red:green:")
                                                               (:desc . "updated description")
                                                               (:level . ,*ORGTRELLO/CARD-LEVEL*)
                                                               (:name . "updated card title")
                                                               (:id . "some-card-id"))))
               (trello-card1 (orgtrello-hash/make-properties `((:keyword . "TODO")
-                                                              (:member-ids . ("888"))
-                                                              (:comments . ,(list (orgtrello-hash/make-properties '((:comment-user . "ardumont")
-                                                                                                                    (:comment-text . "great")))))
-                                                              (:labels . ,(list (orgtrello-hash/make-properties '((:color . "green")))))
+                                                              (:member-ids . "orgtrello-user-dude")
+                                                              (:comments . "ardumont: great")
+                                                              (:tags . ":green:")
                                                               (:desc . "this is a description")
                                                               (:level . ,*ORGTRELLO/CARD-LEVEL*)
                                                               (:name . "other card name")
@@ -658,7 +623,7 @@ some description
   - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\"}
   - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\"}
 - [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\"}
-* TODO other card name                                                  :green:
+* DONE other card name                                                  :green:
   :PROPERTIES:
   :orgtrello-id: some-card-id2
   :orgtrello-users: dude
@@ -705,22 +670,17 @@ some description
 :END:
 "
      (let* ((trello-card0 (orgtrello-hash/make-properties `((:keyword . "TODO")
-                                                            (:member-ids . ("888" "999"))
-                                                            (:comments . ,(list (orgtrello-hash/make-properties '((:comment-user . "ardumont")
-                                                                                                                  (:comment-text . "some comment")))
-                                                                                (orgtrello-hash/make-properties '((:comment-user . "ardumont")
-                                                                                                                  (:comment-text . "some second comment")))))
-                                                            (:labels . ,(list (orgtrello-hash/make-properties '((:color . "red")))
-                                                                              (orgtrello-hash/make-properties '((:color . "green")))))
+                                                            (:member-ids . "orgtrello-user-dude,orgtrello-user-ardumont")
+                                                            (:comments . "ardumont: some comment###ardumont: some second comment")
+                                                            (:tags . ":red:green:")
                                                             (:desc . "updated description")
                                                             (:level . ,*ORGTRELLO/CARD-LEVEL*)
                                                             (:name . "updated card title")
                                                             (:id . "some-card-id"))))
             (trello-card1 (orgtrello-hash/make-properties `((:keyword . "DONE")
-                                                            (:member-ids . ("888"))
-                                                            (:comments . ,(list (orgtrello-hash/make-properties '((:comment-user . "ardumont")
-                                                                                                                  (:comment-text . "great")))))
-                                                            (:labels . ,(list (orgtrello-hash/make-properties '((:color . "green")))))
+                                                            (:member-ids . "orgtrello-user-dude")
+                                                            (:comments . "ardumont: great")
+                                                            (:tags . ":green:")
                                                             (:desc . "this is a description")
                                                             (:level . ,*ORGTRELLO/CARD-LEVEL*)
                                                             (:name . "other card name")

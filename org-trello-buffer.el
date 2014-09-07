@@ -89,22 +89,20 @@ If the VALUE is nil or empty, remove such PROPERTY."
   (orgtrello-buffer/write-checklist-header! checklist-id (gethash checklist-id entities))
   (mapc (lambda (it) (orgtrello-buffer/write-item! it entities)) (gethash checklist-id adjacency)))
 
-(defun orgtrello-buffer/update-member-ids-property! (entity)
+(defun orgtrello-buffer/update-property-member-ids! (entity)
   "Update the users assigned property card entry."
   (--> entity
     (orgtrello-data/entity-member-ids it)
-    (orgtrello-buffer/--csv-user-ids-to-csv-user-names it *ORGTRELLO/HMAP-USERS-ID-NAME*)
     (replace-regexp-in-string *ORGTRELLO/USER-PREFIX* "" it)
     (orgtrello-buffer/set-usernames-assigned-property! it)))
 
-(defun orgtrello-buffer/update-property-card-comments! (entity)
+(defun orgtrello-buffer/update-property-comments! (entity)
   "Update last comments "
   (->> entity
     orgtrello-data/entity-comments
-    orgtrello-data/comments-to-list
     orgtrello-buffer/set-property-comment!))
 
-(defun orgtrello-buffer/write-unknown-properties! (unknown-properties)
+(defun orgtrello-buffer/update-properties-unknown! (unknown-properties)
   "Write the alist UNKNOWN-PROPERTIES inside standard properties org drawer."
   (mapc (lambda (property)
           (let ((key (car property))
@@ -122,9 +120,9 @@ If the VALUE is nil or empty, remove such PROPERTY."
 (defun orgtrello-buffer/write-card-header! (card-id card)
   "Given a card entity, write its data and properties without its structure."
   (orgtrello-buffer/write-entity! card-id card)
-  (orgtrello-buffer/update-member-ids-property! card)
-  (orgtrello-buffer/update-property-card-comments! card)
-  (orgtrello-buffer/write-unknown-properties! (orgtrello-data/entity-unknown-properties card))
+  (orgtrello-buffer/update-property-member-ids! card)
+  (orgtrello-buffer/update-property-comments! card)
+  (orgtrello-buffer/update-properties-unknown! (orgtrello-data/entity-unknown-properties card))
   (orgtrello-buffer/--write-card-description! (orgtrello-data/entity-description card)))
 
 (defun orgtrello-buffer/write-card! (card-id card entities adjacency)

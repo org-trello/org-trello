@@ -391,107 +391,91 @@
               (expect nil (orgtrello-data/id-p nil)))
 
 (ert-deftest testing-orgtrello-data/merge-item ()
-  (should (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "TODO" :id nil :level 3))
-                      (orgtrello-data/merge-item (orgtrello-hash/make-properties `((:checked . "anything") (:name . "some name")))
-                                              (orgtrello-hash/make-properties `((:name . "some other name") (:keyword "TODO"))))))
-  (should (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "DONE" :id nil :level 3))
-                      (orgtrello-data/merge-item (orgtrello-hash/make-properties `((:checked . "complete") (:name . "some name")))
-                                               nil)))
-  (should (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "TODO" :id nil :level 3))
-                      (orgtrello-data/merge-item (orgtrello-hash/make-properties `((:checked . "anything") (:name . "some name")))
-                                              (orgtrello-hash/make-properties `((:name . "some other name") (:keyword . "TODO") (:id . "1"))))))
-  (should (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "TODO" :id "1" :level 3))
-                      (orgtrello-data/merge-item (orgtrello-hash/make-properties `((:checked . "anything") (:name . "some name") (:id . "1")))
-                                              (orgtrello-hash/make-properties `((:name . "some other name") (:keyword . "TODO"))))))
-  (should (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "TODO" :id "1" :level 3))
-                      (orgtrello-data/merge-item (orgtrello-hash/make-properties `((:checked . "anything") (:name . "some name") (:id . "1")))
-                                              (orgtrello-hash/make-properties `((:name . "some other name") (:keyword "TODO") (:id . "2"))))))
-  (should (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "TODO" :id "1" :level 3))
-                      (orgtrello-data/merge-item (orgtrello-hash/make-properties `((:checked . "anything") (:name . "some name") (:id . "1")))
-                                              (orgtrello-hash/make-properties `((:name . "some other name") (:keyword "TODO"))))))
-  (should (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "DONE" :id "1" :level 3))
-                      (orgtrello-data/merge-item (orgtrello-hash/make-properties `((:checked . "complete") (:name . "some name") (:id . "1")))
-                                              nil))))
+  (should (orgtrello-tests/hash-equal
+           #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "IN-PROGRESS" :id "1232" :level 3))
+           (orgtrello-data/merge-item (orgtrello-hash/make-properties `((:name . "some name") (:keyword . "IN-PROGRESS") (:id . "1232") (:level . 3)))
+                                      (orgtrello-hash/make-properties `((:name . "some other name") (:keyword "TODO")))))))
 
 (expectations (desc "orgtrello-data/--compute-state-item-checkbox")
               (expect "[X]" (orgtrello-data/--compute-state-item-checkbox "complete"))
               (expect "[ ]" (orgtrello-data/--compute-state-item-checkbox "incomplete")))
 
 (ert-deftest testing-orgtrello-data/--merge-checklist ()
-  (should (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :id nil :level 2))
-                      (orgtrello-data/--merge-checklist (orgtrello-hash/make-properties `((:id . nil) (:name . "some name")))
-                                                   (orgtrello-hash/make-properties `((:name . "some other name"))))))
-  (should (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :id nil :level 2))
-                      (orgtrello-data/--merge-checklist (orgtrello-hash/make-properties `((:id . nil) (:name . "some name")))
-                                                   (orgtrello-hash/make-properties `((:name . "some other name"))))))
-  (should (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :id nil :level 2))
-                      (orgtrello-data/--merge-checklist (orgtrello-hash/make-properties `((:id . nil) (:name . "some name")))
-                                                   nil)))
-  (should (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :id nil :level 2))
-                      (orgtrello-data/--merge-checklist (orgtrello-hash/make-properties `((:id . nil) (:name . "some name")))
-                                                   (orgtrello-hash/make-properties `((:name . "some other name") (:id "1"))))))
-  (should (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :id "1" :level 2))
-                      (orgtrello-data/--merge-checklist (orgtrello-hash/make-properties `((:id . "1") (:name . "some name") (:id . "1")))
-                                                   (orgtrello-hash/make-properties `((:name . "some other name"))))))
-  (should (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :id "1" :level 2))
-                      (orgtrello-data/--merge-checklist (orgtrello-hash/make-properties `((:id . "1") (:name . "some name") (:id . "1")))
-                                                   (orgtrello-hash/make-properties `((:name . "some other name") (:id 2))))))
-  (should (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :id "1" :level 2))
-                      (orgtrello-data/--merge-checklist (orgtrello-hash/make-properties `((:id . "1") (:name . "some name") (:id . "1")))
-                                                   (orgtrello-hash/make-properties `((:name . "some other name"))))))
-  (should (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :id "1" :level 2))
-                      (orgtrello-data/--merge-checklist (orgtrello-hash/make-properties `((:id . "1") (:name . "some name")))
-                                                   nil))))
+  (should (orgtrello-tests/hash-equal
+           #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :id nil :level 2))
+           (orgtrello-data/--merge-checklist (orgtrello-hash/make-properties `((:id . nil) (:name . "some name") (:level . 2)))
+                                             (orgtrello-hash/make-properties `((:name . "some other name")))))))
 
 (ert-deftest testing-orgtrello-data/--merge-card ()
-  (let ((*ORGTRELLO/HMAP-LIST-ORGKEYWORD-ID-NAME* (orgtrello-hash/make-properties `((1 . "TODO") (2 . "DONE") (3 . "IN-PROGRESS")))))
-    (should (orgtrello-tests/hash-equal (orgtrello-hash/make-properties `((:name . "some other name")
-                                                          (:unknown-properties . :something)))
-             (orgtrello-data/--merge-card nil
-                                          (orgtrello-hash/make-properties `((:name . "some other name")
-                                                                            (:unknown-properties . :something))))))
-    (should (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
-                                      (:name "some name" :tags nil :comments nil :level 1 :id "123" :keyword nil :member-ids "" :desc nil :due nil :unknown-properties :something))
-                        (orgtrello-data/--merge-card (orgtrello-hash/make-properties '((:id . "123") (:name . "some name") (:idList . 1)))
-                                                     (orgtrello-hash/make-properties '((:name . "some other name")
-                                                                                       (:unknown-properties . :something))))))
-    (should (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
-                                      (:name "some name" :tags ":red:green:" :comments "some comments" :level 1 :id "123" :keyword nil :member-ids "ardumont-id,some-dude-id" :desc "some description" :due "some due date"))
-                        (orgtrello-data/--merge-card (orgtrello-hash/make-properties `((:id . "123")
-                                                                                       (:name . "some name")
-                                                                                       (:status . "TODO")
-                                                                                       (:idList . 1)
-                                                                                       (:comments . "some comments")
-                                                                                       (:member-ids . ("ardumont-id" "some-dude-id"))
-                                                                                       (:desc . "some description")
-                                                                                       (:due . "some due date")
-                                                                                       (:labels . ,(list (orgtrello-hash/make-properties '((:color . "red")))
-                                                                                                         (orgtrello-hash/make-properties '((:color . "green")))))))
-                                                     (orgtrello-hash/make-properties '((:name . "some other name"))))))
-    (should (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
-                                      (:name "some name" :tags ":other-stuff:not-trello-flag:red:green:" :comments "some comments" :level 1 :id "123" :keyword nil :member-ids "ardumont-id,some-dude-id" :desc "some description" :due "some due date"))
-                        (orgtrello-data/--merge-card (orgtrello-hash/make-properties `((:id . "123")
-                                                                                       (:name . "some name")
-                                                                                       (:status . "TODO")
-                                                                                       (:idList . 1)
-                                                                                       (:comments . "some comments")
-                                                                                       (:member-ids . ("ardumont-id" "some-dude-id"))
-                                                                                       (:desc . "some description")
-                                                                                       (:due . "some due date")
-                                                                                       (:labels . ,(list (orgtrello-hash/make-properties '((:color . "red")))
-                                                                                                         (orgtrello-hash/make-properties '((:color . "green")))))))
-                                                     (orgtrello-hash/make-properties '((:name . "some other name")
-                                                                                       (:tags . ":other-stuff:not-trello-flag:"))))))))
+  (should (orgtrello-tests/hash-equal
+           (orgtrello-hash/make-properties `((:name . "some other name")
+                                             (:unknown-properties . :something)))
+           (orgtrello-data/--merge-card nil
+                                        (orgtrello-hash/make-properties `((:name . "some other name")
+                                                                          (:unknown-properties . :something))))))
+  (should (orgtrello-tests/hash-equal
+           #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
+                         (:name "some name" :tags nil :comments nil :level 1 :id "123" :keyword nil :member-ids "" :desc nil :due nil :unknown-properties :something))
+           (orgtrello-data/--merge-card (orgtrello-hash/make-properties '((:id . "123") (:name . "some name") (:idList . 1) (:level . 1)))
+                                        (orgtrello-hash/make-properties '((:name . "some other name")
+                                                                          (:unknown-properties . :something))))))
+  (should (orgtrello-tests/hash-equal
+           #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
+                         (:name "some name"
+                                :tags ":red:green:"
+                                :comments "some comments"
+                                :level 1
+                                :id "123"
+                                :keyword "TODO"
+                                :member-ids "ardumont-id,some-dude-id"
+                                :desc "some description"
+                                :due "some due date"))
+           (orgtrello-data/--merge-card
+            (orgtrello-hash/make-properties `((:id . "123")
+                                              (:name . "some name")
+                                              (:keyword . "TODO")
+                                              (:comments . "some comments")
+                                              (:member-ids . "ardumont-id,some-dude-id")
+                                              (:desc . "some description")
+                                              (:due . "some due date")
+                                              (:tags . ":red:green:")
+                                              (:level . 1)))
+            (orgtrello-hash/make-properties '((:name . "some other name"))))))
+  (should (orgtrello-tests/hash-equal
+           #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
+                         (:name "some name"
+                          :tags ":other-stuff:not-trello-flag:reg:green:"
+                          :comments "some comments"
+                          :level 1
+                          :id "123"
+                          :keyword "TODO"
+                          :member-ids "ardumont-id,some-dude-id"
+                          :desc "some description"
+                          :due "some due date"))
+           (orgtrello-data/--merge-card
+            (orgtrello-hash/make-properties `((:id . "123")
+                                              (:name . "some name")
+                                              (:keyword . "TODO")
+                                              (:comments . "some comments")
+                                              (:member-ids . "ardumont-id,some-dude-id")
+                                              (:desc . "some description")
+                                              (:due . "some due date")
+                                              (:tags . ":reg:green:")
+                                              (:level . 1)))
+            (orgtrello-hash/make-properties '((:name . "some other name")
+                                              (:tags . ":other-stuff:not-trello-flag:")
+                                              (:member-ids . "ardumont-id")))))))
 
 (expectations (desc "orgtrello-data/--merge-member-ids")
               (expect "1,5,2,3,4"
-                (orgtrello-data/--merge-member-ids (orgtrello-hash/make-properties `((:member-ids . ("1" "5"))))
-                                                   (orgtrello-hash/make-properties `((:member-ids . "2,3,4"))))))
-
-(expectations (desc "orgtrello-data/--merge-member-ids")
-              (expect "1,5,2,3,4"
-                (orgtrello-data/--merge-member-ids (orgtrello-hash/make-properties `((:member-ids . ["1" "5"])))
-                                                   (orgtrello-hash/make-properties `((:member-ids . "2,3,4"))))))
+                      (orgtrello-data/--merge-member-ids (orgtrello-hash/make-properties `((:member-ids . "1,5")))
+                                                         (orgtrello-hash/make-properties `((:member-ids . "2,3,4")))))
+              (expect "2,3,4"
+                      (orgtrello-data/--merge-member-ids (orgtrello-hash/make-properties `((:member-ids . nil)))
+                                                         (orgtrello-hash/make-properties `((:member-ids . "2,3,4")))))
+              (expect "1"
+                      (orgtrello-data/--merge-member-ids (orgtrello-hash/make-properties `((:member-ids . "1")))
+                                                         (orgtrello-hash/make-properties `((:member-ids . nil))))))
 
 (expectations (desc "orgtrello-data/--compute-state-generic")
               (expect "DONE" (orgtrello-data/--compute-state-generic "complete" '("DONE" "TODO")))
@@ -633,10 +617,10 @@
  (expect t
          (orgtrello-tests/hash-equal
           #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
-                        (:comments "ardumont: hello"
+                        (:comments "ardumont: hello###ardumont: dude"
                          :position 884
                          :name "Joy of FUN(ctional) LANGUAGES"
-                         :member-ids "user-ardumont-id,user-orgmode-id"
+                         :member-ids "orgtrello-user-ardumont,orgtrello-user-orgmode"
                          :due "2014-09-07T00:00:00.000Z"
                          :desc "hello description\n- with many\n- lines\n\n- including\n\n- blanks lines\n- lists\n- with start or dash  are now possible\n  - indentation too\n"
                          :id "card-joy-id"
@@ -663,7 +647,8 @@
                                                                                                                                        "pqr" "FAILED"
                                                                                                                                        "stu" "CANCELLED")))
                  (trello-card #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
-                                            (:comments (#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:comment-id "comment-id-0" :comment-text "hello" :comment-user "ardumont")))
+                                            (:comments (#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:comment-id "comment-id-0" :comment-text "hello" :comment-user "ardumont"))
+                                                        #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:comment-id "comment-id-1" :comment-text "dude" :comment-user "ardumont")))
                                              :position 884
                                              :name "Joy of FUN(ctional) LANGUAGES"
                                              :labels (#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "range" :color "orange"))
@@ -714,121 +699,129 @@
             (orgtrello-data/to-org-trello-item trello-item)))))
 
 (expectations
- (expect
-  (orgtrello-tests/hash-equal
-   #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
-                 (:comments "ardumont: hello"
-                  :position 884
-                  :name "Joy of FUN(ctional) LANGUAGES"
-                  :labels nil
-                  :member-ids ""
-                  :list-id nil
-                  :due "2014-09-07T00:00:00.000Z"
-                  :desc "hello description\n- with many\n- lines\n\n- including\n\n- blanks lines\n- lists\n- with start or dash  are now possible\n  - indentation too\n"
-                  :closed nil
-                  :id "card-joy-id"
-                  :level 1
-                  :tags nil
-                  :keyword "IN-PROGRESS"
-                  :checklists (#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
-                                             (:items
-                                              (#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
-                                                             (:position 2128
-                                                              :name "Scala"
-                                                              :id "scala-id"
-                                                              :checked nil
-                                                              :level 3
-                                                              :keyword "DONE")))
-                                              :position 32768
-                                              :card-id "card-joy-id"
-                                              :board-id "board-id"
-                                              :name "hybrid family"
-                                              :id "checklist-hybrid-id"
-                                              :level 2))
+  (expect
+      (orgtrello-tests/hash-equal
+       #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
+                     (:comments "ardumont: hello"
+                                :position 884
+                                :name "Joy of FUN(ctional) LANGUAGES"
+                                :labels nil
+                                :member-ids ""
+                                :list-id nil
+                                :due "2014-09-07T00:00:00.000Z"
+                                :desc "hello description\n- with many\n- lines\n\n- including\n\n- blanks lines\n- lists\n- with start or dash  are now possible\n  - indentation too\n"
+                                :closed nil
+                                :id "card-joy-id"
+                                :level 1
+                                :tags nil
+                                :keyword "IN-PROGRESS"
+                                :checklists (#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
+                                                           (:items
+                                                            (#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
+                                                                           (:position 2128
+                                                                                      :name "Scala"
+                                                                                      :id "scala-id"
+                                                                                      :checked nil
+                                                                                      :level 3
+                                                                                      :keyword "DONE")))
+                                                            :position 32768
+                                                            :card-id "card-joy-id"
+                                                            :board-id "board-id"
+                                                            :name "hybrid family"
+                                                            :id "checklist-hybrid-id"
+                                                            :level 2))
 
-                                 #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
-                                               (:items
-                                                (#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
-                                                               (:position 1808
-                                                                :name "Haskell"
-                                                                :id "item-haskell-id"
-                                                                :checked nil
-                                                                :level 3
-                                                                :keyword "DONE"))
-                                                   #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
-                                                               (:position 1914
-                                                                :name "Ocaml"
-                                                                :id "item-ocaml-id"
-                                                                :checked nil
-                                                                :level 3
-                                                                :keyword "DONE")))
-                                                :position 49152
-                                                :card-id "card-joy-id"
-                                                :board-id "board-id"
-                                                :name "ML family"
-                                                :id "checklist-ml-family-id"
-                                                :level 2))
+                                               #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
+                                                             (:items
+                                                              (#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
+                                                                             (:position 1808
+                                                                                        :name "Haskell"
+                                                                                        :id "item-haskell-id"
+                                                                                        :checked nil
+                                                                                        :level 3
+                                                                                        :keyword "DONE"))
+                                                                 #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
+                                                                               (:position 1914
+                                                                                          :name "Ocaml"
+                                                                                          :id "item-ocaml-id"
+                                                                                          :checked nil
+                                                                                          :level 3
+                                                                                          :keyword "DONE")))
+                                                              :position 49152
+                                                              :card-id "card-joy-id"
+                                                              :board-id "board-id"
+                                                              :name "ML family"
+                                                              :id "checklist-ml-family-id"
+                                                              :level 2))
 
-                                 #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
-                                               (:items
-                                                (#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
-                                                               (:position 1491 :name "Scheme" :id "item-scheme-id" :checked nil :level 3 :keyword "TODO"))
-                                                   #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
-                                                                 (:position 1596 :name "Clojure" :id "item-clojure-id" :checked nil :level 3 :keyword "DONE"))
-                                                   #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
-                                                                 (:position 1381 :name "Common-Lisp" :id "item-common-lisp-id" :checked nil :level 3 :keyword "DONE"))
-                                                   #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
-                                                                 (:position 1272 :name "Emacs-Lisp" :id "item-emacs-lisp-id" :checked nil :level 3 :keyword "DONE")))
-                                                :position 16384
-                                                :card-id "card-joy-id"
-                                                :board-id "board-id"
-                                                :name "LISP family"
-                                                :id "checklist-lisp-family-id"
-                                                :level 2)))))
+                                               #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
+                                                             (:items
+                                                              (#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
+                                                                             (:position 1491 :name "Scheme" :id "item-scheme-id" :checked nil :level 3 :keyword "TODO"))
+                                                                 #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
+                                                                               (:position 1596 :name "Clojure" :id "item-clojure-id" :checked nil :level 3 :keyword "DONE"))
+                                                                 #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
+                                                                               (:position 1381 :name "Common-Lisp" :id "item-common-lisp-id" :checked nil :level 3 :keyword "DONE"))
+                                                                 #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
+                                                                               (:position 1272 :name "Emacs-Lisp" :id "item-emacs-lisp-id" :checked nil :level 3 :keyword "DONE")))
+                                                              :position 16384
+                                                              :card-id "card-joy-id"
+                                                              :board-id "board-id"
+                                                              :name "LISP family"
+                                                              :id "checklist-lisp-family-id"
+                                                              :level 2)))))
 
-   (let* ((*ORGTRELLO/HMAP-LIST-ORGKEYWORD-ID-NAME* #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data ("abc" "TODO"
-                                                                                                                                "def" "IN-PROGRESS"
-                                                                                                                                "ghi" "DONE"
-                                                                                                                                "jkl" "PENDING"
-                                                                                                                                "mno" "DELEGATED"
-                                                                                                                                "pqr" "FAILED"
-                                                                                                                                "stu" "CANCELLED")))
-          (trello-card #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
-                                     (:comments (#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:comment-id "comment-id-0" :comment-text "hello" :comment-user "ardumont")))
-                                      :checklists (#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
-                                                                 (:items
-                                                                  (#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
-                                                                                 (:position 2128 :name "Scala" :id "scala-id" :checked "complete" :level 3)))
-                                                                  :position 32768 :card-id "card-joy-id" :board-id "board-id" :name "hybrid family" :id "checklist-hybrid-id" :level 2))
-                                                     #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
-                                                                   (:items
-                                                                    (#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
-                                                                                   (:position 1808 :name "Haskell" :id "item-haskell-id" :checked "complete" :level 3))
-                                                                       #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
-                                                                                     (:position 1914 :name "Ocaml" :id "item-ocaml-id" :checked "complete" :level 3)))
-                                                                    :position 49152 :card-id "card-joy-id" :board-id "board-id" :name "ML family" :id "checklist-ml-family-id" :level 2))
-                                                     #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
-                                                                   (:items
-                                                                    (#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
-                                                                                   (:position 1491 :name "Scheme" :id "item-scheme-id" :checked "incomplete" :level 3))
-                                                                       #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
-                                                                                     (:position 1596 :name "Clojure" :id "item-clojure-id" :checked "complete" :level 3))
-                                                                       #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
-                                                                                     (:position 1381 :name "Common-Lisp" :id "item-common-lisp-id" :checked "complete" :level 3))
-                                                                       #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
-                                                                                     (:position 1272 :name "Emacs-Lisp" :id "item-emacs-lisp-id" :checked "complete" :level 3)))
-                                                                    :position 16384 :card-id "card-joy-id" :board-id "board-id" :name "LISP family" :id "checklist-lisp-family-id" :level 2)))
-                                      :position 884
-                                      :name "Joy of FUN(ctional) LANGUAGES"
-                                      :labels nil
-                                      :member-ids nil
-                                      :list-id "def"
-                                      :due "2014-09-07T00:00:00.000Z"
-                                      :desc "hello description\n- with many\n- lines\n\n- including\n\n- blanks lines\n- lists\n- with start or dash  are now possible\n  - indentation too\n"
-                                      :closed nil
-                                      :id "card-joy-id"
-                                      :level 1))))
-     (orgtrello-data/to-org-trello-card trello-card)))))
+       (let* ((*ORGTRELLO/HMAP-USERS-ID-NAME* #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data ("user-orgmode-id" "orgtrello-user-orgmode"
+                                                                                                                          "user-ardumont-id" "orgtrello-user-ardumont"
+                                                                                                                          "ardumont" "orgtrello-user-me")))
+              (*ORGTRELLO/HMAP-USERS-NAME-ID* #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data ("orgtrello-user-orgmode" "user-orgmode-id"
+                                                                                                                          "orgtrello-user-ardumont" "user-ardumont-id"
+                                                                                                                          "orgtrello-user-me" "ardumont")))
+              (*ORGTRELLO/USER-LOGGED-IN* "ardumont")
+              (*ORGTRELLO/HMAP-LIST-ORGKEYWORD-ID-NAME* '("TODO" "IN-PROGRESS" "DONE" "PENDING" "DELEGATED" "FAILED" "CANCELLED"))
+              (*ORGTRELLO/HMAP-LIST-ORGKEYWORD-ID-NAME* #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data ("abc" "TODO"
+                                                                                                                                    "def" "IN-PROGRESS"
+                                                                                                                                    "ghi" "DONE"
+                                                                                                                                    "jkl" "PENDING"
+                                                                                                                                    "mno" "DELEGATED"
+                                                                                                                                    "pqr" "FAILED"
+                                                                                                                                    "stu" "CANCELLED")))
+              (trello-card #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
+                                         (:comments (#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:comment-id "comment-id-0" :comment-text "hello" :comment-user "ardumont")))
+                                                    :checklists (#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
+                                                                               (:items
+                                                                                (#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
+                                                                                               (:position 2128 :name "Scala" :id "scala-id" :checked "complete" :level 3)))
+                                                                                :position 32768 :card-id "card-joy-id" :board-id "board-id" :name "hybrid family" :id "checklist-hybrid-id" :level 2))
+                                                                   #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
+                                                                                 (:items
+                                                                                  (#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
+                                                                                                 (:position 1808 :name "Haskell" :id "item-haskell-id" :checked "complete" :level 3))
+                                                                                     #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
+                                                                                                   (:position 1914 :name "Ocaml" :id "item-ocaml-id" :checked "complete" :level 3)))
+                                                                                  :position 49152 :card-id "card-joy-id" :board-id "board-id" :name "ML family" :id "checklist-ml-family-id" :level 2))
+                                                                   #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
+                                                                                 (:items
+                                                                                  (#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
+                                                                                                 (:position 1491 :name "Scheme" :id "item-scheme-id" :checked "incomplete" :level 3))
+                                                                                     #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
+                                                                                                   (:position 1596 :name "Clojure" :id "item-clojure-id" :checked "complete" :level 3))
+                                                                                     #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
+                                                                                                   (:position 1381 :name "Common-Lisp" :id "item-common-lisp-id" :checked "complete" :level 3))
+                                                                                     #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
+                                                                                                   (:position 1272 :name "Emacs-Lisp" :id "item-emacs-lisp-id" :checked "complete" :level 3)))
+                                                                                  :position 16384 :card-id "card-joy-id" :board-id "board-id" :name "LISP family" :id "checklist-lisp-family-id" :level 2)))
+                                                    :position 884
+                                                    :name "Joy of FUN(ctional) LANGUAGES"
+                                                    :labels nil
+                                                    :member-ids nil
+                                                    :list-id "def"
+                                                    :due "2014-09-07T00:00:00.000Z"
+                                                    :desc "hello description\n- with many\n- lines\n\n- including\n\n- blanks lines\n- lists\n- with start or dash  are now possible\n  - indentation too\n"
+                                                    :closed nil
+                                                    :id "card-joy-id"
+                                                    :level 1))))
+         (orgtrello-data/to-org-trello-card trello-card)))))
 
 (provide 'org-trello-data-tests)
 ;;; org-trello-data-tests.el ends here

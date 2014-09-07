@@ -145,9 +145,8 @@ hello there
 :END:
   "
        (orgtrello-buffer/write-card-header! "some-card-id" (orgtrello-hash/make-properties `((:keyword . "TODO")
-                                                                                             (:member-ids . "ardumont-id,dude-id")
-                                                                                             (:comments . ,(list (orgtrello-hash/make-properties '((:comment-user . "ardumont")
-                                                                                                                                                   (:comment-text . "some comment")))))
+                                                                                             (:member-ids . "ardumont,dude")
+                                                                                             (:comments . "ardumont: some comment")
                                                                                              (:desc . "some description")
                                                                                              (:level . ,*ORGTRELLO/CARD-LEVEL*)
                                                                                              (:name . "some card name"))))
@@ -173,9 +172,8 @@ DEADLINE: <some-due-date>
 :END:
   "
     (orgtrello-buffer/write-card-header! "some-card-id" (orgtrello-hash/make-properties `((:keyword . "TODO")
-                                                                                          (:member-ids . "ardumont-id,dude-id")
-                                                                                          (:comments . ,(list (orgtrello-hash/make-properties '((:comment-user . "ardumont")
-                                                                                                                                                (:comment-text . "some comment")))))
+                                                                                          (:member-ids . "ardumont,dude")
+                                                                                          (:comments . "ardumont: some comment")
                                                                                           (:tags . ":red:green:")
                                                                                           (:desc . "some description")
                                                                                           (:level . ,*ORGTRELLO/CARD-LEVEL*)
@@ -223,7 +221,7 @@ some old description
 #+PROPERTY: orgtrello-user-ardumont ardumont-id
 #+PROPERTY: orgtrello-user-dude dude-id
 :END:
-* TODO some card name
+* TODO some card name                                                   :red:green:
   :PROPERTIES:
   :orgtrello-id: some-card-id
   :orgtrello-users: ardumont,dude
@@ -243,10 +241,9 @@ some old description
 "
      (orgtrello-buffer/write-card! "some-card-id"
                                    (orgtrello-hash/make-properties `((:keyword . "TODO")
-                                                                     (:member-ids . "ardumont-id,dude-id")
-                                                                     (:comments . ,(list (orgtrello-hash/make-properties '((:comment-user . "ardumont")
-                                                                                                                           (:comment-text . "some comment")))))
-                                                                     (:labels . ":red:green:")
+                                                                     (:member-ids . "ardumont,dude")
+                                                                     (:comments . "ardumont: some comment")
+                                                                     (:tags . ":red:green:")
                                                                      (:desc . "some description")
                                                                      (:level . ,*ORGTRELLO/CARD-LEVEL*)
                                                                      (:name . "some card name")
@@ -296,41 +293,30 @@ some old description
 #+PROPERTY: orgtrello-user-dude dude-id
 :END:
 "
-     (let ()
-       (orgtrello-buffer/write-card!
-        "card-id-a"
-        (orgtrello-hash/make-properties
-         `((:keyword . "TODO")
-           (:desc . "description A")
-           (:level . ,*ORGTRELLO/CARD-LEVEL*)
-           (:name . "task A")
-           (:id . "card-id-a")
-           (:member-ids . "ardumont-id,dude-id")
-           (:comments . ,(list (orgtrello-hash/make-properties
-                                '((:comment-user . "ardumont")
-                                  (:comment-text . "some comment")))))
-           ))
-        (orgtrello-hash/make-properties `())
-        (orgtrello-hash/make-properties `())
-        )
-       (orgtrello-buffer/write-card!
-        "card-id-b"
-        (orgtrello-hash/make-properties
-         `((:keyword . "TODO")
-           (:desc . "description B")
-           (:level . ,*ORGTRELLO/CARD-LEVEL*)
-           (:name . "task B")
-           (:id . "card-id-b")
-           (:member-ids . "ardumont-id,dude-id")
-           (:comments . ,(list (orgtrello-hash/make-properties
-                                '((:comment-user . "ardumont")
-                                  (:comment-text . "some comment")))))
-           ))
-        (orgtrello-hash/make-properties `())
-        (orgtrello-hash/make-properties `())
-        ))
-     0)
-    ))
+     (progn
+       (orgtrello-buffer/write-card! "card-id-a"
+                                     (orgtrello-hash/make-properties
+                                      `((:keyword . "TODO")
+                                        (:desc . "description A")
+                                        (:level . ,*ORGTRELLO/CARD-LEVEL*)
+                                        (:name . "task A")
+                                        (:id . "card-id-a")
+                                        (:member-ids . "ardumont,dude")
+                                        (:comments . "ardumont: some comment")))
+                                     (orgtrello-hash/make-properties `())
+                                     (orgtrello-hash/make-properties `()))
+       (orgtrello-buffer/write-card! "card-id-b"
+                                     (orgtrello-hash/make-properties
+                                      `((:keyword . "TODO")
+                                        (:desc . "description B")
+                                        (:level . ,*ORGTRELLO/CARD-LEVEL*)
+                                        (:name . "task B")
+                                        (:id . "card-id-b")
+                                        (:member-ids . "ardumont,dude")
+                                        (:comments . "ardumont: some comment")))
+                                     (orgtrello-hash/make-properties `())
+                                     (orgtrello-hash/make-properties `())))
+     0)))
 
 (expectations
   (expect ":PROPERTIES:
@@ -662,7 +648,7 @@ DEADLINE: <2014-05-17 Sat>
 :orgtrello-id: orgtrello-marker-08677ec948991d1e5a25ab6b813d8eba03fac20f
 :END:
 "
-     (orgtrello-buffer/write-unknown-properties! '(("property0" . "value0")
+     (orgtrello-buffer/update-properties-unknown! '(("property0" . "value0")
                                                    ("property1" . "value1")
                                                    ("property2" . "value2"))))))
 
@@ -671,7 +657,7 @@ DEADLINE: <2014-05-17 Sat>
   (expect "* TODO some card name                                                   :red:green:
   :PROPERTIES:
   :orgtrello-id: some-card-id
-  :orgtrello-users: ,
+  :orgtrello-users: ardumont,dude
   :orgtrello-card-comments: ardumont: some comment
   :END:
   some description
@@ -683,9 +669,8 @@ DEADLINE: <2014-05-17 Sat>
     (orgtrello-tests/with-temp-buffer-and-return-buffer-content
      "" ;; no previous content on buffer
      (let* ((card (orgtrello-hash/make-properties `((:keyword . "TODO")
-                                                    (:member-ids . "ardumont-id,dude-id")
-                                                    (:comments . ,(list (orgtrello-hash/make-properties '((:comment-user . "ardumont")
-                                                                                                          (:comment-text . "some comment")))))
+                                                    (:member-ids . "ardumont,dude")
+                                                    (:comments . "ardumont: some comment")
                                                     (:tags . ":red:green:")
                                                     (:desc . "some description")
                                                     (:level . ,*ORGTRELLO/CARD-LEVEL*)
@@ -715,7 +700,7 @@ DEADLINE: <2014-05-17 Sat>
   (expect "* TODO some card name                                                   :red:green:
   :PROPERTIES:
   :orgtrello-id: some-card-id
-  :orgtrello-users: ,
+  :orgtrello-users: ardumont,dude
   :orgtrello-card-comments: ardumont: some comment
   :END:
   some description
@@ -748,9 +733,8 @@ DEADLINE: <2014-05-17 Sat>
 :END:
 "
      (let* ((card (orgtrello-hash/make-properties `((:keyword . "TODO")
-                                                    (:member-ids . "ardumont-id,dude-id")
-                                                    (:comments . ,(list (orgtrello-hash/make-properties '((:comment-user . "ardumont")
-                                                                                                          (:comment-text . "some comment")))))
+                                                    (:member-ids . "ardumont,dude")
+                                                    (:comments . "ardumont: some comment")
                                                     (:tags . ":red:green:")
                                                     (:desc . "some description")
                                                     (:level . ,*ORGTRELLO/CARD-LEVEL*)
