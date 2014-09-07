@@ -62,7 +62,7 @@
     (should (equal (hash-table-count hashtable-result) (hash-table-count hashtable-expected)))))
 
 (expectations (desc "orgtrello-controller/--compute-user-properties")
-  (expect t (hash-equal
+  (expect t (orgtrello-tests/hash-equal
              #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
                            (:username "ardumont" :full-name "Antoine R. Dumont" :id "4f2baa2f72b7c1293501cad3"))
              (car (orgtrello-controller/--compute-user-properties '(#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
@@ -73,7 +73,7 @@
                                                                            (:member #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
                                                                                                   (:username "orgmode" :full-name "org trello" :id "5203a0c833fc36360800177f"))
                                                                                     :id "524855ff8193aec160002cfa")))))))
-  (expect t (hash-equal
+  (expect t (orgtrello-tests/hash-equal
              #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
                            (:username "orgmode" :full-name "org trello" :id "5203a0c833fc36360800177f"))
              (cadr (orgtrello-controller/--compute-user-properties '(#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
@@ -86,7 +86,7 @@
                                                                                      :id "524855ff8193aec160002cfa"))))))))
 
 (expectations (desc "testing-orgtrello-controller/--compute-user-properties-hash")
-  (expect t (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data ("ardumont" "4f2baa2f72b7c1293501cad3" "orgmode" "5203a0c833fc36360800177f"))
+  (expect t (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data ("ardumont" "4f2baa2f72b7c1293501cad3" "orgmode" "5203a0c833fc36360800177f"))
                         (orgtrello-controller/--compute-user-properties-hash '(#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
                                                                                   (:username "ardumont" :full-name "Antoine R. Dumont" :id "4f2baa2f72b7c1293501cad3"))
                                                                       #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
@@ -114,7 +114,7 @@
 
 (expectations
   (expect t
-    (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data ("0" :id-board0 "1" :id-board1))
+    (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data ("0" :id-board0 "1" :id-board1))
                 (orgtrello-controller/--index-board-map (orgtrello-hash/make-properties '((:id-board0 . "board0-name") (:id-board1 . "board1-name")))))))
 
 (expectations
@@ -212,7 +212,7 @@
 
 (expectations
   (expect t
-    (hash-equal
+    (orgtrello-tests/hash-equal
      #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:id "id0" :name "name0" :closed nil))
      (car (with-mock
             (mock (orgtrello-api/get-boards)                          => :query)
@@ -222,7 +222,7 @@
             (orgtrello-controller/--list-boards!)))))
   (expect
       t
-    (hash-equal
+    (orgtrello-tests/hash-equal
      #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:id "id1" :name "name1" :closed nil))
      (cadr (with-mock
              (mock (orgtrello-api/get-boards)                          => :query)
@@ -240,7 +240,7 @@
 
 (expectations
   (expect t
-    (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
+    (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
                               ("786" "CANCELLED" "456" "FAILED" "ijk" "DONE" "abc" "TODO"))
                 (orgtrello-controller/hmap-id-name '("CANCELLED" "FAILED" "DONE" "TODO")
                                                    '(("board-name" . "some board")
@@ -253,15 +253,15 @@
                                                      ("IN-PROGRESS" . "def")
                                                      ("TODO" . "abc")))))
   (expect t
-    (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data ())
+    (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data ())
                 (orgtrello-controller/hmap-id-name '("CANCELLED" "FAILED" "DONE" "TODO")
                                                    '())))
   (expect t
-    (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data ())
+    (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data ())
                 (orgtrello-controller/hmap-id-name '()
                                                    '(("board-name" . "some board")))))
   (expect t
-    (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data ())
+    (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data ())
                 (orgtrello-controller/hmap-id-name '()
                                                    '()))))
 

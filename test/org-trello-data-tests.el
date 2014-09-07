@@ -110,7 +110,7 @@
 
 (ert-deftest testing-orgtrello-data/parse-data-card ()
   ;; check card
-  (should (hash-equal (orgtrello-hash/make-properties `((:url . "https://trello.com/c/9XPLuJhi/2515-joy-of-fun-ctional-languages")
+  (should (orgtrello-tests/hash-equal (orgtrello-hash/make-properties `((:url . "https://trello.com/c/9XPLuJhi/2515-joy-of-fun-ctional-languages")
                                                         (:name . "Joy of FUN(ctional) LANGUAGES")
                                                         (:level . 1)
                                                         (:member-ids . (1 2 3))
@@ -154,7 +154,7 @@
 
 (ert-deftest testing-orgtrello-data/parse-data-checklist ()
   ;; check checklist
-  (should (hash-equal (orgtrello-hash/make-properties `((:items . ())
+  (should (orgtrello-tests/hash-equal (orgtrello-hash/make-properties `((:items . ())
                                                         (:name . "LISP family")
                                                         (:level . 2)
                                                         (:id . "52c0a36886b7bdd67c008cf1")
@@ -170,7 +170,7 @@
                                                     (id . "52c0a36886b7bdd67c008cf1"))))))
 
 (ert-deftest testing-orgtrello-data/parse-data-item ()
-  (should (hash-equal
+  (should (orgtrello-tests/hash-equal
            (orgtrello-hash/make-properties `((:name . "Emacs-Lisp")
                                              (:level . 3)
                                              (:id . "52c0a64cfb34123369015393")
@@ -181,7 +181,7 @@
                                          (name . "Emacs-Lisp")
                                          (id . "52c0a64cfb34123369015393")
                                          (state . "complete")))))
-  (should (hash-equal
+  (should (orgtrello-tests/hash-equal
            (orgtrello-hash/make-properties `((:name . "Emacs-Lisp")
                                              (:level . 3)
                                              (:id . "52c0a64cfb34123369015393")
@@ -194,7 +194,7 @@
                                          (state . "incomplete"))))))
 
 (ert-deftest testing-orgtrello-data/parse-data-http-response ()
-  (should (hash-equal
+  (should (orgtrello-tests/hash-equal
            (orgtrello-hash/make-properties `((:status . ok)))
            (orgtrello-data/parse-data '((status . ok))))))
 
@@ -266,10 +266,10 @@
                                                  (desc . "")
                                                  (name . "Demandes Infra")
                                                  (id . "50aa59502ddab2fc1100115b"))])))
-    (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
+    (should (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
                                       (:url "https://trello.com/b/o9oY3NlQ/1-board-to-rule-them-all" :closed t :desc "" :name "1-board-to-rule-them-all" :id "5203a4fd0ac2f5b75c001d1d"))
                         (car list-hash)))
-    (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
+    (should (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
                                       (:url "https://trello.com/b/xzOJmxzy/demandes-infra" :closed t :desc "" :name "Demandes Infra" :id "50aa59502ddab2fc1100115b"))
                         (cadr list-hash)))))
 
@@ -296,9 +296,9 @@
               (expect 2 (orgtrello-data/entity-level actual-result))
               (expect "52c0b52ece09f28f6801fe5e" (orgtrello-data/entity-id actual-result))
               (expect 2 (length (orgtrello-data/entity-items actual-result)))
-              (expect t (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:position 16384 :name "introduction" :id "52c0b537ad469b9d6d044fa1" :checked "incomplete" :level 3))
+              (expect t (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:position 16384 :name "introduction" :id "52c0b537ad469b9d6d044fa1" :checked "incomplete" :level 3))
                                     (car (orgtrello-data/entity-items actual-result))))
-              (expect t (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:position 32768 :name "Ch. 1 - A scalable language" :id "52c0b5386548fde20105ea4e" :checked "incomplete" :level 3))
+              (expect t (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:position 32768 :name "Ch. 1 - A scalable language" :id "52c0b5386548fde20105ea4e" :checked "incomplete" :level 3))
                                     (cadr (orgtrello-data/entity-items actual-result)))))
 
 (expectations
@@ -307,7 +307,7 @@
  (expect nil      (orgtrello-data/--deal-with-key 'something-that-does-not-exist)))
 
 (expectations
-  (expect t (hash-equal
+  (expect t (orgtrello-tests/hash-equal
              #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
                            (url :url id :id name :name idMembers :member-ids idList :list-id checklists :checklists idChecklists :checklists idBoard :board-id due :due desc :desc closed :closed idCard :card-id checkItems :items state :checked status :status pos :position keyword :keyword member-ids :member-ids member :member memberships :memberships username :username fullName :full-name actions :comments labelNames :labels lists :lists red :red yellow :yellow blue :blue green :green orange :orange purple :purple labels :labels color :color))
              *ORGTRELLO/DATA-MAP-KEYWORDS*)))
@@ -359,10 +359,10 @@
                                 (id . "532d7441852414f343560757"))])
 
 (expectations
-  (expect t (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:comment-id "532d7447b247e3d24f365309" :comment-text "comment 4" :comment-user "ardumont"))
+  (expect t (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:comment-id "532d7447b247e3d24f365309" :comment-text "comment 4" :comment-user "ardumont"))
                 (car (orgtrello-data/--parse-actions partial-data-to-test))))
   (expect t
-    (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:comment-id "532d7441852414f343560757" :comment-text "comment 3" :comment-user "ardumont"))
+    (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:comment-id "532d7441852414f343560757" :comment-text "comment 3" :comment-user "ardumont"))
                 (cadr (orgtrello-data/--parse-actions partial-data-to-test)))))
 
 (expectations
@@ -391,25 +391,25 @@
               (expect nil (orgtrello-data/id-p nil)))
 
 (ert-deftest testing-orgtrello-data/merge-item ()
-  (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "TODO" :id nil :level 3))
+  (should (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "TODO" :id nil :level 3))
                       (orgtrello-data/merge-item (orgtrello-hash/make-properties `((:checked . "anything") (:name . "some name")))
                                               (orgtrello-hash/make-properties `((:name . "some other name") (:keyword "TODO"))))))
-  (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "DONE" :id nil :level 3))
+  (should (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "DONE" :id nil :level 3))
                       (orgtrello-data/merge-item (orgtrello-hash/make-properties `((:checked . "complete") (:name . "some name")))
                                                nil)))
-  (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "TODO" :id nil :level 3))
+  (should (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "TODO" :id nil :level 3))
                       (orgtrello-data/merge-item (orgtrello-hash/make-properties `((:checked . "anything") (:name . "some name")))
                                               (orgtrello-hash/make-properties `((:name . "some other name") (:keyword . "TODO") (:id . "1"))))))
-  (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "TODO" :id "1" :level 3))
+  (should (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "TODO" :id "1" :level 3))
                       (orgtrello-data/merge-item (orgtrello-hash/make-properties `((:checked . "anything") (:name . "some name") (:id . "1")))
                                               (orgtrello-hash/make-properties `((:name . "some other name") (:keyword . "TODO"))))))
-  (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "TODO" :id "1" :level 3))
+  (should (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "TODO" :id "1" :level 3))
                       (orgtrello-data/merge-item (orgtrello-hash/make-properties `((:checked . "anything") (:name . "some name") (:id . "1")))
                                               (orgtrello-hash/make-properties `((:name . "some other name") (:keyword "TODO") (:id . "2"))))))
-  (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "TODO" :id "1" :level 3))
+  (should (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "TODO" :id "1" :level 3))
                       (orgtrello-data/merge-item (orgtrello-hash/make-properties `((:checked . "anything") (:name . "some name") (:id . "1")))
                                               (orgtrello-hash/make-properties `((:name . "some other name") (:keyword "TODO"))))))
-  (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "DONE" :id "1" :level 3))
+  (should (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :keyword "DONE" :id "1" :level 3))
                       (orgtrello-data/merge-item (orgtrello-hash/make-properties `((:checked . "complete") (:name . "some name") (:id . "1")))
                                               nil))))
 
@@ -418,44 +418,44 @@
               (expect "[ ]" (orgtrello-data/--compute-state-item-checkbox "incomplete")))
 
 (ert-deftest testing-orgtrello-data/--merge-checklist ()
-  (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :id nil :level 2))
+  (should (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :id nil :level 2))
                       (orgtrello-data/--merge-checklist (orgtrello-hash/make-properties `((:id . nil) (:name . "some name")))
                                                    (orgtrello-hash/make-properties `((:name . "some other name"))))))
-  (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :id nil :level 2))
+  (should (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :id nil :level 2))
                       (orgtrello-data/--merge-checklist (orgtrello-hash/make-properties `((:id . nil) (:name . "some name")))
                                                    (orgtrello-hash/make-properties `((:name . "some other name"))))))
-  (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :id nil :level 2))
+  (should (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :id nil :level 2))
                       (orgtrello-data/--merge-checklist (orgtrello-hash/make-properties `((:id . nil) (:name . "some name")))
                                                    nil)))
-  (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :id nil :level 2))
+  (should (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :id nil :level 2))
                       (orgtrello-data/--merge-checklist (orgtrello-hash/make-properties `((:id . nil) (:name . "some name")))
                                                    (orgtrello-hash/make-properties `((:name . "some other name") (:id "1"))))))
-  (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :id "1" :level 2))
+  (should (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :id "1" :level 2))
                       (orgtrello-data/--merge-checklist (orgtrello-hash/make-properties `((:id . "1") (:name . "some name") (:id . "1")))
                                                    (orgtrello-hash/make-properties `((:name . "some other name"))))))
-  (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :id "1" :level 2))
+  (should (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :id "1" :level 2))
                       (orgtrello-data/--merge-checklist (orgtrello-hash/make-properties `((:id . "1") (:name . "some name") (:id . "1")))
                                                    (orgtrello-hash/make-properties `((:name . "some other name") (:id 2))))))
-  (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :id "1" :level 2))
+  (should (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :id "1" :level 2))
                       (orgtrello-data/--merge-checklist (orgtrello-hash/make-properties `((:id . "1") (:name . "some name") (:id . "1")))
                                                    (orgtrello-hash/make-properties `((:name . "some other name"))))))
-  (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :id "1" :level 2))
+  (should (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "some name" :id "1" :level 2))
                       (orgtrello-data/--merge-checklist (orgtrello-hash/make-properties `((:id . "1") (:name . "some name")))
                                                    nil))))
 
 (ert-deftest testing-orgtrello-data/--merge-card ()
   (let ((*ORGTRELLO/HMAP-LIST-ORGKEYWORD-ID-NAME* (orgtrello-hash/make-properties `((1 . "TODO") (2 . "DONE") (3 . "IN-PROGRESS")))))
-    (should (hash-equal (orgtrello-hash/make-properties `((:name . "some other name")
+    (should (orgtrello-tests/hash-equal (orgtrello-hash/make-properties `((:name . "some other name")
                                                           (:unknown-properties . :something)))
              (orgtrello-data/--merge-card nil
                                           (orgtrello-hash/make-properties `((:name . "some other name")
                                                                             (:unknown-properties . :something))))))
-    (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
+    (should (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
                                       (:name "some name" :tags nil :comments nil :level 1 :id "123" :keyword nil :member-ids "" :desc nil :due nil :unknown-properties :something))
                         (orgtrello-data/--merge-card (orgtrello-hash/make-properties '((:id . "123") (:name . "some name") (:idList . 1)))
                                                      (orgtrello-hash/make-properties '((:name . "some other name")
                                                                                        (:unknown-properties . :something))))))
-    (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
+    (should (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
                                       (:name "some name" :tags ":red:green:" :comments "some comments" :level 1 :id "123" :keyword nil :member-ids "ardumont-id,some-dude-id" :desc "some description" :due "some due date"))
                         (orgtrello-data/--merge-card (orgtrello-hash/make-properties `((:id . "123")
                                                                                        (:name . "some name")
@@ -468,7 +468,7 @@
                                                                                        (:labels . ,(list (orgtrello-hash/make-properties '((:color . "red")))
                                                                                                          (orgtrello-hash/make-properties '((:color . "green")))))))
                                                      (orgtrello-hash/make-properties '((:name . "some other name"))))))
-    (should (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
+    (should (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
                                       (:name "some name" :tags ":other-stuff:not-trello-flag:red:green:" :comments "some comments" :level 1 :id "123" :keyword nil :member-ids "ardumont-id,some-dude-id" :desc "some description" :due "some due date"))
                         (orgtrello-data/--merge-card (orgtrello-hash/make-properties `((:id . "123")
                                                                                        (:name . "some name")
@@ -529,41 +529,41 @@
   (expect ":a:b:c:" (orgtrello-data/--labels-to-tags '("a" "b" "c"))))
 
 (expectations
-  (expect t (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name         :value)) (orgtrello-data/put-entity-name         :value (orgtrello-hash/empty-hash))))
-  (expect t (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:memberships  :value)) (orgtrello-data/put-entity-memberships  :value (orgtrello-hash/empty-hash))))
-  (expect t (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:member       :value)) (orgtrello-data/put-entity-member       :value (orgtrello-hash/empty-hash))))
-  (expect t (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:username     :value)) (orgtrello-data/put-entity-username     :value (orgtrello-hash/empty-hash))))
-  (expect t (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:action       :value)) (orgtrello-data/put-entity-action       :value (orgtrello-hash/empty-hash))))
-  (expect t (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:board-id     :value)) (orgtrello-data/put-entity-board-id     :value (orgtrello-hash/empty-hash))))
-  (expect t (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:card-id      :value)) (orgtrello-data/put-entity-card-id      :value (orgtrello-hash/empty-hash))))
-  (expect t (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:list-id      :value)) (orgtrello-data/put-entity-list-id      :value (orgtrello-hash/empty-hash))))
-  (expect t (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:member-ids   :value)) (orgtrello-data/put-entity-member-ids   :value (orgtrello-hash/empty-hash))))
-  (expect t (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:desc         :value)) (orgtrello-data/put-entity-description  :value (orgtrello-hash/empty-hash))))
-  (expect t (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:checklists   :value)) (orgtrello-data/put-entity-checklists   :value (orgtrello-hash/empty-hash))))
-  (expect t (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:items        :value)) (orgtrello-data/put-entity-items        :value (orgtrello-hash/empty-hash))))
-  (expect t (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:position     :value)) (orgtrello-data/put-entity-position     :value (orgtrello-hash/empty-hash))))
-  (expect t (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:buffername   :value)) (orgtrello-data/put-entity-buffername   :value (orgtrello-hash/empty-hash))))
-  (expect t (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:checked      :value)) (orgtrello-data/put-entity-checked      :value (orgtrello-hash/empty-hash))))
-  (expect t (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:due          :value)) (orgtrello-data/put-entity-due          :value (orgtrello-hash/empty-hash))))
-  (expect t (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:id           :value)) (orgtrello-data/put-entity-id           :value (orgtrello-hash/empty-hash))))
-  (expect t (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:level        :value)) (orgtrello-data/put-entity-level        :value (orgtrello-hash/empty-hash))))
-  (expect t (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:closed       :value)) (orgtrello-data/put-entity-closed       :value (orgtrello-hash/empty-hash))))
-  (expect t (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:callback     :value)) (orgtrello-data/put-entity-callback     :value (orgtrello-hash/empty-hash))))
-  (expect t (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:start        :value)) (orgtrello-data/put-entity-start        :value (orgtrello-hash/empty-hash))))
-  (expect t (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:comments     :value)) (orgtrello-data/put-entity-comments     :value (orgtrello-hash/empty-hash))))
-  (expect t (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:labels       :value)) (orgtrello-data/put-entity-labels       :value (orgtrello-hash/empty-hash))))
-  (expect t (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:tags         :value)) (orgtrello-data/put-entity-tags         :value (orgtrello-hash/empty-hash))))
-  (expect t (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:keyword      :value)) (orgtrello-data/put-entity-keyword      :value (orgtrello-hash/empty-hash))))
-  (expect t (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:comment-id   :value)) (orgtrello-data/put-entity-comment-id   :value (orgtrello-hash/empty-hash))))
-  (expect t (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:comment-text :value)) (orgtrello-data/put-entity-comment-text :value (orgtrello-hash/empty-hash))))
-  (expect t (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:comment-user :value)) (orgtrello-data/put-entity-comment-user :value (orgtrello-hash/empty-hash))))
-  (expect t (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:method       :value)) (orgtrello-data/put-entity-method       :value (orgtrello-hash/empty-hash))))
-  (expect t (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:uri          :value)) (orgtrello-data/put-entity-uri          :value (orgtrello-hash/empty-hash))))
-  (expect t (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:sync         :value)) (orgtrello-data/put-entity-sync         :value (orgtrello-hash/empty-hash))))
-  (expect t (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:params       :value)) (orgtrello-data/put-entity-params       :value (orgtrello-hash/empty-hash))))
-  (expect t (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:current      :value)) (orgtrello-data/put-current             :value (orgtrello-hash/empty-hash))))
-  (expect t (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:parent       :value)) (orgtrello-data/put-parent              :value (orgtrello-hash/empty-hash))))
-  (expect t (hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:grandparent  :value)) (orgtrello-data/put-grandparent         :value (orgtrello-hash/empty-hash)))))
+  (expect t (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name         :value)) (orgtrello-data/put-entity-name         :value (orgtrello-hash/empty-hash))))
+  (expect t (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:memberships  :value)) (orgtrello-data/put-entity-memberships  :value (orgtrello-hash/empty-hash))))
+  (expect t (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:member       :value)) (orgtrello-data/put-entity-member       :value (orgtrello-hash/empty-hash))))
+  (expect t (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:username     :value)) (orgtrello-data/put-entity-username     :value (orgtrello-hash/empty-hash))))
+  (expect t (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:action       :value)) (orgtrello-data/put-entity-action       :value (orgtrello-hash/empty-hash))))
+  (expect t (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:board-id     :value)) (orgtrello-data/put-entity-board-id     :value (orgtrello-hash/empty-hash))))
+  (expect t (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:card-id      :value)) (orgtrello-data/put-entity-card-id      :value (orgtrello-hash/empty-hash))))
+  (expect t (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:list-id      :value)) (orgtrello-data/put-entity-list-id      :value (orgtrello-hash/empty-hash))))
+  (expect t (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:member-ids   :value)) (orgtrello-data/put-entity-member-ids   :value (orgtrello-hash/empty-hash))))
+  (expect t (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:desc         :value)) (orgtrello-data/put-entity-description  :value (orgtrello-hash/empty-hash))))
+  (expect t (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:checklists   :value)) (orgtrello-data/put-entity-checklists   :value (orgtrello-hash/empty-hash))))
+  (expect t (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:items        :value)) (orgtrello-data/put-entity-items        :value (orgtrello-hash/empty-hash))))
+  (expect t (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:position     :value)) (orgtrello-data/put-entity-position     :value (orgtrello-hash/empty-hash))))
+  (expect t (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:buffername   :value)) (orgtrello-data/put-entity-buffername   :value (orgtrello-hash/empty-hash))))
+  (expect t (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:checked      :value)) (orgtrello-data/put-entity-checked      :value (orgtrello-hash/empty-hash))))
+  (expect t (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:due          :value)) (orgtrello-data/put-entity-due          :value (orgtrello-hash/empty-hash))))
+  (expect t (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:id           :value)) (orgtrello-data/put-entity-id           :value (orgtrello-hash/empty-hash))))
+  (expect t (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:level        :value)) (orgtrello-data/put-entity-level        :value (orgtrello-hash/empty-hash))))
+  (expect t (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:closed       :value)) (orgtrello-data/put-entity-closed       :value (orgtrello-hash/empty-hash))))
+  (expect t (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:callback     :value)) (orgtrello-data/put-entity-callback     :value (orgtrello-hash/empty-hash))))
+  (expect t (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:start        :value)) (orgtrello-data/put-entity-start        :value (orgtrello-hash/empty-hash))))
+  (expect t (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:comments     :value)) (orgtrello-data/put-entity-comments     :value (orgtrello-hash/empty-hash))))
+  (expect t (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:labels       :value)) (orgtrello-data/put-entity-labels       :value (orgtrello-hash/empty-hash))))
+  (expect t (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:tags         :value)) (orgtrello-data/put-entity-tags         :value (orgtrello-hash/empty-hash))))
+  (expect t (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:keyword      :value)) (orgtrello-data/put-entity-keyword      :value (orgtrello-hash/empty-hash))))
+  (expect t (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:comment-id   :value)) (orgtrello-data/put-entity-comment-id   :value (orgtrello-hash/empty-hash))))
+  (expect t (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:comment-text :value)) (orgtrello-data/put-entity-comment-text :value (orgtrello-hash/empty-hash))))
+  (expect t (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:comment-user :value)) (orgtrello-data/put-entity-comment-user :value (orgtrello-hash/empty-hash))))
+  (expect t (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:method       :value)) (orgtrello-data/put-entity-method       :value (orgtrello-hash/empty-hash))))
+  (expect t (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:uri          :value)) (orgtrello-data/put-entity-uri          :value (orgtrello-hash/empty-hash))))
+  (expect t (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:sync         :value)) (orgtrello-data/put-entity-sync         :value (orgtrello-hash/empty-hash))))
+  (expect t (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:params       :value)) (orgtrello-data/put-entity-params       :value (orgtrello-hash/empty-hash))))
+  (expect t (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:current      :value)) (orgtrello-data/put-current             :value (orgtrello-hash/empty-hash))))
+  (expect t (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:parent       :value)) (orgtrello-data/put-parent              :value (orgtrello-hash/empty-hash))))
+  (expect t (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:grandparent  :value)) (orgtrello-data/put-grandparent         :value (orgtrello-hash/empty-hash)))))
 
 (expectations (desc "testing orgtrello-data/make-hash-org")
   (expect "some name"       (gethash :name           (orgtrello-data/make-hash-org "" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org" :desc :comments :tags :unk)))
