@@ -553,11 +553,18 @@ ENTITIES and ENTITIES-ADJ provide information on card's structure."
     (orgtrello-buffer/write-card! card-id entity entities entities-adj)))
 
 (defun orgtrello-buffer/card-checksum! ()
-  "Compute the card's checksum at point."
-  (->> (orgtrello-entity/compute-card-region!)
-    (cons (current-buffer))
-    (cons 'sha256)
-    (apply 'secure-hash)))
+  "Compute the card's checksum at point.
+Ensure that a checksum-ed card that did not change renders the same checksum."
+  (let ((card-region (orgtrello-entity/compute-card-region!))
+        (buffer-name (current-buffer)))
+    (with-temp-buffer
+      (apply 'insert-buffer-substring (cons buffer-name card-region))
+      (org-mode)
+      (orgtrello-buffer/delete-property-from-entry! *ORGTRELLO/CARD-LOCAL-CHECKSUM*)
+      (->> (orgtrello-entity/compute-card-region!)
+        (cons (current-buffer))
+        (cons 'sha256)
+        (apply 'secure-hash)))))
 
 (orgtrello-log/msg *OT/DEBUG* "orgtrello-buffer loaded!")
 

@@ -45,6 +45,9 @@
 (defconst *ORGTRELLO/CARD-COMMENTS* "orgtrello-card-comments"
   "Current card's comments property.")
 
+(defconst *ORGTRELLO/CARD-LOCAL-CHECKSUM* "orgtrello-card-local-checksum"
+  "Current card's checksum property.")
+
 (defconst *ORGTRELLO/CARD-COMMENTS-DELIMITER* "###"
   "Current card's comments delimiter.")
 

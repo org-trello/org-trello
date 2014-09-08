@@ -754,5 +754,62 @@ DEADLINE: <2014-05-17 Sat>
        (orgtrello-buffer/overwrite-card! '(1 461) card entities entities-adj))
      -5)))
 
+(expectations
+  (desc "orgtrello-buffer/get-card-local-checksum! - Retrieve the card's checksum.")
+  (expect
+      "123"
+    (orgtrello-tests/with-temp-buffer "* card
+:PROPERTIES:
+:orgtrello-card-local-checksum: 123
+:END:"
+                                      (orgtrello-buffer/get-card-local-checksum!))))
+(expectations
+  (desc "orgtrello-buffer/get-card-local-checksum! - Retrieve card's nil checksum.")
+  (expect
+      nil
+    (orgtrello-tests/with-temp-buffer "* card"
+                                      (orgtrello-buffer/get-card-local-checksum!))))
+
+(expectations
+  (desc "orgtrello-buffer/card-checksum! - Compute the checksum of a card.")
+  (expect
+      "7e0646598424bc6e3f501044e36e6490c2654327e9c2ba111647b0a12c9eeb0f"
+    (orgtrello-tests/with-temp-buffer "* TODO some card name
+:PROPERTIES:
+:orgtrello-id: some-card-id
+:orgtrello-users: ardumont,dude
+:orgtrello-card-comments: ardumont: some comment
+:END:
+  some description
+- [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}
+  - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\"}
+  - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\"}
+- [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\"}
+
+* another card"
+                                      (orgtrello-buffer/card-checksum!)
+                                      -5)))
+
+(expectations
+  (desc "orgtrello-buffer/card-checksum! - A card with a checksum should give the same checksum if nothing has changed.")
+  (expect
+      "7e0646598424bc6e3f501044e36e6490c2654327e9c2ba111647b0a12c9eeb0f"
+    (orgtrello-tests/with-temp-buffer "* TODO some card name
+:PROPERTIES:
+:orgtrello-id: some-card-id
+:orgtrello-users: ardumont,dude
+:orgtrello-card-comments: ardumont: some comment
+:orgtrello-card-local-checksum: 7e0646598424bc6e3f501044e36e6490c2654327e9c2ba111647b0a12c9eeb0f
+:END:
+  some description
+- [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}
+  - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\"}
+  - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\"}
+- [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\"}
+
+* another card"
+                                      (orgtrello-buffer/card-checksum!)
+                                      -5)))
+
 (provide 'org-trello-buffer-tests)
 ;;; org-trello-buffer-tests.el ends here
