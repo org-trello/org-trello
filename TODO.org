@@ -6,13 +6,17 @@
 - [ ] Use active region - [[https://github.com/org-trello/org-trello/issues/130][#130]]
 - [ ] Another Disposition about org's buffer - [[https://github.com/org-trello/org-trello/issues/33][#33]]
 - [ ] See to use primitives org-next-item/org-end-of-item-list/org-list-use-circular-motion to move in checkbox
-* IN-PROGRESS 0.6.x [37%]
+- [ ] One command to sync them all - https://github.com/org-trello/org-trello/issues/59
+* IN-PROGRESS 0.6.0 [66%]
 - [X] Refactor - Unify data structure between trello card and org-trello card
 - [X] Refactor - Improve merge computations
 - [X] Refactor - Remove some dead code
-- [ ] One command to sync them all - https://github.com/org-trello/org-trello/issues/59
+- [X] Update version
 - [ ] Improve sync request policy - [[https://github.com/org-trello/org-trello/issues/58]]
-- [ ] Update version
+  - [ ] 'Sync card to trello' only if local changes
+  - [ ] 'Sync card from trello' updates the local checksum signature
+  - [ ] 'Sync buffer to trello' syncs only card with local changes
+  - [ ] 'Sync buffer from trello' updates the local card checksum
 - [ ] Release notes
 * DONE 0.5.9 [100%]
   CLOSED: [2014-09-06 Sat 10:52]
