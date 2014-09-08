@@ -34,6 +34,10 @@ If the VALUE is nil or empty, remove such PROPERTY."
   "Retrieve the card's comments. Can be nil if not on a card."
   (orgtrello-buffer/org-entry-get (point) *ORGTRELLO/CARD-COMMENTS*))
 
+(defun orgtrello-buffer/get-card-local-checksum! ()
+  "Retrieve the card's current local checksum."
+  (orgtrello-buffer/org-entry-get (point) *ORGTRELLO/CARD-LOCAL-CHECKSUM*))
+
 (defun orgtrello-buffer/put-card-comments! (comments)
   "Retrieve the card's comments. Can be nil if not on a card."
   (orgtrello-buffer/org-entry-put! (point) *ORGTRELLO/CARD-COMMENTS* comments))
@@ -325,7 +329,8 @@ Otherwise, work on the all buffer."
   (remove-overlays (if start start (point-min)) (if end end (point-max)) 'invisible 'org-trello-cbx-property))
 
 (defun orgtrello-buffer/install-overlays! ()
-  "Install overlays throughout the all buffers."
+  "Install overlays throughout the all buffers.
+Function to be triggered by `before-save-hook` on org-trello-mode buffer."
   (orgtrello-buffer/remove-overlays!)
   (save-excursion
     (goto-char (point-min))
@@ -333,7 +338,8 @@ Otherwise, work on the all buffer."
       (orgtrello-buffer/install-overlay! (match-beginning 0)))))
 
 (defun orgtrello-buffer/indent-card-descriptions! ()
-  "Indent the card descriptions rigidly starting at 2."
+  "Indent the card descriptions rigidly starting at 2.
+Function to be triggered by `before-save-hook` on org-trello-mode buffer."
   (when (eq major-mode 'org-mode)
     (save-excursion
       (org-map-entries (lambda () "Indent the description from the current card if need be."

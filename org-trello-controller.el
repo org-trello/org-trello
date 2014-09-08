@@ -224,7 +224,6 @@ Along the way, the buffer BUFFER-NAME is written with new informations."
   (lexical-let ((entities             (car entity-structure))
                 (entities-adjacencies entity-structure)
                 (card-computations))
-    ;; compute the card to sync computations
     (maphash (lambda (id entity)
                (when (and (orgtrello-data/entity-card-p entity) (eq :ok (orgtrello-controller/--entity-mandatory-name-ok-p entity)))
                  (-> entity
