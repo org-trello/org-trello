@@ -175,7 +175,8 @@ If NO-CHECK-FLAG is set, no controls are done."
 (defun org-trello/abort-sync ()
   "Control first, then if ok, add a comment to the current card."
   (interactive)
-  (deferred:clear-queue))
+  (deferred:clear-queue)
+  (orgtrello-log/msg *OT/INFO* "Cancel actions done!"))
 
 (defun org-trello/add-card-comments (&optional modifier)
   "Control first, then if ok, add a comment to the current card.
