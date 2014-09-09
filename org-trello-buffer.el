@@ -36,7 +36,7 @@ If the VALUE is nil or empty, remove such PROPERTY."
 
 (defun orgtrello-buffer/get-card-local-checksum! ()
   "Retrieve the card's current local checksum."
-  (orgtrello-buffer/card-entry-get (point) *ORGTRELLO/CARD-LOCAL-CHECKSUM*))
+  (orgtrello-buffer/card-entry-get (point) *ORGTRELLO/LOCAL-CHECKSUM*))
 
 (defun orgtrello-buffer/put-card-comments! (comments)
   "Retrieve the card's comments. Can be nil if not on a card."
@@ -143,7 +143,7 @@ If the VALUE is nil or empty, remove such PROPERTY."
   "Given the current card at point, set the local checksum of the card.
 No checks are done to ensure we are currently on a card."
   (->> (orgtrello-buffer/card-checksum!)
-    (orgtrello-buffer/org-entry-put! (point) *ORGTRELLO/CARD-LOCAL-CHECKSUM*)))
+    (orgtrello-buffer/org-entry-put! (point) *ORGTRELLO/LOCAL-CHECKSUM*)))
 
 (defun orgtrello-buffer/write-entity! (entity-id entity)
   "Write the entity in the buffer to the current position. Move the cursor position."
@@ -574,7 +574,7 @@ Ensure that a checksum-ed card that did not change renders the same checksum."
     (with-temp-buffer
       (apply 'insert-buffer-substring (cons buffer-name card-region))
       (org-mode)
-      (orgtrello-buffer/delete-property-from-entry! *ORGTRELLO/CARD-LOCAL-CHECKSUM*)
+      (orgtrello-buffer/delete-property-from-entry! *ORGTRELLO/LOCAL-CHECKSUM*)
       (->> (orgtrello-entity/compute-card-region!)
         (cons (current-buffer))
         (cons 'sha256)
