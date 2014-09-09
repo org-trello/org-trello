@@ -307,8 +307,11 @@ Move the cursor position."
   "Execute fn-to-execute function for all entities from buffer - fn-to-execute is a function without any parameters."
   (org-map-entries
    (lambda ()
-     (funcall fn-to-execute) ;; execute on heading entry
-     (orgtrello-cbx/map-checkboxes fn-to-execute))))
+     (let ((current-checksum (orgtrello-buffer/card-checksum!))
+           (previous-checksum (orgtrello-buffer/get-card-local-checksum!)))
+       (unless (string= current-checksum previous-checksum)
+         (funcall fn-to-execute)
+         (orgtrello-cbx/map-checkboxes fn-to-execute))))))
 
 (defun orgtrello-buffer/get-usernames-assigned-property! ()
   "Read the org users property from the current entry."
