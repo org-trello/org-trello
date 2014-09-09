@@ -14,9 +14,9 @@
 - [X] Update version
 - [-] Improve sync request policy - [[https://github.com/org-trello/org-trello/issues/58]]
   - [X] 'Sync card to trello' syncs card only if local changes
-  - [ ] 'Sync card from trello' updates the card from trello and the local checksum signature
+  - [X] 'Sync card from trello' updates the card from trello and the local checksum signature
+  - [X] 'Sync buffer from trello' updates the local card checksum
   - [ ] 'Sync buffer to trello' syncs only card with local changes
-  - [ ] 'Sync buffer from trello' updates the local card checksum
 - [ ] Release notes
 * DONE 0.5.9 [100%]
   CLOSED: [2014-09-06 Sat 10:52]

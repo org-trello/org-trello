@@ -134,7 +134,16 @@ If the VALUE is nil or empty, remove such PROPERTY."
   (orgtrello-buffer/write-card-header! card-id card)
   (insert "\n")
   (-when-let (checklists (gethash card-id adjacency))
-    (mapc (lambda (it) (orgtrello-buffer/write-checklist! it entities adjacency)) checklists)))
+    (mapc (lambda (it) (orgtrello-buffer/write-checklist! it entities adjacency)) checklists))
+  (save-excursion
+    (previous-line)
+    (orgtrello-buffer/write-local-checksum-at-point!)))
+
+(defun orgtrello-buffer/write-local-checksum-at-point! ()
+  "Given the current card at point, set the local checksum of the card.
+No checks are done to ensure we are currently on a card."
+  (->> (orgtrello-buffer/card-checksum!)
+    (orgtrello-buffer/org-entry-put! (point) *ORGTRELLO/CARD-LOCAL-CHECKSUM*)))
 
 (defun orgtrello-buffer/write-entity! (entity-id entity)
   "Write the entity in the buffer to the current position. Move the cursor position."
