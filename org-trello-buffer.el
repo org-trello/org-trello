@@ -384,10 +384,12 @@ Function to be triggered by `before-save-hook` on org-trello-mode buffer."
 Deal with org entities and checkbox as well."
   (funcall (if (orgtrello-entity/org-checkbox-p!) 'orgtrello-cbx/org-set-property 'org-set-property) key value))
 
+(defalias 'orgtrello-buffer/card-entry-get 'org-entry-get)
+
 (defun orgtrello-buffer/org-entry-get (point key)
   "Extract the identifier from the POINT at KEY.
 Deal with org entities and checkbox as well."
-  (funcall (if (orgtrello-entity/org-checkbox-p!) 'orgtrello-cbx/org-get-property 'org-entry-get) point key))
+  (funcall (if (orgtrello-entity/org-checkbox-p!) 'orgtrello-cbx/org-get-property 'orgtrello-buffer/card-entry-get) point key))
 
 (defun orgtrello-buffer/--user-ids-assigned-to-current-card ()
   "Compute the user ids assigned to the current card."
