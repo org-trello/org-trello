@@ -292,9 +292,7 @@ Use ENTITIES-ADJACENCIES to provide further information."
 
 (defun orgtrello-proxy/--standard-delete-success-callback (entity-to-del)
   "Return a callback function able to deal with the ENTITY-TO-DEL deletion."
-  (lexical-let ((entry-position    (orgtrello-data/entity-position entity-to-del))
-                (entry-buffer-name (orgtrello-data/entity-buffername entity-to-del))
-                (entry-level       (orgtrello-data/entity-level entity-to-del))
+  (lexical-let ((entry-buffer-name (orgtrello-data/entity-buffername entity-to-del))
                 (marker            (orgtrello-data/entity-id entity-to-del))
                 (level             (orgtrello-data/entity-level entity-to-del)))
     (lambda (response)
@@ -304,7 +302,10 @@ Use ENTITIES-ADJACENCIES to provide further information."
             (-> (orgtrello-buffer/entry-get-full-metadata!)
               orgtrello-data/current
               orgtrello-proxy/delete-region
-              funcall)))))))
+              funcall)
+            (when (< *ORGTRELLO/CARD-LEVEL* level)
+              (previous-line) ;; when on checklist or item, get back one line then update the card's checksum
+              (orgtrello-buffer/write-local-checksum-at-point!))))))))
 
 (defun orgtrello-proxy/--card-delete (card-meta)
   "Deal with the deletion query of a CARD-META."
