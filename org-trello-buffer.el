@@ -363,13 +363,6 @@ Function to be triggered by `before-save-hook` on org-trello-mode buffer."
                              (unless (<= 2 (org-get-indentation));; if need be
                                (indent-rigidly start end *ORGTRELLO-BUFFER/INDENT-DESCRIPTION*)))))))));; now indent with the rightful indentation
 
-;; (defun orgtrello-buffer/compute-card-local-checksums! ()
-;;   "Compute the buffer's cards local checksum.
-;; Function to be triggered by `before-save-hook` on org-trello-mode buffer."
-;;   (save-excursion
-;;     (org-map-entries (lambda () "Set the card's local checksum."
-;;                        (orgtrello-buffer/set-property (point) *ORGTRELLO/CARD-LOCAL-CHECKSUM* (orgtrello-buffer/card-checksum!))))))
-
 (defun orgtrello-buffer/--convert-orgmode-date-to-trello-date (orgmode-date)
   "Convert the 'org-mode' deadline ORGMODE-DATE into a time adapted for trello."
   (if (and orgmode-date (not (string-match-p "T*Z" orgmode-date)))
