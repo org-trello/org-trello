@@ -226,7 +226,7 @@ some old description
   :orgtrello-id: some-card-id
   :orgtrello-users: ardumont,dude
   :orgtrello-card-comments: ardumont: some comment
-  :orgtrello-card-local-checksum: local-checksum
+  :orgtrello-local-checksum: local-checksum
   :END:
   some description
 - [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}
@@ -280,7 +280,7 @@ some old description
   :orgtrello-id: card-id-a
   :orgtrello-users: ardumont,dude
   :orgtrello-card-comments: ardumont: some comment
-  :orgtrello-card-local-checksum: local-checksum-a
+  :orgtrello-local-checksum: local-checksum-a
   :END:
   description A
 * TODO task B
@@ -288,7 +288,7 @@ some old description
   :orgtrello-id: card-id-b
   :orgtrello-users: ardumont,dude
   :orgtrello-card-comments: ardumont: some comment
-  :orgtrello-card-local-checksum: local-checksum-b
+  :orgtrello-local-checksum: local-checksum-b
   :END:
   description B
 "
@@ -662,7 +662,7 @@ DEADLINE: <2014-05-17 Sat>
   :orgtrello-id: some-card-id
   :orgtrello-users: ardumont,dude
   :orgtrello-card-comments: ardumont: some comment
-  :orgtrello-card-local-checksum: local-checksum
+  :orgtrello-local-checksum: local-checksum
   :END:
   some description
 - [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}
@@ -708,7 +708,7 @@ DEADLINE: <2014-05-17 Sat>
   :orgtrello-id: some-card-id
   :orgtrello-users: ardumont,dude
   :orgtrello-card-comments: ardumont: some comment
-  :orgtrello-card-local-checksum: local-checksum
+  :orgtrello-local-checksum: local-checksum
   :END:
   some description
 - [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}
@@ -775,7 +775,7 @@ DEADLINE: <2014-05-17 Sat>
       "123"
     (orgtrello-tests/with-temp-buffer "* card
 :PROPERTIES:
-:orgtrello-card-local-checksum: 123
+:orgtrello-local-checksum: 123
 :END:"
                                       (orgtrello-buffer/get-card-local-checksum!))))
 (expectations
@@ -814,7 +814,7 @@ DEADLINE: <2014-05-17 Sat>
 :orgtrello-id: some-card-id
 :orgtrello-users: ardumont,dude
 :orgtrello-card-comments: ardumont: some comment
-:orgtrello-card-local-checksum: 7e0646598424bc6e3f501044e36e6490c2654327e9c2ba111647b0a12c9eeb0f
+:orgtrello-local-checksum: 7e0646598424bc6e3f501044e36e6490c2654327e9c2ba111647b0a12c9eeb0f
 :END:
   some description
 - [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}
@@ -834,7 +834,7 @@ DEADLINE: <2014-05-17 Sat>
 :orgtrello-id: some-card-id
 :orgtrello-users: ardumont,dude
 :orgtrello-card-comments: ardumont: some comment
-:orgtrello-card-local-checksum: 7e0646598424bc6e3f501044e36e6490c2654327e9c2ba111647b0a12c9eeb0f
+:orgtrello-local-checksum: 7e0646598424bc6e3f501044e36e6490c2654327e9c2ba111647b0a12c9eeb0f
 :END:
   some description
 - [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}
@@ -846,16 +846,15 @@ DEADLINE: <2014-05-17 Sat>
                                       (orgtrello-buffer/card-checksum!)
                                       -5)))
 
-
 (expectations
-  (desc "orgtrello-buffer/write-local-checksum-at-point! - Write local checksum at the current position.")
+  (desc "orgtrello-buffer/write-local-card-checksum-at-point! - Write local checksum at the current position.")
   (expect
       "* TODO some card name
 :PROPERTIES:
 :orgtrello-id: some-card-id
 :orgtrello-users: ardumont,dude
 :orgtrello-card-comments: ardumont: some comment
-:orgtrello-card-local-checksum: 7e0646598424bc6e3f501044e36e6490c2654327e9c2ba111647b0a12c9eeb0f
+:orgtrello-local-checksum: 7e0646598424bc6e3f501044e36e6490c2654327e9c2ba111647b0a12c9eeb0f
 :END:
   some description
 - [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}
@@ -877,18 +876,18 @@ DEADLINE: <2014-05-17 Sat>
 - [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\"}
 
 * another card"
-                                                                  (orgtrello-buffer/write-local-checksum-at-point!)
+                                                                  (orgtrello-buffer/write-local-card-checksum-at-point!)
                                                                   -5)))
 
 (expectations
-  (desc "orgtrello-buffer/write-local-checksum-at-point! - Write local checksum at the current position.")
+  (desc "orgtrello-buffer/write-local-card-checksum-at-point! - Write local checksum at the current position.")
   (expect
       "* TODO some card name
 :PROPERTIES:
 :orgtrello-id: some-card-id
 :orgtrello-users: ardumont,dude
 :orgtrello-card-comments: ardumont: some comment
-:orgtrello-card-local-checksum: 7e0646598424bc6e3f501044e36e6490c2654327e9c2ba111647b0a12c9eeb0f
+:orgtrello-local-checksum: 7e0646598424bc6e3f501044e36e6490c2654327e9c2ba111647b0a12c9eeb0f
 :END:
   some description
 - [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}
@@ -902,7 +901,7 @@ DEADLINE: <2014-05-17 Sat>
 :orgtrello-id: some-card-id
 :orgtrello-users: ardumont,dude
 :orgtrello-card-comments: ardumont: some comment
-:orgtrello-card-local-checksum: blah
+:orgtrello-local-checksum: blah
 :END:
   some description
 - [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}
@@ -911,7 +910,488 @@ DEADLINE: <2014-05-17 Sat>
 - [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\"}
 
 * another card"
-                                                                  (orgtrello-buffer/write-local-checksum-at-point!)
+                                                                  (orgtrello-buffer/write-local-card-checksum-at-point!)
                                                                   -5)))
+
+(expectations
+  (desc "orgtrello-buffer/org-delete-property! - on a checklist")
+  (expect "* TODO some card name
+:PROPERTIES:
+:orgtrello-id: some-card-id
+:END:
+  some description
+- [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}
+  - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\"}
+  - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\"}
+- [-] some other checklist name :PROPERTIES: {}
+"
+    (orgtrello-tests/with-temp-buffer-and-return-buffer-content "* TODO some card name
+:PROPERTIES:
+:orgtrello-id: some-card-id
+:END:
+  some description
+- [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}
+  - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\"}
+  - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\"}
+- [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\"}
+"
+                                                                (orgtrello-buffer/org-delete-property! "orgtrello-id"))))
+
+(expectations
+  (desc "orgtrello-buffer/org-delete-property! - on a checklist - no previous property.")
+  (expect "* TODO some card name
+:PROPERTIES:
+:orgtrello-id: some-card-id
+:END:
+  some description
+- [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}
+  - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\"}
+  - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\"}
+- [-] some other checklist name :PROPERTIES: {}
+"
+    (orgtrello-tests/with-temp-buffer-and-return-buffer-content "* TODO some card name
+:PROPERTIES:
+:orgtrello-id: some-card-id
+:END:
+  some description
+- [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}
+  - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\"}
+  - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\"}
+- [-] some other checklist name :PROPERTIES: {}
+"
+                                                                (orgtrello-buffer/org-delete-property! "orgtrello-id"))))
+
+(expectations
+  (desc "orgtrello-buffer/org-delete-property! - on an item.")
+  (expect "* TODO some card name
+:PROPERTIES:
+:orgtrello-id: some-card-id
+:END:
+  some description
+- [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}
+  - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\"}
+  - [ ] some other item :PROPERTIES: {}
+- [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\"}
+"
+    (orgtrello-tests/with-temp-buffer-and-return-buffer-content "* TODO some card name
+:PROPERTIES:
+:orgtrello-id: some-card-id
+:END:
+  some description
+- [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}
+  - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\"}
+  - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\"}
+- [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\"}
+"
+                                                                (orgtrello-buffer/org-delete-property! "orgtrello-id")
+                                                                -2)))
+
+(expectations
+  (desc "orgtrello-buffer/org-delete-property! - on an item - no previous property.")
+  (expect "* TODO some card name
+:PROPERTIES:
+:orgtrello-id: some-card-id
+:END:
+  some description
+- [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}
+  - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\"}
+  - [ ] some other item :PROPERTIES: {}
+- [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\"}
+"
+    (orgtrello-tests/with-temp-buffer-and-return-buffer-content "* TODO some card name
+:PROPERTIES:
+:orgtrello-id: some-card-id
+:END:
+  some description
+- [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}
+  - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\"}
+  - [ ] some other item :PROPERTIES: {}
+- [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\"}
+"
+                                                                (orgtrello-buffer/org-delete-property! "orgtrello-id")
+                                                                -2)))
+
+(expectations
+  (desc "orgtrello-buffer/org-delete-property! - on a card.")
+  (expect "* TODO some card name
+:PROPERTIES:
+:END:
+  some description
+- [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}
+  - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\"}
+  - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\"}
+- [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\"}
+"
+    (orgtrello-tests/with-temp-buffer-and-return-buffer-content "* TODO some card name
+:PROPERTIES:
+:orgtrello-id: some-card-id
+:END:
+  some description
+- [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}
+  - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\"}
+  - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\"}
+- [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\"}
+"
+                                                                (orgtrello-buffer/org-delete-property! "orgtrello-id")
+                                                                -5)))
+
+(expectations
+  (desc "orgtrello-buffer/org-delete-property! - on a card - no previous property.")
+  (expect "* TODO some card name
+:PROPERTIES:
+:END:
+  some description
+- [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}
+  - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\"}
+  - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\"}
+- [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\"}
+"
+    (orgtrello-tests/with-temp-buffer-and-return-buffer-content "* TODO some card name
+:PROPERTIES:
+:END:
+  some description
+- [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}
+  - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\"}
+  - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\"}
+- [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\"}
+"
+                                                                (orgtrello-buffer/org-delete-property! "orgtrello-id")
+                                                                -5)))
+
+(expectations
+  (desc "orgtrello-buffer/checkbox-checksum! - A checkbox gives a checksum when asked politely.")
+  (expect
+      "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    (orgtrello-tests/with-temp-buffer "* TODO some card name
+:PROPERTIES:
+:orgtrello-id: some-card-id
+:orgtrello-users: ardumont,dude
+:orgtrello-card-comments: ardumont: some comment
+:orgtrello-local-checksum: 7e0646598424bc6e3f501044e36e6490c2654327e9c2ba111647b0a12c9eeb0f
+:END:
+  some description
+- [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}
+  - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\"}
+  - [X] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\"}
+- [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\"}
+"
+                                      (orgtrello-buffer/checkbox-checksum!))))
+
+(expectations
+  (desc "orgtrello-buffer/checkbox-checksum! - A checkbox gives a checksum when asked politely.")
+  (expect
+      "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    (orgtrello-tests/with-temp-buffer "* TODO some card name
+:PROPERTIES:
+:orgtrello-id: some-card-id
+:orgtrello-users: ardumont,dude
+:orgtrello-card-comments: ardumont: some comment
+:orgtrello-local-checksum: 7e0646598424bc6e3f501044e36e6490c2654327e9c2ba111647b0a12c9eeb0f
+:END:
+  some description
+- [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}
+  - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\"}
+  - [X] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\"}
+- [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\", \"orgtrello-local-checksum\":\"7e0646598424bc6e3f501044e36e6490c2654327e9c2ba111647b0a12c9eeb0f\"}
+"
+                                      (orgtrello-buffer/checkbox-checksum!))))
+
+(expectations
+  (desc "orgtrello-buffer/write-local-checksum-at-point! - Write local checksum at the current position.")
+  (expect
+      "* TODO some card name
+:PROPERTIES:
+:orgtrello-id: some-card-id
+:orgtrello-users: ardumont,dude
+:orgtrello-card-comments: ardumont: some comment
+:orgtrello-local-checksum: blah
+:END:
+  some description
+- [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}
+  - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\"}
+  - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\"}
+- [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\", \"orgtrello-local-checksum\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"}
+"
+      (orgtrello-tests/with-temp-buffer-and-return-buffer-content "* TODO some card name
+:PROPERTIES:
+:orgtrello-id: some-card-id
+:orgtrello-users: ardumont,dude
+:orgtrello-card-comments: ardumont: some comment
+:orgtrello-local-checksum: blah
+:END:
+  some description
+- [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}
+  - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\"}
+  - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\"}
+- [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\"}
+"
+                                                                  (orgtrello-buffer/write-local-checksum-at-point!)
+                                                                  -1)))
+
+(expectations
+  (desc "orgtrello-buffer/write-local-checksum-at-point! - The local checksum does not change if no modification.")
+  (expect
+      "* TODO some card name
+:PROPERTIES:
+:orgtrello-id: some-card-id
+:orgtrello-users: ardumont,dude
+:orgtrello-card-comments: ardumont: some comment
+:orgtrello-local-checksum: blah
+:END:
+  some description
+- [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}
+  - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\"}
+  - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\"}
+- [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\", \"orgtrello-local-checksum\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"}
+"
+      (orgtrello-tests/with-temp-buffer-and-return-buffer-content "* TODO some card name
+:PROPERTIES:
+:orgtrello-id: some-card-id
+:orgtrello-users: ardumont,dude
+:orgtrello-card-comments: ardumont: some comment
+:orgtrello-local-checksum: blah
+:END:
+  some description
+- [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}
+  - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\"}
+  - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\"}
+- [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\", \"orgtrello-local-checksum\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"}
+"
+                                                                  (orgtrello-buffer/write-local-checksum-at-point!)
+                                                                  -1)))
+
+(expectations
+  (desc "orgtrello-buffer/write-local-checksum-at-point! - The local checksum does not change if no modification.")
+  (expect
+      "* TODO some card name
+:PROPERTIES:
+:orgtrello-id: some-card-id
+:orgtrello-users: ardumont,dude
+:orgtrello-card-comments: ardumont: some comment
+:orgtrello-local-checksum: blah
+:END:
+  some description
+- [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}
+  - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\"}
+  - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\"}
+- [-] some other checklist names :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\", \"orgtrello-local-checksum\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"}
+"
+      (orgtrello-tests/with-temp-buffer-and-return-buffer-content "* TODO some card name
+:PROPERTIES:
+:orgtrello-id: some-card-id
+:orgtrello-users: ardumont,dude
+:orgtrello-card-comments: ardumont: some comment
+:orgtrello-local-checksum: blah
+:END:
+  some description
+- [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}
+  - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\"}
+  - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\"}
+- [-] some other checklist names :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\"}
+"
+                                                                  (orgtrello-buffer/write-local-checksum-at-point!)
+                                                                  -1)))
+
+(expectations
+  (desc "orgtrello-buffer/write-local-checksum-at-point! - The local checksum does not change if no modification.")
+  (expect
+      nil
+      (orgtrello-tests/with-temp-buffer "* TODO some card name
+:PROPERTIES:
+:orgtrello-id: some-card-id
+:orgtrello-users: ardumont,dude
+:orgtrello-card-comments: ardumont: some comment
+:orgtrello-local-checksum: blah
+:END:
+  some description
+- [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}
+  - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\"}
+  - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\"}
+- [-] some other checklist names :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\"}
+"
+                                                                  (orgtrello-buffer/get-checkbox-local-checksum!)
+                                                                  -1)))
+
+(expectations
+  (desc "orgtrello-buffer/get-checkbox-local-checksum! - Retrieve the local checksum from item.")
+  (expect
+      "foo"
+    (orgtrello-tests/with-temp-buffer "* TODO some card name
+:PROPERTIES:
+:orgtrello-id: some-card-id
+:orgtrello-users: ardumont,dude
+:orgtrello-card-comments: ardumont: some comment
+:orgtrello-local-checksum: blah
+:END:
+  some description
+- [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}
+  - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\", \"orgtrello-local-checksum\":\"foo\"}
+"
+                                      (orgtrello-buffer/get-checkbox-local-checksum!)
+                                      -1)))
+
+(expectations
+  (desc "orgtrello-buffer/get-checkbox-local-checksum! - Retrieve the local checksum from item.")
+  (expect
+      "bar"
+    (orgtrello-tests/with-temp-buffer "* TODO some card name
+:PROPERTIES:
+:orgtrello-id: some-card-id
+:orgtrello-users: ardumont,dude
+:orgtrello-card-comments: ardumont: some comment
+:orgtrello-local-checksum: blah
+:END:
+  some description
+- [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\", \"orgtrello-local-checksum\":\"bar\"}
+  - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\", \"orgtrello-local-checksum\":\"foo\"}
+"
+                                      (orgtrello-buffer/get-checkbox-local-checksum!)
+                                      -2)))
+
+(expectations
+  (desc "orgtrello-buffer/get-checkbox-local-checksum! - Works also on card but it is not intended to!")
+  (expect
+      "foobar"
+    (orgtrello-tests/with-temp-buffer "* TODO some card name
+:PROPERTIES:
+:orgtrello-id: some-card-id
+:orgtrello-users: ardumont,dude
+:orgtrello-card-comments: ardumont: some comment
+:orgtrello-local-checksum: foobar
+:END:
+  some description
+- [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\", \"orgtrello-local-checksum\":\"bar\"}
+  - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\", \"orgtrello-local-checksum\":\"foo\"}
+"
+                                      (orgtrello-buffer/get-checkbox-local-checksum!)
+                                      -3)))
+
+(expectations
+  (desc "orgtrello-buffer/get-checkbox-local-checksum! - Compute the checksum of the item.")
+  (expect
+      "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    (orgtrello-tests/with-temp-buffer "* TODO some card name
+:PROPERTIES:
+:orgtrello-id: some-card-id
+:orgtrello-users: ardumont,dude
+:orgtrello-card-comments: ardumont: some comment
+:orgtrello-local-checksum: foobar
+:END:
+  some description
+- [-] some checklist name
+  - [ ] some other item"
+                                      (orgtrello-buffer/compute-checksum!)
+                                      0)))
+
+(expectations
+  (desc "orgtrello-buffer/get-checkbox-local-checksum! - Compute the checksum of the checklist.")
+  (expect
+      "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    (orgtrello-tests/with-temp-buffer "* TODO some card name
+:PROPERTIES:
+:orgtrello-id: some-card-id
+:orgtrello-users: ardumont,dude
+:orgtrello-card-comments: ardumont: some comment
+:orgtrello-local-checksum: foobar
+:END:
+  some description
+- [-] some checklist name
+  - [ ] some other item"
+                                      (orgtrello-buffer/compute-checksum!)
+                                      -1)))
+
+
+(expectations
+  (desc "orgtrello-buffer/get-checkbox-local-checksum! - Compute the checksum of the item.")
+  (expect
+      "9b21ff3c031d48a6acedca877a9dcebfea1b34a56123ecfdc86f88872fa229e8"
+    (orgtrello-tests/with-temp-buffer "* TODO some card name
+:PROPERTIES:
+:orgtrello-id: some-card-id
+:orgtrello-users: ardumont,dude
+:orgtrello-card-comments: ardumont: some comment
+:orgtrello-local-checksum: foobar
+:END:
+  some description
+- [-] some checklist name
+  - [ ] some other item"
+                                      (orgtrello-buffer/compute-checksum!)
+                                      -5)))
+
+
+(expectations
+  (desc "orgtrello-buffer/get-local-checksum! - The local checksum does not change if no modification.")
+  (expect
+      nil
+    (orgtrello-tests/with-temp-buffer "* TODO some card name
+:PROPERTIES:
+:orgtrello-id: some-card-id
+:orgtrello-users: ardumont,dude
+:orgtrello-card-comments: ardumont: some comment
+:orgtrello-local-checksum: blah
+:END:
+  some description
+- [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}
+  - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\"}
+  - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\"}
+- [-] some other checklist names :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\"}
+"
+                                      (orgtrello-buffer/get-local-checksum!)
+                                      -1)))
+
+(expectations
+  (desc "orgtrello-buffer/get-local-checksum! - Retrieve the local checksum from item.")
+  (expect
+      "foo"
+    (orgtrello-tests/with-temp-buffer "* TODO some card name
+:PROPERTIES:
+:orgtrello-id: some-card-id
+:orgtrello-users: ardumont,dude
+:orgtrello-card-comments: ardumont: some comment
+:orgtrello-local-checksum: blah
+:END:
+  some description
+- [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}
+  - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\", \"orgtrello-local-checksum\":\"foo\"}
+"
+                                      (orgtrello-buffer/get-local-checksum!)
+                                      -1)))
+
+(expectations
+  (desc "orgtrello-buffer/get-local-checksum! - Retrieve the local checksum from item.")
+  (expect
+      "bar"
+    (orgtrello-tests/with-temp-buffer "* TODO some card name
+:PROPERTIES:
+:orgtrello-id: some-card-id
+:orgtrello-users: ardumont,dude
+:orgtrello-card-comments: ardumont: some comment
+:orgtrello-local-checksum: blah
+:END:
+  some description
+- [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\", \"orgtrello-local-checksum\":\"bar\"}
+  - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\", \"orgtrello-local-checksum\":\"foo\"}
+"
+                                      (orgtrello-buffer/get-local-checksum!)
+                                      -2)))
+
+(expectations
+  (desc "orgtrello-buffer/get-local-checksum! - Works also on card but it is not intended to!")
+  (expect
+      "foobar"
+    (orgtrello-tests/with-temp-buffer "* TODO some card name
+:PROPERTIES:
+:orgtrello-id: some-card-id
+:orgtrello-users: ardumont,dude
+:orgtrello-card-comments: ardumont: some comment
+:orgtrello-local-checksum: foobar
+:END:
+  some description
+- [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\", \"orgtrello-local-checksum\":\"bar\"}
+  - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\", \"orgtrello-local-checksum\":\"foo\"}
+"
+                                      (orgtrello-buffer/get-local-checksum!)
+                                      -3)))
+
 (provide 'org-trello-buffer-tests)
 ;;; org-trello-buffer-tests.el ends here

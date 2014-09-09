@@ -13,6 +13,10 @@
 
 (org-trello/require-cl)
 
+(defun orgtrello-buffer/org-delete-property! (property)
+  "Delete the PROPERTY at point."
+  (funcall (if (orgtrello-entity/org-checkbox-p!) 'orgtrello-cbx/org-delete-property 'org-delete-property) property))
+
 (defun orgtrello-buffer/org-entry-put! (point property value)
   "Put at POINT the PROPERTY with VALUE.
 If the VALUE is nil or empty, remove such PROPERTY."
@@ -34,9 +38,17 @@ If the VALUE is nil or empty, remove such PROPERTY."
   "Retrieve the card's comments. Can be nil if not on a card."
   (orgtrello-buffer/org-entry-get (point) *ORGTRELLO/CARD-COMMENTS*))
 
+(defun orgtrello-buffer/get-local-checksum! ()
+  "Retrieve local checksum."
+  (funcall (if (orgtrello-entity/org-checkbox-p!) 'orgtrello-buffer/get-checkbox-local-checksum! 'orgtrello-buffer/get-card-local-checksum!)))
+
 (defun orgtrello-buffer/get-card-local-checksum! ()
   "Retrieve the card's current local checksum."
   (orgtrello-buffer/card-entry-get (point) *ORGTRELLO/LOCAL-CHECKSUM*))
+
+(defun orgtrello-buffer/get-checkbox-local-checksum! ()
+  "Retrieve the checkbox's current local checksum."
+  (orgtrello-buffer/org-entry-get (point) *ORGTRELLO/LOCAL-CHECKSUM*))
 
 (defun orgtrello-buffer/put-card-comments! (comments)
   "Retrieve the card's comments. Can be nil if not on a card."
@@ -137,13 +149,19 @@ If the VALUE is nil or empty, remove such PROPERTY."
     (mapc (lambda (it) (orgtrello-buffer/write-checklist! it entities adjacency)) checklists))
   (save-excursion
     (previous-line)
-    (orgtrello-buffer/write-local-checksum-at-point!)))
+    (orgtrello-buffer/write-local-card-checksum-at-point!)))
 
-(defun orgtrello-buffer/write-local-checksum-at-point! ()
+(defun orgtrello-buffer/write-local-card-checksum-at-point! ()
   "Given the current card at point, set the local checksum of the card.
 No checks are done to ensure we are currently on a card."
   (->> (orgtrello-buffer/card-checksum!)
     (orgtrello-buffer/org-entry-put! (point) *ORGTRELLO/LOCAL-CHECKSUM*)))
+
+(defun orgtrello-buffer/write-local-checksum-at-point! ()
+  "Given the current checkbox at point, set the local checksum of the checkbox.
+No checks are done to ensure we are currently on a checkbox."
+  (->> (orgtrello-buffer/checkbox-checksum!)
+    (orgtrello-buffer/set-property *ORGTRELLO/LOCAL-CHECKSUM*)))
 
 (defun orgtrello-buffer/write-entity! (entity-id entity)
   "Write the entity in the buffer to the current position. Move the cursor position."
@@ -267,16 +285,19 @@ If REGION-START and REGION-END are provided, this will work on such defined regi
           (orgtrello-buffer/org-map-entities-without-params!
            (lambda ()
              (org-show-subtree) ;; unfold every entries, otherwise https://github.com/org-trello/org-trello/issues/53
-             (let* ((full-meta (orgtrello-buffer/entry-get-full-metadata!))
-                    (entity    (orgtrello-data/current full-meta)))
-               (unless (-> entity orgtrello-data/entity-id orgtrello-data/id-p) ;; if no id, we set one
-                 (let ((marker (orgtrello-buffer/--compute-marker-from-entry entity)))
-                   (orgtrello-buffer/--set-marker! marker)        ;; set the marker
-                   (orgtrello-data/put-entity-id marker entity)   ;; update the entity with its id/marker
-                   (orgtrello-data/put-current entity full-meta)));; update the full-meta data with the new entity
-               (--> entity
-                 (orgtrello-buffer/--dispatch-create-entities-map-with-adjacency it)
-                 (funcall it full-meta entities adjacency)))))
+             (let ((current-checksum  (orgtrello-buffer/compute-checksum!))
+                   (previous-checksum (orgtrello-buffer/get-local-checksum!)))
+               (unless (string= current-checksum previous-checksum)
+                 (let* ((full-meta (orgtrello-buffer/entry-get-full-metadata!))
+                        (entity    (orgtrello-data/current full-meta)))
+                   (unless (-> entity orgtrello-data/entity-id orgtrello-data/id-p) ;; if no id, we set one
+                     (let ((marker (orgtrello-buffer/--compute-marker-from-entry entity)))
+                       (orgtrello-buffer/--set-marker! marker)        ;; set the marker
+                       (orgtrello-data/put-entity-id marker entity)   ;; update the entity with its id/marker
+                       (orgtrello-data/put-current entity full-meta)));; update the full-meta data with the new entity
+                   (--> entity
+                     (orgtrello-buffer/--dispatch-create-entities-map-with-adjacency it)
+                     (funcall it full-meta entities adjacency)))))))
           (list entities adjacency))))))
 
 (defun orgtrello-buffer/--put-entities (current-meta entities)
@@ -290,7 +311,7 @@ If REGION-START and REGION-END are provided, this will work on such defined regi
 Move the cursor position."
   (if orgcheckbox-p
       (save-excursion
-        (forward-line -1) ;; need to get back one line backward for the checkboxes as their properties is at the same level (otherwise, for headings we do not care)
+        (previous-line) ;; need to get back one line backward for the checkboxes as their properties is at the same level (otherwise, for headings we do not care)
         (orgtrello-buffer/set-property *ORGTRELLO/ID* id))
     (orgtrello-buffer/set-property *ORGTRELLO/ID* id)))
 
@@ -321,9 +342,7 @@ Move the cursor position."
   "Update users org property."
   (orgtrello-buffer/org-entry-put! nil *ORGTRELLO/USERS-ENTRY* csv-users))
 
-(defun orgtrello-buffer/delete-property-from-entry! (property)
-  "Delete a property from the org buffer."
-  (org-delete-property property))
+(defalias 'orgtrello-buffer/delete-property-from-entry! 'org-delete-property)
 
 (defun orgtrello-buffer/delete-property! (property)
   "Given a property name (checkbox), if found, delete it from the buffer."
@@ -566,19 +585,32 @@ ENTITIES and ENTITIES-ADJ provide information on card's structure."
     (orgtrello-buffer/clean-region! region-start region-end)
     (orgtrello-buffer/write-card! card-id entity entities entities-adj)))
 
-(defun orgtrello-buffer/card-checksum! ()
-  "Compute the card's checksum at point.
-Ensure that a checksum-ed card that did not change renders the same checksum."
-  (let ((card-region (orgtrello-entity/compute-card-region!))
+(defun orgtrello-buffer/compute-generic-checksum! (compute-region-fn)
+  "Compute the entity's checksum.
+COMPUTE-REGION-FN is the region computation function."
+  (let ((region (funcall compute-region-fn))
         (buffer-name (current-buffer)))
     (with-temp-buffer
-      (apply 'insert-buffer-substring (cons buffer-name card-region))
+      (apply 'insert-buffer-substring (cons buffer-name region))
       (org-mode)
-      (orgtrello-buffer/delete-property-from-entry! *ORGTRELLO/LOCAL-CHECKSUM*)
-      (->> (orgtrello-entity/compute-card-region!)
+      (orgtrello-buffer/org-delete-property! *ORGTRELLO/LOCAL-CHECKSUM*)
+      (->> (funcall compute-region-fn)
         (cons (current-buffer))
         (cons 'sha256)
         (apply 'secure-hash)))))
+
+(defun orgtrello-buffer/compute-checksum! ()
+  "Compute the checksum of the current entity at point."
+  (funcall (if (orgtrello-entity/org-checkbox-p!) 'orgtrello-buffer/checkbox-checksum! 'orgtrello-buffer/card-checksum!)))
+
+(defun orgtrello-buffer/card-checksum! ()
+  "Compute the card's checksum at point.
+Ensure that a checksum-ed card that did not change renders the same checksum."
+  (orgtrello-buffer/compute-generic-checksum! 'orgtrello-entity/compute-card-region!))
+
+(defun orgtrello-buffer/checkbox-checksum! ()
+  "Compute the checkbox's checksum."
+  (orgtrello-buffer/compute-generic-checksum! (lambda () `(,(point-at-bol) ,(orgtrello-buffer/end-of-line-point!)))))
 
 (orgtrello-log/msg *OT/DEBUG* "orgtrello-buffer loaded!")
 

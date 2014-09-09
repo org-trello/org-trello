@@ -103,7 +103,9 @@ ENTITIES-ADJACENCIES provides needed information about entities and adjacency."
                      (updated-entity-synced (car updates))
                      (updated-entities-adj  (cdr updates)))
                 (orgtrello-proxy/--compute-sync-next-level updated-entity-synced updated-entities-adj)
-                (orgtrello-buffer/write-local-checksum-at-point!))
+                (when (or (orgtrello-data/entity-checklist-p entity-not-yet-synced) (orgtrello-data/entity-item-p entity-not-yet-synced))
+                  (orgtrello-buffer/write-local-checksum-at-point!))
+                (orgtrello-buffer/write-local-card-checksum-at-point!))
               (orgtrello-log/msg *OT/INFO* str-msg))))))))
 
 (defun orgtrello-proxy/--cleanup-meta (entity)
@@ -305,7 +307,7 @@ Use ENTITIES-ADJACENCIES to provide further information."
               funcall)
             (when (< *ORGTRELLO/CARD-LEVEL* level)
               (previous-line) ;; when on checklist or item, get back one line then update the card's checksum
-              (orgtrello-buffer/write-local-checksum-at-point!))))))))
+              (orgtrello-buffer/write-local-card-checksum-at-point!))))))))
 
 (defun orgtrello-proxy/--card-delete (card-meta)
   "Deal with the deletion query of a CARD-META."

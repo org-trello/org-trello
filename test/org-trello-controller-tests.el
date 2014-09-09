@@ -342,7 +342,7 @@
   :orgtrello-id: some-card-id
   :orgtrello-users: dude,ardumont
   :orgtrello-card-comments: ardumont: some comment###ardumont: some second comment
-  :orgtrello-card-local-checksum: checksum-456
+  :orgtrello-local-checksum: checksum-456
   :END:
   updated description
 - [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}
@@ -429,7 +429,7 @@ some description
   :orgtrello-id: some-card-id
   :orgtrello-users: dude,ardumont
   :orgtrello-card-comments: ardumont: some comment###ardumont: some second comment
-  :orgtrello-card-local-checksum: checksum
+  :orgtrello-local-checksum: checksum
   :END:
   updated description
 - [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}
@@ -439,7 +439,7 @@ some description
 * TODO other card name
   :PROPERTIES:
   :orgtrello-id: some-new-marker
-  :orgtrello-card-local-checksum: checksum
+  :orgtrello-local-checksum: checksum
   :END:
 
 "
@@ -521,7 +521,7 @@ some description
   :orgtrello-id: some-card-id
   :orgtrello-users: dude,ardumont
   :orgtrello-card-comments: ardumont: some comment###ardumont: some second comment
-  :orgtrello-card-local-checksum: checksum-123
+  :orgtrello-local-checksum: checksum-123
   :END:
   updated description
 - [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}
@@ -533,13 +533,13 @@ some description
   :orgtrello-id: some-card-id2
   :orgtrello-users: dude
   :orgtrello-card-comments: ardumont: great
-  :orgtrello-card-local-checksum: checksum-123
+  :orgtrello-local-checksum: checksum-123
   :END:
   this is a description
 * TODO other card name
   :PROPERTIES:
   :orgtrello-id: some-new-marker
-  :orgtrello-card-local-checksum: checksum-123
+  :orgtrello-local-checksum: checksum-123
   :END:
 
 "
@@ -628,7 +628,7 @@ some description
   :orgtrello-id: some-card-id
   :orgtrello-users: dude,ardumont
   :orgtrello-card-comments: ardumont: some comment###ardumont: some second comment
-  :orgtrello-card-local-checksum: checksum-123
+  :orgtrello-local-checksum: checksum-123
   :END:
   updated description
 - [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}
@@ -640,7 +640,7 @@ some description
   :orgtrello-id: some-card-id2
   :orgtrello-users: dude
   :orgtrello-card-comments: ardumont: great
-  :orgtrello-card-local-checksum: checksum-123
+  :orgtrello-local-checksum: checksum-123
   :END:
   this is a description
 "
