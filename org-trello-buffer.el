@@ -36,7 +36,7 @@ If the VALUE is nil or empty, remove such PROPERTY."
 
 (defun orgtrello-buffer/get-card-local-checksum! ()
   "Retrieve the card's current local checksum."
-  (orgtrello-buffer/org-entry-get (point) *ORGTRELLO/CARD-LOCAL-CHECKSUM*))
+  (orgtrello-buffer/card-entry-get (point) *ORGTRELLO/CARD-LOCAL-CHECKSUM*))
 
 (defun orgtrello-buffer/put-card-comments! (comments)
   "Retrieve the card's comments. Can be nil if not on a card."

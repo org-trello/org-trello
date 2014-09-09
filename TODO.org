@@ -12,9 +12,9 @@
 - [X] Refactor - Improve merge computations
 - [X] Refactor - Remove some dead code
 - [X] Update version
-- [ ] Improve sync request policy - [[https://github.com/org-trello/org-trello/issues/58]]
-  - [ ] 'Sync card to trello' only if local changes
-  - [ ] 'Sync card from trello' updates the local checksum signature
+- [-] Improve sync request policy - [[https://github.com/org-trello/org-trello/issues/58]]
+  - [X] 'Sync card to trello' syncs card only if local changes
+  - [ ] 'Sync card from trello' updates the card from trello and the local checksum signature
   - [ ] 'Sync buffer to trello' syncs only card with local changes
   - [ ] 'Sync buffer from trello' updates the local card checksum
 - [ ] Release notes

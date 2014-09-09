@@ -145,11 +145,13 @@ BUFFER-NAME to specify the buffer with which we currently work."
   (orgtrello-log/msg *OT/INFO* "Synchronizing card on board '%s'..." (orgtrello-buffer/board-name!))
   (let ((current-checksum (orgtrello-buffer/card-checksum!))
         (previous-checksum (orgtrello-buffer/get-card-local-checksum!)))
-    (unless (string= current-checksum previous-checksum)
-      (org-show-subtree) ;; we need to show the subtree, otherwise https://github.com/org-trello/org-trello/issues/53
-      (-> buffer-name
-        orgtrello-buffer/build-org-card-structure!
-        orgtrello-controller/execute-sync-entity-structure!))))
+    (if (string= current-checksum previous-checksum)
+        (orgtrello-log/msg *OT/INFO* "Card already synchronized, nothing to do!")
+      (progn
+        (org-show-subtree) ;; we need to show the subtree, otherwise https://github.com/org-trello/org-trello/issues/53
+        (-> buffer-name
+          orgtrello-buffer/build-org-card-structure!
+          orgtrello-controller/execute-sync-entity-structure!)))))
 
 (defun orgtrello-controller/do-sync-buffer-to-trello! ()
   "Full org-mode file synchronisation."
