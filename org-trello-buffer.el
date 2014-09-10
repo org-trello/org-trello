@@ -312,8 +312,12 @@ Move the cursor position."
   (if orgcheckbox-p
       (save-excursion
         (previous-line) ;; need to get back one line backward for the checkboxes as their properties is at the same level (otherwise, for headings we do not care)
-        (orgtrello-buffer/set-property *ORGTRELLO/ID* id))
-    (orgtrello-buffer/set-property *ORGTRELLO/ID* id)))
+        (orgtrello-buffer/set-property *ORGTRELLO/ID* id)
+        (orgtrello-buffer/write-local-checksum-at-point!))
+    (progn
+      (orgtrello-buffer/set-property *ORGTRELLO/ID* id)
+      ;;(orgtrello-buffer/write-local-card-checksum-at-point!) ;; FIXME this is to be done here for us to be symmetric
+      )))
 
 (defun orgtrello-buffer/--set-marker! (marker)
   "Set a MARKER to get back to later."
@@ -610,7 +614,7 @@ Ensure that a checksum-ed card that did not change renders the same checksum."
 
 (defun orgtrello-buffer/checkbox-checksum! ()
   "Compute the checkbox's checksum."
-  (orgtrello-buffer/compute-generic-checksum! (lambda () `(,(point-at-bol) ,(orgtrello-buffer/end-of-line-point!)))))
+  (orgtrello-buffer/compute-generic-checksum! (lambda () `(,(point-at-bol) ,(point-at-eol)))))
 
 (orgtrello-log/msg *OT/DEBUG* "orgtrello-buffer loaded!")
 
