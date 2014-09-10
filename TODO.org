@@ -7,19 +7,19 @@
 - [ ] Another Disposition about org's buffer - [[https://github.com/org-trello/org-trello/issues/33][#33]]
 - [ ] See to use primitives org-next-item/org-end-of-item-list/org-list-use-circular-motion to move in checkbox
 - [ ] One command to sync them all - https://github.com/org-trello/org-trello/issues/59
-* IN-PROGRESS 0.6.0 [66%]
+* IN-PROGRESS 0.6.0 [83%]
 - [X] Refactor - Unify data structure between trello card and org-trello card
 - [X] Refactor - Improve merge computations
 - [X] Refactor - Remove some dead code
 - [X] Update version
-- [-] Improve sync request policy - [[https://github.com/org-trello/org-trello/issues/58]] [85%]
+- [X] Improve sync request policy - [[https://github.com/org-trello/org-trello/issues/58]] [100%]
   - [X] 'Sync card to trello' syncs card only if local changes
   - [X] 'Sync card from trello' updates the card from trello and the local checksum signature
   - [X] 'Sync buffer from trello' updates the local card checksum
   - [X] 'Sync buffer to trello' syncs only card with local changes
   - [X] 'Delete entity' updates the checksum
   - [X] Extend the checksum system to the checkbox entities (checklist/item) - sync to trello
-  - [ ] Extend the checksum system to the checkbox entities (checklist/item) - sync from trello
+  - [X] Extend the checksum system to the checkbox entities (checklist/item) - sync from trello
 - [ ] Release notes
 * DONE 0.5.9 [100%]
   CLOSED: [2014-09-06 Sat 10:52]
