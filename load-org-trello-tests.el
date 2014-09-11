@@ -42,16 +42,29 @@
                                     "test/org-trello-query-tests.el"
                                     "test/org-trello-utils-tests.el"))
 
-(defun org-trello/test-load-namespaces! ()
+(defun orgtrello-test/load-namespaces! ()
   "Load the org-trello namespaces."
   (interactive)
   (mapc #'load-file *ORGTRELLO-TEST-NAMESPACES*)
   (require 'org-trello)
   (orgtrello-log/msg *OT/INFO* "Tests loaded!"))
 
-(org-trello/test-load-namespaces!)
+(defun orgtrello-tests/find-next-error! ()
+  "Find the next test error"
+  (interactive)
+  (with-current-buffer "*compilation*"
+    (goto-char (point-min))
+    (if (search-forward "(ert-test-failed" nil 'noerror)
+        (progn
+          (switch-to-buffer "*compilation*" nil 'same-window)
+          (search-forward "(ert-test-failed" nil 'noerror)
+          (forward-line 10))
+      (message "All is good!"))))
 
-(define-key emacs-lisp-mode-map (kbd "C-c o d") 'org-trello/test-load-namespaces!)
+(orgtrello-test/load-namespaces!)
+
+(define-key emacs-lisp-mode-map (kbd "C-c o d") 'orgtrello-test/load-namespaces!)
+(define-key emacs-lisp-mode-map (kbd "C-c o D") 'orgtrello-tests/find-next-error!)
 
 (require 'org-trello-action-tests)
 (require 'org-trello-api-tests)
