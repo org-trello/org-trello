@@ -156,10 +156,25 @@ At the end of it all, the cursor is moved after the new written text."
     (mapc (lambda (checklist-id) (orgtrello-buffer/write-checklist! checklist-id entities adjacency)) checklist-ids))
   (orgtrello-buffer/update-properties-at-pt! card-id nil))
 
+(defun orgtrello-buffer/checklist-beginning-pt! ()
+  "Compute the current checklist's beginning point."
+  (cond ((orgtrello-entity/checklist-at-pt!) (point-at-bol))
+        ((orgtrello-entity/item-at-pt!) (save-excursion
+                                          (org-beginning-of-item-list)
+                                          (forward-line -1)
+                                          (beginning-of-line)
+                                          (point)))))
+
 (defun orgtrello-buffer/write-local-card-checksum-at-point! ()
   "Given the current card at point, set the local checksum of the card.
 No checks are done to ensure we are currently on a card."
   (->> (orgtrello-buffer/card-checksum!)
+    (orgtrello-buffer/org-entry-put! (point) *ORGTRELLO/LOCAL-CHECKSUM*)))
+
+(defun orgtrello-buffer/write-local-checklist-checksum-at-point! ()
+  "Given the current card at point, set the local checksum of the card.
+No checks are done to ensure we are currently on a card."
+  (->> (orgtrello-buffer/checklist-checksum!)
     (orgtrello-buffer/org-entry-put! (point) *ORGTRELLO/LOCAL-CHECKSUM*)))
 
 (defun orgtrello-buffer/write-local-checksum-at-point! ()
@@ -598,6 +613,7 @@ COMPUTE-REGION-FN is the region computation function."
       (apply 'insert-buffer-substring (cons buffer-name region))
       (org-mode)
       (orgtrello-buffer/delete-property! *ORGTRELLO/LOCAL-CHECKSUM*)
+;;      (message "zone: '%s'" (buffer-substring-no-properties (point-min) (point-max)))
       (->> (list (point-min) (point-max))
         (cons (current-buffer))
         (cons 'sha256)

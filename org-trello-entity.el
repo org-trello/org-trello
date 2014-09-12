@@ -29,10 +29,12 @@ Does not preserve position."
 
 (defun orgtrello-entity/level! ()
   "Compute the levels from the current position (which is `bol`)"
-  (cond ((orgtrello-entity/org-card-p!)                      *ORGTRELLO/CARD-LEVEL*)
-        ((orgtrello-entity/org-checkbox-at-current-point-p!) *ORGTRELLO/CHECKLIST-LEVEL*)
-        ((orgtrello-entity/org-item-p!)                      *ORGTRELLO/ITEM-LEVEL*)
-        (t                                                   -1)))
+  (save-excursion
+    (beginning-of-line)
+    (cond ((orgtrello-entity/org-card-p!)                      *ORGTRELLO/CARD-LEVEL*)
+          ((orgtrello-entity/org-checkbox-at-current-point-p!) *ORGTRELLO/CHECKLIST-LEVEL*)
+          ((orgtrello-entity/org-item-p!)                      *ORGTRELLO/ITEM-LEVEL*)
+          (t                                                   -1))))
 
 (defun orgtrello-entity/goto-next-checkbox ()
   "Go to the next checkbox.
@@ -105,7 +107,7 @@ Otherwise, return the current position."
 
 (defun orgtrello-entity/compute-checklist-region! ()
   "Compute the checklist's region (including the items) couple '(start end)."
-  `(,(point-at-bol) ,(orgtrello-entity/next-checklist-point!)))
+  `(,(orgtrello-buffer/checklist-beginning-pt!) ,(orgtrello-entity/next-checklist-point!)))
 
 (defun orgtrello-entity/compute-item-region! ()
   "Compute the item region couple '(start end)."

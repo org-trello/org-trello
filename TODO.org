@@ -20,6 +20,7 @@
   - [X] 'Delete entity' updates the checksum
   - [X] Extend the checksum system to the checkbox entities (checklist/item) - sync to trello
   - [X] Extend the checksum system to the checkbox entities (checklist/item) - sync from trello
+  - [X] Fix what does not work - Need to find a way to compute the checksum when the `sync checkboxes` is done.
 - [ ] Release notes
 * DONE 0.5.9 [100%]
   CLOSED: [2014-09-06 Sat 10:52]

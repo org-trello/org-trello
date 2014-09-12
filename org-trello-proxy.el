@@ -103,6 +103,7 @@ ENTITIES-ADJACENCIES provides needed information about entities and adjacency."
                      (updated-entity-synced (car updates))
                      (updated-entities-adj  (cdr updates)))
                 (orgtrello-proxy/--compute-sync-next-level updated-entity-synced updated-entities-adj)
+                (ignore-errors (orgtrello-buffer/write-local-checklist-checksum-at-point!))
                 (orgtrello-buffer/write-local-card-checksum-at-point!))
               (orgtrello-log/msg *OT/INFO* str-msg))))))))
 

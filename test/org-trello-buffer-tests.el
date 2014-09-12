@@ -1647,5 +1647,43 @@ DEADLINE: <2014-05-17 Sat>
                                       (orgtrello-buffer/item-checksum!)
                                       -1)))
 
+(expectations
+  (desc "orgtrello-buffer/checklist-beginning-pt! - Determine the beginning of the checklist.")
+  (expect
+      262
+    (orgtrello-tests/with-temp-buffer "* TODO some card name
+:PROPERTIES:
+:orgtrello-id: some-card-id
+:orgtrello-users: ardumont,dude
+:orgtrello-card-comments: ardumont: some comment
+:orgtrello-local-checksum: a058272445d320995bd4c677dd35c0924ff65ce7640cbe7cae21d6ea39ff32c6
+:END:
+  some description
+- [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}
+  - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\", \"orgtrello-local-checksum\":\"d5503e92e8880ddb839c42e31e8ead17a70f09d39f069fbfd9956424984047fc\"}
+"
+                                      (orgtrello-buffer/checklist-beginning-pt!)
+                                      -1)))
+
+(expectations
+  (desc "orgtrello-buffer/checklist-beginning-pt! - Determine the beginning of the checklist.")
+  (expect
+      262
+    (orgtrello-tests/with-temp-buffer "* TODO some card name
+:PROPERTIES:
+:orgtrello-id: some-card-id
+:orgtrello-users: ardumont,dude
+:orgtrello-card-comments: ardumont: some comment
+:orgtrello-local-checksum: a058272445d320995bd4c677dd35c0924ff65ce7640cbe7cae21d6ea39ff32c6
+:END:
+  some description
+- [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}
+  - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\", \"orgtrello-local-checksum\":\"d5503e92e8880ddb839c42e31e8ead17a70f09d39f069fbfd9956424984047fc\"}
+"
+                                      (orgtrello-buffer/checklist-beginning-pt!)
+                                      -2)))
+
+
+
 (provide 'org-trello-buffer-tests)
 ;;; org-trello-buffer-tests.el ends here
