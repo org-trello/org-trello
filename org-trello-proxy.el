@@ -304,7 +304,7 @@ Use ENTITIES-ADJACENCIES to provide further information."
               orgtrello-proxy/delete-region
               funcall)
             (when (< *ORGTRELLO/CARD-LEVEL* level)
-              (previous-line) ;; when on checklist or item, get back one line then update the card's checksum
+              (forward-line -1) ;; when on checklist or item, get back one line then update the card's checksum
               (orgtrello-buffer/write-local-card-checksum-at-point!))))))))
 
 (defun orgtrello-proxy/--card-delete (card-meta)

@@ -96,7 +96,7 @@ If the VALUE is nil or empty, remove such PROPERTY."
     (gethash item-id)
     (orgtrello-buffer/write-entity! item-id))
   (save-excursion ;; item writing does insert a new line
-    (previous-line)
+    (forward-line -1)
     (orgtrello-buffer/update-properties-at-pt! item-id 'checkbox-flag)))
 
 (defalias 'orgtrello-buffer/write-checklist-header! 'orgtrello-buffer/write-entity!)
@@ -109,7 +109,7 @@ At the end of it all, the cursor is moved after the new written text."
          (nb-lines-to-get-back (1+ (if item-ids (length item-ids) 0)))) ;; +1 because of the injected line by headers
     (mapc (lambda (item-id) (orgtrello-buffer/write-item! item-id entities)) item-ids) ;; cursor will move with as much item as it exists
     (save-excursion ;; one item by line so we need to get back to as much item as it exists
-      (previous-line nb-lines-to-get-back)
+      (forward-line (* -1 nb-lines-to-get-back))
       (orgtrello-buffer/update-properties-at-pt! checklist-id 'checkbox-flag))))
 
 (defun orgtrello-buffer/update-property-member-ids! (entity)
