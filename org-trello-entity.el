@@ -9,9 +9,7 @@
   "Is there a checkbox at current point?"
   (org-at-item-bullet-p))
 
-(defun orgtrello-entity/org-card-p! ()
-  "Is there a checkbox at point?"
-  (org-at-heading-p))
+(defalias 'orgtrello-entity/org-card-p! 'org-at-heading-p)
 
 (defun orgtrello-entity/org-item-p! ()
   "Given the current position, determine if we are on an item."
@@ -103,7 +101,7 @@ Otherwise, return the current position."
   "Compute the next checklist position from the current position."
   (save-excursion
     (org-end-of-item)
-    (point)))
+    (1- (point))))
 
 (defun orgtrello-entity/compute-checklist-region! ()
   "Compute the checklist's region (including the items) couple '(start end)."
@@ -111,7 +109,7 @@ Otherwise, return the current position."
 
 (defun orgtrello-entity/compute-item-region! ()
   "Compute the item region couple '(start end)."
-  `(,(point-at-bol) ,(1+ (point-at-eol))))
+  `(,(point-at-bol) ,(point-at-eol)))
 
 (defun orgtrello-entity/compute-card-region! ()
   "Compute the card region zone couple '(start end)."

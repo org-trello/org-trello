@@ -339,16 +339,16 @@
 :END:
 * TODO updated card title                                               :orange:red:green:
   :PROPERTIES:
-  :orgtrello-id: some-card-id
   :orgtrello-users: dude,ardumont
   :orgtrello-card-comments: ardumont: some comment###ardumont: some second comment
-  :orgtrello-local-checksum: local-checkbox-checksum-678
+  :orgtrello-id: some-card-id
+  :orgtrello-local-checksum: local-card-checksum-678
   :END:
   updated description
-- [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\", \"orgtrello-local-checksum\":\"1bc8e829585b7857f3ebb1148a206df326f361bbec201cf77cebf3927112c954\"}
-  - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\", \"orgtrello-local-checksum\":\"852fa674016c5f13e302fb1fca513335632b3a7776da9cf87a89e88d58f23c87\"}
-  - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\", \"orgtrello-local-checksum\":\"b1f7d4b699796d9930747d53e55a9125f5c15731d96eeae0482878695895873e\"}
-- [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\", \"orgtrello-local-checksum\":\"edc031d664252bcbb12c2a123ec63feacac08cb8937e9680866b42d20eaac7d2\"}
+- [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\", \"orgtrello-local-checksum\":\"local-checklist-checksum-678\"}
+  - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\", \"orgtrello-local-checksum\":\"local-item-checksum-678\"}
+  - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\", \"orgtrello-local-checksum\":\"local-item-checksum-678\"}
+- [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\", \"orgtrello-local-checksum\":\"local-checklist-checksum-678\"}
 
 * other card name
 "
@@ -389,7 +389,8 @@ some description
 "
      (with-mock
       (mock (orgtrello-buffer/card-checksum!) => "local-card-checksum-678")
-      (mock (orgtrello-buffer/card-checksum!) => "local-checkbox-checksum-678")
+      (mock (orgtrello-buffer/checklist-checksum!) => "local-checklist-checksum-678")
+      (mock (orgtrello-buffer/item-checksum!) => "local-item-checksum-678")
       (let* ((trello-card (orgtrello-hash/make-properties `((:keyword . "TODO")
                                                             (:member-ids . "dude,ardumont")
                                                             (:comments . "ardumont: some comment###ardumont: some second comment")
@@ -427,16 +428,16 @@ some description
 :END:
 * TODO updated card title                                               :orange:red:green:
   :PROPERTIES:
-  :orgtrello-id: some-card-id
   :orgtrello-users: dude,ardumont
   :orgtrello-card-comments: ardumont: some comment###ardumont: some second comment
+  :orgtrello-id: some-card-id
   :orgtrello-local-checksum: card-checksum-12
   :END:
   updated description
-- [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\", \"orgtrello-local-checksum\":\"checkbox-checksum-12\"}
-  - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\", \"orgtrello-local-checksum\":\"checkbox-checksum-12\"}
-  - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\", \"orgtrello-local-checksum\":\"checkbox-checksum-12\"}
-- [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\", \"orgtrello-local-checksum\":\"checkbox-checksum-12\"}
+- [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\", \"orgtrello-local-checksum\":\"checklist-checksum-12\"}
+  - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\", \"orgtrello-local-checksum\":\"item-checksum-12\"}
+  - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\", \"orgtrello-local-checksum\":\"item-checksum-12\"}
+- [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\", \"orgtrello-local-checksum\":\"checklist-checksum-12\"}
 * TODO other card name
   :PROPERTIES:
   :orgtrello-id: some-new-marker
@@ -482,7 +483,8 @@ some description
      (with-mock
        (mock (orgtrello-buffer/--compute-marker-from-entry *) => "some-new-marker")
        (mock (orgtrello-buffer/card-checksum!) => "card-checksum-12")
-       (mock (orgtrello-buffer/checkbox-checksum!) => "checkbox-checksum-12")
+       (mock (orgtrello-buffer/checklist-checksum!) => "checklist-checksum-12")
+       (mock (orgtrello-buffer/item-checksum!) => "item-checksum-12")
        (let* ((trello-card0 (orgtrello-hash/make-properties `((:keyword . "TODO")
                                                               (:member-ids . "orgtrello-user-dude,orgtrello-user-ardumont")
                                                               (:comments . "ardumont: some comment###ardumont: some second comment")
@@ -519,21 +521,21 @@ some description
 :END:
 * TODO updated card title                                               :orange:red:green:
   :PROPERTIES:
-  :orgtrello-id: some-card-id
   :orgtrello-users: dude,ardumont
   :orgtrello-card-comments: ardumont: some comment###ardumont: some second comment
+  :orgtrello-id: some-card-id
   :orgtrello-local-checksum: card-checksum-1234
   :END:
   updated description
-- [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\", \"orgtrello-local-checksum\":\"checkbox-checksum-1234\"}
-  - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\", \"orgtrello-local-checksum\":\"checkbox-checksum-1234\"}
-  - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\", \"orgtrello-local-checksum\":\"checkbox-checksum-1234\"}
-- [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\", \"orgtrello-local-checksum\":\"checkbox-checksum-1234\"}
+- [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\", \"orgtrello-local-checksum\":\"checklist-checksum-1234\"}
+  - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\", \"orgtrello-local-checksum\":\"item-checksum-1234\"}
+  - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\", \"orgtrello-local-checksum\":\"item-checksum-1234\"}
+- [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\", \"orgtrello-local-checksum\":\"checklist-checksum-1234\"}
 * TODO other card name                                                  :green:
   :PROPERTIES:
-  :orgtrello-id: some-card-id2
   :orgtrello-users: dude
   :orgtrello-card-comments: ardumont: great
+  :orgtrello-id: some-card-id2
   :orgtrello-local-checksum: card-checksum-1234
   :END:
   this is a description
@@ -582,7 +584,8 @@ some description
      (with-mock
        (mock (orgtrello-buffer/--compute-marker-from-entry *) => "some-new-marker")
        (mock (orgtrello-buffer/card-checksum!) => "card-checksum-1234")
-       (mock (orgtrello-buffer/checkbox-checksum!) => "checkbox-checksum-1234")
+       (mock (orgtrello-buffer/checklist-checksum!) => "checklist-checksum-1234")
+       (mock (orgtrello-buffer/item-checksum!) => "item-checksum-1234")
        (let* ((trello-card0 (orgtrello-hash/make-properties `((:keyword . "TODO")
                                                               (:member-ids . "orgtrello-user-dude,orgtrello-user-ardumont")
                                                               (:comments . "ardumont: some comment###ardumont: some second comment")
@@ -627,21 +630,21 @@ some description
 :END:
 * TODO updated card title                                               :orange:red:green:
   :PROPERTIES:
-  :orgtrello-id: some-card-id
   :orgtrello-users: dude,ardumont
   :orgtrello-card-comments: ardumont: some comment###ardumont: some second comment
+  :orgtrello-id: some-card-id
   :orgtrello-local-checksum: card-checksum-123456
   :END:
   updated description
-- [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\", \"orgtrello-local-checksum\":\"checkbox-checksum-123456\"}
-  - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\", \"orgtrello-local-checksum\":\"checkbox-checksum-123456\"}
-  - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\", \"orgtrello-local-checksum\":\"checkbox-checksum-123456\"}
-- [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\", \"orgtrello-local-checksum\":\"checkbox-checksum-123456\"}
+- [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\", \"orgtrello-local-checksum\":\"checklist-checksum-123456\"}
+  - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\", \"orgtrello-local-checksum\":\"item-checksum-123456\"}
+  - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\", \"orgtrello-local-checksum\":\"item-checksum-123456\"}
+- [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\", \"orgtrello-local-checksum\":\"checklist-checksum-123456\"}
 * DONE other card name                                                  :green:
   :PROPERTIES:
-  :orgtrello-id: some-card-id2
   :orgtrello-users: dude
   :orgtrello-card-comments: ardumont: great
+  :orgtrello-id: some-card-id2
   :orgtrello-local-checksum: card-checksum-123456
   :END:
   this is a description
@@ -686,7 +689,8 @@ some description
 "
      (with-mock
        (mock (orgtrello-buffer/card-checksum!) => "card-checksum-123456")
-       (mock (orgtrello-buffer/checkbox-checksum!) => "checkbox-checksum-123456")
+       (mock (orgtrello-buffer/checklist-checksum!) => "checklist-checksum-123456")
+       (mock (orgtrello-buffer/item-checksum!) => "item-checksum-123456")
        (let* ((trello-card0 (orgtrello-hash/make-properties `((:keyword . "TODO")
                                                               (:member-ids . "orgtrello-user-dude,orgtrello-user-ardumont")
                                                               (:comments . "ardumont: some comment###ardumont: some second comment")

@@ -113,22 +113,22 @@ hello there
          (orgtrello-tests/with-temp-buffer "* card\n- [ ] checklist\n- [ ] another" (orgtrello-entity/compute-checklist-header-region!))))
 
 (expectations
- (expect '(8 24)
+ (expect '(8 23)
          (orgtrello-tests/with-temp-buffer "* card\n- [ ] checklist\n- [ ] item" (orgtrello-entity/compute-checklist-region!)))
- (expect '(8 36)
+ (expect '(8 35)
          (orgtrello-tests/with-temp-buffer "* card\n- [ ] checklist\n  - [ ] item" (orgtrello-entity/compute-checklist-region!)))
- (expect '(8 48)
+ (expect '(8 47)
          (orgtrello-tests/with-temp-buffer "* card\n- [ ] checklist\n  - [ ] item\n  - item 2\n" (orgtrello-entity/compute-checklist-region!) -3))
- (expect '(8 48)
+ (expect '(8 47)
          (orgtrello-tests/with-temp-buffer "* card\n- [ ] checklist\n  - [ ] item\n  - item 2\n* another card" (orgtrello-entity/compute-checklist-region!) -3)))
 
 (expectations
- (expect '(17 33)
+ (expect '(17 32)
          (orgtrello-tests/with-temp-buffer "- [ ] checklist\n  - [ ] another" (orgtrello-entity/compute-item-region!) 0)))
 
 (expectations
- (expect 25 (orgtrello-tests/with-temp-buffer "* card\n- [ ] checkbox 0\n- [ ] checkbox 1\n" (orgtrello-entity/next-checklist-point!) -2))
- (expect 56 (orgtrello-tests/with-temp-buffer "* card\n- [ ] checkbox 0\n  - [ ] item0\n- [ ] checkbox 1\n" (orgtrello-entity/next-checklist-point!) -1)))
+ (expect 24 (orgtrello-tests/with-temp-buffer "* card\n- [ ] checkbox 0\n- [ ] checkbox 1\n" (orgtrello-entity/next-checklist-point!) -2))
+ (expect 55 (orgtrello-tests/with-temp-buffer "* card\n- [ ] checkbox 0\n  - [ ] item0\n- [ ] checkbox 1\n" (orgtrello-entity/next-checklist-point!) -1)))
 
 (expectations (desc "orgtrello-entity/compute-next-card-point!")
   (expect 50 (orgtrello-tests/with-temp-buffer "* heading\n- [ ] some checklist\n  - [ ] some item\n"                                      (orgtrello-entity/compute-next-card-point!))) ;; return the max point

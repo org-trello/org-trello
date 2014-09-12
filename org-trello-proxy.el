@@ -97,14 +97,12 @@ ENTITIES-ADJACENCIES provides needed information about entities and adjacency."
                                   (-if-let (entry-id (when (orgtrello-data/id-p marker-id) marker-id)) ;; Already present, we do nothing on the buffer
                                       (format "Entity '%s' with id '%s' synced!" entity-name entry-id)
                                     (progn ;; not present, this was just created, we update with the trello id
-                                      (orgtrello-buffer/set-property *ORGTRELLO/ID* entry-new-id)
+                                      (orgtrello-buffer/update-properties-at-pt! entry-new-id (not (orgtrello-data/entity-card-p entity-not-yet-synced)))
                                       (format "Newly entity '%s' with id '%s' synced!" entity-name entry-new-id)))))
               (let* ((updates (orgtrello-proxy/update-entities-adjacencies! entity-not-yet-synced entity-synced entities-adj))
                      (updated-entity-synced (car updates))
                      (updated-entities-adj  (cdr updates)))
                 (orgtrello-proxy/--compute-sync-next-level updated-entity-synced updated-entities-adj)
-                (when (or (orgtrello-data/entity-checklist-p entity-not-yet-synced) (orgtrello-data/entity-item-p entity-not-yet-synced))
-                  (orgtrello-buffer/write-local-checksum-at-point!))
                 (orgtrello-buffer/write-local-card-checksum-at-point!))
               (orgtrello-log/msg *OT/INFO* str-msg))))))))
 
