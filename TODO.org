@@ -5,7 +5,6 @@
 * TODO 0.6.x [0%]
 - [ ] Use active region - [[https://github.com/org-trello/org-trello/issues/130][#130]]
 - [ ] Another Disposition about org's buffer - [[https://github.com/org-trello/org-trello/issues/33][#33]]
-- [ ] See to use primitives org-next-item/org-end-of-item-list/org-list-use-circular-motion to move in checkbox
 - [ ] One command to sync them all - https://github.com/org-trello/org-trello/issues/59
 * IN-PROGRESS 0.6.0 [83%]
 - [X] Refactor - Unify data structure between trello card and org-trello card
@@ -1272,20 +1271,3 @@ CLOSED: [2013-07-04 jeu. 20:19]
 http://www.marmalade-repo.org/packages
 https://github.com/milkypostman/melpa
 http://nic.ferrier.me.uk/blog/2012_07/emacs-packages-for-programmers
-
-* Integration tests
-  Mock `(json-read)` (heart of the http process returned for everything) to:
-
-** write cards
-
-return '((actions . []) (pos . 16384) (name . "Joy of FUN(ctional) LANGUAGES") (labels . []) (idMembers . []) (idList . "51d99bbc1e1d8988390047f4") (idChecklists . ["53423e457bcf3ef07f4ea575" "53423e418a38ce922cb3750e" "53423e425b6667f92ceda03e"]) (due . "2014-04-01T00:00:00.000Z") (desc . "") (dateLastActivity . "2014-04-07T06:06:48.998Z") (closed . :json-false) (id . "53423e3f4d9e570a6930d684"))
-
-And then ensure the writing of the card in the buffer is ok.
-
-** write checklists
-
-Same idea
-
-** write items
-
-Same idea
