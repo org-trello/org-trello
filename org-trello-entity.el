@@ -107,7 +107,7 @@ Otherwise, return the current position."
 
 (defun orgtrello-entity/compute-checklist-region! ()
   "Compute the checklist's region (including the items) couple '(start end)."
-  `(,(orgtrello-buffer/checklist-beginning-pt!) ,(orgtrello-entity/next-checklist-point!)))
+  `(,(orgtrello-buffer/checklist-beginning-pt!) ,(1- (save-excursion (org-end-of-item) (point)))))
 
 (defun orgtrello-entity/compute-item-region! ()
   "Compute the item region couple '(start end)."

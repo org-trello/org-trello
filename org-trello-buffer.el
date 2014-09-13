@@ -97,7 +97,7 @@ If the VALUE is nil or empty, remove such PROPERTY."
     (orgtrello-buffer/write-entity! item-id))
   (save-excursion ;; item writing does insert a new line
     (forward-line -1)
-    (orgtrello-buffer/update-properties-at-pt! item-id 'checkbox-flag)))
+    (orgtrello-buffer/write-properties-at-pt! item-id)))
 
 (defalias 'orgtrello-buffer/write-checklist-header! 'orgtrello-buffer/write-entity!)
 
@@ -110,7 +110,7 @@ At the end of it all, the cursor is moved after the new written text."
     (mapc (lambda (item-id) (orgtrello-buffer/write-item! item-id entities)) item-ids) ;; cursor will move with as much item as it exists
     (save-excursion ;; one item by line so we need to get back to as much item as it exists
       (forward-line (* -1 nb-lines-to-get-back))
-      (orgtrello-buffer/update-properties-at-pt! checklist-id 'checkbox-flag))))
+      (orgtrello-buffer/write-properties-at-pt! checklist-id))))
 
 (defun orgtrello-buffer/update-property-member-ids! (entity)
   "Update the users assigned property card entry."
@@ -149,12 +149,15 @@ At the end of it all, the cursor is moved after the new written text."
   (orgtrello-buffer/--write-card-description! (orgtrello-data/entity-description card)))
 
 (defun orgtrello-buffer/write-card! (card-id card entities adjacency)
-  "Write the card and its structure inside the org buffer."
+  "Write the card and its structure inside the org buffer.
+The cursor position will move after the newly inserted card."
   (orgtrello-buffer/write-card-header! card-id card)
   (insert "\n")
   (-when-let (checklist-ids (gethash card-id adjacency))
     (mapc (lambda (checklist-id) (orgtrello-buffer/write-checklist! checklist-id entities adjacency)) checklist-ids))
-  (orgtrello-buffer/update-properties-at-pt! card-id nil))
+  (save-excursion
+    (orgtrello-entity/back-to-card!)
+    (orgtrello-buffer/write-properties-at-pt! card-id)))
 
 (defun orgtrello-buffer/checklist-beginning-pt! ()
   "Compute the current checklist's beginning point."
@@ -165,23 +168,54 @@ At the end of it all, the cursor is moved after the new written text."
                                           (beginning-of-line)
                                           (point)))))
 
+(defun orgtrello-buffer/--write-checksum-at-pt! (compute-checksum-fn)
+  "Generic function to write the checksum at current position."
+  (->> (funcall compute-checksum-fn)
+    (orgtrello-buffer/set-property *ORGTRELLO/LOCAL-CHECKSUM*)))
+
+(defun orgtrello-buffer/write-local-card-checksum! ()
+  "Write the card's checksum."
+  (save-excursion
+    (orgtrello-entity/back-to-card!)
+    (orgtrello-buffer/write-local-card-checksum-at-point!)))
+
 (defun orgtrello-buffer/write-local-card-checksum-at-point! ()
-  "Given the current card at point, set the local checksum of the card.
-No checks are done to ensure we are currently on a card."
-  (->> (orgtrello-buffer/card-checksum!)
-    (orgtrello-buffer/org-entry-put! (point) *ORGTRELLO/LOCAL-CHECKSUM*)))
+  "Given the current card at point, set the local checksum of the card."
+  (orgtrello-buffer/--write-checksum-at-pt! 'orgtrello-buffer/card-checksum!))
+
+(defun orgtrello-buffer/write-local-checklist-checksum! ()
+  "Write the local checksum of the checklist."
+  (save-excursion
+    (goto-char (orgtrello-buffer/checklist-beginning-pt!))
+    (orgtrello-buffer/write-local-checklist-checksum-at-point!)))
 
 (defun orgtrello-buffer/write-local-checklist-checksum-at-point! ()
-  "Given the current card at point, set the local checksum of the card.
-No checks are done to ensure we are currently on a card."
-  (->> (orgtrello-buffer/checklist-checksum!)
-    (orgtrello-buffer/org-entry-put! (point) *ORGTRELLO/LOCAL-CHECKSUM*)))
+  "Given the current card at point, set the local checksum of the card."
+  (orgtrello-buffer/--write-checksum-at-pt! 'orgtrello-buffer/checklist-checksum!))
 
-(defun orgtrello-buffer/write-local-checksum-at-point! ()
-  "Given the current checkbox at point, set the local checksum of the checkbox.
-No checks are done to ensure we are currently on a checkbox."
-  (->> (orgtrello-buffer/compute-checksum!)
-    (orgtrello-buffer/set-property *ORGTRELLO/LOCAL-CHECKSUM*)))
+(defun orgtrello-buffer/write-local-item-checksum-at-point! ()
+  "Given the current checkbox at point, set the local checksum of the checkbox."
+  (orgtrello-buffer/--write-checksum-at-pt! 'orgtrello-buffer/item-checksum!))
+
+(defun orgtrello-buffer/write-local-checksum-at-pt! ()
+  "Update the checksum at point.
+If on a card, update the card's checksum.
+Otherwise, if on a checklist, update the checklist's and the card's checksum.
+Otherwise, on an item, update the item's, checklist's and card's checksum."
+  (let ((actions (cond ((orgtrello-entity/org-card-p!)      '(orgtrello-buffer/write-local-card-checksum-at-point!))
+                       ((orgtrello-entity/checklist-at-pt!) '(orgtrello-buffer/write-local-checklist-checksum-at-point!
+                                                              orgtrello-buffer/write-local-card-checksum!))
+                       ((orgtrello-entity/item-at-pt!)      '(orgtrello-buffer/write-local-item-checksum-at-point!
+                                                              orgtrello-buffer/write-local-checklist-checksum!
+                                                              orgtrello-buffer/write-local-card-checksum!)))))
+    (mapc 'funcall actions)))
+
+(defun orgtrello-buffer/write-properties-at-pt! (id)
+  "Update the properties at point, beginning with ID.
+Depending on ORGCHECKBOX-P, compute the checkbox checksum or the card.
+Update the current entity's id and compute the current checksum and update it."
+  (orgtrello-buffer/set-property *ORGTRELLO/ID* id)
+  (orgtrello-buffer/write-local-checksum-at-pt!))
 
 (defun orgtrello-buffer/write-entity! (entity-id entity)
   "Write the entity in the buffer to the current position. Move the cursor position."
@@ -324,15 +358,6 @@ If REGION-START and REGION-END are provided, this will work on such defined regi
   (-> current-meta
     orgtrello-data/current
     (orgtrello-backend/--add-entity-to-entities entities)))
-
-(defun orgtrello-buffer/update-properties-at-pt! (id orgcheckbox-p)
-  "Update the properties at point, beginning with ID.
-Depending on ORGCHECKBOX-P, compute the checkbox checksum or the card.
-Update the current entity's id and compute the current checksum and update it."
-  (orgtrello-buffer/set-property *ORGTRELLO/ID* id)
-  (funcall (if orgcheckbox-p
-               'orgtrello-buffer/write-local-checksum-at-point!
-             'orgtrello-buffer/write-local-card-checksum-at-point!)))
 
 (defun orgtrello-buffer/--set-marker! (marker)
   "Set a MARKER to get back to later."

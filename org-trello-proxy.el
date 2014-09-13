@@ -95,16 +95,16 @@ ENTITIES-ADJACENCIES provides needed information about entities and adjacency."
           (save-excursion
             (-when-let (str-msg (when (orgtrello-proxy/--get-back-to-marker marker-id entity-synced)
                                   (-if-let (entry-id (when (orgtrello-data/id-p marker-id) marker-id)) ;; Already present, we do nothing on the buffer
-                                      (format "Entity '%s' with id '%s' synced!" entity-name entry-id)
+                                      (progn
+                                        (orgtrello-buffer/write-local-checksum-at-pt!)
+                                        (format "Entity '%s' with id '%s' synced!" entity-name entry-id))
                                     (progn ;; not present, this was just created, we update with the trello id
-                                      (orgtrello-buffer/update-properties-at-pt! entry-new-id (not (orgtrello-data/entity-card-p entity-not-yet-synced)))
+                                      (orgtrello-buffer/write-properties-at-pt! entry-new-id)
                                       (format "Newly entity '%s' with id '%s' synced!" entity-name entry-new-id)))))
               (let* ((updates (orgtrello-proxy/update-entities-adjacencies! entity-not-yet-synced entity-synced entities-adj))
                      (updated-entity-synced (car updates))
                      (updated-entities-adj  (cdr updates)))
-                (orgtrello-proxy/--compute-sync-next-level updated-entity-synced updated-entities-adj)
-                (ignore-errors (orgtrello-buffer/write-local-checklist-checksum-at-point!))
-                (orgtrello-buffer/write-local-card-checksum-at-point!))
+                (orgtrello-proxy/--compute-sync-next-level updated-entity-synced updated-entities-adj))
               (orgtrello-log/msg *OT/INFO* str-msg))))))))
 
 (defun orgtrello-proxy/--cleanup-meta (entity)

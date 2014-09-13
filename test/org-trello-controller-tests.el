@@ -341,8 +341,8 @@
   :PROPERTIES:
   :orgtrello-users: dude,ardumont
   :orgtrello-card-comments: ardumont: some comment###ardumont: some second comment
-  :orgtrello-id: some-card-id
   :orgtrello-local-checksum: local-card-checksum-678
+  :orgtrello-id: some-card-id
   :END:
   updated description
 - [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\", \"orgtrello-local-checksum\":\"local-checklist-checksum-678\"}
@@ -430,8 +430,8 @@ some description
   :PROPERTIES:
   :orgtrello-users: dude,ardumont
   :orgtrello-card-comments: ardumont: some comment###ardumont: some second comment
-  :orgtrello-id: some-card-id
   :orgtrello-local-checksum: card-checksum-12
+  :orgtrello-id: some-card-id
   :END:
   updated description
 - [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\", \"orgtrello-local-checksum\":\"checklist-checksum-12\"}
@@ -523,8 +523,8 @@ some description
   :PROPERTIES:
   :orgtrello-users: dude,ardumont
   :orgtrello-card-comments: ardumont: some comment###ardumont: some second comment
-  :orgtrello-id: some-card-id
   :orgtrello-local-checksum: card-checksum-1234
+  :orgtrello-id: some-card-id
   :END:
   updated description
 - [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\", \"orgtrello-local-checksum\":\"checklist-checksum-1234\"}
@@ -632,8 +632,8 @@ some description
   :PROPERTIES:
   :orgtrello-users: dude,ardumont
   :orgtrello-card-comments: ardumont: some comment###ardumont: some second comment
-  :orgtrello-id: some-card-id
   :orgtrello-local-checksum: card-checksum-123456
+  :orgtrello-id: some-card-id
   :END:
   updated description
 - [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\", \"orgtrello-local-checksum\":\"checklist-checksum-123456\"}
