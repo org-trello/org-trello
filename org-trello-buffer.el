@@ -202,7 +202,7 @@ The cursor position will move after the newly inserted card."
 If on a card, update the card's checksum.
 Otherwise, if on a checklist, update the checklist's and the card's checksum.
 Otherwise, on an item, update the item's, checklist's and card's checksum."
-  (let ((actions (cond ((orgtrello-entity/org-card-p!)      '(orgtrello-buffer/write-local-card-checksum-at-point!))
+  (let ((actions (cond ((orgtrello-entity/card-at-pt!)      '(orgtrello-buffer/write-local-card-checksum-at-point!))
                        ((orgtrello-entity/checklist-at-pt!) '(orgtrello-buffer/write-local-checklist-checksum-at-point!
                                                               orgtrello-buffer/write-local-card-checksum!))
                        ((orgtrello-entity/item-at-pt!)      '(orgtrello-buffer/write-local-item-checksum-at-point!
