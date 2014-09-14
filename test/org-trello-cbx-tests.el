@@ -168,9 +168,9 @@
 
 (expectations (desc "orgtrello-cbx/org-checkbox-metadata!")
   (expect '(2 nil "DONE" nil "some checkbox" nil)
-    (orgtrello-tests/with-temp-buffer "- [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}" (orgtrello-cbx/org-checkbox-metadata!)))
+    (orgtrello-tests/with-temp-buffer "  - [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}" (orgtrello-cbx/org-checkbox-metadata!)))
   (expect '(3 nil "TODO" nil "some other checkbox" nil)
-    (orgtrello-tests/with-temp-buffer " - [ ] some other checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}" (orgtrello-cbx/org-checkbox-metadata!))))
+    (orgtrello-tests/with-temp-buffer "    - [ ] some other checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}" (orgtrello-cbx/org-checkbox-metadata!))))
 
 (provide 'org-trello-cbx-tests)
 ;;; org-trello-cbx-tests.el ends here

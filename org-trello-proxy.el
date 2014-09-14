@@ -51,7 +51,6 @@ ENTITIES-ADJACENCIES provides needed information."
   (-map (lambda (child-id)
           (--> child-id
             (orgtrello-data/get-entity it entities-adjacencies)
-            (orgtrello-data/put-entity-action *ORGTRELLO/ACTION-SYNC* it)
             (orgtrello-proxy/--sync-entity it entities-adjacencies)
             (eval it)))
         (orgtrello-data/get-children entity entities-adjacencies)))
@@ -96,9 +95,11 @@ ENTITIES-ADJACENCIES provides needed information about entities and adjacency."
           (save-excursion
             (-when-let (str-msg (when (orgtrello-proxy/--get-back-to-marker marker-id entity-synced)
                                   (-if-let (entry-id (when (orgtrello-data/id-p marker-id) marker-id)) ;; Already present, we do nothing on the buffer
-                                      (format "Entity '%s' with id '%s' synced!" entity-name entry-id)
+                                      (progn
+                                        (orgtrello-buffer/write-local-checksum-at-pt!)
+                                        (format "Entity '%s' with id '%s' synced!" entity-name entry-id))
                                     (progn ;; not present, this was just created, we update with the trello id
-                                      (orgtrello-buffer/set-property *ORGTRELLO/ID* entry-new-id)
+                                      (orgtrello-buffer/write-properties-at-pt! entry-new-id)
                                       (format "Newly entity '%s' with id '%s' synced!" entity-name entry-new-id)))))
               (let* ((updates (orgtrello-proxy/update-entities-adjacencies! entity-not-yet-synced entity-synced entities-adj))
                      (updated-entity-synced (car updates))
@@ -292,9 +293,7 @@ Use ENTITIES-ADJACENCIES to provide further information."
 
 (defun orgtrello-proxy/--standard-delete-success-callback (entity-to-del)
   "Return a callback function able to deal with the ENTITY-TO-DEL deletion."
-  (lexical-let ((entry-position    (orgtrello-data/entity-position entity-to-del))
-                (entry-buffer-name (orgtrello-data/entity-buffername entity-to-del))
-                (entry-level       (orgtrello-data/entity-level entity-to-del))
+  (lexical-let ((entry-buffer-name (orgtrello-data/entity-buffername entity-to-del))
                 (marker            (orgtrello-data/entity-id entity-to-del))
                 (level             (orgtrello-data/entity-level entity-to-del)))
     (lambda (response)
@@ -304,7 +303,10 @@ Use ENTITIES-ADJACENCIES to provide further information."
             (-> (orgtrello-buffer/entry-get-full-metadata!)
               orgtrello-data/current
               orgtrello-proxy/delete-region
-              funcall)))))))
+              funcall)
+            (when (< *ORGTRELLO/CARD-LEVEL* level)
+              (forward-line -1) ;; when on checklist or item, get back one line then update the card's checksum
+              (orgtrello-buffer/write-local-card-checksum-at-point!))))))))
 
 (defun orgtrello-proxy/--card-delete (card-meta)
   "Deal with the deletion query of a CARD-META."

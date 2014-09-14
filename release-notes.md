@@ -1,3 +1,23 @@
+# 0.6.0
+
+- [X] Refactor - Unify data structure between trello card and org-trello card
+- [X] Refactor - Improve merge computations
+- [X] Refactor - Remove some dead code
+- [X] Update version
+- [-] Improve sync request policy - [[https://github.com/org-trello/org-trello/issues/58]] [87%]
+  - [X] 'Sync card to trello' syncs card only if local changes
+  - [X] 'Sync card from trello' updates the card from trello and the local checksum signature
+  - [X] 'Sync buffer from trello' updates the local card checksum
+  - [X] 'Sync buffer to trello' syncs only card with local changes
+  - [X] 'Delete entity' updates the checksum
+  - [X] Extend the checksum system to the checkbox entities (checklist/item) - sync to trello
+  - [X] Extend the checksum system to the checkbox entities (checklist/item) - sync from trello
+  - [X] Update checksum computation depending on entities
+- [X] `Checklists don't work for me` - It does work - Need to improve checklist and item predicates. - CLOSE https://github.com/org-trello/org-trello/issues/204
+  - [X] Fix behavior
+  - [X] Fix tests
+- [X] Release notes
+
 # 0.5.9
 
 - [X] Backlog

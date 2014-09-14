@@ -36,37 +36,37 @@
   - with start or dash  are now possible
     - indentation too
 
-- [-] LISP family
-  - [X] Emacs-Lisp
-  - [X] Common-Lisp
-  - [ ] Scheme
-  - [X] Clojure
-- [-] ML family
-  - [X] Haskell
-  - [X] Ocaml
-- [-] hybrid family
-  - [X] Scala
+  - [-] LISP family
+    - [X] Emacs-Lisp
+    - [X] Common-Lisp
+    - [ ] Scheme
+    - [X] Clojure
+  - [-] ML family
+    - [X] Haskell
+    - [X] Ocaml
+  - [-] hybrid family
+    - [X] Scala
 * TODO Programming in scala
 :PROPERTIES:
 :END:
-- [-] chapters
-  - [ ] introduction
-  - [ ] Ch. 1 - A scalable language
-  - [ ] Ch. 2 - First steps in scala
-  - [ ] Ch. 3 - Next steps in scala
-  - [ ] Ch. 4 - Classes and objects
-  - [ ] Ch. 5 - Basic types and operations
-  - [ ] Ch. 6 - Functional objects
-  - [ ] Ch. 7 - Buit-in control structures
-  - [ ] Ch. 8 - Functions and closures
-  - [ ] Ch. 9 - Control abstraction
-  - [ ] Ch. 10 - Composition and inheritance
-  - [ ] Ch. 11 - Scala's hierarchy
-  - [ ] Ch. 12 - Traits
+  - [-] chapters
+    - [ ] introduction
+    - [ ] Ch. 1 - A scalable language
+    - [ ] Ch. 2 - First steps in scala
+    - [ ] Ch. 3 - Next steps in scala
+    - [ ] Ch. 4 - Classes and objects
+    - [ ] Ch. 5 - Basic types and operations
+    - [ ] Ch. 6 - Functional objects
+    - [ ] Ch. 7 - Buit-in control structures
+    - [ ] Ch. 8 - Functions and closures
+    - [ ] Ch. 9 - Control abstraction
+    - [ ] Ch. 10 - Composition and inheritance
+    - [ ] Ch. 11 - Scala's hierarchy
+    - [ ] Ch. 12 - Traits
 * TODO Functional programming in Haskell
 :PROPERTIES:
 :END:
 * PENDING Questions about life, the universe and everything
 :PROPERTIES:
 :END:
-- [-] How to deal with promotion/demotion?
+  - [-] How to deal with promotion/demotion?

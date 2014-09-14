@@ -30,12 +30,6 @@
 (defconst *ORGTRELLO/OUTOFBOUNDS-LEVEL* 4
   "Out of bounds level.")
 
-(defconst *ORGTRELLO/ACTION-SYNC* "sync-entity"
-  "Possible action regarding the entity synchronization.")
-
-(defconst *ORGTRELLO/ACTION-DELETE* "delete"
-  "Possible action regarding the entity deletion.")
-
 (defconst *ORGTRELLO/USER-PREFIX* "orgtrello-user-"
   "Org-trello prefix to define user to a 'org-mode' level.")
 
@@ -50,6 +44,9 @@
 
 (defconst *ORGTRELLO/CARD-COMMENTS* "orgtrello-card-comments"
   "Current card's comments property.")
+
+(defconst *ORGTRELLO/LOCAL-CHECKSUM* "orgtrello-local-checksum"
+  "Current card's checksum property.")
 
 (defconst *ORGTRELLO/CARD-COMMENTS-DELIMITER* "###"
   "Current card's comments delimiter.")
@@ -101,16 +98,28 @@
 
 (defvar *ORGTRELLO/ORG-KEYWORD-TRELLO-LIST-NAMES* nil
   "Org-trello property names of the different lists.
-This use the standard 'org-todo-keywords property from 'org-mode'.")
+This use the standard 'org-todo-keywords property from 'org-mode'.
+This is intended as a buffer local variable.")
 
 (defvar *ORGTRELLO/HMAP-LIST-ORGKEYWORD-ID-NAME*       nil
-  "Org-trello hash map containing for each id, the associated name (or org keyword).")
+  "Org-trello hash map containing for each id, the associated org keyword.
+This is intended as a buffer local variable.")
 
 (defvar *ORGTRELLO/HMAP-USERS-ID-NAME* nil
-  "Org-trello hash map containing for each user name, the associated id.")
+  "Org-trello hash map containing for each user name, the associated id.
+This is intended as a buffer local variable.")
 
 (defvar *ORGTRELLO/HMAP-USERS-NAME-ID* nil
-  "Org-trello hash map containing for each user id, the associated name.")
+  "Org-trello hash map containing for each user id, the associated name.
+This is intended as a buffer local variable.")
+
+(defvar org-trello/mode nil
+"Flag to notify that the mode is activated or not.
+This is intended as a buffer local variable.")
+
+(defconst *ORGTRELLO/CHECKLIST-INDENT* 2 "Indentation for checklist.")
+
+(defconst *ORGTRELLO/ITEM-INDENT* 4 "Indentation for item.")
 
 ;; make variable buffer-local
 (mapc (lambda (var)
@@ -119,7 +128,8 @@ This use the standard 'org-todo-keywords property from 'org-mode'.")
         *ORGTRELLO/HMAP-LIST-ORGKEYWORD-ID-NAME*
         *ORGTRELLO/HMAP-USERS-ID-NAME*
         *ORGTRELLO/HMAP-USERS-NAME-ID*
-        *ORGTRELLO/USER-LOGGED-IN*))
+        *ORGTRELLO/USER-LOGGED-IN*
+        org-trello/mode))
 
 (defconst *ORGTRELLO/CONFIG-DIR*
   (concat (getenv "HOME") "/" ".trello"))

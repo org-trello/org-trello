@@ -32,6 +32,14 @@ If either org-keywords or properties is nil, return an empty hash-map."
                    (orgtrello-hash/empty-hash)
                    org-keywords)))
 
+(defun orgtrello-setup/display-current-buffer-setup!()
+  "Display current buffer's setup."
+  (list :users-id-name *ORGTRELLO/HMAP-USERS-ID-NAME*
+        :users-name-id *ORGTRELLO/HMAP-USERS-NAME-ID*
+        :user-logged-in *ORGTRELLO/USER-LOGGED-IN*
+        :org-keyword-trello-list-names *ORGTRELLO/ORG-KEYWORD-TRELLO-LIST-NAMES*
+        :org-keyword-id-name *ORGTRELLO/HMAP-LIST-ORGKEYWORD-ID-NAME*))
+
 (defun orgtrello-controller/setup-properties! (&optional args)
   "Setup the org-trello properties according to the 'org-mode' setup in the current buffer.
 Return :ok.
@@ -134,11 +142,16 @@ BUFFER-NAME to specify the buffer with which we currently work."
 
 (defun orgtrello-controller/sync-card-to-trello! (full-meta &optional buffer-name)
   "Do the actual card creation/update - from card to item."
-  (orgtrello-log/msg *OT/INFO* "Synchronizing card on board '%s'..." (orgtrello-buffer/board-name!))
-  (org-show-subtree) ;; in any case, we need to show the subtree, otherwise https://github.com/org-trello/org-trello/issues/53
-  (-> buffer-name
-    orgtrello-buffer/build-org-card-structure!
-    orgtrello-controller/execute-sync-entity-structure!))
+  (let ((current-checksum (orgtrello-buffer/card-checksum!))
+        (previous-checksum (orgtrello-buffer/get-card-local-checksum!)))
+    (if (string= current-checksum previous-checksum)
+        (orgtrello-log/msg *OT/INFO* "Card already synchronized, nothing to do!")
+      (progn
+        (orgtrello-log/msg *OT/INFO* "Synchronizing card on board '%s'..." (orgtrello-buffer/board-name!))
+        (org-show-subtree) ;; we need to show the subtree, otherwise https://github.com/org-trello/org-trello/issues/53
+        (-> buffer-name
+          orgtrello-buffer/build-org-card-structure!
+          orgtrello-controller/execute-sync-entity-structure!)))))
 
 (defun orgtrello-controller/do-sync-buffer-to-trello! ()
   "Full org-mode file synchronisation."
@@ -169,13 +182,13 @@ Does not preserve position."
   (orgtrello-buffer/remove-overlays! (point-at-bol) (point-max))
   (kill-region (point-at-bol) (point-max)))
 
-(defun orgtrello-controller/sync-buffer-with-trello-cards! (buffer-name trello-cards)
+(defun orgtrello-controller/sync-buffer-with-trello-cards! (buffer-name org-trello-cards)
   "Synchronize the buffer BUFFER-NAME with the TRELLO-CARDS."
   (with-local-quit
     (with-current-buffer buffer-name
       (save-excursion
         (let ((entities-from-org-buffer (orgtrello-buffer/build-org-entities! buffer-name)))
-          (-> trello-cards
+          (-> org-trello-cards
             orgtrello-backend/compute-org-trello-card-from
             (orgtrello-data/merge-entities-trello-and-org entities-from-org-buffer)
             ((lambda (entry) (orgtrello-controller/--cleanup-org-entries) entry))   ;; hack to clean the org entries just before synchronizing the buffer
@@ -197,7 +210,9 @@ Does not preserve position."
       (deferred:nextc it
         (lambda (trello-cards) ;; We have the full result in one query, now we can compute the translation in org-trello model
           (orgtrello-log/msg *OT/DEBUG* "trello-card: %S" trello-cards)
-          (orgtrello-controller/sync-buffer-with-trello-cards! buffer-name trello-cards)))
+          (->> trello-cards
+            (mapcar 'orgtrello-data/to-org-trello-card)
+            (orgtrello-controller/sync-buffer-with-trello-cards! buffer-name))))
       (deferred:nextc it
         (lambda ()
           (orgtrello-buffer/save-buffer buffer-name)
@@ -214,7 +229,6 @@ Along the way, the buffer BUFFER-NAME is written with new informations."
   (lexical-let ((entities             (car entity-structure))
                 (entities-adjacencies entity-structure)
                 (card-computations))
-    ;; compute the card to sync computations
     (maphash (lambda (id entity)
                (when (and (orgtrello-data/entity-card-p entity) (eq :ok (orgtrello-controller/--entity-mandatory-name-ok-p entity)))
                  (-> entity
@@ -222,20 +236,22 @@ Along the way, the buffer BUFFER-NAME is written with new informations."
                    (push card-computations))))
              entities)
 
-    (-> card-computations
-      nreverse
-      (orgtrello-proxy/execute-async-computations "card(s) sync ok!" "FAILURE! cards(s) sync KO!"))))
+    (if card-computations
+        (-> card-computations
+          nreverse
+          (orgtrello-proxy/execute-async-computations "card(s) sync ok!" "FAILURE! cards(s) sync KO!"))
+      (orgtrello-log/msg *OT/INFO* "No card(s) to sync."))))
 
-(defun orgtrello-controller/compute-and-overwrite-card! (buffer-name trello-card)
+(defun orgtrello-controller/compute-and-overwrite-card! (buffer-name org-trello-card)
   "Given BUFFER-NAME and TRELLO-CARD, compute, merge and update the buffer-name."
-  (when trello-card
+  (when org-trello-card
     (with-local-quit
       (with-current-buffer buffer-name
         (save-excursion
-          (let* ((card-id                  (orgtrello-data/entity-id trello-card))
+          (let* ((card-id                  (orgtrello-data/entity-id org-trello-card))
                  (region                   (orgtrello-entity/compute-card-region!))
                  (entities-from-org-buffer (apply 'orgtrello-buffer/build-org-entities! (cons buffer-name region)))
-                 (entities-from-trello     (orgtrello-backend/compute-org-trello-card-from (list trello-card)))
+                 (entities-from-trello     (orgtrello-backend/compute-org-trello-card-from (list org-trello-card)))
                  (merged-entities          (orgtrello-data/merge-entities-trello-and-org entities-from-trello entities-from-org-buffer))
                  (entities                 (car merged-entities))
                  (entities-adj             (cadr merged-entities)))
@@ -267,7 +283,9 @@ Optionally, SYNC permits to synchronize the query."
       (deferred:nextc it
         (lambda (trello-card) ;; We have the full result in one query, now we can compute the translation in org-trello model
           (orgtrello-log/msg *OT/DEBUG* "trello-card: %S" trello-card)
-          (orgtrello-controller/compute-and-overwrite-card! buffer-name trello-card)))
+          (->> trello-card
+            orgtrello-data/to-org-trello-card
+            (orgtrello-controller/compute-and-overwrite-card! buffer-name))))
       (deferred:nextc it
         (lambda ()
           (orgtrello-buffer/save-buffer buffer-name)
@@ -790,17 +808,23 @@ When GLOBALLY-FLAG is not nil, remove also local entities properties."
   (orgtrello-controller/do-cleanup-from-buffer! t)
   (orgtrello-log/msg *OT/NOLOG* "Cleanup done!"))
 
+(defun orgtrello-buffer/prepare-buffer! ()
+  "Prepare the buffer to receive org-trello data."
+  (when (and (eq major-mode 'org-mode) org-trello/mode)
+    (orgtrello-buffer/install-overlays!)
+    (orgtrello-buffer/indent-card-descriptions!)
+    (orgtrello-buffer/indent-card-data!)))
+
 (defun orgtrello-controller/mode-on-hook-fn ()
   "Start org-trello hook function to install some org-trello setup."
+  ;; Activate org-trello/mode
+  (setq org-trello/mode 'activated)
   ;; buffer-invisibility-spec
-  (add-to-invisibility-spec '(org-trello-cbx-property)) ;; for an ellipsis (...) change to '(org-trello-cbx-property . t)
+  (add-to-invisibility-spec '(org-trello-cbx-property)) ;; for an ellipsis (-> ...) change to '(org-trello-cbx-property . t)
   ;; installing hooks
-  (mapc (lambda (h)
-          (add-hook 'before-save-hook h)) '(orgtrello-buffer/install-overlays!
-                                            orgtrello-buffer/indent-card-descriptions!))
-  ;; migrate all checkbox at org-trello mode activation
-  (orgtrello-buffer/install-overlays!)
-  (orgtrello-buffer/indent-card-descriptions!)
+  (add-hook 'before-save-hook 'orgtrello-buffer/prepare-buffer!)
+  ;; prepare the buffer at activation time
+  (orgtrello-buffer/prepare-buffer!)
   ;; run hook at startup
   (run-hooks 'org-trello-mode-hook))
 
@@ -809,11 +833,11 @@ When GLOBALLY-FLAG is not nil, remove also local entities properties."
   ;; remove the invisible property names
   (remove-from-invisibility-spec '(org-trello-cbx-property)) ;; for an ellipsis (...) change to '(org-trello-cbx-property . t)
   ;; removing hooks
-  (mapc (lambda (h)
-          (remove-hook 'before-save-hook h)) '(orgtrello-buffer/install-overlays!
-                                               orgtrello-buffer/indent-card-descriptions!))
+  (remove-hook 'before-save-hook 'orgtrello-buffer/prepare-buffer!)
   ;; remove org-trello overlays
-  (orgtrello-buffer/remove-overlays!))
+  (orgtrello-buffer/remove-overlays!)
+  ;; deactivate org-trello/mode
+  (setq org-trello/mode))
 
 (orgtrello-log/msg *OT/DEBUG* "orgtrello-controller loaded!")
 

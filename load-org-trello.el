@@ -67,5 +67,8 @@
   "Trace functions FNS."
   (mapc 'untrace-function fns))
 
+;; (trace-functions '(orgtrello-entity/compute-checklist-region! orgtrello-entity/compute-item-region!))
+;; (untrace-functions '(orgtrello-entity/compute-checklist-region! orgtrello-entity/compute-item-region!))
+
 (provide 'load-org-trello)
 ;;; load-org-trello.el ends here
