@@ -810,7 +810,7 @@ When GLOBALLY-FLAG is not nil, remove also local entities properties."
 
 (defun orgtrello-buffer/prepare-buffer! ()
   "Prepare the buffer to receive org-trello data."
-  (when (eq major-mode 'org-mode)
+  (when (and (eq major-mode 'org-mode) org-trello-mode)
     (orgtrello-buffer/install-overlays!)
     (orgtrello-buffer/indent-card-descriptions!)
     (orgtrello-buffer/indent-card-data!)))

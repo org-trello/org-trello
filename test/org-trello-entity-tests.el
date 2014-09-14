@@ -4,13 +4,16 @@
 (require 'el-mock)
 
 (expectations
- (desc "orgtrello-entity/level!")
- (expect 1  (orgtrello-tests/with-temp-buffer "* some card" (orgtrello-entity/level!)))
- (expect 2  (orgtrello-tests/with-temp-buffer "- [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}" (orgtrello-entity/level!)))
- (expect 3  (orgtrello-tests/with-temp-buffer "  - [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}" (orgtrello-entity/level!)))
- (expect 3  (orgtrello-tests/with-temp-buffer " - [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}" (orgtrello-entity/level!)))
- (expect 3  (orgtrello-tests/with-temp-buffer "     - [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}" (orgtrello-entity/level!)))
- (expect -1 (orgtrello-tests/with-temp-buffer "something else" (orgtrello-entity/level!))))
+  (desc "orgtrello-entity/level! - ok cases")
+  (expect 1  (orgtrello-tests/with-temp-buffer "* some card" (orgtrello-entity/level!)))
+  (expect 2  (orgtrello-tests/with-temp-buffer "  - [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}" (orgtrello-entity/level!)))
+  (expect 3  (orgtrello-tests/with-temp-buffer "    - [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}" (orgtrello-entity/level!))))
+
+(expectations
+  (desc "orgtrello-entity/level! - ko cases")
+  (expect -1 (orgtrello-tests/with-temp-buffer " - [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}" (orgtrello-entity/level!)))
+  (expect -1 (orgtrello-tests/with-temp-buffer "     - [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}" (orgtrello-entity/level!)))
+  (expect -1 (orgtrello-tests/with-temp-buffer "something else" (orgtrello-entity/level!))))
 
 (expectations
   (desc "orgtrello-entity/card-at-pt!")
@@ -62,7 +65,7 @@ hello there
 :orgtrello-id: 52c945143004d4617c012528
 :END:
   hello there
-- [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}"
+  - [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}"
                                       (orgtrello-entity/checklist-at-pt!)
                                       0))
   (expect nil
@@ -71,8 +74,8 @@ hello there
 :orgtrello-id: 52c945143004d4617c012528
 :END:
   hello there
-- [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}
-  - [X] Emacs-Lisp  :PROPERTIES: {\"orgtrello-id\":\"52c9451784251e1b260127f8\"}"
+  - [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}
+    - [X] Emacs-Lisp  :PROPERTIES: {\"orgtrello-id\":\"52c9451784251e1b260127f8\"}"
                                       (orgtrello-entity/checklist-at-pt!)
                                       0)))
 
@@ -94,7 +97,7 @@ hello there
 :orgtrello-id: 52c945143004d4617c012528
 :END:
   hello there
-- [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}"
+  - [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}"
                                       (orgtrello-entity/item-at-pt!)
                                       0))
   (expect t
@@ -103,8 +106,8 @@ hello there
 :orgtrello-id: 52c945143004d4617c012528
 :END:
   hello there
-- [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}
-  - [X] Emacs-Lisp  :PROPERTIES: {\"orgtrello-id\":\"52c9451784251e1b260127f8\"}"
+  - [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}
+    - [X] Emacs-Lisp  :PROPERTIES: {\"orgtrello-id\":\"52c9451784251e1b260127f8\"}"
                                       (orgtrello-entity/item-at-pt!)
                                       0)))
 
@@ -117,33 +120,40 @@ hello there
           (orgtrello-entity/compute-checklist-header-region!))))
 
 (expectations
-  (expect '(8 23)
+  (expect '(8 25)
     (orgtrello-tests/with-temp-buffer
      "* card
-- [ ] checklist
-- [ ] another checklist"
+  - [ ] checklist
+  - [ ] another checklist"
      (orgtrello-entity/compute-checklist-region!)))
-  (expect '(8 35)
+  (expect "  - [ ] checklist"
     (orgtrello-tests/with-temp-buffer
      "* card
-- [ ] checklist
-  - [ ] item"
+  - [ ] checklist
+  - [ ] another checklist"
+     (apply 'buffer-substring-no-properties (orgtrello-entity/compute-checklist-region!))))
+  (expect '(8 40)
+    (orgtrello-tests/with-temp-buffer
+     "* card
+  - [ ] checklist
+    - [ ] item
+"
      (orgtrello-entity/compute-checklist-region!)))
-  (expect '(8 47)
+  (expect '(8 53)
     (orgtrello-tests/with-temp-buffer
      "* card
-- [ ] checklist
-  - [ ] item
-  - item 2
+  - [ ] checklist
+    - [ ] item
+    - item 2
 "
      (orgtrello-entity/compute-checklist-region!)
      -3))
-  (expect '(8 47)
+  (expect '(8 53)
     (orgtrello-tests/with-temp-buffer
      "* card
-- [ ] checklist
-  - [ ] item
-  - item 2
+  - [ ] checklist
+    - [ ] item
+    - item 2
 * another card"
      (orgtrello-entity/compute-checklist-region!)
      -3)))

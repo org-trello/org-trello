@@ -7,7 +7,7 @@
 - [ ] Another Disposition about org's buffer - https://github.com/org-trello/org-trello/issues/33
 - [ ] One command to sync them all - https://github.com/org-trello/org-trello/issues/59
 - [ ] `Trello archived` cards are not archived on org-trello buffers - https://github.com/org-trello/org-trello/issues/203
-* IN-PROGRESS 0.6.0 [57%]
+* IN-PROGRESS 0.6.0 [71%]
 - [X] Refactor - Unify data structure between trello card and org-trello card
 - [X] Refactor - Improve merge computations
 - [X] Refactor - Remove some dead code
@@ -21,9 +21,9 @@
   - [X] Extend the checksum system to the checkbox entities (checklist/item) - sync to trello
   - [X] Extend the checksum system to the checkbox entities (checklist/item) - sync from trello
   - [ ] Update checksum computation depending on entities
-- [-] `Checklists don't work for me` - It does work - Need to improve checklist and item predicates. - https://github.com/org-trello/org-trello/issues/204
+- [X] `Checklists don't work for me` - It does work - Need to improve checklist and item predicates. - CLOSE https://github.com/org-trello/org-trello/issues/204
   - [X] Fix behavior
-  - [ ] Fix tests
+  - [X] Fix tests
 - [ ] Release notes
 * DONE 0.5.9 [100%]
   CLOSED: [2014-09-06 Sat 10:52]

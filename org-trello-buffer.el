@@ -291,7 +291,7 @@ This plus the checklist indentation."
           (orgtrello-data/--compute-state-item-checkbox status)
           name))
 
-(defun orgtrello-buffer/--compute-checklist-to-org-entry (checklist &optional orgcheckbox-p)
+(defun orgtrello-buffer/--compute-checklist-to-org-entry (checklist)
   "Given a CHECKLIST, compute its 'org-mode' entry equivalence.
 The optional ORGCHECKBOX-P is not used."
   (orgtrello-buffer/--compute-checklist-to-org-checkbox (orgtrello-data/entity-name checklist) *ORGTRELLO/CHECKLIST-LEVEL* "incomplete"))

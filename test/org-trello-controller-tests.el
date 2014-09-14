@@ -345,10 +345,10 @@
   :orgtrello-id: some-card-id
   :END:
   updated description
-- [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\", \"orgtrello-local-checksum\":\"local-checklist-checksum-678\"}
-  - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\", \"orgtrello-local-checksum\":\"local-item-checksum-678\"}
-  - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\", \"orgtrello-local-checksum\":\"local-item-checksum-678\"}
-- [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\", \"orgtrello-local-checksum\":\"local-checklist-checksum-678\"}
+  - [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\", \"orgtrello-local-checksum\":\"local-checklist-checksum-678\"}
+    - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\", \"orgtrello-local-checksum\":\"local-item-checksum-678\"}
+    - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\", \"orgtrello-local-checksum\":\"local-item-checksum-678\"}
+  - [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\", \"orgtrello-local-checksum\":\"local-checklist-checksum-678\"}
 
 * other card name
 "
@@ -380,10 +380,10 @@
 :orgtrello-card-comments: ardumont: some comment
 :END:
 some description
-- [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}
-  - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\"}
-  - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\"}
-- [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\"}
+  - [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}
+    - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\"}
+    - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\"}
+  - [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\"}
 
 * other card name
 "
@@ -434,10 +434,10 @@ some description
   :orgtrello-id: some-card-id
   :END:
   updated description
-- [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\", \"orgtrello-local-checksum\":\"checklist-checksum-12\"}
-  - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\", \"orgtrello-local-checksum\":\"item-checksum-12\"}
-  - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\", \"orgtrello-local-checksum\":\"item-checksum-12\"}
-- [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\", \"orgtrello-local-checksum\":\"checklist-checksum-12\"}
+  - [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\", \"orgtrello-local-checksum\":\"checklist-checksum-12\"}
+    - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\", \"orgtrello-local-checksum\":\"item-checksum-12\"}
+    - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\", \"orgtrello-local-checksum\":\"item-checksum-12\"}
+  - [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\", \"orgtrello-local-checksum\":\"checklist-checksum-12\"}
 * TODO other card name
   :PROPERTIES:
   :orgtrello-id: some-new-marker
@@ -473,10 +473,10 @@ some description
 :orgtrello-card-comments: ardumont: some comment
 :END:
 some description
-- [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}
-  - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\"}
-  - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\"}
-- [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\"}
+  - [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}
+    - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\"}
+    - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\"}
+  - [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\"}
 
 * other card name
 "
@@ -527,10 +527,10 @@ some description
   :orgtrello-id: some-card-id
   :END:
   updated description
-- [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\", \"orgtrello-local-checksum\":\"checklist-checksum-1234\"}
-  - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\", \"orgtrello-local-checksum\":\"item-checksum-1234\"}
-  - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\", \"orgtrello-local-checksum\":\"item-checksum-1234\"}
-- [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\", \"orgtrello-local-checksum\":\"checklist-checksum-1234\"}
+  - [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\", \"orgtrello-local-checksum\":\"checklist-checksum-1234\"}
+    - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\", \"orgtrello-local-checksum\":\"item-checksum-1234\"}
+    - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\", \"orgtrello-local-checksum\":\"item-checksum-1234\"}
+  - [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\", \"orgtrello-local-checksum\":\"checklist-checksum-1234\"}
 * TODO other card name                                                  :green:
   :PROPERTIES:
   :orgtrello-users: dude
@@ -574,10 +574,10 @@ some description
 :orgtrello-card-comments: ardumont: some comment
 :END:
 some description
-- [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}
-  - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\"}
-  - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\"}
-- [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\"}
+  - [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}
+    - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\"}
+    - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\"}
+  - [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\"}
 
 * other card name
 "
@@ -636,10 +636,10 @@ some description
   :orgtrello-id: some-card-id
   :END:
   updated description
-- [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\", \"orgtrello-local-checksum\":\"checklist-checksum-123456\"}
-  - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\", \"orgtrello-local-checksum\":\"item-checksum-123456\"}
-  - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\", \"orgtrello-local-checksum\":\"item-checksum-123456\"}
-- [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\", \"orgtrello-local-checksum\":\"checklist-checksum-123456\"}
+  - [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\", \"orgtrello-local-checksum\":\"checklist-checksum-123456\"}
+    - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\", \"orgtrello-local-checksum\":\"item-checksum-123456\"}
+    - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\", \"orgtrello-local-checksum\":\"item-checksum-123456\"}
+  - [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\", \"orgtrello-local-checksum\":\"checklist-checksum-123456\"}
 * DONE other card name                                                  :green:
   :PROPERTIES:
   :orgtrello-users: dude
@@ -677,10 +677,10 @@ some description
 :orgtrello-card-comments: ardumont: some comment
 :END:
 some description
-- [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}
-  - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\"}
-  - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\"}
-- [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\"}
+  - [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}
+    - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\"}
+    - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\"}
+  - [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\"}
 
 * other card name
 :PROPERTIES:
