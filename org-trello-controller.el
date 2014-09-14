@@ -236,9 +236,11 @@ Along the way, the buffer BUFFER-NAME is written with new informations."
                    (push card-computations))))
              entities)
 
-    (-> card-computations
-      nreverse
-      (orgtrello-proxy/execute-async-computations "card(s) sync ok!" "FAILURE! cards(s) sync KO!"))))
+    (if card-computations
+        (-> card-computations
+          nreverse
+          (orgtrello-proxy/execute-async-computations "card(s) sync ok!" "FAILURE! cards(s) sync KO!"))
+      (orgtrello-log/msg *OT/INFO* "No card(s) to sync."))))
 
 (defun orgtrello-controller/compute-and-overwrite-card! (buffer-name org-trello-card)
   "Given BUFFER-NAME and TRELLO-CARD, compute, merge and update the buffer-name."
