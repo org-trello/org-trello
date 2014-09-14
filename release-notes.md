@@ -12,7 +12,7 @@
   - [X] 'Delete entity' updates the checksum
   - [X] Extend the checksum system to the checkbox entities (checklist/item) - sync to trello
   - [X] Extend the checksum system to the checkbox entities (checklist/item) - sync from trello
-  - [ ] Update checksum computation depending on entities
+  - [X] Update checksum computation depending on entities
 - [X] `Checklists don't work for me` - It does work - Need to improve checklist and item predicates. - CLOSE https://github.com/org-trello/org-trello/issues/204
   - [X] Fix behavior
   - [X] Fix tests

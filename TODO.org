@@ -7,12 +7,12 @@
 - [ ] Another Disposition about org's buffer - https://github.com/org-trello/org-trello/issues/33
 - [ ] One command to sync them all - https://github.com/org-trello/org-trello/issues/59
 - [ ] `Trello archived` cards are not archived on org-trello buffers - https://github.com/org-trello/org-trello/issues/203
-* IN-PROGRESS 0.6.0 [85%]
+* IN-PROGRESS 0.6.0 [100%]
 - [X] Refactor - Unify data structure between trello card and org-trello card
 - [X] Refactor - Improve merge computations
 - [X] Refactor - Remove some dead code
 - [X] Update version
-- [-] Improve sync request policy - [[https://github.com/org-trello/org-trello/issues/58]] [87%]
+- [X] Improve sync request policy - [[https://github.com/org-trello/org-trello/issues/58]] [100%]
   - [X] 'Sync card to trello' syncs card only if local changes
   - [X] 'Sync card from trello' updates the card from trello and the local checksum signature
   - [X] 'Sync buffer from trello' updates the local card checksum
@@ -20,7 +20,7 @@
   - [X] 'Delete entity' updates the checksum
   - [X] Extend the checksum system to the checkbox entities (checklist/item) - sync to trello
   - [X] Extend the checksum system to the checkbox entities (checklist/item) - sync from trello
-  - [ ] Update checksum computation depending on entities
+  - [X] Update checksum computation depending on entities
 - [X] `Checklists don't work for me` - It does work - Need to improve checklist and item predicates. - CLOSE https://github.com/org-trello/org-trello/issues/204
   - [X] Fix behavior
   - [X] Fix tests
