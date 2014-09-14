@@ -216,7 +216,8 @@ Otherwise, on an item, update the item's, checklist's and card's checksum."
 Depending on ORGCHECKBOX-P, compute the checkbox checksum or the card.
 Update the current entity's id and compute the current checksum and update it."
   (orgtrello-buffer/set-property *ORGTRELLO/ID* id)
-  (orgtrello-buffer/write-local-checksum-at-pt!))
+  (when (orgtrello-data/id-p id) ;; when not an id, we do not compute the checksum
+    (orgtrello-buffer/write-local-checksum-at-pt!)))
 
 (defun orgtrello-buffer/write-entity! (entity-id entity)
   "Write the entity in the buffer to the current position. Move the cursor position."
