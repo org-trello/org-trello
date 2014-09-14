@@ -3,6 +3,7 @@
 ;;; Code:
 
 (require 'org-trello-setup)
+(require 'org-trello-utils)
 (require 'org-trello-log)
 (require 'org-trello-hash)
 (require 'org-trello-data)
@@ -253,7 +254,7 @@ Otherwise, return the tags with as much space needed to start the tags at positi
   (if (or (null tags) (string= "" tags))
       ""
     (let ((l (length prefix-string)))
-      (format "%s%s" (if (< 72 l) " " (orgtrello-buffer/--symbol " " (- 72 l))) tags))))
+      (format "%s%s" (if (< 72 l) " " (orgtrello-utils/symbol " " (- 72 l))) tags))))
 
 (defun orgtrello-buffer/--compute-card-to-org-entry (card)
   "Given a CARD, compute its 'org-mode' entry equivalence."
@@ -262,16 +263,6 @@ Otherwise, return the tags with as much space needed to start the tags at positi
    (orgtrello-data/entity-keyword card)
    (orgtrello-data/entity-due card)
    (orgtrello-data/entity-tags card)))
-
-(defun orgtrello-buffer/--symbol (sym n)
-  "Compute the repetition of a symbol SYM N times as a string."
-  (--> n
-    (-repeat it sym)
-    (s-join "" it)))
-
-(defun orgtrello-buffer/--space (n)
-  "Given a level, compute N times the number of spaces for an org checkbox entry."
-  (orgtrello-buffer/--symbol " "  n))
 
 (defun orgtrello-buffer/--compute-state-checkbox (state)
   "Compute the STATE of the checkbox."
@@ -286,7 +277,7 @@ Otherwise, return the tags with as much space needed to start the tags at positi
   (format "%s- %s %s\n"
           (-> level
             orgtrello-buffer/--compute-level-into-spaces
-            orgtrello-buffer/--space)
+            orgtrello-utils/space)
           (orgtrello-buffer/--compute-state-checkbox status)
           name))
 
@@ -295,7 +286,7 @@ Otherwise, return the tags with as much space needed to start the tags at positi
   (format "%s- %s %s\n"
           (-> level
             orgtrello-buffer/--compute-level-into-spaces
-            orgtrello-buffer/--space)
+            orgtrello-utils/space)
           (orgtrello-data/--compute-state-item-checkbox status)
           name))
 

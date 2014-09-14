@@ -547,18 +547,6 @@ some description
               (expect "orgtrello-marker-2a0b98e652ce6349a0659a7a8eeb3783ffe9a11a" (orgtrello-buffer/--compute-marker-from-entry (orgtrello-data/make-hash-org :users :level :kwd "some-name" nil :due 1234      "buffername" :desc :comments :tags :unknown)))
               (expect "orgtrello-marker-6c59c5dcf6c83edaeb3f4923bfd929a091504bb3" (orgtrello-buffer/--compute-marker-from-entry (orgtrello-data/make-hash-org :users :level :kwd "some-name" nil :due 4321      "some-other-buffername" :desc :comments :tags :unknown))))
 
-(expectations (desc "orgtrello-buffer/--symbol")
-              (expect ""      (orgtrello-buffer/--symbol " "  0))
-              (expect "*"     (orgtrello-buffer/--symbol "*"  1))
-              (expect "****"  (orgtrello-buffer/--symbol "**" 2))
-              (expect "   "   (orgtrello-buffer/--symbol " "  3)) )
-
-(expectations (desc "orgtrello-buffer/--space")
-              (expect ""    (orgtrello-buffer/--space 0))
-              (expect " "   (orgtrello-buffer/--space 1))
-              (expect "  "  (orgtrello-buffer/--space 2))
-              (expect "   " (orgtrello-buffer/--space 3)) )
-
 (expectations (desc "orgtrello-buffer/--compute-level-into-spaces")
               (expect 0 (orgtrello-buffer/--compute-level-into-spaces 2))
               (expect 2 (orgtrello-buffer/--compute-level-into-spaces nil))
