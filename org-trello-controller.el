@@ -810,15 +810,17 @@ When GLOBALLY-FLAG is not nil, remove also local entities properties."
 
 (defun orgtrello-buffer/prepare-buffer! ()
   "Prepare the buffer to receive org-trello data."
-  (when (and (eq major-mode 'org-mode) org-trello-mode)
+  (when (and (eq major-mode 'org-mode) org-trello/mode)
     (orgtrello-buffer/install-overlays!)
     (orgtrello-buffer/indent-card-descriptions!)
     (orgtrello-buffer/indent-card-data!)))
 
 (defun orgtrello-controller/mode-on-hook-fn ()
   "Start org-trello hook function to install some org-trello setup."
+  ;; Activate org-trello/mode
+  (setq org-trello/mode 'activated)
   ;; buffer-invisibility-spec
-  (add-to-invisibility-spec '(org-trello-cbx-property)) ;; for an ellipsis (...) change to '(org-trello-cbx-property . t)
+  (add-to-invisibility-spec '(org-trello-cbx-property)) ;; for an ellipsis (-> ...) change to '(org-trello-cbx-property . t)
   ;; installing hooks
   (add-hook 'before-save-hook 'orgtrello-buffer/prepare-buffer!)
   ;; prepare the buffer at activation time
@@ -833,7 +835,9 @@ When GLOBALLY-FLAG is not nil, remove also local entities properties."
   ;; removing hooks
   (remove-hook 'before-save-hook 'orgtrello-buffer/prepare-buffer!)
   ;; remove org-trello overlays
-  (orgtrello-buffer/remove-overlays!))
+  (orgtrello-buffer/remove-overlays!)
+  ;; deactivate org-trello/mode
+  (setq org-trello/mode))
 
 (orgtrello-log/msg *OT/DEBUG* "orgtrello-controller loaded!")
 
