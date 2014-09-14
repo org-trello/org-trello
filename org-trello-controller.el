@@ -808,17 +808,21 @@ When GLOBALLY-FLAG is not nil, remove also local entities properties."
   (orgtrello-controller/do-cleanup-from-buffer! t)
   (orgtrello-log/msg *OT/NOLOG* "Cleanup done!"))
 
+(defun orgtrello-buffer/prepare-buffer! ()
+  "Prepare the buffer to receive org-trello data."
+  (when (eq major-mode 'org-mode)
+    (orgtrello-buffer/install-overlays!)
+    (orgtrello-buffer/indent-card-descriptions!)
+    (orgtrello-buffer/indent-card-data!)))
+
 (defun orgtrello-controller/mode-on-hook-fn ()
   "Start org-trello hook function to install some org-trello setup."
   ;; buffer-invisibility-spec
   (add-to-invisibility-spec '(org-trello-cbx-property)) ;; for an ellipsis (...) change to '(org-trello-cbx-property . t)
   ;; installing hooks
-  (mapc (lambda (h)
-          (add-hook 'before-save-hook h)) '(orgtrello-buffer/install-overlays!
-                                            orgtrello-buffer/indent-card-descriptions!))
-  ;; migrate all checkbox at org-trello mode activation
-  (orgtrello-buffer/install-overlays!)
-  (orgtrello-buffer/indent-card-descriptions!)
+  (add-hook 'before-save-hook 'orgtrello-buffer/prepare-buffer!)
+  ;; prepare the buffer at activation time
+  (orgtrello-buffer/prepare-buffer!)
   ;; run hook at startup
   (run-hooks 'org-trello-mode-hook))
 
@@ -827,9 +831,7 @@ When GLOBALLY-FLAG is not nil, remove also local entities properties."
   ;; remove the invisible property names
   (remove-from-invisibility-spec '(org-trello-cbx-property)) ;; for an ellipsis (...) change to '(org-trello-cbx-property . t)
   ;; removing hooks
-  (mapc (lambda (h)
-          (remove-hook 'before-save-hook h)) '(orgtrello-buffer/install-overlays!
-                                               orgtrello-buffer/indent-card-descriptions!))
+  (remove-hook 'before-save-hook 'orgtrello-buffer/prepare-buffer!)
   ;; remove org-trello overlays
   (orgtrello-buffer/remove-overlays!))
 

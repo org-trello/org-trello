@@ -269,8 +269,9 @@ Otherwise, return the tags with as much space needed to start the tags at positi
   (orgtrello-data/--compute-state-generic state '("[X]" "[-]")))
 
 (defun orgtrello-buffer/--compute-level-into-spaces (level)
-  "LEVEL 2 is 0 space, otherwise 2 spaces."
-  (if (equal level *ORGTRELLO/CHECKLIST-LEVEL*) 0 2))
+  "LEVEL 2 is 0 spaces, otherwise 2 spaces.
+This plus the checklist indentation."
+  (+ *ORGTRELLO/CHECKLIST-INDENT* (if (equal level *ORGTRELLO/CHECKLIST-LEVEL*) 0 2)))
 
 (defun orgtrello-buffer/--compute-checklist-to-org-checkbox (name &optional level status)
   "Compute checklist with NAME and optional LEVEL and STATUS to the org checkbox format."
@@ -397,25 +398,39 @@ Otherwise, work on the all buffer."
 (defun orgtrello-buffer/install-overlays! ()
   "Install overlays throughout the all buffers.
 Function to be triggered by `before-save-hook` on org-trello-mode buffer."
-  (orgtrello-buffer/remove-overlays!)
-  (save-excursion
-    (goto-char (point-min))
-    (while (re-search-forward ":PROPERTIES: {.*" nil t)
-      (orgtrello-buffer/install-overlay! (match-beginning 0)))))
+  (when (and (eq major-mode 'org-mode) org-trello-mode)
+    (orgtrello-buffer/remove-overlays!)
+    (save-excursion
+      (goto-char (point-min))
+      (while (re-search-forward ":PROPERTIES: {.*" nil t)
+        (orgtrello-buffer/install-overlay! (match-beginning 0))))))
+
+(defun orgtrello-buffer/indent-region! (indent region)
+  "Given an INDENT and a REGION, check if we need to indent.
+If yes, indent such region with INDENT space."
+  (let ((start (car region))
+        (end   (cadr region)))
+    (save-restriction
+      (narrow-to-region start end)
+      (goto-char (point-min))
+      (unless (<= indent (org-get-indentation));; if need be
+        (indent-rigidly start end indent)))));; now indent with the rightful indentation
 
 (defun orgtrello-buffer/indent-card-descriptions! ()
-  "Indent the card descriptions rigidly starting at 2.
+  "Indent the card description rigidly starting at 2.
 Function to be triggered by `before-save-hook` on org-trello-mode buffer."
-  (when (eq major-mode 'org-mode)
-    (save-excursion
-      (org-map-entries (lambda () "Indent the description from the current card if need be."
-                         (let ((start (orgtrello-entity/card-description-start-point!))
-                               (end   (orgtrello-entity/card-metadata-end-point!)))
-                           (save-restriction
-                             (narrow-to-region start end)
-                             (goto-char (point-min))
-                             (unless (<= 2 (org-get-indentation));; if need be
-                               (indent-rigidly start end *ORGTRELLO-BUFFER/INDENT-DESCRIPTION*)))))))));; now indent with the rightful indentation
+  (when (and (eq major-mode 'org-mode) org-trello-mode)
+    (org-map-entries
+     (lambda ()
+       (orgtrello-buffer/indent-region! *ORGTRELLO-BUFFER/INDENT-DESCRIPTION* (orgtrello-entity/card-metadata-region!))))))
+
+(defun orgtrello-buffer/indent-card-data! ()
+  "Indent the card data rigidly starting at 2.
+Function to be triggered by `before-save-hook` on org-trello-mode buffer."
+  (when (and (eq major-mode 'org-mode) org-trello-mode)
+    (org-map-entries
+     (lambda ()
+       (orgtrello-buffer/indent-region! *ORGTRELLO/CHECKLIST-INDENT* (orgtrello-entity/card-data-region!))))))
 
 (defun orgtrello-buffer/--convert-orgmode-date-to-trello-date (orgmode-date)
   "Convert the 'org-mode' deadline ORGMODE-DATE into a time adapted for trello."
@@ -555,7 +570,10 @@ Make it a hashmap with key :level,  :keyword,  :name and their respective value.
 
 (defun orgtrello-buffer/org-decorator (org-fn)
   "If on org-trello checkbox move to the org end of the line.
+Trigger the needed indentation for the card's description and data.
 In any case, execute ORG-FN."
+  (orgtrello-buffer/indent-card-descriptions!)
+  (orgtrello-buffer/indent-card-data!)
   (when (orgtrello-entity/org-checkbox-p!)
     (org-end-of-line))
   (funcall org-fn))
@@ -629,7 +647,6 @@ COMPUTE-REGION-FN is the region computation function."
       (apply 'insert-buffer-substring (cons buffer-name region))
       (org-mode)
       (orgtrello-buffer/delete-property! *ORGTRELLO/LOCAL-CHECKSUM*)
-;;      (message "zone: '%s'" (buffer-substring-no-properties (point-min) (point-max)))
       (->> (list (point-min) (point-max))
         (cons (current-buffer))
         (cons 'sha256)

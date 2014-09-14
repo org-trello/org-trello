@@ -109,6 +109,10 @@ This use the standard 'org-todo-keywords property from 'org-mode'.")
 (defvar *ORGTRELLO/HMAP-USERS-NAME-ID* nil
   "Org-trello hash map containing for each user id, the associated name.")
 
+(defconst *ORGTRELLO/CHECKLIST-INDENT* 2 "Indentation for checklist.")
+
+(defconst *ORGTRELLO/ITEM-INDENT* 4 "Indentation for item.")
+
 ;; make variable buffer-local
 (mapc (lambda (var)
         (make-variable-buffer-local var))
