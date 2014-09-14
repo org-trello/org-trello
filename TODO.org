@@ -3,9 +3,11 @@
 #+STYLE: <style> h1,h2,h3 {font-family: arial, helvetica, sans-serif} </style>
 
 * TODO 0.6.x [0%]
-- [ ] Use active region - [[https://github.com/org-trello/org-trello/issues/130][#130]]
-- [ ] Another Disposition about org's buffer - [[https://github.com/org-trello/org-trello/issues/33][#33]]
+- [ ] Use active region - https://github.com/org-trello/org-trello/issues/130
+- [ ] Another Disposition about org's buffer - https://github.com/org-trello/org-trello/issues/33
 - [ ] One command to sync them all - https://github.com/org-trello/org-trello/issues/59
+- [ ] `Trello archived` cards are not archived on org-trello buffers - https://github.com/org-trello/org-trello/issues/203
+- [ ] `Checklists don't work for me` - It does work - Need to improve checklist and item predicates. - https://github.com/org-trello/org-trello/issues/204
 * IN-PROGRESS 0.6.0 [83%]
 - [X] Refactor - Unify data structure between trello card and org-trello card
 - [X] Refactor - Improve merge computations
