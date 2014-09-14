@@ -410,11 +410,12 @@ Function to be triggered by `before-save-hook` on org-trello-mode buffer."
 If yes, indent such region with INDENT space."
   (let ((start (car region))
         (end   (cadr region)))
-    (save-restriction
-      (narrow-to-region start end)
-      (goto-char (point-min))
-      (unless (<= indent (org-get-indentation));; if need be
-        (indent-rigidly start end indent)))));; now indent with the rightful indentation
+    (unless (< end start)
+      (save-restriction
+        (narrow-to-region start end)
+        (goto-char (point-min))
+        (unless (<= indent (org-get-indentation));; if need be
+          (indent-rigidly start end indent))))));; now indent with the rightful indentation
 
 (defun orgtrello-buffer/indent-card-descriptions! ()
   "Indent the card description rigidly starting at 2.
