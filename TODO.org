@@ -6,7 +6,10 @@
 - [ ] Use active region - https://github.com/org-trello/org-trello/issues/130
 - [ ] Another Disposition about org's buffer - https://github.com/org-trello/org-trello/issues/33
 - [ ] One command to sync them all - https://github.com/org-trello/org-trello/issues/59
+* IN-PROGRESS 0.6.1 [33%]
+- [X] Update version
 - [ ] `Trello archived` cards are not archived on org-trello buffers - https://github.com/org-trello/org-trello/issues/203
+- [ ] Release notes
 * DONE 0.6.0 [100%]
 CLOSED: [2014-09-14 Sun 18:53]
 - [X] Refactor - Unify data structure between trello card and org-trello card
