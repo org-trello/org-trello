@@ -77,6 +77,12 @@ When UNDO-FLAG is set, trigger the undo computation."
                               ("filter" . "open")
                               ("fields" . "closed,desc,due,idBoard,idList,idMembers,name,pos"))))
 
+(defun orgtrello-api/get-archived-cards (board-id)
+  "Create a cards retrieval from the board with BOARD-ID query."
+  (orgtrello-api/make-query "GET" (format "/boards/%s/cards" board-id)
+                            '(("filter" . "closed")
+                              ("fields" . "closed,desc,due,idBoard,idList,idMembers,name,pos"))))
+
 (defun orgtrello-api/get-card (card-id)
   "Create a get-card with CARD-ID query."
   (orgtrello-api/make-query "GET" (format "/cards/%s" card-id)

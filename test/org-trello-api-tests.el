@@ -31,10 +31,31 @@
             ("fields" . "name,memberships,closed,labelNames")) (gethash :params (orgtrello-api/get-board :id))))
 
 (expectations
-  (desc "testing orgtrello-api/get-cards")
-  (expect "GET"                                                                                                        (gethash :method (orgtrello-api/get-cards :board-id)))
-  (expect "/boards/:board-id/cards"                                                                                    (gethash :uri    (orgtrello-api/get-cards :board-id)))
-  (expect '(("actions" . "commentCard") ("fields" . "closed,desc,due,idBoard,idChecklists,idList,idMembers,name,pos")) (gethash :params (orgtrello-api/get-cards :board-id))))
+ (desc "testing orgtrello-api/get-cards")
+ (expect "GET"                                                                                                        (gethash :method (orgtrello-api/get-cards :board-id)))
+ (expect "/boards/:board-id/cards"                                                                                    (gethash :uri    (orgtrello-api/get-cards :board-id)))
+ (expect '(("actions" . "commentCard") ("fields" . "closed,desc,due,idBoard,idChecklists,idList,idMembers,name,pos")) (gethash :params (orgtrello-api/get-cards :board-id))))
+
+(expectations
+ (desc "testing orgtrello-api/get-full-cards")
+ (expect "GET"
+         (gethash :method (orgtrello-api/get-full-cards :board-id)))
+ (expect "/boards/:board-id/cards"
+         (gethash :uri    (orgtrello-api/get-full-cards :board-id)))
+ (expect '(("actions" . "commentCard")
+           ("checklists" . "all") ("filter" . "open")
+           ("fields" . "closed,desc,due,idBoard,idList,idMembers,name,pos"))
+         (gethash :params (orgtrello-api/get-full-cards :board-id))))
+
+(expectations
+ (desc "testing orgtrello-api/get-archived-cards")
+ (expect "GET"
+         (gethash :method (orgtrello-api/get-archived-cards :board-id)))
+ (expect "/boards/:board-id/cards"
+         (gethash :uri    (orgtrello-api/get-archived-cards :board-id)))
+ (expect '(("filter" . "closed")
+           ("fields" . "closed,desc,due,idBoard,idList,idMembers,name,pos"))
+         (gethash :params (orgtrello-api/get-archived-cards :board-id))))
 
 (expectations
   (desc "orgtrello-api/get-card")

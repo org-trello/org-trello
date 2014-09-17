@@ -202,17 +202,29 @@ Does not preserve position."
                 (board-id (orgtrello-buffer/board-id!)))
     (orgtrello-log/msg *OT/INFO* "Synchronizing the trello board '%s' to the org-mode file..." board-name)
     (deferred:$
-      (deferred:next
-        (lambda ()
-          (-> board-id
-            orgtrello-api/get-full-cards
-            (orgtrello-query/http-trello 'sync))))
+      (deferred:parallel ;; concurrently retrieve:
+        (deferred:next ;; - `'trello archived`' card
+          (lambda ()
+            (-> board-id
+              orgtrello-api/get-archived-cards
+              (orgtrello-query/http-trello 'sync))))
+        (deferred:next ;; - `'trello opened`' card
+          (lambda ()
+            (-> board-id
+              orgtrello-api/get-full-cards
+              (orgtrello-query/http-trello 'sync)))))
       (deferred:nextc it
-        (lambda (trello-cards) ;; We have the full result in one query, now we can compute the translation in org-trello model
-          (orgtrello-log/msg *OT/DEBUG* "trello-card: %S" trello-cards)
-          (->> trello-cards
-            (mapcar 'orgtrello-data/to-org-trello-card)
-            (orgtrello-controller/sync-buffer-with-trello-cards! buffer-name))))
+        (lambda (trello-archived-and-trello-opened-cards)
+          (let ((trello-archived-cards (elt trello-archived-and-trello-opened-cards 0))
+                (trello-cards (elt trello-archived-and-trello-opened-cards 1)))
+            ;; first archive the cards that needs to be
+            (orgtrello-log/msg *OT/DEBUG* "Archived trello-cards: %S" trello-archived-cards)
+            (orgtrello-buffer/archive-cards! trello-archived-cards)
+            ;; Then update the buffer with the other opened trello cards
+            (orgtrello-log/msg *OT/DEBUG* "Opened trello-cards: %S" trello-cards)
+            (->> trello-cards
+              (mapcar 'orgtrello-data/to-org-trello-card)
+              (orgtrello-controller/sync-buffer-with-trello-cards! buffer-name)))))
       (deferred:nextc it
         (lambda ()
           (orgtrello-buffer/save-buffer buffer-name)
