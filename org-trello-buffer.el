@@ -672,6 +672,13 @@ COMPUTE-REGION-FN is the region computation function."
   "Compute the checkbox's checksum."
   (orgtrello-buffer/compute-generic-checksum! 'orgtrello-entity/compute-item-region!))
 
+(defun orgtrello-buffer/archive-cards! (trello-cards)
+  "Given a list of TRELLO-CARDS, archive those if they are present on buffer."
+  (org-map-entries (lambda ()
+                     (let ((card-id (-> (orgtrello-buffer/entry-get-full-metadata!) orgtrello-data/current orgtrello-data/entity-id)))
+                       (when (--some? (string= card-id (orgtrello-data/entity-id it)) trello-cards) ;; find a card to archive
+                         (org-archive-subtree))))))
+
 (orgtrello-log/msg *OT/DEBUG* "orgtrello-buffer loaded!")
 
 (provide 'org-trello-buffer)

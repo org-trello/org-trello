@@ -1,3 +1,9 @@
+# 0.6.1
+
+- [X] Update version
+- [X] `Trello archived` cards are not archived on org-trello buffers - CLOSE https://github.com/org-trello/org-trello/issues/203
+- [X] Release notes
+
 # 0.6.0
 
 - [X] Refactor - Unify data structure between trello card and org-trello card
