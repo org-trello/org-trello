@@ -5,7 +5,11 @@
 * TODO 0.6.x [0%]
 - [ ] Use active region - https://github.com/org-trello/org-trello/issues/130
 - [ ] Another Disposition about org's buffer - https://github.com/org-trello/org-trello/issues/33
-- [ ] One command to sync them all - https://github.com/org-trello/org-trello/issues/59
+* IN-PROGRESS 0.6.2 [25%]
+- [X] Backlog
+- [ ] Update version
+- [ ] Use etags to avoid sync from action if it is not necessary
+- [ ] Release notes
 * DONE 0.6.1 [100%]
 CLOSED: [2014-09-17 Wed 09:43]
 - [X] Update version
