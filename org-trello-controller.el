@@ -716,7 +716,7 @@ Return the hashmap (name, id) of the new lists created."
   "Show the card comments in a temporary buffer."
   (save-excursion
     (orgtrello-entity/back-to-card!)
-    (let* ((current-card-name (-> (orgtrello-buffer/metadata!) orgtrello-data/entity-name))
+    (let* ((current-card-name (-> (orgtrello-buffer/entity-metadata!) orgtrello-data/entity-name))
            (comments-title (format "comments for card '%s'" current-card-name))
            (comments-formatted (-> (orgtrello-buffer/get-card-comments!)
                                  orgtrello-data/format-comments)))
@@ -735,7 +735,7 @@ Return the hashmap (name, id) of the new lists created."
   "Wait for the input to add a comment to the current card."
   (save-excursion
     (orgtrello-entity/back-to-card!)
-    (let* ((card-id (-> (orgtrello-buffer/metadata!) orgtrello-data/entity-id))
+    (let* ((card-id (-> (orgtrello-buffer/entity-metadata!) orgtrello-data/entity-id))
            (comment (read-string "Add a comment: ")))
       (if (or (null card-id) (string= "" card-id) (string= "" comment))
           (message "Empty comment - skip.")

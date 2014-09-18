@@ -623,7 +623,7 @@ DEADLINE: <some-due-date>
                                     (orgtrello-data/current)
                                     orgtrello-data/entity-name)))
 
-(ert-deftest testing-orgtrello-buffer/metadata! ()
+(ert-deftest testing-orgtrello-buffer/entity-metadata! ()
   (let ((h-values            (orgtrello-tests/with-temp-buffer ":PROPERTIES:
 #+PROPERTY: orgtrello-user-ardumont some-user-id
 #+PROPERTY: orgtrello-user-dude some-user-id2
@@ -636,7 +636,7 @@ DEADLINE: <some-due-date>
 :orgtrello-card-comments: ardumont: this is some comments###dude: some other comment
 :END:
   some description\n"
-                                                               (orgtrello-buffer/metadata!)
+                                                               (orgtrello-buffer/entity-metadata!)
                                                                -2)))
     (should (equal 1                                                             (orgtrello-data/entity-level h-values)))
     (should (equal nil                                                           (orgtrello-data/entity-tags h-values)))
