@@ -15,6 +15,7 @@
 (require 'org-trello-buffer)
 (require 'org-trello-input)
 (require 'org-trello-proxy)
+(require 's)
 
 (org-trello/require-cl)
 
@@ -380,7 +381,7 @@ BUFFER-NAME specifies the buffer onto which we work."
       (lambda (consumer-key)
         (orgtrello-log/msg *OT/DEBUG* "consumer-key: %S" consumer-key)
         (let ((access-token (read-string "Access token: ")))
-          `(,consumer-key ,access-token))))
+          (mapcar 's-trim `(,consumer-key ,access-token)))))
     (deferred:nextc it
       (lambda (consumer-key-and-access-token)
         (orgtrello-log/msg *OT/DEBUG* "consumer-key-and-access-token: %S" consumer-key-and-access-token)
