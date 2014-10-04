@@ -15,6 +15,7 @@
 (require 'org-trello-buffer)
 (require 'org-trello-input)
 (require 'org-trello-proxy)
+(require 's)
 
 (org-trello/require-cl)
 
@@ -233,6 +234,20 @@ Does not preserve position."
       (deferred:error it
         (lambda (err) (orgtrello-log/msg *OT/ERROR* "Sync buffer from trello - Catch error: %S" err))))))
 
+(defun orgtrello-controller/check-trello-connection! ()
+  "Full org-mode file synchronisation. Beware, this will block emacs as the request is synchronous."
+  (orgtrello-log/msg *OT/INFO* "Checking trello connection...")
+  (deferred:$
+    (deferred:next (lambda () (orgtrello-query/http-trello (orgtrello-api/get-me) 'sync)))
+    (deferred:nextc it
+      (lambda (user-me)
+        (orgtrello-log/msg *OT/INFO*
+                           (if user-me
+                               (format "Account '%s' configured! Everything is ok!" (orgtrello-data/entity-username user-me))
+                             "There is a problem with your credentials.\nMake sure you used M-x org-trello/install-key-and-token and installed correctly the consumer-key and access-token.\nSee http://org-trello.github.io/trello-setup.html#credentials for more information."))))
+    (deferred:error it
+      (lambda (err) (orgtrello-log/msg *OT/ERROR* "Setup ko - '%s'" err)))))
+
 (defun orgtrello-controller/execute-sync-entity-structure! (entity-structure)
   "Execute synchronization of ENTITY-STRUCTURE (entities at first position, adjacency list in second position).
 The entity-structure is self contained.
@@ -380,7 +395,7 @@ BUFFER-NAME specifies the buffer onto which we work."
       (lambda (consumer-key)
         (orgtrello-log/msg *OT/DEBUG* "consumer-key: %S" consumer-key)
         (let ((access-token (read-string "Access token: ")))
-          `(,consumer-key ,access-token))))
+          (mapcar 's-trim `(,consumer-key ,access-token)))))
     (deferred:nextc it
       (lambda (consumer-key-and-access-token)
         (orgtrello-log/msg *OT/DEBUG* "consumer-key-and-access-token: %S" consumer-key-and-access-token)
@@ -716,7 +731,7 @@ Return the hashmap (name, id) of the new lists created."
   "Show the card comments in a temporary buffer."
   (save-excursion
     (orgtrello-entity/back-to-card!)
-    (let* ((current-card-name (-> (orgtrello-buffer/metadata!) orgtrello-data/entity-name))
+    (let* ((current-card-name (-> (orgtrello-buffer/entity-metadata!) orgtrello-data/entity-name))
            (comments-title (format "comments for card '%s'" current-card-name))
            (comments-formatted (-> (orgtrello-buffer/get-card-comments!)
                                  orgtrello-data/format-comments)))
@@ -735,7 +750,7 @@ Return the hashmap (name, id) of the new lists created."
   "Wait for the input to add a comment to the current card."
   (save-excursion
     (orgtrello-entity/back-to-card!)
-    (let* ((card-id (-> (orgtrello-buffer/metadata!) orgtrello-data/entity-id))
+    (let* ((card-id (-> (orgtrello-buffer/entity-metadata!) orgtrello-data/entity-id))
            (comment (read-string "Add a comment: ")))
       (if (or (null card-id) (string= "" card-id) (string= "" comment))
           (message "Empty comment - skip.")

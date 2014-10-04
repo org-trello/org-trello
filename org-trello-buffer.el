@@ -474,7 +474,7 @@ Deal with org entities and checkbox as well."
     (--map (gethash (format "%s%s" *ORGTRELLO/USER-PREFIX* it) *ORGTRELLO/HMAP-USERS-NAME-ID*) it)
     (orgtrello-data/--users-to it)))
 
-(defun orgtrello-buffer/metadata! ()
+(defun orgtrello-buffer/entity-metadata! ()
   "Compute the metadata for a given org entry. Also add some metadata identifier/due-data/point/buffer-name/etc..."
   (let ((current-point (point)))
     (->> (orgtrello-buffer/--extract-metadata!)
@@ -506,14 +506,14 @@ Deal with org entities and checkbox as well."
   "Extract the metadata from the current heading's parent."
   (save-excursion
     (orgtrello-buffer/org-up-parent!)
-    (orgtrello-buffer/metadata!)))
+    (orgtrello-buffer/entity-metadata!)))
 
 (defun orgtrello-buffer/--grandparent-metadata! ()
   "Extract the metadata from the current heading's grandparent."
   (save-excursion
     (orgtrello-buffer/org-up-parent!)
     (orgtrello-buffer/org-up-parent!)
-    (orgtrello-buffer/metadata!)))
+    (orgtrello-buffer/entity-metadata!)))
 
 (defun orgtrello-buffer/safe-entry-full-metadata! ()
   "Compute the full entry's metadata without any underlying error.
@@ -525,7 +525,7 @@ Return nil if entry is not correct, otherwise return the full entity metadata st
 (defun orgtrello-buffer/entry-get-full-metadata! ()
   "Compute metadata needed for entry into a map with keys :current, :parent, :grandparent. Returns nil if the level is superior to 4."
   (save-excursion
-    (let* ((current   (orgtrello-buffer/metadata!))
+    (let* ((current   (orgtrello-buffer/entity-metadata!))
            (level     (orgtrello-data/entity-level current)))
       (when (< level *ORGTRELLO/OUTOFBOUNDS-LEVEL*)
         (let* ((ancestors (cond ((= level *ORGTRELLO/CARD-LEVEL*)      '(nil nil))

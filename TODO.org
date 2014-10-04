@@ -5,7 +5,18 @@
 * TODO 0.6.x [0%]
 - [ ] Use active region - https://github.com/org-trello/org-trello/issues/130
 - [ ] Another Disposition about org's buffer - https://github.com/org-trello/org-trello/issues/33
-- [ ] One command to sync them all - https://github.com/org-trello/org-trello/issues/59
+- [ ] Use etags to avoid sync from action if it is not necessary [0%]
+  - [ ] Exploit the etags from the card's property drawer and send get request with it
+  - [ ] Retrieve etags from GET result and store it inside the card's property drawer
+  - [ ] Improve sync-from-trello to avoid destroying the full content of the buffer before writing inside
+  - [ ] Does everything work?
+* DONE 0.6.2 [100%]
+CLOSED: [2014-10-04 Sat 11:16]
+- [X] Backlog
+- [X] Update version
+- [X] Improve check connection to trello
+- [X] Improve documentation about the org-trello setup
+- [X] Release notes
 * DONE 0.6.1 [100%]
 CLOSED: [2014-09-17 Wed 09:43]
 - [X] Update version

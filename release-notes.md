@@ -1,3 +1,11 @@
+# 0.6.2
+
+- [X] Backlog
+- [X] Update version
+- [X] Improve check connection to trello
+- [X] Improve documentation about the org-trello setup
+- [X] Release notes
+
 # 0.6.1
 
 - [X] Update version

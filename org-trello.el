@@ -4,7 +4,7 @@
 
 ;; Author: Antoine R. Dumont <eniotna.t AT gmail.com>
 ;; Maintainer: Antoine R. Dumont <eniotna.t AT gmail.com>
-;; Version: 0.6.1
+;; Version: 0.6.2
 ;; Package-Requires: ((emacs "24") (dash "2.8.0") (s "1.9.0") (deferred "0.3.2") (request-deferred "0.1.0"))
 ;; Keywords: org-mode trello sync org-trello
 ;; URL: https://github.com/org-trello/org-trello
@@ -37,8 +37,9 @@
 ;; (require 'org-trello)
 ;; (add-hook 'org-mode-hook 'org-trello-mode)
 ;;
-;; 2) Once - Install the consumer-key and read/write token for org-trello to work in your name with your boards (C-c o i)
+;; 2) Once - Install the consumer-key and read/write access-token for org-trello to work in your name with your boards (C-c o i)
 ;; M-x org-trello/install-key-and-token
+;; (See http://org-trello.github.io/trello-setup.html#credentials for more details)
 ;;
 ;; You may want:
 ;; - to connect your org buffer to an existing board (C-c o I).  Beware that this will only install properties needed to speak with trello board (nothing else).
@@ -87,7 +88,7 @@
 ;;
 ;; Enjoy!
 ;;
-;; More informations: https://org-trello.github.io/org-trello
+;; More informations: https://org-trello.github.io
 ;; Issue tracker: https://github.com/org-trello/org-trello/issues
 
 ;;; Code:
@@ -104,7 +105,7 @@ Please consider upgrading Emacs." emacs-version) "Error message when installing 
 (require 'timer)
 (require 'align)
 
-(defconst *ORGTRELLO/VERSION* "0.6.1" "Current org-trello version installed.")
+(defconst *ORGTRELLO/VERSION* "0.6.2" "Current org-trello version installed.")
 
 
 
@@ -289,7 +290,7 @@ If MODIFIER is not nil, unassign oneself from the card."
 (defun org-trello/check-setup ()
   "Check the current setup."
   (interactive)
-  (org-trello/apply '(org-trello/log-strict-checks-and-do "Checking setup." (lambda () (orgtrello-log/msg *OT/NOLOG* "Setup ok!"))) nil nil 'no-log))
+  (org-trello/apply '(org-trello/log-strict-checks-and-do "Checking setup." orgtrello-controller/check-trello-connection!) nil nil 'no-log))
 
 (defun org-trello/delete-setup ()
   "Delete the current setup."
