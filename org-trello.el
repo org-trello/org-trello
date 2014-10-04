@@ -289,7 +289,11 @@ If MODIFIER is not nil, unassign oneself from the card."
 (defun org-trello/check-setup ()
   "Check the current setup."
   (interactive)
-  (org-trello/apply '(org-trello/log-strict-checks-and-do "Checking setup." (lambda () (orgtrello-log/msg *OT/NOLOG* "Setup ok!"))) nil nil 'no-log))
+  (org-trello/apply '(org-trello/log-strict-checks-and-do "Checking setup." (lambda ()
+                                                                              (orgtrello-log/msg *OT/NOLOG*
+                                                                                                 (if (orgtrello-query/http-trello (orgtrello-api/get-me) 'sync)
+                                                                                                     "Setup ok!"
+                                                                                                   "There is a problem with your credentials. Make sure you used M-x org-trello/install-key-and-token.")))) nil nil 'no-log))
 
 (defun org-trello/delete-setup ()
   "Delete the current setup."
