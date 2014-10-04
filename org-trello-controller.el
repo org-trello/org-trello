@@ -234,6 +234,20 @@ Does not preserve position."
       (deferred:error it
         (lambda (err) (orgtrello-log/msg *OT/ERROR* "Sync buffer from trello - Catch error: %S" err))))))
 
+(defun orgtrello-controller/check-trello-connection! ()
+  "Full org-mode file synchronisation. Beware, this will block emacs as the request is synchronous."
+  (orgtrello-log/msg *OT/INFO* "Checking trello connection...")
+  (deferred:$
+    (deferred:next (lambda () (orgtrello-query/http-trello (orgtrello-api/get-me) 'sync)))
+    (deferred:nextc it
+      (lambda (user-me)
+        (orgtrello-log/msg *OT/INFO*
+                           (if user-me
+                               (format "Account '%s' configured! Everything is ok!" (orgtrello-data/entity-username user-me))
+                             "There is a problem with your credentials. Make sure you used M-x org-trello/install-key-and-token."))))
+    (deferred:error it
+      (lambda (err) (orgtrello-log/msg *OT/ERROR* "Setup ko - '%s'" err)))))
+
 (defun orgtrello-controller/execute-sync-entity-structure! (entity-structure)
   "Execute synchronization of ENTITY-STRUCTURE (entities at first position, adjacency list in second position).
 The entity-structure is self contained.
