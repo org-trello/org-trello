@@ -37,8 +37,9 @@
 ;; (require 'org-trello)
 ;; (add-hook 'org-mode-hook 'org-trello-mode)
 ;;
-;; 2) Once - Install the consumer-key and read/write token for org-trello to work in your name with your boards (C-c o i)
+;; 2) Once - Install the consumer-key and read/write access-token for org-trello to work in your name with your boards (C-c o i)
 ;; M-x org-trello/install-key-and-token
+;; (See http://org-trello.github.io/trello-setup.html#credentials for more details)
 ;;
 ;; You may want:
 ;; - to connect your org buffer to an existing board (C-c o I).  Beware that this will only install properties needed to speak with trello board (nothing else).
@@ -87,7 +88,7 @@
 ;;
 ;; Enjoy!
 ;;
-;; More informations: https://org-trello.github.io/org-trello
+;; More informations: https://org-trello.github.io
 ;; Issue tracker: https://github.com/org-trello/org-trello/issues
 
 ;;; Code:

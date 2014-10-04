@@ -10,10 +10,11 @@
   - [ ] Retrieve etags from GET result and store it inside the card's property drawer
   - [ ] Improve sync-from-trello to avoid destroying the full content of the buffer before writing inside
   - [ ] Does everything work?
-* IN-PROGRESS 0.6.2 [40%]
+* IN-PROGRESS 0.6.2 [80%]
 - [X] Backlog
 - [X] Update version
-- [ ] Improve check connection to trello
+- [X] Improve check connection to trello
+- [X] Improve documentation about the org-trello setup
 - [ ] Release notes
 * DONE 0.6.1 [100%]
 CLOSED: [2014-09-17 Wed 09:43]

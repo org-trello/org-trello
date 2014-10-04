@@ -244,7 +244,7 @@ Does not preserve position."
         (orgtrello-log/msg *OT/INFO*
                            (if user-me
                                (format "Account '%s' configured! Everything is ok!" (orgtrello-data/entity-username user-me))
-                             "There is a problem with your credentials. Make sure you used M-x org-trello/install-key-and-token."))))
+                             "There is a problem with your credentials.\nMake sure you used M-x org-trello/install-key-and-token and installed correctly the consumer-key and access-token.\nSee http://org-trello.github.io/trello-setup.html#credentials for more information."))))
     (deferred:error it
       (lambda (err) (orgtrello-log/msg *OT/ERROR* "Setup ko - '%s'" err)))))
 
