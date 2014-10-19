@@ -241,7 +241,7 @@ This is intended as a buffer local variable.")
   :group 'org-trello)
 
 (add-hook 'org-mode-hook (lambda ()
-                           (when (-any? (lambda (name) (string= name buffer-file-name)) org-trello-files)
+                           (when (-any? (lambda (name) (string= (expand-file-name name) buffer-file-name)) org-trello-files)
                              (org-trello-mode))))
 
 (provide 'org-trello-setup)
