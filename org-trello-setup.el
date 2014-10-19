@@ -2,6 +2,7 @@
 ;;; Commentary:
 ;;; Code:
 
+(require 'org)
 (require 'org-trello-utils)
 
 (defgroup org-trello nil " Org-trello customisation group."
@@ -232,6 +233,16 @@ This is intended as a buffer local variable.")
          `(set *ORGTRELLO/MODE-PREVIOUS-PREFIX-KEYBINDING* ,variable)
          (set variable prefix-keybinding))
   :group 'org-trello)
+
+(defcustom org-trello-files nil
+  "Org-trello files that needs org-trello activated when opened."
+  :type 'list
+  :require 'org-trello
+  :group 'org-trello)
+
+(add-hook 'org-mode-hook (lambda ()
+                           (when (-any? (lambda (name) (string= name buffer-file-name)) org-trello-files)
+                             (org-trello-mode))))
 
 (provide 'org-trello-setup)
 ;;; org-trello-setup.el ends here
