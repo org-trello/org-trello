@@ -1,3 +1,9 @@
+# 0.6.3
+
+- [X] Update version
+- [X] Enable org-trello mode automatically for certain files - https://github.com/org-trello/org-trello/issues/210
+- [X] Release notes
+
 # 0.6.2
 
 - [X] Backlog
