@@ -343,6 +343,16 @@ If MODIFIER is not nil, unassign oneself from the card."
                                       (orgtrello-log/msg *OT/NOLOG* "org-trello/ot is off!"))
           'do-append)
 
+(defcustom org-trello-files nil
+  "Org-trello files that needs org-trello activated when opened."
+  :type 'list
+  :require 'org-trello
+  :group 'org-trello)
+
+(add-hook 'org-mode-hook (lambda ()
+                           (when (-any? (lambda (name) (string= (expand-file-name name) buffer-file-name)) org-trello-files)
+                             (org-trello-mode))))
+
 (orgtrello-log/msg *OT/DEBUG* "org-trello loaded!")
 
 (provide 'org-trello)
