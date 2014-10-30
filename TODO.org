@@ -11,12 +11,12 @@
   - [ ] Improve sync-from-trello to avoid destroying the full content of the buffer before writing inside
   - [ ] Does everything work?
 - [ ] Add a file to the org-trello list - https://github.com/org-trello/org-trello/issues/211
-* IN-PROGRESS 0.6.4 [80%]
+* IN-PROGRESS 0.6.4 [100%]
 - [X] Minor change to allow abbreviated file path - https://github.com/org-trello/org-trello/pull/213
 - [X] Update version
 - [X] Move file list functionality to org-trello.el - CLOSE https://github.com/org-trello/org-trello/issues/214
 - [X] Add ;;;### autoload for the org-trello's default commands
-- [ ] Release notes
+- [X] Release notes
 * DONE 0.6.3 [100%]
 CLOSED: [2014-10-19 Sun 19:26]
 - [X] Update version
