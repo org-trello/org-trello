@@ -121,6 +121,7 @@ Please consider upgrading Emacs." emacs-version) "Error message when installing 
 
 
 
+;;;###autoload
 (defun org-trello/version ()
   "Org-trello version."
   (interactive)
@@ -146,8 +147,8 @@ when NOLOG-P is specified, no output log."
                 (nolog-flag         nolog-p))
     (deferred:$
       (deferred:next (lambda () (save-excursion
-                                  (with-local-quit
-                                    (apply (car computation) (cdr computation))))))
+                             (with-local-quit
+                               (apply (car computation) (cdr computation))))))
       (deferred:nextc it (lambda ()
                            (when buffer-to-save (orgtrello-buffer/save-buffer buffer-to-save))
                            (when reload-setup (orgtrello-action/reload-setup!))
@@ -173,12 +174,14 @@ If NO-CHECK-FLAG is set, no controls are done."
    (if no-check-flag nil '(orgtrello-controller/load-keys! orgtrello-controller/control-keys! orgtrello-controller/setup-properties!))
    action-fn))
 
+;;;###autoload
 (defun org-trello/abort-sync ()
   "Control first, then if ok, add a comment to the current card."
   (interactive)
   (deferred:clear-queue)
   (orgtrello-log/msg *OT/INFO* "Cancel actions done!"))
 
+;;;###autoload
 (defun org-trello/add-card-comments (&optional modifier)
   "Control first, then if ok, add a comment to the current card.
 When MODIFIER is set, this will show the current card's comments."
@@ -188,6 +191,7 @@ When MODIFIER is set, this will show the current card's comments."
                               '("Display current card's last comments" orgtrello-controller/do-show-card-comments!)
                             '("Add card comment" orgtrello-controller/do-add-card-comment!)))))
 
+;;;###autoload
 (defun org-trello/show-card-comments ()
   "Control first, then if ok, show a simple buffer with the current card's last comments."
   (interactive)
@@ -198,6 +202,7 @@ When MODIFIER is set, this will show the current card's comments."
   (interactive)
   (org-trello/apply '(org-trello/log-strict-checks-and-do "Display current board's labels" orgtrello-controller/do-show-board-labels!)))
 
+;;;###autoload
 (defun org-trello/sync-card (&optional modifier)
   "Execute the sync of an entity and its structure to trello.
 If MODIFIER is non nil, execute the sync entity and its structure from trello."
@@ -208,6 +213,7 @@ If MODIFIER is non nil, execute the sync entity and its structure from trello."
              '("Request 'sync entity with structure from trello" orgtrello-controller/checks-then-sync-card-from-trello!)
            '("Request 'sync entity with structure to trello" orgtrello-controller/checks-then-sync-card-to-trello!)))))
 
+;;;###autoload
 (defun org-trello/sync-buffer (&optional modifier)
   "Execute the sync of the entire buffer to trello.
 If MODIFIER is non nil, execute the sync of the entire buffer from trello."
@@ -218,6 +224,7 @@ If MODIFIER is non nil, execute the sync of the entire buffer from trello."
              '("Request 'sync org buffer from trello board'" orgtrello-controller/do-sync-buffer-from-trello!)
            '("Request 'sync org buffer to trello board'" orgtrello-controller/do-sync-buffer-to-trello!)))))
 
+;;;###autoload
 (defun org-trello/kill-entity (&optional modifier)
   "Execute the entity removal from trello and the buffer.
 If MODIFIER is non nil, execute all entities removal from trello and buffer."
@@ -228,36 +235,43 @@ If MODIFIER is non nil, execute all entities removal from trello and buffer."
              '("Delete all cards" orgtrello-controller/do-delete-entities)
            '("Delete entity at point (card/checklist/item)" orgtrello-controller/checks-then-delete-simple)))))
 
+;;;###autoload
 (defun org-trello/kill-cards ()
   "Execute all entities removal from trello and buffer."
   (interactive)
   (org-trello/apply-deferred '(org-trello/log-strict-checks-and-do "Delete Cards" orgtrello-controller/do-delete-entities)))
 
+;;;###autoload
 (defun org-trello/archive-card ()
   "Execute archive card at point."
   (interactive)
   (org-trello/apply-deferred '(org-trello/log-strict-checks-and-do "Archive Card at point" orgtrello-controller/checks-and-do-archive-card)))
 
+;;;###autoload
 (defun org-trello/archive-cards ()
   "Execute archive all the DONE cards from buffer."
   (interactive)
   (org-map-entries 'org-trello/archive-card "/DONE" 'file))
 
+;;;###autoload
 (defun org-trello/install-key-and-token ()
   "No control, trigger the setup installation of the key and the read/write token."
   (interactive)
   (org-trello/apply-deferred '(org-trello/log-light-checks-and-do "Setup key and token" orgtrello-controller/do-install-key-and-token 'do-no-checks)))
 
+;;;###autoload
 (defun org-trello/install-board-metadata ()
   "Control first, then if ok, trigger the setup installation of the trello board to sync with."
   (interactive)
   (org-trello/apply-deferred '(org-trello/log-light-checks-and-do "Install boards and lists" orgtrello-controller/do-install-board-and-lists)))
 
+;;;###autoload
 (defun org-trello/update-board-metadata ()
   "Control first, then if ok, trigger the update of the informations about the board."
   (interactive)
   (org-trello/apply-deferred '(org-trello/log-light-checks-and-do "Update board information" orgtrello-controller/do-update-board-metadata!)))
 
+;;;###autoload
 (defun org-trello/jump-to-trello-card (&optional modifier)
   "Jump from current card to trello card in browser.
 If MODIFIER is not nil, jump from current card to board."
@@ -267,16 +281,19 @@ If MODIFIER is not nil, jump from current card to board."
                               '("Jump to board" orgtrello-controller/jump-to-board!)
                             '("Jump to card" orgtrello-controller/jump-to-card!)))))
 
+;;;###autoload
 (defun org-trello/jump-to-trello-board ()
   "Jump to current trello board."
   (interactive)
   (org-trello/apply '(org-trello/log-strict-checks-and-do "Jump to board" orgtrello-controller/jump-to-board!)))
 
+;;;###autoload
 (defun org-trello/create-board-and-install-metadata ()
   "Control first, then if ok, trigger the board creation."
   (interactive)
   (org-trello/apply-deferred '(org-trello/log-light-checks-and-do "Create board and lists" orgtrello-controller/do-create-board-and-install-metadata)))
 
+;;;###autoload
 (defun org-trello/assign-me (&optional modifier)
   "Assign oneself to the card.
 If MODIFIER is not nil, unassign oneself from the card."
@@ -287,16 +304,19 @@ If MODIFIER is not nil, unassign oneself from the card."
                             '("Assign myself to card" orgtrello-controller/do-assign-me)))
                     (current-buffer)))
 
+;;;###autoload
 (defun org-trello/check-setup ()
   "Check the current setup."
   (interactive)
   (org-trello/apply '(org-trello/log-strict-checks-and-do "Checking setup." orgtrello-controller/check-trello-connection!) nil nil 'no-log))
 
+;;;###autoload
 (defun org-trello/delete-setup ()
   "Delete the current setup."
   (interactive)
   (org-trello/apply '(org-trello/log-strict-checks-and-do "Delete current org-trello setup" orgtrello-controller/delete-setup!) (current-buffer)))
 
+;;;###autoload
 (defun org-trello/help-describing-bindings ()
   "A simple message to describe the standard bindings used."
   (interactive)
