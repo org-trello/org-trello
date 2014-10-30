@@ -1,4 +1,4 @@
-# 0.6.3
+# 0.6.4
 
 - [X] Minor change to allow abbreviated file path - https://github.com/org-trello/org-trello/pull/213
 - [X] Update version
