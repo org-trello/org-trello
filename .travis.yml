@@ -1,21 +1,21 @@
 language: emacs-lisp
+env:
+  global:
+    - PATH=$HOME/.cask/bin:$HOME/.evm/bin:$PATH
+  matrix:
+    # - EVM_EMACS=emacs-24.1-bin
+    # - EVM_EMACS=emacs-24.2-bin
+    - EVM_EMACS=emacs-24.3-bin
+    - EVM_EMACS=emacs-24.4-bin    
 before_install:
   # evm install
-  - sudo mkdir /usr/local/evm
-  - sudo chown travis:travis /usr/local/evm
-  - curl -fsSkL https://raw.github.com/rejeep/evm/master/go | bash
-  - export PATH="$HOME/.evm/bin:$PATH"
-  - export PATH="$HOME/.cask/bin:$PATH"
-  - evm install emacs-24.3-bin
-  - evm install $EVM_EMACS --use --force
+  - curl -fsSkL https://gist.github.com/rejeep/7736123/raw > travis.sh && source ./travis.sh
+  # install the matrix's emacs version
+  - evm install $EVM_EMACS --use --skip
+  - cask --version
   - emacs --version
-  # cask install
-  - curl -fsSkL https://raw.github.com/cask/cask/master/go | python
+  # install deps for cask
   - cask
-env:
-  - EVM_EMACS=emacs-24.1-bin
-  - EVM_EMACS=emacs-24.2-bin
-  - EVM_EMACS=emacs-24.3-bin
 script:
   - pwd
   - make install
