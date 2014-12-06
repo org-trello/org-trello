@@ -11,6 +11,12 @@
   - [ ] Improve sync-from-trello to avoid destroying the full content of the buffer before writing inside
   - [ ] Does everything work?
 - [ ] Add a file to the org-trello list - https://github.com/org-trello/org-trello/issues/211
+- [ ] One command to sync them all - https://github.com/org-trello/org-trello/issues/59
+* IN-PROGRESS 0.6.5 [25%]
+- [X] Create backlog
+- [ ] Update version
+- [ ] Long and multiline comments - https://github.com/org-trello/org-trello/issues/218
+- [ ] Release notes
 * DONE 0.6.4 [100%]
 CLOSED: [2014-10-30 Thu 18:28]
 - [X] Minor change to allow abbreviated file path - https://github.com/org-trello/org-trello/pull/213
