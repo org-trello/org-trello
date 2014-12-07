@@ -18,6 +18,4 @@ before_install:
   - cask
 script:
   - pwd
-  - make install
-  - make test
-  - make install-file-with-deps-from-melpa
+  - make install test install-file-with-deps-from-melpa

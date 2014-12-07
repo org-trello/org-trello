@@ -750,16 +750,18 @@ Return the hashmap (name, id) of the new lists created."
   "Wait for the input to add a comment to the current card."
   (save-excursion
     (orgtrello-entity/back-to-card!)
-    (let* ((card-id (-> (orgtrello-buffer/entity-metadata!) orgtrello-data/entity-id))
-           (comment (read-string "Add a comment: ")))
+    (lexical-let ((card-id (-> (orgtrello-buffer/entity-metadata!) orgtrello-data/entity-id))
+                  (comment (read-string "Add a comment: ")))
       (if (or (null card-id) (string= "" card-id) (string= "" comment))
-          (message "Empty comment - skip.")
-        (orgtrello-query/http-trello (orgtrello-api/add-card-comment card-id comment) 'sync
-                                     (function* (lambda (&key data &allow-other-keys) "Synchronize the buffer with the response data."
-                                                  (orgtrello-log/msg *OT/TRACE* "proxy - response data: %S" data)
-                                                  (orgtrello-controller/--update-comments! comment)
-                                                  (when *ORGTRELLO/DO-SHOW-CARD-COMMENTS-AFTER-ADDING*
-                                                    (orgtrello-controller/do-show-card-comments!)))))))))
+          (orgtrello-log/msg *OT/INFO* "Empty comment - skip.")
+        (deferred:$
+          (deferred:next (lambda () (-> card-id
+                                 (orgtrello-api/add-card-comment comment)
+                                 (orgtrello-query/http-trello 'sync))))
+          (deferred:nextc it
+            (lambda (data)
+              (orgtrello-log/msg *OT/TRACE* "Add card comment - response data: %S" data)
+              (orgtrello-controller/checks-then-sync-card-from-trello!))))))))
 
 (defun orgtrello-controller/do-cleanup-from-buffer! (&optional globally-flag)
   "Clean org-trello data in current buffer.

@@ -6,17 +6,20 @@
 (require 'org-trello-log)
 (require 'org-trello-hash)
 (require 'org-trello-entity)
+(require 'org-trello-utils)
 (require 's)
 
-(defun orgtrello-cbx/serialize-hashmap (hash-table)
+(defun orgtrello-cbx/--serialize-hashmap (hash-table)
   "Return a json representation of HASH-TABLE."
-  (json-encode-hash-table hash-table))
+  (->> hash-table
+    json-encode-hash-table
+    (orgtrello-utils/replace-in-string " " "")))
 
 (defun orgtrello-cbx/--to-properties (alist)
   "Serialize an ALIST to json."
   (-> alist
     orgtrello-hash/make-properties
-    orgtrello-cbx/serialize-hashmap))
+    orgtrello-cbx/--serialize-hashmap))
 
 (defun orgtrello-cbx/--from-properties (string)
   "Deserialize STRING from json to list."

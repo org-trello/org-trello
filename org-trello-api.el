@@ -95,7 +95,7 @@ When UNDO-FLAG is set, trigger the undo computation."
   "Create a get-card with details query with CARD-ID query."
   (orgtrello-api/make-query "GET" (format "/cards/%s" card-id)
                             '(("actions" . "commentCard")
-                              ("action_fields" . "data")
+                              ("action_fields" . "data,date")
                               ("checklists" . "all")
                               ("action_memberCreator_fields" . "username")
                               ("fields" .  "closed,dateLastActivity,desc,due,idList,idMembers,labels,name,pos"))))

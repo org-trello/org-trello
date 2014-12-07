@@ -28,9 +28,8 @@ install:
 test: clean
 	cask exec $(EMACS) --batch \
 			-l ert \
-			-l ./launch-tests.el \
-			-f ert-run-tests-batch-and-exit \
-	  2>&1 | tee $(LOG_TEST_FILE)
+			-l ./load-org-trello-tests.el \
+			-f ert-run-tests-batch-and-exit
 
 test-log:
 	less $(LOG_TEST_FILE)

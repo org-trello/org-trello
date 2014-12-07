@@ -1,5 +1,4 @@
 (require 'ert)
-(require 'ert-expectations)
 (require 'el-mock)
 
 (defun orgtrello-tests/hash-equal (hash1 hash2) "Compare two hash tables to see whether they are equal."
@@ -7,19 +6,19 @@
        (catch 'flag (maphash (lambda (x y) (or (equal (gethash x hash2) y) (throw 'flag nil))) hash1)
               (throw 'flag t))))
 
-(expectations (desc "orgtrello-tests/hash-equal")
- (expect t (orgtrello-tests/hash-equal (orgtrello-hash/make-properties `((:name . "some other name") (:keyword "TODO")))
-                       (orgtrello-hash/make-properties `((:name . "some other name") (:keyword "TODO")))))
- (expect nil (orgtrello-tests/hash-equal (orgtrello-hash/make-properties `((:name . "some other name") (:keyword "TODO")))
-                         (orgtrello-hash/make-properties `((:name . "some other name") (:keyword "DONE"))))))
+(ert-deftest test-orgtrello-tests/hash-equal ()
+  (should (orgtrello-tests/hash-equal (orgtrello-hash/make-properties `((:name . "some other name") (:keyword "TODO")))
+                                      (orgtrello-hash/make-properties `((:name . "some other name") (:keyword "TODO")))))
+  (should-not (orgtrello-tests/hash-equal (orgtrello-hash/make-properties `((:name . "some other name") (:keyword "TODO")))
+                                          (orgtrello-hash/make-properties `((:name . "some other name") (:keyword "DONE"))))))
 
-(expectations (desc "orgtrello-hash/make-transpose-properties")
-  (expect t (orgtrello-tests/hash-equal (orgtrello-hash/make-properties `(("some other name" . :name) ("TODO" . :keyword)))
-                        (orgtrello-hash/make-transpose-properties `((:name . "some other name") (:keyword . "TODO"))))))
+(ert-deftest test-orgtrello-hash/make-transpose-properties ()
+  (should (orgtrello-tests/hash-equal (orgtrello-hash/make-properties `(("some other name" . :name) ("TODO" . :keyword)))
+                                      (orgtrello-hash/make-transpose-properties `((:name . "some other name") (:keyword . "TODO"))))))
 
-(expectations (desc "orgtrello-hash/empty-hash")
- (expect t (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data ())
-                       (orgtrello-hash/empty-hash))))
+(ert-deftest test-orgtrello-hash/empty-hash ()
+  (should (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data ())
+                                      (orgtrello-hash/empty-hash))))
 
 (defun org-trello-mode-test ()
   "Trigger org-trello-mode but shaped for the tests (without hooks)."
