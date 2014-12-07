@@ -29,9 +29,8 @@
                   '(orgtrello-controller/--right-level-p)
                   (orgtrello-data/make-hierarchy (orgtrello-data/make-hash-org :users 3 :kwd :name nil :due :position :buffer-name :desc :comments :tags :unknown))
                   (lambda (entity s) (format "%S %s" entity s))
-                  "- hello"))))
+                  "- hello")))
 
-(ert-deftest test-orgtrello-action/--function-controls-then-do ()
   (should (equal "org-trello - List of errors:
  - Cannot synchronize the card - missing mandatory name. Skip it...
 "

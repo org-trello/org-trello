@@ -1,6 +1,5 @@
 (require 'org-trello-cbx)
 (require 'ert)
-(require 'ert-expectations)
 (require 'el-mock)
 
 (ert-deftest test-orgtrello-cbx/--status ()
@@ -171,6 +170,15 @@
                  (orgtrello-tests/with-temp-buffer "  - [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}" (orgtrello-cbx/org-checkbox-metadata!))))
   (should (equal '(3 nil "TODO" nil "some other checkbox" nil)
                  (orgtrello-tests/with-temp-buffer "    - [ ] some other checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}" (orgtrello-cbx/org-checkbox-metadata!)))))
+
+(ert-deftest test-orgtrello-cbx/--serialize-hashmap ()
+  "Ease conversion to json. Beware, rely on json.el and implementation has slightly changed between emacs 24.3 and 24.4..."
+  (should (equal "{}"
+                 (orgtrello-cbx/--serialize-hashmap (orgtrello-hash/make-properties nil))))
+  (should (equal "{\"a\":\"123\"}"
+                 (orgtrello-cbx/--serialize-hashmap (orgtrello-hash/make-properties '(("a" . "123"))))))
+  (should (equal "{\"orgtrello-checksum\":\"abc\",\"orgtrello-id\":\"123\"}"
+                 (orgtrello-cbx/--serialize-hashmap (orgtrello-hash/make-properties '(("orgtrello-id" . "123") ("orgtrello-checksum" . "abc")))))))
 
 (provide 'org-trello-cbx-tests)
 ;;; org-trello-cbx-tests.el ends here

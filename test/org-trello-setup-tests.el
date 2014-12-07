@@ -5,8 +5,7 @@
 (ert-deftest test-orgtrello-setup/help-describing-bindings-template ()
   (should (equal "C-c o a - M-x some-action - some-description
 C-c o 2 - M-x action2 - some other description" (orgtrello-setup/help-describing-bindings-template "C-c o" '((some-action "a" "some-description")
-                                                                                                             (action2 "2" "some other description"))))))
-(ert-deftest test-orgtrello-setup/help-describing-bindings-template ()
+                                                                                                             (action2 "2" "some other description")))))
   (should (equal
            "C-c z v - M-x org-trello/version - Display the current version installed.
 C-c z i - M-x org-trello/install-key-and-token - Install the keys and the access-token.

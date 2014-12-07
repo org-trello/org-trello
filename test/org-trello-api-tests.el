@@ -10,9 +10,8 @@
 (ert-deftest test-orgtrello-api/get-boards ()
   (should (equal "GET"                 (gethash :method (orgtrello-api/get-boards))))
   (should (equal "/members/me/boards"  (gethash :uri    (orgtrello-api/get-boards))))
-  (should (equal '(("lists" . "open")) (gethash :params (orgtrello-api/get-boards)))))
+  (should (equal '(("lists" . "open")) (gethash :params (orgtrello-api/get-boards))))
 
-(ert-deftest test-orgtrello-api/get-boards ()
   (should (equal "GET"                                     (gethash :method (orgtrello-api/get-boards "open"))))
   (should (equal "/members/me/boards"                      (gethash :uri    (orgtrello-api/get-boards "open"))))
   (should (equal '(("filter" . "open") ("lists" . "open")) (gethash :params (orgtrello-api/get-boards "open")))))
@@ -203,9 +202,8 @@
 
   (should (equal '(:value-a)            (orgtrello-api/--deal-with-optional-values '((:a . :value-a)) nil)))
   (should (equal '(:value-a :value-b)   (orgtrello-api/--deal-with-optional-values '((:a . :value-a)) '(:value-b))))
-  (should (equal '(nil :value-b)        (orgtrello-api/--deal-with-optional-values '((:a . nil)) '(:value-b)))))
+  (should (equal '(nil :value-b)        (orgtrello-api/--deal-with-optional-values '((:a . nil)) '(:value-b))))
 
-(ert-deftest test-orgtrello-api/--deal-with-optional-values ()
   (should (equal nil                           (orgtrello-api/--deal-with-optional-values '((nil . nil) (nil . nil)) nil)))
   (should (equal nil                           (orgtrello-api/--deal-with-optional-values '((nil . :a)  (nil . :a)) nil)))
   (should (equal :existing-list                (orgtrello-api/--deal-with-optional-values '((nil . :a) (nil . :a)) :existing-list)))
@@ -218,9 +216,8 @@
 (ert-deftest test-orgtrello-api/add-board ()
   (should (equal "POST"                      (gethash :method (orgtrello-api/add-board ":some-board"))))
   (should (equal "/boards"                   (gethash :uri    (orgtrello-api/add-board ":some-board"))))
-  (should (equal '(("name" . ":some-board")) (gethash :params (orgtrello-api/add-board ":some-board")))))
+  (should (equal '(("name" . ":some-board")) (gethash :params (orgtrello-api/add-board ":some-board"))))
 
-(ert-deftest test-orgtrello-api/add-board ()
   (should (equal "POST"                           (gethash :method (orgtrello-api/add-board "some-board" "some-description"))))
   (should (equal "/boards"                        (gethash :uri    (orgtrello-api/add-board "some-board" "some-description"))))
   (should (equal '(("desc" . "some-description")

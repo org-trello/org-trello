@@ -12,10 +12,12 @@
   - [ ] Does everything work?
 - [ ] Add a file to the org-trello list - https://github.com/org-trello/org-trello/issues/211
 - [ ] One command to sync them all - https://github.com/org-trello/org-trello/issues/59
-* IN-PROGRESS 0.6.5 [60%]
+* IN-PROGRESS 0.6.5 [57%]
 - [X] Create backlog
 - [X] Update version
 - [X] Maintenance - Revert tests back to ert-deftest to have more explicit error outputs
+- [X] Fix unit tests
+- [ ] WTF?! - CI does not break when tests fail... Fix
 - [ ] Long and multiline comments - https://github.com/org-trello/org-trello/issues/218
 - [ ] Release notes
 * DONE 0.6.4 [100%]

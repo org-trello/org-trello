@@ -3,9 +3,8 @@
 (require 'el-mock)
 
 (ert-deftest test-orgtrello-hash/init-map-from ()
-  (should (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data ()) (orgtrello-hash/init-map-from nil))))
+  (should (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data ()) (orgtrello-hash/init-map-from nil)))
 
-(ert-deftest test-orgtrello-hash/init-map-from ()
   (should (equal :data (orgtrello-hash/init-map-from :data))))
 
 (ert-deftest test-orgtrello-hash/gethash-data ()

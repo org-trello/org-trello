@@ -84,7 +84,7 @@
                                                                                                           (:username "orgmode" :full-name "org trello" :id "5203a0c833fc36360800177f"))
                                                                                             :id "524855ff8193aec160002cfa"))))))))
 
-(ert-deftest testing-orgtrello-controller/--compute-user-properties-hash ()
+(ert-deftest test-orgtrello-controller/--compute-user-properties-hash ()
   (should (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data ("ardumont" "4f2baa2f72b7c1293501cad3" "orgmode" "5203a0c833fc36360800177f"))
                                       (orgtrello-controller/--compute-user-properties-hash '(#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
                                                                                                            (:username "ardumont" :full-name "Antoine R. Dumont" :id "4f2baa2f72b7c1293501cad3"))
@@ -272,10 +272,10 @@
   :orgtrello-id: some-card-id
   :END:
   updated description
-  - [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\", \"orgtrello-local-checksum\":\"local-checklist-checksum-678\"}
-    - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\", \"orgtrello-local-checksum\":\"local-item-checksum-678\"}
-    - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\", \"orgtrello-local-checksum\":\"local-item-checksum-678\"}
-  - [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\", \"orgtrello-local-checksum\":\"local-checklist-checksum-678\"}
+  - [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\",\"orgtrello-local-checksum\":\"local-checklist-checksum-678\"}
+    - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\",\"orgtrello-local-checksum\":\"local-item-checksum-678\"}
+    - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\",\"orgtrello-local-checksum\":\"local-item-checksum-678\"}
+  - [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\",\"orgtrello-local-checksum\":\"local-checklist-checksum-678\"}
 
 * other card name
 "
@@ -329,7 +329,7 @@ some description
                 (orgtrello-controller/compute-and-overwrite-card! (current-buffer) trello-card)))
             -2))))
 
-(ert-deftest test-orgtrello-controller/sync-buffer-with-trello-cards! ()
+(ert-deftest test-orgtrello-controller/sync-buffer-with-trello-cards!-cards-already-present ()
   (should (equal
            ":PROPERTIES:
 #+property: board-name api test board
@@ -360,10 +360,10 @@ some description
   :orgtrello-id: some-card-id
   :END:
   updated description
-  - [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\", \"orgtrello-local-checksum\":\"checklist-checksum-12\"}
-    - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\", \"orgtrello-local-checksum\":\"item-checksum-12\"}
-    - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\", \"orgtrello-local-checksum\":\"item-checksum-12\"}
-  - [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\", \"orgtrello-local-checksum\":\"checklist-checksum-12\"}
+  - [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\",\"orgtrello-local-checksum\":\"checklist-checksum-12\"}
+    - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\",\"orgtrello-local-checksum\":\"item-checksum-12\"}
+    - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\",\"orgtrello-local-checksum\":\"item-checksum-12\"}
+  - [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\",\"orgtrello-local-checksum\":\"checklist-checksum-12\"}
 * TODO other card name
   :PROPERTIES:
   :orgtrello-id: some-new-marker
@@ -421,7 +421,7 @@ some description
                                                                      (:id . "some-card-id")))))
                 (orgtrello-controller/sync-buffer-with-trello-cards! (current-buffer) (list trello-card0))))))))
 
-(ert-deftest test-orgtrello-controller/sync-buffer-with-trello-cards! ()
+(ert-deftest test-orgtrello-controller/sync-buffer-with-trello-cards!-with-multiple-cards ()
   "Overwrite card"
   (should (equal
            ":PROPERTIES:
@@ -453,10 +453,10 @@ some description
   :orgtrello-id: some-card-id
   :END:
   updated description
-  - [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\", \"orgtrello-local-checksum\":\"checklist-checksum-1234\"}
-    - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\", \"orgtrello-local-checksum\":\"item-checksum-1234\"}
-    - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\", \"orgtrello-local-checksum\":\"item-checksum-1234\"}
-  - [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\", \"orgtrello-local-checksum\":\"checklist-checksum-1234\"}
+  - [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\",\"orgtrello-local-checksum\":\"checklist-checksum-1234\"}
+    - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\",\"orgtrello-local-checksum\":\"item-checksum-1234\"}
+    - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\",\"orgtrello-local-checksum\":\"item-checksum-1234\"}
+  - [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\",\"orgtrello-local-checksum\":\"checklist-checksum-1234\"}
 * TODO other card name                                                  :green:
   :PROPERTIES:
   :orgtrello-users: dude
@@ -562,10 +562,10 @@ some description
   :orgtrello-id: some-card-id
   :END:
   updated description
-  - [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\", \"orgtrello-local-checksum\":\"checklist-checksum-123456\"}
-    - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\", \"orgtrello-local-checksum\":\"item-checksum-123456\"}
-    - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\", \"orgtrello-local-checksum\":\"item-checksum-123456\"}
-  - [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\", \"orgtrello-local-checksum\":\"checklist-checksum-123456\"}
+  - [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\",\"orgtrello-local-checksum\":\"checklist-checksum-123456\"}
+    - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\",\"orgtrello-local-checksum\":\"item-checksum-123456\"}
+    - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\",\"orgtrello-local-checksum\":\"item-checksum-123456\"}
+  - [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\",\"orgtrello-local-checksum\":\"checklist-checksum-123456\"}
 * DONE other card name                                                  :green:
   :PROPERTIES:
   :orgtrello-users: dude
