@@ -12,7 +12,7 @@
   - [ ] Does everything work?
 - [ ] Add a file to the org-trello list - https://github.com/org-trello/org-trello/issues/211
 - [ ] One command to sync them all - https://github.com/org-trello/org-trello/issues/59
-* IN-PROGRESS 0.6.5 [85%]
+* IN-PROGRESS 0.6.5 [100%]
 - [X] Create backlog
 - [X] Update version
 - [X] Maintenance - Revert tests back to ert-deftest to have more explicit error outputs
@@ -21,7 +21,7 @@
 - [X] Format user's comments in a readable format - CLOSE https://github.com/org-trello/org-trello/issues/218 [2/2]
   - [X] Update the comment's format according to https://github.com/org-trello/org-trello/issues/218#issue-48750430
   - [X] Update the `org-trello/add-card-comments` command to improve creating comment
-- [ ] Release notes
+- [X] Release notes
 * DONE 0.6.4 [100%]
 CLOSED: [2014-10-30 Thu 18:28]
 - [X] Minor change to allow abbreviated file path - https://github.com/org-trello/org-trello/pull/213
