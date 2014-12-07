@@ -267,7 +267,6 @@
 * TODO updated card title                                               :orange:red:green:
   :PROPERTIES:
   :orgtrello-users: dude,ardumont
-  :orgtrello-card-comments: ardumont: some comment###ardumont: some second comment
   :orgtrello-local-checksum: local-card-checksum-678
   :orgtrello-id: some-card-id
   :END:
@@ -276,6 +275,16 @@
     - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\",\"orgtrello-local-checksum\":\"local-item-checksum-678\"}
     - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\",\"orgtrello-local-checksum\":\"local-item-checksum-678\"}
   - [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\",\"orgtrello-local-checksum\":\"local-checklist-checksum-678\"}
+** COMMENT ardumont, 10/10/2010
+:PROPERTIES:
+:orgtrello-comment-id: some-comment-id
+:END:
+some comment
+** COMMENT tony, 11/10/2010
+:PROPERTIES:
+:orgtrello-comment-id: some-comment-id2
+:END:
+some second comment
 
 * other card name
 "
@@ -320,7 +329,14 @@ some description
               (mock (orgtrello-buffer/item-checksum!) => "local-item-checksum-678")
               (let* ((trello-card (orgtrello-hash/make-properties `((:keyword . "TODO")
                                                                     (:member-ids . "dude,ardumont")
-                                                                    (:comments . "ardumont: some comment###ardumont: some second comment")
+                                                                    (:comments . ,(list (orgtrello-hash/make-properties '((:comment-user . "ardumont")
+                                                                                                                          (:comment-date . "10/10/2010")
+                                                                                                                          (:comment-id   . "some-comment-id")
+                                                                                                                          (:comment-text . "some comment")))
+                                                                                        (orgtrello-hash/make-properties '((:comment-user . "tony")
+                                                                                                                          (:comment-date . "11/10/2010")
+                                                                                                                          (:comment-id   . "some-comment-id2")
+                                                                                                                          (:comment-text . "some second comment")))))
                                                                     (:tags . ":red:green:")
                                                                     (:desc . "updated description")
                                                                     (:level . 1)
@@ -355,7 +371,6 @@ some description
 * TODO updated card title                                               :orange:red:green:
   :PROPERTIES:
   :orgtrello-users: dude,ardumont
-  :orgtrello-card-comments: ardumont: some comment###ardumont: some second comment
   :orgtrello-local-checksum: card-checksum-12
   :orgtrello-id: some-card-id
   :END:
@@ -364,6 +379,16 @@ some description
     - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\",\"orgtrello-local-checksum\":\"item-checksum-12\"}
     - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\",\"orgtrello-local-checksum\":\"item-checksum-12\"}
   - [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\",\"orgtrello-local-checksum\":\"checklist-checksum-12\"}
+** COMMENT ardumont, 10/10/2010
+:PROPERTIES:
+:orgtrello-comment-id: some-comment-id
+:END:
+some comment
+** COMMENT tony, 11/10/2010
+:PROPERTIES:
+:orgtrello-comment-id: some-comment-id2
+:END:
+some second comment
 * TODO other card name
   :PROPERTIES:
   :orgtrello-id: some-new-marker
@@ -413,7 +438,14 @@ some description
               (mock (orgtrello-buffer/item-checksum!) => "item-checksum-12")
               (let* ((trello-card0 (orgtrello-hash/make-properties `((:keyword . "TODO")
                                                                      (:member-ids . "orgtrello-user-dude,orgtrello-user-ardumont")
-                                                                     (:comments . "ardumont: some comment###ardumont: some second comment")
+                                                                     (:comments . ,(list (orgtrello-hash/make-properties '((:comment-user . "ardumont")
+                                                                                                                           (:comment-date . "10/10/2010")
+                                                                                                                           (:comment-id   . "some-comment-id")
+                                                                                                                           (:comment-text . "some comment")))
+                                                                                         (orgtrello-hash/make-properties '((:comment-user . "tony")
+                                                                                                                           (:comment-date . "11/10/2010")
+                                                                                                                           (:comment-id   . "some-comment-id2")
+                                                                                                                           (:comment-text . "some second comment")))))
                                                                      (:tags . ":red:green:")
                                                                      (:desc . "updated description")
                                                                      (:level . ,*ORGTRELLO/CARD-LEVEL*)
@@ -448,7 +480,6 @@ some description
 * TODO updated card title                                               :orange:red:green:
   :PROPERTIES:
   :orgtrello-users: dude,ardumont
-  :orgtrello-card-comments: ardumont: some comment###ardumont: some second comment
   :orgtrello-local-checksum: card-checksum-1234
   :orgtrello-id: some-card-id
   :END:
@@ -457,10 +488,19 @@ some description
     - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\",\"orgtrello-local-checksum\":\"item-checksum-1234\"}
     - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\",\"orgtrello-local-checksum\":\"item-checksum-1234\"}
   - [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\",\"orgtrello-local-checksum\":\"checklist-checksum-1234\"}
+** COMMENT ardumont, 10/10/2010
+:PROPERTIES:
+:orgtrello-comment-id: some-comment-id
+:END:
+some comment
+** COMMENT tony, 11/10/2010
+:PROPERTIES:
+:orgtrello-comment-id: some-comment-id2
+:END:
+some second comment
 * TODO other card name                                                  :green:
   :PROPERTIES:
   :orgtrello-users: dude
-  :orgtrello-card-comments: ardumont: great
   :orgtrello-id: some-card-id2
   :orgtrello-local-checksum: card-checksum-1234
   :END:
@@ -514,7 +554,14 @@ some description
               (mock (orgtrello-buffer/item-checksum!) => "item-checksum-1234")
               (let* ((trello-card0 (orgtrello-hash/make-properties `((:keyword . "TODO")
                                                                      (:member-ids . "orgtrello-user-dude,orgtrello-user-ardumont")
-                                                                     (:comments . "ardumont: some comment###ardumont: some second comment")
+                                                                     (:comments . ,(list (orgtrello-hash/make-properties '((:comment-user . "ardumont")
+                                                                                                                           (:comment-date . "10/10/2010")
+                                                                                                                           (:comment-id   . "some-comment-id")
+                                                                                                                           (:comment-text . "some comment")))
+                                                                                         (orgtrello-hash/make-properties '((:comment-user . "tony")
+                                                                                                                           (:comment-date . "11/10/2010")
+                                                                                                                           (:comment-id   . "some-comment-id2")
+                                                                                                                           (:comment-text . "some second comment")))))
                                                                      (:tags . ":red:green:")
                                                                      (:desc . "updated description")
                                                                      (:level . ,*ORGTRELLO/CARD-LEVEL*)
@@ -522,7 +569,7 @@ some description
                                                                      (:id . "some-card-id"))))
                      (trello-card1 (orgtrello-hash/make-properties `((:keyword . "TODO")
                                                                      (:member-ids . "orgtrello-user-dude")
-                                                                     (:comments . "ardumont: great")
+                                                                     (:comments . nil)
                                                                      (:tags . ":green:")
                                                                      (:desc . "this is a description")
                                                                      (:level . ,*ORGTRELLO/CARD-LEVEL*)
@@ -557,7 +604,6 @@ some description
 * TODO updated card title                                               :orange:red:green:
   :PROPERTIES:
   :orgtrello-users: dude,ardumont
-  :orgtrello-card-comments: ardumont: some comment###ardumont: some second comment
   :orgtrello-local-checksum: card-checksum-123456
   :orgtrello-id: some-card-id
   :END:
@@ -566,10 +612,19 @@ some description
     - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\",\"orgtrello-local-checksum\":\"item-checksum-123456\"}
     - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\",\"orgtrello-local-checksum\":\"item-checksum-123456\"}
   - [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\",\"orgtrello-local-checksum\":\"checklist-checksum-123456\"}
+** COMMENT ardumont, 10/10/2010
+:PROPERTIES:
+:orgtrello-comment-id: some-comment-id
+:END:
+some comment
+** COMMENT tony, 11/10/2010
+:PROPERTIES:
+:orgtrello-comment-id: some-comment-id2
+:END:
+some second comment
 * DONE other card name                                                  :green:
   :PROPERTIES:
   :orgtrello-users: dude
-  :orgtrello-card-comments: ardumont: great
   :orgtrello-id: some-card-id2
   :orgtrello-local-checksum: card-checksum-123456
   :END:
@@ -619,7 +674,14 @@ some description
               (mock (orgtrello-buffer/item-checksum!) => "item-checksum-123456")
               (let* ((trello-card0 (orgtrello-hash/make-properties `((:keyword . "TODO")
                                                                      (:member-ids . "orgtrello-user-dude,orgtrello-user-ardumont")
-                                                                     (:comments . "ardumont: some comment###ardumont: some second comment")
+                                                                     (:comments . ,(list (orgtrello-hash/make-properties '((:comment-user . "ardumont")
+                                                                                                                           (:comment-date . "10/10/2010")
+                                                                                                                           (:comment-id   . "some-comment-id")
+                                                                                                                           (:comment-text . "some comment")))
+                                                                                         (orgtrello-hash/make-properties '((:comment-user . "tony")
+                                                                                                                           (:comment-date . "11/10/2010")
+                                                                                                                           (:comment-id   . "some-comment-id2")
+                                                                                                                           (:comment-text . "some second comment")))))
                                                                      (:tags . ":red:green:")
                                                                      (:desc . "updated description")
                                                                      (:level . ,*ORGTRELLO/CARD-LEVEL*)
@@ -627,7 +689,6 @@ some description
                                                                      (:id . "some-card-id"))))
                      (trello-card1 (orgtrello-hash/make-properties `((:keyword . "DONE")
                                                                      (:member-ids . "orgtrello-user-dude")
-                                                                     (:comments . "ardumont: great")
                                                                      (:tags . ":green:")
                                                                      (:desc . "this is a description")
                                                                      (:level . ,*ORGTRELLO/CARD-LEVEL*)

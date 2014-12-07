@@ -120,11 +120,29 @@ At the end of it all, the cursor is moved after the new written text."
     (replace-regexp-in-string *ORGTRELLO/USER-PREFIX* "" it)
     (orgtrello-buffer/set-usernames-assigned-property! it)))
 
-(defun orgtrello-buffer/update-property-comments! (entity)
+(defun orgtrello-buffer/--write-comments! (entity)
   "Update last comments "
   (->> entity
     orgtrello-data/entity-comments
-    orgtrello-buffer/set-property-comment!))
+    orgtrello-buffer/--write-comments-at-point!))
+
+(defun orgtrello-buffer/--write-comments-at-point! (comments)
+  "Write comments in the buffer at point."
+  (mapc 'orgtrello-buffer/--write-comment-at-point comments))
+
+(defun orgtrello-buffer/--write-comment-at-point (comment)
+  "Write the COMMENT at the current position."
+  (-> comment
+    orgtrello-buffer/--serialize-comment
+    insert))
+
+(defun orgtrello-buffer/--serialize-comment (comment)
+  "Serialize COMMENT as string."
+  (let ((comment-user (orgtrello-data/entity-comment-user comment))
+        (comment-date (orgtrello-data/entity-comment-date comment))
+        (comment-string (orgtrello-data/entity-comment-text comment))
+        (comment-id (orgtrello-data/entity-comment-id comment)))
+    (format "** COMMENT %s, %s\n:PROPERTIES:\n:orgtrello-comment-id: %s\n:END:\n%s\n" comment-user comment-date comment-id comment-string)))
 
 (defun orgtrello-buffer/update-properties-unknown! (unknown-properties)
   "Write the alist UNKNOWN-PROPERTIES inside standard properties org drawer."
@@ -145,7 +163,6 @@ At the end of it all, the cursor is moved after the new written text."
   "Given a card entity, write its data and properties without its structure."
   (orgtrello-buffer/write-entity! card-id card)
   (orgtrello-buffer/update-property-member-ids! card)
-  (orgtrello-buffer/update-property-comments! card)
   (orgtrello-buffer/update-properties-unknown! (orgtrello-data/entity-unknown-properties card))
   (orgtrello-buffer/--write-card-description! (orgtrello-data/entity-description card)))
 
@@ -158,7 +175,8 @@ The cursor position will move after the newly inserted card."
     (mapc (lambda (checklist-id) (orgtrello-buffer/write-checklist! checklist-id entities adjacency)) checklist-ids))
   (save-excursion
     (orgtrello-entity/back-to-card!)
-    (orgtrello-buffer/write-properties-at-pt! card-id)))
+    (orgtrello-buffer/write-properties-at-pt! card-id))
+  (orgtrello-buffer/--write-comments! card))
 
 (defun orgtrello-buffer/checklist-beginning-pt! ()
   "Compute the current checklist's beginning point."
@@ -369,7 +387,8 @@ If REGION-START and REGION-END are provided, this will work on such defined regi
            (previous-checksum (orgtrello-buffer/get-card-local-checksum!)))
        (unless (string= current-checksum previous-checksum)
          (funcall fn-to-execute)
-         (orgtrello-cbx/map-checkboxes fn-to-execute))))))
+         (orgtrello-cbx/map-checkboxes fn-to-execute))))
+   nil nil 'comment))
 
 (defun orgtrello-buffer/get-usernames-assigned-property! ()
   "Read the org users property from the current entry."
@@ -422,7 +441,7 @@ If yes, indent such region with INDENT space."
   "Indent the card description rigidly starting at 2.
 Function to be triggered by `before-save-hook` on org-trello-mode buffer."
   (when (and (eq major-mode 'org-mode) org-trello/mode)
-    (org-map-entries
+    (orgtrello-buffer/org-map-entries
      (lambda ()
        (orgtrello-buffer/indent-region! *ORGTRELLO-BUFFER/INDENT-DESCRIPTION* (orgtrello-entity/card-metadata-region!))))))
 
@@ -430,7 +449,7 @@ Function to be triggered by `before-save-hook` on org-trello-mode buffer."
   "Indent the card data rigidly starting at 2.
 Function to be triggered by `before-save-hook` on org-trello-mode buffer."
   (when (and (eq major-mode 'org-mode) org-trello/mode)
-    (org-map-entries
+    (orgtrello-buffer/org-map-entries
      (lambda ()
        (orgtrello-buffer/indent-region! *ORGTRELLO/CHECKLIST-INDENT* (orgtrello-entity/card-data-region!))))))
 
@@ -554,7 +573,7 @@ Make it a hashmap with key :level,  :keyword,  :name and their respective value.
 
 (defun orgtrello-buffer/org-map-entries (fn-to-execute)
   "Execute for each heading the FN-TO-EXECUTE."
-  (org-map-entries fn-to-execute))
+  (org-map-entries fn-to-execute nil nil 'comment))
 
 (defun orgtrello-buffer/end-of-line-point! ()
   "Compute the end of line for an org-trello buffer."
@@ -674,10 +693,11 @@ COMPUTE-REGION-FN is the region computation function."
 
 (defun orgtrello-buffer/archive-cards! (trello-cards)
   "Given a list of TRELLO-CARDS, archive those if they are present on buffer."
-  (org-map-entries (lambda ()
-                     (let ((card-id (-> (orgtrello-buffer/entry-get-full-metadata!) orgtrello-data/current orgtrello-data/entity-id)))
-                       (when (--some? (string= card-id (orgtrello-data/entity-id it)) trello-cards) ;; find a card to archive
-                         (org-archive-subtree))))))
+  (orgtrello-buffer/org-map-entries
+   (lambda ()
+     (let ((card-id (-> (orgtrello-buffer/entry-get-full-metadata!) orgtrello-data/current orgtrello-data/entity-id)))
+       (when (--some? (string= card-id (orgtrello-data/entity-id it)) trello-cards) ;; find a card to archive
+         (org-archive-subtree))))))
 
 (orgtrello-log/msg *OT/DEBUG* "orgtrello-buffer loaded!")
 

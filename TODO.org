@@ -18,7 +18,9 @@
 - [X] Maintenance - Revert tests back to ert-deftest to have more explicit error outputs
 - [X] Fix unit tests
 - [X] Fix CI which does not break when failure or error.
-- [ ] Long and multiline comments - https://github.com/org-trello/org-trello/issues/218
+- [-] Long and multiline comments - https://github.com/org-trello/org-trello/issues/218 [1/2]
+  - [X] Update the comment's format according to https://github.com/org-trello/org-trello/issues/218#issue-48750430
+  - [ ] Update the `add comment` routine
 - [ ] Release notes
 * DONE 0.6.4 [100%]
 CLOSED: [2014-10-30 Thu 18:28]

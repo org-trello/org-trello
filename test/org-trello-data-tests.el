@@ -359,10 +359,14 @@
                                 (id . "532d7441852414f343560757"))])
 
 (ert-deftest test-orgtrello-data/--parse-actions ()
-  (should (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:comment-id "532d7447b247e3d24f365309" :comment-text "comment 4" :comment-user "ardumont"))
-                                      (car (orgtrello-data/--parse-actions partial-data-to-test))))
-  (should (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:comment-id "532d7441852414f343560757" :comment-text "comment 3" :comment-user "ardumont"))
-                                      (cadr (orgtrello-data/--parse-actions partial-data-to-test)))))
+  (should (orgtrello-tests/hash-equal
+           #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
+                         (:comment-id "532d7447b247e3d24f365309" :comment-text "comment 4" :comment-date "2014-03-22T11:30:15.358Z" :comment-user "ardumont"))
+           (car (orgtrello-data/--parse-actions partial-data-to-test))))
+  (should (orgtrello-tests/hash-equal
+           #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
+                         (:comment-id "532d7441852414f343560757" :comment-text "comment 3" :comment-date "2014-03-22T11:30:09.927Z" :comment-user "ardumont"))
+           (cadr (orgtrello-data/--parse-actions partial-data-to-test)))))
 
 (ert-deftest test-orgtrello-data/comments-to-list ()
   (should (equal "me: some first comment###another-me: another comment"
@@ -615,7 +619,7 @@
   "Convert trello card to org-trello."
   (should (orgtrello-tests/hash-equal
            #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
-                         (:comments "ardumont: hello###ardumont: dude"
+                         (:comments :comments-untouched
                                     :position 884
                                     :name "Joy of FUN(ctional) LANGUAGES"
                                     :member-ids "orgtrello-user-ardumont,orgtrello-user-orgmode"
@@ -645,8 +649,10 @@
                                                                                                                                         "pqr" "FAILED"
                                                                                                                                         "stu" "CANCELLED")))
                   (trello-card #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
-                                             (:comments (#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:comment-id "comment-id-0" :comment-text "hello" :comment-user "ardumont"))
-                                                           #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:comment-id "comment-id-1" :comment-text "dude" :comment-user "ardumont")))
+                                             (:comments :comments-untouched
+                                                        ;;  this is the current format
+                                                        ;; (#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:comment-id "comment-id-0" :comment-text "hello" :comment-user "ardumont" :comment-date "some-date"))
+                                                        ;;    #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:comment-id "comment-id-1" :comment-text "dude" :comment-user "ardumont" :comment-date "some-date")))
                                                         :position 884
                                                         :name "Joy of FUN(ctional) LANGUAGES"
                                                         :labels (#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:name "range" :color "orange"))
