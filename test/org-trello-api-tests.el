@@ -39,6 +39,18 @@
                    ("fields" . "closed,desc,due,idBoard,idList,idMembers,name,pos"))
                  (gethash :params (orgtrello-api/get-full-cards :board-id)))))
 
+(ert-deftest test-orgtrello-api/get-full-card ()
+  (should (equal "GET"
+                 (gethash :method (orgtrello-api/get-full-card :card-id))))
+  (should (equal "/cards/:card-id"
+                 (gethash :uri    (orgtrello-api/get-full-card :card-id))))
+  (should (equal '(("actions" . "commentCard")
+                   ("action_fields" . "data,date")
+                   ("checklists" . "all")
+                   ("action_memberCreator_fields" . "username")
+                   ("fields" . "closed,dateLastActivity,desc,due,idList,idMembers,labels,name,pos"))
+                 (gethash :params (orgtrello-api/get-full-card :card-id)))))
+
 (ert-deftest test-orgtrello-api/get-archived-cards ()
   (should (equal "GET"
                  (gethash :method (orgtrello-api/get-archived-cards :board-id))))

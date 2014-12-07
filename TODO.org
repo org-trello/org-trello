@@ -12,15 +12,15 @@
   - [ ] Does everything work?
 - [ ] Add a file to the org-trello list - https://github.com/org-trello/org-trello/issues/211
 - [ ] One command to sync them all - https://github.com/org-trello/org-trello/issues/59
-* IN-PROGRESS 0.6.5 [71%]
+* IN-PROGRESS 0.6.5 [85%]
 - [X] Create backlog
 - [X] Update version
 - [X] Maintenance - Revert tests back to ert-deftest to have more explicit error outputs
 - [X] Fix unit tests
 - [X] Fix CI which does not break when failure or error.
-- [-] Long and multiline comments - https://github.com/org-trello/org-trello/issues/218 [1/2]
+- [X] Long and multiline comments - https://github.com/org-trello/org-trello/issues/218 [2/2]
   - [X] Update the comment's format according to https://github.com/org-trello/org-trello/issues/218#issue-48750430
-  - [ ] Update the `add comment` routine
+  - [X] Update the `org-trello/add-card-comments` command to improve creating comment
 - [ ] Release notes
 * DONE 0.6.4 [100%]
 CLOSED: [2014-10-30 Thu 18:28]
