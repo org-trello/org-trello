@@ -277,12 +277,12 @@
   - [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\",\"orgtrello-local-checksum\":\"local-checklist-checksum-678\"}
 ** COMMENT ardumont, 10/10/2010
 :PROPERTIES:
-:orgtrello-comment-id: some-comment-id
+:orgtrello-id: some-comment-id
 :END:
 some comment
 ** COMMENT tony, 11/10/2010
 :PROPERTIES:
-:orgtrello-comment-id: some-comment-id2
+:orgtrello-id: some-comment-id2
 :END:
 some second comment
 
@@ -381,12 +381,12 @@ some description
   - [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\",\"orgtrello-local-checksum\":\"checklist-checksum-12\"}
 ** COMMENT ardumont, 10/10/2010
 :PROPERTIES:
-:orgtrello-comment-id: some-comment-id
+:orgtrello-id: some-comment-id
 :END:
 some comment
 ** COMMENT tony, 11/10/2010
 :PROPERTIES:
-:orgtrello-comment-id: some-comment-id2
+:orgtrello-id: some-comment-id2
 :END:
 some second comment
 * TODO other card name
@@ -490,12 +490,12 @@ some description
   - [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\",\"orgtrello-local-checksum\":\"checklist-checksum-1234\"}
 ** COMMENT ardumont, 10/10/2010
 :PROPERTIES:
-:orgtrello-comment-id: some-comment-id
+:orgtrello-id: some-comment-id
 :END:
 some comment
 ** COMMENT tony, 11/10/2010
 :PROPERTIES:
-:orgtrello-comment-id: some-comment-id2
+:orgtrello-id: some-comment-id2
 :END:
 some second comment
 * TODO other card name                                                  :green:
@@ -614,12 +614,12 @@ some description
   - [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\",\"orgtrello-local-checksum\":\"checklist-checksum-123456\"}
 ** COMMENT ardumont, 10/10/2010
 :PROPERTIES:
-:orgtrello-comment-id: some-comment-id
+:orgtrello-id: some-comment-id
 :END:
 some comment
 ** COMMENT tony, 11/10/2010
 :PROPERTIES:
-:orgtrello-comment-id: some-comment-id2
+:orgtrello-id: some-comment-id2
 :END:
 some second comment
 * DONE other card name                                                  :green:

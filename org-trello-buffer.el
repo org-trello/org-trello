@@ -142,7 +142,7 @@ At the end of it all, the cursor is moved after the new written text."
         (comment-date (orgtrello-data/entity-comment-date comment))
         (comment-string (orgtrello-data/entity-comment-text comment))
         (comment-id (orgtrello-data/entity-comment-id comment)))
-    (format "** COMMENT %s, %s\n:PROPERTIES:\n:orgtrello-comment-id: %s\n:END:\n%s\n" comment-user comment-date comment-id comment-string)))
+    (format "** COMMENT %s, %s\n:PROPERTIES:\n:orgtrello-id: %s\n:END:\n%s\n" comment-user comment-date comment-id comment-string)))
 
 (defun orgtrello-buffer/update-properties-unknown! (unknown-properties)
   "Write the alist UNKNOWN-PROPERTIES inside standard properties org drawer."
