@@ -727,16 +727,6 @@ Return the hashmap (name, id) of the new lists created."
     (orgtrello-data/--users-to it)
     (orgtrello-buffer/set-usernames-assigned-property! it)))
 
-(defun orgtrello-controller/do-show-card-comments! ()
-  "Show the card comments in a temporary buffer."
-  (save-excursion
-    (orgtrello-entity/back-to-card!)
-    (let* ((current-card-name (-> (orgtrello-buffer/entity-metadata!) orgtrello-data/entity-name))
-           (comments-title (format "comments for card '%s'" current-card-name))
-           (comments-formatted (-> (orgtrello-buffer/get-card-comments!)
-                                 orgtrello-data/format-comments)))
-      (orgtrello-buffer/pop-up-with-content! comments-title comments-formatted))))
-
 (defun orgtrello-controller/--update-comments! (new-comment)
   "Given a current position on a card and a new comment, add a new comment to the current comments."
   (let ((comments (orgtrello-buffer/get-card-comments!)))

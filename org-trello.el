@@ -184,11 +184,11 @@ If NO-CHECK-FLAG is set, no controls are done."
 ;;;###autoload
 (defun org-trello/add-card-comments (&optional modifier)
   "Control first, then if ok, add a comment to the current card.
-When MODIFIER is set, this will show the current card's comments."
+When MODIFIER is set, this will delete the current card's comments."
   (interactive "P")
   (org-trello/apply (cons 'org-trello/log-strict-checks-and-do
                           (if modifier
-                              '("Display current card's last comments" orgtrello-controller/do-show-card-comments!)
+                              '("Remove current comment card" orgtrello-controller/do-delete-card-comments!)
                             '("Add card comment" orgtrello-controller/do-add-card-comment!)))))
 
 ;;;###autoload
@@ -197,12 +197,6 @@ When MODIFIER is set, this will show the current card's comments."
 This will only work if you are the owner of the comment."
   (interactive)
   (org-trello/apply-deferred '(org-trello/log-strict-checks-and-do "Delete current comment at point" orgtrello-controller/do-delete-card-comment!)))
-
-;;;###autoload
-(defun org-trello/show-card-comments ()
-  "Control first, then if ok, show a simple buffer with the current card's last comments."
-  (interactive)
-  (org-trello/apply '(org-trello/log-strict-checks-and-do "Display current card's last comments" orgtrello-controller/do-show-card-comments!)))
 
 ;;;###autoload
 (defun org-trello/show-board-labels ()
