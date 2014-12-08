@@ -192,6 +192,7 @@ When MODIFIER is set, this will show the current card's comments."
                             '("Add card comment" orgtrello-controller/do-add-card-comment!)))))
 
 ;;;###autoload
+;;;###autoload
 (defun org-trello/show-card-comments ()
   "Control first, then if ok, show a simple buffer with the current card's last comments."
   (interactive)
