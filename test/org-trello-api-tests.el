@@ -288,5 +288,10 @@
   (should (equal "/boards/:board-id/closed" (gethash :uri    (orgtrello-api/open-board :board-id))))
   (should (equal '(("value" . "false"))     (gethash :params (orgtrello-api/open-board :board-id)))))
 
+(ert-deftest test-orgtrello-api/delete-card-comment ()
+  (should (equal "DELETE"                                       (gethash :method (orgtrello-api/delete-card-comment :card-id :comment-id))))
+  (should (equal "/cards/:card-id/actions/:comment-id/comments" (gethash :uri    (orgtrello-api/delete-card-comment :card-id :comment-id))))
+  (should (equal nil                                            (gethash :params (orgtrello-api/delete-card-comment :card-id :comment-id)))))
+
 (provide 'org-trello-api-tests)
 ;;; org-trello-api-tests.el ends here

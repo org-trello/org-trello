@@ -8,10 +8,10 @@
 - [ ] Add a file to the org-trello list - https://github.com/org-trello/org-trello/issues/211
 - [ ] One command to sync them all - https://github.com/org-trello/org-trello/issues/59
 - [ ] Create/Edit comments - https://github.com/org-trello/org-trello/issues/221
-* IN-PROGRESS 0.6.6 [50%]
+* IN-PROGRESS 0.6.6 [75%]
 - [X] Create backlog
 - [X] Update version
-- [ ] Delete comments - https://github.com/org-trello/org-trello/issues/222
+- [X] Delete comments - CLOSE https://github.com/org-trello/org-trello/issues/222
 - [ ] Release notes
 * DONE 0.6.5 [100%]
 CLOSED: [2014-12-08 Mon 19:38]

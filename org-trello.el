@@ -192,6 +192,12 @@ When MODIFIER is set, this will show the current card's comments."
                             '("Add card comment" orgtrello-controller/do-add-card-comment!)))))
 
 ;;;###autoload
+(defun org-trello/delete-card-comment ()
+  "Control first, then if ok, delete the comment at point.
+This will only work if you are the owner of the comment."
+  (interactive)
+  (org-trello/apply-deferred '(org-trello/log-strict-checks-and-do "Delete current comment at point" orgtrello-controller/do-delete-card-comment!)))
+
 ;;;###autoload
 (defun org-trello/show-card-comments ()
   "Control first, then if ok, show a simple buffer with the current card's last comments."
