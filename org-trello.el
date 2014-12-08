@@ -197,6 +197,7 @@ When MODIFIER is set, this will show the current card's comments."
   (interactive)
   (org-trello/apply '(org-trello/log-strict-checks-and-do "Display current card's last comments" orgtrello-controller/do-show-card-comments!)))
 
+;;;###autoload
 (defun org-trello/show-board-labels ()
   "Control first, then if ok, show a simple buffer with the current board's labels."
   (interactive)
