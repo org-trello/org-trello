@@ -4,7 +4,7 @@
 
 ;; Author: Antoine R. Dumont <eniotna.t AT gmail.com>
 ;; Maintainer: Antoine R. Dumont <eniotna.t AT gmail.com>
-;; Version: 0.6.5
+;; Version: 0.6.6
 ;; Package-Requires: ((emacs "24") (dash "2.8.0") (s "1.9.0") (deferred "0.3.2") (request-deferred "0.1.0"))
 ;; Keywords: org-mode trello sync org-trello
 ;; URL: https://github.com/org-trello/org-trello
@@ -105,7 +105,7 @@ Please consider upgrading Emacs." emacs-version) "Error message when installing 
 (require 'timer)
 (require 'align)
 
-(defconst *ORGTRELLO/VERSION* "0.6.5" "Current org-trello version installed.")
+(defconst *ORGTRELLO/VERSION* "0.6.6" "Current org-trello version installed.")
 
 
 
@@ -184,19 +184,21 @@ If NO-CHECK-FLAG is set, no controls are done."
 ;;;###autoload
 (defun org-trello/add-card-comments (&optional modifier)
   "Control first, then if ok, add a comment to the current card.
-When MODIFIER is set, this will show the current card's comments."
+When MODIFIER is set, this will delete the current card's comments."
   (interactive "P")
   (org-trello/apply (cons 'org-trello/log-strict-checks-and-do
                           (if modifier
-                              '("Display current card's last comments" orgtrello-controller/do-show-card-comments!)
+                              '("Remove current comment card" orgtrello-controller/do-delete-card-comments!)
                             '("Add card comment" orgtrello-controller/do-add-card-comment!)))))
 
 ;;;###autoload
-(defun org-trello/show-card-comments ()
-  "Control first, then if ok, show a simple buffer with the current card's last comments."
+(defun org-trello/delete-card-comment ()
+  "Control first, then if ok, delete the comment at point.
+This will only work if you are the owner of the comment."
   (interactive)
-  (org-trello/apply '(org-trello/log-strict-checks-and-do "Display current card's last comments" orgtrello-controller/do-show-card-comments!)))
+  (org-trello/apply-deferred '(org-trello/log-strict-checks-and-do "Delete current comment at point" orgtrello-controller/do-delete-card-comment!)))
 
+;;;###autoload
 (defun org-trello/show-board-labels ()
   "Control first, then if ok, show a simple buffer with the current board's labels."
   (interactive)

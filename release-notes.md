@@ -1,3 +1,11 @@
+# 0.6.6
+
+- [X] Create backlog
+- [X] Update version
+- [X] Delete comments - CLOSE https://github.com/org-trello/org-trello/issues/222
+- [X] Clean no longer used show comments commands + install the delete comment command
+- [X] Release notes
+
 # 0.6.5
 
 - [X] Create backlog

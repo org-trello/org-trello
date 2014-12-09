@@ -727,16 +727,6 @@ Return the hashmap (name, id) of the new lists created."
     (orgtrello-data/--users-to it)
     (orgtrello-buffer/set-usernames-assigned-property! it)))
 
-(defun orgtrello-controller/do-show-card-comments! ()
-  "Show the card comments in a temporary buffer."
-  (save-excursion
-    (orgtrello-entity/back-to-card!)
-    (let* ((current-card-name (-> (orgtrello-buffer/entity-metadata!) orgtrello-data/entity-name))
-           (comments-title (format "comments for card '%s'" current-card-name))
-           (comments-formatted (-> (orgtrello-buffer/get-card-comments!)
-                                 orgtrello-data/format-comments)))
-      (orgtrello-buffer/pop-up-with-content! comments-title comments-formatted))))
-
 (defun orgtrello-controller/--update-comments! (new-comment)
   "Given a current position on a card and a new comment, add a new comment to the current comments."
   (let ((comments (orgtrello-buffer/get-card-comments!)))
@@ -762,6 +752,33 @@ Return the hashmap (name, id) of the new lists created."
             (lambda (data)
               (orgtrello-log/msg *OT/TRACE* "Add card comment - response data: %S" data)
               (orgtrello-controller/checks-then-sync-card-from-trello!))))))))
+
+(defun orgtrello-controller/do-delete-card-comment! ()
+  "Execute checks then do the actual sync if everything is ok."
+  (orgtrello-action/functional-controls-then-do '(orgtrello-controller/--on-entity-p orgtrello-controller/--right-level-p orgtrello-controller/--already-synced-p)
+                                                (orgtrello-buffer/safe-entry-full-metadata!)
+                                                'orgtrello-controller/--do-delete-card-comment!
+                                                (current-buffer)))
+
+(defun orgtrello-controller/--do-delete-card-comment! (card-meta &optional buffer-name)
+  "Delete the comment at point."
+  (save-excursion
+    (lexical-let* ((card-id    (-> card-meta orgtrello-data/parent orgtrello-data/entity-id))
+                   (comment-id (-> card-meta orgtrello-data/current orgtrello-data/entity-id)))
+      (if (or (null card-id) (string= "" card-id) (string= "" comment-id))
+          (orgtrello-log/msg *OT/INFO* "No comment to delete - skip.")
+        (deferred:$
+          (deferred:next (lambda () (-> card-id
+                                 (orgtrello-api/delete-card-comment comment-id)
+                                 (orgtrello-query/http-trello 'sync))))
+          (deferred:nextc it
+            (lambda (data)
+              (save-excursion
+                (beginning-of-line)
+                (hide-subtree)
+                (kill-line)
+                (kill-line))
+              (orgtrello-log/msg *OT/INFO* "Comment deleted!"))))))))
 
 (defun orgtrello-controller/do-cleanup-from-buffer! (&optional globally-flag)
   "Clean org-trello data in current buffer.

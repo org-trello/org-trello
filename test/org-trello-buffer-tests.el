@@ -226,7 +226,7 @@ DEADLINE: <some-due-date>
   - [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\",\"orgtrello-local-checksum\":\"local-checkbox-checksum-456\"}
 ** COMMENT ardumont, some-date
 :PROPERTIES:
-:orgtrello-comment-id: some-comment-id
+:orgtrello-id: some-comment-id
 :END:
 some comment
 "
@@ -286,12 +286,12 @@ some comment
   description A
 ** COMMENT ardumont, some-date
 :PROPERTIES:
-:orgtrello-comment-id: some-comment-id
+:orgtrello-id: some-comment-id
 :END:
 some comment
 ** COMMENT ben, 10/01/2202
 :PROPERTIES:
-:orgtrello-comment-id: some-id
+:orgtrello-id: some-id
 :END:
 comment text
 * TODO task B
@@ -303,7 +303,7 @@ comment text
   description B
 ** COMMENT tony, 10/10/2014
 :PROPERTIES:
-:orgtrello-comment-id: some-com-id
+:orgtrello-id: some-com-id
 :END:
 some text
 "
@@ -720,7 +720,7 @@ DEADLINE: <2014-05-17 Sat>
   - [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\",\"orgtrello-local-checksum\":\"local-checkbox-checksum-567\"}
 ** COMMENT ardumont, some-date
 :PROPERTIES:
-:orgtrello-comment-id: some-comment-id
+:orgtrello-id: some-comment-id
 :END:
 some comment
 "
@@ -775,7 +775,7 @@ some comment
   - [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\",\"orgtrello-local-checksum\":\"local-checklist-checksum-567\"}
 ** COMMENT ardumont, some-date
 :PROPERTIES:
-:orgtrello-comment-id: some-comment-id
+:orgtrello-id: some-comment-id
 :END:
 some comment
 
@@ -1797,7 +1797,7 @@ some comment
             (orgtrello-buffer/org-file-properties!)))))
 
 (ert-deftest test-orgtrello-buffer/--serialize-comment ()
-  (should (equal "** COMMENT tony, 10/10/2013\n:PROPERTIES:\n:orgtrello-comment-id: comment-id\n:END:\nhello, this is a comment!\n"
+  (should (equal "** COMMENT tony, 10/10/2013\n:PROPERTIES:\n:orgtrello-id: comment-id\n:END:\nhello, this is a comment!\n"
                  (orgtrello-buffer/--serialize-comment (orgtrello-hash/make-properties '((:comment-user . "tony")
                                                                                          (:comment-date . "10/10/2013")
                                                                                          (:comment-id   . "comment-id")

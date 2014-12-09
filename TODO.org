@@ -5,14 +5,18 @@
 * TODO 0.6.x [0%]
 - [ ] Use active region - https://github.com/org-trello/org-trello/issues/130
 - [ ] Another Disposition about org's buffer - https://github.com/org-trello/org-trello/issues/33
-- [ ] Use etags to avoid sync from action if it is not necessary [0%]
-  - [ ] Exploit the etags from the card's property drawer and send get request with it
-  - [ ] Retrieve etags from GET result and store it inside the card's property drawer
-  - [ ] Improve sync-from-trello to avoid destroying the full content of the buffer before writing inside
-  - [ ] Does everything work?
 - [ ] Add a file to the org-trello list - https://github.com/org-trello/org-trello/issues/211
 - [ ] One command to sync them all - https://github.com/org-trello/org-trello/issues/59
-* IN-PROGRESS 0.6.5 [100%]
+- [ ] Create/Edit comments - https://github.com/org-trello/org-trello/issues/221
+* DONE 0.6.6 [100%]
+CLOSED: [2014-12-09 Tue 00:13]
+- [X] Create backlog
+- [X] Update version
+- [X] Delete comments - CLOSE https://github.com/org-trello/org-trello/issues/222
+- [X] Clean no longer used show comments commands + install the delete comment command
+- [X] Release notes
+* DONE 0.6.5 [100%]
+CLOSED: [2014-12-08 Mon 19:38]
 - [X] Create backlog
 - [X] Update version
 - [X] Maintenance - Revert tests back to ert-deftest to have more explicit error outputs
