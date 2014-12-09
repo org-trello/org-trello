@@ -134,5 +134,11 @@ Otherwise, return the current position."
   "Compute the card's data region (checklists/items) couple '(start end)."
   `(,(1+ (orgtrello-entity/card-metadata-end-point!)) ,(1- (orgtrello-entity/compute-next-card-point!))))
 
+(defun orgtrello-entity/compute-comment-region! ()
+  "Compute the comment's region."
+  (save-excursion
+    (org-back-to-heading)
+    `(,(point-at-bol) ,(org-end-of-subtree))))
+
 (provide 'org-trello-entity)
 ;;; org-trello-entity.el ends here

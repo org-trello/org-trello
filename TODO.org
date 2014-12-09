@@ -7,9 +7,10 @@
 - [ ] Another Disposition about org's buffer - https://github.com/org-trello/org-trello/issues/33
 - [ ] Add a file to the org-trello list - https://github.com/org-trello/org-trello/issues/211
 - [ ] One command to sync them all - https://github.com/org-trello/org-trello/issues/59
-* IN-PROGRESS 0.6.6 [50%]
+* IN-PROGRESS 0.6.6 [60%]
 - [X] Create backlog
 - [X] Update version
+- [X] Improve/Refactor the comment deletion
 - [ ] Create/Edit comments - https://github.com/org-trello/org-trello/issues/221
 - [ ] Release notes
 * DONE 0.6.6 [100%]

@@ -241,6 +241,7 @@ hello there
                                              (apply 'buffer-substring-no-properties (orgtrello-entity/card-metadata-region!))
                                              -2))))
 
+
 (ert-deftest test-orgtrello-entity/card-data-region! ()
   (should (equal
            "- [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}
@@ -254,6 +255,30 @@ hello there
   - [X] Emacs-Lisp  :PROPERTIES: {\"orgtrello-id\":\"52c9451784251e1b260127f8\"}
 * another card"
                                              (apply 'buffer-substring-no-properties (orgtrello-entity/card-data-region!))
+                                             -2))))
+
+(ert-deftest test-orgtrello-entity/compute-comment-region! ()
+  (should (equal
+           "** COMMENT ardumont, 2014-12-09T17:29:42.073Z
+:PROPERTIES:
+:orgtrello-id: 548731866513c90940aa7746
+:END:
+ardumont comment"
+           (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
+:PROPERTIES:
+:orgtrello-id: 52c945143004d4617c012528
+:END:
+  hello there
+- [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}
+  - [X] Emacs-Lisp  :PROPERTIES: {\"orgtrello-id\":\"52c9451784251e1b260127f8\"}
+* another card
+** COMMENT ardumont, 2014-12-09T17:29:42.073Z
+:PROPERTIES:
+:orgtrello-id: 548731866513c90940aa7746
+:END:
+ardumont comment
+"
+                                             (apply 'buffer-substring-no-properties (orgtrello-entity/compute-comment-region! ))
                                              -2))))
 
 (provide 'org-trello-entity-tests)

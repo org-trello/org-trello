@@ -773,11 +773,7 @@ Return the hashmap (name, id) of the new lists created."
                                  (orgtrello-query/http-trello 'sync))))
           (deferred:nextc it
             (lambda (data)
-              (save-excursion
-                (beginning-of-line)
-                (hide-subtree)
-                (kill-line)
-                (kill-line))
+              (apply 'delete-region (orgtrello-entity/compute-comment-region!))
               (orgtrello-log/msg *OT/INFO* "Comment deleted!"))))))))
 
 (defun orgtrello-controller/do-cleanup-from-buffer! (&optional globally-flag)
