@@ -227,6 +227,7 @@ DEADLINE: <some-due-date>
 ** COMMENT ardumont, some-date
 :PROPERTIES:
 :orgtrello-id: some-comment-id
+:orgtrello-local-checksum: local-comment-checksum-456
 :END:
 some comment
 "
@@ -240,6 +241,7 @@ some comment
                     (mock (orgtrello-buffer/card-checksum!) => "local-card-checksum-456")
                     (mock (orgtrello-buffer/checklist-checksum!) => "local-checkbox-checksum-456")
                     (mock (orgtrello-buffer/item-checksum!) => "local-item-checksum-456")
+                    (mock (orgtrello-buffer/comment-checksum!) => "local-comment-checksum-456")
                     (orgtrello-buffer/write-card! "some-card-id"
                                                   (orgtrello-hash/make-properties `((:keyword . "TODO")
                                                                                     (:member-ids . "ardumont,dude")
@@ -281,29 +283,32 @@ some comment
   :PROPERTIES:
   :orgtrello-users: ardumont,dude
   :orgtrello-id: card-id-a
-  :orgtrello-local-checksum: local-checksum-a
+  :orgtrello-local-checksum: local-card-checksum-a
   :END:
   description A
 ** COMMENT ardumont, some-date
 :PROPERTIES:
 :orgtrello-id: some-comment-id
+:orgtrello-local-checksum: local-comment-checksum-a
 :END:
 some comment
 ** COMMENT ben, 10/01/2202
 :PROPERTIES:
 :orgtrello-id: some-id
+:orgtrello-local-checksum: local-comment-checksum-a
 :END:
 comment text
 * TODO task B
   :PROPERTIES:
   :orgtrello-users: ardumont,dude
   :orgtrello-id: card-id-b
-  :orgtrello-local-checksum: local-checksum-b
+  :orgtrello-local-checksum: local-card-checksum-b
   :END:
   description B
 ** COMMENT tony, 10/10/2014
 :PROPERTIES:
 :orgtrello-id: some-com-id
+:orgtrello-local-checksum: local-comment-checksum-b
 :END:
 some text
 "
@@ -315,7 +320,8 @@ some text
 "
                   (progn
                     (with-mock
-                      (mock (orgtrello-buffer/card-checksum!) => "local-checksum-a")
+                      (mock (orgtrello-buffer/card-checksum!) => "local-card-checksum-a")
+                      (mock (orgtrello-buffer/comment-checksum!) => "local-comment-checksum-a")
                       (orgtrello-buffer/write-card! "card-id-a"
                                                     (orgtrello-hash/make-properties
                                                      `((:keyword . "TODO")
@@ -335,7 +341,8 @@ some text
                                                     (orgtrello-hash/make-properties `())
                                                     (orgtrello-hash/make-properties `())))
                     (with-mock
-                      (mock (orgtrello-buffer/card-checksum!) => "local-checksum-b")
+                      (mock (orgtrello-buffer/card-checksum!) => "local-card-checksum-b")
+                      (mock (orgtrello-buffer/comment-checksum!) => "local-comment-checksum-b")
                       (orgtrello-buffer/write-card! "card-id-b"
                                                     (orgtrello-hash/make-properties
                                                      `((:keyword . "TODO")
@@ -721,6 +728,7 @@ DEADLINE: <2014-05-17 Sat>
 ** COMMENT ardumont, some-date
 :PROPERTIES:
 :orgtrello-id: some-comment-id
+:orgtrello-local-checksum: local-comment-checksum-567
 :END:
 some comment
 "
@@ -730,6 +738,7 @@ some comment
                     (mock (orgtrello-buffer/card-checksum!) => "local-card-checksum-567")
                     (mock (orgtrello-buffer/checklist-checksum!) => "local-checkbox-checksum-567")
                     (mock (orgtrello-buffer/item-checksum!) => "local-item-checksum-567")
+                    (mock (orgtrello-buffer/comment-checksum!) => "local-comment-checksum-567")
                     (let* ((card (orgtrello-hash/make-properties `((:keyword . "TODO")
                                                                    (:member-ids . "ardumont,dude")
                                                                    (:comments . ,(list (orgtrello-hash/make-properties '((:comment-user . "ardumont")
@@ -776,6 +785,7 @@ some comment
 ** COMMENT ardumont, some-date
 :PROPERTIES:
 :orgtrello-id: some-comment-id
+:orgtrello-local-checksum: local-comment-checksum-567
 :END:
 some comment
 
@@ -806,6 +816,7 @@ some comment
                     (mock (orgtrello-buffer/card-checksum!) => "local-card-checksum-567")
                     (mock (orgtrello-buffer/checklist-checksum!) => "local-checklist-checksum-567")
                     (mock (orgtrello-buffer/item-checksum!) => "local-item-checksum-567")
+                    (mock (orgtrello-buffer/comment-checksum!) => "local-comment-checksum-567")
                     (let* ((card (orgtrello-hash/make-properties `((:keyword . "TODO")
                                                                    (:member-ids . "ardumont,dude")
                                                                    (:comments . ,(list (orgtrello-hash/make-properties '((:comment-user . "ardumont")
@@ -965,6 +976,48 @@ some comment
                                                                        (with-mock
                                                                          (mock (orgtrello-buffer/card-checksum!) => "card-checksum-987")
                                                                          (orgtrello-buffer/write-local-checksum-at-pt!))))))
+
+(ert-deftest test-orgtrello-buffer/write-local-checksum-at-pt!-for-comment ()
+  "checklist - Write local checksum at the current position for card's comment."
+  (should (equal
+           "* TODO some card name
+:PROPERTIES:
+:orgtrello-id: some-card-id
+:orgtrello-users: ardumont,dude
+:orgtrello-card-comments: ardumont: some comment
+:orgtrello-local-checksum: card-checksum-123
+:END:
+  some description
+  - [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}
+    - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\"}
+    - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\"}
+  - [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\"}
+** COMMENT ardumont, date
+   :PROPERTIES:
+   :orgtrello-local-checksum: comment-checksum-123
+   :END:
+some comment
+* another card"
+
+           (orgtrello-tests/with-temp-buffer-and-return-buffer-content "* TODO some card name
+:PROPERTIES:
+:orgtrello-id: some-card-id
+:orgtrello-users: ardumont,dude
+:orgtrello-card-comments: ardumont: some comment
+:END:
+  some description
+  - [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}
+    - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\"}
+    - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\"}
+  - [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\"}
+** COMMENT ardumont, date
+some comment
+* another card"
+                                                                       (with-mock
+                                                                         (mock (orgtrello-buffer/comment-checksum!) => "comment-checksum-123")
+                                                                         (mock (orgtrello-buffer/card-checksum!) => "card-checksum-123")
+                                                                         (orgtrello-buffer/write-local-checksum-at-pt!))
+                                                                       -2))))
 
 (ert-deftest test-orgtrello-buffer/org-delete-property!-checklist ()
   ;; On a checklist
@@ -1242,6 +1295,47 @@ some comment
                                                                          (orgtrello-buffer/write-local-item-checksum-at-point!))
                                                                        -1))))
 
+(ert-deftest test-orgtrello-buffer/write-local-comment-checksum-at-point! ()
+  "The local checksum changes if modifications."
+  (should (equal
+           "* TODO some card name
+:PROPERTIES:
+:orgtrello-id: some-card-id
+:orgtrello-users: ardumont,dude
+:orgtrello-card-comments: ardumont: some comment
+:orgtrello-local-checksum: blah
+:END:
+  some description
+  - [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}
+    - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\"}
+    - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\"}
+** COMMENT user, date
+:PROPERTIES:
+:orgtrello-local-checksum: comment-checksum-10324
+:END:
+some comment
+"
+           (orgtrello-tests/with-temp-buffer-and-return-buffer-content "* TODO some card name
+:PROPERTIES:
+:orgtrello-id: some-card-id
+:orgtrello-users: ardumont,dude
+:orgtrello-card-comments: ardumont: some comment
+:orgtrello-local-checksum: blah
+:END:
+  some description
+  - [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}
+    - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\"}
+    - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\"}
+** COMMENT user, date
+:PROPERTIES:
+:END:
+some comment
+"
+                                                                       (with-mock
+                                                                         (mock (orgtrello-buffer/comment-checksum!) => "comment-checksum-10324")
+                                                                         (orgtrello-buffer/write-local-comment-checksum-at-point!))
+                                                                       -1))))
+
 (ert-deftest test-orgtrello-buffer/get-checkbox-local-checksum!-checklist ()
   "The local checksum does not change if no modification."
   (should (equal
@@ -1332,6 +1426,22 @@ some comment
                                                (mock (orgtrello-buffer/item-checksum!) => "item-checksum")
                                                (orgtrello-buffer/compute-checksum!))
                                              -1))))
+
+(ert-deftest test-orgtrello-buffer/compute-checksum!-comment ()
+  "Compute the checksum of the item."
+  (should (equal
+           "comment-checksum"
+           (orgtrello-tests/with-temp-buffer "* card
+** COMMENT ardumont, date
+:PROPERTIES:
+:orgtrello-id: some-comment-id
+:orgtrello-local-checksum: foobar
+:END:
+  some comment
+"
+                                             (with-mock
+                                               (mock (orgtrello-buffer/comment-checksum!) => "comment-checksum")
+                                               (orgtrello-buffer/compute-checksum!))))))
 
 (ert-deftest test-orgtrello-buffer/compute-checksum!-checklist ()
   "Compute the checksum of the checklist."
@@ -1690,6 +1800,46 @@ some comment
     - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\", \"orgtrello-local-checksum\":\"4fc1b47786aaa484f3ebdcb5652a98d0c520ae0b5b899a4d1bc6be8c0d5c4683\"}
 "
                                              (orgtrello-buffer/item-checksum!)
+                                             -1))))
+
+(ert-deftest test-orgtrello-buffer/comment-checksum! ()
+  "A comment's checksum"
+  (should (equal
+           "527eda4372d3ec88c52bd246539f1e516d48ffb9fd875d2489fd0359d210c644"
+           (orgtrello-tests/with-temp-buffer "** COMMENT ardumont,date
+:orgtrello-id: some-comment-id
+:orgtrello-local-checksum: 34c7a81ed2f174e8d1fa996104eec0e42448cdbaeb3a4fc324c9a78d2ea53198
+:END:
+  some comment
+"
+                                             (orgtrello-buffer/comment-checksum!)
+                                             -1))))
+
+(ert-deftest test-orgtrello-buffer/comment-checksum!-not-modified-so-same-checksum ()
+  "A comment's checksum"
+  (should (equal
+           "527eda4372d3ec88c52bd246539f1e516d48ffb9fd875d2489fd0359d210c644"
+           (orgtrello-tests/with-temp-buffer "** COMMENT ardumont,date
+:orgtrello-id: some-comment-id
+:orgtrello-local-checksum: 34c7a81ed2f174e8d1fa996104eec0e42448cdbaeb3a4fc324c9a78d2ea53198
+:END:
+  some comment
+"
+                                             (orgtrello-buffer/comment-checksum!)
+                                             -1))))
+
+(ert-deftest test-orgtrello-buffer/comment-checksum!-not-modified-so-same-checksum ()
+  "A comment's checksum"
+  (should (equal
+           "f8f5048e2bcc61613dde84c4d85bb4dfdc18df29692598540703d8e1c54708fa"
+           (orgtrello-tests/with-temp-buffer "** COMMENT ardumont,date
+:orgtrello-id: some-comment-id
+:orgtrello-local-checksum: 34c7a81ed2f174e8d1fa996104eec0e42448cdbaeb3a4fc324c9a78d2ea53198
+:END:
+  some slightly modified comment
+generates another checksum
+"
+                                             (orgtrello-buffer/comment-checksum!)
                                              -1))))
 
 (ert-deftest test-orgtrello-buffer/checklist-beginning-pt! ()

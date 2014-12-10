@@ -28,6 +28,9 @@
 (defconst *ORGTRELLO/ITEM-LEVEL* 3
   "Item level.")
 
+(defconst *ORGTRELLO/COMMENT-LEVEL* -2
+  "Comment level.")
+
 (defconst *ORGTRELLO/OUTOFBOUNDS-LEVEL* 4
   "Out of bounds level.")
 

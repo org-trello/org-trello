@@ -134,7 +134,8 @@ At the end of it all, the cursor is moved after the new written text."
   "Write the COMMENT at the current position."
   (-> comment
     orgtrello-buffer/--serialize-comment
-    insert))
+    insert)
+  (orgtrello-buffer/write-local-comment-checksum-at-point!))
 
 (defun orgtrello-buffer/--serialize-comment (comment)
   "Serialize COMMENT as string."
@@ -216,18 +217,27 @@ The cursor position will move after the newly inserted card."
   "Given the current checkbox at point, set the local checksum of the checkbox."
   (orgtrello-buffer/--write-checksum-at-pt! 'orgtrello-buffer/item-checksum!))
 
+(defun orgtrello-buffer/write-local-comment-checksum-at-point! ()
+  "Given the current comment at point, set the local checksum of the comment."
+  (orgtrello-buffer/--write-checksum-at-pt! 'orgtrello-buffer/comment-checksum!))
+
 (defun orgtrello-buffer/write-local-checksum-at-pt! ()
   "Update the checksum at point.
 If on a card, update the card's checksum.
 Otherwise, if on a checklist, update the checklist's and the card's checksum.
 Otherwise, on an item, update the item's, checklist's and card's checksum."
-  (let ((actions (cond ((orgtrello-entity/card-at-pt!)      '(orgtrello-buffer/write-local-card-checksum-at-point!))
-                       ((orgtrello-entity/checklist-at-pt!) '(orgtrello-buffer/write-local-checklist-checksum-at-point!
-                                                              orgtrello-buffer/write-local-card-checksum!))
-                       ((orgtrello-entity/item-at-pt!)      '(orgtrello-buffer/write-local-item-checksum-at-point!
-                                                              orgtrello-buffer/write-local-checklist-checksum!
-                                                              orgtrello-buffer/write-local-card-checksum!)))))
-    (mapc 'funcall actions)))
+  (save-excursion
+    (let ((actions (cond ((orgtrello-entity/org-comment-p!)   '(org-back-to-heading
+                                                                orgtrello-buffer/write-local-comment-checksum-at-point!
+                                                                org-up-element
+                                                                orgtrello-buffer/write-local-card-checksum!))
+                         ((orgtrello-entity/card-at-pt!)      '(orgtrello-buffer/write-local-card-checksum-at-point!))
+                         ((orgtrello-entity/checklist-at-pt!) '(orgtrello-buffer/write-local-checklist-checksum-at-point!
+                                                                orgtrello-buffer/write-local-card-checksum!))
+                         ((orgtrello-entity/item-at-pt!)      '(orgtrello-buffer/write-local-item-checksum-at-point!
+                                                                orgtrello-buffer/write-local-checklist-checksum!
+                                                                orgtrello-buffer/write-local-card-checksum!)))))
+      (mapc 'funcall actions))))
 
 (defun orgtrello-buffer/write-properties-at-pt! (id)
   "Update the properties at point, beginning with ID.
@@ -677,7 +687,8 @@ COMPUTE-REGION-FN is the region computation function."
   "Compute the checksum of the current entity at point."
   (funcall (cond ((orgtrello-entity/org-card-p!)      'orgtrello-buffer/card-checksum!)
                  ((orgtrello-entity/checklist-at-pt!) 'orgtrello-buffer/checklist-checksum!)
-                 ((orgtrello-entity/item-at-pt!)      'orgtrello-buffer/item-checksum!))))
+                 ((orgtrello-entity/item-at-pt!)      'orgtrello-buffer/item-checksum!)
+                 ((orgtrello-entity/org-comment-p!)   'orgtrello-buffer/comment-checksum!))))
 
 (defun orgtrello-buffer/card-checksum! ()
   "Compute the card's checksum at point."
@@ -690,6 +701,10 @@ COMPUTE-REGION-FN is the region computation function."
 (defun orgtrello-buffer/item-checksum! ()
   "Compute the checkbox's checksum."
   (orgtrello-buffer/compute-generic-checksum! 'orgtrello-entity/compute-item-region!))
+
+(defun orgtrello-buffer/comment-checksum! ()
+  "Compute the comment's checksum."
+  (orgtrello-buffer/compute-generic-checksum! 'orgtrello-entity/compute-comment-region!))
 
 (defun orgtrello-buffer/archive-cards! (trello-cards)
   "Given a list of TRELLO-CARDS, archive those if they are present on buffer."
