@@ -188,7 +188,7 @@ When MODIFIER is set, this will delete the current card's comments."
   (interactive "P")
   (org-trello/apply (cons 'org-trello/log-strict-checks-and-do
                           (if modifier
-                              '("Remove current comment card" orgtrello-controller/do-delete-card-comments!)
+                              '("Remove current comment card" orgtrello-controller/do-delete-card-comment!)
                             '("Add card comment" orgtrello-controller/do-add-card-comment!)))))
 
 ;;;###autoload
