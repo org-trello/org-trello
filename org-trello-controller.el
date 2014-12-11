@@ -740,18 +740,10 @@ Return the hashmap (name, id) of the new lists created."
   "Wait for the input to add a comment to the current card."
   (save-excursion
     (orgtrello-entity/back-to-card!)
-    (lexical-let ((card-id (-> (orgtrello-buffer/entity-metadata!) orgtrello-data/entity-id))
-                  (comment (read-string "Add a comment: ")))
-      (if (or (null card-id) (string= "" card-id) (string= "" comment))
-          (orgtrello-log/msg *OT/INFO* "Empty comment - skip.")
-        (deferred:$
-          (deferred:next (lambda () (-> card-id
-                                 (orgtrello-api/add-card-comment comment)
-                                 (orgtrello-query/http-trello 'sync))))
-          (deferred:nextc it
-            (lambda (data)
-              (orgtrello-log/msg *OT/TRACE* "Add card comment - response data: %S" data)
-              (orgtrello-controller/checks-then-sync-card-from-trello!))))))))
+    (let ((card-id (-> (orgtrello-buffer/entity-metadata!) orgtrello-data/entity-id)))
+      (if (or (null card-id) (string= "" card-id))
+          (orgtrello-log/msg *OT/INFO* "Card not sync'ed so cannot add comment - skip.")
+        (orgtrello-buffer/add-comment! card-id)))))
 
 (defun orgtrello-controller/do-delete-card-comment! ()
   "Execute checks then do the actual sync if everything is ok."
@@ -773,11 +765,7 @@ Return the hashmap (name, id) of the new lists created."
                                  (orgtrello-query/http-trello 'sync))))
           (deferred:nextc it
             (lambda (data)
-              (save-excursion
-                (beginning-of-line)
-                (hide-subtree)
-                (kill-line)
-                (kill-line))
+              (apply 'delete-region (orgtrello-entity/compute-comment-region!))
               (orgtrello-log/msg *OT/INFO* "Comment deleted!"))))))))
 
 (defun orgtrello-controller/do-cleanup-from-buffer! (&optional globally-flag)
@@ -828,6 +816,7 @@ When GLOBALLY-FLAG is not nil, remove also local entities properties."
           (orgtrello-log/msg *OT/INFO* "Update board information done!"))))))
 
 (defun orgtrello-controller/do-show-board-labels! ()
+  "Open a pop and display the board's labels."
   (->> (orgtrello-buffer/labels!)
     orgtrello-data/format-labels
     (orgtrello-buffer/pop-up-with-content! "Labels")))

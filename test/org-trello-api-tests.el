@@ -293,5 +293,10 @@
   (should (equal "/cards/:card-id/actions/:comment-id/comments" (gethash :uri    (orgtrello-api/delete-card-comment :card-id :comment-id))))
   (should (equal nil                                            (gethash :params (orgtrello-api/delete-card-comment :card-id :comment-id)))))
 
+(ert-deftest test-orgtrello-api/update-card-comment ()
+  (should (equal "PUT"                                          (gethash :method (orgtrello-api/udpate-card-comment :card-id :comment-id))))
+  (should (equal "/cards/:card-id/actions/:comment-id/comments" (gethash :uri    (orgtrello-api/udpate-card-comment :card-id :comment-id))))
+  (should (equal nil                                            (gethash :params (orgtrello-api/udpate-card-comment :card-id :comment-id)))))
+
 (provide 'org-trello-api-tests)
 ;;; org-trello-api-tests.el ends here

@@ -278,11 +278,13 @@
 ** COMMENT ardumont, 10/10/2010
 :PROPERTIES:
 :orgtrello-id: some-comment-id
+:orgtrello-local-checksum: local-comment-checksum-678
 :END:
 some comment
 ** COMMENT tony, 11/10/2010
 :PROPERTIES:
 :orgtrello-id: some-comment-id2
+:orgtrello-local-checksum: local-comment-checksum-678
 :END:
 some second comment
 
@@ -327,6 +329,7 @@ some description
               (mock (orgtrello-buffer/card-checksum!) => "local-card-checksum-678")
               (mock (orgtrello-buffer/checklist-checksum!) => "local-checklist-checksum-678")
               (mock (orgtrello-buffer/item-checksum!) => "local-item-checksum-678")
+              (mock (orgtrello-buffer/comment-checksum!) => "local-comment-checksum-678")
               (let* ((trello-card (orgtrello-hash/make-properties `((:keyword . "TODO")
                                                                     (:member-ids . "dude,ardumont")
                                                                     (:comments . ,(list (orgtrello-hash/make-properties '((:comment-user . "ardumont")
@@ -382,11 +385,13 @@ some description
 ** COMMENT ardumont, 10/10/2010
 :PROPERTIES:
 :orgtrello-id: some-comment-id
+:orgtrello-local-checksum: comment-checksum-12
 :END:
 some comment
 ** COMMENT tony, 11/10/2010
 :PROPERTIES:
 :orgtrello-id: some-comment-id2
+:orgtrello-local-checksum: comment-checksum-12
 :END:
 some second comment
 * TODO other card name
@@ -436,6 +441,7 @@ some description
               (mock (orgtrello-buffer/card-checksum!) => "card-checksum-12")
               (mock (orgtrello-buffer/checklist-checksum!) => "checklist-checksum-12")
               (mock (orgtrello-buffer/item-checksum!) => "item-checksum-12")
+              (mock (orgtrello-buffer/comment-checksum!) => "comment-checksum-12")
               (let* ((trello-card0 (orgtrello-hash/make-properties `((:keyword . "TODO")
                                                                      (:member-ids . "orgtrello-user-dude,orgtrello-user-ardumont")
                                                                      (:comments . ,(list (orgtrello-hash/make-properties '((:comment-user . "ardumont")
@@ -491,11 +497,13 @@ some description
 ** COMMENT ardumont, 10/10/2010
 :PROPERTIES:
 :orgtrello-id: some-comment-id
+:orgtrello-local-checksum: comment-checksum-1234
 :END:
 some comment
 ** COMMENT tony, 11/10/2010
 :PROPERTIES:
 :orgtrello-id: some-comment-id2
+:orgtrello-local-checksum: comment-checksum-1234
 :END:
 some second comment
 * TODO other card name                                                  :green:
@@ -552,6 +560,7 @@ some description
               (mock (orgtrello-buffer/card-checksum!) => "card-checksum-1234")
               (mock (orgtrello-buffer/checklist-checksum!) => "checklist-checksum-1234")
               (mock (orgtrello-buffer/item-checksum!) => "item-checksum-1234")
+              (mock (orgtrello-buffer/comment-checksum!) => "comment-checksum-1234")
               (let* ((trello-card0 (orgtrello-hash/make-properties `((:keyword . "TODO")
                                                                      (:member-ids . "orgtrello-user-dude,orgtrello-user-ardumont")
                                                                      (:comments . ,(list (orgtrello-hash/make-properties '((:comment-user . "ardumont")
@@ -615,11 +624,13 @@ some description
 ** COMMENT ardumont, 10/10/2010
 :PROPERTIES:
 :orgtrello-id: some-comment-id
+:orgtrello-local-checksum: comment-checksum-123456
 :END:
 some comment
 ** COMMENT tony, 11/10/2010
 :PROPERTIES:
 :orgtrello-id: some-comment-id2
+:orgtrello-local-checksum: comment-checksum-123456
 :END:
 some second comment
 * DONE other card name                                                  :green:
@@ -672,6 +683,7 @@ some description
               (mock (orgtrello-buffer/card-checksum!) => "card-checksum-123456")
               (mock (orgtrello-buffer/checklist-checksum!) => "checklist-checksum-123456")
               (mock (orgtrello-buffer/item-checksum!) => "item-checksum-123456")
+              (mock (orgtrello-buffer/comment-checksum!) => "comment-checksum-123456")
               (let* ((trello-card0 (orgtrello-hash/make-properties `((:keyword . "TODO")
                                                                      (:member-ids . "orgtrello-user-dude,orgtrello-user-ardumont")
                                                                      (:comments . ,(list (orgtrello-hash/make-properties '((:comment-user . "ardumont")

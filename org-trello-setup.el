@@ -28,6 +28,9 @@
 (defconst *ORGTRELLO/ITEM-LEVEL* 3
   "Item level.")
 
+(defconst *ORGTRELLO/COMMENT-LEVEL* -2
+  "Comment level.")
+
 (defconst *ORGTRELLO/OUTOFBOUNDS-LEVEL* 4
   "Out of bounds level.")
 
@@ -60,6 +63,9 @@
 
 (defconst *ORGTRELLO/TITLE-BUFFER-INFORMATION* "*org-trello-information*"
   "Title for the org-trello buffers that display information.")
+
+(defconst *ORGTRELLO/TITLE-BUFFER-COMMENT* "*org-trello-comment*"
+  "Title for the org-trello comment buffer that permit comment input.")
 
 (defconst *ORGTRELLO/DEADLINE-PREFIX*   "DEADLINE:"
   "Deadline (org's equivalent to trello's due date property) prefix.")

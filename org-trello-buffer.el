@@ -81,11 +81,78 @@ If the VALUE is nil or empty, remove such PROPERTY."
 
 (defun orgtrello-buffer/pop-up-with-content! (title body-content)
   "Compute a temporary buffer *ORGTRELLO/TITLE-BUFFER-INFORMATION* with the title and body-content."
-  (with-temp-buffer-window
+  (with-current-buffer-window
    *ORGTRELLO/TITLE-BUFFER-INFORMATION* nil nil
-   (progn
-     (temp-buffer-resize-mode 1)
-     (insert (format "%s:\n\n%s" title body-content)))))
+   (temp-buffer-resize-mode 1)
+   (insert (format "%s:\n\n%s" title body-content))))
+
+(defvar orgtrello-buffer/register "*orgtrello-register*"
+  "The variable holding the Emacs' org-trello register.")
+
+(defvar orgtrello-buffer/card-id nil
+  "The variable holding the card-id needed to sync the comment.")
+
+(defvar orgtrello-buffer/return nil
+  "The variable holding the list `'buffer-name`', position.
+This, to get back to when closing the popup window.")
+
+(make-local-variable 'orgtrello-buffer/return)
+(make-local-variable 'orgtrello-buffer/card-id)
+
+(defun orgtrello-buffer/add-comment! (card-id)
+  "Pop up a window for the user to input a comment.
+CARD-ID is the needed id to create the comment."
+  (setq orgtrello-buffer/return (list (current-buffer) (point)))
+  (setq orgtrello-buffer/card-id card-id)
+  (window-configuration-to-register orgtrello-buffer/register)
+  (delete-other-windows)
+  (org-switch-to-buffer-other-window *ORGTRELLO/TITLE-BUFFER-INFORMATION*)
+  (erase-buffer)
+  (let ((org-inhibit-startup t))
+    (org-mode)
+    (insert (format "# Insert comment.\n# Finish with C-c C-c, or cancel with C-c C-k.\n\n"))
+    (define-key org-mode-map [remap org-ctrl-c-ctrl-c] 'orgtrello-buffer/kill-buffer-and-write-new-comment!)
+    (define-key org-mode-map [remap org-kill-note-or-show-branches] 'orgtrello-buffer/close-popup!)))
+
+(defun orgtrello-buffer/close-popup! ()
+  "Close the buffer at point."
+  (interactive)
+  (kill-buffer (current-buffer))
+  (jump-to-register orgtrello-buffer/register)
+  (define-key org-mode-map [remap org-ctrl-c-ctrl-c] nil)
+  (define-key org-mode-map [remap org-kill-note-or-show-branches] nil)
+  (let ((buffer-name (car orgtrello-buffer/return))
+        (pos         (cadr orgtrello-buffer/return)))
+    (pop-to-buffer buffer-name)
+    (goto-char pos)))
+
+(defun orgtrello-buffer/trim-input-comment (comment)
+  "Trim the COMMENT."
+  (let ((trim-comment comment))
+    (while (string-match "\\`# .*\n[ \t\n]*" trim-comment)
+      (setq trim-comment (replace-match "" t t trim-comment)))
+    trim-comment))
+
+(defun orgtrello-buffer/kill-buffer-and-write-new-comment! ()
+  "Write comment present in the popup buffer."
+  (interactive)
+  (deferred:$
+    (deferred:next
+      (lambda ()
+        (let ((comment (orgtrello-buffer/trim-input-comment (buffer-string))))
+          (orgtrello-buffer/close-popup!)
+          comment)))
+    (deferred:nextc it
+      (lambda (comment)
+        (lexical-let ((new-comment comment))
+          (deferred:$
+            (deferred:next (lambda () (-> orgtrello-buffer/card-id
+                                   (orgtrello-api/add-card-comment new-comment)
+                                   (orgtrello-query/http-trello 'sync))))
+            (deferred:nextc it
+              (lambda (data)
+                (orgtrello-log/msg *OT/TRACE* "Add card comment - response data: %S" data)
+                (orgtrello-controller/checks-then-sync-card-from-trello!)))))))))
 
 (defun orgtrello-buffer/set-property-comment! (comments)
   "Update comments property."
@@ -134,7 +201,8 @@ At the end of it all, the cursor is moved after the new written text."
   "Write the COMMENT at the current position."
   (-> comment
     orgtrello-buffer/--serialize-comment
-    insert))
+    insert)
+  (orgtrello-buffer/write-local-comment-checksum-at-point!))
 
 (defun orgtrello-buffer/--serialize-comment (comment)
   "Serialize COMMENT as string."
@@ -216,18 +284,27 @@ The cursor position will move after the newly inserted card."
   "Given the current checkbox at point, set the local checksum of the checkbox."
   (orgtrello-buffer/--write-checksum-at-pt! 'orgtrello-buffer/item-checksum!))
 
+(defun orgtrello-buffer/write-local-comment-checksum-at-point! ()
+  "Given the current comment at point, set the local checksum of the comment."
+  (orgtrello-buffer/--write-checksum-at-pt! 'orgtrello-buffer/comment-checksum!))
+
 (defun orgtrello-buffer/write-local-checksum-at-pt! ()
   "Update the checksum at point.
 If on a card, update the card's checksum.
 Otherwise, if on a checklist, update the checklist's and the card's checksum.
 Otherwise, on an item, update the item's, checklist's and card's checksum."
-  (let ((actions (cond ((orgtrello-entity/card-at-pt!)      '(orgtrello-buffer/write-local-card-checksum-at-point!))
-                       ((orgtrello-entity/checklist-at-pt!) '(orgtrello-buffer/write-local-checklist-checksum-at-point!
-                                                              orgtrello-buffer/write-local-card-checksum!))
-                       ((orgtrello-entity/item-at-pt!)      '(orgtrello-buffer/write-local-item-checksum-at-point!
-                                                              orgtrello-buffer/write-local-checklist-checksum!
-                                                              orgtrello-buffer/write-local-card-checksum!)))))
-    (mapc 'funcall actions)))
+  (save-excursion
+    (let ((actions (cond ((orgtrello-entity/org-comment-p!)   '(org-back-to-heading
+                                                                orgtrello-buffer/write-local-comment-checksum-at-point!
+                                                                org-up-element
+                                                                orgtrello-buffer/write-local-card-checksum!))
+                         ((orgtrello-entity/card-at-pt!)      '(orgtrello-buffer/write-local-card-checksum-at-point!))
+                         ((orgtrello-entity/checklist-at-pt!) '(orgtrello-buffer/write-local-checklist-checksum-at-point!
+                                                                orgtrello-buffer/write-local-card-checksum!))
+                         ((orgtrello-entity/item-at-pt!)      '(orgtrello-buffer/write-local-item-checksum-at-point!
+                                                                orgtrello-buffer/write-local-checklist-checksum!
+                                                                orgtrello-buffer/write-local-card-checksum!)))))
+      (mapc 'funcall actions))))
 
 (defun orgtrello-buffer/write-properties-at-pt! (id)
   "Update the properties at point, beginning with ID.
@@ -677,7 +754,8 @@ COMPUTE-REGION-FN is the region computation function."
   "Compute the checksum of the current entity at point."
   (funcall (cond ((orgtrello-entity/org-card-p!)      'orgtrello-buffer/card-checksum!)
                  ((orgtrello-entity/checklist-at-pt!) 'orgtrello-buffer/checklist-checksum!)
-                 ((orgtrello-entity/item-at-pt!)      'orgtrello-buffer/item-checksum!))))
+                 ((orgtrello-entity/item-at-pt!)      'orgtrello-buffer/item-checksum!)
+                 ((orgtrello-entity/org-comment-p!)   'orgtrello-buffer/comment-checksum!))))
 
 (defun orgtrello-buffer/card-checksum! ()
   "Compute the card's checksum at point."
@@ -690,6 +768,10 @@ COMPUTE-REGION-FN is the region computation function."
 (defun orgtrello-buffer/item-checksum! ()
   "Compute the checkbox's checksum."
   (orgtrello-buffer/compute-generic-checksum! 'orgtrello-entity/compute-item-region!))
+
+(defun orgtrello-buffer/comment-checksum! ()
+  "Compute the comment's checksum."
+  (orgtrello-buffer/compute-generic-checksum! 'orgtrello-entity/compute-comment-region!))
 
 (defun orgtrello-buffer/archive-cards! (trello-cards)
   "Given a list of TRELLO-CARDS, archive those if they are present on buffer."

@@ -4,6 +4,7 @@
 
 (require 'org-trello-setup)
 (require 'org-trello-utils)
+(require 'org-element)
 (require 's)
 
 (defun orgtrello-entity/org-checkbox-p! ()
@@ -15,7 +16,15 @@
      (goto-char (+ (org-get-indentation) (point)))
      (org-at-item-bullet-p))))
 
-(defalias 'orgtrello-entity/org-card-p! 'org-at-heading-p)
+(defun orgtrello-entity/org-heading-with-level-p! (level)
+  "Determine if we are currently on an entity with level level."
+  (let* ((elem-at-point (org-element-at-point))
+         (elem-nature   (car elem-at-point)))
+    (and (eq 'headline elem-nature) (= level (org-element-property :level elem-at-point)))))
+
+(defun orgtrello-entity/org-card-p! ()
+  "Determine if we are currently on a card."
+  (orgtrello-entity/org-heading-with-level-p! *ORGTRELLO/CARD-LEVEL*))
 
 (defun orgtrello-entity/--org-checkbox-p! (indent)
   "Determine if current position is a checkbox.
@@ -30,6 +39,12 @@ Provided indent as the denominator for the checkbox's nature."
 (defun orgtrello-entity/org-item-p! ()
   "Given the current position, determine if we are on an item."
   (orgtrello-entity/--org-checkbox-p! *ORGTRELLO/ITEM-INDENT*))
+
+(defun orgtrello-entity/org-comment-p! ()
+  "Given the current position, determine if we are currently on a comment."
+  (save-excursion
+    (org-back-to-heading)
+    (orgtrello-entity/org-heading-with-level-p! 2)))
 
 (defun orgtrello-entity/back-to-card! ()
   "Given the current position, goes on the card's heading.
@@ -47,6 +62,7 @@ Does not preserve position."
     (cond ((orgtrello-entity/org-card-p!)      *ORGTRELLO/CARD-LEVEL*)
           ((orgtrello-entity/org-checklist-p!) *ORGTRELLO/CHECKLIST-LEVEL*)
           ((orgtrello-entity/org-item-p!)      *ORGTRELLO/ITEM-LEVEL*)
+          ((orgtrello-entity/org-comment-p!)   *ORGTRELLO/COMMENT-LEVEL*)
           (t                                   -1))))
 
 (defun orgtrello-entity/goto-next-checkbox ()
@@ -67,7 +83,8 @@ If hitting a heading or the end of the file, return nil."
 (defun orgtrello-entity/card-at-pt! ()
   "Determine if currently on the card region."
   (let ((pt (point)))
-    (and (<= (orgtrello-entity/card-start-point!) pt) (<= pt (orgtrello-entity/card-metadata-end-point!)))))
+    (and (<= (orgtrello-entity/card-start-point!) pt)
+         (<= pt (orgtrello-entity/card-metadata-end-point!)))))
 
 (defun orgtrello-entity/checklist-at-pt! ()
   "Determine if currently on the checklist region."
@@ -133,6 +150,12 @@ Otherwise, return the current position."
 (defun orgtrello-entity/card-data-region! ()
   "Compute the card's data region (checklists/items) couple '(start end)."
   `(,(1+ (orgtrello-entity/card-metadata-end-point!)) ,(1- (orgtrello-entity/compute-next-card-point!))))
+
+(defun orgtrello-entity/compute-comment-region! ()
+  "Compute the comment's region."
+  (save-excursion
+    (org-back-to-heading)
+    `(,(point-at-bol) ,(org-end-of-subtree))))
 
 (provide 'org-trello-entity)
 ;;; org-trello-entity.el ends here
