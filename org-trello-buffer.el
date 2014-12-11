@@ -81,11 +81,10 @@ If the VALUE is nil or empty, remove such PROPERTY."
 
 (defun orgtrello-buffer/pop-up-with-content! (title body-content)
   "Compute a temporary buffer *ORGTRELLO/TITLE-BUFFER-INFORMATION* with the title and body-content."
-  (with-temp-buffer-window
+  (with-current-buffer-window
    *ORGTRELLO/TITLE-BUFFER-INFORMATION* nil nil
-   (progn
-     (temp-buffer-resize-mode 1)
-     (insert (format "%s:\n\n%s" title body-content)))))
+   (temp-buffer-resize-mode 1)
+   (insert (format "%s:\n\n%s" title body-content))))
 
 (defun orgtrello-buffer/set-property-comment! (comments)
   "Update comments property."
