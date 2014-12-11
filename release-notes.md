@@ -1,3 +1,14 @@
+# 0.6.7
+
+- [X] Create backlog
+- [X] Update version
+- [X] Improve/Refactor the comment deletion
+- [X] Fix `orgtrello-buffer/pop-up-with-content!`
+- [X] Improve comment creation - CLOSE https://github.com/org-trello/org-trello/issues/222 [2/2]
+  - [X] Add checksum to the comments
+  - [X] Improve comment creation
+- [X] Release notes
+
 # 0.6.6
 
 - [X] Create backlog
