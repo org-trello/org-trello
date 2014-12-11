@@ -824,6 +824,7 @@ When GLOBALLY-FLAG is not nil, remove also local entities properties."
           (orgtrello-log/msg *OT/INFO* "Update board information done!"))))))
 
 (defun orgtrello-controller/do-show-board-labels! ()
+  "Open a pop and display the board's labels."
   (->> (orgtrello-buffer/labels!)
     orgtrello-data/format-labels
     (orgtrello-buffer/pop-up-with-content! "Labels")))
