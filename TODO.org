@@ -7,14 +7,15 @@
 - [ ] Another Disposition about org's buffer - https://github.com/org-trello/org-trello/issues/33
 - [ ] Add a file to the org-trello list - https://github.com/org-trello/org-trello/issues/211
 - [ ] One command to sync them all - https://github.com/org-trello/org-trello/issues/59
-* IN-PROGRESS 0.6.6 [60%]
+- [ ] Edit comment - https://github.com/org-trello/org-trello/issues/221
+* IN-PROGRESS 0.6.6 [83%]
 - [X] Create backlog
 - [X] Update version
 - [X] Improve/Refactor the comment deletion
-- [-] Create/Edit comments - https://github.com/org-trello/org-trello/issues/221 [1/3]
+- [X] Fix `orgtrello-buffer/pop-up-with-content!`
+- [X] Improve comment creation - CLOSE https://github.com/org-trello/org-trello/issues/222 [2/2]
   - [X] Add checksum to the comments
-  - [ ] Sync comments with the card
-  - [ ] Improve comment creation
+  - [X] Improve comment creation
 - [ ] Release notes
 * DONE 0.6.6 [100%]
 CLOSED: [2014-12-09 Tue 00:13]
