@@ -7,11 +7,11 @@
 - [ ] Another Disposition about org's buffer - https://github.com/org-trello/org-trello/issues/33
 - [ ] Add a file to the org-trello list - https://github.com/org-trello/org-trello/issues/211
 - [ ] One command to sync them all - https://github.com/org-trello/org-trello/issues/59
-* IN-PROGRESS 0.6.8 [50%]
+* IN-PROGRESS 0.6.8 [80%]
 - [X] Create backlog
 - [X] Update version
 - [X] Edit comment direct in buffer - CLOSE https://github.com/org-trello/org-trello/issues/221
-- [ ] Open binding for sync a comment action
+- [X] Open binding `C-c o U` for `sync a comment` action
 - [ ] Release notes
 
 * DONE 0.6.7 [100%]
