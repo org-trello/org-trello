@@ -182,7 +182,7 @@ If NO-CHECK-FLAG is set, no controls are done."
   (orgtrello-log/msg *OT/INFO* "Cancel actions done!"))
 
 ;;;###autoload
-(defun org-trello/add-card-comments (&optional modifier)
+(defun org-trello/add-card-comment (&optional modifier)
   "Control first, then if ok, add a comment to the current card.
 When MODIFIER is set, this will delete the current card's comments."
   (interactive "P")
