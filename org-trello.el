@@ -216,6 +216,16 @@ If MODIFIER is non nil, execute the sync entity and its structure from trello."
            '("Request 'sync entity with structure to trello" orgtrello-controller/checks-then-sync-card-to-trello!)))))
 
 ;;;###autoload
+(defun org-trello/sync-comment (&optional modifier)
+  "Execute the sync of the card's comment at point.
+If MODIFIER is non nil, remove the comment at point."
+  (interactive "P")
+  (org-trello/apply-deferred (cons 'org-trello/log-strict-checks-and-do
+                                   (if modifier
+                                       '("Remove current comment at point" orgtrello-controller/do-delete-card-comment!)
+                                     '("Sync comment to trello" orgtrello-controller/do-sync-card-comment!)))))
+
+;;;###autoload
 (defun org-trello/sync-buffer (&optional modifier)
   "Execute the sync of the entire buffer to trello.
 If MODIFIER is non nil, execute the sync of the entire buffer from trello."

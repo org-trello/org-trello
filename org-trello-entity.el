@@ -153,9 +153,28 @@ Otherwise, return the current position."
 
 (defun orgtrello-entity/compute-comment-region! ()
   "Compute the comment's region."
+  (org-back-to-heading)
+  `(,(point-at-bol) ,(org-end-of-subtree)))
+
+;; (defun orgtrello-entity/compute-comment-region! ()
+;;   "Compute the comment's region."
+;;   (let ((element (org-element-at-point)))
+;;     `(,(org-element-property :begin element) ,(org-element-property :end element))))
+
+(defun orgtrello-entity/comment-description-start-point! ()
+  "Compute the first character of the comment's description content."
   (save-excursion
-    (org-back-to-heading)
-    `(,(point-at-bol) ,(org-end-of-subtree))))
+    (beginning-of-line)
+    (search-forward ":END:" nil t) ;; if not found, return nil and do not move point
+    (1+ (point-at-eol))))
+
+(defun orgtrello-entity/comment-description-end-point! ()
+  "Compute the comment's end point."
+  (org-element-property :contents-end (org-element-at-point)))
+
+(defun orgtrello-entity/comment-description-region! ()
+  "Compute the comment's description region."
+  `(,(orgtrello-entity/comment-description-start-point!) ,(orgtrello-entity/comment-description-end-point!)))
 
 (provide 'org-trello-entity)
 ;;; org-trello-entity.el ends here
