@@ -203,10 +203,12 @@ When UNDO-FLAG is set, trigger the undo computation."
   "Create a add a card comment to the card with id CARD-ID with the COMMENT-TEXT."
   (orgtrello-api/make-query "POST" (format "/cards/%s/actions/comments" card-id) `(("text" . ,comment-text))))
 
-(defun orgtrello-api/udpate-card-comment (card-id comment-id)
-  "Update the card (CARD-ID)'s comment with id COMMENT-ID.
+(defun orgtrello-api/update-card-comment (card-id comment-id comment-text)
+  "Update the card CARD-ID comment COMMENT-ID with COMMENT-TEXT.
 https://trello.com/docs/api/card/index.html#put-1-cards-card-id-or-shortlink-actions-idaction-comments"
-  (orgtrello-api/make-query "PUT" (format "/cards/%s/actions/%s/comments" card-id comment-id)))
+  (orgtrello-api/make-query "PUT"
+                            (format "/cards/%s/actions/%s/comments" card-id comment-id)
+                            `(("text" . ,comment-text ))))
 
 (defun orgtrello-api/delete-card-comment (card-id comment-id)
   "Delete the card (CARD-ID)'s comment with id COMMENT-ID.

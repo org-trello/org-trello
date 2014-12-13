@@ -4,7 +4,7 @@
 
 ;; Author: Antoine R. Dumont <eniotna.t AT gmail.com>
 ;; Maintainer: Antoine R. Dumont <eniotna.t AT gmail.com>
-;; Version: 0.6.7
+;; Version: 0.6.8
 ;; Package-Requires: ((emacs "24") (dash "2.8.0") (s "1.9.0") (deferred "0.3.2") (request-deferred "0.1.0"))
 ;; Keywords: org-mode trello sync org-trello
 ;; URL: https://github.com/org-trello/org-trello
@@ -105,7 +105,7 @@ Please consider upgrading Emacs." emacs-version) "Error message when installing 
 (require 'timer)
 (require 'align)
 
-(defconst *ORGTRELLO/VERSION* "0.6.7" "Current org-trello version installed.")
+(defconst *ORGTRELLO/VERSION* "0.6.8" "Current org-trello version installed.")
 
 
 
@@ -182,7 +182,7 @@ If NO-CHECK-FLAG is set, no controls are done."
   (orgtrello-log/msg *OT/INFO* "Cancel actions done!"))
 
 ;;;###autoload
-(defun org-trello/add-card-comments (&optional modifier)
+(defun org-trello/add-card-comment (&optional modifier)
   "Control first, then if ok, add a comment to the current card.
 When MODIFIER is set, this will delete the current card's comments."
   (interactive "P")
@@ -214,6 +214,16 @@ If MODIFIER is non nil, execute the sync entity and its structure from trello."
          (if modifier
              '("Request 'sync entity with structure from trello" orgtrello-controller/checks-then-sync-card-from-trello!)
            '("Request 'sync entity with structure to trello" orgtrello-controller/checks-then-sync-card-to-trello!)))))
+
+;;;###autoload
+(defun org-trello/sync-comment (&optional modifier)
+  "Execute the sync of the card's comment at point.
+If MODIFIER is non nil, remove the comment at point."
+  (interactive "P")
+  (org-trello/apply-deferred (cons 'org-trello/log-strict-checks-and-do
+                                   (if modifier
+                                       '("Remove current comment at point" orgtrello-controller/do-delete-card-comment!)
+                                     '("Sync comment to trello" orgtrello-controller/do-sync-card-comment!)))))
 
 ;;;###autoload
 (defun org-trello/sync-buffer (&optional modifier)

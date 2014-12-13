@@ -35,6 +35,10 @@ If the VALUE is nil or empty, remove such PROPERTY."
         (--map (if (s-equals? "" it) it (substring it *ORGTRELLO-BUFFER/INDENT-DESCRIPTION*)))
         (s-join "\n")))))
 
+(defun orgtrello-buffer/extract-comment-description-from-current-position! ()
+  "Given the current position, extract the text content of current card."
+  (apply 'buffer-substring-no-properties (orgtrello-entity/comment-description-region!)))
+
 (defun orgtrello-buffer/get-card-comments! ()
   "Retrieve the card's comments. Can be nil if not on a card."
   (orgtrello-buffer/org-entry-get (point) *ORGTRELLO/CARD-COMMENTS*))
@@ -570,6 +574,11 @@ Deal with org entities and checkbox as well."
     (--map (gethash (format "%s%s" *ORGTRELLO/USER-PREFIX* it) *ORGTRELLO/HMAP-USERS-NAME-ID*) it)
     (orgtrello-data/--users-to it)))
 
+(defun orgtrello-buffer/--extract-description-at-point! ()
+  "Extract description at point depending on the entity's nature."
+  (cond ((orgtrello-entity/org-card-p!) (orgtrello-buffer/extract-description-from-current-position!))
+        ((orgtrello-entity/org-comment-p!) (orgtrello-buffer/extract-comment-description-from-current-position!))))
+
 (defun orgtrello-buffer/entity-metadata! ()
   "Compute the metadata for a given org entry. Also add some metadata identifier/due-data/point/buffer-name/etc..."
   (let ((current-point (point)))
@@ -579,7 +588,7 @@ Deal with org entities and checkbox as well."
       (cons current-point)
       (cons (buffer-name))
       (cons (orgtrello-buffer/--user-ids-assigned-to-current-card))
-      (cons (when (orgtrello-entity/card-at-pt!) (orgtrello-buffer/extract-description-from-current-position!)))
+      (cons (orgtrello-buffer/--extract-description-at-point!))
       (cons (orgtrello-buffer/org-entry-get current-point *ORGTRELLO/CARD-COMMENTS*))
       (cons (orgtrello-buffer/org-unknown-drawer-properties!))
       orgtrello-buffer/--to-orgtrello-metadata)))

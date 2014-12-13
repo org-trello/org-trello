@@ -1,3 +1,11 @@
+# 0.6.8
+
+- [X] Create backlog
+- [X] Update version
+- [X] Edit comment direct in buffer - CLOSE https://github.com/org-trello/org-trello/issues/221
+- [X] Open binding `C-c o U` for `sync a comment` action
+- [X] Release notes
+
 # 0.6.7
 
 - [X] Create backlog
@@ -26,7 +34,7 @@
 - [X] Fix CI which does not break when failure or error.
 - [X] Format user's comments in a readable format - https://github.com/org-trello/org-trello/issues/218 [2/2]
   - [X] Update the comment's format according to https://github.com/org-trello/org-trello/issues/218#issue-48750430
-  - [X] Update the `org-trello/add-card-comments` command to improve creating comment
+  - [X] Update the `org-trello/add-card-comment` command to improve creating comment
 - [X] Release notes
 
 # 0.6.4

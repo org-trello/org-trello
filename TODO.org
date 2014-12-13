@@ -7,7 +7,14 @@
 - [ ] Another Disposition about org's buffer - https://github.com/org-trello/org-trello/issues/33
 - [ ] Add a file to the org-trello list - https://github.com/org-trello/org-trello/issues/211
 - [ ] One command to sync them all - https://github.com/org-trello/org-trello/issues/59
-- [ ] Edit comment - https://github.com/org-trello/org-trello/issues/221
+* DONE 0.6.8 [100%]
+CLOSED: [2014-12-13 Sat 12:23]
+- [X] Create backlog
+- [X] Update version
+- [X] Edit comment direct in buffer - CLOSE https://github.com/org-trello/org-trello/issues/221
+- [X] Open binding `C-c o U` for `sync a comment` action
+- [X] Release notes
+
 * DONE 0.6.7 [100%]
 CLOSED: [2014-12-11 Thu 21:53]
 - [X] Create backlog
@@ -34,7 +41,7 @@ CLOSED: [2014-12-08 Mon 19:38]
 - [X] Fix CI which does not break when failure or error.
 - [X] Format user's comments in a readable format - CLOSE https://github.com/org-trello/org-trello/issues/218 [2/2]
   - [X] Update the comment's format according to https://github.com/org-trello/org-trello/issues/218#issue-48750430
-  - [X] Update the `org-trello/add-card-comments` command to improve creating comment
+  - [X] Update the `org-trello/add-card-comment` command to improve creating comment
 - [X] Release notes
 * DONE 0.6.4 [100%]
 CLOSED: [2014-10-30 Thu 18:28]

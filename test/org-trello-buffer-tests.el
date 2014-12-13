@@ -638,8 +638,8 @@ some text
                                (orgtrello-data/current)
                                orgtrello-data/entity-name))))
 
-(ert-deftest test-orgtrello-buffer/entity-metadata! ()
-  (let ((h-values            (orgtrello-tests/with-temp-buffer ":PROPERTIES:
+(ert-deftest test-orgtrello-buffer/entity-metadata!-card ()
+  (let ((h-values (orgtrello-tests/with-temp-buffer ":PROPERTIES:
 #+PROPERTY: orgtrello-user-ardumont some-user-id
 #+PROPERTY: orgtrello-user-dude some-user-id2
 :END:
@@ -648,21 +648,49 @@ some text
 :PROPERTIES:
 :orgtrello-id: some-id
 :orgtrello-users: ardumont,dude
-:orgtrello-card-comments: ardumont: this is some comments###dude: some other comment
 :END:
   some description\n"
-                                                               (orgtrello-buffer/entity-metadata!)
-                                                               -2)))
+                                                    (progn (org-back-to-heading)
+                                                           (orgtrello-buffer/entity-metadata!)))))
     (should (equal 1                                                             (orgtrello-data/entity-level h-values)))
     (should (equal nil                                                           (orgtrello-data/entity-tags h-values)))
     (should (equal "card title"                                                  (orgtrello-data/entity-name h-values)))
     (should (equal "some-id"                                                     (orgtrello-data/entity-id h-values)))
     (should (equal nil                                                           (orgtrello-data/entity-due h-values)))
     (should (equal "some description"                                            (orgtrello-data/entity-description h-values)))
-    (should (equal "ardumont: this is some comments###dude: some other comment"  (orgtrello-data/entity-comments h-values)))
     (should (equal "some-user-id,some-user-id2"                                  (orgtrello-data/entity-member-ids h-values)))
     (should (equal "TODO"                                                        (orgtrello-data/entity-keyword h-values)))
     (should (equal nil                                                           (orgtrello-data/entity-unknown-properties h-values)))))
+
+(ert-deftest test-orgtrello-buffer/entity-metadata!-comment ()
+  (let ((h-values (orgtrello-tests/with-temp-buffer ":PROPERTIES:
+#+PROPERTY: orgtrello-user-ardumont some-user-id
+#+PROPERTY: orgtrello-user-dude some-user-id2
+:END:
+
+* TODO card title
+:PROPERTIES:
+:orgtrello-id: some-id
+:orgtrello-users: ardumont,dude
+:END:
+  some description\n
+** COMMENT, user date
+:PROPERTIES:
+:orgtrello-id: some-comment-id
+:END:
+the comment is here, the other are trello's metadata
+this comment can be multiline
+and contains text
+nothing enforces the content of the description
+"
+                                                    (progn (org-back-to-heading)
+                                                           (orgtrello-buffer/entity-metadata!)))))
+    (should (equal "some-comment-id"                                             (orgtrello-data/entity-id h-values)))
+    (should (equal "the comment is here, the other are trello's metadata
+this comment can be multiline
+and contains text
+nothing enforces the content of the description
+"                                 (orgtrello-data/entity-description h-values)))))
 
 (ert-deftest test-orgtrello-buffer/compute-marker ()
   (should (equal "orgtrello-marker-2a0b98e652ce6349a0659a7a8eeb3783ffe9a11a" (orgtrello-buffer/compute-marker "buffername" "some-name" 1234)))
