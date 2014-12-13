@@ -1,3 +1,11 @@
+# 0.6.8
+
+- [X] Create backlog
+- [X] Update version
+- [X] Edit comment direct in buffer - CLOSE https://github.com/org-trello/org-trello/issues/221
+- [X] Open binding `C-c o U` for `sync a comment` action
+- [X] Release notes
+
 # 0.6.7
 
 - [X] Create backlog
