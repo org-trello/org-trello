@@ -25,3 +25,5 @@ git tag $VERSION
 git push upstream --tag
 
 make package
+
+./upload-to-marmalade.sh $VERSION
