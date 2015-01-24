@@ -196,11 +196,11 @@ This is intended as a buffer local variable.")
 (defun orgtrello-setup/help-describing-bindings-template (keybinding list-command-binding-description)
   "Standard Help message template from KEYBINDING and LIST-COMMAND-BINDING-DESCRIPTION."
   (->> list-command-binding-description
-    (--map (let ((command        (car it))
-                 (prefix-binding (cadr it))
-                 (help-msg       (cadr (cdr it))))
-             (concat keybinding " " prefix-binding " - M-x " (symbol-name command) " - " help-msg)))
-    (s-join "\n")))
+       (--map (let ((command        (car it))
+                    (prefix-binding (cadr it))
+                    (help-msg       (cadr (cdr it))))
+                (concat keybinding " " prefix-binding " - M-x " (symbol-name command) " - " help-msg)))
+       (s-join "\n")))
 
 (defun orgtrello-setup/install-local-keybinding-map! (previous-org-trello-mode-prefix-keybinding org-trello-mode-prefix-keybinding interactive-command-binding-to-install)
   "Install locally the default binding map with the prefix binding of org-trello-mode-prefix-keybinding."
@@ -239,6 +239,12 @@ This is intended as a buffer local variable.")
          (orgtrello-setup/install-local-keybinding-map! *ORGTRELLO/MODE-PREVIOUS-PREFIX-KEYBINDING* prefix-keybinding *org-trello-interactive-command-binding-couples*)
          `(set *ORGTRELLO/MODE-PREVIOUS-PREFIX-KEYBINDING* ,variable)
          (set variable prefix-keybinding))
+  :group 'org-trello)
+
+(defcustom orgtrello/line-between-comments (if (version<= "8.3" (org-version)) "\n" "")
+  "A customizable property to add a line between comments."
+  :type 'string
+  :require 'org-trello
   :group 'org-trello)
 
 (provide 'org-trello-setup)

@@ -1976,10 +1976,11 @@ generates another checksum
 
 (ert-deftest test-orgtrello-buffer/--serialize-comment ()
   (should (equal "** COMMENT tony, 10/10/2013\n:PROPERTIES:\n:orgtrello-id: comment-id\n:END:\nhello, this is a comment!\n"
-                 (orgtrello-buffer/--serialize-comment (orgtrello-hash/make-properties '((:comment-user . "tony")
-                                                                                         (:comment-date . "10/10/2013")
-                                                                                         (:comment-id   . "comment-id")
-                                                                                         (:comment-text . "hello, this is a comment!")))))))
+                 (let ((orgtrello/line-between-comments ""))
+                   (orgtrello-buffer/--serialize-comment (orgtrello-hash/make-properties '((:comment-user . "tony")
+                                                                                           (:comment-date . "10/10/2013")
+                                                                                           (:comment-id   . "comment-id")
+                                                                                           (:comment-text . "hello, this is a comment!"))))))))
 
 (ert-deftest test-orgtrello-buffer/trim-input-comment ()
   (should (string= "text as is"
