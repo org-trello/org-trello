@@ -455,7 +455,7 @@ This returns the identifier of such board."
   (replace-regexp-in-string " " "-" name))
 
 (defun orgtrello-controller/--delete-buffer-property! (property-name)
-  "A simple routine to delete a #+property: entry from the org-mode buffer."
+  "A simple routine to delete a #+PROPERTY: entry from the org-mode buffer."
   (save-excursion
     (goto-char (point-min))
     (-when-let (current-point (search-forward property-name nil t))
@@ -466,7 +466,7 @@ This returns the identifier of such board."
 
 (defun orgtrello-controller/compute-property (property-name &optional property-value)
   "Compute a formatted property in org buffer from PROPERTY-NAME and optional PROPERTY-VALUE."
-  (format "#+property: %s %s" property-name (if property-value property-value "")))
+  (format "#+PROPERTY: %s %s" property-name (if property-value property-value "")))
 
 (defun orgtrello-controller/--compute-hash-name-id-to-list (users-hash-name-id)
   "Compute the hash of name id to list from USERS-HASH-NAME-ID."

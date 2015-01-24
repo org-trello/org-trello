@@ -1909,8 +1909,8 @@ generates another checksum
            '("TODO" "IN-PROGRESS" "DONE" "PENDING" "DELEGATED" "FAILED" "CANCELLED")
            (orgtrello-tests/with-temp-buffer
             ":PROPERTIES:
-#+property: board-name api test board
-#+property: board-id abc
+#+PROPERTY: board-name api test board
+#+PROPERTY: board-id abc
 #+PROPERTY: CANCELLED def
 #+PROPERTY: FAILED ijk
 #+PROPERTY: DELEGATED lmn
@@ -1952,8 +1952,8 @@ generates another checksum
              ("orgtrello-user-me" . "ardumont"))
            (orgtrello-tests/with-temp-buffer
             ":PROPERTIES:
-#+property: board-name api test board
-#+property: board-id abc
+#+PROPERTY: board-name api test board
+#+PROPERTY: board-id abc
 #+PROPERTY: CANCELLED def
 #+PROPERTY: FAILED ijk
 #+PROPERTY: DELEGATED lmn

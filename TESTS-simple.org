@@ -1,6 +1,6 @@
 :PROPERTIES:
-#+property: board-name api test board
-#+property: board-id 53fc6e11d9955d1d4b33aaab
+#+PROPERTY: board-name api test board
+#+PROPERTY: board-id 53fc6e11d9955d1d4b33aaab
 #+PROPERTY: CANCELLED 53fc6e13f83a2cd99386dc6d
 #+PROPERTY: FAILED 53fc6e134523f050b5d813ad
 #+PROPERTY: DELEGATED 53fc6e14c8d91df93fa57fb2

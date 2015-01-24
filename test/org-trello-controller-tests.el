@@ -108,8 +108,8 @@
   (should (equal '("a")     (orgtrello-controller/--remove-user nil '("a")))))
 
 (ert-deftest test-orgtrello-controller/compute-property ()
-  (should (equal "#+property: test "      (orgtrello-controller/compute-property "test")))
-  (should (equal "#+property: test value" (orgtrello-controller/compute-property "test" "value"))))
+  (should (equal "#+PROPERTY: test "      (orgtrello-controller/compute-property "test")))
+  (should (equal "#+PROPERTY: test value" (orgtrello-controller/compute-property "test" "value"))))
 
 (ert-deftest test-orgtrello-controller/--index-board-map ()
   (should (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data ("0" :id-board0 "1" :id-board1))
@@ -122,8 +122,8 @@
 
 (ert-deftest test-orgtrello-controller/--compute-metadata! ()
   (should (equal '(":PROPERTIES:"
-                   "#+property: board-name some-board-name"
-                   "#+property: board-id some-board-id"
+                   "#+PROPERTY: board-name some-board-name"
+                   "#+PROPERTY: board-id some-board-id"
                    "#+PROPERTY: DONE done-id"
                    "#+PROPERTY: TODO todo-id"
                    ""
@@ -244,8 +244,8 @@
 (ert-deftest test-orgtrello-controller/compute-and-overwrite-card! ()
   (should (equal
            ":PROPERTIES:
-#+property: board-name api test board
-#+property: board-id abc
+#+PROPERTY: board-name api test board
+#+PROPERTY: board-id abc
 #+PROPERTY: CANCELLED def
 #+PROPERTY: FAILED ijk
 #+PROPERTY: DELEGATED lmn
@@ -292,8 +292,8 @@ some second comment
 "
            (orgtrello-tests/with-temp-buffer-and-return-buffer-content
             ":PROPERTIES:
-#+property: board-name api test board
-#+property: board-id abc
+#+PROPERTY: board-name api test board
+#+PROPERTY: board-id abc
 #+PROPERTY: CANCELLED def
 #+PROPERTY: FAILED ijk
 #+PROPERTY: DELEGATED lmn
@@ -351,8 +351,8 @@ some description
 (ert-deftest test-orgtrello-controller/sync-buffer-with-trello-cards!-cards-already-present ()
   (should (equal
            ":PROPERTIES:
-#+property: board-name api test board
-#+property: board-id abc
+#+PROPERTY: board-name api test board
+#+PROPERTY: board-id abc
 #+PROPERTY: CANCELLED def
 #+PROPERTY: FAILED ijk
 #+PROPERTY: DELEGATED lmn
@@ -403,8 +403,8 @@ some second comment
 "
            (orgtrello-tests/with-temp-buffer-and-return-buffer-content
             ":PROPERTIES:
-#+property: board-name api test board
-#+property: board-id abc
+#+PROPERTY: board-name api test board
+#+PROPERTY: board-id abc
 #+PROPERTY: CANCELLED def
 #+PROPERTY: FAILED ijk
 #+PROPERTY: DELEGATED lmn
@@ -463,8 +463,8 @@ some description
   "Overwrite card"
   (should (equal
            ":PROPERTIES:
-#+property: board-name api test board
-#+property: board-id abc
+#+PROPERTY: board-name api test board
+#+PROPERTY: board-id abc
 #+PROPERTY: CANCELLED def
 #+PROPERTY: FAILED ijk
 #+PROPERTY: DELEGATED lmn
@@ -522,8 +522,8 @@ some second comment
 "
            (orgtrello-tests/with-temp-buffer-and-return-buffer-content
             ":PROPERTIES:
-#+property: board-name api test board
-#+property: board-id abc
+#+PROPERTY: board-name api test board
+#+PROPERTY: board-id abc
 #+PROPERTY: CANCELLED def
 #+PROPERTY: FAILED ijk
 #+PROPERTY: DELEGATED lmn
@@ -590,8 +590,8 @@ some description
   "Overwrite multiple cards."
   (should (equal
            ":PROPERTIES:
-#+property: board-name api test board
-#+property: board-id abc
+#+PROPERTY: board-name api test board
+#+PROPERTY: board-id abc
 #+PROPERTY: CANCELLED def
 #+PROPERTY: FAILED ijk
 #+PROPERTY: DELEGATED lmn
@@ -643,8 +643,8 @@ some second comment
 "
            (orgtrello-tests/with-temp-buffer-and-return-buffer-content
             ":PROPERTIES:
-#+property: board-name api test board
-#+property: board-id abc
+#+PROPERTY: board-name api test board
+#+PROPERTY: board-id abc
 #+PROPERTY: CANCELLED def
 #+PROPERTY: FAILED ijk
 #+PROPERTY: DELEGATED lmn
