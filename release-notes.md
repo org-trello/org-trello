@@ -1,3 +1,11 @@
+# 0.6.9
+
+- [X] Create backlog
+- [X] Update version
+- [X] Fix #+property keyword to #+PROPERTY - CLOSE https://github.com/org-trello/org-trello/issues/234
+- [X] Fix missing line on future org-mode 8.3 - CLOSE https://github.com/org-trello/org-trello/issues/232
+- [X] Release notes
+
 # 0.6.8
 
 - [X] Create backlog

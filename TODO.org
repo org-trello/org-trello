@@ -7,6 +7,13 @@
 - [ ] Another Disposition about org's buffer - https://github.com/org-trello/org-trello/issues/33
 - [ ] Add a file to the org-trello list - https://github.com/org-trello/org-trello/issues/211
 - [ ] One command to sync them all - https://github.com/org-trello/org-trello/issues/59
+* DONE 0.6.9 [100%]
+CLOSED: [2015-01-24 Sat 21:13]
+- [X] Create backlog
+- [X] Update version
+- [X] Fix #+property keyword to #+PROPERTY - CLOSE https://github.com/org-trello/org-trello/issues/234
+- [X] Fix missing line on future org-mode 8.3 - CLOSE https://github.com/org-trello/org-trello/issues/232
+- [X] Release notes
 * DONE 0.6.8 [100%]
 CLOSED: [2014-12-13 Sat 12:23]
 - [X] Create backlog
@@ -1240,10 +1247,10 @@ CLOSED: [2013-07-02 mar. 18:43]
 CLOSED: [2013-07-01 lun. 23:31]
 Adding this:
 #+begin_src org-mode
-# +property: board-id      <board-id>
-# +property: todo-list-id  <todo-list-id>
-# +property: doing-list-id <doing-list-id>
-# +property: done-list-id  <done-list-id>
+# +PROPERTY: board-id      <board-id>
+# +PROPERTY: todo-list-id  <todo-list-id>
+# +PROPERTY: doing-list-id <doing-list-id>
+# +PROPERTY: done-list-id  <done-list-id>
 #+end_src
 Note: # + instead of #+ to avoid org-mode capturing the bad ones.
 
@@ -1315,10 +1322,10 @@ Workflow:
 - Retrieve the todo, doing and done id list
 - Generate the different metadata needed in the org-mode file
 #+begin_src txt
-# +property: board-id      <board-id>
-# +property: todo-list-id  <todo-list-id>
-# +property: doing-list-id <doing-list-id>
-# +property: done-list-id  <done-list-id>
+# +PROPERTY: board-id      <board-id>
+# +PROPERTY: todo-list-id  <todo-list-id>
+# +PROPERTY: doing-list-id <doing-list-id>
+# +PROPERTY: done-list-id  <done-list-id>
 #+end_src
 Note: # + instead of #+ because otherwise, org-mode captures them and overwrite the right ones.
 ** DONE Control the access to the function depending on the ~/.trello/config.el file.
