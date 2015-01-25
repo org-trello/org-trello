@@ -7,9 +7,9 @@
 - [ ] Another Disposition about org's buffer - https://github.com/org-trello/org-trello/issues/33
 - [ ] Add a file to the org-trello list - https://github.com/org-trello/org-trello/issues/211
 - [ ] One command to sync them all - https://github.com/org-trello/org-trello/issues/5
-* TODO 0.6.9.1 [25%]
+* TODO 0.6.9.1 [50%]
 - [X] Create backlog
-- [ ] Update version
+- [X] Update version
 - [ ] Tryout - More serious problem than currently fixed - https://github.com/org-trello/org-trello/issues/232
 - [ ] Release notes
 * DONE 0.6.9 [100%]
