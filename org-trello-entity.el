@@ -73,11 +73,19 @@ If hitting a heading or the end of the file, return nil."
   (when (and (< (point) (point-max)) (not (orgtrello-entity/org-card-p!)) (not (orgtrello-entity/org-checkbox-p!)))
     (orgtrello-entity/goto-next-checkbox)))
 
+(defun orgtrello-entity/goto-end-card-metadata ()
+  "Go to the end of the card metadata.
+Does not preserve the current position.
+If hitting a heading or the end of the file, return nil."
+  (forward-line)
+  (when (and (< (point) (point-max)) (not (orgtrello-entity/org-card-p!)) (not (orgtrello-entity/org-checkbox-p!)) (not (orgtrello-entity/org-comment-p!)))
+    (orgtrello-entity/goto-end-card-metadata)))
+
 (defun orgtrello-entity/card-metadata-end-point! ()
   "Compute the first position of the card's next checkbox."
   (save-excursion
     (orgtrello-entity/back-to-card!)
-    (orgtrello-entity/goto-next-checkbox)
+    (orgtrello-entity/goto-end-card-metadata)
     (1- (point))))
 
 (defun orgtrello-entity/card-at-pt! ()
@@ -108,6 +116,16 @@ If a sibling is found, return the point-at-bol, otherwise return the max point i
   (save-excursion
     (org-back-to-heading)
     (if (org-goto-sibling) (point-at-bol) (point-max))))
+
+(defun orgtrello-entity/compute-first-comment-point! ()
+  "Compute the card's first comment position.
+Does preserve position.
+If no comment is found, return the card's end region."
+  (save-excursion
+    (orgtrello-entity/back-to-card!)
+    (-if-let (next-pt (search-forward "** " nil t)) ;; if not found, return nil and do not move point
+        (point-at-bol)
+      (orgtrello-entity/compute-next-card-point!))))
 
 (defun orgtrello-entity/compute-checklist-header-region! ()
   "Compute the checklist's region (only the header, without computing the zone occupied by items) couple '(start end)."
@@ -149,7 +167,7 @@ Otherwise, return the current position."
 
 (defun orgtrello-entity/card-data-region! ()
   "Compute the card's data region (checklists/items) couple '(start end)."
-  `(,(1+ (orgtrello-entity/card-metadata-end-point!)) ,(1- (orgtrello-entity/compute-next-card-point!))))
+  `(,(1+ (orgtrello-entity/card-metadata-end-point!)) ,(1- (orgtrello-entity/compute-first-comment-point!))))
 
 (defun orgtrello-entity/compute-comment-region! ()
   "Compute the comment's region."
