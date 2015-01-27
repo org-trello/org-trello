@@ -7,10 +7,11 @@
 - [ ] Another Disposition about org's buffer - https://github.com/org-trello/org-trello/issues/33
 - [ ] Add a file to the org-trello list - https://github.com/org-trello/org-trello/issues/211
 - [ ] One command to sync them all - https://github.com/org-trello/org-trello/issues/5
-* IN-PROGRESS 0.6.9.1 [100%]
+* DONE 0.6.9.1 [100%]
+CLOSED: [2015-01-27 Tue 18:59]
 - [X] Create backlog
 - [X] Update version
-- [X] Fix region computation problem regarding comments - https://github.com/org-trello/org-trello/issues/232
+- [X] Fix region computation problem regarding comments - CLOSE https://github.com/org-trello/org-trello/issues/232
 - [X] Release notes
 * DONE 0.6.9 [100%]
 CLOSED: [2015-01-24 Sat 21:13]
