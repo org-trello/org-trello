@@ -1,3 +1,10 @@
+# 0.6.9.1
+
+- [X] Create backlog
+- [X] Update version
+- [X] Fix region computation problem regarding comments - https://github.com/org-trello/org-trello/issues/232
+- [X] Release notes
+
 # 0.6.9
 
 - [X] Create backlog
