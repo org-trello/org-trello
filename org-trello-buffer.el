@@ -784,11 +784,12 @@ COMPUTE-REGION-FN is the region computation function."
 
 (defun orgtrello-buffer/archive-cards! (trello-cards)
   "Given a list of TRELLO-CARDS, archive those if they are present on buffer."
-  (orgtrello-buffer/org-map-entries
-   (lambda ()
-     (let ((card-id (-> (orgtrello-buffer/entry-get-full-metadata!) orgtrello-data/current orgtrello-data/entity-id)))
-       (when (--some? (string= card-id (orgtrello-data/entity-id it)) trello-cards) ;; find a card to archive
-         (org-archive-subtree))))))
+  (when trello-cards
+    (orgtrello-buffer/org-map-entries
+     (lambda ()
+       (let ((card-id (-> (orgtrello-buffer/entry-get-full-metadata!) orgtrello-data/current orgtrello-data/entity-id)))
+         (when (--some? (string= card-id (orgtrello-data/entity-id it)) trello-cards) ;; find a card to archive
+           (org-archive-subtree)))))))
 
 (orgtrello-log/msg *OT/DEBUG* "orgtrello-buffer loaded!")
 
