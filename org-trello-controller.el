@@ -202,30 +202,32 @@ Does not preserve position."
                 (point-start (point))
                 (board-id (orgtrello-buffer/board-id!)))
     (orgtrello-log/msg *OT/INFO* "Synchronizing the trello board '%s' to the org-mode file..." board-name)
-    (deferred:$
-      (deferred:parallel ;; concurrently retrieve:
-        (deferred:next ;; - `'trello archived`' card
-          (lambda ()
-            (-> board-id
+    (deferred:$ ;; In emacs 25, deferred:parallel blocks in this context. I don't understand why so I retrieve sequentially for the moment. People, feel free to help and improve.
+      (deferred:next
+        (lambda ()
+          (-> board-id
               orgtrello-api/get-archived-cards
-              (orgtrello-query/http-trello 'sync))))
-        (deferred:next ;; - `'trello opened`' card
-          (lambda ()
-            (-> board-id
-              orgtrello-api/get-full-cards
-              (orgtrello-query/http-trello 'sync)))))
+              (orgtrello-query/http-trello 'sync)
+              list)))
       (deferred:nextc it
-        (lambda (trello-archived-and-trello-opened-cards)
-          (let ((trello-archived-cards (elt trello-archived-and-trello-opened-cards 0))
-                (trello-cards (elt trello-archived-and-trello-opened-cards 1)))
+        (lambda (cards)
+          (-> board-id
+              orgtrello-api/get-full-cards
+              (orgtrello-query/http-trello 'sync)
+              (cons cards))))
+      (deferred:nextc it
+        (lambda (trello-opened-and-archived-cards)
+          (orgtrello-log/msg *OT/DEBUG* "Opened and archived trello-cards: %S" trello-opened-and-archived-cards)
+          (let ((trello-cards          (car  trello-opened-and-archived-cards))
+                (trello-archived-cards (cadr trello-opened-and-archived-cards)))
             ;; first archive the cards that needs to be
             (orgtrello-log/msg *OT/DEBUG* "Archived trello-cards: %S" trello-archived-cards)
             (orgtrello-buffer/archive-cards! trello-archived-cards)
             ;; Then update the buffer with the other opened trello cards
             (orgtrello-log/msg *OT/DEBUG* "Opened trello-cards: %S" trello-cards)
             (->> trello-cards
-              (mapcar 'orgtrello-data/to-org-trello-card)
-              (orgtrello-controller/sync-buffer-with-trello-cards! buffer-name)))))
+                 (mapcar 'orgtrello-data/to-org-trello-card)
+                 (orgtrello-controller/sync-buffer-with-trello-cards! buffer-name)))))
       (deferred:nextc it
         (lambda ()
           (orgtrello-buffer/save-buffer buffer-name)
