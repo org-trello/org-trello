@@ -241,11 +241,5 @@ This is intended as a buffer local variable.")
          (set variable prefix-keybinding))
   :group 'org-trello)
 
-(defcustom orgtrello/line-between-comments (if (version<= "8.3" (org-version)) "\n" "")
-  "A customizable property to add a line between comments."
-  :type 'string
-  :require 'org-trello
-  :group 'org-trello)
-
 (provide 'org-trello-setup)
 ;;; org-trello-setup.el ends here
