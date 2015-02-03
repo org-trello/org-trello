@@ -143,7 +143,7 @@ CARD-ID is the needed id to create the comment."
   (deferred:$
     (deferred:next
       (lambda ()
-        (let ((comment (orgtrello-buffer/trim-input-comment (buffer-string))))
+        (let ((comment (format "%s\n" (s-chomp (orgtrello-buffer/trim-input-comment (buffer-string))))))
           (orgtrello-buffer/close-popup!)
           comment)))
     (deferred:nextc it
@@ -151,12 +151,12 @@ CARD-ID is the needed id to create the comment."
         (lexical-let ((new-comment comment))
           (deferred:$
             (deferred:next (lambda () (-> orgtrello-buffer/card-id
-                                   (orgtrello-api/add-card-comment new-comment)
-                                   (orgtrello-query/http-trello 'sync))))
+                                     (orgtrello-api/add-card-comment new-comment)
+                                     (orgtrello-query/http-trello 'sync))))
             (deferred:nextc it
               (lambda (data)
                 (orgtrello-log/msg *OT/TRACE* "Add card comment - response data: %S" data)
-                (orgtrello-controller/checks-then-sync-card-from-trello!)))))))))
+                (orgtrello-controller/checks-then-sync-card-from-trello!))))))))) ;; FIXME not in right buffer
 
 (defun orgtrello-buffer/set-property-comment! (comments)
   "Update comments property."
