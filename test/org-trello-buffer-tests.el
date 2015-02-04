@@ -1988,8 +1988,12 @@ generates another checksum
                                                                                          (:comment-text . "hello, this is a comment!")))))))
 
 (ert-deftest test-orgtrello-buffer/trim-input-comment ()
-  (should (string= "text as is"
-                   (orgtrello-buffer/trim-input-comment "# hello, some comment\n# ignore this also\ntext as is"))))
+  (should (string= "text as is\n"
+                   (orgtrello-buffer/trim-input-comment "# hello, some comment\n# ignore this also\ntext as is")))
+  (should (string= "text as is\nwith lines\n"
+                   (orgtrello-buffer/trim-input-comment "# hello, some comment\n# ignore this also\ntext as is\nwith lines\n"))))
+
+
 
 (provide 'org-trello-buffer-tests)
 ;;; org-trello-buffer-tests.el ends here

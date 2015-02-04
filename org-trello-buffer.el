@@ -135,7 +135,9 @@ CARD-ID is the needed id to create the comment."
   (let ((trim-comment comment))
     (while (string-match "\\`# .*\n[ \t\n]*" trim-comment)
       (setq trim-comment (replace-match "" t t trim-comment)))
-    trim-comment))
+    (--> trim-comment
+         (s-chomp it)
+         (format "%s\n" it))))
 
 (defun orgtrello-buffer/kill-buffer-and-write-new-comment! ()
   "Write comment present in the popup buffer."
@@ -143,7 +145,7 @@ CARD-ID is the needed id to create the comment."
   (deferred:$
     (deferred:next
       (lambda ()
-        (let ((comment (format "%s\n" (s-chomp (orgtrello-buffer/trim-input-comment (buffer-string))))))
+        (let ((comment (orgtrello-buffer/trim-input-comment (buffer-string))))
           (orgtrello-buffer/close-popup!)
           comment)))
     (deferred:nextc it
