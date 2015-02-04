@@ -194,7 +194,7 @@ At the end of it all, the cursor is moved after the new written text."
     (orgtrello-buffer/set-usernames-assigned-property! it)))
 
 (defun orgtrello-buffer/--write-comments! (entity)
-  "Update last comments "
+  "Update last comments."
   (->> entity
     orgtrello-data/entity-comments
     orgtrello-buffer/--write-comments-at-point!))
