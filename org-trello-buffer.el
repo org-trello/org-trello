@@ -158,7 +158,7 @@ CARD-ID is the needed id to create the comment."
             (deferred:nextc it
               (lambda (data)
                 (orgtrello-log/msg *OT/TRACE* "Add card comment - response data: %S" data)
-                (orgtrello-controller/checks-then-sync-card-from-trello!))))))))) ;; FIXME not in right buffer
+                (orgtrello-controller/checks-then-sync-card-from-trello!))))))))) ;; FIXME not in right namespace org-trello-buffer does not depend on org-trello-controller (but the contrary is true)
 
 (defun orgtrello-buffer/set-property-comment! (comments)
   "Update comments property."
