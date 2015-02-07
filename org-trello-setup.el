@@ -138,8 +138,8 @@ This is intended as a buffer local variable.")
         *ORGTRELLO/USER-LOGGED-IN*
         org-trello/mode))
 
-(defconst *ORGTRELLO/CONFIG-DIR*
-  (concat (getenv "HOME") "/" ".trello"))
+(defconst *ORGTRELLO/CONFIG-DIR* "~/.trello"
+  "Default trello directory for the configuration files.")
 
 (defconst *ORGTRELLO/CONFIG-FILE*
   (concat *ORGTRELLO/CONFIG-DIR* "/config.el"))
