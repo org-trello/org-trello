@@ -2073,7 +2073,9 @@ generates another checksum
   (should (string= "text as is\n"
                    (orgtrello-buffer/trim-input-comment "# hello, some comment\n# ignore this also\ntext as is")))
   (should (string= "text as is\nwith lines\n"
-                   (orgtrello-buffer/trim-input-comment "# hello, some comment\n# ignore this also\ntext as is\nwith lines\n"))))
+                   (orgtrello-buffer/trim-input-comment "# hello, some comment\n# ignore this also\ntext as is\nwith lines\n")))
+  (should (string= "line 1     \nline 2\n"
+                   (orgtrello-buffer/trim-input-comment "# comment line\n# another comment line\nline 1     \nline 2\n\n\n"))))
 
 
 

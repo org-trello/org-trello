@@ -133,11 +133,15 @@ CARD-ID is the needed id to create the comment."
 (defun orgtrello-buffer/trim-input-comment (comment)
   "Trim the COMMENT."
   (let ((trim-comment comment))
-    (while (string-match "\\`# .*\n[ \t\n]*" trim-comment)
+    (while (string-match "\\`# .*\n[ \t\n]*" trim-comment) ;; remove # line comment
       (setq trim-comment (replace-match "" t t trim-comment)))
-    (--> trim-comment
-         (s-chomp it)
-         (format "%s\n" it))))
+    (->> trim-comment
+         (s-split "\n")
+         nreverse
+         (--drop-while (string= "" it))
+         nreverse
+         (s-join "\n")
+         (format "%s\n"))))
 
 (defun orgtrello-buffer/kill-buffer-and-write-new-comment! ()
   "Write comment present in the popup buffer."
@@ -521,12 +525,13 @@ If yes, indent such region with INDENT space."
           (indent-rigidly start end indent))))));; now indent with the rightful indentation
 
 (defun orgtrello-buffer/indent-card-descriptions! ()
-  "Indent the card description rigidly starting at 2.
+  "Indent the buffer's card descriptions rigidly starting at 2.
 Function to be triggered by `before-save-hook` on org-trello-mode buffer."
   (when (and (eq major-mode 'org-mode) org-trello/mode)
     (orgtrello-buffer/org-map-entries
      (lambda ()
-       (orgtrello-buffer/indent-region! *ORGTRELLO-BUFFER/INDENT-DESCRIPTION* (orgtrello-entity/card-metadata-region!))))))
+       (-when-let (card-description (-> (orgtrello-buffer/entry-get-full-metadata!) orgtrello-data/current orgtrello-data/entity-description))
+         (orgtrello-buffer/indent-region! *ORGTRELLO-BUFFER/INDENT-DESCRIPTION* (orgtrello-entity/card-metadata-region!)))))))
 
 (defun orgtrello-buffer/indent-card-data! ()
   "Indent the card data rigidly starting at 2.
