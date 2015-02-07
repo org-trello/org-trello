@@ -724,19 +724,10 @@ Return the hashmap (name, id) of the new lists created."
 (defun orgtrello-controller/do-unassign-me ()
   "Command to unassign oneself of the card."
   (--> (orgtrello-buffer/get-usernames-assigned-property!)
-    (orgtrello-data/--users-from it)
-    (orgtrello-controller/--remove-user *ORGTRELLO/USER-LOGGED-IN* it)
-    (orgtrello-data/--users-to it)
-    (orgtrello-buffer/set-usernames-assigned-property! it)))
-
-(defun orgtrello-controller/--update-comments! (new-comment)
-  "Given a current position on a card and a new comment, add a new comment to the current comments."
-  (let ((comments (orgtrello-buffer/get-card-comments!)))
-    (->> (if comments comments "")
-      orgtrello-data/format-comments
-      (concat (orgtrello-buffer/me!) ": " new-comment *ORGTRELLO/CARD-COMMENTS-DELIMITER-PRINT*)
-      orgtrello-data/unformat-comments
-      orgtrello-buffer/put-card-comments!)))
+       (orgtrello-data/--users-from it)
+       (orgtrello-controller/--remove-user *ORGTRELLO/USER-LOGGED-IN* it)
+       (orgtrello-data/--users-to it)
+       (orgtrello-buffer/set-usernames-assigned-property! it)))
 
 (defun orgtrello-controller/do-add-card-comment! ()
   "Wait for the input to add a comment to the current card."

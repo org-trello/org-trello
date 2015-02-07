@@ -3,7 +3,7 @@
 (require 'el-mock)
 
 (ert-deftest test-orgtrello-controller/--compute-data-from-entity-meta ()
-  (let* ((entry   (orgtrello-data/make-hash-org :member-ids :some-level :some-keyword :some-name "some-id" :some-due :some-point :some-buffername :desc :comments :tags :unknown)))
+  (let* ((entry   (orgtrello-data/make-hash-org :member-ids :some-level :some-keyword :some-name "some-id" :some-due :some-point :some-buffername :desc :tags :unknown)))
     (should (equal (orgtrello-data/entity-id entry)          "some-id"))
     (should (equal (orgtrello-data/entity-name entry)        :some-name))
     (should (equal (orgtrello-data/entity-keyword entry)     :some-keyword))
@@ -13,7 +13,6 @@
     (should (equal (orgtrello-data/entity-buffername entry)  :some-buffername))
     (should (equal (orgtrello-data/entity-member-ids entry)  :member-ids))
     (should (equal (orgtrello-data/entity-tags entry)        :tags))
-    (should (equal (orgtrello-data/entity-comments entry)    :comments))
     (should (equal (orgtrello-data/entity-description entry) :desc))
     (should (equal (orgtrello-data/entity-unknown-properties entry) :unknown))))
 

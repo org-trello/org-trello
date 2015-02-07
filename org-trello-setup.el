@@ -46,20 +46,8 @@
 (defconst *ORGTRELLO/USER-LOGGED-IN*    nil
   "Current user logged in.")
 
-(defconst *ORGTRELLO/CARD-COMMENTS* "orgtrello-card-comments"
-  "Current card's comments property.")
-
 (defconst *ORGTRELLO/LOCAL-CHECKSUM* "orgtrello-local-checksum"
   "Current card's checksum property.")
-
-(defconst *ORGTRELLO/CARD-COMMENTS-DELIMITER* "###"
-  "Current card's comments delimiter.")
-
-(defconst *ORGTRELLO/CARD-COMMENTS-DELIMITER-PRINT* "\n\n"
-  "Current card's comments delimiter to print.")
-
-(defconst *ORGTRELLO/DO-SHOW-CARD-COMMENTS-AFTER-ADDING* nil
-  "Show the comment buffer after adding one comment.")
 
 (defconst *ORGTRELLO/TITLE-BUFFER-INFORMATION* "*org-trello-information*"
   "Title for the org-trello buffers that display information.")

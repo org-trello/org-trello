@@ -39,10 +39,6 @@ If the VALUE is nil or empty, remove such PROPERTY."
   "Given the current position, extract the text content of current card."
   (apply 'buffer-substring-no-properties (orgtrello-entity/comment-description-region!)))
 
-(defun orgtrello-buffer/get-card-comments! ()
-  "Retrieve the card's comments. Can be nil if not on a card."
-  (orgtrello-buffer/org-entry-get (point) *ORGTRELLO/CARD-COMMENTS*))
-
 (defun orgtrello-buffer/get-local-checksum! ()
   "Retrieve local checksum."
   (funcall (if (orgtrello-entity/org-checkbox-p!) 'orgtrello-buffer/get-checkbox-local-checksum! 'orgtrello-buffer/get-card-local-checksum!)))
@@ -590,15 +586,14 @@ Deal with org entities and checkbox as well."
   "Compute the metadata for a given org entry. Also add some metadata identifier/due-data/point/buffer-name/etc..."
   (let ((current-point (point)))
     (->> (orgtrello-buffer/--extract-metadata!)
-      (cons (-> current-point (orgtrello-buffer/org-entry-get "DEADLINE") orgtrello-buffer/--convert-orgmode-date-to-trello-date))
-      (cons (orgtrello-buffer/extract-identifier! current-point))
-      (cons current-point)
-      (cons (buffer-name))
-      (cons (orgtrello-buffer/--user-ids-assigned-to-current-card))
-      (cons (orgtrello-buffer/--extract-description-at-point!))
-      (cons (orgtrello-buffer/org-entry-get current-point *ORGTRELLO/CARD-COMMENTS*))
-      (cons (orgtrello-buffer/org-unknown-drawer-properties!))
-      orgtrello-buffer/--to-orgtrello-metadata)))
+         (cons (-> current-point (orgtrello-buffer/org-entry-get "DEADLINE") orgtrello-buffer/--convert-orgmode-date-to-trello-date))
+         (cons (orgtrello-buffer/extract-identifier! current-point))
+         (cons current-point)
+         (cons (buffer-name))
+         (cons (orgtrello-buffer/--user-ids-assigned-to-current-card))
+         (cons (orgtrello-buffer/--extract-description-at-point!))
+         (cons (orgtrello-buffer/org-unknown-drawer-properties!))
+         orgtrello-buffer/--to-orgtrello-metadata)))
 
 (defun orgtrello-buffer/--filter-out-known-properties (list)
   "Filter out the org-trello known properties from the LIST."
@@ -652,8 +647,8 @@ Return nil if entry is not correct, otherwise return the full entity metadata st
 (defun orgtrello-buffer/--to-orgtrello-metadata (heading-metadata)
   "Given the HEADING-METADATA returned by the function 'org-heading-components.
 Make it a hashmap with key :level,  :keyword,  :name and their respective value."
-  (cl-destructuring-bind (unknown-properties comments description member-ids buffer-name point id due level _ keyword _ name tags) heading-metadata
-    (orgtrello-data/make-hash-org member-ids level (if keyword keyword (car *ORGTRELLO/ORG-KEYWORD-TRELLO-LIST-NAMES*)) name id due point buffer-name description comments tags unknown-properties)))
+  (cl-destructuring-bind (unknown-properties description member-ids buffer-name point id due level _ keyword _ name tags) heading-metadata
+    (orgtrello-data/make-hash-org member-ids level (if keyword keyword (car *ORGTRELLO/ORG-KEYWORD-TRELLO-LIST-NAMES*)) name id due point buffer-name description tags unknown-properties)))
 
 (defun orgtrello-buffer/filtered-kwds! ()
   "org keywords used (based on org-todo-keywords-1)."
