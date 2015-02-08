@@ -1,3 +1,13 @@
+# 0.6.9.2
+
+- [X] Update version
+- [X] Clean dead code regarding old comments system
+- [X] Fix bug regarding comments indentation (breaking org rendering)
+- [X] Fix bug regarding empty card and next card indentation (breaking org rendering)
+- [X] Fix compile log warning about orgtrello-buffer depending on orgtrello-controller (wrong)
+- [X] Update README-dev.md
+- [X] Release notes
+
 # 0.6.9.1
 
 - [X] Create backlog
