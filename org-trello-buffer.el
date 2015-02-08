@@ -136,8 +136,7 @@ CARD-ID is the needed id to create the comment."
          nreverse
          (--drop-while (string= "" it))
          nreverse
-         (s-join "\n")
-         (format "%s\n"))))
+         (s-join "\n"))))
 
 (defun orgtrello-buffer/kill-buffer-and-write-new-comment! ()
   "Write comment present in the popup buffer."
@@ -201,13 +200,15 @@ At the end of it all, the cursor is moved after the new written text."
 
 (defun orgtrello-buffer/--write-comments-at-point! (comments)
   "Write comments in the buffer at point."
-  (mapc 'orgtrello-buffer/--write-comment-at-point comments))
+  (when comments
+    (mapc 'orgtrello-buffer/--write-comment-at-point comments)
+    (when (= 1 (length comments)) (insert "\n"))));; hack, otherwise, the buffer is messed up. Please, people, again feel free to improve this.
 
 (defun orgtrello-buffer/--write-comment-at-point (comment)
   "Write the COMMENT at the current position."
   (-> comment
-    orgtrello-buffer/--serialize-comment
-    insert)
+      orgtrello-buffer/--serialize-comment
+      insert)
   (orgtrello-buffer/write-local-comment-checksum-at-point!))
 
 (defun orgtrello-buffer/--serialize-comment (comment)

@@ -222,6 +222,7 @@ DEADLINE: <some-due-date>
 :orgtrello-local-checksum: local-comment-checksum-456
 :END:
 some comment
+
 "
                  (orgtrello-tests/with-temp-buffer-and-return-buffer-content
                   ":PROPERTIES:
@@ -230,40 +231,40 @@ some comment
 :END:
 "
                   (with-mock
-                   (mock (orgtrello-buffer/card-checksum!) => "local-card-checksum-456")
-                   (mock (orgtrello-buffer/checklist-checksum!) => "local-checkbox-checksum-456")
-                   (mock (orgtrello-buffer/item-checksum!) => "local-item-checksum-456")
-                   (mock (orgtrello-buffer/comment-checksum!) => "local-comment-checksum-456")
-                   (orgtrello-buffer/write-card! "some-card-id"
-                                                 (orgtrello-hash/make-properties `((:keyword . "TODO")
-                                                                                   (:member-ids . "ardumont,dude")
-                                                                                   (:comments . ,(list (orgtrello-hash/make-properties '((:comment-user . "ardumont")
-                                                                                                                                         (:comment-date . "some-date")
-                                                                                                                                         (:comment-id   . "some-comment-id")
-                                                                                                                                         (:comment-text . "some comment")))))
-                                                                                   (:tags . ":red:green:")
-                                                                                   (:desc . "some description")
-                                                                                   (:level . ,*ORGTRELLO/CARD-LEVEL*)
-                                                                                   (:name . "some card name")
-                                                                                   (:id . "some-card-id")))
-                                                 (orgtrello-hash/make-properties `(("some-checklist-id" . ,(orgtrello-hash/make-properties `((:id . "some-checklist-id")
-                                                                                                                                             (:name . "some checklist name")
-                                                                                                                                             (:level . ,*ORGTRELLO/CHECKLIST-LEVEL*))))
-                                                                                   ("some-other-checklist-id" . ,(orgtrello-hash/make-properties `((:id . "some-other-checklist-id")
-                                                                                                                                                   (:name . "some other checklist name")
-                                                                                                                                                   (:level . ,*ORGTRELLO/CHECKLIST-LEVEL*))))
-                                                                                   ("some-item-id"  . ,(orgtrello-hash/make-properties `((:id . "some-item-id")
-                                                                                                                                         (:name . "some item name")
-                                                                                                                                         (:level . ,*ORGTRELLO/ITEM-LEVEL*)
-                                                                                                                                         (:keyword . "DONE"))))
-                                                                                   ("some-other-item-id"  . ,(orgtrello-hash/make-properties `((:id . "some-other-item-id")
-                                                                                                                                               (:name . "some other item name")
-                                                                                                                                               (:level . ,*ORGTRELLO/ITEM-LEVEL*)
-                                                                                                                                               (:keyword . "TODO"))))))
+                    (mock (orgtrello-buffer/card-checksum!) => "local-card-checksum-456")
+                    (mock (orgtrello-buffer/checklist-checksum!) => "local-checkbox-checksum-456")
+                    (mock (orgtrello-buffer/item-checksum!) => "local-item-checksum-456")
+                    (mock (orgtrello-buffer/comment-checksum!) => "local-comment-checksum-456")
+                    (orgtrello-buffer/write-card! "some-card-id"
+                                                  (orgtrello-hash/make-properties `((:keyword . "TODO")
+                                                                                    (:member-ids . "ardumont,dude")
+                                                                                    (:comments . ,(list (orgtrello-hash/make-properties '((:comment-user . "ardumont")
+                                                                                                                                          (:comment-date . "some-date")
+                                                                                                                                          (:comment-id   . "some-comment-id")
+                                                                                                                                          (:comment-text . "some comment")))))
+                                                                                    (:tags . ":red:green:")
+                                                                                    (:desc . "some description")
+                                                                                    (:level . ,*ORGTRELLO/CARD-LEVEL*)
+                                                                                    (:name . "some card name")
+                                                                                    (:id . "some-card-id")))
+                                                  (orgtrello-hash/make-properties `(("some-checklist-id" . ,(orgtrello-hash/make-properties `((:id . "some-checklist-id")
+                                                                                                                                              (:name . "some checklist name")
+                                                                                                                                              (:level . ,*ORGTRELLO/CHECKLIST-LEVEL*))))
+                                                                                    ("some-other-checklist-id" . ,(orgtrello-hash/make-properties `((:id . "some-other-checklist-id")
+                                                                                                                                                    (:name . "some other checklist name")
+                                                                                                                                                    (:level . ,*ORGTRELLO/CHECKLIST-LEVEL*))))
+                                                                                    ("some-item-id"  . ,(orgtrello-hash/make-properties `((:id . "some-item-id")
+                                                                                                                                          (:name . "some item name")
+                                                                                                                                          (:level . ,*ORGTRELLO/ITEM-LEVEL*)
+                                                                                                                                          (:keyword . "DONE"))))
+                                                                                    ("some-other-item-id"  . ,(orgtrello-hash/make-properties `((:id . "some-other-item-id")
+                                                                                                                                                (:name . "some other item name")
+                                                                                                                                                (:level . ,*ORGTRELLO/ITEM-LEVEL*)
+                                                                                                                                                (:keyword . "TODO"))))))
 
-                                                 (orgtrello-hash/make-properties `(("some-other-checklist-id" . ())
-                                                                                   ("some-checklist-id" . ("some-item-id" "some-other-item-id"))
-                                                                                   ("some-card-id" . ("some-checklist-id" "some-other-checklist-id"))))))
+                                                  (orgtrello-hash/make-properties `(("some-other-checklist-id" . ())
+                                                                                    ("some-checklist-id" . ("some-item-id" "some-other-item-id"))
+                                                                                    ("some-card-id" . ("some-checklist-id" "some-other-checklist-id"))))))
                   0))))
 
 (ert-deftest test-orgtrello-buffer/write-card!-successive-writes-on-buffer ()
@@ -306,6 +307,7 @@ comment text
 :orgtrello-local-checksum: local-comment-checksum-b
 :END:
 some text
+
 "
                  (orgtrello-tests/with-temp-buffer-and-return-buffer-content
                   ":PROPERTIES:
@@ -395,6 +397,7 @@ comment text
 :orgtrello-local-checksum: local-comment-checksum
 :END:
 some text
+
 "
                  (orgtrello-tests/with-temp-buffer-indented-and-return-buffer-content
                   ":PROPERTIES:
@@ -836,6 +839,7 @@ DEADLINE: <2014-05-17 Sat>
 :orgtrello-local-checksum: local-comment-checksum-567
 :END:
 some comment
+
 "
                  (orgtrello-tests/with-temp-buffer-and-return-buffer-content
                   "" ;; no previous content on buffer
@@ -894,6 +898,7 @@ some comment
 :orgtrello-local-checksum: local-comment-checksum-567
 :END:
 some comment
+
 
 * IN-PROGRESS another card
 :PROPERTIES:
@@ -2060,11 +2065,11 @@ generates another checksum
                                                                                          (:comment-text . "hello, this is a comment!")))))))
 
 (ert-deftest test-orgtrello-buffer/trim-input-comment ()
-  (should (string= "text as is\n"
+  (should (string= "text as is"
                    (orgtrello-buffer/trim-input-comment "# hello, some comment\n# ignore this also\ntext as is")))
-  (should (string= "text as is\nwith lines\n"
+  (should (string= "text as is\nwith lines"
                    (orgtrello-buffer/trim-input-comment "# hello, some comment\n# ignore this also\ntext as is\nwith lines\n")))
-  (should (string= "line 1     \nline 2\n"
+  (should (string= "line 1     \nline 2"
                    (orgtrello-buffer/trim-input-comment "# comment line\n# another comment line\nline 1     \nline 2\n\n\n"))))
 
 
