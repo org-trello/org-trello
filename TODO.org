@@ -7,6 +7,13 @@
 - [ ] Another Disposition about org's buffer - https://github.com/org-trello/org-trello/issues/33
 - [ ] Add a file to the org-trello list - https://github.com/org-trello/org-trello/issues/211
 - [ ] One command to sync them all - https://github.com/org-trello/org-trello/issues/5
+* TODO 0.7.0 [0%]
+- [ ] Fix bug regarding comments
+- [ ] Clean dead code regarding old comments system
+- [ ] Update version
+- [ ] Update README-dev.md
+- [ ] Release notes
+- [ ] Rework commits
 * DONE 0.6.9.1 [100%]
 CLOSED: [2015-01-27 Tue 18:59]
 - [X] Create backlog
