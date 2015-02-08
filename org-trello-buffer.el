@@ -82,46 +82,6 @@ If the VALUE is nil or empty, remove such PROPERTY."
    (temp-buffer-resize-mode 1)
    (insert (format "%s:\n\n%s" title body-content))))
 
-(defvar orgtrello-buffer/register "*orgtrello-register*"
-  "The variable holding the Emacs' org-trello register.")
-
-(defvar orgtrello-buffer/card-id nil
-  "The variable holding the card-id needed to sync the comment.")
-
-(defvar orgtrello-buffer/return nil
-  "The variable holding the list `'buffer-name`', position.
-This, to get back to when closing the popup window.")
-
-(make-local-variable 'orgtrello-buffer/return)
-(make-local-variable 'orgtrello-buffer/card-id)
-
-(defun orgtrello-buffer/add-comment! (card-id)
-  "Pop up a window for the user to input a comment.
-CARD-ID is the needed id to create the comment."
-  (setq orgtrello-buffer/return (list (current-buffer) (point)))
-  (setq orgtrello-buffer/card-id card-id)
-  (window-configuration-to-register orgtrello-buffer/register)
-  (delete-other-windows)
-  (org-switch-to-buffer-other-window *ORGTRELLO/TITLE-BUFFER-INFORMATION*)
-  (erase-buffer)
-  (let ((org-inhibit-startup t))
-    (org-mode)
-    (insert (format "# Insert comment.\n# Finish with C-c C-c, or cancel with C-c C-k.\n\n"))
-    (define-key org-mode-map [remap org-ctrl-c-ctrl-c] 'orgtrello-buffer/kill-buffer-and-write-new-comment!)
-    (define-key org-mode-map [remap org-kill-note-or-show-branches] 'orgtrello-buffer/close-popup!)))
-
-(defun orgtrello-buffer/close-popup! ()
-  "Close the buffer at point."
-  (interactive)
-  (kill-buffer (current-buffer))
-  (jump-to-register orgtrello-buffer/register)
-  (define-key org-mode-map [remap org-ctrl-c-ctrl-c] nil)
-  (define-key org-mode-map [remap org-kill-note-or-show-branches] nil)
-  (let ((buffer-name (car orgtrello-buffer/return))
-        (pos         (cadr orgtrello-buffer/return)))
-    (pop-to-buffer buffer-name)
-    (goto-char pos)))
-
 (defun orgtrello-buffer/trim-input-comment (comment)
   "Trim the COMMENT."
   (let ((trim-comment comment))
@@ -133,27 +93,6 @@ CARD-ID is the needed id to create the comment."
          (--drop-while (string= "" it))
          nreverse
          (s-join "\n"))))
-
-(defun orgtrello-buffer/kill-buffer-and-write-new-comment! ()
-  "Write comment present in the popup buffer."
-  (interactive)
-  (deferred:$
-    (deferred:next
-      (lambda ()
-        (let ((comment (orgtrello-buffer/trim-input-comment (buffer-string))))
-          (orgtrello-buffer/close-popup!)
-          comment)))
-    (deferred:nextc it
-      (lambda (comment)
-        (lexical-let ((new-comment comment))
-          (deferred:$
-            (deferred:next (lambda () (-> orgtrello-buffer/card-id
-                                     (orgtrello-api/add-card-comment new-comment)
-                                     (orgtrello-query/http-trello 'sync))))
-            (deferred:nextc it
-              (lambda (data)
-                (orgtrello-log/msg *OT/TRACE* "Add card comment - response data: %S" data)
-                (orgtrello-controller/checks-then-sync-card-from-trello!))))))))) ;; FIXME not in right namespace org-trello-buffer does not depend on org-trello-controller (but the contrary is true)
 
 (defun orgtrello-buffer/write-item! (item-id entities)
   "Write the item to the org buffer."

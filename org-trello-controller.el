@@ -736,7 +736,7 @@ Return the hashmap (name, id) of the new lists created."
     (let ((card-id (-> (orgtrello-buffer/entity-metadata!) orgtrello-data/entity-id)))
       (if (or (null card-id) (string= "" card-id))
           (orgtrello-log/msg *OT/INFO* "Card not sync'ed so cannot add comment - skip.")
-        (orgtrello-buffer/add-comment! card-id)))))
+        (orgtrello-controller/add-comment! card-id)))))
 
 (defun orgtrello-controller/do-delete-card-comment! ()
   "Execute checks then do the actual card deletion if everything is ok."
@@ -854,14 +854,75 @@ When GLOBALLY-FLAG is not nil, remove also local entities properties."
 (defun orgtrello-controller/jump-to-board! ()
   "Given the current position, execute the information extraction and jump to board action."
   (->> (orgtrello-buffer/board-id!)
-    (format "/b/%s")
-    org-trello/compute-url
-    browse-url))
+       (format "/b/%s")
+       org-trello/compute-url
+       browse-url))
 
 (defun orgtrello-controller/delete-setup! ()
   "Global org-trello metadata clean up."
   (orgtrello-controller/do-cleanup-from-buffer! t)
   (orgtrello-log/msg *OT/NOLOG* "Cleanup done!"))
+
+(defvar orgtrello-controller/register "*orgtrello-register*"
+  "The variable holding the Emacs' org-trello register.")
+
+(defvar orgtrello-controller/card-id nil
+  "The variable holding the card-id needed to sync the comment.")
+
+(defvar orgtrello-controller/return nil
+  "The variable holding the list `'buffer-name`', position.
+This, to get back to when closing the popup window.")
+
+(make-local-variable 'orgtrello-controller/return)
+(make-local-variable 'orgtrello-controller/card-id)
+
+(defun orgtrello-controller/add-comment! (card-id)
+  "Pop up a window for the user to input a comment.
+CARD-ID is the needed id to create the comment."
+  (setq orgtrello-controller/return (list (current-buffer) (point)))
+  (setq orgtrello-controller/card-id card-id)
+  (window-configuration-to-register orgtrello-controller/register)
+  (delete-other-windows)
+  (org-switch-to-buffer-other-window *ORGTRELLO/TITLE-BUFFER-INFORMATION*)
+  (erase-buffer)
+  (let ((org-inhibit-startup t))
+    (org-mode)
+    (insert (format "# Insert comment.\n# Finish with C-c C-c, or cancel with C-c C-k.\n\n"))
+    (define-key org-mode-map [remap org-ctrl-c-ctrl-c] 'orgtrello-controller/kill-buffer-and-write-new-comment!)
+    (define-key org-mode-map [remap org-kill-note-or-show-branches] 'orgtrello-controller/close-popup!)))
+
+(defun orgtrello-controller/close-popup! ()
+  "Close the buffer at point."
+  (interactive)
+  (kill-buffer (current-buffer))
+  (jump-to-register orgtrello-controller/register)
+  (define-key org-mode-map [remap org-ctrl-c-ctrl-c] nil)
+  (define-key org-mode-map [remap org-kill-note-or-show-branches] nil)
+  (let ((buffer-name (car orgtrello-controller/return))
+        (pos         (cadr orgtrello-controller/return)))
+    (pop-to-buffer buffer-name)
+    (goto-char pos)))
+
+(defun orgtrello-controller/kill-buffer-and-write-new-comment! ()
+  "Write comment present in the popup buffer."
+  (interactive)
+  (deferred:$
+    (deferred:next
+      (lambda ()
+        (let ((comment (orgtrello-buffer/trim-input-comment (buffer-string))))
+          (orgtrello-controller/close-popup!)
+          comment)))
+    (deferred:nextc it
+      (lambda (comment)
+        (lexical-let ((new-comment comment))
+          (deferred:$
+            (deferred:next (lambda () (-> orgtrello-controller/card-id
+                                     (orgtrello-api/add-card-comment new-comment)
+                                     (orgtrello-query/http-trello 'sync))))
+            (deferred:nextc it
+              (lambda (data)
+                (orgtrello-log/msg *OT/TRACE* "Add card comment - response data: %S" data)
+                (orgtrello-controller/checks-then-sync-card-from-trello!)))))))))
 
 (defun orgtrello-buffer/prepare-buffer! ()
   "Prepare the buffer to receive org-trello data."
