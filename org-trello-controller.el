@@ -924,7 +924,7 @@ CARD-ID is the needed id to create the comment."
                 (orgtrello-log/msg *OT/TRACE* "Add card comment - response data: %S" data)
                 (orgtrello-controller/checks-then-sync-card-from-trello!)))))))))
 
-(defun orgtrello-buffer/prepare-buffer! ()
+(defun orgtrello-controller/prepare-buffer! ()
   "Prepare the buffer to receive org-trello data."
   (when (and (eq major-mode 'org-mode) org-trello/mode)
     (orgtrello-buffer/install-overlays!)
@@ -938,9 +938,9 @@ CARD-ID is the needed id to create the comment."
   ;; buffer-invisibility-spec
   (add-to-invisibility-spec '(org-trello-cbx-property)) ;; for an ellipsis (-> ...) change to '(org-trello-cbx-property . t)
   ;; installing hooks
-  (add-hook 'before-save-hook 'orgtrello-buffer/prepare-buffer!)
+  (add-hook 'before-save-hook 'orgtrello-controller/prepare-buffer!)
   ;; prepare the buffer at activation time
-  (orgtrello-buffer/prepare-buffer!)
+  (orgtrello-controller/prepare-buffer!)
   ;; run hook at startup
   (run-hooks 'org-trello-mode-hook))
 
@@ -949,7 +949,7 @@ CARD-ID is the needed id to create the comment."
   ;; remove the invisible property names
   (remove-from-invisibility-spec '(org-trello-cbx-property)) ;; for an ellipsis (...) change to '(org-trello-cbx-property . t)
   ;; removing hooks
-  (remove-hook 'before-save-hook 'orgtrello-buffer/prepare-buffer!)
+  (remove-hook 'before-save-hook 'orgtrello-controller/prepare-buffer!)
   ;; remove org-trello overlays
   (orgtrello-buffer/remove-overlays!)
   ;; deactivate org-trello/mode
