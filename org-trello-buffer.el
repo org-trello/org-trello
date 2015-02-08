@@ -129,7 +129,7 @@ CARD-ID is the needed id to create the comment."
 (defun orgtrello-buffer/trim-input-comment (comment)
   "Trim the COMMENT."
   (let ((trim-comment comment))
-    (while (string-match "\\`# .*\n[ \t\n]*" trim-comment) ;; remove # line comment
+    (while (string-match "\\`# .*\n[ \t\n]*" trim-comment) ;; remove # line comments
       (setq trim-comment (replace-match "" t t trim-comment)))
     (->> trim-comment
          (s-split "\n")
