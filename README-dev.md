@@ -25,7 +25,7 @@ This will describe org-trello's current state of affairs.
 # Sources
 
 The sources are splitted in `namespaces` in the [src/](./src/) folder.
-This is described in the [namespaces.el](./namespaces.el) file.
+This is described in the [Namespaces](#namespaces) section.
 
 ## Conventions
 
@@ -48,6 +48,9 @@ For example:
 - in `org-trello-buffer.el`, all pure public functions are named `orgtrello-buffer/some-fn-name`
 - in `org-trello-input.el`, all pure private functions are named `orgtrello-input/--some-private-fn`
 - in `org-trello-cbx.el`, all public side-effecty functions are named `orgtrello-cbx/some-fn-name!`
+
+*Note* I did not enforce every [emacs-lisp conventions](https://www.gnu.org/software/emacs/manual/html_node/elisp/Coding-Conventions.html).
+But [an issue is open about it](https://github.com/org-trello/org-trello/issues/238).
 
 ### Exception
 
