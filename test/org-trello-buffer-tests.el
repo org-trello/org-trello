@@ -293,6 +293,7 @@ some comment
 :orgtrello-local-checksum: local-comment-checksum-a
 :END:
 comment text
+
 * TODO task B
   :PROPERTIES:
   :orgtrello-users: ardumont,dude
@@ -383,6 +384,7 @@ some comment
 :orgtrello-local-checksum: local-comment-checksum
 :END:
 comment text
+
 * TODO task B
   :PROPERTIES:
   :orgtrello-users: ardumont,dude
