@@ -7,7 +7,8 @@
 - [ ] Another Disposition about org's buffer - https://github.com/org-trello/org-trello/issues/33
 - [ ] Add a file to the org-trello list - https://github.com/org-trello/org-trello/issues/211
 - [ ] One command to sync them all - https://github.com/org-trello/org-trello/issues/5
-* IN-PROGRESS 0.6.9.2 [100%]
+* DONE 0.6.9.2 [100%]
+CLOSED: [2015-02-08 Sun 19:13]
 - [X] Update version
 - [X] Clean dead code regarding old comments system
 - [X] Fix bug regarding comments indentation (breaking org rendering)
