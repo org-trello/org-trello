@@ -793,7 +793,7 @@ Return the hashmap (name, id) of the new lists created."
 When GLOBALLY-FLAG is not nil, remove also local entities properties."
   (orgtrello-controller/--remove-properties-file! *ORGTRELLO/ORG-KEYWORD-TRELLO-LIST-NAMES* *ORGTRELLO/HMAP-USERS-NAME-ID* *ORGTRELLO/USER-LOGGED-IN* t) ;; remove any orgtrello relative entries
   (when globally-flag
-    (mapc 'orgtrello-buffer/delete-property! `(,*ORGTRELLO/ID* ,*ORGTRELLO/USERS-ENTRY* ,*ORGTRELLO/CARD-COMMENTS*))))
+    (mapc 'orgtrello-buffer/delete-property! `(,*ORGTRELLO/ID* ,*ORGTRELLO/USERS-ENTRY*))))
 
 (defun orgtrello-controller/do-write-board-metadata! (board-id board-name user-logged-in board-lists board-labels board-users-name-id)
   "Given a board id, write in the current buffer the updated data."

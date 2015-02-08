@@ -51,10 +51,6 @@ If the VALUE is nil or empty, remove such PROPERTY."
   "Retrieve the checkbox's current local checksum."
   (orgtrello-buffer/org-entry-get (point) *ORGTRELLO/LOCAL-CHECKSUM*))
 
-(defun orgtrello-buffer/put-card-comments! (comments)
-  "Retrieve the card's comments. Can be nil if not on a card."
-  (orgtrello-buffer/org-entry-put! (point) *ORGTRELLO/CARD-COMMENTS* comments))
-
 (defun orgtrello-buffer/org-get-property (property-key properties)
   "Retrieve the PROPERTY-KEY in PROPERTIES."
   (assoc-default property-key properties))
@@ -159,15 +155,11 @@ CARD-ID is the needed id to create the comment."
                 (orgtrello-log/msg *OT/TRACE* "Add card comment - response data: %S" data)
                 (orgtrello-controller/checks-then-sync-card-from-trello!))))))))) ;; FIXME not in right namespace org-trello-buffer does not depend on org-trello-controller (but the contrary is true)
 
-(defun orgtrello-buffer/set-property-comment! (comments)
-  "Update comments property."
-  (orgtrello-buffer/org-entry-put! nil *ORGTRELLO/CARD-COMMENTS* comments))
-
 (defun orgtrello-buffer/write-item! (item-id entities)
   "Write the item to the org buffer."
   (->> entities
-    (gethash item-id)
-    (orgtrello-buffer/write-entity! item-id))
+       (gethash item-id)
+       (orgtrello-buffer/write-entity! item-id))
   (save-excursion ;; item writing does insert a new line
     (forward-line -1)
     (orgtrello-buffer/write-properties-at-pt! item-id)))
