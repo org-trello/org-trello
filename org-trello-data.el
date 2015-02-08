@@ -114,21 +114,20 @@ If the keyword is nil, return the optional DEFAULT-VALUE."
         ((orgtrello-data/entity-checked entity-map) *ORGTRELLO/ITEM-LEVEL*)
         (t nil)))
 
-(defun orgtrello-data/make-hash-org (member-ids level keyword name id due position buffer-name desc comments tags unknown-properties)
-  "Compute the hash-map from MEMBER-IDS LEVEL KEYWORD NAME ID DUE POSITION BUFFER-NAME DESC COMMENTS TAGS UNKNOWN-PROPERTIES."
+(defun orgtrello-data/make-hash-org (member-ids level keyword name id due position buffer-name desc tags unknown-properties)
+  "Compute the hash-map from MEMBER-IDS LEVEL KEYWORD NAME ID DUE POSITION BUFFER-NAME DESC TAGS UNKNOWN-PROPERTIES."
   (->> (orgtrello-hash/empty-hash)
-    (orgtrello-data/put-entity-buffername         buffer-name)
-    (orgtrello-data/put-entity-position           position)
-    (orgtrello-data/put-entity-level              level)
-    (orgtrello-data/put-entity-keyword            keyword)
-    (orgtrello-data/put-entity-name               name)
-    (orgtrello-data/put-entity-id                 id)
-    (orgtrello-data/put-entity-due                due)
-    (orgtrello-data/put-entity-member-ids         member-ids)
-    (orgtrello-data/put-entity-description        desc)
-    (orgtrello-data/put-entity-comments           comments)
-    (orgtrello-data/put-entity-tags               tags)
-    (orgtrello-data/put-entity-unknown-properties unknown-properties)))
+       (orgtrello-data/put-entity-buffername         buffer-name)
+       (orgtrello-data/put-entity-position           position)
+       (orgtrello-data/put-entity-level              level)
+       (orgtrello-data/put-entity-keyword            keyword)
+       (orgtrello-data/put-entity-name               name)
+       (orgtrello-data/put-entity-id                 id)
+       (orgtrello-data/put-entity-due                due)
+       (orgtrello-data/put-entity-member-ids         member-ids)
+       (orgtrello-data/put-entity-description        desc)
+       (orgtrello-data/put-entity-tags               tags)
+       (orgtrello-data/put-entity-unknown-properties unknown-properties)))
 
 (defun orgtrello-data/make-hierarchy (current &optional parent grandparent)
   "Build an org-trello hierarchy using CURRENT, PARENT and GRANDPARENT maps."
@@ -207,31 +206,11 @@ SIZE is a useless parameter, only here to satisfy an implementation detail."
            (-when-let (level (orgtrello-data/--compute-level hmap)) (orgtrello-data/put-entity-level level hmap))
            hmap))))
 
-(defun orgtrello-data/comments-to-list (comments-hash)
-  "Given a list of COMMENTS-HASH maps, return the serialized string comment."
-  (->> comments-hash
-    (--map (s-join ": " (list (orgtrello-data/entity-comment-user it) (orgtrello-data/entity-comment-text it))))
-    (s-join *ORGTRELLO/CARD-COMMENTS-DELIMITER*)))
-
 (defun orgtrello-data/format-labels (labels)
   "Given an assoc list of LABELS, serialize it."
   (->> labels
-    (--map (s-join ": " (list (car it) (cdr it))))
-    (s-join "\n\n")))
-
-(defun orgtrello-data/unformat-comments (comments)
-  "Given a string of COMMENTS human readable, transform it into a property format."
-  (->> comments
-    (s-split *ORGTRELLO/CARD-COMMENTS-DELIMITER-PRINT*)
-    (s-join *ORGTRELLO/CARD-COMMENTS-DELIMITER*)))
-
-(defun orgtrello-data/format-comments (comments)
-  "Given a property string of COMMENTS, work it to permit a human readable display."
-  (if comments
-      (->> comments
-        (s-split *ORGTRELLO/CARD-COMMENTS-DELIMITER*)
-        (s-join *ORGTRELLO/CARD-COMMENTS-DELIMITER-PRINT*))
-    "No comments to display!"))
+       (--map (s-join ": " (list (car it) (cdr it))))
+       (s-join "\n\n")))
 
 (defun orgtrello-data/id-p (id)
   "Is the string ID a trello identifier?"

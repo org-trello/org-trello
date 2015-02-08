@@ -368,22 +368,9 @@
                          (:comment-id "532d7441852414f343560757" :comment-text "comment 3" :comment-date "2014-03-22T11:30:09.927Z" :comment-user "ardumont"))
            (cadr (orgtrello-data/--parse-actions partial-data-to-test)))))
 
-(ert-deftest test-orgtrello-data/comments-to-list ()
-  (should (equal "me: some first comment###another-me: another comment"
-                 (orgtrello-data/comments-to-list (list (orgtrello-hash/make-properties '((:comment-user . "me") (:comment-text . "some first comment")))
-                                                        (orgtrello-hash/make-properties '((:comment-user . "another-me") (:comment-text . "another comment"))))))))
-
 (ert-deftest test-orgtrello-data/format-labels ()
   (should (equal ":red: some label\n\n:yellow: some other label"
                  (orgtrello-data/format-labels '((":red" . "some label") (":yellow" . "some other label"))))))
-
-(ert-deftest test-orgtrello-data/format-comments ()
-  (should (equal "dude0: some comments\n\ndude1: some other comments"
-                 (orgtrello-data/format-comments "dude0: some comments###dude1: some other comments"))))
-
-(ert-deftest test-orgtrello-data/unformat-comments ()
-  (should (equal "dude0: some comments###dude1: some other comments"
-                 (orgtrello-data/unformat-comments "dude0: some comments\n\ndude1: some other comments"))))
 
 (ert-deftest test-orgtrello-data/id-p ()
   (should (equal t   (orgtrello-data/id-p "anything-that-does-not-start-with-orgtrello-marker")))
@@ -553,18 +540,17 @@
   (should (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:grandparent  :value)) (orgtrello-data/put-grandparent         :value (orgtrello-hash/empty-hash)))))
 
 (ert-deftest test-orgtrello-data/make-hash-org ()
-  (should (equal "some name"       (gethash :name           (orgtrello-data/make-hash-org "" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org" :desc :comments :tags :unk))))
-  (should (equal "IN PROGRESS"     (gethash :keyword        (orgtrello-data/make-hash-org "" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org" :desc :comments :tags :unk))))
-  (should (equal 0                 (gethash :level          (orgtrello-data/make-hash-org "" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org" :desc :comments :tags :unk))))
-  (should (equal "some id"         (gethash :id             (orgtrello-data/make-hash-org "" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org" :desc :comments :tags :unk))))
-  (should (equal "due-date"        (gethash :due            (orgtrello-data/make-hash-org "" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org" :desc :comments :tags :unk))))
-  (should (equal :point            (gethash :position       (orgtrello-data/make-hash-org "" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org" :desc :comments :tags :unk))))
-  (should (equal "buffer-name.org" (gethash :buffername     (orgtrello-data/make-hash-org "" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org" :desc :comments :tags :unk))))
-  (should (equal "1,2,3"           (gethash :member-ids     (orgtrello-data/make-hash-org "1,2,3" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org" :desc :comments :tags :unk))))
-  (should (equal :desc             (gethash :desc           (orgtrello-data/make-hash-org "1,2,3" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org" :desc :comments :tags :unk))))
-  (should (equal :comments         (gethash :comments       (orgtrello-data/make-hash-org "1,2,3" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org" :desc :comments :tags :unk))))
-  (should (equal :tags             (gethash :tags           (orgtrello-data/make-hash-org "1,2,3" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org" :desc :comments :tags :unk))))
-  (should (equal :unk              (gethash :unknown-properties (orgtrello-data/make-hash-org "1,2,3" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org" :desc :comments :tags :unk)))))
+  (should (equal "some name"       (gethash :name           (orgtrello-data/make-hash-org "" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org" :desc :tags :unk))))
+  (should (equal "IN PROGRESS"     (gethash :keyword        (orgtrello-data/make-hash-org "" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org" :desc :tags :unk))))
+  (should (equal 0                 (gethash :level          (orgtrello-data/make-hash-org "" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org" :desc :tags :unk))))
+  (should (equal "some id"         (gethash :id             (orgtrello-data/make-hash-org "" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org" :desc :tags :unk))))
+  (should (equal "due-date"        (gethash :due            (orgtrello-data/make-hash-org "" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org" :desc :tags :unk))))
+  (should (equal :point            (gethash :position       (orgtrello-data/make-hash-org "" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org" :desc :tags :unk))))
+  (should (equal "buffer-name.org" (gethash :buffername     (orgtrello-data/make-hash-org "" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org" :desc :tags :unk))))
+  (should (equal "1,2,3"           (gethash :member-ids     (orgtrello-data/make-hash-org "1,2,3" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org" :desc :tags :unk))))
+  (should (equal :desc             (gethash :desc           (orgtrello-data/make-hash-org "1,2,3" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org" :desc :tags :unk))))
+  (should (equal :tags             (gethash :tags           (orgtrello-data/make-hash-org "1,2,3" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org" :desc :tags :unk))))
+  (should (equal :unk              (gethash :unknown-properties (orgtrello-data/make-hash-org "1,2,3" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org" :desc :tags :unk)))))
 
 (ert-deftest test-orgtrello-data/make-hierarchy1 ()
   (should (equal :current (gethash :current (orgtrello-data/make-hierarchy :current))))
@@ -587,33 +573,33 @@
   (should (equal :grandparent (gethash :grandparent (orgtrello-data/make-hierarchy nil :parent :grandparent)))))
 
 (ert-deftest test-orgtrello-data/make-hierarchy5 ()
-  (should (equal :ok                                 (-> (orgtrello-data/make-hash-org :users 1 :keyword "some name" :id :due :position :buffer-name :desc :comments :tags :unk)
-                                                       orgtrello-data/make-hierarchy
-                                                       orgtrello-controller/--mandatory-name-ok-p)))
-  (should (equal *ORGTRELLO/ERROR-SYNC-CARD-MISSING-NAME*      (-> (orgtrello-data/make-hash-org :users 1 :keyword "" :id :due :position :buffer-name :desc :comments :tags :unk)
-                                                                 orgtrello-data/make-hierarchy
-                                                                 orgtrello-controller/--mandatory-name-ok-p)))
-  (should (equal *ORGTRELLO/ERROR-SYNC-CARD-MISSING-NAME*      (-> (orgtrello-data/make-hash-org :users 1 :keyword nil :id :due :position :buffer-name :desc :comments :tags :unk)
-                                                                 orgtrello-data/make-hierarchy
-                                                                 orgtrello-controller/--mandatory-name-ok-p)))
-  (should (equal :ok                                 (-> (orgtrello-data/make-hash-org :users 2 :keyword "some name" :id :due :position :buffer-name :desc :comments :tags :unk)
-                                                       orgtrello-data/make-hierarchy
-                                                       orgtrello-controller/--mandatory-name-ok-p)))
-  (should (equal *ORGTRELLO/ERROR-SYNC-CHECKLIST-MISSING-NAME* (-> (orgtrello-data/make-hash-org :users 2 :keyword "" :id :due :position :buffer-name :desc :comments :tags :unk)
-                                                                 orgtrello-data/make-hierarchy
-                                                                 orgtrello-controller/--mandatory-name-ok-p)))
-  (should (equal *ORGTRELLO/ERROR-SYNC-CHECKLIST-MISSING-NAME* (-> (orgtrello-data/make-hash-org :users 2 :keyword nil :id :due :position :buffer-name :desc :comments :tags :unk)
-                                                                 orgtrello-data/make-hierarchy
-                                                                 orgtrello-controller/--mandatory-name-ok-p)))
-  (should (equal :ok                                 (-> (orgtrello-data/make-hash-org :users 3 :keyword "some name" :id :due :position :buffer-name :desc :comments :tags :unk)
-                                                       orgtrello-data/make-hierarchy
-                                                       orgtrello-controller/--mandatory-name-ok-p)))
-  (should (equal *ORGTRELLO/ERROR-SYNC-ITEM-MISSING-NAME*      (-> (orgtrello-data/make-hash-org :users 3 :keyword "" :id :due :position :buffer-name :desc :comments :tags :unk)
-                                                                 orgtrello-data/make-hierarchy
-                                                                 orgtrello-controller/--mandatory-name-ok-p)))
-  (should (equal *ORGTRELLO/ERROR-SYNC-ITEM-MISSING-NAME*      (-> (orgtrello-data/make-hash-org :users 3 :keyword nil :id :due :position :buffer-name :desc :comments :tags :unk)
-                                                                 orgtrello-data/make-hierarchy
-                                                                 orgtrello-controller/--mandatory-name-ok-p))))
+  (should (equal :ok                                 (-> (orgtrello-data/make-hash-org :users 1 :keyword "some name" :id :due :position :buffer-name :desc :tags :unk)
+                                                         orgtrello-data/make-hierarchy
+                                                         orgtrello-controller/--mandatory-name-ok-p)))
+  (should (equal *ORGTRELLO/ERROR-SYNC-CARD-MISSING-NAME*      (-> (orgtrello-data/make-hash-org :users 1 :keyword "" :id :due :position :buffer-name :desc :tags :unk)
+                                                                   orgtrello-data/make-hierarchy
+                                                                   orgtrello-controller/--mandatory-name-ok-p)))
+  (should (equal *ORGTRELLO/ERROR-SYNC-CARD-MISSING-NAME*      (-> (orgtrello-data/make-hash-org :users 1 :keyword nil :id :due :position :buffer-name :desc :tags :unk)
+                                                                   orgtrello-data/make-hierarchy
+                                                                   orgtrello-controller/--mandatory-name-ok-p)))
+  (should (equal :ok                                 (-> (orgtrello-data/make-hash-org :users 2 :keyword "some name" :id :due :position :buffer-name :desc :tags :unk)
+                                                         orgtrello-data/make-hierarchy
+                                                         orgtrello-controller/--mandatory-name-ok-p)))
+  (should (equal *ORGTRELLO/ERROR-SYNC-CHECKLIST-MISSING-NAME* (-> (orgtrello-data/make-hash-org :users 2 :keyword "" :id :due :position :buffer-name :desc :tags :unk)
+                                                                   orgtrello-data/make-hierarchy
+                                                                   orgtrello-controller/--mandatory-name-ok-p)))
+  (should (equal *ORGTRELLO/ERROR-SYNC-CHECKLIST-MISSING-NAME* (-> (orgtrello-data/make-hash-org :users 2 :keyword nil :id :due :position :buffer-name :desc :tags :unk)
+                                                                   orgtrello-data/make-hierarchy
+                                                                   orgtrello-controller/--mandatory-name-ok-p)))
+  (should (equal :ok                                 (-> (orgtrello-data/make-hash-org :users 3 :keyword "some name" :id :due :position :buffer-name :desc :tags :unk)
+                                                         orgtrello-data/make-hierarchy
+                                                         orgtrello-controller/--mandatory-name-ok-p)))
+  (should (equal *ORGTRELLO/ERROR-SYNC-ITEM-MISSING-NAME*      (-> (orgtrello-data/make-hash-org :users 3 :keyword "" :id :due :position :buffer-name :desc :tags :unk)
+                                                                   orgtrello-data/make-hierarchy
+                                                                   orgtrello-controller/--mandatory-name-ok-p)))
+  (should (equal *ORGTRELLO/ERROR-SYNC-ITEM-MISSING-NAME*      (-> (orgtrello-data/make-hash-org :users 3 :keyword nil :id :due :position :buffer-name :desc :tags :unk)
+                                                                   orgtrello-data/make-hierarchy
+                                                                   orgtrello-controller/--mandatory-name-ok-p))))
 
 (ert-deftest test-orgtrello-data/to-org-trello-card ()
   "Convert trello card to org-trello."

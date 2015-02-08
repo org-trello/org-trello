@@ -99,15 +99,6 @@ hello there
   - [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}"
                                                    (orgtrello-buffer/extract-description-from-current-position!)))))
 
-(ert-deftest test-orgtrello-buffer/get-card-comments! ()
-  (should (equal "some-comments###with-dummy-data"
-                 (orgtrello-tests/with-temp-buffer
-                  "* card
-:PROPERTIES:
-:orgtrello-card-comments: some-comments###with-dummy-data
-:END:"
-                  (orgtrello-buffer/get-card-comments!)))))
-
 (ert-deftest test-orgtrello-buffer/board-id! ()
   (should (equal
            "this-is-the-board-id"
@@ -224,12 +215,14 @@ DEADLINE: <some-due-date>
     - [X] some item name :PROPERTIES: {\"orgtrello-id\":\"some-item-id\",\"orgtrello-local-checksum\":\"local-item-checksum-456\"}
     - [ ] some other item name :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\",\"orgtrello-local-checksum\":\"local-item-checksum-456\"}
   - [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\",\"orgtrello-local-checksum\":\"local-checkbox-checksum-456\"}
+
 ** COMMENT ardumont, some-date
 :PROPERTIES:
 :orgtrello-id: some-comment-id
 :orgtrello-local-checksum: local-comment-checksum-456
 :END:
 some comment
+
 "
                  (orgtrello-tests/with-temp-buffer-and-return-buffer-content
                   ":PROPERTIES:
@@ -286,18 +279,21 @@ some comment
   :orgtrello-local-checksum: local-card-checksum-a
   :END:
   description A
+
 ** COMMENT ardumont, some-date
 :PROPERTIES:
 :orgtrello-id: some-comment-id
 :orgtrello-local-checksum: local-comment-checksum-a
 :END:
 some comment
+
 ** COMMENT ben, 10/01/2202
 :PROPERTIES:
 :orgtrello-id: some-id
 :orgtrello-local-checksum: local-comment-checksum-a
 :END:
 comment text
+
 * TODO task B
   :PROPERTIES:
   :orgtrello-users: ardumont,dude
@@ -305,12 +301,14 @@ comment text
   :orgtrello-local-checksum: local-card-checksum-b
   :END:
   description B
+
 ** COMMENT tony, 10/10/2014
 :PROPERTIES:
 :orgtrello-id: some-com-id
 :orgtrello-local-checksum: local-comment-checksum-b
 :END:
 some text
+
 "
                  (orgtrello-tests/with-temp-buffer-and-return-buffer-content
                   ":PROPERTIES:
@@ -357,6 +355,90 @@ some text
                                                                                                              (:comment-text . "some text")))))))
                                                     (orgtrello-hash/make-properties `())
                                                     (orgtrello-hash/make-properties `()))))
+                  0))))
+
+(ert-deftest test-orgtrello-buffer/write-card!-successive-writes-on-buffer-with-indentation ()
+  (should (equal ":PROPERTIES:
+#+PROPERTY: orgtrello-user-ardumont ardumont-id
+#+PROPERTY: orgtrello-user-dude dude-id
+:END:
+
+* TODO task A
+  :PROPERTIES:
+  :orgtrello-users: ardumont,dude
+  :orgtrello-id: card-id-a
+  :orgtrello-local-checksum: local-card-checksum
+  :END:
+
+
+** COMMENT ardumont, some-date
+:PROPERTIES:
+:orgtrello-id: some-comment-id
+:orgtrello-local-checksum: local-comment-checksum
+:END:
+some comment
+
+** COMMENT ben, 10/01/2202
+:PROPERTIES:
+:orgtrello-id: some-id
+:orgtrello-local-checksum: local-comment-checksum
+:END:
+comment text
+
+* TODO task B
+  :PROPERTIES:
+  :orgtrello-users: ardumont,dude
+  :orgtrello-id: card-id-b
+  :orgtrello-local-checksum: local-card-checksum
+  :END:
+
+
+** COMMENT tony, 10/10/2014
+:PROPERTIES:
+:orgtrello-id: some-com-id
+:orgtrello-local-checksum: local-comment-checksum
+:END:
+some text
+
+"
+                 (orgtrello-tests/with-temp-buffer-indented-and-return-buffer-content
+                  ":PROPERTIES:
+#+PROPERTY: orgtrello-user-ardumont ardumont-id
+#+PROPERTY: orgtrello-user-dude dude-id
+:END:
+
+"
+                  (progn
+                    (with-mock
+                      (mock (orgtrello-buffer/card-checksum!) => "local-card-checksum")
+                      (mock (orgtrello-buffer/comment-checksum!) => "local-comment-checksum")
+                      (orgtrello-controller/sync-buffer-with-trello-cards! (buffer-name)
+                                                                           `(,(orgtrello-hash/make-properties
+                                                                               `((:keyword . "TODO")
+                                                                                 (:desc . "")
+                                                                                 (:level . ,*ORGTRELLO/CARD-LEVEL*)
+                                                                                 (:name . "task A")
+                                                                                 (:id . "card-id-a")
+                                                                                 (:member-ids . "ardumont,dude")
+                                                                                 (:comments . ,(list (orgtrello-hash/make-properties '((:comment-user . "ardumont")
+                                                                                                                                       (:comment-date . "some-date")
+                                                                                                                                       (:comment-id   . "some-comment-id")
+                                                                                                                                       (:comment-text . "some comment")))
+                                                                                                     (orgtrello-hash/make-properties '((:comment-user . "ben")
+                                                                                                                                       (:comment-date . "10/01/2202")
+                                                                                                                                       (:comment-id   . "some-id")
+                                                                                                                                       (:comment-text . "comment text")))))))
+                                                                             ,(orgtrello-hash/make-properties
+                                                                               `((:keyword . "TODO")
+                                                                                 (:desc . "")
+                                                                                 (:level . ,*ORGTRELLO/CARD-LEVEL*)
+                                                                                 (:name . "task B")
+                                                                                 (:id . "card-id-b")
+                                                                                 (:member-ids . "ardumont,dude")
+                                                                                 (:comments . ,(list (orgtrello-hash/make-properties '((:comment-user . "tony")
+                                                                                                                                       (:comment-date . "10/10/2014")
+                                                                                                                                       (:comment-id   . "some-com-id")
+                                                                                                                                       (:comment-text . "some text")))))))))))
                   0))))
 
 (ert-deftest test-orgtrello-buffer/write-checklist! ()
@@ -565,9 +647,9 @@ some text
   (should (equal " :red:green:blue:" (orgtrello-buffer/--serialize-tags "* this is another card name with an extremely long label name, more than 72 chars" ":red:green:blue:"))))
 
 (ert-deftest test-orgtrello-buffer/--compute-marker-from-entry ()
-  (should (equal "id"                                                        (orgtrello-buffer/--compute-marker-from-entry (orgtrello-data/make-hash-org :users :level :kwd :name      "id"  :due :position :buffername :desc :comments :tags :unknown))))
-  (should (equal "orgtrello-marker-2a0b98e652ce6349a0659a7a8eeb3783ffe9a11a" (orgtrello-buffer/--compute-marker-from-entry (orgtrello-data/make-hash-org :users :level :kwd "some-name" nil :due 1234      "buffername" :desc :comments :tags :unknown))))
-  (should (equal "orgtrello-marker-6c59c5dcf6c83edaeb3f4923bfd929a091504bb3" (orgtrello-buffer/--compute-marker-from-entry (orgtrello-data/make-hash-org :users :level :kwd "some-name" nil :due 4321      "some-other-buffername" :desc :comments :tags :unknown)))))
+  (should (equal "id"                                                        (orgtrello-buffer/--compute-marker-from-entry (orgtrello-data/make-hash-org :users :level :kwd :name      "id"  :due :position :buffername :desc :tags :unknown))))
+  (should (equal "orgtrello-marker-2a0b98e652ce6349a0659a7a8eeb3783ffe9a11a" (orgtrello-buffer/--compute-marker-from-entry (orgtrello-data/make-hash-org :users :level :kwd "some-name" nil :due 1234      "buffername" :desc :tags :unknown))))
+  (should (equal "orgtrello-marker-6c59c5dcf6c83edaeb3f4923bfd929a091504bb3" (orgtrello-buffer/--compute-marker-from-entry (orgtrello-data/make-hash-org :users :level :kwd "some-name" nil :due 4321      "some-other-buffername" :desc :tags :unknown)))))
 
 (ert-deftest test-orgtrello-buffer/--compute-level-into-spaces ()
   (should (equal 2 (orgtrello-buffer/--compute-level-into-spaces 2)))
@@ -585,23 +667,22 @@ some text
   (should (equal "[-]" (orgtrello-buffer/--compute-state-checkbox "incomplete"))))
 
 (ert-deftest test-orgtrello-buffer/--dispatch-create-entities-map-with-adjacency ()
-  (should (equal 'orgtrello-buffer/--put-card-with-adjacency      (orgtrello-buffer/--dispatch-create-entities-map-with-adjacency (orgtrello-data/make-hash-org :users *ORGTRELLO/CARD-LEVEL* nil nil nil nil nil nil nil :comments :tags :unknown))))
-  (should (equal 'orgtrello-backend/--put-entities-with-adjacency (orgtrello-buffer/--dispatch-create-entities-map-with-adjacency (orgtrello-data/make-hash-org :users *ORGTRELLO/CHECKLIST-LEVEL* nil nil nil nil nil nil nil :comments :tags :unknown))))
-  (should (equal 'orgtrello-backend/--put-entities-with-adjacency (orgtrello-buffer/--dispatch-create-entities-map-with-adjacency (orgtrello-data/make-hash-org :users *ORGTRELLO/ITEM-LEVEL* nil nil nil nil nil nil nil :comments :tags :unknown)))))
+  (should (equal 'orgtrello-buffer/--put-card-with-adjacency      (orgtrello-buffer/--dispatch-create-entities-map-with-adjacency (orgtrello-data/make-hash-org :users *ORGTRELLO/CARD-LEVEL* nil nil nil nil nil nil nil :tags :unknown))))
+  (should (equal 'orgtrello-backend/--put-entities-with-adjacency (orgtrello-buffer/--dispatch-create-entities-map-with-adjacency (orgtrello-data/make-hash-org :users *ORGTRELLO/CHECKLIST-LEVEL* nil nil nil nil nil nil nil :tags :unknown))))
+  (should (equal 'orgtrello-backend/--put-entities-with-adjacency (orgtrello-buffer/--dispatch-create-entities-map-with-adjacency (orgtrello-data/make-hash-org :users *ORGTRELLO/ITEM-LEVEL* nil nil nil nil nil nil nil :tags :unknown)))))
 
 (ert-deftest test-orgtrello-buffer/--to-orgtrello-metadata ()
-  (should (equal "some name :orgtrello-id-identifier:"  (gethash :name       (orgtrello-buffer/--to-orgtrello-metadata '(:unknown :comments "" "" "buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil)))))
-  (should (equal "IN PROGRESS"                          (gethash :keyword    (orgtrello-buffer/--to-orgtrello-metadata '(:unknown :comments "" "" "buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil)))))
-  (should (equal 0                                      (gethash :level      (orgtrello-buffer/--to-orgtrello-metadata '(:unknown :comments "" "" "buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil)))))
-  (should (equal :id                                    (gethash :id         (orgtrello-buffer/--to-orgtrello-metadata '(:unknown :comments "" "" "buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil)))))
-  (should (equal :due                                   (gethash :due        (orgtrello-buffer/--to-orgtrello-metadata '(:unknown :comments "" "" "buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil)))))
-  (should (equal :point                                 (gethash :position   (orgtrello-buffer/--to-orgtrello-metadata '(:unknown :comments "" "" "buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil)))))
-  (should (equal "1,2,3"                                (gethash :member-ids (orgtrello-buffer/--to-orgtrello-metadata '(:unknown :comments "" "1,2,3" "buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil)))))
-  (should (equal :desc                                  (gethash :desc       (orgtrello-buffer/--to-orgtrello-metadata '(:unknown :comments :desc "1,2,3" "buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil)))))
-  (should (equal :comments                              (gethash :comments   (orgtrello-buffer/--to-orgtrello-metadata '(:unknown :comments :desc "1,2,3" "buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil)))))
-  (should (equal :unknown                               (gethash :unknown-properties (orgtrello-buffer/--to-orgtrello-metadata '(:unknown :comments :desc "1,2,3" "buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil)))))
+  (should (equal "some name :orgtrello-id-identifier:"  (gethash :name       (orgtrello-buffer/--to-orgtrello-metadata '(:unknown "" "" "buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil)))))
+  (should (equal "IN PROGRESS"                          (gethash :keyword    (orgtrello-buffer/--to-orgtrello-metadata '(:unknown "" "" "buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil)))))
+  (should (equal 0                                      (gethash :level      (orgtrello-buffer/--to-orgtrello-metadata '(:unknown "" "" "buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil)))))
+  (should (equal :id                                    (gethash :id         (orgtrello-buffer/--to-orgtrello-metadata '(:unknown "" "" "buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil)))))
+  (should (equal :due                                   (gethash :due        (orgtrello-buffer/--to-orgtrello-metadata '(:unknown "" "" "buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil)))))
+  (should (equal :point                                 (gethash :position   (orgtrello-buffer/--to-orgtrello-metadata '(:unknown "" "" "buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil)))))
+  (should (equal "1,2,3"                                (gethash :member-ids (orgtrello-buffer/--to-orgtrello-metadata '(:unknown "" "1,2,3" "buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil)))))
+  (should (equal :desc                                  (gethash :desc       (orgtrello-buffer/--to-orgtrello-metadata '(:unknown :desc "1,2,3" "buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil)))))
+  (should (equal :unknown                               (gethash :unknown-properties (orgtrello-buffer/--to-orgtrello-metadata '(:unknown :desc "1,2,3" "buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil)))))
   (should (equal :default (let ((*ORGTRELLO/ORG-KEYWORD-TRELLO-LIST-NAMES* '(:default :other-keywords-we-do-not-care)))
-                            (gethash :keyword (orgtrello-buffer/--to-orgtrello-metadata '(:unknown :comments "" "" "buffer-name.org" :point :id :due 0 1 nil nil "some name :orgtrello-id-identifier:" nil)))))))
+                            (gethash :keyword (orgtrello-buffer/--to-orgtrello-metadata '(:unknown "" "" "buffer-name.org" :point :id :due 0 1 nil nil "some name :orgtrello-id-identifier:" nil)))))))
 
 (ert-deftest test-orgtrello-buffer/--convert-orgmode-date-to-trello-date ()
   (should (equal "2013-07-18T02:00:00.000Z" (orgtrello-buffer/--convert-orgmode-date-to-trello-date "2013-07-18T02:00:00.000Z")))
@@ -612,31 +693,31 @@ some text
 (ert-deftest test-orgtrello-buffer/entry-get-full-metadata! ()
   ;; on card
   (should (equal nil    (->> (orgtrello-tests/with-temp-buffer "* card" (orgtrello-buffer/entry-get-full-metadata!))
-                          (orgtrello-data/parent))))
+                             (orgtrello-data/parent))))
   (should (equal nil    (->> (orgtrello-tests/with-temp-buffer "* card" (orgtrello-buffer/entry-get-full-metadata!))
-                          (orgtrello-data/grandparent))))
+                             (orgtrello-data/grandparent))))
   (should (equal "card" (->> (orgtrello-tests/with-temp-buffer "* card" (orgtrello-buffer/entry-get-full-metadata!))
-                          (orgtrello-data/current)
-                          orgtrello-data/entity-name)))
+                             (orgtrello-data/current)
+                             orgtrello-data/entity-name)))
   ;; on checklist
   (should (equal "card"      (->> (orgtrello-tests/with-temp-buffer "* card\n  - [ ] checklist\n" (orgtrello-buffer/entry-get-full-metadata!))
-                               (orgtrello-data/parent)
-                               orgtrello-data/entity-name)))
+                                  (orgtrello-data/parent)
+                                  orgtrello-data/entity-name)))
   (should (equal nil         (->> (orgtrello-tests/with-temp-buffer "* card\n  - [ ] checklist\n" (orgtrello-buffer/entry-get-full-metadata!))
-                               (orgtrello-data/grandparent))))
+                                  (orgtrello-data/grandparent))))
   (should (equal "checklist" (->> (orgtrello-tests/with-temp-buffer "* card\n  - [ ] checklist\n" (orgtrello-buffer/entry-get-full-metadata!))
-                               (orgtrello-data/current)
-                               orgtrello-data/entity-name)))
+                                  (orgtrello-data/current)
+                                  orgtrello-data/entity-name)))
   ;; on item
   (should (equal "checklist" (->> (orgtrello-tests/with-temp-buffer "* card\n  - [ ] checklist\n    - [ ] item\n" (orgtrello-buffer/entry-get-full-metadata!))
-                               (orgtrello-data/parent)
-                               orgtrello-data/entity-name)))
+                                  (orgtrello-data/parent)
+                                  orgtrello-data/entity-name)))
   (should (equal "card"      (->> (orgtrello-tests/with-temp-buffer "* card\n  - [ ] checklist\n    - [ ] item\n" (orgtrello-buffer/entry-get-full-metadata!))
-                               (orgtrello-data/grandparent)
-                               orgtrello-data/entity-name)))
+                                  (orgtrello-data/grandparent)
+                                  orgtrello-data/entity-name)))
   (should (equal "item"      (->> (orgtrello-tests/with-temp-buffer "* card\n  - [ ] checklist\n    - [ ] item\n" (orgtrello-buffer/entry-get-full-metadata!))
-                               (orgtrello-data/current)
-                               orgtrello-data/entity-name))))
+                                  (orgtrello-data/current)
+                                  orgtrello-data/entity-name))))
 
 (ert-deftest test-orgtrello-buffer/entity-metadata!-card ()
   (let ((h-values (orgtrello-tests/with-temp-buffer ":PROPERTIES:
@@ -753,12 +834,14 @@ DEADLINE: <2014-05-17 Sat>
     - [X] some item name :PROPERTIES: {\"orgtrello-id\":\"some-item-id\",\"orgtrello-local-checksum\":\"local-item-checksum-567\"}
     - [ ] some other item name :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\",\"orgtrello-local-checksum\":\"local-item-checksum-567\"}
   - [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\",\"orgtrello-local-checksum\":\"local-checkbox-checksum-567\"}
+
 ** COMMENT ardumont, some-date
 :PROPERTIES:
 :orgtrello-id: some-comment-id
 :orgtrello-local-checksum: local-comment-checksum-567
 :END:
 some comment
+
 "
                  (orgtrello-tests/with-temp-buffer-and-return-buffer-content
                   "" ;; no previous content on buffer
@@ -810,12 +893,14 @@ some comment
     - [X] some item name :PROPERTIES: {\"orgtrello-id\":\"some-item-id\",\"orgtrello-local-checksum\":\"local-item-checksum-567\"}
     - [ ] some other item name :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\",\"orgtrello-local-checksum\":\"local-item-checksum-567\"}
   - [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\",\"orgtrello-local-checksum\":\"local-checklist-checksum-567\"}
+
 ** COMMENT ardumont, some-date
 :PROPERTIES:
 :orgtrello-id: some-comment-id
 :orgtrello-local-checksum: local-comment-checksum-567
 :END:
 some comment
+
 
 * IN-PROGRESS another card
 :PROPERTIES:
@@ -1975,16 +2060,21 @@ generates another checksum
             (orgtrello-buffer/org-file-properties!)))))
 
 (ert-deftest test-orgtrello-buffer/--serialize-comment ()
-  (should (equal "** COMMENT tony, 10/10/2013\n:PROPERTIES:\n:orgtrello-id: comment-id\n:END:\nhello, this is a comment!\n"
-                 (let ((orgtrello/line-between-comments ""))
-                   (orgtrello-buffer/--serialize-comment (orgtrello-hash/make-properties '((:comment-user . "tony")
-                                                                                           (:comment-date . "10/10/2013")
-                                                                                           (:comment-id   . "comment-id")
-                                                                                           (:comment-text . "hello, this is a comment!"))))))))
+  (should (equal "\n** COMMENT tony, 10/10/2013\n:PROPERTIES:\n:orgtrello-id: comment-id\n:END:\nhello, this is a comment!\n"
+                 (orgtrello-buffer/--serialize-comment (orgtrello-hash/make-properties '((:comment-user . "tony")
+                                                                                         (:comment-date . "10/10/2013")
+                                                                                         (:comment-id   . "comment-id")
+                                                                                         (:comment-text . "hello, this is a comment!")))))))
 
 (ert-deftest test-orgtrello-buffer/trim-input-comment ()
   (should (string= "text as is"
-                   (orgtrello-buffer/trim-input-comment "# hello, some comment\n# ignore this also\ntext as is"))))
+                   (orgtrello-buffer/trim-input-comment "# hello, some comment\n# ignore this also\ntext as is")))
+  (should (string= "text as is\nwith lines"
+                   (orgtrello-buffer/trim-input-comment "# hello, some comment\n# ignore this also\ntext as is\nwith lines\n")))
+  (should (string= "line 1     \nline 2"
+                   (orgtrello-buffer/trim-input-comment "# comment line\n# another comment line\nline 1     \nline 2\n\n\n"))))
+
+
 
 (provide 'org-trello-buffer-tests)
 ;;; org-trello-buffer-tests.el ends here

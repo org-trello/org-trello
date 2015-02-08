@@ -39,10 +39,6 @@ If the VALUE is nil or empty, remove such PROPERTY."
   "Given the current position, extract the text content of current card."
   (apply 'buffer-substring-no-properties (orgtrello-entity/comment-description-region!)))
 
-(defun orgtrello-buffer/get-card-comments! ()
-  "Retrieve the card's comments. Can be nil if not on a card."
-  (orgtrello-buffer/org-entry-get (point) *ORGTRELLO/CARD-COMMENTS*))
-
 (defun orgtrello-buffer/get-local-checksum! ()
   "Retrieve local checksum."
   (funcall (if (orgtrello-entity/org-checkbox-p!) 'orgtrello-buffer/get-checkbox-local-checksum! 'orgtrello-buffer/get-card-local-checksum!)))
@@ -54,10 +50,6 @@ If the VALUE is nil or empty, remove such PROPERTY."
 (defun orgtrello-buffer/get-checkbox-local-checksum! ()
   "Retrieve the checkbox's current local checksum."
   (orgtrello-buffer/org-entry-get (point) *ORGTRELLO/LOCAL-CHECKSUM*))
-
-(defun orgtrello-buffer/put-card-comments! (comments)
-  "Retrieve the card's comments. Can be nil if not on a card."
-  (orgtrello-buffer/org-entry-put! (point) *ORGTRELLO/CARD-COMMENTS* comments))
 
 (defun orgtrello-buffer/org-get-property (property-key properties)
   "Retrieve the PROPERTY-KEY in PROPERTIES."
@@ -90,83 +82,23 @@ If the VALUE is nil or empty, remove such PROPERTY."
    (temp-buffer-resize-mode 1)
    (insert (format "%s:\n\n%s" title body-content))))
 
-(defvar orgtrello-buffer/register "*orgtrello-register*"
-  "The variable holding the Emacs' org-trello register.")
-
-(defvar orgtrello-buffer/card-id nil
-  "The variable holding the card-id needed to sync the comment.")
-
-(defvar orgtrello-buffer/return nil
-  "The variable holding the list `'buffer-name`', position.
-This, to get back to when closing the popup window.")
-
-(make-local-variable 'orgtrello-buffer/return)
-(make-local-variable 'orgtrello-buffer/card-id)
-
-(defun orgtrello-buffer/add-comment! (card-id)
-  "Pop up a window for the user to input a comment.
-CARD-ID is the needed id to create the comment."
-  (setq orgtrello-buffer/return (list (current-buffer) (point)))
-  (setq orgtrello-buffer/card-id card-id)
-  (window-configuration-to-register orgtrello-buffer/register)
-  (delete-other-windows)
-  (org-switch-to-buffer-other-window *ORGTRELLO/TITLE-BUFFER-INFORMATION*)
-  (erase-buffer)
-  (let ((org-inhibit-startup t))
-    (org-mode)
-    (insert (format "# Insert comment.\n# Finish with C-c C-c, or cancel with C-c C-k.\n\n"))
-    (define-key org-mode-map [remap org-ctrl-c-ctrl-c] 'orgtrello-buffer/kill-buffer-and-write-new-comment!)
-    (define-key org-mode-map [remap org-kill-note-or-show-branches] 'orgtrello-buffer/close-popup!)))
-
-(defun orgtrello-buffer/close-popup! ()
-  "Close the buffer at point."
-  (interactive)
-  (kill-buffer (current-buffer))
-  (jump-to-register orgtrello-buffer/register)
-  (define-key org-mode-map [remap org-ctrl-c-ctrl-c] nil)
-  (define-key org-mode-map [remap org-kill-note-or-show-branches] nil)
-  (let ((buffer-name (car orgtrello-buffer/return))
-        (pos         (cadr orgtrello-buffer/return)))
-    (pop-to-buffer buffer-name)
-    (goto-char pos)))
-
 (defun orgtrello-buffer/trim-input-comment (comment)
   "Trim the COMMENT."
   (let ((trim-comment comment))
-    (while (string-match "\\`# .*\n[ \t\n]*" trim-comment)
+    (while (string-match "\\`# .*\n[ \t\n]*" trim-comment) ;; remove # line comments
       (setq trim-comment (replace-match "" t t trim-comment)))
-    trim-comment))
-
-(defun orgtrello-buffer/kill-buffer-and-write-new-comment! ()
-  "Write comment present in the popup buffer."
-  (interactive)
-  (deferred:$
-    (deferred:next
-      (lambda ()
-        (let ((comment (orgtrello-buffer/trim-input-comment (buffer-string))))
-          (orgtrello-buffer/close-popup!)
-          comment)))
-    (deferred:nextc it
-      (lambda (comment)
-        (lexical-let ((new-comment comment))
-          (deferred:$
-            (deferred:next (lambda () (-> orgtrello-buffer/card-id
-                                   (orgtrello-api/add-card-comment new-comment)
-                                   (orgtrello-query/http-trello 'sync))))
-            (deferred:nextc it
-              (lambda (data)
-                (orgtrello-log/msg *OT/TRACE* "Add card comment - response data: %S" data)
-                (orgtrello-controller/checks-then-sync-card-from-trello!)))))))))
-
-(defun orgtrello-buffer/set-property-comment! (comments)
-  "Update comments property."
-  (orgtrello-buffer/org-entry-put! nil *ORGTRELLO/CARD-COMMENTS* comments))
+    (->> trim-comment
+         (s-split "\n")
+         nreverse
+         (--drop-while (string= "" it))
+         nreverse
+         (s-join "\n"))))
 
 (defun orgtrello-buffer/write-item! (item-id entities)
   "Write the item to the org buffer."
   (->> entities
-    (gethash item-id)
-    (orgtrello-buffer/write-entity! item-id))
+       (gethash item-id)
+       (orgtrello-buffer/write-entity! item-id))
   (save-excursion ;; item writing does insert a new line
     (forward-line -1)
     (orgtrello-buffer/write-properties-at-pt! item-id)))
@@ -192,20 +124,22 @@ At the end of it all, the cursor is moved after the new written text."
     (orgtrello-buffer/set-usernames-assigned-property! it)))
 
 (defun orgtrello-buffer/--write-comments! (entity)
-  "Update last comments "
+  "Update last comments."
   (->> entity
     orgtrello-data/entity-comments
     orgtrello-buffer/--write-comments-at-point!))
 
 (defun orgtrello-buffer/--write-comments-at-point! (comments)
   "Write comments in the buffer at point."
-  (mapc 'orgtrello-buffer/--write-comment-at-point comments))
+  (when comments
+    (mapc 'orgtrello-buffer/--write-comment-at-point comments)
+    (insert "\n")));; hack, otherwise, the buffer is messed up. Please, people, again feel free to improve this.
 
 (defun orgtrello-buffer/--write-comment-at-point (comment)
   "Write the COMMENT at the current position."
   (-> comment
-    orgtrello-buffer/--serialize-comment
-    insert)
+      orgtrello-buffer/--serialize-comment
+      insert)
   (orgtrello-buffer/write-local-comment-checksum-at-point!))
 
 (defun orgtrello-buffer/--serialize-comment (comment)
@@ -214,7 +148,7 @@ At the end of it all, the cursor is moved after the new written text."
         (comment-date (orgtrello-data/entity-comment-date comment))
         (comment-string (orgtrello-data/entity-comment-text comment))
         (comment-id (orgtrello-data/entity-comment-id comment)))
-    (format "** COMMENT %s, %s\n:PROPERTIES:\n:orgtrello-id: %s\n:END:\n%s\n%s" comment-user comment-date comment-id comment-string orgtrello/line-between-comments)))
+    (format "\n** COMMENT %s, %s\n:PROPERTIES:\n:orgtrello-id: %s\n:END:\n%s\n" comment-user comment-date comment-id comment-string)))
 
 (defun orgtrello-buffer/update-properties-unknown! (unknown-properties)
   "Write the alist UNKNOWN-PROPERTIES inside standard properties org drawer."
@@ -519,12 +453,13 @@ If yes, indent such region with INDENT space."
           (indent-rigidly start end indent))))));; now indent with the rightful indentation
 
 (defun orgtrello-buffer/indent-card-descriptions! ()
-  "Indent the card description rigidly starting at 2.
+  "Indent the buffer's card descriptions rigidly starting at 2.
 Function to be triggered by `before-save-hook` on org-trello-mode buffer."
   (when (and (eq major-mode 'org-mode) org-trello/mode)
     (orgtrello-buffer/org-map-entries
      (lambda ()
-       (orgtrello-buffer/indent-region! *ORGTRELLO-BUFFER/INDENT-DESCRIPTION* (orgtrello-entity/card-metadata-region!))))))
+       (-when-let (card-description (-> (orgtrello-buffer/entry-get-full-metadata!) orgtrello-data/current orgtrello-data/entity-description))
+         (orgtrello-buffer/indent-region! *ORGTRELLO-BUFFER/INDENT-DESCRIPTION* (orgtrello-entity/card-metadata-region!)))))))
 
 (defun orgtrello-buffer/indent-card-data! ()
   "Indent the card data rigidly starting at 2.
@@ -583,15 +518,14 @@ Deal with org entities and checkbox as well."
   "Compute the metadata for a given org entry. Also add some metadata identifier/due-data/point/buffer-name/etc..."
   (let ((current-point (point)))
     (->> (orgtrello-buffer/--extract-metadata!)
-      (cons (-> current-point (orgtrello-buffer/org-entry-get "DEADLINE") orgtrello-buffer/--convert-orgmode-date-to-trello-date))
-      (cons (orgtrello-buffer/extract-identifier! current-point))
-      (cons current-point)
-      (cons (buffer-name))
-      (cons (orgtrello-buffer/--user-ids-assigned-to-current-card))
-      (cons (orgtrello-buffer/--extract-description-at-point!))
-      (cons (orgtrello-buffer/org-entry-get current-point *ORGTRELLO/CARD-COMMENTS*))
-      (cons (orgtrello-buffer/org-unknown-drawer-properties!))
-      orgtrello-buffer/--to-orgtrello-metadata)))
+         (cons (-> current-point (orgtrello-buffer/org-entry-get "DEADLINE") orgtrello-buffer/--convert-orgmode-date-to-trello-date))
+         (cons (orgtrello-buffer/extract-identifier! current-point))
+         (cons current-point)
+         (cons (buffer-name))
+         (cons (orgtrello-buffer/--user-ids-assigned-to-current-card))
+         (cons (orgtrello-buffer/--extract-description-at-point!))
+         (cons (orgtrello-buffer/org-unknown-drawer-properties!))
+         orgtrello-buffer/--to-orgtrello-metadata)))
 
 (defun orgtrello-buffer/--filter-out-known-properties (list)
   "Filter out the org-trello known properties from the LIST."
@@ -645,8 +579,8 @@ Return nil if entry is not correct, otherwise return the full entity metadata st
 (defun orgtrello-buffer/--to-orgtrello-metadata (heading-metadata)
   "Given the HEADING-METADATA returned by the function 'org-heading-components.
 Make it a hashmap with key :level,  :keyword,  :name and their respective value."
-  (cl-destructuring-bind (unknown-properties comments description member-ids buffer-name point id due level _ keyword _ name tags) heading-metadata
-    (orgtrello-data/make-hash-org member-ids level (if keyword keyword (car *ORGTRELLO/ORG-KEYWORD-TRELLO-LIST-NAMES*)) name id due point buffer-name description comments tags unknown-properties)))
+  (cl-destructuring-bind (unknown-properties description member-ids buffer-name point id due level _ keyword _ name tags) heading-metadata
+    (orgtrello-data/make-hash-org member-ids level (if keyword keyword (car *ORGTRELLO/ORG-KEYWORD-TRELLO-LIST-NAMES*)) name id due point buffer-name description tags unknown-properties)))
 
 (defun orgtrello-buffer/filtered-kwds! ()
   "org keywords used (based on org-todo-keywords-1)."
@@ -784,11 +718,12 @@ COMPUTE-REGION-FN is the region computation function."
 
 (defun orgtrello-buffer/archive-cards! (trello-cards)
   "Given a list of TRELLO-CARDS, archive those if they are present on buffer."
-  (orgtrello-buffer/org-map-entries
-   (lambda ()
-     (let ((card-id (-> (orgtrello-buffer/entry-get-full-metadata!) orgtrello-data/current orgtrello-data/entity-id)))
-       (when (--some? (string= card-id (orgtrello-data/entity-id it)) trello-cards) ;; find a card to archive
-         (org-archive-subtree))))))
+  (when trello-cards
+    (orgtrello-buffer/org-map-entries
+     (lambda ()
+       (let ((card-id (-> (orgtrello-buffer/entry-get-full-metadata!) orgtrello-data/current orgtrello-data/entity-id)))
+         (when (--some? (string= card-id (orgtrello-data/entity-id it)) trello-cards) ;; find a card to archive
+           (org-archive-subtree)))))))
 
 (orgtrello-log/msg *OT/DEBUG* "orgtrello-buffer loaded!")
 

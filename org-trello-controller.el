@@ -202,30 +202,32 @@ Does not preserve position."
                 (point-start (point))
                 (board-id (orgtrello-buffer/board-id!)))
     (orgtrello-log/msg *OT/INFO* "Synchronizing the trello board '%s' to the org-mode file..." board-name)
-    (deferred:$
-      (deferred:parallel ;; concurrently retrieve:
-        (deferred:next ;; - `'trello archived`' card
-          (lambda ()
-            (-> board-id
+    (deferred:$ ;; In emacs 25, deferred:parallel blocks in this context. I don't understand why so I retrieve sequentially for the moment. People, feel free to help and improve.
+      (deferred:next
+        (lambda ()
+          (-> board-id
               orgtrello-api/get-archived-cards
-              (orgtrello-query/http-trello 'sync))))
-        (deferred:next ;; - `'trello opened`' card
-          (lambda ()
-            (-> board-id
-              orgtrello-api/get-full-cards
-              (orgtrello-query/http-trello 'sync)))))
+              (orgtrello-query/http-trello 'sync)
+              list)))
       (deferred:nextc it
-        (lambda (trello-archived-and-trello-opened-cards)
-          (let ((trello-archived-cards (elt trello-archived-and-trello-opened-cards 0))
-                (trello-cards (elt trello-archived-and-trello-opened-cards 1)))
+        (lambda (cards)
+          (-> board-id
+              orgtrello-api/get-full-cards
+              (orgtrello-query/http-trello 'sync)
+              (cons cards))))
+      (deferred:nextc it
+        (lambda (trello-opened-and-archived-cards)
+          (orgtrello-log/msg *OT/DEBUG* "Opened and archived trello-cards: %S" trello-opened-and-archived-cards)
+          (let ((trello-cards          (car  trello-opened-and-archived-cards))
+                (trello-archived-cards (cadr trello-opened-and-archived-cards)))
             ;; first archive the cards that needs to be
             (orgtrello-log/msg *OT/DEBUG* "Archived trello-cards: %S" trello-archived-cards)
             (orgtrello-buffer/archive-cards! trello-archived-cards)
             ;; Then update the buffer with the other opened trello cards
             (orgtrello-log/msg *OT/DEBUG* "Opened trello-cards: %S" trello-cards)
             (->> trello-cards
-              (mapcar 'orgtrello-data/to-org-trello-card)
-              (orgtrello-controller/sync-buffer-with-trello-cards! buffer-name)))))
+                 (mapcar 'orgtrello-data/to-org-trello-card)
+                 (orgtrello-controller/sync-buffer-with-trello-cards! buffer-name)))))
       (deferred:nextc it
         (lambda ()
           (orgtrello-buffer/save-buffer buffer-name)
@@ -722,19 +724,10 @@ Return the hashmap (name, id) of the new lists created."
 (defun orgtrello-controller/do-unassign-me ()
   "Command to unassign oneself of the card."
   (--> (orgtrello-buffer/get-usernames-assigned-property!)
-    (orgtrello-data/--users-from it)
-    (orgtrello-controller/--remove-user *ORGTRELLO/USER-LOGGED-IN* it)
-    (orgtrello-data/--users-to it)
-    (orgtrello-buffer/set-usernames-assigned-property! it)))
-
-(defun orgtrello-controller/--update-comments! (new-comment)
-  "Given a current position on a card and a new comment, add a new comment to the current comments."
-  (let ((comments (orgtrello-buffer/get-card-comments!)))
-    (->> (if comments comments "")
-      orgtrello-data/format-comments
-      (concat (orgtrello-buffer/me!) ": " new-comment *ORGTRELLO/CARD-COMMENTS-DELIMITER-PRINT*)
-      orgtrello-data/unformat-comments
-      orgtrello-buffer/put-card-comments!)))
+       (orgtrello-data/--users-from it)
+       (orgtrello-controller/--remove-user *ORGTRELLO/USER-LOGGED-IN* it)
+       (orgtrello-data/--users-to it)
+       (orgtrello-buffer/set-usernames-assigned-property! it)))
 
 (defun orgtrello-controller/do-add-card-comment! ()
   "Wait for the input to add a comment to the current card."
@@ -743,7 +736,7 @@ Return the hashmap (name, id) of the new lists created."
     (let ((card-id (-> (orgtrello-buffer/entity-metadata!) orgtrello-data/entity-id)))
       (if (or (null card-id) (string= "" card-id))
           (orgtrello-log/msg *OT/INFO* "Card not sync'ed so cannot add comment - skip.")
-        (orgtrello-buffer/add-comment! card-id)))))
+        (orgtrello-controller/add-comment! card-id)))))
 
 (defun orgtrello-controller/do-delete-card-comment! ()
   "Execute checks then do the actual card deletion if everything is ok."
@@ -800,7 +793,7 @@ Return the hashmap (name, id) of the new lists created."
 When GLOBALLY-FLAG is not nil, remove also local entities properties."
   (orgtrello-controller/--remove-properties-file! *ORGTRELLO/ORG-KEYWORD-TRELLO-LIST-NAMES* *ORGTRELLO/HMAP-USERS-NAME-ID* *ORGTRELLO/USER-LOGGED-IN* t) ;; remove any orgtrello relative entries
   (when globally-flag
-    (mapc 'orgtrello-buffer/delete-property! `(,*ORGTRELLO/ID* ,*ORGTRELLO/USERS-ENTRY* ,*ORGTRELLO/CARD-COMMENTS*))))
+    (mapc 'orgtrello-buffer/delete-property! `(,*ORGTRELLO/ID* ,*ORGTRELLO/USERS-ENTRY*))))
 
 (defun orgtrello-controller/do-write-board-metadata! (board-id board-name user-logged-in board-lists board-labels board-users-name-id)
   "Given a board id, write in the current buffer the updated data."
@@ -861,16 +854,77 @@ When GLOBALLY-FLAG is not nil, remove also local entities properties."
 (defun orgtrello-controller/jump-to-board! ()
   "Given the current position, execute the information extraction and jump to board action."
   (->> (orgtrello-buffer/board-id!)
-    (format "/b/%s")
-    org-trello/compute-url
-    browse-url))
+       (format "/b/%s")
+       org-trello/compute-url
+       browse-url))
 
 (defun orgtrello-controller/delete-setup! ()
   "Global org-trello metadata clean up."
   (orgtrello-controller/do-cleanup-from-buffer! t)
   (orgtrello-log/msg *OT/NOLOG* "Cleanup done!"))
 
-(defun orgtrello-buffer/prepare-buffer! ()
+(defvar orgtrello-controller/register "*orgtrello-register*"
+  "The variable holding the Emacs' org-trello register.")
+
+(defvar orgtrello-controller/card-id nil
+  "The variable holding the card-id needed to sync the comment.")
+
+(defvar orgtrello-controller/return nil
+  "The variable holding the list `'buffer-name`', position.
+This, to get back to when closing the popup window.")
+
+(make-local-variable 'orgtrello-controller/return)
+(make-local-variable 'orgtrello-controller/card-id)
+
+(defun orgtrello-controller/add-comment! (card-id)
+  "Pop up a window for the user to input a comment.
+CARD-ID is the needed id to create the comment."
+  (setq orgtrello-controller/return (list (current-buffer) (point)))
+  (setq orgtrello-controller/card-id card-id)
+  (window-configuration-to-register orgtrello-controller/register)
+  (delete-other-windows)
+  (org-switch-to-buffer-other-window *ORGTRELLO/TITLE-BUFFER-INFORMATION*)
+  (erase-buffer)
+  (let ((org-inhibit-startup t))
+    (org-mode)
+    (insert (format "# Insert comment.\n# Finish with C-c C-c, or cancel with C-c C-k.\n\n"))
+    (define-key org-mode-map [remap org-ctrl-c-ctrl-c] 'orgtrello-controller/kill-buffer-and-write-new-comment!)
+    (define-key org-mode-map [remap org-kill-note-or-show-branches] 'orgtrello-controller/close-popup!)))
+
+(defun orgtrello-controller/close-popup! ()
+  "Close the buffer at point."
+  (interactive)
+  (kill-buffer (current-buffer))
+  (jump-to-register orgtrello-controller/register)
+  (define-key org-mode-map [remap org-ctrl-c-ctrl-c] nil)
+  (define-key org-mode-map [remap org-kill-note-or-show-branches] nil)
+  (let ((buffer-name (car orgtrello-controller/return))
+        (pos         (cadr orgtrello-controller/return)))
+    (pop-to-buffer buffer-name)
+    (goto-char pos)))
+
+(defun orgtrello-controller/kill-buffer-and-write-new-comment! ()
+  "Write comment present in the popup buffer."
+  (interactive)
+  (deferred:$
+    (deferred:next
+      (lambda ()
+        (let ((comment (orgtrello-buffer/trim-input-comment (buffer-string))))
+          (orgtrello-controller/close-popup!)
+          comment)))
+    (deferred:nextc it
+      (lambda (comment)
+        (lexical-let ((new-comment comment))
+          (deferred:$
+            (deferred:next (lambda () (-> orgtrello-controller/card-id
+                                     (orgtrello-api/add-card-comment new-comment)
+                                     (orgtrello-query/http-trello 'sync))))
+            (deferred:nextc it
+              (lambda (data)
+                (orgtrello-log/msg *OT/TRACE* "Add card comment - response data: %S" data)
+                (orgtrello-controller/checks-then-sync-card-from-trello!)))))))))
+
+(defun orgtrello-controller/prepare-buffer! ()
   "Prepare the buffer to receive org-trello data."
   (when (and (eq major-mode 'org-mode) org-trello/mode)
     (orgtrello-buffer/install-overlays!)
@@ -884,9 +938,9 @@ When GLOBALLY-FLAG is not nil, remove also local entities properties."
   ;; buffer-invisibility-spec
   (add-to-invisibility-spec '(org-trello-cbx-property)) ;; for an ellipsis (-> ...) change to '(org-trello-cbx-property . t)
   ;; installing hooks
-  (add-hook 'before-save-hook 'orgtrello-buffer/prepare-buffer!)
+  (add-hook 'before-save-hook 'orgtrello-controller/prepare-buffer!)
   ;; prepare the buffer at activation time
-  (orgtrello-buffer/prepare-buffer!)
+  (orgtrello-controller/prepare-buffer!)
   ;; run hook at startup
   (run-hooks 'org-trello-mode-hook))
 
@@ -895,7 +949,7 @@ When GLOBALLY-FLAG is not nil, remove also local entities properties."
   ;; remove the invisible property names
   (remove-from-invisibility-spec '(org-trello-cbx-property)) ;; for an ellipsis (...) change to '(org-trello-cbx-property . t)
   ;; removing hooks
-  (remove-hook 'before-save-hook 'orgtrello-buffer/prepare-buffer!)
+  (remove-hook 'before-save-hook 'orgtrello-controller/prepare-buffer!)
   ;; remove org-trello overlays
   (orgtrello-buffer/remove-overlays!)
   ;; deactivate org-trello/mode

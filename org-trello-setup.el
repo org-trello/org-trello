@@ -46,26 +46,11 @@
 (defconst *ORGTRELLO/USER-LOGGED-IN*    nil
   "Current user logged in.")
 
-(defconst *ORGTRELLO/CARD-COMMENTS* "orgtrello-card-comments"
-  "Current card's comments property.")
-
 (defconst *ORGTRELLO/LOCAL-CHECKSUM* "orgtrello-local-checksum"
   "Current card's checksum property.")
 
-(defconst *ORGTRELLO/CARD-COMMENTS-DELIMITER* "###"
-  "Current card's comments delimiter.")
-
-(defconst *ORGTRELLO/CARD-COMMENTS-DELIMITER-PRINT* "\n\n"
-  "Current card's comments delimiter to print.")
-
-(defconst *ORGTRELLO/DO-SHOW-CARD-COMMENTS-AFTER-ADDING* nil
-  "Show the comment buffer after adding one comment.")
-
 (defconst *ORGTRELLO/TITLE-BUFFER-INFORMATION* "*org-trello-information*"
   "Title for the org-trello buffers that display information.")
-
-(defconst *ORGTRELLO/TITLE-BUFFER-COMMENT* "*org-trello-comment*"
-  "Title for the org-trello comment buffer that permit comment input.")
 
 (defconst *ORGTRELLO/DEADLINE-PREFIX*   "DEADLINE:"
   "Deadline (org's equivalent to trello's due date property) prefix.")
@@ -138,8 +123,8 @@ This is intended as a buffer local variable.")
         *ORGTRELLO/USER-LOGGED-IN*
         org-trello/mode))
 
-(defconst *ORGTRELLO/CONFIG-DIR*
-  (concat (getenv "HOME") "/" ".trello"))
+(defconst *ORGTRELLO/CONFIG-DIR* "~/.trello"
+  "Default trello directory for the configuration files.")
 
 (defconst *ORGTRELLO/CONFIG-FILE*
   (concat *ORGTRELLO/CONFIG-DIR* "/config.el"))
@@ -239,12 +224,6 @@ This is intended as a buffer local variable.")
          (orgtrello-setup/install-local-keybinding-map! *ORGTRELLO/MODE-PREVIOUS-PREFIX-KEYBINDING* prefix-keybinding *org-trello-interactive-command-binding-couples*)
          `(set *ORGTRELLO/MODE-PREVIOUS-PREFIX-KEYBINDING* ,variable)
          (set variable prefix-keybinding))
-  :group 'org-trello)
-
-(defcustom orgtrello/line-between-comments (if (version<= "8.3" (org-version)) "\n" "")
-  "A customizable property to add a line between comments."
-  :type 'string
-  :require 'org-trello
   :group 'org-trello)
 
 (provide 'org-trello-setup)

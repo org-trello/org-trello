@@ -28,6 +28,11 @@
   (setq org-trello-mode-off-hook)
   (call-interactively 'org-trello-mode))
 
+(defun orgtrello-tests/prepare-buffer! ()
+  "orgtrello-tests - Prepare the buffer to receive org-trello data."
+  (orgtrello-buffer/indent-card-descriptions!)
+  (orgtrello-buffer/indent-card-data!))
+
 (defmacro orgtrello-tests/with-temp-buffer (text body-test &optional nb-lines-forward)
   `(with-temp-buffer
      (org-mode)
@@ -45,6 +50,17 @@
      (org-trello-mode-test)
      (orgtrello-controller/setup-properties!)
      ,body-test
+     (buffer-substring-no-properties (point-min) (point-max))))
+
+(defmacro orgtrello-tests/with-temp-buffer-indented-and-return-buffer-content (text body-test &optional nb-line-forwards)
+  `(with-temp-buffer
+     (org-mode)
+     (insert ,text)
+     (forward-line (if ,nb-line-forwards ,nb-line-forwards -1))
+     (org-trello-mode-test)
+     (orgtrello-controller/setup-properties!)
+     ,body-test
+     (orgtrello-tests/prepare-buffer!) ;; force the indentation without hook (show how it's done using hook at runtime)
      (buffer-substring-no-properties (point-min) (point-max))))
 
 (defmacro orgtrello-tests/with-org-buffer (text body-test)

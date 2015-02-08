@@ -20,14 +20,14 @@
 "
                  (orgtrello-action/functional-controls-then-do
                   '(orgtrello-controller/--right-level-p)
-                  (orgtrello-data/make-hierarchy (orgtrello-data/make-hash-org :users 4 :kwd :name nil :due :position :buffer-name :desc :comments :tags :unknown))
+                  (orgtrello-data/make-hierarchy (orgtrello-data/make-hash-org :users 4 :kwd :name nil :due :position :buffer-name :desc :tags :unknown))
                   (lambda (entity s) (format "%S %s" entity s))
                   "- hello")))
 
-  (should (equal "#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:current #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:buffername :buffer-name :position :position :level 3 :keyword :kwd :name :name :id nil :due :due :member-ids :users :desc :desc :comments :comments :tags :tags :unknown-properties :unknown)) :parent nil :grandparent nil)) - hello"
+  (should (equal "#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:current #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:buffername :buffer-name :position :position :level 3 :keyword :kwd :name :name :id nil :due :due :member-ids :users :desc :desc :tags :tags :unknown-properties :unknown)) :parent nil :grandparent nil)) - hello"
                  (orgtrello-action/functional-controls-then-do
                   '(orgtrello-controller/--right-level-p)
-                  (orgtrello-data/make-hierarchy (orgtrello-data/make-hash-org :users 3 :kwd :name nil :due :position :buffer-name :desc :comments :tags :unknown))
+                  (orgtrello-data/make-hierarchy (orgtrello-data/make-hash-org :users 3 :kwd :name nil :due :position :buffer-name :desc :tags :unknown))
                   (lambda (entity s) (format "%S %s" entity s))
                   "- hello")))
 
@@ -36,14 +36,14 @@
 "
                  (orgtrello-action/functional-controls-then-do
                   '(orgtrello-controller/--mandatory-name-ok-p)
-                  (orgtrello-data/make-hierarchy (orgtrello-data/make-hash-org :users 1 :kwd nil :level :due :position :buffer-name :desc :comments :tags :unknown))
+                  (orgtrello-data/make-hierarchy (orgtrello-data/make-hash-org :users 1 :kwd nil :level :due :position :buffer-name :desc :tags :unknown))
                   (lambda (entity s) (format "%S %s" entity s))
                   "- hello")))
 
-  (should (equal "#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:current #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:buffername :buffer-name :position :position :level 3 :keyword :kwd :name \"name\" :id :level :due :due :member-ids :users :desc :desc :comments :comments :tags :tags :unknown-properties :unknown)) :parent nil :grandparent nil)) - hello"
+  (should (equal "#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:current #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:buffername :buffer-name :position :position :level 3 :keyword :kwd :name \"name\" :id :level :due :due :member-ids :users :desc :desc :tags :tags :unknown-properties :unknown)) :parent nil :grandparent nil)) - hello"
                  (orgtrello-action/functional-controls-then-do
                   '(orgtrello-controller/--right-level-p)
-                  (orgtrello-data/make-hierarchy (orgtrello-data/make-hash-org :users 3 :kwd "name" :level :due :position :buffer-name :desc :comments :tags :unknown))
+                  (orgtrello-data/make-hierarchy (orgtrello-data/make-hash-org :users 3 :kwd "name" :level :due :position :buffer-name :desc :tags :unknown))
                   (lambda (entity s) (format "%S %s" entity s))
                   "- hello")))
   (should (equal "org-trello - List of errors:
@@ -51,14 +51,14 @@
 "
                  (orgtrello-action/functional-controls-then-do
                   '(orgtrello-controller/--right-level-p orgtrello-controller/--already-synced-p)
-                  (orgtrello-data/make-hierarchy (orgtrello-data/make-hash-org :users 1 :kwd :name nil :due :position :buffer-name :desc :comments :tags :unknown))
+                  (orgtrello-data/make-hierarchy (orgtrello-data/make-hash-org :users 1 :kwd :name nil :due :position :buffer-name :desc :tags :unknown))
                   (lambda (entity s) (format "%S %s" entity s))
                   "- hello")))
-  (should (equal "#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:current #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:buffername :buffer-name :position :position :level 1 :keyword :kwd :name :name :id \"some-id\" :due :due :member-ids :users :desc :desc :comments :comments :tags :tags :unknown-properties :unknown)) :parent nil :grandparent nil)) - hello"
+  (should (equal "#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:current #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:buffername :buffer-name :position :position :level 1 :keyword :kwd :name :name :id \"some-id\" :due :due :member-ids :users :desc :desc :tags :tags :unknown-properties :unknown)) :parent nil :grandparent nil)) - hello"
 
                  (orgtrello-action/functional-controls-then-do
                   '(orgtrello-controller/--right-level-p orgtrello-controller/--already-synced-p)
-                  (orgtrello-data/make-hierarchy (orgtrello-data/make-hash-org :users 1 :kwd :name "some-id" :due :position :buffer-name :desc :comments :tags :unknown))
+                  (orgtrello-data/make-hierarchy (orgtrello-data/make-hash-org :users 1 :kwd :name "some-id" :due :position :buffer-name :desc :tags :unknown))
                   (lambda (entity s) (format "%S %s" entity s))
                   "- hello"))))
 

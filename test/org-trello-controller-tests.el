@@ -3,7 +3,7 @@
 (require 'el-mock)
 
 (ert-deftest test-orgtrello-controller/--compute-data-from-entity-meta ()
-  (let* ((entry   (orgtrello-data/make-hash-org :member-ids :some-level :some-keyword :some-name "some-id" :some-due :some-point :some-buffername :desc :comments :tags :unknown)))
+  (let* ((entry   (orgtrello-data/make-hash-org :member-ids :some-level :some-keyword :some-name "some-id" :some-due :some-point :some-buffername :desc :tags :unknown)))
     (should (equal (orgtrello-data/entity-id entry)          "some-id"))
     (should (equal (orgtrello-data/entity-name entry)        :some-name))
     (should (equal (orgtrello-data/entity-keyword entry)     :some-keyword))
@@ -13,7 +13,6 @@
     (should (equal (orgtrello-data/entity-buffername entry)  :some-buffername))
     (should (equal (orgtrello-data/entity-member-ids entry)  :member-ids))
     (should (equal (orgtrello-data/entity-tags entry)        :tags))
-    (should (equal (orgtrello-data/entity-comments entry)    :comments))
     (should (equal (orgtrello-data/entity-description entry) :desc))
     (should (equal (orgtrello-data/entity-unknown-properties entry) :unknown))))
 
@@ -275,18 +274,21 @@
     - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\",\"orgtrello-local-checksum\":\"local-item-checksum-678\"}
     - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\",\"orgtrello-local-checksum\":\"local-item-checksum-678\"}
   - [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\",\"orgtrello-local-checksum\":\"local-checklist-checksum-678\"}
+
 ** COMMENT ardumont, 10/10/2010
 :PROPERTIES:
 :orgtrello-id: some-comment-id
 :orgtrello-local-checksum: local-comment-checksum-678
 :END:
 some comment
+
 ** COMMENT tony, 11/10/2010
 :PROPERTIES:
 :orgtrello-id: some-comment-id2
 :orgtrello-local-checksum: local-comment-checksum-678
 :END:
 some second comment
+
 
 * other card name
 "
@@ -382,18 +384,21 @@ some description
     - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\",\"orgtrello-local-checksum\":\"item-checksum-12\"}
     - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\",\"orgtrello-local-checksum\":\"item-checksum-12\"}
   - [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\",\"orgtrello-local-checksum\":\"checklist-checksum-12\"}
+
 ** COMMENT ardumont, 10/10/2010
 :PROPERTIES:
 :orgtrello-id: some-comment-id
 :orgtrello-local-checksum: comment-checksum-12
 :END:
 some comment
+
 ** COMMENT tony, 11/10/2010
 :PROPERTIES:
 :orgtrello-id: some-comment-id2
 :orgtrello-local-checksum: comment-checksum-12
 :END:
 some second comment
+
 * TODO other card name
   :PROPERTIES:
   :orgtrello-id: some-new-marker
@@ -494,18 +499,21 @@ some description
     - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\",\"orgtrello-local-checksum\":\"item-checksum-1234\"}
     - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\",\"orgtrello-local-checksum\":\"item-checksum-1234\"}
   - [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\",\"orgtrello-local-checksum\":\"checklist-checksum-1234\"}
+
 ** COMMENT ardumont, 10/10/2010
 :PROPERTIES:
 :orgtrello-id: some-comment-id
 :orgtrello-local-checksum: comment-checksum-1234
 :END:
 some comment
+
 ** COMMENT tony, 11/10/2010
 :PROPERTIES:
 :orgtrello-id: some-comment-id2
 :orgtrello-local-checksum: comment-checksum-1234
 :END:
 some second comment
+
 * TODO other card name                                                  :green:
   :PROPERTIES:
   :orgtrello-users: dude
@@ -621,18 +629,21 @@ some description
     - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\",\"orgtrello-local-checksum\":\"item-checksum-123456\"}
     - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\",\"orgtrello-local-checksum\":\"item-checksum-123456\"}
   - [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\",\"orgtrello-local-checksum\":\"checklist-checksum-123456\"}
+
 ** COMMENT ardumont, 10/10/2010
 :PROPERTIES:
 :orgtrello-id: some-comment-id
 :orgtrello-local-checksum: comment-checksum-123456
 :END:
 some comment
+
 ** COMMENT tony, 11/10/2010
 :PROPERTIES:
 :orgtrello-id: some-comment-id2
 :orgtrello-local-checksum: comment-checksum-123456
 :END:
 some second comment
+
 * DONE other card name                                                  :green:
   :PROPERTIES:
   :orgtrello-users: dude
