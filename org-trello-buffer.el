@@ -133,7 +133,7 @@ At the end of it all, the cursor is moved after the new written text."
   "Write comments in the buffer at point."
   (when comments
     (mapc 'orgtrello-buffer/--write-comment-at-point comments)
-    (when (= 1 (length comments)) (insert "\n"))));; hack, otherwise, the buffer is messed up. Please, people, again feel free to improve this.
+    (insert "\n")));; hack, otherwise, the buffer is messed up. Please, people, again feel free to improve this.
 
 (defun orgtrello-buffer/--write-comment-at-point (comment)
   "Write the COMMENT at the current position."
