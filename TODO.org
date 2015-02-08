@@ -7,10 +7,11 @@
 - [ ] Another Disposition about org's buffer - https://github.com/org-trello/org-trello/issues/33
 - [ ] Add a file to the org-trello list - https://github.com/org-trello/org-trello/issues/211
 - [ ] One command to sync them all - https://github.com/org-trello/org-trello/issues/5
-* IN-PROGRESS 0.6.9.2 [66%]
+* IN-PROGRESS 0.6.9.2 [71%]
 - [X] Update version
 - [X] Clean dead code regarding old comments system
-- [X] Fix bug regarding comments
+- [X] Fix bug regarding comments indentation (breaking org rendering)
+- [X] Fix bug regarding empty card and next card indentation (breaking org rendering)
 - [X] Fix compile log warning about orgtrello-buffer depending on orgtrello-controller (wrong)
 - [ ] Update README-dev.md
 - [ ] Release notes

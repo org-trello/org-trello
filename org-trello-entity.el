@@ -42,9 +42,13 @@ Provided indent as the denominator for the checkbox's nature."
 
 (defun orgtrello-entity/org-comment-p! ()
   "Given the current position, determine if we are currently on a comment."
-  (save-excursion
-    (org-back-to-heading)
-    (orgtrello-entity/org-heading-with-level-p! 2)))
+  (or
+   (save-excursion
+     (org-back-to-heading)
+     (orgtrello-entity/org-heading-with-level-p! 2))
+   (->> (buffer-substring (point-at-bol) (point-at-eol))
+        s-trim-left
+        (s-starts-with? "** "))))
 
 (defun orgtrello-entity/back-to-card! ()
   "Given the current position, goes on the card's heading.
@@ -123,8 +127,10 @@ Does preserve position.
 If no comment is found, return the card's end region."
   (save-excursion
     (orgtrello-entity/back-to-card!)
-    (-if-let (next-pt (search-forward "** " nil t)) ;; if not found, return nil and do not move point
-        (point-at-bol)
+    (-if-let (next-pt (search-forward-regexp "[*][*] " nil t)) ;; if not found, return nil and do not move point
+        (save-excursion
+          (goto-char next-pt)
+          (point-at-bol))
       (orgtrello-entity/compute-next-card-point!))))
 
 (defun orgtrello-entity/compute-checklist-header-region! ()
