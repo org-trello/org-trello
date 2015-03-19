@@ -127,11 +127,15 @@ Does preserve position.
 If no comment is found, return the card's end region."
   (save-excursion
     (orgtrello-entity/back-to-card!)
-    (-if-let (next-pt (search-forward-regexp "[*][*] " nil t)) ;; if not found, return nil and do not move point
-        (save-excursion
-          (goto-char next-pt)
-          (point-at-bol))
-      (orgtrello-entity/compute-next-card-point!))))
+    (let ((card-region (orgtrello-entity/compute-card-region!)))
+      (apply 'narrow-to-region card-region)
+      (let ((next-pt (-if-let (next-pt (search-forward-regexp "[*][*] " nil t)) ;; if not found, return nil and do not move point
+                         (save-excursion
+                           (goto-char next-pt)
+                           (point-at-bol))
+                       (orgtrello-entity/compute-next-card-point!))))
+        (widen)
+        next-pt))))
 
 (defun orgtrello-entity/compute-checklist-header-region! ()
   "Compute the checklist's region (only the header, without computing the zone occupied by items) couple '(start end)."
