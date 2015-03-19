@@ -102,8 +102,6 @@ Please consider upgrading Emacs." emacs-version) "Error message when installing 
 (require 'org)
 (require 'json)
 (require 'parse-time)
-(require 'timer)
-(require 'align)
 
 (defconst *ORGTRELLO/VERSION* "0.6.9.3" "Current org-trello version installed.")
 
