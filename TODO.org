@@ -11,9 +11,9 @@
 - [ ] Create backlog
 - [ ] Update version
 - [ ] Clean org-trello variable
-* IN-PROGRESS 0.6.9.3 [25%]
+* IN-PROGRESS 0.6.9.3 [50%]
 - [X] Create backlog
-- [ ] Update version
+- [X] Update version
 - [ ] Fix #242
 - [ ] Release notes
 * DONE 0.6.9.2 [100%]
