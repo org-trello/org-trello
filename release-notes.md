@@ -1,3 +1,10 @@
+# 0.6.9.3
+
+- [X] Create backlog
+- [X] Update version
+- [X] Problem in first comment point computation - Close #242
+- [X] Release notes
+
 # 0.6.9.2
 
 - [X] Update version
