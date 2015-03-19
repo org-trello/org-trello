@@ -11,11 +11,11 @@
 - [ ] Create backlog
 - [ ] Update version
 - [ ] Clean org-trello variable
-* IN-PROGRESS 0.6.9.3 [75%]
+* IN-PROGRESS 0.6.9.3 [100%]
 - [X] Create backlog
 - [X] Update version
 - [X] Problem in first comment point computation - Close #242
-- [ ] Release notes
+- [X] Release notes
 * DONE 0.6.9.2 [100%]
 CLOSED: [2015-02-08 Sun 19:13]
 - [X] Update version
