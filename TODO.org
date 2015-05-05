@@ -11,7 +11,12 @@
 - [ ] Create backlog
 - [ ] Update version
 - [ ] Clean org-trello variable
-* IN-PROGRESS 0.6.9.3 [100%]
+* IN-PROGRESS 0.6.9.4 [33%]
+- [X] Update version
+- [ ] Fix https://github.com/org-trello/org-trello/issues/252
+- [ ] Release notes
+* DONE 0.6.9.3 [100%]
+CLOSED: [2015-05-05 Tue 20:50]
 - [X] Create backlog
 - [X] Update version
 - [X] Problem in first comment point computation - Close #242
