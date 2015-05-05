@@ -11,7 +11,8 @@
 - [ ] Create backlog
 - [ ] Update version
 - [ ] Clean org-trello variable
-* IN-PROGRESS 0.6.9.4 [100%]
+* DONE 0.6.9.4 [100%]
+CLOSED: [2015-05-05 Tue 20:52]
 - [X] Update version
 - [X] Fix https://github.com/org-trello/org-trello/issues/252
 - [X] Release notes
