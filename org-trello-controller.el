@@ -937,6 +937,8 @@ CARD-ID is the needed id to create the comment."
   (setq org-trello/mode 'activated)
   ;; buffer-invisibility-spec
   (add-to-invisibility-spec '(org-trello-cbx-property)) ;; for an ellipsis (-> ...) change to '(org-trello-cbx-property . t)
+  ;; Setup the buffer
+  (orgtrello-controller/setup-properties!)
   ;; installing hooks
   (add-hook 'before-save-hook 'orgtrello-controller/prepare-buffer!)
   ;; prepare the buffer at activation time

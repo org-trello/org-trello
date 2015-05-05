@@ -1,3 +1,9 @@
+# 0.6.9.4
+
+- [X] Update version
+- [X] Fix https://github.com/org-trello/org-trello/issues/252
+- [X] Release notes
+
 # 0.6.9.3
 
 - [X] Create backlog
