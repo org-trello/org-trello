@@ -67,8 +67,8 @@
   "Trace functions FNS."
   (mapc 'untrace-function fns))
 
-;; (trace-functions '(orgtrello-data/--parse-actions))
-;; (untrace-functions '(orgtrello-data/--parse-actions))
+;; (trace-functions '(orgtrello-data/parse-data))
+;; (untrace-functions '(orgtrello-data/parse-data))
 
 (provide 'load-org-trello)
 ;;; load-org-trello.el ends here

@@ -1,3 +1,11 @@
+# 0.6.9.5
+
+- [X] Create backlog
+- [X] Update version
+- [X] Fix marmalade's release.sh script
+- [X] Fix #255 regarding the org tags/trello labels
+- [X] Release notes
+
 # 0.6.9.4
 
 - [X] Update version

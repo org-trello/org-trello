@@ -4,7 +4,7 @@
 
 ;; Author: Antoine R. Dumont <eniotna.t AT gmail.com>
 ;; Maintainer: Antoine R. Dumont <eniotna.t AT gmail.com>
-;; Version: 0.6.9.4
+;; Version: 0.6.9.5
 ;; Package-Requires: ((emacs "24") (dash "2.8.0") (s "1.9.0") (deferred "0.3.2") (request-deferred "0.2.0"))
 ;; Keywords: org-mode trello sync org-trello
 ;; URL: https://github.com/org-trello/org-trello
@@ -103,7 +103,7 @@ Please consider upgrading Emacs." emacs-version) "Error message when installing 
 (require 'json)
 (require 'parse-time)
 
-(defconst *ORGTRELLO/VERSION* "0.6.9.4" "Current org-trello version installed.")
+(defconst *ORGTRELLO/VERSION* "0.6.9.5" "Current org-trello version installed.")
 
 
 

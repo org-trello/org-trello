@@ -9,6 +9,7 @@ To install the token, execute the install-marmalade-token.sh.
 EOF
     exit 1;
 fi
+VERSION=$1
 
 WDIR=$(dirname $0)
 

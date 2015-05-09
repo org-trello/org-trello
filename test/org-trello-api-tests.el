@@ -36,7 +36,7 @@
                  (gethash :uri    (orgtrello-api/get-full-cards :board-id))))
   (should (equal '(("actions" . "commentCard")
                    ("checklists" . "all") ("filter" . "open")
-                   ("fields" . "closed,desc,due,idBoard,idList,idMembers,name,pos"))
+                   ("fields" . "closed,desc,due,idBoard,idList,idMembers,labels,name,pos"))
                  (gethash :params (orgtrello-api/get-full-cards :board-id)))))
 
 (ert-deftest test-orgtrello-api/get-full-card ()
@@ -57,7 +57,7 @@
   (should (equal "/boards/:board-id/cards"
                  (gethash :uri    (orgtrello-api/get-archived-cards :board-id))))
   (should (equal '(("filter" . "closed")
-                   ("fields" . "closed,desc,due,idBoard,idList,idMembers,name,pos"))
+                   ("fields" . "closed,desc,due,idBoard,idList,idMembers,labels,name,pos"))
                  (gethash :params (orgtrello-api/get-archived-cards :board-id)))))
 
 (ert-deftest test-orgtrello-api/get-card ()
