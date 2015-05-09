@@ -7,11 +7,12 @@
 - [ ] Another Disposition about org's buffer - https://github.com/org-trello/org-trello/issues/33
 - [ ] Add a file to the org-trello list - https://github.com/org-trello/org-trello/issues/211
 - [ ] One command to sync them all - https://github.com/org-trello/org-trello/issues/5
-* IN-PROGRESS 0.6.9.5 [75%]
+* IN-PROGRESS 0.6.9.5 [80%]
 - [X] Create backlog
 - [X] Update version
 - [X] Fix marmalade's release.sh script
-- [ ] Fix #255 regarding the org tags/trello labels
+- [X] Fix #255 regarding the org tags/trello labels
+- [ ] Release notes
 * DONE 0.6.9.4 [100%]
 CLOSED: [2015-05-05 Tue 20:52]
 - [X] Update version
