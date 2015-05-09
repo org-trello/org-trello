@@ -7,10 +7,11 @@
 - [ ] Another Disposition about org's buffer - https://github.com/org-trello/org-trello/issues/33
 - [ ] Add a file to the org-trello list - https://github.com/org-trello/org-trello/issues/211
 - [ ] One command to sync them all - https://github.com/org-trello/org-trello/issues/5
-* TODO 0.7.0 [0%]
-- [ ] Create backlog
+* IN-PROGRESS 0.6.9.5 [25%]
+- [X] Create backlog
 - [ ] Update version
-- [ ] Clean org-trello variable
+- [ ] Fix release script
+- [ ] Fix #255 regarding the org tags/trello labels
 * DONE 0.6.9.4 [100%]
 CLOSED: [2015-05-05 Tue 20:52]
 - [X] Update version
