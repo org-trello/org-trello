@@ -25,11 +25,11 @@
   (should (equal nil (orgtrello-proxy/--compute-check "anything-else"))))
 
 (ert-deftest test-orgtrello-proxy/--tags-to-labels ()
-  (should (equal "a,b,c" (orgtrello-proxy/--tags-to-labels ":a:b:c")))
-  (should (equal "a,b,c" (orgtrello-proxy/--tags-to-labels "a:b:c")))
-  (should (equal "a," (orgtrello-proxy/--tags-to-labels ":a:")))
-  (should (equal "a," (orgtrello-proxy/--tags-to-labels "a:")))
-  (should (equal nil  (orgtrello-proxy/--tags-to-labels nil))))
+  (should (string= "a,b,c" (orgtrello-proxy/--tags-to-labels ":a:b:c")))
+  (should (string= "a,b,c" (orgtrello-proxy/--tags-to-labels "a:b:c")))
+  (should (string= "a," (orgtrello-proxy/--tags-to-labels ":a:")))
+  (should (string= "a," (orgtrello-proxy/--tags-to-labels "a:")))
+  (should (string= ""  (orgtrello-proxy/--tags-to-labels nil))))
 
 (provide 'org-trello-proxy-tests)
 ;;; org-trello-proxy-tests.el ends here
