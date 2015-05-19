@@ -7,6 +7,12 @@
 - [ ] Another Disposition about org's buffer - https://github.com/org-trello/org-trello/issues/33
 - [ ] Add a file to the org-trello list - https://github.com/org-trello/org-trello/issues/211
 - [ ] One command to sync them all - https://github.com/org-trello/org-trello/issues/5
+* IN-PROGRESS 0.6.9.6 [20%]
+- [X] Create backlog
+- [ ] Update version
+- [ ] Fix #261 - Modifying/Adding labels ok, removing labels completely ko
+- [ ] Fix #250 - Changing order of checklist items not saved unless checklist item's text changed
+- [ ] Release notes
 * DONE 0.6.9.5 [100%]
 CLOSED: [2015-05-09 Sat 15:20]
 - [X] Create backlog
