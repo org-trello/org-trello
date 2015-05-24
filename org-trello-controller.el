@@ -74,27 +74,34 @@ ARGS is not used."
 (defun orgtrello-controller/migrate-user-setup! (&optional args)
   "Migrate user's setup file.
 From:
-- ~/.trello/config.el to ~/.emacs.d/.trello/config.el.
+- ~/.trello/config.el to ~/.emacs.d/.trello/<trello-login>.el.
 - Also the names of the constants have changed to *consumer-key* to
   org-trello-consumer-key and from *access-key* to org-trello-access-key.
 ARGS is not used."
-  (when (file-exists-p org-trello--old-config-dir)
+  (when (file-exists-p org-trello--old-config-dir) ;; ok, old setup exists, begin migration
     ;; load old setup
     (load org-trello--old-config-file)
     ;; write new setup
-    (apply 'orgtrello-controller/--do-install-config-file (if *consumer-key*
-                                                              `(,*consumer-key* ,*access-token*)
-                                                            `(,org-trello-consumer-key ,org-trello-access-token)))
+    (apply 'orgtrello-controller/--do-install-config-file (cons (orgtrello-buffer/me!)
+                                                                (if *consumer-key*
+                                                                    `(,*consumer-key* ,*access-token*)
+                                                                  `(,org-trello-consumer-key ,org-trello-access-token))))
     ;; delete old setup file
     (delete-directory org-trello--old-config-dir 'with-contents))
   :ok)
 
+(defun orgtrello-controller/config-file! (&optional username)
+  "Determine the configuration file per buffer setup.
+If USERNAME is supplied, do not look into the current buffer."
+  (format org-trello--config-file (if username username (orgtrello-buffer/me!))))
+
 (defun orgtrello-controller/load-keys! (&optional args)
   "Load the credentials keys from the configuration file.
 ARGS is not used."
-  (if (and (file-exists-p org-trello--config-file) (load org-trello--config-file))
-      :ok
-    "Setup problem - Problem during credentials (consumer-key and the read/write access-token) loading - C-c o i or M-x org-trello-install-key-and-token"))
+  (let ((user-config-file (orgtrello-controller/config-file!)))
+    (if (and (file-exists-p user-config-file) (load user-config-file))
+        :ok
+      "Setup problem - Problem during credentials loading (consumer-key and read/write access-token) - C-c o i or M-x org-trello-install-key-and-token")))
 
 (defun orgtrello-controller/control-keys! (&optional args)
   "Org-trello needs the org-trello-consumer-key and org-trello-access-token for trello resources.
@@ -391,16 +398,17 @@ BUFFER-NAME specifies the buffer onto which we work."
             (orgtrello-buffer/save-buffer buffer-name)
             (orgtrello-log/msg orgtrello-log-info "Archive card '%s' done!" card-name)))))))
 
-(defun orgtrello-controller/--do-install-config-file (consumer-key access-token &optional ask-for-overwrite)
-  "Persist the file config-file with the CONSUMER-KEY and ACCESS-TOKEN.
+(defun orgtrello-controller/--do-install-config-file (user-login consumer-key access-token &optional ask-for-overwrite)
+  "Persist the setup file with USER-LOGIN, CONSUMER-KEY and ACCESS-TOKEN.
 ASK-FOR-OVERWRITE is a flag that needs to be set if we want to prevent some overwriting."
-  (make-directory org-trello--config-dir t)
-  (with-temp-file org-trello--config-file
-    (erase-buffer)
-    (goto-char (point-min))
-    (insert (format "(setq org-trello-consumer-key \"%s\")\n" consumer-key))
-    (insert (format "(setq org-trello-access-token \"%s\")" access-token))
-    (write-file org-trello--config-file ask-for-overwrite)))
+  (let ((new-user-config-file (orgtrello-controller/config-file! user-login)))
+    (make-directory org-trello--config-dir 'do-create-parent-if-need-be)
+    (with-temp-file new-user-config-file
+      (erase-buffer)
+      (goto-char (point-min))
+      (insert (format "(setq org-trello-consumer-key \"%s\")\n" consumer-key))
+      (insert (format "(setq org-trello-access-token \"%s\")" access-token))
+      (write-file new-user-config-file ask-for-overwrite))))
 
 (defun orgtrello-controller/do-install-key-and-token ()
   "Procedure to install the org-trello-consumer-key and the token for the user in the config-file."
@@ -409,18 +417,22 @@ ASK-FOR-OVERWRITE is a flag that needs to be set if we want to prevent some over
       (lambda () (browse-url (org-trello/compute-url "/1/appKey/generate"))))
     (deferred:nextc it
       (lambda ()
-        (let ((consumer-key (read-string "Consumer key: ")))
+        (let ((user-login   (read-string "Trello account login (unique): "))
+              (consumer-key (read-string "Consumer key: ")))
           (browse-url (org-trello/compute-url (format "/1/authorize?response_type=token&name=org-trello&scope=read,write&expiration=never&key=%s" consumer-key)))
-          consumer-key)))
+          (list consumer-key user-login))))
     (deferred:nextc it
-      (lambda (consumer-key)
-        (orgtrello-log/msg orgtrello-log-debug "consumer-key: %S" consumer-key)
+      (lambda (consumer-key-user-login)
+        (orgtrello-log/msg orgtrello-log-debug "user-login + consumer-key: %S" consumer-key-user-login)
         (let ((access-token (read-string "Access token: ")))
-          (mapcar 's-trim `(,consumer-key ,access-token)))))
+          (mapcar 's-trim (cons access-token consumer-key-user-login)))))
     (deferred:nextc it
-      (lambda (consumer-key-and-access-token)
-        (orgtrello-log/msg orgtrello-log-debug "consumer-key-and-access-token: %S" consumer-key-and-access-token)
-        (apply 'orgtrello-controller/--do-install-config-file (append consumer-key-and-access-token '('do-ask-for-overwrite)))))
+      (lambda (access-token-consumer-key-user-login)
+        (orgtrello-log/msg orgtrello-log-debug "user-login + consumer-key + access-token: %S" access-token-consumer-key-user-login)
+        (->> access-token-consumer-key-user-login
+             (cons 'do-ask-for-overwrite)
+             nreverse
+             (apply 'orgtrello-controller/--do-install-config-file))))
     (deferred:nextc it
       (lambda () (orgtrello-log/msg orgtrello-log-info "Setup key and token done!")))))
 

@@ -136,10 +136,10 @@ As of 0.7.0, org-trello now follows Emacs's conventions.")
 (defconst org-trello--config-dir (format "%s%s" user-emacs-directory ".trello")
   "Default trello directory for the configuration files.")
 
-(defconst org-trello--config-filename "config.el"
+(defconst org-trello--config-filename "%s.el"
   "Default org-trello's config filename.")
 
-(defconst org-trello--old-config-file (expand-file-name (format "%s/%s" org-trello--old-config-dir org-trello--config-filename))
+(defconst org-trello--old-config-file (expand-file-name (format "%s/%s" org-trello--old-config-dir "config.el"))
   "Absolute path to the old org-trello's config file.")
 
 (defconst org-trello--config-file (expand-file-name (format "%s/%s" org-trello--config-dir org-trello--config-filename))
