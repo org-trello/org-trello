@@ -333,7 +333,7 @@ some description
               (mock (orgtrello-buffer/item-checksum!) => "local-item-checksum-678")
               (mock (orgtrello-buffer/comment-checksum!) => "local-comment-checksum-678")
               (let* ((trello-card (orgtrello-hash/make-properties `((:keyword . "TODO")
-                                                                    (:member-ids . "dude,ardumont")
+                                                                    (:member-ids . "888,999")
                                                                     (:comments . ,(list (orgtrello-hash/make-properties '((:comment-user . "ardumont")
                                                                                                                           (:comment-date . "10/10/2010")
                                                                                                                           (:comment-id   . "some-comment-id")
@@ -363,8 +363,8 @@ some description
 #+PROPERTY: IN-PROGRESS uvw
 #+PROPERTY: TODO xyz
 #+TODO: TODO IN-PROGRESS DONE | PENDING DELEGATED FAILED CANCELLED
-#+PROPERTY: orgtrello-user-dude 888
-#+PROPERTY: orgtrello-user-ardumont 999
+#+PROPERTY: orgtrello-user-dude 8881
+#+PROPERTY: orgtrello-user-ardumont 9991
 #+PROPERTY: :yellow yellow label
 #+PROPERTY: :red red label
 #+PROPERTY: :purple this is the purple label
@@ -418,8 +418,8 @@ some second comment
 #+PROPERTY: IN-PROGRESS uvw
 #+PROPERTY: TODO xyz
 #+TODO: TODO IN-PROGRESS DONE | PENDING DELEGATED FAILED CANCELLED
-#+PROPERTY: orgtrello-user-dude 888
-#+PROPERTY: orgtrello-user-ardumont 999
+#+PROPERTY: orgtrello-user-dude 8881
+#+PROPERTY: orgtrello-user-ardumont 9991
 #+PROPERTY: :yellow yellow label
 #+PROPERTY: :red red label
 #+PROPERTY: :purple this is the purple label
@@ -448,7 +448,7 @@ some description
               (mock (orgtrello-buffer/item-checksum!) => "item-checksum-12")
               (mock (orgtrello-buffer/comment-checksum!) => "comment-checksum-12")
               (let* ((trello-card0 (orgtrello-hash/make-properties `((:keyword . "TODO")
-                                                                     (:member-ids . "orgtrello-user-dude,orgtrello-user-ardumont")
+                                                                     (:member-ids . "8881,9991")
                                                                      (:comments . ,(list (orgtrello-hash/make-properties '((:comment-user . "ardumont")
                                                                                                                            (:comment-date . "10/10/2010")
                                                                                                                            (:comment-id   . "some-comment-id")
@@ -478,8 +478,8 @@ some description
 #+PROPERTY: IN-PROGRESS uvw
 #+PROPERTY: TODO xyz
 #+TODO: TODO IN-PROGRESS DONE | PENDING DELEGATED FAILED CANCELLED
-#+PROPERTY: orgtrello-user-dude 888
-#+PROPERTY: orgtrello-user-ardumont 999
+#+PROPERTY: orgtrello-user-dude 8882
+#+PROPERTY: orgtrello-user-ardumont 9992
 #+PROPERTY: :yellow yellow label
 #+PROPERTY: :red red label
 #+PROPERTY: :purple this is the purple label
@@ -540,8 +540,8 @@ some second comment
 #+PROPERTY: IN-PROGRESS uvw
 #+PROPERTY: TODO xyz
 #+TODO: TODO IN-PROGRESS DONE | PENDING DELEGATED FAILED CANCELLED
-#+PROPERTY: orgtrello-user-dude 888
-#+PROPERTY: orgtrello-user-ardumont 999
+#+PROPERTY: orgtrello-user-dude 8882
+#+PROPERTY: orgtrello-user-ardumont 9992
 #+PROPERTY: :yellow yellow label
 #+PROPERTY: :red red label
 #+PROPERTY: :purple this is the purple label
@@ -570,7 +570,7 @@ some description
               (mock (orgtrello-buffer/item-checksum!) => "item-checksum-1234")
               (mock (orgtrello-buffer/comment-checksum!) => "comment-checksum-1234")
               (let* ((trello-card0 (orgtrello-hash/make-properties `((:keyword . "TODO")
-                                                                     (:member-ids . "orgtrello-user-dude,orgtrello-user-ardumont")
+                                                                     (:member-ids . "8882,9992")
                                                                      (:comments . ,(list (orgtrello-hash/make-properties '((:comment-user . "ardumont")
                                                                                                                            (:comment-date . "10/10/2010")
                                                                                                                            (:comment-id   . "some-comment-id")
@@ -585,7 +585,7 @@ some description
                                                                      (:name . "updated card title")
                                                                      (:id . "some-card-id"))))
                      (trello-card1 (orgtrello-hash/make-properties `((:keyword . "TODO")
-                                                                     (:member-ids . "orgtrello-user-dude")
+                                                                     (:member-ids . "8882")
                                                                      (:comments . nil)
                                                                      (:tags . ":green:")
                                                                      (:desc . "this is a description")
@@ -608,8 +608,8 @@ some description
 #+PROPERTY: IN-PROGRESS uvw
 #+PROPERTY: TODO xyz
 #+TODO: TODO IN-PROGRESS DONE | PENDING DELEGATED FAILED CANCELLED
-#+PROPERTY: orgtrello-user-dude 888
-#+PROPERTY: orgtrello-user-ardumont 999
+#+PROPERTY: orgtrello-user-dude 8883
+#+PROPERTY: orgtrello-user-ardumont 9993
 #+PROPERTY: :yellow yellow label
 #+PROPERTY: :red red label
 #+PROPERTY: :purple this is the purple label
@@ -664,8 +664,8 @@ some second comment
 #+PROPERTY: IN-PROGRESS uvw
 #+PROPERTY: TODO xyz
 #+TODO: TODO IN-PROGRESS DONE | PENDING DELEGATED FAILED CANCELLED
-#+PROPERTY: orgtrello-user-dude 888
-#+PROPERTY: orgtrello-user-ardumont 999
+#+PROPERTY: orgtrello-user-dude 8883
+#+PROPERTY: orgtrello-user-ardumont 9993
 #+PROPERTY: :yellow yellow label
 #+PROPERTY: :red red label
 #+PROPERTY: :purple this is the purple label
@@ -696,7 +696,7 @@ some description
               (mock (orgtrello-buffer/item-checksum!) => "item-checksum-123456")
               (mock (orgtrello-buffer/comment-checksum!) => "comment-checksum-123456")
               (let* ((trello-card0 (orgtrello-hash/make-properties `((:keyword . "TODO")
-                                                                     (:member-ids . "orgtrello-user-dude,orgtrello-user-ardumont")
+                                                                     (:member-ids . "8883,9993")
                                                                      (:comments . ,(list (orgtrello-hash/make-properties '((:comment-user . "ardumont")
                                                                                                                            (:comment-date . "10/10/2010")
                                                                                                                            (:comment-id   . "some-comment-id")
@@ -711,7 +711,7 @@ some description
                                                                      (:name . "updated card title")
                                                                      (:id . "some-card-id"))))
                      (trello-card1 (orgtrello-hash/make-properties `((:keyword . "DONE")
-                                                                     (:member-ids . "orgtrello-user-dude")
+                                                                     (:member-ids . "8883")
                                                                      (:tags . ":green:")
                                                                      (:desc . "this is a description")
                                                                      (:level . ,*ORGTRELLO/CARD-LEVEL*)

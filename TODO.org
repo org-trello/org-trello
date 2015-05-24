@@ -7,6 +7,16 @@
 - [ ] Another Disposition about org's buffer - https://github.com/org-trello/org-trello/issues/33
 - [ ] Add a file to the org-trello list - https://github.com/org-trello/org-trello/issues/211
 - [ ] One command to sync them all - https://github.com/org-trello/org-trello/issues/5
+- [ ] Migrate ~/.trello/config.el inside emacs's home - #239
+- [ ] Fix #250 - Changing order of checklist items not saved unless checklist item's text changed
+
+* DONE 0.6.9.6 [100%]
+CLOSED: [2015-05-24 Sun 13:25]
+- [X] Create backlog
+- [X] Update version
+- [X] Fix #261 - Modifying/Adding labels ok, removing labels completely ko
+- [X] Fix #262 - Mix between user ids and user name when assigning card
+- [X] Release notes
 * DONE 0.6.9.5 [100%]
 CLOSED: [2015-05-09 Sat 15:20]
 - [X] Create backlog

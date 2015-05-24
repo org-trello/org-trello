@@ -123,10 +123,11 @@ If empty or no keyword then, its equivalence is *ORGTRELLO/TODO*, otherwise, ret
 
 (defun orgtrello-proxy/--tags-to-labels (tags)
   "Transform org TAGS string to csv labels."
-  (when tags
-    (let* ((s (s-split ":" tags))
-           (ns (if (string= "" (car s)) (cdr s) s)))
-      (s-join "," ns))))
+  (if tags
+      (let* ((s (s-split ":" tags))
+             (ns (if (string= "" (car s)) (cdr s) s)))
+        (s-join "," ns))
+    ""))
 
 (defun orgtrello-proxy/--card (card-meta)
   "Deal with create/update CARD-META query build.

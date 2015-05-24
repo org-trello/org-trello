@@ -1,3 +1,11 @@
+# 0.6.9.6
+
+- [X] Create backlog
+- [X] Update version
+- [X] Fix #261 - Modifying/Adding labels ok, removing labels completely ko
+- [X] Fix #262 - Mix between user ids and user name when assigning card
+- [X] Release notes
+
 # 0.6.9.5
 
 - [X] Create backlog

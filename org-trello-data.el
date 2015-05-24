@@ -254,9 +254,10 @@ If TRELLO-CHECKLIST is nil, return ORG-CHECKLIST."
 (defun orgtrello-data/--merge-member-ids (trello-card org-card)
   "Merge users assigned from TRELLO-CARD and ORG-CARD."
   (--> trello-card
-    (orgtrello-data/entity-member-ids-as-list it)
-    (orgtrello-data/merge-2-lists-without-duplicates it (orgtrello-data/entity-member-ids-as-list org-card))
-    (orgtrello-data/--users-to it)))
+       (orgtrello-data/entity-member-ids-as-list it)
+       (orgtrello-data/merge-2-lists-without-duplicates it (orgtrello-data/entity-member-ids-as-list org-card))
+       (-map (lambda (member-id) (gethash member-id *ORGTRELLO/HMAP-USERS-ID-NAME*)) it)
+       (orgtrello-data/--users-to it)))
 
 (defun orgtrello-data/--labels-to-tags (labels)
   "Given a list of tags (LABELS), return a joined string with : as separator."
@@ -288,17 +289,17 @@ If TRELLO-CHECKLIST is nil, return ORG-CHECKLIST."
 If TRELLO-CARD is nil, return ORG-CARD."
   (if trello-card
       (->> (orgtrello-hash/init-map-from org-card)
-        (orgtrello-data/put-entity-tags         (orgtrello-data/--merge-labels-as-tags
-                                                 (orgtrello-data/entity-tags trello-card)
-                                                 (orgtrello-data/entity-tags org-card)))
-        (orgtrello-data/put-entity-comments    (orgtrello-data/entity-comments trello-card))
-        (orgtrello-data/put-entity-level       (orgtrello-data/entity-level trello-card))
-        (orgtrello-data/put-entity-id          (orgtrello-data/entity-id trello-card))
-        (orgtrello-data/put-entity-name        (orgtrello-data/entity-name trello-card))
-        (orgtrello-data/put-entity-keyword     (orgtrello-data/entity-keyword trello-card))
-        (orgtrello-data/put-entity-member-ids  (orgtrello-data/--merge-member-ids trello-card org-card))
-        (orgtrello-data/put-entity-description (orgtrello-data/entity-description trello-card))
-        (orgtrello-data/put-entity-due         (orgtrello-data/entity-due trello-card)))
+           (orgtrello-data/put-entity-tags         (orgtrello-data/--merge-labels-as-tags
+                                                    (orgtrello-data/entity-tags trello-card)
+                                                    (orgtrello-data/entity-tags org-card)))
+           (orgtrello-data/put-entity-comments    (orgtrello-data/entity-comments trello-card))
+           (orgtrello-data/put-entity-level       (orgtrello-data/entity-level trello-card))
+           (orgtrello-data/put-entity-id          (orgtrello-data/entity-id trello-card))
+           (orgtrello-data/put-entity-name        (orgtrello-data/entity-name trello-card))
+           (orgtrello-data/put-entity-keyword     (orgtrello-data/entity-keyword trello-card))
+           (orgtrello-data/put-entity-member-ids  (orgtrello-data/--merge-member-ids trello-card org-card))
+           (orgtrello-data/put-entity-description (orgtrello-data/entity-description trello-card))
+           (orgtrello-data/put-entity-due         (orgtrello-data/entity-due trello-card)))
     org-card))
 
 (defun orgtrello-data/--dispatch-merge-fn (entity)
@@ -374,14 +375,14 @@ ENTITIES-ADJACENCIES provides needed information."
 (defun orgtrello-data/to-org-trello-card (trello-card)
   "Map a TRELLO-CARD to an org-trello one."
   (->> trello-card
-    (orgtrello-data/put-entity-tags (orgtrello-data/--labels-hash-to-tags (orgtrello-data/entity-labels trello-card)))
-    (orgtrello-data/put-entity-labels nil)
-    (orgtrello-data/put-entity-level *ORGTRELLO/CARD-LEVEL*)
-    (orgtrello-data/put-entity-keyword (-> trello-card orgtrello-data/entity-list-id orgtrello-data/--compute-card-status))
-    (orgtrello-data/put-entity-list-id nil)
-    (orgtrello-data/put-entity-member-ids (->> trello-card orgtrello-data/entity-member-ids (--map (gethash it *ORGTRELLO/HMAP-USERS-ID-NAME*)) orgtrello-data/--users-to))
-    (orgtrello-data/put-entity-comments (-> trello-card orgtrello-data/entity-comments))
-    (orgtrello-data/put-entity-checklists (->> trello-card orgtrello-data/entity-checklists (mapcar #'orgtrello-data/to-org-trello-checklist)))))
+       (orgtrello-data/put-entity-tags (orgtrello-data/--labels-hash-to-tags (orgtrello-data/entity-labels trello-card)))
+       (orgtrello-data/put-entity-labels nil)
+       (orgtrello-data/put-entity-level *ORGTRELLO/CARD-LEVEL*)
+       (orgtrello-data/put-entity-keyword (-> trello-card orgtrello-data/entity-list-id orgtrello-data/--compute-card-status))
+       (orgtrello-data/put-entity-list-id nil)
+       (orgtrello-data/put-entity-member-ids (->> trello-card orgtrello-data/entity-member-ids orgtrello-data/--users-to))
+       (orgtrello-data/put-entity-comments (-> trello-card orgtrello-data/entity-comments))
+       (orgtrello-data/put-entity-checklists (->> trello-card orgtrello-data/entity-checklists (mapcar #'orgtrello-data/to-org-trello-checklist)))))
 
 (defun orgtrello-data/to-org-trello-checklist (trello-checklist)
   "Map a TRELLO-CHECKLIST to an org-trello one."
