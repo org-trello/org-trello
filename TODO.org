@@ -21,13 +21,12 @@
 - [ ] #260 - First posting here - three problems - from an email
 - [ ] #136 - Update video tutorials
 
-* TODO 0.6.9.7 [0%]
+* IN-PROGRESS 0.6.9.7 [20%]
 - [ ] Create backlog
 - [ ] Update version
-- [-] #238 - [internal] Respect elisp coding conventions [1/3]
+- [X] Close #238 - [internal] Respect elisp coding conventions [2/2]
   - [X] Rename constants + variables
-  - [ ] Rename entry point using emacs lisp's conventions + alias old definition
-  - [ ] Fix access key + consumer key loading
+  - [X] Rename entry points according to conventions + alias old definitions for backward compatibility
 - [ ] #239 - Migrate ~/.trello/config.el inside user-emacs-directory
 - [ ] Release notes
 

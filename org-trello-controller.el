@@ -69,14 +69,14 @@ ARGS is not used."
   (let ((hmap-count (hash-table-count org-trello--hmap-list-orgkeyword-id-name)))
     (if (and (orgtrello-buffer/org-file-properties!) (orgtrello-buffer/board-id!) (= (length org-trello--org-keyword-trello-list-names) hmap-count))
         :ok
-      "Setup problem.\nEither you did not connect your org-mode buffer with a trello board, to correct this:\n  * attach to a board through C-c o I or M-x org-trello/install-board-metadata\n  * or create a board from scratch with C-c o b or M-x org-trello/create-board-and-install-metadata).\nEither your org-mode's todo keyword list and your trello board lists are not named the same way (which they must).\nFor this, connect to trello and rename your board's list according to your org-mode's todo list.\nAlso, you can specify on your org-mode buffer the todo list you want to work with, for example: #+TODO: TODO DOING | DONE FAIL (hit C-c C-c to refresh the setup)")))
+      "Setup problem.\nEither you did not connect your org-mode buffer with a trello board, to correct this:\n  * attach to a board through C-c o I or M-x org-trello-install-board-metadata\n  * or create a board from scratch with C-c o b or M-x org-trello-create-board-and-install-metadata).\nEither your org-mode's todo keyword list and your trello board lists are not named the same way (which they must).\nFor this, connect to trello and rename your board's list according to your org-mode's todo list.\nAlso, you can specify on your org-mode buffer the todo list you want to work with, for example: #+TODO: TODO DOING | DONE FAIL (hit C-c C-c to refresh the setup)")))
 
 (defun orgtrello-controller/load-keys! (&optional args)
   "Load the credentials keys from the configuration file.
 ARGS is not used."
   (if (and (file-exists-p org-trello--config-file) (load org-trello--config-file))
       :ok
-    "Setup problem - Problem during credentials (consumer-key and the read/write access-token) loading - C-c o i or M-x org-trello/install-key-and-token"))
+    "Setup problem - Problem during credentials (consumer-key and the read/write access-token) loading - C-c o i or M-x org-trello-install-key-and-token"))
 
 (defun orgtrello-controller/control-keys! (&optional args)
   "Org-trello needs the org-trello-consumer-key and org-trello-access-token for trello resources.
@@ -84,7 +84,7 @@ Returns :ok if everything is ok, or the error message if problems.
 ARGS is not used."
   (if (and org-trello-consumer-key org-trello-access-token)
       :ok
-    "Setup problem - You need to install the consumer-key and the read/write access-token - C-c o i or M-x org-trello/install-key-and-token"))
+    "Setup problem - You need to install the consumer-key and the read/write access-token - C-c o i or M-x org-trello-install-key-and-token"))
 
 (defun orgtrello-controller/--on-entity-p (entity)
   "Compute if the org-trello ENTITY exists.
@@ -246,7 +246,7 @@ Does not preserve position."
         (orgtrello-log/msg orgtrello-log-info
                            (if user-me
                                (format "Account '%s' configured! Everything is ok!" (orgtrello-data/entity-username user-me))
-                             "There is a problem with your credentials.\nMake sure you used M-x org-trello/install-key-and-token and installed correctly the consumer-key and access-token.\nSee http://org-trello.github.io/trello-setup.html#credentials for more information."))))
+                             "There is a problem with your credentials.\nMake sure you used M-x org-trello-install-key-and-token and installed correctly the consumer-key and access-token.\nSee http://org-trello.github.io/trello-setup.html#credentials for more information."))))
     (deferred:error it
       (lambda (err) (orgtrello-log/msg orgtrello-log-error "Setup ko - '%s'" err)))))
 

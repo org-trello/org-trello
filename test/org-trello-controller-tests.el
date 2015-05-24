@@ -151,11 +151,11 @@
                    (mock (file-exists-p org-trello--config-file) => t)
                    (mock (load org-trello--config-file)          => t)
                    (orgtrello-controller/load-keys!))))
-  (should (equal "Setup problem - Problem during credentials (consumer-key and the read/write access-token) loading - C-c o i or M-x org-trello/install-key-and-token"
+  (should (equal "Setup problem - Problem during credentials (consumer-key and the read/write access-token) loading - C-c o i or M-x org-trello-install-key-and-token"
                  (with-mock
                    (mock (file-exists-p org-trello--config-file) => nil)
                    (orgtrello-controller/load-keys!))))
-  (should (equal "Setup problem - Problem during credentials (consumer-key and the read/write access-token) loading - C-c o i or M-x org-trello/install-key-and-token"
+  (should (equal "Setup problem - Problem during credentials (consumer-key and the read/write access-token) loading - C-c o i or M-x org-trello-install-key-and-token"
                  (with-mock
                    (mock (file-exists-p org-trello--config-file) => t)
                    (mock (load org-trello--config-file)          => nil)
@@ -166,11 +166,11 @@
                  (let ((org-trello-consumer-key "some-consumer-key")
                        (org-trello-access-token "some-access-token"))
                    (orgtrello-controller/control-keys!))))
-  (should (equal "Setup problem - You need to install the consumer-key and the read/write access-token - C-c o i or M-x org-trello/install-key-and-token"
+  (should (equal "Setup problem - You need to install the consumer-key and the read/write access-token - C-c o i or M-x org-trello-install-key-and-token"
                  (let ((org-trello-consumer-key "some-consumer-key")
                        (org-trello-access-token nil))
                    (orgtrello-controller/control-keys!))))
-  (should (equal "Setup problem - You need to install the consumer-key and the read/write access-token - C-c o i or M-x org-trello/install-key-and-token"
+  (should (equal "Setup problem - You need to install the consumer-key and the read/write access-token - C-c o i or M-x org-trello-install-key-and-token"
                  (let ((org-trello-consumer-key nil)
                        (org-trello-access-token "some-access-token"))
                    (orgtrello-controller/control-keys!)))))
