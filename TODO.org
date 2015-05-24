@@ -3,12 +3,30 @@
 #+STYLE: <style> h1,h2,h3 {font-family: arial, helvetica, sans-serif} </style>
 
 * TODO 0.7.x [0%]
-- [ ] Use active region - https://github.com/org-trello/org-trello/issues/130
-- [ ] Another Disposition about org's buffer - https://github.com/org-trello/org-trello/issues/33
-- [ ] Add a file to the org-trello list - https://github.com/org-trello/org-trello/issues/211
-- [ ] One command to sync them all - https://github.com/org-trello/org-trello/issues/5
-- [ ] Migrate ~/.trello/config.el inside emacs's home - #239
-- [ ] Fix #250 - Changing order of checklist items not saved unless checklist item's text changed
+- [ ] #033 - Different use case and mappings trello <-> org (Another Disposition about org's buffer)
+- [ ] #259 - Option to use indented items as cards instead of current "<list> <card title>" format
+- [ ] #130 - Use active region
+- [ ] #211 - Add a file to the org-trello list
+- [ ] #059 - One command to sync them all
+- [ ] #250 - Changing order of checklist items not saved unless checklist item's text changed
+- [ ] #263 - Colors broken in org trello
+- [ ] #256 - one user can have multiple trello accounts
+- [ ] #254 - lisp error on org files with indented todos
+- [ ] #250 - Changing order of checklist items not saved unless checklist item's text changed
+- [ ] #248 - Installing from melpa (unstable) works, but then it errs on an undefined variable "error-messages"
+- [ ] #245 - Trying to sync a card: orgtrello-buffer/compute-marker: Wrong type argument: numberp, nil
+- [ ] #240 - Preserve non-trello related tags/other meta data
+- [ ] #233 - Troubles with org-capture-before-finalize-hook and org-trello/sync-card
+- [ ] #219 - Synchronization improvements
+- [ ] #260 - First posting here - three problems - from an email
+- [ ] #136 - Update video tutorials
+
+* TODO 0.6.9.7 [0%]
+- [ ] Create backlog
+- [ ] Update version
+- [ ] #239 - Migrate ~/.trello/config.el inside user-emacs-directory
+- [ ] #238 - [internal] Respect elisp coding conventions
+- [ ] Release notes
 
 * DONE 0.6.9.6 [100%]
 CLOSED: [2015-05-24 Sun 13:25]
