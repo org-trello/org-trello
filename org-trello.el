@@ -160,7 +160,8 @@ when NOLOG-P is specified, no output log."
 If WITH-SAVE-FLAG is set, will do a buffer save and reload the org setup."
   (orgtrello-action/msg-controls-or-actions-then-do
    action-label
-   '(orgtrello-controller/load-keys!
+   '(orgtrello-controller/migrate-user-setup!
+     orgtrello-controller/load-keys!
      orgtrello-controller/control-keys!
      orgtrello-controller/setup-properties!
      orgtrello-controller/control-properties!)
@@ -171,7 +172,10 @@ If WITH-SAVE-FLAG is set, will do a buffer save and reload the org setup."
 If NO-CHECK-FLAG is set, no controls are done."
   (orgtrello-action/msg-controls-or-actions-then-do
    action-label
-   (if no-check-flag nil '(orgtrello-controller/load-keys! orgtrello-controller/control-keys! orgtrello-controller/setup-properties!))
+   (if no-check-flag nil '(orgtrello-controller/migrate-user-setup!
+                           orgtrello-controller/load-keys!
+                           orgtrello-controller/control-keys!
+                           orgtrello-controller/setup-properties!))
    action-fn))
 
 ;;;###autoload

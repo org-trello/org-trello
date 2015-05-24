@@ -71,6 +71,24 @@ ARGS is not used."
         :ok
       "Setup problem.\nEither you did not connect your org-mode buffer with a trello board, to correct this:\n  * attach to a board through C-c o I or M-x org-trello-install-board-metadata\n  * or create a board from scratch with C-c o b or M-x org-trello-create-board-and-install-metadata).\nEither your org-mode's todo keyword list and your trello board lists are not named the same way (which they must).\nFor this, connect to trello and rename your board's list according to your org-mode's todo list.\nAlso, you can specify on your org-mode buffer the todo list you want to work with, for example: #+TODO: TODO DOING | DONE FAIL (hit C-c C-c to refresh the setup)")))
 
+(defun orgtrello-controller/migrate-user-setup! (&optional args)
+  "Migrate user's setup file.
+From:
+- ~/.trello/config.el to ~/.emacs.d/.trello/config.el.
+- Also the names of the constants have changed to *consumer-key* to
+  org-trello-consumer-key and from *access-key* to org-trello-access-key.
+ARGS is not used."
+  (when (file-exists-p org-trello--old-config-dir)
+    ;; load old setup
+    (load org-trello--old-config-file)
+    ;; write new setup
+    (apply 'orgtrello-controller/--do-install-config-file (if *consumer-key*
+                                                              `(,*consumer-key* ,*access-token*)
+                                                            `(,org-trello-consumer-key ,org-trello-access-token)))
+    ;; delete old setup file
+    (delete-directory org-trello--old-config-dir 'with-contents))
+  :ok)
+
 (defun orgtrello-controller/load-keys! (&optional args)
   "Load the credentials keys from the configuration file.
 ARGS is not used."
@@ -373,15 +391,16 @@ BUFFER-NAME specifies the buffer onto which we work."
             (orgtrello-buffer/save-buffer buffer-name)
             (orgtrello-log/msg orgtrello-log-info "Archive card '%s' done!" card-name)))))))
 
-(defun orgtrello-controller/--do-install-config-file (consumer-key access-token)
-  "Persist the file config-file with the CONSUMER-KEY and ACCESS-TOKEN."
+(defun orgtrello-controller/--do-install-config-file (consumer-key access-token &optional ask-for-overwrite)
+  "Persist the file config-file with the CONSUMER-KEY and ACCESS-TOKEN.
+ASK-FOR-OVERWRITE is a flag that needs to be set if we want to prevent some overwriting."
   (make-directory org-trello--config-dir t)
   (with-temp-file org-trello--config-file
     (erase-buffer)
     (goto-char (point-min))
     (insert (format "(setq org-trello-consumer-key \"%s\")\n" consumer-key))
     (insert (format "(setq org-trello-access-token \"%s\")" access-token))
-    (write-file org-trello--config-file 'do-ask-for-overwrite)))
+    (write-file org-trello--config-file ask-for-overwrite)))
 
 (defun orgtrello-controller/do-install-key-and-token ()
   "Procedure to install the org-trello-consumer-key and the token for the user in the config-file."
@@ -401,7 +420,7 @@ BUFFER-NAME specifies the buffer onto which we work."
     (deferred:nextc it
       (lambda (consumer-key-and-access-token)
         (orgtrello-log/msg orgtrello-log-debug "consumer-key-and-access-token: %S" consumer-key-and-access-token)
-        (apply 'orgtrello-controller/--do-install-config-file consumer-key-and-access-token)))
+        (apply 'orgtrello-controller/--do-install-config-file (append consumer-key-and-access-token '('do-ask-for-overwrite)))))
     (deferred:nextc it
       (lambda () (orgtrello-log/msg orgtrello-log-info "Setup key and token done!")))))
 

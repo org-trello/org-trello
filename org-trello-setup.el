@@ -13,12 +13,12 @@
 (defconst org-trello-consumer-key nil
   "Id representing the user.")
 
-(defalias '*consumer-key* 'org-trello-consumer-key) ;; for retro compatibility
+(defvar *consumer-key*) ;; for retro compatibility
 
 (defconst org-trello-access-token nil
   "Read/write access token to use trello on behalf of the user.")
 
-(defalias '*access-token* 'org-trello-access-token)
+(defvar *access-token*)  ;; for retro compatibility
 
 (defconst org-trello--label-key-marker "orgtrello-marker"
   "A marker used inside the org buffer to synchronize entries.")
@@ -129,11 +129,21 @@ This is intended as a buffer local variable.")
         org-trello--user-logged-in
         org-trello--mode-activated-p))
 
-(defconst org-trello--config-dir "~/.trello"
+(defconst org-trello--old-config-dir "~/.trello"
+  "Old default trello directory.
+As of 0.7.0, org-trello now follows Emacs's conventions.")
+
+(defconst org-trello--config-dir (format "%s%s" user-emacs-directory ".trello")
   "Default trello directory for the configuration files.")
 
-(defconst org-trello--config-file
-  (concat org-trello--config-dir "/config.el"))
+(defconst org-trello--config-filename "config.el"
+  "Default org-trello's config filename.")
+
+(defconst org-trello--old-config-file (expand-file-name (format "%s/%s" org-trello--old-config-dir org-trello--config-filename))
+  "Absolute path to the old org-trello's config file.")
+
+(defconst org-trello--config-file (expand-file-name (format "%s/%s" org-trello--config-dir org-trello--config-filename))
+  "Absolute path to org-trello's config file.")
 
 (defconst org-trello--label-key-id "orgtrello-id"
   "Key entry used for the trello identifier and the trello marker (the first sync).")
