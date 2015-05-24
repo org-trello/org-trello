@@ -27,7 +27,7 @@ C-c z l - M-x org-trello/show-board-labels - Display the board's labels in a pop
 C-c z j - M-x org-trello/jump-to-trello-card - Jump to card in browser.
 C-c z J - M-x org-trello/jump-to-trello-board - Open the browser to your current trello board.
 C-c z h - M-x org-trello/help-describing-bindings - This help message."
-           (orgtrello-setup/help-describing-bindings-template *ORGTRELLO/MODE-PREFIX-KEYBINDING* *org-trello-interactive-command-binding-couples*))))
+           (orgtrello-setup/help-describing-bindings-template org-trello-current-prefix-keybinding org-trello-interactive-command-binding-couples))))
 
 (ert-deftest test-orgtrello-setup/startup-message ()
   (should (equal "org-trello/ot is on! To begin with, hit C-c o h or M-x 'org-trello/help-describing-bindings" (orgtrello-setup/startup-message "C-c o"))))

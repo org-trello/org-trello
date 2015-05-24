@@ -135,7 +135,7 @@ Write the new properties at current position."
 
 (defun orgtrello-cbx/--status (status)
   "Given a checklist STATUS, return the TODO/DONE for org-trello to work."
-  (if (string= "[X]" status) *ORGTRELLO/DONE* *ORGTRELLO/TODO*))
+  (if (string= "[X]" status) org-trello--done org-trello--todo))
 
 (defun orgtrello-cbx/--name (s status)
   "Retrieve the name of the checklist from the checkbox content S and its STATUS."
@@ -177,9 +177,9 @@ This is a list with the following elements:
   "A function to get back to the current entry's DESTINATION-LEVEL ancestor.
 Return the level found or nil if the level found is a card."
   (let ((current-level (orgtrello-cbx/--get-level (orgtrello-cbx/org-checkbox-metadata!))))
-    (cond ((= *ORGTRELLO/CARD-LEVEL* current-level)      nil)
+    (cond ((= org-trello--card-level current-level)      nil)
           ((= destination-level current-level)           destination-level)
-          ((= *ORGTRELLO/CHECKLIST-LEVEL* current-level) (org-up-heading-safe))
+          ((= org-trello--checklist-level current-level) (org-up-heading-safe))
           (t                                             (progn
                                                            (forward-line -1)
                                                            (orgtrello-cbx/--org-up! destination-level))))))
@@ -207,12 +207,12 @@ Do not exceed the max size of buffer."
   "Map over the current checkbox and execute FN-TO-EXECUTE."
   (save-excursion
     (orgtrello-entity/back-to-card!)                                 ;; go back to the card
-    (-when-let (fst-cbx (orgtrello-entity/goto-next-checkbox-with-same-level! *ORGTRELLO/CHECKLIST-LEVEL*))
+    (-when-let (fst-cbx (orgtrello-entity/goto-next-checkbox-with-same-level! org-trello--checklist-level))
       (goto-char fst-cbx)                                            ;; then first checklist
       (funcall fn-to-execute)                                        ;; execute the function on it
-      (orgtrello-cbx/--map-checkboxes *ORGTRELLO/CARD-LEVEL* fn-to-execute))))
+      (orgtrello-cbx/--map-checkboxes org-trello--card-level fn-to-execute))))
 
-(orgtrello-log/msg *OT/DEBUG* "orgtrello-cbx loaded!")
+(orgtrello-log/msg orgtrello-log-debug "orgtrello-cbx loaded!")
 
 (provide 'org-trello-cbx)
 ;;; org-trello-cbx.el ends here

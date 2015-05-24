@@ -93,17 +93,17 @@
 
 ;;; Code:
 
-(defconst *ORGTRELLO/ERROR-INSTALL-MSG* (format "Oops - your Emacs isn't supported. org-trello only works on Emacs 24.3+ and you're running version: %s.
+(defconst org-trello-error-install-msg (format "Oops - your Emacs isn't supported. org-trello only works on Emacs 24.3+ and you're running version: %s.
 Please consider upgrading Emacs." emacs-version) "Error message when installing org-trello with an unsupported Emacs version.")
 
-(when (version< emacs-version "24") (error *ORGTRELLO/ERROR-INSTALL-MSG*))
+(when (version< emacs-version "24") (error org-trello-error-install-msg))
 
 ;; Dependency on internal Emacs libs
 (require 'org)
 (require 'json)
 (require 'parse-time)
 
-(defconst *ORGTRELLO/VERSION* "0.6.9.6" "Current org-trello version installed.")
+(defconst org-trello--version "0.6.9.6" "Current org-trello version installed.")
 
 
 
@@ -123,7 +123,7 @@ Please consider upgrading Emacs." emacs-version) "Error message when installing 
 (defun org-trello/version ()
   "Org-trello version."
   (interactive)
-  (orgtrello-log/msg *OT/NOLOG* "version: %s" *ORGTRELLO/VERSION*))
+  (orgtrello-log/msg orgtrello-log-no-log "version: %s" org-trello--version))
 
 
 
@@ -150,8 +150,8 @@ when NOLOG-P is specified, no output log."
       (deferred:nextc it (lambda ()
                            (when buffer-to-save (orgtrello-buffer/save-buffer buffer-to-save))
                            (when reload-setup (orgtrello-action/reload-setup!))
-                           (unless nolog-flag (orgtrello-log/msg *OT/INFO* "%s - Done!" prefix-log-message))))
-      (deferred:error it (lambda (x) (orgtrello-log/msg *OT/ERROR* "Main apply function - Problem during execution - '%s'!" x))))))
+                           (unless nolog-flag (orgtrello-log/msg orgtrello-log-info "%s - Done!" prefix-log-message))))
+      (deferred:error it (lambda (x) (orgtrello-log/msg orgtrello-log-error "Main apply function - Problem during execution - '%s'!" x))))))
 
 (defun org-trello/log-strict-checks-and-do (action-label action-fn &optional with-save-flag)
   "Given an ACTION-LABEL and an ACTION-FN, execute sync action.
@@ -177,7 +177,7 @@ If NO-CHECK-FLAG is set, no controls are done."
   "Control first, then if ok, add a comment to the current card."
   (interactive)
   (deferred:clear-queue)
-  (orgtrello-log/msg *OT/INFO* "Cancel actions done!"))
+  (orgtrello-log/msg orgtrello-log-info "Cancel actions done!"))
 
 ;;;###autoload
 (defun org-trello/add-card-comment (&optional modifier)
@@ -330,7 +330,7 @@ If MODIFIER is not nil, unassign oneself from the card."
 (defun org-trello/help-describing-bindings ()
   "A simple message to describe the standard bindings used."
   (interactive)
-  (org-trello/apply `(message ,(orgtrello-setup/help-describing-bindings-template *ORGTRELLO/MODE-PREFIX-KEYBINDING* *org-trello-interactive-command-binding-couples*)) nil nil 'no-log))
+  (org-trello/apply `(message ,(orgtrello-setup/help-describing-bindings-template org-trello-current-prefix-keybinding org-trello-interactive-command-binding-couples)) nil nil 'no-log))
 
 
 
@@ -349,28 +349,28 @@ If MODIFIER is not nil, unassign oneself from the card."
 
 (add-hook 'org-trello-mode-on-hook (lambda ()
                                      ;; install the bindings
-                                     (orgtrello-setup/install-local-prefix-mode-keybinding! *ORGTRELLO/MODE-PREFIX-KEYBINDING*)
+                                     (orgtrello-setup/install-local-prefix-mode-keybinding! org-trello-current-prefix-keybinding)
                                      ;; Overwrite the org-mode-map
                                      (define-key org-trello-mode-map [remap org-end-of-line] 'orgtrello-buffer/end-of-line!)
                                      (define-key org-trello-mode-map [remap org-return] 'orgtrello-buffer/org-return!)
                                      (define-key org-trello-mode-map [remap org-ctrl-c-ret] 'orgtrello-buffer/org-ctrl-c-ret!)
                                      (define-key org-trello-mode-map [remap org-archive-subtree] 'org-trello/archive-card)
                                      ;; a little message in the minibuffer to notify the user
-                                     (orgtrello-log/msg *OT/NOLOG* (orgtrello-setup/startup-message *ORGTRELLO/MODE-PREFIX-KEYBINDING*)))
+                                     (orgtrello-log/msg orgtrello-log-no-log (orgtrello-setup/startup-message org-trello-current-prefix-keybinding)))
           'do-append)
 
 (add-hook 'org-trello-mode-off-hook 'orgtrello-controller/mode-off-hook-fn)
 
 (add-hook 'org-trello-mode-off-hook (lambda ()
                                       ;; remove the bindings when org-trello mode off
-                                      (orgtrello-setup/remove-local-prefix-mode-keybinding! *ORGTRELLO/MODE-PREFIX-KEYBINDING*)
+                                      (orgtrello-setup/remove-local-prefix-mode-keybinding! org-trello-current-prefix-keybinding)
                                       ;; remove mapping override
                                       (define-key org-trello-mode-map [remap org-end-of-line] nil)
                                       (define-key org-trello-mode-map [remap org-return] nil)
                                       (define-key org-trello-mode-map [remap org-ctrl-c-ret] nil)
                                       (define-key org-trello-mode-map [remap org-archive-subtree] nil)
                                       ;; a little message in the minibuffer to notify the user
-                                      (orgtrello-log/msg *OT/NOLOG* "org-trello/ot is off!"))
+                                      (orgtrello-log/msg orgtrello-log-no-log "org-trello/ot is off!"))
           'do-append)
 
 (defcustom org-trello-files nil
@@ -383,7 +383,7 @@ If MODIFIER is not nil, unassign oneself from the card."
                            (when (-any? (lambda (name) (string= (expand-file-name name) buffer-file-name)) org-trello-files)
                              (org-trello-mode))))
 
-(orgtrello-log/msg *OT/DEBUG* "org-trello loaded!")
+(orgtrello-log/msg orgtrello-log-debug "org-trello loaded!")
 
 (provide 'org-trello)
 ;;; org-trello.el ends here

@@ -41,9 +41,9 @@ Display LOG-OK or LOG-KO depending on the result."
            (deferred:parallel
              ,@computations)
            (deferred:error it
-             (lambda () (orgtrello-log/msg *OT/ERROR* ,log-ko)))
+             (lambda () (orgtrello-log/msg orgtrello-log-error ,log-ko)))
            (deferred:nextc it
-             (lambda () (orgtrello-log/msg *OT/DEBUG* ,log-ok))))))
+             (lambda () (orgtrello-log/msg orgtrello-log-debug ,log-ok))))))
 
 (defun orgtrello-proxy/--compute-sync-next-level (entity entities-adjacencies)
   "Trigger the sync for ENTITY's children.
@@ -105,21 +105,21 @@ ENTITIES-ADJACENCIES provides needed information about entities and adjacency."
                      (updated-entity-synced (car updates))
                      (updated-entities-adj  (cdr updates)))
                 (orgtrello-proxy/--compute-sync-next-level updated-entity-synced updated-entities-adj))
-              (orgtrello-log/msg *OT/INFO* str-msg))))))))
+              (orgtrello-log/msg orgtrello-log-info str-msg))))))))
 
 (defun orgtrello-proxy/--cleanup-meta (entity)
   "Clean the ENTITY metadata up."
   (unless (orgtrello-data/entity-id entity)
-    (orgtrello-cbx/org-delete-property *ORGTRELLO/ID*)))
+    (orgtrello-cbx/org-delete-property org-trello--label-key-id)))
 
 (defun orgtrello-proxy/--retrieve-state-of-card (card-meta)
   "Given a CARD-META, retrieve its state depending on its :keyword metadata.
-If empty or no keyword then, its equivalence is *ORGTRELLO/TODO*, otherwise, return its current state."
-  (-if-let (card-kwd (orgtrello-data/entity-keyword card-meta *ORGTRELLO/TODO*)) card-kwd *ORGTRELLO/TODO*))
+If empty or no keyword then, its equivalence is org-trello--todo, otherwise, return its current state."
+  (-if-let (card-kwd (orgtrello-data/entity-keyword card-meta org-trello--todo)) card-kwd org-trello--todo))
 
 (defun orgtrello-proxy/--checks-before-sync-card (card-meta)
   "Given the CARD-META, check is done before synchronizing the cards."
-  (if (orgtrello-data/entity-name card-meta) :ok *ORGTRELLO/ERROR-SYNC-CARD-MISSING-NAME*))
+  (if (orgtrello-data/entity-name card-meta) :ok org-trello--error-sync-card-missing-name))
 
 (defun orgtrello-proxy/--tags-to-labels (tags)
   "Transform org TAGS string to csv labels."
@@ -157,8 +157,8 @@ If the checks are ko, the error message is returned."
   (-if-let (checklist-name (orgtrello-data/entity-name checklist-meta))
       (-if-let (card-id (orgtrello-data/entity-id card-meta))
           :ok
-        *ORGTRELLO/ERROR-SYNC-CHECKLIST-SYNC-CARD-FIRST*)
-    *ORGTRELLO/ERROR-SYNC-CHECKLIST-MISSING-NAME*))
+        org-trello--error-sync-checklist-sync-card-first)
+    org-trello--error-sync-checklist-missing-name))
 
 (defun orgtrello-proxy/--checklist (checklist-meta)
   "Deal with create/update CHECKLIST-META query build.
@@ -191,9 +191,9 @@ If the checks are ko, the error message is returned."
         (card-id      (orgtrello-data/entity-id card-meta)))
     (if item-name
         (if checklist-id
-            (if card-id :ok *ORGTRELLO/ERROR-SYNC-ITEM-SYNC-CARD-FIRST*)
-          *ORGTRELLO/ERROR-SYNC-ITEM-SYNC-CHECKLIST-FIRST*)
-      *ORGTRELLO/ERROR-SYNC-ITEM-MISSING-NAME*)))
+            (if card-id :ok org-trello--error-sync-item-sync-card-first)
+          org-trello--error-sync-item-sync-checklist-first)
+      org-trello--error-sync-item-missing-name)))
 
 (defun orgtrello-proxy/--item (item-meta)
   "Deal with create/update ITEM-META query build.
@@ -233,14 +233,14 @@ MAP-DISPATCH-FN is a map of function taking the one parameter ENTITY."
     (gethash map-dispatch-fn 'orgtrello-action/--too-deep-level)
     (funcall entity)))
 
-(defvar *MAP-DISPATCH-CREATE-UPDATE* (orgtrello-hash/make-properties `((,*ORGTRELLO/CARD-LEVEL*      . orgtrello-proxy/--card)
-                                                                       (,*ORGTRELLO/CHECKLIST-LEVEL* . orgtrello-proxy/--checklist)
-                                                                       (,*ORGTRELLO/ITEM-LEVEL*      . orgtrello-proxy/--item)))
+(defvar orgtrello-proxy--map-fn-dispatch-create-update (orgtrello-hash/make-properties `((,org-trello--card-level      . orgtrello-proxy/--card)
+                                                                                         (,org-trello--checklist-level . orgtrello-proxy/--checklist)
+                                                                                         (,org-trello--item-level      . orgtrello-proxy/--item)))
   "Dispatch map for the creation/update of card/checklist/item.")
 
 (defun orgtrello-proxy/--compute-sync-query-request (entity)
   "Dispatch the ENTITY creation/update depending on the nature of the entry."
-  (orgtrello-proxy/compute-dispatch-fn entity *MAP-DISPATCH-CREATE-UPDATE*))
+  (orgtrello-proxy/compute-dispatch-fn entity orgtrello-proxy--map-fn-dispatch-create-update))
 
 (defun orgtrello-proxy/--sync-entity (entity-data entities-adjacencies)
   "Compute the sync action on entity ENTITY-DATA.
@@ -254,10 +254,10 @@ Use ENTITIES-ADJACENCIES to provide further information."
          (orgtrello-proxy/--standard-post-or-put-success-callback entity-data entities-adjacencies)
          (lambda (response)
            (orgtrello-proxy/--cleanup-meta entity-to-sync)
-           (orgtrello-log/msg *OT/ERROR* "client - Problem during the sync request to the proxy - error-thrown: %s" (request-response-error-thrown response))))
+           (orgtrello-log/msg orgtrello-log-error "client - Problem during the sync request to the proxy - error-thrown: %s" (request-response-error-thrown response))))
       (progn ;; cannot execute the request
         (orgtrello-proxy/--cleanup-meta entity-to-sync)
-        (orgtrello-log/msg *OT/ERROR* query-map)
+        (orgtrello-log/msg orgtrello-log-error query-map)
         query-map))))
 
 (defun orgtrello-proxy/--delete-region (start end)
@@ -275,7 +275,7 @@ Use ENTITIES-ADJACENCIES to provide further information."
 (defun orgtrello-proxy/--delete-checkbox-checklist-region ()
   "Delete the checklist region."
   (let ((starting-point (point-at-bol))
-        (ending-point (save-excursion (-if-let (result (orgtrello-entity/goto-next-checkbox-with-same-level! *ORGTRELLO/CHECKLIST-LEVEL*))
+        (ending-point (save-excursion (-if-let (result (orgtrello-entity/goto-next-checkbox-with-same-level! org-trello--checklist-level))
                                           result
                                         (orgtrello-entity/compute-next-card-point!))))) ;; next checkbox or next card or point-max
     (orgtrello-proxy/--delete-region starting-point ending-point)))
@@ -305,7 +305,7 @@ Use ENTITIES-ADJACENCIES to provide further information."
               orgtrello-data/current
               orgtrello-proxy/delete-region
               funcall)
-            (when (< *ORGTRELLO/CARD-LEVEL* level)
+            (when (< org-trello--card-level level)
               (forward-line -1) ;; when on checklist or item, get back one line then update the card's checksum
               (orgtrello-buffer/write-local-card-checksum-at-point!))))))))
 
@@ -322,14 +322,14 @@ Use ENTITIES-ADJACENCIES to provide further information."
   (let ((checklist-meta (orgtrello-data/parent item-meta)))
     (orgtrello-api/delete-item (orgtrello-data/entity-id checklist-meta) (orgtrello-data/entity-id item-meta))))
 
-(defvar *MAP-DISPATCH-DELETE* (orgtrello-hash/make-properties `((,*ORGTRELLO/CARD-LEVEL*      . orgtrello-proxy/--card-delete)
-                                                                (,*ORGTRELLO/CHECKLIST-LEVEL* . orgtrello-proxy/--checklist-delete)
-                                                                (,*ORGTRELLO/ITEM-LEVEL*      . orgtrello-proxy/--item-delete)))
+(defvar orgtrello-proxy--map-fn-dispatch-delete (orgtrello-hash/make-properties `((,org-trello--card-level      . orgtrello-proxy/--card-delete)
+                                                                (,org-trello--checklist-level . orgtrello-proxy/--checklist-delete)
+                                                                (,org-trello--item-level      . orgtrello-proxy/--item-delete)))
   "Dispatch map for the deletion query of card/checklist/item.")
 
 (defun orgtrello-proxy/--dispatch-delete (entity)
   "Dispatch the call to the delete function depending on ENTITY level info."
-  (orgtrello-proxy/compute-dispatch-fn entity *MAP-DISPATCH-DELETE*))
+  (orgtrello-proxy/compute-dispatch-fn entity orgtrello-proxy--map-fn-dispatch-delete))
 
 (defun orgtrello-proxy/--delete (entity-data)
   "Compute the delete action to remove ENTITY-DATA."
@@ -342,11 +342,11 @@ Use ENTITIES-ADJACENCIES to provide further information."
          nil ; async
          (orgtrello-proxy/--standard-delete-success-callback entity-data)
          (lambda (response)
-           (orgtrello-log/msg *OT/ERROR* "client - Problem during the deletion request to the proxy - error-thrown: %s" (request-response-error-thrown response))
+           (orgtrello-log/msg orgtrello-log-error "client - Problem during the deletion request to the proxy - error-thrown: %s" (request-response-error-thrown response))
            (orgtrello-proxy/--cleanup-meta entity-to-delete)))
-      (orgtrello-log/msg *OT/ERROR* query-map))))
+      (orgtrello-log/msg orgtrello-log-error query-map))))
 
-(orgtrello-log/msg *OT/DEBUG* "orgtrello-proxy loaded!")
+(orgtrello-log/msg orgtrello-log-debug "orgtrello-proxy loaded!")
 
 (provide 'org-trello-proxy)
 ;;; org-trello-proxy.el ends here

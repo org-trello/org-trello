@@ -103,15 +103,15 @@ hello there
   (should (equal
            "this-is-the-board-id"
            (orgtrello-tests/with-org-buffer
-            (format ":PROPERTIES:\n#+PROPERTY: %s this-is-the-board-id\n:END:\n* card\n" *ORGTRELLO/BOARD-ID*)
+            (format ":PROPERTIES:\n#+PROPERTY: %s this-is-the-board-id\n:END:\n* card\n" org-trello--property-board-id)
             (orgtrello-buffer/board-id!))))
   (should (equal "this-is-the-board-name"
                  (orgtrello-tests/with-org-buffer
-                  (format ":PROPERTIES:\n#+PROPERTY: %s this-is-the-board-name\n:END:\n* card\n" *ORGTRELLO/BOARD-NAME*)
+                  (format ":PROPERTIES:\n#+PROPERTY: %s this-is-the-board-name\n:END:\n* card\n" org-trello--property-board-name)
                   (orgtrello-buffer/board-name!))))
   (should (equal "this-is-the-user"
                  (orgtrello-tests/with-org-buffer
-                  (format ":PROPERTIES:\n#+PROPERTY: %s this-is-the-user\n:END:\n* card\n" *ORGTRELLO/USER-ME*)
+                  (format ":PROPERTIES:\n#+PROPERTY: %s this-is-the-user\n:END:\n* card\n" org-trello--property-user-me)
                   (orgtrello-buffer/me!)))))
 
 (ert-deftest test-orgtrello-buffer/write-card-header! ()
@@ -135,7 +135,7 @@ hello there
                                                                                                         (:member-ids . "ardumont,dude")
                                                                                                         (:comments . 'no-longer-exploited-here-comments)
                                                                                                         (:desc . "some description")
-                                                                                                        (:level . ,*ORGTRELLO/CARD-LEVEL*)
+                                                                                                        (:level . ,org-trello--card-level)
                                                                                                         (:name . "some card name"))))
                   0)))
   (should (equal ":PROPERTIES:
@@ -159,7 +159,7 @@ DEADLINE: <some-due-date>
                                                                                                         (:comments . 'no-longer-exploited-here-comments)
                                                                                                         (:tags . ":red:green:")
                                                                                                         (:desc . "some description")
-                                                                                                        (:level . ,*ORGTRELLO/CARD-LEVEL*)
+                                                                                                        (:level . ,org-trello--card-level)
                                                                                                         (:name . "some card name")
                                                                                                         (:due . "some-due-date"))))
                   0))))
@@ -195,7 +195,7 @@ DEADLINE: <some-due-date>
   some old description
   - [ ] some old checklist name\n"
                   (orgtrello-buffer/write-checklist-header! "some-id" (orgtrello-hash/make-properties `((:keyword . "DONE")
-                                                                                                        (:level . ,*ORGTRELLO/CHECKLIST-LEVEL*)
+                                                                                                        (:level . ,org-trello--checklist-level)
                                                                                                         (:name . "some checklist name"))))
                   0))))
 
@@ -244,22 +244,22 @@ some comment
                                                                                                                                           (:comment-text . "some comment")))))
                                                                                     (:tags . ":red:green:")
                                                                                     (:desc . "some description")
-                                                                                    (:level . ,*ORGTRELLO/CARD-LEVEL*)
+                                                                                    (:level . ,org-trello--card-level)
                                                                                     (:name . "some card name")
                                                                                     (:id . "some-card-id")))
                                                   (orgtrello-hash/make-properties `(("some-checklist-id" . ,(orgtrello-hash/make-properties `((:id . "some-checklist-id")
                                                                                                                                               (:name . "some checklist name")
-                                                                                                                                              (:level . ,*ORGTRELLO/CHECKLIST-LEVEL*))))
+                                                                                                                                              (:level . ,org-trello--checklist-level))))
                                                                                     ("some-other-checklist-id" . ,(orgtrello-hash/make-properties `((:id . "some-other-checklist-id")
                                                                                                                                                     (:name . "some other checklist name")
-                                                                                                                                                    (:level . ,*ORGTRELLO/CHECKLIST-LEVEL*))))
+                                                                                                                                                    (:level . ,org-trello--checklist-level))))
                                                                                     ("some-item-id"  . ,(orgtrello-hash/make-properties `((:id . "some-item-id")
                                                                                                                                           (:name . "some item name")
-                                                                                                                                          (:level . ,*ORGTRELLO/ITEM-LEVEL*)
+                                                                                                                                          (:level . ,org-trello--item-level)
                                                                                                                                           (:keyword . "DONE"))))
                                                                                     ("some-other-item-id"  . ,(orgtrello-hash/make-properties `((:id . "some-other-item-id")
                                                                                                                                                 (:name . "some other item name")
-                                                                                                                                                (:level . ,*ORGTRELLO/ITEM-LEVEL*)
+                                                                                                                                                (:level . ,org-trello--item-level)
                                                                                                                                                 (:keyword . "TODO"))))))
 
                                                   (orgtrello-hash/make-properties `(("some-other-checklist-id" . ())
@@ -324,7 +324,7 @@ some text
                                                     (orgtrello-hash/make-properties
                                                      `((:keyword . "TODO")
                                                        (:desc . "description A")
-                                                       (:level . ,*ORGTRELLO/CARD-LEVEL*)
+                                                       (:level . ,org-trello--card-level)
                                                        (:name . "task A")
                                                        (:id . "card-id-a")
                                                        (:member-ids . "ardumont,dude")
@@ -345,7 +345,7 @@ some text
                                                     (orgtrello-hash/make-properties
                                                      `((:keyword . "TODO")
                                                        (:desc . "description B")
-                                                       (:level . ,*ORGTRELLO/CARD-LEVEL*)
+                                                       (:level . ,org-trello--card-level)
                                                        (:name . "task B")
                                                        (:id . "card-id-b")
                                                        (:member-ids . "ardumont,dude")
@@ -416,7 +416,7 @@ some text
                                                                            `(,(orgtrello-hash/make-properties
                                                                                `((:keyword . "TODO")
                                                                                  (:desc . "")
-                                                                                 (:level . ,*ORGTRELLO/CARD-LEVEL*)
+                                                                                 (:level . ,org-trello--card-level)
                                                                                  (:name . "task A")
                                                                                  (:id . "card-id-a")
                                                                                  (:member-ids . "ardumont-id,dude-id")
@@ -431,7 +431,7 @@ some text
                                                                              ,(orgtrello-hash/make-properties
                                                                                `((:keyword . "TODO")
                                                                                  (:desc . "")
-                                                                                 (:level . ,*ORGTRELLO/CARD-LEVEL*)
+                                                                                 (:level . ,org-trello--card-level)
                                                                                  (:name . "task B")
                                                                                  (:id . "card-id-b")
                                                                                  (:member-ids . "ardumont-id,dude-id")
@@ -478,7 +478,7 @@ some text
                     (orgtrello-buffer/write-checklist! "some-checklist-id"
                                                        (orgtrello-hash/make-properties `(("some-checklist-id" . ,(orgtrello-hash/make-properties `((:id . "some-checklist-id")
                                                                                                                                                    (:name . "some checklist name")
-                                                                                                                                                   (:level . ,*ORGTRELLO/CHECKLIST-LEVEL*))))))
+                                                                                                                                                   (:level . ,org-trello--checklist-level))))))
                                                        (orgtrello-hash/make-properties `(("some-checklist-id" . nil)))))
                   0)))
   ;; a little more complicated case
@@ -520,14 +520,14 @@ some text
                     (orgtrello-buffer/write-checklist! "some-checklist-id"
                                                        (orgtrello-hash/make-properties `(("some-checklist-id" . ,(orgtrello-hash/make-properties `((:id . "some-checklist-id")
                                                                                                                                                    (:name . "some checklist name")
-                                                                                                                                                   (:level . ,*ORGTRELLO/CHECKLIST-LEVEL*))))
+                                                                                                                                                   (:level . ,org-trello--checklist-level))))
                                                                                          ("some-item-id"  . ,(orgtrello-hash/make-properties `((:id . "some-item-id")
                                                                                                                                                (:name . "some item name")
-                                                                                                                                               (:level . ,*ORGTRELLO/ITEM-LEVEL*)
+                                                                                                                                               (:level . ,org-trello--item-level)
                                                                                                                                                (:keyword . "DONE"))))
                                                                                          ("some-other-item-id"  . ,(orgtrello-hash/make-properties `((:id . "some-other-item-id")
                                                                                                                                                      (:name . "some other item name")
-                                                                                                                                                     (:level . ,*ORGTRELLO/ITEM-LEVEL*)
+                                                                                                                                                     (:level . ,org-trello--item-level)
                                                                                                                                                      (:keyword . "TODO"))))))
                                                        (orgtrello-hash/make-properties `(("some-checklist-id" . ("some-item-id" "some-other-item-id"))))))
                   0))))
@@ -571,7 +571,7 @@ some text
                     (orgtrello-buffer/write-item! "some-item-id"
                                                   (orgtrello-hash/make-properties `(("some-item-id" . ,(orgtrello-hash/make-properties `((:id . "some-item-id")
                                                                                                                                          (:name . "some item name")
-                                                                                                                                         (:level . ,*ORGTRELLO/ITEM-LEVEL*)
+                                                                                                                                         (:level . ,org-trello--item-level)
                                                                                                                                          (:keyword . "DONE"))))))))
                   0))))
 
@@ -584,7 +584,7 @@ some text
                   (orgtrello-buffer/write-entity! "some-card-id" (orgtrello-hash/make-properties `((:keyword . "DONE")
                                                                                                    (:tags . ":red:green:")
                                                                                                    (:desc . "some description")
-                                                                                                   (:level . ,*ORGTRELLO/CARD-LEVEL*)
+                                                                                                   (:level . ,org-trello--card-level)
                                                                                                    (:name . "some card name"))))
                   0))))
 
@@ -596,7 +596,7 @@ some text
                   "* some content
 "
                   (orgtrello-buffer/write-entity! "some-checklist-id" (orgtrello-hash/make-properties `((:keyword . "DONE")
-                                                                                                        (:level . ,*ORGTRELLO/CHECKLIST-LEVEL*)
+                                                                                                        (:level . ,org-trello--checklist-level)
                                                                                                         (:name . "some checklist name"))))
                   0))))
 
@@ -610,7 +610,7 @@ some text
   - [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}
 "
                   (orgtrello-buffer/write-entity! "some-item-id" (orgtrello-hash/make-properties `((:keyword . "DONE")
-                                                                                                   (:level . ,*ORGTRELLO/ITEM-LEVEL*)
+                                                                                                   (:level . ,org-trello--item-level)
                                                                                                    (:name . "some item name"))))
                   0))))
 
@@ -667,9 +667,9 @@ some text
   (should (equal "[-]" (orgtrello-buffer/--compute-state-checkbox "incomplete"))))
 
 (ert-deftest test-orgtrello-buffer/--dispatch-create-entities-map-with-adjacency ()
-  (should (equal 'orgtrello-buffer/--put-card-with-adjacency      (orgtrello-buffer/--dispatch-create-entities-map-with-adjacency (orgtrello-data/make-hash-org :users *ORGTRELLO/CARD-LEVEL* nil nil nil nil nil nil nil :tags :unknown))))
-  (should (equal 'orgtrello-backend/--put-entities-with-adjacency (orgtrello-buffer/--dispatch-create-entities-map-with-adjacency (orgtrello-data/make-hash-org :users *ORGTRELLO/CHECKLIST-LEVEL* nil nil nil nil nil nil nil :tags :unknown))))
-  (should (equal 'orgtrello-backend/--put-entities-with-adjacency (orgtrello-buffer/--dispatch-create-entities-map-with-adjacency (orgtrello-data/make-hash-org :users *ORGTRELLO/ITEM-LEVEL* nil nil nil nil nil nil nil :tags :unknown)))))
+  (should (equal 'orgtrello-buffer/--put-card-with-adjacency      (orgtrello-buffer/--dispatch-create-entities-map-with-adjacency (orgtrello-data/make-hash-org :users org-trello--card-level nil nil nil nil nil nil nil :tags :unknown))))
+  (should (equal 'orgtrello-backend/--put-entities-with-adjacency (orgtrello-buffer/--dispatch-create-entities-map-with-adjacency (orgtrello-data/make-hash-org :users org-trello--checklist-level nil nil nil nil nil nil nil :tags :unknown))))
+  (should (equal 'orgtrello-backend/--put-entities-with-adjacency (orgtrello-buffer/--dispatch-create-entities-map-with-adjacency (orgtrello-data/make-hash-org :users org-trello--item-level nil nil nil nil nil nil nil :tags :unknown)))))
 
 (ert-deftest test-orgtrello-buffer/--to-orgtrello-metadata ()
   (should (equal "some name :orgtrello-id-identifier:"  (gethash :name       (orgtrello-buffer/--to-orgtrello-metadata '(:unknown "" "" "buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil)))))
@@ -681,7 +681,7 @@ some text
   (should (equal "1,2,3"                                (gethash :member-ids (orgtrello-buffer/--to-orgtrello-metadata '(:unknown "" "1,2,3" "buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil)))))
   (should (equal :desc                                  (gethash :desc       (orgtrello-buffer/--to-orgtrello-metadata '(:unknown :desc "1,2,3" "buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil)))))
   (should (equal :unknown                               (gethash :unknown-properties (orgtrello-buffer/--to-orgtrello-metadata '(:unknown :desc "1,2,3" "buffer-name.org" :point :id :due 0 1 "IN PROGRESS" nil "some name :orgtrello-id-identifier:" nil)))))
-  (should (equal :default (let ((*ORGTRELLO/ORG-KEYWORD-TRELLO-LIST-NAMES* '(:default :other-keywords-we-do-not-care)))
+  (should (equal :default (let ((org-trello--org-keyword-trello-list-names '(:default :other-keywords-we-do-not-care)))
                             (gethash :keyword (orgtrello-buffer/--to-orgtrello-metadata '(:unknown "" "" "buffer-name.org" :point :id :due 0 1 nil nil "some name :orgtrello-id-identifier:" nil)))))))
 
 (ert-deftest test-orgtrello-buffer/--convert-orgmode-date-to-trello-date ()
@@ -858,22 +858,22 @@ some comment
                                                                                                                          (:comment-text . "some comment")))))
                                                                    (:tags . ":red:green:")
                                                                    (:desc . "some description")
-                                                                   (:level . ,*ORGTRELLO/CARD-LEVEL*)
+                                                                   (:level . ,org-trello--card-level)
                                                                    (:name . "some card name")
                                                                    (:id . "some-card-id"))))
                            (entities (orgtrello-hash/make-properties `(("some-checklist-id" . ,(orgtrello-hash/make-properties `((:id . "some-checklist-id")
                                                                                                                                  (:name . "some checklist name")
-                                                                                                                                 (:level . ,*ORGTRELLO/CHECKLIST-LEVEL*))))
+                                                                                                                                 (:level . ,org-trello--checklist-level))))
                                                                        ("some-other-checklist-id" . ,(orgtrello-hash/make-properties `((:id . "some-other-checklist-id")
                                                                                                                                        (:name . "some other checklist name")
-                                                                                                                                       (:level . ,*ORGTRELLO/CHECKLIST-LEVEL*))))
+                                                                                                                                       (:level . ,org-trello--checklist-level))))
                                                                        ("some-item-id"  . ,(orgtrello-hash/make-properties `((:id . "some-item-id")
                                                                                                                              (:name . "some item name")
-                                                                                                                             (:level . ,*ORGTRELLO/ITEM-LEVEL*)
+                                                                                                                             (:level . ,org-trello--item-level)
                                                                                                                              (:keyword . "DONE"))))
                                                                        ("some-other-item-id"  . ,(orgtrello-hash/make-properties `((:id . "some-other-item-id")
                                                                                                                                    (:name . "some other item name")
-                                                                                                                                   (:level . ,*ORGTRELLO/ITEM-LEVEL*)
+                                                                                                                                   (:level . ,org-trello--item-level)
                                                                                                                                    (:keyword . "TODO")))))))
                            (entities-adj (orgtrello-hash/make-properties `(("some-other-checklist-id" . ())
                                                                            ("some-checklist-id" . ("some-item-id" "some-other-item-id"))
@@ -938,22 +938,22 @@ some comment
                                                                                                                          (:comment-text . "some comment")))))
                                                                    (:tags . ":red:green:")
                                                                    (:desc . "some description")
-                                                                   (:level . ,*ORGTRELLO/CARD-LEVEL*)
+                                                                   (:level . ,org-trello--card-level)
                                                                    (:name . "some card name")
                                                                    (:id . "some-card-id"))))
                            (entities (orgtrello-hash/make-properties `(("some-checklist-id" . ,(orgtrello-hash/make-properties `((:id . "some-checklist-id")
                                                                                                                                  (:name . "some checklist name")
-                                                                                                                                 (:level . ,*ORGTRELLO/CHECKLIST-LEVEL*))))
+                                                                                                                                 (:level . ,org-trello--checklist-level))))
                                                                        ("some-other-checklist-id" . ,(orgtrello-hash/make-properties `((:id . "some-other-checklist-id")
                                                                                                                                        (:name . "some other checklist name")
-                                                                                                                                       (:level . ,*ORGTRELLO/CHECKLIST-LEVEL*))))
+                                                                                                                                       (:level . ,org-trello--checklist-level))))
                                                                        ("some-item-id"  . ,(orgtrello-hash/make-properties `((:id . "some-item-id")
                                                                                                                              (:name . "some item name")
-                                                                                                                             (:level . ,*ORGTRELLO/ITEM-LEVEL*)
+                                                                                                                             (:level . ,org-trello--item-level)
                                                                                                                              (:keyword . "DONE"))))
                                                                        ("some-other-item-id"  . ,(orgtrello-hash/make-properties `((:id . "some-other-item-id")
                                                                                                                                    (:name . "some other item name")
-                                                                                                                                   (:level . ,*ORGTRELLO/ITEM-LEVEL*)
+                                                                                                                                   (:level . ,org-trello--item-level)
                                                                                                                                    (:keyword . "TODO")))))))
                            (entities-adj (orgtrello-hash/make-properties `(("some-other-checklist-id" . ())
                                                                            ("some-checklist-id" . ("some-item-id" "some-other-item-id"))

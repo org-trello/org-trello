@@ -44,7 +44,7 @@
 (defun orgtrello-backend/compute-org-trello-card-from (trello-cards)
   "Given a TRELLO-CARDS list, compute its org-trello representation."
   (--reduce-from (progn
-                   (orgtrello-log/msg *OT/INFO* "Computing card '%s' data..." (orgtrello-data/entity-name it))
+                   (orgtrello-log/msg orgtrello-log-info "Computing card '%s' data..." (orgtrello-data/entity-name it))
                    (cl-destructuring-bind (entities adjacency) acc
                      (orgtrello-backend/compute-org-trello-checklists-from-card!
                       it
@@ -68,7 +68,7 @@
                     (list entities adjacencies)
                     it))))
 
-(orgtrello-log/msg *OT/DEBUG* "orgtrello-backend loaded!")
+(orgtrello-log/msg orgtrello-log-debug "orgtrello-backend loaded!")
 
 (provide 'org-trello-backend)
 ;;; org-trello-backend.el ends here

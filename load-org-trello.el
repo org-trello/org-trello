@@ -4,8 +4,10 @@
 
 (add-to-list 'load-path (expand-file-name "."))
 
-(defvar *ORGTRELLO-NAMESPACES* '() "Org-trello namespaces for development purposes.")
-(setq *ORGTRELLO-NAMESPACES* '("org-trello-action.el"
+(defvar org-trello--namespaces '() "Org-trello namespaces for development purposes.")
+(setq org-trello--namespaces '("org-trello-log.el"
+                               "org-trello-setup.el"
+                               "org-trello-action.el"
                                "org-trello-api.el"
                                "org-trello-backend.el"
                                "org-trello-entity.el"
@@ -15,24 +17,22 @@
                                "org-trello-data.el"
                                "org-trello-hash.el"
                                "org-trello-input.el"
-                               "org-trello-log.el"
                                "org-trello-proxy.el"
                                "org-trello-query.el"
                                "org-trello-utils.el"
-                               "org-trello.el"
-                               "org-trello-setup.el"))
+                               "org-trello.el"))
 
 (defun org-trello/dev-load-namespaces! ()
   "Load the org-trello namespaces."
   (interactive)
   ;; recompile code
-  (mapc (lambda (it) (load-with-code-conversion it it)) *ORGTRELLO-NAMESPACES*)
+  (mapc (lambda (it) (load-with-code-conversion it it)) org-trello--namespaces)
   (require 'org-trello)
   ;; reload bindings
   (custom-set-variables
-   '(*ORGTRELLO/MODE-PREFIX-KEYBINDING* "C-c z")
-   '(*orgtrello-log/level* *OT/TRACE*))
-  (orgtrello-log/msg *OT/INFO* "Code loaded!"))
+   '(org-trello-current-prefix-keybinding "C-c z")
+   '(orgtrello-log-level orgtrello-log-trace))
+  (orgtrello-log/msg orgtrello-log-info "Code loaded!"))
 
 (defun org-trello/dev-find-unused-definitions! ()
   "Find unused definitions."
@@ -42,7 +42,7 @@
       (erase-buffer)
       (mapc (lambda (it)
               (insert-file-contents it)
-              (goto-char (point-max))) *ORGTRELLO-NAMESPACES*)
+              (goto-char (point-max))) org-trello--namespaces)
       (emacs-lisp-mode)
       (write-file filename)
       (call-interactively 'emr-el-find-unused-definitions))))

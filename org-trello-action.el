@@ -32,7 +32,7 @@ If there are errors, display them (unless NOLOG-P is set)."
       (-if-let (error-messages (-> control-or-action-fns orgtrello-action/--execute-controls orgtrello-action/--filter-error-messages))
           (unless nolog-p
             ;; there are some trouble, we display all the error messages to help the user understand the problem
-            (orgtrello-log/msg *OT/ERROR* "List of errors:\n %s" (orgtrello-action/--compute-error-message error-messages)))
+            (orgtrello-log/msg orgtrello-log-error "List of errors:\n %s" (orgtrello-action/--compute-error-message error-messages)))
         ;; ok execute the function as the controls are ok
         (funcall fn-to-execute))
     ;; no control, we simply execute the function
@@ -45,7 +45,7 @@ If any errors are thrown during controls, then display them."
   (if control-fns
       (-if-let (error-messages (-> control-fns (orgtrello-action/--execute-controls entity) orgtrello-action/--filter-error-messages))
           ;; there are some trouble, we display all the error messages to help the user understand the problem
-          (orgtrello-log/msg *OT/ERROR* "List of errors:\n %s" (orgtrello-action/--compute-error-message error-messages))
+          (orgtrello-log/msg orgtrello-log-error "List of errors:\n %s" (orgtrello-action/--compute-error-message error-messages))
         ;; ok execute the function as the controls are ok
         (funcall fn-to-execute entity args))
     ;; no control, we simply execute the function
@@ -57,14 +57,14 @@ Then execute some CONTROL-OR-ACTION-FNS.
 If all controls are ok, then execute the parameter-less FN-TO-EXECUTE.
 `(Optionally)`
 if NOLOG-P is set, this will not log anything."
-  (unless nolog-p (orgtrello-log/msg *OT/INFO* (concat msg "...")))
+  (unless nolog-p (orgtrello-log/msg orgtrello-log-info (concat msg "...")))
   (orgtrello-action/controls-or-actions-then-do control-or-action-fns fn-to-execute nolog-p))
 
 (defun orgtrello-action/--too-deep-level (entity)
   "Given an ENTITY with level too deep, display an error message about it."
   "Your arborescence depth is too deep. We only support up to depth 3.\nLevel 1 - card\nLevel 2 - checklist\nLevel 3 - items")
 
-(orgtrello-log/msg *OT/DEBUG* "orgtrello-action loaded!")
+(orgtrello-log/msg orgtrello-log-debug "orgtrello-action loaded!")
 
 (provide 'org-trello-action)
 ;;; org-trello-action.el ends here
