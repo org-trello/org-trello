@@ -10,7 +10,8 @@
 - [ ] Migrate ~/.trello/config.el inside emacs's home - #239
 - [ ] Fix #250 - Changing order of checklist items not saved unless checklist item's text changed
 
-* IN-PROGRESS 0.6.9.6 [100%]
+* DONE 0.6.9.6 [100%]
+CLOSED: [2015-05-24 Sun 13:25]
 - [X] Create backlog
 - [X] Update version
 - [X] Fix #261 - Modifying/Adding labels ok, removing labels completely ko
