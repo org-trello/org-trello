@@ -161,6 +161,7 @@ If WITH-SAVE-FLAG is set, will do a buffer save and reload the org setup."
   (orgtrello-action/msg-controls-or-actions-then-do
    action-label
    '(orgtrello-controller/migrate-user-setup!
+     orgtrello-controller/set-account!
      orgtrello-controller/load-keys!
      orgtrello-controller/control-keys!
      orgtrello-controller/setup-properties!
@@ -173,6 +174,7 @@ If NO-CHECK-FLAG is set, no controls are done."
   (orgtrello-action/msg-controls-or-actions-then-do
    action-label
    (if no-check-flag nil '(orgtrello-controller/migrate-user-setup!
+                           orgtrello-controller/set-account!
                            orgtrello-controller/load-keys!
                            orgtrello-controller/control-keys!
                            orgtrello-controller/setup-properties!))

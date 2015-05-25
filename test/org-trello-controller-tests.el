@@ -148,17 +148,20 @@
 (ert-deftest test-orgtrello-controller/load-keys! ()
   (should (equal :ok
                  (with-mock
-                   (mock (file-exists-p org-trello--config-file) => t)
-                   (mock (load org-trello--config-file)          => t)
+                   (mock (orgtrello-controller/config-file!) => :some-config-file)
+                   (mock (file-exists-p :some-config-file)   => t)
+                   (mock (load :some-config-file)            => t)
                    (orgtrello-controller/load-keys!))))
-  (should (equal "Setup problem - Problem during credentials (consumer-key and the read/write access-token) loading - C-c o i or M-x org-trello-install-key-and-token"
+  (should (equal "Setup problem - Problem during credentials loading (consumer-key and read/write access-token) - C-c o i or M-x org-trello-install-key-and-token"
                  (with-mock
-                   (mock (file-exists-p org-trello--config-file) => nil)
+                   (mock (orgtrello-controller/config-file!) => :some-config-file)
+                   (mock (file-exists-p :some-config-file)   => nil)
                    (orgtrello-controller/load-keys!))))
-  (should (equal "Setup problem - Problem during credentials (consumer-key and the read/write access-token) loading - C-c o i or M-x org-trello-install-key-and-token"
+  (should (equal "Setup problem - Problem during credentials loading (consumer-key and read/write access-token) - C-c o i or M-x org-trello-install-key-and-token"
                  (with-mock
-                   (mock (file-exists-p org-trello--config-file) => t)
-                   (mock (load org-trello--config-file)          => nil)
+                   (mock (orgtrello-controller/config-file!) => :some-config-file)
+                   (mock (file-exists-p :some-config-file)   => t)
+                   (mock (load :some-config-file)            => nil)
                    (orgtrello-controller/load-keys!)))))
 
 (ert-deftest test-orgtrello-controller/control-keys! ()
@@ -718,6 +721,48 @@ some description
                                                                      (:name . "other card name")
                                                                      (:id . "some-card-id2")))))
                 (orgtrello-controller/sync-buffer-with-trello-cards! (current-buffer) (list trello-card0 trello-card1))))))))
+
+(ert-deftest test-orgtrello-controller/user-account-from-config-file ()
+  (should (string= "config" (orgtrello-controller/user-account-from-config-file "/home/tony/.emacs.d/.trello/config.el")))
+  (should (string= "ardumont" (orgtrello-controller/user-account-from-config-file "/home/tony/.emacs.d/.trello/ardumont.el"))))
+
+(ert-deftest test-orgtrello-controller/list-user-accounts ()
+  (should (equal '("ardumont" "config" "orgmode")
+                 (orgtrello-controller/list-user-accounts '("/home/tony/.emacs.d/.trello/ardumont.el" "/home/tony/.emacs.d/.trello/config.el" "/home/tony/.emacs.d/.trello/orgmode.el"))))
+  (should (equal '("foobar")
+                 (orgtrello-controller/list-user-accounts '("/home/tony/.emacs.d/.trello/foobar.el")))))
+
+
+(ert-deftest test-orgtrello-controller/--list-as-index-list ()
+  (orgtrello-tests/hash-equal
+   #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data ("0" "one" "1" "two" "2" "three"))
+   (orgtrello-controller/--list-as-index-list '("one" "two" "three"))))
+
+(ert-deftest test-orgtrello-controller/--list-as-string-to-choose ()
+  (should (string= "0: first\n1: second\n2: third\n"
+                   (orgtrello-controller/--list-as-string-to-choose '("first" "second" "third"))))
+  (should (string= ""
+                   (orgtrello-controller/--list-as-string-to-choose '()))))
+
+
+(ert-deftest test-orgtrello-controller/set-account! ()
+  (should (equal :ok
+                 (with-mock
+                   (mock (orgtrello-buffer/me!) => "some-account")
+                   (orgtrello-controller/set-account!))))
+  (should (equal :ok
+                 (with-mock
+                   (mock (orgtrello-buffer/me!) => nil)
+                   (mock (orgtrello-controller/user-config-files) => :some-config-file)
+                   (mock (orgtrello-controller/list-user-accounts :some-config-file) => '(account0))
+                   (orgtrello-controller/set-account!))))
+  (should (equal :ok
+                 (with-mock
+                   (mock (orgtrello-buffer/me!) => nil)
+                   (mock (orgtrello-controller/user-config-files) => :some-config-file)
+                   (mock (orgtrello-controller/list-user-accounts :some-config-file) => '(:account0 :account1))
+                   (mock (orgtrello-controller/--choose-account! '(:account0 :account1)) => :account0)
+                   (orgtrello-controller/set-account!)))))
 
 (provide 'org-trello-controller-tests)
 ;;; org-trello-controller-tests.el ends here

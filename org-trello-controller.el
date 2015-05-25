@@ -56,7 +56,7 @@ ARGS is not used."
     (setq org-trello--hmap-list-orgkeyword-id-name  (orgtrello-controller/hmap-id-name org-keywords org-file-properties))
     (setq org-trello--hmap-users-id-name            (orgtrello-hash/make-transpose-properties org-trello-users))
     (setq org-trello--hmap-users-name-id            (orgtrello-hash/make-properties org-trello-users))
-    (setq org-trello--user-logged-in                (orgtrello-buffer/me!))
+    (orgtrello-setup/set-user-logged-in             (or (orgtrello-buffer/me!) (orgtrello-setup/user-logged-in)))
 
     (mapc (lambda (color) (add-to-list 'org-tag-alist color))
           '(("red" . ?r) ("green" . ?g) ("yellow" . ?y) ("blue" . ?b) ("purple" . ?p) ("orange" . ?o)))
@@ -90,10 +90,67 @@ ARGS is not used."
     (delete-directory org-trello--old-config-dir 'with-contents))
   :ok)
 
+(defun orgtrello-controller/--list-as-index-list (list)
+  "Given a LIST, return a map of (position . elt-in-list)."
+  (let ((i               0)
+        (index-board-map (orgtrello-hash/empty-hash)))
+    (mapc (lambda (elt)
+            (orgtrello-hash/puthash-data (format "%d" i) elt index-board-map)
+            (setq i (+ 1 i)))
+          list)
+    index-board-map))
+
+(defun orgtrello-controller/--list-as-string-to-choose (list)
+  "Given LIST, return return a string to display in minibuffer."
+  (let ((string-result  "")
+        (i              0))
+    (mapc (lambda (elt)
+            (setq string-result (format "%s%d: %s\n" string-result i elt))
+            (setq i (+ 1 i)))
+          list)
+    string-result))
+
 (defun orgtrello-controller/config-file! (&optional username)
-  "Determine the configuration file per buffer setup.
+  "Determine the configuration file as per user logged in.
 If USERNAME is supplied, do not look into the current buffer."
-  (format org-trello--config-file (if username username (orgtrello-buffer/me!))))
+  (format org-trello--config-file (if username username (orgtrello-setup/user-logged-in))))
+
+(defun orgtrello-controller/user-config-files ()
+  "List the actual possible users."
+  (directory-files org-trello--config-dir 'full-name "^.*\.el"))
+
+(defun orgtrello-controller/user-account-from-config-file (config-file)
+  "Determine the trello account from the CONFIG-FILE filename."
+  (->> config-file
+       (s-chop-prefix (expand-file-name org-trello--config-dir))
+       (s-chop-suffix ".el")))
+
+(defun orgtrello-controller/list-user-accounts (user-config-files)
+  "Given a list of USER-CONFIG-FILES, return the trello accounts list."
+  (mapcar #'orgtrello-controller/user-account-from-config-file user-config-files))
+
+(defun orgtrello-controller/--choose-account! (accounts)
+  "Let the user decide which account (s)he wants to use.
+Return such account name."
+  (let* ((accounts-to-choose    (orgtrello-controller/--list-as-string-to-choose accounts))
+         (accounts-hash         (orgtrello-controller/--list-as-index-list accounts))
+         (account-number-chosen (read-string (format "%sSelect the desired account login: " accounts-to-choose))))
+    (-if-let (user-elected (gethash account-number-chosen accounts-hash))
+        user-elected
+      (orgtrello-controller/--choose-account! accounts))))
+
+(defun orgtrello-controller/set-account! (&optional args)
+  "Set the org-trello account.
+ARGS is not used."
+  (let ((user-account-elected (-if-let (user-account (orgtrello-buffer/me!))
+                                  user-account ;; if already set, keep using the actual account
+                                ;; otherwise, user not logged in, determine which account to use
+                                (let ((user-accounts (orgtrello-controller/list-user-accounts (orgtrello-controller/user-config-files))))
+                                  (if (= 1 (length user-accounts))
+                                      (car user-accounts)
+                                    (orgtrello-controller/--choose-account! user-accounts))))))
+    (orgtrello-setup/set-user-logged-in user-account-elected)
+    :ok))
 
 (defun orgtrello-controller/load-keys! (&optional args)
   "Load the credentials keys from the configuration file.
@@ -412,29 +469,32 @@ ASK-FOR-OVERWRITE is a flag that needs to be set if we want to prevent some over
 
 (defun orgtrello-controller/do-install-key-and-token ()
   "Procedure to install the org-trello-consumer-key and the token for the user in the config-file."
-  (deferred:$
-    (deferred:next
-      (lambda () (browse-url (org-trello/compute-url "/1/appKey/generate"))))
-    (deferred:nextc it
-      (lambda ()
-        (let ((user-login   (read-string "Trello account login (unique): "))
-              (consumer-key (read-string "Consumer key: ")))
-          (browse-url (org-trello/compute-url (format "/1/authorize?response_type=token&name=org-trello&scope=read,write&expiration=never&key=%s" consumer-key)))
-          (list consumer-key user-login))))
-    (deferred:nextc it
-      (lambda (consumer-key-user-login)
-        (orgtrello-log/msg orgtrello-log-debug "user-login + consumer-key: %S" consumer-key-user-login)
-        (let ((access-token (read-string "Access token: ")))
-          (mapcar 's-trim (cons access-token consumer-key-user-login)))))
-    (deferred:nextc it
-      (lambda (access-token-consumer-key-user-login)
-        (orgtrello-log/msg orgtrello-log-debug "user-login + consumer-key + access-token: %S" access-token-consumer-key-user-login)
-        (->> access-token-consumer-key-user-login
-             (cons 'do-ask-for-overwrite)
-             nreverse
-             (apply 'orgtrello-controller/--do-install-config-file))))
-    (deferred:nextc it
-      (lambda () (orgtrello-log/msg orgtrello-log-info "Setup key and token done!")))))
+  (lexical-let* ((user-login       (orgtrello-setup/user-logged-in))
+                 (user-config-file (orgtrello-controller/config-file! user-login)))
+    (if (file-exists-p user-config-file)
+        (orgtrello-log/msg orgtrello-log-info "Configuration for user '%s' already existing (file '%s'), skipping." user-login user-config-file)
+      (deferred:$
+        (deferred:next
+          (lambda () (browse-url (org-trello/compute-url "/1/appKey/generate"))))
+        (deferred:nextc it
+          (lambda (user-login)
+            (let ((consumer-key (read-string "Consumer key: ")))
+              (browse-url (org-trello/compute-url (format "/1/authorize?response_type=token&name=org-trello&scope=read,write&expiration=never&key=%s" consumer-key)))
+              (list consumer-key user-login))))
+        (deferred:nextc it
+          (lambda (consumer-key-user-login)
+            (orgtrello-log/msg orgtrello-log-debug "user-login + consumer-key: %S" consumer-key-user-login)
+            (let ((access-token (read-string "Access token: ")))
+              (mapcar 's-trim (cons access-token consumer-key-user-login)))))
+        (deferred:nextc it
+          (lambda (access-token-consumer-key-user-login)
+            (orgtrello-log/msg orgtrello-log-debug "user-login + consumer-key + access-token: %S" access-token-consumer-key-user-login)
+            (->> access-token-consumer-key-user-login
+                 (cons 'do-ask-for-overwrite)
+                 nreverse
+                 (apply 'orgtrello-controller/--do-install-config-file))))
+        (deferred:nextc it
+          (lambda () (orgtrello-log/msg orgtrello-log-info "Setup key and token done!")))))))
 
 (defun orgtrello-controller/--id-name (entities)
   "Given a list of ENTITIES, return a map of (id, name)."
@@ -454,23 +514,15 @@ ASK-FOR-OVERWRITE is a flag that needs to be set if we want to prevent some over
 
 (defun orgtrello-controller/--index-board-map (boards)
   "Given BOARDS, a map of board (id . name), return a map of (position . name)."
-  (let ((i               0)
-        (index-board-map (orgtrello-hash/empty-hash)))
-    (maphash (lambda (id _)
-               (orgtrello-hash/puthash-data (format "%d" i) id index-board-map)
-               (setq i (+ 1 i)))
-             boards)
-    index-board-map))
+  (-> boards
+      orgtrello-hash/keys
+      orgtrello-controller/--list-as-index-list))
 
 (defun orgtrello-controller/--display-boards-to-choose (boards)
   "Given BOARDS, a map of board (id . name), return a string to display in minibuffer."
-  (let ((string-result  "")
-        (i            0))
-    (maphash (lambda (_ name)
-               (setq string-result (format "%s%d: %s\n" string-result i name))
-               (setq i (+ 1 i)))
-             boards)
-    string-result))
+  (-> boards
+      orgtrello-hash/values
+      orgtrello-controller/--list-as-string-to-choose))
 
 (defun orgtrello-controller/choose-board! (boards)
   "Given a map of boards, ask the user to choose the boards.
@@ -603,43 +655,48 @@ This returns the identifier of such board."
 
 (defun orgtrello-controller/do-install-board-and-lists ()
   "Command to install the list boards."
-  (lexical-let ((buffer-name (current-buffer)))
-    (deferred:$
-      (deferred:parallel ;; retrieve in parallel the open boards and the currently logged in user
-        (deferred:next
-          'orgtrello-controller/--list-boards!)
-        (deferred:next
-          'orgtrello-controller/--user-logged-in!))
-      (deferred:nextc it
-        (lambda (boards-and-user-logged-in)
-          (let* ((boards         (elt boards-and-user-logged-in 0))
-                 (user-logged-in (orgtrello-data/entity-username (elt boards-and-user-logged-in 1)))
-                 (selected-id-board (->> boards
-                                      orgtrello-controller/--id-name
-                                      orgtrello-controller/choose-board!)))
-            (list (car (--filter (string= selected-id-board (orgtrello-data/entity-id it)) boards)) user-logged-in))))
-      (deferred:nextc it ;; hack everything has been retrieved with the first requests except for the members
-        (lambda (board-and-user-logged-in)
-          (-> board-and-user-logged-in
-            car
-            orgtrello-data/entity-id
-            orgtrello-api/get-members
-            (orgtrello-query/http-trello 'sync)
-            (cons board-and-user-logged-in))))
-      (deferred:nextc it
-        (lambda (members-board-and-user)
-          (cl-destructuring-bind (members chosen-board user-logged-in) members-board-and-user
-            (orgtrello-controller/do-write-board-metadata! (orgtrello-data/entity-id chosen-board)
-                                                           (orgtrello-data/entity-name chosen-board)
-                                                           user-logged-in
-                                                           (orgtrello-data/entity-lists chosen-board)
-                                                           (orgtrello-data/entity-labels chosen-board)
-                                                           (orgtrello-controller/--compute-user-properties-hash members)))))
-      (deferred:nextc it
-        (lambda ()
-          (orgtrello-buffer/save-buffer buffer-name)
-          (orgtrello-action/reload-setup!)
-          (orgtrello-log/msg orgtrello-log-info "Install board and list ids done!"))))))
+  (lexical-let* ((buffer-name      (current-buffer))
+                 (user-config-file (orgtrello-controller/config-file!)))
+    (if (not (file-exists-p user-config-file))
+        (orgtrello-log/msg orgtrello-log-error "Setup problem - check your org-trello credentials setup!")
+      (progn
+        (load-file user-config-file)
+        (deferred:$
+          (deferred:parallel ;; retrieve in parallel the open boards and the currently logged in user
+            (deferred:next
+              'orgtrello-controller/--list-boards!)
+            (deferred:next
+              'orgtrello-controller/--user-logged-in!))
+          (deferred:nextc it
+            (lambda (boards-and-user-logged-in)
+              (let* ((boards         (elt boards-and-user-logged-in 0))
+                     (user-logged-in (orgtrello-data/entity-username (elt boards-and-user-logged-in 1)))
+                     (selected-id-board (->> boards
+                                             orgtrello-controller/--id-name
+                                             orgtrello-controller/choose-board!)))
+                (list (car (--filter (string= selected-id-board (orgtrello-data/entity-id it)) boards)) user-logged-in))))
+          (deferred:nextc it ;; hack everything has been retrieved with the first requests except for the members
+            (lambda (board-and-user-logged-in)
+              (-> board-and-user-logged-in
+                  car
+                  orgtrello-data/entity-id
+                  orgtrello-api/get-members
+                  (orgtrello-query/http-trello 'sync)
+                  (cons board-and-user-logged-in))))
+          (deferred:nextc it
+            (lambda (members-board-and-user)
+              (cl-destructuring-bind (members chosen-board user-logged-in) members-board-and-user
+                (orgtrello-controller/do-write-board-metadata! (orgtrello-data/entity-id chosen-board)
+                                                               (orgtrello-data/entity-name chosen-board)
+                                                               user-logged-in
+                                                               (orgtrello-data/entity-lists chosen-board)
+                                                               (orgtrello-data/entity-labels chosen-board)
+                                                               (orgtrello-controller/--compute-user-properties-hash members)))))
+          (deferred:nextc it
+            (lambda ()
+              (orgtrello-buffer/save-buffer buffer-name)
+              (orgtrello-action/reload-setup!)
+              (orgtrello-log/msg orgtrello-log-info "Install board and list ids done!"))))))))
 
 (defun orgtrello-controller/--compute-user-properties (memberships-map)
   "Given a map MEMBERSHIPS-MAP, extract the map of user information."

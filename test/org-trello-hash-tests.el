@@ -23,5 +23,15 @@
   (should (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:1 :2 :key :value))
                                       (orgtrello-hash/puthash-data :key :value (orgtrello-hash/make-properties '((:1 . :2) (:key . :other-value)))))))
 
+(ert-deftest test-orgtrello-hash/keys ()
+  (should (equal '("key0" "key1" "key2")
+                 (orgtrello-hash/keys (orgtrello-hash/make-properties `(("key0" . "val0") ("key1" . "val1") ("key2" . "val2"))))))
+  (should-not (orgtrello-hash/keys (orgtrello-hash/empty-hash))))
+
+(ert-deftest test-orgtrello-hash/values ()
+  (should (equal '("val0" "val1" "val2")
+                 (orgtrello-hash/values (orgtrello-hash/make-properties `(("key0" . "val0") ("key1" . "val1") ("key2" . "val2"))))))
+  (should-not (orgtrello-hash/keys (orgtrello-hash/empty-hash))))
+
 (provide 'org-trello-hash-tests)
 ;;; org-trello-hash-tests.el ends here

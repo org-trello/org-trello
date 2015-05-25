@@ -40,10 +40,11 @@
   - [X] Rename constants + variables
   - [X] Rename entry points according to conventions + alias old definitions for backward compatibility
 - [X] Close #239 - Migrate ~/.trello/config.el inside user-emacs-directory
-- [-] #256 - one user can have multiple trello accounts [2/3]
+- [-] #256 - one user can have multiple trello accounts [3/4]
   - [X] Migrate the actual setup to the multi-account setup (transparent for user)
-  - [X] Update install-key-and-token command to create the account setup
-  - [ ] Make the install-key-and-token command be able to reuse existing setup
+  - [X] Update `org-trello-install-key-and-token` command to create the account setup
+  - [X] Update the loading configuration mechanism multi-account aware
+  - [ ] Make sure initializing org-trello account is ok
 - [ ] Release notes
 
 * DONE 0.6.9.6 [100%]

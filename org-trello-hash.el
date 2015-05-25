@@ -37,6 +37,19 @@ Return the entity updated or nil if the entity is nil."
 If data is nil, return an empty hash table."
   (if data data (orgtrello-hash/empty-hash)))
 
+
+(defun orgtrello-hash/keys (hash-table)
+  "Return a list of keys in HASH-TABLE."
+  (let ((keys '()))
+    (maphash (lambda (k _v) (push k keys)) hash-table)
+    (nreverse keys)))
+
+(defun orgtrello-hash/values (hash-table)
+  "Return a list of values in HASH-TABLE."
+  (let ((values '()))
+    (maphash (lambda (_k v) (push v values)) hash-table)
+    (nreverse values)))
+
 (orgtrello-log/msg orgtrello-log-debug "orgtrello-hash loaded!")
 
 (provide 'org-trello-hash)

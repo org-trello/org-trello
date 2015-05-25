@@ -133,7 +133,7 @@ This is intended as a buffer local variable.")
   "Old default trello directory.
 As of 0.7.0, org-trello now follows Emacs's conventions.")
 
-(defconst org-trello--config-dir (format "%s%s" user-emacs-directory ".trello")
+(defconst org-trello--config-dir (format "%s%s/" user-emacs-directory ".trello")
   "Default trello directory for the configuration files.")
 
 (defconst org-trello--config-filename "%s.el"
@@ -245,6 +245,14 @@ As of 0.7.0, org-trello now follows Emacs's conventions.")
   :group 'org-trello)
 
 (defalias '*ORGTRELLO/MODE-PREFIX-KEYBINDING* 'org-trello-current-prefix-keybinding)
+
+(defun orgtrello-setup/user-logged-in ()
+  "Return the user logged in's name."
+  org-trello--user-logged-in)
+
+(defun orgtrello-setup/set-user-logged-in (user-logged-in)
+  "Set the user logged in USER-LOGGED-IN."
+  (setq org-trello--user-logged-in user-logged-in))
 
 (provide 'org-trello-setup)
 ;;; org-trello-setup.el ends here
