@@ -117,7 +117,8 @@ If USERNAME is supplied, do not look into the current buffer."
 
 (defun orgtrello-controller/user-config-files ()
   "List the actual possible users."
-  (directory-files org-trello--config-dir 'full-name "^.*\.el"))
+  (when (file-exists-p org-trello--config-dir)
+    (directory-files org-trello--config-dir 'full-name "^.*\.el")))
 
 (defun orgtrello-controller/user-account-from-config-file (config-file)
   "Determine the trello account from the CONFIG-FILE filename."
@@ -469,7 +470,7 @@ ASK-FOR-OVERWRITE is a flag that needs to be set if we want to prevent some over
 
 (defun orgtrello-controller/do-install-key-and-token ()
   "Procedure to install the org-trello-consumer-key and the token for the user in the config-file."
-  (lexical-let* ((user-login       (orgtrello-setup/user-logged-in))
+  (lexical-let* ((user-login       (read-string "Trello login account (you need to be logged accordinly in trello.com, we cannot check this for you): "))
                  (user-config-file (orgtrello-controller/config-file! user-login)))
     (if (file-exists-p user-config-file)
         (orgtrello-log/msg orgtrello-log-info "Configuration for user '%s' already existing (file '%s'), skipping." user-login user-config-file)
@@ -625,6 +626,7 @@ This returns the identifier of such board."
                              (nreverse res-list))) ""))
 
 (defun orgtrello-controller/--properties-compute-users-ids (board-users-hash-name-id)
+  "Given BOARD-USERS-HASH-NAME-ID, compute the properties for users."
   (let ((res-list))
     (maphash (lambda (name id) (--> name
                                  (format "#+PROPERTY: %s%s %s" org-trello--label-key-user-prefix it id)
@@ -655,48 +657,43 @@ This returns the identifier of such board."
 
 (defun orgtrello-controller/do-install-board-and-lists ()
   "Command to install the list boards."
-  (lexical-let* ((buffer-name      (current-buffer))
-                 (user-config-file (orgtrello-controller/config-file!)))
-    (if (not (file-exists-p user-config-file))
-        (orgtrello-log/msg orgtrello-log-error "Setup problem - check your org-trello credentials setup!")
-      (progn
-        (load-file user-config-file)
-        (deferred:$
-          (deferred:parallel ;; retrieve in parallel the open boards and the currently logged in user
-            (deferred:next
-              'orgtrello-controller/--list-boards!)
-            (deferred:next
-              'orgtrello-controller/--user-logged-in!))
-          (deferred:nextc it
-            (lambda (boards-and-user-logged-in)
-              (let* ((boards         (elt boards-and-user-logged-in 0))
-                     (user-logged-in (orgtrello-data/entity-username (elt boards-and-user-logged-in 1)))
-                     (selected-id-board (->> boards
-                                             orgtrello-controller/--id-name
-                                             orgtrello-controller/choose-board!)))
-                (list (car (--filter (string= selected-id-board (orgtrello-data/entity-id it)) boards)) user-logged-in))))
-          (deferred:nextc it ;; hack everything has been retrieved with the first requests except for the members
-            (lambda (board-and-user-logged-in)
-              (-> board-and-user-logged-in
-                  car
-                  orgtrello-data/entity-id
-                  orgtrello-api/get-members
-                  (orgtrello-query/http-trello 'sync)
-                  (cons board-and-user-logged-in))))
-          (deferred:nextc it
-            (lambda (members-board-and-user)
-              (cl-destructuring-bind (members chosen-board user-logged-in) members-board-and-user
-                (orgtrello-controller/do-write-board-metadata! (orgtrello-data/entity-id chosen-board)
-                                                               (orgtrello-data/entity-name chosen-board)
-                                                               user-logged-in
-                                                               (orgtrello-data/entity-lists chosen-board)
-                                                               (orgtrello-data/entity-labels chosen-board)
-                                                               (orgtrello-controller/--compute-user-properties-hash members)))))
-          (deferred:nextc it
-            (lambda ()
-              (orgtrello-buffer/save-buffer buffer-name)
-              (orgtrello-action/reload-setup!)
-              (orgtrello-log/msg orgtrello-log-info "Install board and list ids done!"))))))))
+  (lexical-let ((buffer-name (current-buffer)))
+    (deferred:$
+      (deferred:parallel ;; retrieve in parallel the open boards and the currently logged in user
+        (deferred:next
+          'orgtrello-controller/--list-boards!)
+        (deferred:next
+          'orgtrello-controller/--user-logged-in!))
+      (deferred:nextc it
+        (lambda (boards-and-user-logged-in)
+          (let* ((boards         (elt boards-and-user-logged-in 0))
+                 (user-logged-in (orgtrello-data/entity-username (elt boards-and-user-logged-in 1)))
+                 (selected-id-board (->> boards
+                                         orgtrello-controller/--id-name
+                                         orgtrello-controller/choose-board!)))
+            (list (car (--filter (string= selected-id-board (orgtrello-data/entity-id it)) boards)) user-logged-in))))
+      (deferred:nextc it ;; hack everything has been retrieved with the first requests except for the members
+        (lambda (board-and-user-logged-in)
+          (-> board-and-user-logged-in
+              car
+              orgtrello-data/entity-id
+              orgtrello-api/get-members
+              (orgtrello-query/http-trello 'sync)
+              (cons board-and-user-logged-in))))
+      (deferred:nextc it
+        (lambda (members-board-and-user)
+          (cl-destructuring-bind (members chosen-board user-logged-in) members-board-and-user
+            (orgtrello-controller/do-write-board-metadata! (orgtrello-data/entity-id chosen-board)
+                                                           (orgtrello-data/entity-name chosen-board)
+                                                           user-logged-in
+                                                           (orgtrello-data/entity-lists chosen-board)
+                                                           (orgtrello-data/entity-labels chosen-board)
+                                                           (orgtrello-controller/--compute-user-properties-hash members)))))
+      (deferred:nextc it
+        (lambda ()
+          (orgtrello-buffer/save-buffer buffer-name)
+          (orgtrello-action/reload-setup!)
+          (orgtrello-log/msg orgtrello-log-info "Install board and list ids done!"))))))
 
 (defun orgtrello-controller/--compute-user-properties (memberships-map)
   "Given a map MEMBERSHIPS-MAP, extract the map of user information."

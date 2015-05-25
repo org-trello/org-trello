@@ -2,8 +2,7 @@
 #+AUTHOR: ardumont
 #+STYLE: <style> h1,h2,h3 {font-family: arial, helvetica, sans-serif} </style>
 
-* Backlog
-
+* TODO Backlog
 ** Bug
 
 - [ ] #250 - Changing order of checklist items not saved unless checklist item's text changed
@@ -34,17 +33,17 @@
 - [ ] #248 - Installing from melpa (unstable) works, but then it errs on an undefined variable "error-messages"
 - [ ] #263 - Colors broken in org trello
 
-* IN-PROGRESS 0.7.0 [60%]
+* IN-PROGRESS 0.7.0 [80%]
 - [X] Update version
 - [X] Close #238 - [internal] Respect elisp coding conventions [2/2]
   - [X] Rename constants + variables
   - [X] Rename entry points according to conventions + alias old definitions for backward compatibility
 - [X] Close #239 - Migrate ~/.trello/config.el inside user-emacs-directory
-- [-] #256 - one user can have multiple trello accounts [3/4]
+- [X] Close #256 - one user can have multiple trello accounts [4/4]
   - [X] Migrate the actual setup to the multi-account setup (transparent for user)
   - [X] Update `org-trello-install-key-and-token` command to create the account setup
   - [X] Update the loading configuration mechanism multi-account aware
-  - [ ] Make sure initializing org-trello account is ok
+  - [X] Make sure initializing org-trello account is ok
 - [ ] Release notes
 
 * DONE 0.6.9.6 [100%]

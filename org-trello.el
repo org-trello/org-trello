@@ -297,7 +297,7 @@ If MODIFIER is non nil, execute all entities removal from trello and buffer."
 (defun org-trello-install-key-and-token ()
   "No control, trigger the setup installation of the key and the read/write token."
   (interactive)
-  (org-trello/apply-deferred '(org-trello/log-light-checks-and-do "Setup key and token" orgtrello-controller/do-install-key-and-token 'do-no-checks)))
+  (orgtrello-controller/do-install-key-and-token))
 
 (defalias 'org-trello/install-key-and-token 'org-trello-install-key-and-token)
 
