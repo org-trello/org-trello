@@ -31,7 +31,7 @@
 - [ ] #248 - Installing from melpa (unstable) works, but then it errs on an undefined variable "error-messages"
 - [ ] #263 - Colors broken in org trello
 
-* IN-PROGRESS 0.7.0 [87%]
+* IN-PROGRESS 0.7.0 [100%]
 - [X] Update version
 - [X] Close #238 - [internal] Respect elisp coding conventions [2/2]
   - [X] Rename constants + variables
@@ -45,7 +45,7 @@
 - [X] Close #267 - Emptying card's description does not work
 - [X] Remove too much verbosity (when deleting property checksum)
 - [X] Close #250 - Changing order of checklist items not saved unless checklist item's text changed
-- [ ] Release notes
+- [X] Release notes
 
 * DONE 0.6.9.6 [100%]
 CLOSED: [2015-05-24 Sun 13:25]
