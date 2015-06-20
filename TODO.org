@@ -31,7 +31,8 @@
 - [ ] #248 - Installing from melpa (unstable) works, but then it errs on an undefined variable "error-messages"
 - [ ] #263 - Colors broken in org trello
 
-* IN-PROGRESS 0.7.0 [100%]
+* DONE 0.7.0 [100%]
+CLOSED: [2015-06-20 Sat 18:19]
 - [X] Update version
 - [X] Close #238 - [internal] Respect elisp coding conventions [2/2]
   - [X] Rename constants + variables
