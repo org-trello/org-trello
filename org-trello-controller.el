@@ -120,11 +120,7 @@ If USERNAME is supplied, do not look into the current buffer."
   (when (file-exists-p org-trello--config-dir)
     (directory-files org-trello--config-dir 'full-name "^.*\.el")))
 
-(defun orgtrello-controller/user-account-from-config-file (config-file)
-  "Determine the trello account from the CONFIG-FILE filename."
-  (->> config-file
-       (s-chop-prefix (expand-file-name org-trello--config-dir))
-       (s-chop-suffix ".el")))
+(defalias 'orgtrello-controller/user-account-from-config-file 'file-name-base)
 
 (defun orgtrello-controller/list-user-accounts (user-config-files)
   "Given a list of USER-CONFIG-FILES, return the trello accounts list."

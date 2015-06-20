@@ -723,14 +723,14 @@ some description
                 (orgtrello-controller/sync-buffer-with-trello-cards! (current-buffer) (list trello-card0 trello-card1))))))))
 
 (ert-deftest test-orgtrello-controller/user-account-from-config-file ()
-  (should (string= "config" (orgtrello-controller/user-account-from-config-file "/home/tony/.emacs.d/.trello/config.el")))
-  (should (string= "ardumont" (orgtrello-controller/user-account-from-config-file "/home/tony/.emacs.d/.trello/ardumont.el"))))
+  (should (string= "config" (orgtrello-controller/user-account-from-config-file "/home/user/.emacs.d/.trello/config.el")))
+  (should (string= "ardumont" (orgtrello-controller/user-account-from-config-file "/home/user/.emacs.d/.trello/ardumont.el"))))
 
 (ert-deftest test-orgtrello-controller/list-user-accounts ()
   (should (equal '("ardumont" "config" "orgmode")
-                 (orgtrello-controller/list-user-accounts '("/home/tony/.emacs.d/.trello/ardumont.el" "/home/tony/.emacs.d/.trello/config.el" "/home/tony/.emacs.d/.trello/orgmode.el"))))
+                 (orgtrello-controller/list-user-accounts '("/home/user/.emacs.d/.trello/ardumont.el" "/home/user/.emacs.d/.trello/config.el" "/home/user/.emacs.d/.trello/orgmode.el"))))
   (should (equal '("foobar")
-                 (orgtrello-controller/list-user-accounts '("/home/tony/.emacs.d/.trello/foobar.el")))))
+                 (orgtrello-controller/list-user-accounts '("/home/user/.emacs.d/.trello/foobar.el")))))
 
 
 (ert-deftest test-orgtrello-controller/--list-as-index-list ()
