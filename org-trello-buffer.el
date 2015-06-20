@@ -29,11 +29,12 @@ If the VALUE is nil or empty, remove such PROPERTY."
   "Given the current position, extract the text content of current card."
   (let* ((start (orgtrello-entity/card-description-start-point!))
          (end   (orgtrello-entity/card-metadata-end-point!)))
-    (when (< start end)
-      (->> (buffer-substring-no-properties start end)
-        s-lines
-        (--map (if (s-equals? "" it) it (substring it org-trello-buffer--indent-description)))
-        (s-join "\n")))))
+    (if (< start end)
+        (->> (buffer-substring-no-properties start end)
+             s-lines
+             (--map (if (s-equals? "" it) it (substring it org-trello-buffer--indent-description)))
+             (s-join "\n"))
+      "")))
 
 (defun orgtrello-buffer/extract-comment-description-from-current-position! ()
   "Given the current position, extract the text content of current card."

@@ -3,18 +3,18 @@
 (require 'el-mock)
 
 (ert-deftest test-orgtrello-buffer/extract-description-from-current-position! ()
-  (should (equal "llo there"
-                 (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
+  (should (string= "llo there"
+                   (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
    DEADLINE: <2014-04-01T00:00:00.000Z>
 :PROPERTIES:
 :orgtrello-id: 52c945143004d4617c012528
 :END:
 hello there
 "
-                                                   (orgtrello-buffer/extract-description-from-current-position!))))
+                                                     (orgtrello-buffer/extract-description-from-current-position!))))
 
-  (should (equal "hello there"
-                 (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
+  (should (string= "hello there"
+                   (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
 :PROPERTIES:
 :orgtrello-id: 52c945143004d4617c012528
 :END:
@@ -22,10 +22,10 @@ hello there
   - [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}
     - [X] Emacs-Lisp  :PROPERTIES: {\"orgtrello-id\":\"52c9451784251e1b260127f8\"}
     - [X] Common-Lisp :PROPERTIES: {\"orgtrello-id\":\"52c94518b2c5b28e37012ba4\"}"
-                                                   (orgtrello-buffer/extract-description-from-current-position!))))
+                                                     (orgtrello-buffer/extract-description-from-current-position!))))
 
-  (should (equal "\nhello there\n"
-                 (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
+  (should (string= "\nhello there\n"
+                   (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
 :PROPERTIES:
 :orgtrello-id: 52c945143004d4617c012528
 :END:
@@ -35,20 +35,20 @@ hello there
   - [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}
     - [X] Emacs-Lisp  :PROPERTIES: {\"orgtrello-id\":\"52c9451784251e1b260127f8\"}
     - [X] Common-Lisp :PROPERTIES: {\"orgtrello-id\":\"52c94518b2c5b28e37012ba4\"}"
-                                                   (orgtrello-buffer/extract-description-from-current-position!))))
+                                                     (orgtrello-buffer/extract-description-from-current-position!))))
 
-  (should (equal nil
-                 (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES" (orgtrello-buffer/extract-description-from-current-position!))))
+  (should (string= ""
+                   (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES" (orgtrello-buffer/extract-description-from-current-position!))))
 
-  (should (equal nil
-                 (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
+  (should (string= ""
+                   (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
 :PROPERTIES:
 :orgtrello-id: 52c945143004d4617c012528
 :END:
 - [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}"
-                                                   (orgtrello-buffer/extract-description-from-current-position!))))
-  (should (equal "One Paragraph\n\nAnother Paragraph"
-                 (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
+                                                     (orgtrello-buffer/extract-description-from-current-position!))))
+  (should (string= "One Paragraph\n\nAnother Paragraph"
+                   (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
   DEADLINE: <2014-04-01T00:00:00.000Z>
   :PROPERTIES:
   :orgtrello-id: 52c945143004d4617c012528
@@ -57,18 +57,18 @@ hello there
 
   Another Paragraph
 "
-                                                   (orgtrello-buffer/extract-description-from-current-position!))))
-  (should (equal "hello there"
-                 (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
+                                                     (orgtrello-buffer/extract-description-from-current-position!))))
+  (should (string= "hello there"
+                   (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
  :PROPERTIES:
  :orgtrello-id: 52c945143004d4617c012528
  :END:
   hello there
 "
-                                                   (orgtrello-buffer/extract-description-from-current-position!))))
+                                                     (orgtrello-buffer/extract-description-from-current-position!))))
 
-  (should (equal "hello there"
-                 (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
+  (should (string= "hello there"
+                   (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
  :PROPERTIES:
  :orgtrello-id: 52c945143004d4617c012528
     :END:
@@ -76,10 +76,10 @@ hello there
   - [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}
     - [X] Emacs-Lisp  :PROPERTIES: {\"orgtrello-id\":\"52c9451784251e1b260127f8\"}
     - [X] Common-Lisp :PROPERTIES: {\"orgtrello-id\":\"52c94518b2c5b28e37012ba4\"}"
-                                                   (orgtrello-buffer/extract-description-from-current-position!))))
+                                                     (orgtrello-buffer/extract-description-from-current-position!))))
 
-  (should (equal "\nhello there\n"
-                 (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
+  (should (string= "\nhello there\n"
+                   (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
   :PROPERTIES:
          :orgtrello-id: 52c945143004d4617c012528
   :END:
@@ -89,15 +89,15 @@ hello there
   - [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}
     - [X] Emacs-Lisp  :PROPERTIES: {\"orgtrello-id\":\"52c9451784251e1b260127f8\"}
     - [X] Common-Lisp :PROPERTIES: {\"orgtrello-id\":\"52c94518b2c5b28e37012ba4\"}"
-                                                   (orgtrello-buffer/extract-description-from-current-position!))))
+                                                     (orgtrello-buffer/extract-description-from-current-position!))))
 
-  (should (equal nil
-                 (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
+  (should (string= ""
+                   (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
   :PROPERTIES:
  :orgtrello-id: 52c945143004d4617c012528
 :END:
   - [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}"
-                                                   (orgtrello-buffer/extract-description-from-current-position!)))))
+                                                     (orgtrello-buffer/extract-description-from-current-position!)))))
 
 (ert-deftest test-orgtrello-buffer/board-id! ()
   (should (equal

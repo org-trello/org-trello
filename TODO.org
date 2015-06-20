@@ -33,7 +33,7 @@
 - [ ] #248 - Installing from melpa (unstable) works, but then it errs on an undefined variable "error-messages"
 - [ ] #263 - Colors broken in org trello
 
-* IN-PROGRESS 0.7.0 [80%]
+* IN-PROGRESS 0.7.0 [83%]
 - [X] Update version
 - [X] Close #238 - [internal] Respect elisp coding conventions [2/2]
   - [X] Rename constants + variables
@@ -44,6 +44,7 @@
   - [X] Update `org-trello-install-key-and-token` command to create the account setup
   - [X] Update the loading configuration mechanism multi-account aware
   - [X] Make sure initializing org-trello account is ok
+- [X] Fix emptying description use case (could not remove a description)
 - [ ] Release notes
 
 * DONE 0.6.9.6 [100%]
