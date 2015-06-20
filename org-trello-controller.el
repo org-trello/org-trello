@@ -470,7 +470,7 @@ ASK-FOR-OVERWRITE is a flag that needs to be set if we want to prevent some over
 
 (defun orgtrello-controller/do-install-key-and-token ()
   "Procedure to install the org-trello-consumer-key and the token for the user in the config-file."
-  (lexical-let* ((user-login       (read-string "Trello login account (you need to be logged accordinly in trello.com, we cannot check this for you): "))
+  (lexical-let* ((user-login       (read-string "Trello login account (you need to be logged accordingly in trello.com as we cannot check this for you): "))
                  (user-config-file (orgtrello-controller/config-file! user-login)))
     (if (file-exists-p user-config-file)
         (orgtrello-log/msg orgtrello-log-info "Configuration for user '%s' already existing (file '%s'), skipping." user-login user-config-file)
