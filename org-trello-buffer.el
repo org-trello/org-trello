@@ -691,10 +691,11 @@ COMPUTE-REGION-FN is the region computation function."
       (apply 'insert-buffer-substring (cons buffer-name region))
       (org-mode)
       (orgtrello-buffer/delete-property! org-trello--label-key-local-checksum)
+      (insert (format "\n%s" region)) ;; take into account the position for the checksum
       (->> (list (point-min) (point-max))
-        (cons (current-buffer))
-        (cons 'sha256)
-        (apply 'secure-hash)))))
+           (cons (current-buffer))
+           (cons 'sha256)
+           (apply 'secure-hash)))))
 
 (defun orgtrello-buffer/compute-checksum! ()
   "Compute the checksum of the current entity at point."

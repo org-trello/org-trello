@@ -4,8 +4,6 @@
 
 * TODO Backlog
 ** Bug
-
-- [ ] #250 - Changing order of checklist items not saved unless checklist item's text changed
 - [ ] #240 - Preserve non-trello related tags/other meta data
 
 ** Features
@@ -33,7 +31,7 @@
 - [ ] #248 - Installing from melpa (unstable) works, but then it errs on an undefined variable "error-messages"
 - [ ] #263 - Colors broken in org trello
 
-* IN-PROGRESS 0.7.0 [85%]
+* IN-PROGRESS 0.7.0 [87%]
 - [X] Update version
 - [X] Close #238 - [internal] Respect elisp coding conventions [2/2]
   - [X] Rename constants + variables
@@ -44,8 +42,9 @@
   - [X] Update `org-trello-install-key-and-token` command to create the account setup
   - [X] Update the loading configuration mechanism multi-account aware
   - [X] Make sure initializing org-trello account is ok
-- [X] Fix emptying description use case (could not remove a description)
+- [X] Close #267 - Emptying card's description does not work
 - [X] Remove too much verbosity (when deleting property checksum)
+- [X] Close #250 - Changing order of checklist items not saved unless checklist item's text changed
 - [ ] Release notes
 
 * DONE 0.6.9.6 [100%]
