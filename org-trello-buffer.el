@@ -414,7 +414,9 @@ If REGION-START and REGION-END are provided, this will work on such defined regi
   "Update users org property."
   (orgtrello-buffer/org-entry-put! nil org-trello--property-users-entry csv-users))
 
-(defalias 'orgtrello-buffer/delete-property-from-entry! 'org-delete-property)
+(defun orgtrello-buffer/delete-property-from-entry! (property)
+  "Delete the property."
+  (org-entry-delete nil property))
 
 (defun orgtrello-buffer/delete-property! (property)
   "Given a property name (checkbox), if found, delete it from the buffer."
