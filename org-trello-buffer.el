@@ -423,7 +423,7 @@ If REGION-START and REGION-END are provided, this will work on such defined regi
   (orgtrello-buffer/delete-property-from-entry! property)
   (save-excursion
     (goto-char (point-min))
-    (while (re-search-forward ":PROPERTIES: {.*" nil t)
+    (while (re-search-forward " :PROPERTIES: {.*" nil t)
       (remove-overlays (point-at-bol) (point-at-eol)) ;; the current overlay on this line
       (replace-match "" nil t))))                     ;; then remove the property
 
@@ -682,20 +682,28 @@ ENTITIES and ENTITIES-ADJ provide information on card's structure."
     (orgtrello-buffer/clean-region! region-start region-end)
     (orgtrello-buffer/write-card! card-id entity entities entities-adj)))
 
-(defun orgtrello-buffer/compute-generic-checksum! (compute-region-fn)
-  "Compute the entity's checksum.
-COMPUTE-REGION-FN is the region computation function."
-  (let ((region (funcall compute-region-fn))
-        (buffer-name (current-buffer)))
+(defun orgtrello-buffer/checksum (string)
+  "Compute the checksum of the STRING."
+  (secure-hash 'sha256 string))
+
+(defun orgtrello-buffer/--compute-string-to-checksum (region)
+  "Given a REGION, compute the string to checksum."
+  (lexical-let ((region region)
+                (buffer-name (current-buffer)))
     (with-temp-buffer
       (apply 'insert-buffer-substring (cons buffer-name region))
       (org-mode)
       (orgtrello-buffer/delete-property! org-trello--label-key-local-checksum)
-      (insert (format "\n%s" region)) ;; take into account the position for the checksum
-      (->> (list (point-min) (point-max))
-           (cons (current-buffer))
-           (cons 'sha256)
-           (apply 'secure-hash)))))
+      (goto-char (point-max))
+      (insert (format "\n%s" (car region)))
+      (buffer-substring-no-properties (point-min) (point-max)))))
+
+(defun orgtrello-buffer/compute-generic-checksum! (compute-region-fn)
+  "Compute the entity's checksum.
+COMPUTE-REGION-FN is the region computation function."
+  (-> (funcall compute-region-fn)
+      orgtrello-buffer/--compute-string-to-checksum
+      orgtrello-buffer/checksum))
 
 (defun orgtrello-buffer/compute-checksum! ()
   "Compute the checksum of the current entity at point."
