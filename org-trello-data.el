@@ -15,9 +15,9 @@
     delete-dups))
 
 (defun orgtrello-data/--entity-with-level-p (entity level) "Is the ENTITY with level LEVEL?" (-> entity orgtrello-data/entity-level (eq level)))
-(defun orgtrello-data/entity-card-p      (entity) "Is the ENTITY a card?"      (orgtrello-data/--entity-with-level-p entity *ORGTRELLO/CARD-LEVEL*))
-(defun orgtrello-data/entity-checklist-p (entity) "Is the ENTITY a checklist?" (orgtrello-data/--entity-with-level-p entity *ORGTRELLO/CHECKLIST-LEVEL*))
-(defun orgtrello-data/entity-item-p      (entity) "Is the ENTITY an item?"     (orgtrello-data/--entity-with-level-p entity *ORGTRELLO/ITEM-LEVEL*))
+(defun orgtrello-data/entity-card-p      (entity) "Is the ENTITY a card?"      (orgtrello-data/--entity-with-level-p entity org-trello--card-level))
+(defun orgtrello-data/entity-checklist-p (entity) "Is the ENTITY a checklist?" (orgtrello-data/--entity-with-level-p entity org-trello--checklist-level))
+(defun orgtrello-data/entity-item-p      (entity) "Is the ENTITY an item?"     (orgtrello-data/--entity-with-level-p entity org-trello--item-level))
 
 (defun orgtrello-data/entity-id (entity)
   "Retrieve the id from the ENTITY."
@@ -109,9 +109,9 @@ If the keyword is nil, return the optional DEFAULT-VALUE."
 
 (defun orgtrello-data/--compute-level (entity-map)
   "Given an ENTITY-MAP, compute the entity level."
-  (cond ((orgtrello-data/entity-list-id entity-map) *ORGTRELLO/CARD-LEVEL*)
-        ((orgtrello-data/entity-card-id entity-map) *ORGTRELLO/CHECKLIST-LEVEL*)
-        ((orgtrello-data/entity-checked entity-map) *ORGTRELLO/ITEM-LEVEL*)
+  (cond ((orgtrello-data/entity-list-id entity-map) org-trello--card-level)
+        ((orgtrello-data/entity-card-id entity-map) org-trello--checklist-level)
+        ((orgtrello-data/entity-checked entity-map) org-trello--item-level)
         (t nil)))
 
 (defun orgtrello-data/make-hash-org (member-ids level keyword name id due position buffer-name desc tags unknown-properties)
@@ -136,7 +136,7 @@ If the keyword is nil, return the optional DEFAULT-VALUE."
     (orgtrello-data/put-parent parent)
     (orgtrello-data/put-grandparent grandparent)))
 
-(defvar *ORGTRELLO/DATA-MAP-KEYWORDS* (orgtrello-hash/make-properties `((url            . :url)
+(defvar orgtrello-controller--data-map-keywords (orgtrello-hash/make-properties `((url            . :url)
                                                                         (id             . :id)
                                                                         (name           . :name)
                                                                         (idMembers      . :member-ids)
@@ -173,7 +173,7 @@ If the keyword is nil, return the optional DEFAULT-VALUE."
 (defun orgtrello-data/--deal-with-key (key)
   "Return the KEY as is if it's a keyword or return its org-trello representation."
   (cond ((keywordp key) key)
-        (t             (gethash key *ORGTRELLO/DATA-MAP-KEYWORDS*))))
+        (t             (gethash key orgtrello-controller--data-map-keywords))))
 
 (defun orgtrello-data/--dispatch-parse-data-fn (key)
   "Compute the parsing function depending on the KEY."
@@ -214,7 +214,7 @@ SIZE is a useless parameter, only here to satisfy an implementation detail."
 
 (defun orgtrello-data/id-p (id)
   "Is the string ID a trello identifier?"
-  (and id (not (string-match-p (format "^%s-" *ORGTRELLO/MARKER*) id))))
+  (and id (not (string-match-p (format "^%s-" org-trello--label-key-marker) id))))
 
 (defun orgtrello-data/merge-item (trello-item org-item)
   "Merge TRELLO-ITEM and ORG-ITEM together.
@@ -233,7 +233,7 @@ If TRELLO-ITEM is nil, return the ORG-ITEM."
 
 (defun orgtrello-data/--compute-state-item (state)
   "Compute the STATE of the checkbox."
-  (orgtrello-data/--compute-state-generic state `(,*ORGTRELLO/DONE* ,*ORGTRELLO/TODO*)))
+  (orgtrello-data/--compute-state-generic state `(,org-trello--done ,org-trello--todo)))
 
 (defun orgtrello-data/--merge-checklist (trello-checklist org-checklist)
   "Merge TRELLO-CHECKLIST and ORG-CHECKLIST together.
@@ -256,7 +256,7 @@ If TRELLO-CHECKLIST is nil, return ORG-CHECKLIST."
   (--> trello-card
        (orgtrello-data/entity-member-ids-as-list it)
        (orgtrello-data/merge-2-lists-without-duplicates it (orgtrello-data/entity-member-ids-as-list org-card))
-       (-map (lambda (member-id) (gethash member-id *ORGTRELLO/HMAP-USERS-ID-NAME*)) it)
+       (-map (lambda (member-id) (gethash member-id org-trello--hmap-users-id-name)) it)
        (orgtrello-data/--users-to it)))
 
 (defun orgtrello-data/--labels-to-tags (labels)
@@ -337,7 +337,7 @@ If TRELLO-CARD is nil, return ORG-CARD."
 
 (defun orgtrello-data/--compute-card-status (card-id-list)
   "Given a CARD-ID-LIST, compute its status."
-  (gethash card-id-list *ORGTRELLO/HMAP-LIST-ORGKEYWORD-ID-NAME*))
+  (gethash card-id-list org-trello--hmap-list-orgkeyword-id-name))
 
 (defun orgtrello-data/--get-entity (id entities-hash)
   "Retrieve the entity with ID in ENTITIES-HASH."
@@ -347,7 +347,7 @@ If TRELLO-CARD is nil, return ORG-CARD."
   "Depending on the STATE and a generic LIST-STATE, compute the state.
 If state is \"complete\" or \"DONE\", the first element is returned, otherwise the second."
   (if (or (string= "complete" state)
-          (string= *ORGTRELLO/DONE* state))
+          (string= org-trello--done state))
       (car list-state)
     (cadr list-state)))
 
@@ -377,7 +377,7 @@ ENTITIES-ADJACENCIES provides needed information."
   (->> trello-card
        (orgtrello-data/put-entity-tags (orgtrello-data/--labels-hash-to-tags (orgtrello-data/entity-labels trello-card)))
        (orgtrello-data/put-entity-labels nil)
-       (orgtrello-data/put-entity-level *ORGTRELLO/CARD-LEVEL*)
+       (orgtrello-data/put-entity-level org-trello--card-level)
        (orgtrello-data/put-entity-keyword (-> trello-card orgtrello-data/entity-list-id orgtrello-data/--compute-card-status))
        (orgtrello-data/put-entity-list-id nil)
        (orgtrello-data/put-entity-member-ids (->> trello-card orgtrello-data/entity-member-ids orgtrello-data/--users-to))
@@ -387,17 +387,17 @@ ENTITIES-ADJACENCIES provides needed information."
 (defun orgtrello-data/to-org-trello-checklist (trello-checklist)
   "Map a TRELLO-CHECKLIST to an org-trello one."
   (->> trello-checklist
-    (orgtrello-data/put-entity-level *ORGTRELLO/CHECKLIST-LEVEL*)
+    (orgtrello-data/put-entity-level org-trello--checklist-level)
     (orgtrello-data/put-entity-items (->> trello-checklist orgtrello-data/entity-items (mapcar #'orgtrello-data/to-org-trello-item)))))
 
 (defun orgtrello-data/to-org-trello-item (trello-item)
   "Map a TRELLO-ITEM to an org-trello one."
   (->> trello-item
-    (orgtrello-data/put-entity-level *ORGTRELLO/ITEM-LEVEL*)
+    (orgtrello-data/put-entity-level org-trello--item-level)
     (orgtrello-data/put-entity-keyword (-> trello-item orgtrello-data/entity-checked orgtrello-data/--compute-state-item))
     (orgtrello-data/put-entity-checked nil)))
 
-(orgtrello-log/msg *OT/DEBUG* "orgtrello-data loaded!")
+(orgtrello-log/msg orgtrello-log-debug "orgtrello-data loaded!")
 
 (provide 'org-trello-data)
 ;;; org-trello-data.el ends here

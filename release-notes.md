@@ -1,3 +1,20 @@
+# 0.7.0
+
+- [X] Update version
+- [X] Close #238 - [internal] Respect elisp coding conventions [2/2]
+  - [X] Rename constants + variables
+  - [X] Rename entry points according to conventions + alias old definitions for backward compatibility
+- [X] Close #239 - Migrate ~/.trello/config.el inside user-emacs-directory
+- [X] Close #256 - one user can have multiple trello accounts [4/4]
+  - [X] Migrate the actual setup to the multi-account setup (transparent for user)
+  - [X] Update `org-trello-install-key-and-token` command to create the account setup
+  - [X] Update the loading configuration mechanism multi-account aware
+  - [X] Make sure initializing org-trello account is ok
+- [X] Close #267 - Emptying card's description does not work
+- [X] Remove too much verbosity (when deleting property checksum)
+- [X] Close #250 - Changing order of checklist items not saved unless checklist item's text changed
+- [X] Release notes
+
 # 0.6.9.6
 
 - [X] Create backlog

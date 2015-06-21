@@ -11,7 +11,7 @@
       (setq value (read-string input-message)))
     value))
 
-(orgtrello-log/msg *OT/DEBUG* "orgtrello-input loaded!")
+(orgtrello-log/msg orgtrello-log-debug "orgtrello-input loaded!")
 
 (provide 'org-trello-input)
 ;;; org-trello-input.el ends here

@@ -18,17 +18,17 @@
 
 (ert-deftest test-orgtrello-controller/--id-name ()
   (let* ((entities (orgtrello-data/parse-data [((id . "id")
-                                                 (shortUrl . "https://trello.com/b/ePrdEnzC")
-                                                 (url . "https://trello.com/board/devops/4f96a984dbb00d733b04d8b5")
-                                                 (name . "testing board"))
-                                                ((id . "another-id")
-                                                 (shortUrl . "https://trello.com/b/ePrdEnzC")
-                                                 (url . "https://trello.com/board/devops/4f96a984dbb00d733b04d8b5")
-                                                 (name . "testing board 2"))
-                                                ((id . "yet-another-id")
-                                                 (shortUrl . "https://trello.com/b/ePrdEnzC")
-                                                 (url . "https://trello.com/board/devops/4f96a984dbb00d733b04d8b5")
-                                                 (name . "testing board 3"))]))
+                                                (shortUrl . "https://trello.com/b/ePrdEnzC")
+                                                (url . "https://trello.com/board/devops/4f96a984dbb00d733b04d8b5")
+                                                (name . "testing board"))
+                                               ((id . "another-id")
+                                                (shortUrl . "https://trello.com/b/ePrdEnzC")
+                                                (url . "https://trello.com/board/devops/4f96a984dbb00d733b04d8b5")
+                                                (name . "testing board 2"))
+                                               ((id . "yet-another-id")
+                                                (shortUrl . "https://trello.com/b/ePrdEnzC")
+                                                (url . "https://trello.com/board/devops/4f96a984dbb00d733b04d8b5")
+                                                (name . "testing board 3"))]))
          (hashtable-result (orgtrello-controller/--id-name entities))
          (hashtable-expected (make-hash-table :test 'equal)))
     (orgtrello-hash/puthash-data "id" "testing board" hashtable-expected)
@@ -148,31 +148,34 @@
 (ert-deftest test-orgtrello-controller/load-keys! ()
   (should (equal :ok
                  (with-mock
-                   (mock (file-exists-p *ORGTRELLO/CONFIG-FILE*) => t)
-                   (mock (load *ORGTRELLO/CONFIG-FILE*)          => t)
+                   (mock (orgtrello-controller/config-file!) => :some-config-file)
+                   (mock (file-exists-p :some-config-file)   => t)
+                   (mock (load :some-config-file)            => t)
                    (orgtrello-controller/load-keys!))))
-  (should (equal "Setup problem - Problem during credentials (consumer-key and the read/write access-token) loading - C-c o i or M-x org-trello/install-key-and-token"
+  (should (equal "Setup problem - Problem during credentials loading (consumer-key and read/write access-token) - C-c o i or M-x org-trello-install-key-and-token"
                  (with-mock
-                   (mock (file-exists-p *ORGTRELLO/CONFIG-FILE*) => nil)
+                   (mock (orgtrello-controller/config-file!) => :some-config-file)
+                   (mock (file-exists-p :some-config-file)   => nil)
                    (orgtrello-controller/load-keys!))))
-  (should (equal "Setup problem - Problem during credentials (consumer-key and the read/write access-token) loading - C-c o i or M-x org-trello/install-key-and-token"
+  (should (equal "Setup problem - Problem during credentials loading (consumer-key and read/write access-token) - C-c o i or M-x org-trello-install-key-and-token"
                  (with-mock
-                   (mock (file-exists-p *ORGTRELLO/CONFIG-FILE*) => t)
-                   (mock (load *ORGTRELLO/CONFIG-FILE*)          => nil)
+                   (mock (orgtrello-controller/config-file!) => :some-config-file)
+                   (mock (file-exists-p :some-config-file)   => t)
+                   (mock (load :some-config-file)            => nil)
                    (orgtrello-controller/load-keys!)))))
 
 (ert-deftest test-orgtrello-controller/control-keys! ()
   (should (equal :ok
-                 (let ((*consumer-key* "some-consumer-key")
-                       (*access-token* "some-access-token"))
+                 (let ((org-trello-consumer-key "some-consumer-key")
+                       (org-trello-access-token "some-access-token"))
                    (orgtrello-controller/control-keys!))))
-  (should (equal "Setup problem - You need to install the consumer-key and the read/write access-token - C-c o i or M-x org-trello/install-key-and-token"
-                 (let ((*consumer-key* "some-consumer-key")
-                       (*access-token* nil))
+  (should (equal "Setup problem - You need to install the consumer-key and the read/write access-token - C-c o i or M-x org-trello-install-key-and-token"
+                 (let ((org-trello-consumer-key "some-consumer-key")
+                       (org-trello-access-token nil))
                    (orgtrello-controller/control-keys!))))
-  (should (equal "Setup problem - You need to install the consumer-key and the read/write access-token - C-c o i or M-x org-trello/install-key-and-token"
-                 (let ((*consumer-key* nil)
-                       (*access-token* "some-access-token"))
+  (should (equal "Setup problem - You need to install the consumer-key and the read/write access-token - C-c o i or M-x org-trello-install-key-and-token"
+                 (let ((org-trello-consumer-key nil)
+                       (org-trello-access-token "some-access-token"))
                    (orgtrello-controller/control-keys!)))))
 
 (ert-deftest test-orgtrello-controller/choose-board! ()
@@ -459,7 +462,7 @@ some description
                                                                                                                            (:comment-text . "some second comment")))))
                                                                      (:tags . ":red:green:")
                                                                      (:desc . "updated description")
-                                                                     (:level . ,*ORGTRELLO/CARD-LEVEL*)
+                                                                     (:level . ,org-trello--card-level)
                                                                      (:name . "updated card title")
                                                                      (:id . "some-card-id")))))
                 (orgtrello-controller/sync-buffer-with-trello-cards! (current-buffer) (list trello-card0))))))))
@@ -581,7 +584,7 @@ some description
                                                                                                                            (:comment-text . "some second comment")))))
                                                                      (:tags . ":red:green:")
                                                                      (:desc . "updated description")
-                                                                     (:level . ,*ORGTRELLO/CARD-LEVEL*)
+                                                                     (:level . ,org-trello--card-level)
                                                                      (:name . "updated card title")
                                                                      (:id . "some-card-id"))))
                      (trello-card1 (orgtrello-hash/make-properties `((:keyword . "TODO")
@@ -589,7 +592,7 @@ some description
                                                                      (:comments . nil)
                                                                      (:tags . ":green:")
                                                                      (:desc . "this is a description")
-                                                                     (:level . ,*ORGTRELLO/CARD-LEVEL*)
+                                                                     (:level . ,org-trello--card-level)
                                                                      (:name . "other card name")
                                                                      (:id . "some-card-id2")))))
                 (orgtrello-controller/sync-buffer-with-trello-cards! (current-buffer) (list trello-card0 trello-card1))))))))
@@ -707,17 +710,59 @@ some description
                                                                                                                            (:comment-text . "some second comment")))))
                                                                      (:tags . ":red:green:")
                                                                      (:desc . "updated description")
-                                                                     (:level . ,*ORGTRELLO/CARD-LEVEL*)
+                                                                     (:level . ,org-trello--card-level)
                                                                      (:name . "updated card title")
                                                                      (:id . "some-card-id"))))
                      (trello-card1 (orgtrello-hash/make-properties `((:keyword . "DONE")
                                                                      (:member-ids . "8883")
                                                                      (:tags . ":green:")
                                                                      (:desc . "this is a description")
-                                                                     (:level . ,*ORGTRELLO/CARD-LEVEL*)
+                                                                     (:level . ,org-trello--card-level)
                                                                      (:name . "other card name")
                                                                      (:id . "some-card-id2")))))
                 (orgtrello-controller/sync-buffer-with-trello-cards! (current-buffer) (list trello-card0 trello-card1))))))))
+
+(ert-deftest test-orgtrello-controller/user-account-from-config-file ()
+  (should (string= "config" (orgtrello-controller/user-account-from-config-file "/home/user/.emacs.d/.trello/config.el")))
+  (should (string= "ardumont" (orgtrello-controller/user-account-from-config-file "/home/user/.emacs.d/.trello/ardumont.el"))))
+
+(ert-deftest test-orgtrello-controller/list-user-accounts ()
+  (should (equal '("ardumont" "config" "orgmode")
+                 (orgtrello-controller/list-user-accounts '("/home/user/.emacs.d/.trello/ardumont.el" "/home/user/.emacs.d/.trello/config.el" "/home/user/.emacs.d/.trello/orgmode.el"))))
+  (should (equal '("foobar")
+                 (orgtrello-controller/list-user-accounts '("/home/user/.emacs.d/.trello/foobar.el")))))
+
+
+(ert-deftest test-orgtrello-controller/--list-as-index-list ()
+  (orgtrello-tests/hash-equal
+   #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data ("0" "one" "1" "two" "2" "three"))
+   (orgtrello-controller/--list-as-index-list '("one" "two" "three"))))
+
+(ert-deftest test-orgtrello-controller/--list-as-string-to-choose ()
+  (should (string= "0: first\n1: second\n2: third\n"
+                   (orgtrello-controller/--list-as-string-to-choose '("first" "second" "third"))))
+  (should (string= ""
+                   (orgtrello-controller/--list-as-string-to-choose '()))))
+
+
+(ert-deftest test-orgtrello-controller/set-account! ()
+  (should (equal :ok
+                 (with-mock
+                   (mock (orgtrello-buffer/me!) => "some-account")
+                   (orgtrello-controller/set-account!))))
+  (should (equal :ok
+                 (with-mock
+                   (mock (orgtrello-buffer/me!) => nil)
+                   (mock (orgtrello-controller/user-config-files) => :some-config-file)
+                   (mock (orgtrello-controller/list-user-accounts :some-config-file) => '(account0))
+                   (orgtrello-controller/set-account!))))
+  (should (equal :ok
+                 (with-mock
+                   (mock (orgtrello-buffer/me!) => nil)
+                   (mock (orgtrello-controller/user-config-files) => :some-config-file)
+                   (mock (orgtrello-controller/list-user-accounts :some-config-file) => '(:account0 :account1))
+                   (mock (orgtrello-controller/--choose-account! '(:account0 :account1)) => :account0)
+                   (orgtrello-controller/set-account!)))))
 
 (provide 'org-trello-controller-tests)
 ;;; org-trello-controller-tests.el ends here

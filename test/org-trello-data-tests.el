@@ -64,30 +64,30 @@
 
 (ert-deftest test-orgtrello-data/--entity-with-level-p ()
   (should (equal nil (orgtrello-data/--entity-with-level-p nil 1)))
-  (should (equal t   (orgtrello-data/--entity-with-level-p (orgtrello-hash/make-properties `((:level . ,*ORGTRELLO/CARD-LEVEL*))) *ORGTRELLO/CARD-LEVEL*)))
-  (should (equal nil (orgtrello-data/--entity-with-level-p (orgtrello-hash/make-properties `((:level . ,*ORGTRELLO/CHECKLIST-LEVEL*))) *ORGTRELLO/CARD-LEVEL*))))
+  (should (equal t   (orgtrello-data/--entity-with-level-p (orgtrello-hash/make-properties `((:level . ,org-trello--card-level))) org-trello--card-level)))
+  (should (equal nil (orgtrello-data/--entity-with-level-p (orgtrello-hash/make-properties `((:level . ,org-trello--checklist-level))) org-trello--card-level))))
 
 (ert-deftest test-orgtrello-data/entity-card-p ()
-  (should (equal t   (orgtrello-data/entity-card-p (orgtrello-hash/make-properties `((:level . ,*ORGTRELLO/CARD-LEVEL*))))))
-  (should (equal nil (orgtrello-data/entity-card-p (orgtrello-hash/make-properties `((:level . ,*ORGTRELLO/CHECKLIST-LEVEL*))))))
+  (should (equal t   (orgtrello-data/entity-card-p (orgtrello-hash/make-properties `((:level . ,org-trello--card-level))))))
+  (should (equal nil (orgtrello-data/entity-card-p (orgtrello-hash/make-properties `((:level . ,org-trello--checklist-level))))))
   (should (equal nil (orgtrello-data/entity-card-p (orgtrello-hash/make-properties `((idList . 1))))))
   (should (equal nil (orgtrello-data/entity-card-p (orgtrello-hash/make-properties `((id . 1))))))
   (should (equal nil (orgtrello-data/entity-card-p (orgtrello-hash/make-properties `((:list-id . "this is a card"))))))
   (should (equal nil (orgtrello-data/entity-card-p (orgtrello-hash/make-properties `((anything-else . "this is not a card")))))))
 
 (ert-deftest test-orgtrello-data/entity-checklist-p ()
-  (should (equal t   (orgtrello-data/entity-checklist-p (orgtrello-hash/make-properties `((:level . ,*ORGTRELLO/CHECKLIST-LEVEL*))))))
-  (should (equal nil (orgtrello-data/entity-checklist-p (orgtrello-hash/make-properties `((:level . ,*ORGTRELLO/ITEM-LEVEL*))))))
+  (should (equal t   (orgtrello-data/entity-checklist-p (orgtrello-hash/make-properties `((:level . ,org-trello--checklist-level))))))
+  (should (equal nil (orgtrello-data/entity-checklist-p (orgtrello-hash/make-properties `((:level . ,org-trello--item-level))))))
   (should (equal nil (orgtrello-data/entity-checklist-p (orgtrello-hash/make-properties `((idCard . 1))))))
   (should (equal nil (orgtrello-data/entity-checklist-p (orgtrello-hash/make-properties `((id . 1))))))
   (should (equal nil (orgtrello-data/entity-checklist-p (orgtrello-hash/make-properties `((:card-id . "this is a checklist"))))))
   (should (equal nil (orgtrello-data/entity-checklist-p (orgtrello-hash/make-properties `((anything-else . "this is not a checklist")))))))
 
 (ert-deftest test-orgtrello-data/entity-item-p ()
-  (should (equal t   (orgtrello-data/entity-item-p (orgtrello-hash/make-properties `((:level . ,*ORGTRELLO/ITEM-LEVEL*))))))
+  (should (equal t   (orgtrello-data/entity-item-p (orgtrello-hash/make-properties `((:level . ,org-trello--item-level))))))
   (should (equal nil (orgtrello-data/entity-item-p (orgtrello-hash/make-properties `((:checked . "this is an item"))))))
   (should (equal nil (orgtrello-data/entity-item-p (orgtrello-hash/make-properties `((anything-else . "this is not a item"))))))
-  (should (equal nil (orgtrello-data/entity-item-p (orgtrello-hash/make-properties `((:level . ,*ORGTRELLO/CARD-LEVEL*))))))
+  (should (equal nil (orgtrello-data/entity-item-p (orgtrello-hash/make-properties `((:level . ,org-trello--card-level))))))
   (should (equal nil (orgtrello-data/entity-item-p (orgtrello-hash/make-properties `((:state . 1))))))
   (should (equal nil (orgtrello-data/entity-item-p (orgtrello-hash/make-properties `((id . 1)))))))
 
@@ -98,13 +98,13 @@
   (should (equal nil        (orgtrello-data/merge-2-lists-without-duplicates nil nil))))
 
 (ert-deftest test-orgtrello-data/entity-card-p ()
-  (should (equal t (orgtrello-data/entity-card-p (orgtrello-hash/make-properties `((:level . ,*ORGTRELLO/CARD-LEVEL*))))))
-  (should (equal nil (orgtrello-data/entity-card-p (orgtrello-hash/make-properties `((:level . ,*ORGTRELLO/CHECKLIST-LEVEL*)))))))
+  (should (equal t (orgtrello-data/entity-card-p (orgtrello-hash/make-properties `((:level . ,org-trello--card-level))))))
+  (should (equal nil (orgtrello-data/entity-card-p (orgtrello-hash/make-properties `((:level . ,org-trello--checklist-level)))))))
 
 (ert-deftest test-orgtrello-data/--compute-level ()
-  (should (equal *ORGTRELLO/CARD-LEVEL*      (orgtrello-data/--compute-level (orgtrello-hash/make-properties '((:list-id . 0))))))
-  (should (equal *ORGTRELLO/CHECKLIST-LEVEL* (orgtrello-data/--compute-level (orgtrello-hash/make-properties '((:card-id . 0))))))
-  (should (equal *ORGTRELLO/ITEM-LEVEL*      (orgtrello-data/--compute-level (orgtrello-hash/make-properties '((:checked . 0))))))
+  (should (equal org-trello--card-level      (orgtrello-data/--compute-level (orgtrello-hash/make-properties '((:list-id . 0))))))
+  (should (equal org-trello--checklist-level (orgtrello-data/--compute-level (orgtrello-hash/make-properties '((:card-id . 0))))))
+  (should (equal org-trello--item-level      (orgtrello-data/--compute-level (orgtrello-hash/make-properties '((:checked . 0))))))
   (should (equal nil               (orgtrello-data/--compute-level (orgtrello-hash/make-properties '())))))
 
 (ert-deftest test-orgtrello-data/parse-data-card ()
@@ -310,7 +310,7 @@
   (should (equal t (orgtrello-tests/hash-equal
                     #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
                                   (url :url id :id name :name idMembers :member-ids idList :list-id checklists :checklists idChecklists :checklists idBoard :board-id due :due desc :desc closed :closed idCard :card-id checkItems :items state :checked status :status pos :position keyword :keyword member-ids :member-ids member :member memberships :memberships username :username fullName :full-name actions :comments labelNames :labels lists :lists red :red yellow :yellow blue :blue green :green orange :orange purple :purple labels :labels color :color))
-                    *ORGTRELLO/DATA-MAP-KEYWORDS*))))
+                    orgtrello-controller--data-map-keywords))))
 
 (ert-deftest test-orgtrello-data/--dispatch-parse-data-fn ()
   (should (equal 'orgtrello-data/--parse-actions (orgtrello-data/--dispatch-parse-data-fn ':comments)))
@@ -409,7 +409,7 @@
            (orgtrello-data/--merge-card (orgtrello-hash/make-properties '((:id . "123") (:name . "some name") (:idList . 1) (:level . 1)))
                                         (orgtrello-hash/make-properties '((:name . "some other name")
                                                                           (:unknown-properties . :something))))))
-  (should (let ((*ORGTRELLO/HMAP-USERS-ID-NAME* #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data ("user-dude-id" "orgtrello-user-dude"
+  (should (let ((org-trello--hmap-users-id-name #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data ("user-dude-id" "orgtrello-user-dude"
                                                                                                                             "user-ardumont-id" "orgtrello-user-ardumont"
                                                                                                                             "ardumont" "orgtrello-user-me"))))
             (orgtrello-tests/hash-equal
@@ -435,7 +435,7 @@
                                                 (:level . 1)))
               (orgtrello-hash/make-properties '((:name . "some other name")))))))
 
-  (should (let ((*ORGTRELLO/HMAP-USERS-ID-NAME* #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data ("user-dude-id" "orgtrello-user-dude"
+  (should (let ((org-trello--hmap-users-id-name #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data ("user-dude-id" "orgtrello-user-dude"
                                                                                                                             "user-ardumont-id" "orgtrello-user-ardumont"
                                                                                                                             "ardumont" "orgtrello-user-me"))))
             (orgtrello-tests/hash-equal
@@ -464,7 +464,7 @@
                                                 (:member-ids . "user-ardumont-id"))))))))
 
 (ert-deftest test-orgtrello-data/--merge-member-ids ()
-  (let ((*ORGTRELLO/HMAP-USERS-ID-NAME* #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data ("1" "user1"
+  (let ((org-trello--hmap-users-id-name #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data ("1" "user1"
                                                                                                                     "2" "user2"
                                                                                                                     "3" "user3"
                                                                                                                     "4" "user4"
@@ -588,28 +588,28 @@
   (should (equal :ok                                 (-> (orgtrello-data/make-hash-org :users 1 :keyword "some name" :id :due :position :buffer-name :desc :tags :unk)
                                                          orgtrello-data/make-hierarchy
                                                          orgtrello-controller/--mandatory-name-ok-p)))
-  (should (equal *ORGTRELLO/ERROR-SYNC-CARD-MISSING-NAME*      (-> (orgtrello-data/make-hash-org :users 1 :keyword "" :id :due :position :buffer-name :desc :tags :unk)
+  (should (equal org-trello--error-sync-card-missing-name      (-> (orgtrello-data/make-hash-org :users 1 :keyword "" :id :due :position :buffer-name :desc :tags :unk)
                                                                    orgtrello-data/make-hierarchy
                                                                    orgtrello-controller/--mandatory-name-ok-p)))
-  (should (equal *ORGTRELLO/ERROR-SYNC-CARD-MISSING-NAME*      (-> (orgtrello-data/make-hash-org :users 1 :keyword nil :id :due :position :buffer-name :desc :tags :unk)
+  (should (equal org-trello--error-sync-card-missing-name      (-> (orgtrello-data/make-hash-org :users 1 :keyword nil :id :due :position :buffer-name :desc :tags :unk)
                                                                    orgtrello-data/make-hierarchy
                                                                    orgtrello-controller/--mandatory-name-ok-p)))
   (should (equal :ok                                 (-> (orgtrello-data/make-hash-org :users 2 :keyword "some name" :id :due :position :buffer-name :desc :tags :unk)
                                                          orgtrello-data/make-hierarchy
                                                          orgtrello-controller/--mandatory-name-ok-p)))
-  (should (equal *ORGTRELLO/ERROR-SYNC-CHECKLIST-MISSING-NAME* (-> (orgtrello-data/make-hash-org :users 2 :keyword "" :id :due :position :buffer-name :desc :tags :unk)
+  (should (equal org-trello--error-sync-checklist-missing-name (-> (orgtrello-data/make-hash-org :users 2 :keyword "" :id :due :position :buffer-name :desc :tags :unk)
                                                                    orgtrello-data/make-hierarchy
                                                                    orgtrello-controller/--mandatory-name-ok-p)))
-  (should (equal *ORGTRELLO/ERROR-SYNC-CHECKLIST-MISSING-NAME* (-> (orgtrello-data/make-hash-org :users 2 :keyword nil :id :due :position :buffer-name :desc :tags :unk)
+  (should (equal org-trello--error-sync-checklist-missing-name (-> (orgtrello-data/make-hash-org :users 2 :keyword nil :id :due :position :buffer-name :desc :tags :unk)
                                                                    orgtrello-data/make-hierarchy
                                                                    orgtrello-controller/--mandatory-name-ok-p)))
   (should (equal :ok                                 (-> (orgtrello-data/make-hash-org :users 3 :keyword "some name" :id :due :position :buffer-name :desc :tags :unk)
                                                          orgtrello-data/make-hierarchy
                                                          orgtrello-controller/--mandatory-name-ok-p)))
-  (should (equal *ORGTRELLO/ERROR-SYNC-ITEM-MISSING-NAME*      (-> (orgtrello-data/make-hash-org :users 3 :keyword "" :id :due :position :buffer-name :desc :tags :unk)
+  (should (equal org-trello--error-sync-item-missing-name      (-> (orgtrello-data/make-hash-org :users 3 :keyword "" :id :due :position :buffer-name :desc :tags :unk)
                                                                    orgtrello-data/make-hierarchy
                                                                    orgtrello-controller/--mandatory-name-ok-p)))
-  (should (equal *ORGTRELLO/ERROR-SYNC-ITEM-MISSING-NAME*      (-> (orgtrello-data/make-hash-org :users 3 :keyword nil :id :due :position :buffer-name :desc :tags :unk)
+  (should (equal org-trello--error-sync-item-missing-name      (-> (orgtrello-data/make-hash-org :users 3 :keyword nil :id :due :position :buffer-name :desc :tags :unk)
                                                                    orgtrello-data/make-hierarchy
                                                                    orgtrello-controller/--mandatory-name-ok-p))))
 
@@ -631,15 +631,15 @@
                                     :closed nil
                                     :labels nil
                                     :list-id nil))
-           (let* ((*ORGTRELLO/HMAP-USERS-ID-NAME* #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data ("user-orgmode-id" "orgtrello-user-orgmode"
+           (let* ((org-trello--hmap-users-id-name #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data ("user-orgmode-id" "orgtrello-user-orgmode"
                                                                                                                               "user-ardumont-id" "orgtrello-user-ardumont"
                                                                                                                               "ardumont" "orgtrello-user-me")))
-                  (*ORGTRELLO/HMAP-USERS-NAME-ID* #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data ("orgtrello-user-orgmode" "user-orgmode-id"
+                  (org-trello--hmap-users-name-id #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data ("orgtrello-user-orgmode" "user-orgmode-id"
                                                                                                                               "orgtrello-user-ardumont" "user-ardumont-id"
                                                                                                                               "orgtrello-user-me" "ardumont")))
-                  (*ORGTRELLO/USER-LOGGED-IN* "ardumont")
-                  (*ORGTRELLO/HMAP-LIST-ORGKEYWORD-ID-NAME* '("TODO" "IN-PROGRESS" "DONE" "PENDING" "DELEGATED" "FAILED" "CANCELLED"))
-                  (*ORGTRELLO/HMAP-LIST-ORGKEYWORD-ID-NAME* #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data ("abc" "TODO"
+                  (org-trello--user-logged-in "ardumont")
+                  (org-trello--hmap-list-orgkeyword-id-name '("TODO" "IN-PROGRESS" "DONE" "PENDING" "DELEGATED" "FAILED" "CANCELLED"))
+                  (org-trello--hmap-list-orgkeyword-id-name #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data ("abc" "TODO"
                                                                                                                                         "def" "IN-PROGRESS"
                                                                                                                                         "ghi" "DONE"
                                                                                                                                         "jkl" "PENDING"

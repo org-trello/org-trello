@@ -21,7 +21,7 @@
 
 (defun orgtrello-controller/--list-user-entries (properties)
   "List the users entries from PROPERTIES."
-  (--filter (string-match-p *ORGTRELLO/USER-PREFIX* (car it)) properties))
+  (--filter (string-match-p org-trello--label-key-user-prefix (car it)) properties))
 
 (defun orgtrello-controller/hmap-id-name (org-keywords properties)
   "Given an ORG-KEYWORDS and a PROPERTIES, return a map.
@@ -35,11 +35,11 @@ If either org-keywords or properties is nil, return an empty hash-map."
 
 (defun orgtrello-setup/display-current-buffer-setup!()
   "Display current buffer's setup."
-  (list :users-id-name *ORGTRELLO/HMAP-USERS-ID-NAME*
-        :users-name-id *ORGTRELLO/HMAP-USERS-NAME-ID*
-        :user-logged-in *ORGTRELLO/USER-LOGGED-IN*
-        :org-keyword-trello-list-names *ORGTRELLO/ORG-KEYWORD-TRELLO-LIST-NAMES*
-        :org-keyword-id-name *ORGTRELLO/HMAP-LIST-ORGKEYWORD-ID-NAME*))
+  (list :users-id-name org-trello--hmap-users-id-name
+        :users-name-id org-trello--hmap-users-name-id
+        :user-logged-in org-trello--user-logged-in
+        :org-keyword-trello-list-names org-trello--org-keyword-trello-list-names
+        :org-keyword-id-name org-trello--hmap-list-orgkeyword-id-name))
 
 (defun orgtrello-controller/setup-properties! (&optional args)
   "Setup the org-trello properties according to the 'org-mode' setup in the current buffer.
@@ -52,11 +52,11 @@ ARGS is not used."
          (org-file-properties (orgtrello-buffer/org-file-properties!))
          (org-trello-users    (orgtrello-controller/--list-user-entries org-file-properties)))
 
-    (setq *ORGTRELLO/ORG-KEYWORD-TRELLO-LIST-NAMES* org-keywords)
-    (setq *ORGTRELLO/HMAP-LIST-ORGKEYWORD-ID-NAME*  (orgtrello-controller/hmap-id-name org-keywords org-file-properties))
-    (setq *ORGTRELLO/HMAP-USERS-ID-NAME*            (orgtrello-hash/make-transpose-properties org-trello-users))
-    (setq *ORGTRELLO/HMAP-USERS-NAME-ID*            (orgtrello-hash/make-properties org-trello-users))
-    (setq *ORGTRELLO/USER-LOGGED-IN*                (orgtrello-buffer/me!))
+    (setq org-trello--org-keyword-trello-list-names org-keywords)
+    (setq org-trello--hmap-list-orgkeyword-id-name  (orgtrello-controller/hmap-id-name org-keywords org-file-properties))
+    (setq org-trello--hmap-users-id-name            (orgtrello-hash/make-transpose-properties org-trello-users))
+    (setq org-trello--hmap-users-name-id            (orgtrello-hash/make-properties org-trello-users))
+    (orgtrello-setup/set-user-logged-in             (or (orgtrello-buffer/me!) (orgtrello-setup/user-logged-in)))
 
     (mapc (lambda (color) (add-to-list 'org-tag-alist color))
           '(("red" . ?r) ("green" . ?g) ("yellow" . ?y) ("blue" . ?b) ("purple" . ?p) ("orange" . ?o)))
@@ -66,25 +66,104 @@ ARGS is not used."
   "Org-trello needs some header buffer properties set (board id, list ids, ...).
 Return :ok if ok, or the error message if problems.
 ARGS is not used."
-  (let ((hmap-count (hash-table-count *ORGTRELLO/HMAP-LIST-ORGKEYWORD-ID-NAME*)))
-    (if (and (orgtrello-buffer/org-file-properties!) (orgtrello-buffer/board-id!) (= (length *ORGTRELLO/ORG-KEYWORD-TRELLO-LIST-NAMES*) hmap-count))
+  (let ((hmap-count (hash-table-count org-trello--hmap-list-orgkeyword-id-name)))
+    (if (and (orgtrello-buffer/org-file-properties!) (orgtrello-buffer/board-id!) (= (length org-trello--org-keyword-trello-list-names) hmap-count))
         :ok
-      "Setup problem.\nEither you did not connect your org-mode buffer with a trello board, to correct this:\n  * attach to a board through C-c o I or M-x org-trello/install-board-metadata\n  * or create a board from scratch with C-c o b or M-x org-trello/create-board-and-install-metadata).\nEither your org-mode's todo keyword list and your trello board lists are not named the same way (which they must).\nFor this, connect to trello and rename your board's list according to your org-mode's todo list.\nAlso, you can specify on your org-mode buffer the todo list you want to work with, for example: #+TODO: TODO DOING | DONE FAIL (hit C-c C-c to refresh the setup)")))
+      "Setup problem.\nEither you did not connect your org-mode buffer with a trello board, to correct this:\n  * attach to a board through C-c o I or M-x org-trello-install-board-metadata\n  * or create a board from scratch with C-c o b or M-x org-trello-create-board-and-install-metadata).\nEither your org-mode's todo keyword list and your trello board lists are not named the same way (which they must).\nFor this, connect to trello and rename your board's list according to your org-mode's todo list.\nAlso, you can specify on your org-mode buffer the todo list you want to work with, for example: #+TODO: TODO DOING | DONE FAIL (hit C-c C-c to refresh the setup)")))
+
+(defun orgtrello-controller/migrate-user-setup! (&optional args)
+  "Migrate user's setup file.
+From:
+- ~/.trello/config.el to ~/.emacs.d/.trello/<trello-login>.el.
+- Also the names of the constants have changed to *consumer-key* to
+  org-trello-consumer-key and from *access-key* to org-trello-access-key.
+ARGS is not used."
+  (when (file-exists-p org-trello--old-config-dir) ;; ok, old setup exists, begin migration
+    ;; load old setup
+    (load org-trello--old-config-file)
+    ;; write new setup
+    (apply 'orgtrello-controller/--do-install-config-file (cons (orgtrello-buffer/me!)
+                                                                (if *consumer-key*
+                                                                    `(,*consumer-key* ,*access-token*)
+                                                                  `(,org-trello-consumer-key ,org-trello-access-token))))
+    ;; delete old setup file
+    (delete-directory org-trello--old-config-dir 'with-contents))
+  :ok)
+
+(defun orgtrello-controller/--list-as-index-list (list)
+  "Given a LIST, return a map of (position . elt-in-list)."
+  (let ((i               0)
+        (index-board-map (orgtrello-hash/empty-hash)))
+    (mapc (lambda (elt)
+            (orgtrello-hash/puthash-data (format "%d" i) elt index-board-map)
+            (setq i (+ 1 i)))
+          list)
+    index-board-map))
+
+(defun orgtrello-controller/--list-as-string-to-choose (list)
+  "Given LIST, return return a string to display in minibuffer."
+  (let ((string-result  "")
+        (i              0))
+    (mapc (lambda (elt)
+            (setq string-result (format "%s%d: %s\n" string-result i elt))
+            (setq i (+ 1 i)))
+          list)
+    string-result))
+
+(defun orgtrello-controller/config-file! (&optional username)
+  "Determine the configuration file as per user logged in.
+If USERNAME is supplied, do not look into the current buffer."
+  (format org-trello--config-file (if username username (orgtrello-setup/user-logged-in))))
+
+(defun orgtrello-controller/user-config-files ()
+  "List the actual possible users."
+  (when (file-exists-p org-trello--config-dir)
+    (directory-files org-trello--config-dir 'full-name "^.*\.el")))
+
+(defalias 'orgtrello-controller/user-account-from-config-file 'file-name-base)
+
+(defun orgtrello-controller/list-user-accounts (user-config-files)
+  "Given a list of USER-CONFIG-FILES, return the trello accounts list."
+  (mapcar #'orgtrello-controller/user-account-from-config-file user-config-files))
+
+(defun orgtrello-controller/--choose-account! (accounts)
+  "Let the user decide which account (s)he wants to use.
+Return such account name."
+  (let* ((accounts-to-choose    (orgtrello-controller/--list-as-string-to-choose accounts))
+         (accounts-hash         (orgtrello-controller/--list-as-index-list accounts))
+         (account-number-chosen (read-string (format "%sSelect the desired account login: " accounts-to-choose))))
+    (-if-let (user-elected (gethash account-number-chosen accounts-hash))
+        user-elected
+      (orgtrello-controller/--choose-account! accounts))))
+
+(defun orgtrello-controller/set-account! (&optional args)
+  "Set the org-trello account.
+ARGS is not used."
+  (let ((user-account-elected (-if-let (user-account (orgtrello-buffer/me!))
+                                  user-account ;; if already set, keep using the actual account
+                                ;; otherwise, user not logged in, determine which account to use
+                                (let ((user-accounts (orgtrello-controller/list-user-accounts (orgtrello-controller/user-config-files))))
+                                  (if (= 1 (length user-accounts))
+                                      (car user-accounts)
+                                    (orgtrello-controller/--choose-account! user-accounts))))))
+    (orgtrello-setup/set-user-logged-in user-account-elected)
+    :ok))
 
 (defun orgtrello-controller/load-keys! (&optional args)
   "Load the credentials keys from the configuration file.
 ARGS is not used."
-  (if (and (file-exists-p *ORGTRELLO/CONFIG-FILE*) (load *ORGTRELLO/CONFIG-FILE*))
-      :ok
-    "Setup problem - Problem during credentials (consumer-key and the read/write access-token) loading - C-c o i or M-x org-trello/install-key-and-token"))
+  (let ((user-config-file (orgtrello-controller/config-file!)))
+    (if (and (file-exists-p user-config-file) (load user-config-file))
+        :ok
+      "Setup problem - Problem during credentials loading (consumer-key and read/write access-token) - C-c o i or M-x org-trello-install-key-and-token")))
 
 (defun orgtrello-controller/control-keys! (&optional args)
-  "Org-trello needs the *consumer-key* and *access-token* for trello resources.
+  "Org-trello needs the org-trello-consumer-key and org-trello-access-token for trello resources.
 Returns :ok if everything is ok, or the error message if problems.
 ARGS is not used."
-  (if (and *consumer-key* *access-token*)
+  (if (and org-trello-consumer-key org-trello-access-token)
       :ok
-    "Setup problem - You need to install the consumer-key and the read/write access-token - C-c o i or M-x org-trello/install-key-and-token"))
+    "Setup problem - You need to install the consumer-key and the read/write access-token - C-c o i or M-x org-trello-install-key-and-token"))
 
 (defun orgtrello-controller/--on-entity-p (entity)
   "Compute if the org-trello ENTITY exists.
@@ -93,7 +172,7 @@ If it does not not, error."
 
 (defun orgtrello-controller/--right-level-p (entity)
   "Compute if the ENTITY level is correct (not higher than level 4)."
-  (if (and entity (< (-> entity orgtrello-data/current orgtrello-data/entity-level) *ORGTRELLO/OUTOFBOUNDS-LEVEL*)) :ok "Wrong level. Do not deal with entity other than card/checklist/item!"))
+  (if (and entity (< (-> entity orgtrello-data/current orgtrello-data/entity-level) org-trello--out-of-bounds-level)) :ok "Wrong level. Do not deal with entity other than card/checklist/item!"))
 
 (defun orgtrello-controller/--already-synced-p (entity)
   "Compute if the ENTITY has already been synchronized."
@@ -106,9 +185,9 @@ If it does not not, error."
            (name    (orgtrello-data/entity-name simple-entity)))
       (if (and name (< 0 (length name)))
           :ok
-        (cond ((= level *ORGTRELLO/CARD-LEVEL*)      *ORGTRELLO/ERROR-SYNC-CARD-MISSING-NAME*)
-              ((= level *ORGTRELLO/CHECKLIST-LEVEL*) *ORGTRELLO/ERROR-SYNC-CHECKLIST-MISSING-NAME*)
-              ((= level *ORGTRELLO/ITEM-LEVEL*)      *ORGTRELLO/ERROR-SYNC-ITEM-MISSING-NAME*))))
+        (cond ((= level org-trello--card-level)      org-trello--error-sync-card-missing-name)
+              ((= level org-trello--checklist-level) org-trello--error-sync-checklist-missing-name)
+              ((= level org-trello--item-level)      org-trello--error-sync-item-missing-name))))
     :ok))
 
 (defun orgtrello-controller/--mandatory-name-ok-p (entity)
@@ -146,9 +225,9 @@ BUFFER-NAME to specify the buffer with which we currently work."
   (let ((current-checksum (orgtrello-buffer/card-checksum!))
         (previous-checksum (orgtrello-buffer/get-card-local-checksum!)))
     (if (string= current-checksum previous-checksum)
-        (orgtrello-log/msg *OT/INFO* "Card already synchronized, nothing to do!")
+        (orgtrello-log/msg orgtrello-log-info "Card already synchronized, nothing to do!")
       (progn
-        (orgtrello-log/msg *OT/INFO* "Synchronizing card on board '%s'..." (orgtrello-buffer/board-name!))
+        (orgtrello-log/msg orgtrello-log-info "Synchronizing card on board '%s'..." (orgtrello-buffer/board-name!))
         (org-show-subtree) ;; we need to show the subtree, otherwise https://github.com/org-trello/org-trello/issues/53
         (-> buffer-name
           orgtrello-buffer/build-org-card-structure!
@@ -156,7 +235,7 @@ BUFFER-NAME to specify the buffer with which we currently work."
 
 (defun orgtrello-controller/do-sync-buffer-to-trello! ()
   "Full org-mode file synchronisation."
-  (orgtrello-log/msg *OT/WARN* "Synchronizing org-mode file to the board '%s'. This may take some time, some coffee may be a good idea..." (orgtrello-buffer/board-name!))
+  (orgtrello-log/msg orgtrello-log-warn "Synchronizing org-mode file to the board '%s'. This may take some time, some coffee may be a good idea..." (orgtrello-buffer/board-name!))
   (-> (current-buffer)
     orgtrello-buffer/build-org-entities!
     orgtrello-controller/execute-sync-entity-structure!))
@@ -201,7 +280,7 @@ Does not preserve position."
                 (board-name  (orgtrello-buffer/board-name!))
                 (point-start (point))
                 (board-id (orgtrello-buffer/board-id!)))
-    (orgtrello-log/msg *OT/INFO* "Synchronizing the trello board '%s' to the org-mode file..." board-name)
+    (orgtrello-log/msg orgtrello-log-info "Synchronizing the trello board '%s' to the org-mode file..." board-name)
     (deferred:$ ;; In emacs 25, deferred:parallel blocks in this context. I don't understand why so I retrieve sequentially for the moment. People, feel free to help and improve.
       (deferred:next
         (lambda ()
@@ -217,14 +296,14 @@ Does not preserve position."
               (cons cards))))
       (deferred:nextc it
         (lambda (trello-opened-and-archived-cards)
-          (orgtrello-log/msg *OT/DEBUG* "Opened and archived trello-cards: %S" trello-opened-and-archived-cards)
+          (orgtrello-log/msg orgtrello-log-debug "Opened and archived trello-cards: %S" trello-opened-and-archived-cards)
           (let ((trello-cards          (car  trello-opened-and-archived-cards))
                 (trello-archived-cards (cadr trello-opened-and-archived-cards)))
             ;; first archive the cards that needs to be
-            (orgtrello-log/msg *OT/DEBUG* "Archived trello-cards: %S" trello-archived-cards)
+            (orgtrello-log/msg orgtrello-log-debug "Archived trello-cards: %S" trello-archived-cards)
             (orgtrello-buffer/archive-cards! trello-archived-cards)
             ;; Then update the buffer with the other opened trello cards
-            (orgtrello-log/msg *OT/DEBUG* "Opened trello-cards: %S" trello-cards)
+            (orgtrello-log/msg orgtrello-log-debug "Opened trello-cards: %S" trello-cards)
             (->> trello-cards
                  (mapcar 'orgtrello-data/to-org-trello-card)
                  (orgtrello-controller/sync-buffer-with-trello-cards! buffer-name)))))
@@ -232,23 +311,23 @@ Does not preserve position."
         (lambda ()
           (orgtrello-buffer/save-buffer buffer-name)
           (goto-char point-start)
-          (orgtrello-log/msg *OT/INFO* "Synchronizing the trello board '%s' to the org-mode file '%s' done!" board-name buffer-name)))
+          (orgtrello-log/msg orgtrello-log-info "Synchronizing the trello board '%s' to the org-mode file '%s' done!" board-name buffer-name)))
       (deferred:error it
-        (lambda (err) (orgtrello-log/msg *OT/ERROR* "Sync buffer from trello - Catch error: %S" err))))))
+        (lambda (err) (orgtrello-log/msg orgtrello-log-error "Sync buffer from trello - Catch error: %S" err))))))
 
 (defun orgtrello-controller/check-trello-connection! ()
   "Full org-mode file synchronisation. Beware, this will block emacs as the request is synchronous."
-  (orgtrello-log/msg *OT/INFO* "Checking trello connection...")
+  (orgtrello-log/msg orgtrello-log-info "Checking trello connection...")
   (deferred:$
     (deferred:next (lambda () (orgtrello-query/http-trello (orgtrello-api/get-me) 'sync)))
     (deferred:nextc it
       (lambda (user-me)
-        (orgtrello-log/msg *OT/INFO*
+        (orgtrello-log/msg orgtrello-log-info
                            (if user-me
                                (format "Account '%s' configured! Everything is ok!" (orgtrello-data/entity-username user-me))
-                             "There is a problem with your credentials.\nMake sure you used M-x org-trello/install-key-and-token and installed correctly the consumer-key and access-token.\nSee http://org-trello.github.io/trello-setup.html#credentials for more information."))))
+                             "There is a problem with your credentials.\nMake sure you used M-x org-trello-install-key-and-token and installed correctly the consumer-key and access-token.\nSee http://org-trello.github.io/trello-setup.html#credentials for more information."))))
     (deferred:error it
-      (lambda (err) (orgtrello-log/msg *OT/ERROR* "Setup ko - '%s'" err)))))
+      (lambda (err) (orgtrello-log/msg orgtrello-log-error "Setup ko - '%s'" err)))))
 
 (defun orgtrello-controller/execute-sync-entity-structure! (entity-structure)
   "Execute synchronization of ENTITY-STRUCTURE (entities at first position, adjacency list in second position).
@@ -269,7 +348,7 @@ Along the way, the buffer BUFFER-NAME is written with new informations."
         (-> card-computations
           nreverse
           (orgtrello-proxy/execute-async-computations "card(s) sync ok!" "FAILURE! cards(s) sync KO!"))
-      (orgtrello-log/msg *OT/INFO* "No card(s) to sync."))))
+      (orgtrello-log/msg orgtrello-log-info "No card(s) to sync."))))
 
 (defun orgtrello-controller/compute-and-overwrite-card! (buffer-name org-trello-card)
   "Given BUFFER-NAME and TRELLO-CARD, compute, merge and update the buffer-name."
@@ -301,7 +380,7 @@ Optionally, SYNC permits to synchronize the query."
                  (card-meta (progn (when (not (orgtrello-entity/card-at-pt!)) (orgtrello-entity/back-to-card!))
                                    (orgtrello-data/current (orgtrello-buffer/entry-get-full-metadata!))))
                  (card-name (orgtrello-data/entity-name card-meta)))
-    (orgtrello-log/msg *OT/INFO* "Synchronizing the trello card to the org-mode file...")
+    (orgtrello-log/msg orgtrello-log-info "Synchronizing the trello card to the org-mode file...")
     (deferred:$
       (deferred:next
         (lambda ()
@@ -311,7 +390,7 @@ Optionally, SYNC permits to synchronize the query."
             (orgtrello-query/http-trello 'sync))))
       (deferred:nextc it
         (lambda (trello-card) ;; We have the full result in one query, now we can compute the translation in org-trello model
-          (orgtrello-log/msg *OT/DEBUG* "trello-card: %S" trello-card)
+          (orgtrello-log/msg orgtrello-log-debug "trello-card: %S" trello-card)
           (->> trello-card
             orgtrello-data/to-org-trello-card
             (orgtrello-controller/compute-and-overwrite-card! buffer-name))))
@@ -319,9 +398,9 @@ Optionally, SYNC permits to synchronize the query."
         (lambda ()
           (orgtrello-buffer/save-buffer buffer-name)
           (goto-char point-start)
-          (orgtrello-log/msg *OT/INFO* "Synchronizing the trello card '%s' to the org-mode file done!" card-name)))
+          (orgtrello-log/msg orgtrello-log-info "Synchronizing the trello card '%s' to the org-mode file done!" card-name)))
       (deferred:error it
-        (lambda (err) (orgtrello-log/msg *OT/ERROR* "Catch error: %S" err))))))
+        (lambda (err) (orgtrello-log/msg orgtrello-log-error "Catch error: %S" err))))))
 
 (defun orgtrello-controller/--do-delete-card ()
   "Delete the card."
@@ -356,54 +435,63 @@ BUFFER-NAME specifies the buffer onto which we work."
       (deferred:$
         (deferred:next
           (lambda () ;; trello archive
-            (orgtrello-log/msg *OT/INFO* "Archive card '%s'..." card-name)
-            (orgtrello-log/msg *OT/DEBUG* "Archive card '%s' in trello...\n" card-name)
+            (orgtrello-log/msg orgtrello-log-info "Archive card '%s'..." card-name)
+            (orgtrello-log/msg orgtrello-log-debug "Archive card '%s' in trello...\n" card-name)
             (-> card-meta
               orgtrello-data/entity-id
               orgtrello-api/archive-card
               (orgtrello-query/http-trello 'sync))))
         (deferred:nextc it
           (lambda (card-result) ;; org archive
-            (orgtrello-log/msg *OT/DEBUG* "Archive card '%s' in org..." card-name)
+            (orgtrello-log/msg orgtrello-log-debug "Archive card '%s' in org..." card-name)
             (with-current-buffer buffer-name
               (goto-char point-start)
               (org-archive-subtree))))
         (deferred:nextc it
           (lambda () ;; save buffer
             (orgtrello-buffer/save-buffer buffer-name)
-            (orgtrello-log/msg *OT/INFO* "Archive card '%s' done!" card-name)))))))
+            (orgtrello-log/msg orgtrello-log-info "Archive card '%s' done!" card-name)))))))
 
-(defun orgtrello-controller/--do-install-config-file (consumer-key access-token)
-  "Persist the file config-file with the CONSUMER-KEY and ACCESS-TOKEN."
-  (make-directory *ORGTRELLO/CONFIG-DIR* t)
-  (with-temp-file *ORGTRELLO/CONFIG-FILE*
-    (erase-buffer)
-    (goto-char (point-min))
-    (insert (format "(setq *consumer-key* \"%s\")\n" consumer-key))
-    (insert (format "(setq *access-token* \"%s\")" access-token))
-    (write-file *ORGTRELLO/CONFIG-FILE* 'do-ask-for-overwrite)))
+(defun orgtrello-controller/--do-install-config-file (user-login consumer-key access-token &optional ask-for-overwrite)
+  "Persist the setup file with USER-LOGIN, CONSUMER-KEY and ACCESS-TOKEN.
+ASK-FOR-OVERWRITE is a flag that needs to be set if we want to prevent some overwriting."
+  (let ((new-user-config-file (orgtrello-controller/config-file! user-login)))
+    (make-directory org-trello--config-dir 'do-create-parent-if-need-be)
+    (with-temp-file new-user-config-file
+      (erase-buffer)
+      (goto-char (point-min))
+      (insert (format "(setq org-trello-consumer-key \"%s\")\n" consumer-key))
+      (insert (format "(setq org-trello-access-token \"%s\")" access-token))
+      (write-file new-user-config-file ask-for-overwrite))))
 
 (defun orgtrello-controller/do-install-key-and-token ()
-  "Procedure to install the *consumer-key* and the token for the user in the config-file."
-  (deferred:$
-    (deferred:next
-      (lambda () (browse-url (org-trello/compute-url "/1/appKey/generate"))))
-    (deferred:nextc it
-      (lambda ()
-        (let ((consumer-key (read-string "Consumer key: ")))
-          (browse-url (org-trello/compute-url (format "/1/authorize?response_type=token&name=org-trello&scope=read,write&expiration=never&key=%s" consumer-key)))
-          consumer-key)))
-    (deferred:nextc it
-      (lambda (consumer-key)
-        (orgtrello-log/msg *OT/DEBUG* "consumer-key: %S" consumer-key)
-        (let ((access-token (read-string "Access token: ")))
-          (mapcar 's-trim `(,consumer-key ,access-token)))))
-    (deferred:nextc it
-      (lambda (consumer-key-and-access-token)
-        (orgtrello-log/msg *OT/DEBUG* "consumer-key-and-access-token: %S" consumer-key-and-access-token)
-        (apply 'orgtrello-controller/--do-install-config-file consumer-key-and-access-token)))
-    (deferred:nextc it
-      (lambda () (orgtrello-log/msg *OT/INFO* "Setup key and token done!")))))
+  "Procedure to install the org-trello-consumer-key and the token for the user in the config-file."
+  (lexical-let* ((user-login       (read-string "Trello login account (you need to be logged accordingly in trello.com as we cannot check this for you): "))
+                 (user-config-file (orgtrello-controller/config-file! user-login)))
+    (if (file-exists-p user-config-file)
+        (orgtrello-log/msg orgtrello-log-info "Configuration for user '%s' already existing (file '%s'), skipping." user-login user-config-file)
+      (deferred:$
+        (deferred:next
+          (lambda () (browse-url (org-trello/compute-url "/1/appKey/generate"))))
+        (deferred:nextc it
+          (lambda (user-login)
+            (let ((consumer-key (read-string "Consumer key: ")))
+              (browse-url (org-trello/compute-url (format "/1/authorize?response_type=token&name=org-trello&scope=read,write&expiration=never&key=%s" consumer-key)))
+              (list consumer-key user-login))))
+        (deferred:nextc it
+          (lambda (consumer-key-user-login)
+            (orgtrello-log/msg orgtrello-log-debug "user-login + consumer-key: %S" consumer-key-user-login)
+            (let ((access-token (read-string "Access token: ")))
+              (mapcar 's-trim (cons access-token consumer-key-user-login)))))
+        (deferred:nextc it
+          (lambda (access-token-consumer-key-user-login)
+            (orgtrello-log/msg orgtrello-log-debug "user-login + consumer-key + access-token: %S" access-token-consumer-key-user-login)
+            (->> access-token-consumer-key-user-login
+                 (cons 'do-ask-for-overwrite)
+                 nreverse
+                 (apply 'orgtrello-controller/--do-install-config-file))))
+        (deferred:nextc it
+          (lambda () (orgtrello-log/msg orgtrello-log-info "Setup key and token done!")))))))
 
 (defun orgtrello-controller/--id-name (entities)
   "Given a list of ENTITIES, return a map of (id, name)."
@@ -423,23 +511,15 @@ BUFFER-NAME specifies the buffer onto which we work."
 
 (defun orgtrello-controller/--index-board-map (boards)
   "Given BOARDS, a map of board (id . name), return a map of (position . name)."
-  (let ((i               0)
-        (index-board-map (orgtrello-hash/empty-hash)))
-    (maphash (lambda (id _)
-               (orgtrello-hash/puthash-data (format "%d" i) id index-board-map)
-               (setq i (+ 1 i)))
-             boards)
-    index-board-map))
+  (-> boards
+      orgtrello-hash/keys
+      orgtrello-controller/--list-as-index-list))
 
 (defun orgtrello-controller/--display-boards-to-choose (boards)
   "Given BOARDS, a map of board (id . name), return a string to display in minibuffer."
-  (let ((string-result  "")
-        (i            0))
-    (maphash (lambda (_ name)
-               (setq string-result (format "%s%d: %s\n" string-result i name))
-               (setq i (+ 1 i)))
-             boards)
-    string-result))
+  (-> boards
+      orgtrello-hash/values
+      orgtrello-controller/--list-as-string-to-choose))
 
 (defun orgtrello-controller/choose-board! (boards)
   "Given a map of boards, ask the user to choose the boards.
@@ -474,8 +554,8 @@ This returns the identifier of such board."
   "Compute the hash of name id to list from USERS-HASH-NAME-ID."
   (let ((res-list nil))
     (maphash (lambda (name id) (--> name
-                                 (replace-regexp-in-string *ORGTRELLO/USER-PREFIX* "" it)
-                                 (format "%s%s" *ORGTRELLO/USER-PREFIX* it)
+                                 (replace-regexp-in-string org-trello--label-key-user-prefix "" it)
+                                 (format "%s%s" org-trello--label-key-user-prefix it)
                                  (orgtrello-controller/compute-property it id)
                                  (push it res-list)))
              users-hash-name-id)
@@ -486,11 +566,11 @@ This returns the identifier of such board."
   (with-current-buffer (current-buffer)
     ;; compute the list of properties to purge
     (->> `(":PROPERTIES"
-           ,(orgtrello-controller/compute-property *ORGTRELLO/BOARD-NAME*)
-           ,(orgtrello-controller/compute-property *ORGTRELLO/BOARD-ID*)
+           ,(orgtrello-controller/compute-property org-trello--property-board-name)
+           ,(orgtrello-controller/compute-property org-trello--property-board-id)
            ,@(--map (orgtrello-controller/compute-property (orgtrello-controller/--convention-property-name it)) org-keywords)
            ,@(orgtrello-controller/--compute-hash-name-id-to-list users-hash-name-id)
-           ,(orgtrello-controller/compute-property *ORGTRELLO/USER-ME* user-me)
+           ,(orgtrello-controller/compute-property org-trello--property-user-me user-me)
            ,(when update-todo-keywords "#+TODO: ")
            ":red" ":blue" ":yellow" ":green" ":orange" ":purple"
            ":END:")
@@ -507,13 +587,13 @@ This returns the identifier of such board."
 (defun orgtrello-controller/--compute-metadata! (board-name board-id board-lists-hash-name-id board-users-hash-name-id user-me board-labels &optional update-todo-keywords)
   "Compute the org-trello metadata to dump on header file."
   `(":PROPERTIES:"
-    ,(orgtrello-controller/compute-property *ORGTRELLO/BOARD-NAME* board-name)
-    ,(orgtrello-controller/compute-property *ORGTRELLO/BOARD-ID* board-id)
+    ,(orgtrello-controller/compute-property org-trello--property-board-name board-name)
+    ,(orgtrello-controller/compute-property org-trello--property-board-id board-id)
     ,@(orgtrello-controller/--compute-board-lists-hash-name-id board-lists-hash-name-id)
     ,(if update-todo-keywords (orgtrello-controller/--properties-compute-todo-keywords-as-string board-lists-hash-name-id) "")
     ,@(orgtrello-controller/--properties-compute-users-ids board-users-hash-name-id)
     ,@(orgtrello-controller/--properties-labels board-labels)
-    ,(format "#+PROPERTY: %s %s" *ORGTRELLO/USER-ME* user-me)
+    ,(format "#+PROPERTY: %s %s" org-trello--property-user-me user-me)
     ":END:"))
 
 (defun orgtrello-controller/--compute-keyword-separation (name)
@@ -542,9 +622,10 @@ This returns the identifier of such board."
                              (nreverse res-list))) ""))
 
 (defun orgtrello-controller/--properties-compute-users-ids (board-users-hash-name-id)
+  "Given BOARD-USERS-HASH-NAME-ID, compute the properties for users."
   (let ((res-list))
     (maphash (lambda (name id) (--> name
-                                 (format "#+PROPERTY: %s%s %s" *ORGTRELLO/USER-PREFIX* it id)
+                                 (format "#+PROPERTY: %s%s %s" org-trello--label-key-user-prefix it id)
                                  (push it res-list)))
              board-users-hash-name-id)
     res-list))
@@ -584,17 +665,17 @@ This returns the identifier of such board."
           (let* ((boards         (elt boards-and-user-logged-in 0))
                  (user-logged-in (orgtrello-data/entity-username (elt boards-and-user-logged-in 1)))
                  (selected-id-board (->> boards
-                                      orgtrello-controller/--id-name
-                                      orgtrello-controller/choose-board!)))
+                                         orgtrello-controller/--id-name
+                                         orgtrello-controller/choose-board!)))
             (list (car (--filter (string= selected-id-board (orgtrello-data/entity-id it)) boards)) user-logged-in))))
       (deferred:nextc it ;; hack everything has been retrieved with the first requests except for the members
         (lambda (board-and-user-logged-in)
           (-> board-and-user-logged-in
-            car
-            orgtrello-data/entity-id
-            orgtrello-api/get-members
-            (orgtrello-query/http-trello 'sync)
-            (cons board-and-user-logged-in))))
+              car
+              orgtrello-data/entity-id
+              orgtrello-api/get-members
+              (orgtrello-query/http-trello 'sync)
+              (cons board-and-user-logged-in))))
       (deferred:nextc it
         (lambda (members-board-and-user)
           (cl-destructuring-bind (members chosen-board user-logged-in) members-board-and-user
@@ -608,7 +689,7 @@ This returns the identifier of such board."
         (lambda ()
           (orgtrello-buffer/save-buffer buffer-name)
           (orgtrello-action/reload-setup!)
-          (orgtrello-log/msg *OT/INFO* "Install board and list ids done!"))))))
+          (orgtrello-log/msg orgtrello-log-info "Install board and list ids done!"))))))
 
 (defun orgtrello-controller/--compute-user-properties (memberships-map)
   "Given a map MEMBERSHIPS-MAP, extract the map of user information."
@@ -620,14 +701,14 @@ This returns the identifier of such board."
 
 (defun orgtrello-controller/--create-board (board-name &optional board-description)
   "Create a board with name BOARD-NAME and optionally a BOARD-DESCRIPTION."
-  (orgtrello-log/msg *OT/INFO* "Creating board '%s' with description '%s'" board-name board-description)
+  (orgtrello-log/msg orgtrello-log-info "Creating board '%s' with description '%s'" board-name board-description)
   (orgtrello-query/http-trello (orgtrello-api/add-board board-name board-description) 'sync))
 
 (defun orgtrello-controller/--close-lists (list-ids)
   "Given a list of ids LIST-IDS, close those lists."
   (orgtrello-proxy/execute-async-computations
    (--map (lexical-let ((list-id it))
-            (orgtrello-query/http-trello (orgtrello-api/close-list it) nil (lambda (response) (orgtrello-log/msg *OT/INFO* "Closed list with id %s" list-id)) (lambda ())))
+            (orgtrello-query/http-trello (orgtrello-api/close-list it) nil (lambda (response) (orgtrello-log/msg orgtrello-log-info "Closed list with id %s" list-id)) (lambda ())))
          list-ids)
    "List(s) closed."
    "FAILURE - Problem during closing list."))
@@ -638,7 +719,7 @@ The list order in the trello board is the same as the ORG-KEYWORDS.
 Return the hashmap (name, id) of the new lists created."
   (car
    (--reduce-from (cl-destructuring-bind (hash pos) acc
-                    (orgtrello-log/msg *OT/INFO* "Board id %s - Creating list '%s'" board-id it)
+                    (orgtrello-log/msg orgtrello-log-info "Board id %s - Creating list '%s'" board-id it)
                     (list (orgtrello-hash/puthash-data it (orgtrello-data/entity-id (orgtrello-query/http-trello (orgtrello-api/add-list it board-id pos) 'sync)) hash) (+ pos 1)))
                   (list (orgtrello-hash/empty-hash) 1)
                   org-keywords)))
@@ -650,22 +731,22 @@ Return the hashmap (name, id) of the new lists created."
     (deferred:$
       (deferred:next
         (lambda ()
-          (orgtrello-log/msg *OT/DEBUG* "Input from the user.")
+          (orgtrello-log/msg orgtrello-log-debug "Input from the user.")
           (let ((input-board-name        (orgtrello-input/read-not-empty! "Please, input the desired board name: "))
                 (input-board-description (read-string "Please, input the board description (empty for none): ")))
             (list input-board-name input-board-description))))
       (deferred:parallel
         (deferred:nextc it
           (lambda (input-board-name-and-description) ;; compute the current board's information
-            (orgtrello-log/msg *OT/DEBUG* "Create the board. - %S" input-board-name-and-description)
+            (orgtrello-log/msg orgtrello-log-debug "Create the board. - %S" input-board-name-and-description)
             (apply 'orgtrello-controller/--create-board input-board-name-and-description)))
         (deferred:next
           (lambda () ;; compute the current user's information
-            (orgtrello-log/msg *OT/DEBUG* "Computer user information.")
+            (orgtrello-log/msg orgtrello-log-debug "Computer user information.")
             (orgtrello-controller/--user-logged-in!))))
       (deferred:nextc it
         (lambda (board-and-user-logged-in)
-          (orgtrello-log/msg *OT/DEBUG* "Computer default board lists - %S" board-and-user-logged-in)
+          (orgtrello-log/msg orgtrello-log-debug "Computer default board lists - %S" board-and-user-logged-in)
           (let ((board (elt board-and-user-logged-in 0))
                 (user  (elt board-and-user-logged-in 1)))
             (->> board
@@ -675,13 +756,13 @@ Return the hashmap (name, id) of the new lists created."
               (list board user)))))
       (deferred:nextc it
         (lambda (board-user-list-ids)
-          (orgtrello-log/msg *OT/DEBUG* "Close default lists - %S" board-user-list-ids)
+          (orgtrello-log/msg orgtrello-log-debug "Close default lists - %S" board-user-list-ids)
           (cl-destructuring-bind (_ _ list-ids) board-user-list-ids
             (orgtrello-controller/--close-lists list-ids))
           board-user-list-ids))
       (deferred:nextc it
         (lambda (board-user-list-ids)
-          (orgtrello-log/msg *OT/DEBUG* "Create user's list in board - %S" board-user-list-ids)
+          (orgtrello-log/msg orgtrello-log-debug "Create user's list in board - %S" board-user-list-ids)
           (cl-destructuring-bind (board user list-ids) board-user-list-ids
             (--> board
               (orgtrello-data/entity-id it)
@@ -689,7 +770,7 @@ Return the hashmap (name, id) of the new lists created."
               (list board user it)))))
       (deferred:nextc it
         (lambda (board-user-list-ids)
-          (orgtrello-log/msg *OT/DEBUG* "Update buffer with metadata - %S" board-user-list-ids)
+          (orgtrello-log/msg orgtrello-log-debug "Update buffer with metadata - %S" board-user-list-ids)
           (cl-destructuring-bind (board user board-lists-hname-id) board-user-list-ids
             (orgtrello-controller/do-cleanup-from-buffer!)
             (orgtrello-controller/--update-orgmode-file-with-properties! (orgtrello-data/entity-name board)
@@ -703,7 +784,7 @@ Return the hashmap (name, id) of the new lists created."
         (lambda ()
           (orgtrello-buffer/save-buffer buffer-name)
           (orgtrello-action/reload-setup!)
-          (orgtrello-log/msg *OT/INFO* "Create board and lists done!"))))))
+          (orgtrello-log/msg orgtrello-log-info "Create board and lists done!"))))))
 
 (defun orgtrello-controller/--add-user (user users)
   "Add the USER to the USERS list."
@@ -717,7 +798,7 @@ Return the hashmap (name, id) of the new lists created."
   "Command to assign oneself to the card."
   (--> (orgtrello-buffer/get-usernames-assigned-property!)
     (orgtrello-data/--users-from it)
-    (orgtrello-controller/--add-user *ORGTRELLO/USER-LOGGED-IN* it)
+    (orgtrello-controller/--add-user org-trello--user-logged-in it)
     (orgtrello-data/--users-to it)
     (orgtrello-buffer/set-usernames-assigned-property! it)))
 
@@ -725,7 +806,7 @@ Return the hashmap (name, id) of the new lists created."
   "Command to unassign oneself of the card."
   (--> (orgtrello-buffer/get-usernames-assigned-property!)
        (orgtrello-data/--users-from it)
-       (orgtrello-controller/--remove-user *ORGTRELLO/USER-LOGGED-IN* it)
+       (orgtrello-controller/--remove-user org-trello--user-logged-in it)
        (orgtrello-data/--users-to it)
        (orgtrello-buffer/set-usernames-assigned-property! it)))
 
@@ -735,7 +816,7 @@ Return the hashmap (name, id) of the new lists created."
     (orgtrello-entity/back-to-card!)
     (let ((card-id (-> (orgtrello-buffer/entity-metadata!) orgtrello-data/entity-id)))
       (if (or (null card-id) (string= "" card-id))
-          (orgtrello-log/msg *OT/INFO* "Card not sync'ed so cannot add comment - skip.")
+          (orgtrello-log/msg orgtrello-log-info "Card not sync'ed so cannot add comment - skip.")
         (orgtrello-controller/add-comment! card-id)))))
 
 (defun orgtrello-controller/do-delete-card-comment! ()
@@ -751,7 +832,7 @@ Return the hashmap (name, id) of the new lists created."
     (lexical-let ((card-id    (-> card-meta orgtrello-data/parent orgtrello-data/entity-id))
                   (comment-id (-> card-meta orgtrello-data/current orgtrello-data/entity-id)))
       (if (or (null card-id) (string= "" card-id) (string= "" comment-id))
-          (orgtrello-log/msg *OT/INFO* "No comment to delete - skip.")
+          (orgtrello-log/msg orgtrello-log-info "No comment to delete - skip.")
         (deferred:$
           (deferred:next (lambda () (-> card-id
                                  (orgtrello-api/delete-card-comment comment-id)
@@ -759,7 +840,7 @@ Return the hashmap (name, id) of the new lists created."
           (deferred:nextc it
             (lambda (data)
               (apply 'delete-region (orgtrello-entity/compute-comment-region!))
-              (orgtrello-log/msg *OT/INFO* "Comment deleted!"))))))))
+              (orgtrello-log/msg orgtrello-log-info "Comment deleted!"))))))))
 
 
 (defun orgtrello-controller/do-sync-card-comment! ()
@@ -779,21 +860,21 @@ Return the hashmap (name, id) of the new lists created."
                    (comment-id     (orgtrello-data/entity-id entity-comment))
                    (comment-text   (orgtrello-data/entity-description entity-comment)))
       (if (or (null card-id) (string= "" card-id) (string= "" comment-id))
-          (orgtrello-log/msg *OT/INFO* "No comment to sync - skip.")
+          (orgtrello-log/msg orgtrello-log-info "No comment to sync - skip.")
         (deferred:$
           (deferred:next (lambda () (-> card-id
                                  (orgtrello-api/update-card-comment comment-id comment-text)
                                  (orgtrello-query/http-trello 'sync))))
           (deferred:nextc it
             (lambda (data)
-              (orgtrello-log/msg *OT/INFO* "Comment sync'ed!"))))))))
+              (orgtrello-log/msg orgtrello-log-info "Comment sync'ed!"))))))))
 
 (defun orgtrello-controller/do-cleanup-from-buffer! (&optional globally-flag)
   "Clean org-trello data in current buffer.
 When GLOBALLY-FLAG is not nil, remove also local entities properties."
-  (orgtrello-controller/--remove-properties-file! *ORGTRELLO/ORG-KEYWORD-TRELLO-LIST-NAMES* *ORGTRELLO/HMAP-USERS-NAME-ID* *ORGTRELLO/USER-LOGGED-IN* t) ;; remove any orgtrello relative entries
+  (orgtrello-controller/--remove-properties-file! org-trello--org-keyword-trello-list-names org-trello--hmap-users-name-id org-trello--user-logged-in t) ;; remove any orgtrello relative entries
   (when globally-flag
-    (mapc 'orgtrello-buffer/delete-property! `(,*ORGTRELLO/ID* ,*ORGTRELLO/USERS-ENTRY*))))
+    (mapc 'orgtrello-buffer/delete-property! `(,org-trello--label-key-id ,org-trello--property-users-entry))))
 
 (defun orgtrello-controller/do-write-board-metadata! (board-id board-name user-logged-in board-lists board-labels board-users-name-id)
   "Given a board id, write in the current buffer the updated data."
@@ -833,7 +914,7 @@ When GLOBALLY-FLAG is not nil, remove also local entities properties."
         (lambda ()
           (orgtrello-buffer/save-buffer buffer-name)
           (orgtrello-action/reload-setup!)
-          (orgtrello-log/msg *OT/INFO* "Update board information done!"))))))
+          (orgtrello-log/msg orgtrello-log-info "Update board information done!"))))))
 
 (defun orgtrello-controller/do-show-board-labels! ()
   "Open a pop and display the board's labels."
@@ -861,7 +942,7 @@ When GLOBALLY-FLAG is not nil, remove also local entities properties."
 (defun orgtrello-controller/delete-setup! ()
   "Global org-trello metadata clean up."
   (orgtrello-controller/do-cleanup-from-buffer! t)
-  (orgtrello-log/msg *OT/NOLOG* "Cleanup done!"))
+  (orgtrello-log/msg orgtrello-log-no-log "Cleanup done!"))
 
 (defvar orgtrello-controller/register "*orgtrello-register*"
   "The variable holding the Emacs' org-trello register.")
@@ -883,7 +964,7 @@ CARD-ID is the needed id to create the comment."
   (setq orgtrello-controller/card-id card-id)
   (window-configuration-to-register orgtrello-controller/register)
   (delete-other-windows)
-  (org-switch-to-buffer-other-window *ORGTRELLO/TITLE-BUFFER-INFORMATION*)
+  (org-switch-to-buffer-other-window org-trello--title-buffer-information)
   (erase-buffer)
   (let ((org-inhibit-startup t))
     (org-mode)
@@ -921,20 +1002,20 @@ CARD-ID is the needed id to create the comment."
                                      (orgtrello-query/http-trello 'sync))))
             (deferred:nextc it
               (lambda (data)
-                (orgtrello-log/msg *OT/TRACE* "Add card comment - response data: %S" data)
+                (orgtrello-log/msg orgtrello-log-trace "Add card comment - response data: %S" data)
                 (orgtrello-controller/checks-then-sync-card-from-trello!)))))))))
 
 (defun orgtrello-controller/prepare-buffer! ()
   "Prepare the buffer to receive org-trello data."
-  (when (and (eq major-mode 'org-mode) org-trello/mode)
+  (when (and (eq major-mode 'org-mode) org-trello--mode-activated-p)
     (orgtrello-buffer/install-overlays!)
     (orgtrello-buffer/indent-card-descriptions!)
     (orgtrello-buffer/indent-card-data!)))
 
 (defun orgtrello-controller/mode-on-hook-fn ()
   "Start org-trello hook function to install some org-trello setup."
-  ;; Activate org-trello/mode
-  (setq org-trello/mode 'activated)
+  ;; Activate org-trello--mode-activated-p
+  (setq org-trello--mode-activated-p 'activated)
   ;; buffer-invisibility-spec
   (add-to-invisibility-spec '(org-trello-cbx-property)) ;; for an ellipsis (-> ...) change to '(org-trello-cbx-property . t)
   ;; Setup the buffer
@@ -954,10 +1035,10 @@ CARD-ID is the needed id to create the comment."
   (remove-hook 'before-save-hook 'orgtrello-controller/prepare-buffer!)
   ;; remove org-trello overlays
   (orgtrello-buffer/remove-overlays!)
-  ;; deactivate org-trello/mode
-  (setq org-trello/mode))
+  ;; deactivate org-trello--mode-activated-p
+  (setq org-trello--mode-activated-p))
 
-(orgtrello-log/msg *OT/DEBUG* "orgtrello-controller loaded!")
+(orgtrello-log/msg orgtrello-log-debug "orgtrello-controller loaded!")
 
 (provide 'org-trello-controller)
 ;;; org-trello-controller.el ends here

@@ -46,8 +46,8 @@
   (should (equal "call people [4/4]" (orgtrello-cbx/--name "  -[-] call people [4/4]"  "[-]"))))
 
 (ert-deftest test-orgtrello-cbx/--to-properties ()
-  (should (equal "{\"orgtrello-id\":\"123\"}"                              (orgtrello-cbx/--to-properties `((,*ORGTRELLO/ID* . "123")))))
-  (should (equal "{\"orgtrello-id\":\"456\"}"                              (orgtrello-cbx/--to-properties `((,*ORGTRELLO/ID* . "123") (,*ORGTRELLO/ID* . "456")))))
+  (should (equal "{\"orgtrello-id\":\"123\"}"                              (orgtrello-cbx/--to-properties `((,org-trello--label-key-id . "123")))))
+  (should (equal "{\"orgtrello-id\":\"456\"}"                              (orgtrello-cbx/--to-properties `((,org-trello--label-key-id . "123") (,org-trello--label-key-id . "456")))))
   (should (equal "{\"orgtrello-id\":\"def\",\"orgtrello-marker\":\"456\",\"orgtrello-id\":\"abc\"}"
                  (replace-regexp-in-string ", " "," (orgtrello-cbx/--to-properties `(("orgtrello-id" . "abc") (orgtrello-marker . "456") (orgtrello-id . "def"))))))
   (should (equal "{\"orgtrello-marker\":\"456\",\"orgtrello-id\":\"def\"}"

@@ -3,8 +3,8 @@
 (require 'el-mock)
 
 (ert-deftest test-orgtrello-query/--compute-url ()
-  (should (equal (format "%s%s" *ORGTRELLO/TRELLO-URL* "/uri")            (orgtrello-query/--compute-url *ORGTRELLO/TRELLO-URL* "/uri")))
-  (should (equal (format "%s%s" *ORGTRELLO/TRELLO-URL* "/uri/other")      (orgtrello-query/--compute-url *ORGTRELLO/TRELLO-URL* "/uri/other")))
+  (should (equal (format "%s%s" orgtrello-query--trello-url "/uri")            (orgtrello-query/--compute-url orgtrello-query--trello-url "/uri")))
+  (should (equal (format "%s%s" orgtrello-query--trello-url "/uri/other")      (orgtrello-query/--compute-url orgtrello-query--trello-url "/uri/other")))
   (should (equal (format "some-server/uri/some/other")          (orgtrello-query/--compute-url "some-server" "/uri/some/other"))))
 
 (ert-deftest test-orgtrello-query/entity-getters ()

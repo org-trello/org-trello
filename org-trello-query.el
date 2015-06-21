@@ -14,7 +14,7 @@
 (require 'org-trello-data)
 (require 'request-deferred)
 
-(defconst *ORGTRELLO/TRELLO-URL* "https://api.trello.com/1"
+(defconst orgtrello-query--trello-url "https://api.trello.com/1"
   "The needed prefix url for trello.")
 
 (defun orgtrello-query/--compute-url (server uri)
@@ -24,19 +24,19 @@
 (defun* orgtrello-query/--standard-error-callback (&key response error-thrown &allow-other-keys)
   "Standard error callback which expects a RESPONSE.
 Simply displays an error message in the minibuffer with the error code."
-  (orgtrello-log/msg *OT/INFO* "client - Problem during request - error-thrown: %s" error-thrown)
-  (orgtrello-log/msg *OT/DEBUG* "Detailed response: %S" response))
+  (orgtrello-log/msg orgtrello-log-info "client - Problem during request - error-thrown: %s" error-thrown)
+  (orgtrello-log/msg orgtrello-log-debug "Detailed response: %S" response))
 
 (defun* orgtrello-query/--standard-success-callback (&key response &allow-other-keys)
   "Standard success callback with expects a RESPONSE.
 Simply displays a success message in the minibuffer."
   (let ((data (request-response-data response)))
-    (orgtrello-log/msg *OT/DEBUG* "Response: %S" response)
-    (orgtrello-log/msg *OT/DEBUG* "Data: %S" data)))
+    (orgtrello-log/msg orgtrello-log-debug "Response: %S" response)
+    (orgtrello-log/msg orgtrello-log-debug "Data: %S" data)))
 
 (defun orgtrello-query/--authentication-params ()
   "Generate the list of http authentication parameters."
-  `((key . ,*consumer-key*) (token . ,*access-token*)))
+  `((key . ,org-trello-consumer-key) (token . ,org-trello-access-token)))
 
 (defun orgtrello-query/--http-parse ()
   "Parse the http response into an org-trello entity."
@@ -147,9 +147,9 @@ Simply displays a success message in the minibuffer."
 
 (defun orgtrello-query/http-trello (query-map &optional sync success-callback error-callback)
   "Execute an HTTP query to trello with QUERY-MAP and optional SYNC, SUCCESS-CALLBACK, ERROR-CALLBACK."
-  (orgtrello-query/http *ORGTRELLO/TRELLO-URL* query-map sync success-callback error-callback 'with-authentication))
+  (orgtrello-query/http orgtrello-query--trello-url query-map sync success-callback error-callback 'with-authentication))
 
-(orgtrello-log/msg *OT/DEBUG* "orgtrello-query loaded!")
+(orgtrello-log/msg orgtrello-log-debug "orgtrello-query loaded!")
 
 (provide 'org-trello-query)
 ;;; org-trello-query.el ends here

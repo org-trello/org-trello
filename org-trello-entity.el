@@ -24,7 +24,7 @@
 
 (defun orgtrello-entity/org-card-p! ()
   "Determine if we are currently on a card."
-  (orgtrello-entity/org-heading-with-level-p! *ORGTRELLO/CARD-LEVEL*))
+  (orgtrello-entity/org-heading-with-level-p! org-trello--card-level))
 
 (defun orgtrello-entity/--org-checkbox-p! (indent)
   "Determine if current position is a checkbox.
@@ -34,11 +34,11 @@ Provided indent as the denominator for the checkbox's nature."
 
 (defun orgtrello-entity/org-checklist-p! ()
   "Given the current position, determine if we are on a checklist."
-  (orgtrello-entity/--org-checkbox-p! *ORGTRELLO/CHECKLIST-INDENT*))
+  (orgtrello-entity/--org-checkbox-p! org-trello--checklist-indent))
 
 (defun orgtrello-entity/org-item-p! ()
   "Given the current position, determine if we are on an item."
-  (orgtrello-entity/--org-checkbox-p! *ORGTRELLO/ITEM-INDENT*))
+  (orgtrello-entity/--org-checkbox-p! org-trello--item-indent))
 
 (defun orgtrello-entity/org-comment-p! ()
   "Given the current position, determine if we are currently on a comment."
@@ -63,10 +63,10 @@ Does not preserve position."
   "Compute the levels from the current position (which is `bol`)"
   (save-excursion
     (beginning-of-line)
-    (cond ((orgtrello-entity/org-card-p!)      *ORGTRELLO/CARD-LEVEL*)
-          ((orgtrello-entity/org-checklist-p!) *ORGTRELLO/CHECKLIST-LEVEL*)
-          ((orgtrello-entity/org-item-p!)      *ORGTRELLO/ITEM-LEVEL*)
-          ((orgtrello-entity/org-comment-p!)   *ORGTRELLO/COMMENT-LEVEL*)
+    (cond ((orgtrello-entity/org-card-p!)      org-trello--card-level)
+          ((orgtrello-entity/org-checklist-p!) org-trello--checklist-level)
+          ((orgtrello-entity/org-item-p!)      org-trello--item-level)
+          ((orgtrello-entity/org-comment-p!)   org-trello--comment-level)
           (t                                   -1))))
 
 (defun orgtrello-entity/goto-next-checkbox ()
@@ -100,11 +100,11 @@ If hitting a heading or the end of the file, return nil."
 
 (defun orgtrello-entity/checklist-at-pt! ()
   "Determine if currently on the checklist region."
-  (= (orgtrello-entity/level!) *ORGTRELLO/CHECKLIST-LEVEL*))
+  (= (orgtrello-entity/level!) org-trello--checklist-level))
 
 (defun orgtrello-entity/item-at-pt! ()
   "Determine if currently on the item region."
-  (= (orgtrello-entity/level!) *ORGTRELLO/ITEM-LEVEL*))
+  (= (orgtrello-entity/level!) org-trello--item-level))
 
 (defun orgtrello-entity/card-description-start-point! ()
   "Compute the first character of the card's description content."

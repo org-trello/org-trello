@@ -2,13 +2,51 @@
 #+AUTHOR: ardumont
 #+STYLE: <style> h1,h2,h3 {font-family: arial, helvetica, sans-serif} </style>
 
-* TODO 0.7.x [0%]
-- [ ] Use active region - https://github.com/org-trello/org-trello/issues/130
-- [ ] Another Disposition about org's buffer - https://github.com/org-trello/org-trello/issues/33
-- [ ] Add a file to the org-trello list - https://github.com/org-trello/org-trello/issues/211
-- [ ] One command to sync them all - https://github.com/org-trello/org-trello/issues/5
-- [ ] Migrate ~/.trello/config.el inside emacs's home - #239
-- [ ] Fix #250 - Changing order of checklist items not saved unless checklist item's text changed
+* TODO Backlog
+** Bug
+- [ ] #240 - Preserve non-trello related tags/other meta data
+
+** Features
+
+- [ ] #033 - Different use case and mappings trello <-> org (Another Disposition about org's buffer)
+- [ ] #259 - Option to use indented items as cards instead of current "<list> <card title>" format
+- [ ] #219 - Synchronization improvements
+- [ ] #059 - One command to sync them all
+- [ ] #211 - Add a file to the org-trello list
+- [ ] #130 - Use active region
+
+** Doc
+
+- [ ] #136 - Update video tutorials
+
+** Uncertainty
+
+- [ ] #254 - lisp error on org files with indented todos
+- [ ] #233 - Troubles with org-capture-before-finalize-hook and org-trello/sync-card
+
+** Need feedback
+
+- [ ] #260 - First posting here - three problems - from an email
+- [ ] #245 - Trying to sync a card: orgtrello-buffer/compute-marker: Wrong type argument: numberp, nil
+- [ ] #248 - Installing from melpa (unstable) works, but then it errs on an undefined variable "error-messages"
+- [ ] #263 - Colors broken in org trello
+
+* DONE 0.7.0 [100%]
+CLOSED: [2015-06-20 Sat 18:19]
+- [X] Update version
+- [X] Close #238 - [internal] Respect elisp coding conventions [2/2]
+  - [X] Rename constants + variables
+  - [X] Rename entry points according to conventions + alias old definitions for backward compatibility
+- [X] Close #239 - Migrate ~/.trello/config.el inside user-emacs-directory
+- [X] Close #256 - one user can have multiple trello accounts [4/4]
+  - [X] Migrate the actual setup to the multi-account setup (transparent for user)
+  - [X] Update `org-trello-install-key-and-token` command to create the account setup
+  - [X] Update the loading configuration mechanism multi-account aware
+  - [X] Make sure initializing org-trello account is ok
+- [X] Close #267 - Emptying card's description does not work
+- [X] Remove too much verbosity (when deleting property checksum)
+- [X] Close #250 - Changing order of checklist items not saved unless checklist item's text changed
+- [X] Release notes
 
 * DONE 0.6.9.6 [100%]
 CLOSED: [2015-05-24 Sun 13:25]

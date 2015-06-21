@@ -2,24 +2,24 @@
 ;;; Commentary:
 ;;; Code:
 
-(defconst *OT/NOLOG* 0)
-(defconst *OT/ERROR* 1)
-(defconst *OT/WARN*  2)
-(defconst *OT/INFO*  3)
-(defconst *OT/DEBUG* 4)
-(defconst *OT/TRACE* 5)
+(defconst orgtrello-log-no-log 0 "No log level.")
+(defconst orgtrello-log-error  1 "Error log level.")
+(defconst orgtrello-log-warn   2 "Warn log level.")
+(defconst orgtrello-log-info   3 "Info log level.")
+(defconst orgtrello-log-debug  4 "Debug log level.")
+(defconst orgtrello-log-trace  5 "Trace log level.")
 
-(defcustom *orgtrello-log/level* *OT/INFO*
+(defcustom orgtrello-log-level orgtrello-log-info
   "Set log level.
 Levels:
-0 - no logging   (*OT/NOLOG*)
-1 - log errors   (*OT/ERROR*)
-2 - log warnings (*OT/WARN*)
-3 - log info     (*OT/INFO*)
-4 - log debug    (*OT/DEBUG*)
-5 - log trace    (*OT/TRACE*)
-To change such level, add this to your init.el file: (setq *orgtrello-log/level* *OT/TRACE*)"
-  :options (list *OT/NOLOG* *OT/ERROR* *OT/WARN* *OT/INFO* *OT/DEBUG* *OT/TRACE*)
+0 - no logging   (`'orgtrello-log-no-log`')
+1 - log errors   (`'orgtrello-log-error`')
+2 - log warnings (`'orgtrello-log-warn`')
+3 - log info     (`'orgtrello-log-info`')
+4 - log debug    (`'orgtrello-log-debug`')
+5 - log trace    (`'orgtrello-log-trace`')
+To change such level, add this to your init.el file: (setq orgtrello-log-level orgtrello-log-trace)"
+  :options (list orgtrello-log-no-log orgtrello-log-error orgtrello-log-warn orgtrello-log-info orgtrello-log-debug orgtrello-log-trace)
   :type 'integer
   :require 'org-trello
   :group 'org-trello)
@@ -27,10 +27,10 @@ To change such level, add this to your init.el file: (setq *orgtrello-log/level*
 (defun orgtrello-log/msg (level &rest args)
   "Log message with LEVEL.
 ARGS constitutes the parameters to feed to message."
-  (when (<= level *orgtrello-log/level*)
+  (when (<= level orgtrello-log-level)
     (apply 'message (format "org-trello - %s" (car args)) (cdr args))))
 
-(orgtrello-log/msg *OT/DEBUG* "orgtrello-log loaded!")
+(orgtrello-log/msg orgtrello-log-debug "orgtrello-log loaded!")
 
 (provide 'org-trello-log)
 ;;; org-trello-log.el ends here

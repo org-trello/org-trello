@@ -29,11 +29,12 @@ If the VALUE is nil or empty, remove such PROPERTY."
   "Given the current position, extract the text content of current card."
   (let* ((start (orgtrello-entity/card-description-start-point!))
          (end   (orgtrello-entity/card-metadata-end-point!)))
-    (when (< start end)
-      (->> (buffer-substring-no-properties start end)
-        s-lines
-        (--map (if (s-equals? "" it) it (substring it *ORGTRELLO-BUFFER/INDENT-DESCRIPTION*)))
-        (s-join "\n")))))
+    (if (< start end)
+        (->> (buffer-substring-no-properties start end)
+             s-lines
+             (--map (if (s-equals? "" it) it (substring it org-trello-buffer--indent-description)))
+             (s-join "\n"))
+      "")))
 
 (defun orgtrello-buffer/extract-comment-description-from-current-position! ()
   "Given the current position, extract the text content of current card."
@@ -45,11 +46,11 @@ If the VALUE is nil or empty, remove such PROPERTY."
 
 (defun orgtrello-buffer/get-card-local-checksum! ()
   "Retrieve the card's current local checksum."
-  (orgtrello-buffer/card-entry-get (point) *ORGTRELLO/LOCAL-CHECKSUM*))
+  (orgtrello-buffer/card-entry-get (point) org-trello--label-key-local-checksum))
 
 (defun orgtrello-buffer/get-checkbox-local-checksum! ()
   "Retrieve the checkbox's current local checksum."
-  (orgtrello-buffer/org-entry-get (point) *ORGTRELLO/LOCAL-CHECKSUM*))
+  (orgtrello-buffer/org-entry-get (point) org-trello--label-key-local-checksum))
 
 (defun orgtrello-buffer/org-get-property (property-key properties)
   "Retrieve the PROPERTY-KEY in PROPERTIES."
@@ -61,24 +62,24 @@ If the VALUE is nil or empty, remove such PROPERTY."
 
 (defun orgtrello-buffer/board-name! ()
   "Compute the board's name"
-  (orgtrello-buffer/org-file-get-property! *ORGTRELLO/BOARD-NAME*))
+  (orgtrello-buffer/org-file-get-property! org-trello--property-board-name))
 
 (defun orgtrello-buffer/board-id! ()
   "Compute the board's id"
-  (orgtrello-buffer/org-file-get-property! *ORGTRELLO/BOARD-ID*))
+  (orgtrello-buffer/org-file-get-property! org-trello--property-board-id))
 
 (defun orgtrello-buffer/me! ()
   "Compute the board's current user"
-  (orgtrello-buffer/org-file-get-property! *ORGTRELLO/USER-ME*))
+  (orgtrello-buffer/org-file-get-property! org-trello--property-user-me))
 
 (defun orgtrello-buffer/labels! ()
   "Compute the board's current labels and return it as an association list."
   (mapcar (lambda (color) `(,color . ,(orgtrello-buffer/org-file-get-property! color))) '(":red" ":blue" ":orange" ":yellow" ":purple" ":green")))
 
 (defun orgtrello-buffer/pop-up-with-content! (title body-content)
-  "Compute a temporary buffer *ORGTRELLO/TITLE-BUFFER-INFORMATION* with the title and body-content."
+  "Compute a temporary buffer org-trello--title-buffer-information with the title and body-content."
   (with-current-buffer-window
-   *ORGTRELLO/TITLE-BUFFER-INFORMATION* nil nil
+   org-trello--title-buffer-information nil nil
    (temp-buffer-resize-mode 1)
    (insert (format "%s:\n\n%s" title body-content))))
 
@@ -120,7 +121,7 @@ At the end of it all, the cursor is moved after the new written text."
   "Update the users assigned property card entry."
   (--> entity
     (orgtrello-data/entity-member-ids it)
-    (replace-regexp-in-string *ORGTRELLO/USER-PREFIX* "" it)
+    (replace-regexp-in-string org-trello--label-key-user-prefix "" it)
     (orgtrello-buffer/set-usernames-assigned-property! it)))
 
 (defun orgtrello-buffer/--write-comments! (entity)
@@ -163,7 +164,7 @@ At the end of it all, the cursor is moved after the new written text."
   (when description
     (let ((start (point)))
       (insert (format "%s" description))
-      (indent-rigidly start (point) *ORGTRELLO-BUFFER/INDENT-DESCRIPTION*))))
+      (indent-rigidly start (point) org-trello-buffer--indent-description))))
 
 (defun orgtrello-buffer/write-card-header! (card-id card)
   "Given a card entity, write its data and properties without its structure."
@@ -196,7 +197,7 @@ The cursor position will move after the newly inserted card."
 (defun orgtrello-buffer/--write-checksum-at-pt! (compute-checksum-fn)
   "Generic function to write the checksum at current position."
   (->> (funcall compute-checksum-fn)
-    (orgtrello-buffer/set-property *ORGTRELLO/LOCAL-CHECKSUM*)))
+    (orgtrello-buffer/set-property org-trello--label-key-local-checksum)))
 
 (defun orgtrello-buffer/write-local-card-checksum! ()
   "Write the card's checksum."
@@ -248,13 +249,13 @@ Otherwise, on an item, update the item's, checklist's and card's checksum."
   "Update the properties at point, beginning with ID.
 Depending on ORGCHECKBOX-P, compute the checkbox checksum or the card.
 Update the current entity's id and compute the current checksum and update it."
-  (orgtrello-buffer/set-property *ORGTRELLO/ID* id)
+  (orgtrello-buffer/set-property org-trello--label-key-id id)
   (when (orgtrello-data/id-p id) ;; when not an id, we do not compute the checksum
     (orgtrello-buffer/write-local-checksum-at-pt!)))
 
 (defun orgtrello-buffer/write-entity! (entity-id entity)
   "Write the entity in the buffer to the current position. Move the cursor position."
-  (orgtrello-log/msg *OT/INFO* "Synchronizing entity '%s' with id '%s'..." (orgtrello-data/entity-name entity) entity-id)
+  (orgtrello-log/msg orgtrello-log-info "Synchronizing entity '%s' with id '%s'..." (orgtrello-data/entity-name entity) entity-id)
   (insert (orgtrello-buffer/--compute-entity-to-org-entry entity)))
 
 (defun orgtrello-buffer/clean-region! (region-start region-end)
@@ -273,11 +274,11 @@ Remove text and overlays."
 
 (defun orgtrello-buffer/--compute-due-date (due-date)
   "Compute the format of the DUE-DATE."
-  (if due-date (format "%s <%s>\n" *ORGTRELLO/DEADLINE-PREFIX* due-date) ""))
+  (if due-date (format "%s <%s>\n" org-trello--property-deadline-prefix due-date) ""))
 
 (defun orgtrello-buffer/--private-compute-card-to-org-entry (name status due-date tags)
   "Compute the org format of a card with NAME, STATUS, DUE-DATE and TAGS."
-  (let ((prefix-string (format "* %s %s" (if status status *ORGTRELLO/TODO*) name)))
+  (let ((prefix-string (format "* %s %s" (if status status org-trello--todo) name)))
     (format "%s%s\n%s" prefix-string (orgtrello-buffer/--serialize-tags prefix-string tags) (orgtrello-buffer/--compute-due-date due-date))))
 
 (defun orgtrello-buffer/--serialize-tags (prefix-string tags)
@@ -305,7 +306,7 @@ Otherwise, return the tags with as much space needed to start the tags at positi
 (defun orgtrello-buffer/--compute-level-into-spaces (level)
   "LEVEL 2 is 0 spaces, otherwise 2 spaces.
 This plus the checklist indentation."
-  (+ *ORGTRELLO/CHECKLIST-INDENT* (if (equal level *ORGTRELLO/CHECKLIST-LEVEL*) 0 2)))
+  (+ org-trello--checklist-indent (if (equal level org-trello--checklist-level) 0 2)))
 
 (defun orgtrello-buffer/--compute-checklist-to-org-checkbox (name &optional level status)
   "Compute checklist with NAME and optional LEVEL and STATUS to the org checkbox format."
@@ -328,11 +329,11 @@ This plus the checklist indentation."
 (defun orgtrello-buffer/--compute-checklist-to-org-entry (checklist)
   "Given a CHECKLIST, compute its 'org-mode' entry equivalence.
 The optional ORGCHECKBOX-P is not used."
-  (orgtrello-buffer/--compute-checklist-to-org-checkbox (orgtrello-data/entity-name checklist) *ORGTRELLO/CHECKLIST-LEVEL* "incomplete"))
+  (orgtrello-buffer/--compute-checklist-to-org-checkbox (orgtrello-data/entity-name checklist) org-trello--checklist-level "incomplete"))
 
 (defun orgtrello-buffer/--compute-item-to-org-entry (item)
   "Given a checklist ITEM, compute its 'org-mode' entry equivalence."
-  (orgtrello-buffer/--compute-item-to-org-checkbox (orgtrello-data/entity-name item) *ORGTRELLO/ITEM-LEVEL* (orgtrello-data/entity-keyword item)))
+  (orgtrello-buffer/--compute-item-to-org-checkbox (orgtrello-data/entity-name item) org-trello--item-level (orgtrello-data/entity-keyword item)))
 
 (defun orgtrello-buffer/--put-card-with-adjacency (current-meta entities adjacency)
   "Deal with adding the CURRENT-META in ENTITIES and ADJACENCY."
@@ -387,7 +388,7 @@ If REGION-START and REGION-END are provided, this will work on such defined regi
 
 (defun orgtrello-buffer/--set-marker! (marker)
   "Set a MARKER to get back to later."
-  (orgtrello-buffer/set-property *ORGTRELLO/ID* marker))
+  (orgtrello-buffer/set-property org-trello--label-key-id marker))
 
 (defun orgtrello-buffer/set-marker-if-not-present! (entity marker)
   "Set the CURRENT-ENTITY with MARKER to the entry if we never did."
@@ -407,20 +408,22 @@ If REGION-START and REGION-END are provided, this will work on such defined regi
 
 (defun orgtrello-buffer/get-usernames-assigned-property! ()
   "Read the org users property from the current entry."
-  (org-entry-get nil *ORGTRELLO/USERS-ENTRY*))
+  (org-entry-get nil org-trello--property-users-entry))
 
 (defun orgtrello-buffer/set-usernames-assigned-property! (csv-users)
   "Update users org property."
-  (orgtrello-buffer/org-entry-put! nil *ORGTRELLO/USERS-ENTRY* csv-users))
+  (orgtrello-buffer/org-entry-put! nil org-trello--property-users-entry csv-users))
 
-(defalias 'orgtrello-buffer/delete-property-from-entry! 'org-delete-property)
+(defun orgtrello-buffer/delete-property-from-entry! (property)
+  "Delete the property."
+  (org-entry-delete nil property))
 
 (defun orgtrello-buffer/delete-property! (property)
   "Given a property name (checkbox), if found, delete it from the buffer."
   (orgtrello-buffer/delete-property-from-entry! property)
   (save-excursion
     (goto-char (point-min))
-    (while (re-search-forward ":PROPERTIES: {.*" nil t)
+    (while (re-search-forward " :PROPERTIES: {.*" nil t)
       (remove-overlays (point-at-bol) (point-at-eol)) ;; the current overlay on this line
       (replace-match "" nil t))))                     ;; then remove the property
 
@@ -433,7 +436,7 @@ Otherwise, work on the all buffer."
 (defun orgtrello-buffer/install-overlays! ()
   "Install overlays throughout the all buffers.
 Function to be triggered by `before-save-hook` on org-trello-mode buffer."
-  (when (and (eq major-mode 'org-mode) org-trello/mode)
+  (when (and (eq major-mode 'org-mode) org-trello--mode-activated-p)
     (orgtrello-buffer/remove-overlays!)
     (save-excursion
       (goto-char (point-min))
@@ -455,19 +458,19 @@ If yes, indent such region with INDENT space."
 (defun orgtrello-buffer/indent-card-descriptions! ()
   "Indent the buffer's card descriptions rigidly starting at 2.
 Function to be triggered by `before-save-hook` on org-trello-mode buffer."
-  (when (and (eq major-mode 'org-mode) org-trello/mode)
+  (when (and (eq major-mode 'org-mode) org-trello--mode-activated-p)
     (orgtrello-buffer/org-map-entries
      (lambda ()
        (-when-let (card-description (-> (orgtrello-buffer/entry-get-full-metadata!) orgtrello-data/current orgtrello-data/entity-description))
-         (orgtrello-buffer/indent-region! *ORGTRELLO-BUFFER/INDENT-DESCRIPTION* (orgtrello-entity/card-metadata-region!)))))))
+         (orgtrello-buffer/indent-region! org-trello-buffer--indent-description (orgtrello-entity/card-metadata-region!)))))))
 
 (defun orgtrello-buffer/indent-card-data! ()
   "Indent the card data rigidly starting at 2.
 Function to be triggered by `before-save-hook` on org-trello-mode buffer."
-  (when (and (eq major-mode 'org-mode) org-trello/mode)
+  (when (and (eq major-mode 'org-mode) org-trello--mode-activated-p)
     (orgtrello-buffer/org-map-entries
      (lambda ()
-       (orgtrello-buffer/indent-region! *ORGTRELLO/CHECKLIST-INDENT* (orgtrello-entity/card-data-region!))))))
+       (orgtrello-buffer/indent-region! org-trello--checklist-indent (orgtrello-entity/card-data-region!))))))
 
 (defun orgtrello-buffer/--convert-orgmode-date-to-trello-date (orgmode-date)
   "Convert the 'org-mode' deadline ORGMODE-DATE into a time adapted for trello."
@@ -488,7 +491,7 @@ Function to be triggered by `before-save-hook` on org-trello-mode buffer."
 
 (defun orgtrello-buffer/extract-identifier! (point)
   "Extract the identifier from POINT."
-  (orgtrello-buffer/org-entry-get point *ORGTRELLO/ID*))
+  (orgtrello-buffer/org-entry-get point org-trello--label-key-id))
 
 (defun orgtrello-buffer/set-property (key value)
   "Either set the property normally at KEY with VALUE.
@@ -506,7 +509,7 @@ Deal with org entities and checkbox as well."
   "Compute the user ids assigned to the current card."
   (--> (orgtrello-buffer/get-usernames-assigned-property!)
     (orgtrello-data/--users-from it)
-    (--map (gethash (format "%s%s" *ORGTRELLO/USER-PREFIX* it) *ORGTRELLO/HMAP-USERS-NAME-ID*) it)
+    (--map (gethash (format "%s%s" org-trello--label-key-user-prefix it) org-trello--hmap-users-name-id) it)
     (orgtrello-data/--users-to it)))
 
 (defun orgtrello-buffer/--extract-description-at-point! ()
@@ -566,10 +569,10 @@ Return nil if entry is not correct, otherwise return the full entity metadata st
   (save-excursion
     (let* ((current   (orgtrello-buffer/entity-metadata!))
            (level     (orgtrello-data/entity-level current)))
-      (when (< level *ORGTRELLO/OUTOFBOUNDS-LEVEL*)
-        (let* ((ancestors (cond ((= level *ORGTRELLO/CARD-LEVEL*)      '(nil nil))
-                                ((= level *ORGTRELLO/CHECKLIST-LEVEL*) `(,(orgtrello-buffer/--parent-metadata!) nil))
-                                ((= level *ORGTRELLO/ITEM-LEVEL*)      `(,(orgtrello-buffer/--parent-metadata!) ,(orgtrello-buffer/--grandparent-metadata!)))))
+      (when (< level org-trello--out-of-bounds-level)
+        (let* ((ancestors (cond ((= level org-trello--card-level)      '(nil nil))
+                                ((= level org-trello--checklist-level) `(,(orgtrello-buffer/--parent-metadata!) nil))
+                                ((= level org-trello--item-level)      `(,(orgtrello-buffer/--parent-metadata!) ,(orgtrello-buffer/--grandparent-metadata!)))))
                (parent      (car ancestors))
                (grandparent (cadr ancestors)))
           (orgtrello-data/put-parent grandparent parent)
@@ -580,7 +583,7 @@ Return nil if entry is not correct, otherwise return the full entity metadata st
   "Given the HEADING-METADATA returned by the function 'org-heading-components.
 Make it a hashmap with key :level,  :keyword,  :name and their respective value."
   (cl-destructuring-bind (unknown-properties description member-ids buffer-name point id due level _ keyword _ name tags) heading-metadata
-    (orgtrello-data/make-hash-org member-ids level (if keyword keyword (car *ORGTRELLO/ORG-KEYWORD-TRELLO-LIST-NAMES*)) name id due point buffer-name description tags unknown-properties)))
+    (orgtrello-data/make-hash-org member-ids level (if keyword keyword (car org-trello--org-keyword-trello-list-names)) name id due point buffer-name description tags unknown-properties)))
 
 (defun orgtrello-buffer/filtered-kwds! ()
   "org keywords used (based on org-todo-keywords-1)."
@@ -659,11 +662,11 @@ Return nil if none."
 
 (defun orgtrello-buffer/compute-marker (buffer-name name position)
   "Compute the orgtrello marker which is composed of BUFFER-NAME, NAME and POSITION."
-  (->> (list *ORGTRELLO/MARKER* buffer-name name (if (stringp position) position (int-to-string position)))
+  (->> (list org-trello--label-key-marker buffer-name name (if (stringp position) position (int-to-string position)))
     (-interpose "-")
     (apply 'concat)
     sha1
-    (concat *ORGTRELLO/MARKER* "-")))
+    (concat org-trello--label-key-marker "-")))
 
 (defun orgtrello-buffer/save-buffer (buffer-name)
   "Given a BUFFER-NAME, save it."
@@ -679,19 +682,28 @@ ENTITIES and ENTITIES-ADJ provide information on card's structure."
     (orgtrello-buffer/clean-region! region-start region-end)
     (orgtrello-buffer/write-card! card-id entity entities entities-adj)))
 
-(defun orgtrello-buffer/compute-generic-checksum! (compute-region-fn)
-  "Compute the entity's checksum.
-COMPUTE-REGION-FN is the region computation function."
-  (let ((region (funcall compute-region-fn))
-        (buffer-name (current-buffer)))
+(defun orgtrello-buffer/checksum (string)
+  "Compute the checksum of the STRING."
+  (secure-hash 'sha256 string))
+
+(defun orgtrello-buffer/--compute-string-to-checksum (region)
+  "Given a REGION, compute the string to checksum."
+  (lexical-let ((region region)
+                (buffer-name (current-buffer)))
     (with-temp-buffer
       (apply 'insert-buffer-substring (cons buffer-name region))
       (org-mode)
-      (orgtrello-buffer/delete-property! *ORGTRELLO/LOCAL-CHECKSUM*)
-      (->> (list (point-min) (point-max))
-        (cons (current-buffer))
-        (cons 'sha256)
-        (apply 'secure-hash)))))
+      (orgtrello-buffer/delete-property! org-trello--label-key-local-checksum)
+      (goto-char (point-max))
+      (insert (format "\n%s" (car region)))
+      (buffer-substring-no-properties (point-min) (point-max)))))
+
+(defun orgtrello-buffer/compute-generic-checksum! (compute-region-fn)
+  "Compute the entity's checksum.
+COMPUTE-REGION-FN is the region computation function."
+  (-> (funcall compute-region-fn)
+      orgtrello-buffer/--compute-string-to-checksum
+      orgtrello-buffer/checksum))
 
 (defun orgtrello-buffer/compute-checksum! ()
   "Compute the checksum of the current entity at point."
@@ -725,7 +737,7 @@ COMPUTE-REGION-FN is the region computation function."
          (when (--some? (string= card-id (orgtrello-data/entity-id it)) trello-cards) ;; find a card to archive
            (org-archive-subtree)))))))
 
-(orgtrello-log/msg *OT/DEBUG* "orgtrello-buffer loaded!")
+(orgtrello-log/msg orgtrello-log-debug "orgtrello-buffer loaded!")
 
 (provide 'org-trello-buffer)
 ;;; org-trello-buffer.el ends here

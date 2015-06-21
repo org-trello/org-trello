@@ -215,7 +215,7 @@ https://trello.com/docs/api/card/index.html#put-1-cards-card-id-or-shortlink-act
 https://trello.com/docs/api/card/index.html#delete-1-cards-card-id-or-shortlink-actions-idaction-comments"
   (orgtrello-api/make-query "DELETE" (format "/cards/%s/actions/%s/comments" card-id comment-id)))
 
-(orgtrello-log/msg *OT/DEBUG* "orgtrello-api loaded!")
+(orgtrello-log/msg orgtrello-log-debug "orgtrello-api loaded!")
 
 (provide 'org-trello-api)
 ;;; org-trello-api.el ends here
