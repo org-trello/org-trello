@@ -548,7 +548,7 @@ This returns the identifier of such board."
     ,(if update-todo-keywords (orgtrello-controller/--properties-compute-todo-keywords-as-string board-lists-hash-name-id) "")
     ,@(orgtrello-controller/--properties-compute-users-ids board-users-hash-name-id)
     ,@(orgtrello-controller/--properties-labels board-labels)
-    ,(format "#+PROPERTY: %s %s" org-trello--property-user-me user-me)
+    ,(format "#+PROPERTY: %s %s" org-trello--property-user-me (if user-me user-me org-trello--user-logged-in))
     ":END:"))
 
 (defun orgtrello-controller/--compute-keyword-separation (name)
