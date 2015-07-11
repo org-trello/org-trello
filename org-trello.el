@@ -370,7 +370,7 @@ If MODIFIER is not nil, unassign oneself from the card."
 (defun org-trello/delete-setup ()
   "Delete the current setup."
   (interactive)
-  (org-trello/apply '(org-trello/log-strict-checks-and-do "Delete current org-trello setup" orgtrello-controller-delete-setup!) (current-buffer)))
+  (org-trello/apply '(org-trello/log-strict-checks-and-do "Delete current org-trello setup" orgtrello-controller/delete-setup!) (current-buffer)))
 
 (defalias 'org-trello/delete-setup 'org-trello-delete-setup)
 
