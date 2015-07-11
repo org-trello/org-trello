@@ -616,24 +616,23 @@ This returns the identifier of such board."
                  (selected-id-board (->> boards
                                          orgtrello-controller/--name-id
                                          orgtrello-controller/choose-board!)))
-            (list (car (--filter (string= selected-id-board (orgtrello-data/entity-id it)) boards)) user-logged-in))))
-      (deferred:nextc it ;; hack everything has been retrieved with the first requests except for the members
-        (lambda (board-and-user-logged-in)
-          (-> board-and-user-logged-in
-              car
-              orgtrello-data/entity-id
-              orgtrello-api/get-members
-              (orgtrello-query/http-trello 'sync)
-              (cons board-and-user-logged-in))))
+            (list selected-id-board user-logged-in))))
       (deferred:nextc it
-        (lambda (members-board-and-user)
-          (cl-destructuring-bind (members chosen-board user-logged-in) members-board-and-user
+        (lambda (board-id-and-user-logged-in)
+          (-> board-id-and-user-logged-in
+              car
+              orgtrello-api/get-board
+              (orgtrello-query/http-trello 'sync)
+              (cons board-id-and-user-logged-in))))
+      (deferred:nextc it
+        (lambda (board-and-user)
+          (cl-destructuring-bind (chosen-board board-id user-logged-in) board-and-user
             (orgtrello-controller/do-write-board-metadata! (orgtrello-data/entity-id chosen-board)
                                                            (orgtrello-data/entity-name chosen-board)
                                                            user-logged-in
                                                            (orgtrello-data/entity-lists chosen-board)
                                                            (orgtrello-data/entity-labels chosen-board)
-                                                           (orgtrello-controller/--compute-user-properties-hash members)))))
+                                                           (orgtrello-controller/--compute-user-properties-hash (orgtrello-data/entity-member chosen-board))))))
       (deferred:nextc it
         (lambda ()
           (orgtrello-buffer/save-buffer buffer-name)
