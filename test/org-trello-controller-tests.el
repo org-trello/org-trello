@@ -16,29 +16,6 @@
     (should (equal (orgtrello-data/entity-description entry) :desc))
     (should (equal (orgtrello-data/entity-unknown-properties entry) :unknown))))
 
-(ert-deftest test-orgtrello-controller/--id-name ()
-  (let* ((entities (orgtrello-data/parse-data [((id . "id")
-                                                (shortUrl . "https://trello.com/b/ePrdEnzC")
-                                                (url . "https://trello.com/board/devops/4f96a984dbb00d733b04d8b5")
-                                                (name . "testing board"))
-                                               ((id . "another-id")
-                                                (shortUrl . "https://trello.com/b/ePrdEnzC")
-                                                (url . "https://trello.com/board/devops/4f96a984dbb00d733b04d8b5")
-                                                (name . "testing board 2"))
-                                               ((id . "yet-another-id")
-                                                (shortUrl . "https://trello.com/b/ePrdEnzC")
-                                                (url . "https://trello.com/board/devops/4f96a984dbb00d733b04d8b5")
-                                                (name . "testing board 3"))]))
-         (hashtable-result (orgtrello-controller/--id-name entities))
-         (hashtable-expected (make-hash-table :test 'equal)))
-    (orgtrello-hash/puthash-data "id" "testing board" hashtable-expected)
-    (orgtrello-hash/puthash-data "another-id" "testing board 2" hashtable-expected)
-    (orgtrello-hash/puthash-data "yet-another-id" "testing board 3" hashtable-expected)
-    (should (equal (gethash "id" hashtable-result) (gethash "id" hashtable-expected)))
-    (should (equal (gethash "another-id" hashtable-result) (gethash "another-id" hashtable-expected)))
-    (should (equal (gethash "yet-another-id" hashtable-result) (gethash "yet-another-id" hashtable-expected)))
-    (should (equal (hash-table-count hashtable-result) (hash-table-count hashtable-expected)))))
-
 (ert-deftest test-orgtrello-controller/--name-id ()
   (let* ((entities (orgtrello-data/parse-data [((id . "id")
                                                 (shortUrl . "https://trello.com/b/ePrdEnzC")
@@ -109,15 +86,6 @@
 (ert-deftest test-orgtrello-controller/compute-property ()
   (should (equal "#+PROPERTY: test "      (orgtrello-controller/compute-property "test")))
   (should (equal "#+PROPERTY: test value" (orgtrello-controller/compute-property "test" "value"))))
-
-(ert-deftest test-orgtrello-controller/--index-board-map ()
-  (should (orgtrello-tests/hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data ("0" :id-board0 "1" :id-board1))
-                                      (orgtrello-controller/--index-board-map (orgtrello-hash/make-properties '((:id-board0 . "board0-name") (:id-board1 . "board1-name")))))))
-
-(ert-deftest test-orgtrello-controller/--display-boards-to-choose ()
-  (should (equal
-           "0: board0-name\n1: board1-name\n"
-           (orgtrello-controller/--display-boards-to-choose (orgtrello-hash/make-properties '((:id-board0 . "board0-name") (:id-board1 . "board1-name")))))))
 
 (ert-deftest test-orgtrello-controller/--compute-metadata! ()
   (should (equal '(":PROPERTIES:"
@@ -743,36 +711,24 @@ some description
                  (orgtrello-controller/list-user-accounts '("/home/user/.emacs.d/.trello/foobar.el")))))
 
 
-(ert-deftest test-orgtrello-controller/--list-as-index-list ()
-  (orgtrello-tests/hash-equal
-   #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data ("0" "one" "1" "two" "2" "three"))
-   (orgtrello-controller/--list-as-index-list '("one" "two" "three"))))
-
-(ert-deftest test-orgtrello-controller/--list-as-string-to-choose ()
-  (should (string= "0: first\n1: second\n2: third\n"
-                   (orgtrello-controller/--list-as-string-to-choose '("first" "second" "third"))))
-  (should (string= ""
-                   (orgtrello-controller/--list-as-string-to-choose '()))))
-
-
 (ert-deftest test-orgtrello-controller/set-account! ()
   (should (equal :ok
                  (with-mock
-                   (mock (orgtrello-buffer/me!) => "some-account")
-                   (orgtrello-controller/set-account!))))
+                  (mock (orgtrello-buffer/me!) => "some-account")
+                  (orgtrello-controller/set-account!))))
   (should (equal :ok
                  (with-mock
-                   (mock (orgtrello-buffer/me!) => nil)
-                   (mock (orgtrello-controller/user-config-files) => :some-config-file)
-                   (mock (orgtrello-controller/list-user-accounts :some-config-file) => '(account0))
-                   (orgtrello-controller/set-account!))))
+                  (mock (orgtrello-buffer/me!) => nil)
+                  (mock (orgtrello-controller/user-config-files) => :some-config-file)
+                  (mock (orgtrello-controller/list-user-accounts :some-config-file) => '(account0))
+                  (orgtrello-controller/set-account!))))
   (should (equal :ok
                  (with-mock
-                   (mock (orgtrello-buffer/me!) => nil)
-                   (mock (orgtrello-controller/user-config-files) => :some-config-file)
-                   (mock (orgtrello-controller/list-user-accounts :some-config-file) => '(:account0 :account1))
-                   (mock (orgtrello-controller/--choose-account! '(:account0 :account1)) => :account0)
-                   (orgtrello-controller/set-account!)))))
+                  (mock (orgtrello-buffer/me!) => nil)
+                  (mock (orgtrello-controller/user-config-files) => :some-config-file)
+                  (mock (orgtrello-controller/list-user-accounts :some-config-file) => '(:account0 :account1))
+                  (mock (orgtrello-controller/--choose-account! '(:account0 :account1)) => :account0)
+                  (orgtrello-controller/set-account!)))))
 
 (provide 'org-trello-controller-tests)
 ;;; org-trello-controller-tests.el ends here

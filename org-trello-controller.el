@@ -90,26 +90,6 @@ ARGS is not used."
     (delete-directory org-trello--old-config-dir 'with-contents))
   :ok)
 
-(defun orgtrello-controller/--list-as-index-list (list)
-  "Given a LIST, return a map of (position . elt-in-list)."
-  (let ((i               0)
-        (index-board-map (orgtrello-hash/empty-hash)))
-    (mapc (lambda (elt)
-            (orgtrello-hash/puthash-data (format "%d" i) elt index-board-map)
-            (setq i (+ 1 i)))
-          list)
-    index-board-map))
-
-(defun orgtrello-controller/--list-as-string-to-choose (list)
-  "Given LIST, return return a string to display in minibuffer."
-  (let ((string-result  "")
-        (i              0))
-    (mapc (lambda (elt)
-            (setq string-result (format "%s%d: %s\n" string-result i elt))
-            (setq i (+ 1 i)))
-          list)
-    string-result))
-
 (defun orgtrello-controller/config-file! (&optional username)
   "Determine the configuration file as per user logged in.
 If USERNAME is supplied, do not look into the current buffer."
@@ -489,10 +469,6 @@ ASK-FOR-OVERWRITE is a flag that needs to be set if we want to prevent some over
         (deferred:nextc it
           (lambda () (orgtrello-log/msg orgtrello-log-info "Setup key and token done!")))))))
 
-(defun orgtrello-controller/--id-name (entities)
-  "Given a list of ENTITIES, return a map of (id, name)."
-  (--reduce-from (orgtrello-hash/puthash-data (orgtrello-data/entity-id it) (orgtrello-data/entity-name it) acc) (orgtrello-hash/empty-hash) entities))
-
 (defun orgtrello-controller/--name-id (entities)
   "Given a list of ENTITIES, return a map of (id, name)."
   (--reduce-from (orgtrello-hash/puthash-data (orgtrello-data/entity-name it) (orgtrello-data/entity-id it) acc) (orgtrello-hash/empty-hash) entities))
@@ -504,18 +480,6 @@ ASK-FOR-OVERWRITE is a flag that needs to be set if we want to prevent some over
 (defun orgtrello-controller/--list-board-lists! (board-id)
   "Return the map of the existing list of the board with id board-id. (Synchronous request)"
   (orgtrello-query/http-trello (orgtrello-api/get-lists board-id) 'sync))
-
-(defun orgtrello-controller/--index-board-map (boards)
-  "Given BOARDS, a map of board (id . name), return a map of (position . name)."
-  (-> boards
-      orgtrello-hash/keys
-      orgtrello-controller/--list-as-index-list))
-
-(defun orgtrello-controller/--display-boards-to-choose (boards)
-  "Given BOARDS, a map of board (id . name), return a string to display in minibuffer."
-  (-> boards
-      orgtrello-hash/values
-      orgtrello-controller/--list-as-string-to-choose))
 
 (defun orgtrello-controller/choose-board! (boards)
   "Given a map of boards, ask the user to choose the boards.
