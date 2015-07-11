@@ -627,7 +627,7 @@ This returns the identifier of such board."
       (deferred:nextc it
         (lambda (board-and-user)
           (cl-destructuring-bind (chosen-board board-id user-logged-in) board-and-user
-            (orgtrello-controller/do-write-board-metadata! (orgtrello-data/entity-id chosen-board)
+            (orgtrello-controller/do-write-board-metadata! board-id
                                                            (orgtrello-data/entity-name chosen-board)
                                                            user-logged-in
                                                            (orgtrello-data/entity-lists chosen-board)
