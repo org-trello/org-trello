@@ -591,14 +591,14 @@ This returns the identifier of such board."
     (goto-char (point-min))
     (set-buffer-file-coding-system 'utf-8-auto) ;; force utf-8
     (->> (orgtrello-controller/--compute-metadata! board-name board-id board-lists-hash-name-id board-users-hash-name-id user-me board-labels update-todo-keywords)
-      (mapc (lambda (it) (insert it "\n"))))
+         (mapc (lambda (it) (insert it "\n"))))
     (goto-char (point-min))
     (org-cycle)))
 
 (defun orgtrello-controller/--user-logged-in! ()
   "Compute the current user."
   (-> (orgtrello-api/get-me)
-    (orgtrello-query/http-trello 'sync)))
+      (orgtrello-query/http-trello 'sync)))
 
 (defun orgtrello-controller/do-install-board-and-lists ()
   "Command to install the list boards."
