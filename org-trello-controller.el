@@ -129,12 +129,8 @@ If USERNAME is supplied, do not look into the current buffer."
 (defun orgtrello-controller/--choose-account! (accounts)
   "Let the user decide which account (s)he wants to use.
 Return such account name."
-  (let* ((accounts-to-choose    (orgtrello-controller/--list-as-string-to-choose accounts))
-         (accounts-hash         (orgtrello-controller/--list-as-index-list accounts))
-         (account-number-chosen (read-string (format "%sSelect the desired account login: " accounts-to-choose))))
-    (-if-let (user-elected (gethash account-number-chosen accounts-hash))
-        user-elected
-      (orgtrello-controller/--choose-account! accounts))))
+  (message "account: %s" accounts)
+  (completing-read "Select org-trello account (TAB to complete): " accounts nil 'user-must-input-from-list))
 
 (defun orgtrello-controller/set-account! (&optional args)
   "Set the org-trello account.
@@ -524,13 +520,8 @@ ASK-FOR-OVERWRITE is a flag that needs to be set if we want to prevent some over
 (defun orgtrello-controller/choose-board! (boards)
   "Given a map of boards, ask the user to choose the boards.
 This returns the identifier of such board."
-  (let* ((index-selected-board    nil)
-         (display-board-to-choose (orgtrello-controller/--display-boards-to-choose boards))
-         (index-board-map         (orgtrello-controller/--index-board-map boards)))
-    ;; keep asking the selection until the choice is possible
-    (while (not (gethash index-selected-board index-board-map))
-      (setq index-selected-board (read-string (format "%s\nInput the number of the board desired: " display-board-to-choose))))
-    (gethash index-selected-board index-board-map)))
+  (-> (completing-read "Board to install (TAB to complete): " (orgtrello-hash/keys boards) nil 'user-must-input-something-from-list)
+      (gethash boards)))
 
 (defun orgtrello-controller/--convention-property-name (name)
   "Given a NAME, use the right convention for the property used in the headers of the 'org-mode' file."
@@ -665,7 +656,7 @@ This returns the identifier of such board."
           (let* ((boards         (elt boards-and-user-logged-in 0))
                  (user-logged-in (orgtrello-data/entity-username (elt boards-and-user-logged-in 1)))
                  (selected-id-board (->> boards
-                                         orgtrello-controller/--id-name
+                                         orgtrello-controller/--name-id
                                          orgtrello-controller/choose-board!)))
             (list (car (--filter (string= selected-id-board (orgtrello-data/entity-id it)) boards)) user-logged-in))))
       (deferred:nextc it ;; hack everything has been retrieved with the first requests except for the members

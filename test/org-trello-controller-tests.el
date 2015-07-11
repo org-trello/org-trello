@@ -181,12 +181,22 @@
 (ert-deftest test-orgtrello-controller/choose-board! ()
   (should (equal :id-board0
                  (with-mock
-                   (mock (read-string *) => "0")
-                   (orgtrello-controller/choose-board! (orgtrello-hash/make-properties '((:id-board0 . "board0-name") (:id-board1 . "board1-name")))))))
+                   (mock (completing-read *) => "board0-name")
+                   (orgtrello-controller/choose-board! (orgtrello-hash/make-properties '(("board0-name" . :id-board0) ("board1-name" . :id-board1)))))))
   (should (equal :id-board1
                  (with-mock
-                   (mock (read-string *) => "1")
-                   (orgtrello-controller/choose-board! (orgtrello-hash/make-properties '((:id-board0 . "board0-name") (:id-board1 . "board1-name"))))))))
+                   (mock (completing-read *) => "board1-name")
+                   (orgtrello-controller/choose-board! (orgtrello-hash/make-properties '(("board0-name" . :id-board0) ("board1-name" . :id-board1))))))))
+
+(ert-deftest test-orgtrello-controller/--choose-account! ()
+  (should (equal "account0"
+                 (with-mock
+                   (mock (completing-read *) => "account0")
+                   (orgtrello-controller/--choose-account! '("account0" "account1")))))
+  (should (equal "account1"
+                 (with-mock
+                   (mock (completing-read *) => "account1")
+                   (orgtrello-controller/--choose-account! '("account0" "account1"))))))
 
 (ert-deftest test-orgtrello-controller/--list-boards! ()
   (should (equal t
