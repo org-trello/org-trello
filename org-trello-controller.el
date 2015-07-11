@@ -595,12 +595,6 @@ This returns the identifier of such board."
     (goto-char (point-min))
     (org-cycle)))
 
-(defun orgtrello-controller/--hash-table-keys (hash-table)
-  "Extract the keys from the HASH-TABLE."
-  (let ((keys ()))
-    (maphash (lambda (k v) (push k keys)) hash-table)
-    keys))
-
 (defun orgtrello-controller/--user-logged-in! ()
   "Compute the current user."
   (-> (orgtrello-api/get-me)
@@ -834,7 +828,7 @@ When GLOBALLY-FLAG is not nil, remove also local entities properties."
 (defun orgtrello-controller/do-write-board-metadata! (board-id board-name user-logged-in board-lists board-labels board-users-name-id)
   "Given a board id, write in the current buffer the updated data."
   (let* ((board-lists-hname-id (orgtrello-controller/--name-id board-lists))
-         (board-list-keywords  (orgtrello-controller/--hash-table-keys board-lists-hname-id)))
+         (board-list-keywords  (orgtrello-hash/keys board-lists-hname-id)))
     (orgtrello-controller/do-cleanup-from-buffer!)
     (orgtrello-controller/--update-orgmode-file-with-properties! board-name
                                                                  board-id
