@@ -16,6 +16,7 @@
 (require 'org-trello-input)
 (require 'org-trello-proxy)
 (require 's)
+(require 'ido)
 
 (org-trello/require-cl)
 
@@ -110,7 +111,7 @@ If USERNAME is supplied, do not look into the current buffer."
   "Let the user decide which account (s)he wants to use.
 Return such account name."
   (message "account: %s" accounts)
-  (completing-read "Select org-trello account (TAB to complete): " accounts nil 'user-must-input-from-list))
+  (ido-completing-read "Select org-trello account (TAB to complete): " accounts nil 'user-must-input-from-list))
 
 (defun orgtrello-controller/set-account! (&optional args)
   "Set the org-trello account.
@@ -484,7 +485,7 @@ ASK-FOR-OVERWRITE is a flag that needs to be set if we want to prevent some over
 (defun orgtrello-controller/choose-board! (boards)
   "Given a map of boards, ask the user to choose the boards.
 This returns the identifier of such board."
-  (-> (completing-read "Board to install (TAB to complete): " (orgtrello-hash/keys boards) nil 'user-must-input-something-from-list)
+  (-> (ido-completing-read "Board to install (TAB to complete): " (orgtrello-hash/keys boards) nil 'user-must-input-something-from-list)
       (gethash boards)))
 
 (defun orgtrello-controller/--convention-property-name (name)
