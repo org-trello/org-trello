@@ -194,6 +194,7 @@ As of 0.7.0, org-trello now follows Emacs's conventions.")
         (org-trello-show-board-labels                 "l" "Display the board's labels in a pop-up buffer.")
         (org-trello-jump-to-trello-card               "j" "Jump to card in browser.")
         (org-trello-jump-to-trello-board              "J" "Open the browser to your current trello board.")
+        (org-trello-bug-report                        "B" "Prepare a bug report message. With C-u modifier, opens a new issue in org-trello's github tracker too.")
         (org-trello-help-describing-bindings          "h" "This help message.")))
 
 (defvar org-trello-mode-map (make-sparse-keymap)

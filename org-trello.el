@@ -382,6 +382,32 @@ If MODIFIER is not nil, unassign oneself from the card."
 
 (defalias 'org-trello/help-describing-bindings 'org-trello-help-describing-bindings)
 
+(defun org-trello--bug-report ()
+  "Compute the bug report for the user to include."
+  (->> `("Please:"
+         "- Describe your problem with clarity and conciceness (cf. https://www.gnu.org/software/emacs/manual/html_node/emacs/Understanding-Bug-Reporting.html)"
+         "- Explicit your installation choice (melpa, marmalade, el-get, tarball, git clone...)."
+         "- Activate `'trace`' in logs for more thorough output in *Message* buffer: (custom-set-variables '(orgtrello-log-level orgtrello-log-trace))."
+         "- A scrambled sample (of the user's and board's ids) of your org-trello buffer with problems."
+         "- Report the following message trace inside your issue."
+         ""
+         "System information: "
+         ,(format "- system-type: %s" system-type)
+         ,(format "- locale-coding-system: %s" locale-coding-system)
+         ,(format "- emacs-version: %s" (emacs-version))
+         ,(format "- org version: %s" (org-version))
+         ,(format "- org-trello version: %s" org-trello--version)
+         ,(format "- org-trello path: %s" (find-library-name "org-trello")))
+       (s-join "\n")))
+
+(defun org-trello-bug-report (&optional open-url)
+  "Display a bug report message.
+When OPEN-URL is filled, with universal argument (`C-u') is used,
+opens new issue in org-trello's github tracker."
+  (interactive "P")
+  (when open-url (browse-url "https://github.com/org-trello/org-trello/issues/new"))
+  (orgtrello-log/msg orgtrello-log-info (org-trello--bug-report)))
+
 
 
 ;;;###autoload

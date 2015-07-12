@@ -26,6 +26,7 @@ C-c z U - M-x org-trello-sync-comment - Sync a comment to trello. With C-u modif
 C-c z l - M-x org-trello-show-board-labels - Display the board's labels in a pop-up buffer.
 C-c z j - M-x org-trello-jump-to-trello-card - Jump to card in browser.
 C-c z J - M-x org-trello-jump-to-trello-board - Open the browser to your current trello board.
+C-c z B - M-x org-trello-bug-report - Prepare a bug report message. With C-u modifier, opens a new issue in org-trello's github tracker too.
 C-c z h - M-x org-trello-help-describing-bindings - This help message."
            (orgtrello-setup/help-describing-bindings-template org-trello-current-prefix-keybinding org-trello-interactive-command-binding-couples))))
 
