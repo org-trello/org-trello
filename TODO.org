@@ -31,11 +31,11 @@
 - [ ] #248 - Installing from melpa (unstable) works, but then it errs on an undefined variable "error-messages"
 - [ ] #263 - Colors broken in org trello
 
-* IN-PROGRESS 0.7.1 [60%]
+* IN-PROGRESS 0.7.1 [80%]
 - [X] Update version
 - [X] Close #272 - Use native completion mechanism
-- [X] #273 - Fix labels when installing board
-- [ ] #271 - Make a user option for user to decide the policy about checksum and position
+- [X] Close #273 - Fix labels when installing board
+- [X] Close #271 - Make a user option for user to decide the policy about checksum and position
 - [ ] Release notes
 * DONE 0.7.0 [100%]
 CLOSED: [2015-06-20 Sat 18:19]

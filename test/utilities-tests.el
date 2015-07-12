@@ -26,6 +26,7 @@
   (remove-hook 'org-trello-mode-off-hook 'orgtrello-controller/mode-off-hook-fn)
   (setq org-trello-mode-on-hook)
   (setq org-trello-mode-off-hook)
+  (setq orgtrello-setup-use-position-in-checksum-computation 'please-do-use-position-in-checksum-computation)
   (call-interactively 'org-trello-mode))
 
 (defun orgtrello-tests/prepare-buffer! ()
