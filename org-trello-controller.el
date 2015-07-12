@@ -607,9 +607,13 @@ This returns the identifier of such board."
     (deferred:$
       (deferred:parallel ;; retrieve in parallel the open boards and the currently logged in user
         (deferred:next
-          'orgtrello-controller/--list-boards!)
+          (lambda ()
+            (orgtrello-log/msg orgtrello-log-info "Fetching boards information..")
+            (orgtrello-controller/--list-boards!)))
         (deferred:next
-          'orgtrello-controller/--user-logged-in!))
+          (lambda ()
+            (orgtrello-log/msg orgtrello-log-info "Fetching user's information...")
+            (orgtrello-controller/--user-logged-in!))))
       (deferred:nextc it
         (lambda (boards-and-user-logged-in)
           (let* ((boards         (elt boards-and-user-logged-in 0))
@@ -848,15 +852,16 @@ When GLOBALLY-FLAG is not nil, remove also local entities properties."
     (deferred:$
       (deferred:next
         (lambda ()
+          (orgtrello-log/msg orgtrello-log-info "Fetching board information...")
           (-> (orgtrello-buffer/board-id!)
-            orgtrello-api/get-board
-            (orgtrello-query/http-trello 'sync))))
+              orgtrello-api/get-board
+              (orgtrello-query/http-trello 'sync))))
       (deferred:nextc it
         (lambda (board)
           (let ((members (->> board
-                           orgtrello-data/entity-memberships
-                           orgtrello-controller/--compute-user-properties
-                           orgtrello-controller/--compute-user-properties-hash)))
+                              orgtrello-data/entity-memberships
+                              orgtrello-controller/--compute-user-properties
+                              orgtrello-controller/--compute-user-properties-hash)))
             (orgtrello-controller/do-write-board-metadata! (orgtrello-data/entity-id board)
                                                            (orgtrello-data/entity-name board)
                                                            (orgtrello-buffer/me!)
