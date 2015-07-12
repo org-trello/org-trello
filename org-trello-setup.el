@@ -117,6 +117,26 @@ This is intended as a buffer local variable.")
 
 (defconst org-trello--item-indent 4 "Indentation for item.")
 
+(defcustom orgtrello-setup-use-position-in-checksum-computation nil
+  "Let the user decide if (s)he wants to use the position in the checksum.
+The checksum is a hash computation of the current entity's data to prevent
+sending too many sync requests if unnecessary (no real change since last time).
+
+If t, when sync to trello, any change for the current entity will be reflected
+in trello's board.  However, a global sync to trello, will trigger many
+unnecessary sync to trello queries for any entity below the current entity
+changed...  Indeed, the position changes anytime you insert or delete a char.
+This renders almost useless the checksum computation.
+
+Cf.  https://github.com/org-trello/org-trello/issues/271.
+Please, do not hesitate to provide a better idea or a better implementation.
+
+If nil, the default, the sync to trello will be limited to what's really changed
+\(except for the position\).  So the entity's position in trello's board can be
+slightly different than the one from the board."
+  :group 'org-trello
+  :version "0.7.1")
+
 ;; make variable buffer-local
 (mapc (lambda (var)
         (make-variable-buffer-local var))
@@ -174,6 +194,7 @@ As of 0.7.0, org-trello now follows Emacs's conventions.")
         (org-trello-show-board-labels                 "l" "Display the board's labels in a pop-up buffer.")
         (org-trello-jump-to-trello-card               "j" "Jump to card in browser.")
         (org-trello-jump-to-trello-board              "J" "Open the browser to your current trello board.")
+        (org-trello-bug-report                        "B" "Prepare a bug report message. With C-u modifier, opens a new issue in org-trello's github tracker too.")
         (org-trello-help-describing-bindings          "h" "This help message.")))
 
 (defvar org-trello-mode-map (make-sparse-keymap)

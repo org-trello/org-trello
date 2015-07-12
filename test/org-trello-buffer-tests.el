@@ -1840,14 +1840,46 @@ some comment
   - [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\"}
 
 * another card"
-                                             (orgtrello-buffer/--compute-string-to-checksum (orgtrello-entity/compute-card-region!))
+                                             (let ((orgtrello-setup-use-position-in-checksum-computation 'please-do-use-position-in-checksumt))
+                                               (orgtrello-buffer/--compute-string-to-checksum (orgtrello-entity/compute-card-region!)))
                                              -5)))
 
-;; checklist
-(should (equal
-         "  - [-] some other checklist name
+  (should (equal
+           "* TODO some card name
+:PROPERTIES:
+:orgtrello-id: some-card-id
+:orgtrello-users: ardumont,dude
+:orgtrello-card-comments: ardumont: some comment
+:END:
+  some description
+  - [-] some checklist name
+    - [X] some item
+    - [ ] some other item
+  - [-] some other checklist name
+
+"
+           (orgtrello-tests/with-temp-buffer "* TODO some card name
+:PROPERTIES:
+:orgtrello-id: some-card-id
+:orgtrello-users: ardumont,dude
+:orgtrello-card-comments: ardumont: some comment
+:END:
+  some description
+  - [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}
+    - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\"}
+    - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\"}
+  - [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\"}
+
+* another card"
+                                             (let ((orgtrello-setup-use-position-in-checksum-computation nil))
+                                               (orgtrello-buffer/--compute-string-to-checksum (orgtrello-entity/compute-card-region!)))
+                                             -5)))
+
+  ;; checklist
+  (should (equal
+           "  - [-] some other checklist name
 482"
-         (orgtrello-tests/with-temp-buffer "* TODO some card name
+           (orgtrello-tests/with-temp-buffer "* TODO some card name
 :PROPERTIES:
 :orgtrello-id: some-card-id
 :orgtrello-users: ardumont,dude
@@ -1860,12 +1892,12 @@ some comment
     - [X] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\"}
   - [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\"}
 "
-                                           (orgtrello-buffer/--compute-string-to-checksum (orgtrello-entity/compute-checklist-region!))
-                                           -1)))
-(should (equal
-         "    - [X] some other item
+                                             (orgtrello-buffer/--compute-string-to-checksum (orgtrello-entity/compute-checklist-region!))
+                                             -1)))
+  (should (equal
+           "    - [X] some other item
 405"
-         (orgtrello-tests/with-temp-buffer "* TODO some card name
+           (orgtrello-tests/with-temp-buffer "* TODO some card name
 :PROPERTIES:
 :orgtrello-id: some-card-id
 :orgtrello-users: ardumont,dude
@@ -1878,8 +1910,8 @@ some comment
     - [X] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\"}
   - [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\"}
 "
-                                           (orgtrello-buffer/--compute-string-to-checksum (orgtrello-entity/compute-item-region!))
-                                           -2))))
+                                             (orgtrello-buffer/--compute-string-to-checksum (orgtrello-entity/compute-item-region!))
+                                             -2))))
 
 (ert-deftest test-orgtrello-buffer/card-checksum! ()
   "Compute the checksum of a card."

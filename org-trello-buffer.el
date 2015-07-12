@@ -694,8 +694,9 @@ ENTITIES and ENTITIES-ADJ provide information on card's structure."
       (apply 'insert-buffer-substring (cons buffer-name region))
       (org-mode)
       (orgtrello-buffer/delete-property! org-trello--label-key-local-checksum)
-      (goto-char (point-max))
-      (insert (format "\n%s" (car region)))
+      (when orgtrello-setup-use-position-in-checksum-computation
+        (goto-char (point-max))
+        (insert (format "\n%s" (car region))))
       (buffer-substring-no-properties (point-min) (point-max)))))
 
 (defun orgtrello-buffer/compute-generic-checksum! (compute-region-fn)

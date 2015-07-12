@@ -4,8 +4,8 @@
 
 ;; Author: Antoine R. Dumont <eniotna.t AT gmail.com>
 ;; Maintainer: Antoine R. Dumont <eniotna.t AT gmail.com>
-;; Version: 0.7.0
-;; Package-Requires: ((emacs "24") (dash "2.8.0") (s "1.9.0") (deferred "0.3.2") (request-deferred "0.2.0"))
+;; Version: 0.7.1
+;; Package-Requires: ((emacs "24") (dash "2.11.0") (dash-functional "2.11.0") (s "1.9.0") (deferred "0.3.2") (request-deferred "0.2.0"))
 ;; Keywords: org-mode trello sync org-trello
 ;; URL: https://github.com/org-trello/org-trello
 
@@ -103,7 +103,7 @@ Please consider upgrading Emacs." emacs-version) "Error message when installing 
 (require 'json)
 (require 'parse-time)
 
-(defconst org-trello--version "0.7.0" "Current org-trello version installed.")
+(defconst org-trello--version "0.7.1" "Current org-trello version installed.")
 
 
 
@@ -370,7 +370,7 @@ If MODIFIER is not nil, unassign oneself from the card."
 (defun org-trello/delete-setup ()
   "Delete the current setup."
   (interactive)
-  (org-trello/apply '(org-trello/log-strict-checks-and-do "Delete current org-trello setup" orgtrello-controller-delete-setup!) (current-buffer)))
+  (org-trello/apply '(org-trello/log-strict-checks-and-do "Delete current org-trello setup" orgtrello-controller/delete-setup!) (current-buffer)))
 
 (defalias 'org-trello/delete-setup 'org-trello-delete-setup)
 
@@ -381,6 +381,32 @@ If MODIFIER is not nil, unassign oneself from the card."
   (org-trello/apply `(message ,(orgtrello-setup/help-describing-bindings-template org-trello-current-prefix-keybinding org-trello-interactive-command-binding-couples)) nil nil 'no-log))
 
 (defalias 'org-trello/help-describing-bindings 'org-trello-help-describing-bindings)
+
+(defun org-trello--bug-report ()
+  "Compute the bug report for the user to include."
+  (->> `("Please:"
+         "- Describe your problem with clarity and conciceness (cf. https://www.gnu.org/software/emacs/manual/html_node/emacs/Understanding-Bug-Reporting.html)"
+         "- Explicit your installation choice (melpa, marmalade, el-get, tarball, git clone...)."
+         "- Activate `'trace`' in logs for more thorough output in *Message* buffer: (custom-set-variables '(orgtrello-log-level orgtrello-log-trace))."
+         "- A scrambled sample (of the user's and board's ids) of your org-trello buffer with problems."
+         "- Report the following message trace inside your issue."
+         ""
+         "System information: "
+         ,(format "- system-type: %s" system-type)
+         ,(format "- locale-coding-system: %s" locale-coding-system)
+         ,(format "- emacs-version: %s" (emacs-version))
+         ,(format "- org version: %s" (org-version))
+         ,(format "- org-trello version: %s" org-trello--version)
+         ,(format "- org-trello path: %s" (find-library-name "org-trello")))
+       (s-join "\n")))
+
+(defun org-trello-bug-report (&optional open-url)
+  "Display a bug report message.
+When OPEN-URL is filled, with universal argument (`C-u') is used,
+opens new issue in org-trello's github tracker."
+  (interactive "P")
+  (when open-url (browse-url "https://github.com/org-trello/org-trello/issues/new"))
+  (orgtrello-log/msg orgtrello-log-info (org-trello--bug-report)))
 
 
 

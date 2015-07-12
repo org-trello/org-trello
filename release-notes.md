@@ -1,3 +1,13 @@
+# 0.7.1
+
+- [X] Update version
+- [X] Close #272 - Use native completion mechanism
+- [X] Close #273 - Fix labels when installing board
+- [X] Close #271 - Make a user option for user to decide the policy about checksum and position
+- [X] Use improved native completin mechanism (again)
+- [X] Close #274 - Add `M-x org-trello-bug-report` command
+- [X] Release notes
+
 # 0.7.0
 
 - [X] Update version
