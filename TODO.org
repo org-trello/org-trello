@@ -31,7 +31,8 @@
 - [ ] #248 - Installing from melpa (unstable) works, but then it errs on an undefined variable "error-messages"
 - [ ] #263 - Colors broken in org trello
 
-* IN-PROGRESS 0.7.1 [100%]
+* DONE 0.7.1 [100%]
+CLOSED: [2015-07-12 Sun 15:47]
 - [X] Update version
 - [X] Close #272 - Use native completion mechanism
 - [X] Close #273 - Fix labels when installing board
