@@ -626,13 +626,17 @@ This returns the identifier of such board."
               (cons board-id-and-user-logged-in))))
       (deferred:nextc it
         (lambda (board-and-user)
-          (cl-destructuring-bind (chosen-board board-id user-logged-in) board-and-user
-            (orgtrello-controller/do-write-board-metadata! board-id
-                                                           (orgtrello-data/entity-name chosen-board)
-                                                           user-logged-in
-                                                           (orgtrello-data/entity-lists chosen-board)
-                                                           (orgtrello-data/entity-labels chosen-board)
-                                                           (orgtrello-controller/--compute-user-properties-hash (orgtrello-data/entity-member chosen-board))))))
+          (cl-destructuring-bind (board board-id user-logged-in) board-and-user
+            (let ((members (->> board
+                                orgtrello-data/entity-memberships
+                                orgtrello-controller/--compute-user-properties
+                                orgtrello-controller/--compute-user-properties-hash)))
+              (orgtrello-controller/do-write-board-metadata! board-id
+                                                             (orgtrello-data/entity-name board)
+                                                             user-logged-in
+                                                             (orgtrello-data/entity-lists board)
+                                                             (orgtrello-data/entity-labels board)
+                                                             members)))))
       (deferred:nextc it
         (lambda ()
           (orgtrello-buffer/save-buffer buffer-name)
