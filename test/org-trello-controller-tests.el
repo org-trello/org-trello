@@ -261,14 +261,14 @@
 :orgtrello-id: some-comment-id
 :orgtrello-local-checksum: local-comment-checksum-678
 :END:
-some comment
+  some comment
 
 ** COMMENT tony, 11/10/2010
 :PROPERTIES:
 :orgtrello-id: some-comment-id2
 :orgtrello-local-checksum: local-comment-checksum-678
 :END:
-some second comment
+  some second comment
 
 
 * other card name
@@ -371,14 +371,14 @@ some description
 :orgtrello-id: some-comment-id
 :orgtrello-local-checksum: comment-checksum-12
 :END:
-some comment
+  some comment
 
 ** COMMENT tony, 11/10/2010
 :PROPERTIES:
 :orgtrello-id: some-comment-id2
 :orgtrello-local-checksum: comment-checksum-12
 :END:
-some second comment
+  some second comment
 
 * TODO other card name
   :PROPERTIES:
@@ -486,14 +486,14 @@ some description
 :orgtrello-id: some-comment-id
 :orgtrello-local-checksum: comment-checksum-1234
 :END:
-some comment
+  some comment
 
 ** COMMENT tony, 11/10/2010
 :PROPERTIES:
 :orgtrello-id: some-comment-id2
 :orgtrello-local-checksum: comment-checksum-1234
 :END:
-some second comment
+  some second comment
 
 * TODO other card name                                                  :green:
   :PROPERTIES:
@@ -616,14 +616,14 @@ some description
 :orgtrello-id: some-comment-id
 :orgtrello-local-checksum: comment-checksum-123456
 :END:
-some comment
+  some comment
 
 ** COMMENT tony, 11/10/2010
 :PROPERTIES:
 :orgtrello-id: some-comment-id2
 :orgtrello-local-checksum: comment-checksum-123456
 :END:
-some second comment
+  some second comment
 
 * DONE other card name                                                  :green:
   :PROPERTIES:

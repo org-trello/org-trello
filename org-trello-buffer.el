@@ -11,6 +11,8 @@
 (require 'org-trello-entity)
 (require 'org-trello-cbx)
 (require 'org-trello-backend)
+(require 'dash)
+(require 'dash-functional)
 
 (org-trello/require-cl)
 
@@ -143,13 +145,21 @@ At the end of it all, the cursor is moved after the new written text."
       insert)
   (orgtrello-buffer/write-local-comment-checksum-at-point!))
 
+(defun orgtrello-buffer/--prepare-comment (comment)
+  "Prepare COMMENT string for writing on disk.
+This to avoid conflict between `org-mode' and markdown syntax."
+  (->> (s-split "\n" comment)
+       (-map (-rpartial #'s-append "  "))
+       (s-join "\n")))
+
 (defun orgtrello-buffer/--serialize-comment (comment)
   "Serialize COMMENT as string."
-  (let ((comment-user (orgtrello-data/entity-comment-user comment))
-        (comment-date (orgtrello-data/entity-comment-date comment))
-        (comment-string (orgtrello-data/entity-comment-text comment))
-        (comment-id (orgtrello-data/entity-comment-id comment)))
-    (format "\n** COMMENT %s, %s\n:PROPERTIES:\n:orgtrello-id: %s\n:END:\n%s\n" comment-user comment-date comment-id comment-string)))
+  (let* ((comment-user (orgtrello-data/entity-comment-user comment))
+         (comment-date (orgtrello-data/entity-comment-date comment))
+         (comment-string (orgtrello-data/entity-comment-text comment))
+         (comment-id (orgtrello-data/entity-comment-id comment))
+         (prepared-comment-str (orgtrello-buffer/--prepare-comment comment-string)))
+    (format "\n** COMMENT %s, %s\n:PROPERTIES:\n:orgtrello-id: %s\n:END:\n%s\n" comment-user comment-date comment-id prepared-comment-str)))
 
 (defun orgtrello-buffer/update-properties-unknown! (unknown-properties)
   "Write the alist UNKNOWN-PROPERTIES inside standard properties org drawer."

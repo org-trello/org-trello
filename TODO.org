@@ -31,9 +31,9 @@
 - [ ] #248 - Installing from melpa (unstable) works, but then it errs on an undefined variable "error-messages"
 - [ ] #263 - Colors broken in org trello
 
-* IN-PROGRESS 0.7.2 [25%]
+* IN-PROGRESS 0.7.2 [50%]
 - [X] Update version
-- [ ] Close #276 - Fix markdown rendering in comments
+- [X] Close #276 - Markdown rendering in comments
 - [ ] #277 - Improve date time policy conversion
 - [ ] Release notes
 

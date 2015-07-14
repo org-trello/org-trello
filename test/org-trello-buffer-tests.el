@@ -221,7 +221,7 @@ DEADLINE: <some-due-date>
 :orgtrello-id: some-comment-id
 :orgtrello-local-checksum: local-comment-checksum-456
 :END:
-some comment
+  some comment
 
 "
                  (orgtrello-tests/with-temp-buffer-and-return-buffer-content
@@ -285,14 +285,14 @@ some comment
 :orgtrello-id: some-comment-id
 :orgtrello-local-checksum: local-comment-checksum-a
 :END:
-some comment
+  some comment
 
 ** COMMENT ben, 10/01/2202
 :PROPERTIES:
 :orgtrello-id: some-id
 :orgtrello-local-checksum: local-comment-checksum-a
 :END:
-comment text
+  comment text
 
 * TODO task B
   :PROPERTIES:
@@ -307,7 +307,7 @@ comment text
 :orgtrello-id: some-com-id
 :orgtrello-local-checksum: local-comment-checksum-b
 :END:
-some text
+  some text
 
 "
                  (orgtrello-tests/with-temp-buffer-and-return-buffer-content
@@ -376,14 +376,14 @@ some text
 :orgtrello-id: some-comment-id
 :orgtrello-local-checksum: local-comment-checksum
 :END:
-some comment
+  some comment
 
 ** COMMENT ben, 10/01/2202
 :PROPERTIES:
 :orgtrello-id: some-id
 :orgtrello-local-checksum: local-comment-checksum
 :END:
-comment text
+  comment text
 
 * TODO task B
   :PROPERTIES:
@@ -398,7 +398,7 @@ comment text
 :orgtrello-id: some-com-id
 :orgtrello-local-checksum: local-comment-checksum
 :END:
-some text
+  some text
 
 "
                  (orgtrello-tests/with-temp-buffer-indented-and-return-buffer-content
@@ -840,7 +840,7 @@ DEADLINE: <2014-05-17 Sat>
 :orgtrello-id: some-comment-id
 :orgtrello-local-checksum: local-comment-checksum-567
 :END:
-some comment
+  some comment
 
 "
                  (orgtrello-tests/with-temp-buffer-and-return-buffer-content
@@ -899,7 +899,7 @@ some comment
 :orgtrello-id: some-comment-id
 :orgtrello-local-checksum: local-comment-checksum-567
 :END:
-some comment
+  some comment
 
 
 * IN-PROGRESS another card
@@ -1109,7 +1109,7 @@ some comment
    :PROPERTIES:
    :orgtrello-local-checksum: comment-checksum-123
    :END:
-some comment
+  some comment
 * another card"
 
            (orgtrello-tests/with-temp-buffer-and-return-buffer-content "* TODO some card name
@@ -1124,7 +1124,7 @@ some comment
     - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\"}
   - [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\"}
 ** COMMENT ardumont, date
-some comment
+  some comment
 * another card"
                                                                        (with-mock
                                                                          (mock (orgtrello-buffer/comment-checksum!) => "comment-checksum-123")
@@ -1426,7 +1426,7 @@ some comment
 :PROPERTIES:
 :orgtrello-local-checksum: comment-checksum-10324
 :END:
-some comment
+  some comment
 "
            (orgtrello-tests/with-temp-buffer-and-return-buffer-content "* TODO some card name
 :PROPERTIES:
@@ -1442,7 +1442,7 @@ some comment
 ** COMMENT user, date
 :PROPERTIES:
 :END:
-some comment
+  some comment
 "
                                                                        (with-mock
                                                                          (mock (orgtrello-buffer/comment-checksum!) => "comment-checksum-10324")
@@ -2229,7 +2229,7 @@ generates another checksum
             (orgtrello-buffer/org-file-properties!)))))
 
 (ert-deftest test-orgtrello-buffer/--serialize-comment ()
-  (should (equal "\n** COMMENT tony, 10/10/2013\n:PROPERTIES:\n:orgtrello-id: comment-id\n:END:\nhello, this is a comment!\n"
+  (should (equal "\n** COMMENT tony, 10/10/2013\n:PROPERTIES:\n:orgtrello-id: comment-id\n:END:\n  hello, this is a comment!\n"
                  (orgtrello-buffer/--serialize-comment (orgtrello-hash/make-properties '((:comment-user . "tony")
                                                                                          (:comment-date . "10/10/2013")
                                                                                          (:comment-id   . "comment-id")
@@ -2243,7 +2243,11 @@ generates another checksum
   (should (string= "line 1     \nline 2"
                    (orgtrello-buffer/trim-input-comment "# comment line\n# another comment line\nline 1     \nline 2\n\n\n"))))
 
-
+(ert-deftest test-orgtrello-buffer/--prepare-comment ()
+  (should (string= "  a\n  b\n  c"
+                   (orgtrello-buffer/--prepare-comment "a\nb\nc")))
+  (should (string= "  \n  a\n  b\n  c\n  "
+                   (orgtrello-buffer/--prepare-comment "\na\nb\nc\n"))))
 
 (provide 'org-trello-buffer-tests)
 ;;; org-trello-buffer-tests.el ends here
