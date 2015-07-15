@@ -1,7 +1,8 @@
 (require 'ert)
 (require 'el-mock)
 
-(defun orgtrello-tests/hash-equal (hash1 hash2) "Compare two hash tables to see whether they are equal."
+(defun orgtrello-tests/hash-equal (hash1 hash2)
+  "Compare two hash tables to see whether they are equal."
   (and (= (hash-table-count hash1) (hash-table-count hash2))
        (catch 'flag (maphash (lambda (x y) (or (equal (gethash x hash2) y) (throw 'flag nil))) hash1)
               (throw 'flag t))))

@@ -22,6 +22,8 @@
        "README.md")
 
 (development
+ (depends-on "ert-runner")
+ (depends-on "undercover")
  (depends-on "ert")
  (depends-on "ert-expectations")
  (depends-on "el-mock"))
