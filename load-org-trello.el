@@ -2,7 +2,10 @@
 ;;; Commentary:
 ;;; Code:
 
-(add-to-list 'load-path (expand-file-name "."))
+(defvar org-trello-home (or (getenv "ORGTRELLO_HOME") (expand-file-name "."))
+  "org-trello home.")
+
+(add-to-list 'load-path org-trello-home)
 
 (defvar org-trello--namespaces '() "Org-trello namespaces for development purposes.")
 (setq org-trello--namespaces '("org-trello-log.el"
@@ -26,7 +29,7 @@
   "Load the org-trello namespaces."
   (interactive)
   ;; recompile code
-  (mapc (lambda (it) (load-with-code-conversion it it)) org-trello--namespaces)
+  (mapc (lambda (it) (load-with-code-conversion (concat org-trello-home "/" it) it)) org-trello--namespaces)
   (require 'org-trello)
   ;; reload bindings
   (custom-set-variables
