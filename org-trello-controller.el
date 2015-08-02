@@ -354,7 +354,7 @@ Along the way, the buffer BUFFER-NAME is written with new informations."
 Optionally, SYNC permits to synchronize the query."
   (lexical-let* ((buffer-name buffer-name)
                  (point-start (point))
-                 (card-meta (progn (when (not (orgtrello-entity/card-at-pt!)) (orgtrello-entity-back-to-card))
+                 (card-meta (progn (when (not (orgtrello-entity-card-at-pt)) (orgtrello-entity-back-to-card))
                                    (orgtrello-data/current (orgtrello-buffer/entry-get-full-metadata!))))
                  (card-name (orgtrello-data/entity-name card-meta)))
     (orgtrello-log/msg orgtrello-log-info "Synchronizing the trello card to the org-mode file...")
@@ -381,7 +381,7 @@ Optionally, SYNC permits to synchronize the query."
 
 (defun orgtrello-controller/--do-delete-card ()
   "Delete the card."
-  (when (orgtrello-entity/card-at-pt!)
+  (when (orgtrello-entity-card-at-pt)
     (orgtrello-controller/checks-then-delete-simple)))
 
 (defun orgtrello-controller/do-delete-entities ()
@@ -394,7 +394,7 @@ SYNC flag permit to synchronize the http query."
   (let ((buffer-name (current-buffer)))
     (with-current-buffer buffer-name
       (save-excursion
-        (let ((card-meta (progn (when (orgtrello-entity/org-checkbox-p!) (orgtrello-entity-back-to-card))
+        (let ((card-meta (progn (when (orgtrello-entity-org-checkbox-p) (orgtrello-entity-back-to-card))
                                 (orgtrello-buffer/entry-get-full-metadata!))))
           (orgtrello-action/functional-controls-then-do '(orgtrello-controller/--right-level-p orgtrello-controller/--already-synced-p)
                                                         card-meta

@@ -18,7 +18,7 @@
 
 (defun orgtrello-buffer/org-delete-property! (property)
   "Delete the PROPERTY at point."
-  (funcall (if (orgtrello-entity/org-checkbox-p!) 'orgtrello-cbx/org-delete-property 'org-delete-property) property))
+  (funcall (if (orgtrello-entity-org-checkbox-p) 'orgtrello-cbx/org-delete-property 'org-delete-property) property))
 
 (defun orgtrello-buffer/org-entry-put! (point property value)
   "Put at POINT the PROPERTY with VALUE.
@@ -29,8 +29,8 @@ If the VALUE is nil or empty, remove such PROPERTY."
 
 (defun orgtrello-buffer/extract-description-from-current-position! ()
   "Given the current position, extract the text content of current card."
-  (let* ((start (orgtrello-entity/card-description-start-point!))
-         (end   (orgtrello-entity/card-metadata-end-point!)))
+  (let* ((start (orgtrello-entity-card-description-start-point))
+         (end   (orgtrello-entity-card-metadata-end-point)))
     (if (< start end)
         (->> (buffer-substring-no-properties start end)
              s-lines
@@ -44,7 +44,7 @@ If the VALUE is nil or empty, remove such PROPERTY."
 
 (defun orgtrello-buffer/get-local-checksum! ()
   "Retrieve local checksum."
-  (funcall (if (orgtrello-entity/org-checkbox-p!) 'orgtrello-buffer/get-checkbox-local-checksum! 'orgtrello-buffer/get-card-local-checksum!)))
+  (funcall (if (orgtrello-entity-org-checkbox-p) 'orgtrello-buffer/get-checkbox-local-checksum! 'orgtrello-buffer/get-card-local-checksum!)))
 
 (defun orgtrello-buffer/get-card-local-checksum! ()
   "Retrieve the card's current local checksum."
@@ -197,8 +197,8 @@ The cursor position will move after the newly inserted card."
 
 (defun orgtrello-buffer/checklist-beginning-pt! ()
   "Compute the current checklist's beginning point."
-  (cond ((orgtrello-entity/checklist-at-pt!) (point-at-bol))
-        ((orgtrello-entity/item-at-pt!) (save-excursion
+  (cond ((orgtrello-entity-checklist-at-pt) (point-at-bol))
+        ((orgtrello-entity-item-at-pt) (save-excursion
                                           (org-beginning-of-item-list)
                                           (forward-line -1)
                                           (beginning-of-line)
@@ -243,14 +243,14 @@ If on a card, update the card's checksum.
 Otherwise, if on a checklist, update the checklist's and the card's checksum.
 Otherwise, on an item, update the item's, checklist's and card's checksum."
   (save-excursion
-    (let ((actions (cond ((orgtrello-entity/org-comment-p!)   '(org-back-to-heading
+    (let ((actions (cond ((orgtrello-entity-org-comment-p)   '(org-back-to-heading
                                                                 orgtrello-buffer/write-local-comment-checksum-at-point!
                                                                 org-up-element
                                                                 orgtrello-buffer/write-local-card-checksum!))
-                         ((orgtrello-entity/card-at-pt!)      '(orgtrello-buffer/write-local-card-checksum-at-point!))
-                         ((orgtrello-entity/checklist-at-pt!) '(orgtrello-buffer/write-local-checklist-checksum-at-point!
+                         ((orgtrello-entity-card-at-pt)      '(orgtrello-buffer/write-local-card-checksum-at-point!))
+                         ((orgtrello-entity-checklist-at-pt) '(orgtrello-buffer/write-local-checklist-checksum-at-point!
                                                                 orgtrello-buffer/write-local-card-checksum!))
-                         ((orgtrello-entity/item-at-pt!)      '(orgtrello-buffer/write-local-item-checksum-at-point!
+                         ((orgtrello-entity-item-at-pt)      '(orgtrello-buffer/write-local-item-checksum-at-point!
                                                                 orgtrello-buffer/write-local-checklist-checksum!
                                                                 orgtrello-buffer/write-local-card-checksum!)))))
       (mapc 'funcall actions))))
@@ -497,7 +497,7 @@ Function to be triggered by `before-save-hook` on org-trello-mode buffer."
 
 (defun orgtrello-buffer/--extract-metadata! ()
   "Extract the current metadata depending on the org-trello's checklist policy."
-  (funcall (if (orgtrello-entity/org-checkbox-p!) 'orgtrello-cbx/org-checkbox-metadata! 'orgtrello-buffer/org-entity-metadata!)))
+  (funcall (if (orgtrello-entity-org-checkbox-p) 'orgtrello-cbx/org-checkbox-metadata! 'orgtrello-buffer/org-entity-metadata!)))
 
 (defun orgtrello-buffer/extract-identifier! (point)
   "Extract the identifier from POINT."
@@ -506,14 +506,14 @@ Function to be triggered by `before-save-hook` on org-trello-mode buffer."
 (defun orgtrello-buffer/set-property (key value)
   "Either set the property normally at KEY with VALUE.
 Deal with org entities and checkbox as well."
-  (funcall (if (orgtrello-entity/org-checkbox-p!) 'orgtrello-cbx/org-set-property 'org-set-property) key value))
+  (funcall (if (orgtrello-entity-org-checkbox-p) 'orgtrello-cbx/org-set-property 'org-set-property) key value))
 
 (defalias 'orgtrello-buffer/card-entry-get 'org-entry-get)
 
 (defun orgtrello-buffer/org-entry-get (point key)
   "Extract the identifier from the POINT at KEY.
 Deal with org entities and checkbox as well."
-  (funcall (if (orgtrello-entity/org-checkbox-p!) 'orgtrello-cbx/org-get-property 'orgtrello-buffer/card-entry-get) point key))
+  (funcall (if (orgtrello-entity-org-checkbox-p) 'orgtrello-cbx/org-get-property 'orgtrello-buffer/card-entry-get) point key))
 
 (defun orgtrello-buffer/--user-ids-assigned-to-current-card ()
   "Compute the user ids assigned to the current card."
@@ -524,8 +524,8 @@ Deal with org entities and checkbox as well."
 
 (defun orgtrello-buffer/--extract-description-at-point! ()
   "Extract description at point depending on the entity's nature."
-  (cond ((orgtrello-entity/org-card-p!) (orgtrello-buffer/extract-description-from-current-position!))
-        ((orgtrello-entity/org-comment-p!) (orgtrello-buffer/extract-comment-description-from-current-position!))))
+  (cond ((orgtrello-entity-org-card-p) (orgtrello-buffer/extract-description-from-current-position!))
+        ((orgtrello-entity-org-comment-p) (orgtrello-buffer/extract-comment-description-from-current-position!))))
 
 (defun orgtrello-buffer/entity-metadata! ()
   "Compute the metadata for a given org entry. Also add some metadata identifier/due-data/point/buffer-name/etc..."
@@ -552,7 +552,7 @@ Deal with org entities and checkbox as well."
 
 (defun orgtrello-buffer/org-up-parent! ()
   "A function to get back to the current entry's parent"
-  (funcall (if (orgtrello-entity/org-checkbox-p!) 'orgtrello-cbx/org-up! 'org-up-heading-safe)))
+  (funcall (if (orgtrello-entity-org-checkbox-p) 'orgtrello-cbx/org-up! 'org-up-heading-safe)))
 
 (defun orgtrello-buffer/--parent-metadata! ()
   "Extract the metadata from the current heading's parent."
@@ -611,7 +611,7 @@ Make it a hashmap with key :level,  :keyword,  :name and their respective value.
 (defun orgtrello-buffer/end-of-line-point! ()
   "Compute the end of line for an org-trello buffer."
   (let* ((pt (save-excursion (org-end-of-line) (point))))
-    (if (orgtrello-entity/org-checkbox-p!)
+    (if (orgtrello-entity-org-checkbox-p)
         (-if-let (s (orgtrello-buffer/compute-overlay-size!))
             (- pt s 1)
           pt)
@@ -628,7 +628,7 @@ Trigger the needed indentation for the card's description and data.
 In any case, execute ORG-FN."
   (orgtrello-buffer/indent-card-descriptions!)
   (orgtrello-buffer/indent-card-data!)
-  (when (orgtrello-entity/org-checkbox-p!)
+  (when (orgtrello-entity-org-checkbox-p)
     (org-end-of-line))
   (funcall org-fn))
 
@@ -718,10 +718,10 @@ COMPUTE-REGION-FN is the region computation function."
 
 (defun orgtrello-buffer/compute-checksum! ()
   "Compute the checksum of the current entity at point."
-  (funcall (cond ((orgtrello-entity/org-card-p!)      'orgtrello-buffer/card-checksum!)
-                 ((orgtrello-entity/checklist-at-pt!) 'orgtrello-buffer/checklist-checksum!)
-                 ((orgtrello-entity/item-at-pt!)      'orgtrello-buffer/item-checksum!)
-                 ((orgtrello-entity/org-comment-p!)   'orgtrello-buffer/comment-checksum!))))
+  (funcall (cond ((orgtrello-entity-org-card-p)      'orgtrello-buffer/card-checksum!)
+                 ((orgtrello-entity-checklist-at-pt) 'orgtrello-buffer/checklist-checksum!)
+                 ((orgtrello-entity-item-at-pt)      'orgtrello-buffer/item-checksum!)
+                 ((orgtrello-entity-org-comment-p)   'orgtrello-buffer/comment-checksum!))))
 
 (defun orgtrello-buffer/card-checksum! ()
   "Compute the card's checksum at point."

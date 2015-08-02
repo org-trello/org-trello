@@ -70,8 +70,8 @@ This returns a list (updated-entity-synced, updated-entities, updated-adjacencie
     (mapc (lambda (child-id) ;; update parent reference in children in entities
             (let ((child (gethash child-id entities)))
               (--> child
-                (orgtrello-data/put-parent entity-synced it)
-                (puthash child-id it entities))))
+                   (orgtrello-data/put-parent entity-synced it)
+                   (puthash child-id it entities))))
           children-ids)
     ;; update in-place with new entries...
     (puthash entry-new-id entity-synced entities)
@@ -275,7 +275,7 @@ Use ENTITIES-ADJACENCIES to provide further information."
 (defun orgtrello-proxy/--delete-checkbox-checklist-region ()
   "Delete the checklist region."
   (let ((starting-point (point-at-bol))
-        (ending-point (save-excursion (-if-let (result (orgtrello-entity/goto-next-checkbox-with-same-level! org-trello--checklist-level))
+        (ending-point (save-excursion (-if-let (result (orgtrello-entity-goto-next-checkbox-with-same-level! org-trello--checklist-level))
                                           result
                                         (orgtrello-entity-card-end-point))))) ;; next checkbox or next card or point-max
     (orgtrello-proxy/--delete-region starting-point ending-point)))
