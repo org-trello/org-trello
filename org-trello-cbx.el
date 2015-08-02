@@ -206,7 +206,7 @@ Do not exceed the max size of buffer."
 (defun orgtrello-cbx/map-checkboxes (fn-to-execute)
   "Map over the current checkbox and execute FN-TO-EXECUTE."
   (save-excursion
-    (orgtrello-entity/back-to-card!)                                 ;; go back to the card
+    (orgtrello-entity-back-to-card)                                 ;; go back to the card
     (-when-let (fst-cbx (orgtrello-entity/goto-next-checkbox-with-same-level! org-trello--checklist-level))
       (goto-char fst-cbx)                                            ;; then first checklist
       (funcall fn-to-execute)                                        ;; execute the function on it

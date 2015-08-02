@@ -334,7 +334,7 @@ Along the way, the buffer BUFFER-NAME is written with new informations."
       (with-current-buffer buffer-name
         (save-excursion
           (let* ((card-id                  (orgtrello-data/entity-id org-trello-card))
-                 (region                   (orgtrello-entity/compute-card-region!))
+                 (region                   (orgtrello-entity-card-region))
                  (entities-from-org-buffer (apply 'orgtrello-buffer/build-org-entities! (cons buffer-name region)))
                  (entities-from-trello     (orgtrello-backend/compute-org-trello-card-from (list org-trello-card)))
                  (merged-entities          (orgtrello-data/merge-entities-trello-and-org entities-from-trello entities-from-org-buffer))
@@ -354,7 +354,7 @@ Along the way, the buffer BUFFER-NAME is written with new informations."
 Optionally, SYNC permits to synchronize the query."
   (lexical-let* ((buffer-name buffer-name)
                  (point-start (point))
-                 (card-meta (progn (when (not (orgtrello-entity/card-at-pt!)) (orgtrello-entity/back-to-card!))
+                 (card-meta (progn (when (not (orgtrello-entity/card-at-pt!)) (orgtrello-entity-back-to-card))
                                    (orgtrello-data/current (orgtrello-buffer/entry-get-full-metadata!))))
                  (card-name (orgtrello-data/entity-name card-meta)))
     (orgtrello-log/msg orgtrello-log-info "Synchronizing the trello card to the org-mode file...")
@@ -394,7 +394,7 @@ SYNC flag permit to synchronize the http query."
   (let ((buffer-name (current-buffer)))
     (with-current-buffer buffer-name
       (save-excursion
-        (let ((card-meta (progn (when (orgtrello-entity/org-checkbox-p!) (orgtrello-entity/back-to-card!))
+        (let ((card-meta (progn (when (orgtrello-entity/org-checkbox-p!) (orgtrello-entity-back-to-card))
                                 (orgtrello-buffer/entry-get-full-metadata!))))
           (orgtrello-action/functional-controls-then-do '(orgtrello-controller/--right-level-p orgtrello-controller/--already-synced-p)
                                                         card-meta
@@ -770,7 +770,7 @@ Return the hashmap (name, id) of the new lists created."
 (defun orgtrello-controller/do-add-card-comment! ()
   "Wait for the input to add a comment to the current card."
   (save-excursion
-    (orgtrello-entity/back-to-card!)
+    (orgtrello-entity-back-to-card)
     (let ((card-id (-> (orgtrello-buffer/entity-metadata!) orgtrello-data/entity-id)))
       (if (or (null card-id) (string= "" card-id))
           (orgtrello-log/msg orgtrello-log-info "Card not sync'ed so cannot add comment - skip.")

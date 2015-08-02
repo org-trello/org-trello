@@ -1841,7 +1841,7 @@ DEADLINE: <2014-05-17 Sat>
 
 * another card"
                                              (let ((orgtrello-setup-use-position-in-checksum-computation 'please-do-use-position-in-checksumt))
-                                               (orgtrello-buffer/--compute-string-to-checksum (orgtrello-entity/compute-card-region!)))
+                                               (orgtrello-buffer/--compute-string-to-checksum (orgtrello-entity-card-region)))
                                              -5)))
 
   (should (equal
@@ -1872,7 +1872,7 @@ DEADLINE: <2014-05-17 Sat>
 
 * another card"
                                              (let ((orgtrello-setup-use-position-in-checksum-computation nil))
-                                               (orgtrello-buffer/--compute-string-to-checksum (orgtrello-entity/compute-card-region!)))
+                                               (orgtrello-buffer/--compute-string-to-checksum (orgtrello-entity-card-region)))
                                              -5)))
 
   ;; checklist

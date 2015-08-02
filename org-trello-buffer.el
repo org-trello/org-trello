@@ -191,7 +191,7 @@ The cursor position will move after the newly inserted card."
   (-when-let (checklist-ids (gethash card-id adjacency))
     (mapc (lambda (checklist-id) (orgtrello-buffer/write-checklist! checklist-id entities adjacency)) checklist-ids))
   (save-excursion
-    (orgtrello-entity/back-to-card!)
+    (orgtrello-entity-back-to-card)
     (orgtrello-buffer/write-properties-at-pt! card-id))
   (orgtrello-buffer/--write-comments! card))
 
@@ -212,7 +212,7 @@ The cursor position will move after the newly inserted card."
 (defun orgtrello-buffer/write-local-card-checksum! ()
   "Write the card's checksum."
   (save-excursion
-    (orgtrello-entity/back-to-card!)
+    (orgtrello-entity-back-to-card)
     (orgtrello-buffer/write-local-card-checksum-at-point!)))
 
 (defun orgtrello-buffer/write-local-card-checksum-at-point! ()
@@ -358,7 +358,7 @@ The optional ORGCHECKBOX-P is not used."
 (defun orgtrello-buffer/build-org-card-structure! (buffer-name)
   "Build the card structure on the current BUFFER-NAME at current point.
 No synchronization is done."
-  (->> (orgtrello-entity/compute-card-region!)
+  (->> (orgtrello-entity-card-region)
     (cons buffer-name)
     (apply 'orgtrello-buffer/build-org-entities!)))
 
@@ -480,7 +480,7 @@ Function to be triggered by `before-save-hook` on org-trello-mode buffer."
   (when (and (eq major-mode 'org-mode) org-trello--mode-activated-p)
     (orgtrello-buffer/org-map-entries
      (lambda ()
-       (orgtrello-buffer/indent-region! org-trello--checklist-indent (orgtrello-entity/card-data-region!))))))
+       (orgtrello-buffer/indent-region! org-trello--checklist-indent (orgtrello-entity-card-data-region))))))
 
 (defun orgtrello-buffer/--convert-orgmode-date-to-trello-date (orgmode-date)
   "Convert the 'org-mode' deadline ORGMODE-DATE into a time adapted for trello."
@@ -725,7 +725,7 @@ COMPUTE-REGION-FN is the region computation function."
 
 (defun orgtrello-buffer/card-checksum! ()
   "Compute the card's checksum at point."
-  (orgtrello-buffer/compute-generic-checksum! 'orgtrello-entity/compute-card-region!))
+  (orgtrello-buffer/compute-generic-checksum! 'orgtrello-entity-card-region))
 
 (defun orgtrello-buffer/checklist-checksum! ()
   "Compute the checkbox's checksum."

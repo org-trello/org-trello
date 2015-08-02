@@ -41,7 +41,7 @@ The conventions enforced in org-trello:
   - `<NAMESPACE-FILENAME>` is the filename without its path nor its extension. For example, `src/buffer.el` renders `buffer`
   - `<FUNCTION-NAME>` is an alphanumeric symbol with `-` as separator. For example, `orgtrello-api/add-board` is a public function which does create a request to add a board.
 - private functions are prefixed with `--`. For example, `orgtrello-api/--deal-with-optional-values` which is a private utility function to help in creating api request.
-- side-effecty (interacts with the world, e.g read from user, read/write from/to buffer, etc...) functions are suffixed with `!`. For example, `orgtrello-entity/back-to-card!` which does move the caret to the beginning of the card in the org buffer.
+- side-effecty (interacts with the world, e.g read from user, read/write from/to buffer, etc...) functions are suffixed with `!`. For example, `orgtrello-entity-back-to-card` which does move the caret to the beginning of the card in the org buffer.
 - predicate functions are suffixed by `-p`. For example, `orgtrello-data/entity-card-p` which checks if the parameter entity is a card or not.
 
 For example:

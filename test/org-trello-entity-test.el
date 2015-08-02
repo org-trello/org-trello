@@ -159,15 +159,15 @@ hello there
   (should (equal 24 (orgtrello-tests/with-temp-buffer "* card\n- [ ] checkbox 0\n- [ ] checkbox 1\n" (orgtrello-entity/next-checklist-point!) -2)))
   (should (equal 55 (orgtrello-tests/with-temp-buffer "* card\n- [ ] checkbox 0\n  - [ ] item0\n- [ ] checkbox 1\n" (orgtrello-entity/next-checklist-point!) -1))))
 
-(ert-deftest test-orgtrello-entity/compute-next-card-point! ()
-  (should (equal 50 (orgtrello-tests/with-temp-buffer "* heading\n- [ ] some checklist\n  - [ ] some item\n"                                      (orgtrello-entity/compute-next-card-point!)))) ;; return the max point
-  (should (equal 70 (orgtrello-tests/with-temp-buffer "#+TODO: TODO | DONE\n* heading\n- [ ] some checklist\n  - [ ] some item\n"                 (orgtrello-entity/compute-next-card-point!)))) ;; return the max point
-  (should (equal 65 (orgtrello-tests/with-temp-buffer "* heading\n- [ ] some checklist\n  - [ ] some item\n* next heading\n"                      (orgtrello-entity/compute-next-card-point!))))
-  (should (equal 85 (orgtrello-tests/with-temp-buffer "#+TODO: TODO | DONE\n* heading\n- [ ] some checklist\n  - [ ] some item\n* next heading\n" (orgtrello-entity/compute-next-card-point!))))
-  (should (equal 70 (orgtrello-tests/with-temp-buffer "#+TODO: TODO | DONE\n* heading\n- [ ] some checklist\n  - [ ] some item\n* next heading\n" (orgtrello-entity/compute-next-card-point!) -3)))
-  (should (equal 70 (orgtrello-tests/with-temp-buffer "#+TODO: TODO | DONE\n* heading\n- [ ] some checklist\n  - [ ] some item\n* next heading\n" (orgtrello-entity/compute-next-card-point!) -4))))
+(ert-deftest test-orgtrello-entity-card-end-point ()
+  (should (equal 50 (orgtrello-tests/with-temp-buffer "* heading\n- [ ] some checklist\n  - [ ] some item\n"                                      (orgtrello-entity-card-end-point)))) ;; return the max point
+  (should (equal 70 (orgtrello-tests/with-temp-buffer "#+TODO: TODO | DONE\n* heading\n- [ ] some checklist\n  - [ ] some item\n"                 (orgtrello-entity-card-end-point)))) ;; return the max point
+  (should (equal 65 (orgtrello-tests/with-temp-buffer "* heading\n- [ ] some checklist\n  - [ ] some item\n* next heading\n"                      (orgtrello-entity-card-end-point))))
+  (should (equal 85 (orgtrello-tests/with-temp-buffer "#+TODO: TODO | DONE\n* heading\n- [ ] some checklist\n  - [ ] some item\n* next heading\n" (orgtrello-entity-card-end-point))))
+  (should (equal 70 (orgtrello-tests/with-temp-buffer "#+TODO: TODO | DONE\n* heading\n- [ ] some checklist\n  - [ ] some item\n* next heading\n" (orgtrello-entity-card-end-point) -3)))
+  (should (equal 70 (orgtrello-tests/with-temp-buffer "#+TODO: TODO | DONE\n* heading\n- [ ] some checklist\n  - [ ] some item\n* next heading\n" (orgtrello-entity-card-end-point) -4))))
 
-(ert-deftest test-orgtrello-entity/compute-card-region! ()
+(ert-deftest test-orgtrello-entity-card-region ()
   "Compute the region of the card."
   (should (equal
            '(1 265)
@@ -179,7 +179,7 @@ hello there
 - [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}
   - [X] Emacs-Lisp  :PROPERTIES: {\"orgtrello-id\":\"52c9451784251e1b260127f8\"}
 * another card"
-                                             (orgtrello-entity/compute-card-region!)
+                                             (orgtrello-entity-card-region)
                                              -2)))
   (should (equal
            '(265 279)
@@ -191,7 +191,7 @@ hello there
 - [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}
   - [X] Emacs-Lisp  :PROPERTIES: {\"orgtrello-id\":\"52c9451784251e1b260127f8\"}
 * another card"
-                                             (orgtrello-entity/compute-card-region!)
+                                             (orgtrello-entity-card-region)
                                              0)))
   (should (equal
            "* TODO Joy of FUN(ctional) LANGUAGES
@@ -210,7 +210,7 @@ hello there
 - [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}
   - [X] Emacs-Lisp  :PROPERTIES: {\"orgtrello-id\":\"52c9451784251e1b260127f8\"}
 * another card"
-                                             (apply 'buffer-substring-no-properties (orgtrello-entity/compute-card-region!))
+                                             (apply 'buffer-substring-no-properties (orgtrello-entity-card-region))
                                              -2)))
   (should (equal
            "* another card"
@@ -222,7 +222,7 @@ hello there
 - [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}
   - [X] Emacs-Lisp  :PROPERTIES: {\"orgtrello-id\":\"52c9451784251e1b260127f8\"}
 * another card"
-                                             (apply 'buffer-substring-no-properties (orgtrello-entity/compute-card-region!))
+                                             (apply 'buffer-substring-no-properties (orgtrello-entity-card-region))
                                              0))))
 
 
@@ -241,7 +241,7 @@ hello there
                                              -2))))
 
 
-(ert-deftest test-orgtrello-entity/card-data-region! ()
+(ert-deftest test-orgtrello-entity-card-data-region ()
   (should (equal
            "- [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}
   - [X] Emacs-Lisp  :PROPERTIES: {\"orgtrello-id\":\"52c9451784251e1b260127f8\"}"
@@ -253,7 +253,7 @@ hello there
 - [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}
   - [X] Emacs-Lisp  :PROPERTIES: {\"orgtrello-id\":\"52c9451784251e1b260127f8\"}
 * another card"
-                                             (apply 'buffer-substring-no-properties (orgtrello-entity/card-data-region!))
+                                             (apply 'buffer-substring-no-properties (orgtrello-entity-card-data-region))
                                              -2))))
 
 (ert-deftest test-orgtrello-entity/compute-comment-region! ()
