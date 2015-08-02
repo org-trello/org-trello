@@ -23,7 +23,7 @@
     (and (eq 'headline elem-nature) (= level (org-element-property :level elem-at-point)))))
 
 (defun orgtrello-entity/org-card-p! ()
-  "Determine if we are currently on a card."
+  "Determine if we are currently on a card's first line."
   (orgtrello-entity/org-heading-with-level-p! org-trello--card-level))
 
 (defun orgtrello-entity/--org-checkbox-p! (indent)
@@ -48,7 +48,7 @@ Provided indent as the denominator for the checkbox's nature."
      (orgtrello-entity/org-heading-with-level-p! 2))
    (->> (buffer-substring (point-at-bol) (point-at-eol))
         s-trim-left
-        (s-starts-with? "** "))))
+        (s-starts-with? "** COMMENT "))))
 
 (defalias 'orgtrello-entity-back-to-card 'org-back-to-heading)
 
@@ -176,30 +176,28 @@ Otherwise, return the current position."
   "Compute the card's data region (checklists/items) couple '(start end)."
   `(,(1+ (orgtrello-entity/card-metadata-end-point!)) ,(1- (orgtrello-entity-compute-first-comment-point))))
 
-(defun orgtrello-entity/compute-comment-region! ()
-  "Compute the comment's region."
-  (org-back-to-heading)
-  `(,(point-at-bol) ,(org-end-of-subtree)))
+(defun orgtrello-entity-comment-region ()
+  "Compute the comment's region.
+Expected to be called when the cursor is inside the comment region."
+  (save-excursion
+    (org-back-to-heading)
+    (let ((elem (org-element-at-point)))
+      `(,(org-element-property :begin elem) ,(org-element-property :end elem)))))
 
-;; (defun orgtrello-entity/compute-comment-region! ()
-;;   "Compute the comment's region."
-;;   (let ((element (org-element-at-point)))
-;;     `(,(org-element-property :begin element) ,(org-element-property :end element))))
-
-(defun orgtrello-entity/comment-description-start-point! ()
+(defun orgtrello-entity-comment-description-start-point ()
   "Compute the first character of the comment's description content."
   (save-excursion
     (beginning-of-line)
     (search-forward ":END:" nil t) ;; if not found, return nil and do not move point
     (1+ (point-at-eol))))
 
-(defun orgtrello-entity/comment-description-end-point! ()
+(defun orgtrello-entity-comment-description-end-point ()
   "Compute the comment's end point."
   (org-element-property :contents-end (org-element-at-point)))
 
-(defun orgtrello-entity/comment-description-region! ()
+(defun orgtrello-entity-comment-description-region ()
   "Compute the comment's description region."
-  `(,(orgtrello-entity/comment-description-start-point!) ,(orgtrello-entity/comment-description-end-point!)))
+  `(,(orgtrello-entity-comment-description-start-point) ,(orgtrello-entity-comment-description-end-point)))
 
 (provide 'org-trello-entity)
 ;;; org-trello-entity.el ends here

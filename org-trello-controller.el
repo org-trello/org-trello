@@ -796,7 +796,7 @@ Return the hashmap (name, id) of the new lists created."
                                  (orgtrello-query/http-trello 'sync))))
           (deferred:nextc it
             (lambda (data)
-              (apply 'delete-region (orgtrello-entity/compute-comment-region!))
+              (apply 'delete-region (orgtrello-entity-comment-region))
               (orgtrello-log/msg orgtrello-log-info "Comment deleted!"))))))))
 
 

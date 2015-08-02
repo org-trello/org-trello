@@ -2087,7 +2087,7 @@ DEADLINE: <2014-05-17 Sat>
 (ert-deftest test-orgtrello-buffer/comment-checksum! ()
   "A comment's checksum"
   (should (equal
-           "70d359d1facb51a89990e069d08771c1beafff1212e5727f4d74f473d8ab9df5"
+           "e4d969d8287880e52f02d216131a70cffd91cee0eba5c6ed866fdfcf0a8afc95"
            (orgtrello-tests/with-temp-buffer "** COMMENT ardumont,date
 :PROPERTIES:
 :orgtrello-id: some-comment-id
@@ -2100,24 +2100,25 @@ DEADLINE: <2014-05-17 Sat>
 (ert-deftest test-orgtrello-buffer/comment-checksum!-not-modified-so-same-checksum ()
   "A comment's checksum"
   (should (equal
-           "70d359d1facb51a89990e069d08771c1beafff1212e5727f4d74f473d8ab9df5"
+           "e4d969d8287880e52f02d216131a70cffd91cee0eba5c6ed866fdfcf0a8afc95"
            (orgtrello-tests/with-temp-buffer "** COMMENT ardumont,date
 :PROPERTIES:
 :orgtrello-id: some-comment-id
-:orgtrello-local-checksum: 70d359d1facb51a89990e069d08771c1beafff1212e5727f4d74f473d8ab9df5
+:orgtrello-local-checksum: e4d969d8287880e52f02d216131a70cffd91cee0eba5c6ed866fdfcf0a8afc95
 :END:
   some comment
 "
-                                             (orgtrello-buffer/comment-checksum!)))))
+                                             (orgtrello-buffer/comment-checksum!)
+                                             -1))))
 
-(ert-deftest test-orgtrello-buffer/comment-checksum!-not-modified-so-same-checksum ()
+(ert-deftest test-orgtrello-buffer/comment-checksum!-modified-checksum-is-different ()
   "A comment's checksum"
   (should (equal
-           "f3d42d599677bc48e96ff07d60a26b0c7413805d6dd06159e5589d9c1fc83647"
+           "41d89d3b85c121ee47d2e1e8ee7c070767c542e17ad9899ecd7c995543c7366c"
            (orgtrello-tests/with-temp-buffer "** COMMENT ardumont,date
 :PROPERTIES:
 :orgtrello-id: some-comment-id
-:orgtrello-local-checksum: f3d42d599677bc48e96ff07d60a26b0c7413805d6dd06159e5589d9c1fc83647
+:orgtrello-local-checksum: e4d969d8287880e52f02d216131a70cffd91cee0eba5c6ed866fdfcf0a8afc95
 :END:
   some slightly modified comment
 generates another checksum

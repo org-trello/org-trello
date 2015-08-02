@@ -40,7 +40,7 @@ If the VALUE is nil or empty, remove such PROPERTY."
 
 (defun orgtrello-buffer/extract-comment-description-from-current-position! ()
   "Given the current position, extract the text content of current card."
-  (apply 'buffer-substring-no-properties (orgtrello-entity/comment-description-region!)))
+  (apply 'buffer-substring-no-properties (orgtrello-entity-comment-description-region)))
 
 (defun orgtrello-buffer/get-local-checksum! ()
   "Retrieve local checksum."
@@ -737,7 +737,7 @@ COMPUTE-REGION-FN is the region computation function."
 
 (defun orgtrello-buffer/comment-checksum! ()
   "Compute the comment's checksum."
-  (orgtrello-buffer/compute-generic-checksum! 'orgtrello-entity/compute-comment-region!))
+  (orgtrello-buffer/compute-generic-checksum! 'orgtrello-entity-comment-region))
 
 (defun orgtrello-buffer/archive-cards! (trello-cards)
   "Given a list of TRELLO-CARDS, archive those if they are present on buffer."
