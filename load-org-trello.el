@@ -60,18 +60,5 @@
 (define-key emacs-lisp-mode-map (kbd "C-c o f") 'org-trello/dev-find-unused-definitions!)
 (define-key org-trello-mode-map (kbd "C-c o f") 'org-trello/dev-find-unused-definitions!)
 
-;; dev utils functions
-
-(defun trace-functions (fns)
-  "Trace functions FNS."
-  (mapc 'trace-function fns))
-
-(defun untrace-functions (fns)
-  "Trace functions FNS."
-  (mapc 'untrace-function fns))
-
-;; (trace-functions '(orgtrello-data/parse-data))
-;; (untrace-functions '(orgtrello-data/parse-data))
-
 (provide 'load-org-trello)
 ;;; load-org-trello.el ends here
