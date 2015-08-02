@@ -112,26 +112,26 @@ hello there
 - [ ] another"
                   (orgtrello-entity-compute-checklist-header-region)))))
 
-(ert-deftest test-orgtrello-entity/compute-checklist-region! ()
+(ert-deftest test-orgtrello-entity-compute-checklist-region ()
   (should (equal '(8 25)
                  (orgtrello-tests/with-temp-buffer
                   "* card
   - [ ] checklist
   - [ ] another checklist"
-                  (orgtrello-entity/compute-checklist-region!))))
+                  (orgtrello-entity-compute-checklist-region))))
   (should (equal "  - [ ] checklist"
                  (orgtrello-tests/with-temp-buffer
                   "* card
   - [ ] checklist
   - [ ] another checklist"
-                  (apply 'buffer-substring-no-properties (orgtrello-entity/compute-checklist-region!)))))
+                  (apply 'buffer-substring-no-properties (orgtrello-entity-compute-checklist-region)))))
   (should (equal '(8 40)
                  (orgtrello-tests/with-temp-buffer
                   "* card
   - [ ] checklist
     - [ ] item
 "
-                  (orgtrello-entity/compute-checklist-region!))))
+                  (orgtrello-entity-compute-checklist-region))))
   (should (equal '(8 53)
                  (orgtrello-tests/with-temp-buffer
                   "* card
@@ -139,7 +139,7 @@ hello there
     - [ ] item
     - item 2
 "
-                  (orgtrello-entity/compute-checklist-region!)
+                  (orgtrello-entity-compute-checklist-region)
                   -3)))
   (should (equal '(8 53)
                  (orgtrello-tests/with-temp-buffer
@@ -148,12 +148,12 @@ hello there
     - [ ] item
     - item 2
 * another card"
-                  (orgtrello-entity/compute-checklist-region!)
+                  (orgtrello-entity-compute-checklist-region)
                   -3))))
 
-(ert-deftest test-orgtrello-entity/compute-item-region! ()
+(ert-deftest test-orgtrello-entity-compute-item-region ()
   (should (equal '(17 32)
-                 (orgtrello-tests/with-temp-buffer "- [ ] checklist\n  - [ ] another" (orgtrello-entity/compute-item-region!) 0))))
+                 (orgtrello-tests/with-temp-buffer "- [ ] checklist\n  - [ ] another" (orgtrello-entity-compute-item-region) 0))))
 
 (ert-deftest test-orgtrello-entity-next-checklist-point ()
   (should (equal 24 (orgtrello-tests/with-temp-buffer "* card\n- [ ] checkbox 0\n- [ ] checkbox 1\n" (orgtrello-entity-next-checklist-point) -2)))
@@ -226,7 +226,7 @@ hello there
                                              0))))
 
 
-(ert-deftest test-orgtrello-entity/card-metadata-region! ()
+(ert-deftest test-orgtrello-entity-card-metadata-region ()
   (should (equal
            "  hello there"
            (orgtrello-tests/with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
@@ -237,7 +237,7 @@ hello there
 - [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}
   - [X] Emacs-Lisp  :PROPERTIES: {\"orgtrello-id\":\"52c9451784251e1b260127f8\"}
 * another card"
-                                             (apply 'buffer-substring-no-properties (orgtrello-entity/card-metadata-region!))
+                                             (apply 'buffer-substring-no-properties (orgtrello-entity-card-metadata-region))
                                              -2))))
 
 

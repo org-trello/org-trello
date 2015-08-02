@@ -472,7 +472,7 @@ Function to be triggered by `before-save-hook` on org-trello-mode buffer."
     (orgtrello-buffer/org-map-entries
      (lambda ()
        (-when-let (card-description (-> (orgtrello-buffer/entry-get-full-metadata!) orgtrello-data/current orgtrello-data/entity-description))
-         (orgtrello-buffer/indent-region! org-trello-buffer--indent-description (orgtrello-entity/card-metadata-region!)))))))
+         (orgtrello-buffer/indent-region! org-trello-buffer--indent-description (orgtrello-entity-card-metadata-region)))))))
 
 (defun orgtrello-buffer/indent-card-data! ()
   "Indent the card data rigidly starting at 2.
@@ -729,11 +729,11 @@ COMPUTE-REGION-FN is the region computation function."
 
 (defun orgtrello-buffer/checklist-checksum! ()
   "Compute the checkbox's checksum."
-  (orgtrello-buffer/compute-generic-checksum! 'orgtrello-entity/compute-checklist-region!))
+  (orgtrello-buffer/compute-generic-checksum! 'orgtrello-entity-compute-checklist-region))
 
 (defun orgtrello-buffer/item-checksum! ()
   "Compute the checkbox's checksum."
-  (orgtrello-buffer/compute-generic-checksum! 'orgtrello-entity/compute-item-region!))
+  (orgtrello-buffer/compute-generic-checksum! 'orgtrello-entity-compute-item-region))
 
 (defun orgtrello-buffer/comment-checksum! ()
   "Compute the comment's checksum."

@@ -1892,7 +1892,7 @@ DEADLINE: <2014-05-17 Sat>
     - [X] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\"}
   - [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\"}
 "
-                                             (orgtrello-buffer/--compute-string-to-checksum (orgtrello-entity/compute-checklist-region!))
+                                             (orgtrello-buffer/--compute-string-to-checksum (orgtrello-entity-compute-checklist-region))
                                              -1)))
   (should (equal
            "    - [X] some other item
@@ -1910,7 +1910,7 @@ DEADLINE: <2014-05-17 Sat>
     - [X] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\"}
   - [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\"}
 "
-                                             (orgtrello-buffer/--compute-string-to-checksum (orgtrello-entity/compute-item-region!))
+                                             (orgtrello-buffer/--compute-string-to-checksum (orgtrello-entity-compute-item-region))
                                              -2))))
 
 (ert-deftest test-orgtrello-buffer/card-checksum! ()

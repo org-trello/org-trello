@@ -156,11 +156,11 @@ Otherwise, return the current position."
     (org-end-of-item)
     (1- (point))))
 
-(defun orgtrello-entity/compute-checklist-region! ()
+(defun orgtrello-entity-compute-checklist-region ()
   "Compute the checklist's region (including the items) couple '(start end)."
   `(,(orgtrello-buffer/checklist-beginning-pt!) ,(1- (save-excursion (org-end-of-item) (point)))))
 
-(defun orgtrello-entity/compute-item-region! ()
+(defun orgtrello-entity-compute-item-region ()
   "Compute the item region couple '(start end)."
   `(,(point-at-bol) ,(point-at-eol)))
 
@@ -168,7 +168,7 @@ Otherwise, return the current position."
   "Compute the card region zone couple '(start end)."
   `(,(orgtrello-entity-card-start-point) ,(orgtrello-entity-card-end-point)))
 
-(defun orgtrello-entity/card-metadata-region! ()
+(defun orgtrello-entity-card-metadata-region ()
   "Compute the card's metadata (description) region couple '(start end)."
   `(,(orgtrello-entity-card-description-start-point) ,(orgtrello-entity-card-metadata-end-point)))
 
