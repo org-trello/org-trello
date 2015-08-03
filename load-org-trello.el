@@ -3,7 +3,7 @@
 ;;; Code:
 
 (defvar org-trello-home (or (getenv "ORGTRELLO_HOME") (expand-file-name "."))
-  "org-trello home.")
+  "Org-trello home.")
 
 (add-to-list 'load-path org-trello-home)
 
@@ -25,7 +25,7 @@
                                "org-trello-utils.el"
                                "org-trello.el"))
 
-(defun org-trello/dev-load-namespaces! ()
+(defun org-trello-dev-load-namespaces ()
   "Load the org-trello namespaces."
   (interactive)
   ;; recompile code
@@ -35,9 +35,9 @@
   (custom-set-variables
    '(org-trello-current-prefix-keybinding "C-c z")
    '(orgtrello-log-level orgtrello-log-info)) ;; orgtrello-log-trace
-  (orgtrello-log/msg orgtrello-log-info "Code loaded!"))
+  (orgtrello-log-msg orgtrello-log-info "Code loaded!"))
 
-(defun org-trello/dev-find-unused-definitions! ()
+(defun org-trello-dev-find-unused-definitions ()
   "Find unused definitions."
   (interactive)
   (let ((filename "/tmp/org-trello-find-unused-definitions.el"))
@@ -50,15 +50,15 @@
       (write-file filename)
       (call-interactively 'emr-el-find-unused-definitions))))
 
-(org-trello/dev-load-namespaces!)
+(org-trello-dev-load-namespaces)
 (message "org-trello loaded!")
 
 (require 'org-trello)
 
-(define-key emacs-lisp-mode-map (kbd "C-c o r") 'org-trello/dev-load-namespaces!)
-(define-key org-trello-mode-map (kbd "C-c o r") 'org-trello/dev-load-namespaces!)
-(define-key emacs-lisp-mode-map (kbd "C-c o f") 'org-trello/dev-find-unused-definitions!)
-(define-key org-trello-mode-map (kbd "C-c o f") 'org-trello/dev-find-unused-definitions!)
+(define-key emacs-lisp-mode-map (kbd "C-c o r") 'org-trello-dev-load-namespaces)
+(define-key org-trello-mode-map (kbd "C-c o r") 'org-trello-dev-load-namespaces)
+(define-key emacs-lisp-mode-map (kbd "C-c o f") 'org-trello-dev-find-unused-definitions)
+(define-key org-trello-mode-map (kbd "C-c o f") 'org-trello-dev-find-unused-definitions)
 
 (provide 'load-org-trello)
 ;;; load-org-trello.el ends here

@@ -24,13 +24,13 @@ To change such level, add this to your init.el file: (setq orgtrello-log-level o
   :require 'org-trello
   :group 'org-trello)
 
-(defun orgtrello-log/msg (level &rest args)
+(defun orgtrello-log-msg (level &rest args)
   "Log message with LEVEL.
 ARGS constitutes the parameters to feed to message."
   (when (<= level orgtrello-log-level)
     (apply 'message (format "org-trello - %s" (car args)) (cdr args))))
 
-(orgtrello-log/msg orgtrello-log-debug "orgtrello-log loaded!")
+(orgtrello-log-msg orgtrello-log-debug "orgtrello-log loaded!")
 
 (provide 'org-trello-log)
 ;;; org-trello-log.el ends here

@@ -128,7 +128,7 @@ unnecessary sync to trello queries for any entity below the current entity
 changed...  Indeed, the position changes anytime you insert or delete a char.
 This renders almost useless the checksum computation.
 
-Cf.  https://github.com/org-trello/org-trello/issues/271.
+Cf.  https://github.com/org-trello-org-trello-issues/271.
 Please, do not hesitate to provide a better idea or a better implementation.
 
 If nil, the default, the sync to trello will be limited to what's really changed
@@ -200,11 +200,11 @@ As of 0.7.0, org-trello now follows Emacs's conventions.")
 (defvar org-trello-mode-map (make-sparse-keymap)
   "Org-trello's mode map.")
 
-(defun org-trello/compute-url (url-without-base-uri)
+(defun org-trello-compute-url (url-without-base-uri)
   "An helper method to compute the uri to trello from URL-WITHOUT-BASE-URI."
   (concat org-trello--https url-without-base-uri))
 
-(defun org-trello/require-cl ()
+(defun org-trello-require-cl ()
   "Require cl lib."
   (if (version< "24.3" emacs-version)
       (require 'cl-lib)
@@ -213,11 +213,11 @@ As of 0.7.0, org-trello now follows Emacs's conventions.")
       (defalias 'cl-defun 'defun*)
       (defalias 'cl-destructuring-bind 'destructuring-bind))))
 
-(defun orgtrello-setup/startup-message (prefix-keybinding)
+(defun orgtrello-setup-startup-message (prefix-keybinding)
   "Compute org-trello's startup message with the PREFIX-KEYBINDING."
-  (orgtrello-utils/replace-in-string "#PREFIX#" prefix-keybinding "org-trello/ot is on! To begin with, hit #PREFIX# h or M-x 'org-trello/help-describing-bindings"))
+  (orgtrello-utils-replace-in-string "#PREFIX#" prefix-keybinding "org-trello-ot is on! To begin with, hit #PREFIX# h or M-x 'org-trello-help-describing-bindings"))
 
-(defun orgtrello-setup/help-describing-bindings-template (keybinding list-command-binding-description)
+(defun orgtrello-setup-help-describing-bindings-template (keybinding list-command-binding-description)
   "Standard Help message template from KEYBINDING and LIST-COMMAND-BINDING-DESCRIPTION."
   (->> list-command-binding-description
        (--map (let ((command        (car it))
@@ -226,7 +226,7 @@ As of 0.7.0, org-trello now follows Emacs's conventions.")
                 (concat keybinding " " prefix-binding " - M-x " (symbol-name command) " - " help-msg)))
        (s-join "\n")))
 
-(defun orgtrello-setup/install-local-keybinding-map! (previous-org-trello-mode-prefix-keybinding org-trello-mode-prefix-keybinding interactive-command-binding-to-install)
+(defun orgtrello-setup-install-local-keybinding-map (previous-org-trello-mode-prefix-keybinding org-trello-mode-prefix-keybinding interactive-command-binding-to-install)
   "Install locally the default binding map with the prefix binding of org-trello-mode-prefix-keybinding."
   (mapc (lambda (command-and-binding)
           (let ((command (car command-and-binding))
@@ -237,7 +237,7 @@ As of 0.7.0, org-trello now follows Emacs's conventions.")
             (define-key org-trello-mode-map (kbd (concat org-trello-mode-prefix-keybinding binding)) command)))
         interactive-command-binding-to-install))
 
-(defun orgtrello-setup/remove-local-keybinding-map! (previous-org-trello-mode-prefix-keybinding interactive-command-binding-to-install)
+(defun orgtrello-setup-remove-local-keybinding-map (previous-org-trello-mode-prefix-keybinding interactive-command-binding-to-install)
   "Remove the default org-trello bindings."
   (mapc (lambda (command-and-binding)
           (let ((command (car command-and-binding))
@@ -245,13 +245,13 @@ As of 0.7.0, org-trello now follows Emacs's conventions.")
             (define-key org-trello-mode-map (kbd (concat previous-org-trello-mode-prefix-keybinding binding)) nil)))
         interactive-command-binding-to-install))
 
-(defun orgtrello-setup/remove-local-prefix-mode-keybinding! (keybinding)
+(defun orgtrello-setup-remove-local-prefix-mode-keybinding (keybinding)
   "Install the new default org-trello mode keybinding."
-  (orgtrello-setup/remove-local-keybinding-map! keybinding org-trello-interactive-command-binding-couples))
+  (orgtrello-setup-remove-local-keybinding-map keybinding org-trello-interactive-command-binding-couples))
 
-(defun orgtrello-setup/install-local-prefix-mode-keybinding! (keybinding)
+(defun orgtrello-setup-install-local-prefix-mode-keybinding (keybinding)
   "Install the default org-trello mode keybinding."
-  (orgtrello-setup/install-local-keybinding-map! keybinding keybinding org-trello-interactive-command-binding-couples))
+  (orgtrello-setup-install-local-keybinding-map keybinding keybinding org-trello-interactive-command-binding-couples))
 
 (defvar org-trello--previous-prefix-keybinding "C-c o" "Previous or current mode prefix keybinding.")
 (defcustom org-trello-current-prefix-keybinding "C-c o"
@@ -260,18 +260,18 @@ As of 0.7.0, org-trello now follows Emacs's conventions.")
   :require 'org-trello
   :set (lambda (variable prefix-keybinding)
          "Install the new default org-trello mode keybinding."
-         (orgtrello-setup/install-local-keybinding-map! org-trello--previous-prefix-keybinding prefix-keybinding org-trello-interactive-command-binding-couples)
+         (orgtrello-setup-install-local-keybinding-map org-trello--previous-prefix-keybinding prefix-keybinding org-trello-interactive-command-binding-couples)
          `(set org-trello--previous-prefix-keybinding ,variable)
          (set variable prefix-keybinding))
   :group 'org-trello)
 
 (defalias '*ORGTRELLO/MODE-PREFIX-KEYBINDING* 'org-trello-current-prefix-keybinding)
 
-(defun orgtrello-setup/user-logged-in ()
+(defun orgtrello-setup-user-logged-in ()
   "Return the user logged in's name."
   org-trello--user-logged-in)
 
-(defun orgtrello-setup/set-user-logged-in (user-logged-in)
+(defun orgtrello-setup-set-user-logged-in (user-logged-in)
   "Set the user logged in USER-LOGGED-IN."
   (setq org-trello--user-logged-in user-logged-in))
 

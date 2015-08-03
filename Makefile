@@ -63,3 +63,6 @@ install-cask:
 
 emacs-install-clean: package
 	~/bin/emacs/emacs-install-clean.sh ./$(ARCHIVE)
+
+respect-convention:
+	./contrib/respect-elisp-conventions.sh

@@ -42,14 +42,14 @@
                                    "test/org-trello-query-tests.el"
                                    "test/org-trello-utils-tests.el"))
 
-(defun orgtrello-test/load-namespaces! ()
+(defun orgtrello-test-load-namespaces ()
   "Load the org-trello namespaces."
   (interactive)
   (mapc #'load-file orgtrello-test--namespaces)
   (require 'org-trello)
-  (orgtrello-log/msg orgtrello-log-info "Tests loaded!"))
+  (orgtrello-log-msg orgtrello-log-info "Tests loaded!"))
 
-(defun orgtrello-tests/find-next-error! ()
+(defun orgtrello-tests-find-next-error ()
   "Find the next test error"
   (interactive)
   (with-current-buffer "*compilation*"
@@ -61,10 +61,10 @@
           (forward-line 10))
       (message "All is good!"))))
 
-(orgtrello-test/load-namespaces!)
+(orgtrello-test-load-namespaces)
 
-(define-key emacs-lisp-mode-map (kbd "C-c o d") 'orgtrello-test/load-namespaces!)
-(define-key emacs-lisp-mode-map (kbd "C-c o D") 'orgtrello-tests/find-next-error!)
+(define-key emacs-lisp-mode-map (kbd "C-c o d") 'orgtrello-test-load-namespaces)
+(define-key emacs-lisp-mode-map (kbd "C-c o D") 'orgtrello-tests-find-next-error)
 
 (fset 'convert-expectations-to-ert-deftest
       (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ("expectations\210deert-deftestdesc\210\363\363 (\206\206\202" 0 "%d")) arg)))

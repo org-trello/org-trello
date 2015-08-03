@@ -30,7 +30,7 @@
   "Determine if current position is a checkbox.
 Provided INDENT as the denominator for the checkbox's nature."
   (-when-let (s (buffer-substring-no-properties (point-at-bol) (point-at-eol)))
-    (string-match-p (format "^%s%s" (orgtrello-utils/space indent) "- \\\[.?\\\].*") s)))
+    (string-match-p (format "^%s%s" (orgtrello-utils-space indent) "- \\\[.?\\\].*") s)))
 
 (defun orgtrello-entity-org-checklist-p ()
   "Given the current position, determine if we are on a checklist."
@@ -138,7 +138,7 @@ If no comment is found, return the card's end region."
   "Compute the checklist's region (only the header, without computing the zone occupied by items) couple '(start end)."
   `(,(point-at-bol) ,(1+ (point-at-eol))))
 
-(defun orgtrello-entity-goto-next-checkbox-with-same-level! (level)
+(defun orgtrello-entity-goto-next-checkbox-with-same-level (level)
   "Compute the next checkbox's beginning of line (with the same LEVEL).
  Does not preserve the current position.
 If hitting a heading or the end of the file, return nil.
@@ -148,7 +148,7 @@ Otherwise, return the current position."
       (point)
     (if (or (orgtrello-entity-org-card-p) (<= (point-max) (point)))
         nil
-      (orgtrello-entity-goto-next-checkbox-with-same-level! level))))
+      (orgtrello-entity-goto-next-checkbox-with-same-level level))))
 
 (defun orgtrello-entity-next-checklist-point ()
   "Compute the next checklist position from the current position."
@@ -158,7 +158,7 @@ Otherwise, return the current position."
 
 (defun orgtrello-entity-compute-checklist-region ()
   "Compute the checklist's region (including the items) couple '(start end)."
-  `(,(orgtrello-buffer/checklist-beginning-pt!) ,(1- (save-excursion (org-end-of-item) (point)))))
+  `(,(orgtrello-buffer-checklist-beginning-pt) ,(1- (save-excursion (org-end-of-item) (point)))))
 
 (defun orgtrello-entity-compute-item-region ()
   "Compute the item region couple '(start end)."
