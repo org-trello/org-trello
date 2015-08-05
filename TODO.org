@@ -35,12 +35,12 @@
 - [ ] #277 - Improve date time policy conversion
 - [ ] #278 - Too much checklist sync?
 
-* IN-PROGRESS 0.7.2 [80%]
+* IN-PROGRESS 0.7.2 [100%]
 - [X] Update version
 - [X] Close #276 - Markdown rendering in comments
 - [X] Add test coverage
 - [X] [internal] Full respect elisp convention
-- [ ] Release notes
+- [X] Release notes
 
 * DONE 0.7.1 [100%]
 CLOSED: [2015-07-12 Sun 15:47]
