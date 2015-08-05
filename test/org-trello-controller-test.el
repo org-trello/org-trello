@@ -38,39 +38,62 @@
 
 (ert-deftest test-orgtrello-controller--compute-user-properties ()
   (should (orgtrello-tests-hash-equal
-           #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
-                         (:username "ardumont" :full-name "Antoine R. Dumont" :id "4f2baa2f72b7c1293501cad3"))
-           (car (orgtrello-controller--compute-user-properties '(#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
-                                                                                (:member #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
-                                                                                                       (:username "ardumont" :full-name "Antoine R. Dumont" :id "4f2baa2f72b7c1293501cad3"))
-                                                                                         :id "51d99bbc1e1d8988390047f6"))
-                                                                    #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
-                                                                                  (:member #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
-                                                                                                         (:username "orgmode" :full-name "org trello" :id "5203a0c833fc36360800177f"))
-                                                                                           :id "524855ff8193aec160002cfa")))))))
+           (orgtrello-hash-make-properties '((:username . "ardumont")
+                                             (:full-name . "Antoine R. Dumont")
+                                             (:id . "4f2baa2f72b7c1293501cad3")))
+           (car (orgtrello-controller--compute-user-properties
+                 (list (orgtrello-hash-make-properties
+                        `((:member . ,(orgtrello-hash-make-properties '((:username . "ardumont")
+                                                                        (:full-name . "Antoine R. Dumont")
+                                                                        (:id . "4f2baa2f72b7c1293501cad3"))))
+                          (:id . "51d99bbc1e1d8988390047f6")))
+                       (orgtrello-hash-make-properties `((:member . ,(orgtrello-hash-make-properties '((:username . "orgmode")
+                                                                                                       (:full-name . "org trello")
+                                                                                                       (:id . "5203a0c833fc36360800177f"))))
+                                                         (:id . "524855ff8193aec160002cfa"))))))))
   (should (orgtrello-tests-hash-equal
-           #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
-                         (:username "orgmode" :full-name "org trello" :id "5203a0c833fc36360800177f"))
-           (cadr (orgtrello-controller--compute-user-properties '(#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
-                                                                                 (:member #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
-                                                                                                        (:username "ardumont" :full-name "Antoine R. Dumont" :id "4f2baa2f72b7c1293501cad3"))
-                                                                                          :id "51d99bbc1e1d8988390047f6"))
-                                                                     #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
-                                                                                   (:member #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
-                                                                                                          (:username "orgmode" :full-name "org trello" :id "5203a0c833fc36360800177f"))
-                                                                                            :id "524855ff8193aec160002cfa"))))))))
+           (orgtrello-hash-make-properties '((:username . "orgmode")
+                                             (:full-name . "org trello")
+                                             (:id . "5203a0c833fc36360800177f")))
+           (cadr (orgtrello-controller--compute-user-properties
+                  (list (orgtrello-hash-make-properties
+                         `((:member . ,(orgtrello-hash-make-properties '((:username . "ardumont")
+                                                                         (:full-name . "Antoine R. Dumont")
+                                                                         (:id . "4f2baa2f72b7c1293501cad3"))))
+                           (:id . "51d99bbc1e1d8988390047f6")))
+                        (orgtrello-hash-make-properties
+                         `((:member . ,(orgtrello-hash-make-properties '((:username . "orgmode")
+                                                                         (:full-name . "org trello")
+                                                                         (:id . "5203a0c833fc36360800177f"))))
+                           (:id . "524855ff8193aec160002cfa")))))))))
 
 (ert-deftest test-orgtrello-controller--compute-user-properties-hash ()
-  (should (orgtrello-tests-hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data ("ardumont" "4f2baa2f72b7c1293501cad3" "orgmode" "5203a0c833fc36360800177f"))
-                                      (orgtrello-controller--compute-user-properties-hash '(#s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
-                                                                                                           (:username "ardumont" :full-name "Antoine R. Dumont" :id "4f2baa2f72b7c1293501cad3"))
-                                                                                               #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
-                                                                                                             (:username "orgmode" :full-name "org trello" :id "5203a0c833fc36360800177f")))))))
+  (should (orgtrello-tests-hash-equal
+           (orgtrello-hash-make-properties '(("ardumont" . "4f2baa2f72b7c1293501cad3")
+                                             ("orgmode" . "5203a0c833fc36360800177f")))
+           (orgtrello-controller--compute-user-properties-hash
+            (list (orgtrello-hash-make-properties '((:username . "ardumont")
+                                                    (:full-name . "Antoine R. Dumont")
+                                                    (:id . "4f2baa2f72b7c1293501cad3")))
+                  (orgtrello-hash-make-properties '((:username . "orgmode")
+                                                    (:full-name . "org trello")
+                                                    (:id . "5203a0c833fc36360800177f"))))))))
 
 (ert-deftest test-orgtrello-controller--list-user-entries ()
   (should (equal
-           '(("orgtrello-user-ardumont" . "4f2baa2f72b7c1293501cad3") ("orgtrello-user-orgmode" . "5203a0c833fc36360800177f"))
-           (orgtrello-controller--list-user-entries '(("board-name" . "api test board") ("board-id" . "51d99bbc1e1d8988390047f2") ("TODO" . "51d99bbc1e1d8988390047f3") ("IN-PROGRESS" . "51d99bbc1e1d8988390047f4") ("DONE" . "51d99bbc1e1d8988390047f5") ("PENDING" . "51e53898ea3d1780690015ca") ("DELEGATED" . "51e538a89c05f1e25c0027c6") ("FAIL" . "51e538a26f75d07902002d25") ("CANCELLED" . "51e538e6c7a68fa0510014ee") ("orgtrello-user-ardumont" . "4f2baa2f72b7c1293501cad3") ("orgtrello-user-orgmode" . "5203a0c833fc36360800177f"))))))
+           '(("orgtrello-user-ardumont" . "4f2baa2f72b7c1293501cad3")
+             ("orgtrello-user-orgmode" . "5203a0c833fc36360800177f"))
+           (orgtrello-controller--list-user-entries '(("board-name" . "api test board")
+                                                      ("board-id" . "51d99bbc1e1d8988390047f2")
+                                                      ("TODO" . "51d99bbc1e1d8988390047f3")
+                                                      ("IN-PROGRESS" . "51d99bbc1e1d8988390047f4")
+                                                      ("DONE" . "51d99bbc1e1d8988390047f5")
+                                                      ("PENDING" . "51e53898ea3d1780690015ca")
+                                                      ("DELEGATED" . "51e538a89c05f1e25c0027c6")
+                                                      ("FAIL" . "51e538a26f75d07902002d25")
+                                                      ("CANCELLED" . "51e538e6c7a68fa0510014ee")
+                                                      ("orgtrello-user-ardumont" . "4f2baa2f72b7c1293501cad3")
+                                                      ("orgtrello-user-orgmode" . "5203a0c833fc36360800177f"))))))
 
 (ert-deftest test-orgtrello-controller--add-user ()
   (should (equal '("a" "b" "c") (orgtrello-controller--add-user "a" '("a" "b" "c"))))
@@ -169,22 +192,26 @@
 (ert-deftest test-orgtrello-controller--list-boards ()
   (should (equal t
                  (orgtrello-tests-hash-equal
-                  #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:id "id0" :name "name0" :closed nil))
+                  (orgtrello-hash-make-properties '((:id . "id0")
+                                                    (:name . "name0")
+                                                    (:closed . nil)))
                   (car (with-mock
                          (mock (orgtrello-api-get-boards)                          => :query)
-                         (mock (orgtrello-query-http-trello :query 'sync) => `(,(orgtrello-hash-make-properties '((:id . "id0") (:name . "name0") (:closed)))
-                                                                               ,(orgtrello-hash-make-properties '((:id . "id1") (:name . "name1") (:closed)))
-                                                                               ,(orgtrello-hash-make-properties '((:id . "id1") (:name . "name1") (:closed . t)))))
+                         (mock (orgtrello-query-http-trello :query 'sync) => (list (orgtrello-hash-make-properties '((:id . "id0") (:name . "name0") (:closed)))
+                                                                                   (orgtrello-hash-make-properties '((:id . "id1") (:name . "name1") (:closed)))
+                                                                                   (orgtrello-hash-make-properties '((:id . "id1") (:name . "name1") (:closed . t)))))
                          (orgtrello-controller--list-boards))))))
   (should (equal
            t
            (orgtrello-tests-hash-equal
-            #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (:id "id1" :name "name1" :closed nil))
+            (orgtrello-hash-make-properties '((:id . "id1")
+                                              (:name . "name1")
+                                              (:closed . nil)))
             (cadr (with-mock
                     (mock (orgtrello-api-get-boards)                          => :query)
-                    (mock (orgtrello-query-http-trello :query 'sync) => `(,(orgtrello-hash-make-properties '((:id . "id0") (:name . "name0") (:closed)))
-                                                                          ,(orgtrello-hash-make-properties '((:id . "id1") (:name . "name1") (:closed)))
-                                                                          ,(orgtrello-hash-make-properties '((:id . "id1") (:name . "name1") (:closed . t)))))
+                    (mock (orgtrello-query-http-trello :query 'sync) => (list (orgtrello-hash-make-properties '((:id . "id0") (:name . "name0") (:closed)))
+                                                                              (orgtrello-hash-make-properties '((:id . "id1") (:name . "name1") (:closed)))
+                                                                              (orgtrello-hash-make-properties '((:id . "id1") (:name . "name1") (:closed . t)))))
                     (orgtrello-controller--list-boards)))))))
 
 (ert-deftest test-orgtrello-controller--list-board-lists ()
@@ -196,8 +223,10 @@
 
 (ert-deftest test-orgtrello-controller-hmap-id-name ()
   (should (equal t
-                 (orgtrello-tests-hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data
-                                                           ("786" "CANCELLED" "456" "FAILED" "ijk" "DONE" "abc" "TODO"))
+                 (orgtrello-tests-hash-equal (orgtrello-hash-make-properties '(("786" . "CANCELLED")
+                                                                               ("456" . "FAILED")
+                                                                               ("ijk" . "DONE")
+                                                                               ("abc" . "TODO")))
                                              (orgtrello-controller-hmap-id-name '("CANCELLED" "FAILED" "DONE" "TODO")
                                                                                 '(("board-name" . "some board")
                                                                                   ("board-id" . "10223")
@@ -209,15 +238,15 @@
                                                                                   ("IN-PROGRESS" . "def")
                                                                                   ("TODO" . "abc"))))))
   (should (equal t
-                 (orgtrello-tests-hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data ())
+                 (orgtrello-tests-hash-equal (orgtrello-hash-empty-hash)
                                              (orgtrello-controller-hmap-id-name '("CANCELLED" "FAILED" "DONE" "TODO")
                                                                                 '()))))
   (should (equal t
-                 (orgtrello-tests-hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data ())
+                 (orgtrello-tests-hash-equal (orgtrello-hash-empty-hash)
                                              (orgtrello-controller-hmap-id-name '()
                                                                                 '(("board-name" . "some board"))))))
   (should (equal t
-                 (orgtrello-tests-hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data ())
+                 (orgtrello-tests-hash-equal (orgtrello-hash-empty-hash)
                                              (orgtrello-controller-hmap-id-name '()
                                                                                 '())))))
 

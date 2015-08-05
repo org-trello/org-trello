@@ -1,6 +1,18 @@
 (require 'ert)
 (require 'el-mock)
 
+(defsubst hash-table-keys (hash-table)
+  "Return a list of keys in HASH-TABLE."
+  (let ((keys '()))
+    (maphash (lambda (k _v) (push k keys)) hash-table)
+    keys))
+
+(defsubst hash-table-values (hash-table)
+  "Return a list of values in HASH-TABLE."
+  (let ((values '()))
+    (maphash (lambda (_k v) (push v values)) hash-table)
+    values))
+
 (defun orgtrello-tests-hash-equal (hash1 hash2)
   "Compare two hash tables to see whether they are equal."
   (and (= (hash-table-count hash1) (hash-table-count hash2))
@@ -18,8 +30,7 @@
                                       (orgtrello-hash-make-transpose-properties `((:name . "some other name") (:keyword . "TODO"))))))
 
 (ert-deftest test-orgtrello-hash-empty-hash ()
-  (should (orgtrello-tests-hash-equal #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data ())
-                                      (orgtrello-hash-empty-hash))))
+  (should (eq 0 (hash-table-count (orgtrello-hash-empty-hash)))))
 
 (defun org-trello-mode-test ()
   "Trigger org-trello-mode but shaped for the tests (without hooks)."
