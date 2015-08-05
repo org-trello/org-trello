@@ -730,5 +730,5 @@ some description
                   (mock (orgtrello-controller--choose-account '(:account0 :account1)) => :account0)
                   (orgtrello-controller-set-account)))))
 
-(provide 'org-trello-controller-tests)
-;;; org-trello-controller-tests.el ends here
+(provide 'org-trello-controller-test)
+;;; org-trello-controller-test.el ends here

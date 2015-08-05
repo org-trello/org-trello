@@ -304,5 +304,5 @@ hello"
                                                    0))))
 
 
-(provide 'org-trello-entity-tests)
-;;; org-trello-cbx-tests.el ends here
+(provide 'org-trello-entity-test)
+;;; org-trello-entity-test.el ends here

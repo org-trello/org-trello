@@ -698,5 +698,5 @@
                                                        :checked "complete"))))
              (orgtrello-data-to-org-trello-item trello-item)))))
 
-(provide 'org-trello-data-tests)
-;;; org-trello-data-tests.el ends here
+(provide 'org-trello-data-test)
+;;; org-trello-data-test.el ends here

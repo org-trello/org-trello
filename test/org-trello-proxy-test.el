@@ -31,5 +31,5 @@
   (should (string= "a," (orgtrello-proxy--tags-to-labels "a:")))
   (should (string= ""  (orgtrello-proxy--tags-to-labels nil))))
 
-(provide 'org-trello-proxy-tests)
-;;; org-trello-proxy-tests.el ends here
+(provide 'org-trello-proxy-test)
+;;; org-trello-proxy-test.el ends here

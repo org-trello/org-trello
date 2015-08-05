@@ -33,5 +33,5 @@
                  (orgtrello-hash-values (orgtrello-hash-make-properties `(("key0" . "val0") ("key1" . "val1") ("key2" . "val2"))))))
   (should-not (orgtrello-hash-keys (orgtrello-hash-empty-hash))))
 
-(provide 'org-trello-hash-tests)
-;;; org-trello-hash-tests.el ends here
+(provide 'org-trello-hash-test)
+;;; org-trello-hash-test.el ends here

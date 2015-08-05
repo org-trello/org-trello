@@ -18,5 +18,5 @@
   (should (equal "  "  (orgtrello-utils-space 2)))
   (should (equal "   " (orgtrello-utils-space 3))))
 
-(provide 'org-trello-utils-tests)
-;;; org-trello-utils-tests.el ends here
+(provide 'org-trello-utils-test)
+;;; org-trello-utils-test.el ends here

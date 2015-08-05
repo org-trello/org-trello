@@ -25,22 +25,21 @@
 (require 'load-org-trello)
 
 (defvar orgtrello-test--namespaces '() "Org-trello test namespaces for development purposes.")
-(setq orgtrello-test--namespaces '("test/utilities-tests.el"
-                                   "test/org-trello-tests.el"
-                                   "test/org-trello-setup-tests.el"
-                                   "test/org-trello-action-tests.el"
-                                   "test/org-trello-api-tests.el"
-                                   "test/org-trello-backend-tests.el"
-                                   "test/org-trello-entity-tests.el"
-                                   "test/org-trello-entity-tests.el"
-                                   "test/org-trello-cbx-tests.el"
-                                   "test/org-trello-buffer-tests.el"
-                                   "test/org-trello-controller-tests.el"
-                                   "test/org-trello-data-tests.el"
-                                   "test/org-trello-hash-tests.el"
-                                   "test/org-trello-proxy-tests.el"
-                                   "test/org-trello-query-tests.el"
-                                   "test/org-trello-utils-tests.el"))
+(setq orgtrello-test--namespaces '("test/utilities-test.el"
+                                   "test/org-trello-setup-test.el"
+                                   "test/org-trello-action-test.el"
+                                   "test/org-trello-api-test.el"
+                                   "test/org-trello-backend-test.el"
+                                   "test/org-trello-entity-test.el"
+                                   "test/org-trello-entity-test.el"
+                                   "test/org-trello-cbx-test.el"
+                                   "test/org-trello-buffer-test.el"
+                                   "test/org-trello-controller-test.el"
+                                   "test/org-trello-data-test.el"
+                                   "test/org-trello-hash-test.el"
+                                   "test/org-trello-proxy-test.el"
+                                   "test/org-trello-query-test.el"
+                                   "test/org-trello-utils-test.el"))
 
 (defun orgtrello-test-load-namespaces ()
   "Load the org-trello namespaces."
@@ -75,16 +74,16 @@
 (define-key emacs-lisp-mode-map (kbd "C-c o c t") 'convert-expectations-to-ert-deftest)
 (define-key emacs-lisp-mode-map (kbd "C-c o c e") 'convert-expect-to-should-equal)
 
-(require 'org-trello-action-tests)
-(require 'org-trello-api-tests)
-(require 'org-trello-backend-tests)
-(require 'org-trello-buffer-tests)
-(require 'org-trello-cbx-tests)
-(require 'org-trello-controller-tests)
-(require 'org-trello-data-tests)
-(require 'org-trello-hash-tests)
-(require 'org-trello-tests)
-(require 'org-trello-proxy-tests)
+(require 'org-trello-action-test)
+(require 'org-trello-api-test)
+(require 'org-trello-backend-test)
+(require 'org-trello-buffer-test)
+(require 'org-trello-cbx-test)
+(require 'org-trello-controller-test)
+(require 'org-trello-data-test)
+(require 'org-trello-hash-test)
+(require 'org-trello-setup-test)
+(require 'org-trello-proxy-test)
 
 (provide 'load-org-trello-tests)
 ;;; load-org-trello-tests ends here

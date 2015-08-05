@@ -128,5 +128,5 @@
                    (mock (orgtrello-action-controls-or-actions-then-do :control-or-action-fns :fn-to-execute 'no-log) => :some-result)
                    (orgtrello-action-msg-controls-or-actions-then-do "some-msg" :control-or-action-fns :fn-to-execute 'no-log)))))
 
-(provide 'org-trello-action-tests)
-;;; org-trello-action-tests.el ends here
+(provide 'org-trello-action-test)
+;;; org-trello-action-test.el ends here

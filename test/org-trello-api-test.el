@@ -298,5 +298,5 @@
   (should (equal "/cards/:card-id/actions/:comment-id/comments" (gethash :uri    (orgtrello-api-update-card-comment :card-id :comment-id :comment-text))))
   (should (equal '(("text" . :comment-text))                    (gethash :params (orgtrello-api-update-card-comment :card-id :comment-id :comment-text)))))
 
-(provide 'org-trello-api-tests)
-;;; org-trello-api-tests.el ends here
+(provide 'org-trello-api-test)
+;;; org-trello-api-test.el ends here

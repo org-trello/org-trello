@@ -180,5 +180,5 @@
   (should (equal "{\"orgtrello-checksum\":\"abc\",\"orgtrello-id\":\"123\"}"
                  (orgtrello-cbx--serialize-hashmap (orgtrello-hash-make-properties '(("orgtrello-id" . "123") ("orgtrello-checksum" . "abc")))))))
 
-(provide 'org-trello-cbx-tests)
-;;; org-trello-cbx-tests.el ends here
+(provide 'org-trello-cbx-test)
+;;; org-trello-cbx-test.el ends here

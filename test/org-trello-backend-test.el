@@ -1,4 +1,4 @@
 (require 'org-trello-backend)
 
-(provide 'org-trello-backend-tests)
-;;; org-trello-backend-tests.el ends here
+(provide 'org-trello-backend-test)
+;;; org-trello-backend-test.el ends here

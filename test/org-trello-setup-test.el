@@ -33,3 +33,6 @@ C-c z h - M-x org-trello-help-describing-bindings - This help message."
 
 (ert-deftest test-orgtrello-setup-startup-message ()
   (should (equal "org-trello-ot is on! To begin with, hit C-c o h or M-x 'org-trello-help-describing-bindings" (orgtrello-setup-startup-message "C-c o"))))
+
+(provide 'org-trello-setup-test)
+;;; org-trello-setup-test.el ends here

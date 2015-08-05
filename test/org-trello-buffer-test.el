@@ -2250,5 +2250,5 @@ generates another checksum
   (should (string= "  \n  a\n  b\n  c\n  "
                    (orgtrello-buffer--prepare-comment "\na\nb\nc\n"))))
 
-(provide 'org-trello-buffer-tests)
-;;; org-trello-buffer-tests.el ends here
+(provide 'org-trello-buffer-test)
+;;; org-trello-buffer-test.el ends here

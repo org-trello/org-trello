@@ -46,5 +46,5 @@
   (should (equal 'orgtrello-query--post-or-put (orgtrello-query--dispatch-http-query "PUT")))
   (should (equal 'orgtrello-query--delete      (orgtrello-query--dispatch-http-query "DELETE"))))
 
-(provide 'org-trello-query-tests)
-;;; org-trello-query-tests.el ends here
+(provide 'org-trello-query-test)
+;;; org-trello-query-test.el ends here

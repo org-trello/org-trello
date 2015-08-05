@@ -71,5 +71,5 @@
      (org-mode)
      ,body-test))
 
-(provide 'utilities-tests)
-;;; utilities-tests.el ends here
+(provide 'utilities-test)
+;;; utilities-test.el ends here
