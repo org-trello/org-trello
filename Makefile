@@ -26,10 +26,7 @@ install:
 	cask install
 
 test: clean
-	cask exec $(EMACS) --batch \
-			-l ert \
-			-l ./load-org-trello-tests.el \
-			-f ert-run-tests-batch-and-exit
+	cask exec ert-runner
 
 test-log:
 	less $(LOG_TEST_FILE)
@@ -66,3 +63,6 @@ install-cask:
 
 emacs-install-clean: package
 	~/bin/emacs/emacs-install-clean.sh ./$(ARCHIVE)
+
+respect-convention:
+	./contrib/respect-elisp-conventions.sh

@@ -4,7 +4,7 @@
 
 ;; Author: Antoine R. Dumont <eniotna.t AT gmail.com>
 ;; Maintainer: Antoine R. Dumont <eniotna.t AT gmail.com>
-;; Version: 0.7.1
+;; Version: 0.7.2
 ;; Package-Requires: ((emacs "24") (dash "2.11.0") (dash-functional "2.11.0") (s "1.9.0") (deferred "0.3.2") (request-deferred "0.2.0"))
 ;; Keywords: org-mode trello sync org-trello
 ;; URL: https://github.com/org-trello/org-trello
@@ -89,7 +89,7 @@
 ;; Enjoy!
 ;;
 ;; More informations: https://org-trello.github.io
-;; Issue tracker: https://github.com/org-trello/org-trello/issues
+;; Issue tracker: https://github.com/org-trello/org-trello-issues
 
 ;;; Code:
 
@@ -103,7 +103,7 @@ Please consider upgrading Emacs." emacs-version) "Error message when installing 
 (require 'json)
 (require 'parse-time)
 
-(defconst org-trello--version "0.7.1" "Current org-trello version installed.")
+(defconst org-trello--version "0.7.2" "Current org-trello version installed.")
 
 
 
@@ -115,7 +115,7 @@ Please consider upgrading Emacs." emacs-version) "Error message when installing 
 (require 'org-trello-controller)
 (require 'org-trello-buffer)
 
-(org-trello/require-cl)
+(org-trello-require-cl)
 
 
 
@@ -123,19 +123,19 @@ Please consider upgrading Emacs." emacs-version) "Error message when installing 
 (defun org-trello-version ()
   "Org-trello version."
   (interactive)
-  (orgtrello-log/msg orgtrello-log-no-log "version: %s" org-trello--version))
+  (orgtrello-log-msg orgtrello-log-no-log "version: %s" org-trello--version))
 
 (defalias 'org-trello/version 'org-trello-version)
 
 
 
-(defun org-trello/apply-deferred (computation)
+(defun org-trello-apply-deferred (computation)
   "Apply the deferred COMPUTATION."
   (with-current-buffer (current-buffer)
     (save-excursion
       (apply (car computation) (cdr computation)))))
 
-(defun org-trello/apply (comp &optional current-buffer-to-save reload-org-setup nolog-p)
+(defun org-trello-apply (comp &optional current-buffer-to-save reload-org-setup nolog-p)
   "Apply org-trello computation COMP.
 When CURRENT-BUFFER-TO-SAVE (buffer name) is provided, save such buffer.
 When RELOAD-ORG-SETUP is provided, reload the org setup.
@@ -150,34 +150,34 @@ when NOLOG-P is specified, no output log."
                              (with-local-quit
                                (apply (car computation) (cdr computation))))))
       (deferred:nextc it (lambda ()
-                           (when buffer-to-save (orgtrello-buffer/save-buffer buffer-to-save))
-                           (when reload-setup (orgtrello-action/reload-setup!))
-                           (unless nolog-flag (orgtrello-log/msg orgtrello-log-info "%s - Done!" prefix-log-message))))
-      (deferred:error it (lambda (x) (orgtrello-log/msg orgtrello-log-error "Main apply function - Problem during execution - '%s'!" x))))))
+                           (when buffer-to-save (orgtrello-buffer-save-buffer buffer-to-save))
+                           (when reload-setup (orgtrello-action-reload-setup))
+                           (unless nolog-flag (orgtrello-log-msg orgtrello-log-info "%s - Done!" prefix-log-message))))
+      (deferred:error it (lambda (x) (orgtrello-log-msg orgtrello-log-error "Main apply function - Problem during execution - '%s'!" x))))))
 
-(defun org-trello/log-strict-checks-and-do (action-label action-fn &optional with-save-flag)
+(defun org-trello-log-strict-checks-and-do (action-label action-fn &optional with-save-flag)
   "Given an ACTION-LABEL and an ACTION-FN, execute sync action.
 If WITH-SAVE-FLAG is set, will do a buffer save and reload the org setup."
-  (orgtrello-action/msg-controls-or-actions-then-do
+  (orgtrello-action-msg-controls-or-actions-then-do
    action-label
-   '(orgtrello-controller/migrate-user-setup!
-     orgtrello-controller/set-account!
-     orgtrello-controller/load-keys!
-     orgtrello-controller/control-keys!
-     orgtrello-controller/setup-properties!
-     orgtrello-controller/control-properties!)
+   '(orgtrello-controller-migrate-user-setup
+     orgtrello-controller-set-account
+     orgtrello-controller-load-keys
+     orgtrello-controller-control-keys
+     orgtrello-controller-setup-properties
+     orgtrello-controller-control-properties)
    action-fn))
 
-(defun org-trello/log-light-checks-and-do (action-label action-fn &optional no-check-flag)
+(defun org-trello-log-light-checks-and-do (action-label action-fn &optional no-check-flag)
   "Given an ACTION-LABEL and an ACTION-FN, execute sync action.
 If NO-CHECK-FLAG is set, no controls are done."
-  (orgtrello-action/msg-controls-or-actions-then-do
+  (orgtrello-action-msg-controls-or-actions-then-do
    action-label
-   (if no-check-flag nil '(orgtrello-controller/migrate-user-setup!
-                           orgtrello-controller/set-account!
-                           orgtrello-controller/load-keys!
-                           orgtrello-controller/control-keys!
-                           orgtrello-controller/setup-properties!))
+   (if no-check-flag nil '(orgtrello-controller-migrate-user-setup
+                           orgtrello-controller-set-account
+                           orgtrello-controller-load-keys
+                           orgtrello-controller-control-keys
+                           orgtrello-controller-setup-properties))
    action-fn))
 
 ;;;###autoload
@@ -185,7 +185,7 @@ If NO-CHECK-FLAG is set, no controls are done."
   "Control first, then if ok, add a comment to the current card."
   (interactive)
   (deferred:clear-queue)
-  (orgtrello-log/msg orgtrello-log-info "Cancel actions done!"))
+  (orgtrello-log-msg orgtrello-log-info "Cancel actions done!"))
 
 (defalias 'org-trello/abort-sync 'org-trello-abort-sync)
 
@@ -194,10 +194,10 @@ If NO-CHECK-FLAG is set, no controls are done."
   "Control first, then if ok, add a comment to the current card.
 When MODIFIER is set, this will delete the current card's comments."
   (interactive "P")
-  (org-trello/apply (cons 'org-trello/log-strict-checks-and-do
+  (org-trello-apply (cons 'org-trello-log-strict-checks-and-do
                           (if modifier
-                              '("Remove current comment at point" orgtrello-controller/do-delete-card-comment!)
-                            '("Add card comment" orgtrello-controller/do-add-card-comment!)))))
+                              '("Remove current comment at point" orgtrello-controller-do-delete-card-comment)
+                            '("Add card comment" orgtrello-controller-do-add-card-comment)))))
 
 (defalias 'org-trello/add-card-comment 'org-trello-add-card-comment)
 
@@ -206,7 +206,7 @@ When MODIFIER is set, this will delete the current card's comments."
   "Control first, then if ok, delete the comment at point.
 This will only work if you are the owner of the comment."
   (interactive)
-  (org-trello/apply-deferred '(org-trello/log-strict-checks-and-do "Remove current comment at point" orgtrello-controller/do-delete-card-comment!)))
+  (org-trello-apply-deferred '(org-trello-log-strict-checks-and-do "Remove current comment at point" orgtrello-controller-do-delete-card-comment)))
 
 (defalias 'org-trello/delete-card-comment 'org-trello-delete-card-comment)
 
@@ -214,7 +214,7 @@ This will only work if you are the owner of the comment."
 (defun org-trello-show-board-labels ()
   "Control first, then if ok, show a simple buffer with the current board's labels."
   (interactive)
-  (org-trello/apply '(org-trello/log-strict-checks-and-do "Display current board's labels" orgtrello-controller/do-show-board-labels!)))
+  (org-trello-apply '(org-trello-log-strict-checks-and-do "Display current board's labels" orgtrello-controller-do-show-board-labels)))
 
 (defalias 'org-trello/show-board-labels 'org-trello-show-board-labels)
 
@@ -223,11 +223,11 @@ This will only work if you are the owner of the comment."
   "Execute the sync of an entity and its structure to trello.
 If MODIFIER is non nil, execute the sync entity and its structure from trello."
   (interactive "P")
-  (org-trello/apply-deferred
-   (cons 'org-trello/log-strict-checks-and-do
+  (org-trello-apply-deferred
+   (cons 'org-trello-log-strict-checks-and-do
          (if modifier
-             '("Request 'sync entity with structure from trello" orgtrello-controller/checks-then-sync-card-from-trello!)
-           '("Request 'sync entity with structure to trello" orgtrello-controller/checks-then-sync-card-to-trello!)))))
+             '("Request 'sync entity with structure from trello" orgtrello-controller-checks-then-sync-card-from-trello)
+           '("Request 'sync entity with structure to trello" orgtrello-controller-checks-then-sync-card-to-trello)))))
 
 (defalias 'org-trello/sync-card 'org-trello-sync-card)
 
@@ -236,10 +236,10 @@ If MODIFIER is non nil, execute the sync entity and its structure from trello."
   "Execute the sync of the card's comment at point.
 If MODIFIER is non nil, remove the comment at point."
   (interactive "P")
-  (org-trello/apply-deferred (cons 'org-trello/log-strict-checks-and-do
+  (org-trello-apply-deferred (cons 'org-trello-log-strict-checks-and-do
                                    (if modifier
-                                       '("Remove current comment at point" orgtrello-controller/do-delete-card-comment!)
-                                     '("Sync comment to trello" orgtrello-controller/do-sync-card-comment!)))))
+                                       '("Remove current comment at point" orgtrello-controller-do-delete-card-comment)
+                                     '("Sync comment to trello" orgtrello-controller-do-sync-card-comment)))))
 
 (defalias 'org-trello/sync-comment 'org-trello-sync-comment)
 
@@ -248,11 +248,11 @@ If MODIFIER is non nil, remove the comment at point."
   "Execute the sync of the entire buffer to trello.
 If MODIFIER is non nil, execute the sync of the entire buffer from trello."
   (interactive "P")
-  (org-trello/apply-deferred
-   (cons 'org-trello/log-strict-checks-and-do
+  (org-trello-apply-deferred
+   (cons 'org-trello-log-strict-checks-and-do
          (if modifier
-             '("Request 'sync org buffer from trello board'" orgtrello-controller/do-sync-buffer-from-trello!)
-           '("Request 'sync org buffer to trello board'" orgtrello-controller/do-sync-buffer-to-trello!)))))
+             '("Request 'sync org buffer from trello board'" orgtrello-controller-do-sync-buffer-from-trello)
+           '("Request 'sync org buffer to trello board'" orgtrello-controller-do-sync-buffer-to-trello)))))
 
 (defalias 'org-trello/sync-buffer 'org-trello-sync-buffer)
 
@@ -261,11 +261,11 @@ If MODIFIER is non nil, execute the sync of the entire buffer from trello."
   "Execute the entity removal from trello and the buffer.
 If MODIFIER is non nil, execute all entities removal from trello and buffer."
   (interactive "P")
-  (org-trello/apply-deferred
-   (cons 'org-trello/log-strict-checks-and-do
+  (org-trello-apply-deferred
+   (cons 'org-trello-log-strict-checks-and-do
          (if modifier
-             '("Delete all cards" orgtrello-controller/do-delete-entities)
-           '("Delete entity at point (card/checklist/item)" orgtrello-controller/checks-then-delete-simple)))))
+             '("Delete all cards" orgtrello-controller-do-delete-entities)
+           '("Delete entity at point (card/checklist/item)" orgtrello-controller-checks-then-delete-simple)))))
 
 (defalias 'org-trello/kill-entity 'org-trello-kill-entity)
 
@@ -273,7 +273,7 @@ If MODIFIER is non nil, execute all entities removal from trello and buffer."
 (defun org-trello-kill-cards ()
   "Execute all entities removal from trello and buffer."
   (interactive)
-  (org-trello/apply-deferred '(org-trello/log-strict-checks-and-do "Delete Cards" orgtrello-controller/do-delete-entities)))
+  (org-trello-apply-deferred '(org-trello-log-strict-checks-and-do "Delete Cards" orgtrello-controller-do-delete-entities)))
 
 (defalias 'org-trello/kill-cards 'org-trello-kill-cards)
 
@@ -281,7 +281,7 @@ If MODIFIER is non nil, execute all entities removal from trello and buffer."
 (defun org-trello-archive-card ()
   "Execute archive card at point."
   (interactive)
-  (org-trello/apply-deferred '(org-trello/log-strict-checks-and-do "Archive Card at point" orgtrello-controller/checks-and-do-archive-card)))
+  (org-trello-apply-deferred '(org-trello-log-strict-checks-and-do "Archive Card at point" orgtrello-controller-checks-and-do-archive-card)))
 
 (defalias 'org-trello/archive-card 'org-trello-archive-card)
 
@@ -289,7 +289,7 @@ If MODIFIER is non nil, execute all entities removal from trello and buffer."
 (defun org-trello-archive-cards ()
   "Execute archive all the DONE cards from buffer."
   (interactive)
-  (org-map-entries 'org-trello/archive-card "/DONE" 'file))
+  (org-map-entries 'org-trello-archive-card "/DONE" 'file))
 
 (defalias 'org-trello/archive-cards 'org-trello-archive-cards)
 
@@ -297,7 +297,7 @@ If MODIFIER is non nil, execute all entities removal from trello and buffer."
 (defun org-trello-install-key-and-token ()
   "No control, trigger the setup installation of the key and the read/write token."
   (interactive)
-  (orgtrello-controller/do-install-key-and-token))
+  (orgtrello-controller-do-install-key-and-token))
 
 (defalias 'org-trello/install-key-and-token 'org-trello-install-key-and-token)
 
@@ -305,7 +305,7 @@ If MODIFIER is non nil, execute all entities removal from trello and buffer."
 (defun org-trello-install-board-metadata ()
   "Control first, then if ok, trigger the setup installation of the trello board to sync with."
   (interactive)
-  (org-trello/apply-deferred '(org-trello/log-light-checks-and-do "Install boards and lists" orgtrello-controller/do-install-board-and-lists)))
+  (org-trello-apply-deferred '(org-trello-log-light-checks-and-do "Install boards and lists" orgtrello-controller-do-install-board-and-lists)))
 
 (defalias 'org-trello/install-board-metadata 'org-trello-install-board-metadata)
 
@@ -313,7 +313,7 @@ If MODIFIER is non nil, execute all entities removal from trello and buffer."
 (defun org-trello-update-board-metadata ()
   "Control first, then if ok, trigger the update of the informations about the board."
   (interactive)
-  (org-trello/apply-deferred '(org-trello/log-light-checks-and-do "Update board information" orgtrello-controller/do-update-board-metadata!)))
+  (org-trello-apply-deferred '(org-trello-log-light-checks-and-do "Update board information" orgtrello-controller-do-update-board-metadata)))
 
 (defalias 'org-trello/update-board-metadata 'org-trello-update-board-metadata)
 
@@ -322,10 +322,10 @@ If MODIFIER is non nil, execute all entities removal from trello and buffer."
   "Jump from current card to trello card in browser.
 If MODIFIER is not nil, jump from current card to board."
   (interactive "P")
-  (org-trello/apply (cons 'org-trello/log-strict-checks-and-do
+  (org-trello-apply (cons 'org-trello-log-strict-checks-and-do
                           (if modifier
-                              '("Jump to board" orgtrello-controller/jump-to-board!)
-                            '("Jump to card" orgtrello-controller/jump-to-card!)))))
+                              '("Jump to board" orgtrello-controller-jump-to-board)
+                            '("Jump to card" orgtrello-controller-jump-to-card)))))
 
 (defalias 'org-trello/jump-to-trello-card 'org-trello-jump-to-trello-card)
 
@@ -333,7 +333,7 @@ If MODIFIER is not nil, jump from current card to board."
 (defun org-trello-jump-to-trello-board ()
   "Jump to current trello board."
   (interactive)
-  (org-trello/apply '(org-trello/log-strict-checks-and-do "Jump to board" orgtrello-controller/jump-to-board!)))
+  (org-trello-apply '(org-trello-log-strict-checks-and-do "Jump to board" orgtrello-controller-jump-to-board)))
 
 (defalias 'org-trello/jump-to-trello-board 'org-trello-jump-to-trello-board)
 
@@ -341,7 +341,7 @@ If MODIFIER is not nil, jump from current card to board."
 (defun org-trello-create-board-and-install-metadata ()
   "Control first, then if ok, trigger the board creation."
   (interactive)
-  (org-trello/apply-deferred '(org-trello/log-light-checks-and-do "Create board and lists" orgtrello-controller/do-create-board-and-install-metadata)))
+  (org-trello-apply-deferred '(org-trello-log-light-checks-and-do "Create board and lists" orgtrello-controller-do-create-board-and-install-metadata)))
 
 (defalias 'org-trello/create-board-and-install-metadata 'org-trello-create-board-and-install-metadata)
 
@@ -350,10 +350,10 @@ If MODIFIER is not nil, jump from current card to board."
   "Assign oneself to the card.
 If MODIFIER is not nil, unassign oneself from the card."
   (interactive "P")
-  (org-trello/apply (cons 'org-trello/log-light-checks-and-do
+  (org-trello-apply (cons 'org-trello-log-light-checks-and-do
                           (if modifier
-                              '("Unassign me from card" orgtrello-controller/do-unassign-me)
-                            '("Assign myself to card" orgtrello-controller/do-assign-me)))
+                              '("Unassign me from card" orgtrello-controller-do-unassign-me)
+                            '("Assign myself to card" orgtrello-controller-do-assign-me)))
                     (current-buffer)))
 
 (defalias 'org-trello/assign-me 'org-trello-assign-me)
@@ -362,15 +362,15 @@ If MODIFIER is not nil, unassign oneself from the card."
 (defun org-trello-check-setup ()
   "Check the current setup."
   (interactive)
-  (org-trello/apply '(org-trello/log-strict-checks-and-do "Checking setup." orgtrello-controller/check-trello-connection!) nil nil 'no-log))
+  (org-trello-apply '(org-trello-log-strict-checks-and-do "Checking setup." orgtrello-controller-check-trello-connection) nil nil 'no-log))
 
 (defalias 'org-trello/check-setup 'org-trello-check-setup)
 
 ;;;###autoload
-(defun org-trello/delete-setup ()
+(defun org-trello-delete-setup ()
   "Delete the current setup."
   (interactive)
-  (org-trello/apply '(org-trello/log-strict-checks-and-do "Delete current org-trello setup" orgtrello-controller/delete-setup!) (current-buffer)))
+  (org-trello-apply '(org-trello-log-strict-checks-and-do "Delete current org-trello setup" orgtrello-controller-delete-setup) (current-buffer)))
 
 (defalias 'org-trello/delete-setup 'org-trello-delete-setup)
 
@@ -378,7 +378,7 @@ If MODIFIER is not nil, unassign oneself from the card."
 (defun org-trello-help-describing-bindings ()
   "A simple message to describe the standard bindings used."
   (interactive)
-  (org-trello/apply `(message ,(orgtrello-setup/help-describing-bindings-template org-trello-current-prefix-keybinding org-trello-interactive-command-binding-couples)) nil nil 'no-log))
+  (org-trello-apply `(message ,(orgtrello-setup-help-describing-bindings-template org-trello-current-prefix-keybinding org-trello-interactive-command-binding-couples)) nil nil 'no-log))
 
 (defalias 'org-trello/help-describing-bindings 'org-trello-help-describing-bindings)
 
@@ -405,8 +405,8 @@ If MODIFIER is not nil, unassign oneself from the card."
 When OPEN-URL is filled, with universal argument (`C-u') is used,
 opens new issue in org-trello's github tracker."
   (interactive "P")
-  (when open-url (browse-url "https://github.com/org-trello/org-trello/issues/new"))
-  (orgtrello-log/msg orgtrello-log-info (org-trello--bug-report)))
+  (when open-url (browse-url "https://github.com/org-trello/org-trello-issues/new"))
+  (orgtrello-log-msg orgtrello-log-info (org-trello--bug-report)))
 
 
 
@@ -421,32 +421,32 @@ opens new issue in org-trello's github tracker."
   :type 'hook
   :group 'org-trello)
 
-(add-hook 'org-trello-mode-on-hook 'orgtrello-controller/mode-on-hook-fn)
+(add-hook 'org-trello-mode-on-hook 'orgtrello-controller-mode-on-hook-fn)
 
 (add-hook 'org-trello-mode-on-hook (lambda ()
                                      ;; install the bindings
-                                     (orgtrello-setup/install-local-prefix-mode-keybinding! org-trello-current-prefix-keybinding)
+                                     (orgtrello-setup-install-local-prefix-mode-keybinding org-trello-current-prefix-keybinding)
                                      ;; Overwrite the org-mode-map
-                                     (define-key org-trello-mode-map [remap org-end-of-line] 'orgtrello-buffer/end-of-line!)
-                                     (define-key org-trello-mode-map [remap org-return] 'orgtrello-buffer/org-return!)
-                                     (define-key org-trello-mode-map [remap org-ctrl-c-ret] 'orgtrello-buffer/org-ctrl-c-ret!)
-                                     (define-key org-trello-mode-map [remap org-archive-subtree] 'org-trello/archive-card)
+                                     (define-key org-trello-mode-map [remap org-end-of-line] 'orgtrello-buffer-end-of-line)
+                                     (define-key org-trello-mode-map [remap org-return] 'orgtrello-buffer-org-return)
+                                     (define-key org-trello-mode-map [remap org-ctrl-c-ret] 'orgtrello-buffer-org-ctrl-c-ret)
+                                     (define-key org-trello-mode-map [remap org-archive-subtree] 'org-trello-archive-card)
                                      ;; a little message in the minibuffer to notify the user
-                                     (orgtrello-log/msg orgtrello-log-no-log (orgtrello-setup/startup-message org-trello-current-prefix-keybinding)))
+                                     (orgtrello-log-msg orgtrello-log-no-log (orgtrello-setup-startup-message org-trello-current-prefix-keybinding)))
           'do-append)
 
-(add-hook 'org-trello-mode-off-hook 'orgtrello-controller/mode-off-hook-fn)
+(add-hook 'org-trello-mode-off-hook 'orgtrello-controller-mode-off-hook-fn)
 
 (add-hook 'org-trello-mode-off-hook (lambda ()
                                       ;; remove the bindings when org-trello mode off
-                                      (orgtrello-setup/remove-local-prefix-mode-keybinding! org-trello-current-prefix-keybinding)
+                                      (orgtrello-setup-remove-local-prefix-mode-keybinding org-trello-current-prefix-keybinding)
                                       ;; remove mapping override
                                       (define-key org-trello-mode-map [remap org-end-of-line] nil)
                                       (define-key org-trello-mode-map [remap org-return] nil)
                                       (define-key org-trello-mode-map [remap org-ctrl-c-ret] nil)
                                       (define-key org-trello-mode-map [remap org-archive-subtree] nil)
                                       ;; a little message in the minibuffer to notify the user
-                                      (orgtrello-log/msg orgtrello-log-no-log "org-trello/ot is off!"))
+                                      (orgtrello-log-msg orgtrello-log-no-log "org-trello-ot is off!"))
           'do-append)
 
 (defcustom org-trello-files nil
@@ -459,7 +459,7 @@ opens new issue in org-trello's github tracker."
                            (when (-any? (lambda (name) (string= (expand-file-name name) buffer-file-name)) org-trello-files)
                              (org-trello-mode))))
 
-(orgtrello-log/msg orgtrello-log-debug "org-trello loaded!")
+(orgtrello-log-msg orgtrello-log-debug "org-trello loaded!")
 
 (provide 'org-trello)
 ;;; org-trello.el ends here

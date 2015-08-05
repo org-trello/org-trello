@@ -1,3 +1,11 @@
+# 0.7.2
+
+- [X] Update version
+- [X] Close #276 - Markdown rendering in comments
+- [X] Add test coverage
+- [X] [internal] Full respect elisp convention
+- [X] Release notes
+
 # 0.7.1
 
 - [X] Update version

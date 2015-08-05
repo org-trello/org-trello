@@ -1,24 +1,23 @@
 README for the org-trello developer
 ===================================
 
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-**Table of Contents**  *generated with [DocToc](http://doctoc.herokuapp.com/)*
+<!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-generate-toc again -->
+**Table of Contents**
 
 - [Sources](#sources)
-	- [Conventions](#conventions)
-		- [Rules](#rules)
-		- [Exception](#exception)
-	- [Namespaces](#namespaces)
-	- [Loading](#loading)
+    - [Conventions](#conventions)
+        - [Rules](#rules)
+        - [Exception](#exception)
+    - [Namespaces](#namespaces)
+    - [Loading](#loading)
 - [Makefile](#makefile)
-	- [Package](#package)
-	- [Test](#test)
-	- [Install](#install)
-	- [Full install testing](#full-install-testing)
-	- [Release](#release)
+    - [Package](#package)
+    - [Test](#test)
+    - [Install](#install)
+    - [Full install testing](#full-install-testing)
+    - [Release](#release)
 
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+<!-- markdown-toc end -->
 
 This will describe org-trello's current state of affairs.
 
@@ -37,20 +36,17 @@ As there exists no namespace in emacs-lisp, I use:
 
 The conventions enforced in org-trello:
 
-- functions are prefixed with `orgtrello-<NAMESPACE-FILENAME>/<FUNCTION-NAME>`
+- functions are prefixed with `orgtrello-<NAMESPACE-FILENAME>-<FUNCTION-NAME>`
   - `<NAMESPACE-FILENAME>` is the filename without its path nor its extension. For example, `src/buffer.el` renders `buffer`
-  - `<FUNCTION-NAME>` is an alphanumeric symbol with `-` as separator. For example, `orgtrello-api/add-board` is a public function which does create a request to add a board.
-- private functions are prefixed with `--`. For example, `orgtrello-api/--deal-with-optional-values` which is a private utility function to help in creating api request.
-- side-effecty (interacts with the world, e.g read from user, read/write from/to buffer, etc...) functions are suffixed with `!`. For example, `orgtrello-entity/back-to-card!` which does move the caret to the beginning of the card in the org buffer.
-- predicate functions are suffixed by `-p`. For example, `orgtrello-data/entity-card-p` which checks if the parameter entity is a card or not.
+  - `<FUNCTION-NAME>` is an alphanumeric symbol with `-` as separator. For example, `orgtrello-api-add-board` is a public function which does create a request to add a board.
+- private functions are prefixed with `--`. For example, `orgtrello-api--deal-with-optional-values` which is a private utility function to help in creating api request.
+- predicate functions are suffixed by `-p`. For example, `orgtrello-data-entity-card-p` which checks if the parameter entity is a card or not.
 
 For example:
-- in `org-trello-buffer.el`, all pure public functions are named `orgtrello-buffer/some-fn-name`
-- in `org-trello-input.el`, all pure private functions are named `orgtrello-input/--some-private-fn`
-- in `org-trello-cbx.el`, all public side-effecty functions are named `orgtrello-cbx/some-fn-name!`
+- in `org-trello-buffer.el`, all pure public functions are named `orgtrello-buffer-some-fn-name`
+- in `org-trello-input.el`, all pure private functions are named `orgtrello-input--some-private-fn`
 
-*Note* I did not enforce every [emacs-lisp conventions](https://www.gnu.org/software/emacs/manual/html_node/elisp/Coding-Conventions.html).
-But [an issue is open about it](https://github.com/org-trello/org-trello/issues/238).
+*Note* I adapted the code to abide by [emacs-lisp's conventions](https://www.gnu.org/software/emacs/manual/html_node/elisp/Coding-Conventions.html).
 
 ### Exception
 
@@ -58,7 +54,7 @@ But [an issue is open about it](https://github.com/org-trello/org-trello/issues/
 - interactive commands used throughout all of org-trello
 - minor mode
 
-Every exposed interactive command is named `org-trello/fn-name`.
+Every exposed interactive command is named `org-trello-fn-name`.
 
 ## Namespaces
 
@@ -84,7 +80,9 @@ org-trello.el                | Main information about org-trello (version, licen
 
 ## Loading
 
-Use the [load-org-trello.el](./load-org-trello.el) file to load org-trello for development purposes and keep the emacs way of browsing source code (`M-.`, `M-,`).
+Use the [load-org-trello.el](./load-org-trello.el) file to load org-trello for
+development purposes and keep the emacs way of browsing source code
+(`M-.`, `M-,`).
 
 Open the file and `M-x eval-buffer`.
 
@@ -109,10 +107,6 @@ make package
 make test
 ```
 
-This will trigger:
-- the loading of the source code /org-trello*.el/from the root folder.
-- trigger the **launch-tests.el** script that runs the unit/integration tests (stored in **test/** folder)
-
 ## Install
 
 To test that the package, once created, can be installed (using the repository to fetch the dependencies).
@@ -130,7 +124,8 @@ These are the targets used by the CI (cf. [.travis.yml](./.travis.yml))
 
 ## Full install testing
 
-As we deploy in melpa, we can ensure that once delivered, the installation is ok using those targets.
+As we deploy in melpa, we can ensure that once delivered, the installation is ok
+using those targets.
 
 ```sh
 make install-package-from-melpa

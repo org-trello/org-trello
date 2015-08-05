@@ -2,7 +2,10 @@
 ;;; Commentary:
 ;;; Code:
 
-(add-to-list 'load-path (expand-file-name "."))
+(defvar org-trello-home (or (getenv "ORGTRELLO_HOME") (expand-file-name "."))
+  "Org-trello home.")
+
+(add-to-list 'load-path org-trello-home)
 
 (defvar org-trello--namespaces '() "Org-trello namespaces for development purposes.")
 (setq org-trello--namespaces '("org-trello-log.el"
@@ -22,19 +25,19 @@
                                "org-trello-utils.el"
                                "org-trello.el"))
 
-(defun org-trello/dev-load-namespaces! ()
+(defun org-trello-dev-load-namespaces ()
   "Load the org-trello namespaces."
   (interactive)
   ;; recompile code
-  (mapc (lambda (it) (load-with-code-conversion it it)) org-trello--namespaces)
+  (mapc (lambda (it) (load-with-code-conversion (concat org-trello-home "/" it) it)) org-trello--namespaces)
   (require 'org-trello)
   ;; reload bindings
   (custom-set-variables
    '(org-trello-current-prefix-keybinding "C-c z")
    '(orgtrello-log-level orgtrello-log-info)) ;; orgtrello-log-trace
-  (orgtrello-log/msg orgtrello-log-info "Code loaded!"))
+  (orgtrello-log-msg orgtrello-log-info "Code loaded!"))
 
-(defun org-trello/dev-find-unused-definitions! ()
+(defun org-trello-dev-find-unused-definitions ()
   "Find unused definitions."
   (interactive)
   (let ((filename "/tmp/org-trello-find-unused-definitions.el"))
@@ -47,28 +50,15 @@
       (write-file filename)
       (call-interactively 'emr-el-find-unused-definitions))))
 
-(org-trello/dev-load-namespaces!)
+(org-trello-dev-load-namespaces)
 (message "org-trello loaded!")
 
 (require 'org-trello)
 
-(define-key emacs-lisp-mode-map (kbd "C-c o r") 'org-trello/dev-load-namespaces!)
-(define-key org-trello-mode-map (kbd "C-c o r") 'org-trello/dev-load-namespaces!)
-(define-key emacs-lisp-mode-map (kbd "C-c o f") 'org-trello/dev-find-unused-definitions!)
-(define-key org-trello-mode-map (kbd "C-c o f") 'org-trello/dev-find-unused-definitions!)
-
-;; dev utils functions
-
-(defun trace-functions (fns)
-  "Trace functions FNS."
-  (mapc 'trace-function fns))
-
-(defun untrace-functions (fns)
-  "Trace functions FNS."
-  (mapc 'untrace-function fns))
-
-;; (trace-functions '(orgtrello-data/parse-data))
-;; (untrace-functions '(orgtrello-data/parse-data))
+(define-key emacs-lisp-mode-map (kbd "C-c o r") 'org-trello-dev-load-namespaces)
+(define-key org-trello-mode-map (kbd "C-c o r") 'org-trello-dev-load-namespaces)
+(define-key emacs-lisp-mode-map (kbd "C-c o f") 'org-trello-dev-find-unused-definitions)
+(define-key org-trello-mode-map (kbd "C-c o f") 'org-trello-dev-find-unused-definitions)
 
 (provide 'load-org-trello)
 ;;; load-org-trello.el ends here
