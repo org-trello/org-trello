@@ -125,7 +125,7 @@ Please consider upgrading Emacs." emacs-version) "Error message when installing 
   (interactive)
   (orgtrello-log-msg orgtrello-log-no-log "version: %s" org-trello--version))
 
-(defalias 'org-trello-version 'org-trello-version)
+(defalias 'org-trello/version 'org-trello-version)
 
 
 
@@ -187,7 +187,7 @@ If NO-CHECK-FLAG is set, no controls are done."
   (deferred:clear-queue)
   (orgtrello-log-msg orgtrello-log-info "Cancel actions done!"))
 
-(defalias 'org-trello-abort-sync 'org-trello-abort-sync)
+(defalias 'org-trello/abort-sync 'org-trello-abort-sync)
 
 ;;;###autoload
 (defun org-trello-add-card-comment (&optional modifier)
@@ -199,7 +199,7 @@ When MODIFIER is set, this will delete the current card's comments."
                               '("Remove current comment at point" orgtrello-controller-do-delete-card-comment)
                             '("Add card comment" orgtrello-controller-do-add-card-comment)))))
 
-(defalias 'org-trello-add-card-comment 'org-trello-add-card-comment)
+(defalias 'org-trello/add-card-comment 'org-trello-add-card-comment)
 
 ;;;###autoload
 (defun org-trello-delete-card-comment ()
@@ -208,7 +208,7 @@ This will only work if you are the owner of the comment."
   (interactive)
   (org-trello-apply-deferred '(org-trello-log-strict-checks-and-do "Remove current comment at point" orgtrello-controller-do-delete-card-comment)))
 
-(defalias 'org-trello-delete-card-comment 'org-trello-delete-card-comment)
+(defalias 'org-trello/delete-card-comment 'org-trello-delete-card-comment)
 
 ;;;###autoload
 (defun org-trello-show-board-labels ()
@@ -216,7 +216,7 @@ This will only work if you are the owner of the comment."
   (interactive)
   (org-trello-apply '(org-trello-log-strict-checks-and-do "Display current board's labels" orgtrello-controller-do-show-board-labels)))
 
-(defalias 'org-trello-show-board-labels 'org-trello-show-board-labels)
+(defalias 'org-trello/show-board-labels 'org-trello-show-board-labels)
 
 ;;;###autoload
 (defun org-trello-sync-card (&optional modifier)
@@ -229,7 +229,7 @@ If MODIFIER is non nil, execute the sync entity and its structure from trello."
              '("Request 'sync entity with structure from trello" orgtrello-controller-checks-then-sync-card-from-trello)
            '("Request 'sync entity with structure to trello" orgtrello-controller-checks-then-sync-card-to-trello)))))
 
-(defalias 'org-trello-sync-card 'org-trello-sync-card)
+(defalias 'org-trello/sync-card 'org-trello-sync-card)
 
 ;;;###autoload
 (defun org-trello-sync-comment (&optional modifier)
@@ -241,7 +241,7 @@ If MODIFIER is non nil, remove the comment at point."
                                        '("Remove current comment at point" orgtrello-controller-do-delete-card-comment)
                                      '("Sync comment to trello" orgtrello-controller-do-sync-card-comment)))))
 
-(defalias 'org-trello-sync-comment 'org-trello-sync-comment)
+(defalias 'org-trello/sync-comment 'org-trello-sync-comment)
 
 ;;;###autoload
 (defun org-trello-sync-buffer (&optional modifier)
@@ -254,7 +254,7 @@ If MODIFIER is non nil, execute the sync of the entire buffer from trello."
              '("Request 'sync org buffer from trello board'" orgtrello-controller-do-sync-buffer-from-trello)
            '("Request 'sync org buffer to trello board'" orgtrello-controller-do-sync-buffer-to-trello)))))
 
-(defalias 'org-trello-sync-buffer 'org-trello-sync-buffer)
+(defalias 'org-trello/sync-buffer 'org-trello-sync-buffer)
 
 ;;;###autoload
 (defun org-trello-kill-entity (&optional modifier)
@@ -267,7 +267,7 @@ If MODIFIER is non nil, execute all entities removal from trello and buffer."
              '("Delete all cards" orgtrello-controller-do-delete-entities)
            '("Delete entity at point (card/checklist/item)" orgtrello-controller-checks-then-delete-simple)))))
 
-(defalias 'org-trello-kill-entity 'org-trello-kill-entity)
+(defalias 'org-trello/kill-entity 'org-trello-kill-entity)
 
 ;;;###autoload
 (defun org-trello-kill-cards ()
@@ -275,7 +275,7 @@ If MODIFIER is non nil, execute all entities removal from trello and buffer."
   (interactive)
   (org-trello-apply-deferred '(org-trello-log-strict-checks-and-do "Delete Cards" orgtrello-controller-do-delete-entities)))
 
-(defalias 'org-trello-kill-cards 'org-trello-kill-cards)
+(defalias 'org-trello/kill-cards 'org-trello-kill-cards)
 
 ;;;###autoload
 (defun org-trello-archive-card ()
@@ -283,7 +283,7 @@ If MODIFIER is non nil, execute all entities removal from trello and buffer."
   (interactive)
   (org-trello-apply-deferred '(org-trello-log-strict-checks-and-do "Archive Card at point" orgtrello-controller-checks-and-do-archive-card)))
 
-(defalias 'org-trello-archive-card 'org-trello-archive-card)
+(defalias 'org-trello/archive-card 'org-trello-archive-card)
 
 ;;;###autoload
 (defun org-trello-archive-cards ()
@@ -291,7 +291,7 @@ If MODIFIER is non nil, execute all entities removal from trello and buffer."
   (interactive)
   (org-map-entries 'org-trello-archive-card "/DONE" 'file))
 
-(defalias 'org-trello-archive-cards 'org-trello-archive-cards)
+(defalias 'org-trello/archive-cards 'org-trello-archive-cards)
 
 ;;;###autoload
 (defun org-trello-install-key-and-token ()
@@ -299,7 +299,7 @@ If MODIFIER is non nil, execute all entities removal from trello and buffer."
   (interactive)
   (orgtrello-controller-do-install-key-and-token))
 
-(defalias 'org-trello-install-key-and-token 'org-trello-install-key-and-token)
+(defalias 'org-trello/install-key-and-token 'org-trello-install-key-and-token)
 
 ;;;###autoload
 (defun org-trello-install-board-metadata ()
@@ -307,7 +307,7 @@ If MODIFIER is non nil, execute all entities removal from trello and buffer."
   (interactive)
   (org-trello-apply-deferred '(org-trello-log-light-checks-and-do "Install boards and lists" orgtrello-controller-do-install-board-and-lists)))
 
-(defalias 'org-trello-install-board-metadata 'org-trello-install-board-metadata)
+(defalias 'org-trello/install-board-metadata 'org-trello-install-board-metadata)
 
 ;;;###autoload
 (defun org-trello-update-board-metadata ()
@@ -315,7 +315,7 @@ If MODIFIER is non nil, execute all entities removal from trello and buffer."
   (interactive)
   (org-trello-apply-deferred '(org-trello-log-light-checks-and-do "Update board information" orgtrello-controller-do-update-board-metadata)))
 
-(defalias 'org-trello-update-board-metadata 'org-trello-update-board-metadata)
+(defalias 'org-trello/update-board-metadata 'org-trello-update-board-metadata)
 
 ;;;###autoload
 (defun org-trello-jump-to-trello-card (&optional modifier)
@@ -327,7 +327,7 @@ If MODIFIER is not nil, jump from current card to board."
                               '("Jump to board" orgtrello-controller-jump-to-board)
                             '("Jump to card" orgtrello-controller-jump-to-card)))))
 
-(defalias 'org-trello-jump-to-trello-card 'org-trello-jump-to-trello-card)
+(defalias 'org-trello/jump-to-trello-card 'org-trello-jump-to-trello-card)
 
 ;;;###autoload
 (defun org-trello-jump-to-trello-board ()
@@ -335,7 +335,7 @@ If MODIFIER is not nil, jump from current card to board."
   (interactive)
   (org-trello-apply '(org-trello-log-strict-checks-and-do "Jump to board" orgtrello-controller-jump-to-board)))
 
-(defalias 'org-trello-jump-to-trello-board 'org-trello-jump-to-trello-board)
+(defalias 'org-trello/jump-to-trello-board 'org-trello-jump-to-trello-board)
 
 ;;;###autoload
 (defun org-trello-create-board-and-install-metadata ()
@@ -343,7 +343,7 @@ If MODIFIER is not nil, jump from current card to board."
   (interactive)
   (org-trello-apply-deferred '(org-trello-log-light-checks-and-do "Create board and lists" orgtrello-controller-do-create-board-and-install-metadata)))
 
-(defalias 'org-trello-create-board-and-install-metadata 'org-trello-create-board-and-install-metadata)
+(defalias 'org-trello/create-board-and-install-metadata 'org-trello-create-board-and-install-metadata)
 
 ;;;###autoload
 (defun org-trello-assign-me (&optional modifier)
@@ -356,7 +356,7 @@ If MODIFIER is not nil, unassign oneself from the card."
                             '("Assign myself to card" orgtrello-controller-do-assign-me)))
                     (current-buffer)))
 
-(defalias 'org-trello-assign-me 'org-trello-assign-me)
+(defalias 'org-trello/assign-me 'org-trello-assign-me)
 
 ;;;###autoload
 (defun org-trello-check-setup ()
@@ -364,7 +364,7 @@ If MODIFIER is not nil, unassign oneself from the card."
   (interactive)
   (org-trello-apply '(org-trello-log-strict-checks-and-do "Checking setup." orgtrello-controller-check-trello-connection) nil nil 'no-log))
 
-(defalias 'org-trello-check-setup 'org-trello-check-setup)
+(defalias 'org-trello/check-setup 'org-trello-check-setup)
 
 ;;;###autoload
 (defun org-trello-delete-setup ()
@@ -372,7 +372,7 @@ If MODIFIER is not nil, unassign oneself from the card."
   (interactive)
   (org-trello-apply '(org-trello-log-strict-checks-and-do "Delete current org-trello setup" orgtrello-controller-delete-setup) (current-buffer)))
 
-(defalias 'org-trello-delete-setup 'org-trello-delete-setup)
+(defalias 'org-trello/delete-setup 'org-trello-delete-setup)
 
 ;;;###autoload
 (defun org-trello-help-describing-bindings ()
@@ -380,7 +380,7 @@ If MODIFIER is not nil, unassign oneself from the card."
   (interactive)
   (org-trello-apply `(message ,(orgtrello-setup-help-describing-bindings-template org-trello-current-prefix-keybinding org-trello-interactive-command-binding-couples)) nil nil 'no-log))
 
-(defalias 'org-trello-help-describing-bindings 'org-trello-help-describing-bindings)
+(defalias 'org-trello/help-describing-bindings 'org-trello-help-describing-bindings)
 
 (defun org-trello--bug-report ()
   "Compute the bug report for the user to include."
