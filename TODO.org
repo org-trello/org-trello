@@ -35,7 +35,8 @@
 - [ ] #277 - Improve date time policy conversion
 - [ ] #278 - Too much checklist sync?
 
-* IN-PROGRESS 0.7.2 [100%]
+* DONE 0.7.2 [100%]
+CLOSED: [2015-08-05 Wed 19:26]
 - [X] Update version
 - [X] Close #276 - Markdown rendering in comments
 - [X] Add test coverage
