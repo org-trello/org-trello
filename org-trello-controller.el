@@ -205,7 +205,7 @@ BUFFER-NAME to specify the buffer with which we currently work."
         (orgtrello-log-msg orgtrello-log-info "Card already synchronized, nothing to do!")
       (progn
         (orgtrello-log-msg orgtrello-log-info "Synchronizing card on board '%s'..." (orgtrello-buffer-board-name))
-        (org-show-subtree) ;; we need to show the subtree, otherwise https://github.com/org-trello-org-trello-issues/53
+        (org-show-subtree) ;; we need to show the subtree, otherwise https://github.com/org-trello/org-trello-issues/53
         (-> buffer-name
           orgtrello-buffer-build-org-card-structure
           orgtrello-controller-execute-sync-entity-structure)))))

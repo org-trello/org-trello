@@ -374,7 +374,7 @@ If REGION-START and REGION-END are provided, this will work on such defined regi
           (when (and region-start region-end) (narrow-to-region region-start region-end))
           (orgtrello-buffer-org-map-entities-without-params
            (lambda ()
-             (org-show-subtree) ;; unfold every entries, otherwise https://github.com/org-trello-org-trello-issues/53
+             (org-show-subtree) ;; unfold every entries, otherwise https://github.com/org-trello/org-trello-issues/53
              (let ((current-checksum  (orgtrello-buffer-compute-checksum))
                    (previous-checksum (orgtrello-buffer-get-local-checksum)))
                (unless (string= current-checksum previous-checksum)

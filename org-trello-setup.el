@@ -128,7 +128,7 @@ unnecessary sync to trello queries for any entity below the current entity
 changed...  Indeed, the position changes anytime you insert or delete a char.
 This renders almost useless the checksum computation.
 
-Cf.  https://github.com/org-trello-org-trello-issues/271.
+Cf.  https://github.com/org-trello/org-trello-issues/271.
 Please, do not hesitate to provide a better idea or a better implementation.
 
 If nil, the default, the sync to trello will be limited to what's really changed

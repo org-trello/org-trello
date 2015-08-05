@@ -7,7 +7,7 @@
 ;; Version: 0.7.2
 ;; Package-Requires: ((emacs "24") (dash "2.11.0") (dash-functional "2.11.0") (s "1.9.0") (deferred "0.3.2") (request-deferred "0.2.0"))
 ;; Keywords: org-mode trello sync org-trello
-;; URL: https://github.com/org-trello-org-trello
+;; URL: https://github.com/org-trello/org-trello
 
 ;; This file is NOT part of GNU Emacs.
 
@@ -89,7 +89,7 @@
 ;; Enjoy!
 ;;
 ;; More informations: https://org-trello.github.io
-;; Issue tracker: https://github.com/org-trello-org-trello-issues
+;; Issue tracker: https://github.com/org-trello/org-trello-issues
 
 ;;; Code:
 
@@ -405,7 +405,7 @@ If MODIFIER is not nil, unassign oneself from the card."
 When OPEN-URL is filled, with universal argument (`C-u') is used,
 opens new issue in org-trello's github tracker."
   (interactive "P")
-  (when open-url (browse-url "https://github.com/org-trello-org-trello-issues/new"))
+  (when open-url (browse-url "https://github.com/org-trello/org-trello-issues/new"))
   (orgtrello-log-msg orgtrello-log-info (org-trello--bug-report)))
 
 
