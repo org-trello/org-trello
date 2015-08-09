@@ -122,15 +122,15 @@ At the end of it all, the cursor is moved after the new written text."
 (defun orgtrello-buffer-update-property-member-ids (entity)
   "Update the users assigned property card entry."
   (--> entity
-    (orgtrello-data-entity-member-ids it)
-    (replace-regexp-in-string org-trello--label-key-user-prefix "" it)
-    (orgtrello-buffer-set-usernames-assigned-property it)))
+       (orgtrello-data-entity-member-ids it)
+       (replace-regexp-in-string org-trello--label-key-user-prefix "" it)
+       (orgtrello-buffer-set-usernames-assigned-property it)))
 
 (defun orgtrello-buffer--write-comments (entity)
   "Update last comments."
   (->> entity
-    orgtrello-data-entity-comments
-    orgtrello-buffer--write-comments-at-point))
+       orgtrello-data-entity-comments
+       orgtrello-buffer--write-comments-at-point))
 
 (defun orgtrello-buffer--write-comments-at-point (comments)
   "Write comments in the buffer at point."
@@ -199,15 +199,15 @@ The cursor position will move after the newly inserted card."
   "Compute the current checklist's beginning point."
   (cond ((orgtrello-entity-checklist-at-pt) (point-at-bol))
         ((orgtrello-entity-item-at-pt) (save-excursion
-                                          (org-beginning-of-item-list)
-                                          (forward-line -1)
-                                          (beginning-of-line)
-                                          (point)))))
+                                         (org-beginning-of-item-list)
+                                         (forward-line -1)
+                                         (beginning-of-line)
+                                         (point)))))
 
 (defun orgtrello-buffer--write-checksum-at-pt (compute-checksum-fn)
   "Generic function to write the checksum at current position."
   (->> (funcall compute-checksum-fn)
-    (orgtrello-buffer-set-property org-trello--label-key-local-checksum)))
+       (orgtrello-buffer-set-property org-trello--label-key-local-checksum)))
 
 (defun orgtrello-buffer-write-local-card-checksum ()
   "Write the card's checksum."
@@ -244,15 +244,15 @@ Otherwise, if on a checklist, update the checklist's and the card's checksum.
 Otherwise, on an item, update the item's, checklist's and card's checksum."
   (save-excursion
     (let ((actions (cond ((orgtrello-entity-org-comment-p)   '(org-back-to-heading
-                                                                orgtrello-buffer-write-local-comment-checksum-at-point
-                                                                org-up-element
-                                                                orgtrello-buffer-write-local-card-checksum))
+                                                               orgtrello-buffer-write-local-comment-checksum-at-point
+                                                               org-up-element
+                                                               orgtrello-buffer-write-local-card-checksum))
                          ((orgtrello-entity-card-at-pt)      '(orgtrello-buffer-write-local-card-checksum-at-point))
                          ((orgtrello-entity-checklist-at-pt) '(orgtrello-buffer-write-local-checklist-checksum-at-point
-                                                                orgtrello-buffer-write-local-card-checksum))
+                                                               orgtrello-buffer-write-local-card-checksum))
                          ((orgtrello-entity-item-at-pt)      '(orgtrello-buffer-write-local-item-checksum-at-point
-                                                                orgtrello-buffer-write-local-checklist-checksum
-                                                                orgtrello-buffer-write-local-card-checksum)))))
+                                                               orgtrello-buffer-write-local-checklist-checksum
+                                                               orgtrello-buffer-write-local-card-checksum)))))
       (mapc 'funcall actions))))
 
 (defun orgtrello-buffer-write-properties-at-pt (id)
@@ -325,8 +325,8 @@ This plus the checklist indentation."
   "Compute checklist with NAME and optional LEVEL and STATUS to the org checkbox format."
   (format "%s- %s %s\n"
           (-> level
-            orgtrello-buffer--compute-level-into-spaces
-            orgtrello-utils-space)
+              orgtrello-buffer--compute-level-into-spaces
+              orgtrello-utils-space)
           (orgtrello-buffer--compute-state-checkbox status)
           name))
 
@@ -334,8 +334,8 @@ This plus the checklist indentation."
   "Compute item with NAME and optional LEVEL and STATUS to the org checkbox format."
   (format "%s- %s %s\n"
           (-> level
-            orgtrello-buffer--compute-level-into-spaces
-            orgtrello-utils-space)
+              orgtrello-buffer--compute-level-into-spaces
+              orgtrello-utils-space)
           (orgtrello-data--compute-state-item-checkbox status)
           name))
 
@@ -351,8 +351,8 @@ The optional ORGCHECKBOX-P is not used."
 (defun orgtrello-buffer--put-card-with-adjacency (current-meta entities adjacency)
   "Deal with adding the CURRENT-META in ENTITIES and ADJACENCY."
   (-> current-meta
-    (orgtrello-buffer--put-entities entities)
-    (list adjacency)))
+      (orgtrello-buffer--put-entities entities)
+      (list adjacency)))
 
 (defun orgtrello-buffer--dispatch-create-entities-map-with-adjacency (entity)
   "Given the ENTITY, return the function to add the entity and adjacency."
@@ -362,8 +362,8 @@ The optional ORGCHECKBOX-P is not used."
   "Build the card structure on the current BUFFER-NAME at current point.
 No synchronization is done."
   (->> (orgtrello-entity-card-region)
-    (cons buffer-name)
-    (apply 'orgtrello-buffer-build-org-entities)))
+       (cons buffer-name)
+       (apply 'orgtrello-buffer-build-org-entities)))
 
 (defun orgtrello-buffer-build-org-entities (buffer-name &optional region-start region-end)
   "Compute the current entities hash from the BUFFER-NAME.
@@ -389,15 +389,15 @@ If REGION-START and REGION-END are provided, this will work on such defined regi
                        (orgtrello-data-put-entity-id marker entity)   ;; update the entity with its id/marker
                        (orgtrello-data-put-current entity full-meta)));; update the full-meta data with the new entity
                    (--> entity
-                     (orgtrello-buffer--dispatch-create-entities-map-with-adjacency it)
-                     (funcall it full-meta entities adjacency)))))))
+                        (orgtrello-buffer--dispatch-create-entities-map-with-adjacency it)
+                        (funcall it full-meta entities adjacency)))))))
           (list entities adjacency))))))
 
 (defun orgtrello-buffer--put-entities (current-meta entities)
   "Deal with adding a the current entry from CURRENT-META in ENTITIES."
   (-> current-meta
-    orgtrello-data-current
-    (orgtrello-backend--add-entity-to-entities entities)))
+      orgtrello-data-current
+      (orgtrello-backend--add-entity-to-entities entities)))
 
 (defun orgtrello-buffer--set-marker (marker)
   "Set a MARKER to get back to later."
@@ -539,9 +539,9 @@ Deal with org entities and checkbox as well."
 (defun orgtrello-buffer--user-ids-assigned-to-current-card ()
   "Compute the user ids assigned to the current card."
   (--> (orgtrello-buffer-get-usernames-assigned-property)
-    (orgtrello-data--users-from it)
-    (--map (gethash (format "%s%s" org-trello--label-key-user-prefix it) org-trello--hmap-users-name-id) it)
-    (orgtrello-data--users-to it)))
+       (orgtrello-data--users-from it)
+       (--map (gethash (format "%s%s" org-trello--label-key-user-prefix it) org-trello--hmap-users-name-id) it)
+       (orgtrello-data--users-to it)))
 
 (defun orgtrello-buffer--extract-description-at-point ()
   "Extract description at point depending on the entity's nature."
@@ -549,7 +549,8 @@ Deal with org entities and checkbox as well."
         ((orgtrello-entity-org-comment-p) (orgtrello-buffer-extract-comment-description-from-current-position))))
 
 (defun orgtrello-buffer-entity-metadata ()
-  "Compute the metadata for a given org entry. Also add some metadata identifier/due-data/point/buffer-name/etc..."
+  "Compute the metadata for a given org entry.
+Also add some metadata identifier/due-data/point/buffer-name/etc..."
   (let ((current-point (point)))
     (->> (orgtrello-buffer--extract-metadata)
          (cons (-> current-point (orgtrello-buffer-org-entry-get "DEADLINE") orgtrello-buffer--convert-orgmode-date-to-trello-date))
@@ -569,7 +570,7 @@ Deal with org entities and checkbox as well."
 (defun orgtrello-buffer-org-unknown-drawer-properties ()
   "Retrieve the key/value pairs of org-trello unknown drawer properties."
   (->> (org-entry-properties (point) 'standard)
-    orgtrello-buffer--filter-out-known-properties))
+       orgtrello-buffer--filter-out-known-properties))
 
 (defun orgtrello-buffer-org-up-parent ()
   "A function to get back to the current entry's parent"
@@ -677,8 +678,8 @@ Then install the new one."
   "Retrieve overlay at current position.
 Return nil if none."
   (->> (overlays-in (point-at-bol) (point-at-eol))
-    (--filter (eq (overlay-get it 'invisible) 'org-trello-cbx-property))
-    car))
+       (--filter (eq (overlay-get it 'invisible) 'org-trello-cbx-property))
+       car))
 
 (defun orgtrello-buffer-compute-overlay-size ()
   "Compute the overlay size to the current position"
@@ -694,10 +695,10 @@ Return nil if none."
 (defun orgtrello-buffer-compute-marker (buffer-name name position)
   "Compute the orgtrello marker which is composed of BUFFER-NAME, NAME and POSITION."
   (->> (list org-trello--label-key-marker buffer-name name (if (stringp position) position (int-to-string position)))
-    (-interpose "-")
-    (apply 'concat)
-    sha1
-    (concat org-trello--label-key-marker "-")))
+       (-interpose "-")
+       (apply 'concat)
+       sha1
+       (concat org-trello--label-key-marker "-")))
 
 (defun orgtrello-buffer-save-buffer (buffer-name)
   "Given a BUFFER-NAME, save it."
