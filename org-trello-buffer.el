@@ -284,7 +284,10 @@ Remove text and overlays."
 
 (defun orgtrello-buffer--compute-due-date (due-date)
   "Compute the format of the DUE-DATE."
-  (if due-date (format "%s <%s>\n" org-trello--property-deadline-prefix due-date) ""))
+  (if due-date
+      (format "%s <%s>\n" org-trello--property-deadline-prefix
+              (orgtrello-buffer--convert-trello-date-to-orgmode-date due-date))
+    ""))
 
 (defun orgtrello-buffer--private-compute-card-to-org-entry (name status due-date tags)
   "Compute the org format of a card with NAME, STATUS, DUE-DATE and TAGS."
@@ -483,17 +486,35 @@ Function to be triggered by `before-save-hook` on org-trello-mode buffer."
        (orgtrello-buffer-indent-region org-trello--checklist-indent (orgtrello-entity-card-data-region))))))
 
 (defun orgtrello-buffer--convert-orgmode-date-to-trello-date (orgmode-date)
-  "Convert the 'org-mode' deadline ORGMODE-DATE into a time adapted for trello."
-  (if (and orgmode-date (not (string-match-p "T*Z" orgmode-date)))
-      (cl-destructuring-bind (sec min hour day mon year dow dst tz)
-          (--map (if it (if (< it 10) (concat "0" (int-to-string it)) (int-to-string it)))
-                 (parse-time-string orgmode-date))
-        (concat (concat year "-" mon "-" day "T") (if hour (concat hour ":" min ":" sec) "00:00:00") ".000Z"))
+  "Convert the ORGMODE-DATE deadline into a trello one."
+  (if orgmode-date
+      (--> (org-parse-time-string orgmode-date)
+           (apply 'encode-time it)
+           (format-time-string "%Y-%m-%dT%H:%M:%S.%3NZ" it 'universal))
     orgmode-date))
 
-(defun orgtrello-buffer-org-entity-metadata ()
-  "Compute the metadata the org-mode way."
-  (org-heading-components))
+(defconst orgtrello-buffer-iso-8601-date-pattern
+  "[0-9]\\{4\\}-[0-9]\\{2\\}-[0-9]\\{2\\}T[0-9]\\{2\\}:[0-9]\\{2\\}:[0-9]\\{2\\}\.[0-9]\\{3\\}.*"
+  "ISO-8601 date pattern trello sends.")
+
+(defun orgtrello-buffer--prepare-iso-8601 (iso-8601-date)
+  "Convert ISO-8601-DATE into something `parse-time-string' can parse."
+  (when (string-match orgtrello-buffer-iso-8601-date-pattern iso-8601-date)
+    (->> iso-8601-date
+         (replace-regexp-in-string "T" " ")
+         (replace-regexp-in-string ".000Z" " GMT"))))
+
+(defun orgtrello-buffer--convert-trello-date-to-orgmode-date (trello-date)
+  "Convert the TRELLO-DATE into an `org-mode' one."
+  (if trello-date
+      (--> (orgtrello-buffer--prepare-iso-8601 trello-date)
+           (parse-time-string it)
+           (apply 'encode-time it)
+           (format-time-string "%Y-%m-%d %a %H:%M" it))
+    trello-date))
+
+(defalias 'orgtrello-buffer-org-entity-metadata 'org-heading-components
+  "Compute the basic org-mode metadata.")
 
 (defun orgtrello-buffer--extract-metadata ()
   "Extract the current metadata depending on the org-trello's checklist policy."

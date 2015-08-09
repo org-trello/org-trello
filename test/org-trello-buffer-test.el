@@ -132,18 +132,20 @@ hello there
 "
 
                   (orgtrello-buffer-write-card-header "some-card-id" (orgtrello-hash-make-properties `((:keyword . "TODO")
-                                                                                                        (:member-ids . "ardumont,dude")
-                                                                                                        (:comments . 'no-longer-exploited-here-comments)
-                                                                                                        (:desc . "some description")
-                                                                                                        (:level . ,org-trello--card-level)
-                                                                                                        (:name . "some card name"))))
+                                                                                                       (:member-ids . "ardumont,dude")
+                                                                                                       (:comments . 'no-longer-exploited-here-comments)
+                                                                                                       (:desc . "some description")
+                                                                                                       (:level . ,org-trello--card-level)
+                                                                                                       (:name . "some card name"))))
+
                   0)))
+
   (should (equal ":PROPERTIES:
 #+PROPERTY: orgtrello-user-ardumont ardumont-id
 #+PROPERTY: orgtrello-user-dude dude-id
 :END:
 * TODO some card name                                                   :red:green:
-DEADLINE: <some-due-date>
+DEADLINE: <2015-09-23 Wed 01:45>
   :PROPERTIES:
   :orgtrello-users: ardumont,dude
   :END:
@@ -155,13 +157,13 @@ DEADLINE: <some-due-date>
 :END:
 "
                   (orgtrello-buffer-write-card-header "some-card-id" (orgtrello-hash-make-properties `((:keyword . "TODO")
-                                                                                                        (:member-ids . "ardumont,dude")
-                                                                                                        (:comments . 'no-longer-exploited-here-comments)
-                                                                                                        (:tags . ":red:green:")
-                                                                                                        (:desc . "some description")
-                                                                                                        (:level . ,org-trello--card-level)
-                                                                                                        (:name . "some card name")
-                                                                                                        (:due . "some-due-date"))))
+                                                                                                       (:member-ids . "ardumont,dude")
+                                                                                                       (:comments . 'no-longer-exploited-here-comments)
+                                                                                                       (:tags . ":red:green:")
+                                                                                                       (:desc . "some description")
+                                                                                                       (:level . ,org-trello--card-level)
+                                                                                                       (:name . "some card name")
+                                                                                                       (:due . "2015-09-22T23:45:00.000Z"))))
                   0))))
 
 (ert-deftest test-orgtrello-buffer-write-checklist-header ()
@@ -628,15 +630,20 @@ DEADLINE: <some-due-date>
   (should (equal "    - [ ] name\n" (orgtrello-buffer--compute-item-to-org-checkbox "name" 3 "incomplete"))))
 
 (ert-deftest test-orgtrello-buffer--private-compute-card-to-org-entry ()
-  (should (equal "* name TODO                                                             :some-tags:\nDEADLINE: <some-date>\n"
-                 (orgtrello-buffer--private-compute-card-to-org-entry "TODO" "name" "some-date" ":some-tags:")))
+  (should (equal "* name TODO                                                             :some-tags:\nDEADLINE: <date>\n"
+                 (with-mock
+                   (mock (orgtrello-buffer--convert-trello-date-to-orgmode-date "some-date") => "date")
+                   (orgtrello-buffer--private-compute-card-to-org-entry "TODO" "name" "some-date" ":some-tags:"))))
   (should (equal "* name TODO\n"
                  (orgtrello-buffer--private-compute-card-to-org-entry "TODO" "name" nil nil)))
   (should (equal "* name TODO                                                             :tag,tag2:\n"
                  (orgtrello-buffer--private-compute-card-to-org-entry "TODO" "name" nil ":tag,tag2:"))))
 
 (ert-deftest test-orgtrello-buffer--compute-due-date ()
-  (should (equal "DEADLINE: <some-date>\n" (orgtrello-buffer--compute-due-date "some-date")))
+  (should (equal "DEADLINE: <date-formatted>\n"
+                 (with-mock
+                   (mock (orgtrello-buffer--convert-trello-date-to-orgmode-date "some-date") => "date-formatted")
+                   (orgtrello-buffer--compute-due-date "some-date"))))
   (should (equal "" (orgtrello-buffer--compute-due-date nil))))
 
 (ert-deftest test-orgtrello-buffer--serialize-tags ()
@@ -685,10 +692,25 @@ DEADLINE: <some-due-date>
                             (gethash :keyword (orgtrello-buffer--to-orgtrello-metadata '(:unknown "" "" "buffer-name.org" :point :id :due 0 1 nil nil "some name :orgtrello-id-identifier:" nil)))))))
 
 (ert-deftest test-orgtrello-buffer--convert-orgmode-date-to-trello-date ()
-  (should (equal "2013-07-18T02:00:00.000Z" (orgtrello-buffer--convert-orgmode-date-to-trello-date "2013-07-18T02:00:00.000Z")))
-  (should (equal "2013-07-29T14:00:00.000Z" (orgtrello-buffer--convert-orgmode-date-to-trello-date "2013-07-29 lun. 14:00")))
-  (should (equal "2013-07-29T00:00:00.000Z" (orgtrello-buffer--convert-orgmode-date-to-trello-date "2013-07-29")))
-  (should (equal nil                        (orgtrello-buffer--convert-orgmode-date-to-trello-date nil))))
+  (should (equal "2013-07-29T12:00:00.000Z" (orgtrello-buffer--convert-orgmode-date-to-trello-date "2013-07-29 lun. 14:00")))
+  (should (equal "2013-07-29T12:00:00.000Z" (orgtrello-buffer--convert-orgmode-date-to-trello-date "2013-07-29 14:00")))
+  (should-not (orgtrello-buffer--convert-orgmode-date-to-trello-date nil)))
+
+(ert-deftest test-orgtrello-buffer--prepare-iso-8601 ()
+  ;; iso -> simplified
+  (should (string= "2015-08-30 14:00:00 GMT" (orgtrello-buffer--prepare-iso-8601 "2015-08-30T14:00:00.000Z")))
+  (should (string= "2013-07-29 12:00:00 GMT" (orgtrello-buffer--prepare-iso-8601 "2013-07-29T12:00:00.000Z")))
+  (should (string= "2013-07-29 12:00:00 GMT" (orgtrello-buffer--prepare-iso-8601 "2013-07-29T12:00:00.000Z")))
+  (should (string= "2015-09-22 23:45:00 GMT" (orgtrello-buffer--prepare-iso-8601 "2015-09-22T23:45:00.000Z")))
+
+  ;; does not know how to parse (not expected)
+  (should-not (orgtrello-buffer--prepare-iso-8601 "2015-08-30 14:00:00")))
+
+(ert-deftest test-orgtrello-buffer--convert-trello-date-to-org-date ()
+  (should (equal "2015-08-30 Sun 16:00" (orgtrello-buffer--convert-trello-date-to-orgmode-date "2015-08-30T14:00:00.000Z")))
+  (should (equal "2013-07-29 Mon 14:00" (orgtrello-buffer--convert-trello-date-to-orgmode-date "2013-07-29T12:00:00.000Z")))
+  (should (equal "2015-09-23 Wed 01:45" (orgtrello-buffer--convert-trello-date-to-orgmode-date "2015-09-22T23:45:00.000Z")))
+  (should-not (orgtrello-buffer--convert-trello-date-to-orgmode-date nil)))
 
 (ert-deftest test-orgtrello-buffer-entry-get-full-metadata ()
   ;; on card
