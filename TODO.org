@@ -30,9 +30,10 @@
 - [ ] #245 - Trying to sync a card: orgtrello-buffer/compute-marker: Wrong type argument: numberp, nil
 - [ ] #248 - Installing from melpa (unstable) works, but then it errs on an undefined variable "error-messages"
 - [ ] #263 - Colors broken in org trello
-* TODO 0.7.3 [0%]
-- [ ] Update version
+* IN-PROGRESS 0.7.3 [25%]
+- [X] Update version
 - [ ] #277 - Improve date time policy conversion
+- [ ] Fix flycheck warnings
 - [ ] #278 - Too much checklist sync?
 
 * DONE 0.7.2 [100%]
