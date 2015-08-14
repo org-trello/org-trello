@@ -1,8 +1,7 @@
-VERSION=$$(grep "^;; Version: " org-trello.el | cut -f3 -d' ')
-PACKAGE_FOLDER=org-trello-$(VERSION)
-ARCHIVE=$(PACKAGE_FOLDER).tar
+PACKAGE=org-trello
+VERSION=$$(grep "^;; Version: " $(PACKAGE).el | cut -f3 -d' ')
+ARCHIVE=$(PACKAGE)-$(VERSION).tar
 EMACS=emacs
-LOG_TEST_FILE=./run-org-trello-tests.log
 
 .PHONY: clean
 
@@ -27,9 +26,6 @@ install:
 
 test: clean
 	cask exec ert-runner
-
-test-log:
-	less $(LOG_TEST_FILE)
 
 pkg-file:
 	cask pkg-file
@@ -56,7 +52,10 @@ cleanup-data:
 		~/.emacs.d/elnode/public_html/org-trello/*.lock
 
 release:
-	./release.sh $(VERSION)
+	./release.sh $(VERSION) $(PACKAGE)
+
+version:
+	echo "application $(PACKAGE): $(VERSION)\npackage: $(ARCHIVE)"
 
 install-cask:
 	curl -fsSkL https://raw.github.com/cask/cask/master/go | python
