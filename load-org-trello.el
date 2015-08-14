@@ -15,6 +15,7 @@
                                "org-trello-backend.el"
                                "org-trello-entity.el"
                                "org-trello-cbx.el"
+                               "org-trello-date.el"
                                "org-trello-buffer.el"
                                "org-trello-controller.el"
                                "org-trello-data.el"

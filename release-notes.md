@@ -1,3 +1,12 @@
+# 0.7.3
+
+- [X] Update version
+- [X] Close #277 - Improve date time policy conversion
+- [X] Improve release + upload to marmalade scripts
+- [X] Fix flycheck warnings
+- [X] Some refactoring
+- [X] Release notes
+
 # 0.7.2
 
 - [X] Update version

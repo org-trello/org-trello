@@ -16,6 +16,7 @@
        "org-trello-query.el"
        "org-trello-backend.el"
        "org-trello-proxy.el"
+       "org-trello-date.el"
        "org-trello-buffer.el"
        "org-trello-input.el"
        "org-trello-controller.el"

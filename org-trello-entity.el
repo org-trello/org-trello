@@ -140,7 +140,7 @@ If no comment is found, return the card's end region."
 
 (defun orgtrello-entity-goto-next-checkbox-with-same-level (level)
   "Compute the next checkbox's beginning of line (with the same LEVEL).
- Does not preserve the current position.
+Does not preserve the current position.
 If hitting a heading or the end of the file, return nil.
 Otherwise, return the current position."
   (forward-line)

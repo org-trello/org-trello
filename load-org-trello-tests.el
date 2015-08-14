@@ -33,6 +33,7 @@
                                    "test/org-trello-entity-test.el"
                                    "test/org-trello-entity-test.el"
                                    "test/org-trello-cbx-test.el"
+                                   "test/org-trello-date-test.el"
                                    "test/org-trello-buffer-test.el"
                                    "test/org-trello-controller-test.el"
                                    "test/org-trello-data-test.el"

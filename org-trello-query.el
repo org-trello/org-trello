@@ -4,10 +4,8 @@
 
 (if (version< "24.3" emacs-version)
     (require 'cl-lib)
-  (progn ;; need to alias the call
-    (require 'cl)
-    (defalias 'cl-defun 'defun*)
-    (defalias 'cl-destructuring-bind 'destructuring-bind)))
+  (require 'cl)
+  (defalias 'cl-defun 'defun*))
 
 (require 'org-trello-log)
 (require 'org-trello-setup)

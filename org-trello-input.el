@@ -4,11 +4,12 @@
 
 (require 'org-trello-log)
 
-(defun orgtrello-input-read-not-empty (input-message)
-  "Function dedicated to continue asking for input while the input typed is incorrect."
+(defun orgtrello-input-read-not-empty (prompt)
+  "Read input as long as input is empty.
+PROMPT is the prefix string displayed for input."
   (let ((value nil))
     (while (or (null value) (string= "" value))
-      (setq value (read-string input-message)))
+      (setq value (read-string prompt)))
     value))
 
 (orgtrello-log-msg orgtrello-log-debug "orgtrello-input loaded!")

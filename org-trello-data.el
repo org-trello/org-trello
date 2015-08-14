@@ -7,12 +7,13 @@
 (require 'org-trello-hash)
 (require 's)
 (require 'json)
+(require 'dash)
 
 (defun orgtrello-data-merge-2-lists-without-duplicates (a-list b-list)
   "Merge the 2 lists A-LIST and B-LIST together without duplicates."
   (-> a-list
-    (append b-list)
-    delete-dups))
+      (append b-list)
+      delete-dups))
 
 (defun orgtrello-data--entity-with-level-p (entity level) "Is the ENTITY with level LEVEL?" (-> entity orgtrello-data-entity-level (eq level)))
 (defun orgtrello-data-entity-card-p      (entity) "Is the ENTITY a card?"      (orgtrello-data--entity-with-level-p entity org-trello--card-level))
@@ -361,15 +362,15 @@ If state is \"complete\" or \"DONE\", the first element is returned, otherwise t
 
 (defun orgtrello-data-get-children (entity entities-adjacencies)
   "Given ENTITY and ENTITIES-ADJACENCIES, return the children of the entity."
-  (cl-destructuring-bind (_ adjacencies) entities-adjacencies
+  (-let (((_ adjacencies) entities-adjacencies))
     (-> entity
-      orgtrello-data-entity-id-or-marker
-      (orgtrello-data--get-entity adjacencies))))
+        orgtrello-data-entity-id-or-marker
+        (orgtrello-data--get-entity adjacencies))))
 
 (defun orgtrello-data-get-entity (entity-id entities-adjacencies)
   "Given ENTITY-ID, return the complete entity.
 ENTITIES-ADJACENCIES provides needed information."
-  (cl-destructuring-bind (entities _) entities-adjacencies
+  (-let (((entities _) entities-adjacencies))
     (orgtrello-data--get-entity entity-id entities)))
 
 (defun orgtrello-data-to-org-trello-card (trello-card)

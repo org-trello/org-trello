@@ -1,6 +1,8 @@
 (require 'ert)
 (require 'el-mock)
 
+(setenv "TZ" "/usr/share/zoneinfo/Europe/London")
+
 (defsubst hash-table-keys (hash-table)
   "Return a list of keys in HASH-TABLE."
   (let ((keys '()))
