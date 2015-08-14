@@ -26,7 +26,7 @@
   (when string (json-read-from-string string)))
 
 (defun orgtrello-cbx--checkbox-split (checkbox-content)
-  "Split the checkbox CHECKBOX-CONTENT into the checkbox data and the checkbox metadata."
+  "Split the CHECKBOX-CONTENT into the checkbox data and the checkbox metadata."
   (s-split ":PROPERTIES:" checkbox-content))
 
 (defun orgtrello-cbx--checkbox-metadata (checkbox-content)
@@ -50,7 +50,7 @@
     orgtrello-cbx--from-properties))
 
 (defun orgtrello-cbx--read-checkbox ()
-  "Read the full checkbox's content"
+  "Read the full checkbox's content."
   (buffer-substring-no-properties (point-at-bol) (point-at-eol)))
 
 (defun orgtrello-cbx--read-properties-from-point (pt)
@@ -67,7 +67,8 @@
   "Overwrite the current properties at point PT with new PROPERTIES."
   (save-excursion
     (goto-char pt)
-    (let* ((checkbox-title   (-> (orgtrello-cbx--read-checkbox) orgtrello-cbx--checkbox-data))
+    (let* ((checkbox-title   (-> (orgtrello-cbx--read-checkbox)
+                                 orgtrello-cbx--checkbox-data))
            (updated-property (orgtrello-cbx--make-properties-as-string properties))
            (text-to-insert   (format "%s %s" checkbox-title updated-property)))
       (beginning-of-line)
@@ -152,18 +153,23 @@ Write the new properties at current position."
   (let* ((checklist-data   (orgtrello-cbx--checkbox-data full-checklist))
          (meta             (orgtrello-cbx--org-split-data checklist-data))
          (status-retrieved (orgtrello-cbx--retrieve-status meta)))
-    (list nil (orgtrello-cbx--status status-retrieved) nil (orgtrello-cbx--name checklist-data status-retrieved) nil)))
+    (list nil
+          (orgtrello-cbx--status status-retrieved)
+          nil
+          (orgtrello-cbx--name checklist-data status-retrieved)
+          nil)))
 
 (defun orgtrello-cbx-org-checkbox-metadata ()
-  "Extract the metadata about the checklist - this is the symmetrical with `org-heading-components` but for the checklist.
+  "Extract the checklist metadata.
+This is the symmetrical with `org-heading-components` but for the checklist.
 Return the components of the current heading.
 This is a list with the following elements:
-- the level as an integer                                          - (begins at 2)
-- the reduced level                                                - always nil
-- the TODO keyword, or nil                                         - [], [-] map to TODO, [X] map to DONE
+- the level as an integer - (begins at 2)
+- the reduced level- always nil
+- the TODO keyword, or nil - [], [-] map to TODO, [X] map to DONE
 - the priority character, like ?A, or nil if no priority is given  - nil
-- the headline text itself, or the tags string if no headline text - the name of the checkbox
-- the tags string, or nil.                                         - nil"
+- the headline text itself, or tags string if no headline text - checkbox name
+- the tags string, or nil - always nil."
   (save-excursion
     (beginning-of-line)
     (cons (orgtrello-entity-level)
@@ -176,13 +182,18 @@ This is a list with the following elements:
 (defun orgtrello-cbx--org-up (destination-level)
   "A function to get back to the current entry's DESTINATION-LEVEL ancestor.
 Return the level found or nil if the level found is a card."
-  (let ((current-level (orgtrello-cbx--get-level (orgtrello-cbx-org-checkbox-metadata))))
-    (cond ((= org-trello--card-level current-level)      nil)
-          ((= destination-level current-level)           destination-level)
-          ((= org-trello--checklist-level current-level) (org-up-heading-safe))
-          (t                                             (progn
-                                                           (forward-line -1)
-                                                           (orgtrello-cbx--org-up destination-level))))))
+  (let ((current-level (orgtrello-cbx--get-level
+                        (orgtrello-cbx-org-checkbox-metadata))))
+    (cond ((= org-trello--card-level current-level)
+           nil)
+          ((= destination-level current-level)
+           destination-level)
+          ((= org-trello--checklist-level current-level)
+           (org-up-heading-safe))
+          (t
+           (progn
+             (forward-line -1)
+             (orgtrello-cbx--org-up destination-level))))))
 
 (defun orgtrello-cbx-current-level ()
   "Give the current level of the checkbox."
@@ -206,10 +217,11 @@ Do not exceed the max size of buffer."
 (defun orgtrello-cbx-map-checkboxes (fn-to-execute)
   "Map over the current checkbox and execute FN-TO-EXECUTE."
   (save-excursion
-    (orgtrello-entity-back-to-card)                                 ;; go back to the card
-    (-when-let (fst-cbx (orgtrello-entity-goto-next-checkbox-with-same-level org-trello--checklist-level))
-      (goto-char fst-cbx)                                            ;; then first checklist
-      (funcall fn-to-execute)                                        ;; execute the function on it
+    (orgtrello-entity-back-to-card)
+    (-when-let (fst-cbx (orgtrello-entity-goto-next-checkbox-with-same-level
+                         org-trello--checklist-level))
+      (goto-char fst-cbx)
+      (funcall fn-to-execute)
       (orgtrello-cbx--map-checkboxes org-trello--card-level fn-to-execute))))
 
 (orgtrello-log-msg orgtrello-log-debug "orgtrello-cbx loaded!")

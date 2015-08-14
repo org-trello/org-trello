@@ -26,6 +26,8 @@
 
 ;;; Code:
 
+(require 'dash)
+
 (defun orgtrello-date-convert-org-date-to-trello-date (org-date)
   "Convert the ORG-DATE deadline into a trello one."
   (if org-date

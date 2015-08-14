@@ -57,10 +57,10 @@ ENTITIES-ADJACENCIES provides needed information."
 
 (defun orgtrello-proxy-update-entities-adjacencies (old-entity entity-synced entities-adjacencies)
   "Given OLD-ENTITY and ENTITY-SYNCED, update in place ENTITIES-ADJACENCIES.
-This will also update ENTITY-SYNCED with its parent (lost since not present in trello data).
-This will remove OLD-ENTITY's id and update with the ENTITY-SYNCED's one (after sync).
-This will also update the references in arborescence (children with ENTITY-SYNCED).
-This returns a list (updated-entity-synced, updated-entities, updated-adjacencies)."
+This will also update ENTITY-SYNCED with its parent.
+This will remove OLD-ENTITY's id and update with the ENTITY-SYNCED's one.
+This will update the references in arborescence (children with ENTITY-SYNCED).
+Returns a list (updated-entity-synced, updated-entities, updated-adjacencies)."
   (let* ((entities      (car entities-adjacencies))
          (adjacencies   (cadr entities-adjacencies))
          (old-entity-id (orgtrello-data-entity-id-or-marker old-entity))
