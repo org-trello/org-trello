@@ -15,6 +15,7 @@
 (require 'org-trello-buffer)
 (require 'org-trello-input)
 (require 'org-trello-proxy)
+(require 'dash)
 (require 's)
 (require 'ido)
 
@@ -656,17 +657,17 @@ UPDATE-TODO-KEYWORDS is the org list of keywords."
               (cons board-id-and-user-logged-in))))
       (deferred:nextc it
         (lambda (board-and-user)
-          (cl-destructuring-bind (board board-id user-logged-in) board-and-user
-            (let ((members (->> board
+          (-let* (((board board-id user-logged-in) board-and-user)
+                  (members (->> board
                                 orgtrello-data-entity-memberships
                                 orgtrello-controller--compute-user-properties
                                 orgtrello-controller--compute-user-properties-hash)))
-              (orgtrello-controller-do-write-board-metadata board-id
-                                                             (orgtrello-data-entity-name board)
-                                                             user-logged-in
-                                                             (orgtrello-data-entity-lists board)
-                                                             (orgtrello-data-entity-labels board)
-                                                             members)))))
+            (orgtrello-controller-do-write-board-metadata board-id
+                                                          (orgtrello-data-entity-name board)
+                                                          user-logged-in
+                                                          (orgtrello-data-entity-lists board)
+                                                          (orgtrello-data-entity-labels board)
+                                                          members))))
       (deferred:nextc it
         (lambda ()
           (orgtrello-buffer-save-buffer buffer-name)
@@ -700,7 +701,7 @@ UPDATE-TODO-KEYWORDS is the org list of keywords."
 The list order in the trello board is the same as the ORG-KEYWORDS.
 Return the hashmap (name, id) of the new lists created."
   (car
-   (--reduce-from (cl-destructuring-bind (hash pos) acc
+   (--reduce-from (-let (((hash pos) acc))
                     (orgtrello-log-msg orgtrello-log-info "Board id %s - Creating list '%s'" board-id it)
                     (list (orgtrello-hash-puthash-data it (orgtrello-data-entity-id (orgtrello-query-http-trello (orgtrello-api-add-list it board-id pos) 'sync)) hash) (+ pos 1)))
                   (list (orgtrello-hash-empty-hash) 1)
@@ -732,36 +733,36 @@ Return the hashmap (name, id) of the new lists created."
           (let ((board (elt board-and-user-logged-in 0))
                 (user  (elt board-and-user-logged-in 1)))
             (->> board
-              orgtrello-data-entity-id
-              orgtrello-controller--list-board-lists
-              (mapcar 'orgtrello-data-entity-id)
-              (list board user)))))
+                 orgtrello-data-entity-id
+                 orgtrello-controller--list-board-lists
+                 (mapcar 'orgtrello-data-entity-id)
+                 (list board user)))))
       (deferred:nextc it
         (lambda (board-user-list-ids)
           (orgtrello-log-msg orgtrello-log-debug "Close default lists - %S" board-user-list-ids)
-          (cl-destructuring-bind (_ _ list-ids) board-user-list-ids
+          (-let (((_ _ list-ids) board-user-list-ids))
             (orgtrello-controller--close-lists list-ids))
           board-user-list-ids))
       (deferred:nextc it
         (lambda (board-user-list-ids)
           (orgtrello-log-msg orgtrello-log-debug "Create user's list in board - %S" board-user-list-ids)
-          (cl-destructuring-bind (board user list-ids) board-user-list-ids
+          (-let (((board user list-ids) board-user-list-ids))
             (--> board
-              (orgtrello-data-entity-id it)
-              (orgtrello-controller--create-lists-according-to-keywords it org-keywords)
-              (list board user it)))))
+                 (orgtrello-data-entity-id it)
+                 (orgtrello-controller--create-lists-according-to-keywords it org-keywords)
+                 (list board user it)))))
       (deferred:nextc it
         (lambda (board-user-list-ids)
           (orgtrello-log-msg orgtrello-log-debug "Update buffer with metadata - %S" board-user-list-ids)
-          (cl-destructuring-bind (board user board-lists-hname-id) board-user-list-ids
+          (-let (((board user board-lists-hname-id) board-user-list-ids))
             (orgtrello-controller-do-cleanup-from-buffer)
             (orgtrello-controller--update-orgmode-file-with-properties (orgtrello-data-entity-name board)
-                                                                         (orgtrello-data-entity-id board)
-                                                                         board-lists-hname-id
-                                                                         (orgtrello-hash-make-properties `((,(orgtrello-data-entity-username user) . ,(orgtrello-data-entity-id user))))
-                                                                         (orgtrello-data-entity-username user)
-                                                                         (orgtrello-hash-make-properties '((:red . "") (:green . "") (:yellow . "") (:purple . "") (:blue . "") (:orange . "")))
-                                                                         org-keywords))))
+                                                                       (orgtrello-data-entity-id board)
+                                                                       board-lists-hname-id
+                                                                       (orgtrello-hash-make-properties `((,(orgtrello-data-entity-username user) . ,(orgtrello-data-entity-id user))))
+                                                                       (orgtrello-data-entity-username user)
+                                                                       (orgtrello-hash-make-properties '((:red . "") (:green . "") (:yellow . "") (:purple . "") (:blue . "") (:orange . "")))
+                                                                       org-keywords))))
       (deferred:nextc it
         (lambda ()
           (orgtrello-buffer-save-buffer buffer-name)
