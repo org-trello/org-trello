@@ -11,6 +11,7 @@
 (require 'org-trello-entity)
 (require 'org-trello-cbx)
 (require 'org-trello-backend)
+(require 'org-trello-date)
 (require 'dash)
 (require 'dash-functional)
 
@@ -286,7 +287,7 @@ Remove text and overlays."
   "Compute the format of the DUE-DATE."
   (if due-date
       (format "%s <%s>\n" org-trello--property-deadline-prefix
-              (orgtrello-buffer--convert-trello-date-to-orgmode-date due-date))
+              (orgtrello-date-convert-trello-date-to-org-date due-date))
     ""))
 
 (defun orgtrello-buffer--private-compute-card-to-org-entry (name status due-date tags)
@@ -485,34 +486,6 @@ Function to be triggered by `before-save-hook` on org-trello-mode buffer."
      (lambda ()
        (orgtrello-buffer-indent-region org-trello--checklist-indent (orgtrello-entity-card-data-region))))))
 
-(defun orgtrello-buffer--convert-orgmode-date-to-trello-date (orgmode-date)
-  "Convert the ORGMODE-DATE deadline into a trello one."
-  (if orgmode-date
-      (--> (org-parse-time-string orgmode-date)
-           (apply 'encode-time it)
-           (format-time-string "%Y-%m-%dT%H:%M:%S.%3NZ" it 'universal))
-    orgmode-date))
-
-(defconst orgtrello-buffer-iso-8601-date-pattern
-  "[0-9]\\{4\\}-[0-9]\\{2\\}-[0-9]\\{2\\}T[0-9]\\{2\\}:[0-9]\\{2\\}:[0-9]\\{2\\}\.[0-9]\\{3\\}.*"
-  "ISO-8601 date pattern trello sends.")
-
-(defun orgtrello-buffer--prepare-iso-8601 (iso-8601-date)
-  "Convert ISO-8601-DATE into something `parse-time-string' can parse."
-  (when (string-match orgtrello-buffer-iso-8601-date-pattern iso-8601-date)
-    (->> iso-8601-date
-         (replace-regexp-in-string "T" " ")
-         (replace-regexp-in-string ".000Z" " GMT"))))
-
-(defun orgtrello-buffer--convert-trello-date-to-orgmode-date (trello-date)
-  "Convert the TRELLO-DATE into an `org-mode' one."
-  (if trello-date
-      (--> (orgtrello-buffer--prepare-iso-8601 trello-date)
-           (parse-time-string it)
-           (apply 'encode-time it)
-           (format-time-string "%Y-%m-%d %a %H:%M" it))
-    trello-date))
-
 (defalias 'orgtrello-buffer-org-entity-metadata 'org-heading-components
   "Compute the basic org-mode metadata.")
 
@@ -553,7 +526,7 @@ Deal with org entities and checkbox as well."
 Also add some metadata identifier/due-data/point/buffer-name/etc..."
   (let ((current-point (point)))
     (->> (orgtrello-buffer--extract-metadata)
-         (cons (-> current-point (orgtrello-buffer-org-entry-get "DEADLINE") orgtrello-buffer--convert-orgmode-date-to-trello-date))
+         (cons (-> current-point (orgtrello-buffer-org-entry-get "DEADLINE") orgtrello-date-convert-org-date-to-trello-date))
          (cons (orgtrello-buffer-extract-identifier current-point))
          (cons current-point)
          (cons (buffer-name))
