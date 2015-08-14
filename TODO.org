@@ -32,7 +32,8 @@
 - [ ] #248 - Installing from melpa (unstable) works, but then it errs on an undefined variable "error-messages"
 - [ ] #263 - Colors broken in org trello
 
-* IN-PROGRESS 0.7.3 [100%]
+* DONE 0.7.3 [100%]
+CLOSED: [2015-08-14 Fri 22:37]
 - [X] Update version
 - [X] Close #277 - Improve date time policy conversion
 - [X] Improve release + upload to marmalade scripts
