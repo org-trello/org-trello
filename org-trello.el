@@ -190,12 +190,12 @@ If NO-CHECK-FLAG is set, no controls are done."
 (defalias 'org-trello/abort-sync 'org-trello-abort-sync)
 
 ;;;###autoload
-(defun org-trello-add-card-comment (&optional modifier)
+(defun org-trello-add-card-comment (&optional from)
   "Control first, then if ok, add a comment to the current card.
-When MODIFIER is set, this will delete the current card's comments."
+When FROM is set, this will delete the current card's comments."
   (interactive "P")
   (org-trello-apply (cons 'org-trello-log-strict-checks-and-do
-                          (if modifier
+                          (if from
                               '("Remove current comment at point" orgtrello-controller-do-delete-card-comment)
                             '("Add card comment" orgtrello-controller-do-add-card-comment)))))
 
@@ -219,51 +219,51 @@ This will only work if you are the owner of the comment."
 (defalias 'org-trello/show-board-labels 'org-trello-show-board-labels)
 
 ;;;###autoload
-(defun org-trello-sync-card (&optional modifier)
+(defun org-trello-sync-card (&optional from)
   "Execute the sync of an entity and its structure to trello.
-If MODIFIER is non nil, execute the sync entity and its structure from trello."
+If FROM is non nil, execute the sync entity and its structure from trello."
   (interactive "P")
   (org-trello-apply-deferred
    (cons 'org-trello-log-strict-checks-and-do
-         (if modifier
+         (if from
              '("Request 'sync entity with structure from trello" orgtrello-controller-checks-then-sync-card-from-trello)
            '("Request 'sync entity with structure to trello" orgtrello-controller-checks-then-sync-card-to-trello)))))
 
 (defalias 'org-trello/sync-card 'org-trello-sync-card)
 
 ;;;###autoload
-(defun org-trello-sync-comment (&optional modifier)
+(defun org-trello-sync-comment (&optional from)
   "Execute the sync of the card's comment at point.
-If MODIFIER is non nil, remove the comment at point."
+If FROM is non nil, remove the comment at point."
   (interactive "P")
   (org-trello-apply-deferred (cons 'org-trello-log-strict-checks-and-do
-                                   (if modifier
+                                   (if from
                                        '("Remove current comment at point" orgtrello-controller-do-delete-card-comment)
                                      '("Sync comment to trello" orgtrello-controller-do-sync-card-comment)))))
 
 (defalias 'org-trello/sync-comment 'org-trello-sync-comment)
 
 ;;;###autoload
-(defun org-trello-sync-buffer (&optional modifier)
+(defun org-trello-sync-buffer (&optional from)
   "Execute the sync of the entire buffer to trello.
-If MODIFIER is non nil, execute the sync of the entire buffer from trello."
+If FROM is non nil, execute the sync of the entire buffer from trello."
   (interactive "P")
   (org-trello-apply-deferred
    (cons 'org-trello-log-strict-checks-and-do
-         (if modifier
+         (if from
              '("Request 'sync org buffer from trello board'" orgtrello-controller-do-sync-buffer-from-trello)
            '("Request 'sync org buffer to trello board'" orgtrello-controller-do-sync-buffer-to-trello)))))
 
 (defalias 'org-trello/sync-buffer 'org-trello-sync-buffer)
 
 ;;;###autoload
-(defun org-trello-kill-entity (&optional modifier)
+(defun org-trello-kill-entity (&optional from)
   "Execute the entity removal from trello and the buffer.
-If MODIFIER is non nil, execute all entities removal from trello and buffer."
+If FROM is non nil, execute all entities removal from trello and buffer."
   (interactive "P")
   (org-trello-apply-deferred
    (cons 'org-trello-log-strict-checks-and-do
-         (if modifier
+         (if from
              '("Delete all cards" orgtrello-controller-do-delete-entities)
            '("Delete entity at point (card/checklist/item)" orgtrello-controller-checks-then-delete-simple)))))
 
@@ -318,12 +318,12 @@ If MODIFIER is non nil, execute all entities removal from trello and buffer."
 (defalias 'org-trello/update-board-metadata 'org-trello-update-board-metadata)
 
 ;;;###autoload
-(defun org-trello-jump-to-trello-card (&optional modifier)
+(defun org-trello-jump-to-trello-card (&optional from)
   "Jump from current card to trello card in browser.
-If MODIFIER is not nil, jump from current card to board."
+If FROM is not nil, jump from current card to board."
   (interactive "P")
   (org-trello-apply (cons 'org-trello-log-strict-checks-and-do
-                          (if modifier
+                          (if from
                               '("Jump to board" orgtrello-controller-jump-to-board)
                             '("Jump to card" orgtrello-controller-jump-to-card)))))
 
@@ -346,12 +346,12 @@ If MODIFIER is not nil, jump from current card to board."
 (defalias 'org-trello/create-board-and-install-metadata 'org-trello-create-board-and-install-metadata)
 
 ;;;###autoload
-(defun org-trello-assign-me (&optional modifier)
+(defun org-trello-assign-me (&optional unassign)
   "Assign oneself to the card.
-If MODIFIER is not nil, unassign oneself from the card."
+If UNASSIGN is not nil, unassign oneself from the card."
   (interactive "P")
   (org-trello-apply (cons 'org-trello-log-light-checks-and-do
-                          (if modifier
+                          (if unassign
                               '("Unassign me from card" orgtrello-controller-do-unassign-me)
                             '("Assign myself to card" orgtrello-controller-do-assign-me)))
                     (current-buffer)))
@@ -391,7 +391,7 @@ If MODIFIER is not nil, unassign oneself from the card."
          "- A scrambled sample (of the user's and board's ids) of your org-trello buffer with problems."
          "- Report the following message trace inside your issue."
          ""
-         "System information: "
+         "System information:"
          ,(format "- system-type: %s" system-type)
          ,(format "- locale-coding-system: %s" locale-coding-system)
          ,(format "- emacs-version: %s" (emacs-version))
