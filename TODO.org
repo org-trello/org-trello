@@ -32,10 +32,10 @@
 - [ ] #248 - Installing from melpa (unstable) works, but then it errs on an undefined variable "error-messages"
 - [ ] #263 - Colors broken in org trello
 
-* IN-PROGRESS 0.7.4 [20%]
+* IN-PROGRESS 0.7.4 [40%]
 
 - [X] Improve release script + fix typo
-- [ ] Update version
+- [X] Update version
 - [ ] Improve coverage
 - [ ] #279 - Improve parsing of org-trello elements
 - [ ] Release notes
