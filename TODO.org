@@ -5,6 +5,7 @@
 * TODO Backlog
 ** Bug
 - [ ] #240 - Preserve non-trello related tags/other meta data
+- [ ] #278 - Too much checklist sync?
 
 ** Features
 
@@ -30,12 +31,14 @@
 - [ ] #245 - Trying to sync a card: orgtrello-buffer/compute-marker: Wrong type argument: numberp, nil
 - [ ] #248 - Installing from melpa (unstable) works, but then it errs on an undefined variable "error-messages"
 - [ ] #263 - Colors broken in org trello
-* IN-PROGRESS 0.7.3 [60%]
+
+* IN-PROGRESS 0.7.3 [100%]
 - [X] Update version
-- [X] #277 - Improve date time policy conversion
+- [X] Close #277 - Improve date time policy conversion
 - [X] Improve release + upload to marmalade scripts
-- [ ] Fix flycheck warnings
-- [ ] #278 - Too much checklist sync?
+- [X] Fix flycheck warnings
+- [X] Some refactoring
+- [X] Release notes
 
 * DONE 0.7.2 [100%]
 CLOSED: [2015-08-05 Wed 19:26]
