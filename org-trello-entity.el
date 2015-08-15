@@ -20,7 +20,8 @@
   "Determine if we are currently on an entity with LEVEL."
   (let* ((elem-at-point (org-element-at-point))
          (elem-nature   (car elem-at-point)))
-    (and (eq 'headline elem-nature) (= level (org-element-property :level elem-at-point)))))
+    (and (eq 'headline elem-nature)
+         (= level (org-element-property :level elem-at-point)))))
 
 (defun orgtrello-entity-org-card-p ()
   "Determine if we are currently on a card's first line."
@@ -30,7 +31,8 @@
   "Determine if current position is a checkbox.
 Provided INDENT as the denominator for the checkbox's nature."
   (-when-let (s (buffer-substring-no-properties (point-at-bol) (point-at-eol)))
-    (string-match-p (format "^%s%s" (orgtrello-utils-space indent) "- \\\[.?\\\].*") s)))
+    (string-match-p
+     (format "^%s%s" (orgtrello-utils-space indent) "- \\\[.?\\\].*") s)))
 
 (defun orgtrello-entity-org-checklist-p ()
   "Given the current position, determine if we are on a checklist."
@@ -73,7 +75,9 @@ Provided INDENT as the denominator for the checkbox's nature."
 Does not preserve the current position.
 If hitting a heading or the end of the file, return nil."
   (forward-line)
-  (when (and (< (point) (point-max)) (not (orgtrello-entity-org-card-p)) (not (orgtrello-entity-org-checkbox-p)))
+  (when (and (< (point) (point-max))
+             (not (orgtrello-entity-org-card-p))
+             (not (orgtrello-entity-org-checkbox-p)))
     (orgtrello-entity-goto-next-checkbox)))
 
 (defun orgtrello-entity-goto-end-card-metadata ()
@@ -81,7 +85,10 @@ If hitting a heading or the end of the file, return nil."
 Does not preserve the current position.
 If hitting a heading or the end of the file, return nil."
   (forward-line)
-  (when (and (< (point) (point-max)) (not (orgtrello-entity-org-card-p)) (not (orgtrello-entity-org-checkbox-p)) (not (orgtrello-entity-org-comment-p)))
+  (when (and (< (point) (point-max))
+             (not (orgtrello-entity-org-card-p))
+             (not (orgtrello-entity-org-checkbox-p))
+             (not (orgtrello-entity-org-comment-p)))
     (orgtrello-entity-goto-end-card-metadata)))
 
 (defun orgtrello-entity-card-metadata-end-point ()
@@ -109,8 +116,10 @@ If hitting a heading or the end of the file, return nil."
   "Compute the first character of the card's description content."
   (save-excursion
     (orgtrello-entity-back-to-card)
-    (search-forward ":END:" nil t) ;; if not found, return nil and do not move point
-    (1+ (point-at-eol))));; in any case, the description is then just 1 point more than the current position
+    (search-forward ":END:" nil t) ;; if not found, return nil & do not move pt
+    (1+ (point-at-eol))))
+;; in any case, the description is then just 1 point
+;; more than the current position
 
 (defun orgtrello-entity-card-end-point ()
   "Compute the current card's end point."
@@ -126,7 +135,9 @@ If no comment is found, return the card's end region."
     (orgtrello-entity-back-to-card)
     (let ((card-region (orgtrello-entity-card-region)))
       (apply 'narrow-to-region card-region)
-      (let ((next-pt (-if-let (next-pt (search-forward-regexp "[*][*] COMMENT" nil t)) ;; if not found, return nil and do not move point
+      (let ((next-pt (-if-let (next-pt
+                               (search-forward-regexp "[*][*] COMMENT" nil t))
+                         ;; if not found, return nil and do not move point
                          (save-excursion
                            (goto-char next-pt)
                            (point-at-bol))
@@ -135,7 +146,8 @@ If no comment is found, return the card's end region."
         next-pt))))
 
 (defun orgtrello-entity-compute-checklist-header-region ()
-  "Compute the checklist's region (only the header, without computing the zone occupied by items) couple '(start end)."
+  "Compute the checklist's region.
+Only the header, without items, couple '(start end)."
   `(,(point-at-bol) ,(1+ (point-at-eol))))
 
 (defun orgtrello-entity-goto-next-checkbox-with-same-level (level)
@@ -158,7 +170,8 @@ Otherwise, return the current position."
 
 (defun orgtrello-entity-compute-checklist-region ()
   "Compute the checklist's region (including the items) couple '(start end)."
-  `(,(orgtrello-buffer-checklist-beginning-pt) ,(1- (save-excursion (org-end-of-item) (point)))))
+  `(,(orgtrello-buffer-checklist-beginning-pt)
+    ,(1- (save-excursion (org-end-of-item) (point)))))
 
 (defun orgtrello-entity-compute-item-region ()
   "Compute the item region couple '(start end)."
@@ -170,11 +183,13 @@ Otherwise, return the current position."
 
 (defun orgtrello-entity-card-metadata-region ()
   "Compute the card's metadata (description) region couple '(start end)."
-  `(,(orgtrello-entity-card-description-start-point) ,(orgtrello-entity-card-metadata-end-point)))
+  `(,(orgtrello-entity-card-description-start-point)
+    ,(orgtrello-entity-card-metadata-end-point)))
 
 (defun orgtrello-entity-card-data-region ()
   "Compute the card's data region (checklists/items) couple '(start end)."
-  `(,(1+ (orgtrello-entity-card-metadata-end-point)) ,(1- (orgtrello-entity-compute-first-comment-point))))
+  `(,(1+ (orgtrello-entity-card-metadata-end-point))
+    ,(1- (orgtrello-entity-compute-first-comment-point))))
 
 (defun orgtrello-entity-comment-region ()
   "Compute the comment's region.
@@ -188,7 +203,7 @@ Expected to be called when the cursor is inside the comment region."
   "Compute the first character of the comment's description content."
   (save-excursion
     (beginning-of-line)
-    (search-forward ":END:" nil t) ;; if not found, return nil and do not move point
+    (search-forward ":END:" nil t) ;; if not found, return nil & do not move pt
     (1+ (point-at-eol))))
 
 (defun orgtrello-entity-comment-description-end-point ()
@@ -197,7 +212,8 @@ Expected to be called when the cursor is inside the comment region."
 
 (defun orgtrello-entity-comment-description-region ()
   "Compute the comment's description region."
-  `(,(orgtrello-entity-comment-description-start-point) ,(orgtrello-entity-comment-description-end-point)))
+  `(,(orgtrello-entity-comment-description-start-point)
+    ,(orgtrello-entity-comment-description-end-point)))
 
 (provide 'org-trello-entity)
 ;;; org-trello-entity.el ends here

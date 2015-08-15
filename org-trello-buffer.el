@@ -405,9 +405,9 @@ The optional ORGCHECKBOX-P is not used."
    org-trello--item-level
    (orgtrello-data-entity-keyword item)))
 
-(defun orgtrello-buffer--put-card-with-adjacency (current-meta entities adjacency)
-  "Deal with adding the CURRENT-META in ENTITIES and ADJACENCY."
-  (-> current-meta
+(defun orgtrello-buffer--put-card-with-adjacency (cur-meta entities adjacency)
+  "Deal with adding the CUR-META in ENTITIES and ADJACENCY."
+  (-> cur-meta
       (orgtrello-buffer--put-entities entities)
       (list adjacency)))
 
@@ -794,14 +794,14 @@ Return nil if none."
   (with-current-buffer buffer-name
     (call-interactively 'save-buffer)))
 
-(defun orgtrello-buffer-overwrite-card (card-region entity entities entities-adj)
+(defun orgtrello-buffer-overwrite-card (card-region entity entities adjacencies)
   "At current position, overwrite the CARD-REGION with new card ENTITY.
-ENTITIES and ENTITIES-ADJ provide information on card's structure."
+ENTITIES and ADJACENCIES provide information on card's structure."
   (let ((region-start (car card-region))
         (region-end   (1- (cadr card-region)))
         (card-id      (orgtrello-data-entity-id entity)))
     (orgtrello-buffer-clean-region region-start region-end)
-    (orgtrello-buffer-write-card card-id entity entities entities-adj)))
+    (orgtrello-buffer-write-card card-id entity entities adjacencies)))
 
 (defun orgtrello-buffer-checksum (string)
   "Compute the checksum of the STRING."
@@ -844,11 +844,13 @@ COMPUTE-REGION-FN is the region computation function."
 
 (defun orgtrello-buffer-checklist-checksum ()
   "Compute the checkbox's checksum."
-  (orgtrello-buffer-compute-generic-checksum 'orgtrello-entity-compute-checklist-region))
+  (orgtrello-buffer-compute-generic-checksum
+   'orgtrello-entity-compute-checklist-region))
 
 (defun orgtrello-buffer-item-checksum ()
   "Compute the checkbox's checksum."
-  (orgtrello-buffer-compute-generic-checksum 'orgtrello-entity-compute-item-region))
+  (orgtrello-buffer-compute-generic-checksum
+   'orgtrello-entity-compute-item-region))
 
 (defun orgtrello-buffer-comment-checksum ()
   "Compute the comment's checksum."
