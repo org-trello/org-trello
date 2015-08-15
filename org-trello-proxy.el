@@ -17,9 +17,9 @@
   "Trying another approach to getting back to header computing the normal form of the entry DATA in the buffer."
   (orgtrello-proxy--getting-back-to-marker (orgtrello-buffer--compute-entity-to-org-entry data)))
 
-(defun orgtrello-proxy--compute-pattern-search-from-marker (marker)
-  "Given a MARKER, compute the pattern to look for in the file."
-  marker)
+(defalias 'orgtrello-proxy--compute-pattern-search-from-marker (lambda (x) x)
+  "Given a MARKER, compute the pattern to look for in the file.
+At the moment, `identify' function is sufficient.")
 
 (defun orgtrello-proxy--getting-back-to-marker (marker)
   "Given a MARKER, getting back to marker function.

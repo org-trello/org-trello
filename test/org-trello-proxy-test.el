@@ -31,5 +31,8 @@
   (should (string= "a," (orgtrello-proxy--tags-to-labels "a:")))
   (should (string= ""  (orgtrello-proxy--tags-to-labels nil))))
 
+(ert-deftest test-orgtrello-proxy--compute-pattern-search-from-marker ()
+  (should (eq 'x (orgtrello-proxy--compute-pattern-search-from-marker 'x))))
+
 (provide 'org-trello-proxy-test)
 ;;; org-trello-proxy-test.el ends here
