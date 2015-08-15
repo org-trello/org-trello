@@ -19,25 +19,25 @@
 
 (require 'load-org-trello)
 
-(defvar orgtrello-test--namespaces '() "Org-trello test namespaces for development purposes.")
-(setq orgtrello-test--namespaces '("test/utilities-test.el"
-                                   "test/org-trello-setup-test.el"
-                                   "test/org-trello-action-test.el"
-                                   "test/org-trello-api-test.el"
-                                   "test/org-trello-backend-test.el"
-                                   "test/org-trello-entity-test.el"
-                                   "test/org-trello-entity-test.el"
-                                   "test/org-trello-cbx-test.el"
-                                   "test/org-trello-date-test.el"
-                                   "test/org-trello-buffer-test.el"
-                                   "test/org-trello-controller-test.el"
-                                   "test/org-trello-data-test.el"
-                                   "test/org-trello-hash-test.el"
-                                   "test/org-trello-proxy-test.el"
-                                   "test/org-trello-query-test.el"
-                                   "test/org-trello-utils-test.el"))
+(defvar orgtrello-tests--namespaces '() "Org-trello test namespaces for development purposes.")
+(setq orgtrello-tests--namespaces '("test/utilities-test.el"
+                                    "test/org-trello-setup-test.el"
+                                    "test/org-trello-action-test.el"
+                                    "test/org-trello-api-test.el"
+                                    "test/org-trello-backend-test.el"
+                                    "test/org-trello-entity-test.el"
+                                    "test/org-trello-entity-test.el"
+                                    "test/org-trello-cbx-test.el"
+                                    "test/org-trello-date-test.el"
+                                    "test/org-trello-buffer-test.el"
+                                    "test/org-trello-controller-test.el"
+                                    "test/org-trello-data-test.el"
+                                    "test/org-trello-hash-test.el"
+                                    "test/org-trello-proxy-test.el"
+                                    "test/org-trello-query-test.el"
+                                    "test/org-trello-utils-test.el"))
 
-(defun orgtrello-test-count-number-of (regexp)
+(defun orgtrello-tests-count-number-of (regexp)
   "Given a REGEXP, count the number of occurences on current buffer."
   (save-excursion
     (with-current-buffer (current-buffer)
@@ -46,20 +46,20 @@
           (setq c (1+ c)))
         c))))
 
-(defun orgtrello-test-count-number-functions ()
+(defun orgtrello-tests-count-number-functions ()
   "Count the number of `def-un' or `def-alias'."
   (interactive)
-  (orgtrello-test-count-number-of "\\(defun\\|defalias\\).*"))
+  (orgtrello-tests-count-number-of "\\(defun\\|defalias\\).*"))
 
-(defun orgtrello-test-count-number-test ()
+(defun orgtrello-tests-count-number-test ()
   "Count the number of `ert-def-test'."
   (interactive)
-  (orgtrello-test-count-number-of "\\(ert-deftest\\).*"))
+  (orgtrello-tests-count-number-of "\\(ert-deftest\\).*"))
 
-(defun orgtrello-test-load-namespaces ()
+(defun orgtrello-tests-load-namespaces ()
   "Load the org-trello namespaces."
   (interactive)
-  (mapc #'load-file orgtrello-test--namespaces)
+  (mapc #'load-file orgtrello-tests--namespaces)
   (require 'org-trello)
   (orgtrello-log-msg orgtrello-log-info "Tests loaded!"))
 
@@ -75,9 +75,9 @@
           (forward-line 10))
       (message "All is good!"))))
 
-(orgtrello-test-load-namespaces)
+(orgtrello-tests-load-namespaces)
 
-(define-key emacs-lisp-mode-map (kbd "C-c o d") 'orgtrello-test-load-namespaces)
+(define-key emacs-lisp-mode-map (kbd "C-c o d") 'orgtrello-tests-load-namespaces)
 (define-key emacs-lisp-mode-map (kbd "C-c o D") 'orgtrello-tests-find-next-error)
 
 (require 'org-trello-action-test)
