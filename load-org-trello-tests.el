@@ -37,24 +37,46 @@
                                     "test/org-trello-query-test.el"
                                     "test/org-trello-utils-test.el"))
 
-(defun orgtrello-tests-count-number-of (regexp)
-  "Given a REGEXP, count the number of occurences on current buffer."
+(defun orgtrello-tests-number-of (regexp buf)
+  "Given a REGEXP, count all occurences on BUFFER."
   (save-excursion
-    (with-current-buffer (current-buffer)
+    (with-temp-buffer
+      (insert-file buf)
+      (goto-char (point-min))
       (let ((c 0))
         (while (re-search-forward regexp nil t)
           (setq c (1+ c)))
         c))))
 
-(defun orgtrello-tests-count-number-functions ()
-  "Count the number of `def-un' or `def-alias'."
-  (interactive)
-  (orgtrello-tests-count-number-of "\\(defun\\|defalias\\).*"))
+(defun orgtrello-tests-interactive-number-of (regexp &optional ask-buffer)
+  "Given a REGEXP, compute a number of occurrences.
+If region is active, will use the region highlight as buffer.
+Otherwise, if ASK-BUFFER is not nil, will ask the user.
+Otherwise, default to current buffer."
+  (let ((buf (if (region-active-p)
+                 (buffer-substring (region-beginning) (region-end))
+               (if ask-buffer
+                   (read-string "Buffer name: ")
+                 (current-buffer)))))
+    (message "buf: %s" buf)
+    (-when-let (c (orgtrello-tests-number-of regexp buf))
+      (insert (int-to-string c)))))
 
-(defun orgtrello-tests-count-number-test ()
-  "Count the number of `ert-def-test'."
-  (interactive)
-  (orgtrello-tests-count-number-of "\\(ert-deftest\\).*"))
+(defun orgtrello-tests-count-functions (&optional ask-buffer)
+  "Count the number of `def-un' or `def-alias'.
+If region is active, will use the region highlight as buffer.
+Otherwise, if ASK-BUFFER is not nil, will ask the user.
+Otherwise, default to current buffer."
+  (interactive "P")
+  (orgtrello-tests-interactive-number-of "\\(defun\\).*" ask-buffer))
+
+(defun orgtrello-tests-count-number-tests (&optional ask-buffer)
+  "Count the number of `ert-def-test'.
+If region is active, will use the region highlight as buffer.
+Otherwise, if ASK-BUFFER is not nil, will ask the user.
+Otherwise, default to current buffer."
+  (interactive "P")
+  (orgtrello-tests-interactive-number-of "\\(ert-deftest\\).*" ask-buffer))
 
 (defun orgtrello-tests-load-namespaces ()
   "Load the org-trello namespaces."
