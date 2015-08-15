@@ -22,6 +22,235 @@
             (mock (orgtrello-data-parse-data :json-output) => :result)
             (orgtrello-query--http-parse)))))
 
+(ert-deftest test-orgtrello-query--get ()
+  ;; not synced, default callbacks, etc... no authentication
+  (should (equal
+           '(deferred:$
+              (request-deferred "http://server/some-uri"
+                                :type "GET"
+                                :params '((:a 1)
+                                          (:b 2))
+                                :parser 'orgtrello-query--http-parse)
+              (deferred:nextc it orgtrello-query--standard-success-callback)
+              (deferred:error it orgtrello-query--standard-error-callback))
+           (let ((server "http://server/")
+                 (query-map (orgtrello-hash-make-properties '((:uri . "some-uri")
+                                                              (:method . "GET")
+                                                              (:params (:a 1) (:b 2))
+                                                              (:sync)))))
+             (orgtrello-query--get server query-map))))
+  ;; not synced, specific callbacks + authentication
+  (should (equal
+           '(deferred:$
+              (request-deferred "http://server/some-uri"
+                                :type "GET"
+                                :params '((key . :consumer-key)
+                                          (token . :access-token)
+                                          (:c 3)
+                                          (:d 4))
+                                :parser 'orgtrello-query--http-parse)
+              (deferred:nextc it :success-cbk)
+              (deferred:error it :error-cbk))
+           (let ((server "http://server/")
+                 (org-trello-consumer-key :consumer-key)
+                 (org-trello-access-token :access-token)
+                 (query-map (orgtrello-hash-make-properties '((:uri . "some-uri")
+                                                              (:method . "GET")
+                                                              (:params (:c 3) (:d 4))
+                                                              (:sync)))))
+             (orgtrello-query--get server query-map :success-cbk :error-cbk 'with-auth))))
+  ;; sync query, default callbacks
+  (should (equal :result-synced-1
+                 (with-mock
+                   (mock (request "http://server/some-uri"
+                                  :sync    t
+                                  :type    "GET"
+                                  :params  '((:c 3)
+                                             (:d 4))
+                                  :parser  'orgtrello-query--http-parse
+                                  :success 'orgtrello-query--standard-success-callback
+                                  :error   'orgtrello-query--standard-error-callback) => :result-synced-1)
+                   (let ((server "http://server/")
+                         (org-trello-consumer-key :consumer-key)
+                         (org-trello-access-token :access-token)
+                         (query-map (orgtrello-hash-make-properties '((:uri . "some-uri")
+                                                                      (:method . "GET")
+                                                                      (:params (:c 3) (:d 4))
+                                                                      (:sync . 'sync)))))
+                     (orgtrello-query--get server query-map)))))
+  ;; sync query, specific-callbacks with authentication
+  (should (equal :result-synced-2
+                 (with-mock
+                   (mock (request "http://server/some-uri"
+                                  :sync    t
+                                  :type    "GET"
+                                  :params  '((key . :consumer-key)
+                                             (token . :access-token)
+                                             (:c 3)
+                                             (:d 4))
+                                  :parser  'orgtrello-query--http-parse
+                                  :success :success-cbk
+                                  :error   :error-cbk) => :result-synced-2)
+                   (let ((server "http://server/")
+                         (org-trello-consumer-key :consumer-key)
+                         (org-trello-access-token :access-token)
+                         (query-map (orgtrello-hash-make-properties '((:uri . "some-uri")
+                                                                      (:method . "GET")
+                                                                      (:params (:c 3) (:d 4))
+                                                                      (:sync . 'sync)))))
+                     (orgtrello-query--get server query-map :success-cbk :error-cbk 'with-auth))))))
+
+(ert-deftest test-orgtrello-query--post-or-put ()
+  ;; not synced, default callbacks, etc... no authentication
+  (should (equal
+           '(deferred:$
+              (request-deferred "http://server/some-uri"
+                                :type "POST"
+                                :params '((key)
+                                          (token))
+                                :headers '(("Content-type" . "application/json"))
+                                :data "{\"a\":1,\"b\":2}"
+                                :parser 'orgtrello-query--http-parse)
+              (deferred:nextc it :success-cbx)
+              (deferred:error it :error-cbx))
+           (let ((server "http://server/")
+                 (query-map (orgtrello-hash-make-properties '((:uri . "some-uri")
+                                                              (:method . "POST")
+                                                              (:params (:a . 1) (:b . 2))
+                                                              (:sync)))))
+             (orgtrello-query--post-or-put server query-map :success-cbx :error-cbx 'with-auth))))
+  ;; not synced, specific callbacks + authentication
+  (should (equal
+           '(deferred:$
+              (request-deferred "http://server/some-uri"
+                                :type "PUT"
+                                :params '((key . :consumer-key)
+                                          (token . :access-token))
+                                :headers '(("Content-type" . "application/json"))
+                                :data "{\"c\":3,\"d\":4}"
+                                :parser 'orgtrello-query--http-parse)
+              (deferred:nextc it :success-cbk)
+              (deferred:error it :error-cbk))
+           (let ((server "http://server/")
+                 (org-trello-consumer-key :consumer-key)
+                 (org-trello-access-token :access-token)
+                 (query-map (orgtrello-hash-make-properties '((:uri . "some-uri")
+                                                              (:method . "PUT")
+                                                              (:params (:c . 3) (:d . 4))
+                                                              (:sync)))))
+             (orgtrello-query--post-or-put server query-map :success-cbk :error-cbk 'with-auth))))
+  ;; sync query, default callbacks
+  (should (equal :result-post-or-put-synced-no-auth
+                 (with-mock
+                   (mock (request "http://server/some-uri"
+                                  :sync t
+                                  :type "POST"
+                                  :params nil
+                                  :headers  '(("Content-type" . "application/json"))
+                                  :data "{\"c\":3,\"d\":4}"
+                                  :parser 'orgtrello-query--http-parse
+                                  :success 'orgtrello-query--standard-success-callback
+                                  :error 'orgtrello-query--standard-error-callback)
+                         => :result-post-or-put-synced-no-auth)
+                   (let ((server "http://server/")
+                         (org-trello-consumer-key :consumer-key)
+                         (org-trello-access-token :access-token)
+                         (query-map (orgtrello-hash-make-properties '((:uri . "some-uri")
+                                                                      (:method . "POST")
+                                                                      (:params (:c . 3) (:d . 4))
+                                                                      (:sync . 'sync)))))
+                     (orgtrello-query--post-or-put server query-map)))))
+  ;; sync query, specific-callbacks with authentication
+  (should (equal :result-post-or-put-synced-with-auth
+                 (with-mock
+                   (mock (request "http://server/some-uri"
+                                  :sync t
+                                  :type "PUT"
+                                  :params '((key . :consumer-key)
+                                            (token . :access-token))
+                                  :headers '(("Content-type" . "application/json"))
+                                  :data "{\"c\":3,\"d\":4}"
+                                  :parser 'orgtrello-query--http-parse
+                                  :success :success-cbk
+                                  :error :error-cbk) => :result-post-or-put-synced-with-auth)
+                   (let ((server "http://server/")
+                         (org-trello-consumer-key :consumer-key)
+                         (org-trello-access-token :access-token)
+                         (query-map (orgtrello-hash-make-properties '((:uri . "some-uri")
+                                                                      (:method . "PUT")
+                                                                      (:params (:c . 3) (:d . 4))
+                                                                      (:sync . 'sync)))))
+                     (orgtrello-query--post-or-put server query-map :success-cbk :error-cbk 'with-auth))))))
+
+(ert-deftest test-orgtrello-query--delete ()
+  ;; not synced, default callbacks, etc... no authentication
+  (should (equal
+           '(deferred:$
+              (request-deferred "http://server/some-uri"
+                                :type "DELETE"
+                                :params '((key)
+                                          (token)))
+              (deferred:nextc it :success-cbx)
+              (deferred:error it :error-cbx))
+           (let ((server "http://server/")
+                 (query-map (orgtrello-hash-make-properties '((:uri . "some-uri")
+                                                              (:method . "DELETE")
+                                                              (:params (:a . 1) (:b . 2))
+                                                              (:sync)))))
+             (orgtrello-query--delete server query-map :success-cbx :error-cbx 'with-auth))))
+  ;; not synced, specific callbacks + authentication
+  (should (equal
+           '(deferred:$
+              (request-deferred "http://server/some-uri"
+                                :type "DELETE"
+                                :params '((key . :consumer-key)
+                                          (token . :access-token)))
+              (deferred:nextc it :success-cbk)
+              (deferred:error it :error-cbk))
+           (let ((server "http://server/")
+                 (org-trello-consumer-key :consumer-key)
+                 (org-trello-access-token :access-token)
+                 (query-map (orgtrello-hash-make-properties '((:uri . "some-uri")
+                                                              (:method . "DELETE")
+                                                              (:params (:c . 3) (:d . 4))
+                                                              (:sync)))))
+             (orgtrello-query--delete server query-map :success-cbk :error-cbk 'with-auth))))
+  ;; sync query, default callbacks
+  (should (equal :result-delete-synced-no-auth
+                 (with-mock
+                   (mock (request "http://server/some-uri"
+                                  :sync t
+                                  :type "DELETE"
+                                  :params nil
+                                  :success 'orgtrello-query--standard-success-callback
+                                  :error 'orgtrello-query--standard-error-callback)
+                         => :result-delete-synced-no-auth)
+                   (let ((server "http://server/")
+                         (org-trello-consumer-key :consumer-key)
+                         (org-trello-access-token :access-token)
+                         (query-map (orgtrello-hash-make-properties '((:uri . "some-uri")
+                                                                      (:method . "DELETE")
+                                                                      (:params (:c . 3) (:d . 4))
+                                                                      (:sync . 'sync)))))
+                     (orgtrello-query--delete server query-map)))))
+  ;; sync query, specific-callbacks with authentication
+  (should (equal :result-delete-synced-with-auth
+                 (with-mock
+                   (mock (request "http://server/some-uri"
+                                  :sync t
+                                  :type "DELETE"
+                                  :params '((key . :consumer-key) (token . :access-token))
+                                  :success :success-cbk
+                                  :error :error-cbk) => :result-delete-synced-with-auth)
+                   (let ((server "http://server/")
+                         (org-trello-consumer-key :consumer-key)
+                         (org-trello-access-token :access-token)
+                         (query-map (orgtrello-hash-make-properties '((:uri . "some-uri")
+                                                                      (:method . "DELETE")
+                                                                      (:params (:c . 3) (:d . 4))
+                                                                      (:sync . 'sync)))))
+                     (orgtrello-query--delete server query-map :success-cbk :error-cbk 'with-auth))))))
+
 (ert-deftest test-orgtrello-query-http ()
   (should (equal :res
                  (with-mock

@@ -39,7 +39,7 @@ Simply displays a success message in the minibuffer."
 (defun orgtrello-query--http-parse ()
   "Parse the http response into an org-trello entity."
   (->> (json-read)
-    orgtrello-data-parse-data))
+       orgtrello-data-parse-data))
 
 (defun orgtrello-query--get (server query-map &optional success-callback error-callback authentication-p)
   "Execute the GET request to SERVER with QUERY-MAP with optional SUCCESS-CALLBACK, ERROR-CALLBACK and AUTHENTICATION-P."
