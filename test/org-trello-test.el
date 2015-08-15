@@ -69,8 +69,7 @@
                    (mock (org-trello-apply '(org-trello-log-strict-checks-and-do
                                              "Add card comment"
                                              orgtrello-controller-do-add-card-comment)) => :res2)
-                   (org-trello-add-card-comment))))
-  )
+                   (org-trello-add-card-comment)))))
 
 (ert-deftest test-org-trello-delete-card-comment ()
   (should (equal :res
