@@ -461,7 +461,7 @@ If REGION-START and REGION-END are provided, will work on such defined region."
   "Deal with adding a the current entry from CURRENT-META in ENTITIES."
   (-> current-meta
       orgtrello-data-current
-      (orgtrello-backend--add-entity-to-entities entities)))
+      (orgtrello-backend-add-entity-to-entities entities)))
 
 (defun orgtrello-buffer--set-marker (marker)
   "Set a MARKER to get back to later."
