@@ -213,7 +213,7 @@ BUFFER-NAME to specify the buffer with which we currently work."
            (marker  (orgtrello-buffer--compute-marker-from-entry current)))
       (orgtrello-buffer-set-marker-if-not-present current marker)
       (orgtrello-data-put-entity-id marker current)
-      (eval (orgtrello-proxy--delete current)))))
+      (eval (orgtrello-proxy-delete-entity current)))))
 
 (defun orgtrello-controller-checks-then-sync-card-to-trello ()
   "Check then do the actual sync if everything is ok."
@@ -375,7 +375,7 @@ Along the way, the buffer BUFFER-NAME is written with new informations."
                               (orgtrello-controller--entity-mandatory-name-ok-p
                                entity)))
                  (-> entity
-                     (orgtrello-proxy--sync-entity entities-adjacencies)
+                     (orgtrello-proxy-sync-entity entities-adjacencies)
                      (push card-computations))))
              entities)
 

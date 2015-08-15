@@ -1,5 +1,12 @@
-;;; org-trello-proxy.el --- Proxy namespace (in charge of receiving actions to transmit to the consumer).
+;;; org-trello-proxy.el --- `Proxy' namespace
 ;;; Commentary:
+
+;; This namespace is badly named.
+;; Historically, there was a proxy in charge of reading actions
+;; parsing them back and discuss with trello.
+
+;; Now, the controller namespace directly triggers actions from here
+;; and still in charge with discussion of trello.
 ;;; Code:
 
 (require 'org-trello-log)
@@ -17,7 +24,7 @@
   "Trying another approach to getting back to header computing the normal form of the entry DATA in the buffer."
   (orgtrello-proxy--getting-back-to-marker (orgtrello-buffer--compute-entity-to-org-entry data)))
 
-(defalias 'orgtrello-proxy--compute-pattern-search-from-marker (lambda (x) x)
+(defalias 'orgtrello-proxy--compute-pattern-search-from-marker 'identity
   "Given a MARKER, compute the pattern to look for in the file.
 At the moment, `identify' function is sufficient.")
 
@@ -34,28 +41,17 @@ Move the cursor position."
       goto-ok
     (orgtrello-proxy--getting-back-to-headline data)))
 
-(defun orgtrello-proxy-execute-async-computations (computations log-ok log-ko)
-  "Compute the deferred COMPUTATIONS.
-Display LOG-OK or LOG-KO depending on the result."
-  (eval `(deferred:$
-           (deferred:parallel
-             ,@computations)
-           (deferred:error it
-             (lambda () (orgtrello-log-msg orgtrello-log-error ,log-ko)))
-           (deferred:nextc it
-             (lambda () (orgtrello-log-msg orgtrello-log-debug ,log-ok))))))
-
 (defun orgtrello-proxy--compute-sync-next-level (entity entities-adjacencies)
   "Trigger the sync for ENTITY's children.
 ENTITIES-ADJACENCIES provides needed information."
   (-map (lambda (child-id)
           (--> child-id
-            (orgtrello-data-get-entity it entities-adjacencies)
-            (orgtrello-proxy--sync-entity it entities-adjacencies)
-            (eval it)))
+               (orgtrello-data-get-entity it entities-adjacencies)
+               (orgtrello-proxy-sync-entity it entities-adjacencies)
+               (eval it)))
         (orgtrello-data-get-children entity entities-adjacencies)))
 
-(defun orgtrello-proxy-update-entities-adjacencies (old-entity entity-synced entities-adjacencies)
+(defun orgtrello-proxy--update-entities-adjacencies (old-entity entity-synced entities-adjacencies)
   "Given OLD-ENTITY and ENTITY-SYNCED, update in place ENTITIES-ADJACENCIES.
 This will also update ENTITY-SYNCED with its parent.
 This will remove OLD-ENTITY's id and update with the ENTITY-SYNCED's one.
@@ -101,7 +97,7 @@ ENTITIES-ADJACENCIES provides needed information about entities and adjacency."
                                     (progn ;; not present, this was just created, we update with the trello id
                                       (orgtrello-buffer-write-properties-at-pt entry-new-id)
                                       (format "Newly entity '%s' with id '%s' synced!" entity-name entry-new-id)))))
-              (let* ((updates (orgtrello-proxy-update-entities-adjacencies entity-not-yet-synced entity-synced entities-adj))
+              (let* ((updates (orgtrello-proxy--update-entities-adjacencies entity-not-yet-synced entity-synced entities-adj))
                      (updated-entity-synced (car updates))
                      (updated-entities-adj  (cdr updates)))
                 (orgtrello-proxy--compute-sync-next-level updated-entity-synced updated-entities-adj))
@@ -225,7 +221,7 @@ If the checks are ko, the error message is returned."
                                      item-pos)))
       checks-ok-or-error-message)))
 
-(defun orgtrello-proxy-compute-dispatch-fn (entity map-dispatch-fn)
+(defun orgtrello-proxy--compute-dispatch-fn (entity map-dispatch-fn)
   "Generic function to dispatch, depending on the ENTITY level, functions.
 MAP-DISPATCH-FN is a map of function taking the one parameter ENTITY."
   (-> entity
@@ -240,25 +236,8 @@ MAP-DISPATCH-FN is a map of function taking the one parameter ENTITY."
 
 (defun orgtrello-proxy--compute-sync-query-request (entity)
   "Dispatch the ENTITY creation/update depending on the nature of the entry."
-  (orgtrello-proxy-compute-dispatch-fn entity orgtrello-proxy--map-fn-dispatch-create-update))
+  (orgtrello-proxy--compute-dispatch-fn entity orgtrello-proxy--map-fn-dispatch-create-update))
 
-(defun orgtrello-proxy--sync-entity (entity-data entities-adjacencies)
-  "Compute the sync action on entity ENTITY-DATA.
-Use ENTITIES-ADJACENCIES to provide further information."
-  (lexical-let ((query-map      (orgtrello-proxy--compute-sync-query-request entity-data))
-                (entity-to-sync entity-data))
-    (if (hash-table-p query-map)
-        (orgtrello-query-http-trello
-         query-map
-         nil ; async
-         (orgtrello-proxy--standard-post-or-put-success-callback entity-data entities-adjacencies)
-         (lambda (response)
-           (orgtrello-proxy--cleanup-meta entity-to-sync)
-           (orgtrello-log-msg orgtrello-log-error "client - Problem during the sync request to the proxy - error-thrown: %s" (request-response-error-thrown response))))
-      (progn ;; cannot execute the request
-        (orgtrello-proxy--cleanup-meta entity-to-sync)
-        (orgtrello-log-msg orgtrello-log-error query-map)
-        query-map))))
 
 (defun orgtrello-proxy--delete-region (start end)
   "Delete a region defined by START and END bound."
@@ -286,7 +265,7 @@ Use ENTITIES-ADJACENCIES to provide further information."
         (ending-point (1+ (point-at-eol))))
     (orgtrello-proxy--delete-region starting-point ending-point)))
 
-(defun orgtrello-proxy-delete-region (entity)
+(defun orgtrello-proxy--delete-entity-region (entity)
   "Compute the delete region function depending on the ENTITY's nature."
   (cond ((orgtrello-data-entity-card-p entity) 'orgtrello-proxy--delete-card-region)
         ((orgtrello-data-entity-checklist-p entity) 'orgtrello-proxy--delete-checkbox-checklist-region)
@@ -302,9 +281,9 @@ Use ENTITIES-ADJACENCIES to provide further information."
         (save-excursion
           (when (orgtrello-proxy--getting-back-to-marker marker)
             (-> (orgtrello-buffer-entry-get-full-metadata)
-              orgtrello-data-current
-              orgtrello-proxy-delete-region
-              funcall)
+                orgtrello-data-current
+                orgtrello-proxy--delete-entity-region
+                funcall)
             (when (< org-trello--card-level level)
               (forward-line -1) ;; when on checklist or item, get back one line then update the card's checksum
               (orgtrello-buffer-write-local-card-checksum-at-point))))))))
@@ -322,16 +301,28 @@ Use ENTITIES-ADJACENCIES to provide further information."
   (let ((checklist-meta (orgtrello-data-parent item-meta)))
     (orgtrello-api-delete-item (orgtrello-data-entity-id checklist-meta) (orgtrello-data-entity-id item-meta))))
 
-(defvar orgtrello-proxy--map-fn-dispatch-delete (orgtrello-hash-make-properties `((,org-trello--card-level      . orgtrello-proxy--card-delete)
-                                                                (,org-trello--checklist-level . orgtrello-proxy--checklist-delete)
-                                                                (,org-trello--item-level      . orgtrello-proxy--item-delete)))
+(defvar orgtrello-proxy--map-fn-dispatch-delete
+  (orgtrello-hash-make-properties `((,org-trello--card-level      . orgtrello-proxy--card-delete)
+                                    (,org-trello--checklist-level . orgtrello-proxy--checklist-delete)
+                                    (,org-trello--item-level      . orgtrello-proxy--item-delete)))
   "Dispatch map for the deletion query of card/checklist/item.")
 
 (defun orgtrello-proxy--dispatch-delete (entity)
   "Dispatch the call to the delete function depending on ENTITY level info."
-  (orgtrello-proxy-compute-dispatch-fn entity orgtrello-proxy--map-fn-dispatch-delete))
+  (orgtrello-proxy--compute-dispatch-fn entity orgtrello-proxy--map-fn-dispatch-delete))
 
-(defun orgtrello-proxy--delete (entity-data)
+(defun orgtrello-proxy-execute-async-computations (computations log-ok log-ko)
+  "Compute the deferred COMPUTATIONS.
+Display LOG-OK or LOG-KO depending on the result."
+  (eval `(deferred:$
+           (deferred:parallel
+             ,@computations)
+           (deferred:error it
+             (lambda () (orgtrello-log-msg orgtrello-log-error ,log-ko)))
+           (deferred:nextc it
+             (lambda () (orgtrello-log-msg orgtrello-log-debug ,log-ok))))))
+
+(defun orgtrello-proxy-delete-entity (entity-data)
   "Compute the delete action to remove ENTITY-DATA."
   (lexical-let ((query-map        (orgtrello-proxy--dispatch-delete entity-data))
                 (entity-to-delete entity-data)
@@ -345,6 +336,24 @@ Use ENTITIES-ADJACENCIES to provide further information."
            (orgtrello-log-msg orgtrello-log-error "client - Problem during the deletion request to the proxy - error-thrown: %s" (request-response-error-thrown response))
            (orgtrello-proxy--cleanup-meta entity-to-delete)))
       (orgtrello-log-msg orgtrello-log-error query-map))))
+
+(defun orgtrello-proxy-sync-entity (entity-data entities-adjacencies)
+  "Compute the sync action on entity ENTITY-DATA.
+Use ENTITIES-ADJACENCIES to provide further information."
+  (lexical-let ((query-map      (orgtrello-proxy--compute-sync-query-request entity-data))
+                (entity-to-sync entity-data))
+    (if (hash-table-p query-map)
+        (orgtrello-query-http-trello
+         query-map
+         nil ; async
+         (orgtrello-proxy--standard-post-or-put-success-callback entity-data entities-adjacencies)
+         (lambda (response)
+           (orgtrello-proxy--cleanup-meta entity-to-sync)
+           (orgtrello-log-msg orgtrello-log-error "client - Problem during the sync request to the proxy - error-thrown: %s" (request-response-error-thrown response))))
+      (progn ;; cannot execute the request
+        (orgtrello-proxy--cleanup-meta entity-to-sync)
+        (orgtrello-log-msg orgtrello-log-error query-map)
+        query-map))))
 
 (orgtrello-log-msg orgtrello-log-debug "orgtrello-proxy loaded!")
 
