@@ -37,6 +37,25 @@
                                    "test/org-trello-query-test.el"
                                    "test/org-trello-utils-test.el"))
 
+(defun orgtrello-test-count-number-of (regexp)
+  "Given a REGEXP, count the number of occurences on current buffer."
+  (save-excursion
+    (with-current-buffer (current-buffer)
+      (let ((c 0))
+        (while (re-search-forward regexp nil t)
+          (setq c (1+ c)))
+        c))))
+
+(defun orgtrello-test-count-number-functions ()
+  "Count the number of `def-un' or `def-alias'."
+  (interactive)
+  (orgtrello-test-count-number-of "\\(defun\\|defalias\\).*"))
+
+(defun orgtrello-test-count-number-test ()
+  "Count the number of `ert-def-test'."
+  (interactive)
+  (orgtrello-test-count-number-of "\\(ert-deftest\\).*"))
+
 (defun orgtrello-test-load-namespaces ()
   "Load the org-trello namespaces."
   (interactive)
