@@ -4,7 +4,6 @@
 (require 'el-mock)
 
 (ert-deftest test-orgtrello-backend-add-entity-to-entities ()
-    ;; empty map
   (should (let ((entity (orgtrello-hash-make-properties '((:id . :entity-id) (:prop0 . :prop0-val)))))
             (orgtrello-tests-hash-equal
              (orgtrello-hash-make-properties `((:entity-id . ,entity)))

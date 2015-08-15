@@ -76,16 +76,6 @@
                             (orgtrello-hash-gethash-data :key)))))
 
 (ert-deftest test-orgtrello-hash-keys ()
-  (should (equal '("key0" "key1" "key2")
-                 (orgtrello-hash-keys (orgtrello-hash-make-properties `(("key0" . "val0") ("key1" . "val1") ("key2" . "val2"))))))
-  (should-not (orgtrello-hash-keys (orgtrello-hash-empty-hash))))
-
-(ert-deftest test-orgtrello-hash-values ()
-  (should (equal '("val0" "val1" "val2")
-                 (orgtrello-hash-values (orgtrello-hash-make-properties `(("key0" . "val0") ("key1" . "val1") ("key2" . "val2"))))))
-  (should-not (orgtrello-hash-keys (orgtrello-hash-empty-hash))))
-
-(ert-deftest test-orgtrello-hash-keys ()
   (should (equal '(:a :b :c)
                  (orgtrello-hash-keys (orgtrello-hash-make-properties '((:a . :1)
                                                                         (:b . :2)
