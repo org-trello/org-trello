@@ -3,7 +3,6 @@
 ;;; Code:
 
 (require 'ert)
-(require 'ert-expectations)
 (require 'el-mock)
 
 (message "Launching tests!")
@@ -15,10 +14,6 @@
 (add-to-list 'load-path (expand-file-name "./test"))
 
 (message "Loading tests done!")
-
-;; behaviour of expectations changed
-(setq expectations-execute-at-once 'all)       ;; only execute the current sexp at point
-;; (setq expectations-execute-at-once 'all) ;; all tests are executed once hit C-M-x after one sexp
 
 ;; force loading
 
@@ -65,15 +60,6 @@
 
 (define-key emacs-lisp-mode-map (kbd "C-c o d") 'orgtrello-test-load-namespaces)
 (define-key emacs-lisp-mode-map (kbd "C-c o D") 'orgtrello-tests-find-next-error)
-
-(fset 'convert-expectations-to-ert-deftest
-      (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ("expectations\210deert-deftestdesc\210\363\363 (\206\206\202" 0 "%d")) arg)))
-
-(fset 'convert-expect-to-should-equal
-      (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([19 101 120 112 101 99 116 13 134217736 115 104 111 117 108 100 32 40 101 113 117 97 108 company-dummy-event 67108905 67108905 134217730 134217730 134217734 134217734] 0 "%d")) arg)))
-
-(define-key emacs-lisp-mode-map (kbd "C-c o c t") 'convert-expectations-to-ert-deftest)
-(define-key emacs-lisp-mode-map (kbd "C-c o c e") 'convert-expect-to-should-equal)
 
 (require 'org-trello-action-test)
 (require 'org-trello-api-test)
