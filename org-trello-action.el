@@ -7,9 +7,8 @@
 (require 'org-trello-log)
 (require 'dash)
 
-(defun orgtrello-action-reload-setup ()
-  "Reload org-trello setup."
-  (org-set-regexps-and-options))
+(defalias 'orgtrello-action-reload-setup 'org-set-regexps-and-options
+  "Reload org-trello setup.")
 
 (defun orgtrello-action--execute-controls (controls-or-actions-fns &optional entity)
   "Given CONTROLS-OR-ACTIONS-FNS, execute them and return the results.
