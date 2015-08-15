@@ -455,11 +455,11 @@ ASK-FOR-OVERWRITE is a flag that needs to be set if we want to prevent some over
         (orgtrello-log-msg orgtrello-log-info "Configuration for user '%s' already existing (file '%s'), skipping." user-login user-config-file)
       (deferred:$
         (deferred:next
-          (lambda () (browse-url (org-trello-compute-url "/1/appKey/generate"))))
+          (lambda () (browse-url (orgtrello-setup-compute-url "/1/appKey/generate"))))
         (deferred:nextc it
           (lambda (user-login)
             (let ((consumer-key (read-string "Consumer key: ")))
-              (browse-url (org-trello-compute-url (format "/1/authorize?response_type=token&name=org-trello&scope=read,write&expiration=never&key=%s" consumer-key)))
+              (browse-url (orgtrello-setup-compute-url (format "/1/authorize?response_type=token&name=org-trello&scope=read,write&expiration=never&key=%s" consumer-key)))
               (list consumer-key user-login))))
         (deferred:nextc it
           (lambda (consumer-key-user-login)
@@ -920,13 +920,13 @@ BOARD-USERS-NAME-ID is a map of username to id."
                                 ((orgtrello-data-entity-checklist-p entity) 'orgtrello-data-parent)
                                 ((orgtrello-data-entity-card-p entity)      'orgtrello-data-current))))
     (-when-let (card-id (->> full-meta (funcall right-entity-fn) orgtrello-data-entity-id))
-        (browse-url (org-trello-compute-url (format "/c/%s" card-id))))))
+        (browse-url (orgtrello-setup-compute-url (format "/c/%s" card-id))))))
 
 (defun orgtrello-controller-jump-to-board ()
   "Given the current position, execute the information extraction and jump to board action."
   (->> (orgtrello-buffer-board-id)
        (format "/b/%s")
-       org-trello-compute-url
+       orgtrello-setup-compute-url
        browse-url))
 
 (defun orgtrello-controller-delete-setup ()

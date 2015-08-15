@@ -31,8 +31,43 @@ C-c z h - M-x org-trello-help-describing-bindings - This help message."
            (let ((org-trello-current-prefix-keybinding "C-c z"))
              (orgtrello-setup-help-describing-bindings-template org-trello-current-prefix-keybinding org-trello-interactive-command-binding-couples)))))
 
+(ert-deftest test-orgtrello-setup-compute-url ()
+  (should (string= "https://trello.com/some-uri"
+                   (orgtrello-setup-compute-url "/some-uri"))))
+
 (ert-deftest test-orgtrello-setup-startup-message ()
-  (should (equal "org-trello-ot is on! To begin with, hit C-c o h or M-x 'org-trello-help-describing-bindings" (orgtrello-setup-startup-message "C-c o"))))
+  (should (equal "org-trello-ot is on! To begin with, hit C-c o h or M-x 'org-trello-help-describing-bindings"
+                 (orgtrello-setup-startup-message "C-c o"))))
+
+(ert-deftest test-orgtrello-setup-remove-local-prefix-mode-keybinding ()
+  (should (equal :res
+                 (with-mock
+                   (mock (orgtrello-setup-remove-local-keybinding-map :keybinding org-trello-interactive-command-binding-couples) => :res)
+                   (orgtrello-setup-remove-local-prefix-mode-keybinding :keybinding)))))
+
+(ert-deftest test-orgtrello-setup-install-local-prefix-mode-keybinding ()
+  (should (equal :res
+                 (with-mock
+                   (mock (orgtrello-setup-install-local-keybinding-map
+                          :keybinding
+                          :keybinding
+                          org-trello-interactive-command-binding-couples) => :res)
+                   (orgtrello-setup-install-local-prefix-mode-keybinding :keybinding)))))
+
+(ert-deftest test-orgtrello-setup-user-logged-in ()
+  (should (equal :user
+                 (let ((org-trello--user-logged-in :user))
+                   (orgtrello-setup-user-logged-in)))))
+
+(ert-deftest test-orgtrello-setup-set-user-logged-in ()
+  (should (equal
+           '(:user
+             :new-user
+             :new-user)
+           (let ((org-trello--user-logged-in :user))
+             `(,(orgtrello-setup-user-logged-in)
+               ,(orgtrello-setup-set-user-logged-in :new-user)
+               ,(orgtrello-setup-user-logged-in))))))
 
 (provide 'org-trello-setup-test)
 ;;; org-trello-setup-test.el ends here

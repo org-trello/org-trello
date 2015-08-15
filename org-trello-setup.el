@@ -200,7 +200,7 @@ As of 0.7.0, org-trello now follows Emacs's conventions.")
 (defvar org-trello-mode-map (make-sparse-keymap)
   "Org-trello's mode map.")
 
-(defun org-trello-compute-url (url-without-base-uri)
+(defun orgtrello-setup-compute-url (url-without-base-uri)
   "An helper method to compute the uri to trello from URL-WITHOUT-BASE-URI."
   (concat org-trello--https url-without-base-uri))
 
