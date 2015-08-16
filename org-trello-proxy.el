@@ -309,7 +309,7 @@ MAP-DISPATCH-FN is a map of function taking the one parameter ENTITY."
                                     (,org-trello--item-level      . orgtrello-proxy--item-delete)))
   "Dispatch map for the deletion query of card/checklist/item.")
 
-(defun orgtrello-proxy--dispatch-delete (entity)
+(defun orgtrello-proxy--compute-delete-query-request (entity)
   "Dispatch the call to the delete function depending on ENTITY level info."
   (orgtrello-proxy--compute-dispatch-fn entity orgtrello-proxy--map-fn-dispatch-delete))
 
@@ -326,9 +326,8 @@ Display LOG-OK or LOG-KO depending on the result."
 
 (defun orgtrello-proxy-delete-entity (entity)
   "Compute the delete action to remove ENTITY."
-  (lexical-let ((query-map        (orgtrello-proxy--dispatch-delete entity))
-                (entity-to-delete entity)
-                (level            (orgtrello-data-entity-level entity)))
+  (lexical-let ((query-map (orgtrello-proxy--compute-delete-query-request entity))
+                (entity-to-delete entity))
     (if (hash-table-p query-map)
         (orgtrello-query-http-trello
          query-map

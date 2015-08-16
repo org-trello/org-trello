@@ -1,29 +1,29 @@
 #+title: basic coverage
 #+author: ardumont
 
-|--------------------------+-----------------------+------------------------------------+------------------+--------------------+-------------------------------------------|
-| Namespace                | Functions / namespace | test namespace                     | Functions tested |           Coverage | Notes                                     |
-|--------------------------+-----------------------+------------------------------------+------------------+--------------------+-------------------------------------------|
-| org-trello-proxy.el      |                  32.0 | test/org-trello-proxy-test.el      |              7.0 |             21.875 |                                           |
-| org-trello-controller.el |                  84.0 | test/org-trello-controller-test.el |             24.0 |  28.57142857142857 |                                           |
-| org-trello-entity.el     |                  30.0 | test/org-trello-entity-test.el     |             14.0 | 46.666666666666664 |                                           |
-| org-trello-setup.el      |                  11.0 | test/org-trello-setup-test.el      |              7.0 |  63.63636363636363 |                                           |
-| org-trello-buffer.el     |                 106.0 | test/org-trello-buffer-test.el     |             79.0 |  74.52830188679245 |                                           |
-| org-trello-query.el      |                  12.0 | test/org-trello-query-test.el      |              9.0 |               75.0 |                                           |
-| org-trello-cbx.el        |                  30.0 | test/org-trello-cbx-test.el        |             25.0 |  83.33333333333334 |                                           |
-| org-trello.el            |                  28.0 | test/org-trello-test.el            |             26.0 |  92.85714285714286 |                                           |
-| org-trello-input.el      |                   1.0 | test/org-trello-input-test.el      |              1.0 |              100.0 |                                           |
-| org-trello-log.el        |                   1.0 | test/org-trello-log-test.el        |              1.0 |              100.0 |                                           |
-| org-trello-date.el       |                   3.0 | test/org-trello-date-test.el       |              3.0 |              100.0 |                                           |
-| org-trello-utils.el      |                   3.0 | test/org-trello-utils-test.el      |              3.0 |              100.0 |                                           |
-| org-trello-backend.el    |                   6.0 | test/org-trello-backend-test.el    |              6.0 |              100.0 |                                           |
-| org-trello-action.el     |                   7.0 | test/org-trello-action-test.el     |              7.0 |              100.0 |                                           |
-| org-trello-hash.el       |                   8.0 | test/org-trello-hash-test.el       |              8.0 |              100.0 |                                           |
-| org-trello-api.el        |                  36.0 | test/org-trello-api-test.el        |             36.0 |              100.0 |                                           |
-| org-trello-data.el       |                  43.0 | test/org-trello-data-test.el       |             43.0 |              100.0 | Lots of getters/setters -> use defstruct? |
-|--------------------------+-----------------------+------------------------------------+------------------+--------------------+-------------------------------------------|
-| Average                  |                  441. |                                    |             299. |  67.80045351473923 |                                           |
-|--------------------------+-----------------------+------------------------------------+------------------+--------------------+-------------------------------------------|
+#+TBLFM: $5='(* 100 (/ (string-to-number $4) (string-to-int $2)))::@19$2=vsum(@2..@18)::@19$4=vsum(@2..@18)::@19$5='(* 100 (/ (string-to-number (format "%s0" @19$4)) (string-to-number (format "%s0" @19$2))))
+| Namespace                | Functions / namespace | test namespace                     | Functions tested |           Coverage |
+|--------------------------+-----------------------+------------------------------------+------------------+--------------------|
+| org-trello-proxy.el      |                  32.0 | test/org-trello-proxy-test.el      |             16.0 |               50.0 |
+| org-trello-controller.el |                  83.0 | test/org-trello-controller-test.el |             24.0 | 28.915662650602407 |
+| org-trello-entity.el     |                  30.0 | test/org-trello-entity-test.el     |             14.0 | 46.666666666666664 |
+| org-trello-setup.el      |                  12.0 | test/org-trello-setup-test.el      |              8.0 |  66.66666666666666 |
+| org-trello-buffer.el     |                 106.0 | test/org-trello-buffer-test.el     |             79.0 |  74.52830188679245 |
+| org-trello-query.el      |                  12.0 | test/org-trello-query-test.el      |              9.0 |               75.0 |
+| org-trello-cbx.el        |                  30.0 | test/org-trello-cbx-test.el        |             25.0 |  83.33333333333334 |
+| org-trello.el            |                  28.0 | test/org-trello-test.el            |             26.0 |  92.85714285714286 |
+| org-trello-input.el      |                   1.0 | test/org-trello-input-test.el      |              1.0 |              100.0 |
+| org-trello-log.el        |                   1.0 | test/org-trello-log-test.el        |              1.0 |              100.0 |
+| org-trello-date.el       |                   3.0 | test/org-trello-date-test.el       |              3.0 |              100.0 |
+| org-trello-utils.el      |                   3.0 | test/org-trello-utils-test.el      |              3.0 |              100.0 |
+| org-trello-backend.el    |                   6.0 | test/org-trello-backend-test.el    |              6.0 |              100.0 |
+| org-trello-action.el     |                   7.0 | test/org-trello-action-test.el     |              7.0 |              100.0 |
+| org-trello-hash.el       |                   8.0 | test/org-trello-hash-test.el       |              8.0 |              100.0 |
+| org-trello-api.el        |                  36.0 | test/org-trello-api-test.el        |             36.0 |              100.0 |
+| org-trello-data.el       |                  43.0 | test/org-trello-data-test.el       |             43.0 |              100.0 |
+|--------------------------+-----------------------+------------------------------------+------------------+--------------------|
+| Average                  |                  441. |                                    |             309. |  70.06802721088435 |
+|--------------------------+-----------------------+------------------------------------+------------------+--------------------|
 #+TBLFM: $5='(* 100 (/ (string-to-number $4) (string-to-int $2)))::@19$2=vsum(@2..@18)::@19$4=vsum(@2..@18)::@19$5='(* 100 (/ (string-to-number (format "%s0" @19$4)) (string-to-number (format "%s0" @19$2))))
 
 (- 110 (+ 34 35))

@@ -11,11 +11,11 @@
   (should (equal 'orgtrello-proxy--checklist-delete (gethash org-trello--checklist-level orgtrello-proxy--map-fn-dispatch-delete)))
   (should (equal 'orgtrello-proxy--item-delete      (gethash org-trello--item-level orgtrello-proxy--map-fn-dispatch-delete))))
 
-(ert-deftest test-orgtrello-proxy--dispatch-delete ()
+(ert-deftest test-orgtrello-proxy--compute-delete-query-request ()
   (should (equal :res
                  (with-mock
                    (mock (orgtrello-proxy--compute-dispatch-fn :entity orgtrello-proxy--map-fn-dispatch-delete) => :res)
-                   (orgtrello-proxy--dispatch-delete :entity)))))
+                   (orgtrello-proxy--compute-delete-query-request :entity)))))
 
 (ert-deftest test-orgtrello-proxy--delete-entity-region ()
   (should (equal 'orgtrello-proxy--delete-card-region
@@ -99,6 +99,24 @@
                 (mock (orgtrello-data-entity-id :entity) => :id)
                 (orgtrello-proxy--cleanup-meta :entity))))
 
+(ert-deftest test-orgtrello-proxy-delete-entity ()
+  (should (equal :not-a-query
+                 (with-mock
+                   (mock (orgtrello-proxy--compute-delete-query-request :entity) => :not-a-query)
+                   (mock (hash-table-p :not-a-query) => nil)
+                   (mock (orgtrello-log-msg orgtrello-log-error :not-a-query) => :not-a-query)
+                   (orgtrello-proxy-delete-entity :entity))))
+  (should (equal :result
+                 (with-mock
+                   (mock (orgtrello-proxy--compute-delete-query-request :entity) => :query-map)
+                   (mock (hash-table-p :query-map) => t)
+                   (mock (orgtrello-proxy--standard-delete-success-callback :entity) => :success-cbk)
+                   (mock (orgtrello-query-http-trello :query-map
+                                                      nil
+                                                      :success-cbk
+                                                      *) => :result)
+                   (orgtrello-proxy-delete-entity :entity)))))
+
 (ert-deftest test-orgtrello-proxy-sync-entity ()
   ;; not a query so fails
   (should (equal :not-a-query
@@ -106,7 +124,7 @@
                    (mock (orgtrello-proxy--compute-sync-query-request :entity) => :not-a-query)
                    (mock (hash-table-p :not-a-query) => nil)
                    (mock (orgtrello-proxy--cleanup-meta :entity) => :done)
-                   (mock (orgtrello-log-msg orgtrello-log-error :not-a-query) => :done)
+                   (mock (orgtrello-log-msg orgtrello-log-error :not-a-query) => :not-a-query)
                    (orgtrello-proxy-sync-entity :entity :entities-adjacencies))))
   ;; success call to api
   (should (equal :result
