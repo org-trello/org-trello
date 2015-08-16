@@ -298,9 +298,10 @@ MAP-DISPATCH-FN is a map of function taking the one parameter ENTITY."
   (orgtrello-api-delete-checklist (orgtrello-data-entity-id checklist-meta)))
 
 (defun orgtrello-proxy--item-delete (item-meta)
-  "Deal with create/update query of an ITEM-META in CHECKLIST-META."
-  (let ((checklist-meta (orgtrello-data-parent item-meta)))
-    (orgtrello-api-delete-item (orgtrello-data-entity-id checklist-meta) (orgtrello-data-entity-id item-meta))))
+  "Deal with create/update query of an ITEM-META."
+  (let ((checklist (orgtrello-data-parent item-meta)))
+    (orgtrello-api-delete-item (orgtrello-data-entity-id checklist)
+                               (orgtrello-data-entity-id item-meta))))
 
 (defvar orgtrello-proxy--map-fn-dispatch-delete
   (orgtrello-hash-make-properties `((,org-trello--card-level      . orgtrello-proxy--card-delete)

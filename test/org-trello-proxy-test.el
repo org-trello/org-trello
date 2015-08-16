@@ -11,6 +11,52 @@
   (should (equal 'orgtrello-proxy--checklist-delete (gethash org-trello--checklist-level orgtrello-proxy--map-fn-dispatch-delete)))
   (should (equal 'orgtrello-proxy--item-delete      (gethash org-trello--item-level orgtrello-proxy--map-fn-dispatch-delete))))
 
+(ert-deftest test-orgtrello-proxy--dispatch-delete ()
+  (should (equal :res
+                 (with-mock
+                   (mock (orgtrello-proxy--compute-dispatch-fn :entity orgtrello-proxy--map-fn-dispatch-delete) => :res)
+                   (orgtrello-proxy--dispatch-delete :entity)))))
+
+(ert-deftest test-orgtrello-proxy--delete-entity-region ()
+  (should (equal 'orgtrello-proxy--delete-card-region
+                 (with-mock
+                   (mock (orgtrello-data-entity-card-p :entity) => t)
+                   (orgtrello-proxy--delete-entity-region :entity))))
+  (should (equal 'orgtrello-proxy--delete-checkbox-checklist-region
+                 (with-mock
+                   (mock (orgtrello-data-entity-card-p :entity) => nil)
+                   (mock (orgtrello-data-entity-checklist-p :entity) => t)
+                   (orgtrello-proxy--delete-entity-region :entity))))
+  (should (equal 'orgtrello-proxy--delete-checkbox-item-region
+                 (with-mock
+                   (mock (orgtrello-data-entity-card-p :entity) => nil)
+                   (mock (orgtrello-data-entity-checklist-p :entity) => nil)
+                   (mock (orgtrello-data-entity-item-p :entity) => t)
+                   (orgtrello-proxy--delete-entity-region :entity)))))
+
+(ert-deftest test-orgtrello-proxy--card-delete ()
+  "Deal with the deletion query of a CARD-META."
+  (should (equal :delete-card-done
+                 (with-mock
+                   (mock (orgtrello-data-entity-id :card-meta) => :id)
+                   (mock (orgtrello-api-delete-card :id) => :delete-card-done)
+                   (orgtrello-proxy--card-delete :card-meta)))))
+
+(ert-deftest test-orgtrello-proxy--checklist-delete ()
+  (should (equal :delete-checklist-done
+                 (with-mock
+                   (mock (orgtrello-data-entity-id :checklist-meta) => :id)
+                   (mock (orgtrello-api-delete-checklist :id) => :delete-checklist-done)
+                   (orgtrello-proxy--checklist-delete :checklist-meta)))))
+
+(ert-deftest test-orgtrello-proxy--item-delete ()
+  (should (equal :delete-item-done
+                 (let ((item-meta (orgtrello-hash-make-properties `((:id . "item-id")
+                                                                    (:parent . ,(orgtrello-hash-make-properties '((:id . "checklist-id"))))))))
+                   (with-mock
+                     (mock (orgtrello-api-delete-item "checklist-id" "item-id") => :delete-item-done)
+                     (orgtrello-proxy--item-delete item-meta))))))
+
 (ert-deftest test-orgtrello-proxy--card ()
   (should (equal 'orgtrello-proxy--card      (gethash org-trello--card-level orgtrello-proxy--map-fn-dispatch-create-update)))
   (should (equal 'orgtrello-proxy--checklist (gethash org-trello--checklist-level orgtrello-proxy--map-fn-dispatch-create-update)))
