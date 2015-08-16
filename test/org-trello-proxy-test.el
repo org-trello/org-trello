@@ -206,6 +206,27 @@
   (should (equal 'orgtrello-proxy--checklist (gethash org-trello--checklist-level orgtrello-proxy--map-fn-dispatch-create-update)))
   (should (equal 'orgtrello-proxy--item      (gethash org-trello--item-level orgtrello-proxy--map-fn-dispatch-create-update))))
 
+(ert-deftest test-orgtrello-proxy--checklist ()
+  (should (equal :checklist-query-add
+                 (with-mock
+                   (mock (orgtrello-api-add-checklist "card-id" :checklist-name :checklist-pos) => :checklist-query-add)
+                   (orgtrello-proxy--checklist (orgtrello-hash-make-properties `((:id)
+                                                                                 (:name . :checklist-name)
+                                                                                 (:position . :checklist-pos)
+                                                                                 (:parent . ,(orgtrello-hash-make-properties '((:id . "card-id"))))))))))
+  (should (equal :checklist-query-update
+                 (with-mock
+                   (mock (orgtrello-api-update-checklist "checklist-id" :checklist-name :checklist-pos) => :checklist-query-update)
+                   (orgtrello-proxy--checklist (orgtrello-hash-make-properties `((:id . "checklist-id")
+                                                                                 (:name . :checklist-name)
+                                                                                 (:position . :checklist-pos)
+                                                                                 (:parent . ,(orgtrello-hash-make-properties '((:id . "card-id"))))))))))
+  (should (equal :error-msg
+                 (with-mock
+                   (mock (orgtrello-data-parent :checklist-meta) => :card-meta)
+                   (mock (orgtrello-proxy--checks-before-sync-checklist :checklist-meta :card-meta) => :error-msg)
+                   (orgtrello-proxy--checklist :checklist-meta)))))
+
 (ert-deftest test-orgtrello-proxy--compute-state ()
   (should (equal "complete" (orgtrello-proxy--compute-state org-trello--done)))
   (should (equal "incomplete" (orgtrello-proxy--compute-state "anything-else"))))
@@ -240,6 +261,52 @@
            (orgtrello-hash-make-properties '((:id . "checklist-id")))
            (orgtrello-hash-make-properties '((:id . "id")))))))
 
+(ert-deftest test-orgtrello-proxy--item ()
+  (should (equal :query-item-update
+                 (let* ((card-meta (orgtrello-hash-make-properties '((:id . "card-id"))))
+                        (checklist-meta (orgtrello-hash-make-properties `((:id . "checklist-id")
+                                                                          (:parent . ,card-meta))))
+                        (item-meta (orgtrello-hash-make-properties `((:id . "item-id")
+                                                                     (:name . :item-name)
+                                                                     (:keyword . :item-kwd)
+                                                                     (:position . :item-pos)
+                                                                     (:parent . ,checklist-meta)))))
+                   (with-mock
+                     (mock (orgtrello-proxy--checks-before-sync-item item-meta checklist-meta card-meta) => :ok)
+                     (mock (orgtrello-proxy--compute-state :item-kwd) => :item-state)
+                     (mock (orgtrello-api-update-item "card-id"
+                                                      "checklist-id"
+                                                      "item-id"
+                                                      :item-name
+                                                      :item-state
+                                                      :item-pos) => :query-item-update)
+                     (orgtrello-proxy--item item-meta)))))
+  (should (equal :query-item-add
+                 (let* ((card-meta (orgtrello-hash-make-properties '((:id . "card-id"))))
+                        (checklist-meta (orgtrello-hash-make-properties `((:id . "checklist-id")
+                                                                          (:parent . ,card-meta))))
+                        (item-meta (orgtrello-hash-make-properties `((:name . :item-name)
+                                                                     (:keyword . :item-kwd)
+                                                                     (:position . :item-pos)
+                                                                     (:parent . ,checklist-meta)))))
+                   (with-mock
+                     (mock (orgtrello-proxy--checks-before-sync-item item-meta checklist-meta card-meta) => :ok)
+                     (mock (orgtrello-proxy--compute-check :item-kwd) => :item-check)
+                     (mock (orgtrello-api-add-items "checklist-id"
+                                                    :item-name
+                                                    :item-check
+                                                    :item-pos) => :query-item-add)
+                     (orgtrello-proxy--item item-meta)))))
+  (should (equal :error-msg
+                 (let* ((card-meta (orgtrello-hash-make-properties '((:id . "card-id"))))
+                        (checklist-meta (orgtrello-hash-make-properties `((:id . "checklist-id")
+                                                                          (:parent . ,card-meta))))
+                        (item-meta (orgtrello-hash-make-properties `((:name . :item-name)
+                                                                     (:parent . ,checklist-meta)))))
+                   (with-mock
+                     (mock (orgtrello-proxy--checks-before-sync-item item-meta checklist-meta card-meta) => :error-msg)
+                     (orgtrello-proxy--item item-meta))))))
+
 (ert-deftest test-orgtrello-proxy--compute-dispatch-fn ()
   (should (equal :result-with-card-fn
                  (let ((entity (orgtrello-hash-make-properties '((:level . :card-level)))))
@@ -265,6 +332,57 @@
                       entity
                       (orgtrello-hash-make-properties '((:card-level . :card-fn)
                                                         (:checklist-level . :checklist-fn)))))))))
+
+(ert-deftest test-orgtrello-proxy--card ()
+  (should (equal :error-msg
+                 (with-mock
+                   (mock (orgtrello-proxy--checks-before-sync-card :card-meta) => :error-msg)
+                   (orgtrello-proxy--card :card-meta))))
+  (should (equal :query-update-card
+                 (with-mock
+                   (mock (orgtrello-proxy--checks-before-sync-card :card-meta) => :ok)
+                   (mock (orgtrello-proxy--retrieve-state-of-card :card-meta) => :card-kwd)
+                   (mock (orgtrello-buffer-org-file-get-property :card-kwd) => :list-id)
+                   (mock (orgtrello-data-entity-id :card-meta) => :card-id)
+                   (mock (orgtrello-data-entity-name :card-meta) => :card-name)
+                   (mock (orgtrello-data-entity-due :card-meta) => :card-due)
+                   (mock (orgtrello-data-entity-description :card-meta) => :card-desc)
+                   (mock (orgtrello-data-entity-member-ids :card-meta) => :card-user-ids-assigned)
+                   (mock (orgtrello-data-entity-tags :card-meta) => :card-tags)
+                   (mock (orgtrello-proxy--tags-to-labels :card-tags) => :card-labels)
+                   (mock (orgtrello-data-entity-position :card-meta) => :card-pos)
+                   (mock (orgtrello-api-move-card
+                          :card-id
+                          :list-id
+                          :card-name
+                          :card-due
+                          :card-user-ids-assigned
+                          :card-desc
+                          :card-labels
+                          :card-pos) => :query-update-card)
+                   (orgtrello-proxy--card :card-meta))))
+  (should (equal :query-add-card
+                 (with-mock
+                   (mock (orgtrello-proxy--checks-before-sync-card :card-meta) => :ok)
+                   (mock (orgtrello-proxy--retrieve-state-of-card :card-meta) => :card-kwd)
+                   (mock (orgtrello-buffer-org-file-get-property :card-kwd) => :list-id)
+                   (mock (orgtrello-data-entity-id :card-meta) => nil)
+                   (mock (orgtrello-data-entity-name :card-meta) => :card-name)
+                   (mock (orgtrello-data-entity-due :card-meta) => :card-due)
+                   (mock (orgtrello-data-entity-description :card-meta) => :card-desc)
+                   (mock (orgtrello-data-entity-member-ids :card-meta) => :card-user-ids-assigned)
+                   (mock (orgtrello-data-entity-tags :card-meta) => :card-tags)
+                   (mock (orgtrello-proxy--tags-to-labels :card-tags) => :card-labels)
+                   (mock (orgtrello-data-entity-position :card-meta) => :card-pos)
+                   (mock (orgtrello-api-add-card
+                          :card-name
+                          :list-id
+                          :card-due
+                          :card-user-ids-assigned
+                          :card-desc
+                          :card-labels
+                          :card-pos) => :query-add-card)
+                   (orgtrello-proxy--card :card-meta)))))
 
 (ert-deftest test-orgtrello-proxy--tags-to-labels ()
   (should (string= "a,b,c" (orgtrello-proxy--tags-to-labels ":a:b:c")))

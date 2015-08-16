@@ -101,17 +101,27 @@ All maps are indexed by trello or marker id."
             (-when-let (str-msg (when (orgtrello-proxy--get-back-to-marker
                                        marker-id
                                        entity-synced)
-                                  (-if-let (entry-id (when (orgtrello-data-id-p marker-id) marker-id)) ;; Already present, we do nothing on the buffer
-                                      (progn
+                                  (-if-let (entry-id (when (orgtrello-data-id-p
+                                                            marker-id)
+                                                       marker-id))
+                                      (progn ;; id already present, do nothing,
                                         (orgtrello-buffer-write-local-checksum-at-pt)
-                                        (format "Entity '%s' with id '%s' synced!" entity-name entry-id))
-                                    (progn ;; not present, this was just created, we update with the trello id
-                                      (orgtrello-buffer-write-properties-at-pt entry-new-id)
-                                      (format "Newly entity '%s' with id '%s' synced!" entity-name entry-new-id)))))
-              (let* ((updates (orgtrello-proxy--update-entities-adjacencies entity-not-yet-synced entity-synced entities-adj))
+                                        (format "Entity '%s' with id '%s' synced!"
+                                                entity-name
+                                                entry-id))
+                                    (progn ;; not present, update with trello id
+                                      (orgtrello-buffer-write-properties-at-pt
+                                       entry-new-id)
+                                      (format "Newly entity '%s' with id '%s' synced!"
+                                              entity-name
+                                              entry-new-id)))))
+              (let* ((updates (orgtrello-proxy--update-entities-adjacencies
+                               entity-not-yet-synced
+                               entity-synced entities-adj))
                      (updated-entity-synced (car updates))
                      (updated-entities-adj  (cdr updates)))
-                (orgtrello-proxy--compute-sync-next-level updated-entity-synced updated-entities-adj))
+                (orgtrello-proxy--compute-sync-next-level updated-entity-synced
+                                                          updated-entities-adj))
               (orgtrello-log-msg orgtrello-log-info str-msg))))))))
 
 (defun orgtrello-proxy--cleanup-meta (entity)
@@ -121,12 +131,16 @@ All maps are indexed by trello or marker id."
 
 (defun orgtrello-proxy--retrieve-state-of-card (card-meta)
   "Given a CARD-META, retrieve its state depending on its :keyword metadata.
-If empty or no keyword then, its equivalence is org-trello--todo, otherwise, return its current state."
-  (-if-let (card-kwd (orgtrello-data-entity-keyword card-meta org-trello--todo)) card-kwd org-trello--todo))
+If empty, default to org-trello--todo, otherwise, return its current state."
+  (-if-let (card-kwd (orgtrello-data-entity-keyword card-meta org-trello--todo))
+      card-kwd
+    org-trello--todo))
 
 (defun orgtrello-proxy--checks-before-sync-card (card-meta)
   "Given the CARD-META, check is done before synchronizing the cards."
-  (if (orgtrello-data-entity-name card-meta) :ok org-trello--error-sync-card-missing-name))
+  (if (orgtrello-data-entity-name card-meta)
+      :ok
+    org-trello--error-sync-card-missing-name))
 
 (defun orgtrello-proxy--tags-to-labels (tags)
   "Transform org TAGS string to csv labels."
@@ -139,24 +153,42 @@ If empty or no keyword then, its equivalence is org-trello--todo, otherwise, ret
 (defun orgtrello-proxy--card (card-meta)
   "Deal with create/update CARD-META query build.
 If the checks are ko, the error message is returned."
-  (let ((checks-ok-or-error-message (orgtrello-proxy--checks-before-sync-card card-meta)))
+  (let ((checks-ok-or-error-message (orgtrello-proxy--checks-before-sync-card
+                                     card-meta)))
     ;; name is mandatory
     (if (equal :ok checks-ok-or-error-message)
         ;; parent and grandparent are useless here
-        (let* ((card-kwd                (orgtrello-proxy--retrieve-state-of-card card-meta))
-               (list-id                 (orgtrello-buffer-org-file-get-property card-kwd))
-               (card-id                 (orgtrello-data-entity-id          card-meta))
-               (card-name               (orgtrello-data-entity-name        card-meta))
-               (card-due                (orgtrello-data-entity-due         card-meta))
-               (card-desc               (orgtrello-data-entity-description card-meta))
-               (card-user-ids-assigned  (orgtrello-data-entity-member-ids  card-meta))
-               (card-labels             (orgtrello-proxy--tags-to-labels (orgtrello-data-entity-tags card-meta)))
-               (card-pos                (orgtrello-data-entity-position   card-meta)))
+        (let* ((card-kwd (orgtrello-proxy--retrieve-state-of-card card-meta))
+               (list-id (orgtrello-buffer-org-file-get-property card-kwd))
+               (card-id (orgtrello-data-entity-id card-meta))
+               (card-name (orgtrello-data-entity-name card-meta))
+               (card-due (orgtrello-data-entity-due card-meta))
+               (card-desc (orgtrello-data-entity-description card-meta))
+               (card-user-ids-assigned (orgtrello-data-entity-member-ids
+                                        card-meta))
+               (card-labels (orgtrello-proxy--tags-to-labels
+                             (orgtrello-data-entity-tags card-meta)))
+               (card-pos (orgtrello-data-entity-position card-meta)))
           (if card-id
               ;; update
-              (orgtrello-api-move-card card-id list-id card-name card-due card-user-ids-assigned card-desc card-labels card-pos)
+              (orgtrello-api-move-card
+               card-id
+               list-id
+               card-name
+               card-due
+               card-user-ids-assigned
+               card-desc
+               card-labels
+               card-pos)
             ;; create
-            (orgtrello-api-add-card card-name list-id card-due card-user-ids-assigned card-desc card-labels card-pos)))
+            (orgtrello-api-add-card
+             card-name
+             list-id
+             card-due
+             card-user-ids-assigned
+             card-desc
+             card-labels
+             card-pos)))
       checks-ok-or-error-message)))
 
 (defun orgtrello-proxy--checks-before-sync-checklist (checklist-meta card-meta)
@@ -173,14 +205,15 @@ If the checks are ko, the error message is returned."
   (let* ((card-meta                  (orgtrello-data-parent checklist-meta))
          (checks-ok-or-error-message (orgtrello-proxy--checks-before-sync-checklist checklist-meta card-meta)))
     (if (equal :ok checks-ok-or-error-message)
-        (let ((card-id        (orgtrello-data-entity-id card-meta))
-              (checklist-name (orgtrello-data-entity-name checklist-meta))
+        (let ((checklist-name (orgtrello-data-entity-name checklist-meta))
               (checklist-pos  (orgtrello-data-entity-position checklist-meta)))
           (-if-let (checklist-id (orgtrello-data-entity-id checklist-meta))
               ;; update
               (orgtrello-api-update-checklist checklist-id checklist-name checklist-pos)
             ;; create
-            (orgtrello-api-add-checklist card-id checklist-name checklist-pos)))
+            (orgtrello-api-add-checklist (orgtrello-data-entity-id card-meta)
+                                         checklist-name
+                                         checklist-pos)))
       checks-ok-or-error-message)))
 
 (defun orgtrello-proxy--compute-state (state)
@@ -242,9 +275,11 @@ MAP-DISPATCH-FN is a map of function taking the one parameter ENTITY."
       (gethash map-dispatch-fn 'orgtrello-action--too-deep-level)
       (funcall entity)))
 
-(defvar orgtrello-proxy--map-fn-dispatch-create-update (orgtrello-hash-make-properties `((,org-trello--card-level      . orgtrello-proxy--card)
-                                                                                         (,org-trello--checklist-level . orgtrello-proxy--checklist)
-                                                                                         (,org-trello--item-level      . orgtrello-proxy--item)))
+(defvar orgtrello-proxy--map-fn-dispatch-create-update
+  (orgtrello-hash-make-properties
+   `((,org-trello--card-level      . orgtrello-proxy--card)
+     (,org-trello--checklist-level . orgtrello-proxy--checklist)
+     (,org-trello--item-level      . orgtrello-proxy--item)))
   "Dispatch map for the creation/update of card/checklist/item.")
 
 (defun orgtrello-proxy--compute-sync-query-request (entity)
