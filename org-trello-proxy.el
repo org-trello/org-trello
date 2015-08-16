@@ -21,8 +21,9 @@
 (require 'org-trello-action)
 
 (defun orgtrello-proxy--getting-back-to-headline (data)
-  "Trying another approach to getting back to header computing the normal form of the entry DATA in the buffer."
-  (orgtrello-proxy--getting-back-to-marker (orgtrello-buffer--compute-entity-to-org-entry data)))
+  "Another approach for getting back to header computing normal form of DATA."
+  (orgtrello-proxy--getting-back-to-marker
+   (orgtrello-buffer-compute-entity-to-org-entry data)))
 
 (defalias 'orgtrello-proxy--compute-pattern-search-from-marker 'identity
   "Given a MARKER, compute the pattern to look for in the file.
@@ -32,7 +33,10 @@ At the moment, `identify' function is sufficient.")
   "Given a MARKER, getting back to marker function.
 Move the cursor position."
   (goto-char (point-min))
-  (re-search-forward (orgtrello-proxy--compute-pattern-search-from-marker marker) nil t))
+  (re-search-forward
+   (orgtrello-proxy--compute-pattern-search-from-marker marker)
+   nil
+   t))
 
 (defun orgtrello-proxy--get-back-to-marker (marker data)
   "Getting back to MARKER if possible, otherwise return to the DATA headline.
@@ -44,25 +48,25 @@ Move the cursor position."
 (defun orgtrello-proxy--compute-sync-next-level (entity entities-adjacencies)
   "Trigger the sync for ENTITY's children.
 ENTITIES-ADJACENCIES provides needed information."
-  (-map (lambda (child-id)
-          (--> child-id
-               (orgtrello-data-get-entity it entities-adjacencies)
-               (orgtrello-proxy-sync-entity it entities-adjacencies)
-               (eval it)))
-        (orgtrello-data-get-children entity entities-adjacencies)))
-
-(defun orgtrello-proxy--update-entities-adjacencies (old-entity entity-synced entities-adjacencies)
+  (mapcar (lambda (child-id)
+            (--> child-id
+                 (orgtrello-data-get-entity it entities-adjacencies)
+                 (orgtrello-proxy-sync-entity it entities-adjacencies)
+                 (eval it)))
+          (orgtrello-data-get-children entity entities-adjacencies)))
+(defun orgtrello-proxy--update-entities-adjacencies (old-entity
+                                                     entity-synced
+                                                     entities-adjacencies)
   "Given OLD-ENTITY and ENTITY-SYNCED, update in place ENTITIES-ADJACENCIES.
 This will also update ENTITY-SYNCED with its parent.
 This will remove OLD-ENTITY's id and update with the ENTITY-SYNCED's one.
 This will update the references in arborescence (children with ENTITY-SYNCED).
 Returns a list (updated-entity-synced, updated-entities, updated-adjacencies)."
-  (let* ((entities      (car entities-adjacencies))
-         (adjacencies   (cadr entities-adjacencies))
-         (old-entity-id (orgtrello-data-entity-id-or-marker old-entity))
-         (entry-new-id  (orgtrello-data-entity-id-or-marker entity-synced))
-         (children-ids  (gethash old-entity-id adjacencies)))
-    (orgtrello-data-put-parent (orgtrello-data-parent old-entity) entity-synced) ;; keep the parent (which is not present as trello's return)
+  (-let* (((entities adjacencies) entities-adjacencies)
+          (old-entity-id (orgtrello-data-entity-id-or-marker old-entity))
+          (entry-new-id  (orgtrello-data-entity-id-or-marker entity-synced))
+          (children-ids  (gethash old-entity-id adjacencies)))
+    (orgtrello-data-put-parent (orgtrello-data-parent old-entity) entity-synced)
     (mapc (lambda (child-id) ;; update parent reference in children in entities
             (let ((child (gethash child-id entities)))
               (--> child
@@ -75,21 +79,28 @@ Returns a list (updated-entity-synced, updated-entities, updated-adjacencies)."
     ;; return updated values
     (list entity-synced entities adjacencies)))
 
-(defun orgtrello-proxy--standard-post-or-put-success-callback (entity-to-sync entities-adjacencies)
+(defun orgtrello-proxy--standard-post-or-put-success-callback (entity-to-sync
+                                                               entities-adjacencies)
   "Return a callback fn able to deal with the update of ENTITY-TO-SYNC.
-This will update the buffer at the entity synced.
-ENTITIES-ADJACENCIES provides needed information about entities and adjacency."
-  (lexical-let ((buffer-name           (orgtrello-data-entity-buffername entity-to-sync))
-                (marker-id             (orgtrello-data-entity-id-or-marker entity-to-sync))
-                (entity-name           (orgtrello-data-entity-name entity-to-sync))
-                (entities-adj          entities-adjacencies)
+This will update the buffer at the entity synced's position on buffer.
+ENTITIES-ADJACENCIES provides (entities adjacencies) list.
+ENTITIES is the map of all objects.
+ADJACENCIES is the map of children's list per entity.
+All maps are indexed by trello or marker id."
+  (lexical-let ((buffer-name  (orgtrello-data-entity-buffername entity-to-sync))
+                (marker-id    (orgtrello-data-entity-id-or-marker entity-to-sync))
+                (entity-name  (orgtrello-data-entity-name entity-to-sync))
+                (entities-adj entities-adjacencies)
                 (entity-not-yet-synced entity-to-sync))
+
     (lambda (response)
       (let* ((entity-synced (request-response-data response))
              (entry-new-id  (orgtrello-data-entity-id entity-synced)))
         (with-current-buffer buffer-name
           (save-excursion
-            (-when-let (str-msg (when (orgtrello-proxy--get-back-to-marker marker-id entity-synced)
+            (-when-let (str-msg (when (orgtrello-proxy--get-back-to-marker
+                                       marker-id
+                                       entity-synced)
                                   (-if-let (entry-id (when (orgtrello-data-id-p marker-id) marker-id)) ;; Already present, we do nothing on the buffer
                                       (progn
                                         (orgtrello-buffer-write-local-checksum-at-pt)

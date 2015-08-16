@@ -756,5 +756,18 @@
                                                                 (:checked . "complete")))))
              (orgtrello-data-to-org-trello-item trello-item)))))
 
+(ert-deftest test-orgtrello-data-get-children ()
+  (should (equal :entity-children
+                 (with-mock
+                   (mock (orgtrello-data-entity-id-or-marker :entity) => :entity-id)
+                   (mock (orgtrello-data--get-entity :entity-id :adjacencies) => :entity-children)
+                   (orgtrello-data-get-children :entity '(:entities :adjacencies))))))
+
+(ert-deftest test-orgtrello-data-get-entity ()
+  (should (equal :full-entity
+                 (with-mock
+                   (mock (orgtrello-data--get-entity :entity-id :entities) => :full-entity)
+                   (orgtrello-data-get-entity :entity-id '(:entities :adjacencies))))))
+
 (provide 'org-trello-data-test)
 ;;; org-trello-data-test.el ends here

@@ -2,6 +2,47 @@
 (require 'ert)
 (require 'el-mock)
 
+(ert-deftest test-orgtrello-buffer-compute-entity-to-org-entry ()
+  ;; card
+  (should
+   (equal :card-output
+          (with-mock
+            (mock (orgtrello-data-entity-card-p :entity) => t)
+            (mock (funcall 'orgtrello-buffer--compute-card-to-org-entry :entity) => :card-output)
+            (orgtrello-buffer-compute-entity-to-org-entry :entity))))
+  (should
+   (equal :checklist-output
+          (with-mock
+            (mock (orgtrello-data-entity-card-p :entity) => nil)
+            (mock (orgtrello-data-entity-checklist-p :entity) => t)
+            (mock (funcall 'orgtrello-buffer--compute-checklist-to-org-entry :entity) => :checklist-output)
+            (orgtrello-buffer-compute-entity-to-org-entry :entity))))
+  (should
+   (equal :item-output
+          (with-mock
+            (mock (orgtrello-data-entity-card-p :entity) => nil)
+            (mock (orgtrello-data-entity-checklist-p :entity) => nil)
+            (mock (orgtrello-data-entity-item-p :entity) => t)
+            (mock (funcall 'orgtrello-buffer--compute-item-to-org-entry :entity) => :item-output)
+            (orgtrello-buffer-compute-entity-to-org-entry :entity)))))
+
+(ert-deftest test-orgtrello-buffer--compute-card-to-org-entry ()
+  (should
+   (string= "* IN-PROGRESS card-name                                                 orange,purple
+DEADLINE: <2015-08-30 Sun 15:00>\n"
+            (orgtrello-buffer--compute-card-to-org-entry
+             (orgtrello-hash-make-properties '((:name . "card-name")
+                                               (:keyword . "IN-PROGRESS")
+                                               (:due . "2015-08-30T14:00:00.000Z")
+                                               (:tags . "orange,purple")))))))
+
+(ert-deftest test-orgtrello-buffer--compute-checklist-to-org-entry ()
+  (should (equal "  - [-] name\n" (orgtrello-buffer--compute-checklist-to-org-entry (orgtrello-hash-make-properties `((:name . "name")))))))
+
+(ert-deftest test-orgtrello-buffer--compute-item-to-org-entry ()
+  (should (equal "    - [X] name\n" (orgtrello-buffer--compute-item-to-org-entry (orgtrello-hash-make-properties `((:name . "name") (:keyword . "complete"))))))
+  (should (equal "    - [ ] name\n" (orgtrello-buffer--compute-item-to-org-entry (orgtrello-hash-make-properties `((:name . "name") (:keyword . "incomplete")))))))
+
 (ert-deftest test-orgtrello-buffer-extract-description-from-current-position ()
   (should (string= "llo there"
                    (orgtrello-tests-with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
@@ -614,16 +655,9 @@ DEADLINE: <dummy-date-with-right-locale>
   - [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}
 "
                   (orgtrello-buffer-write-entity "some-item-id" (orgtrello-hash-make-properties `((:keyword . "DONE")
-                                                                                                   (:level . ,org-trello--item-level)
-                                                                                                   (:name . "some item name"))))
+                                                                                                  (:level . ,org-trello--item-level)
+                                                                                                  (:name . "some item name"))))
                   0))))
-
-(ert-deftest test-orgtrello-buffer--compute-checklist-to-org-entry ()
-  (should (equal "  - [-] name\n" (orgtrello-buffer--compute-checklist-to-org-entry (orgtrello-hash-make-properties `((:name . "name")))))))
-
-(ert-deftest test-orgtrello-buffer--compute-item-to-org-entry ()
-  (should (equal "    - [X] name\n" (orgtrello-buffer--compute-item-to-org-entry (orgtrello-hash-make-properties `((:name . "name") (:keyword . "complete"))))))
-  (should (equal "    - [ ] name\n" (orgtrello-buffer--compute-item-to-org-entry (orgtrello-hash-make-properties `((:name . "name") (:keyword . "incomplete")))))))
 
 (ert-deftest test-orgtrello-buffer--compute-item-to-org-checkbox ()
   (should (equal "  - [X] name\n" (orgtrello-buffer--compute-item-to-org-checkbox "name" 2 "complete")))

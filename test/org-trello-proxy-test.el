@@ -2,9 +2,146 @@
 (require 'ert)
 (require 'el-mock)
 
+(ert-deftest test-orgtrello-proxy--getting-back-to-headline ()
+  (should (equal :result
+                 (with-mock
+                   (mock (orgtrello-buffer-compute-entity-to-org-entry :data) => :org-entity)
+                   (mock (orgtrello-proxy--getting-back-to-marker :org-entity) => :result)
+                   (orgtrello-proxy--getting-back-to-headline :data)))))
+
 (ert-deftest test-orgtrello-proxy--compute-pattern-search-from-marker ()
   (should (equal "marker-is-a-trello-id" (orgtrello-proxy--compute-pattern-search-from-marker "marker-is-a-trello-id")))
   (should (equal "orgtrello-marker-tony" (orgtrello-proxy--compute-pattern-search-from-marker "orgtrello-marker-tony"))))
+
+(ert-deftest test-orgtrello-proxy--getting-back-to-marker ()
+  (should
+   (equal 17 (orgtrello-tests-with-temp-buffer
+              "blablablabla\nxyz\nhello\n"
+              (progn
+                (orgtrello-proxy--getting-back-to-marker "xyz")
+                (point))))))
+
+(ert-deftest test-orgtrello-proxy--get-back-to-marker ()
+    (should (equal :result
+                   (with-mock
+                     (mock (orgtrello-proxy--getting-back-to-marker :marker) => nil)
+                     (mock (orgtrello-proxy--getting-back-to-headline :data) => :result)
+                     (orgtrello-proxy--get-back-to-marker :marker :data))))
+    (should (equal :ok
+                   (with-mock
+                     (mock (orgtrello-proxy--getting-back-to-marker :marker) => :ok)
+                     (orgtrello-proxy--get-back-to-marker :marker :data)))))
+
+(ert-deftest test-orgtrello-proxy--compute-sync-next-level ()
+  (should (equal '(2)
+                 (with-mock
+                   (mock (orgtrello-data-get-children :entity :entities-adjacencies) => '(:child-id0))
+                   (mock (orgtrello-data-get-entity :child-id0 :entities-adjacencies) => :full-entity-0)
+                   (mock (orgtrello-proxy-sync-entity :full-entity-0 :entities-adjacencies) => '(+ 1 1))
+                   (orgtrello-proxy--compute-sync-next-level :entity :entities-adjacencies)))))
+
+(ert-deftest test-orgtrello-proxy--update-entities-adjacencies ()
+  (-every?
+   (-partial 'eq t)
+   (-let* ((old-entity (orgtrello-hash-make-properties '((:id . :potential-marker-id)
+                                                         (:parent . :some-parent))))
+           (entity-synced (orgtrello-hash-make-properties '((:id . :new-trello-id))))
+           (entities (orgtrello-hash-make-properties `((:potential-marker-id . ,old-entity))))
+           (adjacencies (orgtrello-hash-make-properties `((:potential-marker-id :checklist-id0 :checklist-id1))))
+           (entities-adjacencies (list entities adjacencies))
+           ((updated-synced-entity updated-entities updated-adjacencies) (orgtrello-proxy--update-entities-adjacencies old-entity entity-synced entities-adjacencies)))
+     (list
+      (orgtrello-tests-hash-equal
+       (orgtrello-hash-make-properties '((:id . :new-trello-id)
+                                         (:parent . :some-parent)))
+       updated-synced-entity)
+      (orgtrello-tests-hash-equal
+       (orgtrello-hash-make-properties `((:potential-marker-id . ,old-entity)
+                                         (:new-trello-id . ,updated-synced-entity)
+                                         (:checklist-id0)
+                                         (:checklist-id1)))
+       updated-entities)
+      (orgtrello-tests-hash-equal
+       (orgtrello-hash-make-properties `((:potential-marker-id :checklist-id0 :checklist-id1)
+                                         (:new-trello-id :checklist-id0 :checklist-id1)))
+       updated-adjacencies)))))
+
+(ert-deftest test-orgtrello-proxy--standard-post-or-put-success-callback ()
+  ;; should update the marker with the id returned from trello
+  (should (string=
+           "* TODO Joy of FUN(ctional) LANGUAGES
+:PROPERTIES:
+:orgtrello-id: 55d07e8ada66fd9de074b82e
+:orgtrello-local-checksum: 0face23ee36812bb4ef1321e2567196080b80dc2c6ffd9a19734433b34836303
+:END:
+"
+           (orgtrello-tests-with-temp-buffer-and-return-buffer-content
+            "* TODO Joy of FUN(ctional) LANGUAGES
+:PROPERTIES:
+:orgtrello-id: orgtrello-marker-blah
+:END:
+"
+            (let* ((entity (orgtrello-hash-make-properties `((:id . "orgtrello-marker-blah")
+                                                             (:buffername . ,(current-buffer))
+                                                             (:name . "Joy of FUN(ctional) LANGUAGES"))))
+                   (entities-adjacencies (list (orgtrello-hash-empty-hash) (orgtrello-hash-empty-hash)))
+                   (entity-synced (orgtrello-hash-make-properties '((:id . "55d07e8ada66fd9de074b82e"))))
+                   (response (make-request-response :data entity-synced)))
+              (apply (orgtrello-proxy--standard-post-or-put-success-callback entity entities-adjacencies) (list response))))))
+  (should (string=
+           "* TODO Joy of FUN(ctional) LANGUAGES
+:PROPERTIES:
+:orgtrello-id: 55d07e8ada66fd9de074b82e
+:orgtrello-local-checksum: 0face23ee36812bb4ef1321e2567196080b80dc2c6ffd9a19734433b34836303
+:END:
+"
+           (orgtrello-tests-with-temp-buffer-and-return-buffer-content
+            "* TODO Joy of FUN(ctional) LANGUAGES
+:PROPERTIES:
+:orgtrello-id: 55d07e8ada66fd9de074b82e
+:END:
+"
+            (let* ((entity (orgtrello-hash-make-properties `((:id . "55d07e8ada66fd9de074b82e")
+                                                             (:buffername . ,(current-buffer))
+                                                             (:name . "Joy of FUN(ctional) LANGUAGES"))))
+                   (entities-adjacencies (list (orgtrello-hash-empty-hash) (orgtrello-hash-empty-hash)))
+                   (entity-synced (orgtrello-hash-make-properties '((:id . "55d07e8ada66fd9de074b82e")
+                                                                    (:name . "Joy of FUN(ctional) LANGUAGES"))))
+                   (response (make-request-response :data entity-synced)))
+              (apply (orgtrello-proxy--standard-post-or-put-success-callback entity entities-adjacencies) (list response)))))))
+
+(ert-deftest test-orgtrello-proxy--retrieve-state-of-card ()
+  (should (equal org-trello--todo
+                 (orgtrello-proxy--retrieve-state-of-card (orgtrello-hash-make-properties `((:keyword . ,org-trello--todo))))))
+  (should (equal :something-else
+                 (orgtrello-proxy--retrieve-state-of-card (orgtrello-hash-make-properties `((:keyword . :something-else)))))))
+
+(ert-deftest test-orgtrello-proxy--checks-before-sync-card ()
+  (should (equal :ok
+                 (orgtrello-proxy--checks-before-sync-card
+                  (orgtrello-hash-make-properties `((:name . :name-so-ok)
+                                                    (:keyword . :something-else))))))
+  ;; missing name
+  (should (string= "Cannot synchronize the card - missing mandatory name. Skip it..."
+                   (orgtrello-proxy--checks-before-sync-card
+                    (orgtrello-hash-make-properties `((:keyword . :something-else)))))))
+
+(ert-deftest test-orgtrello-proxy--checks-before-sync-checklist ()
+  (should (string= "Cannot synchronize the checklist - missing mandatory name. Skip it..."
+                   (orgtrello-proxy--checks-before-sync-checklist
+                    (orgtrello-hash-make-properties `((:keyword . :something-else)))
+                    :card)))
+  (should (string= "Cannot synchronize the checklist - the card must be synchronized first. Skip it..."
+                   (orgtrello-proxy--checks-before-sync-checklist
+                    (orgtrello-hash-make-properties `((:name . :checklist-name-so-ok)
+                                                      (:keyword . :something-else)))
+                    (orgtrello-hash-make-properties `((:keyword . :something-else))))))
+  (should (equal :ok
+                 (orgtrello-proxy--checks-before-sync-checklist
+                  (orgtrello-hash-make-properties `((:name . :checklist-name-so-ok)
+                                                    (:keyword . :something-else)))
+                  (orgtrello-hash-make-properties `((:id . "orgtrello-id-card-id-so-ok")
+                                                    (:keyword . :something-else)))))))
 
 (ert-deftest test-orgtrello-proxy-map-dispatch-delete ()
   (should (equal 'orgtrello-proxy--card-delete      (gethash org-trello--card-level orgtrello-proxy--map-fn-dispatch-delete)))

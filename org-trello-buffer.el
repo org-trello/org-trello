@@ -304,7 +304,7 @@ Move the cursor position."
   (orgtrello-log-msg orgtrello-log-info
                      "Synchronizing entity '%s' with id '%s'..."
                      (orgtrello-data-entity-name entity) entity-id)
-  (insert (orgtrello-buffer--compute-entity-to-org-entry entity)))
+  (insert (orgtrello-buffer-compute-entity-to-org-entry entity)))
 
 (defun orgtrello-buffer-clean-region (region-start region-end)
   "Clean region delimited by REGION-START and REGION-END.
@@ -312,7 +312,7 @@ Remove text and overlays."
   (orgtrello-buffer-remove-overlays region-start region-end)
   (delete-region region-start region-end))
 
-(defun orgtrello-buffer--compute-entity-to-org-entry (entity)
+(defun orgtrello-buffer-compute-entity-to-org-entry (entity)
   "Given an ENTITY, compute its org representation."
   (funcall
    (cond ((orgtrello-data-entity-card-p entity)

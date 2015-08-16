@@ -1,10 +1,10 @@
 #+title: basic coverage
 #+author: ardumont
 
-#+TBLFM: $5='(* 100 (/ (string-to-number $4) (string-to-int $2)))::@19$2=vsum(@2..@18)::@19$4=vsum(@2..@18)::@19$5='(* 100 (/ (string-to-number (format "%s0" @19$4)) (string-to-number (format "%s0" @19$2))))
+|--------------------------+-----------------------+------------------------------------+------------------+--------------------|
 | Namespace                | Functions / namespace | test namespace                     | Functions tested |           Coverage |
 |--------------------------+-----------------------+------------------------------------+------------------+--------------------|
-| org-trello-proxy.el      |                  32.0 | test/org-trello-proxy-test.el      |             16.0 |               50.0 |
+| org-trello-proxy.el      |                  32.0 | test/org-trello-proxy-test.el      |             21.0 |             65.625 |
 | org-trello-controller.el |                  83.0 | test/org-trello-controller-test.el |             24.0 | 28.915662650602407 |
 | org-trello-entity.el     |                  30.0 | test/org-trello-entity-test.el     |             14.0 | 46.666666666666664 |
 | org-trello-setup.el      |                  12.0 | test/org-trello-setup-test.el      |              8.0 |  66.66666666666666 |
@@ -20,9 +20,9 @@
 | org-trello-action.el     |                   7.0 | test/org-trello-action-test.el     |              7.0 |              100.0 |
 | org-trello-hash.el       |                   8.0 | test/org-trello-hash-test.el       |              8.0 |              100.0 |
 | org-trello-api.el        |                  36.0 | test/org-trello-api-test.el        |             36.0 |              100.0 |
-| org-trello-data.el       |                  43.0 | test/org-trello-data-test.el       |             43.0 |              100.0 |
+| org-trello-data.el       |                  45.0 | test/org-trello-data-test.el       |             45.0 |              100.0 |
 |--------------------------+-----------------------+------------------------------------+------------------+--------------------|
-| Average                  |                  441. |                                    |             309. |  70.06802721088435 |
+| Average                  |                  443. |                                    |             316. |  71.33182844243792 |
 |--------------------------+-----------------------+------------------------------------+------------------+--------------------|
 #+TBLFM: $5='(* 100 (/ (string-to-number $4) (string-to-int $2)))::@19$2=vsum(@2..@18)::@19$4=vsum(@2..@18)::@19$5='(* 100 (/ (string-to-number (format "%s0" @19$4)) (string-to-number (format "%s0" @19$2))))
 
