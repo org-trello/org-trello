@@ -69,5 +69,19 @@ C-c z h - M-x org-trello-help-describing-bindings - This help message."
                ,(orgtrello-setup-set-user-logged-in :new-user)
                ,(orgtrello-setup-user-logged-in))))))
 
+(ert-deftest test-orgtrello-setup-display-current-buffer-setup ()
+  (should (equal
+           (list :users-id-name :1
+                 :users-name-id :2
+                 :user-logged-in :3
+                 :org-keyword-trello-list-names :4
+                 :org-keyword-id-name :5)
+           (let ((org-trello--hmap-users-id-name :1)
+                 (org-trello--hmap-users-name-id :2)
+                 (org-trello--user-logged-in :3)
+                 (org-trello--org-keyword-trello-list-names :4)
+                 (org-trello--hmap-list-orgkeyword-id-name :5))
+             (orgtrello-setup-display-current-buffer-setup)))))
+
 (provide 'org-trello-setup-test)
 ;;; org-trello-setup-test.el ends here

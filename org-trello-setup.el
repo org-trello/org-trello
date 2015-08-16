@@ -256,6 +256,14 @@ INTERACTIVE-COMMAND-BINDING-TO-INSTALL the list of commands to install."
   "Install the default org-trello mode KEYBINDING."
   (orgtrello-setup-install-local-keybinding-map keybinding keybinding org-trello-interactive-command-binding-couples))
 
+(defun orgtrello-setup-display-current-buffer-setup ()
+  "Display current buffer's setup."
+  (list :users-id-name org-trello--hmap-users-id-name
+        :users-name-id org-trello--hmap-users-name-id
+        :user-logged-in org-trello--user-logged-in
+        :org-keyword-trello-list-names org-trello--org-keyword-trello-list-names
+        :org-keyword-id-name org-trello--hmap-list-orgkeyword-id-name))
+
 (defvar org-trello--previous-prefix-keybinding "C-c o" "Previous or current mode prefix keybinding.")
 (defcustom org-trello-current-prefix-keybinding "C-c o"
   "The default prefix keybinding to execute org-trello commands."

@@ -36,14 +36,6 @@ If either org-keywords or properties is nil, return an empty hash-map."
                    (orgtrello-hash-empty-hash)
                    org-keywords)))
 
-(defun orgtrello-setup-display-current-buffer-setup()
-  "Display current buffer's setup."
-  (list :users-id-name org-trello--hmap-users-id-name
-        :users-name-id org-trello--hmap-users-name-id
-        :user-logged-in org-trello--user-logged-in
-        :org-keyword-trello-list-names org-trello--org-keyword-trello-list-names
-        :org-keyword-id-name org-trello--hmap-list-orgkeyword-id-name))
-
 (defun orgtrello-controller-setup-properties (&optional args)
   "Setup `org-trello' properties according to `org-mode' setup in buffer.
 Return :ok.
