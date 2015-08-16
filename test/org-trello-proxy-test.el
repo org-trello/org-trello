@@ -124,18 +124,18 @@
   ;; missing name
   (should (string= "Cannot synchronize the card - missing mandatory name. Skip it..."
                    (orgtrello-proxy--checks-before-sync-card
-                    (orgtrello-hash-make-properties `((:keyword . :something-else)))))))
+                    (orgtrello-hash-make-properties `((:name)))))))
 
 (ert-deftest test-orgtrello-proxy--checks-before-sync-checklist ()
   (should (string= "Cannot synchronize the checklist - missing mandatory name. Skip it..."
                    (orgtrello-proxy--checks-before-sync-checklist
-                    (orgtrello-hash-make-properties `((:keyword . :something-else)))
+                    (orgtrello-hash-make-properties `((:name)))
                     :card)))
   (should (string= "Cannot synchronize the checklist - the card must be synchronized first. Skip it..."
                    (orgtrello-proxy--checks-before-sync-checklist
                     (orgtrello-hash-make-properties `((:name . :checklist-name-so-ok)
                                                       (:keyword . :something-else)))
-                    (orgtrello-hash-make-properties `((:keyword . :something-else))))))
+                    (orgtrello-hash-make-properties `((:id))))))
   (should (equal :ok
                  (orgtrello-proxy--checks-before-sync-checklist
                   (orgtrello-hash-make-properties `((:name . :checklist-name-so-ok)
@@ -194,6 +194,13 @@
                      (mock (orgtrello-api-delete-item "checklist-id" "item-id") => :delete-item-done)
                      (orgtrello-proxy--item-delete item-meta))))))
 
+(ert-deftest test-orgtrello-proxy--delete-region ()
+  (should (equal :delete-region-done
+                 (with-mock
+                   (mock (remove-overlays :start :end) => :remove-overlays-done)
+                   (mock (delete-region :start :end) => :delete-region-done)
+                   (orgtrello-proxy--delete-region :start :end)))))
+
 (ert-deftest test-orgtrello-proxy--card ()
   (should (equal 'orgtrello-proxy--card      (gethash org-trello--card-level orgtrello-proxy--map-fn-dispatch-create-update)))
   (should (equal 'orgtrello-proxy--checklist (gethash org-trello--checklist-level orgtrello-proxy--map-fn-dispatch-create-update)))
@@ -206,6 +213,58 @@
 (ert-deftest test-orgtrello-proxy--compute-check ()
   (should (equal t   (orgtrello-proxy--compute-check org-trello--done)))
   (should (equal nil (orgtrello-proxy--compute-check "anything-else"))))
+
+(ert-deftest test-orgtrello-proxy--checks-before-sync-item ()
+  (should
+   (equal "Cannot synchronize the item - missing mandatory name. Skip it..."
+          (orgtrello-proxy--checks-before-sync-item
+           (orgtrello-hash-make-properties '((:id . :item-id)))
+           :checklist-meta
+           :card-meta)))
+  (should
+   (equal "Cannot synchronize the item - the checklist must be synchronized first. Skip it..."
+          (orgtrello-proxy--checks-before-sync-item
+           (orgtrello-hash-make-properties '((:name . :item-name)))
+           (orgtrello-hash-make-properties '((:id)))
+           :card-meta)))
+  (should
+   (equal "Cannot synchronize the item - the card must be synchronized first. Skip it..."
+          (orgtrello-proxy--checks-before-sync-item
+           (orgtrello-hash-make-properties '((:name . :item-name)))
+           (orgtrello-hash-make-properties '((:id . "checklist-id")))
+           (orgtrello-hash-make-properties '((:id))))))
+  (should
+   (equal :ok
+          (orgtrello-proxy--checks-before-sync-item
+           (orgtrello-hash-make-properties '((:name . :item-name)))
+           (orgtrello-hash-make-properties '((:id . "checklist-id")))
+           (orgtrello-hash-make-properties '((:id . "id")))))))
+
+(ert-deftest test-orgtrello-proxy--compute-dispatch-fn ()
+  (should (equal :result-with-card-fn
+                 (let ((entity (orgtrello-hash-make-properties '((:level . :card-level)))))
+                   (with-mock
+                     (mock (funcall :card-fn entity) => :result-with-card-fn)
+                     (orgtrello-proxy--compute-dispatch-fn
+                      entity
+                      (orgtrello-hash-make-properties '((:card-level . :card-fn)
+                                                        (:checklist-level . :checklist-fn))))))))
+  (should (equal :result-with-checklist-fn
+                 (let ((entity (orgtrello-hash-make-properties '((:level . :checklist-level)))))
+                   (with-mock
+                     (mock (funcall :checklist-fn entity) => :result-with-checklist-fn)
+                     (orgtrello-proxy--compute-dispatch-fn
+                      entity
+                      (orgtrello-hash-make-properties '((:card-level . :card-fn)
+                                                        (:checklist-level . :checklist-fn))))))))
+  (should (equal :result-with-default-fn
+                 (let ((entity (orgtrello-hash-make-properties '((:level . :unknown)))))
+                   (with-mock
+                     (mock (funcall 'orgtrello-action--too-deep-level entity) => :result-with-default-fn)
+                     (orgtrello-proxy--compute-dispatch-fn
+                      entity
+                      (orgtrello-hash-make-properties '((:card-level . :card-fn)
+                                                        (:checklist-level . :checklist-fn)))))))))
 
 (ert-deftest test-orgtrello-proxy--tags-to-labels ()
   (should (string= "a,b,c" (orgtrello-proxy--tags-to-labels ":a:b:c")))

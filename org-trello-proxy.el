@@ -191,16 +191,18 @@ If the checks are ko, the error message is returned."
   "Given a STATE (TODO/DONE) compute the trello check equivalent."
   (orgtrello-data--compute-state-generic state '(t nil)))
 
-(defun orgtrello-proxy--checks-before-sync-item (item-meta checklist-meta card-meta)
-  "Check all is good before synchronizing the item ITEM-META (CHECKLIST-META and CARD-META indispensable)."
-  (let ((item-name    (orgtrello-data-entity-name item-meta))
-        (checklist-id (orgtrello-data-entity-id checklist-meta))
-        (card-id      (orgtrello-data-entity-id card-meta)))
-    (if item-name
-        (if checklist-id
-            (if card-id :ok org-trello--error-sync-item-sync-card-first)
-          org-trello--error-sync-item-sync-checklist-first)
-      org-trello--error-sync-item-missing-name)))
+(defun orgtrello-proxy--checks-before-sync-item (item-meta
+                                                 checklist-meta
+                                                 card-meta)
+  "Check ITEM-META synchronization is possible.
+CHECKLIST-META and CARD-META are needed to check this."
+  (if (orgtrello-data-entity-name item-meta)
+      (if (orgtrello-data-entity-id checklist-meta)
+          (if (orgtrello-data-entity-id card-meta)
+              :ok
+            org-trello--error-sync-item-sync-card-first)
+        org-trello--error-sync-item-sync-checklist-first)
+    org-trello--error-sync-item-missing-name))
 
 (defun orgtrello-proxy--item (item-meta)
   "Deal with create/update ITEM-META query build.
@@ -236,9 +238,9 @@ If the checks are ko, the error message is returned."
   "Generic function to dispatch, depending on the ENTITY level, functions.
 MAP-DISPATCH-FN is a map of function taking the one parameter ENTITY."
   (-> entity
-    orgtrello-data-entity-level
-    (gethash map-dispatch-fn 'orgtrello-action--too-deep-level)
-    (funcall entity)))
+      orgtrello-data-entity-level
+      (gethash map-dispatch-fn 'orgtrello-action--too-deep-level)
+      (funcall entity)))
 
 (defvar orgtrello-proxy--map-fn-dispatch-create-update (orgtrello-hash-make-properties `((,org-trello--card-level      . orgtrello-proxy--card)
                                                                                          (,org-trello--checklist-level . orgtrello-proxy--checklist)
@@ -315,9 +317,10 @@ MAP-DISPATCH-FN is a map of function taking the one parameter ENTITY."
                                (orgtrello-data-entity-id item-meta))))
 
 (defvar orgtrello-proxy--map-fn-dispatch-delete
-  (orgtrello-hash-make-properties `((,org-trello--card-level      . orgtrello-proxy--card-delete)
-                                    (,org-trello--checklist-level . orgtrello-proxy--checklist-delete)
-                                    (,org-trello--item-level      . orgtrello-proxy--item-delete)))
+  (orgtrello-hash-make-properties
+   `((,org-trello--card-level      . orgtrello-proxy--card-delete)
+     (,org-trello--checklist-level . orgtrello-proxy--checklist-delete)
+     (,org-trello--item-level      . orgtrello-proxy--item-delete)))
   "Dispatch map for the deletion query of card/checklist/item.")
 
 (defun orgtrello-proxy--compute-delete-query-request (entity)
