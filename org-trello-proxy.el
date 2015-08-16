@@ -236,8 +236,9 @@ MAP-DISPATCH-FN is a map of function taking the one parameter ENTITY."
 
 (defun orgtrello-proxy--compute-sync-query-request (entity)
   "Dispatch the ENTITY creation/update depending on the nature of the entry."
-  (orgtrello-proxy--compute-dispatch-fn entity orgtrello-proxy--map-fn-dispatch-create-update))
-
+  (orgtrello-proxy--compute-dispatch-fn
+   entity
+   orgtrello-proxy--map-fn-dispatch-create-update))
 
 (defun orgtrello-proxy--delete-region (start end)
   "Delete a region defined by START and END bound."
@@ -322,34 +323,40 @@ Display LOG-OK or LOG-KO depending on the result."
            (deferred:nextc it
              (lambda () (orgtrello-log-msg orgtrello-log-debug ,log-ok))))))
 
-(defun orgtrello-proxy-delete-entity (entity-data)
-  "Compute the delete action to remove ENTITY-DATA."
-  (lexical-let ((query-map        (orgtrello-proxy--dispatch-delete entity-data))
-                (entity-to-delete entity-data)
-                (level            (orgtrello-data-entity-level entity-data)))
+(defun orgtrello-proxy-delete-entity (entity)
+  "Compute the delete action to remove ENTITY."
+  (lexical-let ((query-map        (orgtrello-proxy--dispatch-delete entity))
+                (entity-to-delete entity)
+                (level            (orgtrello-data-entity-level entity)))
     (if (hash-table-p query-map)
         (orgtrello-query-http-trello
          query-map
          nil ; async
-         (orgtrello-proxy--standard-delete-success-callback entity-data)
+         (orgtrello-proxy--standard-delete-success-callback entity)
          (lambda (response)
-           (orgtrello-log-msg orgtrello-log-error "client - Problem during the deletion request to the proxy - error-thrown: %s" (request-response-error-thrown response))
+           (orgtrello-log-msg
+            orgtrello-log-error
+            "client - Problem during the deletion request to the proxy - error-thrown: %s"
+            (request-response-error-thrown response))
            (orgtrello-proxy--cleanup-meta entity-to-delete)))
       (orgtrello-log-msg orgtrello-log-error query-map))))
 
-(defun orgtrello-proxy-sync-entity (entity-data entities-adjacencies)
-  "Compute the sync action on entity ENTITY-DATA.
+(defun orgtrello-proxy-sync-entity (entity entities-adjacencies)
+  "Compute the sync action on entity ENTITY.
 Use ENTITIES-ADJACENCIES to provide further information."
-  (lexical-let ((query-map      (orgtrello-proxy--compute-sync-query-request entity-data))
-                (entity-to-sync entity-data))
+  (lexical-let ((query-map (orgtrello-proxy--compute-sync-query-request entity))
+                (entity-to-sync entity))
     (if (hash-table-p query-map)
         (orgtrello-query-http-trello
          query-map
          nil ; async
-         (orgtrello-proxy--standard-post-or-put-success-callback entity-data entities-adjacencies)
+         (orgtrello-proxy--standard-post-or-put-success-callback entity entities-adjacencies)
          (lambda (response)
            (orgtrello-proxy--cleanup-meta entity-to-sync)
-           (orgtrello-log-msg orgtrello-log-error "client - Problem during the sync request to the proxy - error-thrown: %s" (request-response-error-thrown response))))
+           (orgtrello-log-msg
+            orgtrello-log-error
+            "client - Problem during the sync request to the proxy - error-thrown: %s"
+            (request-response-error-thrown response))))
       (progn ;; cannot execute the request
         (orgtrello-proxy--cleanup-meta entity-to-sync)
         (orgtrello-log-msg orgtrello-log-error query-map)
