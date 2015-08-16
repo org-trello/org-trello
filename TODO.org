@@ -36,7 +36,12 @@
 
 - [X] Improve release script + fix typo
 - [X] Update version
-- [ ] Improve coverage
+- [-] Improve coverage
+  - [X] stats-coverage.org for some stats
+  - [X] Fix bug on org-trello-log namespace + org-trello-log
+  - [X] org-trello-input
+  - [X] org-trello-query
+  - [ ] org-trello-proxy
 - [ ] #279 - Improve parsing of org-trello elements
 - [ ] Release notes
 
