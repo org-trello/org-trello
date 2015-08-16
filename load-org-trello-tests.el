@@ -102,8 +102,11 @@ Otherwise, default to current buffer."
 (define-key emacs-lisp-mode-map (kbd "C-c o d") 'orgtrello-tests-load-namespaces)
 (define-key emacs-lisp-mode-map (kbd "C-c o D") 'orgtrello-tests-find-next-error)
 
+;; (fset 'orgtrello-tests-org-raw-coverage
+;;       (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([201326624 201326624 201326624 134217848 111 114 103 116 114 101 108 108 111 45 116 101 115 116 115 45 99 111 117 110 116 45 102 117 110 99 116 105 111 110 115 13 67108896 134217826 23 9 25 46 48 9 201326624 201326624 201326624 134217848 111 114 103 116 114 101 108 108 111 45 99 111 8 8 116 101 115 116 115 45 99 111 117 110 116 45 110 117 109 98 101 114 45 116 101 115 116 115 13 67108896 134217826 23 9 25 46 48 9 9] 0 "%d")) arg)))
+
 (fset 'orgtrello-tests-org-raw-coverage
-      (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([201326624 201326624 201326624 134217848 111 114 103 116 114 101 108 108 111 45 116 101 115 116 115 45 99 111 117 110 116 45 102 117 110 99 116 105 111 110 115 13 67108896 134217826 23 9 25 46 48 9 201326624 201326624 201326624 134217848 111 114 103 116 114 101 108 108 111 45 99 111 8 8 116 101 115 116 115 45 99 111 117 110 116 45 110 117 109 98 101 114 45 116 101 115 116 115 13 67108896 134217826 23 9 25 46 48 9 9] 0 "%d")) arg)))
+      (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([tab tab tab 201326624 201326624 backspace tab S-iso-lefttab S-iso-lefttab S-iso-lefttab 201326624 201326624 backspace tab S-iso-lefttab S-iso-lefttab 201326624 201326624 201326624 134217848 111 114 103 116 114 101 108 108 111 45 116 101 115 116 115 45 99 111 117 110 116 45 102 117 110 99 116 105 111 110 115 13 134217736 tab 25 46 48 9 201326624 201326624 201326624 134217848 111 114 103 116 114 101 108 108 111 45 116 101 115 116 115 45 99 111 117 110 116 45 110 117 109 98 101 114 45 116 101 115 116 115 13 134217736 9 25 46 48 9 3 42 21 3 42 9] 0 "%d")) arg)))
 
 (define-key org-trello-mode-map (kbd "C-c o o") 'org-trello-dev-find-unused-definitions)
 (define-key emacs-lisp-mode-map (kbd "C-c o o") 'orgtrello-tests-org-raw-coverage)
