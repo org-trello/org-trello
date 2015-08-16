@@ -1,4 +1,5 @@
 org-trello [![Build Status](https://travis-ci.org/org-trello/org-trello.png?branch=master)](https://travis-ci.org/org-trello/org-trello) [![MELPA Stable](http://stable.melpa.org/packages/org-trello-badge.svg)](http://stable.melpa.org/#/org-trello) [![MELPA](http://melpa.org/packages/org-trello-badge.svg)](http://melpa.org/#/org-trello)
+[![Coverage Status](https://coveralls.io/repos/org-trello/org-trello/badge.svg?branch=master&service=github)](https://coveralls.io/github/org-trello/org-trello?branch=master)
 ==========
 
 The [full documentation](http://org-trello.github.io/) is maintained!
