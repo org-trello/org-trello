@@ -25,7 +25,7 @@
   "List the users entries from properties PROPS."
   (--filter (string-match-p org-trello--label-key-user-prefix (car it)) props))
 
-(defun orgtrello-controller-hmap-id-name (org-keywords props)
+(defun orgtrello-controller--hmap-id-name (org-keywords props)
   "Given an ORG-KEYWORDS and a properties PROPS, return a map.
 This map is a key/value of (trello-id, trello-list-name-and-org-keyword-name).
 If either org-keywords or properties is nil, return an empty hash-map."
@@ -57,7 +57,7 @@ ARGS is not used."
                                org-file-properties)))
 
     (setq org-trello--org-keyword-trello-list-names org-keywords)
-    (setq org-trello--hmap-list-orgkeyword-id-name  (orgtrello-controller-hmap-id-name org-keywords org-file-properties))
+    (setq org-trello--hmap-list-orgkeyword-id-name  (orgtrello-controller--hmap-id-name org-keywords org-file-properties))
     (setq org-trello--hmap-users-id-name            (orgtrello-hash-make-transpose-properties org-trello-users))
     (setq org-trello--hmap-users-name-id            (orgtrello-hash-make-properties org-trello-users))
     (orgtrello-setup-set-user-logged-in             (or (orgtrello-buffer-me) (orgtrello-setup-user-logged-in)))

@@ -221,13 +221,13 @@
                    (mock (orgtrello-query-http-trello :query 'sync) => :some-result)
                    (orgtrello-controller--list-board-lists :board-id)))))
 
-(ert-deftest test-orgtrello-controller-hmap-id-name ()
+(ert-deftest test-orgtrello-controller--hmap-id-name ()
   (should (equal t
                  (orgtrello-tests-hash-equal (orgtrello-hash-make-properties '(("786" . "CANCELLED")
                                                                                ("456" . "FAILED")
                                                                                ("ijk" . "DONE")
                                                                                ("abc" . "TODO")))
-                                             (orgtrello-controller-hmap-id-name '("CANCELLED" "FAILED" "DONE" "TODO")
+                                             (orgtrello-controller--hmap-id-name '("CANCELLED" "FAILED" "DONE" "TODO")
                                                                                 '(("board-name" . "some board")
                                                                                   ("board-id" . "10223")
                                                                                   ("CANCELLED" . "786")
@@ -239,15 +239,15 @@
                                                                                   ("TODO" . "abc"))))))
   (should (equal t
                  (orgtrello-tests-hash-equal (orgtrello-hash-empty-hash)
-                                             (orgtrello-controller-hmap-id-name '("CANCELLED" "FAILED" "DONE" "TODO")
+                                             (orgtrello-controller--hmap-id-name '("CANCELLED" "FAILED" "DONE" "TODO")
                                                                                 '()))))
   (should (equal t
                  (orgtrello-tests-hash-equal (orgtrello-hash-empty-hash)
-                                             (orgtrello-controller-hmap-id-name '()
+                                             (orgtrello-controller--hmap-id-name '()
                                                                                 '(("board-name" . "some board"))))))
   (should (equal t
                  (orgtrello-tests-hash-equal (orgtrello-hash-empty-hash)
-                                             (orgtrello-controller-hmap-id-name '()
+                                             (orgtrello-controller--hmap-id-name '()
                                                                                 '())))))
 
 (ert-deftest test-orgtrello-controller-compute-and-overwrite-card ()
