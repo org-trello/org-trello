@@ -203,8 +203,8 @@ Return the level found or nil if the level found is a card."
 (defun orgtrello-cbx-org-up ()
   "A function to get back to the current entry's parent."
   (-> (orgtrello-cbx-current-level)
-    1-
-    orgtrello-cbx--org-up))
+      1-
+      orgtrello-cbx--org-up))
 
 (defun orgtrello-cbx--map-checkboxes (level fn-to-execute)
   "Map over the checkboxes with level > to LEVEL and execute FN-TO-EXECUTE.
