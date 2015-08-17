@@ -192,7 +192,8 @@ If the checks are ko, the error message is returned."
       checks-ok-or-error-message)))
 
 (defun orgtrello-proxy--checks-before-sync-checklist (checklist-meta card-meta)
-  "Check all is good before synchronizing the CHECKLIST-META (CARD-META indispensable)."
+  "Check all is good before synchronizing the CHECKLIST-META.
+CARD-META for necessary data."
   (-if-let (checklist-name (orgtrello-data-entity-name checklist-meta))
       (-if-let (card-id (orgtrello-data-entity-id card-meta))
           :ok
@@ -202,14 +203,18 @@ If the checks are ko, the error message is returned."
 (defun orgtrello-proxy--checklist (checklist-meta)
   "Deal with create/update CHECKLIST-META query build.
 If the checks are ko, the error message is returned."
-  (let* ((card-meta                  (orgtrello-data-parent checklist-meta))
-         (checks-ok-or-error-message (orgtrello-proxy--checks-before-sync-checklist checklist-meta card-meta)))
+  (let* ((card-meta (orgtrello-data-parent checklist-meta))
+         (checks-ok-or-error-message
+          (orgtrello-proxy--checks-before-sync-checklist checklist-meta
+                                                         card-meta)))
     (if (equal :ok checks-ok-or-error-message)
         (let ((checklist-name (orgtrello-data-entity-name checklist-meta))
               (checklist-pos  (orgtrello-data-entity-position checklist-meta)))
           (-if-let (checklist-id (orgtrello-data-entity-id checklist-meta))
               ;; update
-              (orgtrello-api-update-checklist checklist-id checklist-name checklist-pos)
+              (orgtrello-api-update-checklist checklist-id
+                                              checklist-name
+                                              checklist-pos)
             ;; create
             (orgtrello-api-add-checklist (orgtrello-data-entity-id card-meta)
                                          checklist-name
@@ -241,8 +246,11 @@ CHECKLIST-META and CARD-META are needed to check this."
   "Deal with create/update ITEM-META query build.
 If the checks are ko, the error message is returned."
   (let* ((checklist-meta (orgtrello-data-parent item-meta))
-         (card-meta      (orgtrello-data-parent checklist-meta))
-         (checks-ok-or-error-message (orgtrello-proxy--checks-before-sync-item item-meta checklist-meta card-meta)))
+         (card-meta (orgtrello-data-parent checklist-meta))
+         (checks-ok-or-error-message (orgtrello-proxy--checks-before-sync-item
+                                      item-meta
+                                      checklist-meta
+                                      card-meta)))
     ;; name is mandatory
     (if (equal :ok checks-ok-or-error-message)
         (let* ((item-id         (orgtrello-data-entity-id item-meta))
@@ -297,15 +305,21 @@ MAP-DISPATCH-FN is a map of function taking the one parameter ENTITY."
   "Delete the card region (including overlays and line)."
   (org-back-to-heading)
   (let ((starting-point (point))
-        (ending-point   (save-excursion (if (org-goto-sibling) (point) (point-max))))) ;; next card or point-max
+        (ending-point (save-excursion (if (org-goto-sibling)
+                                          (point)
+                                        (point-max))))) ;; next card or max
     (orgtrello-proxy--delete-region starting-point ending-point)))
 
 (defun orgtrello-proxy--delete-checkbox-checklist-region ()
   "Delete the checklist region."
   (let ((starting-point (point-at-bol))
-        (ending-point (save-excursion (-if-let (result (orgtrello-entity-goto-next-checkbox-with-same-level org-trello--checklist-level))
-                                          result
-                                        (orgtrello-entity-card-end-point))))) ;; next checkbox or next card or point-max
+        (ending-point (save-excursion
+                        (-if-let
+                            (result
+                             (orgtrello-entity-goto-next-checkbox-with-same-level
+                              org-trello--checklist-level))
+                            result
+                          (orgtrello-entity-card-end-point))))) ;; next checkbox or next card or point-max
     (orgtrello-proxy--delete-region starting-point ending-point)))
 
 (defun orgtrello-proxy--delete-checkbox-item-region ()
@@ -316,9 +330,12 @@ MAP-DISPATCH-FN is a map of function taking the one parameter ENTITY."
 
 (defun orgtrello-proxy--delete-entity-region (entity)
   "Compute the delete region function depending on the ENTITY's nature."
-  (cond ((orgtrello-data-entity-card-p entity) 'orgtrello-proxy--delete-card-region)
-        ((orgtrello-data-entity-checklist-p entity) 'orgtrello-proxy--delete-checkbox-checklist-region)
-        ((orgtrello-data-entity-item-p entity) 'orgtrello-proxy--delete-checkbox-item-region)))
+  (cond ((orgtrello-data-entity-card-p entity)
+         'orgtrello-proxy--delete-card-region)
+        ((orgtrello-data-entity-checklist-p entity)
+         'orgtrello-proxy--delete-checkbox-checklist-region)
+        ((orgtrello-data-entity-item-p entity)
+         'orgtrello-proxy--delete-checkbox-item-region)))
 
 (defun orgtrello-proxy--standard-delete-success-callback (entity-to-del)
   "Return a callback function able to deal with the ENTITY-TO-DEL deletion."
@@ -333,8 +350,8 @@ MAP-DISPATCH-FN is a map of function taking the one parameter ENTITY."
                 orgtrello-data-current
                 orgtrello-proxy--delete-entity-region
                 funcall)
-            (when (< org-trello--card-level level)
-              (forward-line -1) ;; when on checklist or item, get back one line then update the card's checksum
+            (when (< org-trello--card-level level) ;; when on checklist or item
+              (forward-line -1) ;; get back one line then update card's checksum
               (orgtrello-buffer-write-local-card-checksum-at-point))))))))
 
 (defun orgtrello-proxy--card-delete (card-meta)
