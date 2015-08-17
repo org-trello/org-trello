@@ -2,6 +2,42 @@
 (require 'ert)
 (require 'el-mock)
 
+(ert-deftest test-orgtrello-cbx--make-properties-as-string ()
+  (should (string= ":PROPERTIES: {\"checksum\":\"abc\",\"properties\":\"123\"}"
+                   (orgtrello-cbx--make-properties-as-string '(("properties" . "123")
+                                                               ("checksum" . "abc"))))))
+
+(ert-deftest test-orgtrello-cbx-current-level ()
+  (should (equal :level
+                 (with-mock
+                   (mock (orgtrello-cbx-org-checkbox-metadata) => '(:level :other-stuff))
+                   (orgtrello-cbx-current-level)))))
+
+(ert-deftest test-orgtrello-cbx-org-up ()
+  ;; get back from item to checklist
+  (should (string= "  - [ ] checklist"
+                   (orgtrello-tests-with-temp-buffer
+                    "* card
+  - [ ] checklist
+    - [ ] item
+    - [ ] item 2
+"
+                    (progn
+                      (orgtrello-cbx-org-up)
+                      (buffer-substring-no-properties (point-at-bol) (point-at-eol))))))
+  ;; get back from checklist to card
+  (should (string= "* card"
+                   (orgtrello-tests-with-temp-buffer
+                    "* card
+  - [ ] checklist
+    - [ ] item
+    - [ ] item 2
+"
+                    (progn
+                      (orgtrello-cbx-org-up)
+                      (buffer-substring-no-properties (point-at-bol) (point-at-eol)))
+                    -3))))
+
 (ert-deftest test-orgtrello-cbx--status ()
   (should (equal "DONE" (orgtrello-cbx--status"[X]")))
   (should (equal "TODO" (orgtrello-cbx--status"[ ]")))
