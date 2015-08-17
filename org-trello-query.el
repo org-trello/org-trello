@@ -4,8 +4,7 @@
 
 (if (version< "24.3" emacs-version)
     (require 'cl-lib)
-  (require 'cl)
-  (defalias 'cl-defun 'defun*))
+  (require 'cl))
 
 (require 'org-trello-log)
 (require 'org-trello-setup)
@@ -19,13 +18,13 @@
   "Compute the trello url from the given SERVER and URI."
   (format "%s%s" server uri))
 
-(defun* orgtrello-query--standard-error-callback (&key response error-thrown &allow-other-keys)
+(defun orgtrello-query--standard-error-callback (response)
   "Standard error callback which expects a RESPONSE.
 Simply displays an error message in the minibuffer with the error code."
-  (orgtrello-log-msg orgtrello-log-info "client - Problem during request - error-thrown: %s" error-thrown)
+  (orgtrello-log-msg orgtrello-log-info "client - Problem during request - error-thrown: %s" (request-response-error-thrown response))
   (orgtrello-log-msg orgtrello-log-debug "Detailed response: %S" response))
 
-(defun* orgtrello-query--standard-success-callback (&key response &allow-other-keys)
+(defun orgtrello-query--standard-success-callback (response)
   "Standard success callback with expects a RESPONSE.
 Simply displays a success message in the minibuffer."
   (let ((data (request-response-data response)))

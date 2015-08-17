@@ -208,8 +208,7 @@ As of 0.7.0, org-trello now follows Emacs's conventions.")
   "Require cl lib."
   (if (version< "24.3" emacs-version)
       (require 'cl-lib)
-    (require 'cl)
-    (defalias 'cl-defun 'defun)))
+    (require 'cl)))
 
 (defun orgtrello-setup-startup-message (prefix-keybinding)
   "Compute org-trello's startup message with the PREFIX-KEYBINDING."
