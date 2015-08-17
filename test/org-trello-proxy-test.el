@@ -171,6 +171,86 @@
                    (mock (orgtrello-data-entity-item-p :entity) => t)
                    (orgtrello-proxy--delete-entity-region :entity)))))
 
+(ert-deftest test-orgtrello-proxy--standard-delete-success-callback ()
+  ;; card deleted!
+  (should (string=
+           "* card not to be touched
+  - [ ] checklist not to be touched
+    - [ ] item not to be touched
+"
+           (orgtrello-tests-with-temp-buffer-and-return-buffer-content
+            "* card not to be touched
+  - [ ] checklist not to be touched
+    - [ ] item not to be touched
+* TODO card and content to be deleted
+:PROPERTIES:
+:orgtrello-id: 55d07e8ada66fd9de074b82e
+:END:
+  description
+  - [ ] checklist
+    - [ ] item
+"
+            (let* ((entity (orgtrello-hash-make-properties `((:id . "55d07e8ada66fd9de074b82e")
+                                                             (:buffername . ,(current-buffer))
+                                                             (:level . 1)))))
+              (apply (orgtrello-proxy--standard-delete-success-callback entity) (list :response-is-not-used))))))
+  ;; checklist deleted!
+  (should (string=
+           "* card not to be touched
+  - [ ] checklist not to be touched
+    - [ ] item not to be touched
+* TODO card not to be touched
+:PROPERTIES:
+:orgtrello-id: 55d07e8ada66fd9de074b82e
+:orgtrello-local-checksum: 84ab4c1e2bb3b1579abba176f191bdd0da9c26afc918d3ece452ccd2137de09b
+:END:
+  description
+"
+           (orgtrello-tests-with-temp-buffer-and-return-buffer-content
+            "* card not to be touched
+  - [ ] checklist not to be touched
+    - [ ] item not to be touched
+* TODO card not to be touched
+:PROPERTIES:
+:orgtrello-id: 55d07e8ada66fd9de074b82e
+:END:
+  description
+  - [ ] checklist and content to be deleted :PROPERTIES: {\"orgtrello-id\":\"44d07e8ada66fd9de074b82e\"}
+    - [ ] item
+"
+            (let* ((entity (orgtrello-hash-make-properties `((:id . "44d07e8ada66fd9de074b82e")
+                                                             (:buffername . ,(current-buffer))
+                                                             (:level . 2)))))
+              (apply (orgtrello-proxy--standard-delete-success-callback entity) (list :response-is-not-used))))))
+  ;; item deleted!
+  (should (string=
+           "* card not to be touched
+  - [ ] checklist not to be touched
+    - [ ] item not to be touched
+* TODO card not to be touched
+:PROPERTIES:
+:orgtrello-id: 55d07e8ada66fd9de074b82e
+:END:
+  description
+  - [ ] checklist :PROPERTIES: {\"orgtrello-local-checksum\":\"b4dda9762d94c205a98abec2fb03fa04a409c75d03cc1cd66840177ce5abe0e4\"}
+"
+           (orgtrello-tests-with-temp-buffer-and-return-buffer-content
+            "* card not to be touched
+  - [ ] checklist not to be touched
+    - [ ] item not to be touched
+* TODO card not to be touched
+:PROPERTIES:
+:orgtrello-id: 55d07e8ada66fd9de074b82e
+:END:
+  description
+  - [ ] checklist
+    - [ ] item to be deleted :PROPERTIES: {\"orgtrello-id\":\"33d07e8ada66fd9de074b82e\"}
+"
+            (let* ((entity (orgtrello-hash-make-properties `((:id . "33d07e8ada66fd9de074b82e")
+                                                             (:buffername . ,(current-buffer))
+                                                             (:level . 3)))))
+              (apply (orgtrello-proxy--standard-delete-success-callback entity) (list :response-is-not-used)))))))
+
 (ert-deftest test-orgtrello-proxy--card-delete ()
   "Deal with the deletion query of a CARD-META."
   (should (equal :delete-card-done
