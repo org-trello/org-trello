@@ -216,5 +216,35 @@
   (should (equal "{\"orgtrello-checksum\":\"abc\",\"orgtrello-id\":\"123\"}"
                  (orgtrello-cbx--serialize-hashmap (orgtrello-hash-make-properties '(("orgtrello-id" . "123") ("orgtrello-checksum" . "abc")))))))
 
+(ert-deftest test-orgtrello-cbx--map-checkboxes ()
+  (equal '(3 3 2)
+         (orgtrello-tests-with-temp-buffer
+          "* card
+  - [ ] checkbox 1
+    - [ ] checkbox 2
+    - [ ] checkbox 3
+  - [ ] checkbox 4
+"
+          (orgtrello-cbx--map-checkboxes org-trello--card-level 'orgtrello-cbx-current-level)
+          -4)))
+
+(ert-deftest test-orgtrello-cbx-map-checkboxes ()
+  (equal '(2 3 3 2)
+         (orgtrello-tests-with-temp-buffer
+          "* card
+  - [ ] checkbox 1
+    - [ ] checkbox 2
+    - [ ] checkbox 3
+  - [ ] checkbox 4"
+          (orgtrello-cbx-map-checkboxes 'orgtrello-cbx-current-level)))
+  (equal '("checkbox 1" "checkbox 2" "checkbox 3" "checkbox 4")
+         (orgtrello-tests-with-temp-buffer
+          "* card
+  - [ ] checkbox 1
+    - [ ] checkbox 2
+    - [ ] checkbox 3
+  - [ ] checkbox 4"
+          (orgtrello-cbx-map-checkboxes (-compose (-rpartial 'elt 4) 'orgtrello-cbx-org-checkbox-metadata)))))
+
 (provide 'org-trello-cbx-test)
 ;;; org-trello-cbx-test.el ends here

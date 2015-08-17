@@ -212,8 +212,9 @@ Does not preserve the cursor position.
 Do not exceed the max size of buffer."
   (orgtrello-entity-goto-next-checkbox)
   (when (and (not (eobp)) (< level (orgtrello-entity-level)))
-    (funcall fn-to-execute)
-    (orgtrello-cbx--map-checkboxes level fn-to-execute)))
+    (cons
+     (funcall fn-to-execute)
+     (orgtrello-cbx--map-checkboxes level fn-to-execute))))
 
 (defun orgtrello-cbx-map-checkboxes (fn-to-execute)
   "Map over the current checkbox and execute FN-TO-EXECUTE."
@@ -222,8 +223,8 @@ Do not exceed the max size of buffer."
     (-when-let (fst-cbx (orgtrello-entity-goto-next-checkbox-with-same-level
                          org-trello--checklist-level))
       (goto-char fst-cbx)
-      (funcall fn-to-execute)
-      (orgtrello-cbx--map-checkboxes org-trello--card-level fn-to-execute))))
+      (cons (funcall fn-to-execute)
+            (orgtrello-cbx--map-checkboxes org-trello--card-level fn-to-execute)))))
 
 (orgtrello-log-msg orgtrello-log-debug "orgtrello-cbx loaded!")
 
