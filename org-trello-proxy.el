@@ -380,16 +380,21 @@ MAP-DISPATCH-FN is a map of function taking the one parameter ENTITY."
   "Dispatch the call to the delete function depending on ENTITY level info."
   (orgtrello-proxy--compute-dispatch-fn entity orgtrello-proxy--map-fn-dispatch-delete))
 
+(defun orgtrello-proxy--execute-async-computations (computations log-ok log-ko)
+  "Compute the deferred COMPUTATIONS.
+Display LOG-OK or LOG-KO depending on the result."
+  `(deferred:$
+     (deferred:parallel
+       ,@computations)
+     (deferred:error it
+       (lambda () (orgtrello-log-msg orgtrello-log-error ,log-ko)))
+     (deferred:nextc it
+       (lambda () (orgtrello-log-msg orgtrello-log-debug ,log-ok)))))
+
 (defun orgtrello-proxy-execute-async-computations (computations log-ok log-ko)
   "Compute the deferred COMPUTATIONS.
 Display LOG-OK or LOG-KO depending on the result."
-  (eval `(deferred:$
-           (deferred:parallel
-             ,@computations)
-           (deferred:error it
-             (lambda () (orgtrello-log-msg orgtrello-log-error ,log-ko)))
-           (deferred:nextc it
-             (lambda () (orgtrello-log-msg orgtrello-log-debug ,log-ok))))))
+  (eval (orgtrello-proxy--execute-async-computations computations log-ok log-ko)))
 
 (defun orgtrello-proxy-delete-entity (entity)
   "Compute the delete action to remove ENTITY."

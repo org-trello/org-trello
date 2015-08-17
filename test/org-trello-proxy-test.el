@@ -529,5 +529,58 @@
                                                       *) => :result)
                    (orgtrello-proxy-sync-entity :entity :entities-adjacencies)))))
 
+(ert-deftest test-orgtrello-proxy--delete-card-region ()
+  (should
+   (string= "* card not deleted
+"
+            (orgtrello-tests-with-temp-buffer-and-return-buffer-content
+             "* card not deleted
+* card to delete
+  - [ ] checklist
+    - [ ] item"
+             (orgtrello-proxy--delete-card-region)
+             -1))))
+
+(ert-deftest test-orgtrello-proxy--delete-checkbox-checklist-region ()
+  (should (string= "* card 1
+* card 2
+"
+                   (orgtrello-tests-with-temp-buffer-and-return-buffer-content
+                    "* card 1
+* card 2
+  - [ ] checklist
+    - [ ] item"
+                    (orgtrello-proxy--delete-checkbox-checklist-region)
+
+                    -1)))
+
+  (ert-deftest test-orgtrello-proxy--delete-checkbox-item-region ()
+    (should (string= "* card 1
+* card 2
+  - [ ] checklist
+"
+                     (orgtrello-tests-with-temp-buffer-and-return-buffer-content
+                      "* card 1
+* card 2
+  - [ ] checklist
+    - [ ] item
+"
+                      (orgtrello-proxy--delete-checkbox-item-region)
+
+                      -1)))))
+
+(ert-deftest test-orgtrello-proxy--execute-async-computations ()
+  (should (equal '(deferred:$
+                    (deferred:parallel (+ 1 1) (+ 1 2))
+                    (deferred:error it (lambda nil (orgtrello-log-msg orgtrello-log-error :log-ko)))
+                    (deferred:nextc it (lambda nil (orgtrello-log-msg orgtrello-log-debug :log-ok))))
+                 (orgtrello-proxy--execute-async-computations '((+ 1 1) (+ 1 2)) :log-ok :log-ko))))
+
+(ert-deftest test-orgtrello-proxy-execute-async-computations ()
+  (should (equal 11
+                 (with-mock
+                   (mock (orgtrello-proxy--execute-async-computations :1 :2 :3) => '(+ 1 10))
+                   (orgtrello-proxy-execute-async-computations :1 :2 :3)))))
+
 (provide 'org-trello-proxy-test)
 ;;; org-trello-proxy-test.el ends here
