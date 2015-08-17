@@ -2,10 +2,6 @@
 ;;; Commentary:
 ;;; Code:
 
-(if (version< "24.3" emacs-version)
-    (require 'cl-lib)
-  (require 'cl))
-
 (require 'org-trello-log)
 (require 'org-trello-setup)
 (require 'org-trello-data)

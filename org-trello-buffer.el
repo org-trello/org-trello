@@ -15,8 +15,6 @@
 (require 'dash)
 (require 'dash-functional)
 
-(org-trello-require-cl)
-
 (defun orgtrello-buffer-org-delete-property (property)
   "Delete the PROPERTY at point."
   (funcall (if (orgtrello-entity-org-checkbox-p)

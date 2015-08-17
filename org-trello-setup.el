@@ -204,12 +204,6 @@ As of 0.7.0, org-trello now follows Emacs's conventions.")
   "An helper method to compute the uri to trello from URL-WITHOUT-BASE-URI."
   (concat org-trello--https url-without-base-uri))
 
-(defun org-trello-require-cl ()
-  "Require cl lib."
-  (if (version< "24.3" emacs-version)
-      (require 'cl-lib)
-    (require 'cl)))
-
 (defun orgtrello-setup-startup-message (prefix-keybinding)
   "Compute org-trello's startup message with the PREFIX-KEYBINDING."
   (orgtrello-utils-replace-in-string "#PREFIX#" prefix-keybinding "org-trello-ot is on! To begin with, hit #PREFIX# h or M-x 'org-trello-help-describing-bindings"))

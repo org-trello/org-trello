@@ -10,8 +10,6 @@
 (require 'org-trello-query)
 (require 'org-trello-api)
 
-(org-trello-require-cl)
-
 (defun orgtrello-backend-add-entity-to-entities (entity entities)
   "Adding ENTITY to the hash ENTITIES."
   (orgtrello-hash-puthash-data (orgtrello-data-entity-id-or-marker entity)

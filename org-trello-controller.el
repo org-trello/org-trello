@@ -19,8 +19,6 @@
 (require 's)
 (require 'ido)
 
-(org-trello-require-cl)
-
 (defun orgtrello-controller--list-user-entries (props)
   "List the users entries from properties PROPS."
   (--filter (string-match-p org-trello--label-key-user-prefix (car it)) props))
