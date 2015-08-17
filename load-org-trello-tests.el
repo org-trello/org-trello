@@ -143,6 +143,28 @@ Otherwise, default to current buffer."
                 fn-name
                 buffer-test-file)))))
 
+(defun orgtrello-tests-function-coverage ()
+  "Determine the function not covered in the current namespace."
+  (let* ((actual-buffer-file (buffer-name (current-buffer)))
+         (buffer-test (orgtrello-tests-ns-file-from-current-buffer actual-buffer-file))
+         (fn-names (orgtrello-tests-list-functions-in-buffer actual-buffer-file)))
+    (->> fn-names
+         (--map (list it (< 0 (orgtrello-tests-number-of (format "\(ert-deftest test-%s" it) buffer-test))))
+         (-filter (-compose 'not 'cadr))
+         (-map 'car)))) ;; FIXME: -reduce...
+
+(defun orgtrello-tests-next-uncovered-function ()
+  (interactive)
+  (-if-let (uncovered-functions (orgtrello-tests-function-coverage))
+      (let ((fn-name (helm-comp-read "Next uncovered function: " uncovered-functions)))
+        (-if-let (pos (save-excursion
+                        (goto-char (point-min))
+                        (search-forward fn-name)))
+            (goto-char pos)
+          (message "Curiously enough, I did not find '%s'... Sorry about that."
+                   fn-name)))
+    (message "Namespace fully covered.")))
+
 (defun orgtrello-tests-count-functions (&optional ask-buffer)
   "Count the number of `def-un' or `def-alias'.
 If region is active, will use the region highlight as buffer.
