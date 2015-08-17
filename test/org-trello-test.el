@@ -211,6 +211,12 @@
                    (mock (org-trello-apply `(message :something) nil nil 'no-log) => :res)
                    (org-trello-help-describing-bindings)))))
 
+(ert-deftest test-org-trello-create-board-and-install-metadata ()
+  (should (equal :res
+                 (with-mock
+                   (mock (org-trello-apply-deferred '(org-trello-log-light-checks-and-do "Create board and lists" orgtrello-controller-do-create-board-and-install-metadata)) => :res)
+                   (org-trello-create-board-and-install-metadata)))))
+
 (ert-deftest test-org-trello--bug-report ()
   (should (string= "Please:
 - Describe your problem with clarity and conciceness (cf. https://www.gnu.org/software/emacs/manual/html_node/emacs/Understanding-Bug-Reporting.html)
