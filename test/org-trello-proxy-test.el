@@ -10,8 +10,8 @@
                    (orgtrello-proxy--getting-back-to-headline :data)))))
 
 (ert-deftest test-orgtrello-proxy--compute-pattern-search-from-marker ()
-  (should (equal "marker-is-a-trello-id" (orgtrello-proxy--compute-pattern-search-from-marker "marker-is-a-trello-id")))
-  (should (equal "orgtrello-marker-tony" (orgtrello-proxy--compute-pattern-search-from-marker "orgtrello-marker-tony"))))
+  (should (equal :anything (orgtrello-proxy--compute-pattern-search-from-marker :anything)))
+  (should (equal 'x (orgtrello-proxy--compute-pattern-search-from-marker 'x))))
 
 (ert-deftest test-orgtrello-proxy--getting-back-to-marker ()
   (should
@@ -470,9 +470,6 @@
   (should (string= "a," (orgtrello-proxy--tags-to-labels ":a:")))
   (should (string= "a," (orgtrello-proxy--tags-to-labels "a:")))
   (should (string= ""  (orgtrello-proxy--tags-to-labels nil))))
-
-(ert-deftest test-orgtrello-proxy--compute-pattern-search-from-marker ()
-  (should (eq 'x (orgtrello-proxy--compute-pattern-search-from-marker 'x))))
 
 (ert-deftest test-orgtrello-proxy--compute-sync-query-request ()
   (should (equal :res
