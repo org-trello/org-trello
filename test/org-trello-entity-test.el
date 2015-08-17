@@ -2,6 +2,155 @@
 (require 'ert)
 (require 'el-mock)
 
+(ert-deftest test-orgtrello-entity-org-checkbox-p ()
+  (should (orgtrello-tests-with-temp-buffer
+           "* card
+    - [ ] ok for item
+"
+           (orgtrello-entity-org-checkbox-p)))
+  (should (orgtrello-tests-with-temp-buffer
+           "* card
+  - [ ] ok for checklist
+"
+           (orgtrello-entity-org-checkbox-p)))
+  (should (orgtrello-tests-with-temp-buffer
+           "* card
+- [ ] checkbox ok
+"
+           (orgtrello-entity-org-checkbox-p)))
+  (should-not (orgtrello-tests-with-temp-buffer
+               "* card
+"
+               (orgtrello-entity-org-checkbox-p))))
+
+(ert-deftest test-orgtrello-entity-org-heading-with-level-p ()
+  (should (orgtrello-tests-with-temp-buffer
+           "* card
+"
+           (orgtrello-entity-org-heading-with-level-p org-trello--card-level)))
+  (should-not (orgtrello-tests-with-temp-buffer
+               "* card
+- [ ] checklist
+"
+               (orgtrello-entity-org-heading-with-level-p org-trello--card-level)))
+  (should-not (orgtrello-tests-with-temp-buffer
+               "* card
+- [ ] checklist
+  - [ ] item
+"
+               (orgtrello-entity-org-heading-with-level-p org-trello--card-level))))
+
+(ert-deftest test-orgtrello-entity-org-card-p ()
+  (should (orgtrello-tests-with-temp-buffer
+           "* card
+"
+           (orgtrello-entity-org-card-p)))
+  (should-not (orgtrello-tests-with-temp-buffer
+               "* card
+- [ ] checklist
+"
+               (orgtrello-entity-org-card-p)))
+
+  (should-not (orgtrello-tests-with-temp-buffer
+               "* card
+- [ ] checklist
+  - [ ] item
+"
+               (orgtrello-entity-org-card-p))))
+
+(ert-deftest test-orgtrello-entity--org-checkbox-p ()
+  (should (orgtrello-tests-with-temp-buffer
+           "* card
+- [ ] checklist
+"
+           (orgtrello-entity--org-checkbox-p 0)))
+  (should (orgtrello-tests-with-temp-buffer
+           "* card
+- [ ] checklist
+  - [ ] item
+"
+           (orgtrello-entity--org-checkbox-p 2)))
+  (should-not (orgtrello-tests-with-temp-buffer
+               "* card
+"
+               (orgtrello-entity--org-checkbox-p 2)))
+  (should-not (orgtrello-tests-with-temp-buffer
+               "* card
+- [ ] checklist
+"
+               (orgtrello-entity--org-checkbox-p 2))))
+
+(ert-deftest test-orgtrello-entity-org-checklist-p ()
+  (should (orgtrello-tests-with-temp-buffer
+           "* card
+  - [ ] checklist
+"
+           (orgtrello-entity-org-checklist-p)))
+  (should-not (orgtrello-tests-with-temp-buffer
+               "* card
+"
+               (orgtrello-entity-org-checklist-p)))
+  (should-not (orgtrello-tests-with-temp-buffer
+               "* card
+- [ ] checklist
+"
+               (orgtrello-entity-org-checklist-p)))
+  (should-not (orgtrello-tests-with-temp-buffer
+               "* card
+  - [ ] checklist
+    - [ ] item
+"
+               (orgtrello-entity-org-checklist-p))))
+
+(ert-deftest test-orgtrello-entity-org-item-p ()
+  (should (orgtrello-tests-with-temp-buffer
+           "* card
+  - [ ] checklist
+    - [ ] item
+"
+           (orgtrello-entity-org-item-p)))
+
+  (should-not (orgtrello-tests-with-temp-buffer
+               "* card
+"
+               (orgtrello-entity-org-item-p)))
+  (should-not (orgtrello-tests-with-temp-buffer
+               "* card
+  - [ ] checklist
+"
+               (orgtrello-entity-org-item-p)))
+  (should-not (orgtrello-tests-with-temp-buffer
+               "* card
+- [ ] checklist
+  - [ ] item
+"
+               (orgtrello-entity-org-item-p))))
+
+(ert-deftest test-orgtrello-entity-org-comment-p ()
+  (should (orgtrello-tests-with-temp-buffer
+           "* card
+  - [ ] checklist
+    - [ ] item
+** COMMENT ardumont:
+booyah
+"
+           (orgtrello-entity-org-comment-p)))
+  (should-not (orgtrello-tests-with-temp-buffer
+               "* card
+"
+               (orgtrello-entity-org-comment-p)))
+  (should-not (orgtrello-tests-with-temp-buffer
+               "* card
+  - [ ] checklist
+"
+               (orgtrello-entity-org-comment-p)))
+  (should-not (orgtrello-tests-with-temp-buffer
+               "* card
+  - [ ] checklist
+    - [ ] item
+"
+               (orgtrello-entity-org-comment-p))))
+
 (ert-deftest test-orgtrello-entity-level ()
   ;; ok
   (should (equal 1  (orgtrello-tests-with-temp-buffer "* some card" (orgtrello-entity-level))))
