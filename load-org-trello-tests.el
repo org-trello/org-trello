@@ -113,7 +113,7 @@ Otherwise, default to current buffer."
 
 (defun orgtrello-tests-ns-file-from-current-buffer (ns-filename)
   "Compute the test namespace file from the namespace file."
-  (let ((buff (f-no-ext ns-filename)))
+  (let ((buff (concat (f-no-ext ns-filename) "-test")))
     (->> (directory-files orgtrello-tests-test-folder)
          (-filter (-partial 'string-match-p buff))
          car
@@ -124,7 +124,9 @@ Otherwise, default to current buffer."
   (should (equal "./test/org-trello-proxy-test.el"
                  (orgtrello-tests-ns-file-from-current-buffer "org-trello-proxy.el")))
   (should (equal "./test/org-trello-buffer-test.el"
-                 (orgtrello-tests-ns-file-from-current-buffer "org-trello-buffer.el"))))
+                 (orgtrello-tests-ns-file-from-current-buffer "org-trello-buffer.el")))
+  (should (equal "./test/org-trello-test.el"
+                 (orgtrello-tests-ns-file-from-current-buffer "org-trello.el"))))
 
 (require 'helm)
 
@@ -163,7 +165,7 @@ Otherwise, default to current buffer."
             (goto-char pos)
           (message "Curiously enough, I did not find '%s'... Sorry about that."
                    fn-name)))
-    (message "Namespace fully covered.")))
+    (message "Congrats! Namespace seems fully covered!")))
 
 (defun orgtrello-tests-count-functions (&optional ask-buffer)
   "Count the number of `def-un' or `def-alias'.
