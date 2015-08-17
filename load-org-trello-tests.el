@@ -10,8 +10,11 @@
 ;; load code prod
 (load-file "load-org-trello.el")
 
+(defconst orgtrello-tests-test-folder "./test"
+  "Folder where tests files are defined.")
+
 ;; Add test folder to the load path
-(add-to-list 'load-path (expand-file-name "./test"))
+(add-to-list 'load-path (expand-file-name orgtrello-tests-test-folder))
 
 (message "Loading tests done!")
 
@@ -37,30 +40,108 @@
                                     "test/org-trello-query-test.el"
                                     "test/org-trello-utils-test.el"))
 
-(defun orgtrello-tests-number-of (regexp buf)
-  "Given a REGEXP, count all occurences on BUFFER."
+(defun orgtrello-tests-execute-fn-on-buffer (fn buffer-file)
+  "Execute the function FN on buffer-file.
+FN is a parameter-less function that compute something from BUFFER-FILE.
+The buffer-file is not modified and the position is not changed."
   (save-excursion
     (with-temp-buffer
-      (insert-file buf)
+      (insert-file buffer-file)
       (goto-char (point-min))
-      (let ((c 0))
-        (while (re-search-forward regexp nil t)
-          (setq c (1+ c)))
-        c))))
+      (funcall fn))))
+
+(defun orgtrello-tests-number-of (regexp buffer-file)
+  "Given a REGEXP, count all occurences on BUFFER-FILE."
+  (orgtrello-tests-execute-fn-on-buffer
+   (lambda ()
+     (let ((c 0))
+       (while (re-search-forward regexp nil t)
+         (setq c (1+ c)))
+       c))
+   buffer-file))
+
+(defun orgtrello-tests-ask-for-buffer-or-fallback-to-default (&optional ask-buffer)
+  "Compute the desired buffer.
+If region is active, use the region.
+Otherwise, if ask-buffer is set, ask for input.
+Otherwise, fallback to the current buffer name."
+  (if (region-active-p)
+      (buffer-substring (region-beginning) (region-end))
+    (if ask-buffer
+        (read-string "Buffer name: ")
+      (buffer-name (current-buffer)))))
+
+;; (ert-deftest test-orgtrello-tests-ask-for-buffer-or-fallback-to-default ()
+;;   (should (equal :default-buffer
+;;                  (with-mock
+;;                    (mock (region-active-p) => nil)
+;;                    (mock (current-buffer) => :current)
+;;                    (mock (buffer-name :current) => :default-buffer)
+;;                    (orgtrello-tests-ask-for-buffer-or-fallback-to-default))))
+;;   (should (equal :result-with-region
+;;                  (with-mock
+;;                    (mock (region-active-p) => t)
+;;                    (mock (region-beginning) => :start)
+;;                    (mock (region-end) => :end)
+;;                    (mock (buffer-substring :start :end) => :result-with-region)
+;;                    (orgtrello-tests-ask-for-buffer-or-fallback-to-default))))
+;;   (should (equal :res
+;;                  (with-mock
+;;                    (mock (read-string "Buffer name: ") => :res)
+;;                    (orgtrello-tests-ask-for-buffer-or-fallback-to-default :buffer)))))
 
 (defun orgtrello-tests-interactive-number-of (regexp &optional ask-buffer)
   "Given a REGEXP, compute a number of occurrences.
 If region is active, will use the region highlight as buffer.
 Otherwise, if ASK-BUFFER is not nil, will ask the user.
 Otherwise, default to current buffer."
-  (let ((buf (if (region-active-p)
-                 (buffer-substring (region-beginning) (region-end))
-               (if ask-buffer
-                   (read-string "Buffer name: ")
-                 (current-buffer)))))
-    (message "buf: %s" buf)
+  (let ((buf (orgtrello-tests-ask-for-buffer-or-fallback-to-default ask-buffer)))
     (-when-let (c (orgtrello-tests-number-of regexp buf))
       (insert (int-to-string c)))))
+
+(defun orgtrello-tests-list-functions-in-buffer (buffer-file)
+  "Compute the number of `defun' in the BUFFER-FILE."
+  (orgtrello-tests-execute-fn-on-buffer
+   (lambda ()
+     (let ((functions))
+       (while (re-search-forward "\(defun \\(.*\\) \(" nil t)
+         (push (match-string-no-properties 1) functions))
+       (nreverse functions)))
+   buffer-file))
+
+(require 'f)
+
+(defun orgtrello-tests-ns-file-from-current-buffer (ns-filename)
+  "Compute the test namespace file from the namespace file."
+  (let ((buff (f-no-ext ns-filename)))
+    (->> (directory-files orgtrello-tests-test-folder)
+         (-filter (-partial 'string-match-p buff))
+         car
+         (list orgtrello-tests-test-folder)
+         (s-join "/"))))
+
+(ert-deftest test-orgtrello-tests-ns-file-from-current-buffer ()
+  (should (equal "./test/org-trello-proxy-test.el"
+                 (orgtrello-tests-ns-file-from-current-buffer "org-trello-proxy.el")))
+  (should (equal "./test/org-trello-buffer-test.el"
+                 (orgtrello-tests-ns-file-from-current-buffer "org-trello-buffer.el"))))
+
+(require 'helm)
+
+(defun orgtrello-tests-function-covered-p (fname &optional ask-buffer)
+  (interactive "P")
+  (let* ((actual-buffer-file (buffer-name (current-buffer)))
+         (buffer-test (orgtrello-tests-ns-file-from-current-buffer actual-buffer-file))
+         (fn-name (if (region-active-p)
+                      (buffer-substring-no-properties (region-beginning) (region-end))
+                    (let ((fn-names (orgtrello-tests-list-functions-in-buffer actual-buffer-file)))
+                      (helm-comp-read "Choose a function to check for coverage: " fn-names)))))
+    (message
+     (if (< 0 (orgtrello-tests-number-of (format "\(ert-deftest test-%s" fn-name) buffer-test))
+         (message "Tested!")
+       (message "'%s' is not covered in %s!"
+                fn-name
+                buffer-test-file)))))
 
 (defun orgtrello-tests-count-functions (&optional ask-buffer)
   "Count the number of `def-un' or `def-alias'.

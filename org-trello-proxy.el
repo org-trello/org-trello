@@ -54,6 +54,7 @@ ENTITIES-ADJACENCIES provides needed information."
                  (orgtrello-proxy-sync-entity it entities-adjacencies)
                  (eval it)))
           (orgtrello-data-get-children entity entities-adjacencies)))
+
 (defun orgtrello-proxy--update-entities-adjacencies (old-entity
                                                      entity-synced
                                                      entities-adjacencies)
