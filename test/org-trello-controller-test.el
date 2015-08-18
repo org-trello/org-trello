@@ -163,6 +163,202 @@ Also, you can specify on your org-mode buffer the todo list you want to work wit
                 (mock (file-exists-p *) => nil)
                 (orgtrello-controller-user-config-files))))
 
+(ert-deftest test-orgtrello-controller--on-entity-p ()
+  (should (equal :ok
+                 (orgtrello-tests-with-temp-buffer
+                  "* card"
+                  (-> (orgtrello-buffer-safe-entry-full-metadata)
+                      orgtrello-controller--on-entity-p))))
+  (should (equal :ok
+                 (orgtrello-tests-with-temp-buffer
+                  "* card
+  - [ ] checklist"
+                  (-> (orgtrello-buffer-safe-entry-full-metadata)
+                      orgtrello-controller--on-entity-p))))
+  (should (equal :ok
+                 (orgtrello-tests-with-temp-buffer
+                  "* card
+  - [ ] checklist
+    - [ ] item"
+                  (-> (orgtrello-buffer-safe-entry-full-metadata)
+                      orgtrello-controller--on-entity-p))))
+  (should (equal "You need to be on an org-trello entity (card/checklist/item) for this action to occur!"
+                 (orgtrello-tests-with-temp-buffer
+                  "** not on a card
+"
+                  (-> (orgtrello-buffer-safe-entry-full-metadata)
+                      orgtrello-controller--on-entity-p)))))
+
+(ert-deftest test-orgtrello-controller--right-level-p ()
+  (should (equal :ok
+                 (orgtrello-tests-with-temp-buffer
+                  "* card"
+                  (-> (orgtrello-buffer-safe-entry-full-metadata)
+                      orgtrello-controller--right-level-p))))
+  (should (equal :ok
+                 (orgtrello-tests-with-temp-buffer
+                  "* card
+  - [ ] checklist"
+                  (-> (orgtrello-buffer-safe-entry-full-metadata)
+                      orgtrello-controller--right-level-p))))
+  (should (equal :ok
+                 (orgtrello-tests-with-temp-buffer
+                  "* card
+  - [ ] checklist
+    - [ ] item"
+                  (-> (orgtrello-buffer-safe-entry-full-metadata)
+                      orgtrello-controller--right-level-p))))
+  (should (equal "Wrong level. Do not deal with entity other than card/checklist/item!"
+                 (orgtrello-tests-with-temp-buffer
+                  "** not on a card
+"
+                  (-> (orgtrello-buffer-safe-entry-full-metadata)
+                      orgtrello-controller--right-level-p)))))
+
+(ert-deftest test-orgtrello-controller--already-synced-p ()
+  (should (equal :ok
+                 (orgtrello-tests-with-temp-buffer
+                  "* card
+:PROPERTIES:
+:orgtrello-id: 123
+:END:"
+                  (-> (orgtrello-buffer-safe-entry-full-metadata)
+                      orgtrello-controller--already-synced-p))))
+  (should (equal "Entity must be synchronized with trello first!"
+                 (orgtrello-tests-with-temp-buffer
+                  "* card"
+                  (-> (orgtrello-buffer-safe-entry-full-metadata)
+                      orgtrello-controller--already-synced-p))))
+  (should (equal :ok
+                 (orgtrello-tests-with-temp-buffer
+                  "* card
+:PROPERTIES:
+:orgtrello-id: 123
+:END:
+  - [ ] checklist :PROPERTIES: {\"orgtrello-id\":\"123\"}"
+                  (-> (orgtrello-buffer-safe-entry-full-metadata)
+                      (orgtrello-controller--already-synced-p)))))
+  (should (equal "Entity must be synchronized with trello first!"
+                 (orgtrello-tests-with-temp-buffer
+                  "* card
+  - [ ] checklist"
+                  (-> (orgtrello-buffer-safe-entry-full-metadata)
+                      orgtrello-controller--already-synced-p))))
+
+  (should (equal :ok
+                 (orgtrello-tests-with-temp-buffer
+                  "* card
+:PROPERTIES:
+:orgtrello-id: 123
+:END:
+  - [ ] checklist :PROPERTIES: {\"orgtrello-id\":\"456\"}
+    - [ ] item :PROPERTIES: {\"orgtrello-id\":\"123456\"}
+"
+                  (-> (orgtrello-buffer-safe-entry-full-metadata)
+                      orgtrello-controller--already-synced-p))))
+  (should (equal "Entity must be synchronized with trello first!"
+                 (orgtrello-tests-with-temp-buffer
+                  "* card
+:PROPERTIES:
+:orgtrello-id: 123
+:END:
+  - [ ] checklist
+    - [ ] item
+"
+                  (-> (orgtrello-buffer-safe-entry-full-metadata)
+                      orgtrello-controller--already-synced-p)))))
+
+(ert-deftest test-orgtrello-controller--entity-mandatory-name-ok-p ()
+  (should (equal :ok
+                 (orgtrello-tests-with-temp-buffer
+                  "* card with a name
+"
+                  (-> (orgtrello-buffer-safe-entry-full-metadata)
+                      orgtrello-data-current
+                      orgtrello-controller--entity-mandatory-name-ok-p))))
+  (should (equal "Cannot synchronize the card - missing mandatory name. Skip it..."
+                 (orgtrello-tests-with-temp-buffer
+                  "* \n"
+                  (-> (orgtrello-buffer-safe-entry-full-metadata)
+                      orgtrello-data-current
+                      orgtrello-controller--entity-mandatory-name-ok-p))))
+  (should (equal :ok
+                 (orgtrello-tests-with-temp-buffer
+                  "* card
+  - [ ] checklist
+"
+                  (-> (orgtrello-buffer-safe-entry-full-metadata)
+                      orgtrello-data-current
+                      orgtrello-controller--entity-mandatory-name-ok-p))))
+
+  (should (equal "Cannot synchronize the checklist - missing mandatory name. Skip it..."
+                 (orgtrello-tests-with-temp-buffer
+                  "* card
+  - [ ] \n"
+                  (-> (orgtrello-buffer-safe-entry-full-metadata)
+                      orgtrello-data-current
+                      orgtrello-controller--entity-mandatory-name-ok-p))))
+  (should (equal :ok
+                 (orgtrello-tests-with-temp-buffer
+                  "* card
+  - [ ] checklist
+    - [ ] item
+"
+                  (-> (orgtrello-buffer-safe-entry-full-metadata)
+                      orgtrello-data-current
+                      orgtrello-controller--entity-mandatory-name-ok-p))))
+  (should (equal "Cannot synchronize the item - missing mandatory name. Skip it..."
+                 (orgtrello-tests-with-temp-buffer
+                  "* card
+  - [ ] checklist
+    - [ ] \n"
+                  (-> (orgtrello-buffer-safe-entry-full-metadata)
+                      orgtrello-data-current
+                      orgtrello-controller--entity-mandatory-name-ok-p)))))
+
+(ert-deftest test-orgtrello-controller--mandatory-name-ok-p ()
+  (should (equal :ok
+                 (orgtrello-tests-with-temp-buffer
+                  "* card with a name
+"
+                  (-> (orgtrello-buffer-safe-entry-full-metadata)
+                      orgtrello-controller--mandatory-name-ok-p))))
+  (should (equal "Cannot synchronize the card - missing mandatory name. Skip it..."
+                 (orgtrello-tests-with-temp-buffer
+                  "* \n"
+                  (-> (orgtrello-buffer-safe-entry-full-metadata)
+                      orgtrello-controller--mandatory-name-ok-p))))
+  (should (equal :ok
+                 (orgtrello-tests-with-temp-buffer
+                  "* card
+  - [ ] checklist
+"
+                  (-> (orgtrello-buffer-safe-entry-full-metadata)
+                      orgtrello-controller--mandatory-name-ok-p))))
+
+  (should (equal "Cannot synchronize the checklist - missing mandatory name. Skip it..."
+                 (orgtrello-tests-with-temp-buffer
+                  "* card
+  - [ ] \n"
+                  (-> (orgtrello-buffer-safe-entry-full-metadata)
+                      orgtrello-controller--mandatory-name-ok-p))))
+  (should (equal :ok
+                 (orgtrello-tests-with-temp-buffer
+                  "* card
+  - [ ] checklist
+    - [ ] item
+"
+                  (-> (orgtrello-buffer-safe-entry-full-metadata)
+                      orgtrello-controller--mandatory-name-ok-p))))
+  (should (equal "Cannot synchronize the item - missing mandatory name. Skip it..."
+                 (orgtrello-tests-with-temp-buffer
+                  "* card
+  - [ ] checklist
+    - [ ] \n"
+                  (-> (orgtrello-buffer-safe-entry-full-metadata)
+                      orgtrello-data-current
+                      orgtrello-controller--entity-mandatory-name-ok-p)))))
+
 (ert-deftest test-orgtrello-controller--compute-data-from-entity-meta ()
   (let* ((entry   (orgtrello-data-make-hash-org :member-ids :some-level :some-keyword :some-name "some-id" :some-due :some-point :some-buffername :desc :tags :unknown)))
     (should (equal (orgtrello-data-entity-id entry)          "some-id"))
