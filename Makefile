@@ -1,7 +1,8 @@
-PACKAGE=org-trello
-VERSION=$$(grep "^;; Version: " $(PACKAGE).el | cut -f3 -d' ')
-ARCHIVE=$(PACKAGE)-$(VERSION).tar
-EMACS=emacs
+PACKAGE = org-trello
+VERSION = $$(grep "^;; Version: " $(PACKAGE).el | cut -f3 -d' ')
+ARCHIVE = $(PACKAGE)-$(VERSION).tar
+EMACS ?= emacs
+CASK ?= cask
 
 .PHONY: clean
 
@@ -9,36 +10,36 @@ pr:
 	hub pull-request -b org-trello:master
 
 deps:
-	cask
+	${CASK}
 
 build:
-	cask build
+	${CASK} build
 
 clean-dist:
 	rm -rf dist/
 
 clean: clean-dist
 	rm -rf *.tar
-	cask clean-elc
+	${CASK} clean-elc
 
 install:
-	cask install
+	${CASK} install
 
 test: clean
-	cask exec ert-runner
+	${CASK} exec ert-runner
 
 pkg-file:
-	cask pkg-file
+	${CASK} pkg-file
 
 pkg-el: pkg-file
-	cask package
+	${CASK} package
 
 package: clean pkg-el
 	cp dist/$(ARCHIVE) .
 	make clean-dist
 
 info:
-	cask info
+	${CASK} info
 
 install-package-from-melpa:
 	./install-package-from.sh melpa
