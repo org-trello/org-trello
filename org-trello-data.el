@@ -7,7 +7,7 @@
 (require 'org-trello-hash)
 (require 's)
 (require 'json)
-(require 'dash)
+(require 'dash-functional)
 
 (defun orgtrello-data-merge-2-lists-without-duplicates (a-list b-list)
   "Merge the 2 lists A-LIST and B-LIST together without duplicates."
@@ -282,8 +282,8 @@ If TRELLO-CHECKLIST is nil, return ORG-CHECKLIST."
 (defun orgtrello-data--from-tags-to-list (tags)
   "Given TAGS, a : string separated string, return a list of non empty string."
   (->> tags
-    (s-split ":")
-    (--filter (not (string= "" it)))))
+       (s-split ":")
+       (-filter (-compose #'not (-partial #'string= "")))))
 
 (defun orgtrello-data--merge-labels-as-tags (trello-labels org-tags)
   "Given TRELLO-LABELS and ORG-TAGS, merge both of them."

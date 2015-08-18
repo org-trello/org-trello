@@ -12,7 +12,6 @@
 (require 'org-trello-cbx)
 (require 'org-trello-backend)
 (require 'org-trello-date)
-(require 'dash)
 (require 'dash-functional)
 
 (defun orgtrello-buffer-org-delete-property (property)
@@ -622,10 +621,10 @@ Also add some metadata identifier/due-data/point/buffer-name/etc..."
          (cons (orgtrello-buffer-org-unknown-drawer-properties))
          orgtrello-buffer--to-orgtrello-metadata)))
 
-(defun orgtrello-buffer--filter-out-known-properties (list)
-  "Filter out the org-trello known properties from the LIST."
+(defun orgtrello-buffer--filter-out-known-properties (l)
+  "Filter out the known org-trello properties from L."
   (--filter (not (or (string-match-p "^orgtrello-.*" (car it))
-                     (string= (car it) "CATEGORY"))) list))
+                     (string= "CATEGORY" (car it)))) l))
 
 (defun orgtrello-buffer-org-unknown-drawer-properties ()
   "Retrieve the key/value pairs of org-trello unknown drawer properties."
@@ -764,7 +763,8 @@ Then install the new one."
   "Retrieve overlay at current position.
 Return nil if none."
   (->> (overlays-in (point-at-bol) (point-at-eol))
-       (--filter (eq (overlay-get it 'invisible) 'org-trello-cbx-property))
+       (-filter (-compose (-partial 'eq 'org-trello-cbx-property)
+                          (-rpartial 'overlay-get 'invisible)))
        car))
 
 (defun orgtrello-buffer-compute-overlay-size ()

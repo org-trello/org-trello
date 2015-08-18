@@ -5,7 +5,7 @@
 (require 'org)
 (require 'org-trello-setup)
 (require 'org-trello-log)
-(require 'dash)
+(require 'dash-functional)
 
 (defalias 'orgtrello-action-reload-setup 'org-set-regexps-and-options
   "Reload org-trello setup.")
@@ -18,7 +18,7 @@ ENTITY is an optional parameter to pass to the list of functions."
 (defun orgtrello-action--filter-error-messages (control-or-actions)
   "Given CONTROL-OR-ACTIONS done, filter only the error messages.
 Return nil if no error message."
-  (--filter (not (equal :ok it)) control-or-actions))
+  (-filter (-compose #'not (-partial #'equal :ok)) control-or-actions))
 
 (defun orgtrello-action--compute-error-message (error-msgs)
   "Given a list of error messages ERROR-MSGS, compute them as a string."

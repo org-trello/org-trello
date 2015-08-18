@@ -15,13 +15,15 @@
 (require 'org-trello-buffer)
 (require 'org-trello-input)
 (require 'org-trello-proxy)
-(require 'dash)
+(require 'dash-functional)
 (require 's)
 (require 'ido)
 
 (defun orgtrello-controller--list-user-entries (props)
   "List the users entries from properties PROPS."
-  (--filter (string-match-p org-trello--label-key-user-prefix (car it)) props))
+  (-filter (-compose
+            (-partial 'string-match-p org-trello--label-key-user-prefix)
+            'car) props))
 
 (defun orgtrello-controller--hmap-id-name (org-keywords props)
   "Given an ORG-KEYWORDS and a properties PROPS, return a map.
