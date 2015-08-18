@@ -2,28 +2,31 @@
 (require 'ert)
 (require 'el-mock)
 
-(ert-deftest test-orgtrello-buffer-compute-entity-to-org-entry ()
-  ;; card
+(ert-deftest test-orgtrello-buffer--compute-entity-to-org-entry-fn ()
   (should
-   (equal :card-output
+   (equal 'orgtrello-buffer--compute-card-to-org-entry
           (with-mock
             (mock (orgtrello-data-entity-card-p :entity) => t)
-            (mock (funcall 'orgtrello-buffer--compute-card-to-org-entry :entity) => :card-output)
-            (orgtrello-buffer-compute-entity-to-org-entry :entity))))
+            (orgtrello-buffer--compute-entity-to-org-entry-fn :entity))))
   (should
-   (equal :checklist-output
+   (equal 'orgtrello-buffer--compute-checklist-to-org-entry
           (with-mock
             (mock (orgtrello-data-entity-card-p :entity) => nil)
             (mock (orgtrello-data-entity-checklist-p :entity) => t)
-            (mock (funcall 'orgtrello-buffer--compute-checklist-to-org-entry :entity) => :checklist-output)
-            (orgtrello-buffer-compute-entity-to-org-entry :entity))))
+            (orgtrello-buffer--compute-entity-to-org-entry-fn :entity))))
   (should
-   (equal :item-output
+   (equal 'orgtrello-buffer--compute-item-to-org-entry
           (with-mock
             (mock (orgtrello-data-entity-card-p :entity) => nil)
             (mock (orgtrello-data-entity-checklist-p :entity) => nil)
             (mock (orgtrello-data-entity-item-p :entity) => t)
-            (mock (funcall 'orgtrello-buffer--compute-item-to-org-entry :entity) => :item-output)
+            (orgtrello-buffer--compute-entity-to-org-entry-fn :entity)))))
+
+(ert-deftest test-orgtrello-buffer-compute-entity-to-org-entry ()
+  (should
+   (equal :some-output
+          (with-mock
+            (mock (orgtrello-buffer--compute-entity-to-org-entry-fn :entity) => (lambda (entity) :some-output))
             (orgtrello-buffer-compute-entity-to-org-entry :entity)))))
 
 (ert-deftest test-orgtrello-buffer--compute-card-to-org-entry ()

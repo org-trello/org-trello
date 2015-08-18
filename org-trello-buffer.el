@@ -310,16 +310,18 @@ Remove text and overlays."
   (orgtrello-buffer-remove-overlays region-start region-end)
   (delete-region region-start region-end))
 
+(defun orgtrello-buffer--compute-entity-to-org-entry-fn (entity)
+  "Given the ENTITY, compute the function that serializes entity in org format."
+  (cond ((orgtrello-data-entity-card-p entity)
+         'orgtrello-buffer--compute-card-to-org-entry)
+        ((orgtrello-data-entity-checklist-p entity)
+         'orgtrello-buffer--compute-checklist-to-org-entry)
+        ((orgtrello-data-entity-item-p entity)
+         'orgtrello-buffer--compute-item-to-org-entry)))
+
 (defun orgtrello-buffer-compute-entity-to-org-entry (entity)
   "Given an ENTITY, compute its org representation."
-  (funcall
-   (cond ((orgtrello-data-entity-card-p entity)
-          'orgtrello-buffer--compute-card-to-org-entry)
-         ((orgtrello-data-entity-checklist-p entity)
-          'orgtrello-buffer--compute-checklist-to-org-entry)
-         ((orgtrello-data-entity-item-p entity)
-          'orgtrello-buffer--compute-item-to-org-entry))
-   entity))
+  (funcall (orgtrello-buffer--compute-entity-to-org-entry-fn entity) entity))
 
 (defun orgtrello-buffer--compute-due-date (due-date)
   "Compute the format of the DUE-DATE."

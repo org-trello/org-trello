@@ -390,28 +390,25 @@
 (ert-deftest test-orgtrello-proxy--compute-dispatch-fn ()
   (should (equal :result-with-card-fn
                  (let ((entity (orgtrello-hash-make-properties '((:level . :card-level)))))
-                   (with-mock
-                     (mock (funcall :card-fn entity) => :result-with-card-fn)
-                     (orgtrello-proxy--compute-dispatch-fn
-                      entity
-                      (orgtrello-hash-make-properties '((:card-level . :card-fn)
-                                                        (:checklist-level . :checklist-fn))))))))
+                   (orgtrello-proxy--compute-dispatch-fn
+                    entity
+                    (orgtrello-hash-make-properties '((:card-level . (lambda (entity) :result-with-card-fn))
+                                                      (:checklist-level . :checklist-fn)))))))
   (should (equal :result-with-checklist-fn
                  (let ((entity (orgtrello-hash-make-properties '((:level . :checklist-level)))))
-                   (with-mock
-                     (mock (funcall :checklist-fn entity) => :result-with-checklist-fn)
+                   (orgtrello-proxy--compute-dispatch-fn
+                    entity
+                    (orgtrello-hash-make-properties '((:card-level . :card-fn)
+                                                      (:checklist-level . (lambda (checklist) :result-with-checklist-fn))))))))
+  (should (string= "Your arborescence depth is too deep. We only support up to depth 3.
+Level 1 - card
+Level 2 - checklist
+Level 3 - items"
+                   (let ((entity (orgtrello-hash-make-properties '((:level . :unknown)))))
                      (orgtrello-proxy--compute-dispatch-fn
                       entity
                       (orgtrello-hash-make-properties '((:card-level . :card-fn)
                                                         (:checklist-level . :checklist-fn))))))))
-  (should (equal :result-with-default-fn
-                 (let ((entity (orgtrello-hash-make-properties '((:level . :unknown)))))
-                   (with-mock
-                     (mock (funcall 'orgtrello-action--too-deep-level entity) => :result-with-default-fn)
-                     (orgtrello-proxy--compute-dispatch-fn
-                      entity
-                      (orgtrello-hash-make-properties '((:card-level . :card-fn)
-                                                        (:checklist-level . :checklist-fn)))))))))
 
 (ert-deftest test-orgtrello-proxy--card ()
   (should (equal :error-msg
