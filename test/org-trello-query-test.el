@@ -113,12 +113,14 @@
                                 :parser 'orgtrello-query--http-parse)
               (deferred:nextc it :success-cbx)
               (deferred:error it :error-cbx))
-           (let ((server "http://server/")
-                 (query-map (orgtrello-hash-make-properties '((:uri . "some-uri")
-                                                              (:method . "POST")
-                                                              (:params (:a . 1) (:b . 2))
-                                                              (:sync)))))
-             (orgtrello-query--post-or-put server query-map :success-cbx :error-cbx 'with-auth))))
+           (with-mock
+             (mock (json-encode '((:a . 1) (:b . 2))) => "{\"a\":1,\"b\":2}")
+             (let ((server "http://server/")
+                   (query-map (orgtrello-hash-make-properties '((:uri . "some-uri")
+                                                                (:method . "POST")
+                                                                (:params (:a . 1) (:b . 2))
+                                                                (:sync)))))
+               (orgtrello-query--post-or-put server query-map :success-cbx :error-cbx 'with-auth)))))
   ;; not synced, specific callbacks + authentication
   (should (equal
            '(deferred:$
@@ -131,17 +133,20 @@
                                 :parser 'orgtrello-query--http-parse)
               (deferred:nextc it :success-cbk)
               (deferred:error it :error-cbk))
-           (let ((server "http://server/")
-                 (org-trello-consumer-key :consumer-key)
-                 (org-trello-access-token :access-token)
-                 (query-map (orgtrello-hash-make-properties '((:uri . "some-uri")
-                                                              (:method . "PUT")
-                                                              (:params (:c . 3) (:d . 4))
-                                                              (:sync)))))
-             (orgtrello-query--post-or-put server query-map :success-cbk :error-cbk 'with-auth))))
+           (with-mock
+             (mock (json-encode '((:c . 3) (:d . 4))) => "{\"c\":3,\"d\":4}")
+             (let ((server "http://server/")
+                   (org-trello-consumer-key :consumer-key)
+                   (org-trello-access-token :access-token)
+                   (query-map (orgtrello-hash-make-properties '((:uri . "some-uri")
+                                                                (:method . "PUT")
+                                                                (:params (:c . 3) (:d . 4))
+                                                                (:sync)))))
+               (orgtrello-query--post-or-put server query-map :success-cbk :error-cbk 'with-auth)))))
   ;; sync query, default callbacks
   (should (equal :result-post-or-put-synced-no-auth
                  (with-mock
+                   (mock (json-encode '((:c . 3) (:d . 4))) => "{\"c\":3,\"d\":4}")
                    (mock (request "http://server/some-uri"
                                   :sync t
                                   :type "POST"
@@ -163,6 +168,7 @@
   ;; sync query, specific-callbacks with authentication
   (should (equal :result-post-or-put-synced-with-auth
                  (with-mock
+                   (mock (json-encode '((:c . 3) (:d . 4))) => "{\"c\":3,\"d\":4}")
                    (mock (request "http://server/some-uri"
                                   :sync t
                                   :type "PUT"
