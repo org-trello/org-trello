@@ -148,7 +148,9 @@ ARGS is not used."
 (defun orgtrello-controller--on-entity-p (entity)
   "Compute if the org-trello ENTITY exists.
 If it does not not, error."
-  (if entity :ok "You need to be on an org-trello entity (card/checklist/item) for this action to occur!"))
+  (if entity
+      :ok
+    "You need to be on an org-trello entity (card/checklist/item) for this action to occur!"))
 
 (defun orgtrello-controller--right-level-p (entity)
   "Compute if the ENTITY level is correct (not higher than level 4)."
@@ -163,7 +165,7 @@ If it does not not, error."
   "Compute if the ENTITY has already been synchronized."
   (if (-> entity orgtrello-data-current orgtrello-data-entity-id)
       :ok
-    "Entity must been synchronized with trello first!"))
+    "Entity must be synchronized with trello first!"))
 
 (defun orgtrello-controller--entity-mandatory-name-ok-p (simple-entity)
   "Ensure SIMPLE-ENTITY can be synced regarding the mandatory data."

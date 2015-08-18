@@ -47,7 +47,7 @@
                   (lambda (entity s) (format "%S %s" entity s))
                   "- hello")))
   (should (equal "org-trello - List of errors:
- - Entity must been synchronized with trello first!
+ - Entity must be synchronized with trello first!
 "
                  (orgtrello-action-functional-controls-then-do
                   '(orgtrello-controller--right-level-p orgtrello-controller--already-synced-p)
