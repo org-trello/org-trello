@@ -258,21 +258,19 @@
                      (orgtrello-query--delete server query-map :success-cbk :error-cbk 'with-auth))))))
 
 (ert-deftest test-orgtrello-query-http ()
-  (should (equal :res
-                 (with-mock
-                   (mock (orgtrello-data-entity-method :query-map) => :entity-method)
-                   (mock (orgtrello-query--dispatch-http-query :entity-method) => :http-query-method-fn)
-                   (mock (funcall :http-query-method-fn :server :query-map :success-cbk-fn :error-cbk-fn :auth-p) => :res)
-                   (orgtrello-query-http :server :query-map nil :success-cbk-fn :error-cbk-fn :auth-p))))
-  ;; (should (equal :res-with-synced-query
-  ;;                (with-mock
-  ;;                  (mock (orgtrello-data-entity-method :query-map)                                                        => :entity-method)
-  ;;                  (mock (orgtrello-query--dispatch-http-query :entity-method)                                            => :http-query-method-fn)
-  ;;                  (mock (orgtrello-data-put-entity-sync 'sync :query-map)                                                => :updated-query-map)
-  ;;                  (mock (funcall :http-query-method-fn :server :updated-query-map :success-cbk-fn :error-cbk-fn :auth-p) => :wrapped-result)
-  ;;                  (mock (request-response-data :wrapped-result)                                                          => :res-with-synced-query)
-  ;;                  (orgtrello-query-http :server :query-map :sync :success-cbk-fn :error-callback-f))))  ;; not working yet...]
-  )
+  (should (eq :res
+              (with-mock
+                (mock (orgtrello-data-entity-method :query-map) => :entity-method)
+                (mock (orgtrello-query--dispatch-http-query :entity-method) => :http-query-method-fn)
+                (mock (funcall :http-query-method-fn :server :query-map :success-cbk-fn :error-cbk-fn :auth-p) => :res)
+                (orgtrello-query-http :server :query-map nil :success-cbk-fn :error-cbk-fn :auth-p))))
+  (should (eq :res-with-synced-query
+              (with-mock
+                (mock (orgtrello-data-entity-method :query-map)                                                        => :entity-method)
+                (mock (orgtrello-query--dispatch-http-query :entity-method)                                            => :http-query-method-fn)
+                (mock (orgtrello-data-put-entity-sync 'sync :query-map)                                                => :updated-query-map)
+                (mock (funcall :http-query-method-fn :server :updated-query-map :success-cbk-fn :error-cbk-fn :auth-p) => (make-request-response :data :res-with-synced-query))
+                (orgtrello-query-http :server :query-map 'sync :success-cbk-fn :error-cbk-fn :auth-p)))))
 
 (ert-deftest test-orgtrello-query--dispatch-http-query ()
   (should (equal 'orgtrello-query--get         (orgtrello-query--dispatch-http-query "GET")))

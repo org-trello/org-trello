@@ -132,7 +132,8 @@ Simply displays a success message in the minibuffer."
                                     orgtrello-data-entity-method
                                     orgtrello-query--dispatch-http-query)))
     (if sync
-        (--> (orgtrello-data-put-entity-sync 'sync query-map)
+        (--> query-map
+             (orgtrello-data-put-entity-sync 'sync it)
              (funcall dispatch-http-query-fn server it success-callback error-callback authentication-p)
              (request-response-data it))
       (funcall dispatch-http-query-fn server query-map success-callback error-callback authentication-p))))
