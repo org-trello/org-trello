@@ -2,6 +2,62 @@
 (require 'ert)
 (require 'el-mock)
 
+(ert-deftest test-orgtrello-controller-setup-properties ()
+  (should
+   (-every? (-partial 'eq t)
+            (orgtrello-tests-with-temp-buffer
+             ":PROPERTIES:
+#+PROPERTY: board-name test board
+#+PROPERTY: board-id identifier-for-the-board
+#+PROPERTY: CANCELLED cancelled-list-id
+#+PROPERTY: FAILED failed-list-id
+#+PROPERTY: DELEGATED deletegated-list-id
+#+PROPERTY: PENDING pending-list-id
+#+PROPERTY: DONE done-list-id
+#+PROPERTY: IN-PROGRESS in-progress-list-id
+#+PROPERTY: TODO todo-list-id
+#+TODO: TODO IN-PROGRESS | DONE PENDING DELEGATED FAILED CANCELLED
+#+PROPERTY: orgtrello-user-user1 user1-id
+#+PROPERTY: orgtrello-user-user2 user2-id
+#+PROPERTY: orgtrello-user-user3 user3-id
+#+PROPERTY: :green green label with & char
+#+PROPERTY: :yellow yello
+#+PROPERTY: :orange range
+#+PROPERTY: :red red
+#+PROPERTY: :purple violet
+#+PROPERTY: :blue blue
+#+PROPERTY: orgtrello-user-me user1
+:END:
+"
+             (let ((org-tag-alist nil))
+               (orgtrello-controller-setup-properties :args-not-used)
+               (list
+                (equal org-trello--org-keyword-trello-list-names '("TODO" "IN-PROGRESS" "DONE" "PENDING" "DELEGATED" "FAILED" "CANCELLED"))
+                (orgtrello-tests-hash-equal org-trello--hmap-list-orgkeyword-id-name
+                                            (orgtrello-hash-make-properties
+                                             '(("todo-list-id" . "TODO")
+                                               ("in-progress-list-id" . "IN-PROGRESS")
+                                               ("done-list-id" . "DONE")
+                                               ("pending-list-id" . "PENDING")
+                                               ("deletegated-list-id" . "DELEGATED")
+                                               ("failed-list-id" . "FAILED")
+                                               ("cancelled-list-id" . "CANCELLED"))))
+                (orgtrello-tests-hash-equal org-trello--hmap-users-id-name
+                                            (orgtrello-hash-make-properties
+                                             '(("user1-id" . "orgtrello-user-user1")
+                                               ("user2-id" . "orgtrello-user-user2")
+                                               ("user3-id" . "orgtrello-user-user3")
+                                               ("user1" . "orgtrello-user-me"))))
+                (orgtrello-tests-hash-equal org-trello--hmap-users-name-id
+                                            (orgtrello-hash-make-properties
+                                             '(("orgtrello-user-user1" . "user1-id")
+                                               ("orgtrello-user-user2" . "user2-id")
+                                               ("orgtrello-user-user3" . "user3-id")
+                                               ("orgtrello-user-me" . "user1"))))
+                (string= org-trello--user-logged-in "user1")
+                (equal org-tag-alist (nreverse '(("red" . ?r) ("green" . ?g) ("yellow" . ?y) ("blue" . ?b) ("purple" . ?p) ("orange" . ?o))))))))))
+
+
 (ert-deftest test-orgtrello-controller--compute-data-from-entity-meta ()
   (let* ((entry   (orgtrello-data-make-hash-org :member-ids :some-level :some-keyword :some-name "some-id" :some-due :some-point :some-buffername :desc :tags :unknown)))
     (should (equal (orgtrello-data-entity-id entry)          "some-id"))
