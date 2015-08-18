@@ -193,10 +193,10 @@ If the keyword is nil, return the optional DEFAULT-VALUE."
   "Given an association list DATA, filter and return only the 'comment' actions.
 SIZE is a useless parameter, only here to satisfy an implementation detail."
   (--map (->> (orgtrello-hash-empty-hash)
-           (orgtrello-data-put-entity-comment-id   (assoc-default 'id it))
-           (orgtrello-data-put-entity-comment-text (->> it (assoc-default 'data) (assoc-default 'text)))
-           (orgtrello-data-put-entity-comment-date (assoc-default 'date it))
-           (orgtrello-data-put-entity-comment-user (->> it car (assoc-default 'username))))
+              (orgtrello-data-put-entity-comment-id   (assoc-default 'id it))
+              (orgtrello-data-put-entity-comment-text (->> it (assoc-default 'data) (assoc-default 'text)))
+              (orgtrello-data-put-entity-comment-date (assoc-default 'date it))
+              (orgtrello-data-put-entity-comment-user (->> it car (assoc-default 'username))))
          data))
 
 (defun orgtrello-data-parse-data (entities)

@@ -34,7 +34,8 @@ If the VALUE is nil or empty, remove such PROPERTY."
     (if (< start end)
         (->> (buffer-substring-no-properties start end)
              s-lines
-             (--map (if (s-equals? "" it) it
+             (--map (if (s-equals? "" it)
+                        it
                       (substring it org-trello-buffer--indent-description)))
              (s-join "\n"))
       "")))
@@ -594,8 +595,9 @@ Deal with org entities and checkbox as well."
   "Compute the user ids assigned to the current card."
   (--> (orgtrello-buffer-get-usernames-assigned-property)
        (orgtrello-data--users-from it)
-       (--map (gethash (format "%s%s" org-trello--label-key-user-prefix it)
-                       org-trello--hmap-users-name-id) it)
+       (-map (-compose (-rpartial #'gethash org-trello--hmap-users-name-id)
+                       (-partial #'format "%s%s" org-trello--label-key-user-prefix))
+             it)
        (orgtrello-data--users-to it)))
 
 (defun orgtrello-buffer--extract-description-at-point ()

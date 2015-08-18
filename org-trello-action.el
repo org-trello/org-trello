@@ -6,6 +6,7 @@
 (require 'org-trello-setup)
 (require 'org-trello-log)
 (require 'dash-functional)
+(require 's)
 
 (defalias 'orgtrello-action-reload-setup 'org-set-regexps-and-options
   "Reload org-trello setup.")
@@ -13,7 +14,7 @@
 (defun orgtrello-action--execute-controls (controls-or-actions-fns &optional entity)
   "Given CONTROLS-OR-ACTIONS-FNS, execute them and return the results.
 ENTITY is an optional parameter to pass to the list of functions."
-  (--map (funcall it entity) controls-or-actions-fns))
+  (-map (-rpartial #'funcall entity) controls-or-actions-fns))
 
 (defun orgtrello-action--filter-error-messages (control-or-actions)
   "Given CONTROL-OR-ACTIONS done, filter only the error messages.
@@ -22,7 +23,8 @@ Return nil if no error message."
 
 (defun orgtrello-action--compute-error-message (error-msgs)
   "Given a list of error messages ERROR-MSGS, compute them as a string."
-  (apply 'concat (--map (concat "- " it "\n") error-msgs)))
+  (->> (-map (-partial #'format "- %s\n") error-msgs)
+       (s-join "")))
 
 (defun orgtrello-action-controls-or-actions-then-do (control-or-action-fns
                                                      fn-to-execute

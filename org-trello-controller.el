@@ -647,9 +647,9 @@ UPDATE-TODO-KWDS is the org list of keywords."
              org-trello--property-board-name)
            ,(orgtrello-controller-compute-property
              org-trello--property-board-id)
-           ,@(--map (orgtrello-controller-compute-property
-                     (orgtrello-controller--convention-property-name it))
-                    org-keywords)
+           ,@(-map (-compose #'orgtrello-controller-compute-property
+                             (-partial #'orgtrello-controller--convention-property-name))
+                   org-keywords)
            ,@(orgtrello-controller--compute-hash-name-id-to-list
               users-hash-name-id)
            ,(orgtrello-controller-compute-property org-trello--property-user-me
