@@ -57,6 +57,111 @@
                 (string= org-trello--user-logged-in "user1")
                 (equal org-tag-alist (nreverse '(("red" . ?r) ("green" . ?g) ("yellow" . ?y) ("blue" . ?b) ("purple" . ?p) ("orange" . ?o))))))))))
 
+(ert-deftest test-orgtrello-controller-control-properties ()
+  ;; ok
+  (should (equal :ok
+                 (orgtrello-tests-with-temp-buffer
+                  ":PROPERTIES:
+#+PROPERTY: board-name test board
+#+PROPERTY: board-id identifier-for-the-board
+#+PROPERTY: CANCELLED cancelled-list-id
+#+PROPERTY: FAILED failed-list-id
+#+PROPERTY: DELEGATED deletegated-list-id
+#+PROPERTY: PENDING pending-list-id
+#+PROPERTY: DONE done-list-id
+#+PROPERTY: IN-PROGRESS in-progress-list-id
+#+PROPERTY: TODO todo-list-id
+:END:
+"
+                  (orgtrello-controller-control-properties :args-not-used))))
+  ;; missing board id
+  (should (string= "Setup problem.
+Either you did not connect your org-mode buffer with a trello board, to correct this:
+  * attach to a board through C-c o I or M-x org-trello-install-board-metadata
+  * or create a board from scratch with C-c o b or M-x org-trello-create-board-and-install-metadata).
+Either your org-mode's todo keyword list and your trello board lists are not named the same way (which they must).
+For this, connect to trello and rename your board's list according to your org-mode's todo list.
+Also, you can specify on your org-mode buffer the todo list you want to work with, for example: #+TODO: TODO DOING | DONE FAIL (hit C-c C-c to refresh the setup)"
+                   (orgtrello-tests-with-temp-buffer
+                    ":PROPERTIES:
+#+PROPERTY: board-name test board
+#+PROPERTY: CANCELLED cancelled-list-id
+#+PROPERTY: FAILED failed-list-id
+#+PROPERTY: DELEGATED deletegated-list-id
+#+PROPERTY: PENDING pending-list-id
+#+PROPERTY: DONE done-list-id
+#+PROPERTY: IN-PROGRESS in-progress-list-id
+#+PROPERTY: TODO todo-list-id
+:END:
+"
+                    (orgtrello-controller-control-properties :args-not-used))))
+  ;; missing one list id
+  (should (string= "Setup problem.
+Either you did not connect your org-mode buffer with a trello board, to correct this:
+  * attach to a board through C-c o I or M-x org-trello-install-board-metadata
+  * or create a board from scratch with C-c o b or M-x org-trello-create-board-and-install-metadata).
+Either your org-mode's todo keyword list and your trello board lists are not named the same way (which they must).
+For this, connect to trello and rename your board's list according to your org-mode's todo list.
+Also, you can specify on your org-mode buffer the todo list you want to work with, for example: #+TODO: TODO DOING | DONE FAIL (hit C-c C-c to refresh the setup)"
+                   (orgtrello-tests-with-temp-buffer
+                    ":PROPERTIES:
+#+PROPERTY: board-name test board
+#+PROPERTY: board-id identifier-for-the-board
+#+PROPERTY: CANCELLED cancelled-list-id
+"
+                    (orgtrello-controller-control-properties :args-not-used)))))
+
+(ert-deftest test-orgtrello-controller-migrate-user-setup ()
+  ;; nothing to do
+  (should (equal :ok
+                 (with-mock
+                   (mock (file-exists-p org-trello--old-config-dir) => nil)
+                   (orgtrello-controller-migrate-user-setup :args-not-used))))
+  ;; (should (equal :ok
+  ;;                (let ((*consumer-key* :consumer-key)
+  ;;                      (*access-token* :access-token))
+  ;;                  (with-mock
+  ;;                    (mock (file-exists-p org-trello--old-config-dir) => t)
+  ;;                    (mock (orgtrello-buffer-me) => :user-me)
+  ;;                    (mock (load org-trello--old-config-file) => :done)
+  ;;                    (mock (orgtrello-buffer-me) => :user-me)
+  ;;                    (mock (orgtrello-controller--do-install-config-file :user-me :consumer-key :access-token) => :done)
+  ;;                    (mock (delete-directory org-trello--old-config-dir 'with-contents) => :done)
+  ;;                    (orgtrello-controller-migrate-user-setup :args-not-used)))))
+  ;; ;; current setup
+  ;; (should (equal :ok
+  ;;                (let ((*consumer-key* nil)
+  ;;                      (org-trello-consumer-key :org-trello-consumer-key)
+  ;;                      (org-trello-access-token :org-trello-access-token))
+  ;;                  (with-mock
+  ;;                    (mock (file-exists-p org-trello--old-config-dir) => t)
+  ;;                    (mock (orgtrello-buffer-me) => :user-me)
+  ;;                    (mock (load org-trello--old-config-file) => :done)
+  ;;                    (mock (orgtrello-buffer-me) => :user-me)
+  ;;                    (mock (orgtrello-controller--do-install-config-file :user-me :org-trello-consumer-key :org-trello-access-token) => :done)
+  ;;                    (mock (delete-directory org-trello--old-config-dir 'with-contents) => :done)
+  ;;                    (orgtrello-controller-migrate-user-setup :args-not-used)))))
+  )
+
+(ert-deftest test-orgtrello-controller-config-file ()
+  (should (string= "~/.emacs.d/.trello/tony.el"
+                   (let ((org-trello--config-file "~/.emacs.d/.trello/%s.el"))
+                     (orgtrello-controller-config-file "tony"))))
+  (should (string= "~/.emacs.d/.trello/user.el"
+                   (with-mock
+                     (mock (orgtrello-setup-user-logged-in) => "user")
+                     (let ((org-trello--config-file "~/.emacs.d/.trello/%s.el"))
+                       (orgtrello-controller-config-file))))))
+
+(ert-deftest test-orgtrello-controller-user-config-files ()
+  (should (equal :list
+                 (with-mock
+                   (mock (file-exists-p org-trello--config-dir) => t)
+                   (mock (directory-files org-trello--config-dir 'full-name "^.*\.el") => :list)
+                   (orgtrello-controller-user-config-files))))
+  (should-not (with-mock
+                (mock (file-exists-p *) => nil)
+                (orgtrello-controller-user-config-files))))
 
 (ert-deftest test-orgtrello-controller--compute-data-from-entity-meta ()
   (let* ((entry   (orgtrello-data-make-hash-org :member-ids :some-level :some-keyword :some-name "some-id" :some-due :some-point :some-buffername :desc :tags :unknown)))
