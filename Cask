@@ -23,6 +23,8 @@
        "README.md")
 
 (development
+ (depends-on "dash-functional")
+ (depends-on "dash")
  (depends-on "ert-runner")
  (depends-on "undercover")
  (depends-on "ert")
