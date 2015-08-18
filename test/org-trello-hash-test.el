@@ -42,7 +42,7 @@
                         (orgtrello-hash-make-properties '((:id-1 . (:b))
                                                           (:id-2 :c :d))))))))
 
-(ert-deftest orgtrello-hash-make-transpose-properties ()
+(ert-deftest test-orgtrello-hash-make-transpose-properties ()
   (should (eq 0
               (hash-table-count (orgtrello-hash-make-transpose-properties nil))))
   (should (orgtrello-tests-hash-equal
