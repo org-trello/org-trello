@@ -97,7 +97,7 @@
 This use the standard 'org-todo-keywords property from 'org-mode'.
 This is intended as a buffer local variable.")
 
-(defvar org-trello--hmap-list-orgkeyword-id-name       nil
+(defvar org-trello--hmap-list-orgkeyword-id-name nil
   "Org-trello hash map containing for each id, the associated org keyword.
 This is intended as a buffer local variable.")
 

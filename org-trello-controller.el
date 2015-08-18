@@ -329,8 +329,8 @@ Beware, this will block Emacs as the request is synchronous."
            board-name buffer-name)))
       (deferred:error it
         (lambda (err) (orgtrello-log-msg orgtrello-log-error
-                                    "Sync buffer from trello - Catch error: %S"
-                                    err))))))
+                                         "Sync buffer from trello - Catch error: %S"
+                                         err))))))
 
 (defun orgtrello-controller-check-trello-connection ()
   "Full `org-mode' file synchronization.
@@ -447,8 +447,8 @@ BUFFER-NAME is the actual buffer to work on."
            card-name)))
       (deferred:error it
         (lambda (err) (orgtrello-log-msg orgtrello-log-error
-                                    "Catch error: %S"
-                                    err))))))
+                                         "Catch error: %S"
+                                         err))))))
 
 (defun orgtrello-controller--do-delete-card ()
   "Delete the card."
@@ -540,7 +540,7 @@ OVERWRITE-ASK is a flag to set to prevent overwriting."
       (deferred:$
         (deferred:next
           (lambda () (browse-url
-                 (orgtrello-setup-compute-url "/1/appKey/generate"))))
+                      (orgtrello-setup-compute-url "/1/appKey/generate"))))
         (deferred:nextc it
           (lambda (user-login)
             (let ((consumer-key (read-string "Consumer key: ")))
@@ -565,8 +565,8 @@ OVERWRITE-ASK is a flag to set to prevent overwriting."
                  (apply 'orgtrello-controller--do-install-config-file))))
         (deferred:nextc it
           (lambda () (orgtrello-log-msg
-                 orgtrello-log-info
-                 "Setup key and token done!")))))))
+                      orgtrello-log-info
+                      "Setup key and token done!")))))))
 
 (defun orgtrello-controller--name-id (entities)
   "Given a list of ENTITIES, return a map of (id, name)."
@@ -734,11 +734,11 @@ UPDATE-TODO-KEYWORDS is the org list of keywords."
   "Given BOARD-USERS-HASH-NAME-ID, compute the properties for users."
   (let ((res-list))
     (maphash (lambda (name id) (--> name
-                               (format "#+PROPERTY: %s%s %s"
-                                       org-trello--label-key-user-prefix
-                                       it
-                                       id)
-                               (push it res-list)))
+                                    (format "#+PROPERTY: %s%s %s"
+                                            org-trello--label-key-user-prefix
+                                            it
+                                            id)
+                                    (push it res-list)))
              board-users-hash-name-id)
     res-list))
 
@@ -862,8 +862,8 @@ UPDATE-TODO-KEYWORDS is the org list of keywords."
              (orgtrello-api-close-list it)
              nil
              (lambda (response) (orgtrello-log-msg orgtrello-log-info
-                                              "Closed list with id %s"
-                                              list-id))
+                                                   "Closed list with id %s"
+                                                   list-id))
              (lambda ())))
           list-ids)
    "List(s) closed."
@@ -1035,8 +1035,8 @@ Return the hashmap (name, id) of the new lists created."
           (orgtrello-log-msg orgtrello-log-info "No comment to delete - skip.")
         (deferred:$
           (deferred:next (lambda () (-> card-id
-                                   (orgtrello-api-delete-card-comment comment-id)
-                                   (orgtrello-query-http-trello 'sync))))
+                                        (orgtrello-api-delete-card-comment comment-id)
+                                        (orgtrello-query-http-trello 'sync))))
           (deferred:nextc it
             (lambda (data)
               (apply 'delete-region (orgtrello-entity-comment-region))
@@ -1068,10 +1068,10 @@ Return the hashmap (name, id) of the new lists created."
           (orgtrello-log-msg orgtrello-log-info "No comment to sync - skip.")
         (deferred:$
           (deferred:next (lambda () (-> card-id
-                                   (orgtrello-api-update-card-comment
-                                    comment-id
-                                    comment-text)
-                                   (orgtrello-query-http-trello 'sync))))
+                                        (orgtrello-api-update-card-comment
+                                         comment-id
+                                         comment-text)
+                                        (orgtrello-query-http-trello 'sync))))
           (deferred:nextc it
             (lambda (data)
               (orgtrello-log-msg orgtrello-log-info "Comment sync'ed!"))))))))
