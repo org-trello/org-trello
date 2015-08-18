@@ -66,3 +66,6 @@ emacs-install-clean: package
 
 respect-convention:
 	./contrib/respect-elisp-conventions.sh
+
+tests:
+	./run-tests.sh 24.3-bin 24.4-bin 24.5-bin
