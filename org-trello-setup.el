@@ -47,7 +47,7 @@
 (defconst org-trello--property-user-me "orgtrello-user-me"
   "Current user's property id.")
 
-(defconst org-trello--user-logged-in    nil
+(defvar org-trello--user-logged-in nil
   "Current user logged in.")
 
 (defconst org-trello--label-key-local-checksum "orgtrello-local-checksum"
