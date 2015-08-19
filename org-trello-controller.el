@@ -733,19 +733,16 @@ UPDATE-TODO-KEYWORDS is the org list of keywords."
 (defun orgtrello-controller--properties-compute-todo-keywords-as-string
     (board-lists-hash-name-id)
   "Compute org keywords from the BOARD-LISTS-HASH-NAME-ID."
-  (mapconcat
-   'identity
-   `("#+TODO: "
-     ,@(let ((res-list))
-         (maphash
-          (lambda (name _)
-            (--> name
-                 (orgtrello-controller--convention-property-name it)
-                 (orgtrello-controller--compute-keyword-separation it)
-                 (format "%s " it)
-                 (push it res-list)))
-          board-lists-hash-name-id)
-         (nreverse res-list))) ""))
+  (s-join " " `("#+TODO:"
+                ,@(let ((res-list))
+                    (maphash
+                     (lambda (name _)
+                       (-> name
+                           orgtrello-controller--convention-property-name
+                           orgtrello-controller--compute-keyword-separation
+                           (push res-list)))
+                     board-lists-hash-name-id)
+                    (nreverse res-list)))))
 
 (defun orgtrello-controller--properties-compute-users-ids
     (board-users-hash-name-id)
@@ -873,18 +870,18 @@ UPDATE-TODO-KEYWORDS is the org list of keywords."
 
 (defun orgtrello-controller--close-lists (list-ids)
   "Given a list of ids LIST-IDS, close those lists."
-  (orgtrello-proxy-execute-async-computations
-   (--map (lexical-let ((list-id it))
-            (orgtrello-query-http-trello
-             (orgtrello-api-close-list it)
-             nil
-             (lambda (response) (orgtrello-log-msg orgtrello-log-info
-                                                   "Closed list with id %s"
-                                                   list-id))
-             (lambda ())))
-          list-ids)
-   "List(s) closed."
-   "FAILURE - Problem during closing list."))
+  (-> (--map (lexical-let ((list-id it))
+               (orgtrello-query-http-trello
+                (orgtrello-api-close-list it)
+                nil
+                (lambda (response) (orgtrello-log-msg orgtrello-log-info
+                                                 "Closed list with id %s"
+                                                 list-id))
+                (lambda ())))
+             list-ids)
+      (orgtrello-proxy-execute-async-computations
+       "List(s) closed."
+       "FAILURE - Problem during closing list.")))
 
 (defun orgtrello-controller--create-lists-according-to-keywords (board-id
                                                                  org-keywords)

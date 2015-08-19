@@ -2,6 +2,25 @@
 (require 'ert)
 (require 'el-mock)
 
+(ert-deftest test-orgtrello-controller--close-lists ()
+  (should (equal
+           :result-comp-close-lists
+           (with-mock
+             (mock (orgtrello-api-close-list :list-id0) => :query-close-list-id-0)
+             (mock (orgtrello-query-http-trello :query-close-list-id-0 nil *) => :async-computation-0)
+             (mock (orgtrello-proxy-execute-async-computations
+                    '(:async-computation-0)
+                    "List(s) closed."
+                    "FAILURE - Problem during closing list.") => :result-comp-close-lists)
+             (orgtrello-controller--close-lists '(:list-id0))))))
+
+(ert-deftest test-orgtrello-controller--create-board ()
+  (should (eq :result
+              (with-mock
+                (mock (orgtrello-api-add-board :board-name :board-description) => :query-create)
+                (mock (orgtrello-query-http-trello :query-create 'sync) => :result)
+                (orgtrello-controller--create-board :board-name :board-description)))))
+
 (ert-deftest test-orgtrello-controller--update-orgmode-file-with-properties ()
   (should (string=
            ":PROPERTIES:
@@ -42,7 +61,7 @@
                    (orgtrello-controller--user-logged-in)))))
 
 (ert-deftest test-orgtrello-controller--properties-compute-todo-keywords-as-string ()
-  (should (string= "#+TODO: list-id-1 list-id-2 list-id-3 "
+  (should (string= "#+TODO: list-id-1 list-id-2 list-id-3"
                    (orgtrello-controller--properties-compute-todo-keywords-as-string
                     (orgtrello-hash-make-properties '(("list-id-1" . "123")
                                                       ("list-id-2" . "456")
