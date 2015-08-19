@@ -566,7 +566,7 @@ Function to be triggered by `before-save-hook` on org-trello-mode buffer."
   "Compute the basic org-mode metadata.")
 
 (defun orgtrello-buffer--extract-metadata ()
-  "Extract the current metadata depending on the org-trello's checklist policy."
+  "Extract the current metadata depending on org-trello's checklist policy."
   (funcall (if (orgtrello-entity-org-checkbox-p)
                'orgtrello-cbx-org-checkbox-metadata
              'orgtrello-buffer-org-entity-metadata)))
