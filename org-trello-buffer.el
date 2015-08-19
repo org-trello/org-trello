@@ -27,7 +27,7 @@ If the VALUE is nil or empty, remove such PROPERTY."
       (orgtrello-buffer-delete-property-from-entry property)
     (org-entry-put point property value)))
 
-(defun orgtrello-buffer-extract-description-from-current-position ()
+(defun orgtrello-buffer--extract-card-description-at-point ()
   "Given the current position, extract the text content of current card."
   (let* ((start (orgtrello-entity-card-description-start-point))
          (end   (orgtrello-entity-card-metadata-end-point)))
@@ -40,7 +40,7 @@ If the VALUE is nil or empty, remove such PROPERTY."
              (s-join "\n"))
       "")))
 
-(defun orgtrello-buffer-extract-comment-description-from-current-position ()
+(defun orgtrello-buffer--extract-comment-description-at-point ()
   "Given the current position, extract the text content of current card."
   (apply 'buffer-substring-no-properties
          (orgtrello-entity-comment-description-region)))
@@ -603,9 +603,9 @@ Deal with org entities and checkbox as well."
 (defun orgtrello-buffer--extract-description-at-point ()
   "Extract description at point depending on the entity's nature."
   (cond ((orgtrello-entity-org-card-p)
-         (orgtrello-buffer-extract-description-from-current-position))
+         (orgtrello-buffer--extract-card-description-at-point))
         ((orgtrello-entity-org-comment-p)
-         (orgtrello-buffer-extract-comment-description-from-current-position))))
+         (orgtrello-buffer--extract-comment-description-at-point))))
 
 (defun orgtrello-buffer-entity-metadata ()
   "Compute the metadata for a given org entry.
