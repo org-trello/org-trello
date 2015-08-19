@@ -2,6 +2,179 @@
 (require 'ert)
 (require 'el-mock)
 
+(ert-deftest test-orgtrello-buffer-indent-card-descriptions ()
+  (should (string=
+           "* card
+  description not indented
+  but this will be after function call.
+* card 2
+  another description which will be indented
+"
+           (orgtrello-tests-with-temp-buffer-and-return-buffer-content
+            "* card
+description not indented
+but this will be after function call.
+* card 2
+another description which will be indented
+"
+            (orgtrello-buffer-indent-card-descriptions))))
+  ;; not indented
+  (should (string=
+           "* card
+description not indented
+but this will be after function call.
+* card 2
+another description which will be indented
+"
+           (orgtrello-tests-with-temp-buffer-and-return-buffer-content
+            "* card
+description not indented
+but this will be after function call.
+* card 2
+another description which will be indented
+"
+            (let ((org-trello--mode-activated-p))
+              (orgtrello-buffer-indent-card-descriptions))))))
+
+(ert-deftest  test-orgtrello-buffer-get-usernames-assigned-property ()
+  (should (string= "user1,user2,user3"
+                   (orgtrello-tests-with-temp-buffer
+                    "* card
+:PROPERTIES:
+:orgtrello-users: user1,user2,user3
+:END:
+  description
+"
+                    (orgtrello-buffer-get-usernames-assigned-property)))))
+
+(ert-deftest test-orgtrello-buffer--user-ids-assigned-to-current-card ()
+  (should (string= "123,456"
+                 (orgtrello-tests-with-temp-buffer
+                  "* card
+:PROPERTIES:
+:orgtrello-users: user1,user2
+:END:
+  description
+"
+                  (let ((org-trello--label-key-user-prefix "ot-u-")
+                        (org-trello--hmap-users-name-id (orgtrello-hash-make-properties '(("ot-u-user1" . "123") ("ot-u-user2" . "456")))))
+                    (orgtrello-buffer--user-ids-assigned-to-current-card))))))
+
+(ert-deftest test-orgtrello-buffer-org-entry-get ()
+  (should (string= "card-id-123"
+                 (orgtrello-tests-with-temp-buffer
+                  "* card
+:PROPERTIES:
+:org-id: card-id-123
+:END:"
+                  (orgtrello-buffer-org-entry-get (point-min) "org-id"))))
+  (should (string= "checklist-id-456"
+                 (orgtrello-tests-with-temp-buffer
+                  "- [ ] checklist :PROPERTIES: {\"cbx-id\":\"checklist-id-456\"}
+"
+                  (orgtrello-buffer-org-entry-get (point-min) "cbx-id"))))
+  (should (string= "item-id-789"
+                 (orgtrello-tests-with-temp-buffer
+                  "  - [ ] item :PROPERTIES: {\"itm-id\":\"item-id-789\"}
+"
+                  (orgtrello-buffer-org-entry-get (point-min) "itm-id")))))
+
+(ert-deftest test-orgtrello-buffer-extract-identifier ()
+  (should (string= "card-id-321"
+                   (orgtrello-tests-with-temp-buffer
+                    "* card
+:PROPERTIES:
+:orgtrello-id: card-id-321
+:END:"
+                    (orgtrello-buffer-extract-identifier (point-min)))))
+  (should (string= "checklist-id-654"
+                   (orgtrello-tests-with-temp-buffer
+                    "- [ ] checklist :PROPERTIES: {\"orgtrello-id\":\"checklist-id-654\"}
+"
+                    (orgtrello-buffer-extract-identifier (point-min)))))
+  (should (string= "item-id-987"
+                   (orgtrello-tests-with-temp-buffer
+                    "  - [ ] item :PROPERTIES: {\"orgtrello-id\":\"item-id-987\"}
+"
+                    (orgtrello-buffer-extract-identifier (point-min))))))
+
+(ert-deftest test-orgtrello-buffer-indent-card-data ()
+  ;; indentation
+  (should (string= "* card0
+  - [ ] check1
+    - [ ] item1
+"
+                   (orgtrello-tests-with-temp-buffer-and-return-buffer-content
+                    "* card0
+- [ ] check1
+  - [ ] item1
+"
+                    (orgtrello-buffer-indent-card-data))))
+  ;; not indented because no org-trello activated
+  (should (string= "* card0
+- [ ] check1
+  - [ ] item1
+"
+                   (orgtrello-tests-with-temp-buffer-and-return-buffer-content
+                    "* card0
+- [ ] check1
+  - [ ] item1
+"
+                    (let (org-trello--mode-activated-p)
+                      (orgtrello-buffer-indent-card-data))))))
+
+(ert-deftest test-orgtrello-buffer--extract-metadata ()
+  (should (equal '(1 1 nil nil "card" nil)
+                 (orgtrello-tests-with-temp-buffer
+                  "* card
+:PROPERTIES:
+:orgtrello-id: abc
+:orgtrello-users: user1,user2
+:END:
+"
+                  (orgtrello-buffer--extract-metadata))))
+  (should (equal '(-1 nil "DONE" nil "checklist title" nil)
+                 (orgtrello-tests-with-temp-buffer
+                  "* card
+- [X] checklist title
+"
+                  (orgtrello-buffer--extract-metadata)))))
+
+(ert-deftest test-orgtrello-buffer-set-property ()
+  ;; card, comment
+  (should (string= "* card
+  :PROPERTIES:
+  :orgtrello-id: card-id-abc
+  :END:"
+                   (orgtrello-tests-with-temp-buffer-and-return-buffer-content
+                    "* card"
+                    (orgtrello-buffer-set-property "orgtrello-id" "card-id-abc"))))
+  (should (string= "* card
+  :PROPERTIES:
+  :orgtrello-id: card-id-abc2
+  :orgtrello-checksum: card-checksum
+  :END:"
+                   (orgtrello-tests-with-temp-buffer-and-return-buffer-content
+                    "* card
+  :PROPERTIES:
+  :orgtrello-id: card-id-abc
+  :END:"
+                    (progn
+                      (orgtrello-buffer-set-property "orgtrello-checksum" "card-checksum")
+                      (orgtrello-buffer-set-property "orgtrello-id" "card-id-abc2")))))
+  ;; checkbox (checklist/item)
+  (should (string= "- [ ] checklist :PROPERTIES: {\"orgtrello-id\":\"checklist-id\"}"
+                   (orgtrello-tests-with-temp-buffer-and-return-buffer-content
+                    "- [ ] checklist"
+                    (orgtrello-buffer-set-property "orgtrello-id" "checklist-id"))))
+  (should (string= "- [ ] checklist :PROPERTIES: {\"orgtrello-id\":\"checklist-id2\",\"orgtrello-checksum\":\"checklist-checksum\"}"
+                   (orgtrello-tests-with-temp-buffer-and-return-buffer-content
+                    "- [ ] checklist :PROPERTIES: {\"orgtrello-id\":\"checklist-id\"}"
+                    (progn
+                      (orgtrello-buffer-set-property "orgtrello-id" "checklist-id2")
+                      (orgtrello-buffer-set-property "orgtrello-checksum" "checklist-checksum")))))
+  )
+
 (ert-deftest test-orgtrello-buffer--compute-entity-to-org-entry-fn ()
   (should
    (equal 'orgtrello-buffer--compute-card-to-org-entry
