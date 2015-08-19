@@ -544,9 +544,6 @@ OVERWRITE-ASK is a flag to set to prevent overwriting."
       (insert (format "(setq org-trello-access-token \"%s\")" access-token))
       (write-file new-user-config-file overwrite-ask))))
 
-;; (ert-deftest test-orgtrello-controller--do-install-config-file ()
-;;   (orgtrello-controller--do-install-config-file :user-login :consumer-key :access-token))
-
 (defun orgtrello-controller-do-install-key-and-token ()
   "Procedure to install consumer-key and access token as user config-file."
   (lexical-let* ((user-login
@@ -561,7 +558,7 @@ OVERWRITE-ASK is a flag to set to prevent overwriting."
       (deferred:$
         (deferred:next
           (lambda () (browse-url
-                      (orgtrello-setup-compute-url "/1/appKey/generate"))))
+                 (orgtrello-setup-compute-url "/1/appKey/generate"))))
         (deferred:nextc it
           (lambda (user-login)
             (let ((consumer-key (read-string "Consumer key: ")))
@@ -636,7 +633,7 @@ This returns the identifier of such board."
   (format "#+PROPERTY: %s %s" prop-name (if prop-value prop-value "")))
 
 (defun orgtrello-controller--compute-hash-name-id-to-list (users-hash-name-id)
-  "Compute the hash of name id to list from USERS-HASH-NAME-ID."
+  "Compute the hashmap of name-id to list from USERS-HASH-NAME-ID."
   (let ((res-list nil))
     (maphash
      (lambda (name id)
@@ -755,11 +752,11 @@ UPDATE-TODO-KEYWORDS is the org list of keywords."
   "Given BOARD-USERS-HASH-NAME-ID, compute the properties for users."
   (let ((res-list))
     (maphash (lambda (name id) (--> name
-                                    (format "#+PROPERTY: %s%s %s"
-                                            org-trello--label-key-user-prefix
-                                            it
-                                            id)
-                                    (push it res-list)))
+                               (format "#+PROPERTY: %s%s %s"
+                                       org-trello--label-key-user-prefix
+                                       it
+                                       id)
+                               (push it res-list)))
              board-users-hash-name-id)
     res-list))
 
@@ -796,8 +793,7 @@ UPDATE-TODO-KEYWORDS is the org list of keywords."
 
 (defun orgtrello-controller--user-logged-in ()
   "Compute the current user."
-  (-> (orgtrello-api-get-me)
-      (orgtrello-query-http-trello 'sync)))
+  (orgtrello-query-http-trello (orgtrello-api-get-me) 'sync))
 
 (defun orgtrello-controller-do-install-board-and-lists ()
   "Command to install the list boards."

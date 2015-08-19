@@ -2,6 +2,98 @@
 (require 'ert)
 (require 'el-mock)
 
+(ert-deftest test-orgtrello-controller--remove-properties-file ()
+  (should (string=
+           ":PROPERTIES:
+#+PROPERTY: board-name board's name or title
+#+PROPERTY: board-id board-id
+#+PROPERTY: done list-id-789
+#+PROPERTY: in-progress-2 list-id-456
+#+PROPERTY: todo-1 list-id-123
+#+TODO: todo-1 in-progress-2 | done
+#+PROPERTY: orgtrello-user-orgtrello-user-user3 789
+#+PROPERTY: orgtrello-user-orgtrello-user-user2 456
+#+PROPERTY: orgtrello-user-orgtrello-user-user1 123
+#+PROPERTY: :green green label
+#+PROPERTY: :red red label
+#+PROPERTY: orgtrello-user-me user3
+:END:
+"
+           (orgtrello-tests-with-temp-buffer-and-return-buffer-content
+            ""
+            (orgtrello-controller--update-orgmode-file-with-properties
+             "board's name or title"
+             "board-id"
+             (orgtrello-hash-make-properties '(("todo-1" . "list-id-123")
+                                               ("in-progress-2" . "list-id-456")
+                                               ("done" . "list-id-789")))
+             (orgtrello-hash-make-properties '(("orgtrello-user-user1" . "123")
+                                               ("orgtrello-user-user2" . "456")
+                                               ("orgtrello-user-user3" . "789")))
+             "user3"
+             (orgtrello-hash-make-properties '((:red . "red label") (:green . "green label")))
+             'do-delete-the-todo-line)))))
+
+(ert-deftest test-orgtrello-controller--user-logged-in ()
+  (should (equal :result-get-me
+                 (with-mock
+                   (mock (orgtrello-api-get-me) => :query-get-me)
+                   (mock (orgtrello-query-http-trello :query-get-me 'sync) => :result-get-me)
+                   (orgtrello-controller--user-logged-in)))))
+
+(ert-deftest test-orgtrello-controller--properties-compute-todo-keywords-as-string ()
+  (should (string= "#+TODO: list-id-1 list-id-2 list-id-3 "
+                   (orgtrello-controller--properties-compute-todo-keywords-as-string
+                    (orgtrello-hash-make-properties '(("list-id-1" . "123")
+                                                      ("list-id-2" . "456")
+                                                      ("list-id-3" . "789")))))))
+
+(ert-deftest test-orgtrello-controller--remove-properties-file ()
+  (should (string=
+           " #+title: dummy sample to sync with trello
+ #+author: Antoine R. Dumont"
+           (orgtrello-tests-with-temp-buffer-and-return-buffer-content
+            ":PROPERTIES:
+ #+PROPERTY: board-name test board api
+ #+PROPERTY: board-id board-id-1
+ #+PROPERTY: CANCELLED list-1-id
+ #+PROPERTY: FAILED list-2-id
+ #+PROPERTY: DELEGATED list-3-id
+ #+PROPERTY: PENDING list-4-id
+ #+PROPERTY: DONE list-5-id
+ #+PROPERTY: IN-PROGRESS list-6-id
+ #+PROPERTY: TODO list-7-id
+ #+TODO: TODO IN-PROGRESS | DONE PENDING DELEGATED FAILED CANCELLED
+ #+PROPERTY: orgtrello-user-user1 123
+ #+PROPERTY: orgtrello-user-user2 456
+ #+PROPERTY: orgtrello-user-user3 789
+ #+PROPERTY: :green green label with & char
+ #+PROPERTY: :yellow yello
+ #+PROPERTY: :orange range
+ #+PROPERTY: :red red
+ #+PROPERTY: :purple violet
+ #+PROPERTY: :blue blue
+ #+PROPERTY: orgtrello-user-me user2
+ :END:
+ #+title: dummy sample to sync with trello
+ #+author: Antoine R. Dumont"
+            (orgtrello-controller--remove-properties-file
+             '("TODO" "IN-PROGRESS" "DONE" "PENDING" "DELEGATED" "FAILED" "CANCELLED")
+             (orgtrello-hash-make-properties '(("orgtrello-user-user1" . "123")
+                                               ("orgtrello-user-user2" . "456")
+                                               ("orgtrello-user-user3" . "789")
+                                               ("orgtrello-user-me" . "user2")))
+             "user2"
+             'do-delete-the-todo-line)))))
+
+(ert-deftest test-orgtrello-controller--compute-hash-name-id-to-list ()
+  (should (equal '("#+PROPERTY: orgtrello-user-user3 451"
+                   "#+PROPERTY: orgtrello-user-user2 341"
+                   "#+PROPERTY: orgtrello-user-user1 231")
+                 (orgtrello-controller--compute-hash-name-id-to-list (orgtrello-hash-make-properties '(("user1" . "231")
+                                                                                                       ("user2" . "341")
+                                                                                                       ("orgtrello-user-user3" . "451")))))))
+
 (ert-deftest test-orgtrello-controller-checks-then-sync-card-to-trello ()
   (should (eq :result-sync
               (with-mock
@@ -29,6 +121,34 @@
                        'orgtrello-controller-delete-card
                        :buffer) => :result-delete)
                 (orgtrello-controller-checks-then-delete-simple)))))
+
+(ert-deftest test-orgtrello-controller-checks-then-sync-card-from-trello ()
+  (should (eq :result-sync-from
+              (with-mock
+                (mock (current-buffer) => :buffer)
+                (mock (orgtrello-buffer-safe-entry-full-metadata) => :entity)
+                (mock (orgtrello-action-functional-controls-then-do
+                       '(orgtrello-controller--on-entity-p
+                         orgtrello-controller--right-level-p
+                         orgtrello-controller--already-synced-p)
+                       :entity
+                       'orgtrello-controller-sync-card-from-trello
+                       :buffer) => :result-sync-from)
+                (orgtrello-controller-checks-then-sync-card-from-trello)))))
+
+
+(ert-deftest test-orgtrello-controller--delete-buffer-property ()
+  (should (equal "* card
+:PROPERTIES:
+:END:
+"
+                 (orgtrello-tests-with-temp-buffer-and-return-buffer-content
+                  "* card
+:PROPERTIES:
+:prop: blah
+:END:
+"
+                  (orgtrello-controller--delete-buffer-property ":prop:")))))
 
 (ert-deftest test-orgtrello-controller-setup-properties ()
   (should
