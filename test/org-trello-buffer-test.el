@@ -428,11 +428,15 @@ hello there
            "this-is-the-board-id"
            (orgtrello-tests-with-org-buffer
             (format ":PROPERTIES:\n#+PROPERTY: %s this-is-the-board-id\n:END:\n* card\n" org-trello--property-board-id)
-            (orgtrello-buffer-board-id))))
+            (orgtrello-buffer-board-id)))))
+
+(ert-deftest test-orgtrello-buffer-board-name ()
   (should (equal "this-is-the-board-name"
                  (orgtrello-tests-with-org-buffer
                   (format ":PROPERTIES:\n#+PROPERTY: %s this-is-the-board-name\n:END:\n* card\n" org-trello--property-board-name)
-                  (orgtrello-buffer-board-name))))
+                  (orgtrello-buffer-board-name)))))
+
+(ert-deftest test-orgtrello-buffer-me ()
   (should (equal "this-is-the-user"
                  (orgtrello-tests-with-org-buffer
                   (format ":PROPERTIES:\n#+PROPERTY: %s this-is-the-user\n:END:\n* card\n" org-trello--property-user-me)
@@ -527,7 +531,8 @@ DEADLINE: <dummy-date-with-right-locale>
                                                                                                         (:name . "some checklist name"))))
                   0))))
 
-(ert-deftest test-orgtrello-buffer-write-card-no-previous-card-on-buffer ()
+(ert-deftest test-orgtrello-buffer-write-card ()
+  ;; no previous card on buffer
   (should (equal ":PROPERTIES:
 #+PROPERTY: orgtrello-user-ardumont ardumont-id
 #+PROPERTY: orgtrello-user-dude dude-id
@@ -593,9 +598,9 @@ DEADLINE: <dummy-date-with-right-locale>
                                                  (orgtrello-hash-make-properties `(("some-other-checklist-id" . ())
                                                                                    ("some-checklist-id" . ("some-item-id" "some-other-item-id"))
                                                                                    ("some-card-id" . ("some-checklist-id" "some-other-checklist-id"))))))
-                  0))))
+                  0)))
 
-(ert-deftest test-orgtrello-buffer-write-card-successive-writes-on-buffer ()
+  ;; with previous cards on buffer
   (should (equal ":PROPERTIES:
 #+PROPERTY: orgtrello-user-ardumont ardumont-id
 #+PROPERTY: orgtrello-user-dude dude-id
@@ -649,43 +654,44 @@ DEADLINE: <dummy-date-with-right-locale>
                       (mock (orgtrello-buffer-card-checksum) => "local-card-checksum-a")
                       (mock (orgtrello-buffer-comment-checksum) => "local-comment-checksum-a")
                       (orgtrello-buffer-write-card "card-id-a"
-                                                    (orgtrello-hash-make-properties
-                                                     `((:keyword . "TODO")
-                                                       (:desc . "description A")
-                                                       (:level . ,org-trello--card-level)
-                                                       (:name . "task A")
-                                                       (:id . "card-id-a")
-                                                       (:member-ids . "ardumont,dude")
-                                                       (:comments . ,(list (orgtrello-hash-make-properties '((:comment-user . "ardumont")
-                                                                                                             (:comment-date . "some-date")
-                                                                                                             (:comment-id   . "some-comment-id")
-                                                                                                             (:comment-text . "some comment")))
-                                                                           (orgtrello-hash-make-properties '((:comment-user . "ben")
-                                                                                                             (:comment-date . "10/01/2202")
-                                                                                                             (:comment-id   . "some-id")
-                                                                                                             (:comment-text . "comment text")))))))
-                                                    (orgtrello-hash-make-properties `())
-                                                    (orgtrello-hash-make-properties `())))
+                                                   (orgtrello-hash-make-properties
+                                                    `((:keyword . "TODO")
+                                                      (:desc . "description A")
+                                                      (:level . ,org-trello--card-level)
+                                                      (:name . "task A")
+                                                      (:id . "card-id-a")
+                                                      (:member-ids . "ardumont,dude")
+                                                      (:comments . ,(list (orgtrello-hash-make-properties '((:comment-user . "ardumont")
+                                                                                                            (:comment-date . "some-date")
+                                                                                                            (:comment-id   . "some-comment-id")
+                                                                                                            (:comment-text . "some comment")))
+                                                                          (orgtrello-hash-make-properties '((:comment-user . "ben")
+                                                                                                            (:comment-date . "10/01/2202")
+                                                                                                            (:comment-id   . "some-id")
+                                                                                                            (:comment-text . "comment text")))))))
+                                                   (orgtrello-hash-make-properties `())
+                                                   (orgtrello-hash-make-properties `())))
                     (with-mock
                       (mock (orgtrello-buffer-card-checksum) => "local-card-checksum-b")
                       (mock (orgtrello-buffer-comment-checksum) => "local-comment-checksum-b")
                       (orgtrello-buffer-write-card "card-id-b"
-                                                    (orgtrello-hash-make-properties
-                                                     `((:keyword . "TODO")
-                                                       (:desc . "description B")
-                                                       (:level . ,org-trello--card-level)
-                                                       (:name . "task B")
-                                                       (:id . "card-id-b")
-                                                       (:member-ids . "ardumont,dude")
-                                                       (:comments . ,(list (orgtrello-hash-make-properties '((:comment-user . "tony")
-                                                                                                             (:comment-date . "10/10/2014")
-                                                                                                             (:comment-id   . "some-com-id")
-                                                                                                             (:comment-text . "some text")))))))
-                                                    (orgtrello-hash-make-properties `())
-                                                    (orgtrello-hash-make-properties `()))))
+                                                   (orgtrello-hash-make-properties
+                                                    `((:keyword . "TODO")
+                                                      (:desc . "description B")
+                                                      (:level . ,org-trello--card-level)
+                                                      (:name . "task B")
+                                                      (:id . "card-id-b")
+                                                      (:member-ids . "ardumont,dude")
+                                                      (:comments . ,(list (orgtrello-hash-make-properties '((:comment-user . "tony")
+                                                                                                            (:comment-date . "10/10/2014")
+                                                                                                            (:comment-id   . "some-com-id")
+                                                                                                            (:comment-text . "some text")))))))
+                                                   (orgtrello-hash-make-properties `())
+                                                   (orgtrello-hash-make-properties `()))))
                   0))))
 
-(ert-deftest test-orgtrello-buffer-write-card-successive-writes-on-buffer-with-indentation ()
+(ert-deftest test-orgtrello-controller-sync-buffer-with-trello-cards ()
+  ;; successive writes on buffer with indentation
   (should (equal ":PROPERTIES:
 #+PROPERTY: orgtrello-user-ardumont ardumont-id
 #+PROPERTY: orgtrello-user-dude dude-id
@@ -897,26 +903,26 @@ DEADLINE: <dummy-date-with-right-locale>
                     (mock (orgtrello-buffer-checklist-checksum) => "checklist-checksum-135")
                     (mock (orgtrello-buffer-card-checksum) => "card-checksum-135")
                     (orgtrello-buffer-write-item "some-item-id"
-                                                  (orgtrello-hash-make-properties `(("some-item-id" . ,(orgtrello-hash-make-properties `((:id . "some-item-id")
-                                                                                                                                         (:name . "some item name")
-                                                                                                                                         (:level . ,org-trello--item-level)
-                                                                                                                                         (:keyword . "DONE"))))))))
+                                                 (orgtrello-hash-make-properties `(("some-item-id" . ,(orgtrello-hash-make-properties `((:id . "some-item-id")
+                                                                                                                                        (:name . "some item name")
+                                                                                                                                        (:level . ,org-trello--item-level)
+                                                                                                                                        (:keyword . "DONE"))))))))
                   0))))
 
-(ert-deftest test-orgtrello-buffer-write-entity-card ()
+(ert-deftest test-orgtrello-buffer-write-entity ()
+  ;; card
   (should (equal "
 * DONE some card name                                                   :red:green:
 "
                  (orgtrello-tests-with-temp-buffer-and-return-buffer-content
                   "\n"
                   (orgtrello-buffer-write-entity "some-card-id" (orgtrello-hash-make-properties `((:keyword . "DONE")
-                                                                                                   (:tags . ":red:green:")
-                                                                                                   (:desc . "some description")
-                                                                                                   (:level . ,org-trello--card-level)
-                                                                                                   (:name . "some card name"))))
-                  0))))
-
-(ert-deftest test-orgtrello-buffer-write-entity-checklist ()
+                                                                                                  (:tags . ":red:green:")
+                                                                                                  (:desc . "some description")
+                                                                                                  (:level . ,org-trello--card-level)
+                                                                                                  (:name . "some card name"))))
+                  0)))
+  ;; checklist
   (should (equal "* some content
   - [-] some checklist name
 "
@@ -924,11 +930,10 @@ DEADLINE: <dummy-date-with-right-locale>
                   "* some content
 "
                   (orgtrello-buffer-write-entity "some-checklist-id" (orgtrello-hash-make-properties `((:keyword . "DONE")
-                                                                                                        (:level . ,org-trello--checklist-level)
-                                                                                                        (:name . "some checklist name"))))
-                  0))))
-
-(ert-deftest test-orgtrello-buffer-write-entity-item ()
+                                                                                                       (:level . ,org-trello--checklist-level)
+                                                                                                       (:name . "some checklist name"))))
+                  0)))
+  ;; item
   (should (equal "* some content
   - [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}
     - [X] some item name
@@ -1039,7 +1044,8 @@ DEADLINE: <dummy-date-with-right-locale>
                                   (orgtrello-data-current)
                                   orgtrello-data-entity-name))))
 
-(ert-deftest test-orgtrello-buffer-entity-metadata-card ()
+(ert-deftest test-orgtrello-buffer-entity-metadata ()
+  ;; card
   (let ((h-values (orgtrello-tests-with-temp-buffer ":PROPERTIES:
 #+PROPERTY: orgtrello-user-ardumont some-user-id
 #+PROPERTY: orgtrello-user-dude some-user-id2
@@ -1061,9 +1067,8 @@ DEADLINE: <dummy-date-with-right-locale>
     (should (equal "some description"                                            (orgtrello-data-entity-description h-values)))
     (should (equal "some-user-id,some-user-id2"                                  (orgtrello-data-entity-member-ids h-values)))
     (should (equal "TODO"                                                        (orgtrello-data-entity-keyword h-values)))
-    (should (equal nil                                                           (orgtrello-data-entity-unknown-properties h-values)))))
-
-(ert-deftest test-orgtrello-buffer-entity-metadata-comment ()
+    (should (equal nil                                                           (orgtrello-data-entity-unknown-properties h-values))))
+  ;; comment
   (let ((h-values (orgtrello-tests-with-temp-buffer ":PROPERTIES:
 #+PROPERTY: orgtrello-user-ardumont some-user-id
 #+PROPERTY: orgtrello-user-dude some-user-id2
@@ -1141,8 +1146,8 @@ DEADLINE: <2014-05-17 Sat>
                                                            ("property1" . "value1")
                                                            ("property2" . "value2")))))))
 
-(ert-deftest test-orgtrello-buffer-overwrite-card-with-no-previous-buffer-content ()
-  "No buffer"
+(ert-deftest test-orgtrello-buffer-overwrite-card ()
+  ;; No previous content on buffer
   (should (equal "* TODO some card name                                                   :red:green:
   :PROPERTIES:
   :orgtrello-users: ardumont,dude
@@ -1198,10 +1203,8 @@ DEADLINE: <2014-05-17 Sat>
                            (entities-adj (orgtrello-hash-make-properties `(("some-other-checklist-id" . ())
                                                                            ("some-checklist-id" . ("some-item-id" "some-other-item-id"))
                                                                            ("some-card-id" . ("some-checklist-id" "some-other-checklist-id"))))))
-                      (orgtrello-buffer-overwrite-card '(1 2) card entities entities-adj)))))))
-
-(ert-deftest test-orgtrello-buffer-overwrite-card-buffer-with-previous-content ()
-  "Multiple cards present at point. Overwrite given previous region card with updated data."
+                      (orgtrello-buffer-overwrite-card '(1 2) card entities entities-adj))))))
+  ;; Multiple cards present at point. Overwrite given previous region card with updated data.
   (should (equal "* TODO some card name                                                   :red:green:
   :PROPERTIES:
   :orgtrello-users: ardumont,dude
@@ -1295,8 +1298,8 @@ DEADLINE: <2014-05-17 Sat>
            (orgtrello-tests-with-temp-buffer "* card"
                                              (orgtrello-buffer-get-card-local-checksum)))))
 
-(ert-deftest test-orgtrello-buffer-write-local-checksum-at-pt-for-checklist ()
-  "Write local checksum at the current position."
+(ert-deftest test-orgtrello-buffer-write-local-checksum-at-pt ()
+  ;; Write checklist's local checksum at the current position.
   (should (equal
            "* TODO some card name
 :PROPERTIES:
@@ -1330,10 +1333,8 @@ DEADLINE: <2014-05-17 Sat>
                                                                          (mock (orgtrello-buffer-checklist-checksum) => "checklist-checksum-098")
                                                                          (mock (orgtrello-buffer-card-checksum) => "card-checksum-098")
                                                                          (orgtrello-buffer-write-local-checksum-at-pt))
-                                                                       -5))))
-
-(ert-deftest test-orgtrello-buffer-write-local-checksum-at-pt-for-item ()
-  "checklist - Write local checksum at the current position."
+                                                                       -5)))
+  ;; checklist - Write local checksum's item at the current position.
   (should (equal
            "* TODO some card name
 :PROPERTIES:
@@ -1368,10 +1369,8 @@ DEADLINE: <2014-05-17 Sat>
                                                                          (mock (orgtrello-buffer-checklist-checksum) => "checklist-checksum-098876")
                                                                          (mock (orgtrello-buffer-card-checksum) => "card-checksum-098876")
                                                                          (orgtrello-buffer-write-local-checksum-at-pt))
-                                                                       -4))))
-
-(ert-deftest test-orgtrello-buffer-write-local-checksum-at-pt-for-card ()
-  "Write local card checksum at the current position."
+                                                                       -4)))
+  ;; Write local card checksum at the current position.
   (should (equal
            "* TODO some card name
 :PROPERTIES:
@@ -1408,10 +1407,9 @@ DEADLINE: <2014-05-17 Sat>
 "
                                                                        (with-mock
                                                                          (mock (orgtrello-buffer-card-checksum) => "card-checksum-987")
-                                                                         (orgtrello-buffer-write-local-checksum-at-pt))))))
+                                                                         (orgtrello-buffer-write-local-checksum-at-pt)))))
 
-(ert-deftest test-orgtrello-buffer-write-local-checksum-at-pt-for-comment ()
-  "checklist - Write local checksum at the current position for card's comment."
+  ;; checklist - Write local checksum at the current position for card's comment.
   (should (equal
            "* TODO some card name
 :PROPERTIES:
@@ -1452,7 +1450,7 @@ DEADLINE: <2014-05-17 Sat>
                                                                          (orgtrello-buffer-write-local-checksum-at-pt))
                                                                        -2))))
 
-(ert-deftest test-orgtrello-buffer-org-delete-property-checklist ()
+(ert-deftest test-orgtrello-buffer-org-delete-property ()
   ;; On a checklist
   (should (equal "* TODO some card name
 :PROPERTIES:
@@ -1496,9 +1494,7 @@ DEADLINE: <2014-05-17 Sat>
     - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\"}
   - [-] some other checklist name :PROPERTIES: {}
 "
-                                                                             (orgtrello-buffer-org-delete-property "orgtrello-id")))))
-
-(ert-deftest test-orgtrello-buffer-org-delete-property-item ()
+                                                                             (orgtrello-buffer-org-delete-property "orgtrello-id"))))
   ;; On an item with property to delete
   (should (equal "* TODO some card name
 :PROPERTIES:
@@ -1545,9 +1541,7 @@ DEADLINE: <2014-05-17 Sat>
   - [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\"}
 "
                                                                              (orgtrello-buffer-org-delete-property "orgtrello-id")
-                                                                             -2))))
-
-(ert-deftest test-orgtrello-buffer-org-delete-property-card ()
+                                                                             -2)))
   ;; On a card.
   (should (equal "* TODO some card name
 :PROPERTIES:
@@ -1729,7 +1723,7 @@ DEADLINE: <2014-05-17 Sat>
                                                                        -1))))
 
 (ert-deftest test-orgtrello-buffer-write-local-comment-checksum-at-point ()
-  "The local checksum changes if modifications."
+  ;; The local checksum changes if modifications.
   (should (equal
            "* TODO some card name
 :PROPERTIES:
@@ -1770,7 +1764,7 @@ DEADLINE: <2014-05-17 Sat>
                                                                        -1))))
 
 (ert-deftest test-orgtrello-buffer-get-checkbox-local-checksum-checklist ()
-  "The local checksum does not change if no modification."
+  ;; The local checksum does not change if no modification.
   (should (equal
            nil
            (orgtrello-tests-with-temp-buffer "* TODO some card name
@@ -1802,10 +1796,8 @@ DEADLINE: <2014-05-17 Sat>
     - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\", \"orgtrello-local-checksum\":\"foo\"}
 "
                                              (orgtrello-buffer-get-checkbox-local-checksum)
-                                             -2))))
-
-(ert-deftest test-orgtrello-buffer-get-checkbox-local-checksum-item ()
-  "Retrieve the local checksum from item."
+                                             -2)))
+  ;; Retrieve the local checksum from item.
   (should (equal
            "foo"
            (orgtrello-tests-with-temp-buffer "* TODO some card name
@@ -1820,10 +1812,8 @@ DEADLINE: <2014-05-17 Sat>
     - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\", \"orgtrello-local-checksum\":\"foo\"}
 "
                                              (orgtrello-buffer-get-checkbox-local-checksum)
-                                             -1))))
-
-(ert-deftest test-orgtrello-buffer-get-checkbox-local-checksum-card ()
-  "Works also on card but it is not intended to!"
+                                             -1)))
+  ;; Works also on card but it is not intended to!
   (should (equal
            "foobar"
            (orgtrello-tests-with-temp-buffer "* TODO some card name
@@ -1840,8 +1830,45 @@ DEADLINE: <2014-05-17 Sat>
                                              (orgtrello-buffer-get-checkbox-local-checksum)
                                              -3))))
 
-(ert-deftest test-orgtrello-buffer-compute-checksum-item ()
-  "Compute the checksum of the item."
+
+(ert-deftest test-orgtrello-buffer-compute-checksum ()
+  ;; Compute the checksum of the card.
+  (should (equal
+           "card-checksum"
+           (orgtrello-tests-with-temp-buffer "* TODO some card name
+:PROPERTIES:
+:orgtrello-id: some-card-id
+:orgtrello-users: ardumont,dude
+:orgtrello-card-comments: ardumont: some comment
+:orgtrello-local-checksum: foobar
+:END:
+  some description
+  - [-] some checklist name
+    - [ ] some other item"
+                                             (with-mock
+                                               (mock (orgtrello-buffer-card-checksum) => "card-checksum")
+                                               (orgtrello-buffer-compute-checksum))
+                                             -10)))
+
+  ;; Compute the checksum of the checklist.
+  (should (equal
+           "checklist-checksum"
+           (orgtrello-tests-with-temp-buffer "* TODO some card name
+:PROPERTIES:
+:orgtrello-id: some-card-id
+:orgtrello-users: ardumont,dude
+:orgtrello-card-comments: ardumont: some comment
+:orgtrello-local-checksum: foobar
+:END:
+  some description
+  - [-] some checklist name
+    - [ ] some other item"
+                                             (with-mock
+                                               (mock (orgtrello-buffer-checklist-checksum) => "checklist-checksum")
+                                               (orgtrello-buffer-compute-checksum))
+                                             -1)))
+
+  ;; Compute the checksum of the item.
   (should (equal
            "item-checksum"
            (orgtrello-tests-with-temp-buffer "* TODO some card name
@@ -1858,10 +1885,8 @@ DEADLINE: <2014-05-17 Sat>
                                              (with-mock
                                                (mock (orgtrello-buffer-item-checksum) => "item-checksum")
                                                (orgtrello-buffer-compute-checksum))
-                                             -1))))
-
-(ert-deftest test-orgtrello-buffer-compute-checksum-comment ()
-  "Compute the checksum of the item."
+                                             -1)))
+  ;; Compute the checksum of the item.
   (should (equal
            "comment-checksum"
            (orgtrello-tests-with-temp-buffer "* card
@@ -1876,47 +1901,8 @@ DEADLINE: <2014-05-17 Sat>
                                                (mock (orgtrello-buffer-comment-checksum) => "comment-checksum")
                                                (orgtrello-buffer-compute-checksum))))))
 
-(ert-deftest test-orgtrello-buffer-compute-checksum-checklist ()
-  "Compute the checksum of the checklist."
-  (should (equal
-           "checklist-checksum"
-           (orgtrello-tests-with-temp-buffer "* TODO some card name
-:PROPERTIES:
-:orgtrello-id: some-card-id
-:orgtrello-users: ardumont,dude
-:orgtrello-card-comments: ardumont: some comment
-:orgtrello-local-checksum: foobar
-:END:
-  some description
-  - [-] some checklist name
-    - [ ] some other item"
-                                             (with-mock
-                                               (mock (orgtrello-buffer-checklist-checksum) => "checklist-checksum")
-                                               (orgtrello-buffer-compute-checksum))
-                                             -1))))
-
-
-(ert-deftest test-orgtrello-buffer-compute-checksum-card ()
-  "Compute the checksum of the card."
-  (should (equal
-           "card-checksum"
-           (orgtrello-tests-with-temp-buffer "* TODO some card name
-:PROPERTIES:
-:orgtrello-id: some-card-id
-:orgtrello-users: ardumont,dude
-:orgtrello-card-comments: ardumont: some comment
-:orgtrello-local-checksum: foobar
-:END:
-  some description
-  - [-] some checklist name
-    - [ ] some other item"
-                                             (with-mock
-                                               (mock (orgtrello-buffer-card-checksum) => "card-checksum")
-                                               (orgtrello-buffer-compute-checksum))
-                                             -10))))
-
-(ert-deftest test-orgtrello-buffer-get-local-checksum-checklist ()
-  "The local checksum does not change if no modification."
+(ert-deftest test-orgtrello-buffer-get-local-checksum ()
+  ;; The local checksum does not change if no modification.
   (should (equal
            nil
            (orgtrello-tests-with-temp-buffer "* TODO some card name
@@ -1948,10 +1934,8 @@ DEADLINE: <2014-05-17 Sat>
     - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\", \"orgtrello-local-checksum\":\"foo\"}
 "
                                              (orgtrello-buffer-get-local-checksum)
-                                             -2))))
-
-(ert-deftest test-orgtrello-buffer-get-local-checksum-item ()
-  "Retrieve the local checksum from item."
+                                             -2)))
+  ;; Retrieve the local checksum from item.
   (should (equal
            "foo"
            (orgtrello-tests-with-temp-buffer "* TODO some card name
@@ -1966,10 +1950,8 @@ DEADLINE: <2014-05-17 Sat>
     - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\", \"orgtrello-local-checksum\":\"foo\"}
 "
                                              (orgtrello-buffer-get-local-checksum)
-                                             -1))))
-
-(ert-deftest test-orgtrello-buffer-get-local-checksum-card ()
-  "Works also on card but it is not intended to!"
+                                             -1)))
+  ;; Works also on card but it is not intended to!
   (should (equal
            "foobar"
            (orgtrello-tests-with-temp-buffer "* TODO some card name
@@ -1986,8 +1968,8 @@ DEADLINE: <2014-05-17 Sat>
                                              (orgtrello-buffer-get-local-checksum)
                                              -3))))
 
-(ert-deftest test-orgtrello-buffer-write-properties-at-pt-card ()
-  "Update card property's id + card checksum computation and update."
+(ert-deftest test-orgtrello-buffer-write-properties-at-pt ()
+  ;; Update card property's id + card checksum computation and update.
   (should (equal
            "* TODO some card name
 :PROPERTIES:
@@ -2007,10 +1989,8 @@ DEADLINE: <2014-05-17 Sat>
 "
                                                                        (with-mock
                                                                          (mock (orgtrello-buffer-card-checksum) => "card-checksum-321")
-                                                                         (orgtrello-buffer-write-properties-at-pt "some-id"))))))
-
-(ert-deftest test-orgtrello-buffer-write-properties-at-pt-checklist ()
-  "Update checkbox property's id + compute checksum at point and set it."
+                                                                         (orgtrello-buffer-write-properties-at-pt "some-id")))))
+  ;; Update checkbox property's id + compute checksum at point and set it.
   (should (equal
            "* TODO some card name
 :PROPERTIES:
@@ -2034,10 +2014,8 @@ DEADLINE: <2014-05-17 Sat>
                                                                          (mock (orgtrello-buffer-checklist-checksum) => "checklist-checksum-321")
                                                                          (mock (orgtrello-buffer-card-checksum) => "card-checksum-321")
                                                                          (orgtrello-buffer-write-properties-at-pt "some-checklist-id"))
-                                                                       -1))))
-
-(ert-deftest test-orgtrello-buffer-write-properties-at-pt-item ()
-  "Update checkbox property's id + compute checksum at point and set it."
+                                                                       -1)))
+  ;; Update checkbox property's id + compute checksum at point and set it.
   (should (equal
            "* TODO some card name
 :PROPERTIES:
@@ -2065,6 +2043,7 @@ DEADLINE: <2014-05-17 Sat>
                                                                          (mock (orgtrello-buffer-card-checksum) => "card-checksum-321")
                                                                          (orgtrello-buffer-write-properties-at-pt "some-item-id"))
                                                                        -1))))
+
 
 (ert-deftest test-orgtrello-buffer-checksum ()
   (should (string= "cabc552bfc3fb1fe64933c9b6a5eb41c8f81cd969e0c8add55870c0afb87c63c"
@@ -2234,7 +2213,7 @@ DEADLINE: <2014-05-17 Sat>
                                              -2))))
 
 (ert-deftest test-orgtrello-buffer-card-checksum ()
-  "Compute the checksum of a card."
+  ;; Compute the checksum of a card.
   (should (equal
            "2a71e11a34c8778629d2e1c36f9efdec3e81a0013bd56c649e88e4d91fd91d3a"
            (orgtrello-tests-with-temp-buffer "* TODO some card name
@@ -2251,10 +2230,8 @@ DEADLINE: <2014-05-17 Sat>
 
 * another card"
                                              (orgtrello-buffer-card-checksum)
-                                             -5))))
-
-(ert-deftest test-orgtrello-buffer-card-checksum-no-change-gives-same-checksum ()
-  "A card with a checksum should give the same checksum if nothing has changed."
+                                             -5)))
+  ;; A card with a checksum should give the same checksum if nothing has changed.
   (should (equal
            "2a71e11a34c8778629d2e1c36f9efdec3e81a0013bd56c649e88e4d91fd91d3a"
            (orgtrello-tests-with-temp-buffer "* TODO some card name
@@ -2272,10 +2249,8 @@ DEADLINE: <2014-05-17 Sat>
 
 * another card"
                                              (orgtrello-buffer-card-checksum)
-                                             -5))))
-
-(ert-deftest test-orgtrello-buffer-card-checksum-modified-then-new-checksum ()
-  "A modified card with a checksum should give another checksum."
+                                             -5)))
+  ;; A modified card with a checksum should give another checksum.
   (should (equal
            "c3875e3e92a0aa7df37b97e58b2c30ade2a84235e7c8303a29e22bcde93d3847"
            (orgtrello-tests-with-temp-buffer "* TODO some card name
@@ -2295,8 +2270,9 @@ DEADLINE: <2014-05-17 Sat>
                                              (orgtrello-buffer-card-checksum)
                                              -5))))
 
+
 (ert-deftest test-orgtrello-buffer-checklist-checksum ()
-  "A checklist gives a checksum when asked politely."
+  ;; A checklist gives a checksum when asked politely.
   (should (equal
            "a9a2d45c6d406ef5bd9f8654f663ed8df222b030893d8a00cfdc37a6b3431378"
            (orgtrello-tests-with-temp-buffer "* TODO some card name
@@ -2313,10 +2289,9 @@ DEADLINE: <2014-05-17 Sat>
   - [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\"}
 "
                                              (orgtrello-buffer-checklist-checksum)
-                                             -1))))
-
-(ert-deftest test-orgtrello-buffer-checklist-checksum-not-modified-gives-same-checksum ()
-  "A checklist gives a checksum when asked politely - does not take `'orgtrello-local-checksum`' property into account."
+                                             -1)))
+  ;; A checklist gives a checksum when asked politely - does not take `'orgtrello-local-checksum`' property into account.
+  ;; checksum-not-modified-gives-same-checksum
   (should (equal
            "a9a2d45c6d406ef5bd9f8654f663ed8df222b030893d8a00cfdc37a6b3431378"
            (orgtrello-tests-with-temp-buffer "* TODO some card name
@@ -2333,10 +2308,9 @@ DEADLINE: <2014-05-17 Sat>
   - [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\", \"orgtrello-local-checksum\":\"a9a2d45c6d406ef5bd9f8654f663ed8df222b030893d8a00cfdc37a6b3431378\"}
 "
                                              (orgtrello-buffer-checklist-checksum)
-                                             -1))))
-
-(ert-deftest test-orgtrello-buffer-checklist-checksum-updates-so-new-checksum ()
-  "A checklist checksum takes into account its items. If items change then the checkbox's checksum is updated."
+                                             -1)))
+  ;; A checklist checksum takes into account its items. If items change then the checkbox's checksum is updated.
+  ;; checksum-updates-so-new-checksum
   (should (equal
            "4abd37301df93d3de1c4cd66a6cd0fe0e2a2115968511d554dd422477ab085f4"
            (orgtrello-tests-with-temp-buffer "* TODO some card name
@@ -2384,10 +2358,9 @@ DEADLINE: <2014-05-17 Sat>
     - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\"}
 "
                                              (orgtrello-buffer-item-checksum)
-                                             -1))))
-
-(ert-deftest test-orgtrello-buffer-item-checksum-not-modified-so-same-checksum ()
-  "An item's checksum does not change even if there is already a checksum computed."
+                                             -1)))
+  ;; An item's checksum does not change even if there is already a checksum computed.
+  ;; checksum-not-modified-so-same-checksum
   (should (equal
            "66c919bd5d8d258feed09d6af2ada061e6abb0aed934534ad77b2f858d156bb0"
            (orgtrello-tests-with-temp-buffer "* TODO some card name
@@ -2402,10 +2375,10 @@ DEADLINE: <2014-05-17 Sat>
     - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\", \"orgtrello-local-checksum\":\"66c919bd5d8d258feed09d6af2ada061e6abb0aed934534ad77b2f858d156bb0\"}
 "
                                              (orgtrello-buffer-item-checksum)
-                                             -1))))
+                                             -1)))  )
 
 (ert-deftest test-orgtrello-buffer-comment-checksum ()
-  "A comment's checksum"
+  ;; A comment's checksum
   (should (equal
            "e4d969d8287880e52f02d216131a70cffd91cee0eba5c6ed866fdfcf0a8afc95"
            (orgtrello-tests-with-temp-buffer "** COMMENT ardumont,date
@@ -2415,10 +2388,8 @@ DEADLINE: <2014-05-17 Sat>
   some comment
 "
                                              (orgtrello-buffer-comment-checksum)
-                                             -1))))
-
-(ert-deftest test-orgtrello-buffer-comment-checksum-not-modified-so-same-checksum ()
-  "A comment's checksum"
+                                             -1)))
+  ;; A comment's checksum is not modified if no updates on it
   (should (equal
            "e4d969d8287880e52f02d216131a70cffd91cee0eba5c6ed866fdfcf0a8afc95"
            (orgtrello-tests-with-temp-buffer "** COMMENT ardumont,date
@@ -2429,10 +2400,8 @@ DEADLINE: <2014-05-17 Sat>
   some comment
 "
                                              (orgtrello-buffer-comment-checksum)
-                                             -1))))
-
-(ert-deftest test-orgtrello-buffer-comment-checksum-modified-checksum-is-different ()
-  "A comment's checksum"
+                                             -1)))
+  ;; A comment's checksum is modified if checksum's values changed
   (should (equal
            "41d89d3b85c121ee47d2e1e8ee7c070767c542e17ad9899ecd7c995543c7366c"
            (orgtrello-tests-with-temp-buffer "** COMMENT ardumont,date
