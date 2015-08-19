@@ -193,8 +193,9 @@ If it does not not, error."
 (defun orgtrello-controller-checks-then-delete-simple ()
   "Do the deletion of an entity."
   (orgtrello-action-functional-controls-then-do
-   '(orgtrello-controller--on-entity-p orgtrello-controller--right-level-p
-                                       orgtrello-controller--already-synced-p)
+   '(orgtrello-controller--on-entity-p
+     orgtrello-controller--right-level-p
+     orgtrello-controller--already-synced-p)
    (orgtrello-buffer-safe-entry-full-metadata)
    'orgtrello-controller-delete-card
    (current-buffer)))
@@ -212,8 +213,9 @@ BUFFER-NAME to specify the buffer with which we currently work."
 (defun orgtrello-controller-checks-then-sync-card-to-trello ()
   "Check then do the actual sync if everything is ok."
   (orgtrello-action-functional-controls-then-do
-   '(orgtrello-controller--on-entity-p orgtrello-controller--right-level-p
-                                       orgtrello-controller--mandatory-name-ok-p)
+   '(orgtrello-controller--on-entity-p
+     orgtrello-controller--right-level-p
+     orgtrello-controller--mandatory-name-ok-p)
    (orgtrello-buffer-safe-entry-full-metadata)
    'orgtrello-controller-sync-card-to-trello
    (current-buffer)))

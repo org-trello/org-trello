@@ -2,6 +2,34 @@
 (require 'ert)
 (require 'el-mock)
 
+(ert-deftest test-orgtrello-controller-checks-then-sync-card-to-trello ()
+  (should (eq :result-sync
+              (with-mock
+                (mock (current-buffer) => :buffer)
+                (mock (orgtrello-buffer-safe-entry-full-metadata) => :entity)
+                (mock (orgtrello-action-functional-controls-then-do
+                       '(orgtrello-controller--on-entity-p
+                         orgtrello-controller--right-level-p
+                         orgtrello-controller--mandatory-name-ok-p)
+                       :entity
+                       'orgtrello-controller-sync-card-to-trello
+                       :buffer) => :result-sync)
+                (orgtrello-controller-checks-then-sync-card-to-trello)))))
+
+(ert-deftest test-orgtrello-controller-checks-then-delete-simple ()
+  (should (eq :result-delete
+              (with-mock
+                (mock (current-buffer) => :buffer)
+                (mock (orgtrello-buffer-safe-entry-full-metadata) => :entity)
+                (mock (orgtrello-action-functional-controls-then-do
+                       '(orgtrello-controller--on-entity-p
+                         orgtrello-controller--right-level-p
+                         orgtrello-controller--already-synced-p)
+                       :entity
+                       'orgtrello-controller-delete-card
+                       :buffer) => :result-delete)
+                (orgtrello-controller-checks-then-delete-simple)))))
+
 (ert-deftest test-orgtrello-controller-setup-properties ()
   (should
    (-every? (-partial 'eq t)
