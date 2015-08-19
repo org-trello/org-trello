@@ -148,7 +148,9 @@ slightly different than the one from the buffer."
         org-trello--hmap-users-name-id
         org-trello--user-logged-in
         org-trello--mode-activated-p
-        orgtrello-setup-use-position-in-checksum-computation))
+        ;; orgtrello-setup-use-position-in-checksum-computation ;; -> should ideally be that way, need to fix tests before that
+        ))
+
 
 (defconst org-trello--old-config-dir "~/.trello"
   "Old default trello directory.
