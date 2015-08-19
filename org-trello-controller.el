@@ -261,13 +261,12 @@ BUFFER-NAME is the buffer on to which act."
 
 (defun orgtrello-controller--sync-buffer-with-trello-data (data)
   "Update the current buffer with DATA (entities and adjacency)."
-  (let ((entities (car data))
-        (adjacency (cadr data)))
+  (-let (((entities adjacencies) data))
     (goto-char (point-max)) ;; go at the end of the file
     (maphash
      (lambda (new-id entity)
        (when (orgtrello-data-entity-card-p entity)
-         (orgtrello-buffer-write-card new-id entity entities adjacency)))
+         (orgtrello-buffer-write-card new-id entity entities adjacencies)))
      entities)
     (goto-char (point-min))                 ;; go back to the beginning of file
     (ignore-errors (org-sort-entries t ?o)) ;; sort entries on keywords & ignore errors (e.g. nothing to sort)
@@ -483,9 +482,10 @@ SYNC flag permit to synchronize the http query."
   (let ((buffer-name (current-buffer)))
     (with-current-buffer buffer-name
       (save-excursion
-        (let ((card-meta (progn (when (orgtrello-entity-org-checkbox-p)
-                                  (orgtrello-entity-back-to-card))
-                                (orgtrello-buffer-entry-get-full-metadata))))
+        (let ((card-meta (progn
+                           (when (orgtrello-entity-org-checkbox-p)
+                             (orgtrello-entity-back-to-card))
+                           (orgtrello-buffer-entry-get-full-metadata))))
           (orgtrello-action-functional-controls-then-do
            '(orgtrello-controller--right-level-p
              orgtrello-controller--already-synced-p)
@@ -888,20 +888,23 @@ UPDATE-TODO-KEYWORDS is the org list of keywords."
   "For the BOARD-ID, create the list names from ORG-KEYWORDS.
 The list order in the trello board is the same as the ORG-KEYWORDS.
 Return the hashmap (name, id) of the new lists created."
-  (car
-   (--reduce-from (-let (((hash pos) acc))
-                    (orgtrello-log-msg orgtrello-log-info
-                                       "Board id %s - Creating list '%s'"
-                                       board-id it)
-                    (list (orgtrello-hash-puthash-data
-                           it
-                           (orgtrello-data-entity-id
-                            (orgtrello-query-http-trello
-                             (orgtrello-api-add-list it board-id pos)
-                             'sync))
-                           hash) (+ pos 1)))
-                  (list (orgtrello-hash-empty-hash) 1)
-                  org-keywords)))
+  (->> org-keywords
+       (--reduce-from (-let (((hash pos) acc))
+                        (orgtrello-log-msg
+                         orgtrello-log-info
+                         "Board id %s - Creating list '%s'"
+                         board-id
+                         it)
+                        (list (orgtrello-hash-puthash-data
+                               it
+                               (orgtrello-data-entity-id
+                                (orgtrello-query-http-trello
+                                 (orgtrello-api-add-list it board-id pos)
+                                 'sync))
+                               hash)
+                              (+ pos 1)))
+                      (list (orgtrello-hash-empty-hash) 1))
+       car))
 
 (defun orgtrello-controller-do-create-board-and-install-metadata ()
   "Command to create a board and the lists."

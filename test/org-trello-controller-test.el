@@ -2,6 +2,110 @@
 (require 'ert)
 (require 'el-mock)
 
+(ert-deftest test-orgtrello-controller-do-delete-entities ()
+  (should (equal :result-do-delete-entities
+                 (with-mock
+                   (mock (org-map-entries 'orgtrello-controller--do-delete-card t 'file) => :result-do-delete-entities)
+                   (orgtrello-controller-do-delete-entities)))))
+
+(ert-deftest test-orgtrello-controller--do-delete-card ()
+  (should (equal :result-do-delete-card
+                 (with-mock
+                   (mock (orgtrello-entity-card-at-pt) => t)
+                   (mock (orgtrello-controller-checks-then-delete-simple) => :result-do-delete-card)
+                   (orgtrello-controller--do-delete-card))))
+  ;; do nothing
+  (should-not
+   (with-mock
+     (mock (orgtrello-entity-card-at-pt) => nil)
+     (orgtrello-controller--do-delete-card))))
+
+(ert-deftest test-orgtrello-controller--sync-buffer-with-trello-data ()
+  (should (string=
+           ":PROPERTIES:
+#+PROPERTY: orgtrello-user-ardumont ardumont-id
+#+PROPERTY: orgtrello-user-dude dude-id
+:END:
+* TODO some card name                                                   :red:green:
+  :PROPERTIES:
+  :orgtrello-users: ardumont,dude
+  :orgtrello-local-checksum: card-checksum
+  :orgtrello-id: some-card-id
+  :END:
+  some description
+  - [-] some cbx name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\",\"orgtrello-local-checksum\":\"cbx-checksum\"}
+    - [X] some it name :PROPERTIES: {\"orgtrello-id\":\"some-item-id\",\"orgtrello-local-checksum\":\"item-checksum\"}
+    - [ ] some other item name :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\",\"orgtrello-local-checksum\":\"item-checksum\"}
+  - [-] some other cbx name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\",\"orgtrello-local-checksum\":\"cbx-checksum\"}
+
+** COMMENT ardumont, some-date
+:PROPERTIES:
+:orgtrello-id: some-comment-id
+:orgtrello-local-checksum: comment-checksum
+:END:
+  some comment
+
+"
+  (orgtrello-tests-with-temp-buffer-and-return-buffer-content
+   ":PROPERTIES:
+#+PROPERTY: orgtrello-user-ardumont ardumont-id
+#+PROPERTY: orgtrello-user-dude dude-id
+:END:
+"
+   (with-mock
+     (mock (orgtrello-buffer-card-checksum) => "card-checksum")
+     (mock (orgtrello-buffer-checklist-checksum) => "cbx-checksum")
+     (mock (orgtrello-buffer-item-checksum) => "item-checksum")
+     (mock (orgtrello-buffer-comment-checksum) => "comment-checksum")
+     (orgtrello-controller--sync-buffer-with-trello-data
+      (list (orgtrello-hash-make-properties
+             `(("some-card-id" .  ,(orgtrello-hash-make-properties `((:keyword . "TODO")
+                                                                     (:member-ids . "ardumont,dude")
+                                                                     (:comments . ,(list (orgtrello-hash-make-properties '((:comment-user . "ardumont")
+                                                                                                                           (:comment-date . "some-date")
+                                                                                                                           (:comment-id   . "some-comment-id")
+                                                                                                                           (:comment-text . "some comment")))))
+                                                                     (:tags . ":red:green:")
+                                                                     (:desc . "some description")
+                                                                     (:level . ,org-trello--card-level)
+                                                                     (:name . "some card name")
+                                                                     (:id . "some-card-id"))))
+               ("some-checklist-id" . ,(orgtrello-hash-make-properties `((:id . "some-cbx-id")
+                                                                         (:name . "some cbx name")
+                                                                         (:level . ,org-trello--checklist-level))))
+               ("some-other-checklist-id" . ,(orgtrello-hash-make-properties `((:id . "some-other-cbx-id")
+                                                                               (:name . "some other cbx name")
+                                                                               (:level . ,org-trello--checklist-level))))
+               ("some-item-id"  . ,(orgtrello-hash-make-properties `((:id . "some-it-id")
+                                                                     (:name . "some it name")
+                                                                     (:level . ,org-trello--item-level)
+                                                                     (:keyword . "DONE"))))
+               ("some-other-item-id"  . ,(orgtrello-hash-make-properties `((:id . "some-other-it-id")
+                                                                           (:name . "some other item name")
+                                                                           (:level . ,org-trello--item-level)
+                                                                           (:keyword . "TODO"))))))
+            (orgtrello-hash-make-properties
+             `(("some-other-checklist-id")
+               ("some-checklist-id" "some-item-id" "some-other-item-id")
+               ("some-card-id" "some-checklist-id" "some-other-checklist-id"))))))))))
+
+(ert-deftest test-orgtrello-controller-do-sync-buffer-to-trello ()
+  (should (equal :result
+                 (with-mock
+                   (mock (orgtrello-buffer-board-name) => :buffer-board-name)
+                   (mock (current-buffer) => :buffer)
+                   (mock (orgtrello-buffer-build-org-entities :buffer) => :entities)
+                   (mock (orgtrello-controller-execute-sync-entity-structure :entities) => :result)
+                   (orgtrello-controller-do-sync-buffer-to-trello)))))
+
+(ert-deftest test-orgtrello-controller--create-lists-according-to-keywords ()
+  (should (orgtrello-tests-hash-equal
+           (orgtrello-hash-make-properties '((:todo . "todo-list-id")))
+           (with-mock
+             (mock (orgtrello-api-add-list :todo :board-id 1) => :query-add-list)
+             (mock (orgtrello-query-http-trello :query-add-list 'sync) => (orgtrello-hash-make-properties '((:id . "todo-list-id"))))
+             (orgtrello-controller--create-lists-according-to-keywords :board-id '(:todo))))))
+
 (ert-deftest test-orgtrello-controller--close-lists ()
   (should (equal
            :result-comp-close-lists
