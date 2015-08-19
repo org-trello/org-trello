@@ -2,7 +2,7 @@
 (require 'ert)
 (require 'el-mock)
 
-(ert-deftest test-orgtrello-controller--remove-properties-file ()
+(ert-deftest test-orgtrello-controller--update-orgmode-file-with-properties ()
   (should (string=
            ":PROPERTIES:
 #+PROPERTY: board-name board's name or title
