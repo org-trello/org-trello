@@ -133,7 +133,7 @@ Please, do not hesitate to provide a better idea or a better implementation.
 
 If nil, the default, the sync to trello will be limited to what's really changed
 \(except for the position\).  So the entity's position in trello's board can be
-slightly different than the one from the board."
+slightly different than the one from the buffer."
   :group 'org-trello
   :version "0.7.1")
 
@@ -147,7 +147,8 @@ slightly different than the one from the board."
         org-trello--hmap-users-id-name
         org-trello--hmap-users-name-id
         org-trello--user-logged-in
-        org-trello--mode-activated-p))
+        org-trello--mode-activated-p
+        orgtrello-setup-use-position-in-checksum-computation))
 
 (defconst org-trello--old-config-dir "~/.trello"
   "Old default trello directory.
