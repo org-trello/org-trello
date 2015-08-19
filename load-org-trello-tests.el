@@ -133,13 +133,18 @@ Otherwise, default to current buffer."
 (defun orgtrello-tests-function-covered-p (fname &optional ask-buffer)
   (interactive "P")
   (let* ((actual-buffer-file (buffer-name (current-buffer)))
-         (buffer-test (orgtrello-tests-ns-file-from-current-buffer actual-buffer-file))
+         (buffer-test-file (orgtrello-tests-ns-file-from-current-buffer
+                            actual-buffer-file))
          (fn-name (if (region-active-p)
-                      (buffer-substring-no-properties (region-beginning) (region-end))
-                    (let ((fn-names (orgtrello-tests-list-functions-in-buffer actual-buffer-file)))
-                      (helm-comp-read "Choose a function to check for coverage: " fn-names)))))
+                      (buffer-substring-no-properties (region-beginning)
+                                                      (region-end))
+                    (let ((fn-names (orgtrello-tests-list-functions-in-buffer
+                                     actual-buffer-file)))
+                      (helm-comp-read "Choose a function to check for coverage: "
+                                      fn-names)))))
     (message
-     (if (< 0 (orgtrello-tests-number-of (format "\(ert-deftest test-%s" fn-name) buffer-test))
+     (if (< 0 (orgtrello-tests-number-of (format "\(ert-deftest test-%s" fn-name)
+                                         buffer-test-file))
          (message "Tested!")
        (message "'%s' is not covered in %s!"
                 fn-name
