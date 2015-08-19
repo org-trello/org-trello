@@ -218,7 +218,7 @@ SIZE is a useless parameter, only here to satisfy an implementation detail."
 (defun orgtrello-data-format-labels (labels)
   "Given an assoc list of LABELS, serialize it."
   (->> labels
-       (--map (s-join ": " (list (car it) (cdr it))))
+       (-map (-partial #'s-join ": "))
        (s-join "\n\n")))
 
 (defun orgtrello-data-id-p (id)

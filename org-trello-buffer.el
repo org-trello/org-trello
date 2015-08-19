@@ -59,9 +59,8 @@ If the VALUE is nil or empty, remove such PROPERTY."
   "Retrieve the checkbox's current local checksum."
   (orgtrello-buffer-org-entry-get (point) org-trello--label-key-local-checksum))
 
-(defun orgtrello-buffer-org-get-property (property-key properties)
-  "Retrieve the PROPERTY-KEY in PROPERTIES."
-  (assoc-default property-key properties))
+(defalias 'orgtrello-buffer-org-get-property 'assoc-default
+  "Retrieve the PROPERTY-KEY in PROPERTIES.")
 
 (defun orgtrello-buffer-org-file-get-property (property-key)
   "Return the PROPERTY-KEY present in the org buffer."
@@ -82,9 +81,8 @@ If the VALUE is nil or empty, remove such PROPERTY."
 
 (defun orgtrello-buffer-labels ()
   "Compute the board's current labels and return it as an association list."
-  (mapcar (lambda (color)
-            `(,color . ,(orgtrello-buffer-org-file-get-property color)))
-          '(":red" ":blue" ":orange" ":yellow" ":purple" ":green")))
+  (-map (-juxt #'identity #'orgtrello-buffer-org-file-get-property)
+        '(":red" ":blue" ":orange" ":yellow" ":purple" ":green")))
 
 (defun orgtrello-buffer-pop-up-with-content (title body-content)
   "Buffer `org-trello--title-buffer-information' with TITLE & BODY-CONTENT."

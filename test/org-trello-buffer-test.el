@@ -2,6 +2,51 @@
 (require 'ert)
 (require 'el-mock)
 
+(ert-deftest test-orgtrello-buffer-org-file-get-property ()
+  (should (eq :result
+              (with-mock
+                (mock (orgtrello-buffer-org-file-properties) => '((entry . :result)))
+                (orgtrello-buffer-org-file-get-property 'entry)))))
+
+(ert-deftest test-orgtrello-buffer-org-file-properties ()
+  (should (eq :something
+              (let ((org-file-properties :something))
+                (orgtrello-buffer-org-file-properties)))))
+
+(ert-deftest test-orgtrello-buffer-labels ()
+  ;; with mock
+  (should (equal '((":red" "red lover")
+                   (":blue" "blue sadness")
+                   (":orange" "o")
+                   (":yellow" "y")
+                   (":purple" "p")
+                   (":green" "g"))
+                 (with-mock
+                   (mock (orgtrello-buffer-org-file-properties) => '((":red" . "red lover")
+                                                                     (":blue" . "blue sadness")
+                                                                     (":green" . "g")
+                                                                     (":yellow" . "y")
+                                                                     (":purple" . "p")
+                                                                     (":orange" . "o")))
+                   (orgtrello-buffer-labels))))
+  (should (equal '((":red" "red")
+                   (":blue" "blue")
+                   (":orange" "range")
+                   (":yellow" "yello")
+                   (":purple" "violet")
+                   (":green" "green label with & char"))
+                 (orgtrello-tests-with-temp-buffer
+                  ":PROPERTIES:
+#+PROPERTY: :green green label with & char
+#+PROPERTY: :yellow yello
+#+PROPERTY: :orange range
+#+PROPERTY: :red red
+#+PROPERTY: :purple violet
+#+PROPERTY: :blue blue
+#+PROPERTY: orgtrello-user-me ardumont
+"
+                  (orgtrello-buffer-labels)))))
+
 (ert-deftest test-orgtrello-buffer-org-entry-put ()
   (should (string= "* card
   :PROPERTIES:

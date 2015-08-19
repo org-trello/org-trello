@@ -389,7 +389,7 @@
 
 (ert-deftest test-orgtrello-data-format-labels ()
   (should (equal ":red: some label\n\n:yellow: some other label"
-                 (orgtrello-data-format-labels '((":red" . "some label") (":yellow" . "some other label"))))))
+                 (orgtrello-data-format-labels '((":red" "some label") (":yellow" "some other label"))))))
 
 (ert-deftest test-orgtrello-data-id-p ()
   (should (equal t   (orgtrello-data-id-p "anything-that-does-not-start-with-orgtrello-marker")))

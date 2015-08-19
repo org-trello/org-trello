@@ -5,9 +5,9 @@
 | Namespace                | Functions / namespace | test namespace                     | Functions tested |           Coverage |
 |--------------------------+-----------------------+------------------------------------+------------------+--------------------|
 | org-trello-controller.el |                  83.0 | test/org-trello-controller-test.el |             34.0 | 40.963855421686745 |
-| org-trello-buffer.el     |                 107.0 | test/org-trello-buffer-test.el     |             70.0 |  65.42056074766354 |
+| org-trello-buffer.el     |                 106.0 | test/org-trello-buffer-test.el     |             73.0 |  68.86792452830188 |
 | org-trello-entity.el     |                  30.0 | test/org-trello-entity-test.el     |             21.0 |               70.0 |
-| org-trello-setup.el      |                  10.0 | test/org-trello-setup-test.el      |              8.0 | x              80.0 |
+| org-trello-setup.el      |                  10.0 | test/org-trello-setup-test.el      |              8.0 |               80.0 |
 | org-trello.el            |                  28.0 | test/org-trello-test.el            |             27.0 |  96.42857142857143 |
 | org-trello-query.el      |                  11.0 | test/org-trello-query-test.el      |             11.0 |              100.0 |
 | org-trello-cbx.el        |                  30.0 | test/org-trello-cbx-test.el        |             30.0 |              100.0 |
@@ -22,6 +22,6 @@
 | org-trello-data.el       |                  45.0 | test/org-trello-data-test.el       |             45.0 |              100.0 |
 | org-trello-proxy.el      |                  33.0 | test/org-trello-proxy-test.el      |             36.0 | 109.09090909090908 |
 |--------------------------+-----------------------+------------------------------------+------------------+--------------------|
-| Average                  |                  442. |                                    |             347. |  78.50678733031674 |
+| Average                  |                  441. |                                    |             350. |  79.36507936507937 |
 |--------------------------+-----------------------+------------------------------------+------------------+--------------------|
 #+TBLFM: $5='(* 100 (/ (string-to-number $4) (string-to-int $2)))::@19$2=vsum(@2..@18)::@19$4=vsum(@2..@18)::@19$5='(* 100 (/ (string-to-number (format "%s0" @19$4)) (string-to-number (format "%s0" @19$2))))
