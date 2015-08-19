@@ -57,33 +57,43 @@
 #+PROPERTY: orgtrello-user-me user1
 :END:
 "
-             (let ((org-tag-alist nil))
-               (orgtrello-controller-setup-properties :args-not-used)
+             (let ((org-tag-alist nil)
+                   (org-trello--user-logged-in))
+               (orgtrello-controller-setup-properties)
                (list
                 (equal org-trello--org-keyword-trello-list-names '("TODO" "IN-PROGRESS" "DONE" "PENDING" "DELEGATED" "FAILED" "CANCELLED"))
-                (orgtrello-tests-hash-equal org-trello--hmap-list-orgkeyword-id-name
-                                            (orgtrello-hash-make-properties
-                                             '(("todo-list-id" . "TODO")
-                                               ("in-progress-list-id" . "IN-PROGRESS")
-                                               ("done-list-id" . "DONE")
-                                               ("pending-list-id" . "PENDING")
-                                               ("deletegated-list-id" . "DELEGATED")
-                                               ("failed-list-id" . "FAILED")
-                                               ("cancelled-list-id" . "CANCELLED"))))
-                (orgtrello-tests-hash-equal org-trello--hmap-users-id-name
-                                            (orgtrello-hash-make-properties
-                                             '(("user1-id" . "orgtrello-user-user1")
-                                               ("user2-id" . "orgtrello-user-user2")
-                                               ("user3-id" . "orgtrello-user-user3")
-                                               ("user1" . "orgtrello-user-me"))))
-                (orgtrello-tests-hash-equal org-trello--hmap-users-name-id
-                                            (orgtrello-hash-make-properties
-                                             '(("orgtrello-user-user1" . "user1-id")
-                                               ("orgtrello-user-user2" . "user2-id")
-                                               ("orgtrello-user-user3" . "user3-id")
-                                               ("orgtrello-user-me" . "user1"))))
+                (orgtrello-tests-hash-equal
+                 org-trello--hmap-list-orgkeyword-id-name
+                 (orgtrello-hash-make-properties
+                  '(("todo-list-id" . "TODO")
+                    ("in-progress-list-id" . "IN-PROGRESS")
+                    ("done-list-id" . "DONE")
+                    ("pending-list-id" . "PENDING")
+                    ("deletegated-list-id" . "DELEGATED")
+                    ("failed-list-id" . "FAILED")
+                    ("cancelled-list-id" . "CANCELLED"))))
+                (orgtrello-tests-hash-equal
+                 org-trello--hmap-users-id-name
+                 (orgtrello-hash-make-properties
+                  '(("user1-id" . "orgtrello-user-user1")
+                    ("user2-id" . "orgtrello-user-user2")
+                    ("user3-id" . "orgtrello-user-user3")
+                    ("user1" . "orgtrello-user-me"))))
+                (orgtrello-tests-hash-equal
+                 org-trello--hmap-users-name-id
+                 (orgtrello-hash-make-properties
+                  '(("orgtrello-user-user1" . "user1-id")
+                    ("orgtrello-user-user2" . "user2-id")
+                    ("orgtrello-user-user3" . "user3-id")
+                    ("orgtrello-user-me" . "user1"))))
                 (string= org-trello--user-logged-in "user1")
-                (equal org-tag-alist (nreverse '(("red" . ?r) ("green" . ?g) ("yellow" . ?y) ("blue" . ?b) ("purple" . ?p) ("orange" . ?o))))))))))
+                (equal org-tag-alist (nreverse
+                                      '(("red" . ?r)
+                                        ("green" . ?g)
+                                        ("yellow" . ?y)
+                                        ("blue" . ?b)
+                                        ("purple" . ?p)
+                                        ("orange" . ?o))))))))))
 
 (ert-deftest test-orgtrello-controller-control-properties ()
   ;; ok
@@ -145,31 +155,35 @@ Also, you can specify on your org-mode buffer the todo list you want to work wit
                  (with-mock
                    (mock (file-exists-p org-trello--old-config-dir) => nil)
                    (orgtrello-controller-migrate-user-setup :args-not-used))))
-  ;; (should (equal :ok
-  ;;                (let ((*consumer-key* :consumer-key)
-  ;;                      (*access-token* :access-token))
-  ;;                  (with-mock
-  ;;                    (mock (file-exists-p org-trello--old-config-dir) => t)
-  ;;                    (mock (orgtrello-buffer-me) => :user-me)
-  ;;                    (mock (load org-trello--old-config-file) => :done)
-  ;;                    (mock (orgtrello-buffer-me) => :user-me)
-  ;;                    (mock (orgtrello-controller--do-install-config-file :user-me :consumer-key :access-token) => :done)
-  ;;                    (mock (delete-directory org-trello--old-config-dir 'with-contents) => :done)
-  ;;                    (orgtrello-controller-migrate-user-setup :args-not-used)))))
-  ;; ;; current setup
-  ;; (should (equal :ok
-  ;;                (let ((*consumer-key* nil)
-  ;;                      (org-trello-consumer-key :org-trello-consumer-key)
-  ;;                      (org-trello-access-token :org-trello-access-token))
-  ;;                  (with-mock
-  ;;                    (mock (file-exists-p org-trello--old-config-dir) => t)
-  ;;                    (mock (orgtrello-buffer-me) => :user-me)
-  ;;                    (mock (load org-trello--old-config-file) => :done)
-  ;;                    (mock (orgtrello-buffer-me) => :user-me)
-  ;;                    (mock (orgtrello-controller--do-install-config-file :user-me :org-trello-consumer-key :org-trello-access-token) => :done)
-  ;;                    (mock (delete-directory org-trello--old-config-dir 'with-contents) => :done)
-  ;;                    (orgtrello-controller-migrate-user-setup :args-not-used)))))
-  )
+  (should (equal :ok
+                 (let ((*consumer-key* :consumer-key)
+                       (*access-token* :access-token)
+                       (org-trello--old-config-dir :config-dir)
+                       (org-trello--old-config-file :config-file))
+                   (with-mock
+                     (mock (file-exists-p org-trello--old-config-dir) => t)
+                     (mock (orgtrello-buffer-me) => :user-logged-in)
+                     (mock (load org-trello--old-config-file) => :done)
+                     (mock (orgtrello-controller--do-install-config-file
+                            :user-logged-in
+                            :consumer-key
+                            :access-token) => :done)
+                     (mock (delete-directory org-trello--old-config-dir 'with-contents) => :done)
+                     (orgtrello-controller-migrate-user-setup :args-not-used)))))
+  ;; current setup
+  (should (equal :ok
+                 (let ((*consumer-key* nil)
+                       (org-trello--old-config-dir :config-dir)
+                       (org-trello--old-config-file :config-file)
+                       (org-trello-consumer-key :org-trello-consumer-key)
+                       (org-trello-access-token :org-trello-access-token))
+                   (with-mock
+                     (mock (file-exists-p org-trello--old-config-dir) => t)
+                     (mock (orgtrello-buffer-me) => :user-logged-in-2)
+                     (mock (load org-trello--old-config-file) => :done)
+                     (mock (orgtrello-controller--do-install-config-file :user-logged-in-2 :org-trello-consumer-key :org-trello-access-token) => :done)
+                     (mock (delete-directory org-trello--old-config-dir 'with-contents) => :done)
+                     (orgtrello-controller-migrate-user-setup :args-not-used))))))
 
 (ert-deftest test-orgtrello-controller-config-file ()
   (should (string= "~/.emacs.d/.trello/tony.el"

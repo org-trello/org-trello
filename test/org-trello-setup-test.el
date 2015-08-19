@@ -55,16 +55,16 @@ C-c z h - M-x org-trello-help-describing-bindings - This help message."
                    (orgtrello-setup-install-local-prefix-mode-keybinding :keybinding)))))
 
 (ert-deftest test-orgtrello-setup-user-logged-in ()
-  (should (equal :user
-                 (let ((org-trello--user-logged-in :user))
+  (should (equal :user-bar
+                 (let ((org-trello--user-logged-in :user-bar))
                    (orgtrello-setup-user-logged-in)))))
 
 (ert-deftest test-orgtrello-setup-set-user-logged-in ()
   (should (equal
-           '(:user
+           '(:user-foobar
              :new-user
              :new-user)
-           (let ((org-trello--user-logged-in :user))
+           (let ((org-trello--user-logged-in :user-foobar))
              `(,(orgtrello-setup-user-logged-in)
                ,(orgtrello-setup-set-user-logged-in :new-user)
                ,(orgtrello-setup-user-logged-in))))))

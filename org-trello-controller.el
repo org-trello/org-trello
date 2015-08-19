@@ -40,22 +40,31 @@ If either org-keywords or properties is nil, return an empty hash-map."
   "Setup `org-trello' properties according to `org-mode' setup in buffer.
 Return :ok.
 ARGS is not used."
-  ;; read the setup
   (orgtrello-action-reload-setup)
-  ;; now exploit some
-  (let* ((org-keywords        (orgtrello-buffer-filtered-kwds))
+  (let* ((org-keywords (orgtrello-buffer-filtered-kwds))
          (org-file-properties (orgtrello-buffer-org-file-properties))
-         (org-trello-users    (orgtrello-controller--list-user-entries
-                               org-file-properties)))
+         (org-trello-users (orgtrello-controller--list-user-entries
+                            org-file-properties)))
 
-    (setq org-trello--org-keyword-trello-list-names org-keywords)
-    (setq org-trello--hmap-list-orgkeyword-id-name  (orgtrello-controller--hmap-id-name org-keywords org-file-properties))
-    (setq org-trello--hmap-users-id-name            (orgtrello-hash-make-transpose-properties org-trello-users))
-    (setq org-trello--hmap-users-name-id            (orgtrello-hash-make-properties org-trello-users))
-    (orgtrello-setup-set-user-logged-in             (or (orgtrello-buffer-me) (orgtrello-setup-user-logged-in)))
+    (setq
+     org-trello--org-keyword-trello-list-names org-keywords
+     org-trello--hmap-list-orgkeyword-id-name (orgtrello-controller--hmap-id-name
+                                               org-keywords
+                                               org-file-properties)
+     org-trello--hmap-users-id-name (orgtrello-hash-make-transpose-properties
+                                     org-trello-users)
+     org-trello--hmap-users-name-id (orgtrello-hash-make-properties
+                                     org-trello-users)
+     org-trello--user-logged-in (or (orgtrello-buffer-me)
+                                    (orgtrello-setup-user-logged-in)))
 
-    (mapc (lambda (color) (add-to-list 'org-tag-alist color))
-          '(("red" . ?r) ("green" . ?g) ("yellow" . ?y) ("blue" . ?b) ("purple" . ?p) ("orange" . ?o)))
+    (mapc (-partial #'add-to-list 'org-tag-alist)
+          '(("red" . ?r)
+            ("green" . ?g)
+            ("yellow" . ?y)
+            ("blue" . ?b)
+            ("purple" . ?p)
+            ("orange" . ?o)))
     :ok))
 
 (defun orgtrello-controller-control-properties (&optional args)
@@ -78,16 +87,20 @@ From:
   org-trello-consumer-key and from *access-key* to org-trello-access-key.
 ARGS is not used."
   (when (file-exists-p org-trello--old-config-dir) ;; old setup, migrate
-    ;; load old setup
-    (load org-trello--old-config-file)
-    ;; write new setup
-    (apply 'orgtrello-controller--do-install-config-file
-           (cons (orgtrello-buffer-me)
-                 (if *consumer-key*
-                     `(,*consumer-key* ,*access-token*)
-                   `(,org-trello-consumer-key ,org-trello-access-token))))
-    ;; delete old setup file
-    (delete-directory org-trello--old-config-dir 'with-contents))
+    (-let (((consumer-key access-key)
+            (if *consumer-key*
+                `(,*consumer-key* ,*access-token*)
+              `(,org-trello-consumer-key ,org-trello-access-token)))
+           (user-login (orgtrello-buffer-me)))
+      ;; load old setup
+      (load org-trello--old-config-file)
+      ;; persist setup
+      (orgtrello-controller--do-install-config-file
+       user-login
+       consumer-key
+       access-key)
+      ;; delete old setup file
+      (delete-directory org-trello--old-config-dir 'with-contents)))
   :ok)
 
 (defun orgtrello-controller-config-file (&optional username)
@@ -229,14 +242,13 @@ BUFFER-NAME is the buffer on to which act."
     (if (string= current-checksum previous-checksum)
         (orgtrello-log-msg orgtrello-log-info
                            "Card already synchronized, nothing to do!")
-      (progn
-        (orgtrello-log-msg orgtrello-log-info
-                           "Synchronizing card on board '%s'..."
-                           (orgtrello-buffer-board-name))
-        (org-show-subtree) ;; show subtree, otherwise org-trello/org-trello/#53
-        (-> buffer-name
-            orgtrello-buffer-build-org-card-structure
-            orgtrello-controller-execute-sync-entity-structure)))))
+      (orgtrello-log-msg orgtrello-log-info
+                         "Synchronizing card on board '%s'..."
+                         (orgtrello-buffer-board-name))
+      (org-show-subtree) ;; show subtree, otherwise org-trello/org-trello/#53
+      (-> buffer-name
+          orgtrello-buffer-build-org-card-structure
+          orgtrello-controller-execute-sync-entity-structure))))
 
 (defun orgtrello-controller-do-sync-buffer-to-trello ()
   "Full `org-mode' file synchronization."
@@ -531,6 +543,9 @@ OVERWRITE-ASK is a flag to set to prevent overwriting."
       (insert (format "(setq org-trello-consumer-key \"%s\")\n" consumer-key))
       (insert (format "(setq org-trello-access-token \"%s\")" access-token))
       (write-file new-user-config-file overwrite-ask))))
+
+;; (ert-deftest test-orgtrello-controller--do-install-config-file ()
+;;   (orgtrello-controller--do-install-config-file :user-login :consumer-key :access-token))
 
 (defun orgtrello-controller-do-install-key-and-token ()
   "Procedure to install consumer-key and access token as user config-file."
