@@ -2,6 +2,14 @@
 (require 'ert)
 (require 'el-mock)
 
+(ert-deftest test-orgtrello-setup-remove-local-keybinding-map ()
+  (should (equal
+           '(:result-defined-binding)
+           (with-mock
+             (mock (kbd "C-c X z") => :binding)
+             (mock (define-key org-trello-mode-map :binding nil) => :result-defined-binding)
+             (orgtrello-setup-remove-local-keybinding-map "C-c X" '(('command-fn "z" "doc description")))))))
+
 (ert-deftest test-orgtrello-setup-help-describing-bindings-template ()
   (should (equal "C-c o a - M-x some-action - some-description
 C-c o 2 - M-x action2 - some other description" (orgtrello-setup-help-describing-bindings-template "C-c o" '((some-action "a" "some-description")

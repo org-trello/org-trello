@@ -225,24 +225,20 @@ As of 0.7.0, org-trello now follows Emacs's conventions.")
 MODE-PREFIX-KEYBIND new prefix keybinding
 INTERACTIVE-COMMAND-BINDING-TO-INSTALL the list of commands to install
 Supercede the old prefix keybinding with the new one."
-  (mapc (lambda (command-and-binding)
-          (let ((command (car command-and-binding))
-                (binding (cadr command-and-binding)))
-            ;; unset previous binding
-            (define-key org-trello-mode-map (kbd (concat prev-mode-prefix-keybind binding)) nil)
-            ;; set new binding
-            (define-key org-trello-mode-map (kbd (concat mode-prefix-keybind binding)) command)))
-        interactive-command-binding-to-install))
+  (--map (-let (((command binding _) it))
+           ;; unset previous binding
+           (define-key org-trello-mode-map (kbd (concat prev-mode-prefix-keybind " " binding)) nil)
+           ;; set new binding
+           (define-key org-trello-mode-map (kbd (concat mode-prefix-keybind " " binding)) command))
+         interactive-command-binding-to-install))
 
 (defun orgtrello-setup-remove-local-keybinding-map (prev-mode-prefix-keybind interactive-command-binding-to-install)
   "Remove the default org-trello bindings.
 PREV-MODE-PREFIX-KEYBIND old prefix keybinding
 INTERACTIVE-COMMAND-BINDING-TO-INSTALL the list of commands to install."
-  (mapc (lambda (command-and-binding)
-          (let ((command (car command-and-binding))
-                (binding (cadr command-and-binding)))
-            (define-key org-trello-mode-map (kbd (concat prev-mode-prefix-keybind binding)) nil)))
-        interactive-command-binding-to-install))
+  (--map (-let (((command binding _) it))
+           (define-key org-trello-mode-map (kbd (concat prev-mode-prefix-keybind " " binding)) nil))
+         interactive-command-binding-to-install))
 
 (defun orgtrello-setup-remove-local-prefix-mode-keybinding (keybinding)
   "Install the new default org-trello mode KEYBINDING."
