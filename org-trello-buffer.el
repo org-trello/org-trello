@@ -136,10 +136,10 @@ At the end of it all, the cursor is moved after the new written text."
 
 (defun orgtrello-buffer-update-property-member-ids (entity)
   "Given ENTITY's date, update the users assigned property card entry."
-  (--> entity
-       (orgtrello-data-entity-member-ids it)
-       (replace-regexp-in-string org-trello--label-key-user-prefix "" it)
-       (orgtrello-buffer-set-usernames-assigned-property it)))
+  (->> entity
+       orgtrello-data-entity-member-ids
+       (replace-regexp-in-string org-trello--label-key-user-prefix "")
+       orgtrello-buffer-set-usernames-assigned-property))
 
 (defun orgtrello-buffer--write-comments (entity)
   "Given ENTITY's date, update last comments ."

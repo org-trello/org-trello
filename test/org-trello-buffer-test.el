@@ -2,6 +2,101 @@
 (require 'ert)
 (require 'el-mock)
 
+(ert-deftest test-orgtrello-buffer--write-card-description ()
+  (should (string= "  some description"
+                   (orgtrello-tests-with-temp-buffer-and-return-buffer-content
+                    ""
+                    (orgtrello-buffer--write-card-description "some description"))))
+  (should-not (orgtrello-buffer--write-card-description nil)))
+
+(ert-deftest test-orgtrello-buffer--write-comment-at-point ()
+  (should (string=
+           "
+** COMMENT foobar, another-date-2
+:PROPERTIES:
+:orgtrello-id: comment-id-2
+:orgtrello-local-checksum: 87e8512614a1e6ce4cf3b4814c89e0a42f01e448968638a6fd83b6ebdbd8eb83
+:END:
+  foo bar comment
+"
+           (orgtrello-tests-with-temp-buffer-and-return-buffer-content
+            ""
+            (orgtrello-buffer--write-comment-at-point (orgtrello-hash-make-properties '((:comment-user . "foobar")
+                                                                                        (:comment-date . "another-date-2")
+                                                                                        (:comment-id   . "comment-id-2")
+                                                                                        (:comment-text . "foo bar comment"))))))))
+
+(ert-deftest test-orgtrello-buffer--write-comments-at-point ()
+  (should (string=
+           "
+** COMMENT author, another-date
+:PROPERTIES:
+:orgtrello-id: comment-id
+:orgtrello-local-checksum: ded0efd43d7371b5346b43d61792f896b261aacbb64c8a25c749aaf8e761c2c5
+:END:
+  yet another comment
+
+** COMMENT foobar, another-date-2
+:PROPERTIES:
+:orgtrello-id: comment-id-2
+:orgtrello-local-checksum: 8628459c72e9ae77754bfba52cf83fbf8c8447ae1cb7f89b134ec269fbde0011
+:END:
+  foo bar comment
+
+"
+           (orgtrello-tests-with-temp-buffer-and-return-buffer-content
+            ""
+            (orgtrello-buffer--write-comments-at-point (list (orgtrello-hash-make-properties '((:comment-user . "author")
+                                                                                               (:comment-date . "another-date")
+                                                                                               (:comment-id   . "comment-id")
+                                                                                               (:comment-text . "yet another comment")))
+                                                             (orgtrello-hash-make-properties '((:comment-user . "foobar")
+                                                                                               (:comment-date . "another-date-2")
+                                                                                               (:comment-id   . "comment-id-2")
+                                                                                               (:comment-text . "foo bar comment"))))))))
+  (should-not (orgtrello-buffer--write-comments-at-point nil)))
+
+(ert-deftest test-orgtrello-buffer--write-comments ()
+  (should (string=
+           "
+** COMMENT ardumont, some-date
+:PROPERTIES:
+:orgtrello-id: some-comment-id
+:orgtrello-local-checksum: 3042a0c47942d4fcebd3f227a9762510295e57b6af490fb1c59db74949bb9ba4
+:END:
+  some comment
+
+"
+           (orgtrello-tests-with-temp-buffer-and-return-buffer-content
+            ""
+            (orgtrello-buffer--write-comments (orgtrello-hash-make-properties `((:comments . ,(list (orgtrello-hash-make-properties '((:comment-user . "ardumont")
+                                                                                                                                      (:comment-date . "some-date")
+                                                                                                                                      (:comment-id   . "some-comment-id")
+                                                                                                                                      (:comment-text . "some comment"))))))))))))
+
+
+(ert-deftest test-orgtrello-buffer-update-property-member-ids ()
+  (should (string=
+           ":PROPERTIES:
+#+PROPERTY: orgtrello-user-user1 123
+#+PROPERTY: orgtrello-user-user2 456
+#+PROPERTY: orgtrello-user-user3 789
+:END:
+* some card
+  :PROPERTIES:
+  :orgtrello-users: user3,user2
+  :END:
+"
+           (orgtrello-tests-with-temp-buffer-and-return-buffer-content
+            ":PROPERTIES:
+#+PROPERTY: orgtrello-user-user1 123
+#+PROPERTY: orgtrello-user-user2 456
+#+PROPERTY: orgtrello-user-user3 789
+:END:
+* some card
+"
+            (orgtrello-buffer-update-property-member-ids (orgtrello-hash-make-properties '((:member-ids . "orgtrello-user-user3,orgtrello-user-user2"))))))))
+
 (ert-deftest test-orgtrello-buffer-org-file-get-property ()
   (should (eq :result
               (with-mock
