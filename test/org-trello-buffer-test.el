@@ -2,6 +2,85 @@
 (require 'ert)
 (require 'el-mock)
 
+(ert-deftest test-orgtrello-buffer--put-entities ()
+  (should
+   (-every? (-partial #'eq t)
+            (-let ((entities (orgtrello-buffer--put-entities
+                              (orgtrello-hash-make-properties `((:current . ,(orgtrello-hash-make-properties '((:id . "card-id-2"))))))
+                              (orgtrello-hash-empty-hash))))
+              (list
+               (orgtrello-tests-hash-equal (gethash "card-id-2" entities) (orgtrello-hash-make-properties '((:id . "card-id-2"))))
+               (eq 1 (hash-table-count entities)))))))
+
+(ert-deftest test-orgtrello-buffer--put-card-with-adjacency ()
+  (should
+   (-every? (-partial #'eq t)
+            (-let (((entities adjacencies) (orgtrello-buffer--put-card-with-adjacency
+                                            (orgtrello-hash-make-properties `((:current . ,(orgtrello-hash-make-properties '((:id . "card-id"))))))
+                                            (orgtrello-hash-empty-hash)
+                                            :adjacencies)))
+              (list
+               (orgtrello-tests-hash-equal (gethash "card-id" entities) (orgtrello-hash-make-properties '((:id . "card-id"))))
+               (eq 1 (hash-table-count entities))
+               (eq adjacencies :adjacencies))))))
+
+(ert-deftest test-orgtrello-buffer-clean-region ()
+  (should (string= ""
+                   (orgtrello-tests-with-temp-buffer-and-return-buffer-content
+                    "* card
+  description
+  - [ ] checklist
+    - [ ] item
+"
+                    (orgtrello-buffer-clean-region (point-min) (point-max)))))
+  (should (string= "* card"
+                   (orgtrello-tests-with-temp-buffer-and-return-buffer-content
+                    "* card
+  description
+  - [ ] checklist
+    - [ ] item
+"
+                    (orgtrello-buffer-clean-region 7 (point-max))))))
+
+(ert-deftest test-orgtrello-buffer-write-local-card-checksum-at-point ()
+  (should (eq :result-card-checksum
+              (with-mock
+                (mock (orgtrello-buffer--write-checksum-at-pt 'orgtrello-buffer-card-checksum) => :result-card-checksum)
+                (orgtrello-buffer-write-local-card-checksum-at-point)))))
+
+(ert-deftest test-orgtrello-buffer-write-local-checklist-checksum-at-point ()
+  (should (eq :result-checklist-checksum
+              (with-mock
+                (mock (orgtrello-buffer--write-checksum-at-pt 'orgtrello-buffer-checklist-checksum) => :result-checklist-checksum)
+                (orgtrello-buffer-write-local-checklist-checksum-at-point)))))
+
+(ert-deftest test-orgtrello-buffer-write-local-item-checksum-at-point ()
+  (should (eq :result-item-checksum
+              (with-mock
+                (mock (orgtrello-buffer--write-checksum-at-pt 'orgtrello-buffer-item-checksum) => :result-item-checksum)
+                (orgtrello-buffer-write-local-item-checksum-at-point)))))
+
+(ert-deftest test-orgtrello-buffer-write-local-comment-checksum-at-point ()
+  (should (eq :result-comment-checksum
+              (with-mock
+                (mock (orgtrello-buffer--write-checksum-at-pt 'orgtrello-buffer-comment-checksum) => :result-comment-checksum)
+                (orgtrello-buffer-write-local-comment-checksum-at-point)))))
+
+(ert-deftest test-orgtrello-buffer--write-checksum-at-pt ()
+  (should (string= "* card
+  :PROPERTIES:
+  :orgtrello-local-checksum: dummy-checksum-whatever-the-input
+  :END:
+"
+                   (orgtrello-tests-with-temp-buffer-and-return-buffer-content
+                    "* card
+"
+                    (orgtrello-buffer--write-checksum-at-pt (lambda () "dummy-checksum-whatever-the-input")))))
+  (should (string= "- [ ] checklist :PROPERTIES: {\"orgtrello-local-checksum\":\"dummy-checksum-whatever-the-input\"}"
+                   (orgtrello-tests-with-temp-buffer-and-return-buffer-content
+                    "- [ ] checklist"
+                    (orgtrello-buffer--write-checksum-at-pt (lambda () "dummy-checksum-whatever-the-input"))))))
+
 (ert-deftest test-orgtrello-buffer--write-card-description ()
   (should (string= "  some description"
                    (orgtrello-tests-with-temp-buffer-and-return-buffer-content
