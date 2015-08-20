@@ -2,6 +2,69 @@
 (require 'ert)
 (require 'el-mock)
 
+(ert-deftest test-orgtrello-buffer-build-org-card-structure ()
+  (should (-every? (-partial #'eq t)
+                   (orgtrello-tests-with-temp-buffer
+                    "* TODO card title
+:PROPERTIES:
+:orgtrello-id: 123
+:orgtrello-checksum: check
+:END:
+
+  - [ ] cbx :PROPERTIES: {\"orgtrello-id\":\"456\"}
+    - [X] cbx itm :PROPERTIES: {\"orgtrello-id\":\"789\"}
+"
+    (-let* ((buf (buffer-name (current-buffer)))
+            ((entities adjacencies)
+             (orgtrello-buffer-build-org-card-structure buf))
+            (entity-card (orgtrello-hash-make-properties `((:buffername . ,buf)
+                                                           (:position . 1)
+                                                           (:level . 1)
+                                                           (:keyword . "TODO")
+                                                           (:name . "card title")
+                                                           (:id . "123")
+                                                           (:due)
+                                                           (:member-ids . "")
+                                                           (:desc . "")
+                                                           (:tags)
+                                                           (:unknown-properties)
+                                                           (:parent))))
+            (entity-cbx (orgtrello-hash-make-properties `((:buffername . ,buf)
+                                                          (:position . 85)
+                                                          (:level . 2)
+                                                          (:keyword . "TODO")
+                                                          (:name . "cbx")
+                                                          (:id . "456")
+                                                          (:due)
+                                                          (:member-ids . "")
+                                                          (:desc)
+                                                          (:tags)
+                                                          (:unknown-properties)
+                                                          (:parent . ,entity-card))))
+            (entity-cbx-item (orgtrello-hash-make-properties `((:buffername . ,buf)
+                                                               (:position . 133)
+                                                               (:level . 3)
+                                                               (:keyword . "DONE")
+                                                               (:name . "cbx itm")
+                                                               (:id . "789")
+                                                               (:due)
+                                                               (:member-ids . "")
+                                                               (:desc)
+                                                               (:tags)
+                                                               (:unknown-properties)
+                                                               (:parent . ,entity-cbx)))))
+      (list
+       (orgtrello-tests-hash-equal
+        entities
+        (orgtrello-hash-make-properties
+         `(("123" . ,entity-card)
+           ("456" . ,entity-cbx)
+           ("789" . ,entity-cbx-item))))
+       (orgtrello-tests-hash-equal
+        adjacencies
+        (orgtrello-hash-make-properties '(("123" "456")
+                                          ("456" "789"))))))))))
+
 (ert-deftest test-orgtrello-buffer--put-entities ()
   (should
    (-every? (-partial #'eq t)
