@@ -461,9 +461,10 @@ If REGION-START and REGION-END are provided, will work on such defined region."
       orgtrello-data-current
       (orgtrello-backend-add-entity-to-entities entities)))
 
-(defun orgtrello-buffer--set-marker (marker)
-  "Set a MARKER to get back to later."
-  (orgtrello-buffer-set-property org-trello--label-key-id marker))
+(defalias 'orgtrello-buffer--set-marker (-partial
+                                         #'orgtrello-buffer-set-property
+                                         org-trello--label-key-id)
+  "Set a MARKER to get back to later.")
 
 (defun orgtrello-buffer-set-marker-if-not-present (entity marker)
   "Set the ENTITY with MARKER to the entry if we never did."

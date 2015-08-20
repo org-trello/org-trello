@@ -2,6 +2,178 @@
 (require 'ert)
 (require 'el-mock)
 
+(ert-deftest test-orgtrello-buffer-get-usernames-assigned-property ()
+  (should (string= "user1,user2,user3"
+                   (orgtrello-tests-with-temp-buffer
+                    "* card
+:PROPERTIES:
+:orgtrello-users: user1,user2,user3
+:END:"
+                    (orgtrello-buffer-get-usernames-assigned-property)))))
+
+(ert-deftest test-orgtrello-buffer-remove-overlays ()
+  (should (eq :result-remove-overlays
+              (with-mock
+                (mock (remove-overlays :point-min
+                                       :point-max
+                                       'invisible
+                                       'org-trello-cbx-property) => :result-remove-overlays)
+                (orgtrello-buffer-remove-overlays :point-min :point-max))))
+  (should (eq :result-remove-overlays
+              (with-mock
+                (mock (point-min) => :point-min)
+                (mock (point-max) => :point-max)
+                (mock (remove-overlays :point-min
+                                       :point-max
+                                       'invisible
+                                       'org-trello-cbx-property) => :result-remove-overlays)
+                (orgtrello-buffer-remove-overlays))))
+
+  (defun orgtrello-buffer-install-overlays ()
+    "Install overlays throughout the all buffers.
+Function to be triggered by `before-save-hook` on org-trello-mode buffer."
+    (when (and (eq major-mode 'org-mode) org-trello--mode-activated-p)
+      (orgtrello-buffer-remove-overlays)
+      (save-excursion
+        (goto-char (point-min))
+        (while (re-search-forward ":PROPERTIES: {.*" nil t)
+          (orgtrello-buffer-install-overlay (match-beginning 0)))))))
+
+(ert-deftest test-orgtrello-buffer--set-marker ()
+  (should (string=
+           "* new card
+  :PROPERTIES:
+  :orgtrello-id: new-id
+  :END:
+"
+           (orgtrello-tests-with-temp-buffer-and-return-buffer-content
+            "* new card
+"
+            (orgtrello-buffer--set-marker "new-id")))))
+
+(ert-deftest test-orgtrello-buffer-set-marker-if-not-present ()
+  (should (string=
+           "* card
+:PROPERTIES:
+:orgtrello-id: set-the-marker-to-notify-id-not-yet-set
+:END:
+"
+           (orgtrello-tests-with-temp-buffer-and-return-buffer-content
+            "* card
+:PROPERTIES:
+:END:
+"
+            (orgtrello-buffer-set-marker-if-not-present
+             (orgtrello-hash-make-properties '((:id . "new-id")))
+             "set-the-marker-to-notify-id-not-yet-set"))))
+  (should-not (orgtrello-tests-with-temp-buffer
+               "* card
+:PROPERTIES:
+:orgtrello-id: marker-already-set-so-nothing-done
+:END:
+"
+               (orgtrello-buffer-set-marker-if-not-present
+                (orgtrello-hash-make-properties '((:id . "marker-already-set-so-nothing-done")))
+                "marker-already-set-so-nothing-done"))))
+
+(ert-deftest test-orgtrello-buffer-build-org-entities ()
+  ;; full buffer
+  (should (-every? (-partial #'eq t)
+                   (orgtrello-tests-with-temp-buffer
+                    "* TODO card title
+:PROPERTIES:
+:orgtrello-id: 123
+:orgtrello-checksum: check
+:END:
+
+  - [ ] cbx :PROPERTIES: {\"orgtrello-id\":\"456\"}
+    - [X] cbx itm :PROPERTIES: {\"orgtrello-id\":\"789\"}
+"
+    (-let* ((buf (buffer-name (current-buffer)))
+            ((entities adjacencies)
+             (orgtrello-buffer-build-org-entities buf))
+            (entity-card (orgtrello-hash-make-properties `((:buffername . ,buf)
+                                                           (:position . 1)
+                                                           (:level . 1)
+                                                           (:keyword . "TODO")
+                                                           (:name . "card title")
+                                                           (:id . "123")
+                                                           (:due)
+                                                           (:member-ids . "")
+                                                           (:desc . "")
+                                                           (:tags)
+                                                           (:unknown-properties)
+                                                           (:parent))))
+            (entity-cbx (orgtrello-hash-make-properties `((:buffername . ,buf)
+                                                          (:position . 85)
+                                                          (:level . 2)
+                                                          (:keyword . "TODO")
+                                                          (:name . "cbx")
+                                                          (:id . "456")
+                                                          (:due)
+                                                          (:member-ids . "")
+                                                          (:desc)
+                                                          (:tags)
+                                                          (:unknown-properties)
+                                                          (:parent . ,entity-card))))
+            (entity-cbx-item (orgtrello-hash-make-properties `((:buffername . ,buf)
+                                                               (:position . 133)
+                                                               (:level . 3)
+                                                               (:keyword . "DONE")
+                                                               (:name . "cbx itm")
+                                                               (:id . "789")
+                                                               (:due)
+                                                               (:member-ids . "")
+                                                               (:desc)
+                                                               (:tags)
+                                                               (:unknown-properties)
+                                                               (:parent . ,entity-cbx)))))
+      (list
+       (orgtrello-tests-hash-equal
+        entities
+        (orgtrello-hash-make-properties
+         `(("123" . ,entity-card)
+           ("456" . ,entity-cbx)
+           ("789" . ,entity-cbx-item))))
+       (orgtrello-tests-hash-equal
+        adjacencies
+        (orgtrello-hash-make-properties '(("123" "456")
+                                          ("456" "789")))))))))
+  ;; with narrow to region
+  (should (-every? (-partial #'eq t)
+                   (orgtrello-tests-with-temp-buffer
+                    "* TODO card title
+:PROPERTIES:
+:orgtrello-id: 123
+:orgtrello-checksum: check
+:END:
+* another card we do not care about here
+** COMMENT, user date
+"
+                    (-let* ((buf (buffer-name (current-buffer)))
+                            ((entities adjacencies)
+                             (orgtrello-buffer-build-org-entities buf (point-min) 84))
+                            (entity-card (orgtrello-hash-make-properties `((:buffername . ,buf)
+                                                                           (:position . 1)
+                                                                           (:level . 1)
+                                                                           (:keyword . "TODO")
+                                                                           (:name . "card title")
+                                                                           (:id . "123")
+                                                                           (:due)
+                                                                           (:member-ids . "")
+                                                                           (:desc . "")
+                                                                           (:tags)
+                                                                           (:unknown-properties)
+                                                                           (:parent)))))
+                      (list
+                       (orgtrello-tests-hash-equal
+                        entities
+                        (orgtrello-hash-make-properties
+                         `(("123" . ,entity-card))))
+                       (orgtrello-tests-hash-equal
+                        adjacencies
+                        (orgtrello-hash-make-properties '(("123"))))))))))
+
 (ert-deftest test-orgtrello-buffer-build-org-card-structure ()
   (should (-every? (-partial #'eq t)
                    (orgtrello-tests-with-temp-buffer
