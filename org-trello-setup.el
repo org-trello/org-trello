@@ -256,14 +256,17 @@ INTERACTIVE-COMMAND-BINDING-TO-INSTALL the list of commands to install."
         :org-keyword-trello-list-names org-trello--org-keyword-trello-list-names
         :org-keyword-id-name org-trello--hmap-list-orgkeyword-id-name))
 
-(defvar org-trello--previous-prefix-keybinding "C-c o" "Previous or current mode prefix keybinding.")
+(defvar org-trello--previous-prefix-keybinding "C-c o"
+  "Previous or current mode prefix keybinding.")
 (defcustom org-trello-current-prefix-keybinding "C-c o"
   "The default prefix keybinding to execute org-trello commands."
   :type 'string
   :require 'org-trello
   :set (lambda (variable prefix-keybinding)
          "Install the new default org-trello mode keybinding."
+         ;; goal is to set the variable with the value prefix-keybinding
          (orgtrello-setup-install-local-keybinding-map org-trello--previous-prefix-keybinding prefix-keybinding org-trello-interactive-command-binding-couples)
+         ;; update the variables
          `(set org-trello--previous-prefix-keybinding ,variable)
          (set variable prefix-keybinding))
   :group 'org-trello)
