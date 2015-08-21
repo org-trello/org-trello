@@ -2,6 +2,13 @@
 (require 'ert)
 (require 'el-mock)
 
+(ert-deftest test-orgtrello-setup-install-local-keybinding-map ()
+  (should (equal '((lambda nil (interactive)) (lambda nil (interactive)))
+                 (orgtrello-setup-install-local-keybinding-map "C-c o"
+                                                               "C-c x"
+                                                               '(((lambda () (interactive)) "a" "description command a")
+                                                                 ((lambda () (interactive)) "b" "description command b"))))))
+
 (ert-deftest test-orgtrello-setup-set-binding ()
   (should (string=
            "C-c x"
