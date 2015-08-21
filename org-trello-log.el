@@ -3,21 +3,21 @@
 ;;; Code:
 
 (defconst orgtrello-log-no-log 0 "No log level except for error.")
-(defconst orgtrello-log-error  5 "Error log level.")
-(defconst orgtrello-log-warn   4 "Warn log level.")
+(defconst orgtrello-log-error  1 "Error log level.")
+(defconst orgtrello-log-warn   2 "Warn log level.")
 (defconst orgtrello-log-info   3 "Info log level.")
-(defconst orgtrello-log-debug  2 "Debug log level.")
-(defconst orgtrello-log-trace  1 "Trace log level.")
+(defconst orgtrello-log-debug  4 "Debug log level.")
+(defconst orgtrello-log-trace  5 "Trace log level.")
 
 (defcustom orgtrello-log-level orgtrello-log-info
   "Set log level.
 Levels:
 0 - no log   (`orgtrello-log-quiet')
-5 - errors   (`orgtrello-log-error')
-4 - warnings (`orgtrello-log-warn')
+1 - errors   (`orgtrello-log-error')
+2 - warnings (`orgtrello-log-warn')
 3 - info     (`orgtrello-log-info')
-2 - debug    (`orgtrello-log-debug')
-1 - trace    (`orgtrello-log-trace')
+4 - debug    (`orgtrello-log-debug')
+5 - trace    (`orgtrello-log-trace')
 To change such level, add this to your init.el file:
 \(custom-set-variables '\(orgtrello-log-level orgtrello-log-trace\)\)"
   :options (list orgtrello-log-no-log
