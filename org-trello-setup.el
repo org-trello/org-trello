@@ -4,6 +4,7 @@
 
 (require 'org)
 (require 'org-trello-utils)
+(require 'org-trello-log)
 
 (defgroup org-trello nil " Org-trello customisation group."
   :tag "Org-trello"
@@ -151,7 +152,6 @@ slightly different than the one from the buffer."
         ;; orgtrello-setup-use-position-in-checksum-computation ;; -> should ideally be that way, need to fix tests before that
         ))
 
-
 (defconst org-trello--old-config-dir "~/.trello"
   "Old default trello directory.
 As of 0.7.0, org-trello now follows Emacs's conventions.")
@@ -174,8 +174,10 @@ As of 0.7.0, org-trello now follows Emacs's conventions.")
 (defconst org-trello-buffer--indent-description 2
   "The default card description's indentation column.")
 
-(defvar org-trello-interactive-command-binding-couples '() "List of commands and default bindings without the prefix key.")
-(defalias '*org-trello-interactive-command-binding-couples* 'org-trello-interactive-command-binding-couples)
+(defvar org-trello-interactive-command-binding-couples '()
+  "List of commands and default bindings without the prefix key.")
+(defalias '*org-trello-interactive-command-binding-couples*
+  'org-trello-interactive-command-binding-couples)
 
 (setq org-trello-interactive-command-binding-couples
       '((org-trello-version                           "v" "Display the current version installed.")
@@ -209,44 +211,61 @@ As of 0.7.0, org-trello now follows Emacs's conventions.")
 
 (defun orgtrello-setup-startup-message (prefix-keybinding)
   "Compute org-trello's startup message with the PREFIX-KEYBINDING."
-  (orgtrello-utils-replace-in-string "#PREFIX#" prefix-keybinding "org-trello-ot is on! To begin with, hit #PREFIX# h or M-x 'org-trello-help-describing-bindings"))
+  (orgtrello-utils-replace-in-string
+   "#PREFIX#"
+   prefix-keybinding
+   "Hello master, help is `M-x org-trello-help-describing-bindings RET' or `#PREFIX# h'."))
 
-(defun orgtrello-setup-help-describing-bindings-template (keybinding list-command-binding-description)
-  "Standard Help message template from KEYBINDING and LIST-COMMAND-BINDING-DESCRIPTION."
-  (->> list-command-binding-description
+(defun orgtrello-setup-help-describing-bindings-template (keybinding
+                                                          command-binding-desc)
+  "Standard Help message template from KEYBINDING and COMMAND-BINDING-DESC."
+  (->> command-binding-desc
        (--map (let ((command        (car it))
                     (prefix-binding (cadr it))
                     (help-msg       (cadr (cdr it))))
-                (concat keybinding " " prefix-binding " - M-x " (symbol-name command) " - " help-msg)))
+                (concat keybinding " "
+                        prefix-binding " - M-x "
+                        (symbol-name command) " - "
+                        help-msg)))
        (s-join "\n")))
 
-(defun orgtrello-setup-install-local-keybinding-map (prev-mode-prefix-keybind mode-prefix-keybind interactive-command-binding-to-install)
+(defun orgtrello-setup-install-local-keybinding-map (prev-mode-prefix-keybind
+                                                     mode-prefix-keybind
+                                                     interactive-command-binding)
   "PREV-MODE-PREFIX-KEYBIND old prefix keybinding.
 MODE-PREFIX-KEYBIND new prefix keybinding
-INTERACTIVE-COMMAND-BINDING-TO-INSTALL the list of commands to install
+INTERACTIVE-COMMAND-BINDING the list of commands to install
 Supercede the old prefix keybinding with the new one."
   (--map (-let (((command binding _) it))
            ;; unset previous binding
-           (define-key org-trello-mode-map (kbd (concat prev-mode-prefix-keybind " " binding)) nil)
+           (define-key org-trello-mode-map
+             (kbd (concat prev-mode-prefix-keybind " " binding)) nil)
            ;; set new binding
-           (define-key org-trello-mode-map (kbd (concat mode-prefix-keybind " " binding)) command))
-         interactive-command-binding-to-install))
+           (define-key org-trello-mode-map
+             (kbd (concat mode-prefix-keybind " " binding)) command))
+         interactive-command-binding))
 
-(defun orgtrello-setup-remove-local-keybinding-map (prev-mode-prefix-keybind interactive-command-binding-to-install)
+(defun orgtrello-setup-remove-local-keybinding-map (prev-mode-prefix-keybind
+                                                    interactive-command-binding)
   "Remove the default org-trello bindings.
 PREV-MODE-PREFIX-KEYBIND old prefix keybinding
-INTERACTIVE-COMMAND-BINDING-TO-INSTALL the list of commands to install."
+INTERACTIVE-COMMAND-BINDING the list of commands to install."
   (--map (-let (((command binding _) it))
            (define-key org-trello-mode-map (kbd (concat prev-mode-prefix-keybind " " binding)) nil))
-         interactive-command-binding-to-install))
+         interactive-command-binding))
 
 (defun orgtrello-setup-remove-local-prefix-mode-keybinding (keybinding)
   "Install the new default org-trello mode KEYBINDING."
-  (orgtrello-setup-remove-local-keybinding-map keybinding org-trello-interactive-command-binding-couples))
+  (orgtrello-setup-remove-local-keybinding-map
+   keybinding
+   org-trello-interactive-command-binding-couples))
 
 (defun orgtrello-setup-install-local-prefix-mode-keybinding (keybinding)
   "Install the default org-trello mode KEYBINDING."
-  (orgtrello-setup-install-local-keybinding-map keybinding keybinding org-trello-interactive-command-binding-couples))
+  (orgtrello-setup-install-local-keybinding-map
+   keybinding
+   keybinding
+   org-trello-interactive-command-binding-couples))
 
 (defun orgtrello-setup-display-current-buffer-setup ()
   "Display current buffer's setup."
@@ -256,20 +275,38 @@ INTERACTIVE-COMMAND-BINDING-TO-INSTALL the list of commands to install."
         :org-keyword-trello-list-names org-trello--org-keyword-trello-list-names
         :org-keyword-id-name org-trello--hmap-list-orgkeyword-id-name))
 
-(defvar org-trello--previous-prefix-keybinding "C-c o"
-  "Previous or current mode prefix keybinding.")
-(defcustom org-trello-current-prefix-keybinding "C-c o"
+(defun orgtrello-setup-set-binding (current-prefix-binding-variable
+                                    prefix-keybinding)
+  "Install the default org-trello mode keybinding.
+CURRENT-PREFIX-BINDING-VARIABLE is the current prefix binding variable to set.
+PREFIX-KEYBINDING is the new binding."
+  (when prefix-keybinding
+    (let ((prev-prefix-keybinding (eval current-prefix-binding-variable)))
+      (orgtrello-log-msg orgtrello-log-trace
+                         "variable: %s\ncurrent value: %s\nnew binding: %s"
+                         current-prefix-binding-variable
+                         prev-prefix-keybinding
+                         prefix-keybinding)
+      ;; goal is to set the current-prefix-binding-variable with the value prefix-keybinding
+      (orgtrello-setup-install-local-keybinding-map
+       prev-prefix-keybinding
+       prefix-keybinding
+       org-trello-interactive-command-binding-couples)
+      ;; update the current-prefix-binding-variable with the new binding
+      (set current-prefix-binding-variable prefix-keybinding))))
+
+(defconst org-trello-default-prefix-keybinding "C-c o"
+  "Default org-trello's prefix keybinding.")
+
+;;;###autoload
+(defcustom org-trello-current-prefix-keybinding nil
   "The default prefix keybinding to execute org-trello commands."
   :type 'string
   :require 'org-trello
-  :set (lambda (variable prefix-keybinding)
-         "Install the new default org-trello mode keybinding."
-         ;; goal is to set the variable with the value prefix-keybinding
-         (orgtrello-setup-install-local-keybinding-map org-trello--previous-prefix-keybinding prefix-keybinding org-trello-interactive-command-binding-couples)
-         ;; update the variables
-         `(set org-trello--previous-prefix-keybinding ,variable)
-         (set variable prefix-keybinding))
+  :set 'orgtrello-setup-set-binding
   :group 'org-trello)
+
+(custom-set-variables `(org-trello-current-prefix-keybinding ,org-trello-default-prefix-keybinding))
 
 (defalias '*ORGTRELLO/MODE-PREFIX-KEYBINDING* 'org-trello-current-prefix-keybinding)
 

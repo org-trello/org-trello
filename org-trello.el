@@ -108,9 +108,8 @@ Please consider upgrading Emacs." emacs-version) "Error message when installing 
 
 
 (require 'org-trello-utils)
-(require 'org-trello-setup)
-
 (require 'org-trello-log)
+(require 'org-trello-setup)
 (require 'org-trello-action)
 (require 'org-trello-controller)
 (require 'org-trello-buffer)
@@ -376,7 +375,13 @@ If UNASSIGN is not nil, unassign oneself from the card."
 (defun org-trello-help-describing-bindings ()
   "A simple message to describe the standard bindings used."
   (interactive)
-  (org-trello-apply `(message ,(orgtrello-setup-help-describing-bindings-template org-trello-current-prefix-keybinding org-trello-interactive-command-binding-couples)) nil nil 'no-log))
+  (org-trello-apply
+   `(message ,(orgtrello-setup-help-describing-bindings-template
+               org-trello-current-prefix-keybinding
+               org-trello-interactive-command-binding-couples))
+   nil
+   nil
+   'no-log))
 
 (defalias 'org-trello/help-describing-bindings 'org-trello-help-describing-bindings)
 
@@ -419,11 +424,14 @@ opens new issue in org-trello's github tracker."
   :type 'hook
   :group 'org-trello)
 
+(setq org-trello-mode-on-hook) ;; for dev
 (add-hook 'org-trello-mode-on-hook 'orgtrello-controller-mode-on-hook-fn)
 
 (add-hook 'org-trello-mode-on-hook (lambda ()
                                      ;; install the bindings
-                                     (orgtrello-setup-install-local-prefix-mode-keybinding org-trello-current-prefix-keybinding)
+                                     (orgtrello-setup-install-local-prefix-mode-keybinding (if (boundp 'org-trello-current-prefix-keybinding)
+                                                                                               org-trello-current-prefix-keybinding
+                                                                                             org-trello-default-prefix-keybinding))
                                      ;; Overwrite the org-mode-map
                                      (define-key org-trello-mode-map [remap org-end-of-line] 'orgtrello-buffer-end-of-line)
                                      (define-key org-trello-mode-map [remap org-return] 'orgtrello-buffer-org-return)
@@ -433,18 +441,21 @@ opens new issue in org-trello's github tracker."
                                      (orgtrello-log-msg orgtrello-log-no-log (orgtrello-setup-startup-message org-trello-current-prefix-keybinding)))
           'do-append)
 
+(setq org-trello-mode-off-hook) ;; for dev
 (add-hook 'org-trello-mode-off-hook 'orgtrello-controller-mode-off-hook-fn)
 
 (add-hook 'org-trello-mode-off-hook (lambda ()
                                       ;; remove the bindings when org-trello mode off
-                                      (orgtrello-setup-remove-local-prefix-mode-keybinding org-trello-current-prefix-keybinding)
+                                      (orgtrello-setup-remove-local-prefix-mode-keybinding (if (boundp 'org-trello-current-prefix-keybinding)
+                                                                                               org-trello-current-prefix-keybinding
+                                                                                             org-trello-default-prefix-keybinding))
                                       ;; remove mapping override
                                       (define-key org-trello-mode-map [remap org-end-of-line] nil)
                                       (define-key org-trello-mode-map [remap org-return] nil)
                                       (define-key org-trello-mode-map [remap org-ctrl-c-ret] nil)
                                       (define-key org-trello-mode-map [remap org-archive-subtree] nil)
                                       ;; a little message in the minibuffer to notify the user
-                                      (orgtrello-log-msg orgtrello-log-no-log "org-trello-ot is off!"))
+                                      (orgtrello-log-msg orgtrello-log-no-log "Wish you well, master."))
           'do-append)
 
 (defcustom org-trello-files nil

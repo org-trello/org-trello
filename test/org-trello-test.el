@@ -205,11 +205,14 @@
                    (org-trello-delete-setup)))))
 
 (ert-deftest test-org-trello-help-describing-bindings ()
-  (should (equal :res
-                 (with-mock
-                   (mock (orgtrello-setup-help-describing-bindings-template org-trello-current-prefix-keybinding org-trello-interactive-command-binding-couples) => :something)
-                   (mock (org-trello-apply `(message :something) nil nil 'no-log) => :res)
-                   (org-trello-help-describing-bindings)))))
+  (should (equal :result-help
+                 (let ((org-trello-current-prefix-keybinding "C-c z"))
+                   (with-mock
+                     (mock (orgtrello-setup-help-describing-bindings-template
+                            org-trello-current-prefix-keybinding
+                            org-trello-interactive-command-binding-couples) => :something)
+                     (mock (org-trello-apply `(message :something) nil nil 'no-log) => :result-help)
+                     (org-trello-help-describing-bindings))))))
 
 (ert-deftest test-org-trello-create-board-and-install-metadata ()
   (should (equal :res

@@ -34,9 +34,20 @@
   (require 'org-trello)
   ;; reload bindings
   (custom-set-variables
-   '(org-trello-current-prefix-keybinding "C-c z")
+   '(org-trello-current-prefix-keybinding "C-c x")
    '(orgtrello-log-level orgtrello-log-no-log)) ;; orgtrello-log-trace
   (orgtrello-log-msg orgtrello-log-info "Code loaded!"))
+
+(defun org-trello-dev-remove-bindings ()
+  "Remove bindings."
+  (interactive)
+  ;; Remove old bindings
+  (mapc 'orgtrello-setup-remove-local-prefix-mode-keybinding '("C-c o"
+                                                               "C-c a"
+                                                               "C-c x"
+                                                               "C-c z"))
+  ;; install the default one
+  (orgtrello-setup-install-local-prefix-mode-keybinding "C-c o"))
 
 (defun org-trello-dev-find-unused-definitions ()
   "Find unused definitions."

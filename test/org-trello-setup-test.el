@@ -2,6 +2,18 @@
 (require 'ert)
 (require 'el-mock)
 
+(ert-deftest test-orgtrello-setup-set-binding ()
+  (should (string=
+           "C-c x"
+           (let ((org-trello-current-prefix-keybinding "C-c a"))
+             (with-mock
+               (mock (orgtrello-setup-install-local-keybinding-map
+                      "C-c a"
+                      "C-c x"
+                      org-trello-interactive-command-binding-couples) => :new-binding-set)
+               (orgtrello-setup-set-binding 'org-trello-current-prefix-keybinding "C-c x")))))
+  (should-not (orgtrello-setup-set-binding 'org-trello-current-prefix-keybinding nil)))
+
 (ert-deftest test-orgtrello-setup-remove-local-keybinding-map ()
   (should (equal
            '(:result-defined-binding)
@@ -11,10 +23,13 @@
              (orgtrello-setup-remove-local-keybinding-map "C-c X" '(('command-fn "z" "doc description")))))))
 
 (ert-deftest test-orgtrello-setup-help-describing-bindings-template ()
-  (should (equal "C-c o a - M-x some-action - some-description
-C-c o 2 - M-x action2 - some other description" (orgtrello-setup-help-describing-bindings-template "C-c o" '((some-action "a" "some-description")
-                                                                                                             (action2 "2" "some other description")))))
-  (should (equal
+  (should (string= "C-c o a - M-x some-action - some-description
+C-c o 2 - M-x action2 - some other description"
+                   (orgtrello-setup-help-describing-bindings-template
+                    "C-c o"
+                    '((some-action "a" "some-description")
+                      (action2 "2" "some other description")))))
+  (should (string=
            "C-c z v - M-x org-trello-version - Display the current version installed.
 C-c z i - M-x org-trello-install-key-and-token - Install the keys and the access-token.
 C-c z I - M-x org-trello-install-board-metadata - Select the board and attach the todo, doing and done list.
@@ -36,21 +51,24 @@ C-c z j - M-x org-trello-jump-to-trello-card - Jump to card in browser.
 C-c z J - M-x org-trello-jump-to-trello-board - Open the browser to your current trello board.
 C-c z B - M-x org-trello-bug-report - Prepare a bug report message. With C-u modifier, opens a new issue in org-trello's github tracker too.
 C-c z h - M-x org-trello-help-describing-bindings - This help message."
-           (let ((org-trello-current-prefix-keybinding "C-c z"))
-             (orgtrello-setup-help-describing-bindings-template org-trello-current-prefix-keybinding org-trello-interactive-command-binding-couples)))))
+           (orgtrello-setup-help-describing-bindings-template
+            "C-c z"
+            org-trello-interactive-command-binding-couples))))
 
 (ert-deftest test-orgtrello-setup-compute-url ()
   (should (string= "https://trello.com/some-uri"
                    (orgtrello-setup-compute-url "/some-uri"))))
 
 (ert-deftest test-orgtrello-setup-startup-message ()
-  (should (equal "org-trello-ot is on! To begin with, hit C-c o h or M-x 'org-trello-help-describing-bindings"
+  (should (equal "Hello master, help is `M-x org-trello-help-describing-bindings RET' or `C-c o h'."
                  (orgtrello-setup-startup-message "C-c o"))))
 
 (ert-deftest test-orgtrello-setup-remove-local-prefix-mode-keybinding ()
   (should (equal :res
                  (with-mock
-                   (mock (orgtrello-setup-remove-local-keybinding-map :keybinding org-trello-interactive-command-binding-couples) => :res)
+                   (mock (orgtrello-setup-remove-local-keybinding-map
+                          :keybinding
+                          org-trello-interactive-command-binding-couples) => :res)
                    (orgtrello-setup-remove-local-prefix-mode-keybinding :keybinding)))))
 
 (ert-deftest test-orgtrello-setup-install-local-prefix-mode-keybinding ()
