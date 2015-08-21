@@ -178,25 +178,29 @@
 (ert-deftest test-org-trello-assign-me ()
   (should (equal :res
                  (with-mock
-                   (mock (current-buffer) => :buffer)
-                   (mock (org-trello-apply '(org-trello-log-light-checks-and-do "Unassign me from card" orgtrello-controller-do-unassign-me) :buffer) => :res)
+                   (mock (org-trello-apply
+                          '(org-trello-log-light-checks-and-do "Unassign me from card" orgtrello-controller-do-unassign-me)
+                          'do-save-buffer-after-computation) => :res)
                    (org-trello-assign-me 'unassign))))
   (should (equal :res2
                  (with-mock
-                   (mock (current-buffer) => :buffer2)
-                   (mock (org-trello-apply '(org-trello-log-light-checks-and-do "Assign myself to card" orgtrello-controller-do-assign-me) :buffer2) => :res2)
+                   (mock (org-trello-apply
+                          '(org-trello-log-light-checks-and-do "Assign myself to card" orgtrello-controller-do-assign-me)
+                          'do-save-buffer-after-computation) => :res2)
                    (org-trello-assign-me)))))
 
 (ert-deftest test-org-trello-check-setup ()
   (should (equal :res
                  (with-mock
-                   (mock (org-trello-apply '(org-trello-log-strict-checks-and-do "Checking setup." orgtrello-controller-check-trello-connection) nil nil 'no-log) => :res)
+                   (mock (org-trello-apply '(org-trello-log-strict-checks-and-do "Checking setup." orgtrello-controller-check-trello-connection) nil 'no-log) => :res)
                    (org-trello-check-setup)))))
 
 (ert-deftest test-org-trello-delete-setup ()
   (should (equal :res
                  (with-mock
-                   (mock (org-trello-apply '(org-trello-log-strict-checks-and-do "Delete current org-trello setup" orgtrello-controller-delete-setup) (current-buffer)) => :res)
+                   (mock (org-trello-apply
+                          '(org-trello-log-strict-checks-and-do "Delete current org-trello setup" orgtrello-controller-delete-setup)
+                          'do-save-buffer-after-computation) => :res)
                    (org-trello-delete-setup)))))
 
 (ert-deftest test-org-trello-help-describing-bindings ()
@@ -206,7 +210,7 @@
                      (mock (orgtrello-setup-help-describing-bindings-template
                             org-trello-current-prefix-keybinding
                             org-trello-interactive-command-binding-couples) => :something)
-                     (mock (org-trello-apply `(message :something) nil nil 'no-log) => :result-help)
+                     (mock (org-trello-apply `(message :something) nil 'no-log) => :result-help)
                      (org-trello-help-describing-bindings))))))
 
 (ert-deftest test-org-trello-create-board-and-install-metadata ()

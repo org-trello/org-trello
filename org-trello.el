@@ -141,13 +141,13 @@ Please consider upgrading Emacs." emacs-version)
     (save-excursion
       (apply (car computation) (cdr computation)))))
 
-(defun org-trello-apply (comp &optional current-buffer-to-save nolog-p)
+(defun org-trello-apply (comp &optional save-buffer-p nolog-p)
   "Apply org-trello computation COMP.
-When CURRENT-BUFFER-TO-SAVE (buffer name) is provided, save such buffer.
+When SAVE-BUFFER-P is provided, save current buffer at the end of computation.
 when NOLOG-P is specified, no output log."
   (lexical-let ((computation        comp)
                 (prefix-log-message (cadr comp))
-                (buffer-to-save     current-buffer-to-save)
+                (buffer-to-save     (when save-buffer-p (buffer-file-name)))
                 (nolog-flag         nolog-p))
     (deferred:$
       (deferred:next (lambda () (save-excursion
@@ -402,7 +402,7 @@ If UNASSIGN is not nil, unassign oneself from the card."
                                 orgtrello-controller-do-unassign-me)
                             '("Assign myself to card"
                               orgtrello-controller-do-assign-me)))
-                    (current-buffer)))
+                    'do-save-buffer-after-computation))
 
 (defalias 'org-trello/assign-me 'org-trello-assign-me)
 
@@ -424,7 +424,7 @@ If UNASSIGN is not nil, unassign oneself from the card."
   (org-trello-apply '(org-trello-log-strict-checks-and-do
                       "Delete current org-trello setup"
                       orgtrello-controller-delete-setup)
-                    (current-buffer)))
+                    'do-save-buffer-after-computation))
 
 (defalias 'org-trello/delete-setup 'org-trello-delete-setup)
 
@@ -436,7 +436,6 @@ If UNASSIGN is not nil, unassign oneself from the card."
    `(message ,(orgtrello-setup-help-describing-bindings-template
                org-trello-current-prefix-keybinding
                org-trello-interactive-command-binding-couples))
-   nil
    nil
    'no-log))
 
