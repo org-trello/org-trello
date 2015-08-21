@@ -156,7 +156,8 @@ when NOLOG-P is specified, no output log."
                 (buffer-to-save     (when save-buffer-p (buffer-file-name)))
                 (nolog-flag         nolog-p))
     (deferred:$
-      (deferred:next #'org-trello--apply-deferred-with-quit)
+      (deferred:next (lambda ()
+                       (org-trello--apply-deferred-with-quit computation)))
       (deferred:nextc it (lambda ()
                            (when buffer-to-save
                              (orgtrello-buffer-save-buffer buffer-to-save))
