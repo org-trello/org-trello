@@ -34,7 +34,7 @@
   (require 'org-trello)
   ;; reload bindings
   (custom-set-variables
-   '(org-trello-current-prefix-keybinding "C-c x")
+   ;; '(org-trello-current-prefix-keybinding "C-c o")
    '(orgtrello-log-level orgtrello-log-no-log)) ;; orgtrello-log-trace
   (orgtrello-log-msg orgtrello-log-info "Code loaded!"))
 
