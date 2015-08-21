@@ -71,24 +71,24 @@ Otherwise, fallback to the current buffer name."
         (read-string "Buffer name: ")
       (buffer-name (current-buffer)))))
 
-;; (ert-deftest test-orgtrello-tests-ask-for-buffer-or-fallback-to-default ()
-;;   (should (equal :default-buffer
-;;                  (with-mock
-;;                    (mock (region-active-p) => nil)
-;;                    (mock (current-buffer) => :current)
-;;                    (mock (buffer-name :current) => :default-buffer)
-;;                    (orgtrello-tests-ask-for-buffer-or-fallback-to-default))))
-;;   (should (equal :result-with-region
-;;                  (with-mock
-;;                    (mock (region-active-p) => t)
-;;                    (mock (region-beginning) => :start)
-;;                    (mock (region-end) => :end)
-;;                    (mock (buffer-substring :start :end) => :result-with-region)
-;;                    (orgtrello-tests-ask-for-buffer-or-fallback-to-default))))
-;;   (should (equal :res
-;;                  (with-mock
-;;                    (mock (read-string "Buffer name: ") => :res)
-;;                    (orgtrello-tests-ask-for-buffer-or-fallback-to-default :buffer)))))
+(ert-deftest test-orgtrello-tests-ask-for-buffer-or-fallback-to-default ()
+  (should (equal :default-buffer
+                 (with-mock
+                   (mock (region-active-p) => nil)
+                   (mock (current-buffer) => :current)
+                   (mock (buffer-name :current) => :default-buffer)
+                   (orgtrello-tests-ask-for-buffer-or-fallback-to-default))))
+  (should (equal :result-with-region
+                 (with-mock
+                   (mock (region-active-p) => t)
+                   (mock (region-beginning) => :start)
+                   (mock (region-end) => :end)
+                   (mock (buffer-substring :start :end) => :result-with-region)
+                   (orgtrello-tests-ask-for-buffer-or-fallback-to-default))))
+  (should (equal :res
+                 (with-mock
+                   (mock (read-string "Buffer name: ") => :res)
+                   (orgtrello-tests-ask-for-buffer-or-fallback-to-default :buffer)))))
 
 (defun orgtrello-tests-interactive-number-of (regexp &optional ask-buffer)
   "Given a REGEXP, compute a number of occurrences.
@@ -166,7 +166,7 @@ Otherwise, default to current buffer."
       (let ((fn-name (helm-comp-read "Next uncovered function: " uncovered-functions)))
         (-if-let (pos (save-excursion
                         (goto-char (point-min))
-                        (search-forward fn-name)))
+                        (search-forward (format "\(defun %s" fn-name))))
             (goto-char pos)
           (message "Curiously enough, I did not find '%s'... Sorry about that."
                    fn-name)))
