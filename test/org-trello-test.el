@@ -2,14 +2,9 @@
 (require 'ert)
 (require 'el-mock)
 
-;; (ert-deftest test-org-trello-apply-deferred ()
-;;   (should (equal :res
-;;                  (with-mock
-;;                    (mock (apply 'fn-name '(arg0 arg1))      => :res)
-;;                    (mock (save-excursion :res)              => :res)
-;;                    (mock (current-buffer)                   => :buffer)
-;;                    (mock (with-current-buffer :buffer :res) => :res)
-;;                    (org-trello-apply-deferred '(fn-name arg0 arg1))))))
+(ert-deftest test-org-trello-apply-deferred ()
+  (should (equal 11
+                 (org-trello-apply-deferred '((lambda (a b) (+ a b)) 1 10)))))
 
 (ert-deftest test-org-trello-version ()
   (should (string= "org-trello - version: xyz"
