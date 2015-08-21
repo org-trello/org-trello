@@ -141,15 +141,13 @@ Please consider upgrading Emacs." emacs-version)
     (save-excursion
       (apply (car computation) (cdr computation)))))
 
-(defun org-trello-apply (comp &optional current-buffer-to-save reload-org-setup nolog-p)
+(defun org-trello-apply (comp &optional current-buffer-to-save nolog-p)
   "Apply org-trello computation COMP.
 When CURRENT-BUFFER-TO-SAVE (buffer name) is provided, save such buffer.
-When RELOAD-ORG-SETUP is provided, reload the org setup.
 when NOLOG-P is specified, no output log."
   (lexical-let ((computation        comp)
                 (prefix-log-message (cadr comp))
                 (buffer-to-save     current-buffer-to-save)
-                (reload-setup       reload-org-setup)
                 (nolog-flag         nolog-p))
     (deferred:$
       (deferred:next (lambda () (save-excursion
@@ -159,8 +157,6 @@ when NOLOG-P is specified, no output log."
         (lambda ()
           (when buffer-to-save
             (orgtrello-buffer-save-buffer buffer-to-save))
-          (when reload-setup
-            (orgtrello-action-reload-setup))
           (unless nolog-flag
             (orgtrello-log-msg orgtrello-log-info
                                "%s - Done!"
@@ -417,7 +413,7 @@ If UNASSIGN is not nil, unassign oneself from the card."
   (org-trello-apply '(org-trello-log-strict-checks-and-do
                       "Checking setup."
                       orgtrello-controller-check-trello-connection)
-                    nil nil 'no-log))
+                    nil 'no-log))
 
 (defalias 'org-trello/check-setup 'org-trello-check-setup)
 
