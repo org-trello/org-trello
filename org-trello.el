@@ -167,7 +167,7 @@ when NOLOG-P is specified, no output log."
                                prefix-log-message))))
       (deferred:error it
         (-partial
-         orgtrello-log-msg
+         #'orgtrello-log-msg
          orgtrello-log-error
          "Main apply function - Problem during execution - '%s'!")))))
 
