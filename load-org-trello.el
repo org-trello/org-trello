@@ -55,8 +55,8 @@
   (let ((filename "/tmp/org-trello-find-unused-definitions.el"))
     (with-temp-file filename
       (erase-buffer)
-      (mapc (lambda (it)
-              (insert-file-contents it)
+      (mapc (lambda (file)
+              (insert-file-contents file)
               (goto-char (point-max))) org-trello--namespaces)
       (emacs-lisp-mode)
       (write-file filename)
