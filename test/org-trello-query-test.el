@@ -289,12 +289,12 @@
 (ert-deftest test-orgtrello-query--standard-error-callback ()
   (should (equal "org-trello - Detailed response: [cl-struct-request-response nil nil nil \"some error thrown\" nil nil nil nil nil nil nil nil nil]"
                  (let ((orgtrello-log-level orgtrello-log-debug))
-                   (orgtrello-query--standard-error-callback (make-request-response :error-thrown "some error thrown"))))))
+                   (orgtrello-query--standard-error-callback :response (make-request-response :error-thrown "some error thrown"))))))
 
 (ert-deftest test-orgtrello-query--standard-success-callback ()
   (string= "org-trello - Data: \"w00t\""
            (let ((orgtrello-log-level orgtrello-log-debug))
-             (orgtrello-query--standard-success-callback (make-request-response :data "w00t")))))
+             (orgtrello-query--standard-success-callback :response (make-request-response :data "w00t")))))
 
 (provide 'org-trello-query-test)
 ;;; org-trello-query-test.el ends here

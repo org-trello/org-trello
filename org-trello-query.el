@@ -14,17 +14,19 @@
   "Compute the trello url from the given SERVER and URI."
   (format "%s%s" server uri))
 
-(defun orgtrello-query--standard-error-callback (response)
+(defun orgtrello-query--standard-error-callback (&rest response)
   "Standard error callback which expects a RESPONSE.
 Simply displays an error message in the minibuffer with the error code."
-  (orgtrello-log-msg orgtrello-log-info "client - Problem during request - error-thrown: %s" (request-response-error-thrown response))
-  (orgtrello-log-msg orgtrello-log-debug "Detailed response: %S" response))
+  (let ((resp (plist-get response :response)))
+    (orgtrello-log-msg orgtrello-log-info "client - Problem during request - error-thrown: %s" (request-response-error-thrown resp))
+    (orgtrello-log-msg orgtrello-log-debug "Detailed response: %S" resp)))
 
-(defun orgtrello-query--standard-success-callback (response)
+(defun orgtrello-query--standard-success-callback (&rest response)
   "Standard success callback with expects a RESPONSE.
 Simply displays a success message in the minibuffer."
-  (let ((data (request-response-data response)))
-    (orgtrello-log-msg orgtrello-log-debug "Response: %S" response)
+  (let* ((resp (plist-get response :response))
+         (data (request-response-data resp)))
+    (orgtrello-log-msg orgtrello-log-debug "Response: %S" resp)
     (orgtrello-log-msg orgtrello-log-debug "Data: %S" data)))
 
 (defun orgtrello-query--authentication-params ()
