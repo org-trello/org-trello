@@ -2,9 +2,13 @@
 (require 'ert)
 (require 'el-mock)
 
-(ert-deftest test-org-trello-apply-deferred ()
+(ert-deftest test-org-trello--apply-deferred ()
   (should (equal 11
-                 (org-trello-apply-deferred '((lambda (a b) (+ a b)) 1 10)))))
+                 (org-trello--apply-deferred '((lambda (a b) (+ a b)) 1 10)))))
+
+(ert-deftest test-org-trello--apply-deferred-with-quit ()
+  (should (equal 30
+                 (org-trello--apply-deferred-with-quit '((lambda (a b) (+ a b)) 10 20)))))
 
 (ert-deftest test-org-trello-version ()
   (should (string= "org-trello - version: xyz"
@@ -69,7 +73,7 @@
 (ert-deftest test-org-trello-delete-card-comment ()
   (should (equal :res
                  (with-mock
-                   (mock (org-trello-apply-deferred '(org-trello-log-strict-checks-and-do "Remove current comment at point" orgtrello-controller-do-delete-card-comment)) => :res)
+                   (mock (org-trello--apply-deferred '(org-trello-log-strict-checks-and-do "Remove current comment at point" orgtrello-controller-do-delete-card-comment)) => :res)
                    (org-trello-delete-card-comment)))))
 
 (ert-deftest test-org-trello-show-board-labels ()
@@ -81,58 +85,58 @@
 (ert-deftest test-org-trello-sync-card ()
   (should (equal :res
                  (with-mock
-                   (mock (org-trello-apply-deferred
+                   (mock (org-trello--apply-deferred
                           '(org-trello-log-strict-checks-and-do "Request 'sync entity with structure from trello" orgtrello-controller-checks-then-sync-card-from-trello)) => :res)
                    (org-trello-sync-card 'from))))
   (should (equal :res2
                  (with-mock
-                   (mock (org-trello-apply-deferred
+                   (mock (org-trello--apply-deferred
                           '(org-trello-log-strict-checks-and-do "Request 'sync entity with structure to trello" orgtrello-controller-checks-then-sync-card-to-trello)) => :res2)
                    (org-trello-sync-card)))))
 
 (ert-deftest test-org-trello-sync-comment ()
   (should (equal :res
                  (with-mock
-                   (mock (org-trello-apply-deferred '(org-trello-log-strict-checks-and-do "Remove current comment at point" orgtrello-controller-do-delete-card-comment)) => :res)
+                   (mock (org-trello--apply-deferred '(org-trello-log-strict-checks-and-do "Remove current comment at point" orgtrello-controller-do-delete-card-comment)) => :res)
                    (org-trello-sync-comment 'from))))
   (should (equal :res2
                  (with-mock
-                   (mock (org-trello-apply-deferred '(org-trello-log-strict-checks-and-do "Sync comment to trello" orgtrello-controller-do-sync-card-comment)) => :res2)
+                   (mock (org-trello--apply-deferred '(org-trello-log-strict-checks-and-do "Sync comment to trello" orgtrello-controller-do-sync-card-comment)) => :res2)
                    (org-trello-sync-comment)))))
 
 (ert-deftest test-org-trello-sync-buffer ()
   (should
    (equal :res
           (with-mock
-            (mock (org-trello-apply-deferred
+            (mock (org-trello--apply-deferred
                    '(org-trello-log-strict-checks-and-do "Request 'sync org buffer from trello board'" orgtrello-controller-do-sync-buffer-from-trello)) => :res)
             (org-trello-sync-buffer 'from))))
   (should
    (equal :res2
           (with-mock
-            (mock (org-trello-apply-deferred '(org-trello-log-strict-checks-and-do "Request 'sync org buffer to trello board'" orgtrello-controller-do-sync-buffer-to-trello)) => :res2)
+            (mock (org-trello--apply-deferred '(org-trello-log-strict-checks-and-do "Request 'sync org buffer to trello board'" orgtrello-controller-do-sync-buffer-to-trello)) => :res2)
             (org-trello-sync-buffer)))))
 
 (ert-deftest test-org-trello-kill-entity ()
   (should (equal :res
                  (with-mock
-                   (mock (org-trello-apply-deferred '(org-trello-log-strict-checks-and-do "Delete all cards" orgtrello-controller-do-delete-entities)) => :res)
+                   (mock (org-trello--apply-deferred '(org-trello-log-strict-checks-and-do "Delete all cards" orgtrello-controller-do-delete-entities)) => :res)
                    (org-trello-kill-entity 'from))))
   (should (equal :res2
                  (with-mock
-                   (mock (org-trello-apply-deferred '(org-trello-log-strict-checks-and-do "Delete entity at point (card/checklist/item)" orgtrello-controller-checks-then-delete-simple)) => :res2)
+                   (mock (org-trello--apply-deferred '(org-trello-log-strict-checks-and-do "Delete entity at point (card/checklist/item)" orgtrello-controller-checks-then-delete-simple)) => :res2)
                    (org-trello-kill-entity)))))
 
 (ert-deftest test-org-trello-kill-cards ()
   (should (equal :res
                  (with-mock
-                   (mock (org-trello-apply-deferred '(org-trello-log-strict-checks-and-do "Delete Cards" orgtrello-controller-do-delete-entities)) => :res)
+                   (mock (org-trello--apply-deferred '(org-trello-log-strict-checks-and-do "Delete Cards" orgtrello-controller-do-delete-entities)) => :res)
                    (org-trello-kill-cards)))))
 
 (ert-deftest test-org-trello-archive-card ()
   (should (equal :res
                  (with-mock
-                   (mock (org-trello-apply-deferred '(org-trello-log-strict-checks-and-do "Archive Card at point" orgtrello-controller-checks-and-do-archive-card)) => :res)
+                   (mock (org-trello--apply-deferred '(org-trello-log-strict-checks-and-do "Archive Card at point" orgtrello-controller-checks-and-do-archive-card)) => :res)
                    (org-trello-archive-card)))))
 
 (ert-deftest test-org-trello-archive-cards ()
@@ -150,13 +154,13 @@
 (ert-deftest test-org-trello-install-board-metadata ()
   (should (equal :res
                  (with-mock
-                   (mock (org-trello-apply-deferred '(org-trello-log-light-checks-and-do "Install boards and lists" orgtrello-controller-do-install-board-and-lists)) => :res)
+                   (mock (org-trello--apply-deferred '(org-trello-log-light-checks-and-do "Install boards and lists" orgtrello-controller-do-install-board-and-lists)) => :res)
                    (org-trello-install-board-metadata)))))
 
 (ert-deftest test-org-trello-update-board-metadata ()
   (should (equal :res
                  (with-mock
-                   (mock (org-trello-apply-deferred '(org-trello-log-light-checks-and-do "Update board information" orgtrello-controller-do-update-board-metadata)) => :res)
+                   (mock (org-trello--apply-deferred '(org-trello-log-light-checks-and-do "Update board information" orgtrello-controller-do-update-board-metadata)) => :res)
                    (org-trello-update-board-metadata)))))
 
 (ert-deftest test-org-trello-jump-to-trello-card ()
@@ -216,7 +220,7 @@
 (ert-deftest test-org-trello-create-board-and-install-metadata ()
   (should (equal :res
                  (with-mock
-                   (mock (org-trello-apply-deferred '(org-trello-log-light-checks-and-do "Create board and lists" orgtrello-controller-do-create-board-and-install-metadata)) => :res)
+                   (mock (org-trello--apply-deferred '(org-trello-log-light-checks-and-do "Create board and lists" orgtrello-controller-do-create-board-and-install-metadata)) => :res)
                    (org-trello-create-board-and-install-metadata)))))
 
 (ert-deftest test-org-trello--bug-report ()

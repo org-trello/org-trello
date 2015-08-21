@@ -135,11 +135,17 @@ Please consider upgrading Emacs." emacs-version)
 
 
 
-(defun org-trello-apply-deferred (computation)
+(defun org-trello--apply-deferred-with-quit (computation)
+  "Apply the deferred COMPUTATION.
+Quit is permitted though."
+  (save-excursion
+    (with-local-quit
+      (apply (car computation) (cdr computation)))))
+
+(defun org-trello--apply-deferred (computation)
   "Apply the deferred COMPUTATION."
   (with-current-buffer (current-buffer)
-    (save-excursion
-      (apply (car computation) (cdr computation)))))
+    (org-trello--apply-deferred-with-quit computation)))
 
 (defun org-trello-apply (comp &optional save-buffer-p nolog-p)
   "Apply org-trello computation COMP.
@@ -150,17 +156,14 @@ when NOLOG-P is specified, no output log."
                 (buffer-to-save     (when save-buffer-p (buffer-file-name)))
                 (nolog-flag         nolog-p))
     (deferred:$
-      (deferred:next (lambda () (save-excursion
-                             (with-local-quit
-                               (apply (car computation) (cdr computation))))))
-      (deferred:nextc it
-        (lambda ()
-          (when buffer-to-save
-            (orgtrello-buffer-save-buffer buffer-to-save))
-          (unless nolog-flag
-            (orgtrello-log-msg orgtrello-log-info
-                               "%s - Done!"
-                               prefix-log-message))))
+      (deferred:next #'org-trello--apply-deferred-with-quit)
+      (deferred:nextc it (lambda ()
+                           (when buffer-to-save
+                             (orgtrello-buffer-save-buffer buffer-to-save))
+                           (unless nolog-flag
+                             (orgtrello-log-msg orgtrello-log-info
+                                                "%s - Done!"
+                                                prefix-log-message))))
       (deferred:error it
         (-partial
          #'orgtrello-log-msg
@@ -224,7 +227,7 @@ When FROM is set, this will delete the current card's comments."
   "Control first, then if ok, delete the comment at point.
 This will only work if you are the owner of the comment."
   (interactive)
-  (org-trello-apply-deferred '(org-trello-log-strict-checks-and-do
+  (org-trello--apply-deferred '(org-trello-log-strict-checks-and-do
                                "Remove current comment at point"
                                orgtrello-controller-do-delete-card-comment)))
 
@@ -245,7 +248,7 @@ This will only work if you are the owner of the comment."
   "Execute the sync of an entity and its structure to trello.
 If FROM is non nil, execute the sync entity and its structure from trello."
   (interactive "P")
-  (org-trello-apply-deferred
+  (org-trello--apply-deferred
    (cons 'org-trello-log-strict-checks-and-do
          (if from
              '("Request 'sync entity with structure from trello"
@@ -260,7 +263,7 @@ If FROM is non nil, execute the sync entity and its structure from trello."
   "Execute the sync of the card's comment at point.
 If FROM is non nil, remove the comment at point."
   (interactive "P")
-  (org-trello-apply-deferred
+  (org-trello--apply-deferred
    (cons 'org-trello-log-strict-checks-and-do
          (if from
              '("Remove current comment at point"
@@ -275,7 +278,7 @@ If FROM is non nil, remove the comment at point."
   "Execute the sync of the entire buffer to trello.
 If FROM is non nil, execute the sync of the entire buffer from trello."
   (interactive "P")
-  (org-trello-apply-deferred
+  (org-trello--apply-deferred
    (cons 'org-trello-log-strict-checks-and-do
          (if from
              '("Request 'sync org buffer from trello board'"
@@ -290,7 +293,7 @@ If FROM is non nil, execute the sync of the entire buffer from trello."
   "Execute the entity removal from trello and the buffer.
 If FROM is non nil, execute all entities removal from trello and buffer."
   (interactive "P")
-  (org-trello-apply-deferred
+  (org-trello--apply-deferred
    (cons 'org-trello-log-strict-checks-and-do
          (if from
              '("Delete all cards" orgtrello-controller-do-delete-entities)
@@ -303,7 +306,7 @@ If FROM is non nil, execute all entities removal from trello and buffer."
 (defun org-trello-kill-cards ()
   "Execute all entities removal from trello and buffer."
   (interactive)
-  (org-trello-apply-deferred '(org-trello-log-strict-checks-and-do
+  (org-trello--apply-deferred '(org-trello-log-strict-checks-and-do
                                "Delete Cards"
                                orgtrello-controller-do-delete-entities)))
 
@@ -313,7 +316,7 @@ If FROM is non nil, execute all entities removal from trello and buffer."
 (defun org-trello-archive-card ()
   "Execute archive card at point."
   (interactive)
-  (org-trello-apply-deferred '(org-trello-log-strict-checks-and-do
+  (org-trello--apply-deferred '(org-trello-log-strict-checks-and-do
                                "Archive Card at point"
                                orgtrello-controller-checks-and-do-archive-card)))
 
@@ -339,7 +342,7 @@ If FROM is non nil, execute all entities removal from trello and buffer."
 (defun org-trello-install-board-metadata ()
   "Control, if ok, trigger setup installation of trello board to sync with."
   (interactive)
-  (org-trello-apply-deferred
+  (org-trello--apply-deferred
    '(org-trello-log-light-checks-and-do
      "Install boards and lists"
      orgtrello-controller-do-install-board-and-lists)))
@@ -350,7 +353,7 @@ If FROM is non nil, execute all entities removal from trello and buffer."
 (defun org-trello-update-board-metadata ()
   "Control first, then if ok, trigger the update of the informations about the board."
   (interactive)
-  (org-trello-apply-deferred '(org-trello-log-light-checks-and-do
+  (org-trello--apply-deferred '(org-trello-log-light-checks-and-do
                                "Update board information"
                                orgtrello-controller-do-update-board-metadata)))
 
@@ -383,7 +386,7 @@ If FROM is not nil, jump from current card to board."
 (defun org-trello-create-board-and-install-metadata ()
   "Control first, then if ok, trigger the board creation."
   (interactive)
-  (org-trello-apply-deferred
+  (org-trello--apply-deferred
    '(org-trello-log-light-checks-and-do
      "Create board and lists"
      orgtrello-controller-do-create-board-and-install-metadata)))
