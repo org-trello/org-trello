@@ -464,8 +464,8 @@ BUFFER-NAME is the actual buffer to work on."
            card-name)))
       (deferred:error it
         (lambda (err) (orgtrello-log-msg orgtrello-log-error
-                                         "Catch error: %S"
-                                         err))))))
+                                    "Catch error: %S"
+                                    err))))))
 
 (defun orgtrello-controller--do-delete-card ()
   "Delete the card."
