@@ -281,7 +281,9 @@ INTERACTIVE-COMMAND-BINDING the list of commands to install."
 CURRENT-PREFIX-BINDING-VARIABLE is the current prefix binding variable to set.
 PREFIX-KEYBINDING is the new binding."
   (when prefix-keybinding
-    (let ((prev-prefix-keybinding (eval current-prefix-binding-variable)))
+    (let ((prev-prefix-keybinding (if (boundp current-prefix-binding-variable)
+                                      (eval current-prefix-binding-variable)
+                                    org-trello-default-prefix-keybinding)))
       (orgtrello-log-msg orgtrello-log-trace
                          "variable: %s\ncurrent value: %s\nnew binding: %s"
                          current-prefix-binding-variable
