@@ -2,6 +2,29 @@
 (require 'ert)
 (require 'el-mock)
 
+(ert-deftest test-orgtrello-entity-card-start-point ()
+  (should (eq 32
+              (orgtrello-tests-with-temp-buffer
+               ":PROPERTIES:
+...
+:END:
+
+* card
+* another card
+"
+               (orgtrello-entity-card-start-point))))
+  (should (eq 25
+              (orgtrello-tests-with-temp-buffer
+               ":PROPERTIES:
+...
+:END:
+
+* card
+* another card
+"
+               (orgtrello-entity-card-start-point)
+               -2))))
+
 (ert-deftest test-orgtrello-entity-org-checkbox-p ()
   (should (orgtrello-tests-with-temp-buffer
            "* card

@@ -2,6 +2,192 @@
 (require 'ert)
 (require 'el-mock)
 
+(ert-deftest test-orgtrello-controller-jump-to-board ()
+  (should (eq :browsed-url
+              (orgtrello-tests-with-temp-buffer
+               ":PROPERTIES:
+#+PROPERTY: board-id 123
+:END:
+"
+               (with-mock
+                 (mock (browse-url "https://trello.com/b/123") => :browsed-url)
+                 (orgtrello-controller-jump-to-board))))))
+
+(ert-deftest test-orgtrello-controller-do-unassign-me ()
+  (should (string= "
+:PROPERTIES:
+#+PROPERTY: orgtrello-user-user1 foo
+#+PROPERTY: orgtrello-user-user2 bar
+#+PROPERTY: orgtrello-user-user3 foobar
+#+PROPERTY: orgtrello-user-me user2
+:END:
+* card
+  :PROPERTIES:
+  :END:
+"
+                   (orgtrello-tests-with-temp-buffer-and-return-buffer-content
+                    "
+:PROPERTIES:
+#+PROPERTY: orgtrello-user-user1 foo
+#+PROPERTY: orgtrello-user-user2 bar
+#+PROPERTY: orgtrello-user-user3 foobar
+#+PROPERTY: orgtrello-user-me user2
+:END:
+* card
+  :PROPERTIES:
+  :orgtrello-users: user2
+  :END:
+"
+                    (orgtrello-controller-do-unassign-me))))
+  (should (string= "
+:PROPERTIES:
+#+PROPERTY: orgtrello-user-user1 foo
+#+PROPERTY: orgtrello-user-user2 bar
+#+PROPERTY: orgtrello-user-user3 foobar
+#+PROPERTY: orgtrello-user-me user2
+:END:
+* card
+  :PROPERTIES:
+  :orgtrello-users: user1
+  :END:
+"
+                   (orgtrello-tests-with-temp-buffer-and-return-buffer-content
+                    "
+:PROPERTIES:
+#+PROPERTY: orgtrello-user-user1 foo
+#+PROPERTY: orgtrello-user-user2 bar
+#+PROPERTY: orgtrello-user-user3 foobar
+#+PROPERTY: orgtrello-user-me user2
+:END:
+* card
+  :PROPERTIES:
+  :orgtrello-users: user2,user1
+  :END:
+"
+                    (orgtrello-controller-do-unassign-me)))))
+
+(ert-deftest test-orgtrello-controller-do-assign-me ()
+  (should (string= "
+:PROPERTIES:
+#+PROPERTY: orgtrello-user-user1 foo
+#+PROPERTY: orgtrello-user-user2 bar
+#+PROPERTY: orgtrello-user-user3 foobar
+#+PROPERTY: orgtrello-user-me user2
+:END:
+* card
+  :PROPERTIES:
+  :orgtrello-users: user2
+  :END:
+"
+                   (orgtrello-tests-with-temp-buffer-and-return-buffer-content
+                    "
+:PROPERTIES:
+#+PROPERTY: orgtrello-user-user1 foo
+#+PROPERTY: orgtrello-user-user2 bar
+#+PROPERTY: orgtrello-user-user3 foobar
+#+PROPERTY: orgtrello-user-me user2
+:END:
+* card
+"
+                    (orgtrello-controller-do-assign-me))))
+  (should (string= "
+:PROPERTIES:
+#+PROPERTY: orgtrello-user-user1 foo
+#+PROPERTY: orgtrello-user-user2 bar
+#+PROPERTY: orgtrello-user-user3 foobar
+#+PROPERTY: orgtrello-user-me user2
+:END:
+* card
+  :PROPERTIES:
+  :orgtrello-users: user2,user1
+  :END:
+"
+                   (orgtrello-tests-with-temp-buffer-and-return-buffer-content
+                    "
+:PROPERTIES:
+#+PROPERTY: orgtrello-user-user1 foo
+#+PROPERTY: orgtrello-user-user2 bar
+#+PROPERTY: orgtrello-user-user3 foobar
+#+PROPERTY: orgtrello-user-me user2
+:END:
+* card
+  :PROPERTIES:
+  :orgtrello-users: user1
+  :END:
+"
+                    (orgtrello-controller-do-assign-me)))))
+
+(ert-deftest test-orgtrello-controller--cleanup-org-entries ()
+  (should (string= "* card
+:PROPERTIES:
+:orgtrello-id: id
+:END:
+  - [ ] checklist :PROPERTIES: {\"orgtrello-id\":\"123\"}
+    - [ ] item :PROPERTIES: {\"orgtrello-id\":\"456\"}
+"
+                   (orgtrello-tests-with-temp-buffer-and-return-buffer-content
+                    "* card
+:PROPERTIES:
+:orgtrello-id: id
+:END:
+  - [ ] checklist :PROPERTIES: {\"orgtrello-id\":\"123\"}
+    - [ ] item :PROPERTIES: {\"orgtrello-id\":\"456\"}
+"
+                    (orgtrello-controller--cleanup-org-entries)))))
+
+(ert-deftest test-orgtrello-controller-sync-card-to-trello ()
+  (should (eq :result-no-sync-needed
+              (with-mock
+                (mock (orgtrello-buffer-card-checksum) => "same-checksum")
+                (mock (orgtrello-log-msg
+                       orgtrello-log-info
+                       "Card already synchronized, nothing to do!") => :result-no-sync-needed)
+                (orgtrello-tests-with-temp-buffer
+                 "* card
+:PROPERTIES:
+:orgtrello-id: 123
+:orgtrello-local-checksum: same-checksum
+:END:
+  description"
+                 (orgtrello-controller-sync-card-to-trello (orgtrello-buffer-entry-get-full-metadata) (current-buffer))
+                 -6))))
+  (should (eq :result-sync
+              (with-mock
+                (mock (orgtrello-buffer-card-checksum) => "checksum")
+                (mock (orgtrello-controller-execute-sync-entity-structure *) => :result-sync)
+                (orgtrello-tests-with-temp-buffer
+                 ":PROPERTIES:
+#+PROPERTY: board-name board
+:END:
+* card
+:PROPERTIES:
+:orgtrello-id: 123
+:orgtrello-local-checksum: old-checksum
+:END:
+  description
+"
+                 (orgtrello-controller-sync-card-to-trello (orgtrello-buffer-entry-get-full-metadata) (current-buffer))
+                 -6)))))
+
+(ert-deftest test-orgtrello-controller-delete-card ()
+  (should (eq
+           2
+           (with-mock
+             (mock (orgtrello-proxy-delete-entity *) => '(+ 1 1))
+             (orgtrello-tests-with-temp-buffer
+              "* card
+:PROPERTIES:
+:orgtrello-id: 55d77b041fd32d11d99eb787
+:END:
+  description
+  - [ ] cbx
+    - [ ] item
+* another card
+"
+              (progn
+                (goto-char (point-min))
+                (orgtrello-controller-delete-card (orgtrello-buffer-entry-get-full-metadata) (current-buffer))))))))
+
 (ert-deftest test-orgtrello-controller-do-delete-entities ()
   (should (equal :result-do-delete-entities
                  (with-mock
