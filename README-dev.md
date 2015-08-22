@@ -30,21 +30,24 @@ This is described in the [Namespaces](#namespaces) section.
 
 As there exists no namespace in emacs-lisp, I use:
 - convention in function names to determine the nature private/public
-- splitted file that represents namespaces.
+- splitted files that represents namespaces.
 
 ### Rules
 
 The conventions enforced in org-trello:
 
 - functions are prefixed with `orgtrello-<NAMESPACE-FILENAME>-<FUNCTION-NAME>`
-  - `<NAMESPACE-FILENAME>` is the filename without its path nor its extension. For example, `src/buffer.el` renders `buffer`
-  - `<FUNCTION-NAME>` is an alphanumeric symbol with `-` as separator. For example, `orgtrello-api-add-board` is a public function which does create a request to add a board.
-- private functions are prefixed with `--`. For example, `orgtrello-api--deal-with-optional-values` which is a private utility function to help in creating api request.
-- predicate functions are suffixed by `-p`. For example, `orgtrello-data-entity-card-p` which checks if the parameter entity is a card or not.
-
-For example:
-- in `org-trello-buffer.el`, all pure public functions are named `orgtrello-buffer-some-fn-name`
-- in `org-trello-input.el`, all pure private functions are named `orgtrello-input--some-private-fn`
+- `<NAMESPACE-FILENAME>` is the filename without its path nor its extension.
+For example, `src/buffer.el` renders `buffer`
+- `<FUNCTION-NAME>` is an alphanumeric symbol with `-` as separator.
+For example, `orgtrello-api-add-board` is a public function which does create a
+request to add a board.
+- private functions are prefixed with `--`. For example,
+`orgtrello-api--deal-with-optional-values` which is a private utility function
+to help in creating api request.
+- predicate functions are suffixed by `-p`. For example,
+`orgtrello-data-entity-card-p` which checks if the parameter entity is a card
+or not.
 
 *Note* I adapted the code to abide by [emacs-lisp's conventions](https://www.gnu.org/software/emacs/manual/html_node/elisp/Coding-Conventions.html).
 
@@ -63,7 +66,9 @@ The namespaces are in loading order:
 Namespaces file              | Description of the namespace
 -----------------------------|------------------------------------------------------------------------
 org-trello-log.el            | Provide log facilities
-org-trello-setup.el          | Main variable definition that permits internal org-trello functions customization
+org-trello-setup.el          | Main variable definition that permits internal
+                             |   org-trello functions customization
+org-trello-date.el           | org-trello's date manipulation
 org-trello-hash.el           | Hash-map manipulation utilities
 org-trello-action.el         | Higher-order functions helper
 org-trello-data.el           | Internal org-trello data manipulation
@@ -72,11 +77,17 @@ org-trello-cbx.el            | Checkbox manipulation utilities
 org-trello-api.el            | Trello API abstraction DSL
 org-trello-query.el          | HTTP query utilities
 org-trello-backend.el        | Deals with trello requests
-org-trello-proxy.el          | Proxy utilities - Namespace in charge of dealing with the orchestration of trello requests
+org-trello-proxy.el          | Proxy utilities - Namespace in charge of dealing
+                             | with the orchestration of trello requests
 org-trello-buffer.el         | Buffer manipulation functions
 org-trello-input.el          | Text input functions
 org-trello-controller.el     | Controller used by org-trello.el
-org-trello.el                | Main information about org-trello (version, licence, deps, etc...) + org-trello minor mode definition which defines interactive commands and the mode
+org-trello.el                | Main information about org-trello (version,
+                             | licence, deps, etc...) + org-trello minor mode
+                             | definition which defines interactive commands
+                             | and the mode
+-----------------------------|-------------------------------------------------------------------------
+utilities.el                 | test utilities functions
 
 ## Loading
 
@@ -109,7 +120,8 @@ make test
 
 ## Install
 
-To test that the package, once created, can be installed (using the repository to fetch the dependencies).
+To test that the package, once created, can be installed (using the repository
+to fetch the dependencies).
 
 ```sh
 make install-file-with-deps-from-melpa
@@ -142,7 +154,7 @@ The release process is done through 2 steps:
 
     *Note* You need `hub` installed for this target to work.
 
-- Then trigger the release through the call to the release target from the Makefile
+- Then trigger release through the call to the release target from the Makefile
 
     ```sh
     make release
@@ -152,11 +164,14 @@ This will:
 - fetch the latest modifications on your repository
 - checkout the master branch
 - fast-forward to the latest master commit
-- tag the latest commit from master using the $VERSION you submit to the script (defaulting to the version from the org-trello.el header)
+- tag the latest commit from master using the $VERSION you submit to the script
+(defaulting to the version from the org-trello.el header)
 - push the tag to the upstream branch repository
-- trigger the package target from the Makefile (thus building a new package to the latest version)
+- trigger the package target from the Makefile (thus building a new package to
+the latest version)
 - Then manual delivery of the tar to the github release page
 
 Note:
 - this is an orchestration of the [release.sh](./release.sh) script
-- the packaging for MELPA is automatically done from `org-trello/org-trello` repository
+- the packaging for MELPA is automatically done from `org-trello/org-trello`
+repository
