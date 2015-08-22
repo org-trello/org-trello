@@ -138,13 +138,6 @@
   (should-not (orgtrello-tests-hash-equal (orgtrello-hash-make-properties `((:name . "some other name") (:keyword "TODO")))
                                           (orgtrello-hash-make-properties `((:name . "some other name") (:keyword "DONE"))))))
 
-(ert-deftest test-orgtrello-hash-make-transpose-properties ()
-  (should (orgtrello-tests-hash-equal (orgtrello-hash-make-properties `(("some other name" . :name) ("TODO" . :keyword)))
-                                      (orgtrello-hash-make-transpose-properties `((:name . "some other name") (:keyword . "TODO"))))))
-
-(ert-deftest test-orgtrello-hash-empty-hash ()
-  (should (eq 0 (hash-table-count (orgtrello-hash-empty-hash)))))
-
 (ert-deftest test-org-trello-mode-test ()
   (should (-every? (-partial #'eq t)
                    (with-mock
@@ -188,7 +181,7 @@ line 3"
                     (buffer-substring-no-properties (point-at-bol) (point-at-eol))
                     -2))))
 
-(ert-deftest test-orgtrello-tests-with-temp-buffer-and-return-content ()
+(ert-deftest test-orgtrello-tests-with-temp-buffer-and-return-buffer-content ()
   (should (string= "1
 2
 3
@@ -227,6 +220,15 @@ description
   - [ ] item
 "
                     (replace-regexp "\\[ \\]" "[X]" nil (point-min) (point-max))))))
+
+(ert-deftest test-orgtrello-tests-with-org-buffer ()
+  (should (eq 'headline
+              (orgtrello-tests-with-org-buffer
+               "* heading
+"
+               (progn
+                 (goto-char (point-min))
+                 (car (org-element-at-point)))))))
 
 (provide 'utilities-test)
 ;;; utilities-test.el ends here

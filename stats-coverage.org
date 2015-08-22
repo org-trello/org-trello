@@ -19,9 +19,10 @@
 | org-trello-hash.el       |                   8.0 | test/org-trello-hash-test.el       |              8.0 |              100.0 |
 | org-trello-api.el        |                  36.0 | test/org-trello-api-test.el        |             36.0 |              100.0 |
 | org-trello-data.el       |                  45.0 | test/org-trello-data-test.el       |             45.0 |              100.0 |
+| utilities.el             |                   9.0 | test/utilities-test.el             |              9.0 |              100.0 |
 | org-trello-entity.el     |                  30.0 | test/org-trello-entity-test.el     |             31.0 | 103.33333333333334 |
 | org-trello-proxy.el      |                  33.0 | test/org-trello-proxy-test.el      |             36.0 | 109.09090909090908 |
 |--------------------------+-----------------------+------------------------------------+------------------+--------------------|
 | Average                  |                  442. |                                    |             405. |   91.6289592760181 |
 |--------------------------+-----------------------+------------------------------------+------------------+--------------------|
-#+TBLFM: $5='(* 100 (/ (string-to-number $4) (string-to-int $2)))::@19$2=vsum(@2..@18)::@19$4=vsum(@2..@18)::@19$5='(* 100 (/ (string-to-number (format "%s0" @19$4)) (string-to-number (format "%s0" @19$2))))
+#+TBLFM: $5='(* 100 (/ (string-to-number $4) (string-to-int $2)))::@20$2=vsum(@2..@18)::@20$4=vsum(@2..@18)::@20$5='(* 100 (/ (string-to-number (format "%s0" @20$4)) (string-to-number (format "%s0" @20$2))))
