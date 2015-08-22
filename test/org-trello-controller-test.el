@@ -2,6 +2,37 @@
 (require 'ert)
 (require 'el-mock)
 
+(ert-deftest test-orgtrello-controller--retrieve-archive-cards ()
+  (should (equal '(:archive-cards :board-id :buffer-name :board-name :point-start)
+                 (with-mock
+                   (mock (orgtrello-api-get-archived-cards :board-id) => :query-archive-cards)
+                   (mock (orgtrello-query-http-trello :query-archive-cards 'sync) => :archive-cards)
+                   (orgtrello-controller--retrieve-archive-cards '(:board-id :buffer-name :board-name :point-start))))))
+
+(ert-deftest test-orgtrello-controller--retrieve-full-cards ()
+  (should (equal '(:cards :archive-cards :board-id :buffer-name :board-name :point-start)
+                 (with-mock
+                   (mock (orgtrello-api-get-full-cards :board-id) => :query-cards)
+                   (mock (orgtrello-query-http-trello :query-cards 'sync) => :cards)
+                   (orgtrello-controller--retrieve-full-cards '(:archive-cards :board-id :buffer-name :board-name :point-start))))))
+
+(ert-deftest test-orgtrello-controller--sync-buffer-with-archived-and-trello-cards ()
+  (should (equal '(:trello-cards :archive-cards :board-id :buffer-name :board-name :point-start)
+                 (let ((orgtrello-log-level orgtrello-log-info))
+                   (with-mock
+                     (mock (orgtrello-buffer-archive-cards :archive-cards) => :done)
+                     (mock (mapcar #'orgtrello-data-to-org-trello-card :trello-cards) => :org-cards)
+                     (mock (orgtrello-controller-sync-buffer-with-trello-cards :buffer-name :org-cards) => :result-sync-from)
+                     (orgtrello-controller--sync-buffer-with-archived-and-trello-cards '(:trello-cards :archive-cards :board-id :buffer-name :board-name :point-start)))))))
+
+(ert-deftest test-orgtrello-controller--after-sync-buffer-with-trello-cards ()
+  (should (equal "org-trello - Synchronizing the trello board ':board-name' to the org-mode file ':buffer-name' done!"
+                 (let ((orgtrello-log-level orgtrello-log-info))
+                   (with-mock
+                     (mock (orgtrello-buffer-save-buffer :buffer-name) => :done)
+                     (mock (goto-char :point-start) => :done)
+                     (orgtrello-controller--after-sync-buffer-with-trello-cards '(:cards :archive-cards :board-id :buffer-name :board-name :point-start)))))))
+
 (ert-deftest test-orgtrello-controller--map-cards-to-computations ()
   (should (equal '(:computation) ;; only card0 computation mapped
                  (let* ((card0 (orgtrello-hash-make-properties '((:id . "123")

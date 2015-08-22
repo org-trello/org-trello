@@ -295,6 +295,56 @@ Does not preserve position."
               ((lambda (entry) (orgtrello-controller--cleanup-org-entries) entry))   ;; hack to clean the org entries just before synchronizing the buffer
               orgtrello-controller--sync-buffer-with-trello-data))))))
 
+(defun orgtrello-controller--retrieve-archive-cards (data)
+  "Retrieve the archive cards from DATA.
+DATA is a list of (board-id &rest buffer-name point-start)."
+  (defalias 'board-id 'car)
+  (-> data
+      board-id
+      orgtrello-api-get-archived-cards
+      (orgtrello-query-http-trello 'sync)
+      (cons data)))
+
+(defun orgtrello-controller--retrieve-full-cards (data)
+  "Retrieve the full cards from DATA.
+DATA is a list of (archive-cards board-id &rest buffer-name point-start).
+Return the initial list + the full cards."
+  (-let* (((archive-cards board-id &rest) data)
+          (cards (-> board-id
+                     orgtrello-api-get-full-cards
+                     (orgtrello-query-http-trello 'sync))))
+    (cons cards data)))
+
+(defun orgtrello-controller--sync-buffer-with-archived-and-trello-cards (data)
+  "Update buffer at point with DATA.
+DATA is a list of (cards archive-cards board-id buffername) in this order."
+  (-let (((trello-cards trello-archived-cards _ buffer-name &rest) data))
+    ;; first archive the cards that needs to be
+    (orgtrello-log-msg orgtrello-log-debug
+                       "Archived trello-cards: %S"
+                       trello-archived-cards)
+    (orgtrello-buffer-archive-cards trello-archived-cards)
+    ;; Then update the buffer with the other opened trello cards
+    (orgtrello-log-msg orgtrello-log-debug
+                       "Opened trello-cards: %S"
+                       trello-cards)
+    (->> trello-cards
+         (mapcar #'orgtrello-data-to-org-trello-card)
+         (orgtrello-controller-sync-buffer-with-trello-cards
+          buffer-name))
+    ;; keep the state clean and returns it
+    data))
+
+(defun orgtrello-controller--after-sync-buffer-with-trello-cards (data)
+  "Given the state DATA, save the buffer and return at initial point."
+  (-let (((_ _ _ buffer-name board-name point-start) data))
+    (orgtrello-buffer-save-buffer buffer-name)
+    (goto-char point-start)
+    (orgtrello-log-msg orgtrello-log-info
+                       "Synchronizing the trello board '%s' to the org-mode file '%s' done!"
+                       board-name
+                       buffer-name)))
+
 (defun orgtrello-controller-do-sync-buffer-from-trello ()
   "Full `org-mode' file synchronization.
 Beware, this will block Emacs as the request is synchronous."
@@ -304,50 +354,22 @@ Beware, this will block Emacs as the request is synchronous."
                 (board-id (orgtrello-buffer-board-id)))
     (orgtrello-log-msg orgtrello-log-info "Synchronizing the trello board '%s' to the org-mode file..." board-name)
     (deferred:$ ;; In emacs 25, deferred:parallel blocks in this context. I don't understand why so I retrieve sequentially for the moment. People, feel free to help and improve.
-      (deferred:next
-        (lambda ()
-          (-> board-id
-              orgtrello-api-get-archived-cards
-              (orgtrello-query-http-trello 'sync)
-              list)))
+      (deferred:next (lambda ()
+                       (list board-id
+                             buffer-name
+                             board-name
+                             point-start))) ;; inject the needed data (state monad :)
       (deferred:nextc it
-        (lambda (cards)
-          (-> board-id
-              orgtrello-api-get-full-cards
-              (orgtrello-query-http-trello 'sync)
-              (cons cards))))
+        #'orgtrello-controller--retrieve-archive-cards)
       (deferred:nextc it
-        (lambda (trello-opened-and-archived-cards)
-          (orgtrello-log-msg orgtrello-log-debug
-                             "Opened and archived trello-cards: %S"
-                             trello-opened-and-archived-cards)
-          (let ((trello-cards          (car  trello-opened-and-archived-cards))
-                (trello-archived-cards (cadr trello-opened-and-archived-cards)))
-            ;; first archive the cards that needs to be
-            (orgtrello-log-msg orgtrello-log-debug
-                               "Archived trello-cards: %S"
-                               trello-archived-cards)
-            (orgtrello-buffer-archive-cards trello-archived-cards)
-            ;; Then update the buffer with the other opened trello cards
-            (orgtrello-log-msg orgtrello-log-debug
-                               "Opened trello-cards: %S"
-                               trello-cards)
-            (->> trello-cards
-                 (mapcar 'orgtrello-data-to-org-trello-card)
-                 (orgtrello-controller-sync-buffer-with-trello-cards
-                  buffer-name)))))
+        #'orgtrello-controller--retrieve-full-cards)
       (deferred:nextc it
-        (lambda ()
-          (orgtrello-buffer-save-buffer buffer-name)
-          (goto-char point-start)
-          (orgtrello-log-msg
-           orgtrello-log-info
-           "Synchronizing the trello board '%s' to the org-mode file '%s' done!"
-           board-name buffer-name)))
+        #'orgtrello-controller--sync-buffer-with-archived-and-trello-cards)
+      (deferred:nextc it
+        #'orgtrello-controller--after-sync-buffer-with-trello-cards)
       (deferred:error it
-        (lambda (err) (orgtrello-log-msg orgtrello-log-error
-                                         "Sync buffer from trello - Catch error: %S"
-                                         err))))))
+        (-partial #'orgtrello-log-msg orgtrello-log-error
+                  "Sync buffer from trello - Catch error: %S")))))
 
 (defun orgtrello-controller-check-trello-connection ()
   "Full `org-mode' file synchronization.
