@@ -1,4 +1,4 @@
-;;; ot-test-utilities.el --- org-trello tests utils
+;;; utilities.el --- org-trello tests utils
 ;;; Commentary:
 ;;; Code:
 
