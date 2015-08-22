@@ -2,6 +2,19 @@
 (require 'ert)
 (require 'el-mock)
 
+(ert-deftest test-orgtrello-controller-prepare-buffer ()
+  (should (eq :prepared-buffer-done
+              (with-mock
+                (mock (orgtrello-setup-org-trello-on-p) => t)
+                (mock (orgtrello-buffer-install-overlays) => :done)
+                (mock (orgtrello-buffer-indent-card-descriptions) => :done)
+                (mock (orgtrello-buffer-indent-card-data) => :prepared-buffer-done)
+                (orgtrello-controller-prepare-buffer))))
+  (should-not
+   (with-mock
+     (mock (orgtrello-setup-org-trello-on-p))
+     (orgtrello-controller-prepare-buffer))))
+
 (ert-deftest test-orgtrello-controller-mode-on-hook-fn ()
   (should-not
    (let ((org-trello--mode-activated-p))
