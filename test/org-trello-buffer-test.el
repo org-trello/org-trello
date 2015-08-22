@@ -27,17 +27,7 @@
                                        :point-max
                                        'invisible
                                        'org-trello-cbx-property) => :result-remove-overlays)
-                (orgtrello-buffer-remove-overlays))))
-
-  (defun orgtrello-buffer-install-overlays ()
-    "Install overlays throughout the all buffers.
-Function to be triggered by `before-save-hook` on org-trello-mode buffer."
-    (when (and (eq major-mode 'org-mode) org-trello--mode-activated-p)
-      (orgtrello-buffer-remove-overlays)
-      (save-excursion
-        (goto-char (point-min))
-        (while (re-search-forward ":PROPERTIES: {.*" nil t)
-          (orgtrello-buffer-install-overlay (match-beginning 0)))))))
+                (orgtrello-buffer-remove-overlays)))))
 
 (ert-deftest test-orgtrello-buffer--set-marker ()
   (should (string=
