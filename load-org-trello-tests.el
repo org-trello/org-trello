@@ -201,11 +201,11 @@ Otherwise, default to current buffer."
 (defun orgtrello-tests-find-next-error ()
   "Find the next test error"
   (interactive)
-  (with-current-buffer "*compilation*"
+  (with-current-buffer "*overseer*"
     (goto-char (point-min))
     (if (search-forward "(ert-test-failed" nil 'noerror)
         (progn
-          (switch-to-buffer "*compilation*" nil 'same-window)
+          (switch-to-buffer "*overseer*" nil 'same-window)
           (search-forward "(ert-test-failed" nil 'noerror)
           (forward-line 10))
       (message "All is good!"))))
