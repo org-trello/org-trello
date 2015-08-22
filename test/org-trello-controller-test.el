@@ -2,6 +2,29 @@
 (require 'ert)
 (require 'el-mock)
 
+(ert-deftest test-orgtrello-controller--after-sync-buffer-with-trello-card ()
+  (should (equal "org-trello - Synchronizing trello card ':card-name' to org-mode file ':buffer-name' done!"
+                 (let ((orgtrello-log-level orgtrello-log-info))
+                   (with-mock
+                     (mock (orgtrello-buffer-save-buffer :buffer-name) => :done)
+                     (mock (goto-char :point-start) => :done)
+                     (orgtrello-controller--after-sync-buffer-with-trello-card '(:full-card :card-meta :buffer-name :card-name :point-start)))))))
+
+(ert-deftest test-orgtrello-controller--retrieve-full-card ()
+  (should (equal '(:full-card :card-meta :buffer-name :card-name :point-start)
+                 (with-mock
+                   (mock (orgtrello-data-entity-id :card-meta) => :card-id)
+                   (mock (orgtrello-api-get-full-card :card-id) => :query-get-full-card)
+                   (mock (orgtrello-query-http-trello :query-get-full-card 'sync) => :full-card)
+                   (orgtrello-controller--retrieve-full-card '(:card-meta :buffer-name :card-name :point-start))))))
+
+(ert-deftest test-orgtrello-controller--sync-buffer-with-trello-card ()
+  (should (equal '(:trello-card :card-meta :buffer-name)
+                 (with-mock
+                   (mock (orgtrello-data-to-org-trello-card :trello-card) => :org-card)
+                   (mock (orgtrello-controller-compute-and-overwrite-card :buffer-name  :org-card) => :done)
+                   (orgtrello-controller--sync-buffer-with-trello-card '(:trello-card :card-meta :buffer-name))))))
+
 (ert-deftest test-orgtrello-controller--check-user-account ()
   (should (string= "org-trello - Account 'user' configured! Everything is ok!"
                    (let ((orgtrello-log-level orgtrello-log-info))
@@ -36,7 +59,7 @@ See http://org-trello.github.io/trello-setup.html#credentials for more informati
                      (orgtrello-controller--sync-buffer-with-archived-and-trello-cards '(:trello-cards :archive-cards :board-id :buffer-name :board-name :point-start)))))))
 
 (ert-deftest test-orgtrello-controller--after-sync-buffer-with-trello-cards ()
-  (should (equal "org-trello - Synchronizing the trello board ':board-name' to the org-mode file ':buffer-name' done!"
+  (should (equal "org-trello - Synchronizing trello board ':board-name' to org-mode file ':buffer-name' done!"
                  (let ((orgtrello-log-level orgtrello-log-info))
                    (with-mock
                      (mock (orgtrello-buffer-save-buffer :buffer-name) => :done)
