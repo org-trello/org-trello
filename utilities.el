@@ -2,7 +2,12 @@
 ;;; Commentary:
 ;;; Code:
 
-(setenv "TZ" "/usr/share/zoneinfo/Europe/London")
+;; hackish way to set a timezone different from my own machine
+;; and ensure the date are correclty dealt with through tests
+(let ((tz-file (if (file-exists-p "/etc/NIXOS")
+                   "/etc" ;; nixos-based os
+                 "/usr/share"))) ;; debian-based
+  (setenv "TZ" (format "%s/zoneinfo/Europe/London" tz-file)))
 
 (defsubst hash-table-keys (hash-table)
   "Return a list of keys in HASH-TABLE."
