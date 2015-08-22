@@ -92,7 +92,8 @@ If hitting a heading or the end of the file, return nil."
     (orgtrello-entity-goto-end-card-metadata)))
 
 (defun orgtrello-entity-card-metadata-end-point ()
-  "Compute the first position of the card's next checkbox."
+  "Compute the card's metadata end point.
+This corresponds to the card's first checkbox position."
   (save-excursion
     (orgtrello-entity-back-to-card)
     (orgtrello-entity-goto-end-card-metadata)
@@ -136,7 +137,7 @@ If no comment is found, return the card's end region."
     (let ((card-region (orgtrello-entity-card-region)))
       (apply 'narrow-to-region card-region)
       (let ((next-pt (-if-let (next-pt
-                               (search-forward-regexp "[*][*] COMMENT" nil t))
+                               (search-forward-regexp "\\*\\* COMMENT " nil t))
                          ;; if not found, return nil and do not move point
                          (save-excursion
                            (goto-char next-pt)
@@ -200,7 +201,8 @@ Expected to be called when the cursor is inside the comment region."
       `(,(org-element-property :begin elem) ,(org-element-property :end elem)))))
 
 (defun orgtrello-entity-comment-description-start-point ()
-  "Compute the first character of the comment's description content."
+  "Compute the first character of the comment's description content.
+Expects the cursor to be on current comment."
   (save-excursion
     (beginning-of-line)
     (search-forward ":END:" nil t) ;; if not found, return nil & do not move pt

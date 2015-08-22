@@ -5,7 +5,6 @@
 | Namespace                | Functions / namespace | test namespace                     | Functions tested |           Coverage |
 |--------------------------+-----------------------+------------------------------------+------------------+--------------------|
 | org-trello-controller.el |                  83.0 | test/org-trello-controller-test.el |             56.0 |  67.46987951807229 |
-| org-trello-entity.el     |                  30.0 | test/org-trello-entity-test.el     |             22.0 |  73.33333333333333 |
 | org-trello-buffer.el     |                 105.0 | test/org-trello-buffer-test.el     |             92.0 |  87.61904761904762 |
 | org-trello.el            |                  29.0 | test/org-trello-test.el            |             28.0 |  96.55172413793103 |
 | org-trello-setup.el      |                  11.0 | test/org-trello-setup-test.el      |             11.0 |              100.0 |
@@ -20,8 +19,9 @@
 | org-trello-hash.el       |                   8.0 | test/org-trello-hash-test.el       |              8.0 |              100.0 |
 | org-trello-api.el        |                  36.0 | test/org-trello-api-test.el        |             36.0 |              100.0 |
 | org-trello-data.el       |                  45.0 | test/org-trello-data-test.el       |             45.0 |              100.0 |
+| org-trello-entity.el     |                  30.0 | test/org-trello-entity-test.el     |             31.0 | 103.33333333333334 |
 | org-trello-proxy.el      |                  33.0 | test/org-trello-proxy-test.el      |             36.0 | 109.09090909090908 |
 |--------------------------+-----------------------+------------------------------------+------------------+--------------------|
-| Average                  |                  442. |                                    |             396. |  89.59276018099548 |
+| Average                  |                  442. |                                    |             405. |   91.6289592760181 |
 |--------------------------+-----------------------+------------------------------------+------------------+--------------------|
 #+TBLFM: $5='(* 100 (/ (string-to-number $4) (string-to-int $2)))::@19$2=vsum(@2..@18)::@19$4=vsum(@2..@18)::@19$5='(* 100 (/ (string-to-number (format "%s0" @19$4)) (string-to-number (format "%s0" @19$2))))

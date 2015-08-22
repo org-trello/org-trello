@@ -2,6 +2,272 @@
 (require 'ert)
 (require 'el-mock)
 
+(ert-deftest test-orgtrello-entity-comment-description-region ()
+  (should (equal '(49 85)
+                 (orgtrello-tests-with-temp-buffer
+                  "* card
+** COMMENT, tony date
+:PROPERTIES:
+:END:
+  comment's description
+  ends here
+
+* another card
+"
+                  (orgtrello-entity-comment-description-region)
+                  -7)))
+
+  (should (equal '(30 66)
+                 (orgtrello-tests-with-temp-buffer
+                  "* card
+** COMMENT, tony date
+  comment's description
+  ends here
+
+* another card
+"
+                  (orgtrello-entity-comment-description-region)
+                  -5))))
+
+(ert-deftest test-orgtrello-entity-comment-description-end-point ()
+  (should (eq 85
+              (orgtrello-tests-with-temp-buffer
+               "* card
+** COMMENT, tony date
+:PROPERTIES:
+:END:
+  comment's description
+  ends here
+
+* another card
+"
+               (orgtrello-entity-comment-description-end-point)
+               -7)))
+
+  (should (eq 66
+              (orgtrello-tests-with-temp-buffer
+               "* card
+** COMMENT, tony date
+  comment's description
+  ends here
+
+* another card
+"
+               (orgtrello-entity-comment-description-end-point)
+               -5))))
+(ert-deftest test-orgtrello-entity-comment-description-start-point ()
+  (should (eq 49
+              (orgtrello-tests-with-temp-buffer
+               "* card
+** COMMENT, tony date
+:PROPERTIES:
+:END:
+  comment's description
+* another card
+"
+               (orgtrello-entity-comment-description-start-point)
+               -5)))
+  (should (eq 30
+              (orgtrello-tests-with-temp-buffer
+               "* card
+** COMMENT, tony date
+  comment's description
+* another card
+"
+               (orgtrello-entity-comment-description-start-point)
+               -3))))
+
+(ert-deftest test-orgtrello-entity-compute-first-comment-point ()
+  (should (eq 47
+              (orgtrello-tests-with-temp-buffer
+               "* card
+description
+  - [ ] cbx
+    - [ ] item
+** COMMENT user, date
+"
+               (orgtrello-entity-compute-first-comment-point))))
+  (should (eq 8
+              (orgtrello-tests-with-temp-buffer
+               "* card
+** COMMENT user, date
+"
+               (orgtrello-entity-compute-first-comment-point))))
+  ;; no comment, return the card's end region
+  (should (eq 8
+              (orgtrello-tests-with-temp-buffer
+               "* card
+"
+               (orgtrello-entity-compute-first-comment-point)))))
+
+(ert-deftest test-orgtrello-entity-card-description-start-point ()
+  (should (eq 8
+              (orgtrello-tests-with-temp-buffer
+               "* card
+description"
+               (orgtrello-entity-card-description-start-point))))
+  (should (eq 8
+              (orgtrello-tests-with-temp-buffer
+               "* card
+  description"
+               (orgtrello-entity-card-description-start-point))))
+  (should (eq 27
+              (orgtrello-tests-with-temp-buffer
+               "* card
+:PROPERTIES:
+:END:
+description
+"
+               (orgtrello-entity-card-description-start-point))))
+  (should (eq 27
+              (orgtrello-tests-with-temp-buffer "* card
+:PROPERTIES:
+:END:
+  description
+"
+                                                (orgtrello-entity-card-description-start-point)))))
+
+(ert-deftest test-orgtrello-entity-card-metadata-end-point ()
+  ;; we are getting just before the card's checklist
+  (should (eq 34
+              (orgtrello-tests-with-temp-buffer
+               "* card
+:PROPERTIES:
+:END:
+  desc
+
+  - [ ] chcklist
+* another card"
+               (progn
+                 (goto-char (point-min))
+                 (orgtrello-entity-card-metadata-end-point)))))
+
+  ;; hitting another heading returns 1 point before it
+  (should (eq 7
+              (orgtrello-tests-with-temp-buffer
+               "* card
+* another card"
+               (progn
+                 (goto-char (point-min))
+                 (orgtrello-entity-card-metadata-end-point)))))
+
+  ;; hitting the end of the buffer returns the end of buffer
+  (should (eq 7 (orgtrello-tests-with-temp-buffer
+                 "* card
+"
+                 (progn
+                   (goto-char (point-min))
+                   (orgtrello-entity-card-metadata-end-point))))))
+
+(ert-deftest test-orgtrello-entity-goto-end-card-metadata ()
+  ;; we are getting just before the card's checklist
+  (should (string=
+           "  - [ ] chcklist"
+           (orgtrello-tests-with-temp-buffer
+            "* card
+:PROPERTIES:
+:END:
+  desc
+
+  - [ ] chcklist
+* another card"
+            (progn
+              (goto-char (point-min))
+              (orgtrello-entity-goto-end-card-metadata)
+              (buffer-substring-no-properties (point) (point-at-eol))))))
+
+  ;; hitting another heading returns nil
+  (should-not (orgtrello-tests-with-temp-buffer
+               "* card
+* another card"
+               (progn
+                 (goto-char (point-min))
+                 (orgtrello-entity-goto-end-card-metadata))))
+  ;; hitting the end of the buffer returns nil
+  (should-not (orgtrello-tests-with-temp-buffer
+               "* card
+"
+               (progn
+                 (goto-char (point-min))
+                 (orgtrello-entity-goto-end-card-metadata)))))
+
+(ert-deftest test-orgtrello-entity-goto-next-checkbox ()
+  (defun string-at-pt ()
+    "Extract string at point."
+    (buffer-substring-no-properties (point-at-bol)
+                                    (point-at-eol)))
+  (should (equal
+           '("  - [ ] checkbox 1"
+             "    - [ ] item 1"
+             "    - [ ] item 2"
+             "  - [ ] checkbox 2"
+             "")
+           (orgtrello-tests-with-temp-buffer
+            "* card
+  - [ ] checkbox 1
+    - [ ] item 1
+    - [ ] item 2
+  - [ ] checkbox 2
+"
+            (let* ((trail nil)
+                   (cbx-start (push (string-at-pt) trail)))
+              (orgtrello-entity-goto-next-checkbox)
+              (push (string-at-pt) trail)
+              (orgtrello-entity-goto-next-checkbox)
+              (push (string-at-pt) trail)
+              (orgtrello-entity-goto-next-checkbox)
+              (push (string-at-pt) trail)
+              (orgtrello-entity-goto-next-checkbox)
+              (push (string-at-pt) trail)
+              (nreverse trail))
+            -4))))
+
+(ert-deftest test-orgtrello-entity-goto-next-checkbox-with-same-level ()
+  (defun string-at-pt ()
+    "Extract string at point."
+    (buffer-substring-no-properties (point-at-bol)
+                                    (point-at-eol)))
+  (should (equal
+           '("  - [ ] checkbox 1"
+             "  - [ ] checkbox 2"
+             "")
+           (orgtrello-tests-with-temp-buffer
+            "* card
+  - [ ] checkbox 1
+    - [ ] item 1
+    - [ ] item 2
+  - [ ] checkbox 2
+"
+            (let* ((trail nil)
+                   (cbx-start (push (string-at-pt) trail)))
+              (orgtrello-entity-goto-next-checkbox-with-same-level 2)
+              (push (string-at-pt) trail)
+              (orgtrello-entity-goto-next-checkbox-with-same-level 2)
+              (push (string-at-pt) trail)
+              (nreverse trail))
+            -4)))
+
+  (should (equal
+           '("    - [X] item 1"
+             "    - [ ] item 2"
+             "")
+           (orgtrello-tests-with-temp-buffer
+            "* card
+  - [ ] checkbox 1
+    - [X] item 1
+    - [ ] item 2
+  - [ ] checkbox 2
+"
+            (let* ((trail nil)
+                   (cbx-start (push (string-at-pt) trail)))
+              (orgtrello-entity-goto-next-checkbox-with-same-level 3)
+              (push (string-at-pt) trail)
+              (orgtrello-entity-goto-next-checkbox-with-same-level 3)
+              (push (string-at-pt) trail)
+              (nreverse trail))
+            -3))))
+
+
 (ert-deftest test-orgtrello-entity-card-start-point ()
   (should (eq 32
               (orgtrello-tests-with-temp-buffer
