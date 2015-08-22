@@ -367,14 +367,13 @@ Beware, this will block Emacs as the request is synchronous."
       (lambda (err)
         (orgtrello-log-msg orgtrello-log-error "Setup ko - '%s'" err)))))
 
-(defun orgtrello-controller-execute-sync-entity-structure (entity-structure)
-  "Execute synchronization of ENTITY-STRUCTURE.
+(defun orgtrello-controller--map-cards-to-computations (entities-adjacencies)
+  "Given an ENTITIES-ADJACENCIES structure, map to computations.
 The ENTITY-STRUCTURE is self contained.
 Entities at first position, adjacency list in second position.
-Synchronization is done here.
-Along the way, the buffer BUFFER-NAME is written with new informations."
-  (lexical-let ((entities             (car entity-structure))
-                (entities-adjacencies entity-structure)
+Synchronization is done here."
+  (lexical-let ((entities             (car entities-adjacencies))
+                (entities-adjacencies entities-adjacencies)
                 (card-computations))
     (maphash (lambda (id entity)
                (when (and (orgtrello-data-entity-card-p entity)
@@ -385,14 +384,21 @@ Along the way, the buffer BUFFER-NAME is written with new informations."
                      (orgtrello-proxy-sync-entity entities-adjacencies)
                      (push card-computations))))
              entities)
+    (nreverse card-computations)))
 
-    (if card-computations
-        (-> card-computations
-            nreverse
-            (orgtrello-proxy-execute-async-computations
-             "card(s) sync ok!"
-             "FAILURE! cards(s) sync KO!"))
-      (orgtrello-log-msg orgtrello-log-info "No card(s) to sync."))))
+(defun orgtrello-controller-execute-sync-entity-structure (entities-adjacencies)
+  "Execute synchronization of ENTITY-STRUCTURE.
+ENTITIES-ADJACENCIES is self contained.
+Entities at first position, adjacency list in second position (children).
+Synchronization is done here.
+Along the way, the buffer BUFFER-NAME is written with new information."
+  (-if-let (card-computations (orgtrello-controller--map-cards-to-computations
+                               entities-adjacencies))
+      (orgtrello-proxy-execute-async-computations
+       card-computations
+       "card(s) sync ok!"
+       "FAILURE! cards(s) sync KO!")
+    (orgtrello-log-msg orgtrello-log-info "No card(s) to sync.")))
 
 (defun orgtrello-controller-compute-and-overwrite-card (buffer-name
                                                         org-trello-card)

@@ -2,6 +2,53 @@
 (require 'ert)
 (require 'el-mock)
 
+(ert-deftest test-orgtrello-controller--map-cards-to-computations ()
+  (should (equal '(:computation) ;; only card0 computation mapped
+                 (let* ((card0 (orgtrello-hash-make-properties '((:id . "123")
+                                                                 (:level . 1)
+                                                                 (:name . "card has a name"))))
+                        ;; card1 won't be elected cause it got no name
+                        (card1 (orgtrello-hash-make-properties '((:id . "456")
+                                                                 (:level . 1))))
+                        ;; checklist are not elected
+                        (checklist (orgtrello-hash-make-properties '((:id . "789")
+                                                                     (:level . 2))))
+                        ;; item neither
+                        (item (orgtrello-hash-make-properties '((:id . "012")
+                                                                (:level . 3))))
+                        (entities (orgtrello-hash-make-properties `(("123" . ,card0)
+                                                                    ("456" . ,card1)
+                                                                    ("789" . ,checklist)
+                                                                    ("012" . ,item))))
+                        (adjacencies (orgtrello-hash-make-properties '(("123")
+                                                                       ("456")
+                                                                       ("789")
+                                                                       ("012"))))
+                        (entities-adjacencies (list entities adjacencies)))
+                   (with-mock
+                     (mock (orgtrello-proxy-sync-entity card0 entities-adjacencies) => :computation)
+                     (orgtrello-controller--map-cards-to-computations entities-adjacencies))))))
+
+(ert-deftest test-orgtrello-controller-execute-sync-entity-structure ()
+  ;; some cards to sync
+  (should (eq :result-synced
+              (with-mock
+                (mock (orgtrello-controller--map-cards-to-computations :entities-adj) => :computations)
+                (mock (orgtrello-proxy-execute-async-computations
+                       :computations
+                       "card(s) sync ok!"
+                       "FAILURE! cards(s) sync KO!") => :result-synced)
+                (orgtrello-controller-execute-sync-entity-structure :entities-adj))))
+  ;; nothing to sync
+  (should (let ((orgtrello-log-level orgtrello-log-info))
+            (equal "org-trello - No card(s) to sync."
+                   (with-mock
+                     (mock (orgtrello-controller--map-cards-to-computations :entities-adj) => nil)
+                     (orgtrello-controller-execute-sync-entity-structure :entities-adj))))))
+
+(ert-deftest test-orgtrello-controller--convention-property-name ()
+  (should (string= "-bla-bli-blo-" (orgtrello-controller--convention-property-name " bla bli blo "))))
+
 (ert-deftest test-orgtrello-controller-prepare-buffer ()
   (should (eq :prepared-buffer-done
               (with-mock
