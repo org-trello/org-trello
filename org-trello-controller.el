@@ -371,23 +371,29 @@ Beware, this will block Emacs as the request is synchronous."
         (-partial #'orgtrello-log-msg orgtrello-log-error
                   "Sync buffer from trello - Catch error: %S")))))
 
+(defun orgtrello-controller--user-logged-in ()
+  "Compute the current user."
+  (orgtrello-query-http-trello (orgtrello-api-get-me) 'sync))
+
+(defun orgtrello-controller--check-user-account (user-me)
+  "Check that the USER-ME account is ok."
+  (orgtrello-log-msg
+   orgtrello-log-info
+   (if user-me
+       (format "Account '%s' configured! Everything is ok!"
+               (orgtrello-data-entity-username user-me))
+     "There is a problem with your credentials.\nMake sure you used M-x org-trello-install-key-and-token and installed correctly the consumer-key and access-token.\nSee http://org-trello.github.io/trello-setup.html#credentials for more information.")))
+
 (defun orgtrello-controller-check-trello-connection ()
   "Full `org-mode' file synchronization.
 Beware, this will block Emacs as the request is synchronous."
   (orgtrello-log-msg orgtrello-log-info "Checking trello connection...")
   (deferred:$
-    (deferred:next (lambda ()
-                     (orgtrello-query-http-trello (orgtrello-api-get-me) 'sync)))
-    (deferred:nextc it
-      (lambda (user-me)
-        (orgtrello-log-msg orgtrello-log-info
-                           (if user-me
-                               (format "Account '%s' configured! Everything is ok!"
-                                       (orgtrello-data-entity-username user-me))
-                             "There is a problem with your credentials.\nMake sure you used M-x org-trello-install-key-and-token and installed correctly the consumer-key and access-token.\nSee http://org-trello.github.io/trello-setup.html#credentials for more information."))))
-    (deferred:error it
-      (lambda (err)
-        (orgtrello-log-msg orgtrello-log-error "Setup ko - '%s'" err)))))
+    (deferred:next #'orgtrello-controller--user-logged-in)
+    (deferred:nextc it #'orgtrello-controller--check-user-account)
+    (deferred:error it (-partial #'orgtrello-log-msg
+                                 orgtrello-log-error
+                                 "Setup ko - '%s'"))))
 
 (defun orgtrello-controller--map-cards-to-computations (entities-adjacencies)
   "Given an ENTITIES-ADJACENCIES structure, map to computations.
@@ -815,10 +821,6 @@ UPDATE-TODO-KEYWORDS is the org list of keywords."
          (mapc (lambda (it) (insert it "\n"))))
     (goto-char (point-min))
     (org-cycle)))
-
-(defun orgtrello-controller--user-logged-in ()
-  "Compute the current user."
-  (orgtrello-query-http-trello (orgtrello-api-get-me) 'sync))
 
 (defun orgtrello-controller-do-install-board-and-lists ()
   "Command to install the list boards."

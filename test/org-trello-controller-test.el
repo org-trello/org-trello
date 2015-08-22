@@ -2,6 +2,16 @@
 (require 'ert)
 (require 'el-mock)
 
+(ert-deftest test-orgtrello-controller--check-user-account ()
+  (should (string= "org-trello - Account 'user' configured! Everything is ok!"
+                   (let ((orgtrello-log-level orgtrello-log-info))
+                     (orgtrello-controller--check-user-account (orgtrello-hash-make-properties '((:username . "user")))))))
+  (should (string= "org-trello - There is a problem with your credentials.
+Make sure you used M-x org-trello-install-key-and-token and installed correctly the consumer-key and access-token.
+See http://org-trello.github.io/trello-setup.html#credentials for more information."
+                   (let ((orgtrello-log-level orgtrello-log-info))
+                     (orgtrello-controller--check-user-account nil)))))
+
 (ert-deftest test-orgtrello-controller--retrieve-archive-cards ()
   (should (equal '(:archive-cards :board-id :buffer-name :board-name :point-start)
                  (with-mock
