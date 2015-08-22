@@ -36,7 +36,8 @@ Deal with nested hash map."
         org-trello--mode-activated-p t)
   (call-interactively 'org-trello-mode))
 
-(defmacro orgtrello-tests-with-temp-buffer (text body-test &optional nb-lines-forward)
+(defmacro orgtrello-tests-with-temp-buffer (text body-test
+                                                 &optional nb-lines-forward)
   "A `org-trello' mode buffer helper test on buffer.
 TEXT is the content of the buffer.
 BODY-TEST is the assertion to test on the buffer.
@@ -49,41 +50,39 @@ NB-LINES-FORWARD is the number of lines to get back to."
      (orgtrello-controller-setup-properties)
      ,body-test))
 
-(defmacro orgtrello-tests-with-temp-buffer-and-return-buffer-content (text body-test &optional nb-lines-forward)
+(defmacro orgtrello-tests-with-temp-buffer-and-return-buffer-content
+    (text body-test &optional nb-lines-forward)
   "A `org-trello' mode buffer helper test on buffer.
 TEXT is the content of the buffer.
 BODY-TEST is the assertion to test on the buffer.
 NB-LINES-FORWARD is the number of lines to get back to.
 This returns the buffer content after body-test has been performed."
-  `(with-temp-buffer
-     (org-mode)
-     (insert ,text)
-     (forward-line (if ,nb-lines-forward ,nb-lines-forward -1))
-     (org-trello-mode-test)
-     (orgtrello-controller-setup-properties)
-     ,body-test
-     (buffer-substring-no-properties (point-min) (point-max))))
+  `(orgtrello-tests-with-temp-buffer
+    ,text
+    (progn
+      ,body-test
+      (buffer-substring-no-properties (point-min) (point-max)))
+    ,nb-lines-forward))
 
 (defun orgtrello-tests-prepare-buffer ()
   "Prepare the buffer to receive org-trello data."
   (orgtrello-buffer-indent-card-descriptions)
   (orgtrello-buffer-indent-card-data))
 
-(defmacro orgtrello-tests-with-temp-buffer-and-return-indented-content (text body-test &optional nb-lines-forward)
+(defmacro orgtrello-tests-with-temp-buffer-and-return-indented-content
+    (text body-test &optional nb-lines-forward)
   "A `org-trello' mode buffer helper test on buffer.
 TEXT is the content of the buffer.
 BODY-TEST is the assertion to test on the buffer.
 NB-LINES-FORWARD is the number of lines to get back to.
 This returns the `org-trello' buffer after body-test has been executed."
-  `(with-temp-buffer
-     (org-mode)
-     (insert ,text)
-     (forward-line (if ,nb-lines-forward ,nb-lines-forward -1))
-     (org-trello-mode-test)
-     (orgtrello-controller-setup-properties)
-     ,body-test
-     (orgtrello-tests-prepare-buffer) ;; force the indentation without hook (show how it's done using hook at runtime)
-     (buffer-substring-no-properties (point-min) (point-max))))
+  `(orgtrello-tests-with-temp-buffer
+    ,text
+    (progn
+      ,body-test
+      (orgtrello-tests-prepare-buffer) ;; force indentation without hook
+      (buffer-substring-no-properties (point-min) (point-max)))
+    ,nb-lines-forward))
 
 (defmacro orgtrello-tests-with-org-buffer (text body-test)
   "A simple `org-mode' buffer.
