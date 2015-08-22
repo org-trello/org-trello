@@ -2,6 +2,26 @@
 (require 'ert)
 (require 'el-mock)
 
+(ert-deftest test-orgtrello-controller-mode-on-hook-fn ()
+  (should-not
+   (let ((org-trello--mode-activated-p))
+     (with-mock
+       (mock (add-to-invisibility-spec '(org-trello-cbx-property)))
+       (mock (orgtrello-controller-setup-properties))
+       (mock (add-hook 'before-save-hook 'orgtrello-controller-prepare-buffer))
+       (mock (orgtrello-controller-prepare-buffer))
+       (mock (run-hooks 'org-trello-mode-hook))
+       (orgtrello-controller-mode-on-hook-fn)))))
+
+(ert-deftest test-orgtrello-controller-mode-off-hook-fn ()
+  (should-not
+   (let ((org-trello--mode-activated-p t))
+     (with-mock
+       (mock (remove-from-invisibility-spec '(org-trello-cbx-property)) => :done)
+       (mock (remove-hook 'before-save-hook 'orgtrello-controller-prepare-buffer) => :done)
+       (mock (orgtrello-buffer-remove-overlays) => :done)
+       (orgtrello-controller-mode-off-hook-fn)))))
+
 (ert-deftest test-orgtrello-controller-jump-to-board ()
   (should (eq :browsed-url
               (orgtrello-tests-with-temp-buffer
