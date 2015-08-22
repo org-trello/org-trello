@@ -4,10 +4,12 @@
 |--------------------------+-----------------------+------------------------------------+------------------+--------------------|
 | Namespace                | Functions / namespace | test namespace                     | Functions tested |           Coverage |
 |--------------------------+-----------------------+------------------------------------+------------------+--------------------|
-| org-trello-controller.el |                  83.0 | test/org-trello-controller-test.el |             56.0 |  67.46987951807229 |
-| org-trello-buffer.el     |                 105.0 | test/org-trello-buffer-test.el     |             92.0 |  87.61904761904762 |
-| org-trello.el            |                  29.0 | test/org-trello-test.el            |             28.0 |  96.55172413793103 |
-| org-trello-setup.el      |                  11.0 | test/org-trello-setup-test.el      |             11.0 |              100.0 |
+| org-trello-data.el       |                 110.0 | test/org-trello-data-test.el       |             45.0 | 40.909090909090914 |
+| org-trello.el            |                  51.0 | test/org-trello-test.el            |             28.0 |  54.90196078431373 |
+| org-trello-controller.el |                  85.0 | test/org-trello-controller-test.el |             62.0 |  72.94117647058823 |
+| org-trello-buffer.el     |                 110.0 | test/org-trello-buffer-test.el     |             92.0 |  83.63636363636363 |
+| org-trello-setup.el      |                  14.0 | test/org-trello-setup-test.el      |             12.0 |  85.71428571428571 |
+| org-trello-action.el     |                   8.0 | test/org-trello-action-test.el     |              7.0 |               87.5 |
 | org-trello-query.el      |                  11.0 | test/org-trello-query-test.el      |             11.0 |              100.0 |
 | org-trello-cbx.el        |                  30.0 | test/org-trello-cbx-test.el        |             30.0 |              100.0 |
 | org-trello-input.el      |                   1.0 | test/org-trello-input-test.el      |              1.0 |              100.0 |
@@ -15,14 +17,12 @@
 | org-trello-date.el       |                   3.0 | test/org-trello-date-test.el       |              3.0 |              100.0 |
 | org-trello-utils.el      |                   3.0 | test/org-trello-utils-test.el      |              3.0 |              100.0 |
 | org-trello-backend.el    |                   6.0 | test/org-trello-backend-test.el    |              6.0 |              100.0 |
-| org-trello-action.el     |                   7.0 | test/org-trello-action-test.el     |              7.0 |              100.0 |
 | org-trello-hash.el       |                   8.0 | test/org-trello-hash-test.el       |              8.0 |              100.0 |
 | org-trello-api.el        |                  36.0 | test/org-trello-api-test.el        |             36.0 |              100.0 |
-| org-trello-data.el       |                  45.0 | test/org-trello-data-test.el       |             45.0 |              100.0 |
 | utilities.el             |                   9.0 | test/utilities-test.el             |              9.0 |              100.0 |
-| org-trello-entity.el     |                  30.0 | test/org-trello-entity-test.el     |             31.0 | 103.33333333333334 |
-| org-trello-proxy.el      |                  33.0 | test/org-trello-proxy-test.el      |             36.0 | 109.09090909090908 |
+| org-trello-entity.el     |                  31.0 | test/org-trello-entity-test.el     |             31.0 |              100.0 |
+| org-trello-proxy.el      |                  34.0 | test/org-trello-proxy-test.el      |             36.0 | 105.88235294117648 |
 |--------------------------+-----------------------+------------------------------------+------------------+--------------------|
-| Average                  |                  442. |                                    |             405. |   91.6289592760181 |
+| Average                  |                  517. |                                    |             385. |  74.46808510638297 |
 |--------------------------+-----------------------+------------------------------------+------------------+--------------------|
 #+TBLFM: $5='(* 100 (/ (string-to-number $4) (string-to-int $2)))::@20$2=vsum(@2..@18)::@20$4=vsum(@2..@18)::@20$5='(* 100 (/ (string-to-number (format "%s0" @20$4)) (string-to-number (format "%s0" @20$2))))
