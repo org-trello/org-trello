@@ -26,7 +26,6 @@
 
 (require 'undercover)
 (undercover "*.el"
-            "test/utilities-test.el"
             (:exclude "*-tests.el")
             (:report-file "/tmp/undercover-report.json"))
 
