@@ -104,7 +104,7 @@ Otherwise, default to current buffer."
   (orgtrello-tests-execute-fn-on-buffer
    (lambda ()
      (let ((functions))
-       (while (re-search-forward "\(defun \\(.*\\) \(" nil t)
+       (while (re-search-forward "\(defun\\|\(defsubst\\|\(defmacro\\|\(defalias \\(.*\\) \(" nil t)
          (push (match-string-no-properties 1) functions))
        (nreverse functions)))
    buffer-file))
@@ -178,7 +178,9 @@ If region is active, will use the region highlight as buffer.
 Otherwise, if ASK-BUFFER is not nil, will ask the user.
 Otherwise, default to current buffer."
   (interactive "P")
-  (orgtrello-tests-interactive-number-of "\\(defun\\).*" ask-buffer))
+  (orgtrello-tests-interactive-number-of
+   "\\(\(defun\\|\(defsubst\\|\(defmacro\\|\(defalias\\).*"
+   ask-buffer))
 
 (defun orgtrello-tests-count-number-tests (&optional ask-buffer)
   "Count the number of `ert-def-test'.
