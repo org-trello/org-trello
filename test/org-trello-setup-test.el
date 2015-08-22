@@ -2,6 +2,21 @@
 (require 'ert)
 (require 'el-mock)
 
+(ert-deftest test-orgtrello-setup-org-trello-on-p ()
+  (should (eq t
+              (let ((major-mode 'org-mode)
+                    (org-trello--mode-activated-p t))
+                (orgtrello-setup-org-trello-on-p))))
+  (should-not (let ((major-mode 'other-mode)
+                    (org-trello--mode-activated-p t))
+                (orgtrello-setup-org-trello-on-p)))
+  (should-not (let ((major-mode 'org-mode)
+                    (org-trello--mode-activated-p))
+                (orgtrello-setup-org-trello-on-p)))
+  (should-not (let ((major-mode 'other-mode)
+                    (org-trello--mode-activated-p))
+                (orgtrello-setup-org-trello-on-p))))
+
 (ert-deftest test-orgtrello-setup-install-local-keybinding-map ()
   (should (equal '((lambda nil (interactive)) (lambda nil (interactive)))
                  (orgtrello-setup-install-local-keybinding-map "C-c o"

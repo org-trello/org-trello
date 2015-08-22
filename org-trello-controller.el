@@ -1264,7 +1264,7 @@ CARD-ID is the needed id to create the comment."
 
 (defun orgtrello-controller-prepare-buffer ()
   "Prepare the buffer to receive org-trello data."
-  (when (and (eq major-mode 'org-mode) org-trello--mode-activated-p)
+  (when (orgtrello-setup-org-trello-on-p)
     (orgtrello-buffer-install-overlays)
     (orgtrello-buffer-indent-card-descriptions)
     (orgtrello-buffer-indent-card-data)))

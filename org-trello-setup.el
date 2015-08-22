@@ -321,5 +321,9 @@ PREFIX-KEYBINDING is the new binding."
   "Set the user logged in USER-LOGGED-IN."
   (setq org-trello--user-logged-in user-logged-in))
 
+(defun orgtrello-setup-org-trello-on-p ()
+  "Determine if buffer is org-trello activated."
+  (and (eq major-mode 'org-mode) org-trello--mode-activated-p))
+
 (provide 'org-trello-setup)
 ;;; org-trello-setup.el ends here

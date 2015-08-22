@@ -519,7 +519,7 @@ Otherwise, work on the all buffer."
 (defun orgtrello-buffer-install-overlays ()
   "Install overlays throughout the all buffers.
 Function to be triggered by `before-save-hook` on org-trello-mode buffer."
-  (when (and (eq major-mode 'org-mode) org-trello--mode-activated-p)
+  (when (orgtrello-setup-org-trello-on-p)
     (orgtrello-buffer-remove-overlays)
     (save-excursion
       (goto-char (point-min))
@@ -541,7 +541,7 @@ If yes, indent such region with INDENT space."
 (defun orgtrello-buffer-indent-card-descriptions ()
   "Indent the buffer's card descriptions rigidly starting at 2.
 Function to be triggered by `before-save-hook` on org-trello-mode buffer."
-  (when (and (eq major-mode 'org-mode) org-trello--mode-activated-p)
+  (when (orgtrello-setup-org-trello-on-p)
     (orgtrello-buffer-org-map-entries
      (lambda ()
        (-when-let (card-description
@@ -555,7 +555,7 @@ Function to be triggered by `before-save-hook` on org-trello-mode buffer."
 (defun orgtrello-buffer-indent-card-data ()
   "Indent the card data rigidly starting at 2.
 Function to be triggered by `before-save-hook` on org-trello-mode buffer."
-  (when (and (eq major-mode 'org-mode) org-trello--mode-activated-p)
+  (when (orgtrello-setup-org-trello-on-p)
     (orgtrello-buffer-org-map-entries
      (lambda ()
        (orgtrello-buffer-indent-region org-trello--checklist-indent
