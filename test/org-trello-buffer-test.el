@@ -1189,7 +1189,7 @@ DEADLINE: <dummy-date-with-right-locale>
   some text
 
 "
-                 (orgtrello-tests-with-temp-buffer-indented-and-return-buffer-content
+                 (orgtrello-tests-with-temp-buffer-and-return-indented-content
                   ":PROPERTIES:
 #+PROPERTY: orgtrello-user-ardumont ardumont-id
 #+PROPERTY: orgtrello-user-dude dude-id
