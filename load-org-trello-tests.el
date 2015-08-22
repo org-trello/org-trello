@@ -100,12 +100,13 @@ Otherwise, default to current buffer."
       (insert (int-to-string c)))))
 
 (defun orgtrello-tests-list-functions-in-buffer (buffer-file)
-  "Compute the number of `defun' in the BUFFER-FILE."
+  "Compute the number of `defun' in the BUFFER-FILE.
+Order is the same as the buffer's definitions."
   (orgtrello-tests-execute-fn-on-buffer
    (lambda ()
      (let ((functions))
-       (while (re-search-forward "\(defun\\|\(defsubst\\|\(defmacro\\|\(defalias \\(.*\\) \(" nil t)
-         (push (match-string-no-properties 1) functions))
+       (while (re-search-forward "\\(defalias '\\|defmacro \\|defsubst \\|defun \\)\\([a-zA-z0-9-]*\\)" nil t)
+         (push (match-string-no-properties 2) functions))
        (nreverse functions)))
    buffer-file))
 
@@ -166,7 +167,7 @@ Otherwise, default to current buffer."
       (let ((fn-name (helm-comp-read "Next uncovered function: " uncovered-functions)))
         (-if-let (pos (save-excursion
                         (goto-char (point-min))
-                        (search-forward (format "\(defun %s" fn-name))))
+                        (search-forward-regexp (format "\\(defalias '\\|defun \\|defmacro \\|defsubst \\)%s" fn-name))))
             (goto-char pos)
           (message "Curiously enough, I did not find '%s'... Sorry about that."
                    fn-name)))
