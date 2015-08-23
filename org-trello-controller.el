@@ -298,9 +298,8 @@ Does not preserve position."
 (defun orgtrello-controller--retrieve-archive-cards (data)
   "Retrieve the archive cards from DATA.
 DATA is a list of (board-id &rest buffer-name point-start)."
-  (defalias 'board-id 'car)
   (-> data
-      board-id
+      car
       orgtrello-api-get-archived-cards
       (orgtrello-query-http-trello 'sync)
       (cons data)))
@@ -469,9 +468,8 @@ Along the way, the buffer BUFFER-NAME is written with new information."
 (defun orgtrello-controller--retrieve-full-card (data)
   "Retrieve the full card from the DATA.
 DATA is a list of (card-meta buffer-name point-start)."
-  (defalias 'card-meta 'car)
   (-> data
-      card-meta
+      car
       orgtrello-data-entity-id
       orgtrello-api-get-full-card
       (orgtrello-query-http-trello 'sync)
