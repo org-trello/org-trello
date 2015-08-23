@@ -81,7 +81,8 @@ if NOLOG-P is set, this will not log anything."
                                                 fn-to-execute nolog-p))
 
 (defun orgtrello-action--too-deep-level (entity)
-  "Given an ENTITY with level too deep, display an error message about it."
+  "Given an ENTITY with level too deep, display an error message about it.
+ENTITY is actually not used (implementation detail)."
   "Your arborescence depth is too deep. We only support up to depth 3.
 Level 1 - card\nLevel 2 - checklist\nLevel 3 - items")
 

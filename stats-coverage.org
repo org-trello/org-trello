@@ -6,10 +6,10 @@
 |--------------------------+-----------------------+------------------------------------+------------------+--------------------|
 | org-trello-data.el       |                 110.0 | test/org-trello-data-test.el       |             45.0 | 40.909090909090914 |
 | org-trello.el            |                  51.0 | test/org-trello-test.el            |             28.0 |  54.90196078431373 |
-| org-trello-controller.el |                  85.0 | test/org-trello-controller-test.el |             62.0 |  72.94117647058823 |
+| org-trello-controller.el |                 100.0 | test/org-trello-controller-test.el |             80.0 |               80.0 |
 | org-trello-buffer.el     |                 110.0 | test/org-trello-buffer-test.el     |             92.0 |  83.63636363636363 |
 | org-trello-setup.el      |                  14.0 | test/org-trello-setup-test.el      |             12.0 |  85.71428571428571 |
-| org-trello-action.el     |                   8.0 | test/org-trello-action-test.el     |              7.0 |               87.5 |
+| org-trello-action.el     |                   8.0 | test/org-trello-action-test.el     |              8.0 |              100.0 |
 | org-trello-query.el      |                  11.0 | test/org-trello-query-test.el      |             11.0 |              100.0 |
 | org-trello-cbx.el        |                  30.0 | test/org-trello-cbx-test.el        |             30.0 |              100.0 |
 | org-trello-input.el      |                   1.0 | test/org-trello-input-test.el      |              1.0 |              100.0 |
@@ -23,6 +23,6 @@
 | org-trello-entity.el     |                  31.0 | test/org-trello-entity-test.el     |             31.0 |              100.0 |
 | org-trello-proxy.el      |                  34.0 | test/org-trello-proxy-test.el      |             36.0 | 105.88235294117648 |
 |--------------------------+-----------------------+------------------------------------+------------------+--------------------|
-| Average                  |                  517. |                                    |             385. |  74.46808510638297 |
+| Average                  |                  532. |                                    |             404. |  75.93984962406014 |
 |--------------------------+-----------------------+------------------------------------+------------------+--------------------|
 #+TBLFM: $5='(* 100 (/ (string-to-number $4) (string-to-int $2)))::@20$2=vsum(@2..@18)::@20$4=vsum(@2..@18)::@20$5='(* 100 (/ (string-to-number (format "%s0" @20$4)) (string-to-number (format "%s0" @20$2))))
