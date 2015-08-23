@@ -19,9 +19,17 @@
 (require 's)
 (require 'ido)
 
+(defun orgtrello-controller--log-success (prefix-log)
+  "Return a function to log the success with PREFIX-LOG as prefix string."
+  (-partial #'orgtrello-log-msg orgtrello-log-info (format "%s DONE."
+                                                           prefix-log)))
+
+
 (defun orgtrello-controller--log-error (prefix-log error-msg)
-  "Prefix log PREFIX-LOG ERROR-MSG."
-  (-partial #'orgtrello-log-msg orgtrello-log-error (format "%s FAILED. %s" prefix-log error-msg)))
+  "Return a function to log the error with PREFIX-LOG and ERROR-MSG."
+  (-partial #'orgtrello-log-msg orgtrello-log-error (format "%s FAILED. %s"
+                                                            prefix-log
+                                                            error-msg)))
 
 (defun orgtrello-controller--list-user-entries (props)
   "List the users entries from properties PROPS."
@@ -363,8 +371,7 @@ Beware, this will block Emacs as the request is synchronous."
                        (list board-id
                              buffer-name
                              board-name
-                             point-start
-                             prefix-log))) ;; inject data (state monad :)
+                             point-start))) ;; inject data (state monad :)
       (deferred:nextc it
         #'orgtrello-controller--retrieve-archive-cards)
       (deferred:nextc it
@@ -374,7 +381,7 @@ Beware, this will block Emacs as the request is synchronous."
       (deferred:nextc it
         #'orgtrello-controller--after-sync-buffer-with-trello-cards)
       (deferred:nextc it
-        #'orgtrello-controller--log-success)
+        (orgtrello-controller--log-success prefix-log))
       (deferred:error it
         (orgtrello-controller--log-error prefix-log "Error: %S")))))
 
@@ -495,12 +502,6 @@ DATA is a list of (full-card card-meta buffer-name point-start)."
     (orgtrello-buffer-save-buffer buffer-name)
     (goto-char point-start)))
 
-(defun orgtrello-controller--log-success (data)
-  "Log the success from DATA.
-DATA is a list.  prefix-log is the last element (... PREFIX-LOG)."
-  (let ((prefix-log (car (last data))))
-    (orgtrello-log-msg orgtrello-log-info (format "%s DONE" prefix-log))))
-
 (defun orgtrello-controller-sync-card-from-trello (full-meta &optional buffer-name)
   "Entity FULL-META synchronization (with its structure) from `trello'.
 BUFFER-NAME is the actual buffer to work on."
@@ -519,8 +520,7 @@ BUFFER-NAME is the actual buffer to work on."
                        (list card-meta
                              buffer-name
                              card-name
-                             point-start
-                             prefix-log)))
+                             point-start)))
       (deferred:nextc it
         #'orgtrello-controller--retrieve-full-card)
       (deferred:nextc it
@@ -528,7 +528,7 @@ BUFFER-NAME is the actual buffer to work on."
       (deferred:nextc it
         #'orgtrello-controller--after-sync-buffer-with-trello-card)
       (deferred:nextc it
-        #'orgtrello-controller--log-success)
+        (orgtrello-controller--log-success prefix-log))
       (deferred:error it
         (orgtrello-controller--log-error prefix-log "Error: %S")))))
 
@@ -591,11 +591,10 @@ BUFFER-NAME specifies the buffer onto which we work."
                          (list card-meta
                                card-name
                                buffer-name
-                               point-start
-                               prefix-log)))
+                               point-start)))
         (deferred:nextc it #'orgtrello-controller--archive-that-card)
         (deferred:nextc it #'orgtrello-controller--sync-buffer-with-archive)
-        (deferred:nextc it #'orgtrello-controller--log-success)
+        (deferred:nextc it (orgtrello-controller--log-success prefix-log))
         (deferred:error it
           (orgtrello-controller--log-error prefix-log "Error: %S"))))))
 

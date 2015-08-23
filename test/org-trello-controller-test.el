@@ -15,9 +15,9 @@
   (should-not (orgtrello-controller--properties-compute-users-ids (orgtrello-hash-empty-hash))))
 
 (ert-deftest test-orgtrello-controller--log-success ()
-  (should (string= "org-trello - do something... DONE"
+  (should (string= "org-trello - do something... DONE."
                    (let ((orgtrello-log-level orgtrello-log-info))
-                     (orgtrello-controller--log-success '(:1 :2 "do something..."))))))
+                     (funcall (orgtrello-controller--log-success "do something..."))))))
 
 (ert-deftest test-orgtrello-controller--archive-that-card ()
   (should (equal '(:archive-result :card-meta :card-name)
