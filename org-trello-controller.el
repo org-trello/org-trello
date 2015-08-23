@@ -1064,11 +1064,15 @@ Return the hashmap (name, id) of the new lists created."
 
 (defun orgtrello-controller--add-user (user users)
   "Add the USER to the USERS list."
-  (if (member user users) users (cons user users)))
+  (if (member user users)
+      users
+    (cons user users)))
 
 (defun orgtrello-controller--remove-user (user users)
   "Remove the USER from the USERS list."
-  (if (member user users) (remove user users) users users))
+  (if (member user users)
+      (remove user users)
+    users))
 
 (defun orgtrello-controller-do-assign-me ()
   "Command to assign oneself to the card."
