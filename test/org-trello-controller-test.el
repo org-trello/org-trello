@@ -2,6 +2,26 @@
 (require 'ert)
 (require 'el-mock)
 
+(ert-deftest test-orgtrello-controller--extract-comment-and-close-popup ()
+  (should (equal '("some comment trimmed from popup's comment" :card-id :buffer-name :point :prefix-log)
+                 (with-mock
+                   (mock (buffer-string) => "some comment trimmed from popup's comment")
+                   (mock (orgtrello-controller-close-popup :buffer-name :point) => :popup-closed)
+                   (orgtrello-controller--extract-comment-and-close-popup '(:card-id :buffer-name :point :prefix-log))))))
+
+(ert-deftest test-orgtrello-controller--sync-card-from-trello-with-data ()
+  (should (eq :data
+              (with-mock
+                (mock (orgtrello-controller-checks-then-sync-card-from-trello) => :result-sync-card)
+                (orgtrello-controller--sync-card-from-trello-with-data :data)))))
+
+(ert-deftest test-orgtrello-controller--add-comment-to-card ()
+  (should (equal (list :result-query :comment :card-id)
+                 (with-mock
+                   (mock (orgtrello-api-add-card-comment :card-id :comment) => :query-add-card)
+                   (mock (orgtrello-query-http-trello :query-add-card 'sync) => :result-query)
+                   (orgtrello-controller--add-comment-to-card '(:comment :card-id))))))
+
 (ert-deftest test-orgtrello-controller-delete-setup ()
   (should (string= "org-trello - Cleanup done!"
                    (with-mock

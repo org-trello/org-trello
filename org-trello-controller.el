@@ -1266,69 +1266,88 @@ BOARD-USERS-NAME-ID is a map of username to id."
 (defvar orgtrello-controller-register "*orgtrello-register*"
   "The variable holding the Emacs' org-trello register.")
 
-(defvar orgtrello-controller-card-id nil
-  "The variable holding the card-id needed to sync the comment.")
-
-(defvar orgtrello-controller-return nil
-  "The variable holding the list `'buffer-name`', position.
-This, to get back to when closing the popup window.")
-
-(make-local-variable 'orgtrello-controller-return)
-(make-local-variable 'orgtrello-controller-card-id)
-
 (defun orgtrello-controller-add-comment (card-id)
   "Pop up a window for the user to input a comment.
 CARD-ID is the needed id to create the comment."
-  (setq orgtrello-controller-return (list (current-buffer) (point)))
-  (setq orgtrello-controller-card-id card-id)
-  (window-configuration-to-register orgtrello-controller-register)
-  (delete-other-windows)
-  (org-switch-to-buffer-other-window org-trello--title-buffer-information)
-  (erase-buffer)
-  (let ((org-inhibit-startup t))
-    (org-mode)
-    (insert
-     (format
-      "# Insert comment.\n# Finish with C-c C-c, or cancel with C-c C-k.\n\n"))
-    (define-key org-mode-map [remap org-ctrl-c-ctrl-c]
-      'orgtrello-controller-kill-buffer-and-write-new-comment)
-    (define-key org-mode-map [remap org-kill-note-or-show-branches]
-      'orgtrello-controller-close-popup)))
+  (lexical-let ((card-id-to-sync card-id)
+                (return-buffer-name (current-buffer))
+                (return-point (point)))
+    (window-configuration-to-register orgtrello-controller-register)
+    (delete-other-windows)
+    (org-switch-to-buffer-other-window org-trello--title-buffer-information)
+    (erase-buffer)
+    (let ((org-inhibit-startup t))
+      (org-mode)
+      (insert
+       (format
+        "# Insert comment for card '%s'.
+# Finish with C-c C-c, or cancel with C-c C-k.\n\n" card-id-to-sync))
+      (define-key org-mode-map [remap org-ctrl-c-ctrl-c]
+        (lambda () (interactive)
+          (orgtrello-controller-kill-buffer-and-write-new-comment
+           card-id-to-sync
+           return-buffer-name
+           return-point)))
+      (define-key org-mode-map [remap org-kill-note-or-show-branches]
+        (lambda () (interactive)
+          (orgtrello-controller-close-popup return-buffer-name return-point))))))
 
-(defun orgtrello-controller-close-popup ()
-  "Close the buffer at point."
-  (interactive)
+(defun orgtrello-controller-close-popup (buffer-name point)
+  "Close the current buffer at point (supposed to be a popup).
+Then, gets back to the BUFFER-NAME at POINT."
   (kill-buffer (current-buffer))
   (jump-to-register orgtrello-controller-register)
   (define-key org-mode-map [remap org-ctrl-c-ctrl-c] nil)
   (define-key org-mode-map [remap org-kill-note-or-show-branches] nil)
-  (-let (((buffer-name pos) orgtrello-controller-return))
-    (pop-to-buffer buffer-name)
-    (goto-char pos)))
+  (pop-to-buffer buffer-name)
+  (goto-char point))
 
-(defun orgtrello-controller-kill-buffer-and-write-new-comment ()
-  "Write comment present in the popup buffer."
-  (interactive)
-  (deferred:$
-    (deferred:next
-      (lambda ()
-        (let ((comment (orgtrello-buffer-trim-input-comment (buffer-string))))
-          (orgtrello-controller-close-popup)
-          comment)))
-    (deferred:nextc it
-      (lambda (comment)
-        (lexical-let ((new-comment comment))
-          (deferred:$
-            (deferred:next (lambda ()
-                             (-> orgtrello-controller-card-id
-                                 (orgtrello-api-add-card-comment new-comment)
-                                 (orgtrello-query-http-trello 'sync))))
-            (deferred:nextc it
-              (lambda (data)
-                (orgtrello-log-msg orgtrello-log-trace
-                                   "Add card comment - response data: %S"
-                                   data)
-                (orgtrello-controller-checks-then-sync-card-from-trello)))))))))
+(defun orgtrello-controller--add-comment-to-card (data)
+  "Given a DATA structure, add the comment to the card.
+DATA is a list (comment card-id prefix-log)."
+  (-let (((comment card-id &rest) data))
+    (-> card-id
+        (orgtrello-api-add-card-comment comment)
+        (orgtrello-query-http-trello 'sync)
+        (cons data))))
+
+(defun orgtrello-controller--sync-card-from-trello-with-data (data)
+  "Given a DATA structure, update the buffer's card.
+DATA is a list (comment card-id prefix-log).
+DATA is not used actually."
+  (orgtrello-controller-checks-then-sync-card-from-trello)
+  data)
+
+(defun orgtrello-controller--extract-comment-and-close-popup (data)
+  "Extract the comment from the buffer.
+DATA is the structure holding the buffer to work with."
+  (-let (((_ buffer-name point &rest) data)
+         (comment (orgtrello-buffer-trim-input-comment (buffer-string))))
+    (orgtrello-controller-close-popup buffer-name point)
+    (cons comment data)))
+
+(defun orgtrello-controller-kill-buffer-and-write-new-comment (card-id
+                                                               buffer-name
+                                                               point)
+  "Write comment present in the popup buffer for the CARD-ID.
+Returns to BUFFER-NAME at POINT when done."
+  (lexical-let* ((card-id card-id)
+                 (return-buffer-name buffer-name)
+                 (return-point point)
+                 (prefix-log (format "Add comment to card '%s'..." card-id)))
+    (deferred:$
+      (deferred:next
+        (lambda () (list card-id return-buffer-name return-point prefix-log)))
+      (deferred:nextc it
+        #'orgtrello-controller--extract-comment-and-close-popup)
+      (deferred:nextc it
+        #'orgtrello-controller--add-comment-to-card)
+      (deferred:nextc it
+        #'orgtrello-controller--sync-card-from-trello-with-data)
+      (deferred:nextc it
+        (orgtrello-controller--log-success prefix-log))
+      (deferred:error it
+        (orgtrello-controller--log-error prefix-log "Error: %S")))))
 
 (defun orgtrello-controller-prepare-buffer ()
   "Prepare the buffer to receive org-trello data."
