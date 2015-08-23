@@ -2,6 +2,17 @@
 (require 'ert)
 (require 'el-mock)
 
+(ert-deftest test-orgtrello-controller-delete-setup ()
+  (should (string= "org-trello - Cleanup done!"
+                   (with-mock
+                     (mock (orgtrello-controller-do-cleanup-from-buffer t) => :done)
+                     (orgtrello-controller-delete-setup)))))
+
+(ert-deftest test-orgtrello-controller--properties-compute-users-ids ()
+  (should (equal '("#+PROPERTY: orgtrello-user-user2 456" "#+PROPERTY: orgtrello-user-user1 123")
+                 (orgtrello-controller--properties-compute-users-ids (orgtrello-hash-make-properties '(("user1" . "123")
+                                                                                                       ("user2" . "456"))))))
+  (should-not (orgtrello-controller--properties-compute-users-ids (orgtrello-hash-empty-hash))))
 
 (ert-deftest test-orgtrello-controller--log-success ()
   (should (string= "org-trello - do something... DONE"
