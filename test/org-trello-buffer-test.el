@@ -2,6 +2,17 @@
 (require 'ert)
 (require 'el-mock)
 
+(ert-deftest test-orgtrello-buffer-set-usernames-assigned-property ()
+  (should (string= "* card
+  :PROPERTIES:
+  :orgtrello-users: user1,user2
+  :END:
+"
+                   (orgtrello-tests-with-temp-buffer-and-return-buffer-content
+                    "* card
+"
+                    (orgtrello-buffer-set-usernames-assigned-property "user1,user2")))))
+
 (ert-deftest test-orgtrello-buffer-get-usernames-assigned-property ()
   (should (string= "user1,user2,user3"
                    (orgtrello-tests-with-temp-buffer
