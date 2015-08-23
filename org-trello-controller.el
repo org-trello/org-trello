@@ -19,13 +19,12 @@
 (require 's)
 (require 'ido)
 
-(defun orgtrello-controller--log-success (prefix-log)
+(defun orgtrello-controller-log-success (prefix-log)
   "Return a function to log the success with PREFIX-LOG as prefix string."
   (-partial #'orgtrello-log-msg orgtrello-log-info (format "%s DONE."
                                                            prefix-log)))
 
-
-(defun orgtrello-controller--log-error (prefix-log error-msg)
+(defun orgtrello-controller-log-error (prefix-log error-msg)
   "Return a function to log the error with PREFIX-LOG and ERROR-MSG."
   (-partial #'orgtrello-log-msg orgtrello-log-error (format "%s FAILED. %s"
                                                             prefix-log
@@ -381,9 +380,9 @@ Beware, this will block Emacs as the request is synchronous."
       (deferred:nextc it
         #'orgtrello-controller--after-sync-buffer-with-trello-cards)
       (deferred:nextc it
-        (orgtrello-controller--log-success prefix-log))
+        (orgtrello-controller-log-success prefix-log))
       (deferred:error it
-        (orgtrello-controller--log-error prefix-log "Error: %S")))))
+        (orgtrello-controller-log-error prefix-log "Error: %S")))))
 
 (defun orgtrello-controller--user-logged-in ()
   "Compute the current user."
@@ -407,7 +406,7 @@ Beware, this will block Emacs as the request is synchronous."
       (deferred:next #'orgtrello-controller--user-logged-in)
       (deferred:nextc it #'orgtrello-controller--check-user-account)
       (deferred:error it
-        (orgtrello-controller--log-error prefix-log "Error: %S")))))
+        (orgtrello-controller-log-error prefix-log "Error: %S")))))
 
 (defun orgtrello-controller--map-cards-to-computations (entities-adjacencies)
   "Given an ENTITIES-ADJACENCIES structure, map to computations.
@@ -528,9 +527,9 @@ BUFFER-NAME is the actual buffer to work on."
       (deferred:nextc it
         #'orgtrello-controller--after-sync-buffer-with-trello-card)
       (deferred:nextc it
-        (orgtrello-controller--log-success prefix-log))
+        (orgtrello-controller-log-success prefix-log))
       (deferred:error it
-        (orgtrello-controller--log-error prefix-log "Error: %S")))))
+        (orgtrello-controller-log-error prefix-log "Error: %S")))))
 
 (defun orgtrello-controller--do-delete-card ()
   "Delete the card."
@@ -594,9 +593,9 @@ BUFFER-NAME specifies the buffer onto which we work."
                                point-start)))
         (deferred:nextc it #'orgtrello-controller--archive-that-card)
         (deferred:nextc it #'orgtrello-controller--sync-buffer-with-archive)
-        (deferred:nextc it (orgtrello-controller--log-success prefix-log))
+        (deferred:nextc it (orgtrello-controller-log-success prefix-log))
         (deferred:error it
-          (orgtrello-controller--log-error prefix-log "Error: %S"))))))
+          (orgtrello-controller-log-error prefix-log "Error: %S"))))))
 
 (defun orgtrello-controller--do-install-config-file (user-login
                                                      consumer-key
@@ -1347,9 +1346,9 @@ Returns to BUFFER-NAME at POINT when done."
       (deferred:nextc it
         #'orgtrello-controller--sync-card-from-trello-with-data)
       (deferred:nextc it
-        (orgtrello-controller--log-success prefix-log))
+        (orgtrello-controller-log-success prefix-log))
       (deferred:error it
-        (orgtrello-controller--log-error prefix-log "Error: %S")))))
+        (orgtrello-controller-log-error prefix-log "Error: %S")))))
 
 (defun orgtrello-controller-prepare-buffer ()
   "Prepare the buffer to receive org-trello data."

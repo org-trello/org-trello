@@ -301,10 +301,10 @@
                                                                                                        ("user2" . "456"))))))
   (should-not (orgtrello-controller--properties-compute-users-ids (orgtrello-hash-empty-hash))))
 
-(ert-deftest test-orgtrello-controller--log-success ()
+(ert-deftest test-orgtrello-controller-log-success ()
   (should (string= "org-trello - do something... DONE."
                    (let ((orgtrello-log-level orgtrello-log-info))
-                     (funcall (orgtrello-controller--log-success "do something..."))))))
+                     (funcall (orgtrello-controller-log-success "do something..."))))))
 
 (ert-deftest test-orgtrello-controller--archive-that-card ()
   (should (equal '(:archive-result :card-meta :card-name)
@@ -361,9 +361,9 @@
                              (current-buffer)) => :archive-result)
                       (orgtrello-controller-checks-and-do-archive-card))))))
 
-(ert-deftest test-orgtrello-controller--log-error ()
+(ert-deftest test-orgtrello-controller-log-error ()
   (should (string= "org-trello - do something... FAILED. Error code: foo-bar"
-                   (funcall (orgtrello-controller--log-error "do something..." "Error code: %s-%s") "foo" "bar"))))
+                   (funcall (orgtrello-controller-log-error "do something..." "Error code: %s-%s") "foo" "bar"))))
 
 (ert-deftest test-orgtrello-controller--after-sync-buffer-with-trello-card ()
   (should (equal :sync-buffer-with-trello-card-done
