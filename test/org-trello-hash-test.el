@@ -51,12 +51,6 @@
            (orgtrello-hash-make-transpose-properties '((:id-1 . (:b))
                                                        (:id-2 :c :d))))))
 
-(defun orgtrello-hash-make-transpose-properties (properties)
-  "Return a hash-table with transposed key/value from PROPERTIES key/values."
-  (--reduce-from (orgtrello-hash-puthash-data (cdr it) (car it) acc)
-                 (orgtrello-hash-empty-hash)
-                 properties))
-
 (ert-deftest test-orgtrello-hash-gethash-data ()
   (should (equal "some-method" (orgtrello-hash-gethash-data :method (orgtrello-hash-make-properties '((:method . "some-method"))))))
   (should (equal nil           (orgtrello-hash-gethash-data :method (orgtrello-hash-make-properties '((:inexistant . "some-method"))))))
