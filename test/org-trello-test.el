@@ -2,6 +2,22 @@
 (require 'ert)
 (require 'el-mock)
 
+(ert-deftest test-org-trello--after-apply ()
+  ;; should save and log
+  (should (string= "org-trello - do something... DONE."
+                   (let ((orgtrello-log-level orgtrello-log-info))
+                     (with-mock
+                       (mock (orgtrello-buffer-save-buffer :buffer-to-save) => :done)
+                       (org-trello--after-apply '(:result-comp :comp :buffer-to-save nil "do something..."))))))
+  ;; do nothing
+  (should-not (org-trello--after-apply '(:result-comp :comp nil 'no-log "do something..."))))
+
+(ert-deftest test-org-trello--apply-deferred-with-data ()
+  (should (equal '(:result-computation :computation :buffer-to-save :nolog-flag :prefix-log)
+                 (with-mock
+                   (mock (org-trello--apply-deferred-with-quit :computation) => :result-computation)
+                   (org-trello--apply-deferred-with-data '(:computation :buffer-to-save :nolog-flag :prefix-log))))))
+
 (ert-deftest test-org-trello--apply-deferred ()
   (should (equal 11
                  (org-trello--apply-deferred '((lambda (a b) (+ a b)) 1 10)))))

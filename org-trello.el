@@ -147,29 +147,41 @@ Quit is permitted though."
   (with-current-buffer (current-buffer)
     (org-trello--apply-deferred-with-quit computation)))
 
+(defun org-trello--after-apply (data)
+  "Given DATA, action after applied instructions.
+DATA is a list (computation buffer-to-save nolog-flag prefix-log)"
+  (-let (((_ _ buffer-to-save nolog-flag prefix-log) data))
+    (when buffer-to-save
+      (orgtrello-buffer-save-buffer buffer-to-save))
+    (unless nolog-flag
+      (funcall (orgtrello-controller-log-success prefix-log)))))
+
+(defun org-trello--apply-deferred-with-data (data)
+  "Given DATA, execute apply action.
+DATA is a list (computation buffer-to-save nolog-flag prefix-log)"
+  (-> data
+      car
+      org-trello--apply-deferred-with-quit
+      (cons data)))
+
 (defun org-trello-apply (comp &optional save-buffer-p nolog-p)
   "Apply org-trello computation COMP.
-When SAVE-BUFFER-P is provided, save current buffer at the end of computation.
-when NOLOG-P is specified, no output log."
-  (lexical-let ((computation        comp)
-                (prefix-log-message (cadr comp))
-                (buffer-to-save     (when save-buffer-p (buffer-file-name)))
-                (nolog-flag         nolog-p))
+When SAVE-BUFFER-P is provided, save current buffer after computation.
+when NOLOG-P is specified, no output log after computation."
+  (lexical-let ((computation comp)
+                (prefix-log (cadr comp))
+                (buffer-to-save (when save-buffer-p (buffer-file-name)))
+                (nolog-flag nolog-p))
     (deferred:$
       (deferred:next (lambda ()
-                       (org-trello--apply-deferred-with-quit computation)))
-      (deferred:nextc it (lambda ()
-                           (when buffer-to-save
-                             (orgtrello-buffer-save-buffer buffer-to-save))
-                           (unless nolog-flag
-                             (orgtrello-log-msg orgtrello-log-info
-                                                "%s - Done!"
-                                                prefix-log-message))))
+                       (list computation
+                             buffer-to-save
+                             nolog-flag
+                             prefix-log)))
+      (deferred:nextc it #'org-trello--apply-deferred-with-data)
+      (deferred:nextc it #'org-trello--after-apply)
       (deferred:error it
-        (-partial
-         #'orgtrello-log-msg
-         orgtrello-log-error
-         "Main apply function - Problem during execution - '%s'!")))))
+        (orgtrello-controller-log-error prefix-log "Error: %S")))))
 
 (defun org-trello-log-strict-checks-and-do (action-label
                                             action-fn
