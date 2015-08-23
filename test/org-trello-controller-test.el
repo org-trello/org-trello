@@ -2,6 +2,161 @@
 (require 'ert)
 (require 'el-mock)
 
+(ert-deftest test-orgtrello-controller-do-write-board-metadata ()
+  (should (eq :result-write
+              (with-mock
+                (mock (orgtrello-controller--name-id :board-lists) => :board-lists-hname-id)
+                (mock (orgtrello-hash-keys :board-lists-hname-id) => :board-list-keywords)
+                (mock (orgtrello-controller-do-cleanup-from-buffer) => :done)
+                (mock (orgtrello-controller--update-orgmode-file-with-properties
+                       :board-name
+                       :board-id
+                       :board-lists-hname-id
+                       :board-users-name-id
+                       :user-logged-in
+                       :board-labels
+                       :board-list-keywords) => :result-write)
+                (orgtrello-controller-do-write-board-metadata
+                 :board-id
+                 :board-name
+                 :user-logged-in
+                 :board-lists
+                 :board-labels
+                 :board-users-name-id)))))
+
+(ert-deftest test-orgtrello-controller-do-cleanup-from-buffer ()
+  (should (string= "#+title: dummy sample to sync with trello
+#+author: Antoine R. Dumont
+
+* TODO Joy of FUN(ctional) LANGUAGES
+:PROPERTIES:
+:orgtrello-local-checksum: 890
+:orgtrello-id: 123
+:END:
+  hello description
+  - with many
+  - lines
+
+  - including
+
+  - blanks lines
+  - lists
+  - with start or dash  are now possible
+    - indentation too
+
+  - [-] LISP family :PROPERTIES: {\"orgtrello-id\":\"456\",\"orgtrello-local-checksum\":\"5102037e8960abd7ffab6983ede9a0744779a85e36072ad27dbe85e1a038f9eb\"}
+    - [X] Emacs-Lisp :PROPERTIES: {\"orgtrello-id\":\"789\",\"orgtrello-local-checksum\":\"7e573221fc50afd48d52c6575845a282b7c48091e616ee48214436cb3e49a09b\"}"
+                   (orgtrello-tests-with-temp-buffer-and-return-buffer-content
+                    ":PROPERTIES:
+#+PROPERTY: board-name api test board
+#+PROPERTY: board-id abc
+#+PROPERTY: CANCELLED def
+#+PROPERTY: FAILED ghi
+#+PROPERTY: DELEGATED jkl
+#+PROPERTY: PENDING mno
+#+PROPERTY: DONE pqr
+#+PROPERTY: IN-PROGRESS tuv
+#+PROPERTY: TODO wxy
+#+TODO: TODO IN-PROGRESS | DONE PENDING DELEGATED FAILED CANCELLED
+#+PROPERTY: orgtrello-user-antoineromaindumont z01
+#+PROPERTY: orgtrello-user-orgmode 234
+#+PROPERTY: orgtrello-user-ardumont 567
+#+PROPERTY: :green green label with & char
+#+PROPERTY: :yellow yello
+#+PROPERTY: :orange range
+#+PROPERTY: :red red
+#+PROPERTY: :purple violet
+#+PROPERTY: :blue blue
+#+PROPERTY: orgtrello-user-me ardumont
+:END:
+#+title: dummy sample to sync with trello
+#+author: Antoine R. Dumont
+
+* TODO Joy of FUN(ctional) LANGUAGES
+:PROPERTIES:
+:orgtrello-local-checksum: 890
+:orgtrello-id: 123
+:END:
+  hello description
+  - with many
+  - lines
+
+  - including
+
+  - blanks lines
+  - lists
+  - with start or dash  are now possible
+    - indentation too
+
+  - [-] LISP family :PROPERTIES: {\"orgtrello-id\":\"456\",\"orgtrello-local-checksum\":\"5102037e8960abd7ffab6983ede9a0744779a85e36072ad27dbe85e1a038f9eb\"}
+    - [X] Emacs-Lisp :PROPERTIES: {\"orgtrello-id\":\"789\",\"orgtrello-local-checksum\":\"7e573221fc50afd48d52c6575845a282b7c48091e616ee48214436cb3e49a09b\"}"
+                    (orgtrello-controller-do-cleanup-from-buffer))))
+  (should (string= "#+title: dummy sample to sync with trello
+#+author: Antoine R. Dumont
+
+* TODO Joy of FUN(ctional) LANGUAGES
+:PROPERTIES:
+:orgtrello-local-checksum: 890
+:END:
+  hello description
+  - with many
+  - lines
+
+  - including
+
+  - blanks lines
+  - lists
+  - with start or dash  are now possible
+    - indentation too
+
+  - [-] LISP family
+    - [X] Emacs-Lisp"
+                   (orgtrello-tests-with-temp-buffer-and-return-buffer-content
+                    ":PROPERTIES:
+#+PROPERTY: board-name api test board
+#+PROPERTY: board-id abc
+#+PROPERTY: CANCELLED def
+#+PROPERTY: FAILED ghi
+#+PROPERTY: DELEGATED jkl
+#+PROPERTY: PENDING mno
+#+PROPERTY: DONE pqr
+#+PROPERTY: IN-PROGRESS tuv
+#+PROPERTY: TODO wxy
+#+TODO: TODO IN-PROGRESS | DONE PENDING DELEGATED FAILED CANCELLED
+#+PROPERTY: orgtrello-user-antoineromaindumont z01
+#+PROPERTY: orgtrello-user-orgmode 234
+#+PROPERTY: orgtrello-user-ardumont 567
+#+PROPERTY: :green green label with & char
+#+PROPERTY: :yellow yello
+#+PROPERTY: :orange range
+#+PROPERTY: :red red
+#+PROPERTY: :purple violet
+#+PROPERTY: :blue blue
+#+PROPERTY: orgtrello-user-me ardumont
+:END:
+#+title: dummy sample to sync with trello
+#+author: Antoine R. Dumont
+
+* TODO Joy of FUN(ctional) LANGUAGES
+:PROPERTIES:
+:orgtrello-local-checksum: 890
+:orgtrello-id: 123
+:END:
+  hello description
+  - with many
+  - lines
+
+  - including
+
+  - blanks lines
+  - lists
+  - with start or dash  are now possible
+    - indentation too
+
+  - [-] LISP family :PROPERTIES: {\"orgtrello-id\":\"456\",\"orgtrello-local-checksum\":\"5102037e8960abd7ffab6983ede9a0744779a85e36072ad27dbe85e1a038f9eb\"}
+    - [X] Emacs-Lisp :PROPERTIES: {\"orgtrello-id\":\"789\",\"orgtrello-local-checksum\":\"7e573221fc50afd48d52c6575845a282b7c48091e616ee48214436cb3e49a09b\"}"
+                    (orgtrello-controller-do-cleanup-from-buffer 'global)))))
+
 (ert-deftest test-orgtrello-controller-do-sync-card-comment ()
   (should (eq :result-delete-card-comment
               (with-mock
