@@ -2,6 +2,46 @@
 (require 'ert)
 (require 'el-mock)
 
+(ert-deftest test-orgtrello-controller-do-show-board-labels ()
+  (should (eq :result-show-popup
+              (with-mock
+                (mock (orgtrello-buffer-labels) => :buffer-labels)
+                (mock (orgtrello-data-format-labels :buffer-labels) => :buffer-content-with-labels)
+                (mock (orgtrello-buffer-pop-up-with-content "Labels" :buffer-content-with-labels) => :result-show-popup)
+                (orgtrello-controller-do-show-board-labels)))))
+
+(ert-deftest test-orgtrello-controller-jump-to-card ()
+  (should (eq :result-jump-2
+              (with-mock
+                (mock (orgtrello-buffer-entry-get-full-metadata) =>
+                      (orgtrello-hash-make-properties `((:current . ,(orgtrello-hash-make-properties '((:level . 3)
+                                                                                                       (:id . "item-id"))))
+                                                        (:grandparent . ,(orgtrello-hash-make-properties '((:level . 1)
+                                                                                                           (:id . "card-id-2")))))))
+                (mock (browse-url "https://trello.com/c/card-id-2") => :result-jump-2)
+                (orgtrello-controller-jump-to-card))))
+  (should (eq :result-jump-1
+              (with-mock
+                (mock (orgtrello-buffer-entry-get-full-metadata) =>
+                      (orgtrello-hash-make-properties `((:current . ,(orgtrello-hash-make-properties '((:level . 2)
+                                                                                                       (:id . "item-id"))))
+                                                        (:parent . ,(orgtrello-hash-make-properties '((:level . 1)
+                                                                                                      (:id . "card-id-1")))))))
+                (mock (browse-url "https://trello.com/c/card-id-1") => :result-jump-1)
+                (orgtrello-controller-jump-to-card))))
+  (should (eq :result-jump
+              (with-mock
+                (mock (orgtrello-buffer-entry-get-full-metadata) =>
+                      (orgtrello-hash-make-properties `((:current . ,(orgtrello-hash-make-properties '((:level . 1)
+                                                                                                       (:id . "card-id")))))))
+                (mock (browse-url "https://trello.com/c/card-id") => :result-jump)
+                (orgtrello-controller-jump-to-card))))
+  (should-not
+   (with-mock
+     (mock (orgtrello-buffer-entry-get-full-metadata) => (orgtrello-hash-make-properties `((:current . ,(orgtrello-hash-make-properties '((:level . 1)
+                                                                                                                                          (:id)))))))
+     (orgtrello-controller-jump-to-card))))
+
 (ert-deftest test-orgtrello-controller-do-write-board-metadata ()
   (should (eq :result-write
               (with-mock
