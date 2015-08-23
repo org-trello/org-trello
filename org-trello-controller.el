@@ -1305,8 +1305,7 @@ CARD-ID is the needed id to create the comment."
   (jump-to-register orgtrello-controller-register)
   (define-key org-mode-map [remap org-ctrl-c-ctrl-c] nil)
   (define-key org-mode-map [remap org-kill-note-or-show-branches] nil)
-  (let ((buffer-name (car orgtrello-controller-return))
-        (pos         (cadr orgtrello-controller-return)))
+  (-let (((buffer-name pos) orgtrello-controller-return))
     (pop-to-buffer buffer-name)
     (goto-char pos)))
 
