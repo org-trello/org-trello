@@ -15,6 +15,7 @@
 (require 'org-trello-buffer)
 (require 'org-trello-input)
 (require 'org-trello-proxy)
+(require 'org-trello-deferred)
 (require 'dash-functional)
 (require 's)
 (require 'ido)
@@ -354,35 +355,21 @@ DATA is a list of (cards archive-cards board-id buffername) in this order."
 (defun orgtrello-controller-do-sync-buffer-from-trello ()
   "Full `org-mode' file synchronization.
 Beware, this will block Emacs as the request is synchronous."
-  (lexical-let ((buffer-name (current-buffer))
-                (board-name  (orgtrello-buffer-board-name))
-                (point-start (point))
-                (board-id (orgtrello-buffer-board-id))
-                (prefix-log (format "Sync trello board '%s' to buffer '%s'..."
-                                    board-name
-                                    buffer-name)))
-
-    (deferred:$ ;; In emacs 25, deferred:parallel blocks in this context.
-      ;; I don't understand why so I retrieve sequentially for the moment.
-      ;; People, feel free to help and improve.
-      (deferred:next (lambda ()
-                       (orgtrello-log-msg orgtrello-log-info prefix-log)
-                       (list board-id
-                             buffer-name
+  (let* ((buffer-name (current-buffer))
+         (board-name  (orgtrello-buffer-board-name))
+         (point-start (point))
+         (board-id (orgtrello-buffer-board-id))
+         (prefix-log (format "Sync trello board '%s' to buffer '%s'..."
                              board-name
-                             point-start))) ;; inject data (state monad :)
-      (deferred:nextc it
-        #'orgtrello-controller--retrieve-archive-cards)
-      (deferred:nextc it
-        #'orgtrello-controller--retrieve-full-cards)
-      (deferred:nextc it
-        #'orgtrello-controller--sync-buffer-with-archived-and-trello-cards)
-      (deferred:nextc it
-        #'orgtrello-controller--after-sync-buffer-with-trello-cards)
-      (deferred:nextc it
-        (orgtrello-controller-log-success prefix-log))
-      (deferred:error it
-        (orgtrello-controller-log-error prefix-log "Error: %S")))))
+                             buffer-name)))
+    (orgtrello-deferred-eval-computation
+     (list board-id buffer-name board-name point-start)
+     `('orgtrello-controller--retrieve-archive-cards
+       'orgtrello-controller--retrieve-full-cards
+       'orgtrello-controller--sync-buffer-with-archived-and-trello-cards
+       'orgtrello-controller--after-sync-buffer-with-trello-cards
+       (orgtrello-controller-log-success ,prefix-log))
+     prefix-log)))
 
 (defun orgtrello-controller--user-logged-in ()
   "Compute the current user."
@@ -400,13 +387,12 @@ Beware, this will block Emacs as the request is synchronous."
 (defun orgtrello-controller-check-trello-connection ()
   "Full `org-mode' file synchronization.
 Beware, this will block Emacs as the request is synchronous."
-  (lexical-let ((prefix-log "Checking trello connection..."))
-    (orgtrello-log-msg orgtrello-log-info prefix-log)
-    (deferred:$
-      (deferred:next #'orgtrello-controller--user-logged-in)
-      (deferred:nextc it #'orgtrello-controller--check-user-account)
-      (deferred:error it
-        (orgtrello-controller-log-error prefix-log "Error: %S")))))
+  (orgtrello-deferred-eval-computation
+   nil
+   '((lambda (data) (orgtrello-controller--user-logged-in))
+     'orgtrello-controller--check-user-account)
+   "Checking trello connection..."
+   'no-success-log))
 
 (defun orgtrello-controller--map-cards-to-computations (entities-adjacencies)
   "Given an ENTITIES-ADJACENCIES structure, map to computations.
@@ -504,32 +490,22 @@ DATA is a list of (full-card card-meta buffer-name point-start)."
 (defun orgtrello-controller-sync-card-from-trello (full-meta &optional buffer-name)
   "Entity FULL-META synchronization (with its structure) from `trello'.
 BUFFER-NAME is the actual buffer to work on."
-  (lexical-let* ((buffer-name buffer-name)
-                 (point-start (point))
-                 (card-meta (progn
-                              (when (not (orgtrello-entity-card-at-pt))
-                                (orgtrello-entity-back-to-card))
-                              (orgtrello-data-current
-                               (orgtrello-buffer-entry-get-full-metadata))))
-                 (card-name (orgtrello-data-entity-name card-meta))
-                 (prefix-log (format "Sync trello card '%s' to buffer '%s'..." card-name buffer-name)))
-    (deferred:$
-      (deferred:next (lambda ()
-                       (orgtrello-log-msg orgtrello-log-info prefix-log)
-                       (list card-meta
-                             buffer-name
+  (let* ((point-start (point))
+         (card-meta (progn
+                      (unless (orgtrello-entity-card-at-pt)
+                        (orgtrello-entity-back-to-card))
+                      (orgtrello-data-current
+                       (orgtrello-buffer-entry-get-full-metadata))))
+         (card-name (orgtrello-data-entity-name card-meta))
+         (prefix-log (format "Sync trello card '%s' to buffer '%s'..."
                              card-name
-                             point-start)))
-      (deferred:nextc it
-        #'orgtrello-controller--retrieve-full-card)
-      (deferred:nextc it
-        #'orgtrello-controller--sync-buffer-with-trello-card)
-      (deferred:nextc it
-        #'orgtrello-controller--after-sync-buffer-with-trello-card)
-      (deferred:nextc it
-        (orgtrello-controller-log-success prefix-log))
-      (deferred:error it
-        (orgtrello-controller-log-error prefix-log "Error: %S")))))
+                             buffer-name)))
+    (orgtrello-deferred-eval-computation
+     (list card-meta buffer-name card-name point-start)
+     '('orgtrello-controller--retrieve-full-card
+       'orgtrello-controller--sync-buffer-with-trello-card
+       'orgtrello-controller--after-sync-buffer-with-trello-card)
+     prefix-log)))
 
 (defun orgtrello-controller--do-delete-card ()
   "Delete the card."

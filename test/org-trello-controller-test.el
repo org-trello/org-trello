@@ -2,6 +2,83 @@
 (require 'ert)
 (require 'el-mock)
 
+(ert-deftest test-orgtrello-controller-sync-card-from-trello ()
+  (should (eq :result-sync-card
+              (with-mock
+                (mock (point) => :point-start)
+                (mock (orgtrello-entity-card-at-pt) => t)
+                (mock (orgtrello-buffer-entry-get-full-metadata) => :card-fullmeta)
+                (mock (orgtrello-data-current :card-fullmeta) => :card-meta)
+                (mock (orgtrello-data-entity-name) => :card-name)
+                (mock (format *) => "do something...")
+                (mock (orgtrello-deferred-eval-computation
+                       '(:card-meta :buffer-name :card-name :point-start)
+                       '('orgtrello-controller--retrieve-full-card
+                         'orgtrello-controller--sync-buffer-with-trello-card
+                         'orgtrello-controller--after-sync-buffer-with-trello-card)
+                       "do something...") => :result-sync-card)
+                (orgtrello-controller-sync-card-from-trello :full-meta :buffer-name))))
+  (should (eq :result-sync-card-2
+              (with-mock
+                (mock (point) => :point-start)
+                (mock (orgtrello-entity-card-at-pt) => nil)
+                (mock (orgtrello-entity-back-to-card) => :back-done)
+                (mock (orgtrello-buffer-entry-get-full-metadata) => :card-fullmeta)
+                (mock (orgtrello-data-current :card-fullmeta) => :card-meta)
+                (mock (orgtrello-data-entity-name) => :card-name)
+                (mock (format *) => "do something...")
+                (mock (orgtrello-deferred-eval-computation
+                       '(:card-meta :buffer-name :card-name :point-start)
+                       '('orgtrello-controller--retrieve-full-card
+                         'orgtrello-controller--sync-buffer-with-trello-card
+                         'orgtrello-controller--after-sync-buffer-with-trello-card)
+                       "do something...") => :result-sync-card-2)
+                (orgtrello-controller-sync-card-from-trello :full-meta :buffer-name)))))
+
+
+(ert-deftest test-orgtrello-controller-do-archive-card ()
+  (should (eq :result-archive
+              (with-mock
+                (mock (point) => :point-start)
+                (mock (orgtrello-data-current :full-meta) => :card-meta)
+                (mock (orgtrello-data-entity-name :card-meta) => :card-name)
+                (mock (format *) => "do archive something...")
+                (mock (orgtrello-deferred-eval-computation
+                       (list :card-meta :card-name :buffer-name :point-start)
+                       '('orgtrello-controller--archive-that-card
+                         'orgtrello-controller--sync-buffer-with-archive)
+                       "do archive something...") => :result-archive)
+                (orgtrello-controller-do-archive-card :full-meta :buffer-name)))))
+
+(ert-deftest test-orgtrello-controller-check-trello-connection ()
+  (should (eq :check-connection-done
+              (with-mock
+                (mock (orgtrello-deferred-eval-computation nil
+                                                           '((lambda (data) (orgtrello-controller--user-logged-in))
+                                                             'orgtrello-controller--check-user-account)
+                                                           "Checking trello connection..."
+                                                           'no-success-log) => :check-connection-done)
+                (orgtrello-controller-check-trello-connection)))))
+
+(ert-deftest test-orgtrello-controller-do-sync-buffer-from-trello ()
+  (should (eq :result-sync-buffer-from-trello
+              (with-mock
+                (mock (current-buffer) => :buffer)
+                (mock (orgtrello-buffer-board-name) => :board-name)
+                (mock (point) => :point-start)
+                (mock (orgtrello-buffer-board-id) => :board-id)
+                (mock (format *) => "do something...")
+                (mock (orgtrello-deferred-eval-computation *) => :result-sync-buffer-from-trello)
+                ;; (mock (orgtrello-deferred-eval-computation
+                ;;        '(:board-id :buffer-name :board-name :point-start)
+                ;;        '('orgtrello-controller--retrieve-archive-cards
+                ;;          'orgtrello-controller--retrieve-full-cards
+                ;;          'orgtrello-controller--sync-buffer-with-archived-and-trello-cards
+                ;;          'orgtrello-controller--after-sync-buffer-with-trello-cards
+                ;;          (orgtrello-controller-log-success "do something..."))
+                ;;        "do something...") => :result-sync-buffer-from-trello)
+                (orgtrello-controller-do-sync-buffer-from-trello)))))
+
 (ert-deftest test-orgtrello-controller--do-install-config-file ()
   (should (string= "(setq org-trello-consumer-key \"consumer-key\"\n      org-trello-access-token \"access-token\")\n"
                    (let ((orgtrello-temp-file (make-temp-file "/tmp/org-trello-user-config-file-temp")))
