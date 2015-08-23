@@ -130,6 +130,7 @@ Order is the same as the buffer's definitions."
                  (orgtrello-tests-ns-file-from-current-buffer "org-trello.el"))))
 
 (require 'helm)
+(require 'thingatpt)
 
 (defun orgtrello-tests-function-covered-p (fname &optional ask-buffer)
   (interactive "P")
@@ -139,10 +140,7 @@ Order is the same as the buffer's definitions."
          (fn-name (if (region-active-p)
                       (buffer-substring-no-properties (region-beginning)
                                                       (region-end))
-                    (let ((fn-names (orgtrello-tests-list-functions-in-buffer
-                                     actual-buffer-file)))
-                      (helm-comp-read "Choose a function to check for coverage: "
-                                      fn-names)))))
+                    (thing-at-point 'sexp))))
     (message
      (if (< 0 (orgtrello-tests-number-of (format "\(ert-deftest test-%s" fn-name)
                                          buffer-test-file))
