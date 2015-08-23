@@ -122,6 +122,7 @@ Please consider upgrading Emacs." emacs-version)
 (require 'org-trello-action)
 (require 'org-trello-controller)
 (require 'org-trello-buffer)
+(require 'org-trello-deferred)
 
 
 
@@ -164,24 +165,17 @@ DATA is a list (computation buffer-to-save nolog-flag prefix-log)"
       org-trello--apply-deferred-with-quit
       (cons data)))
 
-(defun org-trello-apply (comp &optional save-buffer-p nolog-p)
-  "Apply org-trello computation COMP.
+(defun org-trello-apply (computation &optional save-buffer-p nolog-p)
+  "Apply org-trello COMPUTATION.
 When SAVE-BUFFER-P is provided, save current buffer after computation.
 when NOLOG-P is specified, no output log after computation."
-  (lexical-let ((computation comp)
-                (prefix-log (cadr comp))
-                (buffer-to-save (when save-buffer-p (buffer-file-name)))
-                (nolog-flag nolog-p))
-    (deferred:$
-      (deferred:next (lambda ()
-                       (list computation
-                             buffer-to-save
-                             nolog-flag
-                             prefix-log)))
-      (deferred:nextc it #'org-trello--apply-deferred-with-data)
-      (deferred:nextc it #'org-trello--after-apply)
-      (deferred:error it
-        (orgtrello-controller-log-error prefix-log "Error: %S")))))
+  (let ((prefix-log (cadr computation))
+        (buffer-to-save (when save-buffer-p (buffer-file-name))))
+    (orgtrello-deferred-eval-computation
+     (list computation buffer-to-save nolog-p)
+     '('org-trello--apply-deferred-with-data
+       'org-trello--after-apply)
+     prefix-log)))
 
 (defun org-trello-log-strict-checks-and-do (action-label
                                             action-fn

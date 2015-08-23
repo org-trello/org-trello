@@ -2,6 +2,17 @@
 (require 'ert)
 (require 'el-mock)
 
+(ert-deftest test-org-trello-apply ()
+  (should (eq :result-apply-deferred
+              (with-mock
+                (mock (cadr :computation) => :prefix-log)
+                (mock (buffer-file-name) => :buffer)
+                (mock (orgtrello-deferred-eval-computation '(:computation :buffer :nolog-p)
+                                                           '('org-trello--apply-deferred-with-data
+                                                             'org-trello--after-apply)
+                                                           :prefix-log) => :result-apply-deferred)
+                (org-trello-apply :computation :save-buffer-p :nolog-p)))))
+
 (ert-deftest test-org-trello--after-apply ()
   ;; should save and log
   (should (string= "org-trello - do something... DONE."

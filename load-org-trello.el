@@ -24,6 +24,7 @@
                                "org-trello-proxy.el"
                                "org-trello-query.el"
                                "org-trello-utils.el"
+                               "org-trello-deferred.el"
                                "org-trello.el"))
 
 (defun org-trello-dev-load-namespaces ()

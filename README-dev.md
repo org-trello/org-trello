@@ -82,6 +82,7 @@ org-trello-proxy.el          | Proxy utilities - Namespace in charge of dealing
 org-trello-buffer.el         | Buffer manipulation functions
 org-trello-input.el          | Text input functions
 org-trello-controller.el     | Controller used by org-trello.el
+org-trello-deferred.el       | Deferred computation in org-trello
 org-trello.el                | Main information about org-trello (version,
                              | licence, deps, etc...) + org-trello minor mode
                              | definition which defines interactive commands
