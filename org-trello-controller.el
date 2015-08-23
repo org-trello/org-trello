@@ -19,9 +19,9 @@
 (require 's)
 (require 'ido)
 
-(defun orgtrello-controller--log-error (error-msg)
-  "Log ERROR-MSG."
-  (-partial #'orgtrello-log-msg orgtrello-log-error error-msg))
+(defun orgtrello-controller--log-error (prefix-log error-msg)
+  "Prefix log PREFIX-LOG ERROR-MSG."
+  (-partial #'orgtrello-log-msg orgtrello-log-error (format "%s FAILED. %s" prefix-log error-msg)))
 
 (defun orgtrello-controller--list-user-entries (props)
   "List the users entries from properties PROPS."
@@ -376,7 +376,7 @@ Beware, this will block Emacs as the request is synchronous."
       (deferred:nextc it
         #'orgtrello-controller--log-success)
       (deferred:error it
-        (orgtrello-controller--log-error (format "%s FAILED.  Error: %S"))))))
+        (orgtrello-controller--log-error prefix-log "Error: %S")))))
 
 (defun orgtrello-controller--user-logged-in ()
   "Compute the current user."
@@ -394,13 +394,13 @@ Beware, this will block Emacs as the request is synchronous."
 (defun orgtrello-controller-check-trello-connection ()
   "Full `org-mode' file synchronization.
 Beware, this will block Emacs as the request is synchronous."
-  (orgtrello-log-msg orgtrello-log-info "Checking trello connection...")
-  (deferred:$
-    (deferred:next #'orgtrello-controller--user-logged-in)
-    (deferred:nextc it #'orgtrello-controller--check-user-account)
-    (deferred:error it
-      (orgtrello-controller--log-error
-       "Checking trello connection... FAILED.  Error: %S"))))
+  (lexical-let ((prefix-log "Checking trello connection..."))
+    (orgtrello-log-msg orgtrello-log-info prefix-log)
+    (deferred:$
+      (deferred:next #'orgtrello-controller--user-logged-in)
+      (deferred:nextc it #'orgtrello-controller--check-user-account)
+      (deferred:error it
+        (orgtrello-controller--log-error prefix-log "Error: %S")))))
 
 (defun orgtrello-controller--map-cards-to-computations (entities-adjacencies)
   "Given an ENTITIES-ADJACENCIES structure, map to computations.
@@ -530,8 +530,7 @@ BUFFER-NAME is the actual buffer to work on."
       (deferred:nextc it
         #'orgtrello-controller--log-success)
       (deferred:error it
-        (orgtrello-controller--log-error (format "%s FAILED.  Error: %S"
-                                                 prefix-log))))))
+        (orgtrello-controller--log-error prefix-log "Error: %S")))))
 
 (defun orgtrello-controller--do-delete-card ()
   "Delete the card."
@@ -598,8 +597,7 @@ BUFFER-NAME specifies the buffer onto which we work."
         (deferred:nextc it #'orgtrello-controller--sync-buffer-with-archive)
         (deferred:nextc it #'orgtrello-controller--log-success)
         (deferred:error it
-          (orgtrello-controller--log-error (format "%s FAILED.  Error: %S"
-                                                   prefix-log)))))))
+          (orgtrello-controller--log-error prefix-log "Error: %S"))))))
 
 (defun orgtrello-controller--do-install-config-file (user-login
                                                      consumer-key

@@ -75,8 +75,8 @@
                       (orgtrello-controller-checks-and-do-archive-card))))))
 
 (ert-deftest test-orgtrello-controller--log-error ()
-  (should (string= "org-trello - Error message: foo-bar"
-                   (funcall (orgtrello-controller--log-error "Error message: %s-%s") "foo" "bar"))))
+  (should (string= "org-trello - do something... FAILED. Error code: foo-bar"
+                   (funcall (orgtrello-controller--log-error "do something..." "Error code: %s-%s") "foo" "bar"))))
 
 (ert-deftest test-orgtrello-controller--after-sync-buffer-with-trello-card ()
   (should (equal :sync-buffer-with-trello-card-done
