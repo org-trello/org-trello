@@ -172,10 +172,10 @@ when NOLOG-P is specified, no output log after computation."
   (let ((prefix-log (cadr computation))
         (buffer-to-save (when save-buffer-p (buffer-file-name))))
     (orgtrello-deferred-eval-computation
-     (list computation buffer-to-save nolog-p)
-     '('org-trello--apply-deferred-with-data
+     (list computation buffer-to-save nolog-p prefix-log) ;; initial state
+     '('org-trello--apply-deferred-with-data   ;; sequential fn to eval
        'org-trello--after-apply)
-     prefix-log)))
+     prefix-log)))                             ;; error log if need be
 
 (defun org-trello-log-strict-checks-and-do (action-label
                                             action-fn

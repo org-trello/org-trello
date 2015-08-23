@@ -7,7 +7,7 @@
               (with-mock
                 (mock (cadr :computation) => :prefix-log)
                 (mock (buffer-file-name) => :buffer)
-                (mock (orgtrello-deferred-eval-computation '(:computation :buffer :nolog-p)
+                (mock (orgtrello-deferred-eval-computation '(:computation :buffer :nolog-p :prefix-log)
                                                            '('org-trello--apply-deferred-with-data
                                                              'org-trello--after-apply)
                                                            :prefix-log) => :result-apply-deferred)
