@@ -2,6 +2,17 @@
 (require 'ert)
 (require 'el-mock)
 
+(ert-deftest test-orgtrello-controller-close-popup ()
+  (should (eq :result-done
+              (with-mock
+                (mock (current-buffer) => :current-buffer)
+                (mock (kill-buffer :current-buffer) => :done)
+                (mock (define-key org-mode-map *) => :done)
+                (mock (jump-to-register orgtrello-controller-register) => :done)
+                (mock (pop-to-buffer :buffer-name) => :done)
+                (mock (goto-char :point) => :result-done)
+                (orgtrello-controller-close-popup :buffer-name :point)))))
+
 (ert-deftest test-orgtrello-controller-do-show-board-labels ()
   (should (eq :result-show-popup
               (with-mock
