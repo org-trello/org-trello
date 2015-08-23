@@ -2,6 +2,18 @@
 (require 'ert)
 (require 'el-mock)
 
+(ert-deftest test-orgtrello-controller--do-install-config-file ()
+  (should (string= "(setq org-trello-consumer-key \"consumer-key\"\n      org-trello-access-token \"access-token\")\n"
+                   (let ((orgtrello-temp-file (make-temp-file "/tmp/org-trello-user-config-file-temp")))
+                     (with-mock
+                       (mock (orgtrello-controller-config-file "user") => orgtrello-temp-file)
+                       (orgtrello-controller--do-install-config-file "user" "consumer-key" "access-token"))
+                     (let ((buffer-content (with-temp-buffer
+                                             (insert-file-contents orgtrello-temp-file)
+                                             (buffer-substring-no-properties (point-min) (point-max)))))
+                       (delete-file orgtrello-temp-file)
+                       buffer-content)))))
+
 (ert-deftest test-orgtrello-controller-close-popup ()
   (should (eq :result-done
               (with-mock

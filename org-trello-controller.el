@@ -609,8 +609,9 @@ OVERWRITE-ASK is a flag to set to prevent overwriting."
     (with-temp-file new-user-config-file
       (erase-buffer)
       (goto-char (point-min))
-      (insert (format "(setq org-trello-consumer-key \"%s\")\n" consumer-key))
-      (insert (format "(setq org-trello-access-token \"%s\")" access-token))
+      (insert (format "(setq org-trello-consumer-key \"%s\"
+      org-trello-access-token \"%s\")\n"
+                      consumer-key access-token))
       (write-file new-user-config-file overwrite-ask))))
 
 (defun orgtrello-controller-do-install-key-and-token ()
