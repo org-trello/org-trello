@@ -1300,23 +1300,13 @@ DATA is the structure holding the buffer to work with."
                                                                point)
   "Write comment present in the popup buffer for the CARD-ID.
 Returns to BUFFER-NAME at POINT when done."
-  (lexical-let* ((card-id card-id)
-                 (return-buffer-name buffer-name)
-                 (return-point point)
-                 (prefix-log (format "Add comment to card '%s'..." card-id)))
-    (deferred:$
-      (deferred:next
-        (lambda () (list card-id return-buffer-name return-point prefix-log)))
-      (deferred:nextc it
-        #'orgtrello-controller--extract-comment-and-close-popup)
-      (deferred:nextc it
-        #'orgtrello-controller--add-comment-to-card)
-      (deferred:nextc it
-        #'orgtrello-controller--sync-card-from-trello-with-data)
-      (deferred:nextc it
-        (orgtrello-controller-log-success prefix-log))
-      (deferred:error it
-        (orgtrello-controller-log-error prefix-log "Error: %S")))))
+  (let ((prefix-log (format "Add comment to card '%s'..." card-id)))
+    (orgtrello-deferred-eval-computation
+     (list card-id buffer-name point prefix-log)
+     '('orgtrello-controller--extract-comment-and-close-popup
+       'orgtrello-controller--add-comment-to-card
+       'orgtrello-controller--sync-card-from-trello-with-data)
+     prefix-log)))
 
 (defun orgtrello-controller-prepare-buffer ()
   "Prepare the buffer to receive org-trello data."

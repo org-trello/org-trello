@@ -2,6 +2,17 @@
 (require 'ert)
 (require 'el-mock)
 
+(ert-deftest test-orgtrello-controller-kill-buffer-and-write-new-comment ()
+  (should (eq :result-write-new-comment
+              (with-mock
+                (mock (orgtrello-deferred-eval-computation
+                       '(:card-id :buffer-name :point "Add comment to card ':card-id'...")
+                       '('orgtrello-controller--extract-comment-and-close-popup
+                         'orgtrello-controller--add-comment-to-card
+                         'orgtrello-controller--sync-card-from-trello-with-data)
+                       "Add comment to card ':card-id'...") => :result-write-new-comment)
+                (orgtrello-controller-kill-buffer-and-write-new-comment :card-id :buffer-name :point)))))
+
 (ert-deftest test-orgtrello-controller-sync-card-from-trello ()
   (should (eq :result-sync-card
               (with-mock
