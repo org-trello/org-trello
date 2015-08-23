@@ -2,16 +2,77 @@
 (require 'ert)
 (require 'el-mock)
 
+
+(ert-deftest test-orgtrello-controller--log-success ()
+  (should (string= "org-trello - do something... DONE"
+                   (let ((orgtrello-log-level orgtrello-log-info))
+                     (orgtrello-controller--log-success '(:1 :2 "do something..."))))))
+
+(ert-deftest test-orgtrello-controller--archive-that-card ()
+  (should (equal '(:archive-result :card-meta :card-name)
+                 (with-mock
+                   (mock (orgtrello-data-entity-id :card-meta) => :id)
+                   (mock (orgtrello-api-archive-card :id) => :query-archive-card)
+                   (mock (orgtrello-query-http-trello :query-archive-card 'sync) => :archive-result)
+                   (orgtrello-controller--archive-that-card '(:card-meta :card-name))))))
+
+(ert-deftest test-orgtrello-controller--sync-buffer-with-archive ()
+  (should (eq :archive-and-save-done
+              (orgtrello-tests-with-temp-buffer
+               "* card
+"
+               (let ((orgtrello-log-level orgtrello-log-info)
+                     (buf (current-buffer)))
+                 (with-mock
+                   (mock (org-archive-subtree) => :archive-done)
+                   (mock (orgtrello-buffer-save-buffer buf) => :archive-and-save-done)
+                   (orgtrello-controller--sync-buffer-with-archive `(:trello-archive-card
+                                                                     :card-meta
+                                                                     "card"
+                                                                     ,buf
+                                                                     ,(point-min)))))))))
+
+(ert-deftest test-orgtrello-controller-checks-and-do-archive-card ()
+  ;; on card
+  (should (string= :archive-result
+                   (orgtrello-tests-with-temp-buffer
+                    "* card
+"
+                    (with-mock
+                      (mock (orgtrello-buffer-entry-get-full-metadata) => :card-meta)
+                      (mock (orgtrello-action-functional-controls-then-do
+                             '(orgtrello-controller--right-level-p
+                               orgtrello-controller--already-synced-p)
+                             :card-meta
+                             'orgtrello-controller-do-archive-card
+                             (current-buffer)) => :archive-result)
+                      (orgtrello-controller-checks-and-do-archive-card)))))
+  ;; when on checklist
+  (should (string= :archive-result
+                   (orgtrello-tests-with-temp-buffer
+                    "* card
+  - [ ] checklist
+"
+                    (with-mock
+                      (mock (orgtrello-buffer-entry-get-full-metadata) => :card-meta)
+                      (mock (orgtrello-action-functional-controls-then-do
+                             '(orgtrello-controller--right-level-p
+                               orgtrello-controller--already-synced-p)
+                             :card-meta
+                             'orgtrello-controller-do-archive-card
+                             (current-buffer)) => :archive-result)
+                      (orgtrello-controller-checks-and-do-archive-card))))))
+
 (ert-deftest test-orgtrello-controller--log-error ()
   (should (string= "org-trello - Error message: foo-bar"
                    (funcall (orgtrello-controller--log-error "Error message: %s-%s") "foo" "bar"))))
 
 (ert-deftest test-orgtrello-controller--after-sync-buffer-with-trello-card ()
-  (should (equal "org-trello - Sync trello card ':card-name' to buffer ':buffer-name' done!"
+  (should (equal :sync-buffer-with-trello-card-done
                  (let ((orgtrello-log-level orgtrello-log-info))
                    (with-mock
                      (mock (orgtrello-buffer-save-buffer :buffer-name) => :done)
-                     (mock (goto-char :point-start) => :done)
+                     (mock (goto-char :point-start) => :sync-buffer-with-trello-card-done)
                      (orgtrello-controller--after-sync-buffer-with-trello-card '(:full-card :card-meta :buffer-name :card-name :point-start)))))))
 
 (ert-deftest test-orgtrello-controller--retrieve-full-card ()
@@ -63,11 +124,11 @@ See http://org-trello.github.io/trello-setup.html#credentials for more informati
                      (orgtrello-controller--sync-buffer-with-archived-and-trello-cards '(:trello-cards :archive-cards :board-id :buffer-name :board-name :point-start)))))))
 
 (ert-deftest test-orgtrello-controller--after-sync-buffer-with-trello-cards ()
-  (should (equal "org-trello - Sync trello board ':board-name' to buffer ':buffer-name' done!"
+  (should (equal :after-sync-done
                  (let ((orgtrello-log-level orgtrello-log-info))
                    (with-mock
                      (mock (orgtrello-buffer-save-buffer :buffer-name) => :done)
-                     (mock (goto-char :point-start) => :done)
+                     (mock (goto-char :point-start) => :after-sync-done)
                      (orgtrello-controller--after-sync-buffer-with-trello-cards '(:cards :archive-cards :board-id :buffer-name :board-name :point-start)))))))
 
 (ert-deftest test-orgtrello-controller--map-cards-to-computations ()

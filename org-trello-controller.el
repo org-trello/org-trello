@@ -342,11 +342,7 @@ DATA is a list of (cards archive-cards board-id buffername) in this order."
   "Given the state DATA, save the buffer and return at initial point."
   (-let (((_ _ _ buffer-name board-name point-start) data))
     (orgtrello-buffer-save-buffer buffer-name)
-    (goto-char point-start)
-    (orgtrello-log-msg orgtrello-log-info
-                       "Sync trello board '%s' to buffer '%s' done!"
-                       board-name
-                       buffer-name)))
+    (goto-char point-start)))
 
 (defun orgtrello-controller-do-sync-buffer-from-trello ()
   "Full `org-mode' file synchronization.
@@ -354,18 +350,21 @@ Beware, this will block Emacs as the request is synchronous."
   (lexical-let ((buffer-name (current-buffer))
                 (board-name  (orgtrello-buffer-board-name))
                 (point-start (point))
-                (board-id (orgtrello-buffer-board-id)))
-    (orgtrello-log-msg
-     orgtrello-log-info
-     "Sync trello board '%s' to buffer..." board-name)
+                (board-id (orgtrello-buffer-board-id))
+                (prefix-log (format "Sync trello board '%s' to buffer '%s'..."
+                                    board-name
+                                    buffer-name)))
+
     (deferred:$ ;; In emacs 25, deferred:parallel blocks in this context.
       ;; I don't understand why so I retrieve sequentially for the moment.
       ;; People, feel free to help and improve.
       (deferred:next (lambda ()
+                       (orgtrello-log-msg orgtrello-log-info prefix-log)
                        (list board-id
                              buffer-name
                              board-name
-                             point-start))) ;; inject data (state monad :)
+                             point-start
+                             prefix-log))) ;; inject data (state monad :)
       (deferred:nextc it
         #'orgtrello-controller--retrieve-archive-cards)
       (deferred:nextc it
@@ -374,9 +373,10 @@ Beware, this will block Emacs as the request is synchronous."
         #'orgtrello-controller--sync-buffer-with-archived-and-trello-cards)
       (deferred:nextc it
         #'orgtrello-controller--after-sync-buffer-with-trello-cards)
+      (deferred:nextc it
+        #'orgtrello-controller--log-success)
       (deferred:error it
-        (orgtrello-controller--log-error
-         "Sync trello board to buffer... FAILED.  Error: %S")))))
+        (orgtrello-controller--log-error (format "%s FAILED.  Error: %S"))))))
 
 (defun orgtrello-controller--user-logged-in ()
   "Compute the current user."
@@ -493,12 +493,13 @@ DATA is a list of (full-card card-meta buffer-name point-start)."
   "Given the state DATA, save the buffer and return at initial point."
   (-let (((_ _ buffer-name card-name point-start) data))
     (orgtrello-buffer-save-buffer buffer-name)
-    (goto-char point-start)
-    (orgtrello-log-msg
-     orgtrello-log-info
-     "Sync trello card '%s' to buffer '%s' done!"
-     card-name
-     buffer-name)))
+    (goto-char point-start)))
+
+(defun orgtrello-controller--log-success (data)
+  "Log the success from DATA.
+DATA is a list.  prefix-log is the last element (... PREFIX-LOG)."
+  (let ((prefix-log (car (last data))))
+    (orgtrello-log-msg orgtrello-log-info (format "%s DONE" prefix-log))))
 
 (defun orgtrello-controller-sync-card-from-trello (full-meta &optional buffer-name)
   "Entity FULL-META synchronization (with its structure) from `trello'.
@@ -510,21 +511,27 @@ BUFFER-NAME is the actual buffer to work on."
                                 (orgtrello-entity-back-to-card))
                               (orgtrello-data-current
                                (orgtrello-buffer-entry-get-full-metadata))))
-                 (card-name (orgtrello-data-entity-name card-meta)))
-    (orgtrello-log-msg orgtrello-log-info
-                       "Sync trello card to buffer...")
+                 (card-name (orgtrello-data-entity-name card-meta))
+                 (prefix-log (format "Sync trello card '%s' to buffer '%s'..." card-name buffer-name)))
     (deferred:$
       (deferred:next (lambda ()
-                       (list card-meta buffer-name card-name point-start)))
+                       (orgtrello-log-msg orgtrello-log-info prefix-log)
+                       (list card-meta
+                             buffer-name
+                             card-name
+                             point-start
+                             prefix-log)))
       (deferred:nextc it
         #'orgtrello-controller--retrieve-full-card)
       (deferred:nextc it
         #'orgtrello-controller--sync-buffer-with-trello-card)
       (deferred:nextc it
         #'orgtrello-controller--after-sync-buffer-with-trello-card)
+      (deferred:nextc it
+        #'orgtrello-controller--log-success)
       (deferred:error it
-        (orgtrello-controller--log-error
-         "Sync trello card to buffer... FAILED.  Error: %S")))))
+        (orgtrello-controller--log-error (format "%s FAILED.  Error: %S"
+                                                 prefix-log))))))
 
 (defun orgtrello-controller--do-delete-card ()
   "Delete the card."
@@ -552,41 +559,47 @@ SYNC flag permit to synchronize the http query."
            'orgtrello-controller-do-archive-card
            buffer-name))))))
 
+(defun orgtrello-controller--archive-that-card (data)
+  "Archive the card present in the DATA structure.
+DATA is a list of (card-meta card-name buffer-name point-start)."
+  (-let (((card-meta card-name &rest) data))
+    (-> card-meta
+        orgtrello-data-entity-id
+        orgtrello-api-archive-card
+        (orgtrello-query-http-trello 'sync)
+        (cons data))))
+
+(defun orgtrello-controller--sync-buffer-with-archive (data) ;; org archive
+  "Update buffer with archive DATA."
+  (-let (((_ _ card-name buffer-name point-start) data))
+    (with-current-buffer buffer-name
+      (goto-char point-start)
+      (org-archive-subtree))
+    (orgtrello-buffer-save-buffer buffer-name)))
+
 (defun orgtrello-controller-do-archive-card (card-meta &optional buffer-name)
   "Archive current CARD-META at point.
 BUFFER-NAME specifies the buffer onto which we work."
   (save-excursion
     (lexical-let* ((buffer-name buffer-name)
                    (point-start (point))
-                   (card-meta   (orgtrello-data-current card-meta))
-                   (card-name   (orgtrello-data-entity-name card-meta)))
+                   (card-meta (orgtrello-data-current card-meta))
+                   (card-name (orgtrello-data-entity-name card-meta))
+                   (prefix-log (format "Archive card '%s'..." card-name)))
       (deferred:$
-        (deferred:next
-          (lambda () ;; trello archive
-            (orgtrello-log-msg orgtrello-log-info
-                               "Archive card '%s'..."
-                               card-name)
-            (orgtrello-log-msg orgtrello-log-debug
-                               "Archive card '%s' in trello...\n"
-                               card-name)
-            (-> card-meta
-                orgtrello-data-entity-id
-                orgtrello-api-archive-card
-                (orgtrello-query-http-trello 'sync))))
-        (deferred:nextc it
-          (lambda (card-result) ;; org archive
-            (orgtrello-log-msg orgtrello-log-debug
-                               "Archive card '%s' in org..."
-                               card-name)
-            (with-current-buffer buffer-name
-              (goto-char point-start)
-              (org-archive-subtree))))
-        (deferred:nextc it
-          (lambda () ;; save buffer
-            (orgtrello-buffer-save-buffer buffer-name)
-            (orgtrello-log-msg orgtrello-log-info
-                               "Archive card '%s' done!"
-                               card-name)))))))
+        (deferred:next (lambda ()
+                         (orgtrello-log-msg orgtrello-log-info prefix-log)
+                         (list card-meta
+                               card-name
+                               buffer-name
+                               point-start
+                               prefix-log)))
+        (deferred:nextc it #'orgtrello-controller--archive-that-card)
+        (deferred:nextc it #'orgtrello-controller--sync-buffer-with-archive)
+        (deferred:nextc it #'orgtrello-controller--log-success)
+        (deferred:error it
+          (orgtrello-controller--log-error (format "%s FAILED.  Error: %S"
+                                                   prefix-log)))))))
 
 (defun orgtrello-controller--do-install-config-file (user-login
                                                      consumer-key
