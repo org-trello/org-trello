@@ -6,7 +6,7 @@
   (should (eq :result-apply-deferred
               (with-mock
                 (mock (cadr :computation) => :prefix-log)
-                (mock (buffer-file-name) => :buffer)
+                (mock (current-buffer) => :buffer)
                 (mock (orgtrello-deferred-eval-computation '(:computation :buffer :nolog-p :prefix-log)
                                                            '('org-trello--apply-deferred-with-data
                                                              'org-trello--after-apply)

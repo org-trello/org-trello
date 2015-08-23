@@ -170,7 +170,7 @@ DATA is a list (computation buffer-to-save nolog-flag prefix-log)"
 When SAVE-BUFFER-P is provided, save current buffer after computation.
 when NOLOG-P is specified, no output log after computation."
   (let ((prefix-log (cadr computation))
-        (buffer-to-save (when save-buffer-p (buffer-file-name))))
+        (buffer-to-save (when save-buffer-p (current-buffer))))
     (orgtrello-deferred-eval-computation
      (list computation buffer-to-save nolog-p prefix-log) ;; initial state
      '('org-trello--apply-deferred-with-data   ;; sequential fn to eval
