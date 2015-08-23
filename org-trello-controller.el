@@ -341,7 +341,7 @@ DATA is a list of (cards archive-cards board-id buffername) in this order."
     (orgtrello-buffer-save-buffer buffer-name)
     (goto-char point-start)
     (orgtrello-log-msg orgtrello-log-info
-                       "Synchronizing trello board '%s' to org-mode file '%s' done!"
+                       "Sync trello board '%s' to buffer '%s' done!"
                        board-name
                        buffer-name)))
 
@@ -354,7 +354,7 @@ Beware, this will block Emacs as the request is synchronous."
                 (board-id (orgtrello-buffer-board-id)))
     (orgtrello-log-msg
      orgtrello-log-info
-     "Synchronizing trello board '%s' to org-mode file..." board-name)
+     "Sync trello board '%s' to buffer..." board-name)
     (deferred:$ ;; In emacs 25, deferred:parallel blocks in this context.
       ;; I don't understand why so I retrieve sequentially for the moment.
       ;; People, feel free to help and improve.
@@ -362,7 +362,7 @@ Beware, this will block Emacs as the request is synchronous."
                        (list board-id
                              buffer-name
                              board-name
-                             point-start))) ;; inject the needed data (state monad :)
+                             point-start))) ;; inject data (state monad :)
       (deferred:nextc it
         #'orgtrello-controller--retrieve-archive-cards)
       (deferred:nextc it
@@ -373,7 +373,7 @@ Beware, this will block Emacs as the request is synchronous."
         #'orgtrello-controller--after-sync-buffer-with-trello-cards)
       (deferred:error it
         (-partial #'orgtrello-log-msg orgtrello-log-error
-                  "Synchronizing trello board to org-mode file... FAILED. Error: %S")))))
+                  "Sync trello board to buffer... FAILED. Error: %S")))))
 
 (defun orgtrello-controller--user-logged-in ()
   "Compute the current user."
@@ -494,7 +494,7 @@ DATA is a list of (full-card card-meta buffer-name point-start)."
     (goto-char point-start)
     (orgtrello-log-msg
      orgtrello-log-info
-     "Synchronizing trello card '%s' to org-mode file '%s' done!"
+     "Sync trello card '%s' to buffer '%s' done!"
      card-name
      buffer-name)))
 
@@ -510,15 +510,20 @@ BUFFER-NAME is the actual buffer to work on."
                                (orgtrello-buffer-entry-get-full-metadata))))
                  (card-name (orgtrello-data-entity-name card-meta)))
     (orgtrello-log-msg orgtrello-log-info
-                       "Synchronizing trello card to org-mode file...")
+                       "Sync trello card to buffer...")
     (deferred:$
-      (deferred:next (lambda () (list card-meta buffer-name card-name point-start)))
-      (deferred:nextc it #'orgtrello-controller--retrieve-full-card)
-      (deferred:nextc it #'orgtrello-controller--sync-buffer-with-trello-card)
-      (deferred:nextc it #'orgtrello-controller--after-sync-buffer-with-trello-card)
+      (deferred:next (lambda ()
+                       (list card-meta buffer-name card-name point-start)))
+      (deferred:nextc it
+        #'orgtrello-controller--retrieve-full-card)
+      (deferred:nextc it
+        #'orgtrello-controller--sync-buffer-with-trello-card)
+      (deferred:nextc it
+        #'orgtrello-controller--after-sync-buffer-with-trello-card)
       (deferred:error it
-        (-partial #'orgtrello-log-msg orgtrello-log-error
-                  "Synchronizing trello card to org-mode file FAILED... Error: %S")))))
+        (-partial #'orgtrello-log-msg
+                  orgtrello-log-error
+                  "Sync trello card to buffer FAILED... Error: %S")))))
 
 (defun orgtrello-controller--do-delete-card ()
   "Delete the card."

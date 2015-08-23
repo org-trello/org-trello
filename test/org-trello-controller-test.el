@@ -3,7 +3,7 @@
 (require 'el-mock)
 
 (ert-deftest test-orgtrello-controller--after-sync-buffer-with-trello-card ()
-  (should (equal "org-trello - Synchronizing trello card ':card-name' to org-mode file ':buffer-name' done!"
+  (should (equal "org-trello - Sync trello card ':card-name' to buffer ':buffer-name' done!"
                  (let ((orgtrello-log-level orgtrello-log-info))
                    (with-mock
                      (mock (orgtrello-buffer-save-buffer :buffer-name) => :done)
@@ -59,7 +59,7 @@ See http://org-trello.github.io/trello-setup.html#credentials for more informati
                      (orgtrello-controller--sync-buffer-with-archived-and-trello-cards '(:trello-cards :archive-cards :board-id :buffer-name :board-name :point-start)))))))
 
 (ert-deftest test-orgtrello-controller--after-sync-buffer-with-trello-cards ()
-  (should (equal "org-trello - Synchronizing trello board ':board-name' to org-mode file ':buffer-name' done!"
+  (should (equal "org-trello - Sync trello board ':board-name' to buffer ':buffer-name' done!"
                  (let ((orgtrello-log-level orgtrello-log-info))
                    (with-mock
                      (mock (orgtrello-buffer-save-buffer :buffer-name) => :done)
