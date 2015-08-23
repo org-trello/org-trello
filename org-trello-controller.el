@@ -19,6 +19,10 @@
 (require 's)
 (require 'ido)
 
+(defun orgtrello-controller--log-error (error-msg)
+  "Log ERROR-MSG."
+  (-partial #'orgtrello-log-msg orgtrello-log-error error-msg))
+
 (defun orgtrello-controller--list-user-entries (props)
   "List the users entries from properties PROPS."
   (-filter (-compose
@@ -371,8 +375,8 @@ Beware, this will block Emacs as the request is synchronous."
       (deferred:nextc it
         #'orgtrello-controller--after-sync-buffer-with-trello-cards)
       (deferred:error it
-        (-partial #'orgtrello-log-msg orgtrello-log-error
-                  "Sync trello board to buffer... FAILED. Error: %S")))))
+        (orgtrello-controller--log-error
+         "Sync trello board to buffer... FAILED.  Error: %S")))))
 
 (defun orgtrello-controller--user-logged-in ()
   "Compute the current user."
@@ -394,9 +398,9 @@ Beware, this will block Emacs as the request is synchronous."
   (deferred:$
     (deferred:next #'orgtrello-controller--user-logged-in)
     (deferred:nextc it #'orgtrello-controller--check-user-account)
-    (deferred:error it (-partial #'orgtrello-log-msg
-                                 orgtrello-log-error
-                                 "Checking trello connection... FAILED. Error: %S"))))
+    (deferred:error it
+      (orgtrello-controller--log-error
+       "Checking trello connection... FAILED.  Error: %S"))))
 
 (defun orgtrello-controller--map-cards-to-computations (entities-adjacencies)
   "Given an ENTITIES-ADJACENCIES structure, map to computations.
@@ -519,9 +523,8 @@ BUFFER-NAME is the actual buffer to work on."
       (deferred:nextc it
         #'orgtrello-controller--after-sync-buffer-with-trello-card)
       (deferred:error it
-        (-partial #'orgtrello-log-msg
-                  orgtrello-log-error
-                  "Sync trello card to buffer FAILED... Error: %S")))))
+        (orgtrello-controller--log-error
+         "Sync trello card to buffer... FAILED.  Error: %S")))))
 
 (defun orgtrello-controller--do-delete-card ()
   "Delete the card."

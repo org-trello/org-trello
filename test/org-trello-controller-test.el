@@ -2,6 +2,10 @@
 (require 'ert)
 (require 'el-mock)
 
+(ert-deftest test-orgtrello-controller--log-error ()
+  (should (string= "org-trello - Error message: foo-bar"
+                   (funcall (orgtrello-controller--log-error "Error message: %s-%s") "foo" "bar"))))
+
 (ert-deftest test-orgtrello-controller--after-sync-buffer-with-trello-card ()
   (should (equal "org-trello - Sync trello card ':card-name' to buffer ':buffer-name' done!"
                  (let ((orgtrello-log-level orgtrello-log-info))
