@@ -35,7 +35,6 @@
                        "do something...") => :result-sync-card-2)
                 (orgtrello-controller-sync-card-from-trello :full-meta :buffer-name)))))
 
-
 (ert-deftest test-orgtrello-controller-do-archive-card ()
   (should (eq :result-archive
               (with-mock

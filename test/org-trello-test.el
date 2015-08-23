@@ -163,7 +163,7 @@
 (ert-deftest test-org-trello-archive-card ()
   (should (equal :res
                  (with-mock
-                   (mock (org-trello--apply-deferred '(org-trello-log-strict-checks-and-do "Archive Card at point" orgtrello-controller-checks-and-do-archive-card)) => :res)
+                   (mock (org-trello--apply-deferred '(org-trello-log-strict-checks-and-do "Archive card at point..." orgtrello-controller-checks-and-do-archive-card)) => :res)
                    (org-trello-archive-card)))))
 
 (ert-deftest test-org-trello-archive-cards ()

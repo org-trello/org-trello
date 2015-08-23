@@ -324,8 +324,8 @@ If FROM is non nil, execute all entities removal from trello and buffer."
   "Execute archive card at point."
   (interactive)
   (org-trello--apply-deferred '(org-trello-log-strict-checks-and-do
-                               "Archive Card at point"
-                               orgtrello-controller-checks-and-do-archive-card)))
+                                "Archive card at point..."
+                                orgtrello-controller-checks-and-do-archive-card)))
 
 (defalias 'org-trello/archive-card 'org-trello-archive-card)
 

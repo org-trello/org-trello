@@ -551,27 +551,19 @@ DATA is a list of (card-meta card-name buffer-name point-start)."
       (org-archive-subtree))
     (orgtrello-buffer-save-buffer buffer-name)))
 
-(defun orgtrello-controller-do-archive-card (card-meta &optional buffer-name)
-  "Archive current CARD-META at point.
+(defun orgtrello-controller-do-archive-card (full-meta &optional buffer-name)
+  "Archive current FULL-META at point.
 BUFFER-NAME specifies the buffer onto which we work."
   (save-excursion
-    (lexical-let* ((buffer-name buffer-name)
-                   (point-start (point))
-                   (card-meta (orgtrello-data-current card-meta))
-                   (card-name (orgtrello-data-entity-name card-meta))
-                   (prefix-log (format "Archive card '%s'..." card-name)))
-      (deferred:$
-        (deferred:next (lambda ()
-                         (orgtrello-log-msg orgtrello-log-info prefix-log)
-                         (list card-meta
-                               card-name
-                               buffer-name
-                               point-start)))
-        (deferred:nextc it #'orgtrello-controller--archive-that-card)
-        (deferred:nextc it #'orgtrello-controller--sync-buffer-with-archive)
-        (deferred:nextc it (orgtrello-controller-log-success prefix-log))
-        (deferred:error it
-          (orgtrello-controller-log-error prefix-log "Error: %S"))))))
+    (let* ((point-start (point))
+           (card-meta (orgtrello-data-current full-meta))
+           (card-name (orgtrello-data-entity-name card-meta))
+           (prefix-log (format "Archive card '%s'..." card-name)))
+      (orgtrello-deferred-eval-computation
+       (list card-meta card-name buffer-name point-start)
+       '('orgtrello-controller--archive-that-card
+         'orgtrello-controller--sync-buffer-with-archive)
+       prefix-log))))
 
 (defun orgtrello-controller--do-install-config-file (user-login
                                                      consumer-key
