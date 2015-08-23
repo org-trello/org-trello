@@ -581,47 +581,52 @@ OVERWRITE-ASK is a flag to set to prevent overwriting."
                       consumer-key access-token))
       (write-file new-user-config-file overwrite-ask))))
 
+(defun orgtrello-controller--open-access-token-consumer-key-url (data)
+  "Browse url for the consumer-key/access-token url from DATA."
+  (browse-url (orgtrello-setup-compute-url "/1/appKey/generate"))
+  data)
+
+(defun orgtrello-controller--open-ask-permissions-url (data)
+  "Open the ask permissions url.
+DATA is not read."
+  (let ((consumer-key (s-trim (orgtrello-input-read-not-empty "Consumer key: "))))
+    (->> consumer-key
+         (format "/1/authorize?response_type=token&name=org-trello&scope=read,write&expiration=never&key=%s")
+         orgtrello-setup-compute-url
+         browse-url)
+    (cons consumer-key data)))
+
+(defun orgtrello-controller--read-access-token (data)
+  "Input the access token.
+Returns DATA."
+  (-> (orgtrello-input-read-not-empty "Access token: ")
+      s-trim
+      (cons data)))
+
+(defun orgtrello-controller--install-key-and-token-login-from-data (data)
+  "Install key and token from DATA."
+  (-let (((access-token consumer-key user-login) data))
+    (orgtrello-controller--do-install-config-file user-login consumer-key access-token 'do-ask-for-overwrite)))
+
 (defun orgtrello-controller-do-install-key-and-token ()
   "Procedure to install consumer-key and access token as user config-file."
-  (lexical-let* ((user-login
-                  (read-string
-                   "Trello login account (you need to be logged accordingly in trello.com as we cannot check this for you): "))
-                 (user-config-file (orgtrello-controller-config-file user-login)))
+  (let* ((user-login
+          (orgtrello-input-read-string
+           "Trello login account (you need to be logged accordingly in trello.com as we cannot check this for you): "))
+         (user-config-file (orgtrello-controller-config-file user-login))
+         (prefix-log "Install key and token..."))
     (if (file-exists-p user-config-file)
         (orgtrello-log-msg
          orgtrello-log-info
          "Configuration for user '%s' already existing (file '%s'), skipping."
          user-login user-config-file)
-      (deferred:$
-        (deferred:next
-          (lambda () (browse-url
-                 (orgtrello-setup-compute-url "/1/appKey/generate"))))
-        (deferred:nextc it
-          (lambda (user-login)
-            (let ((consumer-key (read-string "Consumer key: ")))
-              (browse-url (orgtrello-setup-compute-url
-                           (format "/1/authorize?response_type=token&name=org-trello&scope=read,write&expiration=never&key=%s" consumer-key)))
-              (list consumer-key user-login))))
-        (deferred:nextc it
-          (lambda (consumer-key-user-login)
-            (orgtrello-log-msg orgtrello-log-debug
-                               "user-login + consumer-key: %S"
-                               consumer-key-user-login)
-            (let ((access-token (read-string "Access token: ")))
-              (mapcar 's-trim (cons access-token consumer-key-user-login)))))
-        (deferred:nextc it
-          (lambda (access-token-consumer-key-user-login)
-            (orgtrello-log-msg orgtrello-log-debug
-                               "user-login + consumer-key + access-token: %S"
-                               access-token-consumer-key-user-login)
-            (->> access-token-consumer-key-user-login
-                 (cons 'do-ask-for-overwrite)
-                 nreverse
-                 (apply 'orgtrello-controller--do-install-config-file))))
-        (deferred:nextc it
-          (lambda () (orgtrello-log-msg
-                 orgtrello-log-info
-                 "Setup key and token done!")))))))
+      (orgtrello-deferred-eval-computation
+       (list user-login)
+       '('orgtrello-controller--open-access-token-consumer-key-url
+         'orgtrello-controller--open-ask-permissions-url
+         'orgtrello-controller--read-access-token
+         'orgtrello-controller--install-key-and-token-login-from-data)
+       prefix-log))))
 
 (defun orgtrello-controller--name-id (entities)
   "Given a list of ENTITIES, return a map of (id, name)."
@@ -786,11 +791,11 @@ UPDATE-TODO-KEYWORDS is the org list of keywords."
   "Given BOARD-USERS-HASH-NAME-ID, compute the properties for users."
   (let ((res-list))
     (maphash (lambda (name id) (--> name
-                               (format "#+PROPERTY: %s%s %s"
-                                       org-trello--label-key-user-prefix
-                                       it
-                                       id)
-                               (push it res-list)))
+                                    (format "#+PROPERTY: %s%s %s"
+                                            org-trello--label-key-user-prefix
+                                            it
+                                            id)
+                                    (push it res-list)))
              board-users-hash-name-id)
     res-list))
 
@@ -908,8 +913,8 @@ UPDATE-TODO-KEYWORDS is the org list of keywords."
                 (orgtrello-api-close-list it)
                 nil
                 (lambda (response) (orgtrello-log-msg orgtrello-log-info
-                                                      "Closed list with id %s"
-                                                      list-id))
+                                                 "Closed list with id %s"
+                                                 list-id))
                 (lambda ())))
              list-ids)
       (orgtrello-proxy-execute-async-computations
@@ -1090,8 +1095,8 @@ Return the hashmap (name, id) of the new lists created."
           (orgtrello-log-msg orgtrello-log-info "No comment to delete - skip.")
         (deferred:$
           (deferred:next (lambda () (-> card-id
-                                   (orgtrello-api-delete-card-comment comment-id)
-                                   (orgtrello-query-http-trello 'sync))))
+                                        (orgtrello-api-delete-card-comment comment-id)
+                                        (orgtrello-query-http-trello 'sync))))
           (deferred:nextc it
             (lambda (data)
               (apply 'delete-region (orgtrello-entity-comment-region))
@@ -1123,10 +1128,10 @@ Return the hashmap (name, id) of the new lists created."
           (orgtrello-log-msg orgtrello-log-info "No comment to sync - skip.")
         (deferred:$
           (deferred:next (lambda () (-> card-id
-                                   (orgtrello-api-update-card-comment
-                                    comment-id
-                                    comment-text)
-                                   (orgtrello-query-http-trello 'sync))))
+                                        (orgtrello-api-update-card-comment
+                                         comment-id
+                                         comment-text)
+                                        (orgtrello-query-http-trello 'sync))))
           (deferred:nextc it
             (lambda (data)
               (orgtrello-log-msg orgtrello-log-info "Comment sync'ed!"))))))))

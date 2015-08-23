@@ -12,6 +12,8 @@ PROMPT is the prefix string displayed for input."
       (setq value (read-string prompt)))
     value))
 
+(defalias 'orgtrello-input-read-string 'read-string)
+
 (orgtrello-log-msg orgtrello-log-debug "orgtrello-input loaded!")
 
 (provide 'org-trello-input)

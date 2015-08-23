@@ -2,6 +2,56 @@
 (require 'ert)
 (require 'el-mock)
 
+(ert-deftest test-orgtrello-controller-do-install-key-and-token ()
+  ;; file not existing
+  (should (eq :result-install
+              (with-mock
+                (mock (orgtrello-input-read-string "Trello login account (you need to be logged accordingly in trello.com as we cannot check this for you): ") => "user")
+                (mock (orgtrello-controller-config-file "user") => :some-file)
+                (mock (file-exists-p :some-file) => nil)
+                (mock (orgtrello-deferred-eval-computation
+                       '("user")
+                       '('orgtrello-controller--open-access-token-consumer-key-url
+                         'orgtrello-controller--open-ask-permissions-url
+                         'orgtrello-controller--read-access-token
+                         'orgtrello-controller--install-key-and-token-login-from-data)
+                       "Install key and token...") => :result-install)
+                (orgtrello-controller-do-install-key-and-token))))
+  ;; file already existing
+  (should (string= "org-trello - Configuration for user 'user' already existing (file ':some-file'), skipping."
+                   (let ((orgtrello-log-level orgtrello-log-info))
+                     (with-mock
+                       (mock (orgtrello-input-read-string "Trello login account (you need to be logged accordingly in trello.com as we cannot check this for you): ") => "user")
+                       (mock (orgtrello-controller-config-file "user") => :some-file)
+                       (mock (file-exists-p :some-file) => t)
+                       (orgtrello-controller-do-install-key-and-token))))))
+
+(ert-deftest test-orgtrello-controller--open-access-token-consumer-key-url ()
+  (should (eq :data
+              (with-mock
+                (mock (orgtrello-setup-compute-url "/1/appKey/generate") => :url)
+                (mock (browse-url :url) => :done)
+                (orgtrello-controller--open-access-token-consumer-key-url :data)))))
+
+(ert-deftest test-orgtrello-controller--open-ask-permissions-url ()
+  (should (equal '("consumer-key" :user-login)
+                 (with-mock
+                   (mock (orgtrello-input-read-not-empty "Consumer key: ") => " consumer-key ")
+                   (mock (browse-url "https://trello.com/1/authorize?response_type=token&name=org-trello&scope=read,write&expiration=never&key=consumer-key") => :done)
+                   (orgtrello-controller--open-ask-permissions-url '(:user-login))))))
+
+(ert-deftest test-orgtrello-controller--read-access-token ()
+  (should (equal '("access-token" :consumer-key :user-login)
+                 (with-mock
+                   (mock (orgtrello-input-read-not-empty "Access token: ") => " access-token ")
+                   (orgtrello-controller--read-access-token '(:consumer-key :user-login))))))
+
+(ert-deftest test-orgtrello-controller--install-key-and-token-login-from-data ()
+  (should (eq :do-install
+              (with-mock
+                (mock (orgtrello-controller--do-install-config-file :user-login :consumer-key :access-token 'do-ask-for-overwrite) => :do-install)
+                (orgtrello-controller--install-key-and-token-login-from-data '(:access-token :consumer-key :user-login))))))
+
 (ert-deftest test-orgtrello-controller-kill-buffer-and-write-new-comment ()
   (should (eq :result-write-new-comment
               (with-mock
