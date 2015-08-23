@@ -1197,7 +1197,27 @@ Also, you can specify on your org-mode buffer the todo list you want to work wit
                   (orgtrello-hash-make-properties '(("TODO" . "todo-id") ("DONE" . "done-id")))
                   (orgtrello-hash-make-properties '(("user" . "user-id") ("some-other-user" . "some-other-user-id")))
                   "user"
-                  (orgtrello-hash-make-properties '((:red . "red label") (:green . "green label")))))))
+                  (orgtrello-hash-make-properties '((:red . "red label") (:green . "green label"))))))
+  (should (equal '(":PROPERTIES:"
+                   "#+PROPERTY: board-name some-board-name"
+                   "#+PROPERTY: board-id some-board-id"
+                   "#+PROPERTY: DONE done-id-2"
+                   "#+PROPERTY: TODO todo-id-2"
+                   ""
+                   "#+PROPERTY: orgtrello-user-some-other-user some-other-user-id-2"
+                   "#+PROPERTY: orgtrello-user-user user-id-2"
+                   "#+PROPERTY: :green green label"
+                   "#+PROPERTY: :red red label"
+                   "#+PROPERTY: orgtrello-user-me user-logged-in"
+                   ":END:")
+                 (let ((org-trello--user-logged-in "user-logged-in"))
+                   (orgtrello-controller--compute-metadata
+                    "some-board-name"
+                    "some-board-id"
+                    (orgtrello-hash-make-properties '(("TODO" . "todo-id-2") ("DONE" . "done-id-2")))
+                    (orgtrello-hash-make-properties '(("user" . "user-id-2") ("some-other-user" . "some-other-user-id-2")))
+                    nil
+                    (orgtrello-hash-make-properties '((:red . "red label") (:green . "green label"))))))))
 
 (ert-deftest test-orgtrello-controller--properties-labels ()
   (should (equal
