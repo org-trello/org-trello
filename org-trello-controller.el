@@ -395,7 +395,7 @@ Beware, this will block Emacs as the request is synchronous."
    (if user-me
        (format "Account '%s' configured! Everything is ok!"
                (orgtrello-data-entity-username user-me))
-     "There is a problem with your credentials.\nMake sure you used M-x org-trello-install-key-and-token and installed correctly the consumer-key and access-token.\nSee http://org-trello.github.io/trello-setup.html#credentials for more information.")))
+     "There is a problem with your credentials.\nMake sure you used M-x org-trello-install-key-and-token and this installed correctly the consumer-key and access-token.\nSee http://org-trello.github.io/trello-setup.html#credentials for more information.")))
 
 (defun orgtrello-controller-check-trello-connection ()
   "Full `org-mode' file synchronization.

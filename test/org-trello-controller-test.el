@@ -393,7 +393,7 @@
                    (let ((orgtrello-log-level orgtrello-log-info))
                      (orgtrello-controller--check-user-account (orgtrello-hash-make-properties '((:username . "user")))))))
   (should (string= "org-trello - There is a problem with your credentials.
-Make sure you used M-x org-trello-install-key-and-token and installed correctly the consumer-key and access-token.
+Make sure you used M-x org-trello-install-key-and-token and this installed correctly the consumer-key and access-token.
 See http://org-trello.github.io/trello-setup.html#credentials for more information."
                    (let ((orgtrello-log-level orgtrello-log-info))
                      (orgtrello-controller--check-user-account nil)))))
