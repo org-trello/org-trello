@@ -639,8 +639,8 @@ OVERWRITE-ASK is a flag to set to prevent overwriting."
                  (apply 'orgtrello-controller--do-install-config-file))))
         (deferred:nextc it
           (lambda () (orgtrello-log-msg
-                      orgtrello-log-info
-                      "Setup key and token done!")))))))
+                 orgtrello-log-info
+                 "Setup key and token done!")))))))
 
 (defun orgtrello-controller--name-id (entities)
   "Given a list of ENTITIES, return a map of (id, name)."
@@ -927,8 +927,8 @@ UPDATE-TODO-KEYWORDS is the org list of keywords."
                 (orgtrello-api-close-list it)
                 nil
                 (lambda (response) (orgtrello-log-msg orgtrello-log-info
-                                                 "Closed list with id %s"
-                                                 list-id))
+                                                      "Closed list with id %s"
+                                                      list-id))
                 (lambda ())))
              list-ids)
       (orgtrello-proxy-execute-async-computations
@@ -1104,8 +1104,8 @@ Return the hashmap (name, id) of the new lists created."
           (orgtrello-log-msg orgtrello-log-info "No comment to delete - skip.")
         (deferred:$
           (deferred:next (lambda () (-> card-id
-                                        (orgtrello-api-delete-card-comment comment-id)
-                                        (orgtrello-query-http-trello 'sync))))
+                                   (orgtrello-api-delete-card-comment comment-id)
+                                   (orgtrello-query-http-trello 'sync))))
           (deferred:nextc it
             (lambda (data)
               (apply 'delete-region (orgtrello-entity-comment-region))
@@ -1137,10 +1137,10 @@ Return the hashmap (name, id) of the new lists created."
           (orgtrello-log-msg orgtrello-log-info "No comment to sync - skip.")
         (deferred:$
           (deferred:next (lambda () (-> card-id
-                                        (orgtrello-api-update-card-comment
-                                         comment-id
-                                         comment-text)
-                                        (orgtrello-query-http-trello 'sync))))
+                                   (orgtrello-api-update-card-comment
+                                    comment-id
+                                    comment-text)
+                                   (orgtrello-query-http-trello 'sync))))
           (deferred:nextc it
             (lambda (data)
               (orgtrello-log-msg orgtrello-log-info "Comment sync'ed!"))))))))
