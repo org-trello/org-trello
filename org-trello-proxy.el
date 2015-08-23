@@ -304,7 +304,7 @@ MAP-DISPATCH-FN is a map of function taking the one parameter ENTITY."
 
 (defun orgtrello-proxy--delete-card-region ()
   "Delete the card region (including overlays and line)."
-  (org-back-to-heading)
+  (orgtrello-entity-back-to-card)
   (let ((starting-point (point))
         (ending-point (save-excursion (if (org-goto-sibling)
                                           (point)

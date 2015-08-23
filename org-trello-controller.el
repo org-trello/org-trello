@@ -1101,8 +1101,9 @@ Return the hashmap (name, id) of the new lists created."
 (defun orgtrello-controller-do-delete-card-comment ()
   "Check then do the actual card deletion if everything is ok."
   (orgtrello-action-functional-controls-then-do
-   '(orgtrello-controller--on-entity-p orgtrello-controller--right-level-p
-                                       orgtrello-controller--already-synced-p)
+   '(orgtrello-controller--on-entity-p
+     orgtrello-controller--right-level-p
+     orgtrello-controller--already-synced-p)
    (orgtrello-buffer-safe-entry-full-metadata)
    'orgtrello-controller--do-delete-card-comment
    (current-buffer)))
@@ -1128,14 +1129,14 @@ Return the hashmap (name, id) of the new lists created."
               (apply 'delete-region (orgtrello-entity-comment-region))
               (orgtrello-log-msg orgtrello-log-info "Comment deleted!"))))))))
 
-
 (defun orgtrello-controller-do-sync-card-comment ()
   "Check then do the actual sync if everything is ok."
   (orgtrello-action-functional-controls-then-do
-   '(orgtrello-controller--on-entity-p orgtrello-controller--right-level-p
-                                       orgtrello-controller--already-synced-p)
+   '(orgtrello-controller--on-entity-p
+     orgtrello-controller--right-level-p
+     orgtrello-controller--already-synced-p)
    (progn
-     (org-back-to-heading)
+     (orgtrello-entity-back-to-card)
      (orgtrello-buffer-safe-entry-full-metadata))
    'orgtrello-controller--do-sync-card-comment
    (current-buffer)))

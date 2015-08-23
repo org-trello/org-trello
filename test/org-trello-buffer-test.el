@@ -1501,7 +1501,7 @@ DEADLINE: <dummy-date-with-right-locale>
 :orgtrello-users: ardumont,dude
 :END:
   some description\n"
-                                                    (progn (org-back-to-heading)
+                                                    (progn (orgtrello-entity-back-to-card)
                                                            (orgtrello-buffer-entity-metadata)))))
     (should (equal 1                                                             (orgtrello-data-entity-level h-values)))
     (should (equal nil                                                           (orgtrello-data-entity-tags h-values)))
@@ -1533,7 +1533,7 @@ this comment can be multiline
 and contains text
 nothing enforces the content of the description
 "
-                                                    (progn (org-back-to-heading)
+                                                    (progn (orgtrello-entity-back-to-card)
                                                            (orgtrello-buffer-entity-metadata)))))
     (should (equal "some-comment-id"                                             (orgtrello-data-entity-id h-values)))
     (should (equal "the comment is here, the other are trello's metadata

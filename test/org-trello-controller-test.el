@@ -2,6 +2,55 @@
 (require 'ert)
 (require 'el-mock)
 
+(ert-deftest test-orgtrello-controller-do-sync-card-comment ()
+  (should (eq :result-delete-card-comment
+              (with-mock
+                (mock (orgtrello-entity-back-to-card) => :back)
+                (mock (current-buffer) => :buffer)
+                (mock (orgtrello-buffer-safe-entry-full-metadata) => :entity)
+                (mock (orgtrello-action-functional-controls-then-do
+                       '(orgtrello-controller--on-entity-p
+                         orgtrello-controller--right-level-p
+                         orgtrello-controller--already-synced-p)
+                       :entity
+                       'orgtrello-controller--do-sync-card-comment
+                       :buffer) => :result-delete-card-comment)
+                (orgtrello-controller-do-sync-card-comment)))))
+
+(ert-deftest test-orgtrello-controller-do-delete-card-comment ()
+  (should (eq :result-delete-card-comment
+              (with-mock
+                (mock (current-buffer) => :buffer)
+                (mock (orgtrello-buffer-safe-entry-full-metadata) => :entity)
+                (mock (orgtrello-action-functional-controls-then-do
+                       '(orgtrello-controller--on-entity-p
+                         orgtrello-controller--right-level-p
+                         orgtrello-controller--already-synced-p)
+                       :entity
+                       'orgtrello-controller--do-delete-card-comment
+                       :buffer) => :result-delete-card-comment)
+                (orgtrello-controller-do-delete-card-comment)))))
+
+(ert-deftest test-orgtrello-controller-do-add-card-comment ()
+  (should (eq :card-added
+              (with-mock
+                (mock (orgtrello-entity-back-to-card) => :back)
+                (mock (orgtrello-buffer-entity-metadata) => (orgtrello-hash-make-properties '((:id . "card-id"))))
+                (mock (orgtrello-controller-add-comment "card-id") => :card-added)
+                (orgtrello-controller-do-add-card-comment))))
+  (should (string= "org-trello - Card not sync'ed so cannot add comment - skip."
+                   (let ((orgtrello-log-level orgtrello-log-info))
+                     (with-mock
+                       (mock (orgtrello-entity-back-to-card) => :back)
+                       (mock (orgtrello-buffer-entity-metadata) => (orgtrello-hash-make-properties '((:id))))
+                       (orgtrello-controller-do-add-card-comment)))))
+  (should (string= "org-trello - Card not sync'ed so cannot add comment - skip."
+                   (let ((orgtrello-log-level orgtrello-log-info))
+                     (with-mock
+                       (mock (orgtrello-entity-back-to-card) => :back)
+                       (mock (orgtrello-buffer-entity-metadata) => (orgtrello-hash-make-properties '((:id . ""))))
+                       (orgtrello-controller-do-add-card-comment))))))
+
 (ert-deftest test-orgtrello-controller--extract-comment-and-close-popup ()
   (should (equal '("some comment trimmed from popup's comment" :card-id :buffer-name :point :prefix-log)
                  (with-mock
@@ -684,7 +733,6 @@ See http://org-trello.github.io/trello-setup.html#credentials for more informati
                        'orgtrello-controller-sync-card-from-trello
                        :buffer) => :result-sync-from)
                 (orgtrello-controller-checks-then-sync-card-from-trello)))))
-
 
 (ert-deftest test-orgtrello-controller--delete-buffer-property ()
   (should (equal "* card

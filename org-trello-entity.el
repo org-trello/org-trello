@@ -42,17 +42,17 @@ Provided INDENT as the denominator for the checkbox's nature."
   "Given the current position, determine if we are on an item."
   (orgtrello-entity--org-checkbox-p org-trello--item-indent))
 
+(defalias 'orgtrello-entity-back-to-card 'org-back-to-heading)
+
 (defun orgtrello-entity-org-comment-p ()
   "Given the current position, determine if we are currently on a comment."
   (or
    (save-excursion
-     (org-back-to-heading)
+     (orgtrello-entity-back-to-card)
      (orgtrello-entity-org-heading-with-level-p 2))
    (->> (buffer-substring (point-at-bol) (point-at-eol))
         s-trim-left
         (s-starts-with? "** COMMENT "))))
-
-(defalias 'orgtrello-entity-back-to-card 'org-back-to-heading)
 
 (defun orgtrello-entity-card-start-point ()
   "Compute the begin point of a card."
@@ -125,7 +125,7 @@ This corresponds to the card's first checkbox position."
 (defun orgtrello-entity-card-end-point ()
   "Compute the current card's end point."
   (save-excursion
-    (org-back-to-heading)
+    (orgtrello-entity-back-to-card)
     (org-element-property :end (org-element-at-point))))
 
 (defun orgtrello-entity-compute-first-comment-point ()
@@ -196,7 +196,7 @@ Otherwise, return the current position."
   "Compute the comment's region.
 Expected to be called when the cursor is inside the comment region."
   (save-excursion
-    (org-back-to-heading)
+    (orgtrello-entity-back-to-card)
     (let ((elem (org-element-at-point)))
       `(,(org-element-property :begin elem) ,(org-element-property :end elem)))))
 

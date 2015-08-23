@@ -271,7 +271,7 @@ Otherwise, on an item, update the item's, checklist's and card's checksum."
   (save-excursion
     (let ((actions
            (cond ((orgtrello-entity-org-comment-p)
-                  '(org-back-to-heading
+                  '(orgtrello-entity-back-to-card
                     orgtrello-buffer-write-local-comment-checksum-at-point
                     org-up-element
                     orgtrello-buffer-write-local-card-checksum))
