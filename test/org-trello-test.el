@@ -250,7 +250,7 @@ System information:
 (ert-deftest test-org-trello-bug-report ()
   (should (equal :res
                  (with-mock
-                   (mock (browse-url "https://github.com/org-trello/org-trello-issues/new") => :opened)
+                   (mock (browse-url "https://github.com/org-trello/org-trello/issues/new") => :opened)
                    (mock (org-trello--bug-report) => :message)
                    (mock (orgtrello-log-msg orgtrello-log-info :message) => :res)
                    (org-trello-bug-report 'browse))))

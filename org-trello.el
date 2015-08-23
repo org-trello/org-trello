@@ -470,7 +470,7 @@ When OPEN-URL is filled, with universal argument (`C-u') is used,
 opens new issue in org-trello's github tracker."
   (interactive "P")
   (when open-url
-    (browse-url "https://github.com/org-trello/org-trello-issues/new"))
+    (browse-url "https://github.com/org-trello/org-trello/issues/new"))
   (orgtrello-log-msg orgtrello-log-info (org-trello--bug-report)))
 
 
