@@ -1135,18 +1135,20 @@ Return the hashmap (name, id) of the new lists created."
     (lexical-let* ((card-id (-> card-meta
                                 orgtrello-data-parent
                                 orgtrello-data-entity-id))
-                   (entity-comment (-> card-meta orgtrello-data-current))
+                   (entity-comment (orgtrello-data-current card-meta))
                    (comment-id (orgtrello-data-entity-id entity-comment))
                    (comment-text (orgtrello-data-entity-description
                                   entity-comment)))
-      (if (or (null card-id) (string= "" card-id) (string= "" comment-id))
+      (if (or (null card-id)
+              (string= "" card-id)
+              (string= "" comment-id))
           (orgtrello-log-msg orgtrello-log-info "No comment to sync - skip.")
         (deferred:$
           (deferred:next (lambda () (-> card-id
-                                        (orgtrello-api-update-card-comment
-                                         comment-id
-                                         comment-text)
-                                        (orgtrello-query-http-trello 'sync))))
+                                   (orgtrello-api-update-card-comment
+                                    comment-id
+                                    comment-text)
+                                   (orgtrello-query-http-trello 'sync))))
           (deferred:nextc it
             (lambda (data)
               (orgtrello-log-msg orgtrello-log-info "Comment sync'ed!"))))))))
