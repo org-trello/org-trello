@@ -1081,26 +1081,41 @@ Return the hashmap (name, id) of the new lists created."
    'orgtrello-controller--do-delete-card-comment
    (current-buffer)))
 
+(defun orgtrello-controller--delete-card-comment-from-data (data)
+  "Delete the card's comment from DATA."
+  (-let (((card-id comment-id) data))
+    (-> card-id
+        (orgtrello-api-delete-card-comment comment-id)
+        (orgtrello-query-http-trello 'sync)
+        (cons data))))
+
+(defun orgtrello-controller--delete-comment-region-from-data (data)
+  "Delete the region's buffer from DATA."
+  (-let* (((_ _ _ comment-region) data)
+          ((region-start region-end) comment-region))
+    (delete-region region-start region-end)))
+
 (defun orgtrello-controller--do-delete-card-comment (card-meta
                                                      &optional buffer-name)
   "Delete the comment at point from the CARD-META in the BUFFER-NAME."
   (save-excursion
-    (lexical-let ((card-id    (-> card-meta
-                                  orgtrello-data-parent
-                                  orgtrello-data-entity-id))
-                  (comment-id (-> card-meta
-                                  orgtrello-data-current
-                                  orgtrello-data-entity-id)))
-      (if (or (null card-id) (string= "" card-id) (string= "" comment-id))
+    (let ((card-id (-> card-meta
+                       orgtrello-data-parent
+                       orgtrello-data-entity-id))
+          (comment-id (-> card-meta
+                          orgtrello-data-current
+                          orgtrello-data-entity-id)))
+      (if (or (null card-id)
+              (string= "" card-id)
+              (string= "" comment-id))
           (orgtrello-log-msg orgtrello-log-info "No comment to delete - skip.")
-        (deferred:$
-          (deferred:next (lambda () (-> card-id
-                                        (orgtrello-api-delete-card-comment comment-id)
-                                        (orgtrello-query-http-trello 'sync))))
-          (deferred:nextc it
-            (lambda (data)
-              (apply 'delete-region (orgtrello-entity-comment-region))
-              (orgtrello-log-msg orgtrello-log-info "Comment deleted!"))))))))
+        (let ((comment-region (orgtrello-entity-comment-region))
+              (prefix-log "Comment deletion..."))
+          (orgtrello-deferred-eval-computation
+           (list card-id comment-id comment-region)
+           '('orgtrello-controller--delete-card-comment-from-data
+             'orgtrello-controller--delete-comment-region-from-data)
+           prefix-log))))))
 
 (defun orgtrello-controller-do-sync-card-comment ()
   "Check then do the actual sync if everything is ok."

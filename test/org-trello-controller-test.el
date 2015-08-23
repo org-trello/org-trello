@@ -2,6 +2,46 @@
 (require 'ert)
 (require 'el-mock)
 
+(ert-deftest test-orgtrello-controller--do-delete-card-comment ()
+  (should (eq :deletion-done
+              (with-mock
+                (mock (orgtrello-entity-comment-region) => :comment-region)
+                (mock (orgtrello-deferred-eval-computation
+                       '("card-id" "comment-id" :comment-region)
+                       '('orgtrello-controller--delete-card-comment-from-data
+                         'orgtrello-controller--delete-comment-region-from-data)
+                       "Comment deletion...") => :deletion-done)
+                (orgtrello-controller--do-delete-card-comment (orgtrello-hash-make-properties `((:parent . ,(orgtrello-hash-make-properties '((:id . "card-id"))))
+                                                                                                (:current . ,(orgtrello-hash-make-properties '((:id . "comment-id")))))) :buffer-name))))
+  (should (string= "org-trello - No comment to delete - skip."
+                   (let ((orgtrello-log-level orgtrello-log-info))
+                     (with-mock
+                       (orgtrello-controller--do-delete-card-comment (orgtrello-hash-make-properties `((:parent . ,(orgtrello-hash-make-properties '((:id . ""))))
+                                                                                                       (:current . ,(orgtrello-hash-make-properties '((:id)))))) :buffer-name)))))
+  (should (string= "org-trello - No comment to delete - skip."
+                   (let ((orgtrello-log-level orgtrello-log-info))
+                     (with-mock
+                       (orgtrello-controller--do-delete-card-comment (orgtrello-hash-make-properties `((:parent . ,(orgtrello-hash-make-properties '((:id . "123"))))
+                                                                                                       (:current . ,(orgtrello-hash-make-properties '((:id . "")))))) :buffer-name)))))
+  (should (string= "org-trello - No comment to delete - skip."
+                   (let ((orgtrello-log-level orgtrello-log-info))
+                     (with-mock
+                       (orgtrello-controller--do-delete-card-comment (orgtrello-hash-make-properties `((:parent . ,(orgtrello-hash-make-properties '((:id))))
+                                                                                                       (:current . ,(orgtrello-hash-make-properties '((:id)))))) :buffer-name))))))
+
+(ert-deftest test-orgtrello-controller--delete-card-comment-from-data ()
+  (should (equal '(:result-query :card-id :comment-id)
+                 (with-mock
+                   (mock (orgtrello-api-delete-card-comment :card-id :comment-id) => :api-query)
+                   (mock (orgtrello-query-http-trello :api-query 'sync) => :result-query)
+                   (orgtrello-controller--delete-card-comment-from-data '(:card-id :comment-id))))))
+
+(ert-deftest test-orgtrello-controller--delete-comment-region-from-data ()
+  (should (eq :delete-done
+              (with-mock
+                (mock (delete-region :region-start :region-end) => :delete-done)
+                (orgtrello-controller--delete-comment-region-from-data '(:res :card-id :comment-id (:region-start :region-end)))))))
+
 (ert-deftest test-orgtrello-controller-do-install-key-and-token ()
   ;; file not existing
   (should (eq :result-install
