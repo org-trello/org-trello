@@ -225,7 +225,7 @@ SIZE is a useless parameter, only here to satisfy an implementation detail."
   "Is the string ID a trello identifier?"
   (and id (not (string-match-p (format "^%s-" org-trello--label-key-marker) id))))
 
-(defun orgtrello-data-merge-item (trello-item org-item)
+(defun orgtrello-data--merge-item (trello-item org-item)
   "Merge TRELLO-ITEM and ORG-ITEM together.
 If TRELLO-ITEM is nil, return the ORG-ITEM."
   (if trello-item
@@ -315,7 +315,7 @@ If TRELLO-CARD is nil, return ORG-CARD."
   "Dispatch the function fn to merge the ENTITY."
   (cond ((orgtrello-data-entity-card-p entity)      'orgtrello-data--merge-card)
         ((orgtrello-data-entity-checklist-p entity) 'orgtrello-data--merge-checklist)
-        ((orgtrello-data-entity-item-p entity)      'orgtrello-data-merge-item)))
+        ((orgtrello-data-entity-item-p entity)      'orgtrello-data--merge-item)))
 
 (defun orgtrello-data-merge-entities-trello-and-org (trello-data org-data)
   "Merge to TRELLO-DATA the ORG-DATA, (org-entity entities inside the trello-entities)."
