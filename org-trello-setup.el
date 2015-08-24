@@ -286,11 +286,6 @@ PREFIX-KEYBINDING is the new binding."
     (let ((prev-prefix-keybinding (if (boundp current-prefix-binding-variable)
                                       (eval current-prefix-binding-variable)
                                     org-trello-default-prefix-keybinding)))
-      (orgtrello-log-msg orgtrello-log-trace
-                         "variable: %s\ncurrent value: %s\nnew binding: %s"
-                         current-prefix-binding-variable
-                         prev-prefix-keybinding
-                         prefix-keybinding)
       (orgtrello-setup-install-local-keybinding-map
        prev-prefix-keybinding
        prefix-keybinding

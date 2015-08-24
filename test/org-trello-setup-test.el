@@ -34,6 +34,15 @@
                       "C-c x"
                       org-trello-interactive-command-binding-couples) => :new-binding-set)
                (orgtrello-setup-set-binding 'org-trello-current-prefix-keybinding "C-c x")))))
+  (should (string=
+           "C-c y"
+           (let ((org-trello-default-prefix-keybinding "C-c X"))
+             (with-mock
+               (mock (orgtrello-setup-install-local-keybinding-map
+                      "C-c X"
+                      "C-c y"
+                      org-trello-interactive-command-binding-couples) => :new-binding-set)
+               (orgtrello-setup-set-binding 'org-trello-unbound-var "C-c y")))))
   (should-not (orgtrello-setup-set-binding 'org-trello-current-prefix-keybinding nil)))
 
 (ert-deftest test-orgtrello-setup-remove-local-keybinding-map ()

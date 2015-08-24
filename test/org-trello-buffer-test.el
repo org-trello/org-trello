@@ -2,6 +2,13 @@
 (require 'ert)
 (require 'el-mock)
 
+(ert-deftest test-orgtrello-buffer-end-of-line ()
+  (should (eq :moved
+              (with-mock
+                (mock (orgtrello-buffer-end-of-line-point) => :end-of-line)
+                (mock (goto-char :end-of-line) => :moved)
+                (orgtrello-buffer-end-of-line)))))
+
 (ert-deftest test-orgtrello-buffer-org-map-entries ()
   (should (equal '(1 1)
                  (orgtrello-tests-with-temp-buffer
@@ -224,7 +231,13 @@
               (orgtrello-tests-with-temp-buffer
                "* card
   - [ ] checklist \n"
-               (orgtrello-buffer-end-of-line-point)))))
+               (orgtrello-buffer-end-of-line-point))))
+  (should (eq 10
+              (with-mock
+                (mock (save-excursion *) => 15)
+                (mock (orgtrello-entity-org-checkbox-p) => t)
+                (mock (orgtrello-buffer-compute-overlay-size) => 4)
+                (orgtrello-buffer-end-of-line-point)))))
 
 (ert-deftest test-orgtrello-buffer-org-map-entities-without-params ()
   (should (equal '(("local-card-checksum-1" "local-checklist-checksum-1" "local-item-checksum-1")
