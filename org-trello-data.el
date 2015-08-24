@@ -362,11 +362,14 @@ If state is \"complete\" or \"DONE\", the first element is returned, otherwise t
 
 (defun orgtrello-data--users-from (string-users)
   "Compute the users name from the comma separated values STRING-USERS."
-  (when string-users (split-string string-users "," t)))
+  (when string-users
+    (s-split "," string-users t)))
 
 (defun orgtrello-data--users-to (users)
   "Given a list of USERS, compute the comma separated string of users."
-  (if users (mapconcat 'identity users ",") ""))
+  (if users
+      (s-join "," users)
+    ""))
 
 (defun orgtrello-data-get-children (entity entities-adjacencies)
   "Given ENTITY and ENTITIES-ADJACENCIES, return the children of the entity."
