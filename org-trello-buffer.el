@@ -328,14 +328,13 @@ Remove text and overlays."
               (orgtrello-date-convert-trello-date-to-org-date due-date))
     ""))
 
-(defun orgtrello-buffer--private-compute-card-to-org-entry (name status due-date
-                                                                 tags)
-  "Compute the org format of a card with NAME, STATUS, DUE-DATE and TAGS."
+(defun orgtrello-buffer--private-compute-card-to-org-entry (name status due tags)
+  "Compute the org format of a card with NAME, STATUS, DUE date and TAGS."
   (let ((prefix-string (format "* %s %s" (if status status org-trello--todo)
                                name)))
     (format "%s%s\n%s" prefix-string
             (orgtrello-buffer--serialize-tags prefix-string tags)
-            (orgtrello-buffer--compute-due-date due-date))))
+            (orgtrello-buffer--compute-due-date due))))
 
 (defun orgtrello-buffer--serialize-tags (prefix-string tags)
   "Given a PREFIX-STRING and TAGS, compute the 'org-mode' serialization string.

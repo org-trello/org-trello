@@ -1409,14 +1409,16 @@ DEADLINE: <dummy-date-with-right-locale>
   (should (equal "    - [ ] name\n" (orgtrello-buffer--compute-item-to-org-checkbox "name" 3 "incomplete"))))
 
 (ert-deftest test-orgtrello-buffer--private-compute-card-to-org-entry ()
-  (should (equal "* name TODO                                                             :some-tags:\nDEADLINE: <date>\n"
+  (should (equal "* TODO name                                                             :some-tags:\nDEADLINE: <date>\n"
                  (with-mock
                    (mock (orgtrello-date-convert-trello-date-to-org-date "some-date") => "date")
-                   (orgtrello-buffer--private-compute-card-to-org-entry "TODO" "name" "some-date" ":some-tags:"))))
-  (should (equal "* name TODO\n"
-                 (orgtrello-buffer--private-compute-card-to-org-entry "TODO" "name" nil nil)))
-  (should (equal "* name TODO                                                             :tag,tag2:\n"
-                 (orgtrello-buffer--private-compute-card-to-org-entry "TODO" "name" nil ":tag,tag2:"))))
+                   (orgtrello-buffer--private-compute-card-to-org-entry "name" "TODO" "some-date" ":some-tags:"))))
+  (should (equal "* DONE name\n"
+                 (orgtrello-buffer--private-compute-card-to-org-entry "name" "DONE" nil nil)))
+  (should (equal "* TODO name\n"
+                 (orgtrello-buffer--private-compute-card-to-org-entry "name" nil nil nil)))
+  (should (equal "* IN-P name                                                             :tag,tag2:\n"
+                 (orgtrello-buffer--private-compute-card-to-org-entry "name" "IN-P" nil ":tag,tag2:"))))
 
 (ert-deftest test-orgtrello-buffer--compute-due-date ()
   (should (equal "DEADLINE: <date-formatted>\n"
