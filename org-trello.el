@@ -417,6 +417,15 @@ If UNASSIGN is not nil, unassign oneself from the card."
 (defalias 'org-trello/assign-me 'org-trello-assign-me)
 
 ;;;###autoload
+(defun org-trello-toggle-assign-me ()
+  "Toggling assign/unassign oneself to a card."
+  (interactive)
+  (org-trello-apply '(org-trello-log-light-checks-and-do
+                      "Toggle assign me to card"
+                      orgtrello-controller-toggle-assign-unassign-oneself)
+                    'do-save-buffer-after-computation))
+
+;;;###autoload
 (defun org-trello-check-setup ()
   "Check the current setup."
   (interactive)

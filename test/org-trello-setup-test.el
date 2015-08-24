@@ -74,7 +74,7 @@ C-c z A - M-x org-trello-archive-cards - Archive all DONE cards.
 C-c z g - M-x org-trello-abort-sync - Abort synchronization activities.
 C-c z k - M-x org-trello-kill-entity - Kill the entity (and its arborescence tree) from the trello board and the org buffer.
 C-c z K - M-x org-trello-kill-cards - Kill all the entities (and their arborescence tree) from the trello board and the org buffer.
-C-c z a - M-x org-trello-assign-me - Assign oneself to the card. With C-u modifier, unassign oneself from the card.
+C-c z a - M-x org-trello-toggle-assign-me - Toggle assign oneself to the card. If not assigned, assign and vice versa.
 C-c z C - M-x org-trello-add-card-comment - Add a comment to the card. With C-u modifier, remove the current card's comment.
 C-c z U - M-x org-trello-sync-comment - Sync a comment to trello. With C-u modifier, remove the current card's comment.
 C-c z l - M-x org-trello-show-board-labels - Display the board's labels in a pop-up buffer.

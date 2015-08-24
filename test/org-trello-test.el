@@ -220,6 +220,14 @@
                           'do-save-buffer-after-computation) => :res2)
                    (org-trello-assign-me)))))
 
+(ert-deftest test-org-trello-toggle-assign-me ()
+  (should (equal :res-toggle-assign-me
+                 (with-mock
+                   (mock (org-trello-apply
+                          '(org-trello-log-light-checks-and-do "Toggle assign me to card" orgtrello-controller-toggle-assign-unassign-oneself)
+                          'do-save-buffer-after-computation) => :res-toggle-assign-me)
+                   (org-trello-toggle-assign-me)))))
+
 (ert-deftest test-org-trello-check-setup ()
   (should (equal :res
                  (with-mock

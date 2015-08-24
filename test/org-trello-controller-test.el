@@ -2,6 +2,36 @@
 (require 'ert)
 (require 'el-mock)
 
+(ert-deftest test-orgtrello-controller-toggle-assign-unassign-oneself ()
+  (should (string=
+           "* card
+:PROPERTIES:
+:orgtrello-users: user2
+:END:
+"
+           (let ((org-trello--user-logged-in "user"))
+             (orgtrello-tests-with-temp-buffer-and-return-buffer-content
+              "* card
+:PROPERTIES:
+:orgtrello-users: user,user2
+:END:
+"
+              (orgtrello-controller-toggle-assign-unassign-oneself)))))
+
+  (should (string=
+           "* card
+:PROPERTIES:
+:orgtrello-users: user
+:END:
+"
+           (let ((org-trello--user-logged-in "user"))
+             (orgtrello-tests-with-temp-buffer-and-return-buffer-content
+              "* card
+:PROPERTIES:
+:END:
+"
+              (orgtrello-controller-toggle-assign-unassign-oneself))))))
+
 (ert-deftest test-orgtrello-controller-do-create-board-and-install-metadata ()
   (should (eq :create-board-done
               (with-mock

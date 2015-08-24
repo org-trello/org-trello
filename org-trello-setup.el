@@ -5,6 +5,7 @@
 (require 'org)
 (require 'org-trello-utils)
 (require 'org-trello-log)
+(require 'dash)
 
 (defgroup org-trello nil " Org-trello customisation group."
   :tag "Org-trello"
@@ -194,7 +195,7 @@ As of 0.7.0, org-trello now follows Emacs's conventions.")
         (org-trello-abort-sync                        "g" "Abort synchronization activities.")
         (org-trello-kill-entity                       "k" "Kill the entity (and its arborescence tree) from the trello board and the org buffer.")
         (org-trello-kill-cards                        "K" "Kill all the entities (and their arborescence tree) from the trello board and the org buffer.")
-        (org-trello-assign-me                         "a" "Assign oneself to the card. With C-u modifier, unassign oneself from the card.")
+        (org-trello-toggle-assign-me                  "a" "Toggle assign oneself to the card. If not assigned, assign and vice versa.")
         (org-trello-add-card-comment                  "C" "Add a comment to the card. With C-u modifier, remove the current card's comment.")
         (org-trello-sync-comment                      "U" "Sync a comment to trello. With C-u modifier, remove the current card's comment.")
         (org-trello-show-board-labels                 "l" "Display the board's labels in a pop-up buffer.")
@@ -221,9 +222,7 @@ As of 0.7.0, org-trello now follows Emacs's conventions.")
                                                           command-binding-desc)
   "Standard Help message template from KEYBINDING and COMMAND-BINDING-DESC."
   (->> command-binding-desc
-       (--map (let ((command        (car it))
-                    (prefix-binding (cadr it))
-                    (help-msg       (cadr (cdr it))))
+       (--map (-let (((command prefix-binding help-msg) it))
                 (concat keybinding " "
                         prefix-binding " - M-x "
                         (symbol-name command) " - "

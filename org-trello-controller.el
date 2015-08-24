@@ -1055,21 +1055,38 @@ DATA is a list of (user board board-name board-desc org-keywords buffername)."
       (remove user users)
     users))
 
+(defun orgtrello-controller-toggle-assign-unassign-oneself ()
+  "Command to toggle assign/unassign oneself from card."
+  (let ((user-me org-trello--user-logged-in)
+        (users-assigned (->> (orgtrello-buffer-get-usernames-assigned-property)
+                             orgtrello-data--users-from)))
+    (if (member user-me users-assigned)
+        ;; unassign
+        (-> user-me
+            (orgtrello-controller--remove-user users-assigned)
+            orgtrello-data--users-to
+            orgtrello-buffer-set-usernames-assigned-property)
+      ;; assign
+      (-> user-me
+          (orgtrello-controller--add-user users-assigned)
+          orgtrello-data--users-to
+          orgtrello-buffer-set-usernames-assigned-property))))
+
 (defun orgtrello-controller-do-assign-me ()
   "Command to assign oneself to the card."
-  (--> (orgtrello-buffer-get-usernames-assigned-property)
-       (orgtrello-data--users-from it)
-       (orgtrello-controller--add-user org-trello--user-logged-in it)
-       (orgtrello-data--users-to it)
-       (orgtrello-buffer-set-usernames-assigned-property it)))
+  (->> (orgtrello-buffer-get-usernames-assigned-property)
+       orgtrello-data--users-from
+       (orgtrello-controller--add-user org-trello--user-logged-in)
+       orgtrello-data--users-to
+       orgtrello-buffer-set-usernames-assigned-property))
 
 (defun orgtrello-controller-do-unassign-me ()
   "Command to unassign oneself of the card."
-  (--> (orgtrello-buffer-get-usernames-assigned-property)
-       (orgtrello-data--users-from it)
-       (orgtrello-controller--remove-user org-trello--user-logged-in it)
-       (orgtrello-data--users-to it)
-       (orgtrello-buffer-set-usernames-assigned-property it)))
+  (->> (orgtrello-buffer-get-usernames-assigned-property)
+       orgtrello-data--users-from
+       (orgtrello-controller--remove-user org-trello--user-logged-in)
+       orgtrello-data--users-to
+       orgtrello-buffer-set-usernames-assigned-property))
 
 (defun orgtrello-controller-do-add-card-comment ()
   "Wait for the input to add a comment to the current card."
