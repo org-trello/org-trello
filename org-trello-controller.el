@@ -375,21 +375,29 @@ Beware, this will block Emacs as the request is synchronous."
   "Compute the current user."
   (orgtrello-query-http-trello (orgtrello-api-get-me) 'sync))
 
-(defun orgtrello-controller--check-user-account (user-me)
-  "Check that the USER-ME account is ok."
-  (orgtrello-log-msg
-   orgtrello-log-info
-   (if user-me
-       (format "Account '%s' configured! Everything is ok!"
-               (orgtrello-data-entity-username user-me))
-     "There is a problem with your credentials.\nMake sure you used M-x org-trello-install-key-and-token and this installed correctly the consumer-key and access-token.\nSee http://org-trello.github.io/trello-setup.html#credentials for more information.")))
+(defun orgtrello-controller--check-user-account (data)
+  "Check the user account in DATA is ok.
+DATA is a list of (user)."
+  (let ((user-me (car data)))
+    (orgtrello-log-msg
+     orgtrello-log-info
+     (if user-me
+         (format "Account '%s' configured! Everything is ok!"
+                 (orgtrello-data-entity-username user-me))
+       "There is a problem with your credentials.\nMake sure you used M-x org-trello-install-key-and-token and this installed correctly the consumer-key and access-token.\nSee http://org-trello.github.io/trello-setup.html#credentials for more information."))))
+
+(defun orgtrello-controller--fetch-user-logged-in (data)
+  "Fetch the user logged in and return the result in DATA.
+DATA is a list of (boards buffername)."
+  (-> (orgtrello-controller--user-logged-in)
+      (cons data)))
 
 (defun orgtrello-controller-check-trello-connection ()
   "Full `org-mode' file synchronization.
 Beware, this will block Emacs as the request is synchronous."
   (orgtrello-deferred-eval-computation
    nil
-   '((lambda (data) (orgtrello-controller--user-logged-in))
+   '('orgtrello-controller--fetch-user-logged-in
      'orgtrello-controller--check-user-account)
    "Checking trello connection..."
    'no-success-log))
@@ -834,12 +842,6 @@ UPDATE-TODO-KEYWORDS is the org list of keywords."
   "Fetch open boards and return the result in DATA.
 DATA is a list (buffername)."
   (-> (orgtrello-controller--list-boards)
-      (cons data)))
-
-(defun orgtrello-controller--fetch-user-logged-in (data)
-  "Fetch the user logged in and return the result in DATA.
-DATA is a list of (boards buffername)."
-  (-> (orgtrello-controller--user-logged-in)
       (cons data)))
 
 (defun orgtrello-controller--choose-board-id (data)
