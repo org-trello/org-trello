@@ -2,6 +2,13 @@
 (require 'ert)
 (require 'el-mock)
 
+(ert-deftest test-orgtrello-controller--fetch-user-logged-in ()
+  (should (equal '(:user-entity :boards :buffer-name)
+                 (with-mock
+                   (mock (orgtrello-api-get-me) => :user-me)
+                   (mock (orgtrello-query-http-trello :user-me 'sync) => :user-entity)
+                   (orgtrello-controller--fetch-user-logged-in '(:boards :buffer-name))))))
+
 (ert-deftest test-orgtrello-controller-do-update-board-metadata ()
   (should (eq :update-board-done
               (with-mock
@@ -153,12 +160,6 @@
                  (with-mock
                    (mock (orgtrello-controller--list-boards) => :boards)
                    (orgtrello-controller--fetch-boards '(:buffername))))))
-
-(ert-deftest test-orgtrello-controller--fetch-boards ()
-  (should (equal '(:user :boards)
-                 (with-mock
-                   (mock (orgtrello-controller--user-logged-in) => :user)
-                   (orgtrello-controller--fetch-user-logged-in '(:boards))))))
 
 (ert-deftest test-orgtrello-controller--choose-board-id ()
   (should (equal '(:board-id-selected :user :boards :buffername)
@@ -1198,13 +1199,6 @@ See http://org-trello.github.io/trello-setup.html#credentials for more informati
              "user3"
              (orgtrello-hash-make-properties '((:red . "red label") (:green . "green label")))
              'do-delete-the-todo-line)))))
-
-(ert-deftest test-orgtrello-controller--user-logged-in ()
-  (should (equal :result-get-me
-                 (with-mock
-                   (mock (orgtrello-api-get-me) => :query-get-me)
-                   (mock (orgtrello-query-http-trello :query-get-me 'sync) => :result-get-me)
-                   (orgtrello-controller--user-logged-in)))))
 
 (ert-deftest test-orgtrello-controller--properties-compute-todo-keywords-as-string ()
   (should (string= "#+TODO: list-id-1 list-id-2 list-id-3"

@@ -371,10 +371,6 @@ Beware, this will block Emacs as the request is synchronous."
        (orgtrello-controller-log-success ,prefix-log))
      prefix-log)))
 
-(defun orgtrello-controller--user-logged-in ()
-  "Compute the current user."
-  (orgtrello-query-http-trello (orgtrello-api-get-me) 'sync))
-
 (defun orgtrello-controller--check-user-account (data)
   "Check the user account in DATA is ok.
 DATA is a list of (user)."
@@ -389,7 +385,8 @@ DATA is a list of (user)."
 (defun orgtrello-controller--fetch-user-logged-in (data)
   "Fetch the user logged in and return the result in DATA.
 DATA is a list of (boards buffername)."
-  (-> (orgtrello-controller--user-logged-in)
+  (-> (orgtrello-api-get-me)
+      (orgtrello-query-http-trello 'sync)
       (cons data)))
 
 (defun orgtrello-controller-check-trello-connection ()
