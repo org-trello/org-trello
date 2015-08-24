@@ -864,8 +864,8 @@ COMPUTE-REGION-FN is the region computation function."
        (let ((card-id (-> (orgtrello-buffer-entry-get-full-metadata)
                           orgtrello-data-current
                           orgtrello-data-entity-id)))
-         (when (--some? (string= card-id (orgtrello-data-entity-id it))
-                        trello-cards) ;; find a card to archive
+         (when (-some? (-compose (-partial 'string= card-id) 'orgtrello-data-entity-id)
+                       trello-cards) ;; find a card to archive
            (org-archive-subtree)))))))
 
 (orgtrello-log-msg orgtrello-log-debug "orgtrello-buffer loaded!")

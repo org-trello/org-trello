@@ -2,6 +2,27 @@
 (require 'ert)
 (require 'el-mock)
 
+(ert-deftest test-orgtrello-buffer-archive-cards ()
+  (should (equal '(:archive-done nil :archive-done)
+                 (orgtrello-tests-with-temp-buffer
+                  "* card to archive
+:PROPERTIES:
+:orgtrello-id: card-id
+:END:
+* not to archive
+:PROPERTIES:
+:orgtrello-id: yet-another-card-id
+:END:
+* another card to archive
+:PROPERTIES:
+:orgtrello-id: other-card-id
+:END:
+"
+                  (with-mock
+                    (mock (org-archive-subtree) => :archive-done)
+                    (orgtrello-buffer-archive-cards (list (orgtrello-hash-make-properties '((:id . "card-id")))
+                                                          (orgtrello-hash-make-properties '((:id . "other-card-id"))))))))))
+
 (ert-deftest test-orgtrello-buffer-set-usernames-assigned-property ()
   (should (string= "* card
   :PROPERTIES:
