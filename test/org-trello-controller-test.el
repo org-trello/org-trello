@@ -182,6 +182,24 @@
                                                                        :board-lists
                                                                        :board-labels
                                                                        :board-members) => :update-buffer-done)
+                   (orgtrello-controller--update-buffer-with-board-metadata '(:board :board-id :user-logged-in)))))
+  ;; user-logged-in could be a hashtable
+  (should (equal '(:board :board-id :user-logged-in)
+                 (with-mock
+                   (mock (orgtrello-data-entity-memberships :board) => :memberships)
+                   (mock (orgtrello-controller--compute-user-properties :memberships) => :members)
+                   (mock (orgtrello-controller--compute-user-properties-hash :members) => :board-members)
+                   (mock (orgtrello-data-entity-name :board) => :board-name)
+                   (mock (orgtrello-data-entity-lists :board) => :board-lists)
+                   (mock (orgtrello-data-entity-labels :board) => :board-labels)
+                   (mock (hash-table-p :user-logged-in) => t)
+                   (mock (orgtrello-data-entity-username :user-logged-in) => :user-name)
+                   (mock (orgtrello-controller-do-write-board-metadata :board-id
+                                                                       :board-name
+                                                                       :user-name
+                                                                       :board-lists
+                                                                       :board-labels
+                                                                       :board-members) => :update-buffer-done)
                    (orgtrello-controller--update-buffer-with-board-metadata '(:board :board-id :user-logged-in))))))
 
 (ert-deftest test-orgtrello-controller--fetch-boards ()

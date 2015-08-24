@@ -875,7 +875,9 @@ DATA is a list of (board board-id user-logged-in boards buffername)."
     (orgtrello-controller-do-write-board-metadata
      board-id
      (orgtrello-data-entity-name board)
-     user-logged-in
+     (if (hash-table-p user-logged-in)
+         (orgtrello-data-entity-username user-logged-in)
+       user-logged-in)
      (orgtrello-data-entity-lists board)
      (orgtrello-data-entity-labels board)
      members)
