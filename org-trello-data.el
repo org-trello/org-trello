@@ -7,7 +7,7 @@
 (require 'org-trello-hash)
 (require 's)
 (require 'json)
-(require 'dash)
+(require 'dash-functional)
 
 (defun orgtrello-data-merge-2-lists-without-duplicates (a-list b-list)
   "Merge the 2 lists A-LIST and B-LIST together without duplicates."
@@ -15,10 +15,21 @@
       (append b-list)
       delete-dups))
 
-(defun orgtrello-data--entity-with-level-p (entity level) "Is the ENTITY with level LEVEL?" (-> entity orgtrello-data-entity-level (eq level)))
-(defun orgtrello-data-entity-card-p      (entity) "Is the ENTITY a card?"      (orgtrello-data--entity-with-level-p entity org-trello--card-level))
-(defun orgtrello-data-entity-checklist-p (entity) "Is the ENTITY a checklist?" (orgtrello-data--entity-with-level-p entity org-trello--checklist-level))
-(defun orgtrello-data-entity-item-p      (entity) "Is the ENTITY an item?"     (orgtrello-data--entity-with-level-p entity org-trello--item-level))
+(defun orgtrello-data--entity-with-level-p (entity level)
+  "Is the ENTITY with level LEVEL?"
+  (-> entity orgtrello-data-entity-level (eq level)))
+
+(defun orgtrello-data-entity-card-p (entity)
+  "Is the ENTITY a card?"
+  (orgtrello-data--entity-with-level-p entity org-trello--card-level))
+
+(defun orgtrello-data-entity-checklist-p (entity)
+  "Is the ENTITY a checklist?"
+  (orgtrello-data--entity-with-level-p entity org-trello--checklist-level))
+
+(defun orgtrello-data-entity-item-p (entity)
+  "Is the ENTITY an item?"
+  (orgtrello-data--entity-with-level-p entity org-trello--item-level))
 
 (defun orgtrello-data-entity-id (entity)
   "Retrieve the id from the ENTITY."
@@ -50,8 +61,6 @@ If the keyword is nil, return the optional DEFAULT-VALUE."
 (defun orgtrello-data-entity-id-or-marker (entity)     "Retrieve the ENTITY's ID-or-marker."     (orgtrello-hash-gethash-data :id           entity))
 (defun orgtrello-data-entity-level        (entity)     "Retrieve the ENTITY's LEVEL."            (orgtrello-hash-gethash-data :level        entity))
 (defun orgtrello-data-entity-closed       (entity)     "Retrieve the ENTITY's CLOSED."           (orgtrello-hash-gethash-data :closed       entity))
-(defun orgtrello-data-entity-callback     (entity)     "Retrieve the ENTITY's CALLBACK."         (orgtrello-hash-gethash-data :callback     entity))
-(defun orgtrello-data-entity-start        (entity)     "Retrieve the ENTITY's START."            (orgtrello-hash-gethash-data :start        entity))
 (defun orgtrello-data-entity-comments     (entity)     "Retrieve the ENTITY's COMMENTS."         (orgtrello-hash-gethash-data :comments     entity))
 (defun orgtrello-data-entity-labels       (entity)     "Retrieve the ENTITY's LABELS."           (orgtrello-hash-gethash-data :labels       entity))
 (defun orgtrello-data-entity-tags         (entity)     "Retrieve the ENTITY's TAGS."             (orgtrello-hash-gethash-data :tags         entity))
@@ -89,8 +98,6 @@ If the keyword is nil, return the optional DEFAULT-VALUE."
 (defun orgtrello-data-put-entity-id           (value entity)     "Update the id with VALUE in ENTITY map."                    (orgtrello-hash-puthash-data :id           value entity))
 (defun orgtrello-data-put-entity-level        (value entity)     "Update the level with VALUE in ENTITY map."                 (orgtrello-hash-puthash-data :level        value entity))
 (defun orgtrello-data-put-entity-closed       (value entity)     "Update the closed with VALUE in ENTITY map."                (orgtrello-hash-puthash-data :closed       value entity))
-(defun orgtrello-data-put-entity-callback     (value entity)     "Update the callback with VALUE in ENTITY map."              (orgtrello-hash-puthash-data :callback     value entity))
-(defun orgtrello-data-put-entity-start        (value entity)     "Update the start with VALUE in ENTITY map."                 (orgtrello-hash-puthash-data :start        value entity))
 (defun orgtrello-data-put-entity-comments     (value entity)     "Update the comments with VALUE in ENTITY map."              (orgtrello-hash-puthash-data :comments     value entity))
 (defun orgtrello-data-put-entity-labels       (value entity)     "Update the labels with VALUE in ENTITY map."                (orgtrello-hash-puthash-data :labels       value entity))
 (defun orgtrello-data-put-entity-tags         (value entity)     "Update the tags with VALUE in ENTITY map."                  (orgtrello-hash-puthash-data :tags         value entity))
@@ -133,43 +140,44 @@ If the keyword is nil, return the optional DEFAULT-VALUE."
 (defun orgtrello-data-make-hierarchy (current &optional parent grandparent)
   "Build an org-trello hierarchy using CURRENT, PARENT and GRANDPARENT maps."
   (->> (orgtrello-hash-empty-hash)
-    (orgtrello-data-put-current current)
-    (orgtrello-data-put-parent parent)
-    (orgtrello-data-put-grandparent grandparent)))
+       (orgtrello-data-put-current current)
+       (orgtrello-data-put-parent parent)
+       (orgtrello-data-put-grandparent grandparent)))
 
-(defvar orgtrello-controller--data-map-keywords (orgtrello-hash-make-properties `((url            . :url)
-                                                                        (id             . :id)
-                                                                        (name           . :name)
-                                                                        (idMembers      . :member-ids)
-                                                                        (idList         . :list-id)
-                                                                        (checklists     . :checklists) ;; for full data
-                                                                        (idChecklists   . :checklists) ;; for checklist ids (those 2 keywords are mutually exclusive and are dealt at request level)
-                                                                        (idBoard        . :board-id)
-                                                                        (due            . :due)
-                                                                        (desc           . :desc)
-                                                                        (closed         . :closed)
-                                                                        (idCard         . :card-id)
-                                                                        (checkItems     . :items)
-                                                                        (state          . :checked)
-                                                                        (status         . :status)
-                                                                        (pos            . :position)
-                                                                        (keyword        . :keyword)
-                                                                        (member-ids     . :member-ids)
-                                                                        (member         . :member)
-                                                                        (memberships    . :memberships)
-                                                                        (username       . :username)
-                                                                        (fullName       . :full-name)
-                                                                        (actions        . :comments)
-                                                                        (labelNames     . :labels)
-                                                                        (lists          . :lists)
-                                                                        (red            . :red)
-                                                                        (yellow         . :yellow)
-                                                                        (blue           . :blue)
-                                                                        (green          . :green)
-                                                                        (orange         . :orange)
-                                                                        (purple         . :purple)
-                                                                        (labels         . :labels)
-                                                                        (color          . :color))))
+(defvar orgtrello-controller--data-map-keywords
+  (orgtrello-hash-make-properties `((url            . :url)
+                                    (id             . :id)
+                                    (name           . :name)
+                                    (idMembers      . :member-ids)
+                                    (idList         . :list-id)
+                                    (checklists     . :checklists) ;; for full data
+                                    (idChecklists   . :checklists) ;; for checklist ids (those 2 keywords are mutually exclusive and are dealt at request level)
+                                    (idBoard        . :board-id)
+                                    (due            . :due)
+                                    (desc           . :desc)
+                                    (closed         . :closed)
+                                    (idCard         . :card-id)
+                                    (checkItems     . :items)
+                                    (state          . :checked)
+                                    (status         . :status)
+                                    (pos            . :position)
+                                    (keyword        . :keyword)
+                                    (member-ids     . :member-ids)
+                                    (member         . :member)
+                                    (memberships    . :memberships)
+                                    (username       . :username)
+                                    (fullName       . :full-name)
+                                    (actions        . :comments)
+                                    (labelNames     . :labels)
+                                    (lists          . :lists)
+                                    (red            . :red)
+                                    (yellow         . :yellow)
+                                    (blue           . :blue)
+                                    (green          . :green)
+                                    (orange         . :orange)
+                                    (purple         . :purple)
+                                    (labels         . :labels)
+                                    (color          . :color))))
 
 (defun orgtrello-data--deal-with-key (key)
   "Return the KEY as is if it's a keyword or return its org-trello representation."
@@ -185,10 +193,10 @@ If the keyword is nil, return the optional DEFAULT-VALUE."
   "Given an association list DATA, filter and return only the 'comment' actions.
 SIZE is a useless parameter, only here to satisfy an implementation detail."
   (--map (->> (orgtrello-hash-empty-hash)
-           (orgtrello-data-put-entity-comment-id   (assoc-default 'id it))
-           (orgtrello-data-put-entity-comment-text (->> it (assoc-default 'data) (assoc-default 'text)))
-           (orgtrello-data-put-entity-comment-date (assoc-default 'date it))
-           (orgtrello-data-put-entity-comment-user (->> it car (assoc-default 'username))))
+              (orgtrello-data-put-entity-comment-id   (assoc-default 'id it))
+              (orgtrello-data-put-entity-comment-text (->> it (assoc-default 'data) (assoc-default 'text)))
+              (orgtrello-data-put-entity-comment-date (assoc-default 'date it))
+              (orgtrello-data-put-entity-comment-user (->> it car (assoc-default 'username))))
          data))
 
 (defun orgtrello-data-parse-data (entities)
@@ -210,14 +218,14 @@ SIZE is a useless parameter, only here to satisfy an implementation detail."
 (defun orgtrello-data-format-labels (labels)
   "Given an assoc list of LABELS, serialize it."
   (->> labels
-       (--map (s-join ": " (list (car it) (cdr it))))
+       (-map (-partial #'s-join ": "))
        (s-join "\n\n")))
 
 (defun orgtrello-data-id-p (id)
   "Is the string ID a trello identifier?"
   (and id (not (string-match-p (format "^%s-" org-trello--label-key-marker) id))))
 
-(defun orgtrello-data-merge-item (trello-item org-item)
+(defun orgtrello-data--merge-item (trello-item org-item)
   "Merge TRELLO-ITEM and ORG-ITEM together.
 If TRELLO-ITEM is nil, return the ORG-ITEM."
   (if trello-item
@@ -274,8 +282,8 @@ If TRELLO-CHECKLIST is nil, return ORG-CHECKLIST."
 (defun orgtrello-data--from-tags-to-list (tags)
   "Given TAGS, a : string separated string, return a list of non empty string."
   (->> tags
-    (s-split ":")
-    (--filter (not (string= "" it)))))
+       (s-split ":")
+       (-filter (-compose #'not (-partial #'string= "")))))
 
 (defun orgtrello-data--merge-labels-as-tags (trello-labels org-tags)
   "Given TRELLO-LABELS and ORG-TAGS, merge both of them."
@@ -307,7 +315,7 @@ If TRELLO-CARD is nil, return ORG-CARD."
   "Dispatch the function fn to merge the ENTITY."
   (cond ((orgtrello-data-entity-card-p entity)      'orgtrello-data--merge-card)
         ((orgtrello-data-entity-checklist-p entity) 'orgtrello-data--merge-checklist)
-        ((orgtrello-data-entity-item-p entity)      'orgtrello-data-merge-item)))
+        ((orgtrello-data-entity-item-p entity)      'orgtrello-data--merge-item)))
 
 (defun orgtrello-data-merge-entities-trello-and-org (trello-data org-data)
   "Merge to TRELLO-DATA the ORG-DATA, (org-entity entities inside the trello-entities)."
@@ -354,11 +362,14 @@ If state is \"complete\" or \"DONE\", the first element is returned, otherwise t
 
 (defun orgtrello-data--users-from (string-users)
   "Compute the users name from the comma separated values STRING-USERS."
-  (when string-users (split-string string-users "," t)))
+  (when string-users
+    (s-split "," string-users t)))
 
 (defun orgtrello-data--users-to (users)
   "Given a list of USERS, compute the comma separated string of users."
-  (if users (mapconcat 'identity users ",") ""))
+  (if users
+      (s-join "," users)
+    ""))
 
 (defun orgtrello-data-get-children (entity entities-adjacencies)
   "Given ENTITY and ENTITIES-ADJACENCIES, return the children of the entity."

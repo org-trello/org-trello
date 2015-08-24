@@ -63,13 +63,13 @@
   "Serialize the PROPERTIES to checkbox string."
   (format ":PROPERTIES: %s" (orgtrello-cbx--to-properties properties)))
 
-(defun orgtrello-cbx--write-properties-at-point (pt properties)
-  "Overwrite the current properties at point PT with new PROPERTIES."
+(defun orgtrello-cbx--write-properties-at-point (pt props)
+  "Overwrite the current properties at point PT with new PROPS."
   (save-excursion
     (goto-char pt)
     (let* ((checkbox-title   (-> (orgtrello-cbx--read-checkbox)
                                  orgtrello-cbx--checkbox-data))
-           (updated-property (orgtrello-cbx--make-properties-as-string properties))
+           (updated-property (orgtrello-cbx--make-properties-as-string props))
            (text-to-insert   (format "%s %s" checkbox-title updated-property)))
       (beginning-of-line)
       (kill-line)
@@ -139,7 +139,7 @@ Write the new properties at current position."
   (if (string= "[X]" status) org-trello--done org-trello--todo))
 
 (defun orgtrello-cbx--name (s status)
-  "Retrieve the name of the checklist from the checkbox content S and its STATUS."
+  "Retrieve the checklist name from the checkbox content S and its STATUS."
   (->> s
     (s-replace "[ ]" "[]")
     s-trim-left
@@ -173,7 +173,8 @@ This is a list with the following elements:
   (save-excursion
     (beginning-of-line)
     (cons (orgtrello-entity-level)
-          (orgtrello-cbx--metadata-from-checklist (orgtrello-cbx--read-checkbox)))))
+          (orgtrello-cbx--metadata-from-checklist
+           (orgtrello-cbx--read-checkbox)))))
 
 (defun orgtrello-cbx--get-level (meta)
   "Retrieve the level from the META describing the checklist."
@@ -202,8 +203,8 @@ Return the level found or nil if the level found is a card."
 (defun orgtrello-cbx-org-up ()
   "A function to get back to the current entry's parent."
   (-> (orgtrello-cbx-current-level)
-    1-
-    orgtrello-cbx--org-up))
+      1-
+      orgtrello-cbx--org-up))
 
 (defun orgtrello-cbx--map-checkboxes (level fn-to-execute)
   "Map over the checkboxes with level > to LEVEL and execute FN-TO-EXECUTE.
@@ -211,8 +212,9 @@ Does not preserve the cursor position.
 Do not exceed the max size of buffer."
   (orgtrello-entity-goto-next-checkbox)
   (when (and (not (eobp)) (< level (orgtrello-entity-level)))
-    (funcall fn-to-execute)
-    (orgtrello-cbx--map-checkboxes level fn-to-execute)))
+    (cons
+     (funcall fn-to-execute)
+     (orgtrello-cbx--map-checkboxes level fn-to-execute))))
 
 (defun orgtrello-cbx-map-checkboxes (fn-to-execute)
   "Map over the current checkbox and execute FN-TO-EXECUTE."
@@ -221,8 +223,8 @@ Do not exceed the max size of buffer."
     (-when-let (fst-cbx (orgtrello-entity-goto-next-checkbox-with-same-level
                          org-trello--checklist-level))
       (goto-char fst-cbx)
-      (funcall fn-to-execute)
-      (orgtrello-cbx--map-checkboxes org-trello--card-level fn-to-execute))))
+      (cons (funcall fn-to-execute)
+            (orgtrello-cbx--map-checkboxes org-trello--card-level fn-to-execute)))))
 
 (orgtrello-log-msg orgtrello-log-debug "orgtrello-cbx loaded!")
 

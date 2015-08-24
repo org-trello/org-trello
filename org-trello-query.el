@@ -2,11 +2,6 @@
 ;;; Commentary:
 ;;; Code:
 
-(if (version< "24.3" emacs-version)
-    (require 'cl-lib)
-  (require 'cl)
-  (defalias 'cl-defun 'defun*))
-
 (require 'org-trello-log)
 (require 'org-trello-setup)
 (require 'org-trello-data)
@@ -19,17 +14,19 @@
   "Compute the trello url from the given SERVER and URI."
   (format "%s%s" server uri))
 
-(defun* orgtrello-query--standard-error-callback (&key response error-thrown &allow-other-keys)
+(defun orgtrello-query--standard-error-callback (&rest response)
   "Standard error callback which expects a RESPONSE.
 Simply displays an error message in the minibuffer with the error code."
-  (orgtrello-log-msg orgtrello-log-info "client - Problem during request - error-thrown: %s" error-thrown)
-  (orgtrello-log-msg orgtrello-log-debug "Detailed response: %S" response))
+  (let ((resp (plist-get response :response)))
+    (orgtrello-log-msg orgtrello-log-info "client - Problem during request - error-thrown: %s" (request-response-error-thrown resp))
+    (orgtrello-log-msg orgtrello-log-debug "Detailed response: %S" resp)))
 
-(defun* orgtrello-query--standard-success-callback (&key response &allow-other-keys)
+(defun orgtrello-query--standard-success-callback (&rest response)
   "Standard success callback with expects a RESPONSE.
 Simply displays a success message in the minibuffer."
-  (let ((data (request-response-data response)))
-    (orgtrello-log-msg orgtrello-log-debug "Response: %S" response)
+  (let* ((resp (plist-get response :response))
+         (data (request-response-data resp)))
+    (orgtrello-log-msg orgtrello-log-debug "Response: %S" resp)
     (orgtrello-log-msg orgtrello-log-debug "Data: %S" data)))
 
 (defun orgtrello-query--authentication-params ()
@@ -39,7 +36,7 @@ Simply displays a success message in the minibuffer."
 (defun orgtrello-query--http-parse ()
   "Parse the http response into an org-trello entity."
   (->> (json-read)
-    orgtrello-data-parse-data))
+       orgtrello-data-parse-data))
 
 (defun orgtrello-query--get (server query-map &optional success-callback error-callback authentication-p)
   "Execute the GET request to SERVER with QUERY-MAP with optional SUCCESS-CALLBACK, ERROR-CALLBACK and AUTHENTICATION-P."
@@ -134,13 +131,13 @@ Simply displays a success message in the minibuffer."
 (defun orgtrello-query-http (server query-map &optional sync success-callback error-callback authentication-p)
   "Execute an HTTP query to the SERVER with QUERY-MAP and optional SYNC, SUCCESS-CALLBACK, ERROR-CALLBACK and AUTHENTICATION-P."
   (let ((dispatch-http-query-fn (-> query-map
-                                  orgtrello-data-entity-method
-                                  orgtrello-query--dispatch-http-query)))
+                                    orgtrello-data-entity-method
+                                    orgtrello-query--dispatch-http-query)))
     (if sync
         (--> query-map
-          (orgtrello-data-put-entity-sync t it)
-          (funcall dispatch-http-query-fn server it success-callback error-callback authentication-p)
-          (request-response-data it))
+             (orgtrello-data-put-entity-sync 'sync it)
+             (funcall dispatch-http-query-fn server it success-callback error-callback authentication-p)
+             (request-response-data it))
       (funcall dispatch-http-query-fn server query-map success-callback error-callback authentication-p))))
 
 (defun orgtrello-query-http-trello (query-map &optional sync success-callback error-callback)

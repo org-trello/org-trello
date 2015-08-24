@@ -5,25 +5,26 @@
 (require 'org)
 (require 'org-trello-setup)
 (require 'org-trello-log)
-(require 'dash)
+(require 'dash-functional)
+(require 's)
 
-(defun orgtrello-action-reload-setup ()
-  "Reload org-trello setup."
-  (org-set-regexps-and-options))
+(defalias 'orgtrello-action-reload-setup 'org-set-regexps-and-options
+  "Reload org-trello setup.")
 
 (defun orgtrello-action--execute-controls (controls-or-actions-fns &optional entity)
   "Given CONTROLS-OR-ACTIONS-FNS, execute them and return the results.
 ENTITY is an optional parameter to pass to the list of functions."
-  (--map (funcall it entity) controls-or-actions-fns))
+  (-map (-rpartial #'funcall entity) controls-or-actions-fns))
 
 (defun orgtrello-action--filter-error-messages (control-or-actions)
   "Given CONTROL-OR-ACTIONS done, filter only the error messages.
 Return nil if no error message."
-  (--filter (not (equal :ok it)) control-or-actions))
+  (-filter (-compose #'not (-partial #'equal :ok)) control-or-actions))
 
 (defun orgtrello-action--compute-error-message (error-msgs)
   "Given a list of error messages ERROR-MSGS, compute them as a string."
-  (apply 'concat (--map (concat "- " it "\n") error-msgs)))
+  (->> (-map (-partial #'format "- %s\n") error-msgs)
+       (s-join "")))
 
 (defun orgtrello-action-controls-or-actions-then-do (control-or-action-fns
                                                      fn-to-execute
@@ -80,7 +81,8 @@ if NOLOG-P is set, this will not log anything."
                                                 fn-to-execute nolog-p))
 
 (defun orgtrello-action--too-deep-level (entity)
-  "Given an ENTITY with level too deep, display an error message about it."
+  "Given an ENTITY with level too deep, display an error message about it.
+ENTITY is actually not used (implementation detail)."
   "Your arborescence depth is too deep. We only support up to depth 3.
 Level 1 - card\nLevel 2 - checklist\nLevel 3 - items")
 

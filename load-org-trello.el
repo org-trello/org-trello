@@ -18,12 +18,13 @@
                                "org-trello-date.el"
                                "org-trello-buffer.el"
                                "org-trello-controller.el"
-                               "org-trello-data.el"
                                "org-trello-hash.el"
+                               "org-trello-data.el"
                                "org-trello-input.el"
                                "org-trello-proxy.el"
                                "org-trello-query.el"
                                "org-trello-utils.el"
+                               "org-trello-deferred.el"
                                "org-trello.el"))
 
 (defun org-trello-dev-load-namespaces ()
@@ -34,9 +35,20 @@
   (require 'org-trello)
   ;; reload bindings
   (custom-set-variables
-   '(org-trello-current-prefix-keybinding "C-c z")
-   '(orgtrello-log-level orgtrello-log-info)) ;; orgtrello-log-trace
+   '(org-trello-current-prefix-keybinding "C-c o")
+   '(orgtrello-log-level orgtrello-log-info))
   (orgtrello-log-msg orgtrello-log-info "Code loaded!"))
+
+(defun org-trello-dev-remove-bindings ()
+  "Remove bindings."
+  (interactive)
+  ;; Remove old bindings
+  (mapc 'orgtrello-setup-remove-local-prefix-mode-keybinding '("C-c o"
+                                                               "C-c a"
+                                                               "C-c x"
+                                                               "C-c z"))
+  ;; install the default one
+  (orgtrello-setup-install-local-prefix-mode-keybinding "C-c o"))
 
 (defun org-trello-dev-find-unused-definitions ()
   "Find unused definitions."
@@ -44,22 +56,29 @@
   (let ((filename "/tmp/org-trello-find-unused-definitions.el"))
     (with-temp-file filename
       (erase-buffer)
-      (mapc (lambda (it)
-              (insert-file-contents it)
+      (mapc (lambda (file)
+              (insert-file-contents file)
               (goto-char (point-max))) org-trello--namespaces)
       (emacs-lisp-mode)
       (write-file filename)
       (call-interactively 'emr-el-find-unused-definitions))))
 
-(org-trello-dev-load-namespaces)
-(message "org-trello loaded!")
+(defun org-trello-dev-load-tests ()
+  "Load the load-org-trello-tests.el file."
+  (interactive)
+  (load-file "load-org-trello-tests.el"))
 
 (require 'org-trello)
 
 (define-key emacs-lisp-mode-map (kbd "C-c o r") 'org-trello-dev-load-namespaces)
-(define-key org-trello-mode-map (kbd "C-c o r") 'org-trello-dev-load-namespaces)
+(define-key emacs-lisp-mode-map (kbd "C-c o t") 'org-trello-dev-load-tests)
 (define-key emacs-lisp-mode-map (kbd "C-c o f") 'org-trello-dev-find-unused-definitions)
+
+(define-key org-trello-mode-map (kbd "C-c o r") 'org-trello-dev-load-namespaces)
+(define-key org-trello-mode-map (kbd "C-c o t") 'org-trello-dev-load-tests)
 (define-key org-trello-mode-map (kbd "C-c o f") 'org-trello-dev-find-unused-definitions)
+
+(orgtrello-log-msg orgtrello-log-info "org-trello loaded!")
 
 (provide 'load-org-trello)
 ;;; load-org-trello.el ends here

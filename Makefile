@@ -1,8 +1,8 @@
-VERSION=$$(grep "^;; Version: " org-trello.el | cut -f3 -d' ')
-PACKAGE_FOLDER=org-trello-$(VERSION)
-ARCHIVE=$(PACKAGE_FOLDER).tar
-EMACS=emacs
-LOG_TEST_FILE=./run-org-trello-tests.log
+PACKAGE = org-trello
+VERSION = $$(grep "^;; Version: " $(PACKAGE).el | cut -f3 -d' ')
+ARCHIVE = $(PACKAGE)-$(VERSION).tar
+EMACS ?= emacs
+CASK ?= cask
 
 .PHONY: clean
 
@@ -10,39 +10,36 @@ pr:
 	hub pull-request -b org-trello:master
 
 deps:
-	cask
+	${CASK}
 
 build:
-	cask build
+	${CASK} build
 
 clean-dist:
 	rm -rf dist/
 
 clean: clean-dist
 	rm -rf *.tar
-	cask clean-elc
+	${CASK} clean-elc
 
 install:
-	cask install
+	${CASK} install
 
 test: clean
-	cask exec ert-runner
-
-test-log:
-	less $(LOG_TEST_FILE)
+	${CASK} exec ert-runner
 
 pkg-file:
-	cask pkg-file
+	${CASK} pkg-file
 
 pkg-el: pkg-file
-	cask package
+	${CASK} package
 
 package: clean pkg-el
 	cp dist/$(ARCHIVE) .
 	make clean-dist
 
 info:
-	cask info
+	${CASK} info
 
 install-package-from-melpa:
 	./install-package-from.sh melpa
@@ -56,7 +53,10 @@ cleanup-data:
 		~/.emacs.d/elnode/public_html/org-trello/*.lock
 
 release:
-	./release.sh $(VERSION)
+	./release.sh $(VERSION) $(PACKAGE)
+
+version:
+	@echo "application $(PACKAGE): $(VERSION)\npackage: $(ARCHIVE)"
 
 install-cask:
 	curl -fsSkL https://raw.github.com/cask/cask/master/go | python
@@ -66,3 +66,6 @@ emacs-install-clean: package
 
 respect-convention:
 	./contrib/respect-elisp-conventions.sh
+
+tests:
+	./run-tests.sh 24.3-bin 24.4-bin 24.5-bin

@@ -2,6 +2,42 @@
 (require 'ert)
 (require 'el-mock)
 
+(ert-deftest test-orgtrello-cbx--make-properties-as-string ()
+  (should (string= ":PROPERTIES: {\"checksum\":\"abc\",\"properties\":\"123\"}"
+                   (orgtrello-cbx--make-properties-as-string '(("properties" . "123")
+                                                               ("checksum" . "abc"))))))
+
+(ert-deftest test-orgtrello-cbx-current-level ()
+  (should (equal :level
+                 (with-mock
+                   (mock (orgtrello-cbx-org-checkbox-metadata) => '(:level :other-stuff))
+                   (orgtrello-cbx-current-level)))))
+
+(ert-deftest test-orgtrello-cbx-org-up ()
+  ;; get back from item to checklist
+  (should (string= "  - [ ] checklist"
+                   (orgtrello-tests-with-temp-buffer
+                    "* card
+  - [ ] checklist
+    - [ ] item
+    - [ ] item 2
+"
+                    (progn
+                      (orgtrello-cbx-org-up)
+                      (buffer-substring-no-properties (point-at-bol) (point-at-eol))))))
+  ;; get back from checklist to card
+  (should (string= "* card"
+                   (orgtrello-tests-with-temp-buffer
+                    "* card
+  - [ ] checklist
+    - [ ] item
+    - [ ] item 2
+"
+                    (progn
+                      (orgtrello-cbx-org-up)
+                      (buffer-substring-no-properties (point-at-bol) (point-at-eol)))
+                    -3))))
+
 (ert-deftest test-orgtrello-cbx--status ()
   (should (equal "DONE" (orgtrello-cbx--status"[X]")))
   (should (equal "TODO" (orgtrello-cbx--status"[ ]")))
@@ -179,6 +215,36 @@
                  (orgtrello-cbx--serialize-hashmap (orgtrello-hash-make-properties '(("a" . "123"))))))
   (should (equal "{\"orgtrello-checksum\":\"abc\",\"orgtrello-id\":\"123\"}"
                  (orgtrello-cbx--serialize-hashmap (orgtrello-hash-make-properties '(("orgtrello-id" . "123") ("orgtrello-checksum" . "abc")))))))
+
+(ert-deftest test-orgtrello-cbx--map-checkboxes ()
+  (equal '(3 3 2)
+         (orgtrello-tests-with-temp-buffer
+          "* card
+  - [ ] checkbox 1
+    - [ ] checkbox 2
+    - [ ] checkbox 3
+  - [ ] checkbox 4
+"
+          (orgtrello-cbx--map-checkboxes org-trello--card-level 'orgtrello-cbx-current-level)
+          -4)))
+
+(ert-deftest test-orgtrello-cbx-map-checkboxes ()
+  (equal '(2 3 3 2)
+         (orgtrello-tests-with-temp-buffer
+          "* card
+  - [ ] checkbox 1
+    - [ ] checkbox 2
+    - [ ] checkbox 3
+  - [ ] checkbox 4"
+          (orgtrello-cbx-map-checkboxes 'orgtrello-cbx-current-level)))
+  (equal '("checkbox 1" "checkbox 2" "checkbox 3" "checkbox 4")
+         (orgtrello-tests-with-temp-buffer
+          "* card
+  - [ ] checkbox 1
+    - [ ] checkbox 2
+    - [ ] checkbox 3
+  - [ ] checkbox 4"
+          (orgtrello-cbx-map-checkboxes (-compose (-rpartial 'elt 4) 'orgtrello-cbx-org-checkbox-metadata)))))
 
 (provide 'org-trello-cbx-test)
 ;;; org-trello-cbx-test.el ends here

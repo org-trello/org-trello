@@ -19,10 +19,13 @@
        "org-trello-date.el"
        "org-trello-buffer.el"
        "org-trello-input.el"
+       "org-trello-deferred.el"
        "org-trello-controller.el"
        "README.md")
 
 (development
+ (depends-on "dash-functional")
+ (depends-on "dash")
  (depends-on "ert-runner")
  (depends-on "undercover")
  (depends-on "ert")

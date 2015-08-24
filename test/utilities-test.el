@@ -1,88 +1,249 @@
 (require 'ert)
 (require 'el-mock)
+(require 'utilities)
 
-(setenv "TZ" "/usr/share/zoneinfo/Europe/London")
+(ert-deftest test-hash-table-keys ()
+  (should (equal '(:c :b :a)
+                 (hash-table-keys (orgtrello-hash-make-properties '((:a . :1)
+                                                                    (:b . :2)
+                                                                    (:c . :3))))))
+  (should-not (orgtrello-hash-keys (orgtrello-hash-empty-hash))))
 
-(defsubst hash-table-keys (hash-table)
-  "Return a list of keys in HASH-TABLE."
-  (let ((keys '()))
-    (maphash (lambda (k _v) (push k keys)) hash-table)
-    keys))
-
-(defsubst hash-table-values (hash-table)
-  "Return a list of values in HASH-TABLE."
-  (let ((values '()))
-    (maphash (lambda (_k v) (push v values)) hash-table)
-    values))
-
-(defun orgtrello-tests-hash-equal (hash1 hash2)
-  "Compare two hash tables to see whether they are equal."
-  (and (= (hash-table-count hash1) (hash-table-count hash2))
-       (catch 'flag (maphash (lambda (x y) (or (equal (gethash x hash2) y) (throw 'flag nil))) hash1)
-              (throw 'flag t))))
+(ert-deftest test-hash-table-values ()
+  (should (equal '(:3 :2 :1)
+                 (hash-table-values (orgtrello-hash-make-properties '((:a . :1)
+                                                                      (:b . :2)
+                                                                      (:c . :3)))))))
 
 (ert-deftest test-orgtrello-tests-hash-equal ()
   (should (orgtrello-tests-hash-equal (orgtrello-hash-make-properties `((:name . "some other name") (:keyword "TODO")))
                                       (orgtrello-hash-make-properties `((:name . "some other name") (:keyword "TODO")))))
+  (should (orgtrello-tests-hash-equal (orgtrello-hash-make-properties `((:keyword "TODO") (:name . "some other name") (:other "1" "2")))
+                                      (orgtrello-hash-make-properties `((:name . "some other name") (:other "1" "2") (:keyword "TODO")))))
+  (should (orgtrello-tests-hash-equal (orgtrello-hash-make-properties `((:buffername . " *temp*-321986")
+                                                                        (:position . 85)
+                                                                        (:level . 2)
+                                                                        (:keyword . "TODO")
+                                                                        (:name . "cbx")
+                                                                        (:id . "456")
+                                                                        (:due)
+                                                                        (:member-ids . "")
+                                                                        (:desc)
+                                                                        (:tags)
+                                                                        (:unknown-properties)))
+                                      (orgtrello-hash-make-properties `((:buffername . " *temp*-321986")
+                                                                        (:position . 85)
+                                                                        (:level . 2)
+                                                                        (:keyword . "TODO")
+                                                                        (:name . "cbx")
+                                                                        (:id . "456")
+                                                                        (:due)
+                                                                        (:member-ids . "")
+                                                                        (:desc)
+                                                                        (:tags)
+                                                                        (:unknown-properties)))))
+  (should (orgtrello-tests-hash-equal (orgtrello-hash-make-properties `((:buffername . " *temp*-321986")
+                                                                        (:position . 85)
+                                                                        (:level . 2)
+                                                                        (:keyword . "TODO")
+                                                                        (:name . "cbx")
+                                                                        (:id . "456")
+                                                                        (:due)
+                                                                        (:member-ids . "")
+                                                                        (:desc)
+                                                                        (:tags)
+                                                                        (:unknown-properties)
+                                                                        (:parent . ,(orgtrello-hash-make-properties '((:buffername . " *temp*-321986")
+                                                                                                                      (:position . 1)
+                                                                                                                      (:level . 1)
+                                                                                                                      (:keyword . "TODO")
+                                                                                                                      (:name . "card title")
+                                                                                                                      (:id . "123")
+                                                                                                                      (:due)
+                                                                                                                      (:member-ids . "")
+                                                                                                                      (:desc . "")
+                                                                                                                      (:tags)
+                                                                                                                      (:unknown-properties)
+                                                                                                                      (:parent))))))
+                                      (orgtrello-hash-make-properties `((:buffername . " *temp*-321986")
+                                                                        (:position . 85)
+                                                                        (:level . 2)
+                                                                        (:keyword . "TODO")
+                                                                        (:name . "cbx")
+                                                                        (:id . "456")
+                                                                        (:due)
+                                                                        (:member-ids . "")
+                                                                        (:desc)
+                                                                        (:tags)
+                                                                        (:unknown-properties)
+                                                                        (:parent . ,(orgtrello-hash-make-properties '((:buffername . " *temp*-321986")
+                                                                                                                      (:position . 1)
+                                                                                                                      (:level . 1)
+                                                                                                                      (:keyword . "TODO")
+                                                                                                                      (:name . "card title")
+                                                                                                                      (:id . "123")
+                                                                                                                      (:due)
+                                                                                                                      (:member-ids . "")
+                                                                                                                      (:desc . "")
+                                                                                                                      (:tags)
+                                                                                                                      (:unknown-properties)
+                                                                                                                      (:parent))))))))
+  (should-not (orgtrello-tests-hash-equal (orgtrello-hash-make-properties `((:buffername . " *temp*-321986")
+                                                                            (:position . 85)
+                                                                            (:level . 2)
+                                                                            (:keyword . "TODO")
+                                                                            (:name . "cbx")
+                                                                            (:id . "456")
+                                                                            (:due)
+                                                                            (:member-ids . "")
+                                                                            (:desc)
+                                                                            (:tags)
+                                                                            (:unknown-properties)
+                                                                            (:parent . ,(orgtrello-hash-make-properties '((:buffername . " *temp*-321986")
+                                                                                                                          (:position . 1)
+                                                                                                                          (:level . 1)
+                                                                                                                          (:keyword . "DONE")
+                                                                                                                          (:name . "card title")
+                                                                                                                          (:id . "123")
+                                                                                                                          (:due)
+                                                                                                                          (:member-ids . "")
+                                                                                                                          (:desc . "")
+                                                                                                                          (:tags)
+                                                                                                                          (:unknown-properties)
+                                                                                                                          (:parent))))))
+                                          ;; keyword in the nested structure is not the same so should fail
+                                          (orgtrello-hash-make-properties `((:buffername . " *temp*-321986")
+                                                                            (:position . 85)
+                                                                            (:level . 2)
+                                                                            (:keyword . "TODO")
+                                                                            (:name . "cbx")
+                                                                            (:id . "456")
+                                                                            (:due)
+                                                                            (:member-ids . "")
+                                                                            (:desc)
+                                                                            (:tags)
+                                                                            (:unknown-properties)
+                                                                            (:parent . ,(orgtrello-hash-make-properties '((:buffername . " *temp*-321986")
+                                                                                                                          (:position . 1)
+                                                                                                                          (:level . 1)
+                                                                                                                          (:keyword . "TODO")
+                                                                                                                          (:name . "card title")
+                                                                                                                          (:id . "123")
+                                                                                                                          (:due)
+                                                                                                                          (:member-ids . "")
+                                                                                                                          (:desc . "")
+                                                                                                                          (:tags)
+                                                                                                                          (:unknown-properties)
+                                                                                                                          (:parent))))))))
   (should-not (orgtrello-tests-hash-equal (orgtrello-hash-make-properties `((:name . "some other name") (:keyword "TODO")))
                                           (orgtrello-hash-make-properties `((:name . "some other name") (:keyword "DONE"))))))
 
-(ert-deftest test-orgtrello-hash-make-transpose-properties ()
-  (should (orgtrello-tests-hash-equal (orgtrello-hash-make-properties `(("some other name" . :name) ("TODO" . :keyword)))
-                                      (orgtrello-hash-make-transpose-properties `((:name . "some other name") (:keyword . "TODO"))))))
+(ert-deftest test-org-trello-mode-test ()
+  (should (-every? (-partial #'eq t)
+                   (with-mock
+                     (mock (call-interactively 'org-trello-mode) => :starting-org-trello)
+                     (org-trello-mode-test)
+                     (list
+                      (equal nil org-trello-mode-on-hook)
+                      (equal nil org-trello-mode-off-hook)
+                      (equal 'please-do-use-position-in-checksum-computation orgtrello-setup-use-position-in-checksum-computation)
+                      (equal orgtrello-log-no-log orgtrello-log-level)
+                      (equal t org-trello--mode-activated-p))))))
 
-(ert-deftest test-orgtrello-hash-empty-hash ()
-  (should (eq 0 (hash-table-count (orgtrello-hash-empty-hash)))))
+(ert-deftest test-orgtrello-tests-with-temp-buffer ()
+  (should (string="line 1
+line 2
+line 3"
+                  (orgtrello-tests-with-temp-buffer
+                   "line 1
+line 2
+line 3"
+                   (buffer-substring-no-properties (point-min) (point-max)))))
 
-(defun org-trello-mode-test ()
-  "Trigger org-trello-mode but shaped for the tests (without hooks)."
-  (remove-hook 'org-trello-mode-on-hook 'orgtrello-controller-mode-on-hook-fn)
-  (remove-hook 'org-trello-mode-off-hook 'orgtrello-controller-mode-off-hook-fn)
-  (setq org-trello-mode-on-hook)
-  (setq org-trello-mode-off-hook)
-  (setq orgtrello-setup-use-position-in-checksum-computation 'please-do-use-position-in-checksum-computation)
-  (call-interactively 'org-trello-mode))
+  (should (string= "line 3"
+                   (orgtrello-tests-with-temp-buffer
+                    "some content
+line 2
+line 3"
+                    (buffer-substring-no-properties (point-at-bol) (point-at-eol))
+                    0)))
+  (should (string= "line 2"
+                   (orgtrello-tests-with-temp-buffer
+                    "line 1
+line 2
+line 3"
+                    (buffer-substring-no-properties (point-at-bol) (point-at-eol)))))
+  (should (string= "line 1"
+                   (orgtrello-tests-with-temp-buffer
+                    "line 1
+line 2
+line 3"
+                    (buffer-substring-no-properties (point-at-bol) (point-at-eol))
+                    -2))))
 
-(defun orgtrello-tests-prepare-buffer ()
-  "orgtrello-tests - Prepare the buffer to receive org-trello data."
-  (orgtrello-buffer-indent-card-descriptions)
-  (orgtrello-buffer-indent-card-data))
+(ert-deftest test-orgtrello-tests-with-temp-buffer-and-return-buffer-content ()
+  (should (string= "1
+2
+3
+"
+                   (orgtrello-tests-with-temp-buffer-and-return-buffer-content
+                    "line 1
+line 2
+line 3
+"
+                    (replace-regexp "line " "" nil (point-min) (point-max))))))
 
-(defmacro orgtrello-tests-with-temp-buffer (text body-test &optional nb-lines-forward)
-  `(with-temp-buffer
-     (org-mode)
-     (insert ,text)
-     (forward-line (if ,nb-lines-forward ,nb-lines-forward -1))
-     (org-trello-mode-test)
-     (orgtrello-controller-setup-properties)
-     ,body-test))
+(ert-deftest test-orgtrello-tests-with-temp-buffer-and-return-content-with-props ()
+  (should (equal #("1
+2
+3
+" 0 2 (line-prefix nil wrap-prefix nil)
+2 4 (line-prefix nil wrap-prefix nil)
+4 6 (line-prefix nil wrap-prefix nil))
+                 (orgtrello-tests-with-temp-buffer-and-return-content-with-props
+                  "line 1
+line 2
+line 3
+"
+                  (replace-regexp "line " "" nil (point-min) (point-max))))))
 
-(defmacro orgtrello-tests-with-temp-buffer-and-return-buffer-content (text body-test &optional nb-line-forwards)
-  `(with-temp-buffer
-     (org-mode)
-     (insert ,text)
-     (forward-line (if ,nb-line-forwards ,nb-line-forwards -1))
-     (org-trello-mode-test)
-     (orgtrello-controller-setup-properties)
-     ,body-test
-     (buffer-substring-no-properties (point-min) (point-max))))
 
-(defmacro orgtrello-tests-with-temp-buffer-indented-and-return-buffer-content (text body-test &optional nb-line-forwards)
-  `(with-temp-buffer
-     (org-mode)
-     (insert ,text)
-     (forward-line (if ,nb-line-forwards ,nb-line-forwards -1))
-     (org-trello-mode-test)
-     (orgtrello-controller-setup-properties)
-     ,body-test
-     (orgtrello-tests-prepare-buffer) ;; force the indentation without hook (show how it's done using hook at runtime)
-     (buffer-substring-no-properties (point-min) (point-max))))
+(ert-deftest test-orgtrello-tests-prepare-buffer ()
+  (should (string= "* card
+  description
+  - [ ] cbx
+    - [ ] item
+"
+                   (orgtrello-tests-with-temp-buffer-and-return-buffer-content
+                    "* card
+description
+- [ ] cbx
+  - [ ] item
+"
+                    (orgtrello-tests-prepare-buffer)))))
 
-(defmacro orgtrello-tests-with-org-buffer (text body-test)
-  `(with-temp-buffer
-     (insert ,text)
-     (org-mode)
-     ,body-test))
+(ert-deftest test-orgtrello-tests-with-temp-buffer-and-return-indented-content ()
+  (should (string= "* card
+  description
+  - [X] cbx
+    - [X] item
+"
+                   (orgtrello-tests-with-temp-buffer-and-return-indented-content
+                    "* card
+description
+- [ ] cbx
+  - [ ] item
+"
+                    (replace-regexp "\\[ \\]" "[X]" nil (point-min) (point-max))))))
+
+(ert-deftest test-orgtrello-tests-with-org-buffer ()
+  (should (eq 'headline
+              (orgtrello-tests-with-org-buffer
+               "* heading
+"
+               (progn
+                 (goto-char (point-min))
+                 (car (org-element-at-point)))))))
 
 (provide 'utilities-test)
 ;;; utilities-test.el ends here

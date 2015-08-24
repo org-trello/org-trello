@@ -10,31 +10,11 @@
 (require 'org-trello-query)
 (require 'org-trello-api)
 
-(org-trello-require-cl)
-
-(defun orgtrello-backend-compute-items-from-checklist (checklist
-                                                       entities
-                                                       adjacencies)
-  "Given a CHECKLIST, retrieve its items.
-Update the ENTITIES hash and the ADJACENCIES list."
-  (let ((checklist-id (orgtrello-data-entity-id checklist)))
-    (--> checklist
-         (orgtrello-data-entity-items it)
-         (sort it (lambda (a b) (when (<= (orgtrello-data-entity-position a)
-                                     (orgtrello-data-entity-position b)) 1)))
-         (--reduce-from (-let (((ents adjs) acc))
-                          (list
-                           (orgtrello-backend--add-entity-to-entities it ents)
-                           (orgtrello-backend--add-entity-to-adjacency it
-                                                                       checklist
-                                                                       adjs)))
-                        (list entities adjacencies)
-                        it))))
-
-(defun orgtrello-backend--add-entity-to-entities (entity entities)
+(defun orgtrello-backend-add-entity-to-entities (entity entities)
   "Adding ENTITY to the hash ENTITIES."
-  (-> (orgtrello-data-entity-id-or-marker entity)
-    (orgtrello-hash-puthash-data entity entities)))
+  (orgtrello-hash-puthash-data (orgtrello-data-entity-id-or-marker entity)
+                               entity
+                               entities))
 
 (defun orgtrello-backend--add-entity-to-adjacency (current-entity
                                                    parent-entity
@@ -47,6 +27,7 @@ Update the ENTITIES hash and the ADJACENCIES list."
      (-snoc (gethash parent-id adjacency) current-id)
      adjacency)))
 
+
 (defun orgtrello-backend--put-entities-with-adjacency (current-meta
                                                        entities
                                                        adjacency)
@@ -54,8 +35,50 @@ Update the ENTITIES hash and the ADJACENCIES list."
   (let ((entity (orgtrello-data-current current-meta))
         (parent (orgtrello-data-parent current-meta)))
     (list
-     (orgtrello-backend--add-entity-to-entities entity entities)
+     (orgtrello-backend-add-entity-to-entities entity entities)
      (orgtrello-backend--add-entity-to-adjacency entity parent adjacency))))
+
+(defun orgtrello-backend--compute-items-from-checklist (checklist
+                                                        entities
+                                                        adjacencies)
+  "Given a CHECKLIST, retrieve its items.
+Update the ENTITIES hash and the ADJACENCIES list."
+  (--> checklist
+       (orgtrello-data-entity-items it)
+       (sort it (lambda (a b) (when (<= (orgtrello-data-entity-position a)
+                                   (orgtrello-data-entity-position b))
+                           1)))
+       (--reduce-from (-let (((ents adjs) acc))
+                        (list
+                         (orgtrello-backend-add-entity-to-entities it ents)
+                         (orgtrello-backend--add-entity-to-adjacency it
+                                                                     checklist
+                                                                     adjs)))
+                      (list entities adjacencies)
+                      it)))
+
+(defun orgtrello-backend--compute-org-trello-checklists-from-card (trello-card
+                                                                   entities
+                                                                   adjacencies)
+  "Given a TRELLO-CARD, retrieve from ENTITIES and ADJACENCIES its checklists.
+Checklists with their items in the right order."
+  (--> trello-card
+       (orgtrello-data-entity-checklists it)
+       (sort it (lambda (a b) (when (<= (orgtrello-data-entity-position a)
+                                   (orgtrello-data-entity-position b))
+                           1)))
+       (-reduce-from
+        (lambda (acc-entities-adj checklist)
+          (-let (((ents adjs) acc-entities-adj))
+            (orgtrello-backend--compute-items-from-checklist
+             checklist
+             (orgtrello-backend-add-entity-to-entities checklist ents)
+             (orgtrello-backend--add-entity-to-adjacency
+              checklist
+              trello-card
+              adjs))))
+        (list entities adjacencies)
+        it)))
 
 (defun orgtrello-backend-compute-org-trello-card-from (trello-cards)
   "Given a TRELLO-CARDS list, compute its org-trello representation."
@@ -64,34 +87,12 @@ Update the ENTITIES hash and the ADJACENCIES list."
                                       "Computing card '%s' data..."
                                       (orgtrello-data-entity-name it))
                    (-let (((entities adjacency) acc))
-                     (orgtrello-backend-compute-org-trello-checklists-from-card
+                     (orgtrello-backend--compute-org-trello-checklists-from-card
                       it
-                      (orgtrello-backend--add-entity-to-entities it entities)
+                      (orgtrello-backend-add-entity-to-entities it entities)
                       adjacency)))
                  (list (orgtrello-hash-empty-hash) (orgtrello-hash-empty-hash))
                  trello-cards))
-
-(defun orgtrello-backend-compute-org-trello-checklists-from-card (trello-card
-                                                                  entities
-                                                                  adjacencies)
-  "Given a TRELLO-CARD, retrieve from ENTITIES and ADJACENCIES its checklists.
-Checklists with their items in the right order."
-  (let ((card-id (orgtrello-data-entity-id trello-card)))
-    (--> trello-card
-         (orgtrello-data-entity-checklists it)
-         (sort it (lambda (a b) (when (<= (orgtrello-data-entity-position a)
-                                     (orgtrello-data-entity-position b))
-                             1)))
-         (-reduce-from (lambda (acc-entities-adj checklist)
-                         (-let (((ents adjs) acc-entities-adj))
-                           (orgtrello-backend-compute-items-from-checklist
-                            checklist
-                            (orgtrello-backend--add-entity-to-entities checklist
-                                                                       ents)
-                            (orgtrello-backend--add-entity-to-adjacency
-                             checklist trello-card adjs))))
-                       (list entities adjacencies)
-                       it))))
 
 (orgtrello-log-msg orgtrello-log-debug "orgtrello-backend loaded!")
 

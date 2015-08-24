@@ -90,7 +90,6 @@
   (should (equal '(("name" . "list-name")
                    ("idBoard" . "board-id")) (gethash :params (orgtrello-api-add-list "list-name" "board-id")))))
 
-
 (ert-deftest test-orgtrello-api-add-card ()
   (should (equal "POST"                                                              (gethash :method (orgtrello-api-add-card :name-card :id-list "due-date"))))
   (should (equal "/cards/"                                                           (gethash :uri    (orgtrello-api-add-card :name-card :id-list "due-date"))))
@@ -153,10 +152,10 @@
 (ert-deftest test-orgtrello-api-get-checklist ()
   (should (equal "GET"                                                                     (gethash :method (orgtrello-api-get-checklist :checklist-id))))
   (should (equal "/checklists/:checklist-id"                                               (gethash :uri    (orgtrello-api-get-checklist :checklist-id))))
-  (should (equal '(("fields" . "name,pos,idCard") ("checkItem_fields" . "name,pos,state")) (gethash :params (orgtrello-api-get-checklist :checklist-id)))))
+  (should (equal '(("fields" . "name,pos,idCard") ("checkItem_fields" . "name,pos,state")) (gethash :params (orgtrello-api-get-checklist :checklist-id))))
 
-(ert-deftest test-orgtrello-api-get-checklist ()
-  (should (equal '(("checkItems" . "none") ("fields" . "name,pos,idCard") ("checkItem_fields" . "name,pos,state")) (gethash :params (orgtrello-api-get-checklist :checklist-id 'no-items)))))
+  (should (equal '(("checkItems" . "none") ("fields" . "name,pos,idCard") ("checkItem_fields" . "name,pos,state"))
+                 (gethash :params (orgtrello-api-get-checklist :checklist-id 'no-items)))))
 
 (ert-deftest test-orgtrello-api-add-items ()
   (should (equal "POST"                                     (gethash :method (orgtrello-api-add-items :checklist-id "item-name" t))))
@@ -234,15 +233,6 @@
   (should (equal "/boards"                        (gethash :uri    (orgtrello-api-add-board "some-board" "some-description"))))
   (should (equal '(("desc" . "some-description")
                    ("name" . "some-board")) (gethash :params (orgtrello-api-add-board "some-board" "some-description")))))
-
-(ert-deftest test-orgtrello-api-add-card ()
-  (should (equal "POST"                                           (gethash :method (orgtrello-api-add-card "card-name" "list-id"))))
-  (should (equal "/cards/"                                        (gethash :uri    (orgtrello-api-add-card "card-name" "list-id"))))
-  (should (equal '(("name" . "card-name") ("idList" . "list-id")) (gethash :params (orgtrello-api-add-card "card-name" "list-id"))))
-
-  (should (equal "POST"                                                                (gethash :method (orgtrello-api-add-card "card-name" "list-id" "due-date"))))
-  (should (equal "/cards/"                                                             (gethash :uri    (orgtrello-api-add-card "card-name" "list-id" "due-date"))))
-  (should (equal '(("due" . "due-date") ("name" . "card-name") ("idList" . "list-id")) (gethash :params (orgtrello-api-add-card "card-name" "list-id" "due-date")))))
 
 (ert-deftest test-orgtrello-api-add-card-comment ()
   (should (equal "POST"                             (gethash :method (orgtrello-api-add-card-comment :card-id "some comment text"))))
