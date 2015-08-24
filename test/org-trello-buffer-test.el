@@ -2,6 +2,34 @@
 (require 'ert)
 (require 'el-mock)
 
+(ert-deftest test-orgtrello-buffer-card-entry-get ()
+  (should (string= "123"
+                   (orgtrello-tests-with-temp-buffer
+                    "* card
+:PROPERTIES:
+:orgtrello-id: 123
+:END:"
+                    (orgtrello-buffer-card-entry-get (point) "orgtrello-id"))))
+  (should-not
+   (orgtrello-tests-with-temp-buffer
+    "* card
+:PROPERTIES:
+:END:"
+    (orgtrello-buffer-card-entry-get (point) "orgtrello-id"))))
+
+(ert-deftest test-orgtrello-buffer-org-entity-metadata ()
+  (should (equal '(1 1 "TODO" nil "card title" nil)
+                 (orgtrello-tests-with-temp-buffer
+                  "* TODO card title
+:PROPERTIES:
+:orgtrello-id: 123
+:orgtrello-checksum: checksum
+:unknown: something
+:END
+  description here
+"
+                  (orgtrello-buffer-org-entity-metadata)))))
+
 (ert-deftest test-orgtrello-buffer-compute-overlay-size ()
   (should (eq 10
               (with-mock
