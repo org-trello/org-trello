@@ -2,6 +2,65 @@
 (require 'ert)
 (require 'el-mock)
 
+(ert-deftest test-orgtrello-buffer-org-map-entries ()
+  (should (equal '(1 1)
+                 (orgtrello-tests-with-temp-buffer
+                  "* card
+  - [ ] checklist
+    - [ ] item
+* another card
+"
+                  (orgtrello-buffer-org-map-entries (-compose 'orgtrello-data-entity-level 'orgtrello-buffer-entity-metadata))))))
+
+(ert-deftest test-orgtrello-buffer-compute-generic-checksum ()
+  (should (eq :result-checksum
+              (with-mock
+                (mock (orgtrello-buffer--compute-string-for-checksum :region) => :string-for-checksum)
+                (mock (orgtrello-buffer-checksum :string-for-checksum) => :result-checksum)
+                (orgtrello-buffer-compute-generic-checksum (lambda () :region))))))
+
+(ert-deftest test-orgtrello-buffer-get-overlay-at-pos ()
+  (should (eq :overlay1
+              (with-mock
+                (mock (point-at-bol) => :point-at-bol)
+                (mock (point-at-eol) => :point-at-eol)
+                (mock (overlays-in :point-at-bol :point-at-eol) => '(:overlay1))
+                (mock (overlay-get :overlay1 'invisible) => 'org-trello-cbx-property)
+                (orgtrello-buffer-get-overlay-at-pos))))
+  (should-not (with-mock
+                (mock (point-at-bol) => :point-at-bol)
+                (mock (point-at-eol) => :point-at-eol)
+                (mock (overlays-in :point-at-bol :point-at-eol) => '(:overlay1))
+                (mock (overlay-get :overlay1 'invisible) => 'something-else)
+                (orgtrello-buffer-get-overlay-at-pos))))
+
+(ert-deftest test-orgtrello-buffer-org-decorator ()
+  (should (eq :done
+              (with-mock
+                (mock (orgtrello-buffer-indent-card-descriptions) => :indent-card-desc-done)
+                (mock (orgtrello-buffer-indent-card-data) => :indent-card-data-done)
+                (mock (orgtrello-entity-org-checkbox-p) => nil)
+                (orgtrello-buffer-org-decorator (lambda () :done)))))
+  (should (eq :done
+              (with-mock
+                (mock (orgtrello-buffer-indent-card-descriptions) => :indent-card-desc-done)
+                (mock (orgtrello-buffer-indent-card-data) => :indent-card-data-done)
+                (mock (orgtrello-entity-org-checkbox-p) => t)
+                (mock (org-end-of-line) => :end-of-line-done)
+                (orgtrello-buffer-org-decorator (lambda () :done))))))
+
+(ert-deftest test-orgtrello-buffer-safe-entry-full-metadata ()
+  (should (eq :full-meta
+              (with-mock
+                (mock (orgtrello-buffer-entry-get-full-metadata) => :full-meta)
+                (orgtrello-buffer-safe-entry-full-metadata))))
+  ;; not on an heading so throw error which is caught and then nil is returned
+  (should-not
+   (orgtrello-tests-with-temp-buffer
+    "
+* card"
+    (orgtrello-buffer-safe-entry-full-metadata))))
+
 (ert-deftest test-orgtrello-buffer--parent-metadata ()
   ;; on item, got back to checklist
   (should (orgtrello-data-entity-checklist-p
@@ -2787,7 +2846,7 @@ DEADLINE: <2014-05-17 Sat>
                                                                                (orgtrello-buffer-delete-property "orgtrello-local-checksum")
                                                                                -1))))
 
-(ert-deftest test-orgtrello-buffer--compute-string-to-checksum ()
+(ert-deftest test-orgtrello-buffer--compute-string-for-checksum ()
   "Compute the region to checksum on an entity."
   (should (equal
            "* TODO some card name
@@ -2818,7 +2877,7 @@ DEADLINE: <2014-05-17 Sat>
 
 * another card"
                                              (let ((orgtrello-setup-use-position-in-checksum-computation 'please-do-use-position-in-checksumt))
-                                               (orgtrello-buffer--compute-string-to-checksum (orgtrello-entity-card-region)))
+                                               (orgtrello-buffer--compute-string-for-checksum (orgtrello-entity-card-region)))
                                              -5)))
 
   (should (equal
@@ -2849,7 +2908,7 @@ DEADLINE: <2014-05-17 Sat>
 
 * another card"
                                              (let ((orgtrello-setup-use-position-in-checksum-computation nil))
-                                               (orgtrello-buffer--compute-string-to-checksum (orgtrello-entity-card-region)))
+                                               (orgtrello-buffer--compute-string-for-checksum (orgtrello-entity-card-region)))
                                              -5)))
 
   ;; checklist
@@ -2869,7 +2928,7 @@ DEADLINE: <2014-05-17 Sat>
     - [X] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\"}
   - [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\"}
 "
-                                             (orgtrello-buffer--compute-string-to-checksum (orgtrello-entity-compute-checklist-region))
+                                             (orgtrello-buffer--compute-string-for-checksum (orgtrello-entity-compute-checklist-region))
                                              -1)))
   (should (equal
            "    - [X] some other item
@@ -2887,7 +2946,7 @@ DEADLINE: <2014-05-17 Sat>
     - [X] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\"}
   - [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\"}
 "
-                                             (orgtrello-buffer--compute-string-to-checksum (orgtrello-entity-compute-item-region))
+                                             (orgtrello-buffer--compute-string-for-checksum (orgtrello-entity-compute-item-region))
                                              -2))))
 
 (ert-deftest test-orgtrello-buffer-card-checksum ()

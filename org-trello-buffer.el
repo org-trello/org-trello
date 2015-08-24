@@ -808,7 +808,7 @@ ENTITIES and ADJACENCIES provide information on card's structure."
   "Compute the checksum of the STRING."
   (secure-hash 'sha256 string))
 
-(defun orgtrello-buffer--compute-string-to-checksum (region)
+(defun orgtrello-buffer--compute-string-for-checksum (region)
   "Given a REGION, compute the string to checksum."
   (lexical-let ((region region)
                 (buffer-name (current-buffer)))
@@ -823,9 +823,10 @@ ENTITIES and ADJACENCIES provide information on card's structure."
 
 (defun orgtrello-buffer-compute-generic-checksum (compute-region-fn)
   "Compute the entity's checksum.
-COMPUTE-REGION-FN is the region computation function."
-  (-> (funcall compute-region-fn)
-      orgtrello-buffer--compute-string-to-checksum
+COMPUTE-REGION-FN is the region computation function (takes no parameter)."
+  (-> compute-region-fn
+      funcall
+      orgtrello-buffer--compute-string-for-checksum
       orgtrello-buffer-checksum))
 
 (defun orgtrello-buffer-compute-checksum ()
