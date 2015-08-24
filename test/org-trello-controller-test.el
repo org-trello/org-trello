@@ -2,6 +2,40 @@
 (require 'ert)
 (require 'el-mock)
 
+(ert-deftest test-orgtrello-controller--do-sync-card-comment ()
+  (should (eq :sync-comment-done
+              (with-mock
+                (mock (orgtrello-deferred-eval-computation
+                       '("card-id" "comment-id" "comment-desc" :buffer-name)
+                       '('orgtrello-controller--update-card-comment)
+                       "Synchronizing comment...") => :sync-comment-done)
+                (orgtrello-controller--do-sync-card-comment (orgtrello-hash-make-properties `((:parent . ,(orgtrello-hash-make-properties '((:id . "card-id"))))
+                                                                                              (:current . ,(orgtrello-hash-make-properties '((:id . "comment-id")
+                                                                                                                                             (:desc . "comment-desc" )))))) :buffer-name))))
+  (should (string= "org-trello - No comment to sync - skip."
+                   (let ((orgtrello-log-level orgtrello-log-info))
+                     (with-mock
+                       (orgtrello-controller--do-sync-card-comment (orgtrello-hash-make-properties `((:parent . ,(orgtrello-hash-make-properties '((:id . ""))))
+                                                                                                     (:current . ,(orgtrello-hash-make-properties '((:id)))))) :buffer-name)))))
+  (should (string= "org-trello - No comment to sync - skip."
+                   (let ((orgtrello-log-level orgtrello-log-info))
+                     (with-mock
+                       (orgtrello-controller--do-sync-card-comment (orgtrello-hash-make-properties `((:parent . ,(orgtrello-hash-make-properties '((:id . "123"))))
+                                                                                                     (:current . ,(orgtrello-hash-make-properties '((:id . "")))))) :buffer-name)))))
+  (should (string= "org-trello - No comment to sync - skip."
+                   (let ((orgtrello-log-level orgtrello-log-info))
+                     (with-mock
+                       (orgtrello-controller--do-sync-card-comment (orgtrello-hash-make-properties `((:parent . ,(orgtrello-hash-make-properties '((:id))))
+                                                                                                     (:current . ,(orgtrello-hash-make-properties '((:id)))))) :buffer-name))))))
+
+
+(ert-deftest test-orgtrello-controller--update-card-comment ()
+  (should (equal '(:update-done :card-id :comment-id :comment-text)
+                 (with-mock
+                   (mock (orgtrello-api-update-card-comment :card-id :comment-id :comment-text) => :api-query-update)
+                   (mock (orgtrello-query-http-trello :api-query-update 'sync) => :update-done)
+                   (orgtrello-controller--update-card-comment '(:card-id :comment-id :comment-text))))))
+
 (ert-deftest test-orgtrello-controller--update-buffer-from-data ()
   (should (string= ":PROPERTIES:
 #+PROPERTY: board-name :board-name

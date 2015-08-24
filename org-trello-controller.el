@@ -1139,29 +1139,34 @@ DATA is a list of (user board board-name board-desc org-keywords buffername)."
    'orgtrello-controller--do-sync-card-comment
    (current-buffer)))
 
+(defun orgtrello-controller--update-card-comment (data)
+  "Update card comment from DATA.
+DATA is a list of (card-id comment-id comment-text buffername)."
+  (-let (((card-id comment-id comment-text &rest) data))
+    (-> card-id
+        (orgtrello-api-update-card-comment comment-id comment-text)
+        (orgtrello-query-http-trello 'sync)
+        (cons data))))
+
 (defun orgtrello-controller--do-sync-card-comment (card-meta &optional buffer-name)
   "Sync the comments from the CARD-META in BUFFER-NAME."
   (save-excursion
-    (lexical-let* ((card-id (-> card-meta
-                                orgtrello-data-parent
-                                orgtrello-data-entity-id))
-                   (entity-comment (orgtrello-data-current card-meta))
-                   (comment-id (orgtrello-data-entity-id entity-comment))
-                   (comment-text (orgtrello-data-entity-description
-                                  entity-comment)))
+    (let* ((card-id (-> card-meta
+                        orgtrello-data-parent
+                        orgtrello-data-entity-id))
+           (entity-comment (orgtrello-data-current card-meta))
+           (comment-id (orgtrello-data-entity-id entity-comment))
+           (comment-text (orgtrello-data-entity-description
+                          entity-comment))
+           (prefix-log "Synchronizing comment..."))
       (if (or (null card-id)
               (string= "" card-id)
               (string= "" comment-id))
           (orgtrello-log-msg orgtrello-log-info "No comment to sync - skip.")
-        (deferred:$
-          (deferred:next (lambda () (-> card-id
-                                   (orgtrello-api-update-card-comment
-                                    comment-id
-                                    comment-text)
-                                   (orgtrello-query-http-trello 'sync))))
-          (deferred:nextc it
-            (lambda (data)
-              (orgtrello-log-msg orgtrello-log-info "Comment sync'ed!"))))))))
+        (orgtrello-deferred-eval-computation
+         (list card-id comment-id comment-text buffer-name)
+         '('orgtrello-controller--update-card-comment)
+         prefix-log)))))
 
 (defun orgtrello-controller-do-cleanup-from-buffer (&optional globally-flag)
   "Clean org-trello data in current buffer.
