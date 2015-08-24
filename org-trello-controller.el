@@ -765,7 +765,9 @@ UPDATE-TODO-KEYWORDS is the org list of keywords."
 
 (defun orgtrello-controller--compute-keyword-separation (name)
   "Given a insensitive keyword NAME, return a string '| done' or the keyword."
-  (if (string= "done" (downcase name)) (format "| %s" name) name))
+  (if (string= "done" (downcase name))
+      (format "| %s" name)
+    name))
 
 (defun orgtrello-controller--compute-board-lists-hash-name-id
     (board-lists-hash-name-id)

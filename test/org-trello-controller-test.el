@@ -2,6 +2,35 @@
 (require 'ert)
 (require 'el-mock)
 
+(ert-deftest test-orgtrello-controller-do-create-board-and-install-metadata ()
+  (should (eq :create-board-done
+              (with-mock
+                (mock (orgtrello-buffer-filtered-kwds) => :org-keywords)
+                (mock (current-buffer) => :buffer-name)
+                (mock (orgtrello-deferred-eval-computation
+                       '(:org-keywords :buffer-name)
+                       '('orgtrello-controller--input-new-board-information
+                         'orgtrello-controller--create-new-board
+                         'orgtrello-controller--fetch-user-logged-in
+                         'orgtrello-controller--close-board-default-lists
+                         'orgtrello-controller--create-user-lists-to-board
+                         'orgtrello-controller--update-buffer-from-data
+                         'orgtrello-controller--save-buffer-and-reload-setup)
+                       "Create board and install metadata...") => :create-board-done)
+                (orgtrello-controller-do-create-board-and-install-metadata)))))
+
+(ert-deftest test-orgtrello-controller--compute-board-lists-hash-name-id ()
+  (should (equal '("#+PROPERTY: done 456" "#+PROPERTY: todo 123")
+                 (orgtrello-controller--compute-board-lists-hash-name-id (orgtrello-hash-make-properties '(("todo" . "123")
+                                                                                                           ("done" . "456")))))))
+(ert-deftest test-orgtrello-controller--compute-keyword-separation ()
+  (should (string= "todo"
+                   (orgtrello-controller--compute-keyword-separation "todo")))
+  (should (string= "| done"
+                   (orgtrello-controller--compute-keyword-separation "done")))
+  (should (string= "| DONE"
+                   (orgtrello-controller--compute-keyword-separation "DONE"))))
+
 (ert-deftest test-orgtrello-controller--fetch-user-logged-in ()
   (should (equal '(:user-entity :boards :buffer-name)
                  (with-mock
