@@ -314,13 +314,12 @@ MAP-DISPATCH-FN is a map of function taking the one parameter ENTITY."
 (defun orgtrello-proxy--delete-checkbox-checklist-region ()
   "Delete the checklist region."
   (let ((starting-point (point-at-bol))
-        (ending-point (save-excursion
-                        (-if-let
-                            (result
-                             (orgtrello-entity-goto-next-checkbox-with-same-level
-                              org-trello--checklist-level))
-                            result
-                          (orgtrello-entity-card-end-point))))) ;; next checkbox or next card or point-max
+        (ending-point
+         (save-excursion
+           (-if-let (result (orgtrello-entity-goto-next-checkbox-with-same-level
+                             org-trello--checklist-level))
+               result
+             (orgtrello-entity-card-end-point))))) ;; next checkbox/card/max
     (orgtrello-proxy--delete-region starting-point ending-point)))
 
 (defun orgtrello-proxy--delete-checkbox-item-region ()

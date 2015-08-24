@@ -113,8 +113,14 @@
 (ert-deftest test-orgtrello-proxy--retrieve-state-of-card ()
   (should (equal org-trello--todo
                  (orgtrello-proxy--retrieve-state-of-card (orgtrello-hash-make-properties `((:keyword . ,org-trello--todo))))))
+  (should (equal org-trello--todo
+                 (orgtrello-proxy--retrieve-state-of-card (orgtrello-hash-make-properties `((:something-else))))))
   (should (equal :something-else
-                 (orgtrello-proxy--retrieve-state-of-card (orgtrello-hash-make-properties `((:keyword . :something-else)))))))
+                 (orgtrello-proxy--retrieve-state-of-card (orgtrello-hash-make-properties `((:keyword . :something-else))))))
+  (should (equal org-trello--todo
+                 (orgtrello-proxy--retrieve-state-of-card (orgtrello-hash-empty-hash))))
+  (should (equal org-trello--todo
+                 (orgtrello-proxy--retrieve-state-of-card nil))))
 
 (ert-deftest test-orgtrello-proxy--checks-before-sync-card ()
   (should (equal :ok
@@ -536,9 +542,21 @@ Level 3 - items"
   - [ ] checklist
     - [ ] item"
              (orgtrello-proxy--delete-card-region)
-             -1))))
+             -1)))
+  (should
+   (string= "* card to delete
+  - [ ] checklist
+    - [ ] item"
+            (orgtrello-tests-with-temp-buffer-and-return-buffer-content
+             "* card not deleted
+* card to delete
+  - [ ] checklist
+    - [ ] item"
+             (orgtrello-proxy--delete-card-region)
+             -4))))
 
 (ert-deftest test-orgtrello-proxy--delete-checkbox-checklist-region ()
+  ;; destroy the checklist and children up to the buffer's end
   (should (string= "* card 1
 * card 2
 "
@@ -548,8 +566,21 @@ Level 3 - items"
   - [ ] checklist
     - [ ] item"
                     (orgtrello-proxy--delete-checkbox-checklist-region)
-
                     -1)))
+  ;; will delete the checklist and its children up to the next checklist
+  (should (string= "* card 1
+* card 2
+  - [ ] checklist 2
+"
+                   (orgtrello-tests-with-temp-buffer-and-return-buffer-content
+                    "* card 1
+* card 2
+  - [ ] checklist 1
+    - [ ] item
+  - [ ] checklist 2
+"
+                    (orgtrello-proxy--delete-checkbox-checklist-region)
+                    -3)))
 
   (ert-deftest test-orgtrello-proxy--delete-checkbox-item-region ()
     (should (string= "* card 1
