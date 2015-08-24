@@ -2,6 +2,28 @@
 (require 'ert)
 (require 'el-mock)
 
+(ert-deftest test-orgtrello-buffer-compute-overlay-size ()
+  (should (eq 10
+              (with-mock
+                (mock (orgtrello-buffer-get-overlay-at-pos) => :o)
+                (mock (overlay-end :o) => 15)
+                (mock (overlay-start :o) => 5)
+                (orgtrello-buffer-compute-overlay-size))))
+  (should-not (with-mock
+                (mock (orgtrello-buffer-get-overlay-at-pos) => nil)
+                (orgtrello-buffer-compute-overlay-size))))
+
+(ert-deftest test-orgtrello-buffer-end-of-line-point ()
+  (should (eq 7
+              (orgtrello-tests-with-temp-buffer
+               "* card\n"
+               (orgtrello-buffer-end-of-line-point))))
+  (should (eq 26
+              (orgtrello-tests-with-temp-buffer
+               "* card
+  - [ ] checklist \n"
+               (orgtrello-buffer-end-of-line-point)))))
+
 (ert-deftest test-orgtrello-buffer-org-map-entities-without-params ()
   (should (equal '(("local-card-checksum-1" "local-checklist-checksum-1" "local-item-checksum-1")
                    nil
