@@ -2,49 +2,91 @@
 (require 'ert)
 (require 'el-mock)
 
-(ert-deftest test-orgtrello-data-entity-getter ()
+(ert-deftest test-orgtrello-data-entity-buffername ()
   (should (equal "test" (orgtrello-data-entity-buffername   (orgtrello-hash-make-properties `((:buffername   . "test"))))))
-  (should (equal nil (orgtrello-data-entity-buffername      (orgtrello-hash-make-properties `((inexistant    . "test"))))))
+  (should (equal nil (orgtrello-data-entity-buffername      (orgtrello-hash-make-properties `((inexistant    . "test")))))))
+
+(ert-deftest test-orgtrello-data-entity-position ()
   (should (equal "test" (orgtrello-data-entity-position     (orgtrello-hash-make-properties `((:position     . "test"))))))
-  (should (equal nil (orgtrello-data-entity-position        (orgtrello-hash-make-properties `((inexistant    . "test"))))))
+  (should (equal nil (orgtrello-data-entity-position        (orgtrello-hash-make-properties `((inexistant    . "test")))))))
+
+(ert-deftest test-orgtrello-data-entity-id ()
   (should (equal "test" (orgtrello-data-entity-id           (orgtrello-hash-make-properties `((:id           . "test"))))))
-  (should (equal nil (orgtrello-data-entity-id              (orgtrello-hash-make-properties `((inexistant    . "test"))))))
+  (should (equal nil (orgtrello-data-entity-id              (orgtrello-hash-make-properties `((inexistant    . "test")))))))
+
+(ert-deftest test-orgtrello-data-entity-name ()
   (should (equal "test" (orgtrello-data-entity-name         (orgtrello-hash-make-properties `((:name         . "test"))))))
-  (should (equal nil (orgtrello-data-entity-name            (orgtrello-hash-make-properties `((inexistant    . "test"))))))
+  (should (equal nil (orgtrello-data-entity-name            (orgtrello-hash-make-properties `((inexistant    . "test")))))))
+
+(ert-deftest test-orgtrello-data-entity-list-id ()
   (should (equal "test" (orgtrello-data-entity-list-id      (orgtrello-hash-make-properties `((:list-id      . "test"))))))
-  (should (equal nil (orgtrello-data-entity-list-id         (orgtrello-hash-make-properties `((inexistant    . "test"))))))
+  (should (equal nil (orgtrello-data-entity-list-id         (orgtrello-hash-make-properties `((inexistant    . "test")))))))
+
+(ert-deftest test-orgtrello-data-entity-checklists ()
   (should (equal "test" (orgtrello-data-entity-checklists   (orgtrello-hash-make-properties `((:checklists   . "test"))))))
-  (should (equal nil (orgtrello-data-entity-checklists      (orgtrello-hash-make-properties `((inexistant    . "test"))))))
+  (should (equal nil (orgtrello-data-entity-checklists      (orgtrello-hash-make-properties `((inexistant    . "test")))))))
+
+(ert-deftest test-orgtrello-data-entity-items ()
   (should (equal "test" (orgtrello-data-entity-items        (orgtrello-hash-make-properties `((:items        . "test"))))))
-  (should (equal nil (orgtrello-data-entity-items           (orgtrello-hash-make-properties `((inexistant    . "test"))))))
+  (should (equal nil (orgtrello-data-entity-items           (orgtrello-hash-make-properties `((inexistant    . "test")))))))
+
+(ert-deftest test-orgtrello-data-entity-card-id ()
   (should (equal "test" (orgtrello-data-entity-card-id      (orgtrello-hash-make-properties `((:card-id      . "test"))))))
-  (should (equal nil (orgtrello-data-entity-card-id         (orgtrello-hash-make-properties `((inexistant    . "test"))))))
+  (should (equal nil (orgtrello-data-entity-card-id         (orgtrello-hash-make-properties `((inexistant    . "test")))))))
+
+(ert-deftest test-orgtrello-data-entity-due ()
   (should (equal "test" (orgtrello-data-entity-due          (orgtrello-hash-make-properties `((:due          . "test"))))))
-  (should (equal nil (orgtrello-data-entity-due             (orgtrello-hash-make-properties `((inexistant    . "test"))))))
+  (should (equal nil (orgtrello-data-entity-due             (orgtrello-hash-make-properties `((inexistant    . "test")))))))
+
+(ert-deftest test-orgtrello-data-entity-keyword ()
   (should (equal "test" (orgtrello-data-entity-keyword      (orgtrello-hash-make-properties `((:keyword      . "test"))))))
-  (should (equal nil (orgtrello-data-entity-keyword         (orgtrello-hash-make-properties `((inexistant    . "test"))))))
+  (should (equal nil (orgtrello-data-entity-keyword         (orgtrello-hash-make-properties `((inexistant    . "test")))))))
+
+(ert-deftest test-orgtrello-data-entity-closed ()
   (should (equal "test" (orgtrello-data-entity-closed       (orgtrello-hash-make-properties `((:closed       . "test"))))))
-  (should (equal nil (orgtrello-data-entity-closed          (orgtrello-hash-make-properties `((inexistant    . "test"))))))
+  (should (equal nil (orgtrello-data-entity-closed          (orgtrello-hash-make-properties `((inexistant    . "test")))))))
+
+(ert-deftest test-orgtrello-data-entity-sync ()
   (should (equal "test" (orgtrello-data-entity-sync         (orgtrello-hash-make-properties `((:sync         . "test"))))))
-  (should (equal nil (orgtrello-data-entity-sync            (orgtrello-hash-make-properties `((inexistant    . "test"))))))
+  (should (equal nil (orgtrello-data-entity-sync            (orgtrello-hash-make-properties `((inexistant    . "test")))))))
+
+(ert-deftest test-orgtrello-data-entity-level ()
   (should (equal "test" (orgtrello-data-entity-level        (orgtrello-hash-make-properties `((:level        . "test"))))))
-  (should (equal nil (orgtrello-data-entity-level           (orgtrello-hash-make-properties `((inexistant    . "test"))))))
+  (should (equal nil (orgtrello-data-entity-level           (orgtrello-hash-make-properties `((inexistant    . "test")))))))
+
+(ert-deftest test-orgtrello-data-entity-method ()
   (should (equal "test" (orgtrello-data-entity-method       (orgtrello-hash-make-properties `((:method       . "test"))))))
-  (should (equal nil (orgtrello-data-entity-method          (orgtrello-hash-make-properties `((inexistant    . "test"))))))
+  (should (equal nil (orgtrello-data-entity-method          (orgtrello-hash-make-properties `((inexistant    . "test")))))))
+
+(ert-deftest test-orgtrello-data-entity-uri ()
   (should (equal "test" (orgtrello-data-entity-uri          (orgtrello-hash-make-properties `((:uri          . "test"))))))
-  (should (equal nil (orgtrello-data-entity-uri             (orgtrello-hash-make-properties `((inexistant    . "test"))))))
+  (should (equal nil (orgtrello-data-entity-uri             (orgtrello-hash-make-properties `((inexistant    . "test")))))))
+
+(ert-deftest test-orgtrello-data-entity-params ()
   (should (equal "test" (orgtrello-data-entity-params       (orgtrello-hash-make-properties `((:params       . "test"))))))
-  (should (equal nil (orgtrello-data-entity-params          (orgtrello-hash-make-properties `((inexistant    . "test"))))))
+  (should (equal nil (orgtrello-data-entity-params          (orgtrello-hash-make-properties `((inexistant    . "test")))))))
+
+(ert-deftest test-orgtrello-data-entity-action ()
   (should (equal "test" (orgtrello-data-entity-action       (orgtrello-hash-make-properties `((:action       . "test"))))))
-  (should (equal nil (orgtrello-data-entity-action          (orgtrello-hash-make-properties `((inexistant    . "test"))))))
+  (should (equal nil (orgtrello-data-entity-action          (orgtrello-hash-make-properties `((inexistant    . "test")))))))
+
+(ert-deftest test-orgtrello-data-entity-comments ()
   (should (equal "test" (orgtrello-data-entity-comments     (orgtrello-hash-make-properties `((:comments     . "test"))))))
-  (should (equal nil (orgtrello-data-entity-comments        (orgtrello-hash-make-properties `((inexistant    . "test"))))))
+  (should (equal nil (orgtrello-data-entity-comments        (orgtrello-hash-make-properties `((inexistant    . "test")))))))
+
+(ert-deftest test-orgtrello-data-entity-comment-id ()
   (should (equal "test" (orgtrello-data-entity-comment-id   (orgtrello-hash-make-properties `((:comment-id   . "test"))))))
-  (should (equal nil (orgtrello-data-entity-comment-id      (orgtrello-hash-make-properties `((inexistant    . "test"))))))
+  (should (equal nil (orgtrello-data-entity-comment-id      (orgtrello-hash-make-properties `((inexistant    . "test")))))))
+
+(ert-deftest test-orgtrello-data-entity-comment-text ()
   (should (equal "test" (orgtrello-data-entity-comment-text (orgtrello-hash-make-properties `((:comment-text . "test"))))))
-  (should (equal nil (orgtrello-data-entity-comment-text    (orgtrello-hash-make-properties `((inexistant    . "test"))))))
+  (should (equal nil (orgtrello-data-entity-comment-text    (orgtrello-hash-make-properties `((inexistant    . "test")))))))
+
+(ert-deftest test-orgtrello-data-entity-comment-user ()
   (should (equal "test" (orgtrello-data-entity-comment-user (orgtrello-hash-make-properties `((:comment-user . "test"))))))
-  (should (equal nil (orgtrello-data-entity-comment-user    (orgtrello-hash-make-properties `((inexistant    . "test"))))))
+  (should (equal nil (orgtrello-data-entity-comment-user    (orgtrello-hash-make-properties `((inexistant    . "test")))))))
+
+(ert-deftest test-orgtrello-data-entity-color ()
   (should (equal "test" (orgtrello-data-entity-color        (orgtrello-hash-make-properties `((:color        . "test"))))))
   (should (equal nil (orgtrello-data-entity-color           (orgtrello-hash-make-properties `((inexistant    . "test")))))))
 
@@ -145,9 +187,7 @@
                                                                            (subscribed . :json-false)
                                                                            (viewingMemberVoted . :json-false)
                                                                            (votes . 0))
-                                                                   (id . "52c09056d84eeca156001a24"))))))
-
-(ert-deftest test-orgtrello-data-parse-data-checklist ()
+                                                                   (id . "52c09056d84eeca156001a24")))))
   ;; check checklist
   (should (orgtrello-tests-hash-equal (orgtrello-hash-make-properties `((:items . ())
                                                                         (:name . "LISP family")
@@ -162,9 +202,8 @@
                                                                    (idCard . "52c09056d84eeca156001a24")
                                                                    (idBoard . "51d99bbc1e1d8988390047f2")
                                                                    (name . "LISP family")
-                                                                   (id . "52c0a36886b7bdd67c008cf1"))))))
-
-(ert-deftest test-orgtrello-data-parse-data-item ()
+                                                                   (id . "52c0a36886b7bdd67c008cf1")))))
+  ;; item
   (should (orgtrello-tests-hash-equal
            (orgtrello-hash-make-properties `((:name . "Emacs-Lisp")
                                              (:level . 3)
@@ -186,14 +225,12 @@
                                         (nameData (emoji))
                                         (name . "Emacs-Lisp")
                                         (id . "52c0a64cfb34123369015393")
-                                        (state . "incomplete"))))))
-
-(ert-deftest test-orgtrello-data-parse-data-http-response ()
+                                        (state . "incomplete")))))
+  ;; http-response
   (should (orgtrello-tests-hash-equal
            (orgtrello-hash-make-properties `((:status . ok)))
-           (orgtrello-data-parse-data '((status . ok))))))
-
-(ert-deftest test-orgtrello-data-parse-data-with-list-of-results ()
+           (orgtrello-data-parse-data '((status . ok)))))
+  ;; with-list-of-results
   (let ((list-hash (orgtrello-data-parse-data '[((shortUrl . "https://trello.com/b/o9oY3NlQ")
                                                  (dateLastView . "2013-08-08T14:07:03.382Z")
                                                  (dateLastActivity)
@@ -312,20 +349,20 @@
   (should (equal :name    (orgtrello-data--deal-with-key 'name)))
   (should (equal nil      (orgtrello-data--deal-with-key 'something-that-does-not-exist))))
 
-(ert-deftest orgtrello-tests-hash-equal ()
-  (should (equal t (orgtrello-tests-hash-equal
-                    (orgtrello-hash-make-properties
-                     '((url . :url) (id . :id) (name . :name) (idMembers . :member-ids)
-                       (idList . :list-id) (checklists . :checklists) (idChecklists . :checklists)
-                       (idBoard . :board-id) (due . :due) (desc . :desc) (closed . :closed)
-                       (idCard . :card-id) (checkItems . :items) (state . :checked)
-                       (status . :status) (pos . :position) (keyword . :keyword)
-                       (member-ids . :member-ids) (member . :member) (memberships . :memberships)
-                       (username . :username) (fullName . :full-name) (actions . :comments)
-                       (labelNames . :labels) (lists . :lists) (red . :red) (yellow . :yellow)
-                       (blue . :blue) (green . :green) (orange . :orange) (purple . :purple)
-                       (labels . :labels) (color . :color)))
-                    orgtrello-controller--data-map-keywords))))
+(ert-deftest test-orgtrello-controller--data-map-keywords ()
+  (should (orgtrello-tests-hash-equal
+           (orgtrello-hash-make-properties
+            '((url . :url) (id . :id) (name . :name) (idMembers . :member-ids)
+              (idList . :list-id) (checklists . :checklists) (idChecklists . :checklists)
+              (idBoard . :board-id) (due . :due) (desc . :desc) (closed . :closed)
+              (idCard . :card-id) (checkItems . :items) (state . :checked)
+              (status . :status) (pos . :position) (keyword . :keyword)
+              (member-ids . :member-ids) (member . :member) (memberships . :memberships)
+              (username . :username) (fullName . :full-name) (actions . :comments)
+              (labelNames . :labels) (lists . :lists) (red . :red) (yellow . :yellow)
+              (blue . :blue) (green . :green) (orange . :orange) (purple . :purple)
+              (labels . :labels) (color . :color)))
+           orgtrello-controller--data-map-keywords)))
 
 (ert-deftest test-orgtrello-data--dispatch-parse-data-fn ()
   (should (equal 'orgtrello-data--parse-actions (orgtrello-data--dispatch-parse-data-fn ':comments)))
@@ -549,71 +586,135 @@
   (should (equal nil (orgtrello-data--labels-to-tags nil)))
   (should (equal ":a:b:c:" (orgtrello-data--labels-to-tags '("a" "b" "c")))))
 
-(ert-deftest test-orgtrello-data-setters ()
+(ert-deftest test-orgtrello-data-put-entity-name ()
   (should (orgtrello-tests-hash-equal (orgtrello-hash-make-properties '((:name . :value)))
-                                      (orgtrello-data-put-entity-name :value (orgtrello-hash-empty-hash))))
+                                      (orgtrello-data-put-entity-name :value (orgtrello-hash-empty-hash)))))
+
+(ert-deftest test-orgtrello-data-put-entity-memberships ()
   (should (orgtrello-tests-hash-equal (orgtrello-hash-make-properties '((:memberships .  :value)))
-                                      (orgtrello-data-put-entity-memberships :value (orgtrello-hash-empty-hash))))
+                                      (orgtrello-data-put-entity-memberships :value (orgtrello-hash-empty-hash)))))
+
+(ert-deftest test-orgtrello-data-put-entity-member ()
   (should (orgtrello-tests-hash-equal (orgtrello-hash-make-properties '((:member . :value)))
-                                      (orgtrello-data-put-entity-member :value (orgtrello-hash-empty-hash))))
+                                      (orgtrello-data-put-entity-member :value (orgtrello-hash-empty-hash)))))
+
+(ert-deftest test-orgtrello-data-put-entity-username ()
   (should (orgtrello-tests-hash-equal (orgtrello-hash-make-properties '((:username   . :value)))
-                                      (orgtrello-data-put-entity-username     :value (orgtrello-hash-empty-hash))))
+                                      (orgtrello-data-put-entity-username     :value (orgtrello-hash-empty-hash)))))
+
+(ert-deftest test-orgtrello-data-put-entity-action ()
   (should (orgtrello-tests-hash-equal (orgtrello-hash-make-properties '((:action     . :value)))
-                                      (orgtrello-data-put-entity-action       :value (orgtrello-hash-empty-hash))))
+                                      (orgtrello-data-put-entity-action       :value (orgtrello-hash-empty-hash)))))
+
+(ert-deftest test-orgtrello-data-put-entity-board-id ()
   (should (orgtrello-tests-hash-equal (orgtrello-hash-make-properties '((:board-id   . :value)))
-                                      (orgtrello-data-put-entity-board-id     :value (orgtrello-hash-empty-hash))))
+                                      (orgtrello-data-put-entity-board-id     :value (orgtrello-hash-empty-hash)))))
+
+(ert-deftest test-orgtrello-data-put-entity-card-id ()
   (should (orgtrello-tests-hash-equal (orgtrello-hash-make-properties '((:card-id    . :value)))
-                                      (orgtrello-data-put-entity-card-id      :value (orgtrello-hash-empty-hash))))
+                                      (orgtrello-data-put-entity-card-id      :value (orgtrello-hash-empty-hash)))))
+
+(ert-deftest test-orgtrello-data-put-entity-list-id ()
   (should (orgtrello-tests-hash-equal (orgtrello-hash-make-properties '((:list-id    . :value)))
-                                      (orgtrello-data-put-entity-list-id      :value (orgtrello-hash-empty-hash))))
+                                      (orgtrello-data-put-entity-list-id      :value (orgtrello-hash-empty-hash)))))
+
+(ert-deftest test-orgtrello-data-put-entity-member-ids ()
   (should (orgtrello-tests-hash-equal (orgtrello-hash-make-properties '((:member-ids . :value)))
-                                      (orgtrello-data-put-entity-member-ids   :value (orgtrello-hash-empty-hash))))
+                                      (orgtrello-data-put-entity-member-ids   :value (orgtrello-hash-empty-hash)))))
+
+(ert-deftest test-orgtrello-data-put-entity-description ()
   (should (orgtrello-tests-hash-equal (orgtrello-hash-make-properties '((:desc       . :value)))
-                                      (orgtrello-data-put-entity-description  :value (orgtrello-hash-empty-hash))))
+                                      (orgtrello-data-put-entity-description  :value (orgtrello-hash-empty-hash)))))
+
+(ert-deftest test-orgtrello-data-put-entity-checklists ()
   (should (orgtrello-tests-hash-equal (orgtrello-hash-make-properties '((:checklists . :value)))
-                                      (orgtrello-data-put-entity-checklists   :value (orgtrello-hash-empty-hash))))
+                                      (orgtrello-data-put-entity-checklists   :value (orgtrello-hash-empty-hash)))))
+
+(ert-deftest test-orgtrello-data-put-entity-items ()
   (should (orgtrello-tests-hash-equal (orgtrello-hash-make-properties '((:items      . :value)))
-                                      (orgtrello-data-put-entity-items        :value (orgtrello-hash-empty-hash))))
+                                      (orgtrello-data-put-entity-items        :value (orgtrello-hash-empty-hash)))))
+
+(ert-deftest test-orgtrello-data-put-entity-position ()
   (should (orgtrello-tests-hash-equal (orgtrello-hash-make-properties '((:position   . :value)))
-                                      (orgtrello-data-put-entity-position     :value (orgtrello-hash-empty-hash))))
+                                      (orgtrello-data-put-entity-position     :value (orgtrello-hash-empty-hash)))))
+
+(ert-deftest test-orgtrello-data-put-entity-buffername ()
   (should (orgtrello-tests-hash-equal (orgtrello-hash-make-properties '((:buffername . :value)))
-                                      (orgtrello-data-put-entity-buffername   :value (orgtrello-hash-empty-hash))))
+                                      (orgtrello-data-put-entity-buffername   :value (orgtrello-hash-empty-hash)))))
+
+(ert-deftest test-orgtrello-data-put-entity-checked ()
   (should (orgtrello-tests-hash-equal (orgtrello-hash-make-properties '((:checked    . :value)))
-                                      (orgtrello-data-put-entity-checked      :value (orgtrello-hash-empty-hash))))
+                                      (orgtrello-data-put-entity-checked      :value (orgtrello-hash-empty-hash)))))
+
+(ert-deftest test-orgtrello-data-put-entity-due ()
   (should (orgtrello-tests-hash-equal (orgtrello-hash-make-properties '((:due        . :value)))
-                                      (orgtrello-data-put-entity-due          :value (orgtrello-hash-empty-hash))))
+                                      (orgtrello-data-put-entity-due          :value (orgtrello-hash-empty-hash)))))
+
+(ert-deftest test-orgtrello-data-put-entity-id ()
   (should (orgtrello-tests-hash-equal (orgtrello-hash-make-properties '((:id         . :value)))
-                                      (orgtrello-data-put-entity-id           :value (orgtrello-hash-empty-hash))))
+                                      (orgtrello-data-put-entity-id           :value (orgtrello-hash-empty-hash)))))
+
+(ert-deftest test-orgtrello-data-put-entity-level ()
   (should (orgtrello-tests-hash-equal (orgtrello-hash-make-properties '((:level      . :value)))
-                                      (orgtrello-data-put-entity-level        :value (orgtrello-hash-empty-hash))))
+                                      (orgtrello-data-put-entity-level        :value (orgtrello-hash-empty-hash)))))
+
+(ert-deftest test-orgtrello-data-put-entity-closed ()
   (should (orgtrello-tests-hash-equal (orgtrello-hash-make-properties '((:closed     . :value)))
-                                      (orgtrello-data-put-entity-closed       :value (orgtrello-hash-empty-hash))))
+                                      (orgtrello-data-put-entity-closed       :value (orgtrello-hash-empty-hash)))))
+
+(ert-deftest test-orgtrello-data-put-entity-comments ()
   (should (orgtrello-tests-hash-equal (orgtrello-hash-make-properties '((:comments   . :value)))
-                                      (orgtrello-data-put-entity-comments     :value (orgtrello-hash-empty-hash))))
+                                      (orgtrello-data-put-entity-comments     :value (orgtrello-hash-empty-hash)))))
+
+(ert-deftest test-orgtrello-data-put-entity-labels ()
   (should (orgtrello-tests-hash-equal (orgtrello-hash-make-properties '((:labels     . :value)))
-                                      (orgtrello-data-put-entity-labels       :value (orgtrello-hash-empty-hash))))
+                                      (orgtrello-data-put-entity-labels       :value (orgtrello-hash-empty-hash)))))
+
+(ert-deftest test-orgtrello-data-put-entity-tags ()
   (should (orgtrello-tests-hash-equal (orgtrello-hash-make-properties '((:tags         . :value)))
-                                      (orgtrello-data-put-entity-tags         :value (orgtrello-hash-empty-hash))))
+                                      (orgtrello-data-put-entity-tags         :value (orgtrello-hash-empty-hash)))))
+
+(ert-deftest test-orgtrello-data-put-entity-keyword ()
   (should (orgtrello-tests-hash-equal (orgtrello-hash-make-properties '((:keyword      . :value)))
-                                      (orgtrello-data-put-entity-keyword      :value (orgtrello-hash-empty-hash))))
+                                      (orgtrello-data-put-entity-keyword      :value (orgtrello-hash-empty-hash)))))
+
+(ert-deftest test-orgtrello-data-put-entity-comment-id ()
   (should (orgtrello-tests-hash-equal (orgtrello-hash-make-properties '((:comment-id   . :value)))
-                                      (orgtrello-data-put-entity-comment-id   :value (orgtrello-hash-empty-hash))))
+                                      (orgtrello-data-put-entity-comment-id   :value (orgtrello-hash-empty-hash)))))
+
+(ert-deftest test-orgtrello-data-put-entity-comment-text ()
   (should (orgtrello-tests-hash-equal (orgtrello-hash-make-properties '((:comment-text . :value)))
-                                      (orgtrello-data-put-entity-comment-text :value (orgtrello-hash-empty-hash))))
+                                      (orgtrello-data-put-entity-comment-text :value (orgtrello-hash-empty-hash)))))
+
+(ert-deftest test-orgtrello-data-put-entity-comment-user ()
   (should (orgtrello-tests-hash-equal (orgtrello-hash-make-properties '((:comment-user . :value)))
-                                      (orgtrello-data-put-entity-comment-user :value (orgtrello-hash-empty-hash))))
+                                      (orgtrello-data-put-entity-comment-user :value (orgtrello-hash-empty-hash)))))
+
+(ert-deftest test-orgtrello-data-put-entity-method ()
   (should (orgtrello-tests-hash-equal (orgtrello-hash-make-properties '((:method       . :value)))
-                                      (orgtrello-data-put-entity-method       :value (orgtrello-hash-empty-hash))))
+                                      (orgtrello-data-put-entity-method       :value (orgtrello-hash-empty-hash)))))
+
+(ert-deftest test-orgtrello-data-put-entity-uri ()
   (should (orgtrello-tests-hash-equal (orgtrello-hash-make-properties '((:uri          . :value)))
-                                      (orgtrello-data-put-entity-uri          :value (orgtrello-hash-empty-hash))))
+                                      (orgtrello-data-put-entity-uri          :value (orgtrello-hash-empty-hash)))))
+
+(ert-deftest test-orgtrello-data-put-entity-sync ()
   (should (orgtrello-tests-hash-equal (orgtrello-hash-make-properties '((:sync         . :value)))
-                                      (orgtrello-data-put-entity-sync         :value (orgtrello-hash-empty-hash))))
+                                      (orgtrello-data-put-entity-sync         :value (orgtrello-hash-empty-hash)))))
+
+(ert-deftest test-orgtrello-data-put-entity-params ()
   (should (orgtrello-tests-hash-equal (orgtrello-hash-make-properties '((:params       . :value)))
-                                      (orgtrello-data-put-entity-params       :value (orgtrello-hash-empty-hash))))
+                                      (orgtrello-data-put-entity-params       :value (orgtrello-hash-empty-hash)))))
+
+(ert-deftest test-orgtrello-data-put-current ()
   (should (orgtrello-tests-hash-equal (orgtrello-hash-make-properties '((:current      . :value)))
-                                      (orgtrello-data-put-current             :value (orgtrello-hash-empty-hash))))
+                                      (orgtrello-data-put-current             :value (orgtrello-hash-empty-hash)))))
+
+(ert-deftest test-orgtrello-data-put-parent ()
   (should (orgtrello-tests-hash-equal (orgtrello-hash-make-properties '((:parent       . :value)))
-                                      (orgtrello-data-put-parent              :value (orgtrello-hash-empty-hash))))
+                                      (orgtrello-data-put-parent              :value (orgtrello-hash-empty-hash)))))
+
+(ert-deftest test-orgtrello-data-put-grandparent ()
   (should (orgtrello-tests-hash-equal (orgtrello-hash-make-properties '((:grandparent  . :value)))
                                       (orgtrello-data-put-grandparent         :value (orgtrello-hash-empty-hash)))))
 
@@ -631,56 +732,53 @@
   (should (equal :unk              (gethash :unknown-properties (orgtrello-data-make-hash-org "1,2,3" 0 "IN PROGRESS" "some name" "some id" "due-date" :point "buffer-name.org" :desc :tags :unk)))))
 
 (ert-deftest test-orgtrello-data-make-hierarchy1 ()
+  ;; 1
   (should (equal :current (gethash :current (orgtrello-data-make-hierarchy :current))))
   (should (equal nil (gethash :parent (orgtrello-data-make-hierarchy :current))))
-  (should (equal nil (gethash :grandparent (orgtrello-data-make-hierarchy :current)))))
-
-(ert-deftest test-orgtrello-data-make-hierarchy2 ()
+  (should (equal nil (gethash :grandparent (orgtrello-data-make-hierarchy :current))))
+  ;; 2
   (should (equal :current (gethash :current (orgtrello-data-make-hierarchy :current :parent))))
   (should (equal :parent (gethash :parent (orgtrello-data-make-hierarchy :current :parent))))
-  (should (equal nil (gethash :grandparent (orgtrello-data-make-hierarchy :current :parent)))))
-
-(ert-deftest test-orgtrello-data-make-hierarchy3 ()
+  (should (equal nil (gethash :grandparent (orgtrello-data-make-hierarchy :current :parent))))
+  ;; 3
   (should (equal :current (gethash :current (orgtrello-data-make-hierarchy :current :parent :grandparent))))
   (should (equal :parent (gethash :parent (orgtrello-data-make-hierarchy :current :parent :grandparent))))
-  (should (equal :grandparent (gethash :grandparent (orgtrello-data-make-hierarchy :current :parent :grandparent)))))
-
-(ert-deftest test-orgtrello-data-make-hierarchy4 ()
+  (should (equal :grandparent (gethash :grandparent (orgtrello-data-make-hierarchy :current :parent :grandparent))))
+  ;; 4
   (should (equal :current (gethash :current (orgtrello-data-make-hierarchy :current nil :grandparent))))
   (should (equal nil (gethash :parent (orgtrello-data-make-hierarchy :current nil :grandparent))))
-  (should (equal :grandparent (gethash :grandparent (orgtrello-data-make-hierarchy nil :parent :grandparent)))))
-
-(ert-deftest test-orgtrello-data-make-hierarchy5 ()
-  (should (equal :ok                                 (-> (orgtrello-data-make-hash-org :users 1 :keyword "some name" :id :due :position :buffer-name :desc :tags :unk)
-                                                         orgtrello-data-make-hierarchy
-                                                         orgtrello-controller--mandatory-name-ok-p)))
-  (should (equal org-trello--error-sync-card-missing-name      (-> (orgtrello-data-make-hash-org :users 1 :keyword "" :id :due :position :buffer-name :desc :tags :unk)
-                                                                   orgtrello-data-make-hierarchy
-                                                                   orgtrello-controller--mandatory-name-ok-p)))
-  (should (equal org-trello--error-sync-card-missing-name      (-> (orgtrello-data-make-hash-org :users 1 :keyword nil :id :due :position :buffer-name :desc :tags :unk)
-                                                                   orgtrello-data-make-hierarchy
-                                                                   orgtrello-controller--mandatory-name-ok-p)))
-  (should (equal :ok                                 (-> (orgtrello-data-make-hash-org :users 2 :keyword "some name" :id :due :position :buffer-name :desc :tags :unk)
-                                                         orgtrello-data-make-hierarchy
-                                                         orgtrello-controller--mandatory-name-ok-p)))
+  (should (equal :grandparent (gethash :grandparent (orgtrello-data-make-hierarchy nil :parent :grandparent))))
+  ;; 5
+  (should (equal :ok (-> (orgtrello-data-make-hash-org :users 1 :keyword "some name" :id :due :position :buffer-name :desc :tags :unk)
+                         orgtrello-data-make-hierarchy
+                         orgtrello-controller--mandatory-name-ok-p)))
+  (should (equal org-trello--error-sync-card-missing-name (-> (orgtrello-data-make-hash-org :users 1 :keyword "" :id :due :position :buffer-name :desc :tags :unk)
+                                                              orgtrello-data-make-hierarchy
+                                                              orgtrello-controller--mandatory-name-ok-p)))
+  (should (equal org-trello--error-sync-card-missing-name (-> (orgtrello-data-make-hash-org :users 1 :keyword nil :id :due :position :buffer-name :desc :tags :unk)
+                                                              orgtrello-data-make-hierarchy
+                                                              orgtrello-controller--mandatory-name-ok-p)))
+  (should (equal :ok (-> (orgtrello-data-make-hash-org :users 2 :keyword "some name" :id :due :position :buffer-name :desc :tags :unk)
+                         orgtrello-data-make-hierarchy
+                         orgtrello-controller--mandatory-name-ok-p)))
   (should (equal org-trello--error-sync-checklist-missing-name (-> (orgtrello-data-make-hash-org :users 2 :keyword "" :id :due :position :buffer-name :desc :tags :unk)
                                                                    orgtrello-data-make-hierarchy
                                                                    orgtrello-controller--mandatory-name-ok-p)))
   (should (equal org-trello--error-sync-checklist-missing-name (-> (orgtrello-data-make-hash-org :users 2 :keyword nil :id :due :position :buffer-name :desc :tags :unk)
                                                                    orgtrello-data-make-hierarchy
                                                                    orgtrello-controller--mandatory-name-ok-p)))
-  (should (equal :ok                                 (-> (orgtrello-data-make-hash-org :users 3 :keyword "some name" :id :due :position :buffer-name :desc :tags :unk)
-                                                         orgtrello-data-make-hierarchy
-                                                         orgtrello-controller--mandatory-name-ok-p)))
-  (should (equal org-trello--error-sync-item-missing-name      (-> (orgtrello-data-make-hash-org :users 3 :keyword "" :id :due :position :buffer-name :desc :tags :unk)
-                                                                   orgtrello-data-make-hierarchy
-                                                                   orgtrello-controller--mandatory-name-ok-p)))
-  (should (equal org-trello--error-sync-item-missing-name      (-> (orgtrello-data-make-hash-org :users 3 :keyword nil :id :due :position :buffer-name :desc :tags :unk)
-                                                                   orgtrello-data-make-hierarchy
-                                                                   orgtrello-controller--mandatory-name-ok-p))))
+  (should (equal :ok (-> (orgtrello-data-make-hash-org :users 3 :keyword "some name" :id :due :position :buffer-name :desc :tags :unk)
+                         orgtrello-data-make-hierarchy
+                         orgtrello-controller--mandatory-name-ok-p)))
+  (should (equal org-trello--error-sync-item-missing-name (-> (orgtrello-data-make-hash-org :users 3 :keyword "" :id :due :position :buffer-name :desc :tags :unk)
+                                                              orgtrello-data-make-hierarchy
+                                                              orgtrello-controller--mandatory-name-ok-p)))
+  (should (equal org-trello--error-sync-item-missing-name (-> (orgtrello-data-make-hash-org :users 3 :keyword nil :id :due :position :buffer-name :desc :tags :unk)
+                                                              orgtrello-data-make-hierarchy
+                                                              orgtrello-controller--mandatory-name-ok-p))))
 
-(ert-deftest test-orgtrello-data-to-org-trello-card ()
-  "Convert trello card to org-trello."
+(ert-deftest test-orgtrello-data-to-org-trello ()
+  ;; Convert trello card to org-trello.
   (should (orgtrello-tests-hash-equal
            (orgtrello-hash-make-properties '((:comments . :comments-untouched)
                                              (:position . 884)
@@ -724,9 +822,8 @@
                                   (:closed . nil)
                                   (:id . "card-joy-id")
                                   (:level . 1)))))
-             (orgtrello-data-to-org-trello-card trello-card)))))
-
-(ert-deftest test-orgtrello-data-to-org-trello-checklist ()
+             (orgtrello-data-to-org-trello-card trello-card))))
+  ;; checklist
   (should (orgtrello-tests-hash-equal
            (orgtrello-hash-make-properties '((:position . 32768)
                                              (:card-id . "card-joy-id")
@@ -740,9 +837,8 @@
                                                                      (:board-id . "board-id")
                                                                      (:name . "hybrid family")
                                                                      (:id . "checklist-hybrid-id")))))
-             (orgtrello-data-to-org-trello-checklist trello-checklist)))))
-
-(ert-deftest test-orgtrello-data-to-org-trello-item ()
+             (orgtrello-data-to-org-trello-checklist trello-checklist))))
+  ;; item
   (should (orgtrello-tests-hash-equal
            (orgtrello-hash-make-properties '((:position . 2128)
                                              (:name . "Scala")
