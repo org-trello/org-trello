@@ -1207,34 +1207,16 @@ BOARD-USERS-NAME-ID is a map of username to id."
 
 (defun orgtrello-controller-do-update-board-metadata ()
   "Update metadata about the current board we are connected to."
-  (lexical-let ((buffer-name (current-buffer)))
-    (deferred:$
-      (deferred:next
-        (lambda ()
-          (orgtrello-log-msg orgtrello-log-info "Fetching board information...")
-          (-> (orgtrello-buffer-board-id)
-              orgtrello-api-get-board
-              (orgtrello-query-http-trello 'sync))))
-      (deferred:nextc it
-        (lambda (board)
-          (let ((members
-                 (->> board
-                      orgtrello-data-entity-memberships
-                      orgtrello-controller--compute-user-properties
-                      orgtrello-controller--compute-user-properties-hash)))
-            (orgtrello-controller-do-write-board-metadata
-             (orgtrello-data-entity-id board)
-             (orgtrello-data-entity-name board)
-             (orgtrello-buffer-me)
-             (orgtrello-data-entity-lists board)
-             (orgtrello-data-entity-labels board)
-             members))))
-      (deferred:nextc it
-        (lambda ()
-          (orgtrello-buffer-save-buffer buffer-name)
-          (orgtrello-action-reload-setup)
-          (orgtrello-log-msg orgtrello-log-info
-                             "Update board information done!"))))))
+  (let ((buffer-name (current-buffer))
+        (board-id (orgtrello-buffer-board-id))
+        (user-logged-in (orgtrello-buffer-me))
+        (prefix-log "Update board metadata..."))
+    (orgtrello-deferred-eval-computation
+     (list board-id user-logged-in buffer-name)
+     '('orgtrello-controller--fetch-board-information
+       'orgtrello-controller--update-buffer-with-board-metadata
+       'orgtrello-controller--save-buffer-and-reload-setup)
+     prefix-log)))
 
 (defun orgtrello-controller-do-show-board-labels ()
   "Open a pop and display the board's labels."

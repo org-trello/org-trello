@@ -2,6 +2,20 @@
 (require 'ert)
 (require 'el-mock)
 
+(ert-deftest test-orgtrello-controller-do-update-board-metadata ()
+  (should (eq :update-board-done
+              (with-mock
+                (mock (current-buffer) => :buffer-name)
+                (mock (orgtrello-buffer-board-id) => :board-id)
+                (mock (orgtrello-buffer-me) => :user-me)
+                (mock (orgtrello-deferred-eval-computation
+                       '(:board-id :user-me :buffer-name)
+                       '('orgtrello-controller--fetch-board-information
+                         'orgtrello-controller--update-buffer-with-board-metadata
+                         'orgtrello-controller--save-buffer-and-reload-setup)
+                       "Update board metadata...") => :update-board-done)
+                (orgtrello-controller-do-update-board-metadata)))))
+
 (ert-deftest test-orgtrello-controller--do-sync-card-comment ()
   (should (eq :sync-comment-done
               (with-mock
