@@ -69,6 +69,20 @@ This returns the buffer content after body-test has been performed."
       (buffer-substring-no-properties (point-min) (point-max)))
     ,nb-lines-forward))
 
+(defmacro orgtrello-tests-with-temp-buffer-and-return-content-with-props
+    (text body-test &optional nb-lines-forward)
+  "A `org-trello' mode buffer helper test on buffer.
+TEXT is the content of the buffer.
+BODY-TEST is the assertion to test on the buffer.
+NB-LINES-FORWARD is the number of lines to get back to.
+This returns the buffer content after body-test has been performed."
+  `(orgtrello-tests-with-temp-buffer
+    ,text
+    (progn
+      ,body-test
+      (buffer-substring (point-min) (point-max)))
+    ,nb-lines-forward))
+
 (defun orgtrello-tests-prepare-buffer ()
   "Prepare the buffer to receive org-trello data."
   (orgtrello-buffer-indent-card-descriptions)

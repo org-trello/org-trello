@@ -193,6 +193,21 @@ line 3
 "
                     (replace-regexp "line " "" nil (point-min) (point-max))))))
 
+(ert-deftest test-orgtrello-tests-with-temp-buffer-and-return-content-with-props ()
+  (should (equal #("1
+2
+3
+" 0 2 (line-prefix nil wrap-prefix nil)
+2 4 (line-prefix nil wrap-prefix nil)
+4 6 (line-prefix nil wrap-prefix nil))
+                 (orgtrello-tests-with-temp-buffer-and-return-content-with-props
+                  "line 1
+line 2
+line 3
+"
+                  (replace-regexp "line " "" nil (point-min) (point-max))))))
+
+
 (ert-deftest test-orgtrello-tests-prepare-buffer ()
   (should (string= "* card
   description

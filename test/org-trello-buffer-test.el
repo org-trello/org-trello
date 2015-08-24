@@ -2,6 +2,121 @@
 (require 'ert)
 (require 'el-mock)
 
+(ert-deftest test-orgtrello-buffer--parent-metadata ()
+  ;; on item, got back to checklist
+  (should (orgtrello-data-entity-checklist-p
+           (orgtrello-tests-with-temp-buffer
+            "* card
+  - [ ] checklist
+    - [ ] item
+"
+            (orgtrello-buffer--parent-metadata))))
+  ;; on checklist, got back to card
+  (should (orgtrello-data-entity-card-p
+           (orgtrello-tests-with-temp-buffer
+            "* card
+  - [ ] checklist
+    - [ ] item
+"
+            (orgtrello-buffer--parent-metadata)
+            -2)))
+  ;; already on top, stay as is
+  (should (orgtrello-data-entity-card-p
+           (orgtrello-tests-with-temp-buffer
+            "* card
+  - [ ] checklist
+    - [ ] item
+"
+            (orgtrello-buffer--parent-metadata)
+            -3))))
+
+(ert-deftest test-orgtrello-buffer--grandparent-metadata ()
+  ;; on item, got back to card
+  (should (orgtrello-data-entity-card-p
+           (orgtrello-tests-with-temp-buffer
+            "* card
+  - [ ] checklist
+    - [ ] item
+"
+            (orgtrello-buffer--grandparent-metadata))))
+
+  ;; on checklist, got back to card
+  (should (orgtrello-data-entity-card-p
+           (orgtrello-tests-with-temp-buffer
+            "* card
+  - [ ] checklist
+    - [ ] item
+"
+            (orgtrello-buffer--grandparent-metadata)
+            -2)))
+  ;; already on top, stay as is
+  (should (orgtrello-data-entity-card-p
+           (orgtrello-tests-with-temp-buffer
+            "* card
+  - [ ] checklist
+    - [ ] item
+"
+            (orgtrello-buffer--grandparent-metadata)
+            -3))))
+
+(ert-deftest test-orgtrello-buffer-org-up-parent ()
+  ;; on item, got back to checklist
+  (should (string= "  - [ ] checklist"
+                   (orgtrello-tests-with-temp-buffer
+                    "* card
+  - [ ] checklist
+    - [ ] item
+"
+                    (progn
+                      (orgtrello-buffer-org-up-parent)
+                      (buffer-substring-no-properties (point-at-bol) (point-at-eol))))))
+  ;; on checklist, got back to card
+  (should (string= "* card"
+                   (orgtrello-tests-with-temp-buffer
+                    "* card
+  - [ ] checklist
+    - [ ] item
+"
+                    (progn
+                      (orgtrello-buffer-org-up-parent)
+                      (buffer-substring-no-properties (point-at-bol) (point-at-eol)))
+                    -2)))
+  ;; already on top, stay as is
+  (should (string= "* card"
+                   (orgtrello-tests-with-temp-buffer
+                    "* card
+  - [ ] checklist
+    - [ ] item
+"
+                    (progn
+                      (orgtrello-buffer-org-up-parent)
+                      (buffer-substring-no-properties (point-at-bol) (point-at-eol)))
+                    -3))))
+
+(ert-deftest test-orgtrello-buffer-install-overlays () ;; not a real test, merely a check nothing breaks...
+  (should (string= "* card
+  - [ ] checklist :PROPERTIES: {\"id\": \"123\"}
+    - [ ] item  :PROPERTIES: {\"id\": \"456\"}
+"
+                   (orgtrello-tests-with-temp-buffer-and-return-buffer-content
+                    "* card
+  - [ ] checklist :PROPERTIES: {\"id\": \"123\"}
+    - [ ] item  :PROPERTIES: {\"id\": \"456\"}
+"
+                    (orgtrello-buffer-install-overlays)))))
+
+(ert-deftest test-orgtrello-buffer-org-return ()
+  (should (eq :result
+              (with-mock
+                (mock (orgtrello-buffer-org-decorator 'org-return) => :result)
+                (orgtrello-buffer-org-return)))))
+
+(ert-deftest test-orgtrello-buffer-org-ctrl-c-ret ()
+  (should (eq :result
+              (with-mock
+                (mock (orgtrello-buffer-org-decorator 'org-ctrl-c-ret) => :result)
+                (orgtrello-buffer-org-ctrl-c-ret)))))
+
 (ert-deftest test-orgtrello-buffer-card-entry-get ()
   (should (string= "123"
                    (orgtrello-tests-with-temp-buffer

@@ -517,14 +517,14 @@ Otherwise, work on the all buffer."
                    'org-trello-cbx-property))
 
 (defun orgtrello-buffer-install-overlays ()
-  "Install overlays throughout the all buffers.
+  "Install overlays throughout all buffer.
 Function to be triggered by `before-save-hook` on org-trello-mode buffer."
   (when (orgtrello-setup-org-trello-on-p)
     (orgtrello-buffer-remove-overlays)
     (save-excursion
       (goto-char (point-min))
-      (while (re-search-forward ":PROPERTIES: {.*" nil t)
-        (orgtrello-buffer-install-overlay (match-beginning 0))))))
+      (while (re-search-forward  "\\(:PROPERTIES: {.*}\\)" nil t)
+        (orgtrello-buffer-install-overlay (match-beginning 1))))))
 
 (defun orgtrello-buffer-indent-region (indent region)
   "Given an INDENT and a REGION, check if we need to indent.
