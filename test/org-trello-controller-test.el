@@ -2,6 +2,71 @@
 (require 'ert)
 (require 'el-mock)
 
+(ert-deftest test-orgtrello-controller-do-install-board-and-lists ()
+  (should (eq :install-board-and-lists-computation
+              (with-mock
+                (mock (current-buffer) => :buffername)
+                (mock (orgtrello-deferred-eval-computation
+                       '(:buffername)
+                       '('orgtrello-controller--fetch-boards
+                         'orgtrello-controller--fetch-user-logged-in
+                         'orgtrello-controller--choose-board-id
+                         'orgtrello-controller--fetch-board-information
+                         'orgtrello-controller--update-buffer-with-board-metadata
+                         'orgtrello-controller--save-buffer-and-reload-setup)
+                       "Install board metadata in buffer...") => :install-board-and-lists-computation)
+                (orgtrello-controller-do-install-board-and-lists)))))
+
+(ert-deftest test-orgtrello-controller--save-buffer-and-reload-setup ()
+  (should (eq :reload-setup-done
+              (with-mock
+                (mock (orgtrello-buffer-save-buffer :buffer-name) => :save-done)
+                (mock (orgtrello-action-reload-setup) => :reload-setup-done)
+                (orgtrello-controller--save-buffer-and-reload-setup '(:1 :2 :3 :4 :buffer-name))))))
+
+(ert-deftest test-orgtrello-controller--update-buffer-with-board-metadata ()
+  (should (equal '(:board :board-id :user-logged-in)
+                 (with-mock
+                   (mock (orgtrello-data-entity-memberships :board) => :memberships)
+                   (mock (orgtrello-controller--compute-user-properties :memberships) => :members)
+                   (mock (orgtrello-controller--compute-user-properties-hash :members) => :board-members)
+                   (mock (orgtrello-data-entity-name :board) => :board-name)
+                   (mock (orgtrello-data-entity-lists :board) => :board-lists)
+                   (mock (orgtrello-data-entity-labels :board) => :board-labels)
+                   (mock (orgtrello-controller-do-write-board-metadata :board-id
+                                                                       :board-name
+                                                                       :user-logged-in
+                                                                       :board-lists
+                                                                       :board-labels
+                                                                       :board-members) => :update-buffer-done)
+                   (orgtrello-controller--update-buffer-with-board-metadata '(:board :board-id :user-logged-in))))))
+
+(ert-deftest test-orgtrello-controller--fetch-boards ()
+  (should (equal '(:boards :buffername)
+                 (with-mock
+                   (mock (orgtrello-controller--list-boards) => :boards)
+                   (orgtrello-controller--fetch-boards '(:buffername))))))
+
+(ert-deftest test-orgtrello-controller--fetch-boards ()
+  (should (equal '(:user :boards)
+                 (with-mock
+                   (mock (orgtrello-controller--user-logged-in) => :user)
+                   (orgtrello-controller--fetch-user-logged-in '(:boards))))))
+
+(ert-deftest test-orgtrello-controller--choose-board-id ()
+  (should (equal '(:board-id-selected :user :boards :buffername)
+                 (with-mock
+                   (mock (orgtrello-controller--name-id :boards) => :boards-name-id)
+                   (mock (orgtrello-controller-choose-board :boards-name-id) => :board-id-selected)
+                   (orgtrello-controller--choose-board-id '(:user :boards :buffername))))))
+
+(ert-deftest test-orgtrello-controller--fetch-board-information ()
+  (should (equal '(:board-info :board-id :user :boards :buffername)
+                 (with-mock
+                   (mock (orgtrello-api-get-board :board-id) => :api-query-board)
+                   (mock (orgtrello-query-http-trello :api-query-board 'sync) => :board-info)
+                   (orgtrello-controller--fetch-board-information '(:board-id :user :boards :buffername))))))
+
 (ert-deftest test-orgtrello-controller--do-delete-card-comment ()
   (should (eq :deletion-done
               (with-mock

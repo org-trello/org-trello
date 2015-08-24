@@ -830,58 +830,74 @@ UPDATE-TODO-KEYWORDS is the org list of keywords."
     (goto-char (point-min))
     (org-cycle)))
 
+(defun orgtrello-controller--fetch-boards (data)
+  "Fetch open boards and return the result in DATA.
+DATA is a list (buffername)."
+  (-> (orgtrello-controller--list-boards)
+      (cons data)))
+
+(defun orgtrello-controller--fetch-user-logged-in (data)
+  "Fetch the user logged in and return the result in DATA.
+DATA is a list of (boards buffername)."
+  (-> (orgtrello-controller--user-logged-in)
+      (cons data)))
+
+(defun orgtrello-controller--choose-board-id (data)
+  "Choose the board-id routine.
+DATA is a list of (user-logged-in boards buffername)"
+  (-let (((user-logged-in boards &rest) data))
+    (-> boards
+        orgtrello-controller--name-id
+        orgtrello-controller-choose-board
+        (cons data))))
+
+(defun orgtrello-controller--fetch-board-information (data)
+  "Retrieve the detailed information on board from DATA.
+DATA is a list of (board-id user-logged-in boards buffername)."
+  (-> data
+      car
+      orgtrello-api-get-board
+      (orgtrello-query-http-trello 'sync)
+      (cons data)))
+
+(defun orgtrello-controller--update-buffer-with-board-metadata (data)
+  "Update properties in buffer from DATA.
+DATA is a list of (board board-id user-logged-in boards buffername)."
+  (-let* (((board board-id user-logged-in &rest) data)
+          (members
+           (->> board
+                orgtrello-data-entity-memberships
+                orgtrello-controller--compute-user-properties
+                orgtrello-controller--compute-user-properties-hash)))
+    (orgtrello-controller-do-write-board-metadata
+     board-id
+     (orgtrello-data-entity-name board)
+     user-logged-in
+     (orgtrello-data-entity-lists board)
+     (orgtrello-data-entity-labels board)
+     members)
+    data))
+
+(defun orgtrello-controller--save-buffer-and-reload-setup (data)
+  "Save the buffer and reload the setup from DATA.
+DATA is a list of (board board-id user-logged-in boards buffername)."
+  (-let (((_ _ _ _ buffer-name) data))
+    (orgtrello-buffer-save-buffer buffer-name)
+    (orgtrello-action-reload-setup)))
+
 (defun orgtrello-controller-do-install-board-and-lists ()
   "Command to install the list boards."
-  (lexical-let ((buffer-name (current-buffer)))
-    (deferred:$
-      (deferred:parallel ;; retrieve in // open boards and currently logged user
-        (deferred:next
-          (lambda ()
-            (orgtrello-log-msg orgtrello-log-info
-                               "Fetching boards information..")
-            (orgtrello-controller--list-boards)))
-        (deferred:next
-          (lambda ()
-            (orgtrello-log-msg orgtrello-log-info
-                               "Fetching user's information...")
-            (orgtrello-controller--user-logged-in))))
-      (deferred:nextc it
-        (lambda (boards-and-user-logged-in)
-          (let* ((boards         (elt boards-and-user-logged-in 0))
-                 (user-logged-in (orgtrello-data-entity-username
-                                  (elt boards-and-user-logged-in 1)))
-                 (selected-id-board (->> boards
-                                         orgtrello-controller--name-id
-                                         orgtrello-controller-choose-board)))
-            (list selected-id-board user-logged-in))))
-      (deferred:nextc it
-        (lambda (board-id-and-user-logged-in)
-          (-> board-id-and-user-logged-in
-              car
-              orgtrello-api-get-board
-              (orgtrello-query-http-trello 'sync)
-              (cons board-id-and-user-logged-in))))
-      (deferred:nextc it
-        (lambda (board-and-user)
-          (-let* (((board board-id user-logged-in) board-and-user)
-                  (members
-                   (->> board
-                        orgtrello-data-entity-memberships
-                        orgtrello-controller--compute-user-properties
-                        orgtrello-controller--compute-user-properties-hash)))
-            (orgtrello-controller-do-write-board-metadata
-             board-id
-             (orgtrello-data-entity-name board)
-             user-logged-in
-             (orgtrello-data-entity-lists board)
-             (orgtrello-data-entity-labels board)
-             members))))
-      (deferred:nextc it
-        (lambda ()
-          (orgtrello-buffer-save-buffer buffer-name)
-          (orgtrello-action-reload-setup)
-          (orgtrello-log-msg orgtrello-log-info
-                             "Install board and list ids done!"))))))
+  (let ((buffer-name (current-buffer))
+        (prefix-log "Install board metadata in buffer..."))
+    (orgtrello-deferred-eval-computation
+     (list buffer-name)
+     '('orgtrello-controller--fetch-boards
+       'orgtrello-controller--fetch-user-logged-in
+       'orgtrello-controller--choose-board-id
+       'orgtrello-controller--fetch-board-information
+       'orgtrello-controller--update-buffer-with-board-metadata
+       'orgtrello-controller--save-buffer-and-reload-setup)
+     prefix-log)))
 
 (defun orgtrello-controller--compute-user-properties (memberships-map)
   "Given a map MEMBERSHIPS-MAP, extract the map of user information."
