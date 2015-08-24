@@ -2,6 +2,65 @@
 (require 'ert)
 (require 'el-mock)
 
+(ert-deftest test-orgtrello-controller--update-buffer-from-data ()
+  (should (string= ":PROPERTIES:
+#+PROPERTY: board-name :board-name
+#+PROPERTY: board-id :board-id
+#+PROPERTY: in-progress 2
+#+PROPERTY: todo 1
+#+TODO: todo in-progress
+#+PROPERTY: orgtrello-user-ted :user-id
+#+PROPERTY: :orange
+#+PROPERTY: :blue
+#+PROPERTY: :purple
+#+PROPERTY: :yellow
+#+PROPERTY: :green
+#+PROPERTY: :red
+#+PROPERTY: orgtrello-user-me ted
+:END:
+"
+                   (orgtrello-tests-with-temp-buffer-and-return-buffer-content
+                    ""
+                    (orgtrello-controller--update-buffer-from-data
+                     `(,(orgtrello-hash-make-properties '(("todo" . "1")
+                                                          ("in-progress" . "2")))
+                       ,(orgtrello-hash-make-properties '((:id . ":user-id")
+                                                          (:username . "ted")))
+                       ,(orgtrello-hash-make-properties '((:id . ":board-id")))
+                       ":board-name"
+                       ":board-description"
+                       ("todo" "in-progress")
+                       ":buffername"))))))
+
+(ert-deftest test-orgtrello-controller--create-user-lists-to-board ()
+  (should (equal '(:created-list-done :user :board :1 :2 :org-keywords)
+                 (with-mock
+                   (mock (orgtrello-data-entity-id :board) => :board-id)
+                   (mock (orgtrello-controller--create-lists-according-to-keywords :board-id :org-keywords) => :created-list-done)
+                   (orgtrello-controller--create-user-lists-to-board '(:user :board :1 :2 :org-keywords))))))
+
+(ert-deftest test-orgtrello-controller--close-board-default-lists ()
+  (should (equal '(:user :board :1 :2)
+                 (with-mock
+                   (mock (orgtrello-data-entity-id :board) => :board-id)
+                   (mock (orgtrello-controller--list-board-lists :board-id) => :lists-to-close)
+                   (mock (mapcar 'orgtrello-data-entity-id :lists-to-close) => :list-ids-to-close)
+                   (mock (orgtrello-controller--close-lists :list-ids-to-close) => :close-lists-done)
+                   (orgtrello-controller--close-board-default-lists '(:user :board :1 :2))))))
+
+(ert-deftest test-orgtrello-controller--create-new-board ()
+  (should (equal '(:board-created :board-name :board-desc)
+                 (with-mock
+                   (mock (orgtrello-controller--create-board :board-name :board-desc) => :board-created)
+                   (orgtrello-controller--create-new-board '(:board-name :board-desc))))))
+
+(ert-deftest test-orgtrello-controller--input-new-board-information ()
+  (should (equal '(:board-name :board-desc :org-keywords :buffername)
+                 (with-mock
+                   (mock (orgtrello-input-read-not-empty "Please, input desired board name: ") => :board-name)
+                   (mock (orgtrello-input-read-string "Please, input board description (empty for none): ") => :board-desc)
+                   (orgtrello-controller--input-new-board-information '(:org-keywords :buffername))))))
+
 (ert-deftest test-orgtrello-controller-do-install-board-and-lists ()
   (should (eq :install-board-and-lists-computation
               (with-mock
@@ -1730,7 +1789,10 @@ Also, you can specify on your org-mode buffer the todo list you want to work wit
 (ert-deftest test-orgtrello-controller--properties-labels ()
   (should (equal
            '("#+PROPERTY: :green green label" "#+PROPERTY: :red red label")
-           (orgtrello-controller--properties-labels (orgtrello-hash-make-properties '((:red . "red label") (:green . "green label")))))))
+           (orgtrello-controller--properties-labels (orgtrello-hash-make-properties '((:red . "red label") (:green . "green label"))))))
+  (should (equal
+           '("#+PROPERTY: :orange" "#+PROPERTY: :green green label" "#+PROPERTY: :red red label")
+           (orgtrello-controller--properties-labels (orgtrello-hash-make-properties '((:red . "red label") (:green . "green label") (:orange . "")))))))
 
 (ert-deftest test-orgtrello-controller-load-keys ()
   (should (equal :ok
