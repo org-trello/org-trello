@@ -19,6 +19,7 @@
        "org-trello-date.el"
        "org-trello-buffer.el"
        "org-trello-input.el"
+       "org-trello-deferred.el"
        "org-trello-controller.el"
        "README.md")
 
