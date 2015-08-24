@@ -1,3 +1,21 @@
+# 0.7.4
+
+- [X] Improve release script + fix typo
+- [X] Update version
+- [X] Coverage [10/10]
+  - [X] stats-coverage.org for statistics (+ travis-ci/coverage.io)
+  - [X] Fix bug on org-trello-log namespace + org-trello-log
+  - [X] org-trello-input
+  - [X] org-trello-query
+  - [X] org-trello-proxy
+  - [X] org-trello-buffer
+  - [X] org-trello-controller
+  - [X] org-trello-data
+  - [X] org-trello-hash
+  - [X] org-trello
+- [X] #283 - Toggle assign me action
+- [X] Release notes
+
 # 0.7.3
 
 - [X] Update version

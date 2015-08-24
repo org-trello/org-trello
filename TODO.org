@@ -33,7 +33,7 @@
 - [ ] #248 - Installing from melpa (unstable) works, but then it errs on an undefined variable "error-messages"
 - [ ] #263 - Colors broken in org trello
 
-* IN-PROGRESS 0.7.4 [80%]
+* IN-PROGRESS 0.7.4 [100%]
 - [X] Improve release script + fix typo
 - [X] Update version
 - [X] Coverage [10/10]
@@ -48,7 +48,7 @@
   - [X] org-trello-hash
   - [X] org-trello
 - [X] #283 - Toggle assign me action
-- [ ] Release notes
+- [X] Release notes
 
 * DONE 0.7.3 [100%]
 CLOSED: [2015-08-14 Fri 22:37]
