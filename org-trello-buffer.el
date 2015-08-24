@@ -478,10 +478,11 @@ FN-TO-EXECUTE is a function without any parameters."
    (lambda ()
      (let ((current-checksum (orgtrello-buffer-card-checksum))
            (previous-checksum (orgtrello-buffer-get-card-local-checksum)))
-       (unless (string= current-checksum previous-checksum)
-         (funcall fn-to-execute)
-         (orgtrello-cbx-map-checkboxes fn-to-execute))))
-   nil nil 'comment))
+       (unless (or (orgtrello-entity-org-comment-p) ;; we should not have to do it ourselves...
+                   (string= current-checksum previous-checksum))
+         (cons (funcall fn-to-execute)
+               (orgtrello-cbx-map-checkboxes fn-to-execute)))))
+   nil nil 'comment 'archive)) ;; erf... the comment are supposed to be skipped... by org-map-entities and are not so we code it
 
 (defun orgtrello-buffer-get-usernames-assigned-property ()
   "Read the org users property from the current entry."

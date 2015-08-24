@@ -2,6 +2,41 @@
 (require 'ert)
 (require 'el-mock)
 
+(ert-deftest test-orgtrello-buffer-org-map-entities-without-params ()
+  (should (equal '(("local-card-checksum-1" "local-checklist-checksum-1" "local-item-checksum-1")
+                   nil
+                   ("local-card-checksum-2")
+                   ("local-card-checksum-3"))
+                 (orgtrello-tests-with-temp-buffer
+                  "* card
+:PROPERTIES:
+:orgtrello-id: card-id-1
+:orgtrello-local-checksum: local-card-checksum-1
+:END:
+  - [ ] checklist :PROPERTIES: {\"orgtrello-id\": \"checklist-id-1\",\"orgtrello-local-checksum\":\"local-checklist-checksum-1\"}
+    - [ ] item :PROPERTIES: {\"orgtrello-id\": \"item-id-1\",\"orgtrello-local-checksum\":\"local-item-checksum-1\"}
+** COMMENT
+:PROPERTIES:
+:orgtrello-id: comment-id-1
+:orgtrello-local-checksum: local-comment-checksum-1
+:END:
+this comment will be ignored
+* card 2
+:PROPERTIES:
+:orgtrello-id: card-id-2
+:orgtrello-local-checksum: local-card-checksum-2
+:END:
+* card 3
+:PROPERTIES:
+:orgtrello-id: card-id-3
+:orgtrello-local-checksum: local-card-checksum-3
+:END:
+"
+                  (orgtrello-buffer-org-map-entities-without-params 'orgtrello-buffer-get-local-checksum)))))
+
+(ert-deftest test-orgtrello-buffer-org-get-property ()
+  (should (eq :id-to-find (orgtrello-buffer-org-get-property :id '((:id . :id-to-find))))))
+
 (ert-deftest test-orgtrello-buffer-archive-cards ()
   (should (equal '(:archive-done nil :archive-done)
                  (orgtrello-tests-with-temp-buffer
