@@ -1,4 +1,4 @@
-;;; load-org-trello.el --- Load the namespaces of org-trello in a dev or test context
+;;; org-trello-tools.el --- Load the namespaces of org-trello in a dev or test context
 ;;; Commentary:
 ;;; Code:
 
@@ -27,7 +27,7 @@
                                "org-trello-deferred.el"
                                "org-trello.el"))
 
-(defun org-trello-dev-load-namespaces ()
+(defun org-trello-tools-load-namespaces ()
   "Load the org-trello namespaces."
   (interactive)
   ;; recompile code
@@ -39,7 +39,7 @@
    '(orgtrello-log-level orgtrello-log-info))
   (orgtrello-log-msg orgtrello-log-info "Code loaded!"))
 
-(defun org-trello-dev-remove-bindings ()
+(defun org-trello-tools-remove-bindings ()
   "Remove bindings."
   (interactive)
   ;; Remove old bindings
@@ -50,7 +50,7 @@
   ;; install the default one
   (orgtrello-setup-install-local-prefix-mode-keybinding "C-c o"))
 
-(defun org-trello-dev-find-unused-definitions ()
+(defun org-trello-tools-find-unused-definitions ()
   "Find unused definitions."
   (interactive)
   (let ((filename "/tmp/org-trello-find-unused-definitions.el"))
@@ -63,22 +63,22 @@
       (write-file filename)
       (call-interactively 'emr-el-find-unused-definitions))))
 
-(defun org-trello-dev-load-tests ()
+(defun org-trello-tools-load-tests ()
   "Load the load-org-trello-tests.el file."
   (interactive)
   (load-file "load-org-trello-tests.el"))
 
 (require 'org-trello)
 
-(define-key emacs-lisp-mode-map (kbd "C-c o r") 'org-trello-dev-load-namespaces)
-(define-key emacs-lisp-mode-map (kbd "C-c o t") 'org-trello-dev-load-tests)
-(define-key emacs-lisp-mode-map (kbd "C-c o f") 'org-trello-dev-find-unused-definitions)
+(define-key emacs-lisp-mode-map (kbd "C-c o r") 'org-trello-tools-load-namespaces)
+(define-key emacs-lisp-mode-map (kbd "C-c o t") 'org-trello-tools-load-tests)
+(define-key emacs-lisp-mode-map (kbd "C-c o f") 'org-trello-tools-find-unused-definitions)
 
-(define-key org-trello-mode-map (kbd "C-c o r") 'org-trello-dev-load-namespaces)
-(define-key org-trello-mode-map (kbd "C-c o t") 'org-trello-dev-load-tests)
-(define-key org-trello-mode-map (kbd "C-c o f") 'org-trello-dev-find-unused-definitions)
+(define-key org-trello-mode-map (kbd "C-c o r") 'org-trello-tools-load-namespaces)
+(define-key org-trello-mode-map (kbd "C-c o t") 'org-trello-tools-load-tests)
+(define-key org-trello-mode-map (kbd "C-c o f") 'org-trello-tools-find-unused-definitions)
 
 (orgtrello-log-msg orgtrello-log-info "org-trello loaded!")
 
-(provide 'load-org-trello)
-;;; load-org-trello.el ends here
+(provide 'org-trello-tools)
+;;; org-trello-tools.el ends here
