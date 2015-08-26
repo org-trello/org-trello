@@ -663,7 +663,9 @@ This returns the identifier of such board."
 
 (defun orgtrello-controller--convention-property-name (name)
   "Given a NAME, use the org property convention used in org-file headers."
-  (replace-regexp-in-string " " "-" name))
+  (->> name
+       (replace-regexp-in-string " " "-")
+       (replace-regexp-in-string "[()]" "")))
 
 (defun orgtrello-controller--delete-buffer-property (property-name)
   "A simple routine to delete a #+PROPERTY: PROPERTY-NAME from the buffer."

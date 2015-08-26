@@ -901,7 +901,8 @@ See http://org-trello.github.io/trello-setup.html#credentials for more informati
                      (orgtrello-controller-execute-sync-entity-structure :entities-adj))))))
 
 (ert-deftest test-orgtrello-controller--convention-property-name ()
-  (should (string= "-bla-bli-blo-" (orgtrello-controller--convention-property-name " bla bli blo "))))
+  (should (string= "-bla-bli-blo-" (orgtrello-controller--convention-property-name " bla bli blo ")))
+  (should (string= "some-made-up-name-with-parenthesis" (orgtrello-controller--convention-property-name "some made-up name with (parenthesis)"))))
 
 (ert-deftest test-orgtrello-controller-prepare-buffer ()
   (should (eq :prepared-buffer-done
