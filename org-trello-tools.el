@@ -5,8 +5,6 @@
 (defvar org-trello-home (or (getenv "ORGTRELLO_HOME") (expand-file-name "."))
   "Org-trello home.")
 
-(add-to-list 'load-path org-trello-home)
-
 (defvar org-trello-tools--namespaces '() "Org-trello namespaces for development purposes.")
 (setq org-trello-tools--namespaces '("org-trello-log.el"
                                "org-trello-setup.el"
@@ -30,6 +28,7 @@
 (defun org-trello-tools-load-namespaces ()
   "Load the org-trello namespaces."
   (interactive)
+  (add-to-list 'load-path org-trello-home)
   ;; recompile code
   (mapc (lambda (it) (load-with-code-conversion (concat org-trello-home "/" it) it)) org-trello-tools--namespaces)
   (require 'org-trello)
@@ -66,15 +65,6 @@
 (defconst orgtrello-tests-test-folder "./test"
   "Folder where tests files are defined.")
 
-;; Add test folder to the load path
-(add-to-list 'load-path (expand-file-name orgtrello-tests-test-folder))
-
-(message "Loading tests done!")
-
-;; force loading
-
-(require 'load-org-trello)
-
 (defvar orgtrello-tools--tests-namespaces '() "Org-trello test namespaces for development purposes.")
 (setq orgtrello-tools--tests-namespaces '("test/utilities-test.el"
                                           "test/org-trello-setup-test.el"
@@ -96,6 +86,8 @@
 (defun org-trello-tools-load-test-namespaces ()
   "Load the org-trello's test namespaces."
   (interactive)
+  ;; Add test folder to the load path
+  (add-to-list 'load-path (expand-file-name orgtrello-tests-test-folder))
   (mapc #'load-file orgtrello-tools--tests-namespaces)
   (require 'org-trello)
   (orgtrello-log-msg orgtrello-log-info "Tests loaded!"))
@@ -240,20 +232,22 @@ Otherwise, default to current buffer."
 (fset 'org-trello-tools-org-raw-coverage
       (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([tab tab tab 201326624 201326624 backspace tab S-iso-lefttab S-iso-lefttab S-iso-lefttab 201326624 201326624 backspace tab S-iso-lefttab S-iso-lefttab 201326624 201326624 201326624 134217848 111 114 103 116 114 101 108 108 111 45 116 101 115 116 115 45 99 111 117 110 116 45 102 117 110 99 116 105 111 110 115 13 134217736 tab 25 46 48 9 201326624 201326624 201326624 134217848 111 114 103 116 114 101 108 108 111 45 116 101 115 116 115 45 99 111 117 110 116 45 110 117 109 98 101 114 45 116 101 115 116 115 13 134217736 9 25 46 48 9 3 42 21 3 42 9] 0 "%d")) arg)))
 
-(define-key emacs-lisp-mode-map (kbd "C-c o d") 'org-trello-tools-load-namespaces)
-(define-key emacs-lisp-mode-map (kbd "C-c o D") 'org-trello-tools-find-next-error)
-(define-key emacs-lisp-mode-map (kbd "C-c o r") 'org-trello-tools-load-namespaces)
-(define-key emacs-lisp-mode-map (kbd "C-c o t") 'org-trello-tools-load-test-namespaces)
-(define-key emacs-lisp-mode-map (kbd "C-c o f") 'org-trello-tools-find-unused-definitions)
-(define-key emacs-lisp-mode-map (kbd "C-c o o") 'org-trello-tools-org-raw-coverage)
+(require 'org-trello)
+(add-hook 'emacs-lisp-mode-hook (lambda ()
+                                  (define-key emacs-lisp-mode-map (kbd "C-c o d") 'org-trello-tools-load-namespaces)
+                                  (define-key emacs-lisp-mode-map (kbd "C-c o D") 'org-trello-tools-find-next-error)
+                                  (define-key emacs-lisp-mode-map (kbd "C-c o r") 'org-trello-tools-load-namespaces)
+                                  (define-key emacs-lisp-mode-map (kbd "C-c o t") 'org-trello-tools-load-test-namespaces)
+                                  (define-key emacs-lisp-mode-map (kbd "C-c o f") 'org-trello-tools-find-unused-definitions)
+                                  (define-key emacs-lisp-mode-map (kbd "C-c o o") 'org-trello-tools-org-raw-coverage)))
 
-(define-key org-trello-mode-map (kbd "C-c o d") 'org-trello-tools-load-namespaces)
-(define-key org-trello-mode-map (kbd "C-c o D") 'org-trello-tools-find-next-error)
-(define-key org-trello-mode-map (kbd "C-c o r") 'org-trello-tools-load-namespaces)
-(define-key org-trello-mode-map (kbd "C-c o t") 'org-trello-tools-load-test-namespaces)
-(define-key org-trello-mode-map (kbd "C-c o f") 'org-trello-tools-find-unused-definitions)
-(define-key org-trello-mode-map (kbd "C-c o o") 'org-trello-tools-org-raw-coverage)
-
+(add-hook 'org-trello-mode-hook (lambda ()
+                                  (define-key org-trello-mode-map (kbd "C-c o d") 'org-trello-tools-load-namespaces)
+                                  (define-key org-trello-mode-map (kbd "C-c o D") 'org-trello-tools-find-next-error)
+                                  (define-key org-trello-mode-map (kbd "C-c o r") 'org-trello-tools-load-namespaces)
+                                  (define-key org-trello-mode-map (kbd "C-c o t") 'org-trello-tools-load-test-namespaces)
+                                  (define-key org-trello-mode-map (kbd "C-c o f") 'org-trello-tools-find-unused-definitions)
+                                  (define-key org-trello-mode-map (kbd "C-c o o") 'org-trello-tools-org-raw-coverage)))
 
 (provide 'org-trello-tools)
 ;;; org-trello-tools.el ends here
