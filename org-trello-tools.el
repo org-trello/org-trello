@@ -7,23 +7,23 @@
 
 (defvar org-trello-tools--namespaces '() "Org-trello namespaces for development purposes.")
 (setq org-trello-tools--namespaces '("org-trello-log.el"
-                               "org-trello-setup.el"
-                               "org-trello-action.el"
-                               "org-trello-api.el"
-                               "org-trello-backend.el"
-                               "org-trello-entity.el"
-                               "org-trello-cbx.el"
-                               "org-trello-date.el"
-                               "org-trello-buffer.el"
-                               "org-trello-controller.el"
-                               "org-trello-hash.el"
-                               "org-trello-data.el"
-                               "org-trello-input.el"
-                               "org-trello-proxy.el"
-                               "org-trello-query.el"
-                               "org-trello-utils.el"
-                               "org-trello-deferred.el"
-                               "org-trello.el"))
+                                     "org-trello-setup.el"
+                                     "org-trello-action.el"
+                                     "org-trello-api.el"
+                                     "org-trello-backend.el"
+                                     "org-trello-entity.el"
+                                     "org-trello-cbx.el"
+                                     "org-trello-date.el"
+                                     "org-trello-buffer.el"
+                                     "org-trello-controller.el"
+                                     "org-trello-hash.el"
+                                     "org-trello-data.el"
+                                     "org-trello-input.el"
+                                     "org-trello-proxy.el"
+                                     "org-trello-query.el"
+                                     "org-trello-utils.el"
+                                     "org-trello-deferred.el"
+                                     "org-trello.el"))
 
 (defun org-trello-tools-load-namespaces ()
   "Load the org-trello namespaces."
@@ -232,7 +232,6 @@ Otherwise, default to current buffer."
 (fset 'org-trello-tools-org-raw-coverage
       (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([tab tab tab 201326624 201326624 backspace tab S-iso-lefttab S-iso-lefttab S-iso-lefttab 201326624 201326624 backspace tab S-iso-lefttab S-iso-lefttab 201326624 201326624 201326624 134217848 111 114 103 116 114 101 108 108 111 45 116 101 115 116 115 45 99 111 117 110 116 45 102 117 110 99 116 105 111 110 115 13 134217736 tab 25 46 48 9 201326624 201326624 201326624 134217848 111 114 103 116 114 101 108 108 111 45 116 101 115 116 115 45 99 111 117 110 116 45 110 117 109 98 101 114 45 116 101 115 116 115 13 134217736 9 25 46 48 9 3 42 21 3 42 9] 0 "%d")) arg)))
 
-(require 'org-trello)
 (add-hook 'emacs-lisp-mode-hook (lambda ()
                                   (define-key emacs-lisp-mode-map (kbd "C-c o d") 'org-trello-tools-load-namespaces)
                                   (define-key emacs-lisp-mode-map (kbd "C-c o D") 'org-trello-tools-find-next-error)
