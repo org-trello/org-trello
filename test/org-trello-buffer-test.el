@@ -902,37 +902,49 @@ another description which will be indented
 "
                     (orgtrello-buffer-get-usernames-assigned-property)))))
 
+(ert-deftest test-orgtrello-buffer--usernames-to-id ()
+  (should (equal '("1" "2")
+                 (orgtrello-buffer--usernames-to-id (orgtrello-hash-make-properties '(("orgtrello-user-user1" . "1")
+                                                                                      ("orgtrello-user-user2" . "2")))
+                                                    '("user1" "user2"))))
+  (should-not (orgtrello-buffer--usernames-to-id (orgtrello-hash-make-properties '(("user1" . "1")
+                                                                                   ("user2" . "2")))
+                                                 nil))
+  (should-not (orgtrello-buffer--usernames-to-id nil nil))
+  (should-error (orgtrello-buffer--usernames-to-id nil '("1"))
+                :type 'wrong-type-argument))
+
 (ert-deftest test-orgtrello-buffer--user-ids-assigned-to-current-card ()
   (should (string= "123,456"
-                 (orgtrello-tests-with-temp-buffer
-                  "* card
+                   (orgtrello-tests-with-temp-buffer
+                    "* card
 :PROPERTIES:
 :orgtrello-users: user1,user2
 :END:
   description
 "
-                  (let ((org-trello--label-key-user-prefix "ot-u-")
-                        (org-trello--hmap-users-name-id (orgtrello-hash-make-properties '(("ot-u-user1" . "123") ("ot-u-user2" . "456")))))
-                    (orgtrello-buffer--user-ids-assigned-to-current-card))))))
+                    (let ((org-trello--label-key-user-prefix "ot-u-")
+                          (org-trello--hmap-users-name-id (orgtrello-hash-make-properties '(("ot-u-user1" . "123") ("ot-u-user2" . "456")))))
+                      (orgtrello-buffer--user-ids-assigned-to-current-card))))))
 
 (ert-deftest test-orgtrello-buffer-org-entry-get ()
   (should (string= "card-id-123"
-                 (orgtrello-tests-with-temp-buffer
-                  "* card
+                   (orgtrello-tests-with-temp-buffer
+                    "* card
 :PROPERTIES:
 :org-id: card-id-123
 :END:"
-                  (orgtrello-buffer-org-entry-get (point-min) "org-id"))))
+                    (orgtrello-buffer-org-entry-get (point-min) "org-id"))))
   (should (string= "checklist-id-456"
-                 (orgtrello-tests-with-temp-buffer
-                  "- [ ] checklist :PROPERTIES: {\"cbx-id\":\"checklist-id-456\"}
+                   (orgtrello-tests-with-temp-buffer
+                    "- [ ] checklist :PROPERTIES: {\"cbx-id\":\"checklist-id-456\"}
 "
-                  (orgtrello-buffer-org-entry-get (point-min) "cbx-id"))))
+                    (orgtrello-buffer-org-entry-get (point-min) "cbx-id"))))
   (should (string= "item-id-789"
-                 (orgtrello-tests-with-temp-buffer
-                  "  - [ ] item :PROPERTIES: {\"itm-id\":\"item-id-789\"}
+                   (orgtrello-tests-with-temp-buffer
+                    "  - [ ] item :PROPERTIES: {\"itm-id\":\"item-id-789\"}
 "
-                  (orgtrello-buffer-org-entry-get (point-min) "itm-id")))))
+                    (orgtrello-buffer-org-entry-get (point-min) "itm-id")))))
 
 (ert-deftest test-orgtrello-buffer-extract-identifier ()
   (should (string= "card-id-321"

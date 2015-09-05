@@ -590,14 +590,21 @@ Deal with org entities and checkbox as well."
                'orgtrello-cbx-org-get-property
              'orgtrello-buffer-card-entry-get) point key))
 
+(defun orgtrello-buffer--usernames-to-id (usernames-ids usernames)
+  "Given USERNAMES-IDS, compute convention name from USERNAMES to a list of ids.
+:: Dict String Id -> [String] -> [Id]"
+  (-map (-compose (-rpartial #'gethash usernames-ids)
+                  (-partial #'format "%s%s" org-trello--label-key-user-prefix))
+        usernames))
+
 (defun orgtrello-buffer--user-ids-assigned-to-current-card ()
-  "Compute the user ids assigned to the current card."
-  (--> (orgtrello-buffer-get-usernames-assigned-property)
-       (orgtrello-data--users-from it)
-       (-map (-compose (-rpartial #'gethash org-trello--hmap-users-name-id)
-                       (-partial #'format "%s%s" org-trello--label-key-user-prefix))
-             it)
-       (orgtrello-data--users-to it)))
+  "Compute the user ids assigned to the current card.
+Retrieve the csv string of usernames, recompute the list of org-trello
+properties and map it to a string of ids."
+  (->> (orgtrello-buffer-get-usernames-assigned-property)
+       orgtrello-data--users-from
+       (orgtrello-buffer--usernames-to-id org-trello--hmap-users-name-id)
+       orgtrello-data--users-to))
 
 (defun orgtrello-buffer--extract-description-at-point ()
   "Extract description at point depending on the entity's nature."

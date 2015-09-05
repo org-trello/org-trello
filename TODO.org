@@ -33,6 +33,11 @@
 - [ ] #248 - Installing from melpa (unstable) works, but then it errs on an undefined variable "error-messages"
 - [ ] #263 - Colors broken in org trello
 
+* IN-PROGRESS 0.7.5 [50%]
+- [X] Update version
+- [X] #290 - Toggling users assignments to card
+- [ ] #291 - Improve labels policy
+- [ ] Release notes
 * DONE 0.7.4 [100%]
 CLOSED: [2015-08-24 Mon 23:39]
 - [X] Improve release script + fix typo

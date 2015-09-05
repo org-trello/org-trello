@@ -18,7 +18,6 @@
 (require 'org-trello-deferred)
 (require 'dash-functional)
 (require 's)
-(require 'ido)
 
 (defun orgtrello-controller-log-success (prefix-log)
   "Return a function to log the success with PREFIX-LOG as prefix string."
@@ -135,11 +134,9 @@ If USERNAME is supplied, do not look into the current buffer."
 (defun orgtrello-controller--choose-account (accounts)
   "Let the user decide which ACCOUNTS (s)he wants to use.
 Return such account name."
-  (message "account: %s" accounts)
-  (ido-completing-read "Select org-trello account (TAB to complete): "
-                       accounts
-                       nil
-                       'user-must-input-from-list))
+  (orgtrello-input-read-string-completion
+   "Select org-trello account (TAB to complete): "
+   accounts))
 
 (defun orgtrello-controller-set-account (&optional args)
   "Set the org-trello account.
@@ -655,10 +652,9 @@ Synchronous request."
 (defun orgtrello-controller-choose-board (boards)
   "Given a BOARDS map, ask the user to choose from.
 This returns the identifier of such board."
-  (-> (ido-completing-read "Board to install (TAB to complete): "
-                           (orgtrello-hash-keys boards)
-                           nil
-                           'user-must-input-something-from-list)
+  (-> (orgtrello-input-read-string-completion
+       "Board to install (TAB to complete): "
+       (orgtrello-hash-keys boards))
       (gethash boards)))
 
 (defun orgtrello-controller--convention-property-name (name)
@@ -1057,38 +1053,78 @@ DATA is a list of (user board board-name board-desc org-keywords buffername)."
       (remove user users)
     users))
 
+(defun orgtrello-controller--remove-prefix-usernames (usernames)
+  "Given USERNAMES-IDS, compute convention name from USERNAMES to a list of ids.
+:: [String] -> [String]"
+  (-map (-partial #'s-chop-prefix org-trello--label-key-user-prefix) usernames))
+
+(defun orgtrello-controller--usernames (users-id-name)
+  "Given USERS-ID-NAME, return usernames without org-trello naming convention.
+Dict Id String -> [String]"
+  (->> (orgtrello-hash-values users-id-name)
+       (-filter
+        (-compose 'not
+                  (-partial 'equal org-trello--property-user-me)))
+       orgtrello-controller--remove-prefix-usernames))
+
+(defun orgtrello-controller-toggle-assign-user ()
+  "Command to let the user choose users to assign to card.
+:: () -> ()"
+  (->> (orgtrello-setup-users)
+       orgtrello-controller--usernames
+       (orgtrello-input-read-string-completion
+        "Users to assign (TAB to complete): ")
+       orgtrello-controller--toggle-assign-unassign-user))
+
+(defun orgtrello-controller--unassign-user (username users-assigned)
+  "Given a USERNAME, and current USERS-ASSIGNED, unassign it from a card.
+:: String -> [String] -> ()"
+  (-> username
+      (orgtrello-controller--remove-user users-assigned)
+      orgtrello-data--users-to
+      orgtrello-buffer-set-usernames-assigned-property))
+
+(defun orgtrello-controller--assign-user (username users-assigned)
+  "Given a USERNAME, and current USERS-ASSIGNED, assign it to the card at point.
+:: String -> [String] -> ()"
+  (-> username
+      (orgtrello-controller--add-user users-assigned)
+      orgtrello-data--users-to
+      orgtrello-buffer-set-usernames-assigned-property))
+
+(defun orgtrello-controller--users-assigned ()
+  "Retrieve the users assigned as list.
+:: () -> [String]"
+  (->> (orgtrello-buffer-get-usernames-assigned-property)
+       orgtrello-data--users-from))
+
+(defun orgtrello-controller--toggle-assign-unassign-user (username)
+  "Command to toggle assign/unassign USERNAME from card.
+:: String -> ()"
+  (let ((users-assigned (orgtrello-controller--users-assigned)))
+    (if (member username users-assigned)
+        (orgtrello-controller--unassign-user username users-assigned)
+      (orgtrello-controller--assign-user username users-assigned))))
+
 (defun orgtrello-controller-toggle-assign-unassign-oneself ()
-  "Command to toggle assign/unassign oneself from card."
-  (let ((user-me org-trello--user-logged-in)
-        (users-assigned (->> (orgtrello-buffer-get-usernames-assigned-property)
-                             orgtrello-data--users-from)))
-    (if (member user-me users-assigned)
-        ;; unassign
-        (-> user-me
-            (orgtrello-controller--remove-user users-assigned)
-            orgtrello-data--users-to
-            orgtrello-buffer-set-usernames-assigned-property)
-      ;; assign
-      (-> user-me
-          (orgtrello-controller--add-user users-assigned)
-          orgtrello-data--users-to
-          orgtrello-buffer-set-usernames-assigned-property))))
+  "Command to toggle assign/unassign oneself from card.
+:: () -> ()"
+  (-> (orgtrello-setup-user-logged-in)
+      orgtrello-controller--toggle-assign-unassign-user))
 
 (defun orgtrello-controller-do-assign-me ()
-  "Command to assign oneself to the card."
-  (->> (orgtrello-buffer-get-usernames-assigned-property)
-       orgtrello-data--users-from
-       (orgtrello-controller--add-user org-trello--user-logged-in)
-       orgtrello-data--users-to
-       orgtrello-buffer-set-usernames-assigned-property))
+  "Command to assign oneself to the card.
+:: () -> ()"
+  (let ((user-me (orgtrello-setup-user-logged-in))
+        (users-assigned (orgtrello-controller--users-assigned)))
+    (orgtrello-controller--assign-user user-me users-assigned)))
 
 (defun orgtrello-controller-do-unassign-me ()
-  "Command to unassign oneself of the card."
-  (->> (orgtrello-buffer-get-usernames-assigned-property)
-       orgtrello-data--users-from
-       (orgtrello-controller--remove-user org-trello--user-logged-in)
-       orgtrello-data--users-to
-       orgtrello-buffer-set-usernames-assigned-property))
+  "Command to unassign oneself of the card.
+:: () -> ()"
+  (let ((user-me (orgtrello-setup-user-logged-in))
+        (users-assigned (orgtrello-controller--users-assigned)))
+    (orgtrello-controller--unassign-user user-me users-assigned)))
 
 (defun orgtrello-controller-do-add-card-comment ()
   "Wait for the input to add a comment to the current card."

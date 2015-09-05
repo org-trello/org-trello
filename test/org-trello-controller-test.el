@@ -2,6 +2,58 @@
 (require 'ert)
 (require 'el-mock)
 
+(ert-deftest test-orgtrello-controller-toggle-assign-user ()
+  (should (eq :user-assigned-or-not-done
+              (with-mock
+                (mock (orgtrello-setup-users) => :usernames-id-name)
+                (mock (orgtrello-controller--usernames :usernames-id-name) => :usernames-list)
+                (mock (orgtrello-input-read-string-completion "Users to assign (TAB to complete): " :usernames-list) => :chosen-user)
+                (mock (orgtrello-controller--toggle-assign-unassign-user :chosen-user) => :user-assigned-or-not-done)
+                (orgtrello-controller-toggle-assign-user)))))
+
+(ert-deftest test-orgtrello-controller--usernames ()
+  (should (equal '("dude0" "dude1")
+                 (orgtrello-controller--usernames (orgtrello-hash-make-properties '(("some-dude-id" . "orgtrello-user-me")
+                                                                                    ("some-dude0-id" . "orgtrello-user-dude0")
+                                                                                    ("some-dude1-id" . "orgtrello-user-dude1"))))))
+  (should-error (orgtrello-controller--usernames nil)
+                :type 'wrong-type-argument))
+
+(ert-deftest test-orgtrello-controller--remove-prefix-usernames ()
+  (should (equal
+           '("dude0" "dude1" "dude2")
+           (orgtrello-controller--remove-prefix-usernames '("orgtrello-user-dude0" "orgtrello-user-dude1" "dude2"))))
+  (should-not (orgtrello-controller--remove-prefix-usernames nil)))
+
+(ert-deftest test-orgtrello-controller--toggle-assign-unassign-user ()
+  ;; already present, it disappears
+  (should (string=
+           "* card
+:PROPERTIES:
+:orgtrello-users: user2
+:END:
+"
+           (orgtrello-tests-with-temp-buffer-and-return-buffer-content
+            "* card
+:PROPERTIES:
+:orgtrello-users: user,user2
+:END:
+"
+            (orgtrello-controller--toggle-assign-unassign-user "user"))))
+  ;; not present, it's added
+  (should (string=
+           "* card
+:PROPERTIES:
+:orgtrello-users: user
+:END:
+"
+           (orgtrello-tests-with-temp-buffer-and-return-buffer-content
+            "* card
+:PROPERTIES:
+:END:
+"
+            (orgtrello-controller--toggle-assign-unassign-user "user")))))
+
 (ert-deftest test-orgtrello-controller-toggle-assign-unassign-oneself ()
   (should (string=
            "* card
@@ -31,6 +83,102 @@
 :END:
 "
               (orgtrello-controller-toggle-assign-unassign-oneself))))))
+
+
+(ert-deftest test-orgtrello-controller--unassign-user ()
+  ;; present, this removes the user entry
+  (should (string=
+           "* card
+:PROPERTIES:
+:orgtrello-users: user2
+:END:
+"
+           (orgtrello-tests-with-temp-buffer-and-return-buffer-content
+            "* card
+:PROPERTIES:
+:orgtrello-users: user,user2
+:END:
+"
+            (orgtrello-controller--unassign-user "user" '("user" "user2")))))
+  ;; no more entries, does nothing
+  (should (string=
+           "* card
+:PROPERTIES:
+:END:
+"
+           (orgtrello-tests-with-temp-buffer-and-return-buffer-content
+            "* card
+:PROPERTIES:
+:END:
+"
+            (orgtrello-controller--unassign-user "user" nil)))))
+
+(ert-deftest test-orgtrello-controller--assign-user ()
+  ;; not present, so assign it add it
+  (should (string=
+           "* card
+:PROPERTIES:
+:orgtrello-users: user,user2
+:END:
+"
+           (orgtrello-tests-with-temp-buffer-and-return-buffer-content
+            "* card
+:PROPERTIES:
+:orgtrello-users: user,user2
+:END:
+"
+            (orgtrello-controller--assign-user "user" '("user2")))))
+  ;; already present, it's still added
+  (should (string=
+           "* card
+:PROPERTIES:
+:orgtrello-users: user,user2
+:END:
+"
+           (orgtrello-tests-with-temp-buffer-and-return-buffer-content
+            "* card
+:PROPERTIES:
+:orgtrello-users: user,user2
+:END:
+"
+            (orgtrello-controller--assign-user "user" '("user" "user2")))))
+  ;; already present, order in list changes the output
+  (should (string=
+           "* card
+:PROPERTIES:
+:orgtrello-users: user2,user
+:END:
+"
+           (orgtrello-tests-with-temp-buffer-and-return-buffer-content
+            "* card
+:PROPERTIES:
+:orgtrello-users: user,user2
+:END:
+"
+            (orgtrello-controller--assign-user "user" '("user2" "user")))))
+  ;; no other user, assign it initializes the properties
+  (should (string=
+           "* card
+  :PROPERTIES:
+  :orgtrello-users: user
+  :END:
+"
+           (orgtrello-tests-with-temp-buffer-and-return-buffer-content
+            "* card
+"
+            (orgtrello-controller--assign-user "user" nil)))))
+
+
+(ert-deftest test-orgtrello-controller--users-assigned ()
+  (should (equal '("user" "user3" "user2")
+
+                 (orgtrello-tests-with-temp-buffer
+                  "* card
+  :PROPERTIES:
+  :orgtrello-users: user,user3,user2
+  :END:
+"
+                  (orgtrello-controller--users-assigned)))))
 
 (ert-deftest test-orgtrello-controller-do-create-board-and-install-metadata ()
   (should (eq :create-board-done

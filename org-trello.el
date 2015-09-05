@@ -406,13 +406,12 @@ If FROM is not nil, jump from current card to board."
   "Assign oneself to the card.
 If UNASSIGN is not nil, unassign oneself from the card."
   (interactive "P")
-  (org-trello-apply (cons 'org-trello-log-light-checks-and-do
-                          (if unassign
-                              '("Unassign me from card"
-                                orgtrello-controller-do-unassign-me)
-                            '("Assign myself to card"
-                              orgtrello-controller-do-assign-me)))
-                    'do-save-buffer-after-computation))
+  (org-trello-apply
+   (cons 'org-trello-log-light-checks-and-do
+         (if unassign
+             '("Unassign me from card" orgtrello-controller-do-unassign-me)
+           '("Assign myself to card" orgtrello-controller-do-assign-me)))
+   'do-save-buffer-after-computation))
 
 (defalias 'org-trello/assign-me 'org-trello-assign-me)
 
@@ -423,6 +422,15 @@ If UNASSIGN is not nil, unassign oneself from the card."
   (org-trello-apply '(org-trello-log-light-checks-and-do
                       "Toggle assign me to card"
                       orgtrello-controller-toggle-assign-unassign-oneself)
+                    'do-save-buffer-after-computation))
+
+;;;###autoload
+(defun org-trello-toggle-assign-user ()
+  "Toggling assign one user to a card."
+  (interactive)
+  (org-trello-apply '(org-trello-log-light-checks-and-do
+                      "Toggle assign one user to a card"
+                      orgtrello-controller-toggle-assign-user)
                     'do-save-buffer-after-computation))
 
 ;;;###autoload
