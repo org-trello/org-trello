@@ -33,7 +33,8 @@
 - [ ] #248 - Installing from melpa (unstable) works, but then it errs on an undefined variable "error-messages"
 - [ ] #263 - Colors broken in org trello
 
-* IN-PROGRESS 0.7.5 [87%]
+* DONE 0.7.5 [100%]
+CLOSED: [2015-09-05 Sat 20:21]
 - [X] #290 - Toggling users assignments to card
 - [X] Add binding `C-c o t` for the toggling command (code, doc, etc...)
 - [X] #293 - Add a basic user driven completing mechanism (default ido, possibility to use helm...)
@@ -45,7 +46,7 @@
 - [X] Open a command to clean org-trello data in buffer
 - [X] Close board command
 - [X] Update version
-- [ ] Release notes
+- [X] Release notes
 * DONE 0.7.4 [100%]
 CLOSED: [2015-08-24 Mon 23:39]
 - [X] Improve release script + fix typo
