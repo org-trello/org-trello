@@ -1,3 +1,18 @@
+# 0.7.5
+
+- [X] #290 - Toggling users assignments to card
+- [X] Add binding `C-c o t` for the toggling command (code, doc, etc...)
+- [X] #293 - Add a basic user driven completing mechanism (default ido, possibility to use helm...)
+- [X] #291 - Improve labels policy [4/4]
+  - [X] Update api to retrieve more labels
+  - [X] Unify board information retrieval
+  - [X] Update show board labels with the new colors
+  - [X] Fix what went wrong (install existing board + create new one)
+- [X] Open a command to clean org-trello data in buffer
+- [X] Close board command
+- [X] Update version
+- [X] Release notes
+
 # 0.7.4
 
 - [X] Improve release script + fix typo
