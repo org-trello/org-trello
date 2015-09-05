@@ -93,10 +93,15 @@ If the VALUE is nil or empty, remove such PROPERTY."
   "Compute the board's current user."
   (orgtrello-buffer-org-file-get-property org-trello--property-user-me))
 
+(defun orgtrello-buffer-colors ()
+  "Compute the list of colors."
+  (-map (-partial 'format "%s")
+        (orgtrello-hash-values orgtrello-setup-data-color-keywords)))
+
 (defun orgtrello-buffer-labels ()
   "Compute the board's current labels and return it as an association list."
   (-map (-juxt #'identity #'orgtrello-buffer-org-file-get-property)
-        '(":red" ":blue" ":orange" ":yellow" ":purple" ":green")))
+        (orgtrello-buffer-colors)))
 
 (defun orgtrello-buffer-pop-up-with-content (title body-content)
   "Buffer `org-trello--title-buffer-information' with TITLE & BODY-CONTENT."

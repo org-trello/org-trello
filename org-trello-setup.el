@@ -5,6 +5,7 @@
 (require 'org)
 (require 'org-trello-utils)
 (require 'org-trello-log)
+(require 'org-trello-hash)
 (require 'dash)
 
 (defgroup org-trello nil " Org-trello customisation group."
@@ -334,6 +335,20 @@ Other possibilities is helm but it's up to you to install the dependencies.
 (defun orgtrello-setup-users ()
   "Return the hashmap of users-id users-name."
   org-trello--hmap-users-id-name)
+
+(defvar orgtrello-setup-data-color-keywords
+  (orgtrello-hash-make-properties `(("orange"         . :orange)
+                                    ("green"          . :green)
+                                    ("red"            . :red)
+                                    ("blue"           . :blue)
+                                    ("purple"         . :purple)
+                                    ("sky"            . :sky)
+                                    ("black"          . :black)
+                                    ("pink"           . :pink)
+                                    ("lime"           . :lime)
+                                    ("yellow"         . :yellow)
+                                    ("grey"           . :grey)))
+  "Mapping between trello's color and org-trello's keywords.")
 
 (provide 'org-trello-setup)
 ;;; org-trello-setup.el ends here

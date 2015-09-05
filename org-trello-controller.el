@@ -688,20 +688,6 @@ This returns the identifier of such board."
      users-hash-name-id)
     res-list))
 
-(defvar orgtrello-controller--data-color-keywords
-  (orgtrello-hash-make-properties `(("orange"         . :orange)
-                                    ("green"          . :green)
-                                    ("red"            . :red)
-                                    ("blue"           . :blue)
-                                    ("purple"         . :purple)
-                                    ("sky"            . :sky)
-                                    ("black"          . :black)
-                                    ("pink"           . :pink)
-                                    ("lime"           . :lime)
-                                    ("yellow"         . :yellow)
-                                    ("grey"           . :grey)))
-  "Mapping between trello's color and org-trello's keywords.")
-
 (defun orgtrello-controller--remove-properties-file (org-keywords
                                                      users-hash-name-id
                                                      user-me
@@ -729,7 +715,7 @@ Works only on properties file."
                                                    user-me)
            ,(when update-todo-kwds "#+TODO: ")
            ,@(-map (-partial 'format "#+PROPERTY: %s")
-                   (orgtrello-hash-values orgtrello-controller--data-color-keywords))
+                   (orgtrello-buffer-colors))
            ":END:")
          (mapc 'orgtrello-controller--delete-buffer-property))
     (widen)
@@ -745,7 +731,7 @@ Works only on properties file."
             (message "color key: %S" (gethash :color hashm "grey"))
             (-> (format "#+PROPERTY: %s %s"
                         (gethash (gethash :color hashm)
-                                 orgtrello-controller--data-color-keywords
+                                 orgtrello-setup-data-color-keywords
                                  :grey)
                         (gethash :name hashm ""))
                 s-trim-right

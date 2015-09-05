@@ -733,27 +733,17 @@ this comment will be ignored
                 (orgtrello-buffer-org-file-properties)))))
 
 (ert-deftest test-orgtrello-buffer-labels ()
-  ;; with mock
-  (should (equal '((":red" "red lover")
-                   (":blue" "blue sadness")
-                   (":orange" "o")
-                   (":yellow" "y")
-                   (":purple" "p")
-                   (":green" "g"))
-                 (with-mock
-                   (mock (orgtrello-buffer-org-file-properties) => '((":red" . "red lover")
-                                                                     (":blue" . "blue sadness")
-                                                                     (":green" . "g")
-                                                                     (":yellow" . "y")
-                                                                     (":purple" . "p")
-                                                                     (":orange" . "o")))
-                   (orgtrello-buffer-labels))))
-  (should (equal '((":red" "red")
+  (should (equal '((":orange" "range")
+                   (":green" "green label with & char")
+                   (":red" "red")
                    (":blue" "blue")
-                   (":orange" "range")
-                   (":yellow" "yello")
                    (":purple" "violet")
-                   (":green" "green label with & char"))
+                   (":sky" nil)
+                   (":black" nil)
+                   (":pink" nil)
+                   (":lime" nil)
+                   (":yellow" "yello")
+                   (":grey" nil))
                  (orgtrello-tests-with-temp-buffer
                   ":PROPERTIES:
 #+PROPERTY: :green green label with & char
@@ -3316,6 +3306,10 @@ generates another checksum
                    (orgtrello-buffer--prepare-comment "a\nb\nc")))
   (should (string= "  \n  a\n  b\n  c\n  "
                    (orgtrello-buffer--prepare-comment "\na\nb\nc\n"))))
+
+(ert-deftest test-orgtrello-buffer-colors ()
+  (should (equal '(":orange" ":green" ":red" ":blue" ":purple" ":sky" ":black" ":pink" ":lime" ":yellow" ":grey")
+                 (orgtrello-buffer-colors))))
 
 (provide 'org-trello-buffer-test)
 ;;; org-trello-buffer-test.el ends here
