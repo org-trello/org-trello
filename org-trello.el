@@ -4,7 +4,7 @@
 
 ;; Author: Antoine R. Dumont <eniotna.t AT gmail.com>
 ;; Maintainer: Antoine R. Dumont <eniotna.t AT gmail.com>
-;; Version: 0.7.4
+;; Version: 0.7.5
 ;; Package-Requires: ((emacs "24") (dash "2.11.0") (dash-functional "2.11.0") (s "1.9.0") (deferred "0.3.2") (request-deferred "0.2.0"))
 ;; Keywords: org-mode trello sync org-trello
 ;; URL: https://github.com/org-trello/org-trello
@@ -112,7 +112,7 @@ Please consider upgrading Emacs." emacs-version)
 (require 'json)
 (require 'parse-time)
 
-(defconst org-trello--version "0.7.4" "Current org-trello version installed.")
+(defconst org-trello--version "0.7.5" "Current org-trello version installed.")
 
 
 
@@ -406,13 +406,12 @@ If FROM is not nil, jump from current card to board."
   "Assign oneself to the card.
 If UNASSIGN is not nil, unassign oneself from the card."
   (interactive "P")
-  (org-trello-apply (cons 'org-trello-log-light-checks-and-do
-                          (if unassign
-                              '("Unassign me from card"
-                                orgtrello-controller-do-unassign-me)
-                            '("Assign myself to card"
-                              orgtrello-controller-do-assign-me)))
-                    'do-save-buffer-after-computation))
+  (org-trello-apply
+   (cons 'org-trello-log-light-checks-and-do
+         (if unassign
+             '("Unassign me from card" orgtrello-controller-do-unassign-me)
+           '("Assign myself to card" orgtrello-controller-do-assign-me)))
+   'do-save-buffer-after-computation))
 
 (defalias 'org-trello/assign-me 'org-trello-assign-me)
 
@@ -423,6 +422,15 @@ If UNASSIGN is not nil, unassign oneself from the card."
   (org-trello-apply '(org-trello-log-light-checks-and-do
                       "Toggle assign me to card"
                       orgtrello-controller-toggle-assign-unassign-oneself)
+                    'do-save-buffer-after-computation))
+
+;;;###autoload
+(defun org-trello-toggle-assign-user ()
+  "Toggling assign one user to a card."
+  (interactive)
+  (org-trello-apply '(org-trello-log-light-checks-and-do
+                      "Toggle assign one user to a card"
+                      orgtrello-controller-toggle-assign-user)
                     'do-save-buffer-after-computation))
 
 ;;;###autoload
@@ -457,6 +465,20 @@ If UNASSIGN is not nil, unassign oneself from the card."
                org-trello-interactive-command-binding-couples))
    nil
    'no-log))
+
+;;;###autoload
+(defun org-trello-clean-org-trello-data ()
+  "Clean up org-trello data."
+  (interactive)
+  (orgtrello-controller-do-cleanup-from-buffer 'global))
+
+;;;###autoload
+(defun org-trello-close-board ()
+  "Propose a list of board to and let the user choose which to close."
+  (interactive)
+  (org-trello--apply-deferred '(org-trello-log-light-checks-and-do
+                                "Close board"
+                                orgtrello-controller-do-close-board)))
 
 (defalias 'org-trello/help-describing-bindings
   'org-trello-help-describing-bindings)
@@ -547,7 +569,8 @@ opens new issue in org-trello's github tracker."
           'do-append)
 
 (defcustom org-trello-files nil
-  "Org-trello files that needs org-trello activated when opened."
+  "Org-trello files that needs org-trello activated when opened.
+This does not support regular expression."
   :type 'list
   :require 'org-trello
   :group 'org-trello)

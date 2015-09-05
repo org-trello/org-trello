@@ -2,6 +2,12 @@
 (require 'ert)
 (require 'el-mock)
 
+(ert-deftest test-org-trello-clean-org-trello-data ()
+  (should (eq :cleanup-done
+              (with-mock
+                (mock (orgtrello-controller-do-cleanup-from-buffer 'global) => :cleanup-done)
+                (org-trello-clean-org-trello-data)))))
+
 (ert-deftest test-org-trello-apply ()
   (should (eq :result-apply-deferred
               (with-mock
@@ -227,6 +233,14 @@
                           '(org-trello-log-light-checks-and-do "Toggle assign me to card" orgtrello-controller-toggle-assign-unassign-oneself)
                           'do-save-buffer-after-computation) => :res-toggle-assign-me)
                    (org-trello-toggle-assign-me)))))
+
+(ert-deftest test-org-trello-toggle-assign-user ()
+  (should (equal :res-user-assigned
+                 (with-mock
+                   (mock (org-trello-apply
+                          '(org-trello-log-light-checks-and-do "Toggle assign one user to a card" orgtrello-controller-toggle-assign-user)
+                          'do-save-buffer-after-computation) => :res-user-assigned)
+                   (org-trello-toggle-assign-user)))))
 
 (ert-deftest test-org-trello-check-setup ()
   (should (equal :res

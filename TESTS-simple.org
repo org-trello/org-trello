@@ -12,12 +12,18 @@
 #+PROPERTY: orgtrello-user-antoineromaindumont 554b1f596ca33dd8f79e974b
 #+PROPERTY: orgtrello-user-orgmode 5203a0c833fc36360800177f
 #+PROPERTY: orgtrello-user-ardumont 4f2baa2f72b7c1293501cad3
-#+PROPERTY: :green green label with & char
 #+PROPERTY: :yellow yello
-#+PROPERTY: :orange range
-#+PROPERTY: :red red
+#+PROPERTY: :lime green lime
+#+PROPERTY: :pink pink?
+#+PROPERTY: :sky blah
 #+PROPERTY: :purple violet
+#+PROPERTY: :red red
+#+PROPERTY: :green duplicated green
 #+PROPERTY: :blue blue
+#+PROPERTY: :grey hello
+#+PROPERTY: :black arf
+#+PROPERTY: :green green label with & char
+#+PROPERTY: :orange range
 #+PROPERTY: orgtrello-user-me ardumont
 :END:
 #+title: dummy sample to sync with trello

@@ -372,8 +372,7 @@
               (status . :status) (pos . :position) (keyword . :keyword)
               (member-ids . :member-ids) (member . :member) (memberships . :memberships)
               (username . :username) (fullName . :full-name) (actions . :comments)
-              (labelNames . :labels) (lists . :lists) (red . :red) (yellow . :yellow)
-              (blue . :blue) (green . :green) (orange . :orange) (purple . :purple)
+              (labelNames . :labels) (lists . :lists)
               (labels . :labels) (color . :color)))
            orgtrello-controller--data-map-keywords)))
 

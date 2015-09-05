@@ -14,6 +14,20 @@
 (require 'org-trello-date)
 (require 'dash-functional)
 
+(defun orgtrello-buffer-global-properties-region ()
+  "Compute the global properties from the buffer.
+Expects the :PROPERTIES: to start the buffer.
+:: () -> (Int, Int)"
+  (save-excursion
+    (goto-char (point-min))
+    (let ((point-min-start (save-excursion
+                             (search-forward ":PROPERTIES:" nil t)
+                             (point-at-bol))))
+      point-min-start
+      (when (eq point-min-start 1) ;; only when :PROPERTIES: as first position!
+        (list point-min-start (save-excursion
+                                (search-forward ":END:" nil t)))))))
+
 (defun orgtrello-buffer-org-delete-property (property)
   "Delete the PROPERTY at point."
   (funcall (if (orgtrello-entity-org-checkbox-p)
@@ -79,10 +93,15 @@ If the VALUE is nil or empty, remove such PROPERTY."
   "Compute the board's current user."
   (orgtrello-buffer-org-file-get-property org-trello--property-user-me))
 
+(defun orgtrello-buffer-colors ()
+  "Compute the list of colors."
+  (-map (-partial 'format "%s")
+        (orgtrello-hash-values orgtrello-setup-data-color-keywords)))
+
 (defun orgtrello-buffer-labels ()
   "Compute the board's current labels and return it as an association list."
   (-map (-juxt #'identity #'orgtrello-buffer-org-file-get-property)
-        '(":red" ":blue" ":orange" ":yellow" ":purple" ":green")))
+        (orgtrello-buffer-colors)))
 
 (defun orgtrello-buffer-pop-up-with-content (title body-content)
   "Buffer `org-trello--title-buffer-information' with TITLE & BODY-CONTENT."
@@ -500,12 +519,12 @@ FN-TO-EXECUTE is a function without any parameters."
 
 (defun orgtrello-buffer-delete-property (property)
   "If a checkbox PROPERTY is found, delete it from the buffer."
-  (orgtrello-buffer-delete-property-from-entry property)
   (save-excursion
+    (orgtrello-buffer-delete-property-from-entry property)
     (goto-char (point-min))
     (while (re-search-forward " :PROPERTIES: {.*" nil t)
       (remove-overlays (point-at-bol) (point-at-eol))
-      (replace-match "" nil t))))                   ;; then remove the property
+      (replace-match "" nil t))))
 
 (defun orgtrello-buffer-remove-overlays (&optional start end)
   "Remove every org-trello overlays from the current buffer.
@@ -590,14 +609,21 @@ Deal with org entities and checkbox as well."
                'orgtrello-cbx-org-get-property
              'orgtrello-buffer-card-entry-get) point key))
 
+(defun orgtrello-buffer--usernames-to-id (usernames-ids usernames)
+  "Given USERNAMES-IDS, compute convention name from USERNAMES to a list of ids.
+:: Dict String Id -> [String] -> [Id]"
+  (-map (-compose (-rpartial #'gethash usernames-ids)
+                  (-partial #'format "%s%s" org-trello--label-key-user-prefix))
+        usernames))
+
 (defun orgtrello-buffer--user-ids-assigned-to-current-card ()
-  "Compute the user ids assigned to the current card."
-  (--> (orgtrello-buffer-get-usernames-assigned-property)
-       (orgtrello-data--users-from it)
-       (-map (-compose (-rpartial #'gethash org-trello--hmap-users-name-id)
-                       (-partial #'format "%s%s" org-trello--label-key-user-prefix))
-             it)
-       (orgtrello-data--users-to it)))
+  "Compute the user ids assigned to the current card.
+Retrieve the csv string of usernames, recompute the list of org-trello
+properties and map it to a string of ids."
+  (->> (orgtrello-buffer-get-usernames-assigned-property)
+       orgtrello-data--users-from
+       (orgtrello-buffer--usernames-to-id org-trello--hmap-users-name-id)
+       orgtrello-data--users-to))
 
 (defun orgtrello-buffer--extract-description-at-point ()
   "Extract description at point depending on the entity's nature."

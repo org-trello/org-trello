@@ -18,7 +18,6 @@
 (require 'org-trello-deferred)
 (require 'dash-functional)
 (require 's)
-(require 'ido)
 
 (defun orgtrello-controller-log-success (prefix-log)
   "Return a function to log the success with PREFIX-LOG as prefix string."
@@ -135,11 +134,9 @@ If USERNAME is supplied, do not look into the current buffer."
 (defun orgtrello-controller--choose-account (accounts)
   "Let the user decide which ACCOUNTS (s)he wants to use.
 Return such account name."
-  (message "account: %s" accounts)
-  (ido-completing-read "Select org-trello account (TAB to complete): "
-                       accounts
-                       nil
-                       'user-must-input-from-list))
+  (orgtrello-input-read-string-completion
+   "Select org-trello account (TAB to complete): "
+   accounts))
 
 (defun orgtrello-controller-set-account (&optional args)
   "Set the org-trello account.
@@ -655,25 +652,24 @@ Synchronous request."
 (defun orgtrello-controller-choose-board (boards)
   "Given a BOARDS map, ask the user to choose from.
 This returns the identifier of such board."
-  (-> (ido-completing-read "Board to install (TAB to complete): "
-                           (orgtrello-hash-keys boards)
-                           nil
-                           'user-must-input-something-from-list)
+  (-> (orgtrello-input-read-string-completion
+       "Board to install (TAB to complete): "
+       (orgtrello-hash-keys boards))
       (gethash boards)))
 
 (defun orgtrello-controller--convention-property-name (name)
   "Given a NAME, use the org property convention used in org-file headers."
-  (replace-regexp-in-string " " "-" name))
+  (->> name
+       (replace-regexp-in-string " " "-")
+       (replace-regexp-in-string "[()]" "")))
 
 (defun orgtrello-controller--delete-buffer-property (property-name)
   "A simple routine to delete a #+PROPERTY: PROPERTY-NAME from the buffer."
   (save-excursion
     (goto-char (point-min))
-    (-when-let (current-point (search-forward property-name nil t))
-      (goto-char current-point)
-      (beginning-of-line)
-      (kill-line)
-      (kill-line))))
+    (while (search-forward property-name nil t)
+      (delete-region (point-at-bol) (point-at-eol))
+      (delete-blank-lines))))
 
 (defun orgtrello-controller-compute-property (prop-name &optional prop-value)
   "Compute a formatted entry from PROP-NAME and optional PROP-VALUE."
@@ -700,8 +696,10 @@ This returns the identifier of such board."
 ORG-KEYWORDS is the `org-mode' keywords
 USERS-HASH-NAME-ID is a map of username to id
 USER-ME is the user's name
-UPDATE-TODO-KWDS is the org list of keywords."
+UPDATE-TODO-KWDS is the org list of keywords.
+Works only on properties file."
   (with-current-buffer (current-buffer)
+    (apply 'narrow-to-region (orgtrello-buffer-global-properties-region))
     ;; compute the list of properties to purge
     (->> `(":PROPERTIES"
            ,(orgtrello-controller-compute-property
@@ -716,18 +714,29 @@ UPDATE-TODO-KWDS is the org list of keywords."
            ,(orgtrello-controller-compute-property org-trello--property-user-me
                                                    user-me)
            ,(when update-todo-kwds "#+TODO: ")
-           ":red" ":blue" ":yellow" ":green" ":orange" ":purple"
+           ,@(-map (-partial 'format "#+PROPERTY: %s")
+                   (orgtrello-buffer-colors))
            ":END:")
-         (mapc 'orgtrello-controller--delete-buffer-property))))
+         (mapc 'orgtrello-controller--delete-buffer-property))
+    (widen)
+    (save-excursion
+      (goto-char (point-min))
+      (delete-blank-lines))))
 
 (defun orgtrello-controller--properties-labels (board-labels)
-  "Compute properties labels from BOARD-LABELS."
+  "Compute properties labels from BOARD-LABELS.
+\[Dict symbol String\] -> [String]"
   (let ((res-list))
-    (maphash (lambda (name id)
-               (-> (format "#+PROPERTY: %s %s" name id)
-                   s-trim-right
-                   (push res-list)))
-             board-labels)
+    (-map (lambda (hashm)
+            (message "color key: %S" (gethash :color hashm "grey"))
+            (-> (format "#+PROPERTY: %s %s"
+                        (gethash (gethash :color hashm)
+                                 orgtrello-setup-data-color-keywords
+                                 :grey)
+                        (gethash :name hashm ""))
+                s-trim-right
+                (push res-list)))
+          board-labels)
     res-list))
 
 (defun orgtrello-controller--compute-metadata (board-name
@@ -800,11 +809,11 @@ UPDATE-TODO-KEYWORDS is the org list of keywords."
   "Given BOARD-USERS-HASH-NAME-ID, compute the properties for users."
   (let ((res-list))
     (maphash (lambda (name id) (--> name
-                                    (format "#+PROPERTY: %s%s %s"
-                                            org-trello--label-key-user-prefix
-                                            it
-                                            id)
-                                    (push it res-list)))
+                               (format "#+PROPERTY: %s%s %s"
+                                       org-trello--label-key-user-prefix
+                                       it
+                                       id)
+                               (push it res-list)))
              board-users-hash-name-id)
     res-list))
 
@@ -896,13 +905,33 @@ DATA is a list and the buffername is the last element of it."
         (prefix-log "Install board metadata in buffer..."))
     (orgtrello-deferred-eval-computation
      (list buffer-name)
-     '('orgtrello-controller--fetch-boards
-       'orgtrello-controller--fetch-user-logged-in
-       'orgtrello-controller--choose-board-id
-       'orgtrello-controller--fetch-board-information
-       'orgtrello-controller--update-buffer-with-board-metadata
+     '('orgtrello-controller--fetch-boards                      ;; [[boards] buffer]
+       'orgtrello-controller--fetch-user-logged-in              ;; [user [board] buffer]
+       'orgtrello-controller--choose-board-id                   ;; [board-id user [board] buffer]
+       'orgtrello-controller--fetch-board-information           ;; [board board-id user [board] buffer]
+       'orgtrello-controller--update-buffer-with-board-metadata ;; [board board-id user [board] buffer]
        'orgtrello-controller--save-buffer-and-reload-setup)
      prefix-log)))
+
+(defun orgtrello-controller--close-board (data)
+  "Close the board present in DATA.
+DATA is a list of (board-id user boards buffername)."
+  (-let (((board-id _ _ &rest) data))
+    (-> data
+        car
+        orgtrello-api-close-board
+        (orgtrello-query-http-trello 'sync))
+    data))
+
+(defun orgtrello-controller-do-close-board ()
+  "Command to install the list boards."
+  (orgtrello-deferred-eval-computation
+   nil
+   '('orgtrello-controller--fetch-boards    ;; [[boards]]
+     'orgtrello-controller--fetch-user-logged-in              ;; [user [board]]
+     'orgtrello-controller--choose-board-id ;; [board-id [board]]
+     'orgtrello-controller--close-board)
+   "Close board according to your wishes buffer..."))
 
 (defun orgtrello-controller--compute-user-properties (memberships-map)
   "Given a map MEMBERSHIPS-MAP, extract the map of user information."
@@ -995,37 +1024,10 @@ DATA is a list of (user board board-name board-desc org-keywords buffername)."
 (defun orgtrello-controller--create-user-lists-to-board (data)
   "Create the user's board list from DATA.
 DATA is a list of (user board board-name board-desc org-keywords buffername)."
-  (-let (((_ board _ _ org-keywords &rest) data))
-    (-> board
-        orgtrello-data-entity-id
-        (orgtrello-controller--create-lists-according-to-keywords org-keywords)
-        (cons data))))
-
-(defun orgtrello-controller--update-buffer-from-data (data)
-  "Update the buffer from DATA.
-DATA is a list of (user board board-name board-desc org-keywords buffername)."
-  (-let* (((board-lists-hname-id user board board-name _ org-keywords &rest) data) ;; FIXME use buffer-name in last position
-          (board-id (orgtrello-data-entity-id board))
-          (user-name (orgtrello-data-entity-username user))
-          (user-id (orgtrello-data-entity-id user))
-          (users-hash (orgtrello-hash-make-properties `((,user-name . ,user-id))))
-          (board-labels (orgtrello-hash-make-properties '((:red . "")
-                                                          (:green . "")
-                                                          (:yellow . "")
-                                                          (:purple . "")
-                                                          (:blue . "")
-                                                          (:orange . "")))))
-    ;; FIXME: expects to work on current buffer... BAD!
-    (orgtrello-controller-do-cleanup-from-buffer)
-    (orgtrello-controller--update-orgmode-file-with-properties
-     board-name
-     board-id
-     board-lists-hname-id
-     users-hash
-     user-name
-     board-labels
-     org-keywords))
-  data)
+  (-let* (((_ board _ _ org-keywords &rest) data)
+          (board-id (orgtrello-data-entity-id board)))
+    (orgtrello-controller--create-lists-according-to-keywords board-id org-keywords)
+    (cons board-id data)))
 
 (defun orgtrello-controller-do-create-board-and-install-metadata ()
   "Command to create a board and the lists."
@@ -1034,12 +1036,13 @@ DATA is a list of (user board board-name board-desc org-keywords buffername)."
                 (prefix-log   "Create board and install metadata..."))
     (orgtrello-deferred-eval-computation
      (list org-keywords buffer-name)
-     '('orgtrello-controller--input-new-board-information
-       'orgtrello-controller--create-new-board
-       'orgtrello-controller--fetch-user-logged-in
-       'orgtrello-controller--close-board-default-lists
-       'orgtrello-controller--create-user-lists-to-board
-       'orgtrello-controller--update-buffer-from-data
+     '('orgtrello-controller--input-new-board-information       ;; [[keyword] buffer-name]
+       'orgtrello-controller--create-new-board                  ;; [board-desc board-name [keyword] buffer-name]
+       'orgtrello-controller--fetch-user-logged-in              ;; [user board-desc board-name [keyword] buffer-name]
+       'orgtrello-controller--close-board-default-lists         ;; [user board-desc board-name [keyword] buffer-name]
+       'orgtrello-controller--create-user-lists-to-board        ;; [board-id user board-desc board-name [keyword] buffer-name]
+       'orgtrello-controller--fetch-board-information           ;; [board board-id user board-desc board-name [keyword] buffer-name]
+       'orgtrello-controller--update-buffer-with-board-metadata ;; [board board-id user board-desc board-name [keyword] buffer-name]
        'orgtrello-controller--save-buffer-and-reload-setup)
      prefix-log)))
 
@@ -1055,38 +1058,78 @@ DATA is a list of (user board board-name board-desc org-keywords buffername)."
       (remove user users)
     users))
 
+(defun orgtrello-controller--remove-prefix-usernames (usernames)
+  "Given USERNAMES-IDS, compute convention name from USERNAMES to a list of ids.
+:: [String] -> [String]"
+  (-map (-partial #'s-chop-prefix org-trello--label-key-user-prefix) usernames))
+
+(defun orgtrello-controller--usernames (users-id-name)
+  "Given USERS-ID-NAME, return usernames without org-trello naming convention.
+Dict Id String -> [String]"
+  (->> (orgtrello-hash-values users-id-name)
+       (-filter
+        (-compose 'not
+                  (-partial 'equal org-trello--property-user-me)))
+       orgtrello-controller--remove-prefix-usernames))
+
+(defun orgtrello-controller-toggle-assign-user ()
+  "Command to let the user choose users to assign to card.
+:: () -> ()"
+  (->> (orgtrello-setup-users)
+       orgtrello-controller--usernames
+       (orgtrello-input-read-string-completion
+        "Users to assign (TAB to complete): ")
+       orgtrello-controller--toggle-assign-unassign-user))
+
+(defun orgtrello-controller--unassign-user (username users-assigned)
+  "Given a USERNAME, and current USERS-ASSIGNED, unassign it from a card.
+:: String -> [String] -> ()"
+  (-> username
+      (orgtrello-controller--remove-user users-assigned)
+      orgtrello-data--users-to
+      orgtrello-buffer-set-usernames-assigned-property))
+
+(defun orgtrello-controller--assign-user (username users-assigned)
+  "Given a USERNAME, and current USERS-ASSIGNED, assign it to the card at point.
+:: String -> [String] -> ()"
+  (-> username
+      (orgtrello-controller--add-user users-assigned)
+      orgtrello-data--users-to
+      orgtrello-buffer-set-usernames-assigned-property))
+
+(defun orgtrello-controller--users-assigned ()
+  "Retrieve the users assigned as list.
+:: () -> [String]"
+  (->> (orgtrello-buffer-get-usernames-assigned-property)
+       orgtrello-data--users-from))
+
+(defun orgtrello-controller--toggle-assign-unassign-user (username)
+  "Command to toggle assign/unassign USERNAME from card.
+:: String -> ()"
+  (let ((users-assigned (orgtrello-controller--users-assigned)))
+    (if (member username users-assigned)
+        (orgtrello-controller--unassign-user username users-assigned)
+      (orgtrello-controller--assign-user username users-assigned))))
+
 (defun orgtrello-controller-toggle-assign-unassign-oneself ()
-  "Command to toggle assign/unassign oneself from card."
-  (let ((user-me org-trello--user-logged-in)
-        (users-assigned (->> (orgtrello-buffer-get-usernames-assigned-property)
-                             orgtrello-data--users-from)))
-    (if (member user-me users-assigned)
-        ;; unassign
-        (-> user-me
-            (orgtrello-controller--remove-user users-assigned)
-            orgtrello-data--users-to
-            orgtrello-buffer-set-usernames-assigned-property)
-      ;; assign
-      (-> user-me
-          (orgtrello-controller--add-user users-assigned)
-          orgtrello-data--users-to
-          orgtrello-buffer-set-usernames-assigned-property))))
+  "Command to toggle assign/unassign oneself from card.
+:: () -> ()"
+  (-> (orgtrello-setup-user-logged-in)
+      orgtrello-controller--toggle-assign-unassign-user))
 
 (defun orgtrello-controller-do-assign-me ()
-  "Command to assign oneself to the card."
-  (->> (orgtrello-buffer-get-usernames-assigned-property)
-       orgtrello-data--users-from
-       (orgtrello-controller--add-user org-trello--user-logged-in)
-       orgtrello-data--users-to
-       orgtrello-buffer-set-usernames-assigned-property))
+  "Command to assign oneself to the card.
+:: () -> ()"
+  (let ((user-me (orgtrello-setup-user-logged-in))
+        (users-assigned (orgtrello-controller--users-assigned)))
+    (orgtrello-controller--assign-user user-me users-assigned)))
 
 (defun orgtrello-controller-do-unassign-me ()
-  "Command to unassign oneself of the card."
-  (->> (orgtrello-buffer-get-usernames-assigned-property)
-       orgtrello-data--users-from
-       (orgtrello-controller--remove-user org-trello--user-logged-in)
-       orgtrello-data--users-to
-       orgtrello-buffer-set-usernames-assigned-property))
+  "Command to unassign oneself of the card.
+:: () -> ()"
+  (let ((user-me (orgtrello-setup-user-logged-in))
+        (users-assigned (orgtrello-controller--users-assigned)))
+    (orgtrello-controller--unassign-user user-me users-assigned)))
 
 (defun orgtrello-controller-do-add-card-comment ()
   "Wait for the input to add a comment to the current card."
@@ -1189,14 +1232,19 @@ DATA is a list of (card-id comment-id comment-text buffername)."
 (defun orgtrello-controller-do-cleanup-from-buffer (&optional globally-flag)
   "Clean org-trello data in current buffer.
 When GLOBALLY-FLAG is not nil, remove also local entities properties."
-  (orgtrello-controller--remove-properties-file
-   org-trello--org-keyword-trello-list-names
-   org-trello--hmap-users-name-id
-   org-trello--user-logged-in
-   t) ;; remove any orgtrello relative entries
-  (when globally-flag
-    (mapc 'orgtrello-buffer-delete-property
-          `(,org-trello--label-key-id ,org-trello--property-users-entry))))
+  (when org-file-properties
+    (orgtrello-controller--remove-properties-file
+     org-trello--org-keyword-trello-list-names
+     org-trello--hmap-users-name-id
+     org-trello--user-logged-in
+     t) ;; remove any orgtrello relative entries
+    (when globally-flag
+      (orgtrello-buffer-org-map-entries
+       (lambda ()
+         (mapc 'orgtrello-buffer-delete-property
+               `(,org-trello--label-key-id
+                 ,org-trello--property-users-entry
+                 ,org-trello--label-key-local-checksum)))))))
 
 (defun orgtrello-controller-do-write-board-metadata (board-id
                                                      board-name

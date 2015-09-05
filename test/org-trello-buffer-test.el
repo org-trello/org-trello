@@ -2,6 +2,22 @@
 (require 'ert)
 (require 'el-mock)
 
+(ert-deftest test-orgtrello-buffer-global-properties-region ()
+  (should (equal '(1 23)
+                 (orgtrello-tests-with-temp-buffer
+                  ":PROPERTIES:
+1
+2
+:END:
+"
+                  (orgtrello-buffer-global-properties-region))))
+  (should-not (orgtrello-tests-with-temp-buffer
+               "something before
+:PROPERTIES:
+:END:
+"
+               (orgtrello-buffer-global-properties-region))))
+
 (ert-deftest test-orgtrello-buffer-end-of-line ()
   (should (eq :moved
               (with-mock
@@ -717,27 +733,17 @@ this comment will be ignored
                 (orgtrello-buffer-org-file-properties)))))
 
 (ert-deftest test-orgtrello-buffer-labels ()
-  ;; with mock
-  (should (equal '((":red" "red lover")
-                   (":blue" "blue sadness")
-                   (":orange" "o")
-                   (":yellow" "y")
-                   (":purple" "p")
-                   (":green" "g"))
-                 (with-mock
-                   (mock (orgtrello-buffer-org-file-properties) => '((":red" . "red lover")
-                                                                     (":blue" . "blue sadness")
-                                                                     (":green" . "g")
-                                                                     (":yellow" . "y")
-                                                                     (":purple" . "p")
-                                                                     (":orange" . "o")))
-                   (orgtrello-buffer-labels))))
-  (should (equal '((":red" "red")
+  (should (equal '((":orange" "range")
+                   (":green" "green label with & char")
+                   (":red" "red")
                    (":blue" "blue")
-                   (":orange" "range")
-                   (":yellow" "yello")
                    (":purple" "violet")
-                   (":green" "green label with & char"))
+                   (":sky" nil)
+                   (":black" nil)
+                   (":pink" nil)
+                   (":lime" nil)
+                   (":yellow" "yello")
+                   (":grey" nil))
                  (orgtrello-tests-with-temp-buffer
                   ":PROPERTIES:
 #+PROPERTY: :green green label with & char
@@ -902,37 +908,49 @@ another description which will be indented
 "
                     (orgtrello-buffer-get-usernames-assigned-property)))))
 
+(ert-deftest test-orgtrello-buffer--usernames-to-id ()
+  (should (equal '("1" "2")
+                 (orgtrello-buffer--usernames-to-id (orgtrello-hash-make-properties '(("orgtrello-user-user1" . "1")
+                                                                                      ("orgtrello-user-user2" . "2")))
+                                                    '("user1" "user2"))))
+  (should-not (orgtrello-buffer--usernames-to-id (orgtrello-hash-make-properties '(("user1" . "1")
+                                                                                   ("user2" . "2")))
+                                                 nil))
+  (should-not (orgtrello-buffer--usernames-to-id nil nil))
+  (should-error (orgtrello-buffer--usernames-to-id nil '("1"))
+                :type 'wrong-type-argument))
+
 (ert-deftest test-orgtrello-buffer--user-ids-assigned-to-current-card ()
   (should (string= "123,456"
-                 (orgtrello-tests-with-temp-buffer
-                  "* card
+                   (orgtrello-tests-with-temp-buffer
+                    "* card
 :PROPERTIES:
 :orgtrello-users: user1,user2
 :END:
   description
 "
-                  (let ((org-trello--label-key-user-prefix "ot-u-")
-                        (org-trello--hmap-users-name-id (orgtrello-hash-make-properties '(("ot-u-user1" . "123") ("ot-u-user2" . "456")))))
-                    (orgtrello-buffer--user-ids-assigned-to-current-card))))))
+                    (let ((org-trello--label-key-user-prefix "ot-u-")
+                          (org-trello--hmap-users-name-id (orgtrello-hash-make-properties '(("ot-u-user1" . "123") ("ot-u-user2" . "456")))))
+                      (orgtrello-buffer--user-ids-assigned-to-current-card))))))
 
 (ert-deftest test-orgtrello-buffer-org-entry-get ()
   (should (string= "card-id-123"
-                 (orgtrello-tests-with-temp-buffer
-                  "* card
+                   (orgtrello-tests-with-temp-buffer
+                    "* card
 :PROPERTIES:
 :org-id: card-id-123
 :END:"
-                  (orgtrello-buffer-org-entry-get (point-min) "org-id"))))
+                    (orgtrello-buffer-org-entry-get (point-min) "org-id"))))
   (should (string= "checklist-id-456"
-                 (orgtrello-tests-with-temp-buffer
-                  "- [ ] checklist :PROPERTIES: {\"cbx-id\":\"checklist-id-456\"}
+                   (orgtrello-tests-with-temp-buffer
+                    "- [ ] checklist :PROPERTIES: {\"cbx-id\":\"checklist-id-456\"}
 "
-                  (orgtrello-buffer-org-entry-get (point-min) "cbx-id"))))
+                    (orgtrello-buffer-org-entry-get (point-min) "cbx-id"))))
   (should (string= "item-id-789"
-                 (orgtrello-tests-with-temp-buffer
-                  "  - [ ] item :PROPERTIES: {\"itm-id\":\"item-id-789\"}
+                   (orgtrello-tests-with-temp-buffer
+                    "  - [ ] item :PROPERTIES: {\"itm-id\":\"item-id-789\"}
 "
-                  (orgtrello-buffer-org-entry-get (point-min) "itm-id")))))
+                    (orgtrello-buffer-org-entry-get (point-min) "itm-id")))))
 
 (ert-deftest test-orgtrello-buffer-extract-identifier ()
   (should (string= "card-id-321"
@@ -3288,6 +3306,10 @@ generates another checksum
                    (orgtrello-buffer--prepare-comment "a\nb\nc")))
   (should (string= "  \n  a\n  b\n  c\n  "
                    (orgtrello-buffer--prepare-comment "\na\nb\nc\n"))))
+
+(ert-deftest test-orgtrello-buffer-colors ()
+  (should (equal '(":orange" ":green" ":red" ":blue" ":purple" ":sky" ":black" ":pink" ":lime" ":yellow" ":grey")
+                 (orgtrello-buffer-colors))))
 
 (provide 'org-trello-buffer-test)
 ;;; org-trello-buffer-test.el ends here

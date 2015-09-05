@@ -170,17 +170,11 @@ If the keyword is nil, return the optional DEFAULT-VALUE."
                                     (actions        . :comments)
                                     (labelNames     . :labels)
                                     (lists          . :lists)
-                                    (red            . :red)
-                                    (yellow         . :yellow)
-                                    (blue           . :blue)
-                                    (green          . :green)
-                                    (orange         . :orange)
-                                    (purple         . :purple)
                                     (labels         . :labels)
                                     (color          . :color))))
 
 (defun orgtrello-data--deal-with-key (key)
-  "Return the KEY as is if it's a keyword or return its org-trello representation."
+  "Return KEY as is if it's a keyword or return its orgtrello representation."
   (cond ((keywordp key) key)
         (t             (gethash key orgtrello-controller--data-map-keywords))))
 
@@ -265,7 +259,7 @@ If TRELLO-CHECKLIST is nil, return ORG-CHECKLIST."
   (--> trello-card
        (orgtrello-data-entity-member-ids-as-list it)
        (orgtrello-data-merge-2-lists-without-duplicates it (orgtrello-data-entity-member-ids-as-list org-card))
-       (-map (lambda (member-id) (gethash member-id org-trello--hmap-users-id-name)) it)
+       (-map (lambda (member-id) (gethash member-id (orgtrello-setup-users))) it)
        (orgtrello-data--users-to it)))
 
 (defun orgtrello-data--labels-to-tags (labels)

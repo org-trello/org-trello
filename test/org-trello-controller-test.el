@@ -2,6 +2,85 @@
 (require 'ert)
 (require 'el-mock)
 
+(ert-deftest test-org-trello-close-board ()
+  (should (eq :close-board-done
+              (with-mock
+                (mock (org-trello--apply-deferred '(org-trello-log-light-checks-and-do
+                                                    "Close board"
+                                                    orgtrello-controller-do-close-board)) => :close-board-done)
+                (org-trello-close-board)))))
+
+(ert-deftest test-orgtrello-controller-do-close-board ()
+  (should (eq :close-board-done
+              (with-mock
+                (mock (orgtrello-deferred-eval-computation
+                       nil
+                       '('orgtrello-controller--fetch-boards
+                         'orgtrello-controller--fetch-user-logged-in
+                         'orgtrello-controller--choose-board-id
+                         'orgtrello-controller--close-board)
+                       "Close board according to your wishes buffer...") => :close-board-done)
+                (orgtrello-controller-do-close-board)))))
+
+(ert-deftest test-orgtrello-controller--close-board ()
+  (should (equal '(:board-id :some :other)
+                 (with-mock
+                   (mock (orgtrello-api-close-board :board-id) => :query-close)
+                   (mock (orgtrello-query-http-trello :query-close 'sync) => :query-done)
+                   (orgtrello-controller--close-board '(:board-id :some :other))))))
+
+(ert-deftest test-orgtrello-controller-toggle-assign-user ()
+  (should (eq :user-assigned-or-not-done
+              (with-mock
+                (mock (orgtrello-setup-users) => :usernames-id-name)
+                (mock (orgtrello-controller--usernames :usernames-id-name) => :usernames-list)
+                (mock (orgtrello-input-read-string-completion "Users to assign (TAB to complete): " :usernames-list) => :chosen-user)
+                (mock (orgtrello-controller--toggle-assign-unassign-user :chosen-user) => :user-assigned-or-not-done)
+                (orgtrello-controller-toggle-assign-user)))))
+
+(ert-deftest test-orgtrello-controller--usernames ()
+  (should (equal '("dude0" "dude1")
+                 (orgtrello-controller--usernames (orgtrello-hash-make-properties '(("some-dude-id" . "orgtrello-user-me")
+                                                                                    ("some-dude0-id" . "orgtrello-user-dude0")
+                                                                                    ("some-dude1-id" . "orgtrello-user-dude1"))))))
+  (should-error (orgtrello-controller--usernames nil)
+                :type 'wrong-type-argument))
+
+(ert-deftest test-orgtrello-controller--remove-prefix-usernames ()
+  (should (equal
+           '("dude0" "dude1" "dude2")
+           (orgtrello-controller--remove-prefix-usernames '("orgtrello-user-dude0" "orgtrello-user-dude1" "dude2"))))
+  (should-not (orgtrello-controller--remove-prefix-usernames nil)))
+
+(ert-deftest test-orgtrello-controller--toggle-assign-unassign-user ()
+  ;; already present, it disappears
+  (should (string=
+           "* card
+:PROPERTIES:
+:orgtrello-users: user2
+:END:
+"
+           (orgtrello-tests-with-temp-buffer-and-return-buffer-content
+            "* card
+:PROPERTIES:
+:orgtrello-users: user,user2
+:END:
+"
+            (orgtrello-controller--toggle-assign-unassign-user "user"))))
+  ;; not present, it's added
+  (should (string=
+           "* card
+:PROPERTIES:
+:orgtrello-users: user
+:END:
+"
+           (orgtrello-tests-with-temp-buffer-and-return-buffer-content
+            "* card
+:PROPERTIES:
+:END:
+"
+            (orgtrello-controller--toggle-assign-unassign-user "user")))))
+
 (ert-deftest test-orgtrello-controller-toggle-assign-unassign-oneself ()
   (should (string=
            "* card
@@ -32,6 +111,102 @@
 "
               (orgtrello-controller-toggle-assign-unassign-oneself))))))
 
+
+(ert-deftest test-orgtrello-controller--unassign-user ()
+  ;; present, this removes the user entry
+  (should (string=
+           "* card
+:PROPERTIES:
+:orgtrello-users: user2
+:END:
+"
+           (orgtrello-tests-with-temp-buffer-and-return-buffer-content
+            "* card
+:PROPERTIES:
+:orgtrello-users: user,user2
+:END:
+"
+            (orgtrello-controller--unassign-user "user" '("user" "user2")))))
+  ;; no more entries, does nothing
+  (should (string=
+           "* card
+:PROPERTIES:
+:END:
+"
+           (orgtrello-tests-with-temp-buffer-and-return-buffer-content
+            "* card
+:PROPERTIES:
+:END:
+"
+            (orgtrello-controller--unassign-user "user" nil)))))
+
+(ert-deftest test-orgtrello-controller--assign-user ()
+  ;; not present, so assign it add it
+  (should (string=
+           "* card
+:PROPERTIES:
+:orgtrello-users: user,user2
+:END:
+"
+           (orgtrello-tests-with-temp-buffer-and-return-buffer-content
+            "* card
+:PROPERTIES:
+:orgtrello-users: user,user2
+:END:
+"
+            (orgtrello-controller--assign-user "user" '("user2")))))
+  ;; already present, it's still added
+  (should (string=
+           "* card
+:PROPERTIES:
+:orgtrello-users: user,user2
+:END:
+"
+           (orgtrello-tests-with-temp-buffer-and-return-buffer-content
+            "* card
+:PROPERTIES:
+:orgtrello-users: user,user2
+:END:
+"
+            (orgtrello-controller--assign-user "user" '("user" "user2")))))
+  ;; already present, order in list changes the output
+  (should (string=
+           "* card
+:PROPERTIES:
+:orgtrello-users: user2,user
+:END:
+"
+           (orgtrello-tests-with-temp-buffer-and-return-buffer-content
+            "* card
+:PROPERTIES:
+:orgtrello-users: user,user2
+:END:
+"
+            (orgtrello-controller--assign-user "user" '("user2" "user")))))
+  ;; no other user, assign it initializes the properties
+  (should (string=
+           "* card
+  :PROPERTIES:
+  :orgtrello-users: user
+  :END:
+"
+           (orgtrello-tests-with-temp-buffer-and-return-buffer-content
+            "* card
+"
+            (orgtrello-controller--assign-user "user" nil)))))
+
+
+(ert-deftest test-orgtrello-controller--users-assigned ()
+  (should (equal '("user" "user3" "user2")
+
+                 (orgtrello-tests-with-temp-buffer
+                  "* card
+  :PROPERTIES:
+  :orgtrello-users: user,user3,user2
+  :END:
+"
+                  (orgtrello-controller--users-assigned)))))
+
 (ert-deftest test-orgtrello-controller-do-create-board-and-install-metadata ()
   (should (eq :create-board-done
               (with-mock
@@ -44,7 +219,8 @@
                          'orgtrello-controller--fetch-user-logged-in
                          'orgtrello-controller--close-board-default-lists
                          'orgtrello-controller--create-user-lists-to-board
-                         'orgtrello-controller--update-buffer-from-data
+                         'orgtrello-controller--fetch-board-information
+                         'orgtrello-controller--update-buffer-with-board-metadata
                          'orgtrello-controller--save-buffer-and-reload-setup)
                        "Create board and install metadata...") => :create-board-done)
                 (orgtrello-controller-do-create-board-and-install-metadata)))))
@@ -53,6 +229,7 @@
   (should (equal '("#+PROPERTY: done 456" "#+PROPERTY: todo 123")
                  (orgtrello-controller--compute-board-lists-hash-name-id (orgtrello-hash-make-properties '(("todo" . "123")
                                                                                                            ("done" . "456")))))))
+
 (ert-deftest test-orgtrello-controller--compute-keyword-separation ()
   (should (string= "todo"
                    (orgtrello-controller--compute-keyword-separation "todo")))
@@ -116,41 +293,11 @@
                    (mock (orgtrello-query-http-trello :api-query-update 'sync) => :update-done)
                    (orgtrello-controller--update-card-comment '(:card-id :comment-id :comment-text))))))
 
-(ert-deftest test-orgtrello-controller--update-buffer-from-data ()
-  (should (string= ":PROPERTIES:
-#+PROPERTY: board-name :board-name
-#+PROPERTY: board-id :board-id
-#+PROPERTY: in-progress 2
-#+PROPERTY: todo 1
-#+TODO: todo in-progress
-#+PROPERTY: orgtrello-user-ted :user-id
-#+PROPERTY: :orange
-#+PROPERTY: :blue
-#+PROPERTY: :purple
-#+PROPERTY: :yellow
-#+PROPERTY: :green
-#+PROPERTY: :red
-#+PROPERTY: orgtrello-user-me ted
-:END:
-"
-                   (orgtrello-tests-with-temp-buffer-and-return-buffer-content
-                    ""
-                    (orgtrello-controller--update-buffer-from-data
-                     `(,(orgtrello-hash-make-properties '(("todo" . "1")
-                                                          ("in-progress" . "2")))
-                       ,(orgtrello-hash-make-properties '((:id . ":user-id")
-                                                          (:username . "ted")))
-                       ,(orgtrello-hash-make-properties '((:id . ":board-id")))
-                       ":board-name"
-                       ":board-description"
-                       ("todo" "in-progress")
-                       ":buffername"))))))
-
 (ert-deftest test-orgtrello-controller--create-user-lists-to-board ()
-  (should (equal '(:created-list-done :user :board :1 :2 :org-keywords)
+  (should (equal '(:board-id :user :board :1 :2 :org-keywords)
                  (with-mock
                    (mock (orgtrello-data-entity-id :board) => :board-id)
-                   (mock (orgtrello-controller--create-lists-according-to-keywords :board-id :org-keywords) => :created-list-done)
+                   (mock (orgtrello-controller--create-lists-according-to-keywords :board-id :org-keywords) => :do-not-care-about-the-result)
                    (orgtrello-controller--create-user-lists-to-board '(:user :board :1 :2 :org-keywords))))))
 
 (ert-deftest test-orgtrello-controller--close-board-default-lists ()
@@ -515,6 +662,10 @@
                  :board-users-name-id)))))
 
 (ert-deftest test-orgtrello-controller-do-cleanup-from-buffer ()
+  ;; should not break when nothing is present
+  (should-not (orgtrello-tests-with-temp-buffer
+               ""
+               (orgtrello-controller-do-cleanup-from-buffer)))
   (should (string= "#+title: dummy sample to sync with trello
 #+author: Antoine R. Dumont
 
@@ -535,7 +686,8 @@
     - indentation too
 
   - [-] LISP family :PROPERTIES: {\"orgtrello-id\":\"456\",\"orgtrello-local-checksum\":\"5102037e8960abd7ffab6983ede9a0744779a85e36072ad27dbe85e1a038f9eb\"}
-    - [X] Emacs-Lisp :PROPERTIES: {\"orgtrello-id\":\"789\",\"orgtrello-local-checksum\":\"7e573221fc50afd48d52c6575845a282b7c48091e616ee48214436cb3e49a09b\"}"
+    - [X] Emacs-Lisp :PROPERTIES: {\"orgtrello-id\":\"789\",\"orgtrello-local-checksum\":\"7e573221fc50afd48d52c6575845a282b7c48091e616ee48214436cb3e49a09b\"}
+"
                    (orgtrello-tests-with-temp-buffer-and-return-buffer-content
                     ":PROPERTIES:
 #+PROPERTY: board-name api test board
@@ -579,14 +731,14 @@
     - indentation too
 
   - [-] LISP family :PROPERTIES: {\"orgtrello-id\":\"456\",\"orgtrello-local-checksum\":\"5102037e8960abd7ffab6983ede9a0744779a85e36072ad27dbe85e1a038f9eb\"}
-    - [X] Emacs-Lisp :PROPERTIES: {\"orgtrello-id\":\"789\",\"orgtrello-local-checksum\":\"7e573221fc50afd48d52c6575845a282b7c48091e616ee48214436cb3e49a09b\"}"
+    - [X] Emacs-Lisp :PROPERTIES: {\"orgtrello-id\":\"789\",\"orgtrello-local-checksum\":\"7e573221fc50afd48d52c6575845a282b7c48091e616ee48214436cb3e49a09b\"}
+"
                     (orgtrello-controller-do-cleanup-from-buffer))))
   (should (string= "#+title: dummy sample to sync with trello
 #+author: Antoine R. Dumont
 
 * TODO Joy of FUN(ctional) LANGUAGES
 :PROPERTIES:
-:orgtrello-local-checksum: 890
 :END:
   hello description
   - with many
@@ -600,7 +752,8 @@
     - indentation too
 
   - [-] LISP family
-    - [X] Emacs-Lisp"
+    - [X] Emacs-Lisp
+"
                    (orgtrello-tests-with-temp-buffer-and-return-buffer-content
                     ":PROPERTIES:
 #+PROPERTY: board-name api test board
@@ -631,6 +784,7 @@
 :PROPERTIES:
 :orgtrello-local-checksum: 890
 :orgtrello-id: 123
+:orgtrello-users: bla
 :END:
   hello description
   - with many
@@ -644,7 +798,8 @@
     - indentation too
 
   - [-] LISP family :PROPERTIES: {\"orgtrello-id\":\"456\",\"orgtrello-local-checksum\":\"5102037e8960abd7ffab6983ede9a0744779a85e36072ad27dbe85e1a038f9eb\"}
-    - [X] Emacs-Lisp :PROPERTIES: {\"orgtrello-id\":\"789\",\"orgtrello-local-checksum\":\"7e573221fc50afd48d52c6575845a282b7c48091e616ee48214436cb3e49a09b\"}"
+    - [X] Emacs-Lisp :PROPERTIES: {\"orgtrello-id\":\"789\",\"orgtrello-local-checksum\":\"7e573221fc50afd48d52c6575845a282b7c48091e616ee48214436cb3e49a09b\"}
+"
                     (orgtrello-controller-do-cleanup-from-buffer 'global)))))
 
 (ert-deftest test-orgtrello-controller-do-sync-card-comment ()
@@ -901,7 +1056,8 @@ See http://org-trello.github.io/trello-setup.html#credentials for more informati
                      (orgtrello-controller-execute-sync-entity-structure :entities-adj))))))
 
 (ert-deftest test-orgtrello-controller--convention-property-name ()
-  (should (string= "-bla-bli-blo-" (orgtrello-controller--convention-property-name " bla bli blo "))))
+  (should (string= "-bla-bli-blo-" (orgtrello-controller--convention-property-name " bla bli blo ")))
+  (should (string= "some-made-up-name-with-parenthesis" (orgtrello-controller--convention-property-name "some made-up name with (parenthesis)"))))
 
 (ert-deftest test-orgtrello-controller-prepare-buffer ()
   (should (eq :prepared-buffer-done
@@ -1274,7 +1430,11 @@ See http://org-trello.github.io/trello-setup.html#credentials for more informati
                                                ("orgtrello-user-user2" . "456")
                                                ("orgtrello-user-user3" . "789")))
              "user3"
-             (orgtrello-hash-make-properties '((:red . "red label") (:green . "green label")))
+             (list
+              (orgtrello-hash-make-properties '((:color . "red")
+                                                (:name . "red label")))
+              (orgtrello-hash-make-properties '((:color . "green")
+                                                (:name . "green label"))))
              'do-delete-the-todo-line)))))
 
 (ert-deftest test-orgtrello-controller--properties-compute-todo-keywords-as-string ()
@@ -1286,35 +1446,34 @@ See http://org-trello.github.io/trello-setup.html#credentials for more informati
 
 (ert-deftest test-orgtrello-controller--remove-properties-file ()
   (should (string=
-           " #+title: dummy sample to sync with trello
- #+author: Antoine R. Dumont"
+           "#+title: dummy sample to sync with trello
+#+author: Antoine R. Dumont"
            (orgtrello-tests-with-temp-buffer-and-return-buffer-content
             ":PROPERTIES:
- #+PROPERTY: board-name test board api
- #+PROPERTY: board-id board-id-1
- #+PROPERTY: CANCELLED list-1-id
- #+PROPERTY: FAILED list-2-id
- #+PROPERTY: DELEGATED list-3-id
- #+PROPERTY: PENDING list-4-id
- #+PROPERTY: DONE list-5-id
- #+PROPERTY: IN-PROGRESS list-6-id
- #+PROPERTY: TODO list-7-id
- #+TODO: TODO IN-PROGRESS | DONE PENDING DELEGATED FAILED CANCELLED
- #+PROPERTY: orgtrello-user-user1 123
- #+PROPERTY: orgtrello-user-user2 456
- #+PROPERTY: orgtrello-user-user3 789
- #+PROPERTY: :green green label with & char
- #+PROPERTY: :yellow yello
- #+PROPERTY: :orange range
- #+PROPERTY: :red red
- #+PROPERTY: :purple violet
- #+PROPERTY: :blue blue
- #+PROPERTY: orgtrello-user-me user2
- :END:
- #+title: dummy sample to sync with trello
- #+author: Antoine R. Dumont"
+#+PROPERTY: board-name test board api
+#+PROPERTY: board-id board-id-1
+#+PROPERTY: CAN list-1-id
+#+PROPERTY: FAI list-2-id
+#+PROPERTY: DEL list-3-id
+#+PROPERTY: PEN list-4-id
+#+PROPERTY: DON list-5-id
+#+PROPERTY: INP list-6-id
+#+PROPERTY: TOD list-7-id
+#+TODO: TODO IN-PROGRESS | DONE PENDING DELEGATED FAILED CANCELLED
+#+PROPERTY: orgtrello-user-user2 456
+#+PROPERTY: :green green label with & char
+#+PROPERTY: :yellow yello
+#+PROPERTY: :orange range
+#+PROPERTY: :red red
+#+PROPERTY: :purple violet
+#+PROPERTY: :blue blue
+#+PROPERTY: :green another one
+#+PROPERTY: orgtrello-user-me user2
+:END:
+#+title: dummy sample to sync with trello
+#+author: Antoine R. Dumont"
             (orgtrello-controller--remove-properties-file
-             '("TODO" "IN-PROGRESS" "DONE" "PENDING" "DELEGATED" "FAILED" "CANCELLED")
+             '("TOD" "INP" "DON" "PEN" "DEL" "FAI" "CAN")
              (orgtrello-hash-make-properties '(("orgtrello-user-user1" . "123")
                                                ("orgtrello-user-user2" . "456")
                                                ("orgtrello-user-user3" . "789")
@@ -1883,7 +2042,11 @@ Also, you can specify on your org-mode buffer the todo list you want to work wit
                   (orgtrello-hash-make-properties '(("TODO" . "todo-id") ("DONE" . "done-id")))
                   (orgtrello-hash-make-properties '(("user" . "user-id") ("some-other-user" . "some-other-user-id")))
                   "user"
-                  (orgtrello-hash-make-properties '((:red . "red label") (:green . "green label"))))))
+                  (list
+                   (orgtrello-hash-make-properties '((:color . "red")
+                                                     (:name . "red label")))
+                   (orgtrello-hash-make-properties '((:color . "green")
+                                                     (:name . "green label")))))))
   (should (equal '(":PROPERTIES:"
                    "#+PROPERTY: board-name some-board-name"
                    "#+PROPERTY: board-id some-board-id"
@@ -1903,15 +2066,24 @@ Also, you can specify on your org-mode buffer the todo list you want to work wit
                     (orgtrello-hash-make-properties '(("TODO" . "todo-id-2") ("DONE" . "done-id-2")))
                     (orgtrello-hash-make-properties '(("user" . "user-id-2") ("some-other-user" . "some-other-user-id-2")))
                     nil
-                    (orgtrello-hash-make-properties '((:red . "red label") (:green . "green label"))))))))
+                    (list
+                     (orgtrello-hash-make-properties '((:color . "red")
+                                                       (:name . "red label")))
+                     (orgtrello-hash-make-properties '((:color . "green")
+                                                       (:name . "green label")))))))))
 
 (ert-deftest test-orgtrello-controller--properties-labels ()
   (should (equal
-           '("#+PROPERTY: :green green label" "#+PROPERTY: :red red label")
-           (orgtrello-controller--properties-labels (orgtrello-hash-make-properties '((:red . "red label") (:green . "green label"))))))
-  (should (equal
-           '("#+PROPERTY: :orange" "#+PROPERTY: :green green label" "#+PROPERTY: :red red label")
-           (orgtrello-controller--properties-labels (orgtrello-hash-make-properties '((:red . "red label") (:green . "green label") (:orange . "")))))))
+           '("#+PROPERTY: :black" "#+PROPERTY: :orange" "#+PROPERTY: :grey grey label" "#+PROPERTY: :green green label" "#+PROPERTY: :red red label")
+           (orgtrello-controller--properties-labels `(,(orgtrello-hash-make-properties '((:color . "red")
+                                                                                         (:name . "red label")))
+                                                      ,(orgtrello-hash-make-properties '((:color . "green")
+                                                                                         (:name . "green label")))
+                                                      ,(orgtrello-hash-make-properties '((:color . nil)
+                                                                                         (:name . "grey label")))
+                                                      ,(orgtrello-hash-make-properties '((:color . "orange")
+                                                                                         (:name . "")))
+                                                      ,(orgtrello-hash-make-properties '((:color . "black"))))))))
 
 (ert-deftest test-orgtrello-controller-load-keys ()
   (should (equal :ok

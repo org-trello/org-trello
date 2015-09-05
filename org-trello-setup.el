@@ -5,6 +5,7 @@
 (require 'org)
 (require 'org-trello-utils)
 (require 'org-trello-log)
+(require 'org-trello-hash)
 (require 'dash)
 
 (defgroup org-trello nil " Org-trello customisation group."
@@ -196,6 +197,7 @@ As of 0.7.0, org-trello now follows Emacs's conventions.")
         (org-trello-kill-entity                       "k" "Kill the entity (and its arborescence tree) from the trello board and the org buffer.")
         (org-trello-kill-cards                        "K" "Kill all the entities (and their arborescence tree) from the trello board and the org buffer.")
         (org-trello-toggle-assign-me                  "a" "Toggle assign oneself to the card. If not assigned, assign and vice versa.")
+        (org-trello-toggle-assign-user                "t" "Toggle assign one user to a card. If not assigned, assign and vice versa.")
         (org-trello-add-card-comment                  "C" "Add a comment to the card. With C-u modifier, remove the current card's comment.")
         (org-trello-sync-comment                      "U" "Sync a comment to trello. With C-u modifier, remove the current card's comment.")
         (org-trello-show-board-labels                 "l" "Display the board's labels in a pop-up buffer.")
@@ -305,6 +307,16 @@ PREFIX-KEYBINDING is the new binding."
 (custom-set-variables `(org-trello-current-prefix-keybinding
                         ,org-trello-default-prefix-keybinding))
 
+(defcustom org-trello-input-completion-mechanism 'default
+  "The completion mechanism the user can choose from.
+Default is the native ido mechanism.
+Other possibilities is helm but it's up to you to install the dependencies.
+\(require 'helm\)
+\(custom-set-variables '\(org-trello-input-completion-mechanism 'helm\)\)"
+  :type'(choice (const default) (const helm))
+  :require 'org-trello
+  :group 'org-trello)
+
 (defalias '*ORGTRELLO/MODE-PREFIX-KEYBINDING*
   'org-trello-current-prefix-keybinding)
 
@@ -319,6 +331,24 @@ PREFIX-KEYBINDING is the new binding."
 (defun orgtrello-setup-org-trello-on-p ()
   "Determine if buffer is org-trello activated."
   (and (eq major-mode 'org-mode) org-trello--mode-activated-p))
+
+(defun orgtrello-setup-users ()
+  "Return the hashmap of users-id users-name."
+  org-trello--hmap-users-id-name)
+
+(defvar orgtrello-setup-data-color-keywords
+  (orgtrello-hash-make-properties `(("orange"         . :orange)
+                                    ("green"          . :green)
+                                    ("red"            . :red)
+                                    ("blue"           . :blue)
+                                    ("purple"         . :purple)
+                                    ("sky"            . :sky)
+                                    ("black"          . :black)
+                                    ("pink"           . :pink)
+                                    ("lime"           . :lime)
+                                    ("yellow"         . :yellow)
+                                    ("grey"           . :grey)))
+  "Mapping between trello's color and org-trello's keywords.")
 
 (provide 'org-trello-setup)
 ;;; org-trello-setup.el ends here
