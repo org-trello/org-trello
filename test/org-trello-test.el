@@ -2,6 +2,12 @@
 (require 'ert)
 (require 'el-mock)
 
+(ert-deftest test-org-trello-clean-org-trello-data ()
+  (should (eq :cleanup-done
+              (with-mock
+                (mock (orgtrello-controller-do-cleanup-from-buffer 'global) => :cleanup-done)
+                (org-trello-clean-org-trello-data)))))
+
 (ert-deftest test-org-trello-apply ()
   (should (eq :result-apply-deferred
               (with-mock

@@ -466,6 +466,12 @@ If UNASSIGN is not nil, unassign oneself from the card."
    nil
    'no-log))
 
+;;;###autoload
+(defun org-trello-clean-org-trello-data ()
+  "Clean up org-trello data."
+  (interactive)
+  (orgtrello-controller-do-cleanup-from-buffer 'global))
+
 (defalias 'org-trello/help-describing-bindings
   'org-trello-help-describing-bindings)
 
