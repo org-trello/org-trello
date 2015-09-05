@@ -2,6 +2,22 @@
 (require 'ert)
 (require 'el-mock)
 
+(ert-deftest test-orgtrello-buffer-global-properties-region ()
+  (should (equal '(1 23)
+                 (orgtrello-tests-with-temp-buffer
+                  ":PROPERTIES:
+1
+2
+:END:
+"
+                  (orgtrello-buffer-global-properties-region))))
+  (should-not (orgtrello-tests-with-temp-buffer
+               "something before
+:PROPERTIES:
+:END:
+"
+               (orgtrello-buffer-global-properties-region))))
+
 (ert-deftest test-orgtrello-buffer-end-of-line ()
   (should (eq :moved
               (with-mock

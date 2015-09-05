@@ -667,11 +667,9 @@ This returns the identifier of such board."
   "A simple routine to delete a #+PROPERTY: PROPERTY-NAME from the buffer."
   (save-excursion
     (goto-char (point-min))
-    (-when-let (current-point (search-forward property-name nil t))
-      (goto-char current-point)
-      (beginning-of-line)
-      (kill-line)
-      (kill-line))))
+    (while (search-forward property-name nil t)
+      (delete-region (point-at-bol) (point-at-eol))
+      (delete-blank-lines))))
 
 (defun orgtrello-controller-compute-property (prop-name &optional prop-value)
   "Compute a formatted entry from PROP-NAME and optional PROP-VALUE."
@@ -690,6 +688,20 @@ This returns the identifier of such board."
      users-hash-name-id)
     res-list))
 
+(defvar orgtrello-controller--data-color-keywords
+  (orgtrello-hash-make-properties `(("orange"         . :orange)
+                                    ("green"          . :green)
+                                    ("red"            . :red)
+                                    ("blue"           . :blue)
+                                    ("purple"         . :purple)
+                                    ("sky"            . :sky)
+                                    ("black"          . :black)
+                                    ("pink"           . :pink)
+                                    ("lime"           . :lime)
+                                    ("yellow"         . :yellow)
+                                    ("grey"           . :grey)))
+  "Mapping between trello's color and org-trello's keywords.")
+
 (defun orgtrello-controller--remove-properties-file (org-keywords
                                                      users-hash-name-id
                                                      user-me
@@ -698,8 +710,10 @@ This returns the identifier of such board."
 ORG-KEYWORDS is the `org-mode' keywords
 USERS-HASH-NAME-ID is a map of username to id
 USER-ME is the user's name
-UPDATE-TODO-KWDS is the org list of keywords."
+UPDATE-TODO-KWDS is the org list of keywords.
+Works only on properties file."
   (with-current-buffer (current-buffer)
+    (apply 'narrow-to-region (orgtrello-buffer-global-properties-region))
     ;; compute the list of properties to purge
     (->> `(":PROPERTIES"
            ,(orgtrello-controller-compute-property
@@ -714,18 +728,29 @@ UPDATE-TODO-KWDS is the org list of keywords."
            ,(orgtrello-controller-compute-property org-trello--property-user-me
                                                    user-me)
            ,(when update-todo-kwds "#+TODO: ")
-           ":red" ":blue" ":yellow" ":green" ":orange" ":purple"
+           ,@(-map (-partial 'format "#+PROPERTY: %s")
+                   (orgtrello-hash-values orgtrello-controller--data-color-keywords))
            ":END:")
-         (mapc 'orgtrello-controller--delete-buffer-property))))
+         (mapc 'orgtrello-controller--delete-buffer-property))
+    (widen)
+    (save-excursion
+      (goto-char (point-min))
+      (delete-blank-lines))))
 
 (defun orgtrello-controller--properties-labels (board-labels)
-  "Compute properties labels from BOARD-LABELS."
+  "Compute properties labels from BOARD-LABELS.
+\[Dict symbol String\] -> [String]"
   (let ((res-list))
-    (maphash (lambda (name id)
-               (-> (format "#+PROPERTY: %s %s" name id)
-                   s-trim-right
-                   (push res-list)))
-             board-labels)
+    (-map (lambda (hashm)
+            (message "color key: %S" (gethash :color hashm "grey"))
+            (-> (format "#+PROPERTY: %s %s"
+                        (gethash (gethash :color hashm)
+                                 orgtrello-controller--data-color-keywords
+                                 :grey)
+                        (gethash :name hashm ""))
+                s-trim-right
+                (push res-list)))
+          board-labels)
     res-list))
 
 (defun orgtrello-controller--compute-metadata (board-name
@@ -798,11 +823,11 @@ UPDATE-TODO-KEYWORDS is the org list of keywords."
   "Given BOARD-USERS-HASH-NAME-ID, compute the properties for users."
   (let ((res-list))
     (maphash (lambda (name id) (--> name
-                                    (format "#+PROPERTY: %s%s %s"
-                                            org-trello--label-key-user-prefix
-                                            it
-                                            id)
-                                    (push it res-list)))
+                               (format "#+PROPERTY: %s%s %s"
+                                       org-trello--label-key-user-prefix
+                                       it
+                                       id)
+                               (push it res-list)))
              board-users-hash-name-id)
     res-list))
 
@@ -999,32 +1024,6 @@ DATA is a list of (user board board-name board-desc org-keywords buffername)."
         (orgtrello-controller--create-lists-according-to-keywords org-keywords)
         (cons data))))
 
-(defun orgtrello-controller--update-buffer-from-data (data)
-  "Update the buffer from DATA.
-DATA is a list of (user board board-name board-desc org-keywords buffername)."
-  (-let* (((board-lists-hname-id user board board-name _ org-keywords &rest) data) ;; FIXME use buffer-name in last position
-          (board-id (orgtrello-data-entity-id board))
-          (user-name (orgtrello-data-entity-username user))
-          (user-id (orgtrello-data-entity-id user))
-          (users-hash (orgtrello-hash-make-properties `((,user-name . ,user-id))))
-          (board-labels (orgtrello-hash-make-properties '((:red . "")
-                                                          (:green . "")
-                                                          (:yellow . "")
-                                                          (:purple . "")
-                                                          (:blue . "")
-                                                          (:orange . "")))))
-    ;; FIXME: expects to work on current buffer... BAD!
-    (orgtrello-controller-do-cleanup-from-buffer)
-    (orgtrello-controller--update-orgmode-file-with-properties
-     board-name
-     board-id
-     board-lists-hname-id
-     users-hash
-     user-name
-     board-labels
-     org-keywords))
-  data)
-
 (defun orgtrello-controller-do-create-board-and-install-metadata ()
   "Command to create a board and the lists."
   (lexical-let ((org-keywords (orgtrello-buffer-filtered-kwds))
@@ -1037,7 +1036,8 @@ DATA is a list of (user board board-name board-desc org-keywords buffername)."
        'orgtrello-controller--fetch-user-logged-in
        'orgtrello-controller--close-board-default-lists
        'orgtrello-controller--create-user-lists-to-board
-       'orgtrello-controller--update-buffer-from-data
+       'orgtrello-controller--fetch-board-information
+       'orgtrello-controller--update-buffer-with-board-metadata
        'orgtrello-controller--save-buffer-and-reload-setup)
      prefix-log)))
 
@@ -1233,8 +1233,12 @@ When GLOBALLY-FLAG is not nil, remove also local entities properties."
    org-trello--user-logged-in
    t) ;; remove any orgtrello relative entries
   (when globally-flag
-    (mapc 'orgtrello-buffer-delete-property
-          `(,org-trello--label-key-id ,org-trello--property-users-entry))))
+    (orgtrello-buffer-org-map-entries
+     (lambda ()
+       (mapc 'orgtrello-buffer-delete-property
+             `(,org-trello--label-key-id
+               ,org-trello--property-users-entry
+               ,org-trello--label-key-local-checksum))))))
 
 (defun orgtrello-controller-do-write-board-metadata (board-id
                                                      board-name

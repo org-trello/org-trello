@@ -52,7 +52,9 @@ If FILTER is specified, this will filter on this."
    '(("memberships" . "active")
      ("memberships_member" . "true")
      ("lists" . "open")
-     ("fields" . "name,memberships,closed,labelNames"))))
+     ("fields" . "name,memberships,closed")
+     ("labels" . "all")
+     ("label_fields" . "name,color"))))
 
 (defun orgtrello-api-do (api-uri id &optional undo-flag)
   "Compute the query to do/undo thing using API-URI and ID.

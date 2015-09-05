@@ -22,7 +22,10 @@
   (should (equal '(("memberships" . "active")
                    ("memberships_member" . "true")
                    ("lists" . "open")
-                   ("fields" . "name,memberships,closed,labelNames")) (gethash :params (orgtrello-api-get-board :id)))))
+                   ("fields" . "name,memberships,closed")
+                   ("labels" . "all")
+                   ("label_fields" . "name,color"))
+                 (gethash :params (orgtrello-api-get-board :id)))))
 
 (ert-deftest test-orgtrello-api-get-cards ()
   (should (equal "GET"                                                                                                        (gethash :method (orgtrello-api-get-cards :board-id))))
