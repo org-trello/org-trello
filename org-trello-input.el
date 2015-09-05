@@ -22,10 +22,10 @@ PROMPT is the prefix string displayed for input.
   "Read input from user with completing mechanism.
 PROMPT is the prompt for user to see.
 CHOICES is the list of possibilities with completing properties.
-:: String -> [a] -> () -> a"
-  (ido-completing-read prompt choices nil 'do-match))
-
-(orgtrello-log-msg orgtrello-log-debug "orgtrello-input loaded!")
+:: String -> [a] -> a"
+  (if (eq 'default org-trello-input-completion-mechanism)
+      (ido-completing-read prompt choices nil 'do-match)
+    (helm-comp-read prompt choices nil nil nil nil )))
 
 (provide 'org-trello-input)
 ;;; org-trello-input.el ends here

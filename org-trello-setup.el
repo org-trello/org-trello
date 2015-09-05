@@ -306,6 +306,16 @@ PREFIX-KEYBINDING is the new binding."
 (custom-set-variables `(org-trello-current-prefix-keybinding
                         ,org-trello-default-prefix-keybinding))
 
+(defcustom org-trello-input-completion-mechanism 'default
+  "The completion mechanism the user can choose from.
+Default is the native ido mechanism.
+Other possibilities is helm but it's up to you to install the dependencies.
+\(require 'helm\)
+\(custom-set-variables '\(org-trello-input-completion-mechanism 'helm\)\)"
+  :type'(choice (const default) (const helm))
+  :require 'org-trello
+  :group 'org-trello)
+
 (defalias '*ORGTRELLO/MODE-PREFIX-KEYBINDING*
   'org-trello-current-prefix-keybinding)
 
