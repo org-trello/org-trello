@@ -905,11 +905,11 @@ DATA is a list and the buffername is the last element of it."
         (prefix-log "Install board metadata in buffer..."))
     (orgtrello-deferred-eval-computation
      (list buffer-name)
-     '('orgtrello-controller--fetch-boards
-       'orgtrello-controller--fetch-user-logged-in
-       'orgtrello-controller--choose-board-id
-       'orgtrello-controller--fetch-board-information
-       'orgtrello-controller--update-buffer-with-board-metadata
+     '('orgtrello-controller--fetch-boards                      ;; [[boards] buffer]
+       'orgtrello-controller--fetch-user-logged-in              ;; [user [board] buffer]
+       'orgtrello-controller--choose-board-id                   ;; [board-id user [board] buffer]
+       'orgtrello-controller--fetch-board-information           ;; [board board-id user [board] buffer]
+       'orgtrello-controller--update-buffer-with-board-metadata ;; [board board-id user [board] buffer]
        'orgtrello-controller--save-buffer-and-reload-setup)
      prefix-log)))
 
@@ -1004,11 +1004,10 @@ DATA is a list of (user board board-name board-desc org-keywords buffername)."
 (defun orgtrello-controller--create-user-lists-to-board (data)
   "Create the user's board list from DATA.
 DATA is a list of (user board board-name board-desc org-keywords buffername)."
-  (-let (((_ board _ _ org-keywords &rest) data))
-    (-> board
-        orgtrello-data-entity-id
-        (orgtrello-controller--create-lists-according-to-keywords org-keywords)
-        (cons data))))
+  (-let* (((_ board _ _ org-keywords &rest) data)
+          (board-id (orgtrello-data-entity-id board)))
+    (orgtrello-controller--create-lists-according-to-keywords board-id org-keywords)
+    (cons board-id data)))
 
 (defun orgtrello-controller-do-create-board-and-install-metadata ()
   "Command to create a board and the lists."
@@ -1017,13 +1016,13 @@ DATA is a list of (user board board-name board-desc org-keywords buffername)."
                 (prefix-log   "Create board and install metadata..."))
     (orgtrello-deferred-eval-computation
      (list org-keywords buffer-name)
-     '('orgtrello-controller--input-new-board-information
-       'orgtrello-controller--create-new-board
-       'orgtrello-controller--fetch-user-logged-in
-       'orgtrello-controller--close-board-default-lists
-       'orgtrello-controller--create-user-lists-to-board
-       'orgtrello-controller--fetch-board-information
-       'orgtrello-controller--update-buffer-with-board-metadata
+     '('orgtrello-controller--input-new-board-information       ;; [[keyword] buffer-name]
+       'orgtrello-controller--create-new-board                  ;; [board-desc board-name [keyword] buffer-name]
+       'orgtrello-controller--fetch-user-logged-in              ;; [user board-desc board-name [keyword] buffer-name]
+       'orgtrello-controller--close-board-default-lists         ;; [user board-desc board-name [keyword] buffer-name]
+       'orgtrello-controller--create-user-lists-to-board        ;; [board-id user board-desc board-name [keyword] buffer-name]
+       'orgtrello-controller--fetch-board-information           ;; [board board-id user board-desc board-name [keyword] buffer-name]
+       'orgtrello-controller--update-buffer-with-board-metadata ;; [board board-id user board-desc board-name [keyword] buffer-name]
        'orgtrello-controller--save-buffer-and-reload-setup)
      prefix-log)))
 
@@ -1213,18 +1212,19 @@ DATA is a list of (card-id comment-id comment-text buffername)."
 (defun orgtrello-controller-do-cleanup-from-buffer (&optional globally-flag)
   "Clean org-trello data in current buffer.
 When GLOBALLY-FLAG is not nil, remove also local entities properties."
-  (orgtrello-controller--remove-properties-file
-   org-trello--org-keyword-trello-list-names
-   org-trello--hmap-users-name-id
-   org-trello--user-logged-in
-   t) ;; remove any orgtrello relative entries
-  (when globally-flag
-    (orgtrello-buffer-org-map-entries
-     (lambda ()
-       (mapc 'orgtrello-buffer-delete-property
-             `(,org-trello--label-key-id
-               ,org-trello--property-users-entry
-               ,org-trello--label-key-local-checksum))))))
+  (when org-file-properties
+    (orgtrello-controller--remove-properties-file
+     org-trello--org-keyword-trello-list-names
+     org-trello--hmap-users-name-id
+     org-trello--user-logged-in
+     t) ;; remove any orgtrello relative entries
+    (when globally-flag
+      (orgtrello-buffer-org-map-entries
+       (lambda ()
+         (mapc 'orgtrello-buffer-delete-property
+               `(,org-trello--label-key-id
+                 ,org-trello--property-users-entry
+                 ,org-trello--label-key-local-checksum)))))))
 
 (defun orgtrello-controller-do-write-board-metadata (board-id
                                                      board-name

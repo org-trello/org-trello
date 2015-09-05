@@ -267,10 +267,10 @@
                    (orgtrello-controller--update-card-comment '(:card-id :comment-id :comment-text))))))
 
 (ert-deftest test-orgtrello-controller--create-user-lists-to-board ()
-  (should (equal '(:created-list-done :user :board :1 :2 :org-keywords)
+  (should (equal '(:board-id :user :board :1 :2 :org-keywords)
                  (with-mock
                    (mock (orgtrello-data-entity-id :board) => :board-id)
-                   (mock (orgtrello-controller--create-lists-according-to-keywords :board-id :org-keywords) => :created-list-done)
+                   (mock (orgtrello-controller--create-lists-according-to-keywords :board-id :org-keywords) => :do-not-care-about-the-result)
                    (orgtrello-controller--create-user-lists-to-board '(:user :board :1 :2 :org-keywords))))))
 
 (ert-deftest test-orgtrello-controller--close-board-default-lists ()
@@ -635,6 +635,10 @@
                  :board-users-name-id)))))
 
 (ert-deftest test-orgtrello-controller-do-cleanup-from-buffer ()
+  ;; should not break when nothing is present
+  (should-not (orgtrello-tests-with-temp-buffer
+               ""
+               (orgtrello-controller-do-cleanup-from-buffer)))
   (should (string= "#+title: dummy sample to sync with trello
 #+author: Antoine R. Dumont
 
