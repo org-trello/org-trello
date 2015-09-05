@@ -265,7 +265,7 @@ If TRELLO-CHECKLIST is nil, return ORG-CHECKLIST."
   (--> trello-card
        (orgtrello-data-entity-member-ids-as-list it)
        (orgtrello-data-merge-2-lists-without-duplicates it (orgtrello-data-entity-member-ids-as-list org-card))
-       (-map (lambda (member-id) (gethash member-id org-trello--hmap-users-id-name)) it)
+       (-map (lambda (member-id) (gethash member-id (orgtrello-setup-users))) it)
        (orgtrello-data--users-to it)))
 
 (defun orgtrello-data--labels-to-tags (labels)

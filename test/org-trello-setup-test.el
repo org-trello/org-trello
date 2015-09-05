@@ -2,6 +2,13 @@
 (require 'ert)
 (require 'el-mock)
 
+(ert-deftest test-orgtrello-setup-users ()
+  (should (eq :something
+              (let ((org-trello--hmap-users-id-name :something))
+                (orgtrello-setup-users))))
+  (should-not (let ((org-trello--hmap-users-id-name))
+                (orgtrello-setup-users))))
+
 (ert-deftest test-orgtrello-setup-org-trello-on-p ()
   (should (eq t
               (let ((major-mode 'org-mode)

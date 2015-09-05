@@ -320,5 +320,9 @@ PREFIX-KEYBINDING is the new binding."
   "Determine if buffer is org-trello activated."
   (and (eq major-mode 'org-mode) org-trello--mode-activated-p))
 
+(defun orgtrello-setup-users ()
+  "Return the hashmap of users-id users-name."
+  org-trello--hmap-users-id-name)
+
 (provide 'org-trello-setup)
 ;;; org-trello-setup.el ends here
