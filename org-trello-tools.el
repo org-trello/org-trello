@@ -33,9 +33,11 @@
   (mapc (lambda (it) (load-with-code-conversion (concat org-trello-home "/" it) it)) org-trello-tools--namespaces)
   (require 'org-trello)
   ;; reload bindings
+  (require 'helm)
   (custom-set-variables
    '(org-trello-current-prefix-keybinding "C-c o")
-   '(orgtrello-log-level orgtrello-log-info))
+   '(orgtrello-log-level orgtrello-log-info)
+   '(org-trello-input-completion-mechanism 'helm))
   (orgtrello-log-msg orgtrello-log-info "Code loaded!"))
 
 (defun org-trello-tools-remove-bindings ()
