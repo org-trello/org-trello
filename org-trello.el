@@ -472,6 +472,14 @@ If UNASSIGN is not nil, unassign oneself from the card."
   (interactive)
   (orgtrello-controller-do-cleanup-from-buffer 'global))
 
+;;;###autoload
+(defun org-trello-close-board ()
+  "Propose a list of board to and let the user choose which to close."
+  (interactive)
+  (org-trello--apply-deferred '(org-trello-log-light-checks-and-do
+                                "Close board"
+                                orgtrello-controller-do-close-board)))
+
 (defalias 'org-trello/help-describing-bindings
   'org-trello-help-describing-bindings)
 

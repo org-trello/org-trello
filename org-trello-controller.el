@@ -913,6 +913,26 @@ DATA is a list and the buffername is the last element of it."
        'orgtrello-controller--save-buffer-and-reload-setup)
      prefix-log)))
 
+(defun orgtrello-controller--close-board (data)
+  "Close the board present in DATA.
+DATA is a list of (board-id user boards buffername)."
+  (-let (((board-id _ _ &rest) data))
+    (-> data
+        car
+        orgtrello-api-close-board
+        (orgtrello-query-http-trello 'sync))
+    data))
+
+(defun orgtrello-controller-do-close-board ()
+  "Command to install the list boards."
+  (orgtrello-deferred-eval-computation
+   nil
+   '('orgtrello-controller--fetch-boards    ;; [[boards]]
+     'orgtrello-controller--fetch-user-logged-in              ;; [user [board]]
+     'orgtrello-controller--choose-board-id ;; [board-id [board]]
+     'orgtrello-controller--close-board)
+   "Close board according to your wishes buffer..."))
+
 (defun orgtrello-controller--compute-user-properties (memberships-map)
   "Given a map MEMBERSHIPS-MAP, extract the map of user information."
   (mapcar 'orgtrello-data-entity-member memberships-map))

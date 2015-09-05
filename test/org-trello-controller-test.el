@@ -2,6 +2,33 @@
 (require 'ert)
 (require 'el-mock)
 
+(ert-deftest test-org-trello-close-board ()
+  (should (eq :close-board-done
+              (with-mock
+                (mock (org-trello--apply-deferred '(org-trello-log-light-checks-and-do
+                                                    "Close board"
+                                                    orgtrello-controller-do-close-board)) => :close-board-done)
+                (org-trello-close-board)))))
+
+(ert-deftest test-orgtrello-controller-do-close-board ()
+  (should (eq :close-board-done
+              (with-mock
+                (mock (orgtrello-deferred-eval-computation
+                       nil
+                       '('orgtrello-controller--fetch-boards
+                         'orgtrello-controller--fetch-user-logged-in
+                         'orgtrello-controller--choose-board-id
+                         'orgtrello-controller--close-board)
+                       "Close board according to your wishes buffer...") => :close-board-done)
+                (orgtrello-controller-do-close-board)))))
+
+(ert-deftest test-orgtrello-controller--close-board ()
+  (should (equal '(:board-id :some :other)
+                 (with-mock
+                   (mock (orgtrello-api-close-board :board-id) => :query-close)
+                   (mock (orgtrello-query-http-trello :query-close 'sync) => :query-done)
+                   (orgtrello-controller--close-board '(:board-id :some :other))))))
+
 (ert-deftest test-orgtrello-controller-toggle-assign-user ()
   (should (eq :user-assigned-or-not-done
               (with-mock
