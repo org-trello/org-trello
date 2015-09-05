@@ -36,6 +36,7 @@
 * IN-PROGRESS 0.7.5 [50%]
 - [X] Update version
 - [X] #290 - Toggling users assignments to card
+- [X] Add binding `C-c o t` for the toggling command (code, doc, etc...)
 - [ ] #291 - Improve labels policy
 - [ ] Release notes
 * DONE 0.7.4 [100%]
