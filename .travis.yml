@@ -1,4 +1,5 @@
 language: emacs-lisp
+sudo: false
 env:
   global:
     - PATH=$HOME/.cask/bin:$HOME/.evm/bin:$PATH
@@ -10,9 +11,7 @@ env:
     - EVM_EMACS=emacs-24.5-bin
 before_install:
   # evm install
-  - curl -fsSkL https://gist.github.com/rejeep/7736123/raw > travis.sh && source ./travis.sh
-  # install the matrix's emacs version
-  - evm install $EVM_EMACS --use --skip
+  - curl -fsSkL https://gist.github.com/rejeep/ebcd57c3af83b049833b/raw > x.sh && source ./x.sh
   - cask --version
   - emacs --version
   # install deps for cask
