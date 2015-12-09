@@ -524,7 +524,8 @@ opens new issue in org-trello's github tracker."
   :type 'hook
   :group 'org-trello)
 
-(setq org-trello-mode-on-hook) ;; for dev
+(defvar org-trello-mode-on-hook)
+(setq org-trello-mode-on-hook nil) ;; for dev
 (add-hook 'org-trello-mode-on-hook 'orgtrello-controller-mode-on-hook-fn)
 
 (add-hook 'org-trello-mode-on-hook
@@ -549,7 +550,8 @@ opens new issue in org-trello's github tracker."
                                 org-trello-current-prefix-keybinding)))
           'do-append)
 
-(setq org-trello-mode-off-hook) ;; for dev
+(defvar org-trello-mode-off-hook)
+(setq org-trello-mode-off-hook nil) ;; for dev
 (add-hook 'org-trello-mode-off-hook 'orgtrello-controller-mode-off-hook-fn)
 
 (add-hook 'org-trello-mode-off-hook
