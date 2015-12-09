@@ -250,7 +250,7 @@
                (orgtrello-buffer-end-of-line-point))))
   (should (eq 10
               (with-mock
-                (mock (save-excursion *) => 15)
+                (mock (save-excursion * *) => 15)
                 (mock (orgtrello-entity-org-checkbox-p) => t)
                 (mock (orgtrello-buffer-compute-overlay-size) => 4)
                 (orgtrello-buffer-end-of-line-point)))))

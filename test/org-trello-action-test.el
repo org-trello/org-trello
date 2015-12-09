@@ -38,28 +38,29 @@
   ;; with all controls ok, the action function is executed
   (should (equal "some-result"
                  (with-mock
-                   (mock (control0) => :ok)
-                   (mock (control1) => :ok)
+                   (mock (control0 nil) => :ok)
+                   (mock (control1 nil) => :ok)
                    (orgtrello-action-controls-or-actions-then-do '(control0 control1) (lambda () "some-result")))))
+
   ;; with all controls ok and the no logs flag, the action function is executed
   (should (equal "some-result"
                  (with-mock
-                   (mock (control0) => :ok)
-                   (mock (control1) => :ok)
+                   (mock (control0 nil) => :ok)
+                   (mock (control1 nil) => :ok)
                    (orgtrello-action-controls-or-actions-then-do '(control0 control1) (lambda () "some-result") 'no-logs))))
-  ;; with a problem in controls, the action function is not executed and the logs are returned
+  ;; ;; with a problem in controls, the action function is not executed and the logs are returned
   (should (equal "org-trello - List of errors:\n - some error message from control 1\n- some other error message from control 2\n"
                  (with-mock
-                   (mock (control0)            => :ok)
-                   (mock (control1-that-fails) => "some error message from control 1")
-                   (mock (control2-that-fails) => "some other error message from control 2")
+                   (mock (control0 nil)            => :ok)
+                   (mock (control1-that-fails nil) => "some error message from control 1")
+                   (mock (control2-that-fails nil) => "some other error message from control 2")
                    (orgtrello-action-controls-or-actions-then-do '(control0 control1-that-fails control2-that-fails) 'some-uncalled-function-because-control-fail))))
-  ;; with a problem in controls, the action function is not executed and the logs are not returned
+  ;; ;; with a problem in controls, the action function is not executed and the logs are not returned
   (should (equal nil
                  (with-mock
-                   (mock (control0)            => :ok)
-                   (mock (control1-that-fails) => "some error message from control 1")
-                   (mock (control2-that-fails) => "some other error message from control 2")
+                   (mock (control0 nil)            => :ok)
+                   (mock (control1-that-fails nil) => "some error message from control 1")
+                   (mock (control2-that-fails nil) => "some other error message from control 2")
                    (orgtrello-action-controls-or-actions-then-do '(control0 control1-that-fails control2-that-fails) 'some-uncalled-function-because-control-fail 'no-logs)))))
 
 (ert-deftest test-orgtrello-action-functional-controls-then-do ()

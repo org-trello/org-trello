@@ -507,8 +507,8 @@
                 (mock (orgtrello-entity-card-at-pt) => t)
                 (mock (orgtrello-buffer-entry-get-full-metadata) => :card-fullmeta)
                 (mock (orgtrello-data-current :card-fullmeta) => :card-meta)
-                (mock (orgtrello-data-entity-name) => :card-name)
-                (mock (format *) => "do something...")
+                (mock (orgtrello-data-entity-name :card-meta) => :card-name)
+                (mock (format "Sync trello card '%s' to buffer '%s'..." :card-name :buffer-name) => "do something...")
                 (mock (orgtrello-deferred-eval-computation
                        '(:card-meta :buffer-name :card-name :point-start)
                        '('orgtrello-controller--retrieve-full-card
@@ -523,8 +523,8 @@
                 (mock (orgtrello-entity-back-to-card) => :back-done)
                 (mock (orgtrello-buffer-entry-get-full-metadata) => :card-fullmeta)
                 (mock (orgtrello-data-current :card-fullmeta) => :card-meta)
-                (mock (orgtrello-data-entity-name) => :card-name)
-                (mock (format *) => "do something...")
+                (mock (orgtrello-data-entity-name :card-meta) => :card-name)
+                (mock (format "Sync trello card '%s' to buffer '%s'..." :card-name :buffer-name) => "do something...")
                 (mock (orgtrello-deferred-eval-computation
                        '(:card-meta :buffer-name :card-name :point-start)
                        '('orgtrello-controller--retrieve-full-card
@@ -539,7 +539,7 @@
                 (mock (point) => :point-start)
                 (mock (orgtrello-data-current :full-meta) => :card-meta)
                 (mock (orgtrello-data-entity-name :card-meta) => :card-name)
-                (mock (format *) => "do archive something...")
+                (mock (format * *) => "do archive something...")
                 (mock (orgtrello-deferred-eval-computation
                        (list :card-meta :card-name :buffer-name :point-start)
                        '('orgtrello-controller--archive-that-card
@@ -564,16 +564,15 @@
                 (mock (orgtrello-buffer-board-name) => :board-name)
                 (mock (point) => :point-start)
                 (mock (orgtrello-buffer-board-id) => :board-id)
-                (mock (format *) => "do something...")
-                (mock (orgtrello-deferred-eval-computation *) => :result-sync-buffer-from-trello)
-                ;; (mock (orgtrello-deferred-eval-computation
-                ;;        '(:board-id :buffer-name :board-name :point-start)
-                ;;        '('orgtrello-controller--retrieve-archive-cards
-                ;;          'orgtrello-controller--retrieve-full-cards
-                ;;          'orgtrello-controller--sync-buffer-with-archived-and-trello-cards
-                ;;          'orgtrello-controller--after-sync-buffer-with-trello-cards
-                ;;          (orgtrello-controller-log-success "do something..."))
-                ;;        "do something...") => :result-sync-buffer-from-trello)
+                (mock (format * * *) => "do something...")
+                (mock (orgtrello-deferred-eval-computation
+                       '(:board-id :buffer :board-name :point-start)
+                       '('orgtrello-controller--retrieve-archive-cards
+                         'orgtrello-controller--retrieve-full-cards
+                         'orgtrello-controller--sync-buffer-with-archived-and-trello-cards
+                         'orgtrello-controller--after-sync-buffer-with-trello-cards
+                         (orgtrello-controller-log-success "do something..."))
+                       "do something...") => :result-sync-buffer-from-trello)
                 (orgtrello-controller-do-sync-buffer-from-trello)))))
 
 (ert-deftest test-orgtrello-controller--do-install-config-file ()
@@ -592,8 +591,9 @@
   (should (eq :result-done
               (with-mock
                 (mock (current-buffer) => :current-buffer)
+                (mock (jump-to-register *) => :done)
                 (mock (kill-buffer :current-buffer) => :done)
-                (mock (define-key org-mode-map *) => :done)
+                (mock (define-key org-mode-map * *) => :done)
                 (mock (jump-to-register orgtrello-controller-register) => :done)
                 (mock (pop-to-buffer :buffer-name) => :done)
                 (mock (goto-char :point) => :result-done)
@@ -1387,7 +1387,7 @@ See http://org-trello.github.io/trello-setup.html#credentials for more informati
            :result-comp-close-lists
            (with-mock
              (mock (orgtrello-api-close-list :list-id0) => :query-close-list-id-0)
-             (mock (orgtrello-query-http-trello :query-close-list-id-0 nil *) => :async-computation-0)
+             (mock (orgtrello-query-http-trello :query-close-list-id-0 nil * *) => :async-computation-0)
              (mock (orgtrello-proxy-execute-async-computations
                     '(:async-computation-0)
                     "List(s) closed."
@@ -2121,21 +2121,31 @@ Also, you can specify on your org-mode buffer the todo list you want to work wit
 (ert-deftest test-orgtrello-controller-choose-board ()
   (should (equal :id-board0
                  (with-mock
-                   (mock (ido-completing-read *) => "board0-name")
+                   (mock (orgtrello-hash-keys *) => :boards)
+                   (mock (orgtrello-input-read-string-completion
+                          "Board to install (TAB to complete): "
+                          :boards) => "board0-name")
                    (orgtrello-controller-choose-board (orgtrello-hash-make-properties '(("board0-name" . :id-board0) ("board1-name" . :id-board1)))))))
   (should (equal :id-board1
                  (with-mock
-                   (mock (ido-completing-read *) => "board1-name")
+                   (mock (orgtrello-hash-keys *) => :boards)
+                   (mock (orgtrello-input-read-string-completion
+                          "Board to install (TAB to complete): "
+                          :boards) => "board1-name")
                    (orgtrello-controller-choose-board (orgtrello-hash-make-properties '(("board0-name" . :id-board0) ("board1-name" . :id-board1))))))))
 
 (ert-deftest test-orgtrello-controller--choose-account ()
   (should (equal "account0"
                  (with-mock
-                   (mock (ido-completing-read *) => "account0")
+                   (mock (orgtrello-input-read-string-completion
+                          "Select org-trello account (TAB to complete): "
+                          '("account0" "account1")) => "account0")
                    (orgtrello-controller--choose-account '("account0" "account1")))))
   (should (equal "account1"
                  (with-mock
-                   (mock (ido-completing-read *) => "account1")
+                   (mock (orgtrello-input-read-string-completion
+                          "Select org-trello account (TAB to complete): "
+                          '("account0" "account1")) => "account1")
                    (orgtrello-controller--choose-account '("account0" "account1"))))))
 
 (ert-deftest test-orgtrello-controller--list-boards ()
@@ -2145,7 +2155,7 @@ Also, you can specify on your org-mode buffer the todo list you want to work wit
                                                     (:name . "name0")
                                                     (:closed . nil)))
                   (car (with-mock
-                         (mock (orgtrello-api-get-boards)                          => :query)
+                         (mock (orgtrello-api-get-boards "open")          => :query)
                          (mock (orgtrello-query-http-trello :query 'sync) => (list (orgtrello-hash-make-properties '((:id . "id0") (:name . "name0") (:closed)))
                                                                                    (orgtrello-hash-make-properties '((:id . "id1") (:name . "name1") (:closed)))
                                                                                    (orgtrello-hash-make-properties '((:id . "id1") (:name . "name1") (:closed . t)))))
@@ -2157,7 +2167,7 @@ Also, you can specify on your org-mode buffer the todo list you want to work wit
                                               (:name . "name1")
                                               (:closed . nil)))
             (cadr (with-mock
-                    (mock (orgtrello-api-get-boards)                          => :query)
+                    (mock (orgtrello-api-get-boards "open")          => :query)
                     (mock (orgtrello-query-http-trello :query 'sync) => (list (orgtrello-hash-make-properties '((:id . "id0") (:name . "name0") (:closed)))
                                                                               (orgtrello-hash-make-properties '((:id . "id1") (:name . "name1") (:closed)))
                                                                               (orgtrello-hash-make-properties '((:id . "id1") (:name . "name1") (:closed . t)))))

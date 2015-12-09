@@ -79,7 +79,7 @@
   (should
    (equal (list :updated-entities-map :updated-adjacencies-map)
           (with-mock
-            (mock (orgtrello-backend-add-entity-to-entities :current-entity) => :updated-entities-map)
+            (mock (orgtrello-backend-add-entity-to-entities :current-entity :entities-map) => :updated-entities-map)
             (mock (orgtrello-backend--add-entity-to-adjacency :current-entity
                                                               :parent-entity
                                                               :adjacency-map) => :updated-adjacencies-map)
