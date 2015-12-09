@@ -422,6 +422,32 @@
                                 (idMemberCreator . "4f2baa2f72b7c1293501cad3")
                                 (id . "532d7441852414f343560757"))])
 
+(defvar alternative-data-to-test '[((id . "566")
+                                    (idMemberCreator . "52f")
+                                    (data
+                                     (list
+                                      (name . "ToDo")
+                                      (id . "561"))
+                                     (board
+                                      (shortLink . "wLd")
+                                      (name . "Working title")
+                                      (id . "562"))
+                                     (card
+                                      (shortLink . "cIZ")
+                                      (idShort . 16)
+                                      (name . "Figure out a name")
+                                      (id . "563"))
+                                     (text . "Comment 5"))
+                                    (type . "commentCard")
+                                    (date . "2015-12-09T14:05:04.685Z")
+                                    (memberCreator
+                                     (id . "52f")
+                                     (avatarHash . "5e5")
+                                     (fullName . "Martin")
+                                     (initials . "M")
+                                     (username . "redacted")))]
+)
+
 (ert-deftest test-orgtrello-data--parse-actions ()
   (should (orgtrello-tests-hash-equal
            (orgtrello-hash-make-properties '((:comment-id . "532d7447b247e3d24f365309")
@@ -434,7 +460,13 @@
                                              (:comment-text . "comment 3")
                                              (:comment-date . "2014-03-22T11:30:09.927Z")
                                              (:comment-user . "ardumont")))
-           (cadr (orgtrello-data--parse-actions partial-data-to-test)))))
+           (cadr (orgtrello-data--parse-actions partial-data-to-test))))
+  (should (orgtrello-tests-hash-equal
+           (orgtrello-hash-make-properties '((:comment-id . "566")
+                                             (:comment-text . "Comment 5")
+                                             (:comment-date . "2015-12-09T14:05:04.685Z")
+                                             (:comment-user . "redacted")))
+           (car (orgtrello-data--parse-actions alternative-data-to-test)))))
 
 (ert-deftest test-orgtrello-data-format-labels ()
   (should (equal ":red: some label\n\n:yellow: some other label"
