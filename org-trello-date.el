@@ -33,7 +33,7 @@
   (if org-date
       (--> (org-parse-time-string org-date)
            (apply 'encode-time it)
-           (format-time-string "%Y-%m-%dT%H:%M:%S.%3NZ" it 'universal))
+           (format-time-string "%Y-%m-%dT%H:%M:%S.%3NZ" it t))
     org-date))
 
 (defconst orgtrello-date-iso-8601-date-pattern
