@@ -235,8 +235,8 @@ When FROM is set, this will delete the current card's comments."
 This will only work if you are the owner of the comment."
   (interactive)
   (org-trello--apply-deferred '(org-trello-log-strict-checks-and-do
-                               "Remove current comment at point"
-                               orgtrello-controller-do-delete-card-comment)))
+                                "Remove current comment at point"
+                                orgtrello-controller-do-delete-card-comment)))
 
 (defalias 'org-trello/delete-card-comment 'org-trello-delete-card-comment)
 
@@ -314,8 +314,8 @@ If FROM is non nil, execute all entities removal from trello and buffer."
   "Execute all entities removal from trello and buffer."
   (interactive)
   (org-trello--apply-deferred '(org-trello-log-strict-checks-and-do
-                               "Delete Cards"
-                               orgtrello-controller-do-delete-entities)))
+                                "Delete Cards"
+                                orgtrello-controller-do-delete-entities)))
 
 (defalias 'org-trello/kill-cards 'org-trello-kill-cards)
 
@@ -361,8 +361,8 @@ If FROM is non nil, execute all entities removal from trello and buffer."
   "Control first, then if ok, trigger the update of the informations about the board."
   (interactive)
   (org-trello--apply-deferred '(org-trello-log-light-checks-and-do
-                               "Update board information"
-                               orgtrello-controller-do-update-board-metadata)))
+                                "Update board information"
+                                orgtrello-controller-do-update-board-metadata)))
 
 (defalias 'org-trello/update-board-metadata 'org-trello-update-board-metadata)
 
