@@ -190,7 +190,7 @@ SIZE is a useless parameter, only here to satisfy an implementation detail."
               (orgtrello-data-put-entity-comment-id   (assoc-default 'id it))
               (orgtrello-data-put-entity-comment-text (->> it (assoc-default 'data) (assoc-default 'text)))
               (orgtrello-data-put-entity-comment-date (assoc-default 'date it))
-              (orgtrello-data-put-entity-comment-user (->> it car (assoc-default 'username))))
+              (orgtrello-data-put-entity-comment-user (->> it (assoc-default 'memberCreator) (assoc-default 'username))))
          data))
 
 (defun orgtrello-data-parse-data (entities)
