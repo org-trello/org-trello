@@ -523,7 +523,7 @@ FN-TO-EXECUTE is a function without any parameters."
     (orgtrello-buffer-delete-property-from-entry property)
     (goto-char (point-min))
     (while (re-search-forward " :PROPERTIES: {.*" nil t)
-      (remove-overlays (point-at-bol) (point-at-eol))
+      (orgtrello-buffer-remove-overlays (point-at-bol) (point-at-eol))
       (replace-match "" nil t))))
 
 (defun orgtrello-buffer-remove-overlays (&optional start end)

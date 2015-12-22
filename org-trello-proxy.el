@@ -299,7 +299,7 @@ MAP-DISPATCH-FN is a map of function taking the one parameter ENTITY."
 
 (defun orgtrello-proxy--delete-region (start end)
   "Delete a region defined by START and END bound."
-  (remove-overlays start end) ;; remove overlays on the card region
+  (orgtrello-buffer-remove-overlays start end) ;; remove overlays on the card region
   (delete-region start end))
 
 (defun orgtrello-proxy--delete-card-region ()
