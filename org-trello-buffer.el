@@ -840,7 +840,8 @@ ENTITIES and ADJACENCIES provide information on card's structure."
                 (buffer-name (current-buffer)))
     (with-temp-buffer
       (apply 'insert-buffer-substring (cons buffer-name region))
-      (org-mode)
+      (let ((org-startup-with-latex-preview nil))
+        (org-mode))
       (orgtrello-buffer-delete-property org-trello--label-key-local-checksum)
       (when orgtrello-setup-use-position-in-checksum-computation
         (goto-char (point-max))
