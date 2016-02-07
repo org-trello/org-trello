@@ -38,8 +38,7 @@ Simply displays a success message in the minibuffer."
     (erase-buffer)
     (insert (decode-coding-string data 'utf-8))
     (goto-char (point-min))
-    (orgtrello-log-msg orgtrello-log-debug "Decoded data to utf-8")
-    ))
+    (orgtrello-log-msg orgtrello-log-debug "Decoded data to utf-8")))
 
 (defun orgtrello-query--http-parse ()
   "Parse the http response into an org-trello entity."
