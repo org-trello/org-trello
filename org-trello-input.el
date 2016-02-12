@@ -4,6 +4,11 @@
 
 (require 'org-trello-log)
 (require 'ido)
+(require 's)
+
+(defalias 'orgtrello-input-read-string 'read-string
+  "Read input from user which can be null.
+:: () -> String")
 
 (defun orgtrello-input-read-not-empty (prompt)
   "Read input as long as input is empty.
@@ -11,12 +16,8 @@ PROMPT is the prefix string displayed for input.
 :: () -> String"
   (let ((value nil))
     (while (or (null value) (string= "" value))
-      (setq value (read-string prompt)))
+      (setq value (-> (orgtrello-input-read-string prompt) s-trim)))
     value))
-
-(defalias 'orgtrello-input-read-string 'read-string
-  "Read input from user which can be null.
-:: () -> String")
 
 (defun orgtrello-input-read-string-completion (prompt choices)
   "Read input from user with completing mechanism.

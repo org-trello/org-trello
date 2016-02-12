@@ -15,9 +15,9 @@
   )
 
 (ert-deftest test-orgtrello-input-read-not-empty ()
-  (should (equal :something
+  (should (equal "something"
                  (with-mock
-                   (mock (read-string "prompt: ") => :something)
+                   (mock (read-string "prompt: ") => " something ")
                    (orgtrello-input-read-not-empty "prompt: ")))))
 
 (ert-deftest test-orgtrello-input-read-string ()
