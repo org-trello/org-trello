@@ -26,7 +26,10 @@ CHOICES is the list of possibilities with completing properties.
 :: String -> [a] -> a"
   (if (eq 'default org-trello-input-completion-mechanism)
       (ido-completing-read prompt choices nil 'do-match)
-    (helm-comp-read prompt choices)))
+    (progn ;; Beware, the user needs to install helm first as this is
+           ;; not a runtime dependency on org-trello itself
+      (require 'helm)
+      (helm-comp-read prompt choices))))
 
 (provide 'org-trello-input)
 ;;; org-trello-input.el ends here

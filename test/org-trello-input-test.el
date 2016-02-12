@@ -6,13 +6,12 @@
                 (with-mock
                   (mock (ido-completing-read :prompt :choices nil 'do-match) => :res-with-ido)
                   (orgtrello-input-read-string-completion :prompt :choices)))))
-  ;; can't work without requiring helm -> not declared as a dependency on org-trello
-  ;; (should (eq :res-with-helm
-  ;;             (let ((org-trello-input-completion-mechanism 'other))
-  ;;               (with-mock
-  ;;                 (mock (helm-comp-read :prompt :choices nil 'do-match) => :res-with-helm)
-  ;;                 (orgtrello-input-read-string-completion :prompt :choices)))))
-  )
+  ;; cask declares helm as test dependency
+  (should (eq :res-with-helm
+              (let ((org-trello-input-completion-mechanism 'other))
+                (with-mock
+                  (mock (helm-comp-read :prompt :choices) => :res-with-helm)
+                  (orgtrello-input-read-string-completion :prompt :choices))))))
 
 (ert-deftest test-orgtrello-input-read-not-empty ()
   (should (equal "something"
