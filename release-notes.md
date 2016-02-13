@@ -1,3 +1,18 @@
+# 0.7.6
+
+- [X] Update version
+- [X] Support unicode characters in sync - Close #307 Close #309
+- [X] Fix parsing username comments - Close #301
+- [X] Fix parsing timestamp in superior emacs (api change)
+- [X] Update travis-ci scripts to use the new travis infrastructure
+- [X] fix broken tests (mock.el unit test library revealed broken tests)
+- [X] Fix problem with org-latex-preview when computing checksums - Close #303
+- [X] Do not permit empty login when installing access key and token - Close #314
+- [X] Upgrade dependencies version
+- [X] Pb with labels-tags regarding the grey - Close #310
+- [X] Improve documentation about the setup account - #306
+- [X] Release notes
+
 # 0.7.5
 
 - [X] #290 - Toggling users assignments to card

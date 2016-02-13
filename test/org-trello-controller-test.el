@@ -443,7 +443,7 @@
   ;; file not existing
   (should (eq :result-install
               (with-mock
-                (mock (orgtrello-input-read-string "Trello login account (you need to be logged accordingly in trello.com as we cannot check this for you): ") => "user")
+                (mock (orgtrello-input-read-not-empty "Trello login account (you need to be logged accordingly in trello.com as we cannot check this for you): ") => "user")
                 (mock (orgtrello-controller-config-file "user") => :some-file)
                 (mock (file-exists-p :some-file) => nil)
                 (mock (orgtrello-deferred-eval-computation

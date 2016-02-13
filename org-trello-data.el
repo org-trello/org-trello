@@ -271,7 +271,10 @@ If TRELLO-CHECKLIST is nil, return ORG-CHECKLIST."
 (defun orgtrello-data--labels-hash-to-tags (labels)
   "Given a hash map with LABELS entry, return a tag string joined by : separator."
   (when labels
-    (orgtrello-data--labels-to-tags (mapcar 'orgtrello-data-entity-color labels))))
+    (orgtrello-data--labels-to-tags
+     (mapcar (lambda (label) (-if-let (l (orgtrello-data-entity-color label))
+                            l
+                          "grey")) labels))))
 
 (defun orgtrello-data--from-tags-to-list (tags)
   "Given TAGS, a : string separated string, return a list of non empty string."

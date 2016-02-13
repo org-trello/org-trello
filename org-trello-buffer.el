@@ -523,7 +523,7 @@ FN-TO-EXECUTE is a function without any parameters."
     (orgtrello-buffer-delete-property-from-entry property)
     (goto-char (point-min))
     (while (re-search-forward " :PROPERTIES: {.*" nil t)
-      (remove-overlays (point-at-bol) (point-at-eol))
+      (orgtrello-buffer-remove-overlays (point-at-bol) (point-at-eol))
       (replace-match "" nil t))))
 
 (defun orgtrello-buffer-remove-overlays (&optional start end)
@@ -840,7 +840,8 @@ ENTITIES and ADJACENCIES provide information on card's structure."
                 (buffer-name (current-buffer)))
     (with-temp-buffer
       (apply 'insert-buffer-substring (cons buffer-name region))
-      (org-mode)
+      (let ((org-startup-with-latex-preview nil))
+        (org-mode))
       (orgtrello-buffer-delete-property org-trello--label-key-local-checksum)
       (when orgtrello-setup-use-position-in-checksum-computation
         (goto-char (point-max))

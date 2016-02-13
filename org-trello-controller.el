@@ -613,7 +613,7 @@ Returns DATA."
 (defun orgtrello-controller-do-install-key-and-token ()
   "Procedure to install consumer-key and access token as user config-file."
   (let* ((user-login
-          (orgtrello-input-read-string
+          (orgtrello-input-read-not-empty
            "Trello login account (you need to be logged accordingly in trello.com as we cannot check this for you): "))
          (user-config-file (orgtrello-controller-config-file user-login))
          (prefix-log "Install key and token..."))

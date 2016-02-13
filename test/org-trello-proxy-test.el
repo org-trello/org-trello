@@ -283,7 +283,7 @@
 (ert-deftest test-orgtrello-proxy--delete-region ()
   (should (equal :delete-region-done
                  (with-mock
-                   (mock (remove-overlays :start :end) => :remove-overlays-done)
+                   (mock (orgtrello-buffer-remove-overlays :start :end) => :remove-overlays-done)
                    (mock (delete-region :start :end) => :delete-region-done)
                    (orgtrello-proxy--delete-region :start :end)))))
 

@@ -34,12 +34,12 @@ Simply displays a success message in the minibuffer."
   `((key . ,org-trello-consumer-key) (token . ,org-trello-access-token)))
 
 (defun orgtrello-query--decode-as-utf-8 ()
+  "Permit to decode the buffer's response data as utf-8."
   (let ((data (buffer-string)))
     (erase-buffer)
     (insert (decode-coding-string data 'utf-8))
     (goto-char (point-min))
-    (orgtrello-log-msg orgtrello-log-debug "Decoded data to utf-8")
-    ))
+    (orgtrello-log-msg orgtrello-log-debug "Decoded data to utf-8")))
 
 (defun orgtrello-query--http-parse ()
   "Parse the http response into an org-trello entity."

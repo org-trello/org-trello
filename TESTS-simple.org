@@ -56,6 +56,7 @@
 * TODO Programming in scala
 :PROPERTIES:
 :END:
+
   - [-] chapters
     - [ ] introduction
     - [ ] Ch. 1 - A scalable language
@@ -73,7 +74,18 @@
 * TODO Functional programming in Haskell
 :PROPERTIES:
 :END:
+
 * PENDING Questions about life, the universe and everything
 :PROPERTIES:
 :END:
+
   - [-] How to deal with promotion/demotion?
+
+* IN-PROGRESS blahblah
+:PROPERTIES:
+:END:
+  ah blah blah..
+  - [-] Checklist
+    - [ ] ⌂ hey ho
+    - [X] another item
+  - [-] ἀ ἃ ἄ ἅ ἆ ἇ Ἀ Ἁ Ἂ Ἃ Ἄ Ἅ Ἆ Ἇ
