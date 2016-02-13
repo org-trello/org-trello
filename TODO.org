@@ -42,6 +42,7 @@
 - [X] Fix problem with org-latex-preview when computing checksums - Close #303
 - [X] Do not permit empty login when installing access key and token - Close #314
 - [X] Upgrade dependencies version
+- [X] Pb with labels-tags regarding the grey - Close #310
 - [ ] Improve documentation about the setup account - #306
 - [ ] Release notes
 
