@@ -32,7 +32,7 @@
 - [ ] #245 - Trying to sync a card: orgtrello-buffer/compute-marker: Wrong type argument: numberp, nil
 - [ ] #248 - Installing from melpa (unstable) works, but then it errs on an undefined variable "error-messages"
 - [ ] #263 - Colors broken in org trello
-* IN-PROGRESS 0.7.6 [72%]
+* IN-PROGRESS 0.7.6 [81%]
 - [X] Update version
 - [X] Support unicode characters in sync - Close #307 Close #309
 - [X] Fix parsing username comments - Close #301
@@ -41,7 +41,7 @@
 - [X] fix broken tests (mock.el unit test library revealed broken tests)
 - [X] Fix problem with org-latex-preview when computing checksums - Close #303
 - [X] Do not permit empty login when installing access key and token - Close #314
-- [ ] Upgrade dependencies version
+- [X] Upgrade dependencies version
 - [ ] Improve documentation about the setup account - #306
 - [ ] Release notes
 
