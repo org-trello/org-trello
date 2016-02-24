@@ -1,3 +1,11 @@
+# 0.7.7
+
+- [X] Rework packaging problem
+- [X] Add issue/pr templates
+- [X] Add request-backend to the org-trello-bug-report
+- [X] Update version
+- [X] Release notes
+
 # 0.7.6
 
 - [X] Update version

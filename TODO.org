@@ -32,12 +32,12 @@
 - [ ] #245 - Trying to sync a card: orgtrello-buffer/compute-marker: Wrong type argument: numberp, nil
 - [ ] #248 - Installing from melpa (unstable) works, but then it errs on an undefined variable "error-messages"
 - [ ] #263 - Colors broken in org trello
-* DONE 0.7.7 [80%]
+* DONE 0.7.7 [100%]
 - [X] Rework packaging problem
 - [X] Add issue/pr templates
 - [X] Add request-backend to the org-trello-bug-report
 - [X] Update version
-- [ ] Release notes
+- [X] Release notes
 * DONE 0.7.6 [100%]
 CLOSED: [2016-02-13 Sat 19:36]
 - [X] Update version
