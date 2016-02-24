@@ -1,4 +1,4 @@
-;;; utilities.el --- org-trello tests utils
+;;; org-trello-tests.el --- org-trello tests utils
 ;;; Commentary:
 ;;; Code:
 
@@ -112,5 +112,5 @@ BODY-TEST is the assertion to test on the buffer."
      (org-mode)
      ,body-test))
 
-(provide 'utilities)
-;;; utilities.el ends here
+(provide 'org-trello-tests)
+;;; org-trello-tests.el ends here

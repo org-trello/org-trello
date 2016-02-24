@@ -1,6 +1,6 @@
 (require 'ert)
 (require 'el-mock)
-(require 'utilities)
+(require 'org-trello-tests)
 
 (ert-deftest test-hash-table-keys ()
   (should (equal '(:c :b :a)
@@ -245,5 +245,5 @@ description
                  (goto-char (point-min))
                  (car (org-element-at-point)))))))
 
-(provide 'utilities-test)
-;;; utilities-test.el ends here
+(provide 'org-trello-tests)
+;;; org-trello-tests-test.el ends here

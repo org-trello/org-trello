@@ -68,7 +68,7 @@
   "Folder where tests files are defined.")
 
 (defvar orgtrello-tools--tests-namespaces '() "Org-trello test namespaces for development purposes.")
-(setq orgtrello-tools--tests-namespaces '("test/utilities-test.el"
+(setq orgtrello-tools--tests-namespaces '("test/org-trello-tests-test.el"
                                           "test/org-trello-setup-test.el"
                                           "test/org-trello-action-test.el"
                                           "test/org-trello-api-test.el"
