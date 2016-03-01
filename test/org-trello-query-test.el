@@ -15,12 +15,14 @@
             (orgtrello-query--authentication-params)))))
 
 (ert-deftest test-orgtrello-query--http-parse ()
-  (should
-   (equal :result
-          (with-mock
-            (mock (json-read) => :json-output)
-            (mock (orgtrello-data-parse-data :json-output) => :result)
-            (orgtrello-query--http-parse)))))
+  (should (equal '("some-output with unicode bytes ἀ ἃ ἄ ἅ ἆ ἇ Ἀ Ἁ Ἂ Ἃ Ἄ Ἅ Ἆ Ἇ")
+                 (with-mock
+                   (mock (buffer-string) => "[\"some-output with unicode bytes ἀ ἃ ἄ ἅ ἆ ἇ Ἀ Ἁ Ἂ Ἃ Ἄ Ἅ Ἆ Ἇ\"]")
+                   (orgtrello-query--http-parse))))
+  (should (equal '("bytes антикор") ;; i have no idea what this means so please, reader, don't take it personally
+                 (with-mock
+                   (mock (buffer-string) => "[\"bytes \320\260\320\275\321\202\320\270\320\272\320\276\321\200\"]")
+                   (orgtrello-query--http-parse)))))
 
 (ert-deftest test-orgtrello-query--get ()
   ;; not synced, default callbacks, etc... no authentication

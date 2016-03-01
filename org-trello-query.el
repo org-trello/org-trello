@@ -33,19 +33,12 @@ Simply displays a success message in the minibuffer."
   "Generate the list of http authentication parameters."
   `((key . ,org-trello-consumer-key) (token . ,org-trello-access-token)))
 
-(defun orgtrello-query--decode-as-utf-8 ()
-  "Permit to decode the buffer's response data as utf-8."
-  (let ((data (buffer-string)))
-    (erase-buffer)
-    (insert (decode-coding-string data 'utf-8))
-    (goto-char (point-min))
-    (orgtrello-log-msg orgtrello-log-debug "Decoded data to utf-8")))
-
 (defun orgtrello-query--http-parse ()
   "Parse the http response into an org-trello entity."
-  (orgtrello-query--decode-as-utf-8)
-  (->> (json-read)
-       orgtrello-data-parse-data))
+  (-> (buffer-string)
+      (decode-coding-string 'utf-8)
+      json-read-from-string
+      orgtrello-data-parse-data))
 
 (defun orgtrello-query--get (server query-map &optional success-callback error-callback authentication-p)
   "Execute the GET request to SERVER with QUERY-MAP with optional SUCCESS-CALLBACK, ERROR-CALLBACK and AUTHENTICATION-P."
