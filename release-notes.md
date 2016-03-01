@@ -1,3 +1,10 @@
+# 0.7.8
+
+- [X] Fix cyrillic encoding problem - Close #318 #270
+- [X] Update version
+- [X] Sign tag release
+- [X] Release notes
+
 # 0.7.7
 
 - [X] Rework packaging problem

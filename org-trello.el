@@ -4,7 +4,7 @@
 
 ;; Author: Antoine R. Dumont <eniotna.t AT gmail.com>
 ;; Maintainer: Antoine R. Dumont <eniotna.t AT gmail.com>
-;; Version: 0.7.7
+;; Version: 0.7.8
 ;; Package-Requires: ((emacs "24") (dash "2.12.1") (dash-functional "2.12.1") (s "1.11.0") (deferred "0.4.0") (request-deferred "0.2.0"))
 ;; Keywords: org-mode trello sync org-trello
 ;; URL: https://github.com/org-trello/org-trello
@@ -112,7 +112,7 @@ Please consider upgrading Emacs." emacs-version)
 (require 'json)
 (require 'parse-time)
 
-(defconst org-trello--version "0.7.7" "Current org-trello version installed.")
+(defconst org-trello--version "0.7.8" "Current org-trello version installed.")
 
 
 

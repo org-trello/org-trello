@@ -23,7 +23,7 @@ git checkout master
 
 git merge upstream/master
 
-git tag $VERSION
+git tag -a -s $VERSION
 
 git push upstream --tag
 
