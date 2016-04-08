@@ -179,15 +179,16 @@ Optional fields DUE, ID-MEMBERS, DESC, LABELS, POS query."
                                         labels pos)
   "Create an update a card CARD-ID to IDLIST.
 Optional NAME, DUE date, ID-MEMBERS, DESC, LABELS, POS query."
-  (->> (orgtrello-api--deal-with-optional-values
-        `((,name . ("name" . ,name))
-          (,id-members . ("idMembers" . ,id-members))
-          (,due . ("due" . ,due))
-          (,desc . ("desc" . ,desc))
-          (,labels . ("labels" . ,labels))
-          (,pos . ("pos" . ,pos)))
-        `(("idList" . ,idList)))
-       (orgtrello-api-make-query "PUT" (format "/cards/%s" card-id))))
+  (let ((due (if due due "")))
+    (->> (orgtrello-api--deal-with-optional-values
+          `((,name . ("name" . ,name))
+            (,id-members . ("idMembers" . ,id-members))
+            (,due . ("due" . ,due))
+            (,desc . ("desc" . ,desc))
+            (,labels . ("labels" . ,labels))
+            (,pos . ("pos" . ,pos)))
+          `(("idList" . ,idList)))
+         (orgtrello-api-make-query "PUT" (format "/cards/%s" card-id)))))
 
 (defun orgtrello-api-add-checklist (card-id name pos)
   "Create an add a checklist to a card CARD-ID, checklist with NAME, POS query."
