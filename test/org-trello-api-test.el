@@ -111,15 +111,15 @@
 (ert-deftest test-orgtrello-api-move-card ()
   (should (equal "PUT"                                             (gethash :method (orgtrello-api-move-card :id-card :id-list "name-card"))))
   (should (equal "/cards/:id-card"                                 (gethash :uri    (orgtrello-api-move-card :id-card :id-list "name-card"))))
-  (should (equal '(("name"   . "name-card") ("idList" . :id-list)) (gethash :params (orgtrello-api-move-card :id-card :id-list "name-card"))))
+  (should (equal '(("due". "") ("name"   . "name-card") ("idList" . :id-list)) (gethash :params (orgtrello-api-move-card :id-card :id-list "name-card"))))
 
   (should (equal "PUT"                                     (gethash :method (orgtrello-api-move-card :id-card :id-list :name))))
   (should (equal "/cards/:id-card"                         (gethash :uri    (orgtrello-api-move-card :id-card :id-list :name))))
-  (should (equal '(("name" . :name) ("idList" . :id-list)) (gethash :params (orgtrello-api-move-card :id-card :id-list :name))))
+  (should (equal '(("due". "") ("name" . :name) ("idList" . :id-list)) (gethash :params (orgtrello-api-move-card :id-card :id-list :name))))
 
   (should (equal "PUT"                    (gethash :method (orgtrello-api-move-card :id-card :id-list))))
   (should (equal "/cards/:id-card"        (gethash :uri    (orgtrello-api-move-card :id-card :id-list))))
-  (should (equal '(("idList" . :id-list)) (gethash :params (orgtrello-api-move-card :id-card :id-list))))
+  (should (equal '(("due" . "") ("idList" . :id-list)) (gethash :params (orgtrello-api-move-card :id-card :id-list))))
 
   (should (equal "PUT"                                        (gethash :method (orgtrello-api-move-card :id-card :id-list nil :due-date))))
   (should (equal "/cards/:id-card"                            (gethash :uri    (orgtrello-api-move-card :id-card :id-list nil :due-date))))
@@ -131,11 +131,11 @@
 
   (should (equal "PUT"                                                                                 (gethash :method (orgtrello-api-move-card :id-card :id-list "name-card" nil "idmember0,idmember1"))))
   (should (equal "/cards/:id-card"                                                                     (gethash :uri    (orgtrello-api-move-card :id-card :id-list "name-card" nil "idmember0,idmember1"))))
-  (should (equal '(("idMembers" . "idmember0,idmember1") ("name" . "name-card") ("idList" . :id-list)) (gethash :params (orgtrello-api-move-card :id-card :id-list "name-card" nil "idmember0,idmember1"))))
+  (should (equal '(("due". "") ("idMembers" . "idmember0,idmember1") ("name" . "name-card") ("idList" . :id-list)) (gethash :params (orgtrello-api-move-card :id-card :id-list "name-card" nil "idmember0,idmember1"))))
 
   (should (equal "PUT"                                            (gethash :method (orgtrello-api-move-card :id-card :id-list nil nil nil :description nil))))
   (should (equal "/cards/:id-card"                                (gethash :uri    (orgtrello-api-move-card :id-card :id-list nil nil nil :description nil))))
-  (should (equal '(("desc" . :description) ("idList" . :id-list)) (gethash :params (orgtrello-api-move-card :id-card :id-list nil nil nil :description nil)))))
+  (should (equal '(("desc" . :description) ("due" . "") ("idList" . :id-list)) (gethash :params (orgtrello-api-move-card :id-card :id-list nil nil nil :description nil)))))
 
 (ert-deftest test-orgtrello-api-add-checklist ()
   (should (equal "POST"                                         (gethash :method (orgtrello-api-add-checklist "id-card" "name-checklist" "pos"))))

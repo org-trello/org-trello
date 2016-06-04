@@ -1,3 +1,10 @@
+# 0.7.9
+
+- [X] Fix problem with custom kill-whole-line properties - Close #270
+- [X] Fix problem with scheduled deadline - Close #326
+- [X] Upgrade version
+- [X] Release notes
+
 # 0.7.8
 
 - [X] Fix cyrillic encoding problem - Close #318 #270
