@@ -38,7 +38,8 @@ Deal with nested hash map."
         org-trello-mode-off-hook nil
         orgtrello-setup-use-position-in-checksum-computation 'please-do-use-position-in-checksum-computation
         orgtrello-log-level orgtrello-log-no-log
-        org-trello--mode-activated-p t)
+        org-trello--mode-activated-p t
+        kill-whole-line t)
   (call-interactively 'org-trello-mode))
 
 (defmacro orgtrello-tests-with-temp-buffer (text body-test
