@@ -32,11 +32,12 @@
 - [ ] #245 - Trying to sync a card: orgtrello-buffer/compute-marker: Wrong type argument: numberp, nil
 - [ ] #248 - Installing from melpa (unstable) works, but then it errs on an undefined variable "error-messages"
 - [ ] #263 - Colors broken in org trello
-* IN-PROGRESS 0.7.9 [75%]
-- [X] Close #270 - Problem with kill-whole-line properties
-- [X] Close #326 - Problem with scheduled deadline
+* DONE 0.7.9 [100%]
+CLOSED: [2016-06-04 Sat 14:42]
+- [X] Fix problem with custom kill-whole-line properties - Close #270
+- [X] Fix problem with scheduled deadline - Close #326
 - [X] Upgrade version
-- [ ] Release notes
+- [X] Release notes
 
 * DONE 0.7.8 [100%]
 - [X] Fix cyrillic encoding problem - Close #318 #270
