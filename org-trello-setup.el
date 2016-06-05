@@ -350,5 +350,12 @@ Other possibilities is helm but it's up to you to install the dependencies.
                                     ("grey"           . :grey)))
   "Mapping between trello's color and org-trello's keywords.")
 
+(defcustom orgtrello-with-check-on-sensible-actions nil
+  "Some action can be dangerous removing entity for example.
+This custom determine if the user wants to be asked confirmation
+before doing some of those sensitive actions."
+  :require 'org-trello
+  :group 'org-trello)
+
 (provide 'org-trello-setup)
 ;;; org-trello-setup.el ends here

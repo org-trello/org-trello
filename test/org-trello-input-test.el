@@ -24,3 +24,12 @@
                  (with-mock
                    (mock (read-string "prompt: ") => :something)
                    (orgtrello-input-read-string "prompt: ")))))
+
+(ert-deftest test-orgtrello-input-confirm ()
+  (should (equal 'y
+                 (with-mock
+                   (mock (y-or-n-p "prompt: ") => 'y)
+                   (orgtrello-input-confirm "prompt: "))))
+  (should-not (with-mock
+                (mock (y-or-n-p "prompt: ") => nil)
+                (orgtrello-input-confirm "prompt: "))))

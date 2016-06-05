@@ -10,6 +10,10 @@
   "Read input from user which can be null.
 :: () -> String")
 
+(defalias 'orgtrello-input-confirm 'y-or-n-p
+  "Yes or no question.
+:: () -> String")
+
 (defun orgtrello-input-read-not-empty (prompt)
   "Read input as long as input is empty.
 PROMPT is the prefix string displayed for input.

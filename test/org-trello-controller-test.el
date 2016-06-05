@@ -1279,10 +1279,20 @@ See http://org-trello.github.io/trello-setup.html#credentials for more informati
                 (orgtrello-controller-delete-card (orgtrello-buffer-entry-get-full-metadata) (current-buffer))))))))
 
 (ert-deftest test-orgtrello-controller-do-delete-entities ()
-  (should (equal :result-do-delete-entities
+  (should (equal :result-do-delete-entities-with-no-check
                  (with-mock
-                   (mock (org-map-entries 'orgtrello-controller--do-delete-card t 'file) => :result-do-delete-entities)
-                   (orgtrello-controller-do-delete-entities)))))
+                   (mock (org-map-entries 'orgtrello-controller--do-delete-card t 'file) => :result-do-delete-entities-with-no-check)
+                   (orgtrello-controller-do-delete-entities))))
+  (should (equal :result-do-delete-entities-with-check
+                 (let ((orgtrello-with-check-on-sensible-actions t))
+                   (with-mock
+                     (mock (orgtrello-input-confirm "Do you want to delete all cards? ") => t)
+                     (mock (org-map-entries 'orgtrello-controller--do-delete-card t 'file) => :result-do-delete-entities-with-check)
+                     (orgtrello-controller-do-delete-entities)))))
+  (should-not (let ((orgtrello-with-check-on-sensible-actions t))
+                (with-mock
+                  (mock (orgtrello-input-confirm "Do you want to delete all cards? ") => nil)
+                  (orgtrello-controller-do-delete-entities)))))
 
 (ert-deftest test-orgtrello-controller--do-delete-card ()
   (should (equal :result-do-delete-card

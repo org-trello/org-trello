@@ -517,7 +517,11 @@ BUFFER-NAME is the actual buffer to work on."
 (defun orgtrello-controller-do-delete-entities ()
   "Launch a batch deletion of every single entities present on the buffer.
 SYNC flag permit to synchronize the http query."
-  (org-map-entries 'orgtrello-controller--do-delete-card t 'file))
+  (let ((do-it (if orgtrello-with-check-on-sensible-actions
+                   (orgtrello-input-confirm "Do you want to delete all cards? ")
+                 t)))
+    (when do-it
+      (org-map-entries 'orgtrello-controller--do-delete-card t 'file))))
 
 (defun orgtrello-controller-checks-and-do-archive-card ()
   "Check the functional requirements, then if everything is ok, archive the card."
