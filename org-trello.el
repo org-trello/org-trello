@@ -499,7 +499,8 @@ If UNASSIGN is not nil, unassign oneself from the card."
          ,(format "- org version: %s" (org-version))
          ,(format "- org-trello version: %s" org-trello--version)
          ,(format "- org-trello path: %s" (find-library-name "org-trello"))
-         ,(format "- request-backend: %s" request-backend))
+         ,(format "- request-backend: %s" request-backend)
+         ,(format "- kill-whole-line: %s" kill-whole-line))
        (s-join "\n")))
 
 (defun org-trello-bug-report (&optional open-url)

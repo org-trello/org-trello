@@ -287,11 +287,13 @@ System information:
 - org version: org-version
 - org-trello version: org-trello-version
 - org-trello path: /path/to/org-trello
-- request-backend: curl"
+- request-backend: curl
+- kill-whole-line: something"
                    (let ((system-type "system-type")
                          (locale-coding-system "locale-coding-system")
                          (org-trello--version "org-trello-version")
-                         (request-backend "curl"))
+                         (request-backend "curl")
+                         (kill-whole-line 'something))
                      (with-mock
                        (mock (emacs-version) => "emacs-version")
                        (mock (org-version) => "org-version")
