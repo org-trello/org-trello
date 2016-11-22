@@ -1428,7 +1428,7 @@ Returns to BUFFER-NAME at POINT when done."
   ;; remove org-trello overlays
   (orgtrello-buffer-remove-overlays)
   ;; deactivate org-trello--mode-activated-p
-  (setq org-trello--mode-activated-p))
+  (setq org-trello--mode-activated-p nil))
 
 (orgtrello-log-msg orgtrello-log-debug "orgtrello-controller loaded!")
 
