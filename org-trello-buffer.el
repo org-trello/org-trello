@@ -349,7 +349,7 @@ Remove text and overlays."
 
 (defun orgtrello-buffer--private-compute-card-to-org-entry (name status due tags)
   "Compute the org format of a card with NAME, STATUS, DUE date and TAGS."
-  (let ((prefix-string (format "* %s %s" (if status status org-trello--todo)
+  (let ((prefix-string (format "*%s %s" (if status (format " %s" status) "")
                                name)))
     (format "%s%s\n%s" prefix-string
             (orgtrello-buffer--serialize-tags prefix-string tags)
