@@ -1,8 +1,8 @@
 ;;; test-helper.el ---                               -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2015  ardumont
+;; Copyright (C) 2015-2017  Antoine R. Dumont (@ardumont) <antoine.romain.dumont@gmail.com>
 
-;; Author: ardumont <eniotna.t@gmail.com>
+;; Author: Antoine R. Dumont (@ardumont) <antoine.romain.dumont@gmail.com>
 ;; Keywords:
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -19,9 +19,6 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
-
-;;
-
 ;;; Code:
 
 (when (require 'cl-lib 'no-error)

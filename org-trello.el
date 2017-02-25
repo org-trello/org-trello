@@ -1,9 +1,9 @@
 ;;; org-trello.el --- Minor mode to synchronize org-mode buffer and trello board
 
-;; Copyright (C) 2013 Antoine R. Dumont <eniotna.t AT gmail.com>
+;; Copyright (C) 2013-2017 Antoine R. Dumont (@ardumont) <antoine.romain.dumont@gmail.com>
 
-;; Author: Antoine R. Dumont <eniotna.t AT gmail.com>
-;; Maintainer: Antoine R. Dumont <eniotna.t AT gmail.com>
+;; Author: Antoine R. Dumont (@ardumont) <antoine.romain.dumont@gmail.com>
+;; Maintainer: Antoine R. Dumont (@ardumont) <antoine.romain.dumont@gmail.com>
 ;; Version: 0.7.9
 ;; Package-Requires: ((emacs "24") (dash "2.12.1") (dash-functional "2.12.1") (s "1.11.0") (deferred "0.4.0") (request-deferred "0.2.0"))
 ;; Keywords: org-mode trello sync org-trello

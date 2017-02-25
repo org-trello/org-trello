@@ -1,10 +1,8 @@
 ;;; org-trello-date.el --- Date manipulation for org-trello-buffer
-;;; Commentary:
-;;; Code:
 
-;; Copyright (C) 2015  Antoine Romain Dumont
+;; Copyright (C) 2015-2017  Antoine R. Dumont (@ardumont) <antoine.romain.dumont@gmail.com>
 
-;; Author: Antoine Romain Dumont <antoine.romain.dumont@gmail.com>
+;; Author: Antoine R. Dumont (@ardumont) <antoine.romain.dumont@gmail.com>
 ;; Keywords:
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -21,9 +19,6 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
-
-;;
-
 ;;; Code:
 
 (require 'dash)
