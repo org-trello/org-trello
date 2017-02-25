@@ -60,4 +60,4 @@ emacs-install-clean: package
 	~/bin/emacs/emacs-install-clean.sh ./$(ARCHIVE)
 
 tests:
-	./run-tests.sh 24.3-travis 24.4-travis 24.5-travis 25.1-travis
+	./run-tests.sh 24.4-travis 24.5-travis 25.1-travis
