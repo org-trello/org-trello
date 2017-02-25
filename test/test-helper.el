@@ -24,6 +24,9 @@
 
 ;;; Code:
 
+(when (require 'cl-lib 'no-error)
+  (defalias 'incf 'cl-incf))
+
 (require 'undercover)
 (undercover "*.el"
             (:exclude "*-tests.el")
