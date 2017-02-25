@@ -47,11 +47,6 @@ install-package-from-melpa:
 install-file-with-deps-from-melpa: package
 	./install-file-with-deps-from.sh melpa $(VERSION)
 
-cleanup-data:
-	rm -rvf ~/.emacs.d/elnode/public_html/org-trello/{1,2,3}/.scanning/* \
-		~/.emacs.d/elnode/public_html/org-trello/{1,2,3}/* \
-		~/.emacs.d/elnode/public_html/org-trello/*.lock
-
 release:
 	./release.sh $(VERSION) $(PACKAGE)
 
@@ -63,9 +58,6 @@ install-cask:
 
 emacs-install-clean: package
 	~/bin/emacs/emacs-install-clean.sh ./$(ARCHIVE)
-
-respect-convention:
-	./contrib/respect-elisp-conventions.sh
 
 tests:
 	./run-tests.sh 24.3-bin 24.4-bin 24.5-bin
