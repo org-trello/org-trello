@@ -30,5 +30,4 @@
  (depends-on "undercover")
  (depends-on "ert")
  (depends-on "ert-expectations")
- (depends-on "el-mock")
- (depends-on "helm"))
+ (depends-on "el-mock"))

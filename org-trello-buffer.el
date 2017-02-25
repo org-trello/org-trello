@@ -1,4 +1,23 @@
 ;;; org-trello-buffer.el --- Manipulation functions of org-trello buffer
+
+;; Copyright (C) 2015-2017  Antoine R. Dumont (@ardumont) <antoine.romain.dumont@gmail.com>
+
+;; Author: Antoine R. Dumont (@ardumont) <antoine.romain.dumont@gmail.com>
+;; Keywords:
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 ;;; Commentary:
 ;;; Code:
 
@@ -349,7 +368,7 @@ Remove text and overlays."
 
 (defun orgtrello-buffer--private-compute-card-to-org-entry (name status due tags)
   "Compute the org format of a card with NAME, STATUS, DUE date and TAGS."
-  (let ((prefix-string (format "* %s %s" (if status status org-trello--todo)
+  (let ((prefix-string (format "*%s %s" (if status (format " %s" status) "")
                                name)))
     (format "%s%s\n%s" prefix-string
             (orgtrello-buffer--serialize-tags prefix-string tags)

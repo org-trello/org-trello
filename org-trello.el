@@ -1,11 +1,11 @@
 ;;; org-trello.el --- Minor mode to synchronize org-mode buffer and trello board
 
-;; Copyright (C) 2013 Antoine R. Dumont <eniotna.t AT gmail.com>
+;; Copyright (C) 2013-2017 Antoine R. Dumont (@ardumont) <antoine.romain.dumont@gmail.com>
 
-;; Author: Antoine R. Dumont <eniotna.t AT gmail.com>
-;; Maintainer: Antoine R. Dumont <eniotna.t AT gmail.com>
-;; Version: 0.7.9
-;; Package-Requires: ((emacs "24") (dash "2.12.1") (dash-functional "2.12.1") (s "1.11.0") (deferred "0.4.0") (request-deferred "0.2.0"))
+;; Author: Antoine R. Dumont (@ardumont) <antoine.romain.dumont@gmail.com>
+;; Maintainer: Antoine R. Dumont (@ardumont) <antoine.romain.dumont@gmail.com>
+;; Version: 0.8.0
+;; Package-Requires: ((dash "2.12.1") (dash-functional "2.12.1") (s "1.11.0") (deferred "0.4.0") (request-deferred "0.2.0"))
 ;; Keywords: org-mode trello sync org-trello
 ;; URL: https://github.com/org-trello/org-trello
 
@@ -107,12 +107,14 @@ Please consider upgrading Emacs." emacs-version)
 
 (when (version< emacs-version "24") (error org-trello-error-install-msg))
 
+(require 'cl)
+
 ;; Dependency on internal Emacs libs
 (require 'org)
 (require 'json)
 (require 'parse-time)
 
-(defconst org-trello--version "0.7.9" "Current org-trello version installed.")
+(defconst org-trello--version "0.8.0" "Current org-trello version installed.")
 
 
 
@@ -499,7 +501,8 @@ If UNASSIGN is not nil, unassign oneself from the card."
          ,(format "- org version: %s" (org-version))
          ,(format "- org-trello version: %s" org-trello--version)
          ,(format "- org-trello path: %s" (find-library-name "org-trello"))
-         ,(format "- request-backend: %s" request-backend))
+         ,(format "- request-backend: %s" request-backend)
+         ,(format "- kill-whole-line: %s" kill-whole-line))
        (s-join "\n")))
 
 (defun org-trello-bug-report (&optional open-url)

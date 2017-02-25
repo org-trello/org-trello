@@ -1,4 +1,23 @@
 ;;; org-trello-setup.el --- Constants + Variables setup for org-trello.
+
+;; Copyright (C) 2015-2017  Antoine R. Dumont (@ardumont) <antoine.romain.dumont@gmail.com>
+
+;; Author: Antoine R. Dumont (@ardumont) <antoine.romain.dumont@gmail.com>
+;; Keywords:
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 ;;; Commentary:
 ;;; Code:
 
@@ -349,6 +368,13 @@ Other possibilities is helm but it's up to you to install the dependencies.
                                     ("yellow"         . :yellow)
                                     ("grey"           . :grey)))
   "Mapping between trello's color and org-trello's keywords.")
+
+(defcustom orgtrello-with-check-on-sensible-actions nil
+  "Some action can be dangerous removing entity for example.
+This custom determine if the user wants to be asked confirmation
+before doing some of those sensitive actions."
+  :require 'org-trello
+  :group 'org-trello)
 
 (provide 'org-trello-setup)
 ;;; org-trello-setup.el ends here

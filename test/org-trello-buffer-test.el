@@ -1726,7 +1726,7 @@ DEADLINE: <dummy-date-with-right-locale>
                    (orgtrello-buffer--private-compute-card-to-org-entry "name" "TODO" "some-date" ":some-tags:"))))
   (should (equal "* DONE name\n"
                  (orgtrello-buffer--private-compute-card-to-org-entry "name" "DONE" nil nil)))
-  (should (equal "* TODO name\n"
+  (should (equal "* name\n"
                  (orgtrello-buffer--private-compute-card-to-org-entry "name" nil nil nil)))
   (should (equal "* IN-P name                                                             :tag,tag2:\n"
                  (orgtrello-buffer--private-compute-card-to-org-entry "name" "IN-P" nil ":tag,tag2:"))))

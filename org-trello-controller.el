@@ -1,4 +1,23 @@
 ;;; org-trello-controller.el --- Controller of org-trello mode
+
+;; Copyright (C) 2015-2017  Antoine R. Dumont (@ardumont) <antoine.romain.dumont@gmail.com>
+
+;; Author: Antoine R. Dumont (@ardumont) <antoine.romain.dumont@gmail.com>
+;; Keywords:
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 ;;; Commentary:
 ;;; Code:
 
@@ -375,7 +394,7 @@ DATA is a list of (user)."
     (orgtrello-log-msg
      orgtrello-log-info
      (if user-me
-         (format "Account '%s' configured! Everything is ok!"
+         (format "Account %s configured! Everything is ok!"
                  (orgtrello-data-entity-username user-me))
        "There is a problem with your credentials.\nMake sure you used M-x org-trello-install-key-and-token and this installed correctly the consumer-key and access-token.\nSee http://org-trello.github.io/trello-setup.html#credentials for more information."))))
 
@@ -517,7 +536,11 @@ BUFFER-NAME is the actual buffer to work on."
 (defun orgtrello-controller-do-delete-entities ()
   "Launch a batch deletion of every single entities present on the buffer.
 SYNC flag permit to synchronize the http query."
-  (org-map-entries 'orgtrello-controller--do-delete-card t 'file))
+  (let ((do-it (if orgtrello-with-check-on-sensible-actions
+                   (orgtrello-input-confirm "Do you want to delete all cards? ")
+                 t)))
+    (when do-it
+      (org-map-entries 'orgtrello-controller--do-delete-card t 'file))))
 
 (defun orgtrello-controller-checks-and-do-archive-card ()
   "Check the functional requirements, then if everything is ok, archive the card."
@@ -620,7 +643,7 @@ Returns DATA."
     (if (file-exists-p user-config-file)
         (orgtrello-log-msg
          orgtrello-log-info
-         "Configuration for user '%s' already existing (file '%s'), skipping."
+         "Configuration for user %s already existing (file %s), skipping."
          user-login user-config-file)
       (orgtrello-deferred-eval-computation
        (list user-login)
@@ -1138,8 +1161,9 @@ Dict Id String -> [String]"
     (let ((card-id (-> (orgtrello-buffer-entity-metadata)
                        orgtrello-data-entity-id)))
       (if (or (null card-id) (string= "" card-id))
-          (orgtrello-log-msg orgtrello-log-info
-                             "Card not sync'ed so cannot add comment - skip.")
+          (orgtrello-log-msg
+           orgtrello-log-info
+           "Card not synchronized so cannot add comment - skip.")
         (orgtrello-controller-add-comment card-id)))))
 
 (defun orgtrello-controller-do-delete-card-comment ()
@@ -1424,7 +1448,7 @@ Returns to BUFFER-NAME at POINT when done."
   ;; remove org-trello overlays
   (orgtrello-buffer-remove-overlays)
   ;; deactivate org-trello--mode-activated-p
-  (setq org-trello--mode-activated-p))
+  (setq org-trello--mode-activated-p nil))
 
 (orgtrello-log-msg orgtrello-log-debug "orgtrello-controller loaded!")
 

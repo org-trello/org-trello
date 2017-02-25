@@ -1,3 +1,13 @@
+# 0.8.0
+
+- [X] Update travis ci configuration
+- [X] Fix ci's multiple problems
+- [X] Fix some emacs25 incompatibilities
+- [X] Add copyright headers + update copyright range
+- [X] Add 'kill-whole-line in bug report
+- [X] Upgrade version
+- [X] Release notes
+
 # 0.7.9
 
 - [X] Fix problem with custom kill-whole-line properties - Close #270
