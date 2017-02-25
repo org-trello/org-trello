@@ -394,7 +394,7 @@ DATA is a list of (user)."
     (orgtrello-log-msg
      orgtrello-log-info
      (if user-me
-         (format "Account '%s' configured! Everything is ok!"
+         (format "Account %s configured! Everything is ok!"
                  (orgtrello-data-entity-username user-me))
        "There is a problem with your credentials.\nMake sure you used M-x org-trello-install-key-and-token and this installed correctly the consumer-key and access-token.\nSee http://org-trello.github.io/trello-setup.html#credentials for more information."))))
 
@@ -643,7 +643,7 @@ Returns DATA."
     (if (file-exists-p user-config-file)
         (orgtrello-log-msg
          orgtrello-log-info
-         "Configuration for user '%s' already existing (file '%s'), skipping."
+         "Configuration for user %s already existing (file %s), skipping."
          user-login user-config-file)
       (orgtrello-deferred-eval-computation
        (list user-login)
@@ -1161,8 +1161,9 @@ Dict Id String -> [String]"
     (let ((card-id (-> (orgtrello-buffer-entity-metadata)
                        orgtrello-data-entity-id)))
       (if (or (null card-id) (string= "" card-id))
-          (orgtrello-log-msg orgtrello-log-info
-                             "Card not sync'ed so cannot add comment - skip.")
+          (orgtrello-log-msg
+           orgtrello-log-info
+           "Card not synchronized so cannot add comment - skip.")
         (orgtrello-controller-add-comment card-id)))))
 
 (defun orgtrello-controller-do-delete-card-comment ()

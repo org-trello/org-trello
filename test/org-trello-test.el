@@ -11,13 +11,13 @@
 (ert-deftest test-org-trello-apply ()
   (should (eq :result-apply-deferred
               (with-mock
-                (mock (cadr :computation) => :prefix-log)
                 (mock (current-buffer) => :buffer)
-                (mock (orgtrello-deferred-eval-computation '(:computation :buffer :nolog-p :prefix-log)
-                                                           '('org-trello--apply-deferred-with-data
-                                                             'org-trello--after-apply)
-                                                           :prefix-log) => :result-apply-deferred)
-                (org-trello-apply :computation :save-buffer-p :nolog-p)))))
+                (mock (orgtrello-deferred-eval-computation
+                       '((:computation :prefix-log) :buffer :nolog-p :prefix-log)
+                       '('org-trello--apply-deferred-with-data
+                         'org-trello--after-apply)
+                       :prefix-log) => :result-apply-deferred)
+                (org-trello-apply ' (:computation :prefix-log) :save-buffer-p :nolog-p)))))
 
 (ert-deftest test-org-trello--after-apply ()
   ;; should save and log

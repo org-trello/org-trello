@@ -455,7 +455,7 @@
                        "Install key and token...") => :result-install)
                 (orgtrello-controller-do-install-key-and-token))))
   ;; file already existing
-  (should (string= "org-trello - Configuration for user 'user' already existing (file ':some-file'), skipping."
+  (should (string= "org-trello - Configuration for user user already existing (file :some-file), skipping."
                    (let ((orgtrello-log-level orgtrello-log-info))
                      (with-mock
                        (mock (orgtrello-input-read-string "Trello login account (you need to be logged accordingly in trello.com as we cannot check this for you): ") => "user")
@@ -838,13 +838,13 @@
                 (mock (orgtrello-buffer-entity-metadata) => (orgtrello-hash-make-properties '((:id . "card-id"))))
                 (mock (orgtrello-controller-add-comment "card-id") => :card-added)
                 (orgtrello-controller-do-add-card-comment))))
-  (should (string= "org-trello - Card not sync'ed so cannot add comment - skip."
+  (should (string= "org-trello - Card not synchronized so cannot add comment - skip."
                    (let ((orgtrello-log-level orgtrello-log-info))
                      (with-mock
                        (mock (orgtrello-entity-back-to-card) => :back)
                        (mock (orgtrello-buffer-entity-metadata) => (orgtrello-hash-make-properties '((:id))))
                        (orgtrello-controller-do-add-card-comment)))))
-  (should (string= "org-trello - Card not sync'ed so cannot add comment - skip."
+  (should (string= "org-trello - Card not synchronized so cannot add comment - skip."
                    (let ((orgtrello-log-level orgtrello-log-info))
                      (with-mock
                        (mock (orgtrello-entity-back-to-card) => :back)
@@ -971,7 +971,7 @@
                    (orgtrello-controller--sync-buffer-with-trello-card '(:trello-card :card-meta :buffer-name))))))
 
 (ert-deftest test-orgtrello-controller--check-user-account ()
-  (should (string= "org-trello - Account 'user' configured! Everything is ok!"
+  (should (string= "org-trello - Account user configured! Everything is ok!"
                    (let ((orgtrello-log-level orgtrello-log-info))
                      (orgtrello-controller--check-user-account (list (orgtrello-hash-make-properties '((:username . "user"))))))))
   (should (string= "org-trello - There is a problem with your credentials.

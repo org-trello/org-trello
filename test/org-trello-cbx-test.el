@@ -93,8 +93,14 @@
 
 (ert-deftest test-orgtrello-cbx--from-properties ()
   (should (equal '((orgtrello-id . "123")) (orgtrello-cbx--from-properties "{\"orgtrello-id\":\"123\"}")))
-  (should (equal '((orgtrello-marker . "456") (orgtrello-id . "123")) (orgtrello-cbx--from-properties "{\"orgtrello-id\":\"123\",\"orgtrello-marker\":\"456\"}")))
-  (should (equal '((orgtrello-marker . "456") (orgtrello-id . "123")) (orgtrello-cbx--from-properties "{\"orgtrello-id\":\"123\", \"orgtrello-marker\":\"456\"}"))))
+  (should (orgtrello-tests-hash-equal
+           (orgtrello-hash-make-properties
+            '((orgtrello-marker . "456") (orgtrello-id . "123")))
+           (orgtrello-hash-make-properties
+            (orgtrello-cbx--from-properties "{\"orgtrello-id\":\"123\",\"orgtrello-marker\":\"456\"}"))))
+  (should (orgtrello-tests-hash-equal
+           (orgtrello-hash-make-properties '((orgtrello-marker . "456") (orgtrello-id . "123")))
+           (orgtrello-hash-make-properties (orgtrello-cbx--from-properties "{\"orgtrello-id\":\"123\", \"orgtrello-marker\":\"456\"}")))))
 
 (ert-deftest test-orgtrello-cbx--read-properties ()
   (should (equal '((orgtrello-id . "123")) (orgtrello-cbx--read-properties "- [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}"))))
