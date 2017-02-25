@@ -31,14 +31,14 @@
 - [ ] #245 - Trying to sync a card: orgtrello-buffer/compute-marker: Wrong type argument: numberp, nil
 - [ ] #248 - Installing from melpa (unstable) works, but then it errs on an undefined variable "error-messages"
 - [ ] #263 - Colors broken in org trello
-* TODO 0.8.0 [71%]
+* TODO 0.8.0 [85%]
 
 - [X] Update travis ci configuration
 - [X] Fix ci's multiple problems
 - [X] Fix some emacs25 incompatibilities
 - [X] Add copyright headers + update copyright range
 - [X] Add 'kill-whole-line in bug report
-- [ ] Upgrade version
+- [X] Upgrade version
 - [ ] Release notes
 
 * DONE 0.7.9 [100%]
