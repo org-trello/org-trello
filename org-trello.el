@@ -588,6 +588,12 @@ This does not support regular expression."
                          org-trello-files)
               (org-trello-mode))))
 
+(defcustom org-trello-add-tags t
+  "Add trello colors to org tags list?"
+  :type 'boolean
+  :require 'org-trello
+  :group 'org-trello)
+
 (orgtrello-log-msg orgtrello-log-debug "org-trello loaded!")
 
 (provide 'org-trello)
