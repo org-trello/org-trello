@@ -313,4 +313,17 @@ System information:
                    (mock (orgtrello-log-msg orgtrello-log-info :message2) => :res)
                    (org-trello-bug-report)))))
 
+
+(ert-deftest test-org-trello-add-tags ()
+  (should (equal '()
+                 (let ((org-tag-alist '())
+                       (org-trello-add-tags nil))
+                   (orgtrello-controller-setup-properties)
+                   org-tag-alist)))
+  (should (equal '(("orange" . 111) ("purple" . 112) ("blue" . 98) ("yellow" . 121) ("green" . 103) ("red" . 114))
+                 (let ((org-tag-alist '())
+                       (org-trello-add-tags t))
+                  (orgtrello-controller-setup-properties)
+                  org-tag-alist))))
+
 (provide 'org-trello-test)
