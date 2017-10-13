@@ -94,7 +94,7 @@ Simply displays a success message in the minibuffer."
           (params        (when authentication-p (orgtrello-query--authentication-params)))
           (parser        'orgtrello-query--http-parse)
           (headers       '(("Content-type" . "application/json")))
-          (data          (->> query-map orgtrello-data-entity-params json-encode))
+          (data          (encode-coding-string (->> query-map orgtrello-data-entity-params json-encode) 'utf-8))
           (success-cbck  (if success-callback success-callback 'orgtrello-query--standard-success-callback))
           (error-cbck    (if error-callback error-callback 'orgtrello-query--standard-error-callback)))
       (if (orgtrello-data-entity-sync query-map)
