@@ -60,13 +60,13 @@
 (defconst org-trello--out-of-bounds-level 4
   "Out of bounds level.")
 
-(defconst org-trello--label-key-user-prefix "orgtrello-user-"
+(defconst org-trello--label-key-user-prefix "orgtrello_user_"
   "Org-trello prefix to define user to a 'org-mode' level.")
 
-(defconst org-trello--property-users-entry "orgtrello-users"
+(defconst org-trello--property-users-entry "orgtrello_users"
   "Org-trello property entry to store the users assigned to a card.")
 
-(defconst org-trello--property-user-me "orgtrello-user-me"
+(defconst org-trello--property-user-me "orgtrello_user_me"
   "Current user's property id.")
 
 (defvar org-trello--user-logged-in nil
