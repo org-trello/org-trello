@@ -138,7 +138,7 @@ ARGS is not used."
   "Migrate user's setup file according to latest development.
 ARGS is not used."
   (when (orgtrello-buffer-to-migrate-p)
-    (orgtrello-log-msg orgtrello-log-warn "Migrate the buffer's keys to the correct new one.")
+    (orgtrello-log-msg orgtrello-log-warn "Migrate the buffer's keys to the correct new one (https://org-trello.github.io/migration.html#081).")
     (orgtrello-buffer-migrate-buffer))
   :ok)
 
