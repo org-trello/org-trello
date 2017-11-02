@@ -1884,7 +1884,7 @@ nothing enforces the content of the description
             "* TODO Joy of FUN(ctional) LANGUAGES
 DEADLINE: <2014-05-17 Sat>
 :PROPERTIES:
-:orgtrello_id: orgtrello-marker-08677ec948991d1e5a25ab6b813d8eba03fac20f
+:orgtrello_id: orgtrello_marker_08677ec948991d1e5a25ab6b813d8eba03fac20f
 :some-unknown-thingy: some value
 :orgtrello_users: ardumont
 :orgtrello-unknown-key-prefixed-by-orgtrello: some unknown value that will be filtered
@@ -1897,7 +1897,7 @@ DEADLINE: <2014-05-17 Sat>
            "* TODO Joy of FUN(ctional) LANGUAGES
 DEADLINE: <2014-05-17 Sat>
 :PROPERTIES:
-:orgtrello_id: orgtrello-marker-08677ec948991d1e5a25ab6b813d8eba03fac20f
+:orgtrello_id: orgtrello_marker_08677ec948991d1e5a25ab6b813d8eba03fac20f
 :property0: value0
 :property1: value1
 :property2: value2
@@ -1907,12 +1907,12 @@ DEADLINE: <2014-05-17 Sat>
             "* TODO Joy of FUN(ctional) LANGUAGES
 DEADLINE: <2014-05-17 Sat>
 :PROPERTIES:
-:orgtrello_id: orgtrello-marker-08677ec948991d1e5a25ab6b813d8eba03fac20f
+:orgtrello_id: orgtrello_marker_08677ec948991d1e5a25ab6b813d8eba03fac20f
 :END:
 "
             (orgtrello-buffer-update-properties-unknown '(("property0" . "value0")
-                                                           ("property1" . "value1")
-                                                           ("property2" . "value2")))))))
+                                                          ("property1" . "value1")
+                                                          ("property2" . "value2")))))))
 
 (ert-deftest test-orgtrello-buffer-overwrite-card ()
   ;; No previous content on buffer
@@ -3310,6 +3310,75 @@ generates another checksum
 (ert-deftest test-orgtrello-buffer-colors ()
   (should (equal '(":orange" ":green" ":red" ":blue" ":purple" ":sky" ":black" ":pink" ":lime" ":yellow" ":grey")
                  (orgtrello-buffer-colors))))
+
+(ert-deftest test-orgtrello-buffer-migrate ()
+  (should (string=
+           "
+:PROPERTIES:
+#+PROPERTY: board-name api test board
+#+PROPERTY: board-id abc
+#+PROPERTY: CANCELLED def
+#+PROPERTY: FAILED ijk
+#+PROPERTY: DELEGATED lmn
+#+PROPERTY: PENDING opq
+#+PROPERTY: DONE rst
+#+PROPERTY: IN-PROGRESS uvw
+#+PROPERTY: TODO xyz
+#+TODO: TODO IN-PROGRESS DONE | PENDING DELEGATED FAILED CANCELLED
+#+PROPERTY: orgtrello_user_orgmode 888
+#+PROPERTY: orgtrello_user_ardumont 999
+#+PROPERTY: :yellow yellow label
+#+PROPERTY: :red red label
+#+PROPERTY: :purple this is the purple label
+#+PROPERTY: :orange orange label
+#+PROPERTY: :green green label with & char
+#+PROPERTY: :blue
+#+PROPERTY: orgtrello_user_me ardumont
+
+* TODO some card name
+:PROPERTIES:
+:orgtrello_id: some-card-id
+:orgtrello_users: ardumont,dude
+:orgtrello_local_checksum: a058272445d320995bd4c677dd35c0924ff65ce7640cbe7cae21d6ea39ff32c6
+:END:
+  some description
+  - [-] some checklist name :PROPERTIES: {\"orgtrello_id\":\"some-checklist-id\"}
+    - [X] some item :PROPERTIES: {\"orgtrello_id\":\"some-item-id\", \"orgtrello_local_checksum\":\"d5503e92e8880ddb839c42e31e8ead17a70f09d39f069fbfd9956424984047fc\"}
+"
+           
+           (orgtrello-tests-with-temp-buffer-and-return-buffer-content "
+:PROPERTIES:
+#+PROPERTY: board-name api test board
+#+PROPERTY: board-id abc
+#+PROPERTY: CANCELLED def
+#+PROPERTY: FAILED ijk
+#+PROPERTY: DELEGATED lmn
+#+PROPERTY: PENDING opq
+#+PROPERTY: DONE rst
+#+PROPERTY: IN-PROGRESS uvw
+#+PROPERTY: TODO xyz
+#+TODO: TODO IN-PROGRESS DONE | PENDING DELEGATED FAILED CANCELLED
+#+PROPERTY: orgtrello-user-orgmode 888
+#+PROPERTY: orgtrello-user-ardumont 999
+#+PROPERTY: :yellow yellow label
+#+PROPERTY: :red red label
+#+PROPERTY: :purple this is the purple label
+#+PROPERTY: :orange orange label
+#+PROPERTY: :green green label with & char
+#+PROPERTY: :blue
+#+PROPERTY: orgtrello-user-me ardumont
+
+* TODO some card name
+:PROPERTIES:
+:orgtrello-id: some-card-id
+:orgtrello-users: ardumont,dude
+:orgtrello-local-checksum: a058272445d320995bd4c677dd35c0924ff65ce7640cbe7cae21d6ea39ff32c6
+:END:
+  some description
+  - [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}
+    - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\", \"orgtrello-local-checksum\":\"d5503e92e8880ddb839c42e31e8ead17a70f09d39f069fbfd9956424984047fc\"}
+"
+                                                                       (orgtrello-buffer-migrate-buffer)))))
 
 (provide 'org-trello-buffer-test)
 ;;; org-trello-buffer-test.el ends here

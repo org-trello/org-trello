@@ -918,6 +918,28 @@ COMPUTE-REGION-FN is the region computation function (takes no parameter)."
                        trello-cards) ;; find a card to archive
            (org-archive-subtree)))))))
 
+(defun orgtrello-buffer-migrate-buffer ()
+  "Migrate the old properties to the new one.
+The cursor remains at current position once the computation is done."
+  (defun orgtrello-buffer--replace-str (str new)
+    "Replace all strings matching STR with NEW.
+The cursor moves along the search."
+    (goto-char (point-min))
+    (while (search-forward str nil t)
+      (replace-match new)))
+
+  (save-excursion
+    (with-current-buffer (current-buffer)
+      (org-trello-mode -1)
+      (let ((case-fold-search t)
+            (old-new `(("orgtrello-id" ,org-trello--label-key-id)
+                       ("orgtrello-local-checksum" ,org-trello--label-key-local-checksum)
+                       ("orgtrello-marker-" ,(format "%s%s" org-trello--label-key-marker org-trello--property-separator))
+                       ("orgtrello-user-" ,org-trello--label-key-user-prefix)
+                       (":orgtrello-users:" ,(format ":%s:" org-trello--property-users-entry)))))
+        (--map (orgtrello-buffer--replace-str (car it) (cadr it)) old-new))
+      (org-trello-mode))))
+
 (orgtrello-log-msg orgtrello-log-debug "orgtrello-buffer loaded!")
 
 (provide 'org-trello-buffer)

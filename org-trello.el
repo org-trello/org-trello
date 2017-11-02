@@ -468,6 +468,12 @@ If UNASSIGN is not nil, unassign oneself from the card."
    nil
    'no-log))
 
+;;;### autoload
+(defun org-trello-migrate-buffer ()
+  "Migrate the buffer's property keys to the actual new ones."
+  (interactive)
+  (orgtrello-buffer-migrate-buffer))
+
 ;;;###autoload
 (defun org-trello-clean-org-trello-data ()
   "Clean up org-trello data."

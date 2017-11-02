@@ -300,6 +300,12 @@ System information:
                        (mock (find-library-name "org-trello") => "/path/to/org-trello")
                        (org-trello--bug-report))))))
 
+(ert-deftest test-org-trello-migrate-buffer ()
+  (should (equal :res
+                 (with-mock
+                   (mock (orgtrello-buffer-migrate-buffer) => :res)
+                   (org-trello-migrate-buffer)))))
+
 (ert-deftest test-org-trello-bug-report ()
   (should (equal :res
                  (with-mock
