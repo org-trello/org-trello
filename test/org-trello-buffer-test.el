@@ -2983,7 +2983,7 @@ DEADLINE: <2014-05-17 Sat>
 (ert-deftest test-orgtrello-buffer-card-checksum ()
   ;; Compute the checksum of a card.
   (should (equal
-           "2a71e11a34c8778629d2e1c36f9efdec3e81a0013bd56c649e88e4d91fd91d3a"
+           "f4e45f5bf79b426cba25fbcaf164976c071431de687c46f931bc23235d1b7fd1"
            (orgtrello-tests-with-temp-buffer "* TODO some card name
 :PROPERTIES:
 :orgtrello-id: some-card-id
@@ -3001,13 +3001,13 @@ DEADLINE: <2014-05-17 Sat>
                                              -5)))
   ;; A card with a checksum should give the same checksum if nothing has changed.
   (should (equal
-           "2a71e11a34c8778629d2e1c36f9efdec3e81a0013bd56c649e88e4d91fd91d3a"
+           "f4e45f5bf79b426cba25fbcaf164976c071431de687c46f931bc23235d1b7fd1"
            (orgtrello-tests-with-temp-buffer "* TODO some card name
 :PROPERTIES:
 :orgtrello-id: some-card-id
 :orgtrello_users: ardumont,dude
 :orgtrello-card-comments: ardumont: some comment
-:orgtrello-local-checksum: 2a71e11a34c8778629d2e1c36f9efdec3e81a0013bd56c649e88e4d91fd91d3a
+:orgtrello-local-checksum: f4e45f5bf79b426cba25fbcaf164976c071431de687c46f931bc23235d1b7fd1
 :END:
   some description
   - [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}
@@ -3020,7 +3020,7 @@ DEADLINE: <2014-05-17 Sat>
                                              -5)))
   ;; A modified card with a checksum should give another checksum.
   (should (equal
-           "c3875e3e92a0aa7df37b97e58b2c30ade2a84235e7c8303a29e22bcde93d3847"
+           "8425d8d5f2e56a5b3fc37e7c107ffde3f73ff0bf4b2a61eda0163918f007da74"
            (orgtrello-tests-with-temp-buffer "* TODO some card name
 :PROPERTIES:
 :orgtrello-id: some-card-id
