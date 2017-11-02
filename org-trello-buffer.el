@@ -214,8 +214,8 @@ This to avoid conflict between `org-mode' and markdown syntax."
          (comment-str (-> comment
                           orgtrello-data-entity-comment-text
                           orgtrello-buffer--prepare-comment)))
-    (format "\n** COMMENT %s, %s\n:PROPERTIES:\n:orgtrello-id: %s\n:END:\n%s\n"
-            comment-user comment-date comment-id comment-str)))
+    (format "\n** COMMENT %s, %s\n:PROPERTIES:\n:%s: %s\n:END:\n%s\n"
+            comment-user comment-date org-trello--label-key-id comment-id comment-str)))
 
 (defun orgtrello-buffer-update-properties-unknown (unknown-properties)
   "Write the alist UNKNOWN-PROPERTIES inside standard properties org drawer."

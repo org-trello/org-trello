@@ -75,10 +75,10 @@
 (defconst org-trello--property-user-me (format "%suser_me" org-trello--property-prefix-key)
   "Current user's property id.")
 
-(defconst org-trello--label-key-id "orgtrello-id"
+(defconst org-trello--label-key-id (format "%sid" org-trello--property-prefix-key)
   "Key entry used for the trello identifier and the trello marker (the first sync).")
 
-(defconst org-trello--label-key-local-checksum "orgtrello-local-checksum"
+(defconst org-trello--label-key-local-checksum (format "%slocal_checksum" org-trello--property-prefix-key)
   "Current card's checksum property.")
 
 (defvar org-trello--user-logged-in nil
