@@ -88,13 +88,14 @@ ARGS is not used."
      org-trello--user-logged-in (or (orgtrello-buffer-me)
                                     (orgtrello-setup-user-logged-in)))
 
-    (mapc (-partial #'add-to-list 'org-tag-alist)
-          '(("red" . ?r)
-            ("green" . ?g)
-            ("yellow" . ?y)
-            ("blue" . ?b)
-            ("purple" . ?p)
-            ("orange" . ?o)))
+    (when org-trello-add-tags
+      (mapc (-partial #'add-to-list 'org-tag-alist)
+            '(("red" . ?r)
+              ("green" . ?g)
+              ("yellow" . ?y)
+              ("blue" . ?b)
+              ("purple" . ?p)
+              ("orange" . ?o))))
     :ok))
 
 (defun orgtrello-controller-control-properties (&optional args)
