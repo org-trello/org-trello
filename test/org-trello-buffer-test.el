@@ -314,7 +314,7 @@ this comment will be ignored
 (ert-deftest test-orgtrello-buffer-set-usernames-assigned-property ()
   (should (string= "* card
   :PROPERTIES:
-  :orgtrello-users: user1,user2
+  :orgtrello_users: user1,user2
   :END:
 "
                    (orgtrello-tests-with-temp-buffer-and-return-buffer-content
@@ -327,7 +327,7 @@ this comment will be ignored
                    (orgtrello-tests-with-temp-buffer
                     "* card
 :PROPERTIES:
-:orgtrello-users: user1,user2,user3
+:orgtrello_users: user1,user2,user3
 :END:"
                     (orgtrello-buffer-get-usernames-assigned-property)))))
 
@@ -702,24 +702,24 @@ this comment will be ignored
 (ert-deftest test-orgtrello-buffer-update-property-member-ids ()
   (should (string=
            ":PROPERTIES:
-#+PROPERTY: orgtrello-user-user1 123
-#+PROPERTY: orgtrello-user-user2 456
-#+PROPERTY: orgtrello-user-user3 789
+#+PROPERTY: orgtrello_user_user1 123
+#+PROPERTY: orgtrello_user_user2 456
+#+PROPERTY: orgtrello_user_user3 789
 :END:
 * some card
   :PROPERTIES:
-  :orgtrello-users: user3,user2
+  :orgtrello_users: user3,user2
   :END:
 "
            (orgtrello-tests-with-temp-buffer-and-return-buffer-content
             ":PROPERTIES:
-#+PROPERTY: orgtrello-user-user1 123
-#+PROPERTY: orgtrello-user-user2 456
-#+PROPERTY: orgtrello-user-user3 789
+#+PROPERTY: orgtrello_user_user1 123
+#+PROPERTY: orgtrello_user_user2 456
+#+PROPERTY: orgtrello_user_user3 789
 :END:
 * some card
 "
-            (orgtrello-buffer-update-property-member-ids (orgtrello-hash-make-properties '((:member-ids . "orgtrello-user-user3,orgtrello-user-user2"))))))))
+            (orgtrello-buffer-update-property-member-ids (orgtrello-hash-make-properties '((:member-ids . "orgtrello_user_user3,orgtrello_user_user2"))))))))
 
 (ert-deftest test-orgtrello-buffer-org-file-get-property ()
   (should (eq :result
@@ -752,7 +752,7 @@ this comment will be ignored
 #+PROPERTY: :red red
 #+PROPERTY: :purple violet
 #+PROPERTY: :blue blue
-#+PROPERTY: orgtrello-user-me ardumont
+#+PROPERTY: orgtrello_user_me ardumont
 "
                   (orgtrello-buffer-labels)))))
 
@@ -902,7 +902,7 @@ another description which will be indented
                    (orgtrello-tests-with-temp-buffer
                     "* card
 :PROPERTIES:
-:orgtrello-users: user1,user2,user3
+:orgtrello_users: user1,user2,user3
 :END:
   description
 "
@@ -910,8 +910,8 @@ another description which will be indented
 
 (ert-deftest test-orgtrello-buffer--usernames-to-id ()
   (should (equal '("1" "2")
-                 (orgtrello-buffer--usernames-to-id (orgtrello-hash-make-properties '(("orgtrello-user-user1" . "1")
-                                                                                      ("orgtrello-user-user2" . "2")))
+                 (orgtrello-buffer--usernames-to-id (orgtrello-hash-make-properties '(("orgtrello_user_user1" . "1")
+                                                                                      ("orgtrello_user_user2" . "2")))
                                                     '("user1" "user2"))))
   (should-not (orgtrello-buffer--usernames-to-id (orgtrello-hash-make-properties '(("user1" . "1")
                                                                                    ("user2" . "2")))
@@ -925,7 +925,7 @@ another description which will be indented
                    (orgtrello-tests-with-temp-buffer
                     "* card
 :PROPERTIES:
-:orgtrello-users: user1,user2
+:orgtrello_users: user1,user2
 :END:
   description
 "
@@ -1002,7 +1002,7 @@ another description which will be indented
                   "* card
 :PROPERTIES:
 :orgtrello-id: abc
-:orgtrello-users: user1,user2
+:orgtrello_users: user1,user2
 :END:
 "
                   (orgtrello-buffer--extract-metadata))))
@@ -1210,18 +1210,18 @@ hello there
 
 (ert-deftest test-orgtrello-buffer-write-card-header ()
   (should (equal ":PROPERTIES:
-#+PROPERTY: orgtrello-user-ardumont ardumont-id
-#+PROPERTY: orgtrello-user-dude dude-id
+#+PROPERTY: orgtrello_user_ardumont ardumont-id
+#+PROPERTY: orgtrello_user_dude dude-id
 :END:
 * TODO some card name
   :PROPERTIES:
-  :orgtrello-users: ardumont,dude
+  :orgtrello_users: ardumont,dude
   :END:
   some description"
                  (orgtrello-tests-with-temp-buffer-and-return-buffer-content
                   ":PROPERTIES:
-#+PROPERTY: orgtrello-user-ardumont ardumont-id
-#+PROPERTY: orgtrello-user-dude dude-id
+#+PROPERTY: orgtrello_user_ardumont ardumont-id
+#+PROPERTY: orgtrello_user_dude dude-id
 :END:
 "
 
@@ -1235,19 +1235,19 @@ hello there
                   0)))
 
   (should (equal ":PROPERTIES:
-#+PROPERTY: orgtrello-user-ardumont ardumont-id
-#+PROPERTY: orgtrello-user-dude dude-id
+#+PROPERTY: orgtrello_user_ardumont ardumont-id
+#+PROPERTY: orgtrello_user_dude dude-id
 :END:
 * TODO some card name                                                   :red:green:
 DEADLINE: <dummy-date-with-right-locale>
   :PROPERTIES:
-  :orgtrello-users: ardumont,dude
+  :orgtrello_users: ardumont,dude
   :END:
   some description"
                  (orgtrello-tests-with-temp-buffer-and-return-buffer-content
                   ":PROPERTIES:
-#+PROPERTY: orgtrello-user-ardumont ardumont-id
-#+PROPERTY: orgtrello-user-dude dude-id
+#+PROPERTY: orgtrello_user_ardumont ardumont-id
+#+PROPERTY: orgtrello_user_dude dude-id
 :END:
 "
                   (with-mock
@@ -1264,14 +1264,14 @@ DEADLINE: <dummy-date-with-right-locale>
 
 (ert-deftest test-orgtrello-buffer-write-checklist-header ()
   (should (equal ":PROPERTIES:
-#+PROPERTY: orgtrello-user-ardumont ardumont-id
-#+PROPERTY: orgtrello-user-dude dude-id
+#+PROPERTY: orgtrello_user_ardumont ardumont-id
+#+PROPERTY: orgtrello_user_dude dude-id
 :END:
 
 * TODO some old card name
   :PROPERTIES:
   :orgtrello-id: some-id
-  :orgtrello-users: ardumont,dude
+  :orgtrello_users: ardumont,dude
   :orgtrello-card-comments:
   :END:
   some old description
@@ -1280,14 +1280,14 @@ DEADLINE: <dummy-date-with-right-locale>
 "
                  (orgtrello-tests-with-temp-buffer-and-return-buffer-content
                   ":PROPERTIES:
-#+PROPERTY: orgtrello-user-ardumont ardumont-id
-#+PROPERTY: orgtrello-user-dude dude-id
+#+PROPERTY: orgtrello_user_ardumont ardumont-id
+#+PROPERTY: orgtrello_user_dude dude-id
 :END:
 
 * TODO some old card name
   :PROPERTIES:
   :orgtrello-id: some-id
-  :orgtrello-users: ardumont,dude
+  :orgtrello_users: ardumont,dude
   :orgtrello-card-comments:
   :END:
   some old description
@@ -1300,12 +1300,12 @@ DEADLINE: <dummy-date-with-right-locale>
 (ert-deftest test-orgtrello-buffer-write-card ()
   ;; no previous card on buffer
   (should (equal ":PROPERTIES:
-#+PROPERTY: orgtrello-user-ardumont ardumont-id
-#+PROPERTY: orgtrello-user-dude dude-id
+#+PROPERTY: orgtrello_user_ardumont ardumont-id
+#+PROPERTY: orgtrello_user_dude dude-id
 :END:
 * TODO some card name                                                   :red:green:
   :PROPERTIES:
-  :orgtrello-users: ardumont,dude
+  :orgtrello_users: ardumont,dude
   :orgtrello-local-checksum: local-card-checksum-456
   :orgtrello-id: some-card-id
   :END:
@@ -1325,8 +1325,8 @@ DEADLINE: <dummy-date-with-right-locale>
 "
                  (orgtrello-tests-with-temp-buffer-and-return-buffer-content
                   ":PROPERTIES:
-#+PROPERTY: orgtrello-user-ardumont ardumont-id
-#+PROPERTY: orgtrello-user-dude dude-id
+#+PROPERTY: orgtrello_user_ardumont ardumont-id
+#+PROPERTY: orgtrello_user_dude dude-id
 :END:
 "
                   (with-mock
@@ -1368,12 +1368,12 @@ DEADLINE: <dummy-date-with-right-locale>
 
   ;; with previous cards on buffer
   (should (equal ":PROPERTIES:
-#+PROPERTY: orgtrello-user-ardumont ardumont-id
-#+PROPERTY: orgtrello-user-dude dude-id
+#+PROPERTY: orgtrello_user_ardumont ardumont-id
+#+PROPERTY: orgtrello_user_dude dude-id
 :END:
 * TODO task A
   :PROPERTIES:
-  :orgtrello-users: ardumont,dude
+  :orgtrello_users: ardumont,dude
   :orgtrello-id: card-id-a
   :orgtrello-local-checksum: local-card-checksum-a
   :END:
@@ -1395,7 +1395,7 @@ DEADLINE: <dummy-date-with-right-locale>
 
 * TODO task B
   :PROPERTIES:
-  :orgtrello-users: ardumont,dude
+  :orgtrello_users: ardumont,dude
   :orgtrello-id: card-id-b
   :orgtrello-local-checksum: local-card-checksum-b
   :END:
@@ -1411,8 +1411,8 @@ DEADLINE: <dummy-date-with-right-locale>
 "
                  (orgtrello-tests-with-temp-buffer-and-return-buffer-content
                   ":PROPERTIES:
-#+PROPERTY: orgtrello-user-ardumont ardumont-id
-#+PROPERTY: orgtrello-user-dude dude-id
+#+PROPERTY: orgtrello_user_ardumont ardumont-id
+#+PROPERTY: orgtrello_user_dude dude-id
 :END:
 "
                   (progn
@@ -1459,13 +1459,13 @@ DEADLINE: <dummy-date-with-right-locale>
 (ert-deftest test-orgtrello-controller-sync-buffer-with-trello-cards ()
   ;; successive writes on buffer with indentation
   (should (equal ":PROPERTIES:
-#+PROPERTY: orgtrello-user-ardumont ardumont-id
-#+PROPERTY: orgtrello-user-dude dude-id
+#+PROPERTY: orgtrello_user_ardumont ardumont-id
+#+PROPERTY: orgtrello_user_dude dude-id
 :END:
 
 * TODO task A
   :PROPERTIES:
-  :orgtrello-users: ardumont,dude
+  :orgtrello_users: ardumont,dude
   :orgtrello-id: card-id-a
   :orgtrello-local-checksum: local-card-checksum
   :END:
@@ -1487,7 +1487,7 @@ DEADLINE: <dummy-date-with-right-locale>
 
 * TODO task B
   :PROPERTIES:
-  :orgtrello-users: ardumont,dude
+  :orgtrello_users: ardumont,dude
   :orgtrello-id: card-id-b
   :orgtrello-local-checksum: local-card-checksum
   :END:
@@ -1503,8 +1503,8 @@ DEADLINE: <dummy-date-with-right-locale>
 "
                  (orgtrello-tests-with-temp-buffer-and-return-indented-content
                   ":PROPERTIES:
-#+PROPERTY: orgtrello-user-ardumont ardumont-id
-#+PROPERTY: orgtrello-user-dude dude-id
+#+PROPERTY: orgtrello_user_ardumont ardumont-id
+#+PROPERTY: orgtrello_user_dude dude-id
 :END:
 
 "
@@ -1544,14 +1544,14 @@ DEADLINE: <dummy-date-with-right-locale>
 (ert-deftest test-orgtrello-buffer-write-checklist ()
   ;; Simple case
   (should (equal ":PROPERTIES:
-#+PROPERTY: orgtrello-user-ardumont ardumont-id
-#+PROPERTY: orgtrello-user-dude dude-id
+#+PROPERTY: orgtrello_user_ardumont ardumont-id
+#+PROPERTY: orgtrello_user_dude dude-id
 :END:
 
 * TODO some card name
   :PROPERTIES:
   :orgtrello-id: some-card-id
-  :orgtrello-users: ardumont,dude
+  :orgtrello_users: ardumont,dude
   :orgtrello-card-comments: ardumont: some comment
   :orgtrello-local-checksum: 1234-card-checksum
   :END:
@@ -1560,14 +1560,14 @@ DEADLINE: <dummy-date-with-right-locale>
 "
                  (orgtrello-tests-with-temp-buffer-and-return-buffer-content
                   ":PROPERTIES:
-#+PROPERTY: orgtrello-user-ardumont ardumont-id
-#+PROPERTY: orgtrello-user-dude dude-id
+#+PROPERTY: orgtrello_user_ardumont ardumont-id
+#+PROPERTY: orgtrello_user_dude dude-id
 :END:
 
 * TODO some card name
   :PROPERTIES:
   :orgtrello-id: some-card-id
-  :orgtrello-users: ardumont,dude
+  :orgtrello_users: ardumont,dude
   :orgtrello-card-comments: ardumont: some comment
   :END:
   some description
@@ -1583,14 +1583,14 @@ DEADLINE: <dummy-date-with-right-locale>
                   0)))
   ;; a little more complicated case
   (should (equal ":PROPERTIES:
-#+PROPERTY: orgtrello-user-ardumont ardumont-id
-#+PROPERTY: orgtrello-user-dude dude-id
+#+PROPERTY: orgtrello_user_ardumont ardumont-id
+#+PROPERTY: orgtrello_user_dude dude-id
 :END:
 
 * TODO some card name
   :PROPERTIES:
   :orgtrello-id: some-card-id
-  :orgtrello-users: ardumont,dude
+  :orgtrello_users: ardumont,dude
   :orgtrello-card-comments: ardumont: some comment
   :orgtrello-local-checksum: card-checksum-654321
   :END:
@@ -1601,14 +1601,14 @@ DEADLINE: <dummy-date-with-right-locale>
 "
                  (orgtrello-tests-with-temp-buffer-and-return-buffer-content
                   ":PROPERTIES:
-#+PROPERTY: orgtrello-user-ardumont ardumont-id
-#+PROPERTY: orgtrello-user-dude dude-id
+#+PROPERTY: orgtrello_user_ardumont ardumont-id
+#+PROPERTY: orgtrello_user_dude dude-id
 :END:
 
 * TODO some card name
   :PROPERTIES:
   :orgtrello-id: some-card-id
-  :orgtrello-users: ardumont,dude
+  :orgtrello_users: ardumont,dude
   :orgtrello-card-comments: ardumont: some comment
   :END:
   some description
@@ -1634,14 +1634,14 @@ DEADLINE: <dummy-date-with-right-locale>
 
 (ert-deftest test-orgtrello-buffer-write-item ()
   (should (equal ":PROPERTIES:
-#+PROPERTY: orgtrello-user-ardumont ardumont-id
-#+PROPERTY: orgtrello-user-dude dude-id
+#+PROPERTY: orgtrello_user_ardumont ardumont-id
+#+PROPERTY: orgtrello_user_dude dude-id
 :END:
 
 * TODO some card name
   :PROPERTIES:
   :orgtrello-id: some-card-id
-  :orgtrello-users: ardumont,dude
+  :orgtrello_users: ardumont,dude
   :orgtrello-card-comments: ardumont: some comment
   :orgtrello-local-checksum: card-checksum-135
   :END:
@@ -1651,14 +1651,14 @@ DEADLINE: <dummy-date-with-right-locale>
 "
                  (orgtrello-tests-with-temp-buffer-and-return-buffer-content
                   ":PROPERTIES:
-#+PROPERTY: orgtrello-user-ardumont ardumont-id
-#+PROPERTY: orgtrello-user-dude dude-id
+#+PROPERTY: orgtrello_user_ardumont ardumont-id
+#+PROPERTY: orgtrello_user_dude dude-id
 :END:
 
 * TODO some card name
   :PROPERTIES:
   :orgtrello-id: some-card-id
-  :orgtrello-users: ardumont,dude
+  :orgtrello_users: ardumont,dude
   :orgtrello-card-comments: ardumont: some comment
   :END:
   some description
@@ -1815,14 +1815,14 @@ DEADLINE: <dummy-date-with-right-locale>
 (ert-deftest test-orgtrello-buffer-entity-metadata ()
   ;; card
   (let ((h-values (orgtrello-tests-with-temp-buffer ":PROPERTIES:
-#+PROPERTY: orgtrello-user-ardumont some-user-id
-#+PROPERTY: orgtrello-user-dude some-user-id2
+#+PROPERTY: orgtrello_user_ardumont some-user-id
+#+PROPERTY: orgtrello_user_dude some-user-id2
 :END:
 
 * TODO card title
 :PROPERTIES:
 :orgtrello-id: some-id
-:orgtrello-users: ardumont,dude
+:orgtrello_users: ardumont,dude
 :END:
   some description\n"
                                                     (progn (orgtrello-entity-back-to-card)
@@ -1838,14 +1838,14 @@ DEADLINE: <dummy-date-with-right-locale>
     (should (equal nil                                                           (orgtrello-data-entity-unknown-properties h-values))))
   ;; comment
   (let ((h-values (orgtrello-tests-with-temp-buffer ":PROPERTIES:
-#+PROPERTY: orgtrello-user-ardumont some-user-id
-#+PROPERTY: orgtrello-user-dude some-user-id2
+#+PROPERTY: orgtrello_user_ardumont some-user-id
+#+PROPERTY: orgtrello_user_dude some-user-id2
 :END:
 
 * TODO card title
 :PROPERTIES:
 :orgtrello-id: some-id
-:orgtrello-users: ardumont,dude
+:orgtrello_users: ardumont,dude
 :END:
   some description\n
 ** COMMENT, user date
@@ -1873,7 +1873,7 @@ nothing enforces the content of the description
 (ert-deftest test-orgtrello-buffer--filter-out-known-properties ()
   (should (equal '(("some-unknown-thingy" . "some value"))
                  (orgtrello-buffer--filter-out-known-properties '(("orgtrello-id" . "orgtrello-marker-08677ec948991d1e5a25ab6b813d8eba03fac20f")
-                                                                   ("orgtrello-users" . "some user")
+                                                                   ("orgtrello_users" . "some user")
                                                                    ("some-unknown-thingy" . "some value")
                                                                    ("CATEGORY" . "TESTS-simple"))))))
 
@@ -1886,7 +1886,7 @@ DEADLINE: <2014-05-17 Sat>
 :PROPERTIES:
 :orgtrello-id: orgtrello-marker-08677ec948991d1e5a25ab6b813d8eba03fac20f
 :some-unknown-thingy: some value
-:orgtrello-users: ardumont
+:orgtrello_users: ardumont
 :orgtrello-unknown-key-prefixed-by-orgtrello: some unknown value that will be filtered
 :END:
 "
@@ -1918,7 +1918,7 @@ DEADLINE: <2014-05-17 Sat>
   ;; No previous content on buffer
   (should (equal "* TODO some card name                                                   :red:green:
   :PROPERTIES:
-  :orgtrello-users: ardumont,dude
+  :orgtrello_users: ardumont,dude
   :orgtrello-local-checksum: local-card-checksum-567
   :orgtrello-id: some-card-id
   :END:
@@ -1975,7 +1975,7 @@ DEADLINE: <2014-05-17 Sat>
   ;; Multiple cards present at point. Overwrite given previous region card with updated data.
   (should (equal "* TODO some card name                                                   :red:green:
   :PROPERTIES:
-  :orgtrello-users: ardumont,dude
+  :orgtrello_users: ardumont,dude
   :orgtrello-local-checksum: local-card-checksum-567
   :orgtrello-id: some-card-id
   :END:
@@ -2002,7 +2002,7 @@ DEADLINE: <2014-05-17 Sat>
                   "* TODO some card name
 :PROPERTIES:
 :orgtrello-id: some-card-id
-:orgtrello-users: ,
+:orgtrello_users: ,
 :orgtrello-card-comments: ardumont: some comment
 :END:
   some description
@@ -2072,7 +2072,7 @@ DEADLINE: <2014-05-17 Sat>
            "* TODO some card name
 :PROPERTIES:
 :orgtrello-id: some-card-id
-:orgtrello-users: ardumont,dude
+:orgtrello_users: ardumont,dude
 :orgtrello-card-comments: ardumont: some comment
 :orgtrello-local-checksum: card-checksum-098
 :END:
@@ -2087,7 +2087,7 @@ DEADLINE: <2014-05-17 Sat>
            (orgtrello-tests-with-temp-buffer-and-return-buffer-content "* TODO some card name
 :PROPERTIES:
 :orgtrello-id: some-card-id
-:orgtrello-users: ardumont,dude
+:orgtrello_users: ardumont,dude
 :orgtrello-card-comments: ardumont: some comment
 :END:
   some description
@@ -2107,7 +2107,7 @@ DEADLINE: <2014-05-17 Sat>
            "* TODO some card name
 :PROPERTIES:
 :orgtrello-id: some-card-id
-:orgtrello-users: ardumont,dude
+:orgtrello_users: ardumont,dude
 :orgtrello-card-comments: ardumont: some comment
 :orgtrello-local-checksum: card-checksum-098876
 :END:
@@ -2122,7 +2122,7 @@ DEADLINE: <2014-05-17 Sat>
            (orgtrello-tests-with-temp-buffer-and-return-buffer-content "* TODO some card name
 :PROPERTIES:
 :orgtrello-id: some-card-id
-:orgtrello-users: ardumont,dude
+:orgtrello_users: ardumont,dude
 :orgtrello-card-comments: ardumont: some comment
 :END:
   some description
@@ -2143,7 +2143,7 @@ DEADLINE: <2014-05-17 Sat>
            "* TODO some card name
 :PROPERTIES:
 :orgtrello-id: some-card-id
-:orgtrello-users: ardumont,dude
+:orgtrello_users: ardumont,dude
 :orgtrello-card-comments: ardumont: some comment
 :orgtrello-local-checksum: blah
 :END:
@@ -2161,7 +2161,7 @@ DEADLINE: <2014-05-17 Sat>
            (orgtrello-tests-with-temp-buffer-and-return-buffer-content "* TODO some card name
 :PROPERTIES:
 :orgtrello-id: some-card-id
-:orgtrello-users: ardumont,dude
+:orgtrello_users: ardumont,dude
 :orgtrello-card-comments: ardumont: some comment
 :orgtrello-local-checksum: blah
 :END:
@@ -2182,7 +2182,7 @@ DEADLINE: <2014-05-17 Sat>
            "* TODO some card name
 :PROPERTIES:
 :orgtrello-id: some-card-id
-:orgtrello-users: ardumont,dude
+:orgtrello_users: ardumont,dude
 :orgtrello-card-comments: ardumont: some comment
 :orgtrello-local-checksum: card-checksum-123
 :END:
@@ -2201,7 +2201,7 @@ DEADLINE: <2014-05-17 Sat>
            (orgtrello-tests-with-temp-buffer-and-return-buffer-content "* TODO some card name
 :PROPERTIES:
 :orgtrello-id: some-card-id
-:orgtrello-users: ardumont,dude
+:orgtrello_users: ardumont,dude
 :orgtrello-card-comments: ardumont: some comment
 :END:
   some description
@@ -2361,7 +2361,7 @@ DEADLINE: <2014-05-17 Sat>
            "* TODO some card name
 :PROPERTIES:
 :orgtrello-id: some-card-id
-:orgtrello-users: ardumont,dude
+:orgtrello_users: ardumont,dude
 :orgtrello-card-comments: ardumont: some comment
 :orgtrello-local-checksum: card-checksum-876
 :END:
@@ -2374,7 +2374,7 @@ DEADLINE: <2014-05-17 Sat>
            (orgtrello-tests-with-temp-buffer-and-return-buffer-content "* TODO some card name
 :PROPERTIES:
 :orgtrello-id: some-card-id
-:orgtrello-users: ardumont,dude
+:orgtrello_users: ardumont,dude
 :orgtrello-card-comments: ardumont: some comment
 :orgtrello-local-checksum: blah
 :END:
@@ -2394,7 +2394,7 @@ DEADLINE: <2014-05-17 Sat>
            "* TODO some card name
 :PROPERTIES:
 :orgtrello-id: some-card-id
-:orgtrello-users: ardumont,dude
+:orgtrello_users: ardumont,dude
 :orgtrello-card-comments: ardumont: some comment
 :orgtrello-local-checksum: card-checksum-543
 :END:
@@ -2407,7 +2407,7 @@ DEADLINE: <2014-05-17 Sat>
            (orgtrello-tests-with-temp-buffer-and-return-buffer-content "* TODO some card name
 :PROPERTIES:
 :orgtrello-id: some-card-id
-:orgtrello-users: ardumont,dude
+:orgtrello_users: ardumont,dude
 :orgtrello-card-comments: ardumont: some comment
 :orgtrello-local-checksum: blah
 :END:
@@ -2429,7 +2429,7 @@ DEADLINE: <2014-05-17 Sat>
            "* TODO some card name
 :PROPERTIES:
 :orgtrello-id: some-card-id
-:orgtrello-users: ardumont,dude
+:orgtrello_users: ardumont,dude
 :orgtrello-card-comments: ardumont: some comment
 :orgtrello-local-checksum: card-checksum-432
 :END:
@@ -2442,7 +2442,7 @@ DEADLINE: <2014-05-17 Sat>
            (orgtrello-tests-with-temp-buffer-and-return-buffer-content "* TODO some card name
 :PROPERTIES:
 :orgtrello-id: some-card-id
-:orgtrello-users: ardumont,dude
+:orgtrello_users: ardumont,dude
 :orgtrello-card-comments: ardumont: some comment
 :orgtrello-local-checksum: blah
 :END:
@@ -2464,7 +2464,7 @@ DEADLINE: <2014-05-17 Sat>
            "* TODO some card name
 :PROPERTIES:
 :orgtrello-id: some-card-id
-:orgtrello-users: ardumont,dude
+:orgtrello_users: ardumont,dude
 :orgtrello-card-comments: ardumont: some comment
 :orgtrello-local-checksum: blah
 :END:
@@ -2476,7 +2476,7 @@ DEADLINE: <2014-05-17 Sat>
            (orgtrello-tests-with-temp-buffer-and-return-buffer-content "* TODO some card name
 :PROPERTIES:
 :orgtrello-id: some-card-id
-:orgtrello-users: ardumont,dude
+:orgtrello_users: ardumont,dude
 :orgtrello-card-comments: ardumont: some comment
 :orgtrello-local-checksum: blah
 :END:
@@ -2496,7 +2496,7 @@ DEADLINE: <2014-05-17 Sat>
            "* TODO some card name
 :PROPERTIES:
 :orgtrello-id: some-card-id
-:orgtrello-users: ardumont,dude
+:orgtrello_users: ardumont,dude
 :orgtrello-card-comments: ardumont: some comment
 :orgtrello-local-checksum: blah
 :END:
@@ -2513,7 +2513,7 @@ DEADLINE: <2014-05-17 Sat>
            (orgtrello-tests-with-temp-buffer-and-return-buffer-content "* TODO some card name
 :PROPERTIES:
 :orgtrello-id: some-card-id
-:orgtrello-users: ardumont,dude
+:orgtrello_users: ardumont,dude
 :orgtrello-card-comments: ardumont: some comment
 :orgtrello-local-checksum: blah
 :END:
@@ -2538,7 +2538,7 @@ DEADLINE: <2014-05-17 Sat>
            (orgtrello-tests-with-temp-buffer "* TODO some card name
 :PROPERTIES:
 :orgtrello-id: some-card-id
-:orgtrello-users: ardumont,dude
+:orgtrello_users: ardumont,dude
 :orgtrello-card-comments: ardumont: some comment
 :orgtrello-local-checksum: blah
 :END:
@@ -2555,7 +2555,7 @@ DEADLINE: <2014-05-17 Sat>
            (orgtrello-tests-with-temp-buffer "* TODO some card name
 :PROPERTIES:
 :orgtrello-id: some-card-id
-:orgtrello-users: ardumont,dude
+:orgtrello_users: ardumont,dude
 :orgtrello-card-comments: ardumont: some comment
 :orgtrello-local-checksum: blah
 :END:
@@ -2571,7 +2571,7 @@ DEADLINE: <2014-05-17 Sat>
            (orgtrello-tests-with-temp-buffer "* TODO some card name
 :PROPERTIES:
 :orgtrello-id: some-card-id
-:orgtrello-users: ardumont,dude
+:orgtrello_users: ardumont,dude
 :orgtrello-card-comments: ardumont: some comment
 :orgtrello-local-checksum: blah
 :END:
@@ -2587,7 +2587,7 @@ DEADLINE: <2014-05-17 Sat>
            (orgtrello-tests-with-temp-buffer "* TODO some card name
 :PROPERTIES:
 :orgtrello-id: some-card-id
-:orgtrello-users: ardumont,dude
+:orgtrello_users: ardumont,dude
 :orgtrello-card-comments: ardumont: some comment
 :orgtrello-local-checksum: foobar
 :END:
@@ -2606,7 +2606,7 @@ DEADLINE: <2014-05-17 Sat>
            (orgtrello-tests-with-temp-buffer "* TODO some card name
 :PROPERTIES:
 :orgtrello-id: some-card-id
-:orgtrello-users: ardumont,dude
+:orgtrello_users: ardumont,dude
 :orgtrello-card-comments: ardumont: some comment
 :orgtrello-local-checksum: foobar
 :END:
@@ -2624,7 +2624,7 @@ DEADLINE: <2014-05-17 Sat>
            (orgtrello-tests-with-temp-buffer "* TODO some card name
 :PROPERTIES:
 :orgtrello-id: some-card-id
-:orgtrello-users: ardumont,dude
+:orgtrello_users: ardumont,dude
 :orgtrello-card-comments: ardumont: some comment
 :orgtrello-local-checksum: foobar
 :END:
@@ -2642,7 +2642,7 @@ DEADLINE: <2014-05-17 Sat>
            (orgtrello-tests-with-temp-buffer "* TODO some card name
 :PROPERTIES:
 :orgtrello-id: some-card-id
-:orgtrello-users: ardumont,dude
+:orgtrello_users: ardumont,dude
 :orgtrello-card-comments: ardumont: some comment
 :orgtrello-local-checksum: foobar
 :END:
@@ -2676,7 +2676,7 @@ DEADLINE: <2014-05-17 Sat>
            (orgtrello-tests-with-temp-buffer "* TODO some card name
 :PROPERTIES:
 :orgtrello-id: some-card-id
-:orgtrello-users: ardumont,dude
+:orgtrello_users: ardumont,dude
 :orgtrello-card-comments: ardumont: some comment
 :orgtrello-local-checksum: blah
 :END:
@@ -2693,7 +2693,7 @@ DEADLINE: <2014-05-17 Sat>
            (orgtrello-tests-with-temp-buffer "* TODO some card name
 :PROPERTIES:
 :orgtrello-id: some-card-id
-:orgtrello-users: ardumont,dude
+:orgtrello_users: ardumont,dude
 :orgtrello-card-comments: ardumont: some comment
 :orgtrello-local-checksum: blah
 :END:
@@ -2709,7 +2709,7 @@ DEADLINE: <2014-05-17 Sat>
            (orgtrello-tests-with-temp-buffer "* TODO some card name
 :PROPERTIES:
 :orgtrello-id: some-card-id
-:orgtrello-users: ardumont,dude
+:orgtrello_users: ardumont,dude
 :orgtrello-card-comments: ardumont: some comment
 :orgtrello-local-checksum: blah
 :END:
@@ -2725,7 +2725,7 @@ DEADLINE: <2014-05-17 Sat>
            (orgtrello-tests-with-temp-buffer "* TODO some card name
 :PROPERTIES:
 :orgtrello-id: some-card-id
-:orgtrello-users: ardumont,dude
+:orgtrello_users: ardumont,dude
 :orgtrello-card-comments: ardumont: some comment
 :orgtrello-local-checksum: foobar
 :END:
@@ -2742,7 +2742,7 @@ DEADLINE: <2014-05-17 Sat>
            "* TODO some card name
 :PROPERTIES:
 :orgtrello-id: some-id
-:orgtrello-users: ardumont,dude
+:orgtrello_users: ardumont,dude
 :orgtrello-card-comments: ardumont: some comment
 :orgtrello-local-checksum: card-checksum-321
 :END:
@@ -2750,7 +2750,7 @@ DEADLINE: <2014-05-17 Sat>
            (orgtrello-tests-with-temp-buffer-and-return-buffer-content "* TODO some card name
 :PROPERTIES:
 :orgtrello-id: some-card-id
-:orgtrello-users: ardumont,dude
+:orgtrello_users: ardumont,dude
 :orgtrello-card-comments: ardumont: some comment
 :orgtrello-local-checksum: foobar
 :END:
@@ -2763,7 +2763,7 @@ DEADLINE: <2014-05-17 Sat>
            "* TODO some card name
 :PROPERTIES:
 :orgtrello-id: some-id
-:orgtrello-users: ardumont,dude
+:orgtrello_users: ardumont,dude
 :orgtrello-card-comments: ardumont: some comment
 :orgtrello-local-checksum: card-checksum-321
 :END:
@@ -2772,7 +2772,7 @@ DEADLINE: <2014-05-17 Sat>
            (orgtrello-tests-with-temp-buffer-and-return-buffer-content "* TODO some card name
 :PROPERTIES:
 :orgtrello-id: some-id
-:orgtrello-users: ardumont,dude
+:orgtrello_users: ardumont,dude
 :orgtrello-card-comments: ardumont: some comment
 :orgtrello-local-checksum: foobar
 :END:
@@ -2788,7 +2788,7 @@ DEADLINE: <2014-05-17 Sat>
            "* TODO some card name
 :PROPERTIES:
 :orgtrello-id: some-id
-:orgtrello-users: ardumont,dude
+:orgtrello_users: ardumont,dude
 :orgtrello-card-comments: ardumont: some comment
 :orgtrello-local-checksum: card-checksum-321
 :END:
@@ -2798,7 +2798,7 @@ DEADLINE: <2014-05-17 Sat>
            (orgtrello-tests-with-temp-buffer-and-return-buffer-content "* TODO some card name
 :PROPERTIES:
 :orgtrello-id: some-id
-:orgtrello-users: ardumont,dude
+:orgtrello_users: ardumont,dude
 :orgtrello-card-comments: ardumont: some comment
 :orgtrello-local-checksum: foobar
 :END:
@@ -2824,7 +2824,7 @@ DEADLINE: <2014-05-17 Sat>
   (should (string= "* TODO some card name
 :PROPERTIES:
 :orgtrello-id: some-card-id
-:orgtrello-users: ardumont,dude
+:orgtrello_users: ardumont,dude
 :orgtrello-card-comments: ardumont: some comment
 :END:
   some description
@@ -2836,7 +2836,7 @@ DEADLINE: <2014-05-17 Sat>
                    (orgtrello-tests-with-temp-buffer-and-return-buffer-content "* TODO some card name
 :PROPERTIES:
 :orgtrello-id: some-card-id
-:orgtrello-users: ardumont,dude
+:orgtrello_users: ardumont,dude
 :orgtrello-card-comments: ardumont: some comment
 :orgtrello-local-checksum: some-local-checksum
 :END:
@@ -2852,7 +2852,7 @@ DEADLINE: <2014-05-17 Sat>
   (should (string= "* TODO some card name
 :PROPERTIES:
 :orgtrello-id: some-card-id
-:orgtrello-users: ardumont,dude
+:orgtrello_users: ardumont,dude
 :orgtrello-card-comments: ardumont: some comment
 :END:
   some description
@@ -2864,7 +2864,7 @@ DEADLINE: <2014-05-17 Sat>
                    (orgtrello-tests-with-temp-buffer-and-return-buffer-content "* TODO some card name
 :PROPERTIES:
 :orgtrello-id: some-card-id
-:orgtrello-users: ardumont,dude
+:orgtrello_users: ardumont,dude
 :orgtrello-card-comments: ardumont: some comment
 :orgtrello-local-checksum: some-local-checksum
 :END:
@@ -2883,7 +2883,7 @@ DEADLINE: <2014-05-17 Sat>
            "* TODO some card name
 :PROPERTIES:
 :orgtrello-id: some-card-id
-:orgtrello-users: ardumont,dude
+:orgtrello_users: ardumont,dude
 :orgtrello-card-comments: ardumont: some comment
 :END:
   some description
@@ -2897,7 +2897,7 @@ DEADLINE: <2014-05-17 Sat>
            (orgtrello-tests-with-temp-buffer "* TODO some card name
 :PROPERTIES:
 :orgtrello-id: some-card-id
-:orgtrello-users: ardumont,dude
+:orgtrello_users: ardumont,dude
 :orgtrello-card-comments: ardumont: some comment
 :END:
   some description
@@ -2915,7 +2915,7 @@ DEADLINE: <2014-05-17 Sat>
            "* TODO some card name
 :PROPERTIES:
 :orgtrello-id: some-card-id
-:orgtrello-users: ardumont,dude
+:orgtrello_users: ardumont,dude
 :orgtrello-card-comments: ardumont: some comment
 :END:
   some description
@@ -2928,7 +2928,7 @@ DEADLINE: <2014-05-17 Sat>
            (orgtrello-tests-with-temp-buffer "* TODO some card name
 :PROPERTIES:
 :orgtrello-id: some-card-id
-:orgtrello-users: ardumont,dude
+:orgtrello_users: ardumont,dude
 :orgtrello-card-comments: ardumont: some comment
 :END:
   some description
@@ -2949,7 +2949,7 @@ DEADLINE: <2014-05-17 Sat>
            (orgtrello-tests-with-temp-buffer "* TODO some card name
 :PROPERTIES:
 :orgtrello-id: some-card-id
-:orgtrello-users: ardumont,dude
+:orgtrello_users: ardumont,dude
 :orgtrello-card-comments: ardumont: some comment
 :orgtrello-local-checksum: a058272445d320995bd4c677dd35c0924ff65ce7640cbe7cae21d6ea39ff32c6
 :END:
@@ -2967,7 +2967,7 @@ DEADLINE: <2014-05-17 Sat>
            (orgtrello-tests-with-temp-buffer "* TODO some card name
 :PROPERTIES:
 :orgtrello-id: some-card-id
-:orgtrello-users: ardumont,dude
+:orgtrello_users: ardumont,dude
 :orgtrello-card-comments: ardumont: some comment
 :orgtrello-local-checksum: a058272445d320995bd4c677dd35c0924ff65ce7640cbe7cae21d6ea39ff32c6
 :END:
@@ -2987,7 +2987,7 @@ DEADLINE: <2014-05-17 Sat>
            (orgtrello-tests-with-temp-buffer "* TODO some card name
 :PROPERTIES:
 :orgtrello-id: some-card-id
-:orgtrello-users: ardumont,dude
+:orgtrello_users: ardumont,dude
 :orgtrello-card-comments: ardumont: some comment
 :END:
   some description
@@ -3005,7 +3005,7 @@ DEADLINE: <2014-05-17 Sat>
            (orgtrello-tests-with-temp-buffer "* TODO some card name
 :PROPERTIES:
 :orgtrello-id: some-card-id
-:orgtrello-users: ardumont,dude
+:orgtrello_users: ardumont,dude
 :orgtrello-card-comments: ardumont: some comment
 :orgtrello-local-checksum: 2a71e11a34c8778629d2e1c36f9efdec3e81a0013bd56c649e88e4d91fd91d3a
 :END:
@@ -3024,7 +3024,7 @@ DEADLINE: <2014-05-17 Sat>
            (orgtrello-tests-with-temp-buffer "* TODO some card name
 :PROPERTIES:
 :orgtrello-id: some-card-id
-:orgtrello-users: ardumont,dude
+:orgtrello_users: ardumont,dude
 :orgtrello-card-comments: ardumont: some comment
 :orgtrello-local-checksum: 2a71e11a34c8778629d2e1c36f9efdec3e81a0013bd56c649e88e4d91fd91d3a
 :END:
@@ -3046,7 +3046,7 @@ DEADLINE: <2014-05-17 Sat>
            (orgtrello-tests-with-temp-buffer "* TODO some card name
 :PROPERTIES:
 :orgtrello-id: some-card-id
-:orgtrello-users: ardumont,dude
+:orgtrello_users: ardumont,dude
 :orgtrello-card-comments: ardumont: some comment
 :orgtrello-local-checksum: a058272445d320995bd4c677dd35c0924ff65ce7640cbe7cae21d6ea39ff32c6
 :END:
@@ -3065,7 +3065,7 @@ DEADLINE: <2014-05-17 Sat>
            (orgtrello-tests-with-temp-buffer "* TODO some card name
 :PROPERTIES:
 :orgtrello-id: some-card-id
-:orgtrello-users: ardumont,dude
+:orgtrello_users: ardumont,dude
 :orgtrello-card-comments: ardumont: some comment
 :orgtrello-local-checksum: a058272445d320995bd4c677dd35c0924ff65ce7640cbe7cae21d6ea39ff32c6
 :END:
@@ -3084,7 +3084,7 @@ DEADLINE: <2014-05-17 Sat>
            (orgtrello-tests-with-temp-buffer "* TODO some card name
 :PROPERTIES:
 :orgtrello-id: some-card-id
-:orgtrello-users: ardumont,dude
+:orgtrello_users: ardumont,dude
 :orgtrello-card-comments: ardumont: some comment
 :orgtrello-local-checksum: dcae7ad96da00965d3f63eb9104fa676d9ee0d2cedc69b1fd865d0f8c2a0b3f5
 :END:
@@ -3099,7 +3099,7 @@ DEADLINE: <2014-05-17 Sat>
            (orgtrello-tests-with-temp-buffer "* TODO some card name
 :PROPERTIES:
 :orgtrello-id: some-card-id
-:orgtrello-users: ardumont,dude
+:orgtrello_users: ardumont,dude
 :orgtrello-card-comments: ardumont: some comment
 :orgtrello-local-checksum: a058272445d320995bd4c677dd35c0924ff65ce7640cbe7cae21d6ea39ff32c6
 :END:
@@ -3117,7 +3117,7 @@ DEADLINE: <2014-05-17 Sat>
            (orgtrello-tests-with-temp-buffer "* TODO some card name
 :PROPERTIES:
 :orgtrello-id: some-card-id
-:orgtrello-users: ardumont,dude
+:orgtrello_users: ardumont,dude
 :orgtrello-card-comments: ardumont: some comment
 :orgtrello-local-checksum: a058272445d320995bd4c677dd35c0924ff65ce7640cbe7cae21d6ea39ff32c6
 :END:
@@ -3134,7 +3134,7 @@ DEADLINE: <2014-05-17 Sat>
            (orgtrello-tests-with-temp-buffer "* TODO some card name
 :PROPERTIES:
 :orgtrello-id: some-card-id
-:orgtrello-users: ardumont,dude
+:orgtrello_users: ardumont,dude
 :orgtrello-card-comments: ardumont: some comment
 :orgtrello-local-checksum: e7dc2fd6842e823786868235b6b33cb4cad4b75f73fed32bdb3df1dc54ef0418
 :END:
@@ -3189,7 +3189,7 @@ generates another checksum
            (orgtrello-tests-with-temp-buffer "* TODO some card name
 :PROPERTIES:
 :orgtrello-id: some-card-id
-:orgtrello-users: ardumont,dude
+:orgtrello_users: ardumont,dude
 :orgtrello-card-comments: ardumont: some comment
 :orgtrello-local-checksum: a058272445d320995bd4c677dd35c0924ff65ce7640cbe7cae21d6ea39ff32c6
 :END:
@@ -3205,7 +3205,7 @@ generates another checksum
            (orgtrello-tests-with-temp-buffer "* TODO some card name
 :PROPERTIES:
 :orgtrello-id: some-card-id
-:orgtrello-users: ardumont,dude
+:orgtrello_users: ardumont,dude
 :orgtrello-card-comments: ardumont: some comment
 :orgtrello-local-checksum: a058272445d320995bd4c677dd35c0924ff65ce7640cbe7cae21d6ea39ff32c6
 :END:
@@ -3231,15 +3231,15 @@ generates another checksum
 #+PROPERTY: IN-PROGRESS uvw
 #+PROPERTY: TODO xyz
 #+TODO: TODO IN-PROGRESS DONE | PENDING DELEGATED FAILED CANCELLED
-#+PROPERTY: orgtrello-user-orgmode 888
-#+PROPERTY: orgtrello-user-ardumont 999
+#+PROPERTY: orgtrello_user_orgmode 888
+#+PROPERTY: orgtrello_user_ardumont 999
 #+PROPERTY: :yellow yellow label
 #+PROPERTY: :red red label
 #+PROPERTY: :purple this is the purple label
 #+PROPERTY: :orange orange label
 #+PROPERTY: :green green label with & char
 #+PROPERTY: :blue
-#+PROPERTY: orgtrello-user-me ardumont
+#+PROPERTY: orgtrello_user_me ardumont
 :END:"
             (orgtrello-buffer-filtered-kwds)))))
 
@@ -3254,14 +3254,14 @@ generates another checksum
              ("DONE" . "rst")
              ("IN-PROGRESS" . "uvw")
              ("TODO" . "xyz")
-             ("orgtrello-user-orgmode" . "888")
-             ("orgtrello-user-ardumont" . "999")
+             ("orgtrello_user_orgmode" . "888")
+             ("orgtrello_user_ardumont" . "999")
              (":yellow" . "yellow label")
              (":red" . "red label")
              (":purple" . "this is the purple label")
              (":orange" . "orange label")
              (":green" . "green label with & char")
-             ("orgtrello-user-me" . "ardumont"))
+             ("orgtrello_user_me" . "ardumont"))
            (orgtrello-tests-with-temp-buffer
             ":PROPERTIES:
 #+PROPERTY: board-name api test board
@@ -3274,15 +3274,15 @@ generates another checksum
 #+PROPERTY: IN-PROGRESS uvw
 #+PROPERTY: TODO xyz
 #+TODO: TODO IN-PROGRESS DONE | PENDING DELEGATED FAILED CANCELLED
-#+PROPERTY: orgtrello-user-orgmode 888
-#+PROPERTY: orgtrello-user-ardumont 999
+#+PROPERTY: orgtrello_user_orgmode 888
+#+PROPERTY: orgtrello_user_ardumont 999
 #+PROPERTY: :yellow yellow label
 #+PROPERTY: :red red label
 #+PROPERTY: :purple this is the purple label
 #+PROPERTY: :orange orange label
 #+PROPERTY: :green green label with & char
 #+PROPERTY: :blue
-#+PROPERTY: orgtrello-user-me ardumont
+#+PROPERTY: orgtrello_user_me ardumont
 :END:"
             (orgtrello-buffer-org-file-properties)))))
 
