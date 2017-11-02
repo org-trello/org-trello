@@ -9,7 +9,7 @@ before_install:
   - cask --version
   - emacs --version
   # install deps for cask
-  - cask
+  - EMACS="/home/travis/.evm/bin/emacs" cask install
 env:
   - EVM_EMACS=emacs-24.4-travis
   - EVM_EMACS=emacs-24.5-travis
@@ -19,4 +19,4 @@ env:
 
 script:
   - pwd
-  - make install test
+  - EMACS="/home/travis/.evm/bin/emacs" make install test
