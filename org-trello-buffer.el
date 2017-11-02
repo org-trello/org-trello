@@ -669,8 +669,10 @@ Also add some metadata identifier/due-data/point/buffer-name/etc..."
 
 (defun orgtrello-buffer--filter-out-known-properties (l)
   "Filter out the known org-trello properties from L."
-  (--filter (not (or (string-match-p "^orgtrello-.*" (car it))
-                     (string= "CATEGORY" (car it)))) l))
+  (--filter (let ((v (car it)))
+              (not (or (string-match-p "^orgtrello-.*" v)
+                       (string-match-p "^orgtrello_.*" v)
+                       (string= "CATEGORY" v)))) l))
 
 (defun orgtrello-buffer-org-unknown-drawer-properties ()
   "Retrieve the key/value pairs of org-trello unknown drawer properties."
