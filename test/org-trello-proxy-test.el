@@ -78,10 +78,10 @@
            (orgtrello-tests-with-temp-buffer-and-return-buffer-content
             "* TODO Joy of FUN(ctional) LANGUAGES
 :PROPERTIES:
-:orgtrello-id: orgtrello-marker-blah
+:orgtrello-id: orgtrello_marker_blah
 :END:
 "
-            (let* ((entity (orgtrello-hash-make-properties `((:id . "orgtrello-marker-blah")
+            (let* ((entity (orgtrello-hash-make-properties `((:id . "orgtrello_marker_blah")
                                                              (:buffername . ,(current-buffer))
                                                              (:name . "Joy of FUN(ctional) LANGUAGES"))))
                    (entities-adjacencies (list (orgtrello-hash-empty-hash) (orgtrello-hash-empty-hash)))

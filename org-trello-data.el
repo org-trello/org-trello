@@ -236,7 +236,7 @@ SIZE is a useless parameter, only here to satisfy an implementation detail."
 
 (defun orgtrello-data-id-p (id)
   "Is the string ID a trello identifier?"
-  (and id (not (string-match-p (format "^%s-" org-trello--label-key-marker) id))))
+  (and id (not (string-match-p (format "^%s%s" org-trello--label-key-marker org-trello--property-separator) id))))
 
 (defun orgtrello-data--merge-item (trello-item org-item)
   "Merge TRELLO-ITEM and ORG-ITEM together.

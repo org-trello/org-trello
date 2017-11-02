@@ -477,7 +477,7 @@
   (should (equal t   (orgtrello-data-id-p "agfgdsfgbdfgbdfgbdfshouldbetrue")))
   (should (equal t   (orgtrello-data-id-p "orgtrello-markeragfgdsfgbdfgbdfgbdfshouldbetrue")))
   (should (equal t   (orgtrello-data-id-p "should-be-true-orgtrello-marker-agfgdsfgbdfgbdfgbdf")))
-  (should (equal nil (orgtrello-data-id-p "orgtrello-marker-shouldbenil")))
+  (should (equal nil (orgtrello-data-id-p "orgtrello_marker_shouldbenil")))
   (should (equal nil (orgtrello-data-id-p nil))))
 
 (ert-deftest test-orgtrello-data--merge-item ()

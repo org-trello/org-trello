@@ -832,10 +832,10 @@ Return nil if none."
   "Compute the orgtrello marker which is composed of BUFFER-NAME, NAME and POSITION."
   (->> (list org-trello--label-key-marker buffer-name name
              (if (stringp position) position (int-to-string position)))
-       (-interpose "-")
+       (-interpose org-trello--property-separator)
        (apply 'concat)
        sha1
-       (concat org-trello--label-key-marker "-")))
+       (concat org-trello--label-key-marker org-trello--property-separator)))
 
 (defun orgtrello-buffer-save-buffer (buffer-name)
   "Given a BUFFER-NAME, save it."

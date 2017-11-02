@@ -1747,8 +1747,8 @@ DEADLINE: <dummy-date-with-right-locale>
 
 (ert-deftest test-orgtrello-buffer--compute-marker-from-entry ()
   (should (equal "id"                                                        (orgtrello-buffer--compute-marker-from-entry (orgtrello-data-make-hash-org :users :level :kwd :name      "id"  :due :position :buffername :desc :tags :unknown))))
-  (should (equal "orgtrello-marker-2a0b98e652ce6349a0659a7a8eeb3783ffe9a11a" (orgtrello-buffer--compute-marker-from-entry (orgtrello-data-make-hash-org :users :level :kwd "some-name" nil :due 1234      "buffername" :desc :tags :unknown))))
-  (should (equal "orgtrello-marker-6c59c5dcf6c83edaeb3f4923bfd929a091504bb3" (orgtrello-buffer--compute-marker-from-entry (orgtrello-data-make-hash-org :users :level :kwd "some-name" nil :due 4321      "some-other-buffername" :desc :tags :unknown)))))
+  (should (equal "orgtrello_marker_949366675d3ae704f6b0560ae1fc52db645414fc" (orgtrello-buffer--compute-marker-from-entry (orgtrello-data-make-hash-org :users :level :kwd "some-name" nil :due 1234      "buffername" :desc :tags :unknown))))
+  (should (equal "orgtrello_marker_547be64971d8be47d28e23322ec8cfe367803e02" (orgtrello-buffer--compute-marker-from-entry (orgtrello-data-make-hash-org :users :level :kwd "some-name" nil :due 4321      "some-other-buffername" :desc :tags :unknown)))))
 
 (ert-deftest test-orgtrello-buffer--compute-level-into-spaces ()
   (should (equal 2 (orgtrello-buffer--compute-level-into-spaces 2)))
@@ -1867,8 +1867,8 @@ nothing enforces the content of the description
 "                                 (orgtrello-data-entity-description h-values)))))
 
 (ert-deftest test-orgtrello-buffer-compute-marker ()
-  (should (equal "orgtrello-marker-2a0b98e652ce6349a0659a7a8eeb3783ffe9a11a" (orgtrello-buffer-compute-marker "buffername" "some-name" 1234)))
-  (should (equal "orgtrello-marker-6c59c5dcf6c83edaeb3f4923bfd929a091504bb3" (orgtrello-buffer-compute-marker "some-other-buffername" "some-name" 4321))))
+  (should (equal "orgtrello_marker_949366675d3ae704f6b0560ae1fc52db645414fc" (orgtrello-buffer-compute-marker "buffername" "some-name" 1234)))
+  (should (equal "orgtrello_marker_547be64971d8be47d28e23322ec8cfe367803e02" (orgtrello-buffer-compute-marker "some-other-buffername" "some-name" 4321))))
 
 (ert-deftest test-orgtrello-buffer--filter-out-known-properties ()
   (should (equal '(("some-unknown-thingy" . "some value"))
