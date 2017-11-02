@@ -1709,6 +1709,18 @@ Also, you can specify on your org-mode buffer the todo list you want to work wit
                      (mock (delete-directory org-trello--old-config-dir 'with-contents) => :done)
                      (orgtrello-controller-migrate-user-setup :args-not-used))))))
 
+(ert-deftest test-orgtrello-controller-migrate-user-buffer ()
+  ;; nothing to do
+  (should (equal :ok
+                 (with-mock
+                   (mock (orgtrello-buffer-to-migrate-p) => nil)
+                   (orgtrello-controller-migrate-user-buffer :args-not-used))))
+  (should (equal :ok
+                 (with-mock
+                   (mock (orgtrello-buffer-to-migrate-p) => t)
+                   (mock (orgtrello-buffer-migrate-buffer) => t)
+                   (orgtrello-controller-migrate-user-buffer :args-not-used)))))
+
 (ert-deftest test-orgtrello-controller-config-file ()
   (should (string= "~/.emacs.d/.trello/tony.el"
                    (let ((org-trello--config-file "~/.emacs.d/.trello/%s.el"))

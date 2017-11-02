@@ -918,6 +918,16 @@ COMPUTE-REGION-FN is the region computation function (takes no parameter)."
                        trello-cards) ;; find a card to archive
            (org-archive-subtree)))))))
 
+(defun orgtrello-buffer-to-migrate-p ()
+  "Check if the current buffer needs migration or not."
+  (save-excursion
+    (with-current-buffer (current-buffer)
+      (when (let ((case-fold-search t))
+              (search-forward-regexp
+               "orgtrello-id\\|orgtrello-local-checksum\\|orgtrello-marker-\\|orgtrello-user-\\|:orgtrello-users:"
+               nil t))
+        t))))
+
 (defun orgtrello-buffer-migrate-buffer ()
   "Migrate the old properties to the new one.
 The cursor remains at current position once the computation is done."
@@ -930,15 +940,13 @@ The cursor moves along the search."
 
   (save-excursion
     (with-current-buffer (current-buffer)
-      (org-trello-mode -1)
       (let ((case-fold-search t)
             (old-new `(("orgtrello-id" ,org-trello--label-key-id)
                        ("orgtrello-local-checksum" ,org-trello--label-key-local-checksum)
                        ("orgtrello-marker-" ,(format "%s%s" org-trello--label-key-marker org-trello--property-separator))
                        ("orgtrello-user-" ,org-trello--label-key-user-prefix)
                        (":orgtrello-users:" ,(format ":%s:" org-trello--property-users-entry)))))
-        (--map (orgtrello-buffer--replace-str (car it) (cadr it)) old-new))
-      (org-trello-mode))))
+        (--map (orgtrello-buffer--replace-str (car it) (cadr it)) old-new)))))
 
 (orgtrello-log-msg orgtrello-log-debug "orgtrello-buffer loaded!")
 

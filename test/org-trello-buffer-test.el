@@ -3379,6 +3379,77 @@ generates another checksum
     - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\", \"orgtrello-local-checksum\":\"d5503e92e8880ddb839c42e31e8ead17a70f09d39f069fbfd9956424984047fc\"}
 "
                                                                        (orgtrello-buffer-migrate-buffer)))))
+(ert-deftest test-orgtrello-buffer-to-migrate-p ()
+  (should (equal t
+                 (orgtrello-tests-with-temp-buffer "
+:PROPERTIES:
+#+PROPERTY: board-name api test board
+#+PROPERTY: board-id abc
+#+PROPERTY: CANCELLED def
+#+PROPERTY: FAILED ijk
+#+PROPERTY: DELEGATED lmn
+#+PROPERTY: PENDING opq
+#+PROPERTY: DONE rst
+#+PROPERTY: IN-PROGRESS uvw
+#+PROPERTY: TODO xyz
+#+TODO: TODO IN-PROGRESS DONE | PENDING DELEGATED FAILED CANCELLED
+#+PROPERTY: orgtrello-user-orgmode 888
+#+PROPERTY: orgtrello-user-ardumont 999
+#+PROPERTY: :yellow yellow label
+#+PROPERTY: :red red label
+#+PROPERTY: :purple this is the purple label
+#+PROPERTY: :orange orange label
+#+PROPERTY: :green green label with & char
+#+PROPERTY: :blue
+#+PROPERTY: orgtrello-user-me ardumont
+
+* TODO some card name
+:PROPERTIES:
+:orgtrello-id: some-card-id
+:orgtrello-users: ardumont,dude
+:orgtrello-local-checksum: a058272445d320995bd4c677dd35c0924ff65ce7640cbe7cae21d6ea39ff32c6
+:END:
+  some description
+  - [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}
+    - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\", \"orgtrello-local-checksum\":\"d5503e92e8880ddb839c42e31e8ead17a70f09d39f069fbfd9956424984047fc\"}
+"
+                                                   (orgtrello-buffer-to-migrate-p))))
+  (should-not (orgtrello-tests-with-temp-buffer
+               "
+:PROPERTIES:
+#+PROPERTY: board-name api test board
+#+PROPERTY: board-id abc
+#+PROPERTY: CANCELLED def
+#+PROPERTY: FAILED ijk
+#+PROPERTY: DELEGATED lmn
+#+PROPERTY: PENDING opq
+#+PROPERTY: DONE rst
+#+PROPERTY: IN-PROGRESS uvw
+#+PROPERTY: TODO xyz
+#+TODO: TODO IN-PROGRESS DONE | PENDING DELEGATED FAILED CANCELLED
+#+PROPERTY: orgtrello_user_orgmode 888
+#+PROPERTY: orgtrello_user_ardumont 999
+#+PROPERTY: :yellow yellow label
+#+PROPERTY: :red red label
+#+PROPERTY: :purple this is the purple label
+#+PROPERTY: :orange orange label
+#+PROPERTY: :green green label with & char
+#+PROPERTY: :blue
+#+PROPERTY: orgtrello_user_me ardumont
+
+* TODO some card name
+:PROPERTIES:
+:orgtrello_id: some-card-id
+:orgtrello_users: ardumont,dude
+:orgtrello_local_checksum: a058272445d320995bd4c677dd35c0924ff65ce7640cbe7cae21d6ea39ff32c6
+:END:
+  some description
+  - [-] some checklist name :PROPERTIES: {\"orgtrello_id\":\"some-checklist-id\"}
+    - [X] some item :PROPERTIES: {\"orgtrello_id\":\"some-item-id\", \"orgtrello_local_checksum\":\"d5503e92e8880ddb839c42e31e8ead17a70f09d39f069fbfd9956424984047fc\"}
+"
+               (orgtrello-buffer-to-migrate-p)
+               
+               )))
 
 (provide 'org-trello-buffer-test)
 ;;; org-trello-buffer-test.el ends here

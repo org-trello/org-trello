@@ -134,6 +134,14 @@ ARGS is not used."
       (delete-directory org-trello--old-config-dir 'with-contents)))
   :ok)
 
+(defun orgtrello-controller-migrate-user-buffer (&optional args)
+  "Migrate user's setup file according to latest development.
+ARGS is not used."
+  (when (orgtrello-buffer-to-migrate-p)
+    (orgtrello-log-msg orgtrello-log-warn "Migrate the buffer's keys to the correct new one.")
+    (orgtrello-buffer-migrate-buffer))
+  :ok)
+
 (defun orgtrello-controller-config-file (&optional username)
   "Determine the configuration file as per user logged in.
 If USERNAME is supplied, do not look into the current buffer."

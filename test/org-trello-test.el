@@ -61,6 +61,7 @@
                    (mock (orgtrello-action-msg-controls-or-actions-then-do
                           :action-label
                           '(orgtrello-controller-migrate-user-setup
+                            orgtrello-controller-migrate-user-buffer
                             orgtrello-controller-set-account
                             orgtrello-controller-load-keys
                             orgtrello-controller-control-keys
@@ -82,6 +83,7 @@
                    (mock (orgtrello-action-msg-controls-or-actions-then-do
                           :action-label
                           '(orgtrello-controller-migrate-user-setup
+                            orgtrello-controller-migrate-user-buffer
                             orgtrello-controller-set-account
                             orgtrello-controller-load-keys
                             orgtrello-controller-control-keys
