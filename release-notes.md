@@ -1,3 +1,13 @@
+# 0.8.1
+
+- [X] Make adding trello colors to `org-tag-alist` optional - Close #365
+- [X] Fix typo in link to issue tracker - Close #364
+- [X] Fix ci
+- [X] Fix user properties search in agenda view - Close #366 - Close #371
+- [X] Correct bad encoding of json encoded data.
+- [X] Update version
+- [X] Release notes
+
 # 0.8.0
 
 - [X] Update travis ci configuration
