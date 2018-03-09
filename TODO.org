@@ -31,11 +31,11 @@
 - [ ] #245 - Trying to sync a card: orgtrello-buffer/compute-marker: Wrong type argument: numberp, nil
 - [ ] #248 - Installing from melpa (unstable) works, but then it errs on an undefined variable "error-messages"
 - [ ] #263 - Colors broken in org trello
-* IN-PROGRESS 0.8.1 [71%]
+* IN-PROGRESS 0.8.1 [85%]
 - [X] Make adding trello colors to `org-tag-alist` optional - Close #365
 - [X] Fix typo in link to issue tracker - Close #364
 - [X] Fix ci
-- [ ] Fix user properties search in agenda view - Close #366 - Close #371
+- [X] Fix user properties search in agenda view - Close #366 - Close #371
 - [X] Correct bad encoding of json encoded data.
 - [X] Update version
 - [ ] Release notes
