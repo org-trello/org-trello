@@ -214,8 +214,8 @@ This to avoid conflict between `org-mode' and markdown syntax."
          (comment-str (-> comment
                           orgtrello-data-entity-comment-text
                           orgtrello-buffer--prepare-comment)))
-    (format "\n** COMMENT %s, %s\n:PROPERTIES:\n:orgtrello-id: %s\n:END:\n%s\n"
-            comment-user comment-date comment-id comment-str)))
+    (format "\n** COMMENT %s, %s\n:PROPERTIES:\n:%s: %s\n:END:\n%s\n"
+            comment-user comment-date org-trello--label-key-id comment-id comment-str)))
 
 (defun orgtrello-buffer-update-properties-unknown (unknown-properties)
   "Write the alist UNKNOWN-PROPERTIES inside standard properties org drawer."
@@ -669,8 +669,10 @@ Also add some metadata identifier/due-data/point/buffer-name/etc..."
 
 (defun orgtrello-buffer--filter-out-known-properties (l)
   "Filter out the known org-trello properties from L."
-  (--filter (not (or (string-match-p "^orgtrello-.*" (car it))
-                     (string= "CATEGORY" (car it)))) l))
+  (--filter (let ((v (car it)))
+              (not (or (string-match-p "^orgtrello-.*" v)
+                       (string-match-p "^orgtrello_.*" v)
+                       (string= "CATEGORY" v)))) l))
 
 (defun orgtrello-buffer-org-unknown-drawer-properties ()
   "Retrieve the key/value pairs of org-trello unknown drawer properties."
@@ -830,10 +832,10 @@ Return nil if none."
   "Compute the orgtrello marker which is composed of BUFFER-NAME, NAME and POSITION."
   (->> (list org-trello--label-key-marker buffer-name name
              (if (stringp position) position (int-to-string position)))
-       (-interpose "-")
+       (-interpose org-trello--property-separator)
        (apply 'concat)
        sha1
-       (concat org-trello--label-key-marker "-")))
+       (concat org-trello--label-key-marker org-trello--property-separator)))
 
 (defun orgtrello-buffer-save-buffer (buffer-name)
   "Given a BUFFER-NAME, save it."
@@ -915,6 +917,36 @@ COMPUTE-REGION-FN is the region computation function (takes no parameter)."
          (when (-some? (-compose (-partial 'string= card-id) 'orgtrello-data-entity-id)
                        trello-cards) ;; find a card to archive
            (org-archive-subtree)))))))
+
+(defun orgtrello-buffer-to-migrate-p ()
+  "Check if the current buffer needs migration or not."
+  (save-excursion
+    (with-current-buffer (current-buffer)
+      (when (let ((case-fold-search t))
+              (search-forward-regexp
+               "orgtrello-id\\|orgtrello-local-checksum\\|orgtrello-marker-\\|orgtrello-user-\\|:orgtrello-users:"
+               nil t))
+        t))))
+
+(defun orgtrello-buffer-migrate-buffer ()
+  "Migrate the old properties to the new one.
+The cursor remains at current position once the computation is done."
+  (defun orgtrello-buffer--replace-str (str new)
+    "Replace all strings matching STR with NEW.
+The cursor moves along the search."
+    (goto-char (point-min))
+    (while (search-forward str nil t)
+      (replace-match new)))
+
+  (save-excursion
+    (with-current-buffer (current-buffer)
+      (let ((case-fold-search t)
+            (old-new `(("orgtrello-id" ,org-trello--label-key-id)
+                       ("orgtrello-local-checksum" ,org-trello--label-key-local-checksum)
+                       ("orgtrello-marker-" ,(format "%s%s" org-trello--label-key-marker org-trello--property-separator))
+                       ("orgtrello-user-" ,org-trello--label-key-user-prefix)
+                       (":orgtrello-users:" ,(format ":%s:" org-trello--property-users-entry)))))
+        (--map (orgtrello-buffer--replace-str (car it) (cadr it)) old-new)))))
 
 (orgtrello-log-msg orgtrello-log-debug "orgtrello-buffer loaded!")
 

@@ -40,16 +40,16 @@
 
 (ert-deftest test-orgtrello-controller--usernames ()
   (should (equal '("dude0" "dude1")
-                 (orgtrello-controller--usernames (orgtrello-hash-make-properties '(("some-dude-id" . "orgtrello-user-me")
-                                                                                    ("some-dude0-id" . "orgtrello-user-dude0")
-                                                                                    ("some-dude1-id" . "orgtrello-user-dude1"))))))
+                 (orgtrello-controller--usernames (orgtrello-hash-make-properties '(("some-dude-id" . "orgtrello_user_me")
+                                                                                    ("some-dude0-id" . "orgtrello_user_dude0")
+                                                                                    ("some-dude1-id" . "orgtrello_user_dude1"))))))
   (should-error (orgtrello-controller--usernames nil)
                 :type 'wrong-type-argument))
 
 (ert-deftest test-orgtrello-controller--remove-prefix-usernames ()
   (should (equal
            '("dude0" "dude1" "dude2")
-           (orgtrello-controller--remove-prefix-usernames '("orgtrello-user-dude0" "orgtrello-user-dude1" "dude2"))))
+           (orgtrello-controller--remove-prefix-usernames '("orgtrello_user_dude0" "orgtrello_user_dude1" "dude2"))))
   (should-not (orgtrello-controller--remove-prefix-usernames nil)))
 
 (ert-deftest test-orgtrello-controller--toggle-assign-unassign-user ()
@@ -57,13 +57,13 @@
   (should (string=
            "* card
 :PROPERTIES:
-:orgtrello-users: user2
+:orgtrello_users: user2
 :END:
 "
            (orgtrello-tests-with-temp-buffer-and-return-buffer-content
             "* card
 :PROPERTIES:
-:orgtrello-users: user,user2
+:orgtrello_users: user,user2
 :END:
 "
             (orgtrello-controller--toggle-assign-unassign-user "user"))))
@@ -71,7 +71,7 @@
   (should (string=
            "* card
 :PROPERTIES:
-:orgtrello-users: user
+:orgtrello_users: user
 :END:
 "
            (orgtrello-tests-with-temp-buffer-and-return-buffer-content
@@ -85,14 +85,14 @@
   (should (string=
            "* card
 :PROPERTIES:
-:orgtrello-users: user2
+:orgtrello_users: user2
 :END:
 "
            (let ((org-trello--user-logged-in "user"))
              (orgtrello-tests-with-temp-buffer-and-return-buffer-content
               "* card
 :PROPERTIES:
-:orgtrello-users: user,user2
+:orgtrello_users: user,user2
 :END:
 "
               (orgtrello-controller-toggle-assign-unassign-oneself)))))
@@ -100,7 +100,7 @@
   (should (string=
            "* card
 :PROPERTIES:
-:orgtrello-users: user
+:orgtrello_users: user
 :END:
 "
            (let ((org-trello--user-logged-in "user"))
@@ -117,13 +117,13 @@
   (should (string=
            "* card
 :PROPERTIES:
-:orgtrello-users: user2
+:orgtrello_users: user2
 :END:
 "
            (orgtrello-tests-with-temp-buffer-and-return-buffer-content
             "* card
 :PROPERTIES:
-:orgtrello-users: user,user2
+:orgtrello_users: user,user2
 :END:
 "
             (orgtrello-controller--unassign-user "user" '("user" "user2")))))
@@ -145,13 +145,13 @@
   (should (string=
            "* card
 :PROPERTIES:
-:orgtrello-users: user,user2
+:orgtrello_users: user,user2
 :END:
 "
            (orgtrello-tests-with-temp-buffer-and-return-buffer-content
             "* card
 :PROPERTIES:
-:orgtrello-users: user,user2
+:orgtrello_users: user,user2
 :END:
 "
             (orgtrello-controller--assign-user "user" '("user2")))))
@@ -159,13 +159,13 @@
   (should (string=
            "* card
 :PROPERTIES:
-:orgtrello-users: user,user2
+:orgtrello_users: user,user2
 :END:
 "
            (orgtrello-tests-with-temp-buffer-and-return-buffer-content
             "* card
 :PROPERTIES:
-:orgtrello-users: user,user2
+:orgtrello_users: user,user2
 :END:
 "
             (orgtrello-controller--assign-user "user" '("user" "user2")))))
@@ -173,13 +173,13 @@
   (should (string=
            "* card
 :PROPERTIES:
-:orgtrello-users: user2,user
+:orgtrello_users: user2,user
 :END:
 "
            (orgtrello-tests-with-temp-buffer-and-return-buffer-content
             "* card
 :PROPERTIES:
-:orgtrello-users: user,user2
+:orgtrello_users: user,user2
 :END:
 "
             (orgtrello-controller--assign-user "user" '("user2" "user")))))
@@ -187,7 +187,7 @@
   (should (string=
            "* card
   :PROPERTIES:
-  :orgtrello-users: user
+  :orgtrello_users: user
   :END:
 "
            (orgtrello-tests-with-temp-buffer-and-return-buffer-content
@@ -202,7 +202,7 @@
                  (orgtrello-tests-with-temp-buffer
                   "* card
   :PROPERTIES:
-  :orgtrello-users: user,user3,user2
+  :orgtrello_users: user,user3,user2
   :END:
 "
                   (orgtrello-controller--users-assigned)))))
@@ -671,8 +671,8 @@
 
 * TODO Joy of FUN(ctional) LANGUAGES
 :PROPERTIES:
-:orgtrello-local-checksum: 890
-:orgtrello-id: 123
+:orgtrello_local_checksum: 890
+:orgtrello_id: 123
 :END:
   hello description
   - with many
@@ -685,8 +685,8 @@
   - with start or dash  are now possible
     - indentation too
 
-  - [-] LISP family :PROPERTIES: {\"orgtrello-id\":\"456\",\"orgtrello-local-checksum\":\"5102037e8960abd7ffab6983ede9a0744779a85e36072ad27dbe85e1a038f9eb\"}
-    - [X] Emacs-Lisp :PROPERTIES: {\"orgtrello-id\":\"789\",\"orgtrello-local-checksum\":\"7e573221fc50afd48d52c6575845a282b7c48091e616ee48214436cb3e49a09b\"}
+  - [-] LISP family :PROPERTIES: {\"orgtrello_id\":\"456\",\"orgtrello_local_checksum\":\"5102037e8960abd7ffab6983ede9a0744779a85e36072ad27dbe85e1a038f9eb\"}
+    - [X] Emacs-Lisp :PROPERTIES: {\"orgtrello_id\":\"789\",\"orgtrello_local_checksum\":\"7e573221fc50afd48d52c6575845a282b7c48091e616ee48214436cb3e49a09b\"}
 "
                    (orgtrello-tests-with-temp-buffer-and-return-buffer-content
                     ":PROPERTIES:
@@ -700,24 +700,24 @@
 #+PROPERTY: IN-PROGRESS tuv
 #+PROPERTY: TODO wxy
 #+TODO: TODO IN-PROGRESS | DONE PENDING DELEGATED FAILED CANCELLED
-#+PROPERTY: orgtrello-user-antoineromaindumont z01
-#+PROPERTY: orgtrello-user-orgmode 234
-#+PROPERTY: orgtrello-user-ardumont 567
+#+PROPERTY: orgtrello_user_antoineromaindumont z01
+#+PROPERTY: orgtrello_user_orgmode 234
+#+PROPERTY: orgtrello_user_ardumont 567
 #+PROPERTY: :green green label with & char
 #+PROPERTY: :yellow yello
 #+PROPERTY: :orange range
 #+PROPERTY: :red red
 #+PROPERTY: :purple violet
 #+PROPERTY: :blue blue
-#+PROPERTY: orgtrello-user-me ardumont
+#+PROPERTY: orgtrello_user_me ardumont
 :END:
 #+title: dummy sample to sync with trello
 #+author: Antoine R. Dumont
 
 * TODO Joy of FUN(ctional) LANGUAGES
 :PROPERTIES:
-:orgtrello-local-checksum: 890
-:orgtrello-id: 123
+:orgtrello_local_checksum: 890
+:orgtrello_id: 123
 :END:
   hello description
   - with many
@@ -730,8 +730,8 @@
   - with start or dash  are now possible
     - indentation too
 
-  - [-] LISP family :PROPERTIES: {\"orgtrello-id\":\"456\",\"orgtrello-local-checksum\":\"5102037e8960abd7ffab6983ede9a0744779a85e36072ad27dbe85e1a038f9eb\"}
-    - [X] Emacs-Lisp :PROPERTIES: {\"orgtrello-id\":\"789\",\"orgtrello-local-checksum\":\"7e573221fc50afd48d52c6575845a282b7c48091e616ee48214436cb3e49a09b\"}
+  - [-] LISP family :PROPERTIES: {\"orgtrello_id\":\"456\",\"orgtrello_local_checksum\":\"5102037e8960abd7ffab6983ede9a0744779a85e36072ad27dbe85e1a038f9eb\"}
+    - [X] Emacs-Lisp :PROPERTIES: {\"orgtrello_id\":\"789\",\"orgtrello_local_checksum\":\"7e573221fc50afd48d52c6575845a282b7c48091e616ee48214436cb3e49a09b\"}
 "
                     (orgtrello-controller-do-cleanup-from-buffer))))
   (should (string= "#+title: dummy sample to sync with trello
@@ -766,25 +766,25 @@
 #+PROPERTY: IN-PROGRESS tuv
 #+PROPERTY: TODO wxy
 #+TODO: TODO IN-PROGRESS | DONE PENDING DELEGATED FAILED CANCELLED
-#+PROPERTY: orgtrello-user-antoineromaindumont z01
-#+PROPERTY: orgtrello-user-orgmode 234
-#+PROPERTY: orgtrello-user-ardumont 567
+#+PROPERTY: orgtrello_user_antoineromaindumont z01
+#+PROPERTY: orgtrello_user_orgmode 234
+#+PROPERTY: orgtrello_user_ardumont 567
 #+PROPERTY: :green green label with & char
 #+PROPERTY: :yellow yello
 #+PROPERTY: :orange range
 #+PROPERTY: :red red
 #+PROPERTY: :purple violet
 #+PROPERTY: :blue blue
-#+PROPERTY: orgtrello-user-me ardumont
+#+PROPERTY: orgtrello_user_me ardumont
 :END:
 #+title: dummy sample to sync with trello
 #+author: Antoine R. Dumont
 
 * TODO Joy of FUN(ctional) LANGUAGES
 :PROPERTIES:
-:orgtrello-local-checksum: 890
-:orgtrello-id: 123
-:orgtrello-users: bla
+:orgtrello_local_checksum: 890
+:orgtrello_id: 123
+:orgtrello_users: bla
 :END:
   hello description
   - with many
@@ -797,8 +797,8 @@
   - with start or dash  are now possible
     - indentation too
 
-  - [-] LISP family :PROPERTIES: {\"orgtrello-id\":\"456\",\"orgtrello-local-checksum\":\"5102037e8960abd7ffab6983ede9a0744779a85e36072ad27dbe85e1a038f9eb\"}
-    - [X] Emacs-Lisp :PROPERTIES: {\"orgtrello-id\":\"789\",\"orgtrello-local-checksum\":\"7e573221fc50afd48d52c6575845a282b7c48091e616ee48214436cb3e49a09b\"}
+  - [-] LISP family :PROPERTIES: {\"orgtrello_id\":\"456\",\"orgtrello_local_checksum\":\"5102037e8960abd7ffab6983ede9a0744779a85e36072ad27dbe85e1a038f9eb\"}
+    - [X] Emacs-Lisp :PROPERTIES: {\"orgtrello_id\":\"789\",\"orgtrello_local_checksum\":\"7e573221fc50afd48d52c6575845a282b7c48091e616ee48214436cb3e49a09b\"}
 "
                     (orgtrello-controller-do-cleanup-from-buffer 'global)))))
 
@@ -878,7 +878,7 @@
                      (orgtrello-controller-delete-setup)))))
 
 (ert-deftest test-orgtrello-controller--properties-compute-users-ids ()
-  (should (equal '("#+PROPERTY: orgtrello-user-user2 456" "#+PROPERTY: orgtrello-user-user1 123")
+  (should (equal '("#+PROPERTY: orgtrello_user_user2 456" "#+PROPERTY: orgtrello_user_user1 123")
                  (orgtrello-controller--properties-compute-users-ids (orgtrello-hash-make-properties '(("user1" . "123")
                                                                                                        ("user2" . "456"))))))
   (should-not (orgtrello-controller--properties-compute-users-ids (orgtrello-hash-empty-hash))))
@@ -1106,10 +1106,10 @@ See http://org-trello.github.io/trello-setup.html#credentials for more informati
 (ert-deftest test-orgtrello-controller-do-unassign-me ()
   (should (string= "
 :PROPERTIES:
-#+PROPERTY: orgtrello-user-user1 foo
-#+PROPERTY: orgtrello-user-user2 bar
-#+PROPERTY: orgtrello-user-user3 foobar
-#+PROPERTY: orgtrello-user-me user2
+#+PROPERTY: orgtrello_user_user1 foo
+#+PROPERTY: orgtrello_user_user2 bar
+#+PROPERTY: orgtrello_user_user3 foobar
+#+PROPERTY: orgtrello_user_me user2
 :END:
 * card
   :PROPERTIES:
@@ -1118,40 +1118,40 @@ See http://org-trello.github.io/trello-setup.html#credentials for more informati
                    (orgtrello-tests-with-temp-buffer-and-return-buffer-content
                     "
 :PROPERTIES:
-#+PROPERTY: orgtrello-user-user1 foo
-#+PROPERTY: orgtrello-user-user2 bar
-#+PROPERTY: orgtrello-user-user3 foobar
-#+PROPERTY: orgtrello-user-me user2
+#+PROPERTY: orgtrello_user_user1 foo
+#+PROPERTY: orgtrello_user_user2 bar
+#+PROPERTY: orgtrello_user_user3 foobar
+#+PROPERTY: orgtrello_user_me user2
 :END:
 * card
   :PROPERTIES:
-  :orgtrello-users: user2
+  :orgtrello_users: user2
   :END:
 "
                     (orgtrello-controller-do-unassign-me))))
   (should (string= "
 :PROPERTIES:
-#+PROPERTY: orgtrello-user-user1 foo
-#+PROPERTY: orgtrello-user-user2 bar
-#+PROPERTY: orgtrello-user-user3 foobar
-#+PROPERTY: orgtrello-user-me user2
+#+PROPERTY: orgtrello_user_user1 foo
+#+PROPERTY: orgtrello_user_user2 bar
+#+PROPERTY: orgtrello_user_user3 foobar
+#+PROPERTY: orgtrello_user_me user2
 :END:
 * card
   :PROPERTIES:
-  :orgtrello-users: user1
+  :orgtrello_users: user1
   :END:
 "
                    (orgtrello-tests-with-temp-buffer-and-return-buffer-content
                     "
 :PROPERTIES:
-#+PROPERTY: orgtrello-user-user1 foo
-#+PROPERTY: orgtrello-user-user2 bar
-#+PROPERTY: orgtrello-user-user3 foobar
-#+PROPERTY: orgtrello-user-me user2
+#+PROPERTY: orgtrello_user_user1 foo
+#+PROPERTY: orgtrello_user_user2 bar
+#+PROPERTY: orgtrello_user_user3 foobar
+#+PROPERTY: orgtrello_user_me user2
 :END:
 * card
   :PROPERTIES:
-  :orgtrello-users: user2,user1
+  :orgtrello_users: user2,user1
   :END:
 "
                     (orgtrello-controller-do-unassign-me)))))
@@ -1159,50 +1159,50 @@ See http://org-trello.github.io/trello-setup.html#credentials for more informati
 (ert-deftest test-orgtrello-controller-do-assign-me ()
   (should (string= "
 :PROPERTIES:
-#+PROPERTY: orgtrello-user-user1 foo
-#+PROPERTY: orgtrello-user-user2 bar
-#+PROPERTY: orgtrello-user-user3 foobar
-#+PROPERTY: orgtrello-user-me user2
+#+PROPERTY: orgtrello_user_user1 foo
+#+PROPERTY: orgtrello_user_user2 bar
+#+PROPERTY: orgtrello_user_user3 foobar
+#+PROPERTY: orgtrello_user_me user2
 :END:
 * card
   :PROPERTIES:
-  :orgtrello-users: user2
+  :orgtrello_users: user2
   :END:
 "
                    (orgtrello-tests-with-temp-buffer-and-return-buffer-content
                     "
 :PROPERTIES:
-#+PROPERTY: orgtrello-user-user1 foo
-#+PROPERTY: orgtrello-user-user2 bar
-#+PROPERTY: orgtrello-user-user3 foobar
-#+PROPERTY: orgtrello-user-me user2
+#+PROPERTY: orgtrello_user_user1 foo
+#+PROPERTY: orgtrello_user_user2 bar
+#+PROPERTY: orgtrello_user_user3 foobar
+#+PROPERTY: orgtrello_user_me user2
 :END:
 * card
 "
                     (orgtrello-controller-do-assign-me))))
   (should (string= "
 :PROPERTIES:
-#+PROPERTY: orgtrello-user-user1 foo
-#+PROPERTY: orgtrello-user-user2 bar
-#+PROPERTY: orgtrello-user-user3 foobar
-#+PROPERTY: orgtrello-user-me user2
+#+PROPERTY: orgtrello_user_user1 foo
+#+PROPERTY: orgtrello_user_user2 bar
+#+PROPERTY: orgtrello_user_user3 foobar
+#+PROPERTY: orgtrello_user_me user2
 :END:
 * card
   :PROPERTIES:
-  :orgtrello-users: user2,user1
+  :orgtrello_users: user2,user1
   :END:
 "
                    (orgtrello-tests-with-temp-buffer-and-return-buffer-content
                     "
 :PROPERTIES:
-#+PROPERTY: orgtrello-user-user1 foo
-#+PROPERTY: orgtrello-user-user2 bar
-#+PROPERTY: orgtrello-user-user3 foobar
-#+PROPERTY: orgtrello-user-me user2
+#+PROPERTY: orgtrello_user_user1 foo
+#+PROPERTY: orgtrello_user_user2 bar
+#+PROPERTY: orgtrello_user_user3 foobar
+#+PROPERTY: orgtrello_user_me user2
 :END:
 * card
   :PROPERTIES:
-  :orgtrello-users: user1
+  :orgtrello_users: user1
   :END:
 "
                     (orgtrello-controller-do-assign-me)))))
@@ -1210,18 +1210,18 @@ See http://org-trello.github.io/trello-setup.html#credentials for more informati
 (ert-deftest test-orgtrello-controller--cleanup-org-entries ()
   (should (string= "* card
 :PROPERTIES:
-:orgtrello-id: id
+:orgtrello_id: id
 :END:
-  - [ ] checklist :PROPERTIES: {\"orgtrello-id\":\"123\"}
-    - [ ] item :PROPERTIES: {\"orgtrello-id\":\"456\"}
+  - [ ] checklist :PROPERTIES: {\"orgtrello_id\":\"123\"}
+    - [ ] item :PROPERTIES: {\"orgtrello_id\":\"456\"}
 "
                    (orgtrello-tests-with-temp-buffer-and-return-buffer-content
                     "* card
 :PROPERTIES:
-:orgtrello-id: id
+:orgtrello_id: id
 :END:
-  - [ ] checklist :PROPERTIES: {\"orgtrello-id\":\"123\"}
-    - [ ] item :PROPERTIES: {\"orgtrello-id\":\"456\"}
+  - [ ] checklist :PROPERTIES: {\"orgtrello_id\":\"123\"}
+    - [ ] item :PROPERTIES: {\"orgtrello_id\":\"456\"}
 "
                     (orgtrello-controller--cleanup-org-entries)))))
 
@@ -1235,8 +1235,8 @@ See http://org-trello.github.io/trello-setup.html#credentials for more informati
                 (orgtrello-tests-with-temp-buffer
                  "* card
 :PROPERTIES:
-:orgtrello-id: 123
-:orgtrello-local-checksum: same-checksum
+:orgtrello_id: 123
+:orgtrello_local_checksum: same-checksum
 :END:
   description"
                  (orgtrello-controller-sync-card-to-trello (orgtrello-buffer-entry-get-full-metadata) (current-buffer))
@@ -1251,8 +1251,8 @@ See http://org-trello.github.io/trello-setup.html#credentials for more informati
 :END:
 * card
 :PROPERTIES:
-:orgtrello-id: 123
-:orgtrello-local-checksum: old-checksum
+:orgtrello_id: 123
+:orgtrello_local_checksum: old-checksum
 :END:
   description
 "
@@ -1267,7 +1267,7 @@ See http://org-trello.github.io/trello-setup.html#credentials for more informati
              (orgtrello-tests-with-temp-buffer
               "* card
 :PROPERTIES:
-:orgtrello-id: 55d77b041fd32d11d99eb787
+:orgtrello_id: 55d77b041fd32d11d99eb787
 :END:
   description
   - [ ] cbx
@@ -1309,33 +1309,33 @@ See http://org-trello.github.io/trello-setup.html#credentials for more informati
 (ert-deftest test-orgtrello-controller--sync-buffer-with-trello-data ()
   (should (string=
            ":PROPERTIES:
-#+PROPERTY: orgtrello-user-ardumont ardumont-id
-#+PROPERTY: orgtrello-user-dude dude-id
+#+PROPERTY: orgtrello_user_ardumont ardumont-id
+#+PROPERTY: orgtrello_user_dude dude-id
 :END:
 * TODO some card name                                                   :red:green:
   :PROPERTIES:
-  :orgtrello-users: ardumont,dude
-  :orgtrello-local-checksum: card-checksum
-  :orgtrello-id: some-card-id
+  :orgtrello_users: ardumont,dude
+  :orgtrello_local_checksum: card-checksum
+  :orgtrello_id: some-card-id
   :END:
   some description
-  - [-] some cbx name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\",\"orgtrello-local-checksum\":\"cbx-checksum\"}
-    - [X] some it name :PROPERTIES: {\"orgtrello-id\":\"some-item-id\",\"orgtrello-local-checksum\":\"item-checksum\"}
-    - [ ] some other item name :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\",\"orgtrello-local-checksum\":\"item-checksum\"}
-  - [-] some other cbx name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\",\"orgtrello-local-checksum\":\"cbx-checksum\"}
+  - [-] some cbx name :PROPERTIES: {\"orgtrello_id\":\"some-checklist-id\",\"orgtrello_local_checksum\":\"cbx-checksum\"}
+    - [X] some it name :PROPERTIES: {\"orgtrello_id\":\"some-item-id\",\"orgtrello_local_checksum\":\"item-checksum\"}
+    - [ ] some other item name :PROPERTIES: {\"orgtrello_id\":\"some-other-item-id\",\"orgtrello_local_checksum\":\"item-checksum\"}
+  - [-] some other cbx name :PROPERTIES: {\"orgtrello_id\":\"some-other-checklist-id\",\"orgtrello_local_checksum\":\"cbx-checksum\"}
 
 ** COMMENT ardumont, some-date
 :PROPERTIES:
-:orgtrello-id: some-comment-id
-:orgtrello-local-checksum: comment-checksum
+:orgtrello_id: some-comment-id
+:orgtrello_local_checksum: comment-checksum
 :END:
   some comment
 
 "
   (orgtrello-tests-with-temp-buffer-and-return-buffer-content
    ":PROPERTIES:
-#+PROPERTY: orgtrello-user-ardumont ardumont-id
-#+PROPERTY: orgtrello-user-dude dude-id
+#+PROPERTY: orgtrello_user_ardumont ardumont-id
+#+PROPERTY: orgtrello_user_dude dude-id
 :END:
 "
    (with-mock
@@ -1420,12 +1420,12 @@ See http://org-trello.github.io/trello-setup.html#credentials for more informati
 #+PROPERTY: in-progress-2 list-id-456
 #+PROPERTY: todo-1 list-id-123
 #+TODO: todo-1 in-progress-2 | done
-#+PROPERTY: orgtrello-user-orgtrello-user-user3 789
-#+PROPERTY: orgtrello-user-orgtrello-user-user2 456
-#+PROPERTY: orgtrello-user-orgtrello-user-user1 123
+#+PROPERTY: orgtrello_user_orgtrello_user_user3 789
+#+PROPERTY: orgtrello_user_orgtrello_user_user2 456
+#+PROPERTY: orgtrello_user_orgtrello_user_user1 123
 #+PROPERTY: :green green label
 #+PROPERTY: :red red label
-#+PROPERTY: orgtrello-user-me user3
+#+PROPERTY: orgtrello_user_me user3
 :END:
 "
            (orgtrello-tests-with-temp-buffer-and-return-buffer-content
@@ -1436,9 +1436,9 @@ See http://org-trello.github.io/trello-setup.html#credentials for more informati
              (orgtrello-hash-make-properties '(("todo-1" . "list-id-123")
                                                ("in-progress-2" . "list-id-456")
                                                ("done" . "list-id-789")))
-             (orgtrello-hash-make-properties '(("orgtrello-user-user1" . "123")
-                                               ("orgtrello-user-user2" . "456")
-                                               ("orgtrello-user-user3" . "789")))
+             (orgtrello-hash-make-properties '(("orgtrello_user_user1" . "123")
+                                               ("orgtrello_user_user2" . "456")
+                                               ("orgtrello_user_user3" . "789")))
              "user3"
              (list
               (orgtrello-hash-make-properties '((:color . "red")
@@ -1470,7 +1470,7 @@ See http://org-trello.github.io/trello-setup.html#credentials for more informati
 #+PROPERTY: INP list-6-id
 #+PROPERTY: TOD list-7-id
 #+TODO: TODO IN-PROGRESS | DONE PENDING DELEGATED FAILED CANCELLED
-#+PROPERTY: orgtrello-user-user2 456
+#+PROPERTY: orgtrello_user_user2 456
 #+PROPERTY: :green green label with & char
 #+PROPERTY: :yellow yello
 #+PROPERTY: :orange range
@@ -1478,26 +1478,26 @@ See http://org-trello.github.io/trello-setup.html#credentials for more informati
 #+PROPERTY: :purple violet
 #+PROPERTY: :blue blue
 #+PROPERTY: :green another one
-#+PROPERTY: orgtrello-user-me user2
+#+PROPERTY: orgtrello_user_me user2
 :END:
 #+title: dummy sample to sync with trello
 #+author: Antoine R. Dumont"
             (orgtrello-controller--remove-properties-file
              '("TOD" "INP" "DON" "PEN" "DEL" "FAI" "CAN")
-             (orgtrello-hash-make-properties '(("orgtrello-user-user1" . "123")
-                                               ("orgtrello-user-user2" . "456")
-                                               ("orgtrello-user-user3" . "789")
-                                               ("orgtrello-user-me" . "user2")))
+             (orgtrello-hash-make-properties '(("orgtrello_user_user1" . "123")
+                                               ("orgtrello_user_user2" . "456")
+                                               ("orgtrello_user_user3" . "789")
+                                               ("orgtrello_user_me" . "user2")))
              "user2"
              'do-delete-the-todo-line)))))
 
 (ert-deftest test-orgtrello-controller--compute-hash-name-id-to-list ()
-  (should (equal '("#+PROPERTY: orgtrello-user-user3 451"
-                   "#+PROPERTY: orgtrello-user-user2 341"
-                   "#+PROPERTY: orgtrello-user-user1 231")
+  (should (equal '("#+PROPERTY: orgtrello_user_user3 451"
+                   "#+PROPERTY: orgtrello_user_user2 341"
+                   "#+PROPERTY: orgtrello_user_user1 231")
                  (orgtrello-controller--compute-hash-name-id-to-list (orgtrello-hash-make-properties '(("user1" . "231")
                                                                                                        ("user2" . "341")
-                                                                                                       ("orgtrello-user-user3" . "451")))))))
+                                                                                                       ("orgtrello_user_user3" . "451")))))))
 
 (ert-deftest test-orgtrello-controller-checks-then-sync-card-to-trello ()
   (should (eq :result-sync
@@ -1569,16 +1569,16 @@ See http://org-trello.github.io/trello-setup.html#credentials for more informati
 #+PROPERTY: IN-PROGRESS in-progress-list-id
 #+PROPERTY: TODO todo-list-id
 #+TODO: TODO IN-PROGRESS | DONE PENDING DELEGATED FAILED CANCELLED
-#+PROPERTY: orgtrello-user-user1 user1-id
-#+PROPERTY: orgtrello-user-user2 user2-id
-#+PROPERTY: orgtrello-user-user3 user3-id
+#+PROPERTY: orgtrello_user_user1 user1-id
+#+PROPERTY: orgtrello_user_user2 user2-id
+#+PROPERTY: orgtrello_user_user3 user3-id
 #+PROPERTY: :green green label with & char
 #+PROPERTY: :yellow yello
 #+PROPERTY: :orange range
 #+PROPERTY: :red red
 #+PROPERTY: :purple violet
 #+PROPERTY: :blue blue
-#+PROPERTY: orgtrello-user-me user1
+#+PROPERTY: orgtrello_user_me user1
 :END:
 "
              (let ((org-tag-alist nil)
@@ -1599,17 +1599,17 @@ See http://org-trello.github.io/trello-setup.html#credentials for more informati
                 (orgtrello-tests-hash-equal
                  org-trello--hmap-users-id-name
                  (orgtrello-hash-make-properties
-                  '(("user1-id" . "orgtrello-user-user1")
-                    ("user2-id" . "orgtrello-user-user2")
-                    ("user3-id" . "orgtrello-user-user3")
-                    ("user1" . "orgtrello-user-me"))))
+                  '(("user1-id" . "orgtrello_user_user1")
+                    ("user2-id" . "orgtrello_user_user2")
+                    ("user3-id" . "orgtrello_user_user3")
+                    ("user1" . "orgtrello_user_me"))))
                 (orgtrello-tests-hash-equal
                  org-trello--hmap-users-name-id
                  (orgtrello-hash-make-properties
-                  '(("orgtrello-user-user1" . "user1-id")
-                    ("orgtrello-user-user2" . "user2-id")
-                    ("orgtrello-user-user3" . "user3-id")
-                    ("orgtrello-user-me" . "user1"))))
+                  '(("orgtrello_user_user1" . "user1-id")
+                    ("orgtrello_user_user2" . "user2-id")
+                    ("orgtrello_user_user3" . "user3-id")
+                    ("orgtrello_user_me" . "user1"))))
                 (string= org-trello--user-logged-in "user1")
                 (equal org-tag-alist (nreverse
                                       '(("red" . ?r)
@@ -1709,6 +1709,18 @@ Also, you can specify on your org-mode buffer the todo list you want to work wit
                      (mock (delete-directory org-trello--old-config-dir 'with-contents) => :done)
                      (orgtrello-controller-migrate-user-setup :args-not-used))))))
 
+(ert-deftest test-orgtrello-controller-migrate-user-buffer ()
+  ;; nothing to do
+  (should (equal :ok
+                 (with-mock
+                   (mock (orgtrello-buffer-to-migrate-p) => nil)
+                   (orgtrello-controller-migrate-user-buffer :args-not-used))))
+  (should (equal :ok
+                 (with-mock
+                   (mock (orgtrello-buffer-to-migrate-p) => t)
+                   (mock (orgtrello-buffer-migrate-buffer) => t)
+                   (orgtrello-controller-migrate-user-buffer :args-not-used)))))
+
 (ert-deftest test-orgtrello-controller-config-file ()
   (should (string= "~/.emacs.d/.trello/tony.el"
                    (let ((org-trello--config-file "~/.emacs.d/.trello/%s.el"))
@@ -1786,7 +1798,7 @@ Also, you can specify on your org-mode buffer the todo list you want to work wit
                  (orgtrello-tests-with-temp-buffer
                   "* card
 :PROPERTIES:
-:orgtrello-id: 123
+:orgtrello_id: 123
 :END:"
                   (-> (orgtrello-buffer-safe-entry-full-metadata)
                       orgtrello-controller--already-synced-p))))
@@ -1799,9 +1811,9 @@ Also, you can specify on your org-mode buffer the todo list you want to work wit
                  (orgtrello-tests-with-temp-buffer
                   "* card
 :PROPERTIES:
-:orgtrello-id: 123
+:orgtrello_id: 123
 :END:
-  - [ ] checklist :PROPERTIES: {\"orgtrello-id\":\"123\"}"
+  - [ ] checklist :PROPERTIES: {\"orgtrello_id\":\"123\"}"
                   (-> (orgtrello-buffer-safe-entry-full-metadata)
                       (orgtrello-controller--already-synced-p)))))
   (should (equal "Entity must be synchronized with trello first!"
@@ -1815,10 +1827,10 @@ Also, you can specify on your org-mode buffer the todo list you want to work wit
                  (orgtrello-tests-with-temp-buffer
                   "* card
 :PROPERTIES:
-:orgtrello-id: 123
+:orgtrello_id: 123
 :END:
-  - [ ] checklist :PROPERTIES: {\"orgtrello-id\":\"456\"}
-    - [ ] item :PROPERTIES: {\"orgtrello-id\":\"123456\"}
+  - [ ] checklist :PROPERTIES: {\"orgtrello_id\":\"456\"}
+    - [ ] item :PROPERTIES: {\"orgtrello_id\":\"123456\"}
 "
                   (-> (orgtrello-buffer-safe-entry-full-metadata)
                       orgtrello-controller--already-synced-p))))
@@ -1826,7 +1838,7 @@ Also, you can specify on your org-mode buffer the todo list you want to work wit
                  (orgtrello-tests-with-temp-buffer
                   "* card
 :PROPERTIES:
-:orgtrello-id: 123
+:orgtrello_id: 123
 :END:
   - [ ] checklist
     - [ ] item
@@ -2004,8 +2016,8 @@ Also, you can specify on your org-mode buffer the todo list you want to work wit
 
 (ert-deftest test-orgtrello-controller--list-user-entries ()
   (should (equal
-           '(("orgtrello-user-ardumont" . "4f2baa2f72b7c1293501cad3")
-             ("orgtrello-user-orgmode" . "5203a0c833fc36360800177f"))
+           '(("orgtrello_user_ardumont" . "4f2baa2f72b7c1293501cad3")
+             ("orgtrello_user_orgmode" . "5203a0c833fc36360800177f"))
            (orgtrello-controller--list-user-entries '(("board-name" . "api test board")
                                                       ("board-id" . "51d99bbc1e1d8988390047f2")
                                                       ("TODO" . "51d99bbc1e1d8988390047f3")
@@ -2015,8 +2027,8 @@ Also, you can specify on your org-mode buffer the todo list you want to work wit
                                                       ("DELEGATED" . "51e538a89c05f1e25c0027c6")
                                                       ("FAIL" . "51e538a26f75d07902002d25")
                                                       ("CANCELLED" . "51e538e6c7a68fa0510014ee")
-                                                      ("orgtrello-user-ardumont" . "4f2baa2f72b7c1293501cad3")
-                                                      ("orgtrello-user-orgmode" . "5203a0c833fc36360800177f"))))))
+                                                      ("orgtrello_user_ardumont" . "4f2baa2f72b7c1293501cad3")
+                                                      ("orgtrello_user_orgmode" . "5203a0c833fc36360800177f"))))))
 
 (ert-deftest test-orgtrello-controller--add-user ()
   (should (equal '("a" "b" "c") (orgtrello-controller--add-user "a" '("a" "b" "c"))))
@@ -2040,11 +2052,11 @@ Also, you can specify on your org-mode buffer the todo list you want to work wit
                    "#+PROPERTY: DONE done-id"
                    "#+PROPERTY: TODO todo-id"
                    ""
-                   "#+PROPERTY: orgtrello-user-some-other-user some-other-user-id"
-                   "#+PROPERTY: orgtrello-user-user user-id"
+                   "#+PROPERTY: orgtrello_user_some-other-user some-other-user-id"
+                   "#+PROPERTY: orgtrello_user_user user-id"
                    "#+PROPERTY: :green green label"
                    "#+PROPERTY: :red red label"
-                   "#+PROPERTY: orgtrello-user-me user"
+                   "#+PROPERTY: orgtrello_user_me user"
                    ":END:")
                  (orgtrello-controller--compute-metadata
                   "some-board-name"
@@ -2063,11 +2075,11 @@ Also, you can specify on your org-mode buffer the todo list you want to work wit
                    "#+PROPERTY: DONE done-id-2"
                    "#+PROPERTY: TODO todo-id-2"
                    ""
-                   "#+PROPERTY: orgtrello-user-some-other-user some-other-user-id-2"
-                   "#+PROPERTY: orgtrello-user-user user-id-2"
+                   "#+PROPERTY: orgtrello_user_some-other-user some-other-user-id-2"
+                   "#+PROPERTY: orgtrello_user_user user-id-2"
                    "#+PROPERTY: :green green label"
                    "#+PROPERTY: :red red label"
-                   "#+PROPERTY: orgtrello-user-me user-logged-in"
+                   "#+PROPERTY: orgtrello_user_me user-logged-in"
                    ":END:")
                  (let ((org-trello--user-logged-in "user-logged-in"))
                    (orgtrello-controller--compute-metadata
@@ -2232,39 +2244,39 @@ Also, you can specify on your org-mode buffer the todo list you want to work wit
 #+PROPERTY: IN-PROGRESS uvw
 #+PROPERTY: TODO xyz
 #+TODO: TODO IN-PROGRESS DONE | PENDING DELEGATED FAILED CANCELLED
-#+PROPERTY: orgtrello-user-dude 888
-#+PROPERTY: orgtrello-user-ardumont 999
+#+PROPERTY: orgtrello_user_dude 888
+#+PROPERTY: orgtrello_user_ardumont 999
 #+PROPERTY: :yellow yellow label
 #+PROPERTY: :red red label
 #+PROPERTY: :purple this is the purple label
 #+PROPERTY: :orange orange label
 #+PROPERTY: :green green label with & char
 #+PROPERTY: :blue
-#+PROPERTY: orgtrello-user-me ardumont
+#+PROPERTY: orgtrello_user_me ardumont
 :END:
 * TODO updated card title                                               :orange:red:green:
   :PROPERTIES:
-  :orgtrello-users: dude,ardumont
-  :orgtrello-local-checksum: local-card-checksum-678
-  :orgtrello-id: some-card-id
+  :orgtrello_users: dude,ardumont
+  :orgtrello_local_checksum: local-card-checksum-678
+  :orgtrello_id: some-card-id
   :END:
   updated description
-  - [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\",\"orgtrello-local-checksum\":\"local-checklist-checksum-678\"}
-    - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\",\"orgtrello-local-checksum\":\"local-item-checksum-678\"}
-    - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\",\"orgtrello-local-checksum\":\"local-item-checksum-678\"}
-  - [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\",\"orgtrello-local-checksum\":\"local-checklist-checksum-678\"}
+  - [-] some checklist name :PROPERTIES: {\"orgtrello_id\":\"some-checklist-id\",\"orgtrello_local_checksum\":\"local-checklist-checksum-678\"}
+    - [X] some item :PROPERTIES: {\"orgtrello_id\":\"some-item-id\",\"orgtrello_local_checksum\":\"local-item-checksum-678\"}
+    - [ ] some other item :PROPERTIES: {\"orgtrello_id\":\"some-other-item-id\",\"orgtrello_local_checksum\":\"local-item-checksum-678\"}
+  - [-] some other checklist name :PROPERTIES: {\"orgtrello_id\":\"some-other-checklist-id\",\"orgtrello_local_checksum\":\"local-checklist-checksum-678\"}
 
 ** COMMENT ardumont, 10/10/2010
 :PROPERTIES:
-:orgtrello-id: some-comment-id
-:orgtrello-local-checksum: local-comment-checksum-678
+:orgtrello_id: some-comment-id
+:orgtrello_local_checksum: local-comment-checksum-678
 :END:
   some comment
 
 ** COMMENT tony, 11/10/2010
 :PROPERTIES:
-:orgtrello-id: some-comment-id2
-:orgtrello-local-checksum: local-comment-checksum-678
+:orgtrello_id: some-comment-id2
+:orgtrello_local_checksum: local-comment-checksum-678
 :END:
   some second comment
 
@@ -2283,26 +2295,26 @@ Also, you can specify on your org-mode buffer the todo list you want to work wit
 #+PROPERTY: IN-PROGRESS uvw
 #+PROPERTY: TODO xyz
 #+TODO: TODO IN-PROGRESS DONE | PENDING DELEGATED FAILED CANCELLED
-#+PROPERTY: orgtrello-user-dude 888
-#+PROPERTY: orgtrello-user-ardumont 999
+#+PROPERTY: orgtrello_user_dude 888
+#+PROPERTY: orgtrello_user_ardumont 999
 #+PROPERTY: :yellow yellow label
 #+PROPERTY: :red red label
 #+PROPERTY: :purple this is the purple label
 #+PROPERTY: :orange orange label
 #+PROPERTY: :green green label with & char
 #+PROPERTY: :blue
-#+PROPERTY: orgtrello-user-me ardumont
+#+PROPERTY: orgtrello_user_me ardumont
 :END:
 * TODO some card name                                                   :orange:
 :PROPERTIES:
-:orgtrello-id: some-card-id
-:orgtrello-card-comments: ardumont: some comment
+:orgtrello_id: some-card-id
+:orgtrello_card_comments: ardumont: some comment
 :END:
 some description
-  - [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}
-    - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\"}
-    - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\"}
-  - [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\"}
+  - [-] some checklist name :PROPERTIES: {\"orgtrello_id\":\"some-checklist-id\"}
+    - [X] some item :PROPERTIES: {\"orgtrello_id\":\"some-item-id\"}
+    - [ ] some other item :PROPERTIES: {\"orgtrello_id\":\"some-other-item-id\"}
+  - [-] some other checklist name :PROPERTIES: {\"orgtrello_id\":\"some-other-checklist-id\"}
 
 * other card name
 "
@@ -2342,46 +2354,46 @@ some description
 #+PROPERTY: IN-PROGRESS uvw
 #+PROPERTY: TODO xyz
 #+TODO: TODO IN-PROGRESS DONE | PENDING DELEGATED FAILED CANCELLED
-#+PROPERTY: orgtrello-user-dude 8881
-#+PROPERTY: orgtrello-user-ardumont 9991
+#+PROPERTY: orgtrello_user_dude 8881
+#+PROPERTY: orgtrello_user_ardumont 9991
 #+PROPERTY: :yellow yellow label
 #+PROPERTY: :red red label
 #+PROPERTY: :purple this is the purple label
 #+PROPERTY: :orange orange label
 #+PROPERTY: :green green label with & char
 #+PROPERTY: :blue
-#+PROPERTY: orgtrello-user-me ardumont
+#+PROPERTY: orgtrello_user_me ardumont
 :END:
 * TODO updated card title                                               :orange:red:green:
   :PROPERTIES:
-  :orgtrello-users: dude,ardumont
-  :orgtrello-local-checksum: card-checksum-12
-  :orgtrello-id: some-card-id
+  :orgtrello_users: dude,ardumont
+  :orgtrello_local_checksum: card-checksum-12
+  :orgtrello_id: some-card-id
   :END:
   updated description
-  - [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\",\"orgtrello-local-checksum\":\"checklist-checksum-12\"}
-    - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\",\"orgtrello-local-checksum\":\"item-checksum-12\"}
-    - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\",\"orgtrello-local-checksum\":\"item-checksum-12\"}
-  - [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\",\"orgtrello-local-checksum\":\"checklist-checksum-12\"}
+  - [-] some checklist name :PROPERTIES: {\"orgtrello_id\":\"some-checklist-id\",\"orgtrello_local_checksum\":\"checklist-checksum-12\"}
+    - [X] some item :PROPERTIES: {\"orgtrello_id\":\"some-item-id\",\"orgtrello_local_checksum\":\"item-checksum-12\"}
+    - [ ] some other item :PROPERTIES: {\"orgtrello_id\":\"some-other-item-id\",\"orgtrello_local_checksum\":\"item-checksum-12\"}
+  - [-] some other checklist name :PROPERTIES: {\"orgtrello_id\":\"some-other-checklist-id\",\"orgtrello_local_checksum\":\"checklist-checksum-12\"}
 
 ** COMMENT ardumont, 10/10/2010
 :PROPERTIES:
-:orgtrello-id: some-comment-id
-:orgtrello-local-checksum: comment-checksum-12
+:orgtrello_id: some-comment-id
+:orgtrello_local_checksum: comment-checksum-12
 :END:
   some comment
 
 ** COMMENT tony, 11/10/2010
 :PROPERTIES:
-:orgtrello-id: some-comment-id2
-:orgtrello-local-checksum: comment-checksum-12
+:orgtrello_id: some-comment-id2
+:orgtrello_local_checksum: comment-checksum-12
 :END:
   some second comment
 
 * TODO other card name
   :PROPERTIES:
-  :orgtrello-id: some-new-marker
-  :orgtrello-local-checksum: card-checksum-12
+  :orgtrello_id: some-new-marker
+  :orgtrello_local_checksum: card-checksum-12
   :END:
 
 "
@@ -2397,26 +2409,26 @@ some description
 #+PROPERTY: IN-PROGRESS uvw
 #+PROPERTY: TODO xyz
 #+TODO: TODO IN-PROGRESS DONE | PENDING DELEGATED FAILED CANCELLED
-#+PROPERTY: orgtrello-user-dude 8881
-#+PROPERTY: orgtrello-user-ardumont 9991
+#+PROPERTY: orgtrello_user_dude 8881
+#+PROPERTY: orgtrello_user_ardumont 9991
 #+PROPERTY: :yellow yellow label
 #+PROPERTY: :red red label
 #+PROPERTY: :purple this is the purple label
 #+PROPERTY: :orange orange label
 #+PROPERTY: :green green label with & char
 #+PROPERTY: :blue
-#+PROPERTY: orgtrello-user-me ardumont
+#+PROPERTY: orgtrello_user_me ardumont
 :END:
 * TODO some card name                                                   :orange:
 :PROPERTIES:
-:orgtrello-id: some-card-id
-:orgtrello-card-comments: ardumont: some comment
+:orgtrello_id: some-card-id
+:orgtrello_card_comments: ardumont: some comment
 :END:
 some description
-  - [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}
-    - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\"}
-    - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\"}
-  - [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\"}
+  - [-] some checklist name :PROPERTIES: {\"orgtrello_id\":\"some-checklist-id\"}
+    - [X] some item :PROPERTIES: {\"orgtrello_id\":\"some-item-id\"}
+    - [ ] some other item :PROPERTIES: {\"orgtrello_id\":\"some-other-item-id\"}
+  - [-] some other checklist name :PROPERTIES: {\"orgtrello_id\":\"some-other-checklist-id\"}
 
 * other card name
 "
@@ -2457,53 +2469,53 @@ some description
 #+PROPERTY: IN-PROGRESS uvw
 #+PROPERTY: TODO xyz
 #+TODO: TODO IN-PROGRESS DONE | PENDING DELEGATED FAILED CANCELLED
-#+PROPERTY: orgtrello-user-dude 8882
-#+PROPERTY: orgtrello-user-ardumont 9992
+#+PROPERTY: orgtrello_user_dude 8882
+#+PROPERTY: orgtrello_user_ardumont 9992
 #+PROPERTY: :yellow yellow label
 #+PROPERTY: :red red label
 #+PROPERTY: :purple this is the purple label
 #+PROPERTY: :orange orange label
 #+PROPERTY: :green green label with & char
 #+PROPERTY: :blue
-#+PROPERTY: orgtrello-user-me ardumont
+#+PROPERTY: orgtrello_user_me ardumont
 :END:
 * TODO updated card title                                               :orange:red:green:
   :PROPERTIES:
-  :orgtrello-users: dude,ardumont
-  :orgtrello-local-checksum: card-checksum-1234
-  :orgtrello-id: some-card-id
+  :orgtrello_users: dude,ardumont
+  :orgtrello_local_checksum: card-checksum-1234
+  :orgtrello_id: some-card-id
   :END:
   updated description
-  - [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\",\"orgtrello-local-checksum\":\"checklist-checksum-1234\"}
-    - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\",\"orgtrello-local-checksum\":\"item-checksum-1234\"}
-    - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\",\"orgtrello-local-checksum\":\"item-checksum-1234\"}
-  - [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\",\"orgtrello-local-checksum\":\"checklist-checksum-1234\"}
+  - [-] some checklist name :PROPERTIES: {\"orgtrello_id\":\"some-checklist-id\",\"orgtrello_local_checksum\":\"checklist-checksum-1234\"}
+    - [X] some item :PROPERTIES: {\"orgtrello_id\":\"some-item-id\",\"orgtrello_local_checksum\":\"item-checksum-1234\"}
+    - [ ] some other item :PROPERTIES: {\"orgtrello_id\":\"some-other-item-id\",\"orgtrello_local_checksum\":\"item-checksum-1234\"}
+  - [-] some other checklist name :PROPERTIES: {\"orgtrello_id\":\"some-other-checklist-id\",\"orgtrello_local_checksum\":\"checklist-checksum-1234\"}
 
 ** COMMENT ardumont, 10/10/2010
 :PROPERTIES:
-:orgtrello-id: some-comment-id
-:orgtrello-local-checksum: comment-checksum-1234
+:orgtrello_id: some-comment-id
+:orgtrello_local_checksum: comment-checksum-1234
 :END:
   some comment
 
 ** COMMENT tony, 11/10/2010
 :PROPERTIES:
-:orgtrello-id: some-comment-id2
-:orgtrello-local-checksum: comment-checksum-1234
+:orgtrello_id: some-comment-id2
+:orgtrello_local_checksum: comment-checksum-1234
 :END:
   some second comment
 
 * TODO other card name                                                  :green:
   :PROPERTIES:
-  :orgtrello-users: dude
-  :orgtrello-id: some-card-id2
-  :orgtrello-local-checksum: card-checksum-1234
+  :orgtrello_users: dude
+  :orgtrello_id: some-card-id2
+  :orgtrello_local_checksum: card-checksum-1234
   :END:
   this is a description
 * TODO other card name
   :PROPERTIES:
-  :orgtrello-id: some-new-marker
-  :orgtrello-local-checksum: card-checksum-1234
+  :orgtrello_id: some-new-marker
+  :orgtrello_local_checksum: card-checksum-1234
   :END:
 
 "
@@ -2519,26 +2531,26 @@ some description
 #+PROPERTY: IN-PROGRESS uvw
 #+PROPERTY: TODO xyz
 #+TODO: TODO IN-PROGRESS DONE | PENDING DELEGATED FAILED CANCELLED
-#+PROPERTY: orgtrello-user-dude 8882
-#+PROPERTY: orgtrello-user-ardumont 9992
+#+PROPERTY: orgtrello_user_dude 8882
+#+PROPERTY: orgtrello_user_ardumont 9992
 #+PROPERTY: :yellow yellow label
 #+PROPERTY: :red red label
 #+PROPERTY: :purple this is the purple label
 #+PROPERTY: :orange orange label
 #+PROPERTY: :green green label with & char
 #+PROPERTY: :blue
-#+PROPERTY: orgtrello-user-me ardumont
+#+PROPERTY: orgtrello_user_me ardumont
 :END:
 * TODO some card name                                                   :orange:
 :PROPERTIES:
-:orgtrello-id: some-card-id
-:orgtrello-card-comments: ardumont: some comment
+:orgtrello_id: some-card-id
+:orgtrello_card_comments: ardumont: some comment
 :END:
 some description
-  - [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}
-    - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\"}
-    - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\"}
-  - [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\"}
+  - [-] some checklist name :PROPERTIES: {\"orgtrello_id\":\"some-checklist-id\"}
+    - [X] some item :PROPERTIES: {\"orgtrello_id\":\"some-item-id\"}
+    - [ ] some other item :PROPERTIES: {\"orgtrello_id\":\"some-other-item-id\"}
+  - [-] some other checklist name :PROPERTIES: {\"orgtrello_id\":\"some-other-checklist-id\"}
 
 * other card name
 "
@@ -2587,47 +2599,47 @@ some description
 #+PROPERTY: IN-PROGRESS uvw
 #+PROPERTY: TODO xyz
 #+TODO: TODO IN-PROGRESS DONE | PENDING DELEGATED FAILED CANCELLED
-#+PROPERTY: orgtrello-user-dude 8883
-#+PROPERTY: orgtrello-user-ardumont 9993
+#+PROPERTY: orgtrello_user_dude 8883
+#+PROPERTY: orgtrello_user_ardumont 9993
 #+PROPERTY: :yellow yellow label
 #+PROPERTY: :red red label
 #+PROPERTY: :purple this is the purple label
 #+PROPERTY: :orange orange label
 #+PROPERTY: :green green label with & char
 #+PROPERTY: :blue
-#+PROPERTY: orgtrello-user-me ardumont
+#+PROPERTY: orgtrello_user_me ardumont
 :END:
 * TODO updated card title                                               :orange:red:green:
   :PROPERTIES:
-  :orgtrello-users: dude,ardumont
-  :orgtrello-local-checksum: card-checksum-123456
-  :orgtrello-id: some-card-id
+  :orgtrello_users: dude,ardumont
+  :orgtrello_local_checksum: card-checksum-123456
+  :orgtrello_id: some-card-id
   :END:
   updated description
-  - [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\",\"orgtrello-local-checksum\":\"checklist-checksum-123456\"}
-    - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\",\"orgtrello-local-checksum\":\"item-checksum-123456\"}
-    - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\",\"orgtrello-local-checksum\":\"item-checksum-123456\"}
-  - [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\",\"orgtrello-local-checksum\":\"checklist-checksum-123456\"}
+  - [-] some checklist name :PROPERTIES: {\"orgtrello_id\":\"some-checklist-id\",\"orgtrello_local_checksum\":\"checklist-checksum-123456\"}
+    - [X] some item :PROPERTIES: {\"orgtrello_id\":\"some-item-id\",\"orgtrello_local_checksum\":\"item-checksum-123456\"}
+    - [ ] some other item :PROPERTIES: {\"orgtrello_id\":\"some-other-item-id\",\"orgtrello_local_checksum\":\"item-checksum-123456\"}
+  - [-] some other checklist name :PROPERTIES: {\"orgtrello_id\":\"some-other-checklist-id\",\"orgtrello_local_checksum\":\"checklist-checksum-123456\"}
 
 ** COMMENT ardumont, 10/10/2010
 :PROPERTIES:
-:orgtrello-id: some-comment-id
-:orgtrello-local-checksum: comment-checksum-123456
+:orgtrello_id: some-comment-id
+:orgtrello_local_checksum: comment-checksum-123456
 :END:
   some comment
 
 ** COMMENT tony, 11/10/2010
 :PROPERTIES:
-:orgtrello-id: some-comment-id2
-:orgtrello-local-checksum: comment-checksum-123456
+:orgtrello_id: some-comment-id2
+:orgtrello_local_checksum: comment-checksum-123456
 :END:
   some second comment
 
 * DONE other card name                                                  :green:
   :PROPERTIES:
-  :orgtrello-users: dude
-  :orgtrello-id: some-card-id2
-  :orgtrello-local-checksum: card-checksum-123456
+  :orgtrello_users: dude
+  :orgtrello_id: some-card-id2
+  :orgtrello_local_checksum: card-checksum-123456
   :END:
   this is a description
 "
@@ -2643,30 +2655,30 @@ some description
 #+PROPERTY: IN-PROGRESS uvw
 #+PROPERTY: TODO xyz
 #+TODO: TODO IN-PROGRESS DONE | PENDING DELEGATED FAILED CANCELLED
-#+PROPERTY: orgtrello-user-dude 8883
-#+PROPERTY: orgtrello-user-ardumont 9993
+#+PROPERTY: orgtrello_user_dude 8883
+#+PROPERTY: orgtrello_user_ardumont 9993
 #+PROPERTY: :yellow yellow label
 #+PROPERTY: :red red label
 #+PROPERTY: :purple this is the purple label
 #+PROPERTY: :orange orange label
 #+PROPERTY: :green green label with & char
 #+PROPERTY: :blue
-#+PROPERTY: orgtrello-user-me ardumont
+#+PROPERTY: orgtrello_user_me ardumont
 :END:
 * TODO some card name                                                   :orange:
 :PROPERTIES:
-:orgtrello-id: some-card-id
-:orgtrello-card-comments: ardumont: some comment
+:orgtrello_id: some-card-id
+:orgtrello_card_comments: ardumont: some comment
 :END:
 some description
-  - [-] some checklist name :PROPERTIES: {\"orgtrello-id\":\"some-checklist-id\"}
-    - [X] some item :PROPERTIES: {\"orgtrello-id\":\"some-item-id\"}
-    - [ ] some other item :PROPERTIES: {\"orgtrello-id\":\"some-other-item-id\"}
-  - [-] some other checklist name :PROPERTIES: {\"orgtrello-id\":\"some-other-checklist-id\"}
+  - [-] some checklist name :PROPERTIES: {\"orgtrello_id\":\"some-checklist-id\"}
+    - [X] some item :PROPERTIES: {\"orgtrello_id\":\"some-item-id\"}
+    - [ ] some other item :PROPERTIES: {\"orgtrello_id\":\"some-other-item-id\"}
+  - [-] some other checklist name :PROPERTIES: {\"orgtrello_id\":\"some-other-checklist-id\"}
 
 * other card name
 :PROPERTIES:
-:orgtrello-id: some-card-id2
+:orgtrello_id: some-card-id2
 :END:
 "
             (with-mock

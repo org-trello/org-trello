@@ -61,6 +61,7 @@
                    (mock (orgtrello-action-msg-controls-or-actions-then-do
                           :action-label
                           '(orgtrello-controller-migrate-user-setup
+                            orgtrello-controller-migrate-user-buffer
                             orgtrello-controller-set-account
                             orgtrello-controller-load-keys
                             orgtrello-controller-control-keys
@@ -82,6 +83,7 @@
                    (mock (orgtrello-action-msg-controls-or-actions-then-do
                           :action-label
                           '(orgtrello-controller-migrate-user-setup
+                            orgtrello-controller-migrate-user-buffer
                             orgtrello-controller-set-account
                             orgtrello-controller-load-keys
                             orgtrello-controller-control-keys
@@ -300,6 +302,12 @@ System information:
                        (mock (find-library-name "org-trello") => "/path/to/org-trello")
                        (org-trello--bug-report))))))
 
+(ert-deftest test-org-trello-migrate-buffer ()
+  (should (equal :res
+                 (with-mock
+                   (mock (orgtrello-buffer-migrate-buffer) => :res)
+                   (org-trello-migrate-buffer)))))
+
 (ert-deftest test-org-trello-bug-report ()
   (should (equal :res
                  (with-mock
@@ -312,5 +320,18 @@ System information:
                    (mock (org-trello--bug-report) => :message2)
                    (mock (orgtrello-log-msg orgtrello-log-info :message2) => :res)
                    (org-trello-bug-report)))))
+
+
+(ert-deftest test-org-trello-add-tags ()
+  (should (equal '()
+                 (let ((org-tag-alist '())
+                       (org-trello-add-tags nil))
+                   (orgtrello-controller-setup-properties)
+                   org-tag-alist)))
+  (should (equal '(("orange" . 111) ("purple" . 112) ("blue" . 98) ("yellow" . 121) ("green" . 103) ("red" . 114))
+                 (let ((org-tag-alist '())
+                       (org-trello-add-tags t))
+                  (orgtrello-controller-setup-properties)
+                  org-tag-alist))))
 
 (provide 'org-trello-test)

@@ -443,18 +443,18 @@ booyah
 (ert-deftest test-orgtrello-entity-level ()
   ;; ok
   (should (equal 1  (orgtrello-tests-with-temp-buffer "* some card" (orgtrello-entity-level))))
-  (should (equal 2  (orgtrello-tests-with-temp-buffer "  - [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}" (orgtrello-entity-level))))
-  (should (equal 3  (orgtrello-tests-with-temp-buffer "    - [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}" (orgtrello-entity-level))))
+  (should (equal 2  (orgtrello-tests-with-temp-buffer "  - [X] some checkbox :PROPERTIES: {\"orgtrello_id\":\"123\"}" (orgtrello-entity-level))))
+  (should (equal 3  (orgtrello-tests-with-temp-buffer "    - [X] some checkbox :PROPERTIES: {\"orgtrello_id\":\"123\"}" (orgtrello-entity-level))))
   ;; ko
-  (should (equal -1 (orgtrello-tests-with-temp-buffer "* card\n - [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}" (orgtrello-entity-level) 0)))
-  (should (equal -1 (orgtrello-tests-with-temp-buffer "* card\n     - [X] some checkbox :PROPERTIES: {\"orgtrello-id\":\"123\"}" (orgtrello-entity-level) 0))))
+  (should (equal -1 (orgtrello-tests-with-temp-buffer "* card\n - [X] some checkbox :PROPERTIES: {\"orgtrello_id\":\"123\"}" (orgtrello-entity-level) 0)))
+  (should (equal -1 (orgtrello-tests-with-temp-buffer "* card\n     - [X] some checkbox :PROPERTIES: {\"orgtrello_id\":\"123\"}" (orgtrello-entity-level) 0))))
 
 (ert-deftest test-orgtrello-entity-card-at-pt ()
   (should (equal t
                  (orgtrello-tests-with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
    DEADLINE: <2014-04-01T00:00:00.000Z>
 :PROPERTIES:
-:orgtrello-id: 52c945143004d4617c012528
+:orgtrello_id: 52c945143004d4617c012528
 :END:
 hello there
 "
@@ -463,20 +463,20 @@ hello there
   (should (equal nil
                  (orgtrello-tests-with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
 :PROPERTIES:
-:orgtrello-id: 52c945143004d4617c012528
+:orgtrello_id: 52c945143004d4617c012528
 :END:
   hello there
-- [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}"
+- [-] LISP family   :PROPERTIES: {\"orgtrello_id\":\"52c945140a364c5226007314\"}"
                                                    (orgtrello-entity-card-at-pt)
                                                    0)))
   (should (equal nil
                  (orgtrello-tests-with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
 :PROPERTIES:
-:orgtrello-id: 52c945143004d4617c012528
+:orgtrello_id: 52c945143004d4617c012528
 :END:
   hello there
-- [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}
-  - [X] Emacs-Lisp  :PROPERTIES: {\"orgtrello-id\":\"52c9451784251e1b260127f8\"}"
+- [-] LISP family   :PROPERTIES: {\"orgtrello_id\":\"52c945140a364c5226007314\"}
+  - [X] Emacs-Lisp  :PROPERTIES: {\"orgtrello_id\":\"52c9451784251e1b260127f8\"}"
                                                    (orgtrello-entity-card-at-pt)
                                                    0))))
 
@@ -485,7 +485,7 @@ hello there
                  (orgtrello-tests-with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
    DEADLINE: <2014-04-01T00:00:00.000Z>
 :PROPERTIES:
-:orgtrello-id: 52c945143004d4617c012528
+:orgtrello_id: 52c945143004d4617c012528
 :END:
 hello there
 "
@@ -494,20 +494,20 @@ hello there
   (should (equal t
                  (orgtrello-tests-with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
 :PROPERTIES:
-:orgtrello-id: 52c945143004d4617c012528
+:orgtrello_id: 52c945143004d4617c012528
 :END:
   hello there
-  - [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}"
+  - [-] LISP family   :PROPERTIES: {\"orgtrello_id\":\"52c945140a364c5226007314\"}"
                                                    (orgtrello-entity-checklist-at-pt)
                                                    0)))
   (should (equal nil
                  (orgtrello-tests-with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
 :PROPERTIES:
-:orgtrello-id: 52c945143004d4617c012528
+:orgtrello_id: 52c945143004d4617c012528
 :END:
   hello there
-  - [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}
-    - [X] Emacs-Lisp  :PROPERTIES: {\"orgtrello-id\":\"52c9451784251e1b260127f8\"}"
+  - [-] LISP family   :PROPERTIES: {\"orgtrello_id\":\"52c945140a364c5226007314\"}
+    - [X] Emacs-Lisp  :PROPERTIES: {\"orgtrello_id\":\"52c9451784251e1b260127f8\"}"
                                                    (orgtrello-entity-checklist-at-pt)
                                                    0))))
 
@@ -516,7 +516,7 @@ hello there
                  (orgtrello-tests-with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
    DEADLINE: <2014-04-01T00:00:00.000Z>
 :PROPERTIES:
-:orgtrello-id: 52c945143004d4617c012528
+:orgtrello_id: 52c945143004d4617c012528
 :END:
 hello there
 "
@@ -525,20 +525,20 @@ hello there
   (should (equal nil
                  (orgtrello-tests-with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
 :PROPERTIES:
-:orgtrello-id: 52c945143004d4617c012528
+:orgtrello_id: 52c945143004d4617c012528
 :END:
   hello there
-  - [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}"
+  - [-] LISP family   :PROPERTIES: {\"orgtrello_id\":\"52c945140a364c5226007314\"}"
                                                    (orgtrello-entity-item-at-pt)
                                                    0)))
   (should (equal t
                  (orgtrello-tests-with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
 :PROPERTIES:
-:orgtrello-id: 52c945143004d4617c012528
+:orgtrello_id: 52c945143004d4617c012528
 :END:
   hello there
-  - [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}
-    - [X] Emacs-Lisp  :PROPERTIES: {\"orgtrello-id\":\"52c9451784251e1b260127f8\"}"
+  - [-] LISP family   :PROPERTIES: {\"orgtrello_id\":\"52c945140a364c5226007314\"}
+    - [X] Emacs-Lisp  :PROPERTIES: {\"orgtrello_id\":\"52c9451784251e1b260127f8\"}"
                                                    (orgtrello-entity-item-at-pt)
                                                    0))))
 
@@ -611,11 +611,11 @@ hello there
            '(1 265)
            (orgtrello-tests-with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
 :PROPERTIES:
-:orgtrello-id: 52c945143004d4617c012528
+:orgtrello_id: 52c945143004d4617c012528
 :END:
   hello there
-- [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}
-  - [X] Emacs-Lisp  :PROPERTIES: {\"orgtrello-id\":\"52c9451784251e1b260127f8\"}
+- [-] LISP family   :PROPERTIES: {\"orgtrello_id\":\"52c945140a364c5226007314\"}
+  - [X] Emacs-Lisp  :PROPERTIES: {\"orgtrello_id\":\"52c9451784251e1b260127f8\"}
 * another card"
                                              (orgtrello-entity-card-region)
                                              -2)))
@@ -623,30 +623,30 @@ hello there
            '(265 279)
            (orgtrello-tests-with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
 :PROPERTIES:
-:orgtrello-id: 52c945143004d4617c012528
+:orgtrello_id: 52c945143004d4617c012528
 :END:
   hello there
-- [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}
-  - [X] Emacs-Lisp  :PROPERTIES: {\"orgtrello-id\":\"52c9451784251e1b260127f8\"}
+- [-] LISP family   :PROPERTIES: {\"orgtrello_id\":\"52c945140a364c5226007314\"}
+  - [X] Emacs-Lisp  :PROPERTIES: {\"orgtrello_id\":\"52c9451784251e1b260127f8\"}
 * another card"
                                              (orgtrello-entity-card-region)
                                              0)))
   (should (equal
            "* TODO Joy of FUN(ctional) LANGUAGES
 :PROPERTIES:
-:orgtrello-id: 52c945143004d4617c012528
+:orgtrello_id: 52c945143004d4617c012528
 :END:
   hello there
-- [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}
-  - [X] Emacs-Lisp  :PROPERTIES: {\"orgtrello-id\":\"52c9451784251e1b260127f8\"}
+- [-] LISP family   :PROPERTIES: {\"orgtrello_id\":\"52c945140a364c5226007314\"}
+  - [X] Emacs-Lisp  :PROPERTIES: {\"orgtrello_id\":\"52c9451784251e1b260127f8\"}
 "
            (orgtrello-tests-with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
 :PROPERTIES:
-:orgtrello-id: 52c945143004d4617c012528
+:orgtrello_id: 52c945143004d4617c012528
 :END:
   hello there
-- [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}
-  - [X] Emacs-Lisp  :PROPERTIES: {\"orgtrello-id\":\"52c9451784251e1b260127f8\"}
+- [-] LISP family   :PROPERTIES: {\"orgtrello_id\":\"52c945140a364c5226007314\"}
+  - [X] Emacs-Lisp  :PROPERTIES: {\"orgtrello_id\":\"52c9451784251e1b260127f8\"}
 * another card"
                                              (apply 'buffer-substring-no-properties (orgtrello-entity-card-region))
                                              -2)))
@@ -654,11 +654,11 @@ hello there
            "* another card"
            (orgtrello-tests-with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
 :PROPERTIES:
-:orgtrello-id: 52c945143004d4617c012528
+:orgtrello_id: 52c945143004d4617c012528
 :END:
   hello there
-- [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}
-  - [X] Emacs-Lisp  :PROPERTIES: {\"orgtrello-id\":\"52c9451784251e1b260127f8\"}
+- [-] LISP family   :PROPERTIES: {\"orgtrello_id\":\"52c945140a364c5226007314\"}
+  - [X] Emacs-Lisp  :PROPERTIES: {\"orgtrello_id\":\"52c9451784251e1b260127f8\"}
 * another card"
                                              (apply 'buffer-substring-no-properties (orgtrello-entity-card-region))
                                              0))))
@@ -669,11 +669,11 @@ hello there
            "  hello there"
            (orgtrello-tests-with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
 :PROPERTIES:
-:orgtrello-id: 52c945143004d4617c012528
+:orgtrello_id: 52c945143004d4617c012528
 :END:
   hello there
-- [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}
-  - [X] Emacs-Lisp  :PROPERTIES: {\"orgtrello-id\":\"52c9451784251e1b260127f8\"}
+- [-] LISP family   :PROPERTIES: {\"orgtrello_id\":\"52c945140a364c5226007314\"}
+  - [X] Emacs-Lisp  :PROPERTIES: {\"orgtrello_id\":\"52c9451784251e1b260127f8\"}
 * another card"
                                              (apply 'buffer-substring-no-properties (orgtrello-entity-card-metadata-region))
                                              -2))))
@@ -681,15 +681,15 @@ hello there
 
 (ert-deftest test-orgtrello-entity-card-data-region ()
   (should (equal
-           "- [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}
-  - [X] Emacs-Lisp  :PROPERTIES: {\"orgtrello-id\":\"52c9451784251e1b260127f8\"}"
+           "- [-] LISP family   :PROPERTIES: {\"orgtrello_id\":\"52c945140a364c5226007314\"}
+  - [X] Emacs-Lisp  :PROPERTIES: {\"orgtrello_id\":\"52c9451784251e1b260127f8\"}"
            (orgtrello-tests-with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
 :PROPERTIES:
-:orgtrello-id: 52c945143004d4617c012528
+:orgtrello_id: 52c945143004d4617c012528
 :END:
   hello there
-- [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}
-  - [X] Emacs-Lisp  :PROPERTIES: {\"orgtrello-id\":\"52c9451784251e1b260127f8\"}
+- [-] LISP family   :PROPERTIES: {\"orgtrello_id\":\"52c945140a364c5226007314\"}
+  - [X] Emacs-Lisp  :PROPERTIES: {\"orgtrello_id\":\"52c9451784251e1b260127f8\"}
 * another card"
                                              (apply 'buffer-substring-no-properties (orgtrello-entity-card-data-region))
                                              -2))))
@@ -698,21 +698,21 @@ hello there
   (should (equal
            "** COMMENT ardumont, 2014-12-09T17:29:42.073Z
 :PROPERTIES:
-:orgtrello-id: 548731866513c90940aa7746
+:orgtrello_id: 548731866513c90940aa7746
 :END:
 ardumont comment
 "
            (orgtrello-tests-with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
 :PROPERTIES:
-:orgtrello-id: 52c945143004d4617c012528
+:orgtrello_id: 52c945143004d4617c012528
 :END:
   hello there
-- [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}
-  - [X] Emacs-Lisp  :PROPERTIES: {\"orgtrello-id\":\"52c9451784251e1b260127f8\"}
+- [-] LISP family   :PROPERTIES: {\"orgtrello_id\":\"52c945140a364c5226007314\"}
+  - [X] Emacs-Lisp  :PROPERTIES: {\"orgtrello_id\":\"52c9451784251e1b260127f8\"}
 * another card
 ** COMMENT ardumont, 2014-12-09T17:29:42.073Z
 :PROPERTIES:
-:orgtrello-id: 548731866513c90940aa7746
+:orgtrello_id: 548731866513c90940aa7746
 :END:
 ardumont comment
 "
@@ -723,7 +723,7 @@ ardumont comment
   (should-not (orgtrello-tests-with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
    DEADLINE: <2014-04-01T00:00:00.000Z>
 :PROPERTIES:
-:orgtrello-id: 52c945143004d4617c012528
+:orgtrello_id: 52c945143004d4617c012528
 :END:
 hello there
 "
@@ -731,11 +731,11 @@ hello there
   (should (equal t
                  (orgtrello-tests-with-temp-buffer "* TODO Joy of FUN(ctional) LANGUAGES
 :PROPERTIES:
-:orgtrello-id: 52c945143004d4617c012528
+:orgtrello_id: 52c945143004d4617c012528
 :END:
   hello there
-  - [-] LISP family   :PROPERTIES: {\"orgtrello-id\":\"52c945140a364c5226007314\"}
-    - [X] Emacs-Lisp  :PROPERTIES: {\"orgtrello-id\":\"52c9451784251e1b260127f8\"}
+  - [-] LISP family   :PROPERTIES: {\"orgtrello_id\":\"52c945140a364c5226007314\"}
+    - [X] Emacs-Lisp  :PROPERTIES: {\"orgtrello_id\":\"52c9451784251e1b260127f8\"}
 ** COMMENT ardumont, some-date
 hello"
                                                    (orgtrello-entity-org-comment-p)

@@ -4,7 +4,7 @@
 
 ;; Author: Antoine R. Dumont (@ardumont) <antoine.romain.dumont@gmail.com>
 ;; Maintainer: Antoine R. Dumont (@ardumont) <antoine.romain.dumont@gmail.com>
-;; Version: 0.8.0
+;; Version: 0.8.1
 ;; Package-Requires: ((dash "2.12.1") (dash-functional "2.12.1") (s "1.11.0") (deferred "0.4.0") (request-deferred "0.2.0"))
 ;; Keywords: org-mode trello sync org-trello
 ;; URL: https://github.com/org-trello/org-trello
@@ -95,7 +95,7 @@
 ;; Enjoy!
 ;;
 ;; More informations: https://org-trello.github.io
-;; Issue tracker: https://github.com/org-trello/org-trello-issues
+;; Issue tracker: https://github.com/org-trello/org-trello/issues
 
 ;;; Code:
 
@@ -187,6 +187,7 @@ If WITH-SAVE-FLAG is set, will do a buffer save and reload the org setup."
   (orgtrello-action-msg-controls-or-actions-then-do
    action-label
    '(orgtrello-controller-migrate-user-setup
+     orgtrello-controller-migrate-user-buffer
      orgtrello-controller-set-account
      orgtrello-controller-load-keys
      orgtrello-controller-control-keys
@@ -202,6 +203,7 @@ If NO-CHECK-FLAG is set, no controls are done."
   (orgtrello-action-msg-controls-or-actions-then-do
    action-label
    (if no-check-flag nil '(orgtrello-controller-migrate-user-setup
+                           orgtrello-controller-migrate-user-buffer
                            orgtrello-controller-set-account
                            orgtrello-controller-load-keys
                            orgtrello-controller-control-keys
@@ -468,6 +470,12 @@ If UNASSIGN is not nil, unassign oneself from the card."
    nil
    'no-log))
 
+;;;### autoload
+(defun org-trello-migrate-buffer ()
+  "Migrate the buffer's property keys to the actual new ones."
+  (interactive)
+  (orgtrello-buffer-migrate-buffer))
+
 ;;;###autoload
 (defun org-trello-clean-org-trello-data ()
   "Clean up org-trello data."
@@ -587,6 +595,12 @@ This does not support regular expression."
                            (string= (expand-file-name name) buffer-file-name))
                          org-trello-files)
               (org-trello-mode))))
+
+(defcustom org-trello-add-tags t
+  "Add trello colors to org tags list?"
+  :type 'boolean
+  :require 'org-trello
+  :group 'org-trello)
 
 (orgtrello-log-msg orgtrello-log-debug "org-trello loaded!")
 

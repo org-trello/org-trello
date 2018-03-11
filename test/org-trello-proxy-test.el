@@ -71,17 +71,17 @@
   (should (string=
            "* TODO Joy of FUN(ctional) LANGUAGES
 :PROPERTIES:
-:orgtrello-id: 55d07e8ada66fd9de074b82e
-:orgtrello-local-checksum: 0face23ee36812bb4ef1321e2567196080b80dc2c6ffd9a19734433b34836303
+:orgtrello_id: 55d07e8ada66fd9de074b82e
+:orgtrello_local_checksum: ace382b3b56ab198b0b636f04ccb817a16702a8789b59e2c895ba11891948057
 :END:
 "
            (orgtrello-tests-with-temp-buffer-and-return-buffer-content
             "* TODO Joy of FUN(ctional) LANGUAGES
 :PROPERTIES:
-:orgtrello-id: orgtrello-marker-blah
+:orgtrello_id: orgtrello_marker_blah
 :END:
 "
-            (let* ((entity (orgtrello-hash-make-properties `((:id . "orgtrello-marker-blah")
+            (let* ((entity (orgtrello-hash-make-properties `((:id . "orgtrello_marker_blah")
                                                              (:buffername . ,(current-buffer))
                                                              (:name . "Joy of FUN(ctional) LANGUAGES"))))
                    (entities-adjacencies (list (orgtrello-hash-empty-hash) (orgtrello-hash-empty-hash)))
@@ -91,14 +91,14 @@
   (should (string=
            "* TODO Joy of FUN(ctional) LANGUAGES
 :PROPERTIES:
-:orgtrello-id: 55d07e8ada66fd9de074b82e
-:orgtrello-local-checksum: 0face23ee36812bb4ef1321e2567196080b80dc2c6ffd9a19734433b34836303
+:orgtrello_id: 55d07e8ada66fd9de074b82e
+:orgtrello_local_checksum: ace382b3b56ab198b0b636f04ccb817a16702a8789b59e2c895ba11891948057
 :END:
 "
            (orgtrello-tests-with-temp-buffer-and-return-buffer-content
             "* TODO Joy of FUN(ctional) LANGUAGES
 :PROPERTIES:
-:orgtrello-id: 55d07e8ada66fd9de074b82e
+:orgtrello_id: 55d07e8ada66fd9de074b82e
 :END:
 "
             (let* ((entity (orgtrello-hash-make-properties `((:id . "55d07e8ada66fd9de074b82e")
@@ -146,7 +146,7 @@
                  (orgtrello-proxy--checks-before-sync-checklist
                   (orgtrello-hash-make-properties `((:name . :checklist-name-so-ok)
                                                     (:keyword . :something-else)))
-                  (orgtrello-hash-make-properties `((:id . "orgtrello-id-card-id-so-ok")
+                  (orgtrello-hash-make-properties `((:id . "orgtrello_id-card-id-so-ok")
                                                     (:keyword . :something-else)))))))
 
 (ert-deftest test-orgtrello-proxy-map-dispatch-delete ()
@@ -190,7 +190,7 @@
     - [ ] item not to be touched
 * TODO card and content to be deleted
 :PROPERTIES:
-:orgtrello-id: 55d07e8ada66fd9de074b82e
+:orgtrello_id: 55d07e8ada66fd9de074b82e
 :END:
   description
   - [ ] checklist
@@ -207,8 +207,8 @@
     - [ ] item not to be touched
 * TODO card not to be touched
 :PROPERTIES:
-:orgtrello-id: 55d07e8ada66fd9de074b82e
-:orgtrello-local-checksum: 84ab4c1e2bb3b1579abba176f191bdd0da9c26afc918d3ece452ccd2137de09b
+:orgtrello_id: 55d07e8ada66fd9de074b82e
+:orgtrello_local_checksum: a858571f347edb0d091122f8bd3041db2542984dd404e72c7fcd0e2118d3d49e
 :END:
   description
 "
@@ -218,10 +218,11 @@
     - [ ] item not to be touched
 * TODO card not to be touched
 :PROPERTIES:
-:orgtrello-id: 55d07e8ada66fd9de074b82e
+:orgtrello_id: 55d07e8ada66fd9de074b82e
+:orgtrello_local_checksum: a858571f347edb0d091122f8bd3041db2542984dd404e72c7fcd0e2118d3d49e
 :END:
   description
-  - [ ] checklist and content to be deleted :PROPERTIES: {\"orgtrello-id\":\"44d07e8ada66fd9de074b82e\"}
+  - [ ] checklist and content to be deleted :PROPERTIES: {\"orgtrello_id\":\"44d07e8ada66fd9de074b82e\"}
     - [ ] item
 "
             (let* ((entity (orgtrello-hash-make-properties `((:id . "44d07e8ada66fd9de074b82e")
@@ -235,10 +236,10 @@
     - [ ] item not to be touched
 * TODO card not to be touched
 :PROPERTIES:
-:orgtrello-id: 55d07e8ada66fd9de074b82e
+:orgtrello_id: 55d07e8ada66fd9de074b82e
 :END:
   description
-  - [ ] checklist :PROPERTIES: {\"orgtrello-local-checksum\":\"b4dda9762d94c205a98abec2fb03fa04a409c75d03cc1cd66840177ce5abe0e4\"}
+  - [ ] checklist :PROPERTIES: {\"orgtrello_local_checksum\":\"b588d968d964523cb9f865c93d9cf788a6ae40a3264ab34cad521084b53cb9be\"}
 "
            (orgtrello-tests-with-temp-buffer-and-return-buffer-content
             "* card not to be touched
@@ -246,11 +247,11 @@
     - [ ] item not to be touched
 * TODO card not to be touched
 :PROPERTIES:
-:orgtrello-id: 55d07e8ada66fd9de074b82e
+:orgtrello_id: 55d07e8ada66fd9de074b82e
 :END:
   description
   - [ ] checklist
-    - [ ] item to be deleted :PROPERTIES: {\"orgtrello-id\":\"33d07e8ada66fd9de074b82e\"}
+    - [ ] item to be deleted :PROPERTIES: {\"orgtrello_id\":\"33d07e8ada66fd9de074b82e\"}
 "
             (let* ((entity (orgtrello-hash-make-properties `((:id . "33d07e8ada66fd9de074b82e")
                                                              (:buffername . ,(current-buffer))

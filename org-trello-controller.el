@@ -88,13 +88,14 @@ ARGS is not used."
      org-trello--user-logged-in (or (orgtrello-buffer-me)
                                     (orgtrello-setup-user-logged-in)))
 
-    (mapc (-partial #'add-to-list 'org-tag-alist)
-          '(("red" . ?r)
-            ("green" . ?g)
-            ("yellow" . ?y)
-            ("blue" . ?b)
-            ("purple" . ?p)
-            ("orange" . ?o)))
+    (when org-trello-add-tags
+      (mapc (-partial #'add-to-list 'org-tag-alist)
+            '(("red" . ?r)
+              ("green" . ?g)
+              ("yellow" . ?y)
+              ("blue" . ?b)
+              ("purple" . ?p)
+              ("orange" . ?o))))
     :ok))
 
 (defun orgtrello-controller-control-properties (&optional args)
@@ -131,6 +132,14 @@ ARGS is not used."
        access-key)
       ;; delete old setup file
       (delete-directory org-trello--old-config-dir 'with-contents)))
+  :ok)
+
+(defun orgtrello-controller-migrate-user-buffer (&optional args)
+  "Migrate user's setup file according to latest development.
+ARGS is not used."
+  (when (orgtrello-buffer-to-migrate-p)
+    (orgtrello-log-msg orgtrello-log-warn "Migrate the buffer's keys to the correct new one (https://org-trello.github.io/migration.html#081).")
+    (orgtrello-buffer-migrate-buffer))
   :ok)
 
 (defun orgtrello-controller-config-file (&optional username)

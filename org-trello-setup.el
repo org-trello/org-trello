@@ -42,9 +42,6 @@
 
 (defvar *access-token*)  ;; for retro compatibility
 
-(defconst org-trello--label-key-marker "orgtrello-marker"
-  "A marker used inside the org buffer to synchronize entries.")
-
 (defconst org-trello--card-level 1
   "Card level.")
 
@@ -60,20 +57,33 @@
 (defconst org-trello--out-of-bounds-level 4
   "Out of bounds level.")
 
-(defconst org-trello--label-key-user-prefix "orgtrello-user-"
+(defconst org-trello--property-separator "_"
+  "Separator used for org-trello's property key.")
+
+(defconst org-trello--property-prefix-key "orgtrello_"
+  "Org-trello property prefix key.")
+
+(defconst org-trello--label-key-marker (format "%smarker" org-trello--property-prefix-key)
+  "A marker used inside the org buffer to synchronize entries.")
+
+(defconst org-trello--label-key-user-prefix (format "%suser_" org-trello--property-prefix-key)
   "Org-trello prefix to define user to a 'org-mode' level.")
 
-(defconst org-trello--property-users-entry "orgtrello-users"
+(defconst org-trello--property-users-entry (format "%susers" org-trello--property-prefix-key)
   "Org-trello property entry to store the users assigned to a card.")
 
-(defconst org-trello--property-user-me "orgtrello-user-me"
+(defconst org-trello--property-user-me (format "%suser_me" org-trello--property-prefix-key)
   "Current user's property id.")
+
+(defconst org-trello--label-key-id (format "%sid" org-trello--property-prefix-key)
+  "Key entry used for the trello identifier and the trello marker (the first sync).")
+
+(defconst org-trello--label-key-local-checksum (format "%slocal_checksum" org-trello--property-prefix-key)
+  "Current card's checksum property.")
 
 (defvar org-trello--user-logged-in nil
   "Current user logged in.")
 
-(defconst org-trello--label-key-local-checksum "orgtrello-local-checksum"
-  "Current card's checksum property.")
 
 (defconst org-trello--title-buffer-information "*org-trello-information*"
   "Title for the org-trello buffers that display information.")
@@ -189,9 +199,6 @@ As of 0.7.0, org-trello now follows Emacs's conventions.")
 
 (defconst org-trello--config-file (expand-file-name (format "%s/%s" org-trello--config-dir org-trello--config-filename))
   "Absolute path to org-trello's config file.")
-
-(defconst org-trello--label-key-id "orgtrello-id"
-  "Key entry used for the trello identifier and the trello marker (the first sync).")
 
 (defconst org-trello-buffer--indent-description 2
   "The default card description's indentation column.")
