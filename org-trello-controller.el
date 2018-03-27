@@ -385,7 +385,9 @@ Beware, this will block Emacs as the request is synchronous."
          (point-start (point))
          (board-id (orgtrello-buffer-board-id))
          (prefix-log (format "Sync trello board '%s' to buffer '%s'..."
-                             board-name
+                             (if (stringp board-name)
+				 (replace-regexp-in-string "%" "%%" board-name)
+			       board-name)
                              buffer-name)))
     (orgtrello-deferred-eval-computation
      (list board-id buffer-name board-name point-start)
@@ -528,7 +530,9 @@ BUFFER-NAME is the actual buffer to work on."
                        (orgtrello-buffer-entry-get-full-metadata))))
          (card-name (orgtrello-data-entity-name card-meta))
          (prefix-log (format "Sync trello card '%s' to buffer '%s'..."
-                             card-name
+                             (if (stringp card-name)
+				 (replace-regexp-in-string "%" "%%" card-name)
+			       card-name)
                              buffer-name)))
     (orgtrello-deferred-eval-computation
      (list card-meta buffer-name card-name point-start)
@@ -592,7 +596,10 @@ BUFFER-NAME specifies the buffer onto which we work."
     (let* ((point-start (point))
            (card-meta (orgtrello-data-current full-meta))
            (card-name (orgtrello-data-entity-name card-meta))
-           (prefix-log (format "Archive card '%s'..." card-name)))
+           (prefix-log (format "Archive card '%s'..."
+			       (if (stringp card-name)
+			       	   (replace-regexp-in-string "%" "%%" card-name)
+			       	 card-name))))
       (orgtrello-deferred-eval-computation
        (list card-meta card-name buffer-name point-start)
        '('orgtrello-controller--archive-that-card
