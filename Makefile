@@ -3,6 +3,7 @@ VERSION = $$(grep "^;; Version: " $(PACKAGE).el | cut -f3 -d' ')
 ARCHIVE = $(PACKAGE)-$(VERSION).tar
 EMACS ?= emacs
 CASK ?= cask
+LANG=en_US.UTF-8
 
 .PHONY: clean
 
