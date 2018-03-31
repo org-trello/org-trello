@@ -49,13 +49,23 @@ To change such level, add this to your init.el file:
   :require 'org-trello
   :group 'org-trello)
 
+(defun orgtrello-log--sanitize-input (arg)
+  "Sanitize input by protecting against specific character in ARG.
+Basic implementation, we could actually check the symbol exists
+in it.
+ARG constitutes the arg to sanitize, should something loggable."
+  (if (stringp arg)
+      (replace-regexp-in-string "% " "%% " arg)
+    arg))
+
 (defun orgtrello-log-msg (level &rest args)
   "Log message with LEVEL.
 Depending on `orgtrello-log-level', this will be displayed or not.
 All errors are displayed anyway.
 ARGS constitutes the parameters to feed to message."
   (when (or (<= level orgtrello-log-level) (eq orgtrello-log-error level))
-    (apply 'message (format "org-trello - %s" (car args)) (cdr args))))
+    (let ((args (mapcar 'orgtrello-log--sanitize-input args)))
+      (apply 'message (format "org-trello - %s" (car args)) (cdr args)))))
 
 (orgtrello-log-msg orgtrello-log-debug "orgtrello-log loaded!")
 
