@@ -21,6 +21,7 @@
 ;;; Commentary:
 ;;; Code:
 
+(eval-when-compile (require 'cl)) ;; lexical-let
 (require 'org-trello-setup)
 (require 'org-trello-utils)
 (require 'org-trello-log)
