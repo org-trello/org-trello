@@ -30,6 +30,7 @@
 ;;; Commentary:
 ;;; Code:
 
+(eval-when-compile (require 'cl)) ;; lexical-let
 (require 'org-trello-log)
 (require 'org-trello-setup)
 (require 'org-trello-query)
