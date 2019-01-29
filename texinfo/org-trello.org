@@ -1,29 +1,37 @@
 # -*- mode: org; -*-
+# Customize Emacs variable org-export-backends to include texinfo,
+# then use “C-c C-e i t” to export this file to org-trello.texi.
+:METADATA:
 #+TITLE: org-trello Manual
-:META:
-#+SUBTITLE: Connect Emacs org-mode to Trello.com
+#+MACRO: DESCRIPTION Sync org-mode with Trello.com.
+#+SUBTITLE: Sync org-mode with Trello.com.
 #+DATE: [2019-01-27 Sun]
-#+AUTHOR: Daniel Birket
-#+SUBAUTHOR: Antoine R. Dumont
-#+EMAIL: danielb@birket.com
+#+AUTHOR: Manual by Daniel Birket
+#+SUBAUTHOR: Package by Antoine R. Dumont
 #+LANGUAGE: en
 #+STARTUP: indent
 
-#+TEXINFO_FILENAME: org-trello.texi
+#+TEXINFO_FILENAME: org-trello.info
 #+TEXINFO_DIR_CATEGORY: Emacs
 #+TEXINFO_DIR_TITLE: org-trello
-#+TEXINFO_DIR_DESC: Connect org-mode to Trello.com
+#+TEXINFO_DIR_DESC: Sync org-mode with Trello.com.
+#+TEXINFO_HEADER: @documentdescription
+#+TEXINFO_HEADER: Sync org-mode with Trello.com.
+#+TEXINFO_HEADER: @end documentdescription
+#+TEXINFO_POSTHEADER: @syncodeindex vr fn
+#+TEXINFO_POSTHEADER: @synindex ky cp
 
 #+MACRO: PAK_NAME org-trello
-#+MACRO: PAK_AUTHOR Antoine R. Dumont
+#+MACRO: PAK_AUTHOR Antoine Dumont
 #+MACRO: PAK_VERSION 0.8.1
 #+MACRO: PAK_RELEASE [2018-03-18 Sun]
-#+MACRO: PAK_COPYRIGHT ©2013-2019
+#+MACRO: PAK_COPYRIGHT ©2013-2017
 #+MACRO: PAK_DOC_URL http://org-trello.github.io
 #+MACRO: PAK_SRC_URL https://github.com/org-trello/org-trello
 
 #+MACRO: DOC_EDITION {{{PAK_VERSION}}}.a
-#+MACRO: DOC_COPYRIGHT ©2019 {{{AUTHOR}}}
+#+MACRO: DOC_EDITOR Daniel Birket
+#+MACRO: DOC_COPYRIGHT ©2019
 #+MACRO: DOC_SRC_URL https://github.com/daniel-birket/org-trello
 :END:
 :OPTIONS:
@@ -33,14 +41,15 @@
 #+OPTIONS: p:nil pri:nil prop:nil stat:t tags:t tasks:t tex:t
 #+OPTIONS: timestamp:t title:t toc:t todo:t |:t
 :END:
+{{{DESCRIPTION}}}
 
 This manual describes how to install and use {{{PAK_NAME}}}, an Emacs
-package to connect org-mode to Trello.com.
-* Copying
+package to synchronize org-mode with Trello.com.
+* COPYING
   :PROPERTIES:
   :COPYING:  t
   :END:
-Copyright: {{{DOC_COPYRIGHT}}}.
+This manual is copyrighted {{{DOC_COPYRIGHT}}} by {{{DOC_EDITOR}}}.
 
 #+BEGIN_QUOTE
 Permission is granted to copy, distribute and/or modify this document
@@ -52,30 +61,136 @@ Free Documentation License.
 #+END_QUOTE
 
 This is the {{{TITLE}}}, edition {{{DOC_EDITION}}}, released
-{{{DATE}}}, by {{{AUTHOR}}}. It describes how to install and use the
-Emacs package {{{PAK_NAME}}}, version {{{PAK_VERSION}}}, released
-{{{PAK_RELEASE}}}, which was written and copyright {{{PAK_COPYRIGHT}}}
-by {{{PAK_AUTHOR}}}, et al. (See {{{PAK_DOC_URL}}}.)
+{{{DATE}}}, written and copyright {{{DOC_COPYRIGHT}}} by {{{DOC_EDITOR}}}.
+(See {{{DOC_SRC_URL}}}.)
 
-This manual was created by referring to the {{{PAK_NAME}}} source-code
-comments and doc-strings using: Emacs, org-mode, the org-mode texinfo
-exporter, and texinfo, and other open-source packages.
+This manaul describes how to install and use the Emacs package
+{{{PAK_NAME}}}, version {{{PAK_VERSION}}}, released {{{PAK_RELEASE}}},
+written and copyright {{{PAK_COPYRIGHT}}} by {{{PAK_AUTHOR}}}, et al.
+(See {{{PAK_DOC_URL}}}.)
 
 * Installing org-trello
   :PROPERTIES:
   :ALT_TITLE: Installing
   :DESCRIPTION: Installing org-trello
   :END:
-Installing Text.
+#+CINDEX: org-trello, installing
+Installing…
 * Connecting to Trello.com
   :PROPERTIES:
   :ALT_TITLE: Connecting
   :DESCRIPTION: Connecting to Trello.com
   :END:
-Connecting Text.
+#+CINDEX: trello.com, connecting
+Connecting…
 * Using org-trello
   :PROPERTIES:
   :ALT_TITLE: Using
   :DESCRIPTION: Using org-trello
   :END:
-Using Text.
+#+CINDEX: org-trello, using
+Using…
+* Frequently-Asked Questions
+  :PROPERTIES:
+  :ALT_TITLE: FAQ
+  :DESCRIPTION: Frequently-Asked Questions
+  :END:
+#+CINDEX: FAQ
+FAQ…
+* Troubleshooting org-trello
+  :PROPERTIES:
+  :ALT_TITLE: Troubleshooting
+  :DESCRIPTION: Troubleshooting org-trello
+  :END:
+#+CINDEX: troubleshooting
+#+CINDEX: errors
+Troubleshooting…
+* Customizing org-trello
+  :PROPERTIES:
+  :ALT_TITLE: Customizing
+  :DESCRIPTION: Customizing org-trello
+  :END:
+#+CINDEX: customizing
+Customizing…
+* Contributing to org-trello
+  :PROPERTIES:
+  :ALT_TITLE: Contributing
+  :DESCRIPTION: Contributing to org-trello
+  :END:
+#+CINDEX: contributing
+#+CINDEX: development
+Contributing…
+* Version Notes History
+:PROPERTIES:
+:ALT_TITLE: Versions
+:DESCRIPTION: Version Notes History
+:APPENDIX: t
+:END:
+#+CINDEX: version notes
+Versions…
+* License & Credits
+:PROPERTIES:
+:ALT_TITLE: License/Credits
+:DESCRIPTION: License and Credits
+:APPENDIX: t
+:END:
+#+CINDEX: copying
+#+CINDEX: license, given
+#+CINDEX: credits
+#+CINDEX: contributors
+#+TEXINFO: @insertcopying
+
+This manual was written with reference to the {{{PAK_NAME}}} source-code,
+which begins:
+
+#+BEGIN_SRC emacs-lisp
+;;; org-trello.el --- Minor mode to synchronize org-mode buffer and trello board
+
+;; Copyright (C) 2013-2017 Antoine R. Dumont (@ardumont) <antoine.romain.dumont@gmail.com>
+
+;; Author: Antoine R. Dumont (@ardumont) <antoine.romain.dumont@gmail.com>
+;; Maintainer: Antoine R. Dumont (@ardumont) <antoine.romain.dumont@gmail.com>
+;; Version: 0.8.1
+;; URL: https://github.com/org-trello/org-trello
+
+;; This file is NOT part of GNU Emacs.
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation; either version 3, or (at your option)
+;; any later version.
+;;
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+;; GNU General Public License for more details.
+#+END_SRC
+
+* GNU General Public License
+:PROPERTIES:
+:ALT_TITLE: GNU GPL
+:DESCRIPTION: GNU General Public License
+:APPENDIX: t
+:END:
+#+CINDEX: license, software
+#+TEXINFO: @include gpl.texi
+* GNU Free Documentation License
+:PROPERTIES:
+:ALT_TITLE: GNU FDL
+:DESCRIPTION: GNU Free Documentation License
+:APPENDIX: t
+:END:
+#+CINDEX: license, manual
+#+TEXINFO: @include fdl.texi
+* Variable & Function Index
+:PROPERTIES:
+:INDEX:    fn
+:ALT_TITLE: Vars/Funcs
+:DESCRIPTION: Variable & Function Index
+:END:
+* Keys and Concepts Index
+:PROPERTIES:
+:INDEX:    cp
+:ALT_TITLE: Keys/Concepts
+:DESCRIPTION: Keys and Concepts Index
+:END:
