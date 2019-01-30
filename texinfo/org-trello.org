@@ -142,14 +142,19 @@ Customizing…
 #+CINDEX: contributing
 #+CINDEX: development
 Contributing…
-* Version Notes
+* Release Notes
 :PROPERTIES:
-:ALT_TITLE: Versions
-:DESCRIPTION: Version Notes History
+:ALT_TITLE: Releases
+:DESCRIPTION: Release Notes History
 :APPENDIX: t
 :END:
-#+CINDEX: version notes
-Versions…
+#+CINDEX: release notes
+#+CINDEX: version history
+This appendix records the primary changes in each release of
+org-trello. Please see the [[https://github.com/org-trello/org-trello][repository]] on GitHub for a more detailed
+history.
+
+#+INCLUDE: release-notes.org
 * Contributor Credits
 :PROPERTIES:
 :ALT_TITLE: Credits
