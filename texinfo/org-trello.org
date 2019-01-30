@@ -5,7 +5,7 @@
 #+TITLE: org-trello Manual
 #+MACRO: DESCRIPTION Sync org-mode with Trello.com.
 #+SUBTITLE: Sync org-mode with Trello.com.
-#+DATE: [2019-01-27 Sun]
+#+DATE: 2019-01-27
 #+AUTHOR: Manual by Daniel Birket
 #+SUBAUTHOR: Package by Antoine R. Dumont
 #+LANGUAGE: en
@@ -24,7 +24,7 @@
 #+MACRO: PAK_NAME org-trello
 #+MACRO: PAK_AUTHOR Antoine Dumont
 #+MACRO: PAK_VERSION 0.8.1
-#+MACRO: PAK_RELEASE [2018-03-18 Sun]
+#+MACRO: PAK_RELEASE 2018-03-18
 #+MACRO: PAK_COPYRIGHT ©2013-2017
 #+MACRO: PAK_DOC_URL http://org-trello.github.io
 #+MACRO: PAK_SRC_URL https://github.com/org-trello/org-trello
@@ -32,7 +32,7 @@
 #+MACRO: DOC_EDITION {{{PAK_VERSION}}}.a
 #+MACRO: DOC_EDITOR Daniel Birket
 #+MACRO: DOC_COPYRIGHT ©2019
-#+MACRO: DOC_SRC_URL https://github.com/daniel-birket/org-trello
+#+MACRO: DOC_SRC_URL https://github.com/daniel-birket/org-trello/tree/texinfo/texinfo
 :END:
 :OPTIONS:
 #+OPTIONS: ':nil *:t -:t ::t <:t H:3 \n:nil ^:{} arch:headline
@@ -60,14 +60,14 @@ Texts. A copy of the license is included in the section entitled GNU
 Free Documentation License.
 #+END_QUOTE
 
-This is the {{{TITLE}}}, edition {{{DOC_EDITION}}}, released
-{{{DATE}}}, written and copyright {{{DOC_COPYRIGHT}}} by {{{DOC_EDITOR}}}.
+This is the {{{TITLE}}}, edition {{{DOC_EDITION}}}, released {{{DATE}}},
+written and copyright {{{DOC_COPYRIGHT}}} by {{{DOC_EDITOR}}}.\\
 (See {{{DOC_SRC_URL}}}.)
 
 This manaul describes how to install and use the Emacs package
 {{{PAK_NAME}}}, version {{{PAK_VERSION}}}, released {{{PAK_RELEASE}}},
-written and copyright {{{PAK_COPYRIGHT}}} by {{{PAK_AUTHOR}}}, et al.
-(See {{{PAK_DOC_URL}}}.)
+written and copyright {{{PAK_COPYRIGHT}}} by {{{PAK_AUTHOR}}}, et al.\\
+(See {{{PAK_SRC_URL}}}.)
 
 * Installing org-trello
   :PROPERTIES:
@@ -89,7 +89,29 @@ Connecting…
   :DESCRIPTION: Using org-trello
   :END:
 #+CINDEX: org-trello, using
-Using…
+This section describes how to use org-trello _after_ connecting an
+org-file to a board of Trello.com.
+** Summary of Key-Bindings
+:PROPERTIES:
+:ALT_TITLE: Key-Bindings
+:DESCRIPTION: Summary of Key-Bindings
+:END:
+All default org-trello key-bindings use the “C-c o” prefix.
+
+- C-c o v :: Display the version of org-trello.
+** Synchronization Functions
+:PROPERTIES:
+:ALT_TEXT: Synchronization
+:DESCRIPTION: Synchronization Functions
+:END:
+This section describes the synchronization functions.
+
+#+ATTR_TEXINFO: :table-type vtable :indic code
+- org-trello-sync-buffer :: 
+  Use “C-c o s” to sync the entire buffer _to_ the Trello board.\\
+  Use “C-u C-c o s” to sync the entire buffer _from_ the Trello board.
+#+FINDEX: org-trello-sync-buffer
+#+KINDEX: C-c o s
 * Frequently-Asked Questions
   :PROPERTIES:
   :ALT_TITLE: FAQ
@@ -120,7 +142,7 @@ Customizing…
 #+CINDEX: contributing
 #+CINDEX: development
 Contributing…
-* Version Notes History
+* Version Notes
 :PROPERTIES:
 :ALT_TITLE: Versions
 :DESCRIPTION: Version Notes History
@@ -128,28 +150,38 @@ Contributing…
 :END:
 #+CINDEX: version notes
 Versions…
-* License & Credits
+* Contributor Credits
 :PROPERTIES:
-:ALT_TITLE: License/Credits
-:DESCRIPTION: License and Credits
+:ALT_TITLE: Credits
+:DESCRIPTION: Contributor Credits
+:APPENDIX: t
+:END:
+#+CINDEX: credits
+#+CINDEX: contributors
+Contributors …
+* Manual & Package Licenses
+:PROPERTIES:
+:ALT_TITLE: Licenses
+:DESCRIPTION: Manual & Package Licenses
 :APPENDIX: t
 :END:
 #+CINDEX: copying
 #+CINDEX: license, given
-#+CINDEX: credits
-#+CINDEX: contributors
 #+TEXINFO: @insertcopying
 
 This manual was written with reference to the {{{PAK_NAME}}} source-code,
-which begins:
+which begins with this license and non-warranty statement:
 
 #+BEGIN_SRC emacs-lisp
-;;; org-trello.el --- Minor mode to synchronize org-mode buffer and trello board
+;;; org-trello.el 
+;; Minor mode to synchronize org-mode buffer and trello board
 
-;; Copyright (C) 2013-2017 Antoine R. Dumont (@ardumont) <antoine.romain.dumont@gmail.com>
+;; Copyright (C) 2013-2017 Antoine R. Dumont (@ardumont) 
+;; <antoine.romain.dumont@gmail.com>
 
-;; Author: Antoine R. Dumont (@ardumont) <antoine.romain.dumont@gmail.com>
-;; Maintainer: Antoine R. Dumont (@ardumont) <antoine.romain.dumont@gmail.com>
+;; Author: Antoine R. Dumont
+;; Maintainer: Antoine R. Dumont
+
 ;; Version: 0.8.1
 ;; URL: https://github.com/org-trello/org-trello
 
