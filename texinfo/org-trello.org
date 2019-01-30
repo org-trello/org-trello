@@ -18,8 +18,6 @@
 #+TEXINFO_HEADER: @documentdescription
 #+TEXINFO_HEADER: Sync org-mode with Trello.com.
 #+TEXINFO_HEADER: @end documentdescription
-#+TEXINFO_POSTHEADER: @syncodeindex vr fn
-#+TEXINFO_POSTHEADER: @synindex ky cp
 
 #+MACRO: PAK_NAME org-trello
 #+MACRO: PAK_AUTHOR Antoine Dumont
@@ -98,7 +96,14 @@ org-file to a board of Trello.com.
 :END:
 All default org-trello key-bindings use the “C-c o” prefix.
 
-- C-c o v :: Display the version of org-trello.
+#+KINDEX: C-c o C-h
+Type “C-c o C-h” to display help for all key bindings with this
+prefix.
+
+| Keys      | Command                                             |
+|-----------+-----------------------------------------------------|
+| C-c o C-h | Display help on all key-bindings with C-c o prefix. |
+| C-c o v   | Display the version of org-trello.                  |
 ** Synchronization Functions
 :PROPERTIES:
 :ALT_TEXT: Synchronization
@@ -106,12 +111,12 @@ All default org-trello key-bindings use the “C-c o” prefix.
 :END:
 This section describes the synchronization functions.
 
-#+ATTR_TEXINFO: :table-type vtable :indic code
-- org-trello-sync-buffer :: 
-  Use “C-c o s” to sync the entire buffer _to_ the Trello board.\\
-  Use “C-u C-c o s” to sync the entire buffer _from_ the Trello board.
-#+FINDEX: org-trello-sync-buffer
 #+KINDEX: C-c o s
+#+KINDEX: C-u C-c o s
+#+ATTR_TEXINFO: :table-type ftable :indic code
+- org-trello-sync-buffer :: 
+  Type “C-c o s” to sync the entire buffer TO the Trello board.\\
+  Type “C-u C-c o s” to sync the entire buffer FROM the Trello board.
 * Frequently-Asked Questions
   :PROPERTIES:
   :ALT_TITLE: FAQ
@@ -142,19 +147,6 @@ Customizing…
 #+CINDEX: contributing
 #+CINDEX: development
 Contributing…
-* Release Notes
-:PROPERTIES:
-:ALT_TITLE: Releases
-:DESCRIPTION: Release Notes History
-:APPENDIX: t
-:END:
-#+CINDEX: release notes
-#+CINDEX: version history
-This appendix records the primary changes in each release of
-org-trello. Please see the [[https://github.com/org-trello/org-trello][repository]] on GitHub for a more detailed
-history.
-
-#+INCLUDE: release-notes.org
 * Contributor Credits
 :PROPERTIES:
 :ALT_TITLE: Credits
@@ -219,15 +211,44 @@ which begins with this license and non-warranty statement:
 :END:
 #+CINDEX: license, manual
 #+TEXINFO: @include fdl.texi
-* Variable & Function Index
+* Concepts Index
 :PROPERTIES:
-:INDEX:    fn
-:ALT_TITLE: Vars/Funcs
-:DESCRIPTION: Variable & Function Index
+:INDEX: cp
+:ALT_TITLE: Concepts
+:DESCRIPTION: Concepts Index
+:APPENDIX: t
 :END:
-* Keys and Concepts Index
+* Key Binding Index
 :PROPERTIES:
-:INDEX:    cp
-:ALT_TITLE: Keys/Concepts
-:DESCRIPTION: Keys and Concepts Index
+:INDEX: ky
+:ALT_TITLE: Keys
+:DESCRIPTION: Key Bindings Index
+:APPENDIX: t
 :END:
+* Functions Index
+:PROPERTIES:
+:INDEX: fn
+:ALT_TITLE: Functions
+:DESCRIPTION: Functions Index
+:APPENDIX: t
+:END:
+* Variables Index
+:PROPERTIES:
+:INDEX: vr
+:ALT_TITLE: Variables
+:DESCRIPTION: Variables Index
+:APPENDIX: t
+:END:
+* Release Notes
+:PROPERTIES:
+:ALT_TITLE: Releases
+:DESCRIPTION: Release Notes History
+:APPENDIX: t
+:END:
+#+CINDEX: release notes
+#+CINDEX: version history
+This appendix records the primary changes in each release of
+org-trello. Please see the [[https://github.com/org-trello/org-trello][repository]] on GitHub for a more detailed
+history.
+
+#+INCLUDE: release-notes.org

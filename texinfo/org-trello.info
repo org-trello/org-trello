@@ -44,13 +44,15 @@ package to synchronize org-mode with Trello.com.
 * Troubleshooting::              Troubleshooting org-trello
 * Customizing::                  Customizing org-trello
 * Contributing::                 Contributing to org-trello
-* Releases::                     Release Notes History
 * Credits::                      Contributor Credits
 * Licenses::                     Manual & Package Licenses
 * GNU GPL::                      GNU General Public License
 * GNU FDL::                      GNU Free Documentation License
-* Vars/Funcs::                   Variable & Function Index
-* Keys/Concepts::                Keys and Concepts Index
+* Concepts::                     Concepts Index
+* Keys::                         Key Bindings Index
+* Functions::                    Functions Index
+* Variables::                    Variables Index
+* Releases::                     Release Notes History
 
 — The Detailed Node Listing —
 
@@ -200,8 +202,13 @@ File: org-trello.info,  Node: Key-Bindings,  Next: Synchronization Functions,  U
 
 All default org-trello key-bindings use the “C-c o” prefix.
 
-C-c o v
-     Display the version of org-trello.
+   Type “C-c o C-h” to display help for all key bindings with this
+prefix.
+
+Keys        Command
+------------------------------------------------------------------
+C-c o C-h   Display help on all key-bindings with C-c o prefix.
+C-c o v     Display the version of org-trello.
 
 
 File: org-trello.info,  Node: Synchronization Functions,  Prev: Key-Bindings,  Up: Using
@@ -212,8 +219,8 @@ File: org-trello.info,  Node: Synchronization Functions,  Prev: Key-Bindings,  U
 This section describes the synchronization functions.
 
 ‘org-trello-sync-buffer’
-     Use “C-c o s” to sync the entire buffer to the Trello board.
-     Use “C-u C-c o s” to sync the entire buffer from the Trello board.
+     Type “C-c o s” to sync the entire buffer TO the Trello board.
+     Type “C-u C-c o s” to sync the entire buffer FROM the Trello board.
 
 
 File: org-trello.info,  Node: FAQ,  Next: Troubleshooting,  Prev: Using,  Up: Top
@@ -240,7 +247,7 @@ File: org-trello.info,  Node: Customizing,  Next: Contributing,  Prev: Troublesh
 Customizing…
 
 
-File: org-trello.info,  Node: Contributing,  Next: Releases,  Prev: Customizing,  Up: Top
+File: org-trello.info,  Node: Contributing,  Next: Credits,  Prev: Customizing,  Up: Top
 
 7 Contributing to org-trello
 ****************************
@@ -248,1937 +255,9 @@ File: org-trello.info,  Node: Contributing,  Next: Releases,  Prev: Customizing,
 Contributing…
 
 
-File: org-trello.info,  Node: Releases,  Next: Credits,  Prev: Contributing,  Up: Top
+File: org-trello.info,  Node: Credits,  Next: Licenses,  Prev: Contributing,  Up: Top
 
-Appendix A Release Notes
-************************
-
-This appendix records the primary changes in each release of org-trello.
-Please see the repository (https://github.com/org-trello/org-trello) on
-GitHub for a more detailed history.
-
-* Menu:
-
-* Release 0.8.1: Release 081.
-* Release 0.8.0: Release 080.
-* Release 0.7.9: Release 079.
-* Release 0.7.8: Release 078.
-* Release 0.7.7: Release 077.
-* Release 0.7.6: Release 076.
-* Release 0.7.5: Release 075.
-* Release 0.7.4: Release 074.
-* Release 0.7.3: Release 073.
-* Release 0.7.2: Release 072.
-* Release 0.7.1: Release 071.
-* Release 0.7.0: Release 070.
-* Release 0.6.9.6: Release 0696.
-* Release 0.6.9.5: Release 0695.
-* Release 0.6.9.4: Release 0694.
-* Release 0.6.9.3: Release 0693.
-* Release 0.6.9.2: Release 0692.
-* Release 0.6.9.1: Release 0691.
-* Release 0.6.9: Release 069.
-* Release 0.6.8: Release 068.
-* Release 0.6.7: Release 067.
-* Release 0.6.6: Release 066.
-* Release 0.6.5: Release 065.
-* Release 0.6.4: Release 064.
-* Release 0.6.3: Release 063.
-* Release 0.6.2: Release 062.
-* Release 0.6.1: Release 061.
-* Release 0.6.0: Release 060.
-* Release 0.5.9: Release 059.
-* Release 0.5.8: Release 058.
-* Release 0.5.7: Release 057.
-* Release 0.5.6: Release 056.
-* Release 0.5.5: Release 055.
-* Release 0.5.4: Release 054.
-* Release 0.5.3: Release 053.
-* Release 0.5.2: Release 052.
-* Release 0.5.1: Release 051.
-* Release 0.5.0: Release 050.
-* Release 0.4.9: Release 049.
-* Release 0.4.8: Release 048.
-* Release 0.4.7: Release 047.
-* Release 0.4.6: Release 046.
-* Release 0.4.5: Release 045.
-* Release 0.4.4: Release 044.
-* Release 0.4.3: Release 043.
-* Release 0.4.2: Release 042.
-* Release 0.4.1.1: Release 0411.
-* Release 0.4.1: Release 041.
-* Release 0.4.0.1: Release 0401.
-* Release 0.4.0: Release 040.
-* Release 0.3.9: Release 039.
-* Release 0.3.8: Release 038.
-* Release 0.3.7: Release 037.
-* Release 0.3.6.1: Release 0361.
-* Release 0.3.6: Release 036.
-* Release 0.3.5: Release 035.
-* Release 0.3.4: Release 034.
-* Release 0.3.3: Release 033.
-* Release 0.3.2: Release 032.
-* Release 0.3.1.1: Release 0311.
-* Release 0.3.1: Release 031.
-* Release 0.3.0: Release 030.
-* Release 0.2.9.1: Release 0291.
-* Release 0.2.9: Release 029.
-* Release 0.2.8.2: Release 0282.
-* Release 0.2.8.1: Release 0281.
-* Release 0.2.8: Release 028.
-* Release 0.2.7: Release 027.
-* Release 0.2.6: Release 026.
-* Release 0.2.5: Release 025.
-* Release 0.2.4: Release 024.
-* Release 0.2.3: Release 023.
-* Release 0.2.2: Release 022.
-* Release 0.2.1.2: Release 0212.
-* Release 0.2.1.1: Release 0211.
-* Release 0.2.1: Release 021.
-* Release 0.2.0: Release 020.
-* Release 0.1.9: Release 019.
-* Release 0.1.8: Release 018.
-* Release 0.1.7.1: Release 0171.
-* Release 0.1.7: Release 017.
-* Release 0.1.6: Release 016.
-* Release 0.1.5: Release 015.
-* Release 0.1.4: Release 014.
-* Release 0.1.3: Release 013.
-* Release 0.1.2: Release 012.
-* Release 0.1.1: Release 011.
-* Release 0.1.0: Release 010.
-* Release 0.0.9: Release 009.
-* Release 0.0.8: Release 008.
-* Release 0.0.7: Release 007.
-* Release 0.0.6.1: Release 0061.
-* Release 0.0.6: Release 006.
-* Release 0.0.5: Release 005.
-* Release 0.0.4.1: Release 0041.
-* Release 0.0.4: Release 004.
-* Release 0.0.3: Release 003.
-* Release 0.0.2: Release 002.
-* Release 0.0.1: Release 001.
-
-
-File: org-trello.info,  Node: Release 081,  Next: Release 080,  Up: Releases
-
-A.1 Release 0.8.1
-=================
-
-   • Make adding trello colors to ‘org-tag-alist’ optional - Close #365
-   • Fix typo in link to issue tracker - Close #364
-   • Fix ci
-   • Fix user properties search in agenda view - Close #366 - Close #371
-   • Correct bad encoding of json encoded data.
-   • Update version
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 080,  Next: Release 079,  Prev: Release 081,  Up: Releases
-
-A.2 Release 0.8.0
-=================
-
-   • Update travis ci configuration
-   • Fix ci’s multiple problems
-   • Fix some emacs25 incompatibilities
-   • Add copyright headers + update copyright range
-   • Add ’kill-whole-line in bug report
-   • Upgrade version
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 079,  Next: Release 078,  Prev: Release 080,  Up: Releases
-
-A.3 Release 0.7.9
-=================
-
-   • Fix problem with custom kill-whole-line properties - Close #270
-   • Fix problem with scheduled deadline - Close #326
-   • Upgrade version
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 078,  Next: Release 077,  Prev: Release 079,  Up: Releases
-
-A.4 Release 0.7.8
-=================
-
-   • Fix cyrillic encoding problem - Close #318 #270
-   • Update version
-   • Sign tag release
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 077,  Next: Release 076,  Prev: Release 078,  Up: Releases
-
-A.5 Release 0.7.7
-=================
-
-   • Rework packaging problem
-   • Add issue/pr templates
-   • Add request-backend to the org-trello-bug-report
-   • Update version
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 076,  Next: Release 075,  Prev: Release 077,  Up: Releases
-
-A.6 Release 0.7.6
-=================
-
-   • Update version
-   • Support unicode characters in sync - Close #307 Close #309
-   • Fix parsing username comments - Close #301
-   • Fix parsing timestamp in superior emacs (api change)
-   • Update travis-ci scripts to use the new travis infrastructure
-   • fix broken tests (mock.el unit test library revealed broken tests)
-   • Fix problem with org-latex-preview when computing checksums - Close
-     #303
-   • Do not permit empty login when installing access key and token -
-     Close #314
-   • Upgrade dependencies version
-   • Pb with labels-tags regarding the grey - Close #310
-   • Improve documentation about the setup account - #306
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 075,  Next: Release 074,  Prev: Release 076,  Up: Releases
-
-A.7 Release 0.7.5
-=================
-
-   • #290 - Toggling users assignments to card
-   • Add binding ‘C-c o t’ for the toggling command (code, doc, etc...)
-   • #293 - Add a basic user driven completing mechanism (default ido,
-     possibility to use helm...)
-   • #291 - Improve labels policy [4/4]
-
-        • Update api to retrieve more labels
-        • Unify board information retrieval
-        • Update show board labels with the new colors
-        • Fix what went wrong (install existing board + create new one)
-
-   • Open a command to clean org-trello data in buffer
-   • Close board command
-   • Update version
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 074,  Next: Release 073,  Prev: Release 075,  Up: Releases
-
-A.8 Release 0.7.4
-=================
-
-   • Improve release script + fix typo
-   • Update version
-   • Coverage [10/10]
-
-        • stats-coverage.org for statistics (+ travis-ci/coverage.io)
-        • Fix bug on org-trello-log namespace + org-trello-log
-        • org-trello-input
-        • org-trello-query
-        • org-trello-proxy
-        • org-trello-buffer
-        • org-trello-controller
-        • org-trello-data
-        • org-trello-hash
-        • org-trello
-
-   • #283 - Toggle assign me action
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 073,  Next: Release 072,  Prev: Release 074,  Up: Releases
-
-A.9 Release 0.7.3
-=================
-
-   • Update version
-   • Close #277 - Improve date time policy conversion
-   • Improve release + upload to marmalade scripts
-   • Fix flycheck warnings
-   • Some refactoring
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 072,  Next: Release 071,  Prev: Release 073,  Up: Releases
-
-A.10 Release 0.7.2
-==================
-
-   • Update version
-   • Close #276 - Markdown rendering in comments
-   • Add test coverage
-   • [internal] Full respect elisp convention
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 071,  Next: Release 070,  Prev: Release 072,  Up: Releases
-
-A.11 Release 0.7.1
-==================
-
-   • Update version
-   • Close #272 - Use native completion mechanism
-   • Close #273 - Fix labels when installing board
-   • Close #271 - Make a user option for user to decide the policy about
-     checksum and position
-   • Use improved native completin mechanism (again)
-   • Close #274 - Add ‘M-x org-trello-bug-report’ command
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 070,  Next: Release 0696,  Prev: Release 071,  Up: Releases
-
-A.12 Release 0.7.0
-==================
-
-   • Update version
-   • Close #238 - [internal] Respect elisp coding conventions [2/2]
-
-        • Rename constants + variables
-        • Rename entry points according to conventions + alias old
-          definitions for backward compatibility
-
-   • Close #239 - Migrate ~/.trello/config.el inside
-     user-emacs-directory
-   • Close #256 - one user can have multiple trello accounts [4/4]
-
-        • Migrate the actual setup to the multi-account setup
-          (transparent for user)
-        • Update ‘org-trello-install-key-and-token’ command to create
-          the account setup
-        • Update the loading configuration mechanism multi-account aware
-        • Make sure initializing org-trello account is ok
-
-   • Close #267 - Emptying card’s description does not work
-   • Remove too much verbosity (when deleting property checksum)
-   • Close #250 - Changing order of checklist items not saved unless
-     checklist item’s text changed
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 0696,  Next: Release 0695,  Prev: Release 070,  Up: Releases
-
-A.13 Release 0.6.9.6
-====================
-
-   • Create backlog
-   • Update version
-   • Fix #261 - Modifying/Adding labels ok, removing labels completely
-     ko
-   • Fix #262 - Mix between user ids and user name when assigning card
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 0695,  Next: Release 0694,  Prev: Release 0696,  Up: Releases
-
-A.14 Release 0.6.9.5
-====================
-
-   • Create backlog
-   • Update version
-   • Fix marmalade’s release.sh script
-   • Fix #255 regarding the org tags/trello labels
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 0694,  Next: Release 0693,  Prev: Release 0695,  Up: Releases
-
-A.15 Release 0.6.9.4
-====================
-
-   • Update version
-   • Fix <https://github.com/org-trello/org-trello/issues/252>
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 0693,  Next: Release 0692,  Prev: Release 0694,  Up: Releases
-
-A.16 Release 0.6.9.3
-====================
-
-   • Create backlog
-   • Update version
-   • Problem in first comment point computation - Close #242
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 0692,  Next: Release 0691,  Prev: Release 0693,  Up: Releases
-
-A.17 Release 0.6.9.2
-====================
-
-   • Update version
-   • Clean dead code regarding old comments system
-   • Fix bug regarding comments indentation (breaking org rendering)
-   • Fix bug regarding empty card and next card indentation (breaking
-     org rendering)
-   • Fix compile log warning about orgtrello-buffer depending on
-     orgtrello-controller (wrong)
-   • Update README-dev.md
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 0691,  Next: Release 069,  Prev: Release 0692,  Up: Releases
-
-A.18 Release 0.6.9.1
-====================
-
-   • Create backlog
-   • Update version
-   • Fix region computation problem regarding comments -
-     <https://github.com/org-trello/org-trello/issues/232>
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 069,  Next: Release 068,  Prev: Release 0691,  Up: Releases
-
-A.19 Release 0.6.9
-==================
-
-   • Create backlog
-   • Update version
-   • Fix #+property keyword to #+PROPERTY - CLOSE
-     <https://github.com/org-trello/org-trello/issues/234>
-   • Fix missing line on future org-mode 8.3 - CLOSE
-     <https://github.com/org-trello/org-trello/issues/232>
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 068,  Next: Release 067,  Prev: Release 069,  Up: Releases
-
-A.20 Release 0.6.8
-==================
-
-   • Create backlog
-   • Update version
-   • Edit comment direct in buffer - CLOSE
-     <https://github.com/org-trello/org-trello/issues/221>
-   • Open binding ‘C-c o U’ for ‘sync a comment’ action
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 067,  Next: Release 066,  Prev: Release 068,  Up: Releases
-
-A.21 Release 0.6.7
-==================
-
-   • Create backlog
-   • Update version
-   • Improve/Refactor the comment deletion
-   • Fix ‘orgtrello-buffer/pop-up-with-content!’
-   • Improve comment creation - CLOSE
-     <https://github.com/org-trello/org-trello/issues/222> [2/2]
-
-        • Add checksum to the comments
-        • Improve comment creation
-
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 066,  Next: Release 065,  Prev: Release 067,  Up: Releases
-
-A.22 Release 0.6.6
-==================
-
-   • Create backlog
-   • Update version
-   • Delete comments - CLOSE
-     <https://github.com/org-trello/org-trello/issues/222>
-   • Clean no longer used show comments commands + install the delete
-     comment command
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 065,  Next: Release 064,  Prev: Release 066,  Up: Releases
-
-A.23 Release 0.6.5
-==================
-
-   • Create backlog
-   • Update version
-   • Maintenance - Revert tests back to ert-deftest to have more
-     explicit error outputs
-   • Fix unit tests
-   • Fix CI which does not break when failure or error.
-   • Format user’s comments in a readable format -
-     <https://github.com/org-trello/org-trello/issues/218> [2/2]
-
-        • Update the comment’s format according to
-          <https://github.com/org-trello/org-trello/issues/218#issue-48750430>
-        • Update the ‘org-trello/add-card-comment’ command to improve
-          creating comment
-
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 064,  Next: Release 063,  Prev: Release 065,  Up: Releases
-
-A.24 Release 0.6.4
-==================
-
-   • Minor change to allow abbreviated file path -
-     <https://github.com/org-trello/org-trello/pull/213>
-   • Update version
-   • Move file list functionality to org-trello.el - CLOSE
-     <https://github.com/org-trello/org-trello/issues/214>
-   • Add ;;;### autoload for the org-trello’s default commands
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 063,  Next: Release 062,  Prev: Release 064,  Up: Releases
-
-A.25 Release 0.6.3
-==================
-
-   • Update version
-   • Enable org-trello mode automatically for certain files -
-     <https://github.com/org-trello/org-trello/issues/210>
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 062,  Next: Release 061,  Prev: Release 063,  Up: Releases
-
-A.26 Release 0.6.2
-==================
-
-   • Backlog
-   • Update version
-   • Improve check connection to trello
-   • Improve documentation about the org-trello setup
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 061,  Next: Release 060,  Prev: Release 062,  Up: Releases
-
-A.27 Release 0.6.1
-==================
-
-   • Update version
-   • ‘Trello archived’ cards are not archived on org-trello buffers -
-     CLOSE <https://github.com/org-trello/org-trello/issues/203>
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 060,  Next: Release 059,  Prev: Release 061,  Up: Releases
-
-A.28 Release 0.6.0
-==================
-
-   • Refactor - Unify data structure between trello card and org-trello
-     card
-   • Refactor - Improve merge computations
-   • Refactor - Remove some dead code
-   • Update version
-   • Improve sync request policy -
-     <https://github.com/org-trello/org-trello/issues/58> [87%]
-
-        • ’Sync card to trello’ syncs card only if local changes
-        • ’Sync card from trello’ updates the card from trello and the
-          local checksum signature
-        • ’Sync buffer from trello’ updates the local card checksum
-        • ’Sync buffer to trello’ syncs only card with local changes
-        • ’Delete entity’ updates the checksum
-        • Extend the checksum system to the checkbox entities
-          (checklist/item) - sync to trello
-        • Extend the checksum system to the checkbox entities
-          (checklist/item) - sync from trello
-        • Update checksum computation depending on entities
-
-   • ‘Checklists don't work for me’ - It does work - Need to improve
-     checklist and item predicates.  - CLOSE
-     <https://github.com/org-trello/org-trello/issues/204>
-
-        • Fix behavior
-        • Fix tests
-
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 059,  Next: Release 058,  Prev: Release 060,  Up: Releases
-
-A.29 Release 0.5.9
-==================
-
-   • Backlog
-   • Update version
-   • Improve region card computation for sync card from trello.
-   • Fix error on sync card from trello when nothing to sync.
-   • Use defcustom instead of defvar for user customisation - CLOSE #196
-     (https://github.com/org-trello/org-trello/issues/196)
-   • When not in card, explain why you cannot do the current action
-   • Improve display of error when sync a card without title
-   • Check package installation and fix what’s needed
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 058,  Next: Release 057,  Prev: Release 059,  Up: Releases
-
-A.30 Release 0.5.8
-==================
-
-   • Backlog
-   • Update version
-   • Add emacs24 dependencies -
-     <https://github.com/purcell/org-trello/commit/0fef27e83d5b1c68af03213354ddd97448c802d2>
-        • 
-     <http://www.gnu.org/software/emacs/manual/html_node/elisp/Library-Headers.html#Library-Headers>
-        • 
-     <http://stackoverflow.com/questions/16805645/how-can-i-gracefully-drop-support-for-older-emacsen-in-my-elisp-package>
-   • Downgrade request dependency to 0.3.1 to make org-trello
-     installation possible in melpa-stable (no answer from ‘request’
-     maintainer) + <https://github.com/org-trello/org-trello/issues/195>
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 057,  Next: Release 056,  Prev: Release 058,  Up: Releases
-
-A.31 Release 0.5.7
-==================
-
-   • Backlog
-   • Update version
-   • Fix default keyword when not specified (trello list name) - #183
-     (https://github.com/org-trello/org-trello/issues/183)
-   • Remove reference to proxy in log messages
-   • Sync buffer from trello - Ignore errors when there is nothing to
-     sort.
-   • Sync buffer from trello - Fold buffer entries when done.
-   • Fix bug on (orgtrello-entity/compute-card-region!)
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 056,  Next: Release 055,  Prev: Release 057,  Up: Releases
-
-A.32 Release 0.5.6
-==================
-
-   • backlog
-   • Update version
-   • Use save-excursion - save-restriction - narrow-to-region instead of
-     using region
-   • Fix behavior orgtrello-buffer/end-of-line!  When going to end of
-     line in checkbox, we need to do it twice, fix.
-   • Small refactoring about overlays
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 055,  Next: Release 054,  Prev: Release 056,  Up: Releases
-
-A.33 Release 0.5.5
-==================
-
-   • Backlog
-   • Update version
-   • Update main github’s readme to static link to the main
-     documentation site.
-   • Update bindings order to regroup them
-   • Add bindings for archiving cards ‘C-c o A’
-   • Remove old bindings ‘C-c o C’ that synced the card.
-   • Update bindings ‘C-c o A’ to add comments to the card to ‘C-c o A’
-   • Update bindings to show comments as ‘C-u C-c o A’ and remove the
-     old one ‘C-c o o’
-   • Check everything is ok from test point of view
-   • Fix Synchronization problem - #183
-   • Some refactoring to reduce multiple buffer readings
-   • Check package installation
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 054,  Next: Release 053,  Prev: Release 055,  Up: Releases
-
-A.34 Release 0.5.4
-==================
-
-   • Backlog
-   • Archive cards - CLOSE #181
-
-        • Open trello api about (un)archive card
-        • Refactor API to factorize behavior
-        • Install org-trello archive binding [100%]
-
-             • Archive card interactive command
-             • Ensure sync-from trello does not retrieve archive cards
-               too
-             • Remap org’s default archive binding ‘C-c $’ to use
-               org-trello’s
-             • Functional checks before executing archive
-             • Add Archive DONE cards interactive command
-
-   • Fix ‘Most actions not working’ issue - CLOSE #192
-   • Update version
-   • Fix compilation warning(s)
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 053,  Next: Release 052,  Prev: Release 054,  Up: Releases
-
-A.35 Release 0.5.3
-==================
-
-   • Backlog
-   • Emacs blocks when sync - CLOSE #164 - Deferred the sync/delete
-     actions [100%]
-
-        • Align execution of code regarding [100%]
-
-             • Sync to
-             • Sync from
-             • Delete
-
-        • Render the execution asynchronous [100%]
-
-             • Delete
-             • Sync card to trello
-             • Sync buffer to trello
-             • Sync card from trello
-             • Sync buffer from trello
-
-        • Fix alignment problem (sync a card from trello must enforce
-          order on position)
-        • Remove dead code
-        • Refactor behavior between sync card and sync buffer [100%]
-
-             • Refactor behavior
-             • Refactor names
-
-        • Trigger save after sync action - cannot do this because all
-          requests are asynchronous.  So emacs will do it on his own.
-        • Caret must remain where it stands after ‘sync from card’
-          action
-        • Fix - Keep the order when synchronizing the buffer
-        • Improve orgtrello-controller/do-install-key-and-token
-        • Improve org-trello/install-board-and-lists-ids [100%]
-
-             • Let trello do the filtering on listing the boards
-             • Resequence the actions and use parallel requests to
-               improve speed
-             • Improve some more regarding the sequencing
-
-        • Improve org-trello/update-board-metadata [100%]
-
-             • Rework the sequencing
-             • Remove intermediary sync request
-
-        • Clean new dead code
-        • Improve orgtrello-controller/do-create-board-and-lists [100%]
-
-             • Rename org-trello/create-board to
-               org-trello/create-board-and-install-metadata
-             • Resequence the trello requests
-             • Clean up some dead code
-
-   • Fix caret movement problem (At the end of an action, the caret must
-     be at the same position as before)
-   • Improve logging system to prefix org-trello message with
-     ’org-trello -’
-   • Fix create board issue (regarding org keyword list + order +
-     closing list)
-   • Rename org-trello/install-board-and-lists to
-     org-trello/install-board-metadata
-   • Rename org-trello/jump-to-card to org-trello/jump-to-trello-card
-   • Update package doc installation in org-trello.el
-   • Check package dependencies and adapt them if need be
-   • Fix problem with org-trello/end-of-line!  when there is no org
-     information at point
-   • Update version
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 052,  Next: Release 051,  Prev: Release 053,  Up: Releases
-
-A.36 Release 0.5.2
-==================
-
-   • Remove org-trello’s over engineered bricks (proxy, elnode,
-     webadmin) -> this will render it synchronous again.  [100%]
-
-        • Is proxy useful since emacs still blocks?  -> The only thing
-          interesting seems to be the ability to watch running actions.
-          As no one seem to care about it, we can remove it.
-        • Can’t we simply use ’deferred (or ’async library) to defer
-          computations?  -> Yes, building actions (sync, delete) as
-          ’lazy’ list (macro) of deferred computations.
-        • What about concurrency then?  There will be indeed
-          possibilities of concurrent requests.
-        • What about race conditions then?  We need to find a way to
-          compose deferred computations -> deferred
-          (https://github.com/kiwanami/emacs-deferred) seems able to do
-          so
-        • Remove db dependency
-        • Remove elnode dependency
-        • Remove esxml dependency
-        • Remove orgtrello-db.el
-        • Remove orgtrello-webadmin.el
-        • Remove orgtrello-elnode.el
-        • Remove orgtrello-server.el
-        • Clean orgtrello-proxy.el up
-        • Get back to synchronous query (sync to + delete)
-        • Get back to synchronous query for sync from trello routines
-        • Clean load-org-trello.el up
-        • Update README-dev.md about namespace removal
-        • Fix loading of load-org-trello.el code
-        • Clean tests up
-        • Update org-trello package
-
-   • Fix bug regarding sync-entity and structure (apparently, there is a
-     bad limit computation and this syncs the all buffer)
-   • Fix save buffer at the end of the sync actions
-   • Clean README-dev.md about marmalade
-   • Update dependencies version
-   • Now that elnode, esxml, db dependencies’ are out of the way,
-     org-trello can be fully built on melpa-stable.
-   • Update version
-   • Clean dead code
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 051,  Next: Release 050,  Prev: Release 052,  Up: Releases
-
-A.37 Release 0.5.1
-==================
-
-   • Remove marmalade remains (release.sh + Makefile)
-   • Small refactoring of the main contract
-   • Fix bad code (typo caddr)
-   • Update version
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 050,  Next: Release 049,  Prev: Release 051,  Up: Releases
-
-A.38 Release 0.5.0
-==================
-
-   • Revert 0.4.9 #187 which introduced regressions
-     #186#issuecomment-52423783 and maybe #185
-   • Retrieve interesting code from 0.4.9 (for example, start proxy
-     during actions if stopped and warn about it, etc...)
-   • Update version
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 049,  Next: Release 048,  Prev: Release 050,  Up: Releases
-
-A.39 Release 0.4.9
-==================
-
-   • Backlog
-   • Emacs blocks when sync - #164
-
-        • deferred dependency - 0.3.1 chosen because it’s the common
-          denominator between marmalade and melpa
-        • Render the data request consumer asynchoneous
-        • ... emacs still blocks though...
-
-   • Sometimes the proxy seems to not be started (which is a mess), add
-     a check on the running proxy before doing anything.  - #180
-   • During the check of the proxy, if not started, try to start it.
-   • Update version
-   • No longer deliver to marmalade (too much work)
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 048,  Next: Release 047,  Prev: Release 049,  Up: Releases
-
-A.40 Release 0.4.8
-==================
-
-   • Backlog
-   • mad caret syndrom - Close #177
-
-        • mad caret - fix sync to
-        • mad caret - the caret does not move even when sync computation
-          takes place
-        • mad caret - fix sync from
-
-   • Upgrade version
-   • Update release notes
-
-
-File: org-trello.info,  Node: Release 047,  Next: Release 046,  Prev: Release 048,  Up: Releases
-
-A.41 Release 0.4.7
-==================
-
-   • Backlog
-   • Improve the description management in org and trello - #89 #175
-   • Revert to the block json-encode-hash-table
-   • Upgrade version
-   • Update release notes
-
-
-File: org-trello.info,  Node: Release 046,  Next: Release 045,  Prev: Release 047,  Up: Releases
-
-A.42 Release 0.4.6
-==================
-
-   • Prepare Backlog
-   • Fix - CLOSE <https://github.com/org-trello/org-trello/issues/172>
-   • Fix - prelude does some monkey-patching on json-encode-hash-table
-     which is used by org-trello - reimplement this function
-   • CI is broken again - Try to find a solution
-   • Update version
-   • Update release notes
-
-
-File: org-trello.info,  Node: Release 045,  Next: Release 044,  Prev: Release 046,  Up: Releases
-
-A.43 Release 0.4.5
-==================
-
-   • Backlog
-   • ’Sync from trello’ must preserve unknown data card in drawer -
-     CLOSE #167
-
-        • Extract unknown information and store them in org entity
-          representation
-        • Ensure those data transit back in trello data when merging
-        • Write back those unknown information in the sync from trello
-
-   • Update version
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 044,  Next: Release 043,  Prev: Release 045,  Up: Releases
-
-A.44 Release 0.4.4
-==================
-
-   • Multiple files packaging - CLOSE #163
-
-        • Move src/*.el files to /org-trello
-        • Add ’provide statements for each of those files
-        • Rework header + org-trello + footer files
-        • Adapt main org-trello.el files to reference the needed
-          namespaces
-        • Adapt test files so that it continues to work (add the needed
-          require statements)
-        • Adapt loading code routine for developing + testing
-        • Refactoring step - rename some files to avoid confusion
-        • Adapt README-dev.md to the current code adaptation
-        • Adapt cask packaging
-        • Add missing standard header to namespace
-        • Does org-trello still compiles?  NO
-        • Fix simple compilation warnings
-        • Fix some more warnings
-        • Does org-trello’s test work?  YES
-        • Does org-trello work?  NO
-        • Doc - Update docstring to standard emacs convention
-        • Fix org-trello to make it work again
-        • Test package melpa install (adapt org-trello recipe and test
-          M-x package-install-file) -
-          <https://github.com/ardumont/melpa/blob/org-trello-with-multiple-files-packaging/recipes/org-trello>
-        • Test package marmalade install
-
-   • Fix org-trello behavior with overlay on org-return and
-     org-ctrl-c-ret
-   • Update version
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 043,  Next: Release 042,  Prev: Release 044,  Up: Releases
-
-A.45 Release 0.4.3
-==================
-
-   • Prepare backlog
-   • Replace local back-end (file implementation) with a RAM database
-     [100%]
-   • Update README-dev.md about the new db namespace
-   • Remove some useless new code
-   • Improve start/stop server policy (one server may sync multiple
-     buffers/boards... and right now, not really taken into account)
-   • Clean dead code from the implementation switch from implicit disk
-     files db to RAM db [100%]
-   • Improve start/stop server policy 2
-   • Some Refactoring
-   • Version
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 042,  Next: Release 0411,  Prev: Release 043,  Up: Releases
-
-A.46 Release 0.4.2
-==================
-
-   • Refactoring - Remove dead code
-   • Refactoring - Remove duplicated code already existing in dependency
-     library
-   • Improve - Fold all entries when sync full file from trello is done
-   • Improve loading org-trello namespaces for dev purposes
-   • Version
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 0411,  Next: Release 041,  Prev: Release 042,  Up: Releases
-
-A.47 Release 0.4.1.1
-====================
-
-   • Remove non interactive commands
-   • Create board does not work - Close #157
-   • Improve loading keys policy - #156
-   • Use cask to make the packaging and remove old personal routines
-   • Version
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 041,  Next: Release 0401,  Prev: Release 0411,  Up: Releases
-
-A.48 Release 0.4.1
-==================
-
-   • Fix deadline/description problem - #154
-   • Fix deadline/due date problem - #153
-   • When sync from trello, merge non trello org tags with trello tags
-     (to avoid loss for the user)
-   • When sync to trello, filter out org tags that will not be
-     understood by trello (to avoid 400 request from trello)
-   • Add the quick start in the main package description
-   • Version
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 0401,  Next: Release 040,  Prev: Release 041,  Up: Releases
-
-A.49 Release 0.4.0.1
-====================
-
-   • Fix ’Sync doesn’t work if org buffer name contains special
-     characters’ - Close #147
-   • Version
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 040,  Next: Release 039,  Prev: Release 0401,  Up: Releases
-
-A.50 Release 0.4.0
-==================
-
-   • Refactor
-   • Fix - Close <https://github.com/org-trello/org-trello/issues/145>
-   • Remove unused dependency
-   • Update README-dev.md
-   • Version
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 039,  Next: Release 038,  Prev: Release 040,  Up: Releases
-
-A.51 Release 0.3.9
-==================
-
-   • Refactor - Symmetry for all commands where that makes sense
-     (without C-u/with C-u)
-   • Refactor - Enforce the api request creation usage with the params
-     as usual
-   • Let trello filter out needless data - CLOSE
-     <https://github.com/org-trello/org-trello/issues/69>
-
-        • Let trello filter out needless data - get card
-        • Let trello filter out needless data - get checklist
-        • Let trello filter out needless data - get item
-
-   • Upgrade Version
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 038,  Next: Release 037,  Prev: Release 039,  Up: Releases
-
-A.52 Release 0.3.8
-==================
-
-   • Some refactoring
-
-        • Align sync from trello card tags/labels serialization with
-          org’s tags behavior
-        • Refactor open org-trello buffer with title/content
-        • Sanitize functions (move functions to their right namespaces)
-        • Do not override the user’s existing tags
-
-   • Provide org-trello-mode-hook - CLOSE
-     <https://github.com/org-trello/org-trello/issues/116>
-   • Open stop all synchronization actions - CLOSE
-     <https://github.com/org-trello/org-trello/issues/131>
-   • Use C-u keychord to create a symmetry use (e.g. =C-c o s= is sync
-     to trello, ‘C-u C-c o s’ is sync from trello)
-
-        • sync-buffer, sync-to-trello, with C-u, sync-from-trello
-        • assign-me, with C-u, unassign me
-        • A command to ’sync from trello’ the current entity without its
-          structure - CLOSE
-          <https://github.com/org-trello/org-trello/issues/139>
-        • Use C-u on sync-entity-to-trello command to trigger the
-          sync-entity-from-trello
-        • A command to ’sync from trello’ the current entity and its
-          structure - CLOSE
-          <https://github.com/org-trello/org-trello/issues/140>
-        • Use C-u on sync-entity-and-structure-to-trello command to
-          trigger the sync-entity-and-structure-from-trello
-
-   • Some more refactoring
-   • Fix bug regarding org keywords which disappeared
-   • Version
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 037,  Next: Release 0361,  Prev: Release 038,  Up: Releases
-
-A.53 Release 0.3.7
-==================
-
-   • Use ‘defconst’ keyword instead of defvar
-   • Use trello labels and org tags as one - CLOSE
-     <https://github.com/org-trello/org-trello/issues/70>
-   • Refactor + Fix create / connect to board
-   • Update metadata command about the board currently connected
-     (sometimes, new information arise)
-   • Release notes
-   • Version
-
-
-File: org-trello.info,  Node: Release 0361,  Next: Release 036,  Prev: Release 037,  Up: Releases
-
-A.54 Release 0.3.6.1
-====================
-
-   • Fix already used bindings
-   • Fix edge case about adding comments
-   • Version
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 036,  Next: Release 035,  Prev: Release 0361,  Up: Releases
-
-A.55 Release 0.3.6
-==================
-
-   • Test multiple emacs version -
-     <https://github.com/org-trello/org-trello/issues/52>
-   • Add a logo to website -
-     <https://github.com/org-trello/org-trello/issues/129>
-   • Synchronize user comments -
-     <https://github.com/org-trello/org-trello/issues/86>
-   • Add a comment to a card -
-     <https://github.com/org-trello/org-trello/issues/132>
-   • Take control over the test file which is now too big (dispatch in
-     ’namespace’ test buffer)
-   • Version
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 035,  Next: Release 034,  Prev: Release 036,  Up: Releases
-
-A.56 Release 0.3.5
-==================
-
-   • Test multiple emacs version -
-     <https://github.com/org-trello/org-trello/issues/52>
-   • Version
-   • Update documentation note for the package view
-   • Release note
-
-
-File: org-trello.info,  Node: Release 034,  Next: Release 033,  Prev: Release 035,  Up: Releases
-
-A.57 Release 0.3.4
-==================
-
-   • PR fix typo in readme -
-     <https://github.com/org-trello/org-trello/pull/120>
-   • Fix webadmin button to delete running action
-   • Add version emacs 24.3.50 in documentation
-   • Improve computation level for checkbox (checklist/items) -
-     <https://github.com/org-trello/org-trello/issues/121#issuecomment-37559929>
-   • Improve documentation
-   • Upgrade version
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 033,  Next: Release 032,  Prev: Release 034,  Up: Releases
-
-A.58 Release 0.3.3
-==================
-
-   • Issue when installing on melpa reported wrongly on melpa and
-     reported back <https://github.com/org-trello/org-trello/issues/117>
-   • Fix typo when-let in -when-let
-   • Remove org as a dependency, the plugins org- do not seem to declare
-     it + problem in dependency
-   • Upgrade to dash 2.5.0
-   • Clarify the possible manipulation to install the package as a file
-     or directly from the multiple repository
-   • Integration test to install the file with marmalade
-   • Integration test to install the file with melpa
-   • Integration test to fully install the package on marmalade
-   • Integration test to fully install the package on melpa
-   • Update README-dev.md about those targets
-   • Decline these tests with multiple emacs versions
-   • Use these targets on travis (even if the feedback will be way
-     longer, it’s better than no feedback)
-   • Upgrade version
-   • Ensure org-trello works with emacs 24.4 (how do i install it...)
-
-
-File: org-trello.info,  Node: Release 032,  Next: Release 0311,  Prev: Release 033,  Up: Releases
-
-A.59 Release 0.3.2
-==================
-
-   • Use standard remapping to override the org-end-of-line routine -
-     <https://www.gnu.org/software/emacs/manual/html_node/elisp/Remapping-Commands.html>
-   • Clean some dead code
-   • Use standard mode map definition for the org-trello bindings
-   • Fix description extract -
-     <https://github.com/org-trello/org-trello/issues/114>
-   • Version
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 0311,  Next: Release 031,  Prev: Release 032,  Up: Releases
-
-A.60 Release 0.3.1.1
-====================
-
-   • Installation failure -
-     <https://github.com/org-trello/org-trello/issues/112>
-   • Version
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 031,  Next: Release 030,  Prev: Release 0311,  Up: Releases
-
-A.61 Release 0.3.1
-==================
-
-   • Backlog
-   • Version
-   • Avoid duplication in declaring the org-trello version
-   • Add the important information about emacs 24.3+ (org-trello is only
-     supported from this version range)
-   • Clean the code regarding the old checklist/item entities (with
-     stars) - <https://github.com/org-trello/org-trello/issues/105>
-   • Sometimes, multiple cards are created more than once.  Improve the
-     proxy policy regarding this - Unable to reproduce so do nothing.
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 030,  Next: Release 0291,  Prev: Release 031,  Up: Releases
-
-A.62 Release 0.3.0
-==================
-
-   • Backlog
-   • Upgrade Version
-   • org-trello bindings remains present when org-trello is switched
-     off.  Fix it.
-   • Update doc
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 0291,  Next: Release 029,  Prev: Release 030,  Up: Releases
-
-A.63 Release 0.2.9.1
-====================
-
-   • Forgot to ship code
-   • Update version
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 029,  Next: Release 0282,  Prev: Release 0291,  Up: Releases
-
-A.64 Release 0.2.9
-==================
-
-   • Remove org-trello.el at the root of the code (as the package
-     generates this file and the test load without it, no longer needs
-     to be gitted)
-   • Invisible checkbox identifier -
-     <https://github.com/org-trello/org-trello/issues/98>
-   • Fix sync from trello which loses the state of the checkboxes
-   • Fix tests break since org-trello.el has been destroyed and simplify
-     the testing
-   • Overload the C-e mapping to go at the end of the line for the
-     org-trello mode
-   • Update doc
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 0282,  Next: Release 0281,  Prev: Release 029,  Up: Releases
-
-A.65 Release 0.2.8.2
-====================
-
-   • Fix yet another error on synchronization from trello.
-   • Update doc
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 0281,  Next: Release 028,  Prev: Release 0282,  Up: Releases
-
-A.66 Release 0.2.8.1
-====================
-
-   • Fix error on synchronization from trello
-   • Update doc
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 028,  Next: Release 027,  Prev: Release 0281,  Up: Releases
-
-A.67 Release 0.2.8
-==================
-
-   • Backlog
-   • Synchronize description -
-     <https://github.com/org-trello/org-trello/issues/80>
-   • Use –reduce-from from dash instead of cl-reduce to reduce the cl
-     deps
-   • Version
-   • Update doc
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 027,  Next: Release 026,  Prev: Release 028,  Up: Releases
-
-A.68 Release 0.2.7
-==================
-
-   • Backlog
-   • Create TODO template for the backlog start
-   • Clean obsolete files (org-trello.org is no longer maintained,
-     TODO-tests.org is no longer used)
-   • Retry to split into ‘namespace’ files -
-     <https://github.com/org-trello/org-trello/issues/93>
-
-        • Split into ‘namespace’ files
-        • Ensure packaging is generated and ok for marmalade
-        • Ensure packaging is generated and ok for melpa - yes, ensure
-          that the root ‘org-trello.el’ is generated before pushing on
-          master.
-        • Ensure the tests are still ok
-
-   • README-dev - <https://github.com/org-trello/org-trello/issues/99>
-   • Rewrite the abstraction around fetched results to unify the ‘data
-     model’ (in and out identical) -
-     <https://github.com/org-trello/org-trello/issues/100>
-   • Unify the terms around users-assigned (org-trello) and members
-     (trello)
-   • Split the last org-trello namespace into 2 (‘controller’ for the
-     orchestration function call triggered by interactive commands and
-     ‘org-trello’ for the interactive commands)
-   • Unfold every entries before triggering the sync from trello to
-     avoid problems similar as
-     <https://github.com/org-trello/org-trello/issues/53>
-   • Version
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 026,  Next: Release 025,  Prev: Release 027,  Up: Releases
-
-A.69 Release 0.2.6
-==================
-
-   • Jump to card - <https://github.com/org-trello/org-trello/issues/88>
-   • Rewrite convention for the "goto board" action into "jump to board"
-   • Update README.md
-   • Version
-   • Release Note
-
-
-File: org-trello.info,  Node: Release 025,  Next: Release 024,  Prev: Release 026,  Up: Releases
-
-A.70 Release 0.2.5
-==================
-
-   • Backlog updates
-   • Global properties in upper case -
-     <https://github.com/org-trello/org-trello/issues/83>
-   • Hide the global properties -
-     <https://github.com/org-trello/org-trello/issues/77>
-   • Use of checkbox convention -
-     <https://github.com/org-trello/org-trello/issues/78>
-   • Jumping from emacs to the current trello board -
-     <https://github.com/org-trello/org-trello/issues/76>
-   • Simplify the update of the help menu to avoid possible
-     desynchronisation with code
-   • Update documentation + TOC
-   • Version
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 024,  Next: Release 023,  Prev: Release 025,  Up: Releases
-
-A.71 Release 0.2.4
-==================
-
-   • Sprint backlog
-   • Some refactoring + tests coverage
-   • Fix sync-from-trello - Merge org card’s users assigned list and the
-     trello one
-   • Fix sync-from-trello - if new entities are referenced but not yet
-     sync’ed on trello, they will disappear from the buffer when
-     sync-from-trello (they should not) -
-     <https://github.com/org-trello/org-trello/issues/71>
-
-        • Compute the entities without sync’ed properties
-        • Write them silly at the end of the computation of the sync’ed
-          data (trello and org merge) to the org buffer
-
-   • Upgrade version
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 023,  Next: Release 022,  Prev: Release 024,  Up: Releases
-
-A.72 Release 0.2.3
-==================
-
-   • Version
-   • Fix discrepancy between docstring and binding to delete the setup -
-     <https://github.com/org-trello/org-trello/issues/74>
-   • Use a prefix binding which does not override the emacs’s default
-     user prefix (keep the original for the moment to avoid disturbing
-     people which already use it) -
-     <https://github.com/org-trello/org-trello/issues/72>
-   • Update documentation about the possibility to change the default
-     prefix key
-   • Fix ci-travis build due to change in cask installation command
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 022,  Next: Release 0212,  Prev: Release 023,  Up: Releases
-
-A.73 Release 0.2.2
-==================
-
-   • Version
-   • Improve abstraction around data from trello (not complete yet)
-   • Show people assigned to card -
-     <https://github.com/org-trello/org-trello/issues/67>
-
-        • Compute user properties part from the board’s informations
-        • Install board setup routine (C-c o I) also install board users
-        • Create board routine (C-c o i) should also install user boards
-          (only the current user should then appear)
-        • Setuping properties before doing any actions
-        • Cleanup routine should also remove user global properties
-        • User assigns oneself to the card
-        • User unassigns oneself to the card
-        • sync-to-trello also assign users
-        • sync-to-trello also unassign users
-        • sync-from-trello also retrieve user informations and update
-          the org buffer
-        • cleanup routine must cleanup card properties regarding user
-          assigned
-
-   • Update README about new command
-   • Update README TOC
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 0212,  Next: Release 0211,  Prev: Release 022,  Up: Releases
-
-A.74 Release 0.2.1.2
-====================
-
-   • Version
-   • Release notes
-   • Fix typography in naming windows-nt system
-
-
-File: org-trello.info,  Node: Release 0211,  Next: Release 021,  Prev: Release 0212,  Up: Releases
-
-A.75 Release 0.2.1.1
-====================
-
-   • Version
-   • Release notes
-   • Fix error in packaging manipulation
-
-
-File: org-trello.info,  Node: Release 021,  Next: Release 020,  Prev: Release 0211,  Up: Releases
-
-A.76 Release 0.2.1
-==================
-
-   • Version
-   • Improve sync from trello - In case of new item/checklist, the entry
-     will be added at the end of the buffer instead of its rightful
-     place.
-   • Problem regarding some function on windows system -
-     <https://github.com/org-trello/org-trello/issues/62>
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 020,  Next: Release 019,  Prev: Release 021,  Up: Releases
-
-A.77 Release 0.2.0
-==================
-
-   • Version
-   • Improve cleanup of the org-trello metadata
-   • Videos about org-trello
-
-        • Webadmin
-        • Checkbox
-        • Sync from trello
-        • Cleanup trello board
-        • Cleanup org-trello buffe
-
-   • Reference videos to README
-   • Improve sync to trello
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 019,  Next: Release 018,  Prev: Release 020,  Up: Releases
-
-A.78 Release 0.1.9
-==================
-
-   • Clean install org-trello
-   • Ensure sync-from-trello keep the order of the checklists clean
-   • Version
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 018,  Next: Release 0171,  Prev: Release 019,  Up: Releases
-
-A.79 Release 0.1.8
-==================
-
-   • Simplify Cask file
-   • webadmin: Improve rendering [2/2]
-
-        • Better display for the delete buttons.
-        • Use css for the play/pause entities
-
-   • Ensure checks before sync request to the proxy.
-   • Fix sync full entity (related to map-checkbox) -
-     <https://github.com/org-trello/org-trello/issues/53>
-   • Improve the justify policy once and for all (this blinks at the
-     moment!)
-   • Version
-   • Fix problem with archive/unarchive file routine
-   • Fix problem with delete file routine (does not take place)
-   • Add missing callback for the delete action
-   • Improve the post-actions
-
-        • Justify once
-        • Saving once
-        • Unify the saving behaviour with the delete action
-
-
-File: org-trello.info,  Node: Release 0171,  Next: Release 017,  Prev: Release 018,  Up: Releases
-
-A.80 Release 0.1.7.1
-====================
-
-   • Fix problem requiring cl-lib -
-     <https://github.com/org-trello/org-trello/issues/51>
-   • Fix error on when-let -
-     <https://github.com/org-trello/org-trello/issues/54>
-   • Version
-   • release notes
-
-
-File: org-trello.info,  Node: Release 017,  Next: Release 016,  Prev: Release 0171,  Up: Releases
-
-A.81 Release 0.1.7
-==================
-
-   • webadmin: Add an action button on action to stop it
-   • webadmin: Add an action button to stop every running actions on
-     entities
-   • URLencode/Protect the data from the query before executing the
-     query - <https://github.com/org-trello/org-trello/issues/46>
-   • Some refactoring about:
-
-        • Docstring position (same level as function definition, this
-          way, when toggling sexp, we see the docstring too)
-        • Simplification of cond statement
-        • Adding some missing tests
-        • Simplifying some code function (removing let when not needed)
-
-   • Fix the scan problem with level 3 (must have been introduced with
-     the refactoring from number to variable level)
-   • Remove the marker notion and use the identifier in its place (we
-     already use it as marker)
-   • Fix the :PROPERTIES: font lock (which is not painted as keyword)
-   • Improve the justify policy (trim the content before computing the
-     justifying) -> There remains erratic behaviour
-   • Improve map-checkbox to deal with limit (map over checkbox inferior
-     to current level, at the moment, we scan all checkboxes)
-   • Version
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 016,  Next: Release 015,  Prev: Release 017,  Up: Releases
-
-A.82 Release 0.1.6
-==================
-
-   • Use the native org checklist to sync to trello
-   • Sync entity and arborescence tree
-   • Sync to trello must sync the native checklist if the flag is
-     activated
-   • Sync from trello must create native checklists if the flag is
-     activated
-   • Cleanup routine must cleanup the new checklist.
-   • Delete entity must remove entity on point
-   • Upgrade version
-   • Automate the release to marmalade
-   • Justify the #PROPERTIES# to the left for a better rendering
-   • Keywordify the #PROPERTIES#
-   • Merge the org :PROPERTIES: and the org-trello #PROPERTIES# into
-     one.
-   • Improve the activation/deactivation of the new way
-   • Update the readme about the new checkbox mode
-   • Release notes
-   • Release
-
-
-File: org-trello.info,  Node: Release 015,  Next: Release 014,  Prev: Release 016,  Up: Releases
-
-A.83 Release 0.1.5
-==================
-
-   • Symmetry in the architecture - the deletion must pass through the
-     consumer too.
-   • Upgrade version
-   • webadmin: Improve the rendering of the webadmin page to add headers
-     and action
-   • webadmin: Add a current scanning entry in the webadmin page
-   • Defining log level using variable
-   • Redefine main function to sync an entity (they are badly named).
-   • Release notes
-   • Release
-
-
-File: org-trello.info,  Node: Release 014,  Next: Release 013,  Prev: Release 015,  Up: Releases
-
-A.84 Release 0.1.4
-==================
-
-   • Prepare the hierarchy files to avoid problem like
-     <https://github.com/org-trello/org-trello/issues/37#issuecomment-23151353>
-   • Adding a version interactive command (it will help for asking
-     people the version they use).
-   • Upgrade version
-   • Refactoring - simplify code
-   • Improve message labels
-   • Improve failure dealing regarding the sync
-   • Improve the marker computation
-   • Remove the label/title notion and use the name notion (same as
-     trello), this will reduce error reasoning.
-   • Fix the format with missing argument on the callback sync success
-   • Improve the test regarding the synchro completion of a level
-   • Order when syncing to trello
-   • Release notes
-   • Release
-
-
-File: org-trello.info,  Node: Release 013,  Next: Release 012,  Prev: Release 014,  Up: Releases
-
-A.85 Release 0.1.3
-==================
-
-   • Leverage elnode’s webserver capacity to display some basic
-     monitoring about the synchronization
-   • Install bootstrap and jquery.js directly to avoid the user’s manual
-     installation (the first query to static files install bootstrap and
-     jquery now)
-   • Simple end to end test - simple entity creation
-   • Improve the logging policy
-   • Improve the saving policy
-   • Upgrade version
-   • Release notes
-   • Release
-
-
-File: org-trello.info,  Node: Release 012,  Next: Release 011,  Prev: Release 013,  Up: Releases
-
-A.86 Release 0.1.2
-==================
-
-   • Use an intermediary server between org and trello to permit
-     asynchronous actions
-   • Change org-trello’s loading policy + update the readme about it
-   • Find a way to make the proxy less verbose
-   • Fix the loss of todo keywords after the synchronization -> no idea
-     what’s wrong here
-   • Improve the attachment board routine to add the missing | keyword
-     (hardcode with DONE for example)
-   • Improve the clearing of already present heading metadata
-   • Improve the help message to categorize the bindings
-   • Improve the starting/stopping of org-trello
-   • Remove end to end test as this can no longer works with
-     asynchronous
-   • Update the readme to explain the migration from 0.1.1 to 0.1.2
-   • Render the sync to trello routine asynchronous
-   • Render the sync complex entity routine asynchronous
-   • Render the sync from trello asynchronous
-   • Fix check setup routine
-   • Interactive command to cleanup the org-trello data from the current
-     buffer
-   • Interactive command to delete all entities from the board and the
-     org buffer
-   • Update version
-   • Release notes
-   • Release
-
-
-File: org-trello.info,  Node: Release 011,  Next: Release 010,  Prev: Release 012,  Up: Releases
-
-A.87 Release 0.1.1
-==================
-
-   • Literate org-trello
-   • Testing the packaging, at the moment, this is done manually (make
-     package & M-x package-install-file)
-   • Introducing C-c o h at the loading of the buffer when ot is loaded
-   • Update readme/main page with images on videos
-   • Replace already present properties regarding boards before
-     injecting new ones.
-   • Improve the current attach board and list routine to avoid manual
-     setup for the user
-   • Update version
-   • Update dependencies lib to more recent version.
-   • Remove some warnings
-   • Add some message for the user to warn the user to use UTF-8
-   • Force utf-8 for the routine of board installation (create aend
-     attach)
-   • Some more refactoring
-   • Refactoring: formatting code, install consume-key and access token
-     routine improved, ...
-   • Refactoring: UTF-8 warning for every routine + Forcing UTF-8 at
-     setup time (create board and attach board routine)
-   • Refactoring: Adding ^L break line inside the code to delimit the
-     ‘namespace’
-   • Refactoring: Improve the callback use by avoiding to specify them
-   • Refactoring: Restart org-mode after synchronization to avoid losing
-     the user’s setup.
-   • Refactoring: Fix some problems (version, checklist mechanism
-     update, warning on format, create complex entity which sync only
-     the current entity)
-   • Release notes
-   • Release
-
-
-File: org-trello.info,  Node: Release 010,  Next: Release 009,  Prev: Release 011,  Up: Releases
-
-A.88 Release 0.1.0
-==================
-
-   • Fix importing of cards with due date -
-     <https://github.com/org-trello/org-trello/pull/22>
-   • Migrate carton to card.el (travis-ci builds break because of this)
-   • Order of creation of list (from keywords) in trello does not match
-     the order of the keyword
-   • Abstract away the query (:method, :uri, ...) implementation
-   • Abstract away the implementation of the org-data some more (access
-     of the information from the map are embedded in the function
-     instead of delegating to dedicated function, thus not hiding the
-     implementation)
-   • Version
-   • Order when synchronizing from trello does not match trello’s order
-   • Refactor the sync from trello routine function (2 reduce embedded,
-     only one is sufficient)
-   • Enforce the order of the card accord to the org keywords after
-     dumping the new entries from trello
-   • Abstract away the return data from the http request
-   • Update org version to the latest stable
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 009,  Next: Release 008,  Prev: Release 010,  Up: Releases
-
-A.89 Release 0.0.9
-==================
-
-   • Update videos with the new features in the readme
-   • Fix bug regarding the saving buffer routine
-   • Refactoring action code regarding the message to display in the
-     minibuffer (ATM we do not see what is done or not any longer)
-   • Refactoring the http and http-sync functions
-   • Improve the delete entity action by forcing the caret to go at the
-     begin of the line of the heading before killing anything.
-   • Update version
-   • Release notes
-
-
-File: org-trello.info,  Node: Release 008,  Next: Release 007,  Prev: Release 009,  Up: Releases
-
-A.90 Release 0.0.8
-==================
-
-   • Fix the cl-lib dependency
-   • Improve the message when an action is done to let the user know
-     when the action is done!
-   • Better saving buffer policy
-   • Sync org DEADLINE with trello card due -
-     <https://github.com/org-trello/org-trello/issues/17>
-   • Done, Todo on "check lists" - Once the user sets a "check list" to
-     DONE or TODO, then check or uncheck all the tasks it contains.  -
-     <https://github.com/org-trello/org-trello/issues/16>
-   • A simple and parametrable setup to make the user choose to use the
-     checklist system or not
-   • Upgrade version
-   • Release notes
-   • Release
-   • Update documentation about deadline, checklist
-   • Cleanup the debugging functions
-
-
-File: org-trello.info,  Node: Release 007,  Next: Release 0061,  Prev: Release 008,  Up: Releases
-
-A.91 Release 0.0.7
-==================
-
-   • Reference missing bindings in documentation
-   • Upgrade version
-   • Improve the error message around the setup (the setup message is
-     too generic and must be more detailed)
-   • Save the buffer after the synchronization is done (after all we
-     write the trello ids in the buffer)
-   • Release
-
-
-File: org-trello.info,  Node: Release 0061,  Next: Release 006,  Prev: Release 007,  Up: Releases
-
-A.92 Release 0.0.6.1
-====================
-
-   • Fix the json-1.3 dependency, sometimes only 1.2 is available
-   • Update version
-   • Release
-
-
-File: org-trello.info,  Node: Release 006,  Next: Release 005,  Prev: Release 0061,  Up: Releases
-
-A.93 Release 0.0.6
-==================
-
-   • Test that the title/label of the entity is set when syncing to
-     avoid a 400 error
-   • Before making the request, ensure that everything is ok (checklist
-     needs the card id, items needs the checklist id, etc...)
-   • Up the demo video in the beginning of the readme
-   • Improve readme with links to org-mode and trello
-   • Improve readme’s use cases
-   • Mention the possible errors
-   • Mention the emacs version
-   • Update release notes
-   • Update the version
-   • Make a release
-
-
-File: org-trello.info,  Node: Release 005,  Next: Release 0041,  Prev: Release 006,  Up: Releases
-
-A.94 Release 0.0.5
-==================
-
-   • Synchronizing from the trello board must simply computes and
-     add/remove what’s changed [100%]
-   • Rewrite the release notes in their own file
-   • Look on how to make a toc in the README.md in github
-   • Update the release notes
-   • Release on github, marmalade, melpa
-
-
-File: org-trello.info,  Node: Release 0041,  Next: Release 004,  Prev: Release 005,  Up: Releases
-
-A.95 Release 0.0.4.1
-====================
-
-   • Fix the creation board routine regarding the org-mode keywords
-     (dynamic typing hell!)
-   • Improve documentation regarding the possibilities to setup the
-     org-mode keyword
-   • Upgrade version to 0.0.4.1
-   • Release on github, melpa, marmalade
-
-
-File: org-trello.info,  Node: Release 004,  Next: Release 003,  Prev: Release 0041,  Up: Releases
-
-A.96 Release 0.0.4
-==================
-
-   • Permit the user to deal with his/her own trello list (based on
-     his/her org-mode keywords -
-     cf. <http://orgmode.org/manual/In_002dbuffer-settings.html>)
-   • Deploy on marmalade the stable version (and update the readme about
-     it)
-   • Rewrite tests using ‘expectations’
-   • Simplify some code regarding destructuring for example
-   • Remove useless code
-   • Improve documentations and sync the routine check message with the
-     documentation.
-   • Update documentation
-   • Release on github, melpa, marmalade
-
-
-File: org-trello.info,  Node: Release 003,  Next: Release 002,  Prev: Release 004,  Up: Releases
-
-A.97 Release 0.0.3
-==================
-
-   • Syncing complex entities
-   • cleanup useless tests
-   • Namespace cleanup
-   • Building package is now able to deal with the right version
-   • Create a board from org-mode
-   • Display the name of the board as a property file
-   • Cleanup the useless controls
-   • Given a org-mode file, fill in the trello board
-   • Announce in emacs mailing list
-   • Filter out the closed boards from the "choose board list"
-   • filter out level > 4 when syncing.
-   • Given a trello board, sync into a org-mode file
-   • cf. todo/done (./TODO.org) for the remains
-   • Release on github (and the previous version too)
-
-
-File: org-trello.info,  Node: Release 002,  Next: Release 001,  Prev: Release 003,  Up: Releases
-
-A.98 Release 0.0.2
-==================
-
-   • Technical release fixing technical details
-   • Fixing the packaging (inlining into org-trello.el)
-   • Adding ci-travis
-   • Local packaging to help testing
-
-
-File: org-trello.info,  Node: Release 001,  Prev: Release 002,  Up: Releases
-
-A.99 Release 0.0.1
-==================
-
-   • write only mode at the moment (org-mode pushes to trello, no
-     reading yet)
-   • simple entity creation (card, checklist, item/task), the request is
-     asynchroneous
-   • entity deletion (card, checklist, item/task)
-   • Interactive command to ease the setup of the consumer-key and the
-     access-token
-   • Interactive command to ease the setup of one org-mode file (which
-     represents one trello board).  I assume there exists a ’todo’,
-     ’doing’, and ’done’ list (named that way too)
-   • Control that the setup file (consumer-key and access-token) are
-     rightly generated (to avoid later problem)
-   • Control that the properties on the current org-mode file are
-     rightly setuped to access a trello board
-   • packaging for melpa
-
-
-File: org-trello.info,  Node: Credits,  Next: Licenses,  Prev: Releases,  Up: Top
-
-Appendix B Contributor Credits
+Appendix A Contributor Credits
 ******************************
 
 Contributors …
@@ -2186,7 +265,7 @@ Contributors …
 
 File: org-trello.info,  Node: Licenses,  Next: GNU GPL,  Prev: Credits,  Up: Top
 
-Appendix C Manual & Package Licenses
+Appendix B Manual & Package Licenses
 ************************************
 
 This manual is copyrighted ©2019 by Daniel Birket.
@@ -2238,7 +317,7 @@ which begins with this license and non-warranty statement:
 
 File: org-trello.info,  Node: GNU GPL,  Next: GNU FDL,  Prev: Licenses,  Up: Top
 
-Appendix D GNU General Public License
+Appendix C GNU General Public License
 *************************************
 
                         Version 3, 29 June 2007
@@ -2952,9 +1031,9 @@ GNU Lesser General Public License instead of this License.  But first,
 please read <http://www.gnu.org/philosophy/why-not-lgpl.html>.
 
 
-File: org-trello.info,  Node: GNU FDL,  Next: Vars/Funcs,  Prev: GNU GPL,  Up: Top
+File: org-trello.info,  Node: GNU FDL,  Next: Concepts,  Prev: GNU GPL,  Up: Top
 
-Appendix E GNU Free Documentation License
+Appendix D GNU Free Documentation License
 *****************************************
 
                      Version 1.3, 3 November 2008
@@ -3434,21 +1513,9 @@ software license, such as the GNU General Public License, to permit
 their use in free software.
 
 
-File: org-trello.info,  Node: Vars/Funcs,  Next: Keys/Concepts,  Prev: GNU FDL,  Up: Top
+File: org-trello.info,  Node: Concepts,  Next: Keys,  Prev: GNU FDL,  Up: Top
 
-F Variable & Function Index
-***************************
-
- [index ]
-* Menu:
-
-* org-trello-sync-buffer:                Synchronization Functions.
-                                                               (line 11)
-
-
-File: org-trello.info,  Node: Keys/Concepts,  Prev: Vars/Funcs,  Up: Top
-
-G Keys and Concepts Index
+Appendix E Concepts Index
 *************************
 
  [index ]
@@ -3467,130 +1534,2093 @@ G Keys and Concepts Index
 * license, software:                     GNU GPL.               (line 6)
 * org-trello, installing:                Installing.            (line 6)
 * org-trello, using:                     Using.                 (line 6)
-* release notes:                         Releases.              (line 6)
+* release notes:                         Releases.              (line 4)
 * trello.com, connecting:                Connecting.            (line 6)
 * troubleshooting:                       Troubleshooting.       (line 6)
-* version history:                       Releases.              (line 6)
+* version history:                       Releases.              (line 4)
+
+
+File: org-trello.info,  Node: Keys,  Next: Functions,  Prev: Concepts,  Up: Top
+
+Appendix F Key Binding Index
+****************************
+
+ [index ]
+* Menu:
+
+* C-c o C-h:                             Key-Bindings.          (line 8)
+* C-c o s:                               Synchronization Functions.
+                                                                (line 8)
+* C-u C-c o s:                           Synchronization Functions.
+                                                                (line 8)
+
+
+File: org-trello.info,  Node: Functions,  Next: Variables,  Prev: Keys,  Up: Top
+
+Appendix G Functions Index
+**************************
+
+ [index ]
+* Menu:
+
+* org-trello-sync-buffer:                Synchronization Functions.
+                                                                (line 8)
+
+
+File: org-trello.info,  Node: Variables,  Next: Releases,  Prev: Functions,  Up: Top
+
+Appendix H Variables Index
+**************************
+
+
+File: org-trello.info,  Node: Releases,  Prev: Variables,  Up: Top
+
+Appendix I Release Notes
+************************
+
+This appendix records the primary changes in each release of org-trello.
+Please see the repository (https://github.com/org-trello/org-trello) on
+GitHub for a more detailed history.
+
+* Menu:
+
+* Release 0.8.1: Release 081.
+* Release 0.8.0: Release 080.
+* Release 0.7.9: Release 079.
+* Release 0.7.8: Release 078.
+* Release 0.7.7: Release 077.
+* Release 0.7.6: Release 076.
+* Release 0.7.5: Release 075.
+* Release 0.7.4: Release 074.
+* Release 0.7.3: Release 073.
+* Release 0.7.2: Release 072.
+* Release 0.7.1: Release 071.
+* Release 0.7.0: Release 070.
+* Release 0.6.9.6: Release 0696.
+* Release 0.6.9.5: Release 0695.
+* Release 0.6.9.4: Release 0694.
+* Release 0.6.9.3: Release 0693.
+* Release 0.6.9.2: Release 0692.
+* Release 0.6.9.1: Release 0691.
+* Release 0.6.9: Release 069.
+* Release 0.6.8: Release 068.
+* Release 0.6.7: Release 067.
+* Release 0.6.6: Release 066.
+* Release 0.6.5: Release 065.
+* Release 0.6.4: Release 064.
+* Release 0.6.3: Release 063.
+* Release 0.6.2: Release 062.
+* Release 0.6.1: Release 061.
+* Release 0.6.0: Release 060.
+* Release 0.5.9: Release 059.
+* Release 0.5.8: Release 058.
+* Release 0.5.7: Release 057.
+* Release 0.5.6: Release 056.
+* Release 0.5.5: Release 055.
+* Release 0.5.4: Release 054.
+* Release 0.5.3: Release 053.
+* Release 0.5.2: Release 052.
+* Release 0.5.1: Release 051.
+* Release 0.5.0: Release 050.
+* Release 0.4.9: Release 049.
+* Release 0.4.8: Release 048.
+* Release 0.4.7: Release 047.
+* Release 0.4.6: Release 046.
+* Release 0.4.5: Release 045.
+* Release 0.4.4: Release 044.
+* Release 0.4.3: Release 043.
+* Release 0.4.2: Release 042.
+* Release 0.4.1.1: Release 0411.
+* Release 0.4.1: Release 041.
+* Release 0.4.0.1: Release 0401.
+* Release 0.4.0: Release 040.
+* Release 0.3.9: Release 039.
+* Release 0.3.8: Release 038.
+* Release 0.3.7: Release 037.
+* Release 0.3.6.1: Release 0361.
+* Release 0.3.6: Release 036.
+* Release 0.3.5: Release 035.
+* Release 0.3.4: Release 034.
+* Release 0.3.3: Release 033.
+* Release 0.3.2: Release 032.
+* Release 0.3.1.1: Release 0311.
+* Release 0.3.1: Release 031.
+* Release 0.3.0: Release 030.
+* Release 0.2.9.1: Release 0291.
+* Release 0.2.9: Release 029.
+* Release 0.2.8.2: Release 0282.
+* Release 0.2.8.1: Release 0281.
+* Release 0.2.8: Release 028.
+* Release 0.2.7: Release 027.
+* Release 0.2.6: Release 026.
+* Release 0.2.5: Release 025.
+* Release 0.2.4: Release 024.
+* Release 0.2.3: Release 023.
+* Release 0.2.2: Release 022.
+* Release 0.2.1.2: Release 0212.
+* Release 0.2.1.1: Release 0211.
+* Release 0.2.1: Release 021.
+* Release 0.2.0: Release 020.
+* Release 0.1.9: Release 019.
+* Release 0.1.8: Release 018.
+* Release 0.1.7.1: Release 0171.
+* Release 0.1.7: Release 017.
+* Release 0.1.6: Release 016.
+* Release 0.1.5: Release 015.
+* Release 0.1.4: Release 014.
+* Release 0.1.3: Release 013.
+* Release 0.1.2: Release 012.
+* Release 0.1.1: Release 011.
+* Release 0.1.0: Release 010.
+* Release 0.0.9: Release 009.
+* Release 0.0.8: Release 008.
+* Release 0.0.7: Release 007.
+* Release 0.0.6.1: Release 0061.
+* Release 0.0.6: Release 006.
+* Release 0.0.5: Release 005.
+* Release 0.0.4.1: Release 0041.
+* Release 0.0.4: Release 004.
+* Release 0.0.3: Release 003.
+* Release 0.0.2: Release 002.
+* Release 0.0.1: Release 001.
+
+
+File: org-trello.info,  Node: Release 081,  Next: Release 080,  Up: Releases
+
+I.1 Release 0.8.1
+=================
+
+   • Make adding trello colors to ‘org-tag-alist’ optional - Close #365
+   • Fix typo in link to issue tracker - Close #364
+   • Fix ci
+   • Fix user properties search in agenda view - Close #366 - Close #371
+   • Correct bad encoding of json encoded data.
+   • Update version
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 080,  Next: Release 079,  Prev: Release 081,  Up: Releases
+
+I.2 Release 0.8.0
+=================
+
+   • Update travis ci configuration
+   • Fix ci’s multiple problems
+   • Fix some emacs25 incompatibilities
+   • Add copyright headers + update copyright range
+   • Add ’kill-whole-line in bug report
+   • Upgrade version
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 079,  Next: Release 078,  Prev: Release 080,  Up: Releases
+
+I.3 Release 0.7.9
+=================
+
+   • Fix problem with custom kill-whole-line properties - Close #270
+   • Fix problem with scheduled deadline - Close #326
+   • Upgrade version
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 078,  Next: Release 077,  Prev: Release 079,  Up: Releases
+
+I.4 Release 0.7.8
+=================
+
+   • Fix cyrillic encoding problem - Close #318 #270
+   • Update version
+   • Sign tag release
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 077,  Next: Release 076,  Prev: Release 078,  Up: Releases
+
+I.5 Release 0.7.7
+=================
+
+   • Rework packaging problem
+   • Add issue/pr templates
+   • Add request-backend to the org-trello-bug-report
+   • Update version
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 076,  Next: Release 075,  Prev: Release 077,  Up: Releases
+
+I.6 Release 0.7.6
+=================
+
+   • Update version
+   • Support unicode characters in sync - Close #307 Close #309
+   • Fix parsing username comments - Close #301
+   • Fix parsing timestamp in superior emacs (api change)
+   • Update travis-ci scripts to use the new travis infrastructure
+   • fix broken tests (mock.el unit test library revealed broken tests)
+   • Fix problem with org-latex-preview when computing checksums - Close
+     #303
+   • Do not permit empty login when installing access key and token -
+     Close #314
+   • Upgrade dependencies version
+   • Pb with labels-tags regarding the grey - Close #310
+   • Improve documentation about the setup account - #306
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 075,  Next: Release 074,  Prev: Release 076,  Up: Releases
+
+I.7 Release 0.7.5
+=================
+
+   • #290 - Toggling users assignments to card
+   • Add binding ‘C-c o t’ for the toggling command (code, doc, etc...)
+   • #293 - Add a basic user driven completing mechanism (default ido,
+     possibility to use helm...)
+   • #291 - Improve labels policy [4/4]
+
+        • Update api to retrieve more labels
+        • Unify board information retrieval
+        • Update show board labels with the new colors
+        • Fix what went wrong (install existing board + create new one)
+
+   • Open a command to clean org-trello data in buffer
+   • Close board command
+   • Update version
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 074,  Next: Release 073,  Prev: Release 075,  Up: Releases
+
+I.8 Release 0.7.4
+=================
+
+   • Improve release script + fix typo
+   • Update version
+   • Coverage [10/10]
+
+        • stats-coverage.org for statistics (+ travis-ci/coverage.io)
+        • Fix bug on org-trello-log namespace + org-trello-log
+        • org-trello-input
+        • org-trello-query
+        • org-trello-proxy
+        • org-trello-buffer
+        • org-trello-controller
+        • org-trello-data
+        • org-trello-hash
+        • org-trello
+
+   • #283 - Toggle assign me action
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 073,  Next: Release 072,  Prev: Release 074,  Up: Releases
+
+I.9 Release 0.7.3
+=================
+
+   • Update version
+   • Close #277 - Improve date time policy conversion
+   • Improve release + upload to marmalade scripts
+   • Fix flycheck warnings
+   • Some refactoring
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 072,  Next: Release 071,  Prev: Release 073,  Up: Releases
+
+I.10 Release 0.7.2
+==================
+
+   • Update version
+   • Close #276 - Markdown rendering in comments
+   • Add test coverage
+   • [internal] Full respect elisp convention
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 071,  Next: Release 070,  Prev: Release 072,  Up: Releases
+
+I.11 Release 0.7.1
+==================
+
+   • Update version
+   • Close #272 - Use native completion mechanism
+   • Close #273 - Fix labels when installing board
+   • Close #271 - Make a user option for user to decide the policy about
+     checksum and position
+   • Use improved native completin mechanism (again)
+   • Close #274 - Add ‘M-x org-trello-bug-report’ command
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 070,  Next: Release 0696,  Prev: Release 071,  Up: Releases
+
+I.12 Release 0.7.0
+==================
+
+   • Update version
+   • Close #238 - [internal] Respect elisp coding conventions [2/2]
+
+        • Rename constants + variables
+        • Rename entry points according to conventions + alias old
+          definitions for backward compatibility
+
+   • Close #239 - Migrate ~/.trello/config.el inside
+     user-emacs-directory
+   • Close #256 - one user can have multiple trello accounts [4/4]
+
+        • Migrate the actual setup to the multi-account setup
+          (transparent for user)
+        • Update ‘org-trello-install-key-and-token’ command to create
+          the account setup
+        • Update the loading configuration mechanism multi-account aware
+        • Make sure initializing org-trello account is ok
+
+   • Close #267 - Emptying card’s description does not work
+   • Remove too much verbosity (when deleting property checksum)
+   • Close #250 - Changing order of checklist items not saved unless
+     checklist item’s text changed
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 0696,  Next: Release 0695,  Prev: Release 070,  Up: Releases
+
+I.13 Release 0.6.9.6
+====================
+
+   • Create backlog
+   • Update version
+   • Fix #261 - Modifying/Adding labels ok, removing labels completely
+     ko
+   • Fix #262 - Mix between user ids and user name when assigning card
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 0695,  Next: Release 0694,  Prev: Release 0696,  Up: Releases
+
+I.14 Release 0.6.9.5
+====================
+
+   • Create backlog
+   • Update version
+   • Fix marmalade’s release.sh script
+   • Fix #255 regarding the org tags/trello labels
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 0694,  Next: Release 0693,  Prev: Release 0695,  Up: Releases
+
+I.15 Release 0.6.9.4
+====================
+
+   • Update version
+   • Fix <https://github.com/org-trello/org-trello/issues/252>
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 0693,  Next: Release 0692,  Prev: Release 0694,  Up: Releases
+
+I.16 Release 0.6.9.3
+====================
+
+   • Create backlog
+   • Update version
+   • Problem in first comment point computation - Close #242
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 0692,  Next: Release 0691,  Prev: Release 0693,  Up: Releases
+
+I.17 Release 0.6.9.2
+====================
+
+   • Update version
+   • Clean dead code regarding old comments system
+   • Fix bug regarding comments indentation (breaking org rendering)
+   • Fix bug regarding empty card and next card indentation (breaking
+     org rendering)
+   • Fix compile log warning about orgtrello-buffer depending on
+     orgtrello-controller (wrong)
+   • Update README-dev.md
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 0691,  Next: Release 069,  Prev: Release 0692,  Up: Releases
+
+I.18 Release 0.6.9.1
+====================
+
+   • Create backlog
+   • Update version
+   • Fix region computation problem regarding comments -
+     <https://github.com/org-trello/org-trello/issues/232>
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 069,  Next: Release 068,  Prev: Release 0691,  Up: Releases
+
+I.19 Release 0.6.9
+==================
+
+   • Create backlog
+   • Update version
+   • Fix #+property keyword to #+PROPERTY - CLOSE
+     <https://github.com/org-trello/org-trello/issues/234>
+   • Fix missing line on future org-mode 8.3 - CLOSE
+     <https://github.com/org-trello/org-trello/issues/232>
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 068,  Next: Release 067,  Prev: Release 069,  Up: Releases
+
+I.20 Release 0.6.8
+==================
+
+   • Create backlog
+   • Update version
+   • Edit comment direct in buffer - CLOSE
+     <https://github.com/org-trello/org-trello/issues/221>
+   • Open binding ‘C-c o U’ for ‘sync a comment’ action
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 067,  Next: Release 066,  Prev: Release 068,  Up: Releases
+
+I.21 Release 0.6.7
+==================
+
+   • Create backlog
+   • Update version
+   • Improve/Refactor the comment deletion
+   • Fix ‘orgtrello-buffer/pop-up-with-content!’
+   • Improve comment creation - CLOSE
+     <https://github.com/org-trello/org-trello/issues/222> [2/2]
+
+        • Add checksum to the comments
+        • Improve comment creation
+
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 066,  Next: Release 065,  Prev: Release 067,  Up: Releases
+
+I.22 Release 0.6.6
+==================
+
+   • Create backlog
+   • Update version
+   • Delete comments - CLOSE
+     <https://github.com/org-trello/org-trello/issues/222>
+   • Clean no longer used show comments commands + install the delete
+     comment command
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 065,  Next: Release 064,  Prev: Release 066,  Up: Releases
+
+I.23 Release 0.6.5
+==================
+
+   • Create backlog
+   • Update version
+   • Maintenance - Revert tests back to ert-deftest to have more
+     explicit error outputs
+   • Fix unit tests
+   • Fix CI which does not break when failure or error.
+   • Format user’s comments in a readable format -
+     <https://github.com/org-trello/org-trello/issues/218> [2/2]
+
+        • Update the comment’s format according to
+          <https://github.com/org-trello/org-trello/issues/218#issue-48750430>
+        • Update the ‘org-trello/add-card-comment’ command to improve
+          creating comment
+
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 064,  Next: Release 063,  Prev: Release 065,  Up: Releases
+
+I.24 Release 0.6.4
+==================
+
+   • Minor change to allow abbreviated file path -
+     <https://github.com/org-trello/org-trello/pull/213>
+   • Update version
+   • Move file list functionality to org-trello.el - CLOSE
+     <https://github.com/org-trello/org-trello/issues/214>
+   • Add ;;;### autoload for the org-trello’s default commands
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 063,  Next: Release 062,  Prev: Release 064,  Up: Releases
+
+I.25 Release 0.6.3
+==================
+
+   • Update version
+   • Enable org-trello mode automatically for certain files -
+     <https://github.com/org-trello/org-trello/issues/210>
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 062,  Next: Release 061,  Prev: Release 063,  Up: Releases
+
+I.26 Release 0.6.2
+==================
+
+   • Backlog
+   • Update version
+   • Improve check connection to trello
+   • Improve documentation about the org-trello setup
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 061,  Next: Release 060,  Prev: Release 062,  Up: Releases
+
+I.27 Release 0.6.1
+==================
+
+   • Update version
+   • ‘Trello archived’ cards are not archived on org-trello buffers -
+     CLOSE <https://github.com/org-trello/org-trello/issues/203>
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 060,  Next: Release 059,  Prev: Release 061,  Up: Releases
+
+I.28 Release 0.6.0
+==================
+
+   • Refactor - Unify data structure between trello card and org-trello
+     card
+   • Refactor - Improve merge computations
+   • Refactor - Remove some dead code
+   • Update version
+   • Improve sync request policy -
+     <https://github.com/org-trello/org-trello/issues/58> [87%]
+
+        • ’Sync card to trello’ syncs card only if local changes
+        • ’Sync card from trello’ updates the card from trello and the
+          local checksum signature
+        • ’Sync buffer from trello’ updates the local card checksum
+        • ’Sync buffer to trello’ syncs only card with local changes
+        • ’Delete entity’ updates the checksum
+        • Extend the checksum system to the checkbox entities
+          (checklist/item) - sync to trello
+        • Extend the checksum system to the checkbox entities
+          (checklist/item) - sync from trello
+        • Update checksum computation depending on entities
+
+   • ‘Checklists don't work for me’ - It does work - Need to improve
+     checklist and item predicates.  - CLOSE
+     <https://github.com/org-trello/org-trello/issues/204>
+
+        • Fix behavior
+        • Fix tests
+
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 059,  Next: Release 058,  Prev: Release 060,  Up: Releases
+
+I.29 Release 0.5.9
+==================
+
+   • Backlog
+   • Update version
+   • Improve region card computation for sync card from trello.
+   • Fix error on sync card from trello when nothing to sync.
+   • Use defcustom instead of defvar for user customisation - CLOSE #196
+     (https://github.com/org-trello/org-trello/issues/196)
+   • When not in card, explain why you cannot do the current action
+   • Improve display of error when sync a card without title
+   • Check package installation and fix what’s needed
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 058,  Next: Release 057,  Prev: Release 059,  Up: Releases
+
+I.30 Release 0.5.8
+==================
+
+   • Backlog
+   • Update version
+   • Add emacs24 dependencies -
+     <https://github.com/purcell/org-trello/commit/0fef27e83d5b1c68af03213354ddd97448c802d2>
+        • 
+     <http://www.gnu.org/software/emacs/manual/html_node/elisp/Library-Headers.html#Library-Headers>
+        • 
+     <http://stackoverflow.com/questions/16805645/how-can-i-gracefully-drop-support-for-older-emacsen-in-my-elisp-package>
+   • Downgrade request dependency to 0.3.1 to make org-trello
+     installation possible in melpa-stable (no answer from ‘request’
+     maintainer) + <https://github.com/org-trello/org-trello/issues/195>
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 057,  Next: Release 056,  Prev: Release 058,  Up: Releases
+
+I.31 Release 0.5.7
+==================
+
+   • Backlog
+   • Update version
+   • Fix default keyword when not specified (trello list name) - #183
+     (https://github.com/org-trello/org-trello/issues/183)
+   • Remove reference to proxy in log messages
+   • Sync buffer from trello - Ignore errors when there is nothing to
+     sort.
+   • Sync buffer from trello - Fold buffer entries when done.
+   • Fix bug on (orgtrello-entity/compute-card-region!)
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 056,  Next: Release 055,  Prev: Release 057,  Up: Releases
+
+I.32 Release 0.5.6
+==================
+
+   • backlog
+   • Update version
+   • Use save-excursion - save-restriction - narrow-to-region instead of
+     using region
+   • Fix behavior orgtrello-buffer/end-of-line!  When going to end of
+     line in checkbox, we need to do it twice, fix.
+   • Small refactoring about overlays
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 055,  Next: Release 054,  Prev: Release 056,  Up: Releases
+
+I.33 Release 0.5.5
+==================
+
+   • Backlog
+   • Update version
+   • Update main github’s readme to static link to the main
+     documentation site.
+   • Update bindings order to regroup them
+   • Add bindings for archiving cards ‘C-c o A’
+   • Remove old bindings ‘C-c o C’ that synced the card.
+   • Update bindings ‘C-c o A’ to add comments to the card to ‘C-c o A’
+   • Update bindings to show comments as ‘C-u C-c o A’ and remove the
+     old one ‘C-c o o’
+   • Check everything is ok from test point of view
+   • Fix Synchronization problem - #183
+   • Some refactoring to reduce multiple buffer readings
+   • Check package installation
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 054,  Next: Release 053,  Prev: Release 055,  Up: Releases
+
+I.34 Release 0.5.4
+==================
+
+   • Backlog
+   • Archive cards - CLOSE #181
+
+        • Open trello api about (un)archive card
+        • Refactor API to factorize behavior
+        • Install org-trello archive binding [100%]
+
+             • Archive card interactive command
+             • Ensure sync-from trello does not retrieve archive cards
+               too
+             • Remap org’s default archive binding ‘C-c $’ to use
+               org-trello’s
+             • Functional checks before executing archive
+             • Add Archive DONE cards interactive command
+
+   • Fix ‘Most actions not working’ issue - CLOSE #192
+   • Update version
+   • Fix compilation warning(s)
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 053,  Next: Release 052,  Prev: Release 054,  Up: Releases
+
+I.35 Release 0.5.3
+==================
+
+   • Backlog
+   • Emacs blocks when sync - CLOSE #164 - Deferred the sync/delete
+     actions [100%]
+
+        • Align execution of code regarding [100%]
+
+             • Sync to
+             • Sync from
+             • Delete
+
+        • Render the execution asynchronous [100%]
+
+             • Delete
+             • Sync card to trello
+             • Sync buffer to trello
+             • Sync card from trello
+             • Sync buffer from trello
+
+        • Fix alignment problem (sync a card from trello must enforce
+          order on position)
+        • Remove dead code
+        • Refactor behavior between sync card and sync buffer [100%]
+
+             • Refactor behavior
+             • Refactor names
+
+        • Trigger save after sync action - cannot do this because all
+          requests are asynchronous.  So emacs will do it on his own.
+        • Caret must remain where it stands after ‘sync from card’
+          action
+        • Fix - Keep the order when synchronizing the buffer
+        • Improve orgtrello-controller/do-install-key-and-token
+        • Improve org-trello/install-board-and-lists-ids [100%]
+
+             • Let trello do the filtering on listing the boards
+             • Resequence the actions and use parallel requests to
+               improve speed
+             • Improve some more regarding the sequencing
+
+        • Improve org-trello/update-board-metadata [100%]
+
+             • Rework the sequencing
+             • Remove intermediary sync request
+
+        • Clean new dead code
+        • Improve orgtrello-controller/do-create-board-and-lists [100%]
+
+             • Rename org-trello/create-board to
+               org-trello/create-board-and-install-metadata
+             • Resequence the trello requests
+             • Clean up some dead code
+
+   • Fix caret movement problem (At the end of an action, the caret must
+     be at the same position as before)
+   • Improve logging system to prefix org-trello message with
+     ’org-trello -’
+   • Fix create board issue (regarding org keyword list + order +
+     closing list)
+   • Rename org-trello/install-board-and-lists to
+     org-trello/install-board-metadata
+   • Rename org-trello/jump-to-card to org-trello/jump-to-trello-card
+   • Update package doc installation in org-trello.el
+   • Check package dependencies and adapt them if need be
+   • Fix problem with org-trello/end-of-line!  when there is no org
+     information at point
+   • Update version
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 052,  Next: Release 051,  Prev: Release 053,  Up: Releases
+
+I.36 Release 0.5.2
+==================
+
+   • Remove org-trello’s over engineered bricks (proxy, elnode,
+     webadmin) -> this will render it synchronous again.  [100%]
+
+        • Is proxy useful since emacs still blocks?  -> The only thing
+          interesting seems to be the ability to watch running actions.
+          As no one seem to care about it, we can remove it.
+        • Can’t we simply use ’deferred (or ’async library) to defer
+          computations?  -> Yes, building actions (sync, delete) as
+          ’lazy’ list (macro) of deferred computations.
+        • What about concurrency then?  There will be indeed
+          possibilities of concurrent requests.
+        • What about race conditions then?  We need to find a way to
+          compose deferred computations -> deferred
+          (https://github.com/kiwanami/emacs-deferred) seems able to do
+          so
+        • Remove db dependency
+        • Remove elnode dependency
+        • Remove esxml dependency
+        • Remove orgtrello-db.el
+        • Remove orgtrello-webadmin.el
+        • Remove orgtrello-elnode.el
+        • Remove orgtrello-server.el
+        • Clean orgtrello-proxy.el up
+        • Get back to synchronous query (sync to + delete)
+        • Get back to synchronous query for sync from trello routines
+        • Clean load-org-trello.el up
+        • Update README-dev.md about namespace removal
+        • Fix loading of load-org-trello.el code
+        • Clean tests up
+        • Update org-trello package
+
+   • Fix bug regarding sync-entity and structure (apparently, there is a
+     bad limit computation and this syncs the all buffer)
+   • Fix save buffer at the end of the sync actions
+   • Clean README-dev.md about marmalade
+   • Update dependencies version
+   • Now that elnode, esxml, db dependencies’ are out of the way,
+     org-trello can be fully built on melpa-stable.
+   • Update version
+   • Clean dead code
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 051,  Next: Release 050,  Prev: Release 052,  Up: Releases
+
+I.37 Release 0.5.1
+==================
+
+   • Remove marmalade remains (release.sh + Makefile)
+   • Small refactoring of the main contract
+   • Fix bad code (typo caddr)
+   • Update version
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 050,  Next: Release 049,  Prev: Release 051,  Up: Releases
+
+I.38 Release 0.5.0
+==================
+
+   • Revert 0.4.9 #187 which introduced regressions
+     #186#issuecomment-52423783 and maybe #185
+   • Retrieve interesting code from 0.4.9 (for example, start proxy
+     during actions if stopped and warn about it, etc...)
+   • Update version
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 049,  Next: Release 048,  Prev: Release 050,  Up: Releases
+
+I.39 Release 0.4.9
+==================
+
+   • Backlog
+   • Emacs blocks when sync - #164
+
+        • deferred dependency - 0.3.1 chosen because it’s the common
+          denominator between marmalade and melpa
+        • Render the data request consumer asynchoneous
+        • ... emacs still blocks though...
+
+   • Sometimes the proxy seems to not be started (which is a mess), add
+     a check on the running proxy before doing anything.  - #180
+   • During the check of the proxy, if not started, try to start it.
+   • Update version
+   • No longer deliver to marmalade (too much work)
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 048,  Next: Release 047,  Prev: Release 049,  Up: Releases
+
+I.40 Release 0.4.8
+==================
+
+   • Backlog
+   • mad caret syndrom - Close #177
+
+        • mad caret - fix sync to
+        • mad caret - the caret does not move even when sync computation
+          takes place
+        • mad caret - fix sync from
+
+   • Upgrade version
+   • Update release notes
+
+
+File: org-trello.info,  Node: Release 047,  Next: Release 046,  Prev: Release 048,  Up: Releases
+
+I.41 Release 0.4.7
+==================
+
+   • Backlog
+   • Improve the description management in org and trello - #89 #175
+   • Revert to the block json-encode-hash-table
+   • Upgrade version
+   • Update release notes
+
+
+File: org-trello.info,  Node: Release 046,  Next: Release 045,  Prev: Release 047,  Up: Releases
+
+I.42 Release 0.4.6
+==================
+
+   • Prepare Backlog
+   • Fix - CLOSE <https://github.com/org-trello/org-trello/issues/172>
+   • Fix - prelude does some monkey-patching on json-encode-hash-table
+     which is used by org-trello - reimplement this function
+   • CI is broken again - Try to find a solution
+   • Update version
+   • Update release notes
+
+
+File: org-trello.info,  Node: Release 045,  Next: Release 044,  Prev: Release 046,  Up: Releases
+
+I.43 Release 0.4.5
+==================
+
+   • Backlog
+   • ’Sync from trello’ must preserve unknown data card in drawer -
+     CLOSE #167
+
+        • Extract unknown information and store them in org entity
+          representation
+        • Ensure those data transit back in trello data when merging
+        • Write back those unknown information in the sync from trello
+
+   • Update version
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 044,  Next: Release 043,  Prev: Release 045,  Up: Releases
+
+I.44 Release 0.4.4
+==================
+
+   • Multiple files packaging - CLOSE #163
+
+        • Move src/*.el files to /org-trello
+        • Add ’provide statements for each of those files
+        • Rework header + org-trello + footer files
+        • Adapt main org-trello.el files to reference the needed
+          namespaces
+        • Adapt test files so that it continues to work (add the needed
+          require statements)
+        • Adapt loading code routine for developing + testing
+        • Refactoring step - rename some files to avoid confusion
+        • Adapt README-dev.md to the current code adaptation
+        • Adapt cask packaging
+        • Add missing standard header to namespace
+        • Does org-trello still compiles?  NO
+        • Fix simple compilation warnings
+        • Fix some more warnings
+        • Does org-trello’s test work?  YES
+        • Does org-trello work?  NO
+        • Doc - Update docstring to standard emacs convention
+        • Fix org-trello to make it work again
+        • Test package melpa install (adapt org-trello recipe and test
+          M-x package-install-file) -
+          <https://github.com/ardumont/melpa/blob/org-trello-with-multiple-files-packaging/recipes/org-trello>
+        • Test package marmalade install
+
+   • Fix org-trello behavior with overlay on org-return and
+     org-ctrl-c-ret
+   • Update version
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 043,  Next: Release 042,  Prev: Release 044,  Up: Releases
+
+I.45 Release 0.4.3
+==================
+
+   • Prepare backlog
+   • Replace local back-end (file implementation) with a RAM database
+     [100%]
+   • Update README-dev.md about the new db namespace
+   • Remove some useless new code
+   • Improve start/stop server policy (one server may sync multiple
+     buffers/boards... and right now, not really taken into account)
+   • Clean dead code from the implementation switch from implicit disk
+     files db to RAM db [100%]
+   • Improve start/stop server policy 2
+   • Some Refactoring
+   • Version
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 042,  Next: Release 0411,  Prev: Release 043,  Up: Releases
+
+I.46 Release 0.4.2
+==================
+
+   • Refactoring - Remove dead code
+   • Refactoring - Remove duplicated code already existing in dependency
+     library
+   • Improve - Fold all entries when sync full file from trello is done
+   • Improve loading org-trello namespaces for dev purposes
+   • Version
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 0411,  Next: Release 041,  Prev: Release 042,  Up: Releases
+
+I.47 Release 0.4.1.1
+====================
+
+   • Remove non interactive commands
+   • Create board does not work - Close #157
+   • Improve loading keys policy - #156
+   • Use cask to make the packaging and remove old personal routines
+   • Version
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 041,  Next: Release 0401,  Prev: Release 0411,  Up: Releases
+
+I.48 Release 0.4.1
+==================
+
+   • Fix deadline/description problem - #154
+   • Fix deadline/due date problem - #153
+   • When sync from trello, merge non trello org tags with trello tags
+     (to avoid loss for the user)
+   • When sync to trello, filter out org tags that will not be
+     understood by trello (to avoid 400 request from trello)
+   • Add the quick start in the main package description
+   • Version
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 0401,  Next: Release 040,  Prev: Release 041,  Up: Releases
+
+I.49 Release 0.4.0.1
+====================
+
+   • Fix ’Sync doesn’t work if org buffer name contains special
+     characters’ - Close #147
+   • Version
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 040,  Next: Release 039,  Prev: Release 0401,  Up: Releases
+
+I.50 Release 0.4.0
+==================
+
+   • Refactor
+   • Fix - Close <https://github.com/org-trello/org-trello/issues/145>
+   • Remove unused dependency
+   • Update README-dev.md
+   • Version
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 039,  Next: Release 038,  Prev: Release 040,  Up: Releases
+
+I.51 Release 0.3.9
+==================
+
+   • Refactor - Symmetry for all commands where that makes sense
+     (without C-u/with C-u)
+   • Refactor - Enforce the api request creation usage with the params
+     as usual
+   • Let trello filter out needless data - CLOSE
+     <https://github.com/org-trello/org-trello/issues/69>
+
+        • Let trello filter out needless data - get card
+        • Let trello filter out needless data - get checklist
+        • Let trello filter out needless data - get item
+
+   • Upgrade Version
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 038,  Next: Release 037,  Prev: Release 039,  Up: Releases
+
+I.52 Release 0.3.8
+==================
+
+   • Some refactoring
+
+        • Align sync from trello card tags/labels serialization with
+          org’s tags behavior
+        • Refactor open org-trello buffer with title/content
+        • Sanitize functions (move functions to their right namespaces)
+        • Do not override the user’s existing tags
+
+   • Provide org-trello-mode-hook - CLOSE
+     <https://github.com/org-trello/org-trello/issues/116>
+   • Open stop all synchronization actions - CLOSE
+     <https://github.com/org-trello/org-trello/issues/131>
+   • Use C-u keychord to create a symmetry use (e.g. =C-c o s= is sync
+     to trello, ‘C-u C-c o s’ is sync from trello)
+
+        • sync-buffer, sync-to-trello, with C-u, sync-from-trello
+        • assign-me, with C-u, unassign me
+        • A command to ’sync from trello’ the current entity without its
+          structure - CLOSE
+          <https://github.com/org-trello/org-trello/issues/139>
+        • Use C-u on sync-entity-to-trello command to trigger the
+          sync-entity-from-trello
+        • A command to ’sync from trello’ the current entity and its
+          structure - CLOSE
+          <https://github.com/org-trello/org-trello/issues/140>
+        • Use C-u on sync-entity-and-structure-to-trello command to
+          trigger the sync-entity-and-structure-from-trello
+
+   • Some more refactoring
+   • Fix bug regarding org keywords which disappeared
+   • Version
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 037,  Next: Release 0361,  Prev: Release 038,  Up: Releases
+
+I.53 Release 0.3.7
+==================
+
+   • Use ‘defconst’ keyword instead of defvar
+   • Use trello labels and org tags as one - CLOSE
+     <https://github.com/org-trello/org-trello/issues/70>
+   • Refactor + Fix create / connect to board
+   • Update metadata command about the board currently connected
+     (sometimes, new information arise)
+   • Release notes
+   • Version
+
+
+File: org-trello.info,  Node: Release 0361,  Next: Release 036,  Prev: Release 037,  Up: Releases
+
+I.54 Release 0.3.6.1
+====================
+
+   • Fix already used bindings
+   • Fix edge case about adding comments
+   • Version
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 036,  Next: Release 035,  Prev: Release 0361,  Up: Releases
+
+I.55 Release 0.3.6
+==================
+
+   • Test multiple emacs version -
+     <https://github.com/org-trello/org-trello/issues/52>
+   • Add a logo to website -
+     <https://github.com/org-trello/org-trello/issues/129>
+   • Synchronize user comments -
+     <https://github.com/org-trello/org-trello/issues/86>
+   • Add a comment to a card -
+     <https://github.com/org-trello/org-trello/issues/132>
+   • Take control over the test file which is now too big (dispatch in
+     ’namespace’ test buffer)
+   • Version
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 035,  Next: Release 034,  Prev: Release 036,  Up: Releases
+
+I.56 Release 0.3.5
+==================
+
+   • Test multiple emacs version -
+     <https://github.com/org-trello/org-trello/issues/52>
+   • Version
+   • Update documentation note for the package view
+   • Release note
+
+
+File: org-trello.info,  Node: Release 034,  Next: Release 033,  Prev: Release 035,  Up: Releases
+
+I.57 Release 0.3.4
+==================
+
+   • PR fix typo in readme -
+     <https://github.com/org-trello/org-trello/pull/120>
+   • Fix webadmin button to delete running action
+   • Add version emacs 24.3.50 in documentation
+   • Improve computation level for checkbox (checklist/items) -
+     <https://github.com/org-trello/org-trello/issues/121#issuecomment-37559929>
+   • Improve documentation
+   • Upgrade version
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 033,  Next: Release 032,  Prev: Release 034,  Up: Releases
+
+I.58 Release 0.3.3
+==================
+
+   • Issue when installing on melpa reported wrongly on melpa and
+     reported back <https://github.com/org-trello/org-trello/issues/117>
+   • Fix typo when-let in -when-let
+   • Remove org as a dependency, the plugins org- do not seem to declare
+     it + problem in dependency
+   • Upgrade to dash 2.5.0
+   • Clarify the possible manipulation to install the package as a file
+     or directly from the multiple repository
+   • Integration test to install the file with marmalade
+   • Integration test to install the file with melpa
+   • Integration test to fully install the package on marmalade
+   • Integration test to fully install the package on melpa
+   • Update README-dev.md about those targets
+   • Decline these tests with multiple emacs versions
+   • Use these targets on travis (even if the feedback will be way
+     longer, it’s better than no feedback)
+   • Upgrade version
+   • Ensure org-trello works with emacs 24.4 (how do i install it...)
+
+
+File: org-trello.info,  Node: Release 032,  Next: Release 0311,  Prev: Release 033,  Up: Releases
+
+I.59 Release 0.3.2
+==================
+
+   • Use standard remapping to override the org-end-of-line routine -
+     <https://www.gnu.org/software/emacs/manual/html_node/elisp/Remapping-Commands.html>
+   • Clean some dead code
+   • Use standard mode map definition for the org-trello bindings
+   • Fix description extract -
+     <https://github.com/org-trello/org-trello/issues/114>
+   • Version
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 0311,  Next: Release 031,  Prev: Release 032,  Up: Releases
+
+I.60 Release 0.3.1.1
+====================
+
+   • Installation failure -
+     <https://github.com/org-trello/org-trello/issues/112>
+   • Version
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 031,  Next: Release 030,  Prev: Release 0311,  Up: Releases
+
+I.61 Release 0.3.1
+==================
+
+   • Backlog
+   • Version
+   • Avoid duplication in declaring the org-trello version
+   • Add the important information about emacs 24.3+ (org-trello is only
+     supported from this version range)
+   • Clean the code regarding the old checklist/item entities (with
+     stars) - <https://github.com/org-trello/org-trello/issues/105>
+   • Sometimes, multiple cards are created more than once.  Improve the
+     proxy policy regarding this - Unable to reproduce so do nothing.
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 030,  Next: Release 0291,  Prev: Release 031,  Up: Releases
+
+I.62 Release 0.3.0
+==================
+
+   • Backlog
+   • Upgrade Version
+   • org-trello bindings remains present when org-trello is switched
+     off.  Fix it.
+   • Update doc
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 0291,  Next: Release 029,  Prev: Release 030,  Up: Releases
+
+I.63 Release 0.2.9.1
+====================
+
+   • Forgot to ship code
+   • Update version
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 029,  Next: Release 0282,  Prev: Release 0291,  Up: Releases
+
+I.64 Release 0.2.9
+==================
+
+   • Remove org-trello.el at the root of the code (as the package
+     generates this file and the test load without it, no longer needs
+     to be gitted)
+   • Invisible checkbox identifier -
+     <https://github.com/org-trello/org-trello/issues/98>
+   • Fix sync from trello which loses the state of the checkboxes
+   • Fix tests break since org-trello.el has been destroyed and simplify
+     the testing
+   • Overload the C-e mapping to go at the end of the line for the
+     org-trello mode
+   • Update doc
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 0282,  Next: Release 0281,  Prev: Release 029,  Up: Releases
+
+I.65 Release 0.2.8.2
+====================
+
+   • Fix yet another error on synchronization from trello.
+   • Update doc
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 0281,  Next: Release 028,  Prev: Release 0282,  Up: Releases
+
+I.66 Release 0.2.8.1
+====================
+
+   • Fix error on synchronization from trello
+   • Update doc
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 028,  Next: Release 027,  Prev: Release 0281,  Up: Releases
+
+I.67 Release 0.2.8
+==================
+
+   • Backlog
+   • Synchronize description -
+     <https://github.com/org-trello/org-trello/issues/80>
+   • Use –reduce-from from dash instead of cl-reduce to reduce the cl
+     deps
+   • Version
+   • Update doc
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 027,  Next: Release 026,  Prev: Release 028,  Up: Releases
+
+I.68 Release 0.2.7
+==================
+
+   • Backlog
+   • Create TODO template for the backlog start
+   • Clean obsolete files (org-trello.org is no longer maintained,
+     TODO-tests.org is no longer used)
+   • Retry to split into ‘namespace’ files -
+     <https://github.com/org-trello/org-trello/issues/93>
+
+        • Split into ‘namespace’ files
+        • Ensure packaging is generated and ok for marmalade
+        • Ensure packaging is generated and ok for melpa - yes, ensure
+          that the root ‘org-trello.el’ is generated before pushing on
+          master.
+        • Ensure the tests are still ok
+
+   • README-dev - <https://github.com/org-trello/org-trello/issues/99>
+   • Rewrite the abstraction around fetched results to unify the ‘data
+     model’ (in and out identical) -
+     <https://github.com/org-trello/org-trello/issues/100>
+   • Unify the terms around users-assigned (org-trello) and members
+     (trello)
+   • Split the last org-trello namespace into 2 (‘controller’ for the
+     orchestration function call triggered by interactive commands and
+     ‘org-trello’ for the interactive commands)
+   • Unfold every entries before triggering the sync from trello to
+     avoid problems similar as
+     <https://github.com/org-trello/org-trello/issues/53>
+   • Version
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 026,  Next: Release 025,  Prev: Release 027,  Up: Releases
+
+I.69 Release 0.2.6
+==================
+
+   • Jump to card - <https://github.com/org-trello/org-trello/issues/88>
+   • Rewrite convention for the "goto board" action into "jump to board"
+   • Update README.md
+   • Version
+   • Release Note
+
+
+File: org-trello.info,  Node: Release 025,  Next: Release 024,  Prev: Release 026,  Up: Releases
+
+I.70 Release 0.2.5
+==================
+
+   • Backlog updates
+   • Global properties in upper case -
+     <https://github.com/org-trello/org-trello/issues/83>
+   • Hide the global properties -
+     <https://github.com/org-trello/org-trello/issues/77>
+   • Use of checkbox convention -
+     <https://github.com/org-trello/org-trello/issues/78>
+   • Jumping from emacs to the current trello board -
+     <https://github.com/org-trello/org-trello/issues/76>
+   • Simplify the update of the help menu to avoid possible
+     desynchronisation with code
+   • Update documentation + TOC
+   • Version
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 024,  Next: Release 023,  Prev: Release 025,  Up: Releases
+
+I.71 Release 0.2.4
+==================
+
+   • Sprint backlog
+   • Some refactoring + tests coverage
+   • Fix sync-from-trello - Merge org card’s users assigned list and the
+     trello one
+   • Fix sync-from-trello - if new entities are referenced but not yet
+     sync’ed on trello, they will disappear from the buffer when
+     sync-from-trello (they should not) -
+     <https://github.com/org-trello/org-trello/issues/71>
+
+        • Compute the entities without sync’ed properties
+        • Write them silly at the end of the computation of the sync’ed
+          data (trello and org merge) to the org buffer
+
+   • Upgrade version
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 023,  Next: Release 022,  Prev: Release 024,  Up: Releases
+
+I.72 Release 0.2.3
+==================
+
+   • Version
+   • Fix discrepancy between docstring and binding to delete the setup -
+     <https://github.com/org-trello/org-trello/issues/74>
+   • Use a prefix binding which does not override the emacs’s default
+     user prefix (keep the original for the moment to avoid disturbing
+     people which already use it) -
+     <https://github.com/org-trello/org-trello/issues/72>
+   • Update documentation about the possibility to change the default
+     prefix key
+   • Fix ci-travis build due to change in cask installation command
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 022,  Next: Release 0212,  Prev: Release 023,  Up: Releases
+
+I.73 Release 0.2.2
+==================
+
+   • Version
+   • Improve abstraction around data from trello (not complete yet)
+   • Show people assigned to card -
+     <https://github.com/org-trello/org-trello/issues/67>
+
+        • Compute user properties part from the board’s informations
+        • Install board setup routine (C-c o I) also install board users
+        • Create board routine (C-c o i) should also install user boards
+          (only the current user should then appear)
+        • Setuping properties before doing any actions
+        • Cleanup routine should also remove user global properties
+        • User assigns oneself to the card
+        • User unassigns oneself to the card
+        • sync-to-trello also assign users
+        • sync-to-trello also unassign users
+        • sync-from-trello also retrieve user informations and update
+          the org buffer
+        • cleanup routine must cleanup card properties regarding user
+          assigned
+
+   • Update README about new command
+   • Update README TOC
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 0212,  Next: Release 0211,  Prev: Release 022,  Up: Releases
+
+I.74 Release 0.2.1.2
+====================
+
+   • Version
+   • Release notes
+   • Fix typography in naming windows-nt system
+
+
+File: org-trello.info,  Node: Release 0211,  Next: Release 021,  Prev: Release 0212,  Up: Releases
+
+I.75 Release 0.2.1.1
+====================
+
+   • Version
+   • Release notes
+   • Fix error in packaging manipulation
+
+
+File: org-trello.info,  Node: Release 021,  Next: Release 020,  Prev: Release 0211,  Up: Releases
+
+I.76 Release 0.2.1
+==================
+
+   • Version
+   • Improve sync from trello - In case of new item/checklist, the entry
+     will be added at the end of the buffer instead of its rightful
+     place.
+   • Problem regarding some function on windows system -
+     <https://github.com/org-trello/org-trello/issues/62>
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 020,  Next: Release 019,  Prev: Release 021,  Up: Releases
+
+I.77 Release 0.2.0
+==================
+
+   • Version
+   • Improve cleanup of the org-trello metadata
+   • Videos about org-trello
+
+        • Webadmin
+        • Checkbox
+        • Sync from trello
+        • Cleanup trello board
+        • Cleanup org-trello buffe
+
+   • Reference videos to README
+   • Improve sync to trello
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 019,  Next: Release 018,  Prev: Release 020,  Up: Releases
+
+I.78 Release 0.1.9
+==================
+
+   • Clean install org-trello
+   • Ensure sync-from-trello keep the order of the checklists clean
+   • Version
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 018,  Next: Release 0171,  Prev: Release 019,  Up: Releases
+
+I.79 Release 0.1.8
+==================
+
+   • Simplify Cask file
+   • webadmin: Improve rendering [2/2]
+
+        • Better display for the delete buttons.
+        • Use css for the play/pause entities
+
+   • Ensure checks before sync request to the proxy.
+   • Fix sync full entity (related to map-checkbox) -
+     <https://github.com/org-trello/org-trello/issues/53>
+   • Improve the justify policy once and for all (this blinks at the
+     moment!)
+   • Version
+   • Fix problem with archive/unarchive file routine
+   • Fix problem with delete file routine (does not take place)
+   • Add missing callback for the delete action
+   • Improve the post-actions
+
+        • Justify once
+        • Saving once
+        • Unify the saving behaviour with the delete action
+
+
+File: org-trello.info,  Node: Release 0171,  Next: Release 017,  Prev: Release 018,  Up: Releases
+
+I.80 Release 0.1.7.1
+====================
+
+   • Fix problem requiring cl-lib -
+     <https://github.com/org-trello/org-trello/issues/51>
+   • Fix error on when-let -
+     <https://github.com/org-trello/org-trello/issues/54>
+   • Version
+   • release notes
+
+
+File: org-trello.info,  Node: Release 017,  Next: Release 016,  Prev: Release 0171,  Up: Releases
+
+I.81 Release 0.1.7
+==================
+
+   • webadmin: Add an action button on action to stop it
+   • webadmin: Add an action button to stop every running actions on
+     entities
+   • URLencode/Protect the data from the query before executing the
+     query - <https://github.com/org-trello/org-trello/issues/46>
+   • Some refactoring about:
+
+        • Docstring position (same level as function definition, this
+          way, when toggling sexp, we see the docstring too)
+        • Simplification of cond statement
+        • Adding some missing tests
+        • Simplifying some code function (removing let when not needed)
+
+   • Fix the scan problem with level 3 (must have been introduced with
+     the refactoring from number to variable level)
+   • Remove the marker notion and use the identifier in its place (we
+     already use it as marker)
+   • Fix the :PROPERTIES: font lock (which is not painted as keyword)
+   • Improve the justify policy (trim the content before computing the
+     justifying) -> There remains erratic behaviour
+   • Improve map-checkbox to deal with limit (map over checkbox inferior
+     to current level, at the moment, we scan all checkboxes)
+   • Version
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 016,  Next: Release 015,  Prev: Release 017,  Up: Releases
+
+I.82 Release 0.1.6
+==================
+
+   • Use the native org checklist to sync to trello
+   • Sync entity and arborescence tree
+   • Sync to trello must sync the native checklist if the flag is
+     activated
+   • Sync from trello must create native checklists if the flag is
+     activated
+   • Cleanup routine must cleanup the new checklist.
+   • Delete entity must remove entity on point
+   • Upgrade version
+   • Automate the release to marmalade
+   • Justify the #PROPERTIES# to the left for a better rendering
+   • Keywordify the #PROPERTIES#
+   • Merge the org :PROPERTIES: and the org-trello #PROPERTIES# into
+     one.
+   • Improve the activation/deactivation of the new way
+   • Update the readme about the new checkbox mode
+   • Release notes
+   • Release
+
+
+File: org-trello.info,  Node: Release 015,  Next: Release 014,  Prev: Release 016,  Up: Releases
+
+I.83 Release 0.1.5
+==================
+
+   • Symmetry in the architecture - the deletion must pass through the
+     consumer too.
+   • Upgrade version
+   • webadmin: Improve the rendering of the webadmin page to add headers
+     and action
+   • webadmin: Add a current scanning entry in the webadmin page
+   • Defining log level using variable
+   • Redefine main function to sync an entity (they are badly named).
+   • Release notes
+   • Release
+
+
+File: org-trello.info,  Node: Release 014,  Next: Release 013,  Prev: Release 015,  Up: Releases
+
+I.84 Release 0.1.4
+==================
+
+   • Prepare the hierarchy files to avoid problem like
+     <https://github.com/org-trello/org-trello/issues/37#issuecomment-23151353>
+   • Adding a version interactive command (it will help for asking
+     people the version they use).
+   • Upgrade version
+   • Refactoring - simplify code
+   • Improve message labels
+   • Improve failure dealing regarding the sync
+   • Improve the marker computation
+   • Remove the label/title notion and use the name notion (same as
+     trello), this will reduce error reasoning.
+   • Fix the format with missing argument on the callback sync success
+   • Improve the test regarding the synchro completion of a level
+   • Order when syncing to trello
+   • Release notes
+   • Release
+
+
+File: org-trello.info,  Node: Release 013,  Next: Release 012,  Prev: Release 014,  Up: Releases
+
+I.85 Release 0.1.3
+==================
+
+   • Leverage elnode’s webserver capacity to display some basic
+     monitoring about the synchronization
+   • Install bootstrap and jquery.js directly to avoid the user’s manual
+     installation (the first query to static files install bootstrap and
+     jquery now)
+   • Simple end to end test - simple entity creation
+   • Improve the logging policy
+   • Improve the saving policy
+   • Upgrade version
+   • Release notes
+   • Release
+
+
+File: org-trello.info,  Node: Release 012,  Next: Release 011,  Prev: Release 013,  Up: Releases
+
+I.86 Release 0.1.2
+==================
+
+   • Use an intermediary server between org and trello to permit
+     asynchronous actions
+   • Change org-trello’s loading policy + update the readme about it
+   • Find a way to make the proxy less verbose
+   • Fix the loss of todo keywords after the synchronization -> no idea
+     what’s wrong here
+   • Improve the attachment board routine to add the missing | keyword
+     (hardcode with DONE for example)
+   • Improve the clearing of already present heading metadata
+   • Improve the help message to categorize the bindings
+   • Improve the starting/stopping of org-trello
+   • Remove end to end test as this can no longer works with
+     asynchronous
+   • Update the readme to explain the migration from 0.1.1 to 0.1.2
+   • Render the sync to trello routine asynchronous
+   • Render the sync complex entity routine asynchronous
+   • Render the sync from trello asynchronous
+   • Fix check setup routine
+   • Interactive command to cleanup the org-trello data from the current
+     buffer
+   • Interactive command to delete all entities from the board and the
+     org buffer
+   • Update version
+   • Release notes
+   • Release
+
+
+File: org-trello.info,  Node: Release 011,  Next: Release 010,  Prev: Release 012,  Up: Releases
+
+I.87 Release 0.1.1
+==================
+
+   • Literate org-trello
+   • Testing the packaging, at the moment, this is done manually (make
+     package & M-x package-install-file)
+   • Introducing C-c o h at the loading of the buffer when ot is loaded
+   • Update readme/main page with images on videos
+   • Replace already present properties regarding boards before
+     injecting new ones.
+   • Improve the current attach board and list routine to avoid manual
+     setup for the user
+   • Update version
+   • Update dependencies lib to more recent version.
+   • Remove some warnings
+   • Add some message for the user to warn the user to use UTF-8
+   • Force utf-8 for the routine of board installation (create aend
+     attach)
+   • Some more refactoring
+   • Refactoring: formatting code, install consume-key and access token
+     routine improved, ...
+   • Refactoring: UTF-8 warning for every routine + Forcing UTF-8 at
+     setup time (create board and attach board routine)
+   • Refactoring: Adding ^L break line inside the code to delimit the
+     ‘namespace’
+   • Refactoring: Improve the callback use by avoiding to specify them
+   • Refactoring: Restart org-mode after synchronization to avoid losing
+     the user’s setup.
+   • Refactoring: Fix some problems (version, checklist mechanism
+     update, warning on format, create complex entity which sync only
+     the current entity)
+   • Release notes
+   • Release
+
+
+File: org-trello.info,  Node: Release 010,  Next: Release 009,  Prev: Release 011,  Up: Releases
+
+I.88 Release 0.1.0
+==================
+
+   • Fix importing of cards with due date -
+     <https://github.com/org-trello/org-trello/pull/22>
+   • Migrate carton to card.el (travis-ci builds break because of this)
+   • Order of creation of list (from keywords) in trello does not match
+     the order of the keyword
+   • Abstract away the query (:method, :uri, ...) implementation
+   • Abstract away the implementation of the org-data some more (access
+     of the information from the map are embedded in the function
+     instead of delegating to dedicated function, thus not hiding the
+     implementation)
+   • Version
+   • Order when synchronizing from trello does not match trello’s order
+   • Refactor the sync from trello routine function (2 reduce embedded,
+     only one is sufficient)
+   • Enforce the order of the card accord to the org keywords after
+     dumping the new entries from trello
+   • Abstract away the return data from the http request
+   • Update org version to the latest stable
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 009,  Next: Release 008,  Prev: Release 010,  Up: Releases
+
+I.89 Release 0.0.9
+==================
+
+   • Update videos with the new features in the readme
+   • Fix bug regarding the saving buffer routine
+   • Refactoring action code regarding the message to display in the
+     minibuffer (ATM we do not see what is done or not any longer)
+   • Refactoring the http and http-sync functions
+   • Improve the delete entity action by forcing the caret to go at the
+     begin of the line of the heading before killing anything.
+   • Update version
+   • Release notes
+
+
+File: org-trello.info,  Node: Release 008,  Next: Release 007,  Prev: Release 009,  Up: Releases
+
+I.90 Release 0.0.8
+==================
+
+   • Fix the cl-lib dependency
+   • Improve the message when an action is done to let the user know
+     when the action is done!
+   • Better saving buffer policy
+   • Sync org DEADLINE with trello card due -
+     <https://github.com/org-trello/org-trello/issues/17>
+   • Done, Todo on "check lists" - Once the user sets a "check list" to
+     DONE or TODO, then check or uncheck all the tasks it contains.  -
+     <https://github.com/org-trello/org-trello/issues/16>
+   • A simple and parametrable setup to make the user choose to use the
+     checklist system or not
+   • Upgrade version
+   • Release notes
+   • Release
+   • Update documentation about deadline, checklist
+   • Cleanup the debugging functions
+
+
+File: org-trello.info,  Node: Release 007,  Next: Release 0061,  Prev: Release 008,  Up: Releases
+
+I.91 Release 0.0.7
+==================
+
+   • Reference missing bindings in documentation
+   • Upgrade version
+   • Improve the error message around the setup (the setup message is
+     too generic and must be more detailed)
+   • Save the buffer after the synchronization is done (after all we
+     write the trello ids in the buffer)
+   • Release
+
+
+File: org-trello.info,  Node: Release 0061,  Next: Release 006,  Prev: Release 007,  Up: Releases
+
+I.92 Release 0.0.6.1
+====================
+
+   • Fix the json-1.3 dependency, sometimes only 1.2 is available
+   • Update version
+   • Release
+
+
+File: org-trello.info,  Node: Release 006,  Next: Release 005,  Prev: Release 0061,  Up: Releases
+
+I.93 Release 0.0.6
+==================
+
+   • Test that the title/label of the entity is set when syncing to
+     avoid a 400 error
+   • Before making the request, ensure that everything is ok (checklist
+     needs the card id, items needs the checklist id, etc...)
+   • Up the demo video in the beginning of the readme
+   • Improve readme with links to org-mode and trello
+   • Improve readme’s use cases
+   • Mention the possible errors
+   • Mention the emacs version
+   • Update release notes
+   • Update the version
+   • Make a release
+
+
+File: org-trello.info,  Node: Release 005,  Next: Release 0041,  Prev: Release 006,  Up: Releases
+
+I.94 Release 0.0.5
+==================
+
+   • Synchronizing from the trello board must simply computes and
+     add/remove what’s changed [100%]
+   • Rewrite the release notes in their own file
+   • Look on how to make a toc in the README.md in github
+   • Update the release notes
+   • Release on github, marmalade, melpa
+
+
+File: org-trello.info,  Node: Release 0041,  Next: Release 004,  Prev: Release 005,  Up: Releases
+
+I.95 Release 0.0.4.1
+====================
+
+   • Fix the creation board routine regarding the org-mode keywords
+     (dynamic typing hell!)
+   • Improve documentation regarding the possibilities to setup the
+     org-mode keyword
+   • Upgrade version to 0.0.4.1
+   • Release on github, melpa, marmalade
+
+
+File: org-trello.info,  Node: Release 004,  Next: Release 003,  Prev: Release 0041,  Up: Releases
+
+I.96 Release 0.0.4
+==================
+
+   • Permit the user to deal with his/her own trello list (based on
+     his/her org-mode keywords -
+     cf. <http://orgmode.org/manual/In_002dbuffer-settings.html>)
+   • Deploy on marmalade the stable version (and update the readme about
+     it)
+   • Rewrite tests using ‘expectations’
+   • Simplify some code regarding destructuring for example
+   • Remove useless code
+   • Improve documentations and sync the routine check message with the
+     documentation.
+   • Update documentation
+   • Release on github, melpa, marmalade
+
+
+File: org-trello.info,  Node: Release 003,  Next: Release 002,  Prev: Release 004,  Up: Releases
+
+I.97 Release 0.0.3
+==================
+
+   • Syncing complex entities
+   • cleanup useless tests
+   • Namespace cleanup
+   • Building package is now able to deal with the right version
+   • Create a board from org-mode
+   • Display the name of the board as a property file
+   • Cleanup the useless controls
+   • Given a org-mode file, fill in the trello board
+   • Announce in emacs mailing list
+   • Filter out the closed boards from the "choose board list"
+   • filter out level > 4 when syncing.
+   • Given a trello board, sync into a org-mode file
+   • cf. todo/done (./TODO.org) for the remains
+   • Release on github (and the previous version too)
+
+
+File: org-trello.info,  Node: Release 002,  Next: Release 001,  Prev: Release 003,  Up: Releases
+
+I.98 Release 0.0.2
+==================
+
+   • Technical release fixing technical details
+   • Fixing the packaging (inlining into org-trello.el)
+   • Adding ci-travis
+   • Local packaging to help testing
+
+
+File: org-trello.info,  Node: Release 001,  Prev: Release 002,  Up: Releases
+
+I.99 Release 0.0.1
+==================
+
+   • write only mode at the moment (org-mode pushes to trello, no
+     reading yet)
+   • simple entity creation (card, checklist, item/task), the request is
+     asynchroneous
+   • entity deletion (card, checklist, item/task)
+   • Interactive command to ease the setup of the consumer-key and the
+     access-token
+   • Interactive command to ease the setup of one org-mode file (which
+     represents one trello board).  I assume there exists a ’todo’,
+     ’doing’, and ’done’ list (named that way too)
+   • Control that the setup file (consumer-key and access-token) are
+     rightly generated (to avoid later problem)
+   • Control that the properties on the current org-mode file are
+     rightly setuped to access a trello board
+   • packaging for melpa
 
 
 
 Tag Table:
 Node: Top1079
-Node: Installing5346
-Node: Connecting5495
-Node: Using5652
-Node: Key-Bindings5998
-Node: Synchronization Functions6261
-Node: FAQ6645
-Node: Troubleshooting6797
-Node: Customizing6967
-Node: Contributing7134
-Node: Releases7303
-Node: Release 08110659
-Node: Release 08011091
-Node: Release 07911487
-Node: Release 07811796
-Node: Release 07712056
-Node: Release 07612355
-Node: Release 07513183
-Node: Release 07413949
-Node: Release 07314602
-Node: Release 07214945
-Node: Release 07115252
-Node: Release 07015761
-Node: Release 069616903
-Node: Release 069517268
-Node: Release 069417576
-Node: Release 069317831
-Node: Release 069218106
-Node: Release 069118641
-Node: Release 06918970
-Node: Release 06819401
-Node: Release 06719776
-Node: Release 06620266
-Node: Release 06520654
-Node: Release 06421393
-Node: Release 06321873
-Node: Release 06222179
-Node: Release 06122475
-Node: Release 06022799
-Node: Release 05924147
-Node: Release 05824800
-Node: Release 05725585
-Node: Release 05626168
-Node: Release 05526623
-Node: Release 05427446
-Node: Release 05328294
-Node: Release 05230997
-Node: Release 05133101
-Node: Release 05033419
-Node: Release 04933831
-Node: Release 04834558
-Node: Release 04734975
-Node: Release 04635302
-Node: Release 04535773
-Node: Release 04436301
-Node: Release 04337840
-Node: Release 04238523
-Node: Release 041138962
-Node: Release 04139342
-Node: Release 040139903
-Node: Release 04040186
-Node: Release 03940512
-Node: Release 03841171
-Node: Release 03742782
-Node: Release 036143277
-Node: Release 03643534
-Node: Release 03544188
-Node: Release 03444512
-Node: Release 03345062
-Node: Release 03246192
-Node: Release 031146718
-Node: Release 03146988
-Node: Release 03047638
-Node: Release 029147946
-Node: Release 02948161
-Node: Release 028248847
-Node: Release 028149093
-Node: Release 02849326
-Node: Release 02749711
-Node: Release 02651175
-Node: Release 02551524
-Node: Release 02452253
-Node: Release 02353029
-Node: Release 02253735
-Node: Release 021254919
-Node: Release 021155151
-Node: Release 02155376
-Node: Release 02055825
-Node: Release 01956289
-Node: Release 01856567
-Node: Release 017157460
-Node: Release 01757826
-Node: Release 01659168
-Node: Release 01560068
-Node: Release 01460630
-Node: Release 01361518
-Node: Release 01262116
-Node: Release 01163432
-Node: Release 01065005
-Node: Release 00966155
-Node: Release 00866773
-Node: Release 00767646
-Node: Release 006168104
-Node: Release 00668354
-Node: Release 00569016
-Node: Release 004169451
-Node: Release 00469863
-Node: Release 00370558
-Node: Release 00271341
-Node: Release 00171652
-Node: Credits72559
-Node: Licenses72725
-Node: GNU GPL74820
-Node: GNU FDL112584
-Node: Vars/Funcs137915
-Node: Keys/Concepts138227
+Node: Installing5428
+Node: Connecting5577
+Node: Using5734
+Node: Key-Bindings6080
+Node: Synchronization Functions6573
+Node: FAQ6959
+Node: Troubleshooting7111
+Node: Customizing7281
+Node: Contributing7448
+Node: Credits7616
+Node: Licenses7786
+Node: GNU GPL9881
+Node: GNU FDL47645
+Node: Concepts72974
+Node: Keys74371
+Node: Functions74890
+Node: Variables75192
+Node: Releases75335
+Node: Release 08178672
+Node: Release 08079104
+Node: Release 07979500
+Node: Release 07879809
+Node: Release 07780069
+Node: Release 07680368
+Node: Release 07581196
+Node: Release 07481962
+Node: Release 07382615
+Node: Release 07282958
+Node: Release 07183265
+Node: Release 07083774
+Node: Release 069684916
+Node: Release 069585281
+Node: Release 069485589
+Node: Release 069385844
+Node: Release 069286119
+Node: Release 069186654
+Node: Release 06986983
+Node: Release 06887414
+Node: Release 06787789
+Node: Release 06688279
+Node: Release 06588667
+Node: Release 06489406
+Node: Release 06389886
+Node: Release 06290192
+Node: Release 06190488
+Node: Release 06090812
+Node: Release 05992160
+Node: Release 05892813
+Node: Release 05793598
+Node: Release 05694181
+Node: Release 05594636
+Node: Release 05495459
+Node: Release 05396307
+Node: Release 05299010
+Node: Release 051101114
+Node: Release 050101432
+Node: Release 049101844
+Node: Release 048102571
+Node: Release 047102988
+Node: Release 046103315
+Node: Release 045103786
+Node: Release 044104314
+Node: Release 043105853
+Node: Release 042106536
+Node: Release 0411106975
+Node: Release 041107355
+Node: Release 0401107916
+Node: Release 040108199
+Node: Release 039108525
+Node: Release 038109184
+Node: Release 037110795
+Node: Release 0361111290
+Node: Release 036111547
+Node: Release 035112201
+Node: Release 034112525
+Node: Release 033113075
+Node: Release 032114205
+Node: Release 0311114731
+Node: Release 031115001
+Node: Release 030115651
+Node: Release 0291115959
+Node: Release 029116174
+Node: Release 0282116860
+Node: Release 0281117106
+Node: Release 028117339
+Node: Release 027117724
+Node: Release 026119188
+Node: Release 025119537
+Node: Release 024120266
+Node: Release 023121042
+Node: Release 022121748
+Node: Release 0212122932
+Node: Release 0211123164
+Node: Release 021123389
+Node: Release 020123838
+Node: Release 019124302
+Node: Release 018124580
+Node: Release 0171125473
+Node: Release 017125839
+Node: Release 016127181
+Node: Release 015128081
+Node: Release 014128643
+Node: Release 013129531
+Node: Release 012130129
+Node: Release 011131445
+Node: Release 010133018
+Node: Release 009134168
+Node: Release 008134786
+Node: Release 007135659
+Node: Release 0061136117
+Node: Release 006136367
+Node: Release 005137029
+Node: Release 0041137464
+Node: Release 004137876
+Node: Release 003138571
+Node: Release 002139354
+Node: Release 001139665
 
 End Tag Table
 

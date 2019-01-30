@@ -68,13 +68,15 @@ package to synchronize org-mode with Trello.com.
 * Troubleshooting::              Troubleshooting org-trello
 * Customizing::                  Customizing org-trello
 * Contributing::                 Contributing to org-trello
-* Releases::                     Release Notes History
 * Credits::                      Contributor Credits
 * Licenses::                     Manual & Package Licenses
 * GNU GPL::                      GNU General Public License
 * GNU FDL::                      GNU Free Documentation License
-* Vars/Funcs::                   Variable & Function Index
-* Keys/Concepts::                Keys and Concepts Index
+* Concepts::                     Concepts Index
+* Keys::                         Key Bindings Index
+* Functions::                    Functions Index
+* Variables::                    Variables Index
+* Releases::                     Release Notes History
 
 @detailmenu
 --- The Detailed Node Listing ---
@@ -218,23 +220,31 @@ org-file to a board of Trello.com.
 
 All default org-trello key-bindings use the “C-c o” prefix.
 
-@table @asis
+@kindex C-c o C-h
+Type “C-c o C-h” to display help for all key bindings with this
+prefix.
+
+@multitable {aaaaaaaaa} {aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa}
+@headitem Keys
+@tab Command
+@item C-c o C-h
+@tab Display help on all key-bindings with C-c o prefix.
 @item C-c o v
-Display the version of org-trello.
-@end table
+@tab Display the version of org-trello.
+@end multitable
 
 @node Synchronization Functions
 @section Synchronization Functions
 
 This section describes the synchronization functions.
 
-@vtable @code
-@item org-trello-sync-buffer
-Use “C-c o s” to sync the entire buffer to the Trello board.@*
-Use “C-u C-c o s” to sync the entire buffer from the Trello board.
-@end vtable
-@findex org-trello-sync-buffer
 @kindex C-c o s
+@kindex C-u C-c o s
+@ftable @code
+@item org-trello-sync-buffer
+Type “C-c o s” to sync the entire buffer TO the Trello board.@*
+Type “C-u C-c o s” to sync the entire buffer FROM the Trello board.
+@end ftable
 
 @node FAQ
 @chapter Frequently-Asked Questions
@@ -261,6 +271,81 @@ Customizing…
 @cindex contributing
 @cindex development
 Contributing…
+
+@node Credits
+@appendix Contributor Credits
+
+@cindex credits
+@cindex contributors
+Contributors …
+
+@node Licenses
+@appendix Manual & Package Licenses
+
+@cindex copying
+@cindex license, given
+@insertcopying
+
+This manual was written with reference to the org-trello source-code,
+which begins with this license and non-warranty statement:
+
+@lisp
+;;; org-trello.el 
+;; Minor mode to synchronize org-mode buffer and trello board
+
+;; Copyright (C) 2013-2017 Antoine R. Dumont (@@ardumont) 
+;; <antoine.romain.dumont@@gmail.com>
+
+;; Author: Antoine R. Dumont
+;; Maintainer: Antoine R. Dumont
+
+;; Version: 0.8.1
+;; URL: https://github.com/org-trello/org-trello
+
+;; This file is NOT part of GNU Emacs.
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation; either version 3, or (at your option)
+;; any later version.
+;;
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+;; GNU General Public License for more details.
+@end lisp
+
+@node GNU GPL
+@appendix GNU General Public License
+
+@cindex license, software
+@include gpl.texi
+
+@node GNU FDL
+@appendix GNU Free Documentation License
+
+@cindex license, manual
+@include fdl.texi
+
+@node Concepts
+@appendix Concepts Index
+
+@printindex cp
+
+@node Keys
+@appendix Key Binding Index
+
+@printindex ky
+
+@node Functions
+@appendix Functions Index
+
+@printindex fn
+
+@node Variables
+@appendix Variables Index
+
+@printindex vr
 
 @node Releases
 @appendix Release Notes
@@ -2985,70 +3070,5 @@ setuped to access a trello board
 @item
 packaging for melpa
 @end itemize
-
-@node Credits
-@appendix Contributor Credits
-
-@cindex credits
-@cindex contributors
-Contributors …
-
-@node Licenses
-@appendix Manual & Package Licenses
-
-@cindex copying
-@cindex license, given
-@insertcopying
-
-This manual was written with reference to the org-trello source-code,
-which begins with this license and non-warranty statement:
-
-@lisp
-;;; org-trello.el 
-;; Minor mode to synchronize org-mode buffer and trello board
-
-;; Copyright (C) 2013-2017 Antoine R. Dumont (@@ardumont) 
-;; <antoine.romain.dumont@@gmail.com>
-
-;; Author: Antoine R. Dumont
-;; Maintainer: Antoine R. Dumont
-
-;; Version: 0.8.1
-;; URL: https://github.com/org-trello/org-trello
-
-;; This file is NOT part of GNU Emacs.
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation; either version 3, or (at your option)
-;; any later version.
-;;
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-;; GNU General Public License for more details.
-@end lisp
-
-@node GNU GPL
-@appendix GNU General Public License
-
-@cindex license, software
-@include gpl.texi
-
-@node GNU FDL
-@appendix GNU Free Documentation License
-
-@cindex license, manual
-@include fdl.texi
-
-@node Vars/Funcs
-@chapter Variable & Function Index
-
-@printindex fn
-
-@node Keys/Concepts
-@chapter Keys and Concepts Index
-
-@printindex cp
 
 @bye
