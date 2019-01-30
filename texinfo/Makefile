@@ -7,31 +7,35 @@ OrgSrc		:= $(BaseName).org
 TexiSrc		:= $(BaseName).texi
 TexiInc		:= gpl.texi fdl.texi
 
-# Objects
-InfoObj		:= $(BaseName).info
-InfoGzObj	:= $(BaseName).info.gz
-HtmlObj		:= $(BaseName).html
-PdfObj		:= $(BaseName).pdf
-Objects		:= $(InfoObj) $(InfoGzObj) $(HtmlObj) $(PdfObj)
+Objects		:= $(BaseName).aux $(BaseName).cp $(BaseName).cps \
+		$(BaseName).fn $(BaseName).fns $(BaseName).ky $(BaseName).kys \
+		$(BaseName).log $(BaseName).toc $(BaseName).vr $(BaseName).vrs
+
+# Output
+InfoOut		:= $(BaseName).info
+InfoGzOut	:= $(BaseName).info.gz
+HtmlOut		:= $(BaseName).html
+PdfOut		:= $(BaseName).pdf
+Outputs		:= $(InfoOut) $(InfoGzOut) $(HtmlOut) $(PdfOut)
 
 # installation
 InstallDir	:= ~/info
 
-info		: $(InfoObj)
+info		: $(InfoOut)
 
-.PHONY 		: all view info html pdf install clean
+.PHONY 		: all view info html pdf install clean cleanall
 
 all 		: info html pdf
 
-install		: $(InfoObj)
-	rm $(InfoGzObj)
+install		: $(InfoOut)
+	rm $(InfoGzOut)
 	gzip -k  $<
-	echo install $(InfoGzObj) in $(InstallDir)... eventually
+	echo install $(InfoGzOut) in $(InstallDir)... eventually
 
-view		: $(InfoObj)
+view		: $(InfoOut)
 	info ./$<
 
-$(InfoObj)	: $(TexiSrc) $(TexiInc)
+$(InfoOut)	: $(TexiSrc) $(TexiInc)
 	makeinfo $<
 
 html		: $(TexiSrc) info
@@ -42,3 +46,6 @@ pdf		: $(TexiSrc) info
 
 clean		:
 	rm $(Objects) || True
+
+cleanall	: clean
+	rm $(Outputs) || True
