@@ -1,0 +1,66 @@
+#+TITLE: org-trello Manual TODO
+#+AUTHOR: Daniel Birket
+#+EMAIL: danielb@birket.com
+#+TODO: TODO(t) NEXT(n) WORK(w) CHEK(c) HOLD(h) | DONE(d) KILL(k)
+
+* TODO Convert Existing Documentation
+
+Use wget to grab the existing documentation, then convert it to org-mode
+through pandoc for easier reference and cut/paste.
+
+* TODO Complete 1st Draft
+
+Draft and Review all sections of the Manual, including:
+
+- [-] Draft
+  - [ ] Installing
+  - [ ] Connecting
+  - [ ] Using
+  - [ ] FAQ
+  - [ ] Troubleshooting
+  - [ ] Customizing
+  - [ ] Contributing
+  - [ ] Credits
+  - [X] Licenses
+  - [X] GNU GPL
+  - [X] GNU FDL
+  - [X] Concepts
+  - [X] Key Bindings
+  - [X] Functions
+  - [X] Variables
+  - [X] Release Notes
+
+- [ ] Review
+  - [ ] Installing
+  - [ ] Connecting
+  - [ ] Using
+  - [ ] FAQ
+  - [ ] Troubleshooting
+  - [ ] Customizing
+  - [ ] Contributing
+  - [ ] Credits
+  - [ ] Licenses
+  - [ ] GNU GPL
+  - [ ] GNU FDL
+  - [ ] Concepts
+  - [ ] Key Bindings
+  - [ ] Functions
+  - [ ] Variables
+  - [ ] Release Notes
+
+* TODO Convert release-notes from .md to .org
+
+The release-notes log is currently in GitHub’s favored markdown
+format, but GitHub can also display org-mode format. Changing
+release-notes.md to release-notes.org (already prettified in the
+texinfo folder) will permit the Manual to INCLUDE directly from the
+project’s release notes, not a separately maintained copy of it.
+
+* HOLD Replace README.md with rewritten brief README.org
+
+  - Note [2019-01-30 Wed 12:32] by danielb \\
+    Hold until the manual is complete and approved.
+
+Replace README.md with a new README.org (for easier maintenance) with
+a Table of Contents that references the HTML manual sections directly.
+Also reference the legacy documentation for as long as it exists.
