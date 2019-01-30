@@ -3,8 +3,11 @@
 #+EMAIL: danielb@birket.com
 #+TODO: TODO(t) NEXT(n) WORK(w) CHEK(c) HOLD(h) | DONE(d) KILL(k)
 
-* TODO Convert Existing Documentation
+* DONE Convert Existing Documentation
+  CLOSED: [2019-01-30 Wed 14:51]
 
+  - Note [2019-01-30 Wed 14:51] by danielb \\
+    Done - See legacy/ and legacy/org.
 Use wget to grab the existing documentation, then convert it to org-mode
 through pandoc for easier reference and cut/paste.
 

@@ -10,3 +10,4 @@
 *.vr
 *.vrs
 !org-trello.html
+legacy/
