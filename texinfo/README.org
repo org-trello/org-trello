@@ -1,0 +1,16 @@
+This file describes how to build and install the TexInfo-format
+“org-trello Manual”. TexInfo is the standard documentation format of
+GNU-project programs, and is used by Emacs and org-mode.
+
+* Overview
+This org-trello manual may be installed in your INFOPATH for
+access from within Emacs using info-mode by typing C-h i d and
+selecting the “org-trello” manual from the menu of manuals. This
+text-only version of the manual may also be viewed using the ’info’
+command at the command line.
+
+TexInfo also builds illustrated HTML and PDF versions of the manual.
+
+* Building the Manual Formats
+
+* Installing the Info-Format Manual
