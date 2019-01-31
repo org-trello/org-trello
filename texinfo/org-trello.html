@@ -1,6 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<!-- This manual is copyrighted ©2019 by Daniel Birket.
+<!-- This is the org-trello Manual, edition 0.8.1.a, released 2019-01-30,
+written and copyright ©2019 by Daniel Birket.
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3 or
@@ -10,22 +11,41 @@ Texts. A copy of the license is included in the section entitled GNU
 Free Documentation License.
 
 
-This is the org-trello Manual, edition 0.8.1.a, released 2019-01-27,
-written and copyright ©2019 by Daniel Birket.
-
-(See https://github.com/daniel-birket/org-trello/tree/texinfo/texinfo.)
-
 This manaul describes how to install and use the Emacs package
 org-trello, version 0.8.1, released 2018-03-18,
-written and copyright ©2013-2017 by Antoine Dumont, et al.
+written and copyright ©2013-2017 by Antoine Dumont,
+to synchronize org-mode TO-DO lists with https://trello.com (Trello.com).
 
-(See https://github.com/org-trello/org-trello.) -->
+This manual was written with reference to the org-trello source-code,
+which begins with this license and non-warranty statement:
+
+;;; org-trello.el 
+;; Minor mode to synchronize org-mode buffer and trello board
+
+;; Copyright (C) 2013-2017 by Antoine R. Dumont (@ardumont) 
+;; Author: Antoine R. Dumont <antoine.romain.dumont@gmail.com>
+;; Maintainer: Antoine R. Dumont
+
+;; Version: 0.8.1
+;; URL: https://github.com/org-trello/org-trello
+
+;; This file is NOT part of GNU Emacs.
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation; either version 3, or (at your option)
+;; any later version.
+;;
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+;; GNU General Public License for more details. -->
 <!-- Created by GNU Texinfo 6.5, http://www.gnu.org/software/texinfo/ -->
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>org-trello Manual</title>
 
-<meta name="description" content="Sync org-mode with Trello.com.">
+<meta name="description" content="Sync Emacs org-mode with Trello.com.">
 <meta name="keywords" content="org-trello Manual">
 <meta name="resource-type" content="document">
 <meta name="distribution" content="global">
@@ -89,115 +109,13 @@ ul.no-bullet {list-style: none}
   <li><a name="toc-Customizing-org_002dtrello" href="#Customizing">6 Customizing org-trello</a></li>
   <li><a name="toc-Contributing-to-org_002dtrello" href="#Contributing">7 Contributing to org-trello</a></li>
   <li><a name="toc-Contributor-Credits" href="#Credits">Appendix A Contributor Credits</a></li>
-  <li><a name="toc-Manual-_0026-Package-Licenses" href="#Licenses">Appendix B Manual &amp; Package Licenses</a></li>
-  <li><a name="toc-GNU-General-Public-License" href="#GNU-GPL">Appendix C GNU General Public License</a></li>
-  <li><a name="toc-GNU-Free-Documentation-License" href="#GNU-FDL">Appendix D GNU Free Documentation License</a></li>
-  <li><a name="toc-Concepts-Index" href="#Concepts">Appendix E Concepts Index</a></li>
-  <li><a name="toc-Key-Binding-Index" href="#Keys">Appendix F Key Binding Index</a></li>
-  <li><a name="toc-Functions-Index" href="#Functions">Appendix G Functions Index</a></li>
-  <li><a name="toc-Variables-Index" href="#Variables">Appendix H Variables Index</a></li>
-  <li><a name="toc-Release-Notes" href="#Releases">Appendix I Release Notes</a>
-  <ul class="no-bullet">
-    <li><a name="toc-Release-0_002e8_002e1" href="#Release-081">I.1 Release 0.8.1</a></li>
-    <li><a name="toc-Release-0_002e8_002e0" href="#Release-080">I.2 Release 0.8.0</a></li>
-    <li><a name="toc-Release-0_002e7_002e9" href="#Release-079">I.3 Release 0.7.9</a></li>
-    <li><a name="toc-Release-0_002e7_002e8" href="#Release-078">I.4 Release 0.7.8</a></li>
-    <li><a name="toc-Release-0_002e7_002e7" href="#Release-077">I.5 Release 0.7.7</a></li>
-    <li><a name="toc-Release-0_002e7_002e6" href="#Release-076">I.6 Release 0.7.6</a></li>
-    <li><a name="toc-Release-0_002e7_002e5" href="#Release-075">I.7 Release 0.7.5</a></li>
-    <li><a name="toc-Release-0_002e7_002e4" href="#Release-074">I.8 Release 0.7.4</a></li>
-    <li><a name="toc-Release-0_002e7_002e3" href="#Release-073">I.9 Release 0.7.3</a></li>
-    <li><a name="toc-Release-0_002e7_002e2" href="#Release-072">I.10 Release 0.7.2</a></li>
-    <li><a name="toc-Release-0_002e7_002e1" href="#Release-071">I.11 Release 0.7.1</a></li>
-    <li><a name="toc-Release-0_002e7_002e0" href="#Release-070">I.12 Release 0.7.0</a></li>
-    <li><a name="toc-Release-0_002e6_002e9_002e6" href="#Release-0696">I.13 Release 0.6.9.6</a></li>
-    <li><a name="toc-Release-0_002e6_002e9_002e5" href="#Release-0695">I.14 Release 0.6.9.5</a></li>
-    <li><a name="toc-Release-0_002e6_002e9_002e4" href="#Release-0694">I.15 Release 0.6.9.4</a></li>
-    <li><a name="toc-Release-0_002e6_002e9_002e3" href="#Release-0693">I.16 Release 0.6.9.3</a></li>
-    <li><a name="toc-Release-0_002e6_002e9_002e2" href="#Release-0692">I.17 Release 0.6.9.2</a></li>
-    <li><a name="toc-Release-0_002e6_002e9_002e1" href="#Release-0691">I.18 Release 0.6.9.1</a></li>
-    <li><a name="toc-Release-0_002e6_002e9" href="#Release-069">I.19 Release 0.6.9</a></li>
-    <li><a name="toc-Release-0_002e6_002e8" href="#Release-068">I.20 Release 0.6.8</a></li>
-    <li><a name="toc-Release-0_002e6_002e7" href="#Release-067">I.21 Release 0.6.7</a></li>
-    <li><a name="toc-Release-0_002e6_002e6" href="#Release-066">I.22 Release 0.6.6</a></li>
-    <li><a name="toc-Release-0_002e6_002e5" href="#Release-065">I.23 Release 0.6.5</a></li>
-    <li><a name="toc-Release-0_002e6_002e4" href="#Release-064">I.24 Release 0.6.4</a></li>
-    <li><a name="toc-Release-0_002e6_002e3" href="#Release-063">I.25 Release 0.6.3</a></li>
-    <li><a name="toc-Release-0_002e6_002e2" href="#Release-062">I.26 Release 0.6.2</a></li>
-    <li><a name="toc-Release-0_002e6_002e1" href="#Release-061">I.27 Release 0.6.1</a></li>
-    <li><a name="toc-Release-0_002e6_002e0" href="#Release-060">I.28 Release 0.6.0</a></li>
-    <li><a name="toc-Release-0_002e5_002e9" href="#Release-059">I.29 Release 0.5.9</a></li>
-    <li><a name="toc-Release-0_002e5_002e8" href="#Release-058">I.30 Release 0.5.8</a></li>
-    <li><a name="toc-Release-0_002e5_002e7" href="#Release-057">I.31 Release 0.5.7</a></li>
-    <li><a name="toc-Release-0_002e5_002e6" href="#Release-056">I.32 Release 0.5.6</a></li>
-    <li><a name="toc-Release-0_002e5_002e5" href="#Release-055">I.33 Release 0.5.5</a></li>
-    <li><a name="toc-Release-0_002e5_002e4" href="#Release-054">I.34 Release 0.5.4</a></li>
-    <li><a name="toc-Release-0_002e5_002e3" href="#Release-053">I.35 Release 0.5.3</a></li>
-    <li><a name="toc-Release-0_002e5_002e2" href="#Release-052">I.36 Release 0.5.2</a></li>
-    <li><a name="toc-Release-0_002e5_002e1" href="#Release-051">I.37 Release 0.5.1</a></li>
-    <li><a name="toc-Release-0_002e5_002e0" href="#Release-050">I.38 Release 0.5.0</a></li>
-    <li><a name="toc-Release-0_002e4_002e9" href="#Release-049">I.39 Release 0.4.9</a></li>
-    <li><a name="toc-Release-0_002e4_002e8" href="#Release-048">I.40 Release 0.4.8</a></li>
-    <li><a name="toc-Release-0_002e4_002e7" href="#Release-047">I.41 Release 0.4.7</a></li>
-    <li><a name="toc-Release-0_002e4_002e6" href="#Release-046">I.42 Release 0.4.6</a></li>
-    <li><a name="toc-Release-0_002e4_002e5" href="#Release-045">I.43 Release 0.4.5</a></li>
-    <li><a name="toc-Release-0_002e4_002e4" href="#Release-044">I.44 Release 0.4.4</a></li>
-    <li><a name="toc-Release-0_002e4_002e3" href="#Release-043">I.45 Release 0.4.3</a></li>
-    <li><a name="toc-Release-0_002e4_002e2" href="#Release-042">I.46 Release 0.4.2</a></li>
-    <li><a name="toc-Release-0_002e4_002e1_002e1" href="#Release-0411">I.47 Release 0.4.1.1</a></li>
-    <li><a name="toc-Release-0_002e4_002e1" href="#Release-041">I.48 Release 0.4.1</a></li>
-    <li><a name="toc-Release-0_002e4_002e0_002e1" href="#Release-0401">I.49 Release 0.4.0.1</a></li>
-    <li><a name="toc-Release-0_002e4_002e0" href="#Release-040">I.50 Release 0.4.0</a></li>
-    <li><a name="toc-Release-0_002e3_002e9" href="#Release-039">I.51 Release 0.3.9</a></li>
-    <li><a name="toc-Release-0_002e3_002e8" href="#Release-038">I.52 Release 0.3.8</a></li>
-    <li><a name="toc-Release-0_002e3_002e7" href="#Release-037">I.53 Release 0.3.7</a></li>
-    <li><a name="toc-Release-0_002e3_002e6_002e1" href="#Release-0361">I.54 Release 0.3.6.1</a></li>
-    <li><a name="toc-Release-0_002e3_002e6" href="#Release-036">I.55 Release 0.3.6</a></li>
-    <li><a name="toc-Release-0_002e3_002e5" href="#Release-035">I.56 Release 0.3.5</a></li>
-    <li><a name="toc-Release-0_002e3_002e4" href="#Release-034">I.57 Release 0.3.4</a></li>
-    <li><a name="toc-Release-0_002e3_002e3" href="#Release-033">I.58 Release 0.3.3</a></li>
-    <li><a name="toc-Release-0_002e3_002e2" href="#Release-032">I.59 Release 0.3.2</a></li>
-    <li><a name="toc-Release-0_002e3_002e1_002e1" href="#Release-0311">I.60 Release 0.3.1.1</a></li>
-    <li><a name="toc-Release-0_002e3_002e1" href="#Release-031">I.61 Release 0.3.1</a></li>
-    <li><a name="toc-Release-0_002e3_002e0" href="#Release-030">I.62 Release 0.3.0</a></li>
-    <li><a name="toc-Release-0_002e2_002e9_002e1" href="#Release-0291">I.63 Release 0.2.9.1</a></li>
-    <li><a name="toc-Release-0_002e2_002e9" href="#Release-029">I.64 Release 0.2.9</a></li>
-    <li><a name="toc-Release-0_002e2_002e8_002e2" href="#Release-0282">I.65 Release 0.2.8.2</a></li>
-    <li><a name="toc-Release-0_002e2_002e8_002e1" href="#Release-0281">I.66 Release 0.2.8.1</a></li>
-    <li><a name="toc-Release-0_002e2_002e8" href="#Release-028">I.67 Release 0.2.8</a></li>
-    <li><a name="toc-Release-0_002e2_002e7" href="#Release-027">I.68 Release 0.2.7</a></li>
-    <li><a name="toc-Release-0_002e2_002e6" href="#Release-026">I.69 Release 0.2.6</a></li>
-    <li><a name="toc-Release-0_002e2_002e5" href="#Release-025">I.70 Release 0.2.5</a></li>
-    <li><a name="toc-Release-0_002e2_002e4" href="#Release-024">I.71 Release 0.2.4</a></li>
-    <li><a name="toc-Release-0_002e2_002e3" href="#Release-023">I.72 Release 0.2.3</a></li>
-    <li><a name="toc-Release-0_002e2_002e2" href="#Release-022">I.73 Release 0.2.2</a></li>
-    <li><a name="toc-Release-0_002e2_002e1_002e2" href="#Release-0212">I.74 Release 0.2.1.2</a></li>
-    <li><a name="toc-Release-0_002e2_002e1_002e1" href="#Release-0211">I.75 Release 0.2.1.1</a></li>
-    <li><a name="toc-Release-0_002e2_002e1" href="#Release-021">I.76 Release 0.2.1</a></li>
-    <li><a name="toc-Release-0_002e2_002e0" href="#Release-020">I.77 Release 0.2.0</a></li>
-    <li><a name="toc-Release-0_002e1_002e9" href="#Release-019">I.78 Release 0.1.9</a></li>
-    <li><a name="toc-Release-0_002e1_002e8" href="#Release-018">I.79 Release 0.1.8</a></li>
-    <li><a name="toc-Release-0_002e1_002e7_002e1" href="#Release-0171">I.80 Release 0.1.7.1</a></li>
-    <li><a name="toc-Release-0_002e1_002e7" href="#Release-017">I.81 Release 0.1.7</a></li>
-    <li><a name="toc-Release-0_002e1_002e6" href="#Release-016">I.82 Release 0.1.6</a></li>
-    <li><a name="toc-Release-0_002e1_002e5" href="#Release-015">I.83 Release 0.1.5</a></li>
-    <li><a name="toc-Release-0_002e1_002e4" href="#Release-014">I.84 Release 0.1.4</a></li>
-    <li><a name="toc-Release-0_002e1_002e3" href="#Release-013">I.85 Release 0.1.3</a></li>
-    <li><a name="toc-Release-0_002e1_002e2" href="#Release-012">I.86 Release 0.1.2</a></li>
-    <li><a name="toc-Release-0_002e1_002e1" href="#Release-011">I.87 Release 0.1.1</a></li>
-    <li><a name="toc-Release-0_002e1_002e0" href="#Release-010">I.88 Release 0.1.0</a></li>
-    <li><a name="toc-Release-0_002e0_002e9" href="#Release-009">I.89 Release 0.0.9</a></li>
-    <li><a name="toc-Release-0_002e0_002e8" href="#Release-008">I.90 Release 0.0.8</a></li>
-    <li><a name="toc-Release-0_002e0_002e7" href="#Release-007">I.91 Release 0.0.7</a></li>
-    <li><a name="toc-Release-0_002e0_002e6_002e1" href="#Release-0061">I.92 Release 0.0.6.1</a></li>
-    <li><a name="toc-Release-0_002e0_002e6" href="#Release-006">I.93 Release 0.0.6</a></li>
-    <li><a name="toc-Release-0_002e0_002e5" href="#Release-005">I.94 Release 0.0.5</a></li>
-    <li><a name="toc-Release-0_002e0_002e4_002e1" href="#Release-0041">I.95 Release 0.0.4.1</a></li>
-    <li><a name="toc-Release-0_002e0_002e4" href="#Release-004">I.96 Release 0.0.4</a></li>
-    <li><a name="toc-Release-0_002e0_002e3" href="#Release-003">I.97 Release 0.0.3</a></li>
-    <li><a name="toc-Release-0_002e0_002e2" href="#Release-002">I.98 Release 0.0.2</a></li>
-    <li><a name="toc-Release-0_002e0_002e1" href="#Release-001">I.99 Release 0.0.1</a></li>
-  </ul></li>
+  <li><a name="toc-GNU-General-Public-License" href="#GNU-GPL">Appendix B GNU General Public License</a></li>
+  <li><a name="toc-GNU-Free-Documentation-License" href="#GNU-FDL">Appendix C GNU Free Documentation License</a></li>
+  <li><a name="toc-Concepts-Index" href="#Concepts">Appendix D Concepts Index</a></li>
+  <li><a name="toc-Key-Binding-Index" href="#Keys">Appendix E Key Binding Index</a></li>
+  <li><a name="toc-Functions-Index" href="#Functions">Appendix F Functions Index</a></li>
+  <li><a name="toc-Variables-Index" href="#Variables">Appendix G Variables Index</a></li>
+  <li><a name="toc-Release-Notes" href="#Releases">Appendix H Release Notes</a></li>
 </ul>
 </div>
 
@@ -206,11 +124,54 @@ ul.no-bullet {list-style: none}
 <a name="org_002dtrello-Manual"></a>
 <h1 class="top">org-trello Manual</h1>
 
-<p>Sync org-mode with Trello.com.
+<p>Sync Emacs org-mode with Trello.com.
 </p>
-<p>This manual describes how to install and use org-trello, an Emacs
-package to synchronize org-mode with Trello.com.
+<p>This is the org-trello Manual, edition 0.8.1.a, released 2019-01-30,
+written and copyright ©2019 by Daniel Birket.
 </p>
+<blockquote>
+<p>Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.3 or
+any later version published by the Free Software Foundation; with no
+Invariant Sections, with no Front-Cover Texts, and with no Back-Cover
+Texts. A copy of the license is included in the section entitled GNU
+Free Documentation License.
+</p>
+</blockquote>
+
+<p>This manaul describes how to install and use the Emacs package
+org-trello, version 0.8.1, released 2018-03-18,
+written and copyright ©2013-2017 by Antoine Dumont,
+to synchronize org-mode TO-DO lists with <a href="https://trello.com">Trello.com</a>.
+</p>
+<p>This manual was written with reference to the org-trello source-code,
+which begins with this license and non-warranty statement:
+</p>
+<div class="lisp">
+<pre class="lisp">;;; org-trello.el 
+;; Minor mode to synchronize org-mode buffer and trello board
+
+;; Copyright (C) 2013-2017 by Antoine R. Dumont (@ardumont) 
+;; Author: Antoine R. Dumont &lt;antoine.romain.dumont@gmail.com&gt;
+;; Maintainer: Antoine R. Dumont
+
+;; Version: 0.8.1
+;; URL: https://github.com/org-trello/org-trello
+
+;; This file is NOT part of GNU Emacs.
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation; either version 3, or (at your option)
+;; any later version.
+;;
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+;; GNU General Public License for more details.
+</pre></div>
+
+
 
 <hr>
 <a name="Installing"></a>
@@ -317,67 +278,9 @@ Type “C-u C-c o s” to sync the entire buffer FROM the Trello board.
 <p>Contributors …
 </p>
 <hr>
-<a name="Licenses"></a>
-<a name="Manual-_0026-Package-Licenses"></a>
-<h2 class="appendix">Appendix B Manual &amp; Package Licenses</h2>
-
-<a name="index-copying"></a>
-<a name="index-license_002c-given"></a>
-<p>This manual is copyrighted ©2019 by Daniel Birket.
-</p>
-<blockquote>
-<p>Permission is granted to copy, distribute and/or modify this document
-under the terms of the GNU Free Documentation License, Version 1.3 or
-any later version published by the Free Software Foundation; with no
-Invariant Sections, with no Front-Cover Texts, and with no Back-Cover
-Texts. A copy of the license is included in the section entitled GNU
-Free Documentation License.
-</p>
-</blockquote>
-
-<p>This is the org-trello Manual, edition 0.8.1.a, released 2019-01-27,
-written and copyright ©2019 by Daniel Birket.<br>
-(See <a href="https://github.com/daniel-birket/org-trello/tree/texinfo/texinfo">https://github.com/daniel-birket/org-trello/tree/texinfo/texinfo</a>.)
-</p>
-<p>This manaul describes how to install and use the Emacs package
-org-trello, version 0.8.1, released 2018-03-18,
-written and copyright ©2013-2017 by Antoine Dumont, et al.<br>
-(See <a href="https://github.com/org-trello/org-trello">https://github.com/org-trello/org-trello</a>.)
-</p>
-
-<p>This manual was written with reference to the org-trello source-code,
-which begins with this license and non-warranty statement:
-</p>
-<div class="lisp">
-<pre class="lisp">;;; org-trello.el 
-;; Minor mode to synchronize org-mode buffer and trello board
-
-;; Copyright (C) 2013-2017 Antoine R. Dumont (@ardumont) 
-;; &lt;antoine.romain.dumont@gmail.com&gt;
-
-;; Author: Antoine R. Dumont
-;; Maintainer: Antoine R. Dumont
-
-;; Version: 0.8.1
-;; URL: https://github.com/org-trello/org-trello
-
-;; This file is NOT part of GNU Emacs.
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation; either version 3, or (at your option)
-;; any later version.
-;;
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-;; GNU General Public License for more details.
-</pre></div>
-
-<hr>
 <a name="GNU-GPL"></a>
 <a name="GNU-General-Public-License"></a>
-<h2 class="appendix">Appendix C GNU General Public License</h2>
+<h2 class="appendix">Appendix B GNU General Public License</h2>
 
 <a name="index-license_002c-software"></a>
 <div align="center">Version 3, 29 June 2007
@@ -1087,7 +990,7 @@ first, please read <a href="http://www.gnu.org/philosophy/why-not-lgpl.html">htt
 <hr>
 <a name="GNU-FDL"></a>
 <a name="GNU-Free-Documentation-License"></a>
-<h2 class="appendix">Appendix D GNU Free Documentation License</h2>
+<h2 class="appendix">Appendix C GNU Free Documentation License</h2>
 
 <a name="index-license_002c-manual"></a>
 <div align="center">Version 1.3, 3 November 2008
@@ -1562,7 +1465,7 @@ to permit their use in free software.
 <hr>
 <a name="Concepts"></a>
 <a name="Concepts-Index"></a>
-<h2 class="appendix">Appendix E Concepts Index</h2>
+<h2 class="appendix">Appendix D Concepts Index</h2>
 
 <table><tr><th valign="top">Jump to: &nbsp; </th><td><a class="summary-letter" href="#Concepts_cp_letter-C"><b>C</b></a>
  &nbsp; 
@@ -1589,7 +1492,6 @@ to permit their use in free software.
 <tr><th><a name="Concepts_cp_letter-C">C</a></th><td></td><td></td></tr>
 <tr><td></td><td valign="top"><a href="#index-contributing">contributing</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Contributing">Contributing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-contributors">contributors</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Credits">Credits</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-copying">copying</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Licenses">Licenses</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-credits">credits</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Credits">Credits</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-customizing">customizing</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Customizing">Customizing</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
@@ -1603,7 +1505,6 @@ to permit their use in free software.
 <tr><td></td><td valign="top"><a href="#index-FAQ">FAQ</a>:</td><td>&nbsp;</td><td valign="top"><a href="#FAQ">FAQ</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th><a name="Concepts_cp_letter-L">L</a></th><td></td><td></td></tr>
-<tr><td></td><td valign="top"><a href="#index-license_002c-given">license, given</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Licenses">Licenses</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-license_002c-manual">license, manual</a>:</td><td>&nbsp;</td><td valign="top"><a href="#GNU-FDL">GNU FDL</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-license_002c-software">license, software</a>:</td><td>&nbsp;</td><td valign="top"><a href="#GNU-GPL">GNU GPL</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
@@ -1645,7 +1546,7 @@ to permit their use in free software.
 <hr>
 <a name="Keys"></a>
 <a name="Key-Binding-Index"></a>
-<h2 class="appendix">Appendix F Key Binding Index</h2>
+<h2 class="appendix">Appendix E Key Binding Index</h2>
 
 <table><tr><th valign="top">Jump to: &nbsp; </th><td><a class="summary-letter" href="#Keys_ky_letter-C"><b>C</b></a>
  &nbsp; 
@@ -1666,7 +1567,7 @@ to permit their use in free software.
 <hr>
 <a name="Functions"></a>
 <a name="Functions-Index"></a>
-<h2 class="appendix">Appendix G Functions Index</h2>
+<h2 class="appendix">Appendix F Functions Index</h2>
 
 <table><tr><th valign="top">Jump to: &nbsp; </th><td><a class="summary-letter" href="#Functions_fn_letter-O"><b>O</b></a>
  &nbsp; 
@@ -1685,13 +1586,13 @@ to permit their use in free software.
 <hr>
 <a name="Variables"></a>
 <a name="Variables-Index"></a>
-<h2 class="appendix">Appendix H Variables Index</h2>
+<h2 class="appendix">Appendix G Variables Index</h2>
 
 
 <hr>
 <a name="Releases"></a>
 <a name="Release-Notes"></a>
-<h2 class="appendix">Appendix I Release Notes</h2>
+<h2 class="appendix">Appendix H Release Notes</h2>
 
 <a name="index-release-notes"></a>
 <a name="index-version-history"></a>
@@ -1699,12 +1600,8 @@ to permit their use in free software.
 org-trello. Please see the <a href="https://github.com/org-trello/org-trello">repository</a> on GitHub for a more detailed
 history.
 </p>
-
-<hr>
-<a name="Release-081"></a>
-<a name="Release-0_002e8_002e1"></a>
-<h3 class="appendixsec">I.1 Release 0.8.1</h3>
-
+<ul>
+<li> Release 0.8.1
 <ul>
 <li> Make adding trello colors to &lsquo;<samp>org-tag-alist</samp>&rsquo; optional - Close #365
 </li><li> Fix typo in link to issue tracker - Close #364
@@ -1716,11 +1613,7 @@ history.
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-080"></a>
-<a name="Release-0_002e8_002e0"></a>
-<h3 class="appendixsec">I.2 Release 0.8.0</h3>
-
+</li><li> Release 0.8.0
 <ul>
 <li> Update travis ci configuration
 </li><li> Fix ci&rsquo;s multiple problems
@@ -1731,11 +1624,7 @@ history.
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-079"></a>
-<a name="Release-0_002e7_002e9"></a>
-<h3 class="appendixsec">I.3 Release 0.7.9</h3>
-
+</li><li> Release 0.7.9
 <ul>
 <li> Fix problem with custom kill-whole-line properties - Close #270
 </li><li> Fix problem with scheduled deadline - Close #326
@@ -1743,11 +1632,7 @@ history.
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-078"></a>
-<a name="Release-0_002e7_002e8"></a>
-<h3 class="appendixsec">I.4 Release 0.7.8</h3>
-
+</li><li> Release 0.7.8
 <ul>
 <li> Fix cyrillic encoding problem - Close #318 #270
 </li><li> Update version
@@ -1755,11 +1640,7 @@ history.
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-077"></a>
-<a name="Release-0_002e7_002e7"></a>
-<h3 class="appendixsec">I.5 Release 0.7.7</h3>
-
+</li><li> Release 0.7.7
 <ul>
 <li> Rework packaging problem
 </li><li> Add issue/pr templates
@@ -1768,11 +1649,7 @@ history.
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-076"></a>
-<a name="Release-0_002e7_002e6"></a>
-<h3 class="appendixsec">I.6 Release 0.7.6</h3>
-
+</li><li> Release 0.7.6
 <ul>
 <li> Update version
 </li><li> Support unicode characters in sync - Close #307 Close #309
@@ -1790,11 +1667,7 @@ Close #314
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-075"></a>
-<a name="Release-0_002e7_002e5"></a>
-<h3 class="appendixsec">I.7 Release 0.7.5</h3>
-
+</li><li> Release 0.7.5
 <ul>
 <li> #290 - Toggling users assignments to card
 </li><li> Add binding &lsquo;<samp>C-c o t</samp>&rsquo; for the toggling command (code, doc, etc&hellip;)
@@ -1815,11 +1688,7 @@ possibility to use helm&hellip;)
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-074"></a>
-<a name="Release-0_002e7_002e4"></a>
-<h3 class="appendixsec">I.8 Release 0.7.4</h3>
-
+</li><li> Release 0.7.4
 <ul>
 <li> Improve release script + fix typo
 </li><li> Update version
@@ -1842,11 +1711,7 @@ possibility to use helm&hellip;)
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-073"></a>
-<a name="Release-0_002e7_002e3"></a>
-<h3 class="appendixsec">I.9 Release 0.7.3</h3>
-
+</li><li> Release 0.7.3
 <ul>
 <li> Update version
 </li><li> Close #277 - Improve date time policy conversion
@@ -1856,11 +1721,7 @@ possibility to use helm&hellip;)
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-072"></a>
-<a name="Release-0_002e7_002e2"></a>
-<h3 class="appendixsec">I.10 Release 0.7.2</h3>
-
+</li><li> Release 0.7.2
 <ul>
 <li> Update version
 </li><li> Close #276 - Markdown rendering in comments
@@ -1869,11 +1730,7 @@ possibility to use helm&hellip;)
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-071"></a>
-<a name="Release-0_002e7_002e1"></a>
-<h3 class="appendixsec">I.11 Release 0.7.1</h3>
-
+</li><li> Release 0.7.1
 <ul>
 <li> Update version
 </li><li> Close #272 - Use native completion mechanism
@@ -1885,11 +1742,7 @@ about checksum and position
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-070"></a>
-<a name="Release-0_002e7_002e0"></a>
-<h3 class="appendixsec">I.12 Release 0.7.0</h3>
-
+</li><li> Release 0.7.0
 <ul>
 <li> Update version
 </li><li> Close #238 - [internal] Respect elisp coding conventions [2/2]
@@ -1920,11 +1773,7 @@ checklist item&rsquo;s text changed
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-0696"></a>
-<a name="Release-0_002e6_002e9_002e6"></a>
-<h3 class="appendixsec">I.13 Release 0.6.9.6</h3>
-
+</li><li> Release 0.6.9.6
 <ul>
 <li> Create backlog
 </li><li> Update version
@@ -1934,11 +1783,7 @@ ko
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-0695"></a>
-<a name="Release-0_002e6_002e9_002e5"></a>
-<h3 class="appendixsec">I.14 Release 0.6.9.5</h3>
-
+</li><li> Release 0.6.9.5
 <ul>
 <li> Create backlog
 </li><li> Update version
@@ -1947,22 +1792,14 @@ ko
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-0694"></a>
-<a name="Release-0_002e6_002e9_002e4"></a>
-<h3 class="appendixsec">I.15 Release 0.6.9.4</h3>
-
+</li><li> Release 0.6.9.4
 <ul>
 <li> Update version
 </li><li> Fix <a href="https://github.com/org-trello/org-trello/issues/252">https://github.com/org-trello/org-trello/issues/252</a>
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-0693"></a>
-<a name="Release-0_002e6_002e9_002e3"></a>
-<h3 class="appendixsec">I.16 Release 0.6.9.3</h3>
-
+</li><li> Release 0.6.9.3
 <ul>
 <li> Create backlog
 </li><li> Update version
@@ -1970,11 +1807,7 @@ ko
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-0692"></a>
-<a name="Release-0_002e6_002e9_002e2"></a>
-<h3 class="appendixsec">I.17 Release 0.6.9.2</h3>
-
+</li><li> Release 0.6.9.2
 <ul>
 <li> Update version
 </li><li> Clean dead code regarding old comments system
@@ -1987,11 +1820,7 @@ orgtrello-controller (wrong)
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-0691"></a>
-<a name="Release-0_002e6_002e9_002e1"></a>
-<h3 class="appendixsec">I.18 Release 0.6.9.1</h3>
-
+</li><li> Release 0.6.9.1
 <ul>
 <li> Create backlog
 </li><li> Update version
@@ -2000,11 +1829,7 @@ orgtrello-controller (wrong)
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-069"></a>
-<a name="Release-0_002e6_002e9"></a>
-<h3 class="appendixsec">I.19 Release 0.6.9</h3>
-
+</li><li> Release 0.6.9
 <ul>
 <li> Create backlog
 </li><li> Update version
@@ -2015,11 +1840,7 @@ orgtrello-controller (wrong)
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-068"></a>
-<a name="Release-0_002e6_002e8"></a>
-<h3 class="appendixsec">I.20 Release 0.6.8</h3>
-
+</li><li> Release 0.6.8
 <ul>
 <li> Create backlog
 </li><li> Update version
@@ -2029,11 +1850,7 @@ orgtrello-controller (wrong)
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-067"></a>
-<a name="Release-0_002e6_002e7"></a>
-<h3 class="appendixsec">I.21 Release 0.6.7</h3>
-
+</li><li> Release 0.6.7
 <ul>
 <li> Create backlog
 </li><li> Update version
@@ -2050,11 +1867,7 @@ orgtrello-controller (wrong)
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-066"></a>
-<a name="Release-0_002e6_002e6"></a>
-<h3 class="appendixsec">I.22 Release 0.6.6</h3>
-
+</li><li> Release 0.6.6
 <ul>
 <li> Create backlog
 </li><li> Update version
@@ -2065,11 +1878,7 @@ comment command
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-065"></a>
-<a name="Release-0_002e6_002e5"></a>
-<h3 class="appendixsec">I.23 Release 0.6.5</h3>
-
+</li><li> Release 0.6.5
 <ul>
 <li> Create backlog
 </li><li> Update version
@@ -2090,11 +1899,7 @@ creating comment
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-064"></a>
-<a name="Release-0_002e6_002e4"></a>
-<h3 class="appendixsec">I.24 Release 0.6.4</h3>
-
+</li><li> Release 0.6.4
 <ul>
 <li> Minor change to allow abbreviated file path -
 <a href="https://github.com/org-trello/org-trello/pull/213">https://github.com/org-trello/org-trello/pull/213</a>
@@ -2105,11 +1910,7 @@ creating comment
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-063"></a>
-<a name="Release-0_002e6_002e3"></a>
-<h3 class="appendixsec">I.25 Release 0.6.3</h3>
-
+</li><li> Release 0.6.3
 <ul>
 <li> Update version
 </li><li> Enable org-trello mode automatically for certain files -
@@ -2117,11 +1918,7 @@ creating comment
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-062"></a>
-<a name="Release-0_002e6_002e2"></a>
-<h3 class="appendixsec">I.26 Release 0.6.2</h3>
-
+</li><li> Release 0.6.2
 <ul>
 <li> Backlog
 </li><li> Update version
@@ -2130,11 +1927,7 @@ creating comment
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-061"></a>
-<a name="Release-0_002e6_002e1"></a>
-<h3 class="appendixsec">I.27 Release 0.6.1</h3>
-
+</li><li> Release 0.6.1
 <ul>
 <li> Update version
 </li><li> &lsquo;<samp>Trello archived</samp>&rsquo; cards are not archived on org-trello buffers -
@@ -2142,11 +1935,7 @@ CLOSE <a href="https://github.com/org-trello/org-trello/issues/203">https://gith
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-060"></a>
-<a name="Release-0_002e6_002e0"></a>
-<h3 class="appendixsec">I.28 Release 0.6.0</h3>
-
+</li><li> Release 0.6.0
 <ul>
 <li> Refactor - Unify data structure between trello card and org-trello
 card
@@ -2182,11 +1971,7 @@ checklist and item predicates. - CLOSE
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-059"></a>
-<a name="Release-0_002e5_002e9"></a>
-<h3 class="appendixsec">I.29 Release 0.5.9</h3>
-
+</li><li> Release 0.5.9
 <ul>
 <li> Backlog
 </li><li> Update version
@@ -2200,11 +1985,7 @@ checklist and item predicates. - CLOSE
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-058"></a>
-<a name="Release-0_002e5_002e8"></a>
-<h3 class="appendixsec">I.30 Release 0.5.8</h3>
-
+</li><li> Release 0.5.8
 <ul>
 <li> Backlog
 </li><li> Update version
@@ -2222,11 +2003,7 @@ maintainer) + <a href="https://github.com/org-trello/org-trello/issues/195">http
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-057"></a>
-<a name="Release-0_002e5_002e7"></a>
-<h3 class="appendixsec">I.31 Release 0.5.7</h3>
-
+</li><li> Release 0.5.7
 <ul>
 <li> Backlog
 </li><li> Update version
@@ -2240,11 +2017,7 @@ sort.
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-056"></a>
-<a name="Release-0_002e5_002e6"></a>
-<h3 class="appendixsec">I.32 Release 0.5.6</h3>
-
+</li><li> Release 0.5.6
 <ul>
 <li> backlog
 </li><li> Update version
@@ -2256,11 +2029,7 @@ line in checkbox, we need to do it twice, fix.
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-055"></a>
-<a name="Release-0_002e5_002e5"></a>
-<h3 class="appendixsec">I.33 Release 0.5.5</h3>
-
+</li><li> Release 0.5.5
 <ul>
 <li> Backlog
 </li><li> Update version
@@ -2279,11 +2048,7 @@ old one &lsquo;<samp>C-c o o</samp>&rsquo;
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-054"></a>
-<a name="Release-0_002e5_002e4"></a>
-<h3 class="appendixsec">I.34 Release 0.5.4</h3>
-
+</li><li> Release 0.5.4
 <ul>
 <li> Backlog
 </li><li> Archive cards - CLOSE #181
@@ -2309,11 +2074,7 @@ org-trello&rsquo;s
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-053"></a>
-<a name="Release-0_002e5_002e3"></a>
-<h3 class="appendixsec">I.35 Release 0.5.3</h3>
-
+</li><li> Release 0.5.3
 <ul>
 <li> Backlog
 </li><li> Emacs blocks when sync - CLOSE #164 - Deferred the sync/delete
@@ -2397,11 +2158,7 @@ information at point
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-052"></a>
-<a name="Release-0_002e5_002e2"></a>
-<h3 class="appendixsec">I.36 Release 0.5.2</h3>
-
+</li><li> Release 0.5.2
 <ul>
 <li> Remove org-trello&rsquo;s over engineered bricks (proxy, elnode,
 webadmin) -&gt; this will render it synchronous again. [100%]
@@ -2448,11 +2205,7 @@ org-trello can be fully built on melpa-stable.
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-051"></a>
-<a name="Release-0_002e5_002e1"></a>
-<h3 class="appendixsec">I.37 Release 0.5.1</h3>
-
+</li><li> Release 0.5.1
 <ul>
 <li> Remove marmalade remains (release.sh + Makefile)
 </li><li> Small refactoring of the main contract
@@ -2461,11 +2214,7 @@ org-trello can be fully built on melpa-stable.
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-050"></a>
-<a name="Release-0_002e5_002e0"></a>
-<h3 class="appendixsec">I.38 Release 0.5.0</h3>
-
+</li><li> Release 0.5.0
 <ul>
 <li> Revert 0.4.9 #187 which introduced regressions
 #186#issuecomment-52423783 and maybe #185
@@ -2475,11 +2224,7 @@ during actions if stopped and warn about it, etc&hellip;)
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-049"></a>
-<a name="Release-0_002e4_002e9"></a>
-<h3 class="appendixsec">I.39 Release 0.4.9</h3>
-
+</li><li> Release 0.4.9
 <ul>
 <li> Backlog
 </li><li> Emacs blocks when sync - #164
@@ -2499,11 +2244,7 @@ a check on the running proxy before doing anything. - #180
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-048"></a>
-<a name="Release-0_002e4_002e8"></a>
-<h3 class="appendixsec">I.40 Release 0.4.8</h3>
-
+</li><li> Release 0.4.8
 <ul>
 <li> Backlog
 </li><li> mad caret syndrom - Close #177
@@ -2519,11 +2260,7 @@ takes place
 </li><li> Update release notes
 </li></ul>
 
-<hr>
-<a name="Release-047"></a>
-<a name="Release-0_002e4_002e7"></a>
-<h3 class="appendixsec">I.41 Release 0.4.7</h3>
-
+</li><li> Release 0.4.7
 <ul>
 <li> Backlog
 </li><li> Improve the description management in org and trello - #89 #175
@@ -2532,11 +2269,7 @@ takes place
 </li><li> Update release notes
 </li></ul>
 
-<hr>
-<a name="Release-046"></a>
-<a name="Release-0_002e4_002e6"></a>
-<h3 class="appendixsec">I.42 Release 0.4.6</h3>
-
+</li><li> Release 0.4.6
 <ul>
 <li> Prepare Backlog
 </li><li> Fix - CLOSE <a href="https://github.com/org-trello/org-trello/issues/172">https://github.com/org-trello/org-trello/issues/172</a>
@@ -2547,11 +2280,7 @@ which is used by org-trello - reimplement this function
 </li><li> Update release notes
 </li></ul>
 
-<hr>
-<a name="Release-045"></a>
-<a name="Release-0_002e4_002e5"></a>
-<h3 class="appendixsec">I.43 Release 0.4.5</h3>
-
+</li><li> Release 0.4.5
 <ul>
 <li> Backlog
 </li><li> &rsquo;Sync from trello&rsquo; must preserve unknown data card in drawer -
@@ -2568,11 +2297,7 @@ representation
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-044"></a>
-<a name="Release-0_002e4_002e4"></a>
-<h3 class="appendixsec">I.44 Release 0.4.4</h3>
-
+</li><li> Release 0.4.4
 <ul>
 <li> Multiple files packaging - CLOSE #163
 
@@ -2608,11 +2333,7 @@ org-ctrl-c-ret
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-043"></a>
-<a name="Release-0_002e4_002e3"></a>
-<h3 class="appendixsec">I.45 Release 0.4.3</h3>
-
+</li><li> Release 0.4.3
 <ul>
 <li> Prepare backlog
 </li><li> Replace local back-end (file implementation) with a RAM database
@@ -2629,11 +2350,7 @@ files db to RAM db [100%]
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-042"></a>
-<a name="Release-0_002e4_002e2"></a>
-<h3 class="appendixsec">I.46 Release 0.4.2</h3>
-
+</li><li> Release 0.4.2
 <ul>
 <li> Refactoring - Remove dead code
 </li><li> Refactoring - Remove duplicated code already existing in
@@ -2644,11 +2361,7 @@ dependency library
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-0411"></a>
-<a name="Release-0_002e4_002e1_002e1"></a>
-<h3 class="appendixsec">I.47 Release 0.4.1.1</h3>
-
+</li><li> Release 0.4.1.1
 <ul>
 <li> Remove non interactive commands
 </li><li> Create board does not work - Close #157
@@ -2658,11 +2371,7 @@ dependency library
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-041"></a>
-<a name="Release-0_002e4_002e1"></a>
-<h3 class="appendixsec">I.48 Release 0.4.1</h3>
-
+</li><li> Release 0.4.1
 <ul>
 <li> Fix deadline/description problem - #154
 </li><li> Fix deadline/due date problem - #153
@@ -2675,11 +2384,7 @@ understood by trello (to avoid 400 request from trello)
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-0401"></a>
-<a name="Release-0_002e4_002e0_002e1"></a>
-<h3 class="appendixsec">I.49 Release 0.4.0.1</h3>
-
+</li><li> Release 0.4.0.1
 <ul>
 <li> Fix &rsquo;Sync doesn&rsquo;t work if org buffer name contains special
 characters&rsquo; - Close #147
@@ -2687,11 +2392,7 @@ characters&rsquo; - Close #147
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-040"></a>
-<a name="Release-0_002e4_002e0"></a>
-<h3 class="appendixsec">I.50 Release 0.4.0</h3>
-
+</li><li> Release 0.4.0
 <ul>
 <li> Refactor
 </li><li> Fix - Close <a href="https://github.com/org-trello/org-trello/issues/145">https://github.com/org-trello/org-trello/issues/145</a>
@@ -2701,11 +2402,7 @@ characters&rsquo; - Close #147
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-039"></a>
-<a name="Release-0_002e3_002e9"></a>
-<h3 class="appendixsec">I.51 Release 0.3.9</h3>
-
+</li><li> Release 0.3.9
 <ul>
 <li> Refactor - Symmetry for all commands where that makes sense
 (without C-u/with C-u)
@@ -2724,11 +2421,7 @@ as usual
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-038"></a>
-<a name="Release-0_002e3_002e8"></a>
-<h3 class="appendixsec">I.52 Release 0.3.8</h3>
-
+</li><li> Release 0.3.8
 <ul>
 <li> Some refactoring
 
@@ -2768,11 +2461,7 @@ trigger the sync-entity-and-structure-from-trello
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-037"></a>
-<a name="Release-0_002e3_002e7"></a>
-<h3 class="appendixsec">I.53 Release 0.3.7</h3>
-
+</li><li> Release 0.3.7
 <ul>
 <li> Use &lsquo;<samp>defconst</samp>&rsquo; keyword instead of defvar
 </li><li> Use trello labels and org tags as one - CLOSE
@@ -2784,11 +2473,7 @@ trigger the sync-entity-and-structure-from-trello
 </li><li> Version
 </li></ul>
 
-<hr>
-<a name="Release-0361"></a>
-<a name="Release-0_002e3_002e6_002e1"></a>
-<h3 class="appendixsec">I.54 Release 0.3.6.1</h3>
-
+</li><li> Release 0.3.6.1
 <ul>
 <li> Fix already used bindings
 </li><li> Fix edge case about adding comments
@@ -2796,11 +2481,7 @@ trigger the sync-entity-and-structure-from-trello
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-036"></a>
-<a name="Release-0_002e3_002e6"></a>
-<h3 class="appendixsec">I.55 Release 0.3.6</h3>
-
+</li><li> Release 0.3.6
 <ul>
 <li> Test multiple emacs version -
 <a href="https://github.com/org-trello/org-trello/issues/52">https://github.com/org-trello/org-trello/issues/52</a>
@@ -2816,11 +2497,7 @@ trigger the sync-entity-and-structure-from-trello
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-035"></a>
-<a name="Release-0_002e3_002e5"></a>
-<h3 class="appendixsec">I.56 Release 0.3.5</h3>
-
+</li><li> Release 0.3.5
 <ul>
 <li> Test multiple emacs version -
 <a href="https://github.com/org-trello/org-trello/issues/52">https://github.com/org-trello/org-trello/issues/52</a>
@@ -2829,11 +2506,7 @@ trigger the sync-entity-and-structure-from-trello
 </li><li> Release note
 </li></ul>
 
-<hr>
-<a name="Release-034"></a>
-<a name="Release-0_002e3_002e4"></a>
-<h3 class="appendixsec">I.57 Release 0.3.4</h3>
-
+</li><li> Release 0.3.4
 <ul>
 <li> PR fix typo in readme -
 <a href="https://github.com/org-trello/org-trello/pull/120">https://github.com/org-trello/org-trello/pull/120</a>
@@ -2846,11 +2519,7 @@ trigger the sync-entity-and-structure-from-trello
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-033"></a>
-<a name="Release-0_002e3_002e3"></a>
-<h3 class="appendixsec">I.58 Release 0.3.3</h3>
-
+</li><li> Release 0.3.3
 <ul>
 <li> Issue when installing on melpa reported wrongly on melpa and
 reported back <a href="https://github.com/org-trello/org-trello/issues/117">https://github.com/org-trello/org-trello/issues/117</a>
@@ -2872,11 +2541,7 @@ longer, it&rsquo;s better than no feedback)
 </li><li> Ensure org-trello works with emacs 24.4 (how do i install it&hellip;)
 </li></ul>
 
-<hr>
-<a name="Release-032"></a>
-<a name="Release-0_002e3_002e2"></a>
-<h3 class="appendixsec">I.59 Release 0.3.2</h3>
-
+</li><li> Release 0.3.2
 <ul>
 <li> Use standard remapping to override the org-end-of-line routine -
 <a href="https://www.gnu.org/software/emacs/manual/html_node/elisp/Remapping-Commands.html">https://www.gnu.org/software/emacs/manual/html_node/elisp/Remapping-Commands.html</a>
@@ -2888,11 +2553,7 @@ longer, it&rsquo;s better than no feedback)
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-0311"></a>
-<a name="Release-0_002e3_002e1_002e1"></a>
-<h3 class="appendixsec">I.60 Release 0.3.1.1</h3>
-
+</li><li> Release 0.3.1.1
 <ul>
 <li> Installation failure -
 <a href="https://github.com/org-trello/org-trello/issues/112">https://github.com/org-trello/org-trello/issues/112</a>
@@ -2900,11 +2561,7 @@ longer, it&rsquo;s better than no feedback)
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-031"></a>
-<a name="Release-0_002e3_002e1"></a>
-<h3 class="appendixsec">I.61 Release 0.3.1</h3>
-
+</li><li> Release 0.3.1
 <ul>
 <li> Backlog
 </li><li> Version
@@ -2918,11 +2575,7 @@ proxy policy regarding this - Unable to reproduce so do nothing.
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-030"></a>
-<a name="Release-0_002e3_002e0"></a>
-<h3 class="appendixsec">I.62 Release 0.3.0</h3>
-
+</li><li> Release 0.3.0
 <ul>
 <li> Backlog
 </li><li> Upgrade Version
@@ -2932,22 +2585,14 @@ off. Fix it.
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-0291"></a>
-<a name="Release-0_002e2_002e9_002e1"></a>
-<h3 class="appendixsec">I.63 Release 0.2.9.1</h3>
-
+</li><li> Release 0.2.9.1
 <ul>
 <li> Forgot to ship code
 </li><li> Update version
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-029"></a>
-<a name="Release-0_002e2_002e9"></a>
-<h3 class="appendixsec">I.64 Release 0.2.9</h3>
-
+</li><li> Release 0.2.9
 <ul>
 <li> Remove org-trello.el at the root of the code (as the package
 generates this file and the test load without it, no longer needs to
@@ -2963,33 +2608,21 @@ org-trello mode
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-0282"></a>
-<a name="Release-0_002e2_002e8_002e2"></a>
-<h3 class="appendixsec">I.65 Release 0.2.8.2</h3>
-
+</li><li> Release 0.2.8.2
 <ul>
 <li> Fix yet another error on synchronization from trello.
 </li><li> Update doc
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-0281"></a>
-<a name="Release-0_002e2_002e8_002e1"></a>
-<h3 class="appendixsec">I.66 Release 0.2.8.1</h3>
-
+</li><li> Release 0.2.8.1
 <ul>
 <li> Fix error on synchronization from trello
 </li><li> Update doc
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-028"></a>
-<a name="Release-0_002e2_002e8"></a>
-<h3 class="appendixsec">I.67 Release 0.2.8</h3>
-
+</li><li> Release 0.2.8
 <ul>
 <li> Backlog
 </li><li> Synchronize description -
@@ -3001,11 +2634,7 @@ deps
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-027"></a>
-<a name="Release-0_002e2_002e7"></a>
-<h3 class="appendixsec">I.68 Release 0.2.7</h3>
-
+</li><li> Release 0.2.7
 <ul>
 <li> Backlog
 </li><li> Create TODO template for the backlog start
@@ -3038,11 +2667,7 @@ avoid problems similar as
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-026"></a>
-<a name="Release-0_002e2_002e6"></a>
-<h3 class="appendixsec">I.69 Release 0.2.6</h3>
-
+</li><li> Release 0.2.6
 <ul>
 <li> Jump to card - <a href="https://github.com/org-trello/org-trello/issues/88">https://github.com/org-trello/org-trello/issues/88</a>
 </li><li> Rewrite convention for the &quot;goto board&quot; action into &quot;jump to
@@ -3052,11 +2677,7 @@ board&quot;
 </li><li> Release Note
 </li></ul>
 
-<hr>
-<a name="Release-025"></a>
-<a name="Release-0_002e2_002e5"></a>
-<h3 class="appendixsec">I.70 Release 0.2.5</h3>
-
+</li><li> Release 0.2.5
 <ul>
 <li> Backlog updates
 </li><li> Global properties in upper case -
@@ -3074,11 +2695,7 @@ desynchronisation with code
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-024"></a>
-<a name="Release-0_002e2_002e4"></a>
-<h3 class="appendixsec">I.71 Release 0.2.4</h3>
-
+</li><li> Release 0.2.4
 <ul>
 <li> Sprint backlog
 </li><li> Some refactoring + tests coverage
@@ -3099,11 +2716,7 @@ data (trello and org merge) to the org buffer
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-023"></a>
-<a name="Release-0_002e2_002e3"></a>
-<h3 class="appendixsec">I.72 Release 0.2.3</h3>
-
+</li><li> Release 0.2.3
 <ul>
 <li> Version
 </li><li> Fix discrepancy between docstring and binding to delete the
@@ -3118,11 +2731,7 @@ prefix key
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-022"></a>
-<a name="Release-0_002e2_002e2"></a>
-<h3 class="appendixsec">I.73 Release 0.2.2</h3>
-
+</li><li> Release 0.2.2
 <ul>
 <li> Version
 </li><li> Improve abstraction around data from trello (not complete yet)
@@ -3151,33 +2760,21 @@ assigned
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-0212"></a>
-<a name="Release-0_002e2_002e1_002e2"></a>
-<h3 class="appendixsec">I.74 Release 0.2.1.2</h3>
-
+</li><li> Release 0.2.1.2
 <ul>
 <li> Version
 </li><li> Release notes
 </li><li> Fix typography in naming windows-nt system
 </li></ul>
 
-<hr>
-<a name="Release-0211"></a>
-<a name="Release-0_002e2_002e1_002e1"></a>
-<h3 class="appendixsec">I.75 Release 0.2.1.1</h3>
-
+</li><li> Release 0.2.1.1
 <ul>
 <li> Version
 </li><li> Release notes
 </li><li> Fix error in packaging manipulation
 </li></ul>
 
-<hr>
-<a name="Release-021"></a>
-<a name="Release-0_002e2_002e1"></a>
-<h3 class="appendixsec">I.76 Release 0.2.1</h3>
-
+</li><li> Release 0.2.1
 <ul>
 <li> Version
 </li><li> Improve sync from trello - In case of new item/checklist, the
@@ -3188,11 +2785,7 @@ place.
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-020"></a>
-<a name="Release-0_002e2_002e0"></a>
-<h3 class="appendixsec">I.77 Release 0.2.0</h3>
-
+</li><li> Release 0.2.0
 <ul>
 <li> Version
 </li><li> Improve cleanup of the org-trello metadata
@@ -3211,11 +2804,7 @@ place.
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-019"></a>
-<a name="Release-0_002e1_002e9"></a>
-<h3 class="appendixsec">I.78 Release 0.1.9</h3>
-
+</li><li> Release 0.1.9
 <ul>
 <li> Clean install org-trello
 </li><li> Ensure sync-from-trello keep the order of the checklists clean
@@ -3223,11 +2812,7 @@ place.
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-018"></a>
-<a name="Release-0_002e1_002e8"></a>
-<h3 class="appendixsec">I.79 Release 0.1.8</h3>
-
+</li><li> Release 0.1.8
 <ul>
 <li> Simplify Cask file
 </li><li> webadmin: Improve rendering [2/2]
@@ -3255,11 +2840,7 @@ moment!)
 </li></ul>
 </li></ul>
 
-<hr>
-<a name="Release-0171"></a>
-<a name="Release-0_002e1_002e7_002e1"></a>
-<h3 class="appendixsec">I.80 Release 0.1.7.1</h3>
-
+</li><li> Release 0.1.7.1
 <ul>
 <li> Fix problem requiring cl-lib -
 <a href="https://github.com/org-trello/org-trello/issues/51">https://github.com/org-trello/org-trello/issues/51</a>
@@ -3269,11 +2850,7 @@ moment!)
 </li><li> release notes
 </li></ul>
 
-<hr>
-<a name="Release-017"></a>
-<a name="Release-0_002e1_002e7"></a>
-<h3 class="appendixsec">I.81 Release 0.1.7</h3>
-
+</li><li> Release 0.1.7
 <ul>
 <li> webadmin: Add an action button on action to stop it
 </li><li> webadmin: Add an action button to stop every running actions on
@@ -3303,11 +2880,7 @@ inferior to current level, at the moment, we scan all checkboxes)
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-016"></a>
-<a name="Release-0_002e1_002e6"></a>
-<h3 class="appendixsec">I.82 Release 0.1.6</h3>
-
+</li><li> Release 0.1.6
 <ul>
 <li> Use the native org checklist to sync to trello
 </li><li> Sync entity and arborescence tree
@@ -3329,11 +2902,7 @@ one.
 </li><li> Release
 </li></ul>
 
-<hr>
-<a name="Release-015"></a>
-<a name="Release-0_002e1_002e5"></a>
-<h3 class="appendixsec">I.83 Release 0.1.5</h3>
-
+</li><li> Release 0.1.5
 <ul>
 <li> Symmetry in the architecture - the deletion must pass through the
 consumer too.
@@ -3347,11 +2916,7 @@ and action
 </li><li> Release
 </li></ul>
 
-<hr>
-<a name="Release-014"></a>
-<a name="Release-0_002e1_002e4"></a>
-<h3 class="appendixsec">I.84 Release 0.1.4</h3>
-
+</li><li> Release 0.1.4
 <ul>
 <li> Prepare the hierarchy files to avoid problem like
 <a href="https://github.com/org-trello/org-trello/issues/37#issuecomment-23151353">https://github.com/org-trello/org-trello/issues/37#issuecomment-23151353</a>
@@ -3371,11 +2936,7 @@ trello), this will reduce error reasoning.
 </li><li> Release
 </li></ul>
 
-<hr>
-<a name="Release-013"></a>
-<a name="Release-0_002e1_002e3"></a>
-<h3 class="appendixsec">I.85 Release 0.1.3</h3>
-
+</li><li> Release 0.1.3
 <ul>
 <li> Leverage elnode&rsquo;s webserver capacity to display some basic monitoring
 about the synchronization
@@ -3390,11 +2951,7 @@ jquery now)
 </li><li> Release
 </li></ul>
 
-<hr>
-<a name="Release-012"></a>
-<a name="Release-0_002e1_002e2"></a>
-<h3 class="appendixsec">I.86 Release 0.1.2</h3>
-
+</li><li> Release 0.1.2
 <ul>
 <li> Use an intermediary server between org and trello to permit
 asynchronous actions
@@ -3423,11 +2980,7 @@ org buffer
 </li><li> Release
 </li></ul>
 
-<hr>
-<a name="Release-011"></a>
-<a name="Release-0_002e1_002e1"></a>
-<h3 class="appendixsec">I.87 Release 0.1.1</h3>
-
+</li><li> Release 0.1.1
 <ul>
 <li> Literate org-trello
 </li><li> Testing the packaging, at the moment, this is done manually (make
@@ -3462,11 +3015,7 @@ current entity)
 </li><li> Release
 </li></ul>
 
-<hr>
-<a name="Release-010"></a>
-<a name="Release-0_002e1_002e0"></a>
-<h3 class="appendixsec">I.88 Release 0.1.0</h3>
-
+</li><li> Release 0.1.0
 <ul>
 <li> Fix importing of cards with due date -
 <a href="https://github.com/org-trello/org-trello/pull/22">https://github.com/org-trello/org-trello/pull/22</a>
@@ -3491,11 +3040,7 @@ dumping the new entries from trello
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-009"></a>
-<a name="Release-0_002e0_002e9"></a>
-<h3 class="appendixsec">I.89 Release 0.0.9</h3>
-
+</li><li> Release 0.0.9
 <ul>
 <li> Update videos with the new features in the readme
 </li><li> Fix bug regarding the saving buffer routine
@@ -3508,11 +3053,7 @@ the begin of the line of the heading before killing anything.
 </li><li> Release notes
 </li></ul>
 
-<hr>
-<a name="Release-008"></a>
-<a name="Release-0_002e0_002e8"></a>
-<h3 class="appendixsec">I.90 Release 0.0.8</h3>
-
+</li><li> Release 0.0.8
 <ul>
 <li> Fix the cl-lib dependency
 </li><li> Improve the message when an action is done to let the user know
@@ -3532,11 +3073,7 @@ the checklist system or not
 </li><li> Cleanup the debugging functions
 </li></ul>
 
-<hr>
-<a name="Release-007"></a>
-<a name="Release-0_002e0_002e7"></a>
-<h3 class="appendixsec">I.91 Release 0.0.7</h3>
-
+</li><li> Release 0.0.7
 <ul>
 <li> Reference missing bindings in documentation
 </li><li> Upgrade version
@@ -3547,22 +3084,14 @@ write the trello ids in the buffer)
 </li><li> Release
 </li></ul>
 
-<hr>
-<a name="Release-0061"></a>
-<a name="Release-0_002e0_002e6_002e1"></a>
-<h3 class="appendixsec">I.92 Release 0.0.6.1</h3>
-
+</li><li> Release 0.0.6.1
 <ul>
 <li> Fix the json-1.3 dependency, sometimes only 1.2 is available
 </li><li> Update version
 </li><li> Release
 </li></ul>
 
-<hr>
-<a name="Release-006"></a>
-<a name="Release-0_002e0_002e6"></a>
-<h3 class="appendixsec">I.93 Release 0.0.6</h3>
-
+</li><li> Release 0.0.6
 <ul>
 <li> Test that the title/label of the entity is set when syncing to
 avoid a 400 error
@@ -3578,11 +3107,7 @@ avoid a 400 error
 </li><li> Make a release
 </li></ul>
 
-<hr>
-<a name="Release-005"></a>
-<a name="Release-0_002e0_002e5"></a>
-<h3 class="appendixsec">I.94 Release 0.0.5</h3>
-
+</li><li> Release 0.0.5
 <ul>
 <li> Synchronizing from the trello board must simply computes and
 add/remove what&rsquo;s changed [100%]
@@ -3592,11 +3117,7 @@ add/remove what&rsquo;s changed [100%]
 </li><li> Release on github, marmalade, melpa
 </li></ul>
 
-<hr>
-<a name="Release-0041"></a>
-<a name="Release-0_002e0_002e4_002e1"></a>
-<h3 class="appendixsec">I.95 Release 0.0.4.1</h3>
-
+</li><li> Release 0.0.4.1
 <ul>
 <li> Fix the creation board routine regarding the org-mode keywords
 (dynamic typing hell!)
@@ -3606,11 +3127,7 @@ org-mode keyword
 </li><li> Release on github, melpa, marmalade
 </li></ul>
 
-<hr>
-<a name="Release-004"></a>
-<a name="Release-0_002e0_002e4"></a>
-<h3 class="appendixsec">I.96 Release 0.0.4</h3>
-
+</li><li> Release 0.0.4
 <ul>
 <li> Permit the user to deal with his/her own trello list (based on
 his/her org-mode keywords -
@@ -3626,11 +3143,7 @@ the documentation.
 </li><li> Release on github, melpa, marmalade
 </li></ul>
 
-<hr>
-<a name="Release-003"></a>
-<a name="Release-0_002e0_002e3"></a>
-<h3 class="appendixsec">I.97 Release 0.0.3</h3>
-
+</li><li> Release 0.0.3
 <ul>
 <li> Syncing complex entities
 </li><li> cleanup useless tests
@@ -3648,11 +3161,7 @@ the documentation.
 </li><li> Release on github (and the previous version too)
 </li></ul>
 
-<hr>
-<a name="Release-002"></a>
-<a name="Release-0_002e0_002e2"></a>
-<h3 class="appendixsec">I.98 Release 0.0.2</h3>
-
+</li><li> Release 0.0.2
 <ul>
 <li> Technical release fixing technical details
 </li><li> Fixing the packaging (inlining into org-trello.el)
@@ -3660,11 +3169,7 @@ the documentation.
 </li><li> Local packaging to help testing
 </li></ul>
 
-<hr>
-<a name="Release-001"></a>
-<a name="Release-0_002e0_002e1"></a>
-<h3 class="appendixsec">I.99 Release 0.0.1</h3>
-
+</li><li> Release 0.0.1
 <ul>
 <li> write only mode at the moment (org-mode pushes to trello, no reading
 yet)
@@ -3681,6 +3186,7 @@ rightly generated (to avoid later problem)
 </li><li> Control that the properties on the current org-mode file are rightly
 setuped to access a trello board
 </li><li> packaging for melpa
+</li></ul>
 </li></ul>
 
 <hr>

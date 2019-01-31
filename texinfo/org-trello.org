@@ -1,11 +1,12 @@
 # -*- mode: org; -*-
 # Customize Emacs variable org-export-backends to include texinfo,
 # then use “C-c C-e i t” to export this file to org-trello.texi.
-:METADATA:
 #+TITLE: org-trello Manual
-#+MACRO: DESCRIPTION Sync org-mode with Trello.com.
-#+SUBTITLE: Sync org-mode with Trello.com.
-#+DATE: 2019-01-27
+:METADATA:
+#+DATE: 2019-01-30
+#+MACRO: DESCR Sync Emacs org-mode with Trello.com.
+#+SUBTITLE: {{{DESCR}}}
+#+DESCRIPTION: {{{DESCR}}}
 #+AUTHOR: Manual by Daniel Birket
 #+SUBAUTHOR: Package by Antoine R. Dumont
 #+LANGUAGE: en
@@ -14,9 +15,9 @@
 #+TEXINFO_FILENAME: org-trello.info
 #+TEXINFO_DIR_CATEGORY: Emacs
 #+TEXINFO_DIR_TITLE: org-trello
-#+TEXINFO_DIR_DESC: Sync org-mode with Trello.com.
+#+TEXINFO_DIR_DESC: Sync Emacs org-mode with Trello.com.
 #+TEXINFO_HEADER: @documentdescription
-#+TEXINFO_HEADER: Sync org-mode with Trello.com.
+#+TEXINFO_HEADER: Sync Emacs org-mode with Trello.com.
 #+TEXINFO_HEADER: @end documentdescription
 
 #+MACRO: PAK_NAME org-trello
@@ -39,15 +40,15 @@
 #+OPTIONS: p:nil pri:nil prop:nil stat:t tags:t tasks:t tex:t
 #+OPTIONS: timestamp:t title:t toc:t todo:t |:t
 :END:
-{{{DESCRIPTION}}}
+{{{DESCR}}}
 
-This manual describes how to install and use {{{PAK_NAME}}}, an Emacs
-package to synchronize org-mode with Trello.com.
+#+TEXINFO: @insertcopying
 * COPYING
   :PROPERTIES:
   :COPYING:  t
   :END:
-This manual is copyrighted {{{DOC_COPYRIGHT}}} by {{{DOC_EDITOR}}}.
+This is the {{{TITLE}}}, edition {{{DOC_EDITION}}}, released {{{DATE}}},
+written and copyright {{{DOC_COPYRIGHT}}} by {{{DOC_EDITOR}}}.
 
 #+BEGIN_QUOTE
 Permission is granted to copy, distribute and/or modify this document
@@ -58,14 +59,37 @@ Texts. A copy of the license is included in the section entitled GNU
 Free Documentation License.
 #+END_QUOTE
 
-This is the {{{TITLE}}}, edition {{{DOC_EDITION}}}, released {{{DATE}}},
-written and copyright {{{DOC_COPYRIGHT}}} by {{{DOC_EDITOR}}}.\\
-(See {{{DOC_SRC_URL}}}.)
-
 This manaul describes how to install and use the Emacs package
 {{{PAK_NAME}}}, version {{{PAK_VERSION}}}, released {{{PAK_RELEASE}}},
-written and copyright {{{PAK_COPYRIGHT}}} by {{{PAK_AUTHOR}}}, et al.\\
-(See {{{PAK_SRC_URL}}}.)
+written and copyright {{{PAK_COPYRIGHT}}} by {{{PAK_AUTHOR}}},
+to synchronize org-mode TO-DO lists with [[https://trello.com][Trello.com]].
+
+This manual was written with reference to the {{{PAK_NAME}}} source-code,
+which begins with this license and non-warranty statement:
+
+#+BEGIN_SRC emacs-lisp
+;;; org-trello.el 
+;; Minor mode to synchronize org-mode buffer and trello board
+
+;; Copyright (C) 2013-2017 by Antoine R. Dumont (@ardumont) 
+;; Author: Antoine R. Dumont <antoine.romain.dumont@gmail.com>
+;; Maintainer: Antoine R. Dumont
+
+;; Version: 0.8.1
+;; URL: https://github.com/org-trello/org-trello
+
+;; This file is NOT part of GNU Emacs.
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation; either version 3, or (at your option)
+;; any later version.
+;;
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+;; GNU General Public License for more details.
+#+END_SRC
 
 * Installing org-trello
   :PROPERTIES:
@@ -145,7 +169,6 @@ Customizing…
   :DESCRIPTION: Contributing to org-trello
   :END:
 #+CINDEX: contributing
-#+CINDEX: development
 Contributing…
 * Contributor Credits
 :PROPERTIES:
@@ -156,45 +179,6 @@ Contributing…
 #+CINDEX: credits
 #+CINDEX: contributors
 Contributors …
-* Manual & Package Licenses
-:PROPERTIES:
-:ALT_TITLE: Licenses
-:DESCRIPTION: Manual & Package Licenses
-:APPENDIX: t
-:END:
-#+CINDEX: copying
-#+CINDEX: license, given
-#+TEXINFO: @insertcopying
-
-This manual was written with reference to the {{{PAK_NAME}}} source-code,
-which begins with this license and non-warranty statement:
-
-#+BEGIN_SRC emacs-lisp
-;;; org-trello.el 
-;; Minor mode to synchronize org-mode buffer and trello board
-
-;; Copyright (C) 2013-2017 Antoine R. Dumont (@ardumont) 
-;; <antoine.romain.dumont@gmail.com>
-
-;; Author: Antoine R. Dumont
-;; Maintainer: Antoine R. Dumont
-
-;; Version: 0.8.1
-;; URL: https://github.com/org-trello/org-trello
-
-;; This file is NOT part of GNU Emacs.
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation; either version 3, or (at your option)
-;; any later version.
-;;
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-;; GNU General Public License for more details.
-#+END_SRC
-
 * GNU General Public License
 :PROPERTIES:
 :ALT_TITLE: GNU GPL
