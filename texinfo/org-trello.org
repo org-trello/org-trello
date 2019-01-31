@@ -178,7 +178,22 @@ Contributing…
 :END:
 #+CINDEX: credits
 #+CINDEX: contributors
-Contributors …
+
+Many thanks to all the [[https://github.com/org-trello/org-trello/graphs/contributors][contributors]] to org-trello, including:
+
+- [[https://github.com/dtebbs][@dtebbs]]        :: [[https://github.com/org-trello/org-trello/pull/173][PR - fix on the card description]]
+- [[https://github.com/jasom][@jasom]]         :: [[https://github.com/org-trello/org-trello/pull/175][PR - improvements on the trello card's description rendering]].
+- [[https://github.com/nicferrier][@nicferrier]]    :: [[http://marmalade-repo.org/][marmalade]], [[https://github.com/nicferrier/elnode][elnode]], [[http://nic.ferrier.me.uk/blog/2012_07/emacs-packages-for-programmers][emacs clean install]]...
+- [[https://twitter.com/nicolas_roche][@nicolas_roche]] :: logo and the multiple suggestions regarding the web design part.
+- [[https://twitter.com/nmassyl][@nmassyl]]       :: multiple exchanges on design and functionalities.
+- [[https://github.com/purcell][@purcell]]       :: various discussions, suggestions regarding packaging on [[http://melpa.milkbox.net/][Melpa]]
+- [[https://github.com/puzan][@puzan]]         :: org-trello's el-get recipe
+
+and thanks to all those that opened [[https://github.com/org-trello/org-trello/issues][issues]] or [[https://github.com/org-trello/org-trello/pulls][pull requests]].
+
+Also, thank you to the entire free-software community world-wide, including the
+creators and contributors of Emacs and org-mode.
+
 * GNU General Public License
 :PROPERTIES:
 :ALT_TITLE: GNU GPL

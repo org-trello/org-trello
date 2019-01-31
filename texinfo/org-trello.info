@@ -215,7 +215,36 @@ File: org-trello.info,  Node: Credits,  Next: GNU GPL,  Prev: Contributing,  Up:
 Appendix A Contributor Credits
 ******************************
 
-Contributors …
+Many thanks to all the contributors
+(https://github.com/org-trello/org-trello/graphs/contributors) to
+org-trello, including:
+
+@dtebbs (https://github.com/dtebbs)
+     PR - fix on the card description
+     (https://github.com/org-trello/org-trello/pull/173)
+@jasom (https://github.com/jasom)
+     PR - improvements on the trello card’s description rendering
+     (https://github.com/org-trello/org-trello/pull/175).
+@nicferrier (https://github.com/nicferrier)
+     marmalade (http://marmalade-repo.org/), elnode
+     (https://github.com/nicferrier/elnode), emacs clean install
+     (http://nic.ferrier.me.uk/blog/2012_07/emacs-packages-for-programmers)...
+@nicolas_roche (https://twitter.com/nicolas_roche)
+     logo and the multiple suggestions regarding the web design part.
+@nmassyl (https://twitter.com/nmassyl)
+     multiple exchanges on design and functionalities.
+@purcell (https://github.com/purcell)
+     various discussions, suggestions regarding packaging on Melpa
+     (http://melpa.milkbox.net/)
+@puzan (https://github.com/puzan)
+     org-trello’s el-get recipe
+
+   and thanks to all those that opened issues
+(https://github.com/org-trello/org-trello/issues) or pull requests
+(https://github.com/org-trello/org-trello/pulls).
+
+   Also, thank you to the entire free-software community world-wide,
+including the creators and contributors of Emacs and org-mode.
 
 
 File: org-trello.info,  Node: GNU GPL,  Next: GNU FDL,  Prev: Credits,  Up: Top
@@ -1428,7 +1457,6 @@ Appendix D Concepts Index
 * contributors:                          Credits.               (line 6)
 * credits:                               Credits.               (line 6)
 * customizing:                           Customizing.           (line 6)
-* development:                           Contributing.          (line 6)
 * errors:                                Troubleshooting.       (line 6)
 * FAQ:                                   FAQ.                   (line 6)
 * license, manual:                       GNU FDL.               (line 6)
@@ -2871,13 +2899,13 @@ Node: Troubleshooting6667
 Node: Customizing6837
 Node: Contributing7004
 Node: Credits7172
-Node: GNU GPL7341
-Node: GNU FDL45104
-Node: Concepts70433
-Node: Keys71684
-Node: Functions72203
-Node: Variables72505
-Node: Releases72648
+Node: GNU GPL8699
+Node: GNU FDL46462
+Node: Concepts71791
+Node: Keys72969
+Node: Functions73488
+Node: Variables73790
+Node: Releases73933
 
 End Tag Table
 

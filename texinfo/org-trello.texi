@@ -189,7 +189,6 @@ Customizing…
 @chapter Contributing to org-trello
 
 @cindex contributing
-@cindex development
 Contributing…
 
 @node Credits
@@ -197,7 +196,30 @@ Contributing…
 
 @cindex credits
 @cindex contributors
-Contributors …
+
+Many thanks to all the @uref{https://github.com/org-trello/org-trello/graphs/contributors, contributors} to org-trello, including:
+
+@table @asis
+@item @uref{https://github.com/dtebbs, @@dtebbs}       
+@uref{https://github.com/org-trello/org-trello/pull/173, PR - fix on the card description}
+@item @uref{https://github.com/jasom, @@jasom}        
+@uref{https://github.com/org-trello/org-trello/pull/175, PR - improvements on the trello card's description rendering}.
+@item @uref{https://github.com/nicferrier, @@nicferrier}   
+@uref{http://marmalade-repo.org/, marmalade}, @uref{https://github.com/nicferrier/elnode, elnode}, @uref{http://nic.ferrier.me.uk/blog/2012_07/emacs-packages-for-programmers, emacs clean install}@dots{}
+@item @uref{https://twitter.com/nicolas_roche, @@nicolas_roche}
+logo and the multiple suggestions regarding the web design part.
+@item @uref{https://twitter.com/nmassyl, @@nmassyl}      
+multiple exchanges on design and functionalities.
+@item @uref{https://github.com/purcell, @@purcell}      
+various discussions, suggestions regarding packaging on @uref{http://melpa.milkbox.net/, Melpa}
+@item @uref{https://github.com/puzan, @@puzan}        
+org-trello's el-get recipe
+@end table
+
+and thanks to all those that opened @uref{https://github.com/org-trello/org-trello/issues, issues} or @uref{https://github.com/org-trello/org-trello/pulls, pull requests}.
+
+Also, thank you to the entire free-software community world-wide, including the
+creators and contributors of Emacs and org-mode.
 
 @node GNU GPL
 @appendix GNU General Public License
