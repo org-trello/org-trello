@@ -102,11 +102,18 @@ ul.no-bullet {list-style: none}
   <li><a name="toc-Using-org_002dtrello" href="#Using">3 Using org-trello</a>
   <ul class="no-bullet">
     <li><a name="toc-Summary-of-Key_002dBindings" href="#Key_002dBindings">3.1 Summary of Key-Bindings</a></li>
-    <li><a name="toc-Synchronization-Functions-1" href="#Synchronization-Functions">3.2 Synchronization Functions</a></li>
+    <li><a name="toc-Connection-Functions-1" href="#Connection-Functions">3.2 Connection Functions</a></li>
+    <li><a name="toc-Synchronization-Functions-1" href="#Synchronization-Functions">3.3 Synchronization Functions</a></li>
+    <li><a name="toc-Editing-Functions-1" href="#Editing-Functions">3.4 Editing Functions</a></li>
+    <li><a name="toc-Misc_002e-Functions" href="#Misc-Functions">3.5 Misc. Functions</a></li>
   </ul></li>
   <li><a name="toc-Frequently_002dAsked-Questions" href="#FAQ">4 Frequently-Asked Questions</a></li>
   <li><a name="toc-Troubleshooting-org_002dtrello" href="#Troubleshooting">5 Troubleshooting org-trello</a></li>
-  <li><a name="toc-Customizing-org_002dtrello" href="#Customizing">6 Customizing org-trello</a></li>
+  <li><a name="toc-Customizing-org_002dtrello" href="#Customizing">6 Customizing org-trello</a>
+  <ul class="no-bullet">
+    <li><a name="toc-Customizing-the-Prefix-Keybinding" href="#Prefix-Keys">6.1 Customizing the Prefix Keybinding</a></li>
+    <li><a name="toc-Customizing-Individual-Key-Bindings" href="#Individual-Keys">6.2 Customizing Individual Key Bindings</a></li>
+  </ul></li>
   <li><a name="toc-Contributing-to-org_002dtrello" href="#Contributing">7 Contributing to org-trello</a></li>
   <li><a name="toc-Contributor-Credits" href="#Credits">Appendix A Contributor Credits</a></li>
   <li><a name="toc-GNU-General-Public-License" href="#GNU-GPL">Appendix B GNU General Public License</a></li>
@@ -121,6 +128,10 @@ ul.no-bullet {list-style: none}
 
 
 <a name="Top"></a>
+<div class="header">
+<p>
+Next: <a href="#Installing" accesskey="n" rel="next">Installing</a>, Up: <a href="dir.html#Top" accesskey="u" rel="up">(dir)</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Concepts" title="Index" rel="index">Index</a>]</p>
+</div>
 <a name="org_002dtrello-Manual"></a>
 <h1 class="top">org-trello Manual</h1>
 
@@ -172,9 +183,71 @@ which begins with this license and non-warranty statement:
 </pre></div>
 
 
+<table class="menu" border="0" cellspacing="0">
+<tr><td align="left" valign="top">&bull; <a href="#Installing" accesskey="1">Installing</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Installing org-trello
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="#Connecting" accesskey="2">Connecting</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Connecting to Trello.com
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="#Using" accesskey="3">Using</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Using org-trello
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="#FAQ" accesskey="4">FAQ</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Frequently-Asked Questions
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="#Troubleshooting" accesskey="5">Troubleshooting</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Troubleshooting org-trello
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="#Customizing" accesskey="6">Customizing</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Customizing org-trello
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="#Contributing" accesskey="7">Contributing</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Contributing to org-trello
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="#Credits" accesskey="8">Credits</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Contributor Credits
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="#GNU-GPL" accesskey="9">GNU GPL</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">GNU General Public License
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="#GNU-FDL">GNU FDL</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">GNU Free Documentation License
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="#Concepts">Concepts</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Concepts Index
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="#Keys">Keys</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Key Bindings Index
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="#Functions">Functions</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Functions Index
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="#Variables">Variables</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Variables Index
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="#Releases">Releases</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Release Notes History
+</td></tr>
+<tr><th colspan="3" align="left" valign="top"><pre class="menu-comment">
+
+</pre></th></tr><tr><th colspan="3" align="left" valign="top"><pre class="menu-comment">&mdash; The Detailed Node Listing &mdash;
+
+Using
+
+</pre></th></tr><tr><td align="left" valign="top">&bull; <a href="#Key_002dBindings">Key-Bindings</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Summary of Key-Bindings
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="#Connection-Functions">Connection Functions</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Connection Functions
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="#Synchronization-Functions">Synchronization Functions</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Synchronization Functions
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="#Editing-Functions">Editing Functions</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Editing Functions
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="#Misc-Functions">Misc. Functions</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Miscellaneous Functions
+</td></tr>
+<tr><th colspan="3" align="left" valign="top"><pre class="menu-comment">
+
+Customizing
+
+</pre></th></tr><tr><td align="left" valign="top">&bull; <a href="#Prefix-Keys">Prefix Keys</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Customizing the Prefixx Keybinding
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="#Individual-Keys">Individual Keys</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Customizing Individual Key Bindings
+</td></tr>
+<tr><th colspan="3" align="left" valign="top"><pre class="menu-comment">
+
+</pre></th></tr></table>
 
 <hr>
 <a name="Installing"></a>
+<div class="header">
+<p>
+Next: <a href="#Connecting" accesskey="n" rel="next">Connecting</a>, Previous: <a href="#Top" accesskey="p" rel="prev">Top</a>, Up: <a href="#Top" accesskey="u" rel="up">Top</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Concepts" title="Index" rel="index">Index</a>]</p>
+</div>
 <a name="Installing-org_002dtrello"></a>
 <h2 class="chapter">1 Installing org-trello</h2>
 
@@ -183,6 +256,10 @@ which begins with this license and non-warranty statement:
 </p>
 <hr>
 <a name="Connecting"></a>
+<div class="header">
+<p>
+Next: <a href="#Using" accesskey="n" rel="next">Using</a>, Previous: <a href="#Installing" accesskey="p" rel="prev">Installing</a>, Up: <a href="#Top" accesskey="u" rel="up">Top</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Concepts" title="Index" rel="index">Index</a>]</p>
+</div>
 <a name="Connecting-to-Trello_002ecom"></a>
 <h2 class="chapter">2 Connecting to Trello.com</h2>
 
@@ -191,6 +268,10 @@ which begins with this license and non-warranty statement:
 </p>
 <hr>
 <a name="Using"></a>
+<div class="header">
+<p>
+Next: <a href="#FAQ" accesskey="n" rel="next">FAQ</a>, Previous: <a href="#Connecting" accesskey="p" rel="prev">Connecting</a>, Up: <a href="#Top" accesskey="u" rel="up">Top</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Concepts" title="Index" rel="index">Index</a>]</p>
+</div>
 <a name="Using-org_002dtrello"></a>
 <h2 class="chapter">3 Using org-trello</h2>
 
@@ -198,28 +279,65 @@ which begins with this license and non-warranty statement:
 <p>This section describes how to use org-trello after connecting an
 org-file to a board of Trello.com.
 </p>
+<table class="menu" border="0" cellspacing="0">
+<tr><td align="left" valign="top">&bull; <a href="#Key_002dBindings" accesskey="1">Key-Bindings</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Summary of Key-Bindings
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="#Connection-Functions" accesskey="2">Connection Functions</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Connection Functions
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="#Synchronization-Functions" accesskey="3">Synchronization Functions</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Synchronization Functions
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="#Editing-Functions" accesskey="4">Editing Functions</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Editing Functions
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="#Misc-Functions" accesskey="5">Misc. Functions</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Miscellaneous Functions
+</td></tr>
+</table>
 
 <hr>
 <a name="Key_002dBindings"></a>
+<div class="header">
+<p>
+Next: <a href="#Connection-Functions" accesskey="n" rel="next">Connection Functions</a>, Up: <a href="#Using" accesskey="u" rel="up">Using</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Concepts" title="Index" rel="index">Index</a>]</p>
+</div>
 <a name="Summary-of-Key_002dBindings"></a>
 <h3 class="section">3.1 Summary of Key-Bindings</h3>
 
 <p>All default org-trello key-bindings use the “C-c o” prefix.
 </p>
 <a name="index-C_002dc-o-C_002dh"></a>
-<p>Type “C-c o C-h” to display help for all key bindings with this
-prefix.
+<p><em>Note:</em> You may type “C-c o C-h” to display help for most org-trello
+key bindings.
 </p>
 <table>
 <thead><tr><th>Keys</th><th>Command</th></tr></thead>
 <tr><td>C-c o C-h</td><td>Display help on all key-bindings with C-c o prefix.</td></tr>
 <tr><td>C-c o v</td><td>Display the version of org-trello.</td></tr>
+<tr><td>C-c o i</td><td>Install the Trello.com access key and token.</td></tr>
+<tr><td>C-c o I</td><td>Select an existing Trello board and attach this file to it.</td></tr>
+<tr><td>C-c o b</td><td>Create a new Trello board and attach this file to it.</td></tr>
+<tr><td>C-c o u</td><td>Update this file’s attachment to its Trello board.</td></tr>
+<tr><td></td><td></td></tr>
 </table>
 
 <hr>
+<a name="Connection-Functions"></a>
+<div class="header">
+<p>
+Next: <a href="#Synchronization-Functions" accesskey="n" rel="next">Synchronization Functions</a>, Previous: <a href="#Key_002dBindings" accesskey="p" rel="prev">Key-Bindings</a>, Up: <a href="#Using" accesskey="u" rel="up">Using</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Concepts" title="Index" rel="index">Index</a>]</p>
+</div>
+<a name="Connection-Functions-1"></a>
+<h3 class="section">3.2 Connection Functions</h3>
+
+<p>This section describes the functions used to connect org-trello to
+Trello.com and to attach an org file to a Trello board.
+</p>
+<hr>
 <a name="Synchronization-Functions"></a>
+<div class="header">
+<p>
+Next: <a href="#Editing-Functions" accesskey="n" rel="next">Editing Functions</a>, Previous: <a href="#Connection-Functions" accesskey="p" rel="prev">Connection Functions</a>, Up: <a href="#Using" accesskey="u" rel="up">Using</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Concepts" title="Index" rel="index">Index</a>]</p>
+</div>
 <a name="Synchronization-Functions-1"></a>
-<h3 class="section">3.2 Synchronization Functions</h3>
+<h3 class="section">3.3 Synchronization Functions</h3>
 
 <p>This section describes the synchronization functions.
 </p>
@@ -235,7 +353,34 @@ Type “C-u C-c o s” to sync the entire buffer FROM the Trello board.
 </dl>
 
 <hr>
+<a name="Editing-Functions"></a>
+<div class="header">
+<p>
+Next: <a href="#Misc-Functions" accesskey="n" rel="next">Misc Functions</a>, Previous: <a href="#Synchronization-Functions" accesskey="p" rel="prev">Synchronization Functions</a>, Up: <a href="#Using" accesskey="u" rel="up">Using</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Concepts" title="Index" rel="index">Index</a>]</p>
+</div>
+<a name="Editing-Functions-1"></a>
+<h3 class="section">3.4 Editing Functions</h3>
+
+<p>This section describes the functions used to edit cards, comments and
+list items.
+</p>
+<hr>
+<a name="Misc-Functions"></a>
+<div class="header">
+<p>
+Previous: <a href="#Editing-Functions" accesskey="p" rel="prev">Editing Functions</a>, Up: <a href="#Using" accesskey="u" rel="up">Using</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Concepts" title="Index" rel="index">Index</a>]</p>
+</div>
+<a name="Misc_002e-Functions"></a>
+<h3 class="section">3.5 Misc. Functions</h3>
+
+<p>This section describes other functions not listed above.
+</p>
+<hr>
 <a name="FAQ"></a>
+<div class="header">
+<p>
+Next: <a href="#Troubleshooting" accesskey="n" rel="next">Troubleshooting</a>, Previous: <a href="#Using" accesskey="p" rel="prev">Using</a>, Up: <a href="#Top" accesskey="u" rel="up">Top</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Concepts" title="Index" rel="index">Index</a>]</p>
+</div>
 <a name="Frequently_002dAsked-Questions"></a>
 <h2 class="chapter">4 Frequently-Asked Questions</h2>
 
@@ -244,6 +389,10 @@ Type “C-u C-c o s” to sync the entire buffer FROM the Trello board.
 </p>
 <hr>
 <a name="Troubleshooting"></a>
+<div class="header">
+<p>
+Next: <a href="#Customizing" accesskey="n" rel="next">Customizing</a>, Previous: <a href="#FAQ" accesskey="p" rel="prev">FAQ</a>, Up: <a href="#Top" accesskey="u" rel="up">Top</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Concepts" title="Index" rel="index">Index</a>]</p>
+</div>
 <a name="Troubleshooting-org_002dtrello"></a>
 <h2 class="chapter">5 Troubleshooting org-trello</h2>
 
@@ -253,14 +402,115 @@ Type “C-u C-c o s” to sync the entire buffer FROM the Trello board.
 </p>
 <hr>
 <a name="Customizing"></a>
+<div class="header">
+<p>
+Next: <a href="#Contributing" accesskey="n" rel="next">Contributing</a>, Previous: <a href="#Troubleshooting" accesskey="p" rel="prev">Troubleshooting</a>, Up: <a href="#Top" accesskey="u" rel="up">Top</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Concepts" title="Index" rel="index">Index</a>]</p>
+</div>
 <a name="Customizing-org_002dtrello"></a>
 <h2 class="chapter">6 Customizing org-trello</h2>
 
 <a name="index-customizing"></a>
-<p>Customizing…
+<p>This section describes how you may customize org-trello.
+</p>
+<table class="menu" border="0" cellspacing="0">
+<tr><td align="left" valign="top">&bull; <a href="#Prefix-Keys" accesskey="1">Prefix Keys</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Customizing the Prefixx Keybinding
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="#Individual-Keys" accesskey="2">Individual Keys</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Customizing Individual Key Bindings
+</td></tr>
+</table>
+
+<hr>
+<a name="Prefix-Keys"></a>
+<div class="header">
+<p>
+Next: <a href="#Individual-Keys" accesskey="n" rel="next">Individual Keys</a>, Up: <a href="#Customizing" accesskey="u" rel="up">Customizing</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Concepts" title="Index" rel="index">Index</a>]</p>
+</div>
+<a name="Customizing-the-Prefix-Keybinding"></a>
+<h3 class="section">6.1 Customizing the Prefix Keybinding</h3>
+
+<a name="index-org_002dtrello_002dcurrent_002dprefix_002dkeybinding"></a>
+<p>By default, org-trello uses the prefix keybinding “C-c o” to begin
+(almost) all of its commands. You may change this by customizing the
+variable “org-trello-current-prefix-keybinding”.
+</p>
+<p>To customize “org-trello-current-prefix-keybinding”, type “C-h v
+org-trello-current-prefix-keybinding RET” to display the help text for this
+variable. Then follow the “customize” link on the last line. You
+may then use the customize interface to set another prefix keybinding.
+</p>
+<p><em>Note:</em> If org-trello is already running, you must restart emacs after
+customizing this variable (or run “M-x org-trello-mode” - <em>twice</em>).
+</p>
+<p>You may also change this setting in your emacs initialization file.
+For example, to change the org-trello prefix keybinding to “C-c x” add
+these lines to your ~/.emacs (or ~/.emacs.d/.init.el) file:
+</p>
+<div class="lisp">
+<pre class="lisp">(require 'org-trello)
+(custom-set-variables '(org-trello-current-prefix-keybinding &quot;C-c x&quot;))
+</pre></div>
+
+<p>For an example, please see my <a href="https://github.com/ardumont/orgmode-pack/blob/master/orgmode-pack.el#L57">startup file</a>.
 </p>
 <hr>
+<a name="Individual-Keys"></a>
+<div class="header">
+<p>
+Previous: <a href="#Prefix-Keys" accesskey="p" rel="prev">Prefix Keys</a>, Up: <a href="#Customizing" accesskey="u" rel="up">Customizing</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Concepts" title="Index" rel="index">Index</a>]</p>
+</div>
+<a name="Customizing-Individual-Key-Bindings"></a>
+<h3 class="section">6.2 Customizing Individual Key Bindings</h3>
+
+<a name="index-org_002dtrello_002dmode_002dmap"></a>
+<p>To redefine one or more org-trello-mode keys, you should create a
+function to define keys in the org-trello-mode-map and hook your
+function to the org-trello-mode-hook. This will make org-trello run
+your function each time it starts.
+</p>
+<div class="lisp">
+<pre class="lisp">(require 'org-trello)
+
+(defun def-my-org-trello-keys () &quot;Define my org-trello keys.&quot;
+  (define-key org-trello-mode-map (kbd &quot;C-c x v&quot;) 'org-trello-version)
+  (define-key org-trello-mode-map (kbd &quot;C-c x i&quot;) 'org-trello-install-key-and-token)
+  (define-key org-trello-mode-map (kbd &quot;C-c x I&quot;) 'org-trello-install-board-metadata)
+  (define-key org-trello-mode-map (kbd &quot;C-c x c&quot;) 'org-trello-sync-card)
+  (define-key org-trello-mode-map (kbd &quot;C-c x s&quot;) 'org-trello-sync-buffer)
+  (define-key org-trello-mode-map (kbd &quot;C-c x a&quot;) 'org-trello-assign-me)
+  (define-key org-trello-mode-map (kbd &quot;C-c x d&quot;) 'org-trello-check-setup)
+  (define-key org-trello-mode-map (kbd &quot;C-c x D&quot;) 'org-trello-delete-setup)
+  (define-key org-trello-mode-map (kbd &quot;C-c x b&quot;) 'org-trello-create-board-and-install-metadata)
+  (define-key org-trello-mode-map (kbd &quot;C-c x k&quot;) 'org-trello-kill-entity)
+  (define-key org-trello-mode-map (kbd &quot;C-c x K&quot;) 'org-trello-kill-cards)
+  (define-key org-trello-mode-map (kbd &quot;C-c x a&quot;) 'org-trello-archive-card)
+  (define-key org-trello-mode-map (kbd &quot;C-c x A&quot;) 'org-trello-archive-cards)
+  (define-key org-trello-mode-map (kbd &quot;C-c x j&quot;) 'org-trello-jump-to-trello-card)
+  (define-key org-trello-mode-map (kbd &quot;C-c x J&quot;) 'org-trello-jump-to-trello-board)
+  (define-key org-trello-mode-map (kbd &quot;C-c x C&quot;) 'org-trello-add-card-comments)
+  (define-key org-trello-mode-map (kbd &quot;C-c x o&quot;) 'org-trello-show-card-comments)
+  (define-key org-trello-mode-map (kbd &quot;C-c x l&quot;) 'org-trello-show-card-labels)
+  (define-key org-trello-mode-map (kbd &quot;C-c x u&quot;) 'org-trello-update-board-metadata)
+  (define-key org-trello-mode-map (kbd &quot;C-c x h&quot;) 'org-trello-help-describing-bindings))
+
+(add-hook 'org-trello-mode-hook 'def-my-org-trello-keys)
+</pre></div>
+
+<p><em>Note:</em> This will not update the help messages to match your
+key-bindings nor remove the default keybindings.
+</p>
+<p>You may add several lines like this one to your hook function to
+remove specific existing org-trello keybindings:
+</p>
+<div class="lisp">
+<pre class="lisp">(define-key org-trello-mode-map (kbd &quot;C-c o v&quot;) nil)
+</pre></div>
+
+<hr>
 <a name="Contributing"></a>
+<div class="header">
+<p>
+Next: <a href="#Credits" accesskey="n" rel="next">Credits</a>, Previous: <a href="#Customizing" accesskey="p" rel="prev">Customizing</a>, Up: <a href="#Top" accesskey="u" rel="up">Top</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Concepts" title="Index" rel="index">Index</a>]</p>
+</div>
 <a name="Contributing-to-org_002dtrello"></a>
 <h2 class="chapter">7 Contributing to org-trello</h2>
 
@@ -269,6 +519,10 @@ Type “C-u C-c o s” to sync the entire buffer FROM the Trello board.
 </p>
 <hr>
 <a name="Credits"></a>
+<div class="header">
+<p>
+Next: <a href="#GNU-GPL" accesskey="n" rel="next">GNU GPL</a>, Previous: <a href="#Contributing" accesskey="p" rel="prev">Contributing</a>, Up: <a href="#Top" accesskey="u" rel="up">Top</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Concepts" title="Index" rel="index">Index</a>]</p>
+</div>
 <a name="Contributor-Credits"></a>
 <h2 class="appendix">Appendix A Contributor Credits</h2>
 
@@ -308,6 +562,10 @@ creators and contributors of Emacs and org-mode.
 </p>
 <hr>
 <a name="GNU-GPL"></a>
+<div class="header">
+<p>
+Next: <a href="#GNU-FDL" accesskey="n" rel="next">GNU FDL</a>, Previous: <a href="#Credits" accesskey="p" rel="prev">Credits</a>, Up: <a href="#Top" accesskey="u" rel="up">Top</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Concepts" title="Index" rel="index">Index</a>]</p>
+</div>
 <a name="GNU-General-Public-License"></a>
 <h2 class="appendix">Appendix B GNU General Public License</h2>
 
@@ -1018,6 +1276,10 @@ first, please read <a href="http://www.gnu.org/philosophy/why-not-lgpl.html">htt
 </p>
 <hr>
 <a name="GNU-FDL"></a>
+<div class="header">
+<p>
+Next: <a href="#Concepts" accesskey="n" rel="next">Concepts</a>, Previous: <a href="#GNU-GPL" accesskey="p" rel="prev">GNU GPL</a>, Up: <a href="#Top" accesskey="u" rel="up">Top</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Concepts" title="Index" rel="index">Index</a>]</p>
+</div>
 <a name="GNU-Free-Documentation-License"></a>
 <h2 class="appendix">Appendix C GNU Free Documentation License</h2>
 
@@ -1493,6 +1755,10 @@ to permit their use in free software.
 
 <hr>
 <a name="Concepts"></a>
+<div class="header">
+<p>
+Next: <a href="#Keys" accesskey="n" rel="next">Keys</a>, Previous: <a href="#GNU-FDL" accesskey="p" rel="prev">GNU FDL</a>, Up: <a href="#Top" accesskey="u" rel="up">Top</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Concepts" title="Index" rel="index">Index</a>]</p>
+</div>
 <a name="Concepts-Index"></a>
 <h2 class="appendix">Appendix D Concepts Index</h2>
 
@@ -1567,6 +1833,10 @@ to permit their use in free software.
 
 <hr>
 <a name="Keys"></a>
+<div class="header">
+<p>
+Next: <a href="#Functions" accesskey="n" rel="next">Functions</a>, Previous: <a href="#Concepts" accesskey="p" rel="prev">Concepts</a>, Up: <a href="#Top" accesskey="u" rel="up">Top</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Concepts" title="Index" rel="index">Index</a>]</p>
+</div>
 <a name="Key-Binding-Index"></a>
 <h2 class="appendix">Appendix E Key Binding Index</h2>
 
@@ -1588,6 +1858,10 @@ to permit their use in free software.
 
 <hr>
 <a name="Functions"></a>
+<div class="header">
+<p>
+Next: <a href="#Variables" accesskey="n" rel="next">Variables</a>, Previous: <a href="#Keys" accesskey="p" rel="prev">Keys</a>, Up: <a href="#Top" accesskey="u" rel="up">Top</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Concepts" title="Index" rel="index">Index</a>]</p>
+</div>
 <a name="Functions-Index"></a>
 <h2 class="appendix">Appendix F Functions Index</h2>
 
@@ -1607,12 +1881,34 @@ to permit their use in free software.
 
 <hr>
 <a name="Variables"></a>
+<div class="header">
+<p>
+Next: <a href="#Releases" accesskey="n" rel="next">Releases</a>, Previous: <a href="#Functions" accesskey="p" rel="prev">Functions</a>, Up: <a href="#Top" accesskey="u" rel="up">Top</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Concepts" title="Index" rel="index">Index</a>]</p>
+</div>
 <a name="Variables-Index"></a>
 <h2 class="appendix">Appendix G Variables Index</h2>
 
+<table><tr><th valign="top">Jump to: &nbsp; </th><td><a class="summary-letter" href="#Variables_vr_letter-O"><b>O</b></a>
+ &nbsp; 
+</td></tr></table>
+<table class="index-vr" border="0">
+<tr><td></td><th align="left">Index Entry</th><td>&nbsp;</td><th align="left"> Section</th></tr>
+<tr><td colspan="4"> <hr></td></tr>
+<tr><th><a name="Variables_vr_letter-O">O</a></th><td></td><td></td></tr>
+<tr><td></td><td valign="top"><a href="#index-org_002dtrello_002dcurrent_002dprefix_002dkeybinding"><code>org-trello-current-prefix-keybinding</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Prefix-Keys">Prefix Keys</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-org_002dtrello_002dmode_002dmap"><code>org-trello-mode-map</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Individual-Keys">Individual Keys</a></td></tr>
+<tr><td colspan="4"> <hr></td></tr>
+</table>
+<table><tr><th valign="top">Jump to: &nbsp; </th><td><a class="summary-letter" href="#Variables_vr_letter-O"><b>O</b></a>
+ &nbsp; 
+</td></tr></table>
 
 <hr>
 <a name="Releases"></a>
+<div class="header">
+<p>
+Previous: <a href="#Variables" accesskey="p" rel="prev">Variables</a>, Up: <a href="#Top" accesskey="u" rel="up">Top</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Concepts" title="Index" rel="index">Index</a>]</p>
+</div>
 <a name="Release-Notes"></a>
 <h2 class="appendix">Appendix H Release Notes</h2>
 

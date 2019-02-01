@@ -106,7 +106,15 @@ Sync Emacs org-mode with Trello.com.
 Using
 
 * Key-Bindings::                 Summary of Key-Bindings
+* Connection Functions::         Connection Functions
 * Synchronization Functions::    Synchronization Functions
+* Editing Functions::            Editing Functions
+* Misc. Functions: Misc Functions.  Miscellaneous Functions
+
+Customizing
+
+* Prefix Keys::                  Customizing the Prefixx Keybinding
+* Individual Keys::              Customizing Individual Key Bindings
 
 @end detailmenu
 @end menu
@@ -132,7 +140,10 @@ org-file to a board of Trello.com.
 
 @menu
 * Key-Bindings::                 Summary of Key-Bindings
+* Connection Functions::         Connection Functions
 * Synchronization Functions::    Synchronization Functions
+* Editing Functions::            Editing Functions
+* Misc. Functions: Misc Functions.  Miscellaneous Functions
 @end menu
 
 @node Key-Bindings
@@ -141,17 +152,33 @@ org-file to a board of Trello.com.
 All default org-trello key-bindings use the “C-c o” prefix.
 
 @kindex C-c o C-h
-Type “C-c o C-h” to display help for all key bindings with this
-prefix.
+@emph{Note:} You may type “C-c o C-h” to display help for most org-trello
+key bindings.
 
-@multitable {aaaaaaaaa} {aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa}
+@multitable {aaaaaaaaa} {aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa}
 @headitem Keys
 @tab Command
 @item C-c o C-h
 @tab Display help on all key-bindings with C-c o prefix.
 @item C-c o v
 @tab Display the version of org-trello.
+@item C-c o i
+@tab Install the Trello.com access key and token.
+@item C-c o I
+@tab Select an existing Trello board and attach this file to it.
+@item C-c o b
+@tab Create a new Trello board and attach this file to it.
+@item C-c o u
+@tab Update this file’s attachment to its Trello board.
+@item 
+@tab 
 @end multitable
+
+@node Connection Functions
+@section Connection Functions
+
+This section describes the functions used to connect org-trello to
+Trello.com and to attach an org file to a Trello board.
 
 @node Synchronization Functions
 @section Synchronization Functions
@@ -165,6 +192,17 @@ This section describes the synchronization functions.
 Type “C-c o s” to sync the entire buffer TO the Trello board.@*
 Type “C-u C-c o s” to sync the entire buffer FROM the Trello board.
 @end ftable
+
+@node Editing Functions
+@section Editing Functions
+
+This section describes the functions used to edit cards, comments and
+list items.
+
+@node Misc Functions
+@section Misc. Functions
+
+This section describes other functions not listed above.
 
 @node FAQ
 @chapter Frequently-Asked Questions
@@ -183,7 +221,86 @@ Troubleshooting…
 @chapter Customizing org-trello
 
 @cindex customizing
-Customizing…
+This section describes how you may customize org-trello.
+
+@menu
+* Prefix Keys::                  Customizing the Prefixx Keybinding
+* Individual Keys::              Customizing Individual Key Bindings
+@end menu
+
+@node Prefix Keys
+@section Customizing the Prefix Keybinding
+
+@vindex org-trello-current-prefix-keybinding
+By default, org-trello uses the prefix keybinding “C-c o” to begin
+(almost) all of its commands. You may change this by customizing the
+variable “org-trello-current-prefix-keybinding”.
+
+To customize “org-trello-current-prefix-keybinding”, type “C-h v
+org-trello-current-prefix-keybinding RET” to display the help text for this
+variable. Then follow the “customize” link on the last line. You
+may then use the customize interface to set another prefix keybinding.
+
+@emph{Note:} If org-trello is already running, you must restart emacs after
+customizing this variable (or run “M-x org-trello-mode” - @emph{twice}).
+
+You may also change this setting in your emacs initialization file.
+For example, to change the org-trello prefix keybinding to “C-c x” add
+these lines to your ~/.emacs (or ~/.emacs.d/.init.el) file:
+
+@lisp
+(require 'org-trello)
+(custom-set-variables '(org-trello-current-prefix-keybinding "C-c x"))
+@end lisp
+
+For an example, please see my @uref{https://github.com/ardumont/orgmode-pack/blob/master/orgmode-pack.el#L57, startup file}.
+
+@node Individual Keys
+@section Customizing Individual Key Bindings
+
+@vindex org-trello-mode-map
+To redefine one or more org-trello-mode keys, you should create a
+function to define keys in the org-trello-mode-map and hook your
+function to the org-trello-mode-hook. This will make org-trello run
+your function each time it starts.
+
+@lisp
+(require 'org-trello)
+
+(defun def-my-org-trello-keys () "Define my org-trello keys."
+  (define-key org-trello-mode-map (kbd "C-c x v") 'org-trello-version)
+  (define-key org-trello-mode-map (kbd "C-c x i") 'org-trello-install-key-and-token)
+  (define-key org-trello-mode-map (kbd "C-c x I") 'org-trello-install-board-metadata)
+  (define-key org-trello-mode-map (kbd "C-c x c") 'org-trello-sync-card)
+  (define-key org-trello-mode-map (kbd "C-c x s") 'org-trello-sync-buffer)
+  (define-key org-trello-mode-map (kbd "C-c x a") 'org-trello-assign-me)
+  (define-key org-trello-mode-map (kbd "C-c x d") 'org-trello-check-setup)
+  (define-key org-trello-mode-map (kbd "C-c x D") 'org-trello-delete-setup)
+  (define-key org-trello-mode-map (kbd "C-c x b") 'org-trello-create-board-and-install-metadata)
+  (define-key org-trello-mode-map (kbd "C-c x k") 'org-trello-kill-entity)
+  (define-key org-trello-mode-map (kbd "C-c x K") 'org-trello-kill-cards)
+  (define-key org-trello-mode-map (kbd "C-c x a") 'org-trello-archive-card)
+  (define-key org-trello-mode-map (kbd "C-c x A") 'org-trello-archive-cards)
+  (define-key org-trello-mode-map (kbd "C-c x j") 'org-trello-jump-to-trello-card)
+  (define-key org-trello-mode-map (kbd "C-c x J") 'org-trello-jump-to-trello-board)
+  (define-key org-trello-mode-map (kbd "C-c x C") 'org-trello-add-card-comments)
+  (define-key org-trello-mode-map (kbd "C-c x o") 'org-trello-show-card-comments)
+  (define-key org-trello-mode-map (kbd "C-c x l") 'org-trello-show-card-labels)
+  (define-key org-trello-mode-map (kbd "C-c x u") 'org-trello-update-board-metadata)
+  (define-key org-trello-mode-map (kbd "C-c x h") 'org-trello-help-describing-bindings))
+
+(add-hook 'org-trello-mode-hook 'def-my-org-trello-keys)
+@end lisp
+
+@emph{Note:} This will not update the help messages to match your
+key-bindings nor remove the default keybindings.
+
+You may add several lines like this one to your hook function to
+remove specific existing org-trello keybindings:
+
+@lisp
+(define-key org-trello-mode-map (kbd "C-c o v") nil)
+@end lisp
 
 @node Contributing
 @chapter Contributing to org-trello
