@@ -10,7 +10,6 @@
 #+AUTHOR: Manual by Daniel Birket
 #+SUBAUTHOR: Package by Antoine R. Dumont
 #+LANGUAGE: en
-#+STARTUP: indent
 
 #+TEXINFO_FILENAME: org-trello.info
 #+TEXINFO_DIR_CATEGORY: Emacs
@@ -39,11 +38,13 @@
 #+OPTIONS: d:(not "LOGBOOK") date:t e:t email:nil f:t inline:t num:t
 #+OPTIONS: p:nil pri:nil prop:nil stat:t tags:t tasks:t tex:t
 #+OPTIONS: timestamp:t title:t toc:t todo:t |:t
+#+TODO: TODO(t) NEXT(n) WORK(w) CHEK(c) HOLD(h) | DONE(d) KILL(k)
+#+STARTUP: indent
 :END:
 {{{DESCR}}}
 
 #+TEXINFO: @insertcopying
-* COPYING
+* CHEK COPYING
   :PROPERTIES:
   :COPYING:  t
   :END:
@@ -91,14 +92,20 @@ which begins with this license and non-warranty statement:
 ;; GNU General Public License for more details.
 #+END_SRC
 
-* Installing org-trello
+* TODO About org-trello
+:PROPERTIES:
+:ALT_TITLE: About
+:DESCRIPTION: About org-trello
+:END:
+Why use org-trello?
+* TODO Installing org-trello
   :PROPERTIES:
   :ALT_TITLE: Installing
   :DESCRIPTION: Installing org-trello
   :END:
 #+CINDEX: org-trello, installing
 Installing…
-* Connecting to Trello.com
+* TODO Connecting to Trello.com
   :PROPERTIES:
   :ALT_TITLE: Connecting
   :DESCRIPTION: Connecting to Trello.com
@@ -111,12 +118,22 @@ Connecting…
   :DESCRIPTION: Using org-trello
   :END:
 #+CINDEX: org-trello, using
-This section describes how to use org-trello _after_ connecting an
-org-file to a board of Trello.com.
-** Summary of Key-Bindings
+This section describes how to use org-trello.
+** TODO Quick Start
 :PROPERTIES:
-:ALT_TITLE: Key-Bindings
-:DESCRIPTION: Summary of Key-Bindings
+:ALT_TITLE: Quick Start
+:DESCRIPTION: First Steps with org-trello
+:END:
+** Command Descriptions
+:PROPERTIES:
+:ALT_TEXT: Commands
+:DESCRIPTION: Command Descriptions
+:END:
+This section describes all commands.
+*** WORK Summary of Commands
+:PROPERTIES:
+:ALT_TITLE: Summary
+:DESCRIPTION: Summary of Commands
 :END:
 All default org-trello key-bindings use the “C-c o” prefix.
 
@@ -134,17 +151,17 @@ key bindings.
 | C-c o b   | Create a new Trello board and attach this file to it.       |
 | C-c o u   | Update this file’s attachment to its Trello board.          |
 |           |                                                             |
-** Connection Functions 
+*** TODO Connection Commands
 :PROPERTIES:
-:ALT_TEXT: Connect Funcs.
-:DESCRIPTION: Connection Functions
+:ALT_TITLE: Connection Cmds
+:DESCRIPTION: Connection Commands
 :END:
 This section describes the functions used to connect org-trello to
 Trello.com and to attach an org file to a Trello board.
-** Synchronization Functions
+*** WORK Synchronization Commands
 :PROPERTIES:
-:ALT_TEXT: Synch. Funcs.
-:DESCRIPTION: Synchronization Functions
+:ALT_TITLE: Synch Cmds
+:DESCRIPTION: Synchronization Commands
 :END:
 This section describes the synchronization functions.
 
@@ -154,28 +171,34 @@ This section describes the synchronization functions.
 - org-trello-sync-buffer :: 
   Type “C-c o s” to sync the entire buffer TO the Trello board.\\
   Type “C-u C-c o s” to sync the entire buffer FROM the Trello board.
-** Editing Functions 
+*** TODO Editing Commands
 :PROPERTIES:
-:ALT_TEXT: Editing Funcs.
-:DESCRIPTION: Editing Functions
+:ALT_TITLE: Editing Cmds
+:DESCRIPTION: Editing Commands
 :END:
 This section describes the functions used to edit cards, comments and
 list items.
-** Misc. Functions 
+*** TODO Misc. Commands
 :PROPERTIES:
-:ALT_TEXT: Misc. Funcs.
-:DESCRIPTION: Miscellaneous Functions
+:ALT_TITLE: Misc Cmds
+:DESCRIPTION: Misc. Commands
 :END:
 This section describes other functions not listed above.
 
-* Frequently-Asked Questions
+** TODO How to Perform Tasks
+:PROPERTIES:
+:ALT_TITLE: How to…
+:DESCRIPTION: How to Perform Tasks
+:END:
+This section is describes how to use commands to perform tasks with org-trello.
+* TODO Frequently-Asked Questions
   :PROPERTIES:
   :ALT_TITLE: FAQ
   :DESCRIPTION: Frequently-Asked Questions
   :END:
 #+CINDEX: FAQ
 FAQ…
-* Troubleshooting org-trello
+* TODO Troubleshooting org-trello
   :PROPERTIES:
   :ALT_TITLE: Troubleshooting
   :DESCRIPTION: Troubleshooting org-trello
@@ -190,10 +213,10 @@ Troubleshooting…
   :END:
 #+CINDEX: customizing
 This section describes how you may customize org-trello.
-** Customizing the Prefix Keybinding
+** CHEK Customizing the Prefix Keybinding
 :PROPERTIES:
 :ALT_TITLE: Prefix Keys
-:DESCRIPTION: Customizing the Prefixx Keybinding
+:DESCRIPTION: Customizing the Prefix Keybinding
 :END:
 #+VINDEX: org-trello-current-prefix-keybinding
 By default, org-trello uses the prefix keybinding “C-c o” to begin
@@ -219,13 +242,13 @@ these lines to your ~/.emacs (or ~/.emacs.d/.init.el) file:
 
 For an example, please see my [[https://github.com/ardumont/orgmode-pack/blob/master/orgmode-pack.el#L57][startup file]].
 
-** Customizing Individual Key Bindings
+** CHEK Customizing Individual Keybindings
 :PROPERTIES:
 :ALT_TITLE: Individual Keys
 :DESCRIPTION: Customizing Individual Key Bindings
 :END:
 #+VINDEX: org-trello-mode-map
-To redefine one or more org-trello-mode keys, you should create a
+To redefine one or more org-trello-mode command keybindings, you should create a
 function to define keys in the org-trello-mode-map and hook your
 function to the org-trello-mode-hook. This will make org-trello run
 your function each time it starts.
@@ -267,6 +290,13 @@ remove specific existing org-trello keybindings:
 #+BEGIN_SRC emacs-lisp
     (define-key org-trello-mode-map (kbd "C-c o v") nil)
 #+END_SRC
+
+** TODO Customizing org-trello Variables
+:PROPERTIES:
+:ALT_TITLE: Variables
+:DESCRIPTION: Customizing Variables
+:END:
+
 * Contributing to org-trello
   :PROPERTIES:
   :ALT_TITLE: Contributing
@@ -274,11 +304,10 @@ remove specific existing org-trello keybindings:
   :END:
 #+CINDEX: contributing
 Contributing…
-* Contributor Credits
+** CHEK Credits
 :PROPERTIES:
 :ALT_TITLE: Credits
 :DESCRIPTION: Contributor Credits
-:APPENDIX: t
 :END:
 #+CINDEX: credits
 #+CINDEX: contributors
@@ -298,7 +327,19 @@ and thanks to all those that opened [[https://github.com/org-trello/org-trello/i
 Also, thank you to the entire free-software community world-wide, including the
 creators and contributors of Emacs and org-mode.
 
-* GNU General Public License
+** CHEK Release Notes
+:PROPERTIES:
+:ALT_TITLE: Releases
+:DESCRIPTION: Release Notes History
+:END:
+#+CINDEX: release notes
+#+CINDEX: version history
+The separate [[file:release-notes.org][release-notes file]] records the primary changes in each
+release of org-trello. Please also see the [[https://github.com/org-trello/org-trello][repository]] on GitHub for a
+detailed history.
+
+* DONE GNU General Public License
+CLOSED: [2019-02-01 Fri 20:21]
 :PROPERTIES:
 :ALT_TITLE: GNU GPL
 :DESCRIPTION: GNU General Public License
@@ -306,7 +347,8 @@ creators and contributors of Emacs and org-mode.
 :END:
 #+CINDEX: license, software
 #+TEXINFO: @include gpl.texi
-* GNU Free Documentation License
+* DONE GNU Free Documentation License
+CLOSED: [2019-02-01 Fri 20:21]
 :PROPERTIES:
 :ALT_TITLE: GNU FDL
 :DESCRIPTION: GNU Free Documentation License
@@ -314,44 +356,39 @@ creators and contributors of Emacs and org-mode.
 :END:
 #+CINDEX: license, manual
 #+TEXINFO: @include fdl.texi
-* Concepts Index
+* Indices
+:PROPERTIES:
+:ALT_TITLE: Indices
+:DESCRIPTION: Indices
+:APPENDIX: t
+:END:
+This section contains the concepts, commands, functions and variables indices.
+** Concepts Index
 :PROPERTIES:
 :INDEX: cp
 :ALT_TITLE: Concepts
 :DESCRIPTION: Concepts Index
 :APPENDIX: t
 :END:
-* Key Binding Index
+** Commands Index
 :PROPERTIES:
 :INDEX: ky
-:ALT_TITLE: Keys
-:DESCRIPTION: Key Bindings Index
+:ALT_TITLE: Command Index
+:DESCRIPTION: Commands Index
 :APPENDIX: t
 :END:
-* Functions Index
+** Functions Index
 :PROPERTIES:
 :INDEX: fn
 :ALT_TITLE: Functions
 :DESCRIPTION: Functions Index
 :APPENDIX: t
 :END:
-* Variables Index
+** Variables Index
 :PROPERTIES:
 :INDEX: vr
 :ALT_TITLE: Variables
 :DESCRIPTION: Variables Index
 :APPENDIX: t
 :END:
-* Release Notes
-:PROPERTIES:
-:ALT_TITLE: Releases
-:DESCRIPTION: Release Notes History
-:APPENDIX: t
-:END:
-#+CINDEX: release notes
-#+CINDEX: version history
-This appendix records the primary changes in each release of
-org-trello. Please see the [[https://github.com/org-trello/org-trello][repository]] on GitHub for a more detailed
-history.
 
-#+INCLUDE: release-notes.org

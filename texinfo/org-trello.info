@@ -7,18 +7,17 @@ written and copyright ©2019 by Daniel Birket.
      Permission is granted to copy, distribute and/or modify this
      document under the terms of the GNU Free Documentation License,
      Version 1.3 or any later version published by the Free Software
-     Foundation; with no Invariant Sections, with no Front-Cover
-     Texts, and with no Back-Cover Texts.  A copy of the license is
-     included in the section entitled GNU Free Documentation License.
+     Foundation; with no Invariant Sections, with no Front-Cover Texts,
+     and with no Back-Cover Texts.  A copy of the license is included in
+     the section entitled GNU Free Documentation License.
 
    This manaul describes how to install and use the Emacs package
 org-trello, version 0.8.1, released 2018-03-18, written and copyright
 ©2013-2017 by Antoine Dumont, to synchronize org-mode TO-DO lists with
 Trello.com (https://trello.com).
 
-   This manual was written with reference to the org-trello
-source-code, which begins with this license and non-warranty
-statement:
+   This manual was written with reference to the org-trello source-code,
+which begins with this license and non-warranty statement:
 
      ;;; org-trello.el
      ;; Minor mode to synchronize org-mode buffer and trello board
@@ -47,31 +46,30 @@ START-INFO-DIR-ENTRY
 END-INFO-DIR-ENTRY
 
 
-File: org-trello.info,  Node: Top,  Next: Installing,  Up: (dir)
+File: org-trello.info,  Node: Top,  Next: About,  Up: (dir)
 
 org-trello Manual
 *****************
 
 Sync Emacs org-mode with Trello.com.
 
-   This is the org-trello Manual, edition 0.8.1.a, released
-2019-01-30, written and copyright ©2019 by Daniel Birket.
+   This is the org-trello Manual, edition 0.8.1.a, released 2019-01-30,
+written and copyright ©2019 by Daniel Birket.
 
      Permission is granted to copy, distribute and/or modify this
      document under the terms of the GNU Free Documentation License,
      Version 1.3 or any later version published by the Free Software
-     Foundation; with no Invariant Sections, with no Front-Cover
-     Texts, and with no Back-Cover Texts.  A copy of the license is
-     included in the section entitled GNU Free Documentation License.
+     Foundation; with no Invariant Sections, with no Front-Cover Texts,
+     and with no Back-Cover Texts.  A copy of the license is included in
+     the section entitled GNU Free Documentation License.
 
    This manaul describes how to install and use the Emacs package
 org-trello, version 0.8.1, released 2018-03-18, written and copyright
 ©2013-2017 by Antoine Dumont, to synchronize org-mode TO-DO lists with
 Trello.com (https://trello.com).
 
-   This manual was written with reference to the org-trello
-source-code, which begins with this license and non-warranty
-statement:
+   This manual was written with reference to the org-trello source-code,
+which begins with this license and non-warranty statement:
 
      ;;; org-trello.el
      ;; Minor mode to synchronize org-mode buffer and trello board
@@ -97,6 +95,7 @@ statement:
 
 * Menu:
 
+* About::                        About org-trello
 * Installing::                   Installing org-trello
 * Connecting::                   Connecting to Trello.com
 * Using::                        Using org-trello
@@ -104,74 +103,115 @@ statement:
 * Troubleshooting::              Troubleshooting org-trello
 * Customizing::                  Customizing org-trello
 * Contributing::                 Contributing to org-trello
-* Credits::                      Contributor Credits
 * GNU GPL::                      GNU General Public License
 * GNU FDL::                      GNU Free Documentation License
-* Concepts::                     Concepts Index
-* Keys::                         Key Bindings Index
-* Functions::                    Functions Index
-* Variables::                    Variables Index
-* Releases::                     Release Notes History
+* Indices::                      Indices
 
 — The Detailed Node Listing —
 
 Using
 
-* Key-Bindings::                 Summary of Key-Bindings
-* Connection Functions::         Connection Functions
-* Synchronization Functions::    Synchronization Functions
-* Editing Functions::            Editing Functions
-* Misc. Functions: Misc Functions.  Miscellaneous Functions
+* Quick Start::                  First Steps with org-trello
+* Command Descriptions::         Command Descriptions
+* How to…::                      How to Perform Tasks
+
+Command Descriptions
+
+* Summary::                      Summary of Commands
+* Connection Cmds::              Connection Commands
+* Synch Cmds::                   Synchronization Commands
+* Editing Cmds::                 Editing Commands
+* Misc Cmds::                    Misc. Commands
 
 Customizing
 
-* Prefix Keys::                  Customizing the Prefixx Keybinding
+* Prefix Keys::                  Customizing the Prefix Keybinding
 * Individual Keys::              Customizing Individual Key Bindings
+* Variables::                    Customizing Variables
+
+Contributing
+
+* Credits::                      Contributor Credits
+* Releases::                     Release Notes History
+
+Indices
+
+* Concepts::                     Concepts Index
+* Command Index::                Commands Index
+* Functions::                    Functions Index
+* Variables: Variables (1).      Variables Index
 
 
 
-File: org-trello.info,  Node: Installing,  Next: Connecting,  Prev: Top,  Up: Top
+File: org-trello.info,  Node: About,  Next: Installing,  Prev: Top,  Up: Top
 
-1 Installing org-trello
-***********************
+1 *TODO* About org-trello
+*************************
+
+Why use org-trello?
+
+
+File: org-trello.info,  Node: Installing,  Next: Connecting,  Prev: About,  Up: Top
+
+2 *TODO* Installing org-trello
+******************************
 
 Installing…
 
 
 File: org-trello.info,  Node: Connecting,  Next: Using,  Prev: Installing,  Up: Top
 
-2 Connecting to Trello.com
-**************************
+3 *TODO* Connecting to Trello.com
+*********************************
 
 Connecting…
 
 
 File: org-trello.info,  Node: Using,  Next: FAQ,  Prev: Connecting,  Up: Top
 
-3 Using org-trello
+4 Using org-trello
 ******************
 
-This section describes how to use org-trello after connecting an
-org-file to a board of Trello.com.
+This section describes how to use org-trello.
 
 * Menu:
 
-* Key-Bindings::                 Summary of Key-Bindings
-* Connection Functions::         Connection Functions
-* Synchronization Functions::    Synchronization Functions
-* Editing Functions::            Editing Functions
-* Misc. Functions: Misc Functions.  Miscellaneous Functions
+* Quick Start::                  First Steps with org-trello
+* Command Descriptions::         Command Descriptions
+* How to…::                      How to Perform Tasks
 
 
-File: org-trello.info,  Node: Key-Bindings,  Next: Connection Functions,  Up: Using
+File: org-trello.info,  Node: Quick Start,  Next: Command Descriptions,  Up: Using
 
-3.1 Summary of Key-Bindings
-===========================
+4.1 *TODO* Quick Start
+======================
+
+
+File: org-trello.info,  Node: Command Descriptions,  Next: How to…,  Prev: Quick Start,  Up: Using
+
+4.2 Command Descriptions
+========================
+
+This section describes all commands.
+
+* Menu:
+
+* Summary::                      Summary of Commands
+* Connection Cmds::              Connection Commands
+* Synch Cmds::                   Synchronization Commands
+* Editing Cmds::                 Editing Commands
+* Misc Cmds::                    Misc. Commands
+
+
+File: org-trello.info,  Node: Summary,  Next: Connection Cmds,  Up: Command Descriptions
+
+4.2.1 *WORK* Summary of Commands
+--------------------------------
 
 All default org-trello key-bindings use the “C-c o” prefix.
 
-   _Note:_ You may type “C-c o C-h” to display help for most
-org-trello key bindings.
+   _Note:_ You may type “C-c o C-h” to display help for most org-trello
+key bindings.
 
 Keys        Command
 --------------------------------------------------------------------------
@@ -183,78 +223,87 @@ C-c o b     Create a new Trello board and attach this file to it.
 C-c o u     Update this file’s attachment to its Trello board.
 
 
-File: org-trello.info,  Node: Connection Functions,  Next: Synchronization Functions,  Prev: Key-Bindings,  Up: Using
+File: org-trello.info,  Node: Connection Cmds,  Next: Synch Cmds,  Prev: Summary,  Up: Command Descriptions
 
-3.2 Connection Functions
-========================
+4.2.2 *TODO* Connection Commands
+--------------------------------
 
 This section describes the functions used to connect org-trello to
 Trello.com and to attach an org file to a Trello board.
 
 
-File: org-trello.info,  Node: Synchronization Functions,  Next: Editing Functions,  Prev: Connection Functions,  Up: Using
+File: org-trello.info,  Node: Synch Cmds,  Next: Editing Cmds,  Prev: Connection Cmds,  Up: Command Descriptions
 
-3.3 Synchronization Functions
-=============================
+4.2.3 *WORK* Synchronization Commands
+-------------------------------------
 
 This section describes the synchronization functions.
 
 ‘org-trello-sync-buffer’
      Type “C-c o s” to sync the entire buffer TO the Trello board.
-     Type “C-u C-c o s” to sync the entire buffer FROM the Trello
-     board.
+     Type “C-u C-c o s” to sync the entire buffer FROM the Trello board.
 
 
-File: org-trello.info,  Node: Editing Functions,  Next: Misc Functions,  Prev: Synchronization Functions,  Up: Using
+File: org-trello.info,  Node: Editing Cmds,  Next: Misc Cmds,  Prev: Synch Cmds,  Up: Command Descriptions
 
-3.4 Editing Functions
-=====================
+4.2.4 *TODO* Editing Commands
+-----------------------------
 
 This section describes the functions used to edit cards, comments and
 list items.
 
 
-File: org-trello.info,  Node: Misc Functions,  Prev: Editing Functions,  Up: Using
+File: org-trello.info,  Node: Misc Cmds,  Prev: Editing Cmds,  Up: Command Descriptions
 
-3.5 Misc. Functions
-===================
+4.2.5 *TODO* Misc. Commands
+---------------------------
 
 This section describes other functions not listed above.
 
 
+File: org-trello.info,  Node: How to…,  Prev: Command Descriptions,  Up: Using
+
+4.3 *TODO* How to Perform Tasks
+===============================
+
+This section is describes how to use commands to perform tasks with
+org-trello.
+
+
 File: org-trello.info,  Node: FAQ,  Next: Troubleshooting,  Prev: Using,  Up: Top
 
-4 Frequently-Asked Questions
-****************************
+5 *TODO* Frequently-Asked Questions
+***********************************
 
 FAQ…
 
 
 File: org-trello.info,  Node: Troubleshooting,  Next: Customizing,  Prev: FAQ,  Up: Top
 
-5 Troubleshooting org-trello
-****************************
+6 *TODO* Troubleshooting org-trello
+***********************************
 
 Troubleshooting…
 
 
 File: org-trello.info,  Node: Customizing,  Next: Contributing,  Prev: Troubleshooting,  Up: Top
 
-6 Customizing org-trello
+7 Customizing org-trello
 ************************
 
 This section describes how you may customize org-trello.
 
 * Menu:
 
-* Prefix Keys::                  Customizing the Prefixx Keybinding
+* Prefix Keys::                  Customizing the Prefix Keybinding
 * Individual Keys::              Customizing Individual Key Bindings
+* Variables::                    Customizing Variables
 
 
 File: org-trello.info,  Node: Prefix Keys,  Next: Individual Keys,  Up: Customizing
 
-6.1 Customizing the Prefix Keybinding
-=====================================
+7.1 *CHEK* Customizing the Prefix Keybinding
+============================================
 
 By default, org-trello uses the prefix keybinding “C-c o” to begin
 (almost) all of its commands.  You may change this by customizing the
@@ -262,9 +311,8 @@ variable “org-trello-current-prefix-keybinding”.
 
    To customize “org-trello-current-prefix-keybinding”, type “C-h v
 org-trello-current-prefix-keybinding RET” to display the help text for
-this variable.  Then follow the “customize” link on the last line.
-You may then use the customize interface to set another prefix
-keybinding.
+this variable.  Then follow the “customize” link on the last line.  You
+may then use the customize interface to set another prefix keybinding.
 
    _Note:_ If org-trello is already running, you must restart emacs
 after customizing this variable (or run “M-x org-trello-mode” -
@@ -281,15 +329,15 @@ these lines to your ~/.emacs (or ~/.emacs.d/.init.el) file:
 (https://github.com/ardumont/orgmode-pack/blob/master/orgmode-pack.el#L57).
 
 
-File: org-trello.info,  Node: Individual Keys,  Prev: Prefix Keys,  Up: Customizing
+File: org-trello.info,  Node: Individual Keys,  Next: Variables,  Prev: Prefix Keys,  Up: Customizing
 
-6.2 Customizing Individual Key Bindings
-=======================================
+7.2 *CHEK* Customizing Individual Keybindings
+=============================================
 
-To redefine one or more org-trello-mode keys, you should create a
-function to define keys in the org-trello-mode-map and hook your
-function to the org-trello-mode-hook.  This will make org-trello run
-your function each time it starts.
+To redefine one or more org-trello-mode command keybindings, you should
+create a function to define keys in the org-trello-mode-map and hook
+your function to the org-trello-mode-hook.  This will make org-trello
+run your function each time it starts.
 
      (require 'org-trello)
 
@@ -326,18 +374,29 @@ remove specific existing org-trello keybindings:
      (define-key org-trello-mode-map (kbd "C-c o v") nil)
 
 
-File: org-trello.info,  Node: Contributing,  Next: Credits,  Prev: Customizing,  Up: Top
+File: org-trello.info,  Node: Variables,  Prev: Individual Keys,  Up: Customizing
 
-7 Contributing to org-trello
+7.3 *TODO* Customizing org-trello Variables
+===========================================
+
+
+File: org-trello.info,  Node: Contributing,  Next: GNU GPL,  Prev: Customizing,  Up: Top
+
+8 Contributing to org-trello
 ****************************
 
 Contributing…
 
-
-File: org-trello.info,  Node: Credits,  Next: GNU GPL,  Prev: Contributing,  Up: Top
+* Menu:
 
-Appendix A Contributor Credits
-******************************
+* Credits::                      Contributor Credits
+* Releases::                     Release Notes History
+
+
+File: org-trello.info,  Node: Credits,  Next: Releases,  Up: Contributing
+
+8.1 *CHEK* Credits
+==================
 
 Many thanks to all the contributors
 (https://github.com/org-trello/org-trello/graphs/contributors) to
@@ -371,12 +430,23 @@ org-trello, including:
 including the creators and contributors of Emacs and org-mode.
 
 
-File: org-trello.info,  Node: GNU GPL,  Next: GNU FDL,  Prev: Credits,  Up: Top
+File: org-trello.info,  Node: Releases,  Prev: Credits,  Up: Contributing
 
-Appendix B GNU General Public License
-*************************************
+8.2 *CHEK* Release Notes
+========================
 
-                       Version 3, 29 June 2007
+The separate release-notes file (release-notes.org) records the primary
+changes in each release of org-trello.  Please also see the repository
+(https://github.com/org-trello/org-trello) on GitHub for a detailed
+history.
+
+
+File: org-trello.info,  Node: GNU GPL,  Next: GNU FDL,  Prev: Contributing,  Up: Top
+
+Appendix A *DONE* GNU General Public License
+********************************************
+
+                        Version 3, 29 June 2007
 
      Copyright © 2007 Free Software Foundation, Inc. <http://fsf.org/>
 
@@ -386,17 +456,17 @@ Appendix B GNU General Public License
 Preamble
 ========
 
-The GNU General Public License is a free, copyleft license for
-software and other kinds of works.
+The GNU General Public License is a free, copyleft license for software
+and other kinds of works.
 
-   The licenses for most software and other practical works are
-designed to take away your freedom to share and change the works.  By
-contrast, the GNU General Public License is intended to guarantee your
-freedom to share and change all versions of a program—to make sure it
-remains free software for all its users.  We, the Free Software
-Foundation, use the GNU General Public License for most of our
-software; it applies also to any other work released this way by its
-authors.  You can apply it to your programs, too.
+   The licenses for most software and other practical works are designed
+to take away your freedom to share and change the works.  By contrast,
+the GNU General Public License is intended to guarantee your freedom to
+share and change all versions of a program—to make sure it remains free
+software for all its users.  We, the Free Software Foundation, use the
+GNU General Public License for most of our software; it applies also to
+any other work released this way by its authors.  You can apply it to
+your programs, too.
 
    When we speak of free software, we are referring to freedom, not
 price.  Our General Public Licenses are designed to make sure that you
@@ -406,46 +476,43 @@ want it, that you can change the software or use pieces of it in new
 free programs, and that you know you can do these things.
 
    To protect your rights, we need to prevent others from denying you
-these rights or asking you to surrender the rights.  Therefore, you
-have certain responsibilities if you distribute copies of the
-software, or if you modify it: responsibilities to respect the freedom
-of others.
+these rights or asking you to surrender the rights.  Therefore, you have
+certain responsibilities if you distribute copies of the software, or if
+you modify it: responsibilities to respect the freedom of others.
 
    For example, if you distribute copies of such a program, whether
 gratis or for a fee, you must pass on to the recipients the same
-freedoms that you received.  You must make sure that they, too,
-receive or can get the source code.  And you must show them these
-terms so they know their rights.
+freedoms that you received.  You must make sure that they, too, receive
+or can get the source code.  And you must show them these terms so they
+know their rights.
 
    Developers that use the GNU GPL protect your rights with two steps:
 (1) assert copyright on the software, and (2) offer you this License
 giving you legal permission to copy, distribute and/or modify it.
 
-   For the developers’ and authors’ protection, the GPL clearly
-explains that there is no warranty for this free software.  For both
-users’ and authors’ sake, the GPL requires that modified versions be
-marked as changed, so that their problems will not be attributed
-erroneously to authors of previous versions.
+   For the developers’ and authors’ protection, the GPL clearly explains
+that there is no warranty for this free software.  For both users’ and
+authors’ sake, the GPL requires that modified versions be marked as
+changed, so that their problems will not be attributed erroneously to
+authors of previous versions.
 
    Some devices are designed to deny users access to install or run
-modified versions of the software inside them, although the
-manufacturer can do so.  This is fundamentally incompatible with the
-aim of protecting users’ freedom to change the software.  The
-systematic pattern of such abuse occurs in the area of products for
-individuals to use, which is precisely where it is most unacceptable.
-Therefore, we have designed this version of the GPL to prohibit the
-practice for those products.  If such problems arise substantially in
-other domains, we stand ready to extend this provision to those
-domains in future versions of the GPL, as needed to protect the
-freedom of users.
+modified versions of the software inside them, although the manufacturer
+can do so.  This is fundamentally incompatible with the aim of
+protecting users’ freedom to change the software.  The systematic
+pattern of such abuse occurs in the area of products for individuals to
+use, which is precisely where it is most unacceptable.  Therefore, we
+have designed this version of the GPL to prohibit the practice for those
+products.  If such problems arise substantially in other domains, we
+stand ready to extend this provision to those domains in future versions
+of the GPL, as needed to protect the freedom of users.
 
-   Finally, every program is threatened constantly by software
-patents.  States should not allow patents to restrict development and
-use of software on general-purpose computers, but in those that do, we
-wish to avoid the special danger that patents applied to a free
-program could make it effectively proprietary.  To prevent this, the
-GPL assures that patents cannot be used to render the program
-non-free.
+   Finally, every program is threatened constantly by software patents.
+States should not allow patents to restrict development and use of
+software on general-purpose computers, but in those that do, we wish to
+avoid the special danger that patents applied to a free program could
+make it effectively proprietary.  To prevent this, the GPL assures that
+patents cannot be used to render the program non-free.
 
    The precise terms and conditions for copying, distribution and
 modification follow.
@@ -461,79 +528,78 @@ TERMS AND CONDITIONS
      “Copyright” also means copyright-like laws that apply to other
      kinds of works, such as semiconductor masks.
 
-     “The Program” refers to any copyrightable work licensed under
-     this License.  Each licensee is addressed as “you”.  “Licensees”
-     and “recipients” may be individuals or organizations.
+     “The Program” refers to any copyrightable work licensed under this
+     License.  Each licensee is addressed as “you”.  “Licensees” and
+     “recipients” may be individuals or organizations.
 
      To “modify” a work means to copy from or adapt all or part of the
      work in a fashion requiring copyright permission, other than the
-     making of an exact copy.  The resulting work is called a
-     “modified version” of the earlier work or a work “based on” the
-     earlier work.
+     making of an exact copy.  The resulting work is called a “modified
+     version” of the earlier work or a work “based on” the earlier work.
 
      A “covered work” means either the unmodified Program or a work
      based on the Program.
 
      To “propagate” a work means to do anything with it that, without
      permission, would make you directly or secondarily liable for
-     infringement under applicable copyright law, except executing it
-     on a computer or modifying a private copy.  Propagation includes
+     infringement under applicable copyright law, except executing it on
+     a computer or modifying a private copy.  Propagation includes
      copying, distribution (with or without modification), making
-     available to the public, and in some countries other activities
-     as well.
+     available to the public, and in some countries other activities as
+     well.
 
-     To “convey” a work means any kind of propagation that enables
-     other parties to make or receive copies.  Mere interaction with a
-     user through a computer network, with no transfer of a copy, is
-     not conveying.
+     To “convey” a work means any kind of propagation that enables other
+     parties to make or receive copies.  Mere interaction with a user
+     through a computer network, with no transfer of a copy, is not
+     conveying.
 
-     An interactive user interface displays “Appropriate Legal
-     Notices” to the extent that it includes a convenient and
-     prominently visible feature that (1) displays an appropriate
-     copyright notice, and (2) tells the user that there is no
-     warranty for the work (except to the extent that warranties are
-     provided), that licensees may convey the work under this License,
-     and how to view a copy of this License.  If the interface
-     presents a list of user commands or options, such as a menu, a
-     prominent item in the list meets this criterion.
+     An interactive user interface displays “Appropriate Legal Notices”
+     to the extent that it includes a convenient and prominently visible
+     feature that (1) displays an appropriate copyright notice, and (2)
+     tells the user that there is no warranty for the work (except to
+     the extent that warranties are provided), that licensees may convey
+     the work under this License, and how to view a copy of this
+     License.  If the interface presents a list of user commands or
+     options, such as a menu, a prominent item in the list meets this
+     criterion.
 
   1. Source Code.
 
      The “source code” for a work means the preferred form of the work
-     for making modifications to it.  “Object code” means any
-     non-source form of a work.
+     for making modifications to it.  “Object code” means any non-source
+     form of a work.
 
      A “Standard Interface” means an interface that either is an
      official standard defined by a recognized standards body, or, in
      the case of interfaces specified for a particular programming
-     language, one that is widely used among developers working in
-     that language.
+     language, one that is widely used among developers working in that
+     language.
 
      The “System Libraries” of an executable work include anything,
-     other than the work as a whole, that (a) is included in the
-     normal form of packaging a Major Component, but which is not part
-     of that Major Component, and (b) serves only to enable use of the
-     work with that Major Component, or to implement a Standard
-     Interface for which an implementation is available to the public
-     in source code form.  A “Major Component”, in this context, means
-     a major essential component (kernel, window system, and so on) of
-     the specific operating system (if any) on which the executable
-     work runs, or a compiler used to produce the work, or an object
-     code interpreter used to run it.
+     other than the work as a whole, that (a) is included in the normal
+     form of packaging a Major Component, but which is not part of that
+     Major Component, and (b) serves only to enable use of the work with
+     that Major Component, or to implement a Standard Interface for
+     which an implementation is available to the public in source code
+     form.  A “Major Component”, in this context, means a major
+     essential component (kernel, window system, and so on) of the
+     specific operating system (if any) on which the executable work
+     runs, or a compiler used to produce the work, or an object code
+     interpreter used to run it.
 
-     The “Corresponding Source” for a work in object code form means
-     all the source code needed to generate, install, and (for an
-     executable work) run the object code and to modify the work,
-     including scripts to control those activities.  However, it does
-     not include the work’s System Libraries, or general-purpose tools
-     or generally available free programs which are used unmodified in
-     performing those activities but which are not part of the work.
-     For example, Corresponding Source includes interface definition
-     files associated with source files for the work, and the source
-     code for shared libraries and dynamically linked subprograms that
-     the work is specifically designed to require, such as by intimate
-     data communication or control flow between those subprograms and
-     other parts of the work.
+     The “Corresponding Source” for a work in object code form means all
+     the source code needed to generate, install, and (for an executable
+     work) run the object code and to modify the work, including scripts
+     to control those activities.  However, it does not include the
+     work’s System Libraries, or general-purpose tools or generally
+     available free programs which are used unmodified in performing
+     those activities but which are not part of the work.  For example,
+     Corresponding Source includes interface definition files associated
+     with source files for the work, and the source code for shared
+     libraries and dynamically linked subprograms that the work is
+     specifically designed to require, such as by intimate data
+     communication or control flow between those subprograms and other
+     parts of the work.
 
      The Corresponding Source need not include anything that users can
      regenerate automatically from other parts of the Corresponding
@@ -546,65 +612,63 @@ TERMS AND CONDITIONS
 
      All rights granted under this License are granted for the term of
      copyright on the Program, and are irrevocable provided the stated
-     conditions are met.  This License explicitly affirms your
-     unlimited permission to run the unmodified Program.  The output
-     from running a covered work is covered by this License only if
-     the output, given its content, constitutes a covered work.  This
-     License acknowledges your rights of fair use or other equivalent,
-     as provided by copyright law.
+     conditions are met.  This License explicitly affirms your unlimited
+     permission to run the unmodified Program.  The output from running
+     a covered work is covered by this License only if the output, given
+     its content, constitutes a covered work.  This License acknowledges
+     your rights of fair use or other equivalent, as provided by
+     copyright law.
 
      You may make, run and propagate covered works that you do not
      convey, without conditions so long as your license otherwise
      remains in force.  You may convey covered works to others for the
-     sole purpose of having them make modifications exclusively for
-     you, or provide you with facilities for running those works,
-     provided that you comply with the terms of this License in
-     conveying all material for which you do not control copyright.
-     Those thus making or running the covered works for you must do so
-     exclusively on your behalf, under your direction and control, on
-     terms that prohibit them from making any copies of your
-     copyrighted material outside their relationship with you.
+     sole purpose of having them make modifications exclusively for you,
+     or provide you with facilities for running those works, provided
+     that you comply with the terms of this License in conveying all
+     material for which you do not control copyright.  Those thus making
+     or running the covered works for you must do so exclusively on your
+     behalf, under your direction and control, on terms that prohibit
+     them from making any copies of your copyrighted material outside
+     their relationship with you.
 
      Conveying under any other circumstances is permitted solely under
-     the conditions stated below.  Sublicensing is not allowed;
-     section 10 makes it unnecessary.
+     the conditions stated below.  Sublicensing is not allowed; section
+     10 makes it unnecessary.
 
   3. Protecting Users’ Legal Rights From Anti-Circumvention Law.
 
-     No covered work shall be deemed part of an effective
-     technological measure under any applicable law fulfilling
-     obligations under article 11 of the WIPO copyright treaty adopted
-     on 20 December 1996, or similar laws prohibiting or restricting
-     circumvention of such measures.
+     No covered work shall be deemed part of an effective technological
+     measure under any applicable law fulfilling obligations under
+     article 11 of the WIPO copyright treaty adopted on 20 December
+     1996, or similar laws prohibiting or restricting circumvention of
+     such measures.
 
-     When you convey a covered work, you waive any legal power to
-     forbid circumvention of technological measures to the extent such
+     When you convey a covered work, you waive any legal power to forbid
+     circumvention of technological measures to the extent such
      circumvention is effected by exercising rights under this License
-     with respect to the covered work, and you disclaim any intention
-     to limit operation or modification of the work as a means of
+     with respect to the covered work, and you disclaim any intention to
+     limit operation or modification of the work as a means of
      enforcing, against the work’s users, your or third parties’ legal
      rights to forbid circumvention of technological measures.
 
   4. Conveying Verbatim Copies.
 
-     You may convey verbatim copies of the Program’s source code as
-     you receive it, in any medium, provided that you conspicuously
-     and appropriately publish on each copy an appropriate copyright
-     notice; keep intact all notices stating that this License and any
+     You may convey verbatim copies of the Program’s source code as you
+     receive it, in any medium, provided that you conspicuously and
+     appropriately publish on each copy an appropriate copyright notice;
+     keep intact all notices stating that this License and any
      non-permissive terms added in accord with section 7 apply to the
      code; keep intact all notices of the absence of any warranty; and
-     give all recipients a copy of this License along with the
-     Program.
+     give all recipients a copy of this License along with the Program.
 
-     You may charge any price or no price for each copy that you
-     convey, and you may offer support or warranty protection for a
-     fee.
+     You may charge any price or no price for each copy that you convey,
+     and you may offer support or warranty protection for a fee.
 
   5. Conveying Modified Source Versions.
 
-     You may convey a work based on the Program, or the modifications
-     to produce it from the Program, in the form of source code under
-     the terms of section 4, provided that you also meet all of these
+     You may convey a work based on the Program, or the modifications to
+     produce it from the Program, in the form of source code under the
+     terms of section 4, provided that you also meet all of these
      conditions:
 
        a. The work must carry prominent notices stating that you
@@ -618,27 +682,26 @@ TERMS AND CONDITIONS
        c. You must license the entire work, as a whole, under this
           License to anyone who comes into possession of a copy.  This
           License will therefore apply, along with any applicable
-          section 7 additional terms, to the whole of the work, and
-          all its parts, regardless of how they are packaged.  This
-          License gives no permission to license the work in any other
-          way, but it does not invalidate such permission if you have
-          separately received it.
+          section 7 additional terms, to the whole of the work, and all
+          its parts, regardless of how they are packaged.  This License
+          gives no permission to license the work in any other way, but
+          it does not invalidate such permission if you have separately
+          received it.
 
-       d. If the work has interactive user interfaces, each must
-          display Appropriate Legal Notices; however, if the Program
-          has interactive interfaces that do not display Appropriate
-          Legal Notices, your work need not make them do so.
+       d. If the work has interactive user interfaces, each must display
+          Appropriate Legal Notices; however, if the Program has
+          interactive interfaces that do not display Appropriate Legal
+          Notices, your work need not make them do so.
 
-     A compilation of a covered work with other separate and
-     independent works, which are not by their nature extensions of
-     the covered work, and which are not combined with it such as to
-     form a larger program, in or on a volume of a storage or
-     distribution medium, is called an “aggregate” if the compilation
-     and its resulting copyright are not used to limit the access or
-     legal rights of the compilation’s users beyond what the
-     individual works permit.  Inclusion of a covered work in an
-     aggregate does not cause this License to apply to the other parts
-     of the aggregate.
+     A compilation of a covered work with other separate and independent
+     works, which are not by their nature extensions of the covered
+     work, and which are not combined with it such as to form a larger
+     program, in or on a volume of a storage or distribution medium, is
+     called an “aggregate” if the compilation and its resulting
+     copyright are not used to limit the access or legal rights of the
+     compilation’s users beyond what the individual works permit.
+     Inclusion of a covered work in an aggregate does not cause this
+     License to apply to the other parts of the aggregate.
 
   6. Conveying Non-Source Forms.
 
@@ -647,44 +710,43 @@ TERMS AND CONDITIONS
      machine-readable Corresponding Source under the terms of this
      License, in one of these ways:
 
-       a. Convey the object code in, or embodied in, a physical
-          product (including a physical distribution medium),
-          accompanied by the Corresponding Source fixed on a durable
-          physical medium customarily used for software interchange.
+       a. Convey the object code in, or embodied in, a physical product
+          (including a physical distribution medium), accompanied by the
+          Corresponding Source fixed on a durable physical medium
+          customarily used for software interchange.
 
-       b. Convey the object code in, or embodied in, a physical
-          product (including a physical distribution medium),
-          accompanied by a written offer, valid for at least three
-          years and valid for as long as you offer spare parts or
-          customer support for that product model, to give anyone who
-          possesses the object code either (1) a copy of the
-          Corresponding Source for all the software in the product
-          that is covered by this License, on a durable physical
-          medium customarily used for software interchange, for a
-          price no more than your reasonable cost of physically
-          performing this conveying of source, or (2) access to copy
-          the Corresponding Source from a network server at no charge.
+       b. Convey the object code in, or embodied in, a physical product
+          (including a physical distribution medium), accompanied by a
+          written offer, valid for at least three years and valid for as
+          long as you offer spare parts or customer support for that
+          product model, to give anyone who possesses the object code
+          either (1) a copy of the Corresponding Source for all the
+          software in the product that is covered by this License, on a
+          durable physical medium customarily used for software
+          interchange, for a price no more than your reasonable cost of
+          physically performing this conveying of source, or (2) access
+          to copy the Corresponding Source from a network server at no
+          charge.
 
-       c. Convey individual copies of the object code with a copy of
-          the written offer to provide the Corresponding Source.  This
-          alternative is allowed only occasionally and
-          noncommercially, and only if you received the object code
-          with such an offer, in accord with subsection 6b.
+       c. Convey individual copies of the object code with a copy of the
+          written offer to provide the Corresponding Source.  This
+          alternative is allowed only occasionally and noncommercially,
+          and only if you received the object code with such an offer,
+          in accord with subsection 6b.
 
        d. Convey the object code by offering access from a designated
-          place (gratis or for a charge), and offer equivalent access
-          to the Corresponding Source in the same way through the same
+          place (gratis or for a charge), and offer equivalent access to
+          the Corresponding Source in the same way through the same
           place at no further charge.  You need not require recipients
           to copy the Corresponding Source along with the object code.
-          If the place to copy the object code is a network server,
-          the Corresponding Source may be on a different server
-          (operated by you or a third party) that supports equivalent
-          copying facilities, provided you maintain clear directions
-          next to the object code saying where to find the
-          Corresponding Source.  Regardless of what server hosts the
-          Corresponding Source, you remain obligated to ensure that it
-          is available for as long as needed to satisfy these
-          requirements.
+          If the place to copy the object code is a network server, the
+          Corresponding Source may be on a different server (operated by
+          you or a third party) that supports equivalent copying
+          facilities, provided you maintain clear directions next to the
+          object code saying where to find the Corresponding Source.
+          Regardless of what server hosts the Corresponding Source, you
+          remain obligated to ensure that it is available for as long as
+          needed to satisfy these requirements.
 
        e. Convey the object code using peer-to-peer transmission,
           provided you inform other peers where the object code and
@@ -696,27 +758,26 @@ TERMS AND CONDITIONS
      not be included in conveying the object code work.
 
      A “User Product” is either (1) a “consumer product”, which means
-     any tangible personal property which is normally used for
-     personal, family, or household purposes, or (2) anything designed
-     or sold for incorporation into a dwelling.  In determining
-     whether a product is a consumer product, doubtful cases shall be
-     resolved in favor of coverage.  For a particular product received
-     by a particular user, “normally used” refers to a typical or
-     common use of that class of product, regardless of the status of
-     the particular user or of the way in which the particular user
-     actually uses, or expects or is expected to use, the product.  A
-     product is a consumer product regardless of whether the product
-     has substantial commercial, industrial or non-consumer uses,
-     unless such uses represent the only significant mode of use of
-     the product.
+     any tangible personal property which is normally used for personal,
+     family, or household purposes, or (2) anything designed or sold for
+     incorporation into a dwelling.  In determining whether a product is
+     a consumer product, doubtful cases shall be resolved in favor of
+     coverage.  For a particular product received by a particular user,
+     “normally used” refers to a typical or common use of that class of
+     product, regardless of the status of the particular user or of the
+     way in which the particular user actually uses, or expects or is
+     expected to use, the product.  A product is a consumer product
+     regardless of whether the product has substantial commercial,
+     industrial or non-consumer uses, unless such uses represent the
+     only significant mode of use of the product.
 
      “Installation Information” for a User Product means any methods,
      procedures, authorization keys, or other information required to
      install and execute modified versions of a covered work in that
      User Product from a modified version of its Corresponding Source.
      The information must suffice to ensure that the continued
-     functioning of the modified object code is in no case prevented
-     or interfered with solely because modification has been made.
+     functioning of the modified object code is in no case prevented or
+     interfered with solely because modification has been made.
 
      If you convey an object code work under this section in, or with,
      or specifically for use in, a User Product, and the conveying
@@ -725,18 +786,18 @@ TERMS AND CONDITIONS
      perpetuity or for a fixed term (regardless of how the transaction
      is characterized), the Corresponding Source conveyed under this
      section must be accompanied by the Installation Information.  But
-     this requirement does not apply if neither you nor any third
-     party retains the ability to install modified object code on the
-     User Product (for example, the work has been installed in ROM).
+     this requirement does not apply if neither you nor any third party
+     retains the ability to install modified object code on the User
+     Product (for example, the work has been installed in ROM).
 
      The requirement to provide Installation Information does not
      include a requirement to continue to provide support service,
-     warranty, or updates for a work that has been modified or
-     installed by the recipient, or for the User Product in which it
-     has been modified or installed.  Access to a network may be
-     denied when the modification itself materially and adversely
-     affects the operation of the network or violates the rules and
-     protocols for communication across the network.
+     warranty, or updates for a work that has been modified or installed
+     by the recipient, or for the User Product in which it has been
+     modified or installed.  Access to a network may be denied when the
+     modification itself materially and adversely affects the operation
+     of the network or violates the rules and protocols for
+     communication across the network.
 
      Corresponding Source conveyed, and Installation Information
      provided, in accord with this section must be in a format that is
@@ -751,42 +812,39 @@ TERMS AND CONDITIONS
      conditions.  Additional permissions that are applicable to the
      entire Program shall be treated as though they were included in
      this License, to the extent that they are valid under applicable
-     law.  If additional permissions apply only to part of the
-     Program, that part may be used separately under those
-     permissions, but the entire Program remains governed by this
-     License without regard to the additional permissions.
+     law.  If additional permissions apply only to part of the Program,
+     that part may be used separately under those permissions, but the
+     entire Program remains governed by this License without regard to
+     the additional permissions.
 
      When you convey a copy of a covered work, you may at your option
-     remove any additional permissions from that copy, or from any
-     part of it.  (Additional permissions may be written to require
-     their own removal in certain cases when you modify the work.)
-     You may place additional permissions on material, added by you to
-     a covered work, for which you have or can give appropriate
-     copyright permission.
+     remove any additional permissions from that copy, or from any part
+     of it.  (Additional permissions may be written to require their own
+     removal in certain cases when you modify the work.)  You may place
+     additional permissions on material, added by you to a covered work,
+     for which you have or can give appropriate copyright permission.
 
      Notwithstanding any other provision of this License, for material
-     you add to a covered work, you may (if authorized by the
-     copyright holders of that material) supplement the terms of this
-     License with terms:
+     you add to a covered work, you may (if authorized by the copyright
+     holders of that material) supplement the terms of this License with
+     terms:
 
        a. Disclaiming warranty or limiting liability differently from
           the terms of sections 15 and 16 of this License; or
 
        b. Requiring preservation of specified reasonable legal notices
-          or author attributions in that material or in the
-          Appropriate Legal Notices displayed by works containing it;
-          or
+          or author attributions in that material or in the Appropriate
+          Legal Notices displayed by works containing it; or
 
-       c. Prohibiting misrepresentation of the origin of that
-          material, or requiring that modified versions of such
-          material be marked in reasonable ways as different from the
-          original version; or
+       c. Prohibiting misrepresentation of the origin of that material,
+          or requiring that modified versions of such material be marked
+          in reasonable ways as different from the original version; or
 
-       d. Limiting the use for publicity purposes of names of
-          licensors or authors of the material; or
+       d. Limiting the use for publicity purposes of names of licensors
+          or authors of the material; or
 
-       e. Declining to grant rights under trademark law for use of
-          some trade names, trademarks, or service marks; or
+       e. Declining to grant rights under trademark law for use of some
+          trade names, trademarks, or service marks; or
 
        f. Requiring indemnification of licensors and authors of that
           material by anyone who conveys the material (or modified
@@ -795,103 +853,102 @@ TERMS AND CONDITIONS
           assumptions directly impose on those licensors and authors.
 
      All other non-permissive additional terms are considered “further
-     restrictions” within the meaning of section 10.  If the Program
-     as you received it, or any part of it, contains a notice stating
-     that it is governed by this License along with a term that is a
-     further restriction, you may remove that term.  If a license
-     document contains a further restriction but permits relicensing
-     or conveying under this License, you may add to a covered work
-     material governed by the terms of that license document, provided
-     that the further restriction does not survive such relicensing or
-     conveying.
+     restrictions” within the meaning of section 10.  If the Program as
+     you received it, or any part of it, contains a notice stating that
+     it is governed by this License along with a term that is a further
+     restriction, you may remove that term.  If a license document
+     contains a further restriction but permits relicensing or conveying
+     under this License, you may add to a covered work material governed
+     by the terms of that license document, provided that the further
+     restriction does not survive such relicensing or conveying.
 
-     If you add terms to a covered work in accord with this section,
-     you must place, in the relevant source files, a statement of the
-     additional terms that apply to those files, or a notice
-     indicating where to find the applicable terms.
+     If you add terms to a covered work in accord with this section, you
+     must place, in the relevant source files, a statement of the
+     additional terms that apply to those files, or a notice indicating
+     where to find the applicable terms.
 
      Additional terms, permissive or non-permissive, may be stated in
-     the form of a separately written license, or stated as
-     exceptions; the above requirements apply either way.
+     the form of a separately written license, or stated as exceptions;
+     the above requirements apply either way.
 
   8. Termination.
 
-     You may not propagate or modify a covered work except as
-     expressly provided under this License.  Any attempt otherwise to
-     propagate or modify it is void, and will automatically terminate
-     your rights under this License (including any patent licenses
-     granted under the third paragraph of section 11).
+     You may not propagate or modify a covered work except as expressly
+     provided under this License.  Any attempt otherwise to propagate or
+     modify it is void, and will automatically terminate your rights
+     under this License (including any patent licenses granted under the
+     third paragraph of section 11).
 
      However, if you cease all violation of this License, then your
      license from a particular copyright holder is reinstated (a)
-     provisionally, unless and until the copyright holder explicitly
-     and finally terminates your license, and (b) permanently, if the
+     provisionally, unless and until the copyright holder explicitly and
+     finally terminates your license, and (b) permanently, if the
      copyright holder fails to notify you of the violation by some
      reasonable means prior to 60 days after the cessation.
 
      Moreover, your license from a particular copyright holder is
-     reinstated permanently if the copyright holder notifies you of
-     the violation by some reasonable means, this is the first time
-     you have received notice of violation of this License (for any
-     work) from that copyright holder, and you cure the violation
-     prior to 30 days after your receipt of the notice.
+     reinstated permanently if the copyright holder notifies you of the
+     violation by some reasonable means, this is the first time you have
+     received notice of violation of this License (for any work) from
+     that copyright holder, and you cure the violation prior to 30 days
+     after your receipt of the notice.
 
      Termination of your rights under this section does not terminate
-     the licenses of parties who have received copies or rights from
-     you under this License.  If your rights have been terminated and
-     not permanently reinstated, you do not qualify to receive new
-     licenses for the same material under section 10.
+     the licenses of parties who have received copies or rights from you
+     under this License.  If your rights have been terminated and not
+     permanently reinstated, you do not qualify to receive new licenses
+     for the same material under section 10.
 
   9. Acceptance Not Required for Having Copies.
 
-     You are not required to accept this License in order to receive
-     or run a copy of the Program.  Ancillary propagation of a covered
-     work occurring solely as a consequence of using peer-to-peer
+     You are not required to accept this License in order to receive or
+     run a copy of the Program.  Ancillary propagation of a covered work
+     occurring solely as a consequence of using peer-to-peer
      transmission to receive a copy likewise does not require
      acceptance.  However, nothing other than this License grants you
-     permission to propagate or modify any covered work.  These
-     actions infringe copyright if you do not accept this License.
-     Therefore, by modifying or propagating a covered work, you
-     indicate your acceptance of this License to do so.
+     permission to propagate or modify any covered work.  These actions
+     infringe copyright if you do not accept this License.  Therefore,
+     by modifying or propagating a covered work, you indicate your
+     acceptance of this License to do so.
 
   10. Automatic Licensing of Downstream Recipients.
 
      Each time you convey a covered work, the recipient automatically
-     receives a license from the original licensors, to run, modify
-     and propagate that work, subject to this License.  You are not
+     receives a license from the original licensors, to run, modify and
+     propagate that work, subject to this License.  You are not
      responsible for enforcing compliance by third parties with this
      License.
 
-     An “entity transaction” is a transaction transferring control of
-     an organization, or substantially all assets of one, or
-     subdividing an organization, or merging organizations.  If
-     propagation of a covered work results from an entity transaction,
-     each party to that transaction who receives a copy of the work
-     also receives whatever licenses to the work the party’s
-     predecessor in interest had or could give under the previous
-     paragraph, plus a right to possession of the Corresponding Source
-     of the work from the predecessor in interest, if the predecessor
-     has it or can get it with reasonable efforts.
+     An “entity transaction” is a transaction transferring control of an
+     organization, or substantially all assets of one, or subdividing an
+     organization, or merging organizations.  If propagation of a
+     covered work results from an entity transaction, each party to that
+     transaction who receives a copy of the work also receives whatever
+     licenses to the work the party’s predecessor in interest had or
+     could give under the previous paragraph, plus a right to possession
+     of the Corresponding Source of the work from the predecessor in
+     interest, if the predecessor has it or can get it with reasonable
+     efforts.
 
-     You may not impose any further restrictions on the exercise of
-     the rights granted or affirmed under this License.  For example,
-     you may not impose a license fee, royalty, or other charge for
-     exercise of rights granted under this License, and you may not
-     initiate litigation (including a cross-claim or counterclaim in a
-     lawsuit) alleging that any patent claim is infringed by making,
-     using, selling, offering for sale, or importing the Program or
-     any portion of it.
+     You may not impose any further restrictions on the exercise of the
+     rights granted or affirmed under this License.  For example, you
+     may not impose a license fee, royalty, or other charge for exercise
+     of rights granted under this License, and you may not initiate
+     litigation (including a cross-claim or counterclaim in a lawsuit)
+     alleging that any patent claim is infringed by making, using,
+     selling, offering for sale, or importing the Program or any portion
+     of it.
 
   11. Patents.
 
-     A “contributor” is a copyright holder who authorizes use under
-     this License of the Program or a work on which the Program is
-     based.  The work thus licensed is called the contributor’s
-     “contributor version”.
+     A “contributor” is a copyright holder who authorizes use under this
+     License of the Program or a work on which the Program is based.
+     The work thus licensed is called the contributor’s “contributor
+     version”.
 
      A contributor’s “essential patent claims” are all patent claims
-     owned or controlled by the contributor, whether already acquired
-     or hereafter acquired, that would be infringed by some manner,
+     owned or controlled by the contributor, whether already acquired or
+     hereafter acquired, that would be infringed by some manner,
      permitted by this License, of making, using, or selling its
      contributor version, but do not include claims that would be
      infringed only as a consequence of further modification of the
@@ -902,104 +959,98 @@ TERMS AND CONDITIONS
      Each contributor grants you a non-exclusive, worldwide,
      royalty-free patent license under the contributor’s essential
      patent claims, to make, use, sell, offer for sale, import and
-     otherwise run, modify and propagate the contents of its
-     contributor version.
+     otherwise run, modify and propagate the contents of its contributor
+     version.
 
      In the following three paragraphs, a “patent license” is any
      express agreement or commitment, however denominated, not to
      enforce a patent (such as an express permission to practice a
-     patent or covenant not to sue for patent infringement).  To
-     “grant” such a patent license to a party means to make such an
-     agreement or commitment not to enforce a patent against the
-     party.
+     patent or covenant not to sue for patent infringement).  To “grant”
+     such a patent license to a party means to make such an agreement or
+     commitment not to enforce a patent against the party.
 
      If you convey a covered work, knowingly relying on a patent
-     license, and the Corresponding Source of the work is not
-     available for anyone to copy, free of charge and under the terms
-     of this License, through a publicly available network server or
-     other readily accessible means, then you must either (1) cause
-     the Corresponding Source to be so available, or (2) arrange to
-     deprive yourself of the benefit of the patent license for this
-     particular work, or (3) arrange, in a manner consistent with the
-     requirements of this License, to extend the patent license to
-     downstream recipients.  “Knowingly relying” means you have actual
-     knowledge that, but for the patent license, your conveying the
-     covered work in a country, or your recipient’s use of the covered
-     work in a country, would infringe one or more identifiable
-     patents in that country that you have reason to believe are
-     valid.
+     license, and the Corresponding Source of the work is not available
+     for anyone to copy, free of charge and under the terms of this
+     License, through a publicly available network server or other
+     readily accessible means, then you must either (1) cause the
+     Corresponding Source to be so available, or (2) arrange to deprive
+     yourself of the benefit of the patent license for this particular
+     work, or (3) arrange, in a manner consistent with the requirements
+     of this License, to extend the patent license to downstream
+     recipients.  “Knowingly relying” means you have actual knowledge
+     that, but for the patent license, your conveying the covered work
+     in a country, or your recipient’s use of the covered work in a
+     country, would infringe one or more identifiable patents in that
+     country that you have reason to believe are valid.
 
      If, pursuant to or in connection with a single transaction or
-     arrangement, you convey, or propagate by procuring conveyance of,
-     a covered work, and grant a patent license to some of the parties
+     arrangement, you convey, or propagate by procuring conveyance of, a
+     covered work, and grant a patent license to some of the parties
      receiving the covered work authorizing them to use, propagate,
      modify or convey a specific copy of the covered work, then the
      patent license you grant is automatically extended to all
      recipients of the covered work and works based on it.
 
-     A patent license is “discriminatory” if it does not include
-     within the scope of its coverage, prohibits the exercise of, or
-     is conditioned on the non-exercise of one or more of the rights
-     that are specifically granted under this License.  You may not
-     convey a covered work if you are a party to an arrangement with a
-     third party that is in the business of distributing software,
-     under which you make payment to the third party based on the
-     extent of your activity of conveying the work, and under which
-     the third party grants, to any of the parties who would receive
-     the covered work from you, a discriminatory patent license (a) in
-     connection with copies of the covered work conveyed by you (or
-     copies made from those copies), or (b) primarily for and in
-     connection with specific products or compilations that contain
-     the covered work, unless you entered into that arrangement, or
-     that patent license was granted, prior to 28 March 2007.
+     A patent license is “discriminatory” if it does not include within
+     the scope of its coverage, prohibits the exercise of, or is
+     conditioned on the non-exercise of one or more of the rights that
+     are specifically granted under this License.  You may not convey a
+     covered work if you are a party to an arrangement with a third
+     party that is in the business of distributing software, under which
+     you make payment to the third party based on the extent of your
+     activity of conveying the work, and under which the third party
+     grants, to any of the parties who would receive the covered work
+     from you, a discriminatory patent license (a) in connection with
+     copies of the covered work conveyed by you (or copies made from
+     those copies), or (b) primarily for and in connection with specific
+     products or compilations that contain the covered work, unless you
+     entered into that arrangement, or that patent license was granted,
+     prior to 28 March 2007.
 
-     Nothing in this License shall be construed as excluding or
-     limiting any implied license or other defenses to infringement
-     that may otherwise be available to you under applicable patent
-     law.
+     Nothing in this License shall be construed as excluding or limiting
+     any implied license or other defenses to infringement that may
+     otherwise be available to you under applicable patent law.
 
   12. No Surrender of Others’ Freedom.
 
-     If conditions are imposed on you (whether by court order,
-     agreement or otherwise) that contradict the conditions of this
-     License, they do not excuse you from the conditions of this
-     License.  If you cannot convey a covered work so as to satisfy
-     simultaneously your obligations under this License and any other
-     pertinent obligations, then as a consequence you may not convey
-     it at all.  For example, if you agree to terms that obligate you
-     to collect a royalty for further conveying from those to whom you
-     convey the Program, the only way you could satisfy both those
-     terms and this License would be to refrain entirely from
-     conveying the Program.
+     If conditions are imposed on you (whether by court order, agreement
+     or otherwise) that contradict the conditions of this License, they
+     do not excuse you from the conditions of this License.  If you
+     cannot convey a covered work so as to satisfy simultaneously your
+     obligations under this License and any other pertinent obligations,
+     then as a consequence you may not convey it at all.  For example,
+     if you agree to terms that obligate you to collect a royalty for
+     further conveying from those to whom you convey the Program, the
+     only way you could satisfy both those terms and this License would
+     be to refrain entirely from conveying the Program.
 
   13. Use with the GNU Affero General Public License.
 
      Notwithstanding any other provision of this License, you have
-     permission to link or combine any covered work with a work
-     licensed under version 3 of the GNU Affero General Public License
-     into a single combined work, and to convey the resulting work.
-     The terms of this License will continue to apply to the part
-     which is the covered work, but the special requirements of the
-     GNU Affero General Public License, section 13, concerning
-     interaction through a network will apply to the combination as
-     such.
+     permission to link or combine any covered work with a work licensed
+     under version 3 of the GNU Affero General Public License into a
+     single combined work, and to convey the resulting work.  The terms
+     of this License will continue to apply to the part which is the
+     covered work, but the special requirements of the GNU Affero
+     General Public License, section 13, concerning interaction through
+     a network will apply to the combination as such.
 
   14. Revised Versions of this License.
 
      The Free Software Foundation may publish revised and/or new
-     versions of the GNU General Public License from time to time.
-     Such new versions will be similar in spirit to the present
-     version, but may differ in detail to address new problems or
-     concerns.
+     versions of the GNU General Public License from time to time.  Such
+     new versions will be similar in spirit to the present version, but
+     may differ in detail to address new problems or concerns.
 
      Each version is given a distinguishing version number.  If the
      Program specifies that a certain numbered version of the GNU
      General Public License “or any later version” applies to it, you
      have the option of following the terms and conditions either of
-     that numbered version or of any later version published by the
-     Free Software Foundation.  If the Program does not specify a
-     version number of the GNU General Public License, you may choose
-     any version ever published by the Free Software Foundation.
+     that numbered version or of any later version published by the Free
+     Software Foundation.  If the Program does not specify a version
+     number of the GNU General Public License, you may choose any
+     version ever published by the Free Software Foundation.
 
      If the Program specifies that a proxy can decide which future
      versions of the GNU General Public License can be used, that
@@ -1007,28 +1058,28 @@ TERMS AND CONDITIONS
      authorizes you to choose that version for the Program.
 
      Later license versions may give you additional or different
-     permissions.  However, no additional obligations are imposed on
-     any author or copyright holder as a result of your choosing to
-     follow a later version.
+     permissions.  However, no additional obligations are imposed on any
+     author or copyright holder as a result of your choosing to follow a
+     later version.
 
   15. Disclaimer of Warranty.
 
      THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY
      APPLICABLE LAW.  EXCEPT WHEN OTHERWISE STATED IN WRITING THE
-     COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM “AS
-     IS” WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED,
+     COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM “AS IS”
+     WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED,
      INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
      MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.  THE ENTIRE
-     RISK AS TO THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH
-     YOU.  SHOULD THE PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF
-     ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
+     RISK AS TO THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU.
+     SHOULD THE PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL
+     NECESSARY SERVICING, REPAIR OR CORRECTION.
 
   16. Limitation of Liability.
 
      IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN
-     WRITING WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO
-     MODIFIES AND/OR CONVEYS THE PROGRAM AS PERMITTED ABOVE, BE LIABLE
-     TO YOU FOR DAMAGES, INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL OR
+     WRITING WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MODIFIES
+     AND/OR CONVEYS THE PROGRAM AS PERMITTED ABOVE, BE LIABLE TO YOU FOR
+     DAMAGES, INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL OR
      CONSEQUENTIAL DAMAGES ARISING OUT OF THE USE OR INABILITY TO USE
      THE PROGRAM (INCLUDING BUT NOT LIMITED TO LOSS OF DATA OR DATA
      BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD
@@ -1038,10 +1089,10 @@ TERMS AND CONDITIONS
 
   17. Interpretation of Sections 15 and 16.
 
-     If the disclaimer of warranty and limitation of liability
-     provided above cannot be given local legal effect according to
-     their terms, reviewing courts shall apply local law that most
-     closely approximates an absolute waiver of all civil liability in
+     If the disclaimer of warranty and limitation of liability provided
+     above cannot be given local legal effect according to their terms,
+     reviewing courts shall apply local law that most closely
+     approximates an absolute waiver of all civil liability in
      connection with the Program, unless a warranty or assumption of
      liability accompanies a copy of the Program in return for a fee.
 
@@ -1056,11 +1107,10 @@ possible use to the public, the best way to achieve this is to make it
 free software which everyone can redistribute and change under these
 terms.
 
-   To do so, attach the following notices to the program.  It is
-safest to attach them to the start of each source file to most
-effectively state the exclusion of warranty; and each file should have
-at least the “copyright” line and a pointer to where the full notice
-is found.
+   To do so, attach the following notices to the program.  It is safest
+to attach them to the start of each source file to most effectively
+state the exclusion of warranty; and each file should have at least the
+“copyright” line and a pointer to where the full notice is found.
 
      ONE LINE TO GIVE THE PROGRAM'S NAME AND A BRIEF IDEA OF WHAT IT DOES.
      Copyright (C) YEAR NAME OF AUTHOR
@@ -1102,17 +1152,17 @@ the GNU GPL, see <http://www.gnu.org/licenses/>.
    The GNU General Public License does not permit incorporating your
 program into proprietary programs.  If your program is a subroutine
 library, you may consider it more useful to permit linking proprietary
-applications with the library.  If this is what you want to do, use
-the GNU Lesser General Public License instead of this License.  But
-first, please read <http://www.gnu.org/philosophy/why-not-lgpl.html>.
+applications with the library.  If this is what you want to do, use the
+GNU Lesser General Public License instead of this License.  But first,
+please read <http://www.gnu.org/philosophy/why-not-lgpl.html>.
 
 
-File: org-trello.info,  Node: GNU FDL,  Next: Concepts,  Prev: GNU GPL,  Up: Top
+File: org-trello.info,  Node: GNU FDL,  Next: Indices,  Prev: GNU GPL,  Up: Top
 
-Appendix C GNU Free Documentation License
-*****************************************
+Appendix B *DONE* GNU Free Documentation License
+************************************************
 
-                    Version 1.3, 3 November 2008
+                     Version 1.3, 3 November 2008
 
      Copyright © 2000, 2001, 2002, 2007, 2008 Free Software Foundation, Inc.
      <http://fsf.org/>
@@ -1122,136 +1172,132 @@ Appendix C GNU Free Documentation License
 
   0. PREAMBLE
 
-     The purpose of this License is to make a manual, textbook, or
-     other functional and useful document “free” in the sense of
-     freedom: to assure everyone the effective freedom to copy and
-     redistribute it, with or without modifying it, either
-     commercially or noncommercially.  Secondarily, this License
-     preserves for the author and publisher a way to get credit for
-     their work, while not being considered responsible for
-     modifications made by others.
+     The purpose of this License is to make a manual, textbook, or other
+     functional and useful document “free” in the sense of freedom: to
+     assure everyone the effective freedom to copy and redistribute it,
+     with or without modifying it, either commercially or
+     noncommercially.  Secondarily, this License preserves for the
+     author and publisher a way to get credit for their work, while not
+     being considered responsible for modifications made by others.
 
      This License is a kind of “copyleft”, which means that derivative
      works of the document must themselves be free in the same sense.
-     It complements the GNU General Public License, which is a
-     copyleft license designed for free software.
+     It complements the GNU General Public License, which is a copyleft
+     license designed for free software.
 
      We have designed this License in order to use it for manuals for
      free software, because free software needs free documentation: a
      free program should come with manuals providing the same freedoms
      that the software does.  But this License is not limited to
      software manuals; it can be used for any textual work, regardless
-     of subject matter or whether it is published as a printed book.
-     We recommend this License principally for works whose purpose is
+     of subject matter or whether it is published as a printed book.  We
+     recommend this License principally for works whose purpose is
      instruction or reference.
 
   1. APPLICABILITY AND DEFINITIONS
 
      This License applies to any manual or other work, in any medium,
-     that contains a notice placed by the copyright holder saying it
-     can be distributed under the terms of this License.  Such a
-     notice grants a world-wide, royalty-free license, unlimited in
-     duration, to use that work under the conditions stated herein.
-     The “Document”, below, refers to any such manual or work.  Any
-     member of the public is a licensee, and is addressed as “you”.
-     You accept the license if you copy, modify or distribute the work
-     in a way requiring permission under copyright law.
+     that contains a notice placed by the copyright holder saying it can
+     be distributed under the terms of this License.  Such a notice
+     grants a world-wide, royalty-free license, unlimited in duration,
+     to use that work under the conditions stated herein.  The
+     “Document”, below, refers to any such manual or work.  Any member
+     of the public is a licensee, and is addressed as “you”.  You accept
+     the license if you copy, modify or distribute the work in a way
+     requiring permission under copyright law.
 
-     A “Modified Version” of the Document means any work containing
-     the Document or a portion of it, either copied verbatim, or with
+     A “Modified Version” of the Document means any work containing the
+     Document or a portion of it, either copied verbatim, or with
      modifications and/or translated into another language.
 
-     A “Secondary Section” is a named appendix or a front-matter
-     section of the Document that deals exclusively with the
-     relationship of the publishers or authors of the Document to the
-     Document’s overall subject (or to related matters) and contains
-     nothing that could fall directly within that overall subject.
-     (Thus, if the Document is in part a textbook of mathematics, a
-     Secondary Section may not explain any mathematics.)  The
-     relationship could be a matter of historical connection with the
-     subject or with related matters, or of legal, commercial,
-     philosophical, ethical or political position regarding them.
+     A “Secondary Section” is a named appendix or a front-matter section
+     of the Document that deals exclusively with the relationship of the
+     publishers or authors of the Document to the Document’s overall
+     subject (or to related matters) and contains nothing that could
+     fall directly within that overall subject.  (Thus, if the Document
+     is in part a textbook of mathematics, a Secondary Section may not
+     explain any mathematics.)  The relationship could be a matter of
+     historical connection with the subject or with related matters, or
+     of legal, commercial, philosophical, ethical or political position
+     regarding them.
 
      The “Invariant Sections” are certain Secondary Sections whose
-     titles are designated, as being those of Invariant Sections, in
-     the notice that says that the Document is released under this
-     License.  If a section does not fit the above definition of
-     Secondary then it is not allowed to be designated as Invariant.
-     The Document may contain zero Invariant Sections.  If the
-     Document does not identify any Invariant Sections then there are
-     none.
+     titles are designated, as being those of Invariant Sections, in the
+     notice that says that the Document is released under this License.
+     If a section does not fit the above definition of Secondary then it
+     is not allowed to be designated as Invariant.  The Document may
+     contain zero Invariant Sections.  If the Document does not identify
+     any Invariant Sections then there are none.
 
      The “Cover Texts” are certain short passages of text that are
      listed, as Front-Cover Texts or Back-Cover Texts, in the notice
      that says that the Document is released under this License.  A
-     Front-Cover Text may be at most 5 words, and a Back-Cover Text
-     may be at most 25 words.
+     Front-Cover Text may be at most 5 words, and a Back-Cover Text may
+     be at most 25 words.
 
-     A “Transparent” copy of the Document means a machine-readable
-     copy, represented in a format whose specification is available to
-     the general public, that is suitable for revising the document
-     straightforwardly with generic text editors or (for images
-     composed of pixels) generic paint programs or (for drawings) some
-     widely available drawing editor, and that is suitable for input
-     to text formatters or for automatic translation to a variety of
-     formats suitable for input to text formatters.  A copy made in an
-     otherwise Transparent file format whose markup, or absence of
-     markup, has been arranged to thwart or discourage subsequent
-     modification by readers is not Transparent.  An image format is
-     not Transparent if used for any substantial amount of text.  A
-     copy that is not “Transparent” is called “Opaque”.
+     A “Transparent” copy of the Document means a machine-readable copy,
+     represented in a format whose specification is available to the
+     general public, that is suitable for revising the document
+     straightforwardly with generic text editors or (for images composed
+     of pixels) generic paint programs or (for drawings) some widely
+     available drawing editor, and that is suitable for input to text
+     formatters or for automatic translation to a variety of formats
+     suitable for input to text formatters.  A copy made in an otherwise
+     Transparent file format whose markup, or absence of markup, has
+     been arranged to thwart or discourage subsequent modification by
+     readers is not Transparent.  An image format is not Transparent if
+     used for any substantial amount of text.  A copy that is not
+     “Transparent” is called “Opaque”.
 
      Examples of suitable formats for Transparent copies include plain
      ASCII without markup, Texinfo input format, LaTeX input format,
-     SGML or XML using a publicly available DTD, and
-     standard-conforming simple HTML, PostScript or PDF designed for
-     human modification.  Examples of transparent image formats
-     include PNG, XCF and JPG.  Opaque formats include proprietary
-     formats that can be read and edited only by proprietary word
-     processors, SGML or XML for which the DTD and/or processing tools
-     are not generally available, and the machine-generated HTML,
-     PostScript or PDF produced by some word processors for output
-     purposes only.
+     SGML or XML using a publicly available DTD, and standard-conforming
+     simple HTML, PostScript or PDF designed for human modification.
+     Examples of transparent image formats include PNG, XCF and JPG.
+     Opaque formats include proprietary formats that can be read and
+     edited only by proprietary word processors, SGML or XML for which
+     the DTD and/or processing tools are not generally available, and
+     the machine-generated HTML, PostScript or PDF produced by some word
+     processors for output purposes only.
 
-     The “Title Page” means, for a printed book, the title page
-     itself, plus such following pages as are needed to hold, legibly,
-     the material this License requires to appear in the title page.
-     For works in formats which do not have any title page as such,
-     “Title Page” means the text near the most prominent appearance of
-     the work’s title, preceding the beginning of the body of the
-     text.
+     The “Title Page” means, for a printed book, the title page itself,
+     plus such following pages as are needed to hold, legibly, the
+     material this License requires to appear in the title page.  For
+     works in formats which do not have any title page as such, “Title
+     Page” means the text near the most prominent appearance of the
+     work’s title, preceding the beginning of the body of the text.
 
-     The “publisher” means any person or entity that distributes
-     copies of the Document to the public.
+     The “publisher” means any person or entity that distributes copies
+     of the Document to the public.
 
      A section “Entitled XYZ” means a named subunit of the Document
-     whose title either is precisely XYZ or contains XYZ in
-     parentheses following text that translates XYZ in another
-     language.  (Here XYZ stands for a specific section name mentioned
-     below, such as “Acknowledgements”, “Dedications”, “Endorsements”,
-     or “History”.)  To “Preserve the Title” of such a section when
-     you modify the Document means that it remains a section “Entitled
-     XYZ” according to this definition.
+     whose title either is precisely XYZ or contains XYZ in parentheses
+     following text that translates XYZ in another language.  (Here XYZ
+     stands for a specific section name mentioned below, such as
+     “Acknowledgements”, “Dedications”, “Endorsements”, or “History”.)
+     To “Preserve the Title” of such a section when you modify the
+     Document means that it remains a section “Entitled XYZ” according
+     to this definition.
 
      The Document may include Warranty Disclaimers next to the notice
      which states that this License applies to the Document.  These
-     Warranty Disclaimers are considered to be included by reference
-     in this License, but only as regards disclaiming warranties: any
-     other implication that these Warranty Disclaimers may have is
-     void and has no effect on the meaning of this License.
+     Warranty Disclaimers are considered to be included by reference in
+     this License, but only as regards disclaiming warranties: any other
+     implication that these Warranty Disclaimers may have is void and
+     has no effect on the meaning of this License.
 
   2. VERBATIM COPYING
 
      You may copy and distribute the Document in any medium, either
      commercially or noncommercially, provided that this License, the
      copyright notices, and the license notice saying this License
-     applies to the Document are reproduced in all copies, and that
-     you add no other conditions whatsoever to those of this License.
-     You may not use technical measures to obstruct or control the
-     reading or further copying of the copies you make or distribute.
-     However, you may accept compensation in exchange for copies.  If
-     you distribute a large enough number of copies you must also
-     follow the conditions in section 3.
+     applies to the Document are reproduced in all copies, and that you
+     add no other conditions whatsoever to those of this License.  You
+     may not use technical measures to obstruct or control the reading
+     or further copying of the copies you make or distribute.  However,
+     you may accept compensation in exchange for copies.  If you
+     distribute a large enough number of copies you must also follow the
+     conditions in section 3.
 
      You may also lend copies, under the same conditions stated above,
      and you may publicly display copies.
@@ -1259,18 +1305,17 @@ Appendix C GNU Free Documentation License
   3. COPYING IN QUANTITY
 
      If you publish printed copies (or copies in media that commonly
-     have printed covers) of the Document, numbering more than 100,
-     and the Document’s license notice requires Cover Texts, you must
+     have printed covers) of the Document, numbering more than 100, and
+     the Document’s license notice requires Cover Texts, you must
      enclose the copies in covers that carry, clearly and legibly, all
      these Cover Texts: Front-Cover Texts on the front cover, and
-     Back-Cover Texts on the back cover.  Both covers must also
-     clearly and legibly identify you as the publisher of these
-     copies.  The front cover must present the full title with all
-     words of the title equally prominent and visible.  You may add
-     other material on the covers in addition.  Copying with changes
-     limited to the covers, as long as they preserve the title of the
-     Document and satisfy these conditions, can be treated as verbatim
-     copying in other respects.
+     Back-Cover Texts on the back cover.  Both covers must also clearly
+     and legibly identify you as the publisher of these copies.  The
+     front cover must present the full title with all words of the title
+     equally prominent and visible.  You may add other material on the
+     covers in addition.  Copying with changes limited to the covers, as
+     long as they preserve the title of the Document and satisfy these
+     conditions, can be treated as verbatim copying in other respects.
 
      If the required texts for either cover are too voluminous to fit
      legibly, you should put the first ones listed (as many as fit
@@ -1278,40 +1323,39 @@ Appendix C GNU Free Documentation License
      adjacent pages.
 
      If you publish or distribute Opaque copies of the Document
-     numbering more than 100, you must either include a
-     machine-readable Transparent copy along with each Opaque copy, or
-     state in or with each Opaque copy a computer-network location
-     from which the general network-using public has access to
-     download using public-standard network protocols a complete
-     Transparent copy of the Document, free of added material.  If you
-     use the latter option, you must take reasonably prudent steps,
-     when you begin distribution of Opaque copies in quantity, to
-     ensure that this Transparent copy will remain thus accessible at
-     the stated location until at least one year after the last time
-     you distribute an Opaque copy (directly or through your agents or
-     retailers) of that edition to the public.
+     numbering more than 100, you must either include a machine-readable
+     Transparent copy along with each Opaque copy, or state in or with
+     each Opaque copy a computer-network location from which the general
+     network-using public has access to download using public-standard
+     network protocols a complete Transparent copy of the Document, free
+     of added material.  If you use the latter option, you must take
+     reasonably prudent steps, when you begin distribution of Opaque
+     copies in quantity, to ensure that this Transparent copy will
+     remain thus accessible at the stated location until at least one
+     year after the last time you distribute an Opaque copy (directly or
+     through your agents or retailers) of that edition to the public.
 
-     It is requested, but not required, that you contact the authors
-     of the Document well before redistributing any large number of
-     copies, to give them a chance to provide you with an updated
-     version of the Document.
+     It is requested, but not required, that you contact the authors of
+     the Document well before redistributing any large number of copies,
+     to give them a chance to provide you with an updated version of the
+     Document.
 
   4. MODIFICATIONS
 
      You may copy and distribute a Modified Version of the Document
      under the conditions of sections 2 and 3 above, provided that you
-     release the Modified Version under precisely this License, with
-     the Modified Version filling the role of the Document, thus
-     licensing distribution and modification of the Modified Version
-     to whoever possesses a copy of it.  In addition, you must do
-     these things in the Modified Version:
+     release the Modified Version under precisely this License, with the
+     Modified Version filling the role of the Document, thus licensing
+     distribution and modification of the Modified Version to whoever
+     possesses a copy of it.  In addition, you must do these things in
+     the Modified Version:
 
        A. Use in the Title Page (and on the covers, if any) a title
-          distinct from that of the Document, and from those of
-          previous versions (which should, if there were any, be
-          listed in the History section of the Document).  You may use
-          the same title as a previous version if the original
-          publisher of that version gives permission.
+          distinct from that of the Document, and from those of previous
+          versions (which should, if there were any, be listed in the
+          History section of the Document).  You may use the same title
+          as a previous version if the original publisher of that
+          version gives permission.
 
        B. List on the Title Page, as authors, one or more persons or
           entities responsible for authorship of the modifications in
@@ -1330,8 +1374,8 @@ Appendix C GNU Free Documentation License
 
        F. Include, immediately after the copyright notices, a license
           notice giving the public permission to use the Modified
-          Version under the terms of this License, in the form shown
-          in the Addendum below.
+          Version under the terms of this License, in the form shown in
+          the Addendum below.
 
        G. Preserve in that license notice the full lists of Invariant
           Sections and required Cover Texts given in the Document’s
@@ -1341,32 +1385,30 @@ Appendix C GNU Free Documentation License
 
        I. Preserve the section Entitled “History”, Preserve its Title,
           and add to it an item stating at least the title, year, new
-          authors, and publisher of the Modified Version as given on
-          the Title Page.  If there is no section Entitled “History”
-          in the Document, create one stating the title, year,
-          authors, and publisher of the Document as given on its Title
-          Page, then add an item describing the Modified Version as
-          stated in the previous sentence.
+          authors, and publisher of the Modified Version as given on the
+          Title Page.  If there is no section Entitled “History” in the
+          Document, create one stating the title, year, authors, and
+          publisher of the Document as given on its Title Page, then add
+          an item describing the Modified Version as stated in the
+          previous sentence.
 
        J. Preserve the network location, if any, given in the Document
           for public access to a Transparent copy of the Document, and
           likewise the network locations given in the Document for
-          previous versions it was based on.  These may be placed in
-          the “History” section.  You may omit a network location for
-          a work that was published at least four years before the
-          Document itself, or if the original publisher of the version
-          it refers to gives permission.
+          previous versions it was based on.  These may be placed in the
+          “History” section.  You may omit a network location for a work
+          that was published at least four years before the Document
+          itself, or if the original publisher of the version it refers
+          to gives permission.
 
-       K. For any section Entitled “Acknowledgements” or
-          “Dedications”, Preserve the Title of the section, and
-          preserve in the section all the substance and tone of each
-          of the contributor acknowledgements and/or dedications given
-          therein.
+       K. For any section Entitled “Acknowledgements” or “Dedications”,
+          Preserve the Title of the section, and preserve in the section
+          all the substance and tone of each of the contributor
+          acknowledgements and/or dedications given therein.
 
-       L. Preserve all the Invariant Sections of the Document,
-          unaltered in their text and in their titles.  Section
-          numbers or the equivalent are not considered part of the
-          section titles.
+       L. Preserve all the Invariant Sections of the Document, unaltered
+          in their text and in their titles.  Section numbers or the
+          equivalent are not considered part of the section titles.
 
        M. Delete any section Entitled “Endorsements”.  Such a section
           may not be included in the Modified Version.
@@ -1379,52 +1421,52 @@ Appendix C GNU Free Documentation License
 
      If the Modified Version includes new front-matter sections or
      appendices that qualify as Secondary Sections and contain no
-     material copied from the Document, you may at your option
-     designate some or all of these sections as invariant.  To do
-     this, add their titles to the list of Invariant Sections in the
-     Modified Version’s license notice.  These titles must be distinct
-     from any other section titles.
+     material copied from the Document, you may at your option designate
+     some or all of these sections as invariant.  To do this, add their
+     titles to the list of Invariant Sections in the Modified Version’s
+     license notice.  These titles must be distinct from any other
+     section titles.
 
-     You may add a section Entitled “Endorsements”, provided it
-     contains nothing but endorsements of your Modified Version by
-     various parties—for example, statements of peer review or that
-     the text has been approved by an organization as the
-     authoritative definition of a standard.
+     You may add a section Entitled “Endorsements”, provided it contains
+     nothing but endorsements of your Modified Version by various
+     parties—for example, statements of peer review or that the text has
+     been approved by an organization as the authoritative definition of
+     a standard.
 
      You may add a passage of up to five words as a Front-Cover Text,
-     and a passage of up to 25 words as a Back-Cover Text, to the end
-     of the list of Cover Texts in the Modified Version.  Only one
-     passage of Front-Cover Text and one of Back-Cover Text may be
-     added by (or through arrangements made by) any one entity.  If
-     the Document already includes a cover text for the same cover,
-     previously added by you or by arrangement made by the same entity
-     you are acting on behalf of, you may not add another; but you may
-     replace the old one, on explicit permission from the previous
-     publisher that added the old one.
+     and a passage of up to 25 words as a Back-Cover Text, to the end of
+     the list of Cover Texts in the Modified Version.  Only one passage
+     of Front-Cover Text and one of Back-Cover Text may be added by (or
+     through arrangements made by) any one entity.  If the Document
+     already includes a cover text for the same cover, previously added
+     by you or by arrangement made by the same entity you are acting on
+     behalf of, you may not add another; but you may replace the old
+     one, on explicit permission from the previous publisher that added
+     the old one.
 
      The author(s) and publisher(s) of the Document do not by this
-     License give permission to use their names for publicity for or
-     to assert or imply endorsement of any Modified Version.
+     License give permission to use their names for publicity for or to
+     assert or imply endorsement of any Modified Version.
 
   5. COMBINING DOCUMENTS
 
      You may combine the Document with other documents released under
      this License, under the terms defined in section 4 above for
-     modified versions, provided that you include in the combination
-     all of the Invariant Sections of all of the original documents,
+     modified versions, provided that you include in the combination all
+     of the Invariant Sections of all of the original documents,
      unmodified, and list them all as Invariant Sections of your
      combined work in its license notice, and that you preserve all
      their Warranty Disclaimers.
 
      The combined work need only contain one copy of this License, and
-     multiple identical Invariant Sections may be replaced with a
-     single copy.  If there are multiple Invariant Sections with the
-     same name but different contents, make the title of each such
-     section unique by adding at the end of it, in parentheses, the
-     name of the original author or publisher of that section if
-     known, or else a unique number.  Make the same adjustment to the
-     section titles in the list of Invariant Sections in the license
-     notice of the combined work.
+     multiple identical Invariant Sections may be replaced with a single
+     copy.  If there are multiple Invariant Sections with the same name
+     but different contents, make the title of each such section unique
+     by adding at the end of it, in parentheses, the name of the
+     original author or publisher of that section if known, or else a
+     unique number.  Make the same adjustment to the section titles in
+     the list of Invariant Sections in the license notice of the
+     combined work.
 
      In the combination, you must combine any sections Entitled
      “History” in the various original documents, forming one section
@@ -1436,57 +1478,56 @@ Appendix C GNU Free Documentation License
 
      You may make a collection consisting of the Document and other
      documents released under this License, and replace the individual
-     copies of this License in the various documents with a single
-     copy that is included in the collection, provided that you follow
-     the rules of this License for verbatim copying of each of the
-     documents in all other respects.
+     copies of this License in the various documents with a single copy
+     that is included in the collection, provided that you follow the
+     rules of this License for verbatim copying of each of the documents
+     in all other respects.
 
      You may extract a single document from such a collection, and
-     distribute it individually under this License, provided you
-     insert a copy of this License into the extracted document, and
-     follow this License in all other respects regarding verbatim
-     copying of that document.
+     distribute it individually under this License, provided you insert
+     a copy of this License into the extracted document, and follow this
+     License in all other respects regarding verbatim copying of that
+     document.
 
   7. AGGREGATION WITH INDEPENDENT WORKS
 
      A compilation of the Document or its derivatives with other
-     separate and independent documents or works, in or on a volume of
-     a storage or distribution medium, is called an “aggregate” if the
+     separate and independent documents or works, in or on a volume of a
+     storage or distribution medium, is called an “aggregate” if the
      copyright resulting from the compilation is not used to limit the
-     legal rights of the compilation’s users beyond what the
-     individual works permit.  When the Document is included in an
-     aggregate, this License does not apply to the other works in the
-     aggregate which are not themselves derivative works of the
-     Document.
+     legal rights of the compilation’s users beyond what the individual
+     works permit.  When the Document is included in an aggregate, this
+     License does not apply to the other works in the aggregate which
+     are not themselves derivative works of the Document.
 
      If the Cover Text requirement of section 3 is applicable to these
-     copies of the Document, then if the Document is less than one
-     half of the entire aggregate, the Document’s Cover Texts may be
-     placed on covers that bracket the Document within the aggregate,
-     or the electronic equivalent of covers if the Document is in
-     electronic form.  Otherwise they must appear on printed covers
-     that bracket the whole aggregate.
+     copies of the Document, then if the Document is less than one half
+     of the entire aggregate, the Document’s Cover Texts may be placed
+     on covers that bracket the Document within the aggregate, or the
+     electronic equivalent of covers if the Document is in electronic
+     form.  Otherwise they must appear on printed covers that bracket
+     the whole aggregate.
 
   8. TRANSLATION
 
      Translation is considered a kind of modification, so you may
-     distribute translations of the Document under the terms of
-     section 4.  Replacing Invariant Sections with translations
-     requires special permission from their copyright holders, but you
-     may include translations of some or all Invariant Sections in
-     addition to the original versions of these Invariant Sections.
-     You may include a translation of this License, and all the
-     license notices in the Document, and any Warranty Disclaimers,
-     provided that you also include the original English version of
-     this License and the original versions of those notices and
-     disclaimers.  In case of a disagreement between the translation
-     and the original version of this License or a notice or
-     disclaimer, the original version will prevail.
+     distribute translations of the Document under the terms of section
+     4.  Replacing Invariant Sections with translations requires special
+     permission from their copyright holders, but you may include
+     translations of some or all Invariant Sections in addition to the
+     original versions of these Invariant Sections.  You may include a
+     translation of this License, and all the license notices in the
+     Document, and any Warranty Disclaimers, provided that you also
+     include the original English version of this License and the
+     original versions of those notices and disclaimers.  In case of a
+     disagreement between the translation and the original version of
+     this License or a notice or disclaimer, the original version will
+     prevail.
 
      If a section in the Document is Entitled “Acknowledgements”,
      “Dedications”, or “History”, the requirement (section 4) to
-     Preserve its Title (section 1) will typically require changing
-     the actual title.
+     Preserve its Title (section 1) will typically require changing the
+     actual title.
 
   9. TERMINATION
 
@@ -1497,30 +1538,30 @@ Appendix C GNU Free Documentation License
 
      However, if you cease all violation of this License, then your
      license from a particular copyright holder is reinstated (a)
-     provisionally, unless and until the copyright holder explicitly
-     and finally terminates your license, and (b) permanently, if the
+     provisionally, unless and until the copyright holder explicitly and
+     finally terminates your license, and (b) permanently, if the
      copyright holder fails to notify you of the violation by some
      reasonable means prior to 60 days after the cessation.
 
      Moreover, your license from a particular copyright holder is
-     reinstated permanently if the copyright holder notifies you of
-     the violation by some reasonable means, this is the first time
-     you have received notice of violation of this License (for any
-     work) from that copyright holder, and you cure the violation
-     prior to 30 days after your receipt of the notice.
+     reinstated permanently if the copyright holder notifies you of the
+     violation by some reasonable means, this is the first time you have
+     received notice of violation of this License (for any work) from
+     that copyright holder, and you cure the violation prior to 30 days
+     after your receipt of the notice.
 
      Termination of your rights under this section does not terminate
-     the licenses of parties who have received copies or rights from
-     you under this License.  If your rights have been terminated and
-     not permanently reinstated, receipt of a copy of some or all of
-     the same material does not give you any rights to use it.
+     the licenses of parties who have received copies or rights from you
+     under this License.  If your rights have been terminated and not
+     permanently reinstated, receipt of a copy of some or all of the
+     same material does not give you any rights to use it.
 
   10. FUTURE REVISIONS OF THIS LICENSE
 
      The Free Software Foundation may publish new, revised versions of
      the GNU Free Documentation License from time to time.  Such new
-     versions will be similar in spirit to the present version, but
-     may differ in detail to address new problems or concerns.  See
+     versions will be similar in spirit to the present version, but may
+     differ in detail to address new problems or concerns.  See
      <http://www.gnu.org/copyleft/>.
 
      Each version of the License is given a distinguishing version
@@ -1528,33 +1569,32 @@ Appendix C GNU Free Documentation License
      version of this License “or any later version” applies to it, you
      have the option of following the terms and conditions either of
      that specified version or of any later version that has been
-     published (not as a draft) by the Free Software Foundation.  If
-     the Document does not specify a version number of this License,
-     you may choose any version ever published (not as a draft) by the
-     Free Software Foundation.  If the Document specifies that a proxy
-     can decide which future versions of this License can be used,
-     that proxy’s public statement of acceptance of a version
-     permanently authorizes you to choose that version for the
-     Document.
+     published (not as a draft) by the Free Software Foundation.  If the
+     Document does not specify a version number of this License, you may
+     choose any version ever published (not as a draft) by the Free
+     Software Foundation.  If the Document specifies that a proxy can
+     decide which future versions of this License can be used, that
+     proxy’s public statement of acceptance of a version permanently
+     authorizes you to choose that version for the Document.
 
   11. RELICENSING
 
-     “Massive Multiauthor Collaboration Site” (or “MMC Site”) means
-     any World Wide Web server that publishes copyrightable works and
-     also provides prominent facilities for anybody to edit those
-     works.  A public wiki that anybody can edit is an example of such
-     a server.  A “Massive Multiauthor Collaboration” (or “MMC”)
-     contained in the site means any set of copyrightable works thus
-     published on the MMC site.
+     “Massive Multiauthor Collaboration Site” (or “MMC Site”) means any
+     World Wide Web server that publishes copyrightable works and also
+     provides prominent facilities for anybody to edit those works.  A
+     public wiki that anybody can edit is an example of such a server.
+     A “Massive Multiauthor Collaboration” (or “MMC”) contained in the
+     site means any set of copyrightable works thus published on the MMC
+     site.
 
      “CC-BY-SA” means the Creative Commons Attribution-Share Alike 3.0
-     license published by Creative Commons Corporation, a
-     not-for-profit corporation with a principal place of business in
-     San Francisco, California, as well as future copyleft versions of
-     that license published by that same organization.
+     license published by Creative Commons Corporation, a not-for-profit
+     corporation with a principal place of business in San Francisco,
+     California, as well as future copyleft versions of that license
+     published by that same organization.
 
-     “Incorporate” means to publish or republish a Document, in whole
-     or in part, as part of another Document.
+     “Incorporate” means to publish or republish a Document, in whole or
+     in part, as part of another Document.
 
      An MMC is “eligible for relicensing” if it is licensed under this
      License, and if all works that were first published under this
@@ -1571,8 +1611,8 @@ ADDENDUM: How to use this License for your documents
 ====================================================
 
 To use this License in a document you have written, include a copy of
-the License in the document and put the following copyright and
-license notices just after the title page:
+the License in the document and put the following copyright and license
+notices just after the title page:
 
        Copyright (C)  YEAR  YOUR NAME.
        Permission is granted to copy, distribute and/or modify this document
@@ -1594,1501 +1634,118 @@ combination of the three, merge those two alternatives to suit the
 situation.
 
    If your document contains nontrivial examples of program code, we
-recommend releasing these examples in parallel under your choice of
-free software license, such as the GNU General Public License, to
-permit their use in free software.
+recommend releasing these examples in parallel under your choice of free
+software license, such as the GNU General Public License, to permit
+their use in free software.
 
 
-File: org-trello.info,  Node: Concepts,  Next: Keys,  Prev: GNU FDL,  Up: Top
+File: org-trello.info,  Node: Indices,  Prev: GNU FDL,  Up: Top
 
-Appendix D Concepts Index
-*************************
+Appendix C Indices
+******************
+
+This section contains the concepts, commands, functions and variables
+indices.
+
+* Menu:
+
+* Concepts::                     Concepts Index
+* Command Index::                Commands Index
+* Functions::                    Functions Index
+* Variables: Variables (1).      Variables Index
+
+
+File: org-trello.info,  Node: Concepts,  Next: Command Index,  Up: Indices
+
+C.1 Concepts Index
+==================
 
  [index ]
 * Menu:
 
-* contributing:                          Contributing.        (line 6)
-* contributors:                          Credits.             (line 6)
-* credits:                               Credits.             (line 6)
-* customizing:                           Customizing.         (line 6)
-* errors:                                Troubleshooting.     (line 6)
-* FAQ:                                   FAQ.                 (line 6)
-* license, manual:                       GNU FDL.             (line 6)
-* license, software:                     GNU GPL.             (line 6)
-* org-trello, installing:                Installing.          (line 6)
-* org-trello, using:                     Using.               (line 6)
-* release notes:                         Releases.            (line 4)
-* trello.com, connecting:                Connecting.          (line 6)
-* troubleshooting:                       Troubleshooting.     (line 6)
-* version history:                       Releases.            (line 4)
+* contributing:                          Contributing.          (line 6)
+* contributors:                          Credits.               (line 6)
+* credits:                               Credits.               (line 6)
+* customizing:                           Customizing.           (line 6)
+* errors:                                Troubleshooting.       (line 6)
+* FAQ:                                   FAQ.                   (line 6)
+* license, manual:                       GNU FDL.               (line 6)
+* license, software:                     GNU GPL.               (line 6)
+* org-trello, installing:                Installing.            (line 6)
+* org-trello, using:                     Using.                 (line 6)
+* release notes:                         Releases.              (line 6)
+* trello.com, connecting:                Connecting.            (line 6)
+* troubleshooting:                       Troubleshooting.       (line 6)
+* version history:                       Releases.              (line 6)
 
 
-File: org-trello.info,  Node: Keys,  Next: Functions,  Prev: Concepts,  Up: Top
+File: org-trello.info,  Node: Command Index,  Next: Functions,  Prev: Concepts,  Up: Indices
 
-Appendix E Key Binding Index
-****************************
+C.2 Commands Index
+==================
 
  [index ]
 * Menu:
 
-* C-c o C-h:                             Key-Bindings.        (line 8)
-* C-c o s:                               Synchronization Functions.
-                                                              (line 8)
-* C-u C-c o s:                           Synchronization Functions.
-                                                              (line 8)
+* C-c o C-h:                             Summary.               (line 8)
+* C-c o s:                               Synch Cmds.            (line 8)
+* C-u C-c o s:                           Synch Cmds.            (line 8)
 
 
-File: org-trello.info,  Node: Functions,  Next: Variables,  Prev: Keys,  Up: Top
+File: org-trello.info,  Node: Functions,  Next: Variables (1),  Prev: Command Index,  Up: Indices
 
-Appendix F Functions Index
-**************************
+C.3 Functions Index
+===================
 
  [index ]
 * Menu:
 
-* org-trello-sync-buffer:                Synchronization Functions.
-                                                              (line 8)
+* org-trello-sync-buffer:                Synch Cmds.            (line 8)
 
 
-File: org-trello.info,  Node: Variables,  Next: Releases,  Prev: Functions,  Up: Top
+File: org-trello.info,  Node: Variables (1),  Prev: Functions,  Up: Indices
 
-Appendix G Variables Index
-**************************
+C.4 Variables Index
+===================
 
  [index ]
 * Menu:
 
-* org-trello-current-prefix-keybinding:  Prefix Keys.         (line 6)
-* org-trello-mode-map:                   Individual Keys.     (line 6)
-
-
-File: org-trello.info,  Node: Releases,  Prev: Variables,  Up: Top
-
-Appendix H Release Notes
-************************
-
-This appendix records the primary changes in each release of
-org-trello.  Please see the repository
-(https://github.com/org-trello/org-trello) on GitHub for a more
-detailed history.
-
-   • Release 0.8.1
-        • Make adding trello colors to ‘org-tag-alist’ optional -
-          Close #365
-        • Fix typo in link to issue tracker - Close #364
-        • Fix ci
-        • Fix user properties search in agenda view - Close #366 -
-          Close #371
-        • Correct bad encoding of json encoded data.
-        • Update version
-        • Release notes
-
-   • Release 0.8.0
-        • Update travis ci configuration
-        • Fix ci’s multiple problems
-        • Fix some emacs25 incompatibilities
-        • Add copyright headers + update copyright range
-        • Add ’kill-whole-line in bug report
-        • Upgrade version
-        • Release notes
-
-   • Release 0.7.9
-        • Fix problem with custom kill-whole-line properties - Close
-          #270
-        • Fix problem with scheduled deadline - Close #326
-        • Upgrade version
-        • Release notes
-
-   • Release 0.7.8
-        • Fix cyrillic encoding problem - Close #318 #270
-        • Update version
-        • Sign tag release
-        • Release notes
-
-   • Release 0.7.7
-        • Rework packaging problem
-        • Add issue/pr templates
-        • Add request-backend to the org-trello-bug-report
-        • Update version
-        • Release notes
-
-   • Release 0.7.6
-        • Update version
-        • Support unicode characters in sync - Close #307 Close #309
-        • Fix parsing username comments - Close #301
-        • Fix parsing timestamp in superior emacs (api change)
-        • Update travis-ci scripts to use the new travis
-          infrastructure
-        • fix broken tests (mock.el unit test library revealed broken
-          tests)
-        • Fix problem with org-latex-preview when computing checksums
-          - Close #303
-        • Do not permit empty login when installing access key and
-          token - Close #314
-        • Upgrade dependencies version
-        • Pb with labels-tags regarding the grey - Close #310
-        • Improve documentation about the setup account - #306
-        • Release notes
-
-   • Release 0.7.5
-        • #290 - Toggling users assignments to card
-        • Add binding ‘C-c o t’ for the toggling command (code, doc,
-          etc...)
-        • #293 - Add a basic user driven completing mechanism (default
-          ido, possibility to use helm...)
-        • #291 - Improve labels policy [4/4]
-
-             • Update api to retrieve more labels
-             • Unify board information retrieval
-             • Update show board labels with the new colors
-             • Fix what went wrong (install existing board + create
-               new one)
-
-        • Open a command to clean org-trello data in buffer
-        • Close board command
-        • Update version
-        • Release notes
-
-   • Release 0.7.4
-        • Improve release script + fix typo
-        • Update version
-        • Coverage [10/10]
-
-             • stats-coverage.org for statistics (+
-               travis-ci/coverage.io)
-             • Fix bug on org-trello-log namespace + org-trello-log
-             • org-trello-input
-             • org-trello-query
-             • org-trello-proxy
-             • org-trello-buffer
-             • org-trello-controller
-             • org-trello-data
-             • org-trello-hash
-             • org-trello
-
-        • #283 - Toggle assign me action
-        • Release notes
-
-   • Release 0.7.3
-        • Update version
-        • Close #277 - Improve date time policy conversion
-        • Improve release + upload to marmalade scripts
-        • Fix flycheck warnings
-        • Some refactoring
-        • Release notes
-
-   • Release 0.7.2
-        • Update version
-        • Close #276 - Markdown rendering in comments
-        • Add test coverage
-        • [internal] Full respect elisp convention
-        • Release notes
-
-   • Release 0.7.1
-        • Update version
-        • Close #272 - Use native completion mechanism
-        • Close #273 - Fix labels when installing board
-        • Close #271 - Make a user option for user to decide the
-          policy about checksum and position
-        • Use improved native completin mechanism (again)
-        • Close #274 - Add ‘M-x org-trello-bug-report’ command
-        • Release notes
-
-   • Release 0.7.0
-        • Update version
-        • Close #238 - [internal] Respect elisp coding conventions
-          [2/2]
-
-             • Rename constants + variables
-             • Rename entry points according to conventions + alias
-               old definitions for backward compatibility
-
-        • Close #239 - Migrate ~/.trello/config.el inside
-          user-emacs-directory
-        • Close #256 - one user can have multiple trello accounts
-          [4/4]
-
-             • Migrate the actual setup to the multi-account setup
-               (transparent for user)
-             • Update ‘org-trello-install-key-and-token’ command to
-               create the account setup
-             • Update the loading configuration mechanism
-               multi-account aware
-             • Make sure initializing org-trello account is ok
-
-        • Close #267 - Emptying card’s description does not work
-        • Remove too much verbosity (when deleting property checksum)
-        • Close #250 - Changing order of checklist items not saved
-          unless checklist item’s text changed
-        • Release notes
-
-   • Release 0.6.9.6
-        • Create backlog
-        • Update version
-        • Fix #261 - Modifying/Adding labels ok, removing labels
-          completely ko
-        • Fix #262 - Mix between user ids and user name when assigning
-          card
-        • Release notes
-
-   • Release 0.6.9.5
-        • Create backlog
-        • Update version
-        • Fix marmalade’s release.sh script
-        • Fix #255 regarding the org tags/trello labels
-        • Release notes
-
-   • Release 0.6.9.4
-        • Update version
-        • Fix <https://github.com/org-trello/org-trello/issues/252>
-        • Release notes
-
-   • Release 0.6.9.3
-        • Create backlog
-        • Update version
-        • Problem in first comment point computation - Close #242
-        • Release notes
-
-   • Release 0.6.9.2
-        • Update version
-        • Clean dead code regarding old comments system
-        • Fix bug regarding comments indentation (breaking org
-          rendering)
-        • Fix bug regarding empty card and next card indentation
-          (breaking org rendering)
-        • Fix compile log warning about orgtrello-buffer depending on
-          orgtrello-controller (wrong)
-        • Update README-dev.md
-        • Release notes
-
-   • Release 0.6.9.1
-        • Create backlog
-        • Update version
-        • Fix region computation problem regarding comments -
-          <https://github.com/org-trello/org-trello/issues/232>
-        • Release notes
-
-   • Release 0.6.9
-        • Create backlog
-        • Update version
-        • Fix #+property keyword to #+PROPERTY - CLOSE
-          <https://github.com/org-trello/org-trello/issues/234>
-        • Fix missing line on future org-mode 8.3 - CLOSE
-          <https://github.com/org-trello/org-trello/issues/232>
-        • Release notes
-
-   • Release 0.6.8
-        • Create backlog
-        • Update version
-        • Edit comment direct in buffer - CLOSE
-          <https://github.com/org-trello/org-trello/issues/221>
-        • Open binding ‘C-c o U’ for ‘sync a comment’ action
-        • Release notes
-
-   • Release 0.6.7
-        • Create backlog
-        • Update version
-        • Improve/Refactor the comment deletion
-        • Fix ‘orgtrello-buffer/pop-up-with-content!’
-        • Improve comment creation - CLOSE
-          <https://github.com/org-trello/org-trello/issues/222> [2/2]
-
-             • Add checksum to the comments
-             • Improve comment creation
-
-        • Release notes
-
-   • Release 0.6.6
-        • Create backlog
-        • Update version
-        • Delete comments - CLOSE
-          <https://github.com/org-trello/org-trello/issues/222>
-        • Clean no longer used show comments commands + install the
-          delete comment command
-        • Release notes
-
-   • Release 0.6.5
-        • Create backlog
-        • Update version
-        • Maintenance - Revert tests back to ert-deftest to have more
-          explicit error outputs
-        • Fix unit tests
-        • Fix CI which does not break when failure or error.
-        • Format user’s comments in a readable format -
-          <https://github.com/org-trello/org-trello/issues/218> [2/2]
-
-             • Update the comment’s format according to
-               <https://github.com/org-trello/org-trello/issues/218#issue-48750430>
-             • Update the ‘org-trello/add-card-comment’ command to
-               improve creating comment
-
-        • Release notes
-
-   • Release 0.6.4
-        • Minor change to allow abbreviated file path -
-          <https://github.com/org-trello/org-trello/pull/213>
-        • Update version
-        • Move file list functionality to org-trello.el - CLOSE
-          <https://github.com/org-trello/org-trello/issues/214>
-        • Add ;;;### autoload for the org-trello’s default commands
-        • Release notes
-
-   • Release 0.6.3
-        • Update version
-        • Enable org-trello mode automatically for certain files -
-          <https://github.com/org-trello/org-trello/issues/210>
-        • Release notes
-
-   • Release 0.6.2
-        • Backlog
-        • Update version
-        • Improve check connection to trello
-        • Improve documentation about the org-trello setup
-        • Release notes
-
-   • Release 0.6.1
-        • Update version
-        • ‘Trello archived’ cards are not archived on org-trello
-          buffers - CLOSE
-          <https://github.com/org-trello/org-trello/issues/203>
-        • Release notes
-
-   • Release 0.6.0
-        • Refactor - Unify data structure between trello card and
-          org-trello card
-        • Refactor - Improve merge computations
-        • Refactor - Remove some dead code
-        • Update version
-        • Improve sync request policy -
-          <https://github.com/org-trello/org-trello/issues/58> [87%]
-
-             • ’Sync card to trello’ syncs card only if local changes
-             • ’Sync card from trello’ updates the card from trello
-               and the local checksum signature
-             • ’Sync buffer from trello’ updates the local card
-               checksum
-             • ’Sync buffer to trello’ syncs only card with local
-               changes
-             • ’Delete entity’ updates the checksum
-             • Extend the checksum system to the checkbox entities
-               (checklist/item) - sync to trello
-             • Extend the checksum system to the checkbox entities
-               (checklist/item) - sync from trello
-             • Update checksum computation depending on entities
-
-        • ‘Checklists don't work for me’ - It does work - Need to
-          improve checklist and item predicates.  - CLOSE
-          <https://github.com/org-trello/org-trello/issues/204>
-
-             • Fix behavior
-             • Fix tests
-
-        • Release notes
-
-   • Release 0.5.9
-        • Backlog
-        • Update version
-        • Improve region card computation for sync card from trello.
-        • Fix error on sync card from trello when nothing to sync.
-        • Use defcustom instead of defvar for user customisation -
-          CLOSE #196
-          (https://github.com/org-trello/org-trello/issues/196)
-        • When not in card, explain why you cannot do the current
-          action
-        • Improve display of error when sync a card without title
-        • Check package installation and fix what’s needed
-        • Release notes
-
-   • Release 0.5.8
-        • Backlog
-        • Update version
-        • Add emacs24 dependencies -
-          <https://github.com/purcell/org-trello/commit/0fef27e83d5b1c68af03213354ddd97448c802d2>
-             • 
-          <http://www.gnu.org/software/emacs/manual/html_node/elisp/Library-Headers.html#Library-Headers>
-             • 
-          <http://stackoverflow.com/questions/16805645/how-can-i-gracefully-drop-support-for-older-emacsen-in-my-elisp-package>
-        • Downgrade request dependency to 0.3.1 to make org-trello
-          installation possible in melpa-stable (no answer from
-          ‘request’ maintainer) +
-          <https://github.com/org-trello/org-trello/issues/195>
-        • Release notes
-
-   • Release 0.5.7
-        • Backlog
-        • Update version
-        • Fix default keyword when not specified (trello list name) -
-          #183 (https://github.com/org-trello/org-trello/issues/183)
-        • Remove reference to proxy in log messages
-        • Sync buffer from trello - Ignore errors when there is
-          nothing to sort.
-        • Sync buffer from trello - Fold buffer entries when done.
-        • Fix bug on (orgtrello-entity/compute-card-region!)
-        • Release notes
-
-   • Release 0.5.6
-        • backlog
-        • Update version
-        • Use save-excursion - save-restriction - narrow-to-region
-          instead of using region
-        • Fix behavior orgtrello-buffer/end-of-line!  When going to
-          end of line in checkbox, we need to do it twice, fix.
-        • Small refactoring about overlays
-        • Release notes
-
-   • Release 0.5.5
-        • Backlog
-        • Update version
-        • Update main github’s readme to static link to the main
-          documentation site.
-        • Update bindings order to regroup them
-        • Add bindings for archiving cards ‘C-c o A’
-        • Remove old bindings ‘C-c o C’ that synced the card.
-        • Update bindings ‘C-c o A’ to add comments to the card to
-          ‘C-c o A’
-        • Update bindings to show comments as ‘C-u C-c o A’ and remove
-          the old one ‘C-c o o’
-        • Check everything is ok from test point of view
-        • Fix Synchronization problem - #183
-        • Some refactoring to reduce multiple buffer readings
-        • Check package installation
-        • Release notes
-
-   • Release 0.5.4
-        • Backlog
-        • Archive cards - CLOSE #181
-
-             • Open trello api about (un)archive card
-             • Refactor API to factorize behavior
-             • Install org-trello archive binding [100%]
-
-                  • Archive card interactive command
-                  • Ensure sync-from trello does not retrieve archive
-                    cards too
-                  • Remap org’s default archive binding ‘C-c $’ to use
-                    org-trello’s
-                  • Functional checks before executing archive
-                  • Add Archive DONE cards interactive command
-
-        • Fix ‘Most actions not working’ issue - CLOSE #192
-        • Update version
-        • Fix compilation warning(s)
-        • Release notes
-
-   • Release 0.5.3
-        • Backlog
-        • Emacs blocks when sync - CLOSE #164 - Deferred the
-          sync/delete actions [100%]
-
-             • Align execution of code regarding [100%]
-
-                  • Sync to
-                  • Sync from
-                  • Delete
-
-             • Render the execution asynchronous [100%]
-
-                  • Delete
-                  • Sync card to trello
-                  • Sync buffer to trello
-                  • Sync card from trello
-                  • Sync buffer from trello
-
-             • Fix alignment problem (sync a card from trello must
-               enforce order on position)
-             • Remove dead code
-             • Refactor behavior between sync card and sync buffer
-               [100%]
-
-                  • Refactor behavior
-                  • Refactor names
-
-             • Trigger save after sync action - cannot do this because
-               all requests are asynchronous.  So emacs will do it on
-               his own.
-             • Caret must remain where it stands after ‘sync from
-               card’ action
-             • Fix - Keep the order when synchronizing the buffer
-             • Improve orgtrello-controller/do-install-key-and-token
-             • Improve org-trello/install-board-and-lists-ids [100%]
-
-                  • Let trello do the filtering on listing the boards
-                  • Resequence the actions and use parallel requests
-                    to improve speed
-                  • Improve some more regarding the sequencing
-
-             • Improve org-trello/update-board-metadata [100%]
-
-                  • Rework the sequencing
-                  • Remove intermediary sync request
-
-             • Clean new dead code
-             • Improve orgtrello-controller/do-create-board-and-lists
-               [100%]
-
-                  • Rename org-trello/create-board to
-                    org-trello/create-board-and-install-metadata
-                  • Resequence the trello requests
-                  • Clean up some dead code
-
-        • Fix caret movement problem (At the end of an action, the
-          caret must be at the same position as before)
-        • Improve logging system to prefix org-trello message with
-          ’org-trello -’
-        • Fix create board issue (regarding org keyword list + order +
-          closing list)
-        • Rename org-trello/install-board-and-lists to
-          org-trello/install-board-metadata
-        • Rename org-trello/jump-to-card to
-          org-trello/jump-to-trello-card
-        • Update package doc installation in org-trello.el
-        • Check package dependencies and adapt them if need be
-        • Fix problem with org-trello/end-of-line!  when there is no
-          org information at point
-        • Update version
-        • Release notes
-
-   • Release 0.5.2
-        • Remove org-trello’s over engineered bricks (proxy, elnode,
-          webadmin) -> this will render it synchronous again.  [100%]
-
-             • Is proxy useful since emacs still blocks?  -> The only
-               thing interesting seems to be the ability to watch
-               running actions.  As no one seem to care about it, we
-               can remove it.
-             • Can’t we simply use ’deferred (or ’async library) to
-               defer computations?  -> Yes, building actions (sync,
-               delete) as ’lazy’ list (macro) of deferred
-               computations.
-             • What about concurrency then?  There will be indeed
-               possibilities of concurrent requests.
-             • What about race conditions then?  We need to find a way
-               to compose deferred computations -> deferred
-               (https://github.com/kiwanami/emacs-deferred) seems able
-               to do so
-             • Remove db dependency
-             • Remove elnode dependency
-             • Remove esxml dependency
-             • Remove orgtrello-db.el
-             • Remove orgtrello-webadmin.el
-             • Remove orgtrello-elnode.el
-             • Remove orgtrello-server.el
-             • Clean orgtrello-proxy.el up
-             • Get back to synchronous query (sync to + delete)
-             • Get back to synchronous query for sync from trello
-               routines
-             • Clean load-org-trello.el up
-             • Update README-dev.md about namespace removal
-             • Fix loading of load-org-trello.el code
-             • Clean tests up
-             • Update org-trello package
-
-        • Fix bug regarding sync-entity and structure (apparently,
-          there is a bad limit computation and this syncs the all
-          buffer)
-        • Fix save buffer at the end of the sync actions
-        • Clean README-dev.md about marmalade
-        • Update dependencies version
-        • Now that elnode, esxml, db dependencies’ are out of the way,
-          org-trello can be fully built on melpa-stable.
-        • Update version
-        • Clean dead code
-        • Release notes
-
-   • Release 0.5.1
-        • Remove marmalade remains (release.sh + Makefile)
-        • Small refactoring of the main contract
-        • Fix bad code (typo caddr)
-        • Update version
-        • Release notes
-
-   • Release 0.5.0
-        • Revert 0.4.9 #187 which introduced regressions
-          #186#issuecomment-52423783 and maybe #185
-        • Retrieve interesting code from 0.4.9 (for example, start
-          proxy during actions if stopped and warn about it, etc...)
-        • Update version
-        • Release notes
-
-   • Release 0.4.9
-        • Backlog
-        • Emacs blocks when sync - #164
-
-             • deferred dependency - 0.3.1 chosen because it’s the
-               common denominator between marmalade and melpa
-             • Render the data request consumer asynchoneous
-             • ... emacs still blocks though...
-
-        • Sometimes the proxy seems to not be started (which is a
-          mess), add a check on the running proxy before doing
-          anything.  - #180
-        • During the check of the proxy, if not started, try to start
-          it.
-        • Update version
-        • No longer deliver to marmalade (too much work)
-        • Release notes
-
-   • Release 0.4.8
-        • Backlog
-        • mad caret syndrom - Close #177
-
-             • mad caret - fix sync to
-             • mad caret - the caret does not move even when sync
-               computation takes place
-             • mad caret - fix sync from
-
-        • Upgrade version
-        • Update release notes
-
-   • Release 0.4.7
-        • Backlog
-        • Improve the description management in org and trello - #89
-          #175
-        • Revert to the block json-encode-hash-table
-        • Upgrade version
-        • Update release notes
-
-   • Release 0.4.6
-        • Prepare Backlog
-        • Fix - CLOSE
-          <https://github.com/org-trello/org-trello/issues/172>
-        • Fix - prelude does some monkey-patching on
-          json-encode-hash-table which is used by org-trello -
-          reimplement this function
-        • CI is broken again - Try to find a solution
-        • Update version
-        • Update release notes
-
-   • Release 0.4.5
-        • Backlog
-        • ’Sync from trello’ must preserve unknown data card in drawer
-          - CLOSE #167
-
-             • Extract unknown information and store them in org
-               entity representation
-             • Ensure those data transit back in trello data when
-               merging
-             • Write back those unknown information in the sync from
-               trello
-
-        • Update version
-        • Release notes
-
-   • Release 0.4.4
-        • Multiple files packaging - CLOSE #163
-
-             • Move src/*.el files to /org-trello
-             • Add ’provide statements for each of those files
-             • Rework header + org-trello + footer files
-             • Adapt main org-trello.el files to reference the needed
-               namespaces
-             • Adapt test files so that it continues to work (add the
-               needed require statements)
-             • Adapt loading code routine for developing + testing
-             • Refactoring step - rename some files to avoid confusion
-             • Adapt README-dev.md to the current code adaptation
-             • Adapt cask packaging
-             • Add missing standard header to namespace
-             • Does org-trello still compiles?  NO
-             • Fix simple compilation warnings
-             • Fix some more warnings
-             • Does org-trello’s test work?  YES
-             • Does org-trello work?  NO
-             • Doc - Update docstring to standard emacs convention
-             • Fix org-trello to make it work again
-             • Test package melpa install (adapt org-trello recipe and
-               test M-x package-install-file) -
-               <https://github.com/ardumont/melpa/blob/org-trello-with-multiple-files-packaging/recipes/org-trello>
-             • Test package marmalade install
-
-        • Fix org-trello behavior with overlay on org-return and
-          org-ctrl-c-ret
-        • Update version
-        • Release notes
-
-   • Release 0.4.3
-        • Prepare backlog
-        • Replace local back-end (file implementation) with a RAM
-          database [100%]
-        • Update README-dev.md about the new db namespace
-        • Remove some useless new code
-        • Improve start/stop server policy (one server may sync
-          multiple buffers/boards... and right now, not really taken
-          into account)
-        • Clean dead code from the implementation switch from implicit
-          disk files db to RAM db [100%]
-        • Improve start/stop server policy 2
-        • Some Refactoring
-        • Version
-        • Release notes
-
-   • Release 0.4.2
-        • Refactoring - Remove dead code
-        • Refactoring - Remove duplicated code already existing in
-          dependency library
-        • Improve - Fold all entries when sync full file from trello
-          is done
-        • Improve loading org-trello namespaces for dev purposes
-        • Version
-        • Release notes
-
-   • Release 0.4.1.1
-        • Remove non interactive commands
-        • Create board does not work - Close #157
-        • Improve loading keys policy - #156
-        • Use cask to make the packaging and remove old personal
-          routines
-        • Version
-        • Release notes
-
-   • Release 0.4.1
-        • Fix deadline/description problem - #154
-        • Fix deadline/due date problem - #153
-        • When sync from trello, merge non trello org tags with trello
-          tags (to avoid loss for the user)
-        • When sync to trello, filter out org tags that will not be
-          understood by trello (to avoid 400 request from trello)
-        • Add the quick start in the main package description
-        • Version
-        • Release notes
-
-   • Release 0.4.0.1
-        • Fix ’Sync doesn’t work if org buffer name contains special
-          characters’ - Close #147
-        • Version
-        • Release notes
-
-   • Release 0.4.0
-        • Refactor
-        • Fix - Close
-          <https://github.com/org-trello/org-trello/issues/145>
-        • Remove unused dependency
-        • Update README-dev.md
-        • Version
-        • Release notes
-
-   • Release 0.3.9
-        • Refactor - Symmetry for all commands where that makes sense
-          (without C-u/with C-u)
-        • Refactor - Enforce the api request creation usage with the
-          params as usual
-        • Let trello filter out needless data - CLOSE
-          <https://github.com/org-trello/org-trello/issues/69>
-
-             • Let trello filter out needless data - get card
-             • Let trello filter out needless data - get checklist
-             • Let trello filter out needless data - get item
-
-        • Upgrade Version
-        • Release notes
-
-   • Release 0.3.8
-        • Some refactoring
-
-             • Align sync from trello card tags/labels serialization
-               with org’s tags behavior
-             • Refactor open org-trello buffer with title/content
-             • Sanitize functions (move functions to their right
-               namespaces)
-             • Do not override the user’s existing tags
-
-        • Provide org-trello-mode-hook - CLOSE
-          <https://github.com/org-trello/org-trello/issues/116>
-        • Open stop all synchronization actions - CLOSE
-          <https://github.com/org-trello/org-trello/issues/131>
-        • Use C-u keychord to create a symmetry use (e.g. =C-c o s= is
-          sync to trello, ‘C-u C-c o s’ is sync from trello)
-
-             • sync-buffer, sync-to-trello, with C-u, sync-from-trello
-             • assign-me, with C-u, unassign me
-             • A command to ’sync from trello’ the current entity
-               without its structure - CLOSE
-               <https://github.com/org-trello/org-trello/issues/139>
-             • Use C-u on sync-entity-to-trello command to trigger the
-               sync-entity-from-trello
-             • A command to ’sync from trello’ the current entity and
-               its structure - CLOSE
-               <https://github.com/org-trello/org-trello/issues/140>
-             • Use C-u on sync-entity-and-structure-to-trello command
-               to trigger the sync-entity-and-structure-from-trello
-
-        • Some more refactoring
-        • Fix bug regarding org keywords which disappeared
-        • Version
-        • Release notes
-
-   • Release 0.3.7
-        • Use ‘defconst’ keyword instead of defvar
-        • Use trello labels and org tags as one - CLOSE
-          <https://github.com/org-trello/org-trello/issues/70>
-        • Refactor + Fix create / connect to board
-        • Update metadata command about the board currently connected
-          (sometimes, new information arise)
-        • Release notes
-        • Version
-
-   • Release 0.3.6.1
-        • Fix already used bindings
-        • Fix edge case about adding comments
-        • Version
-        • Release notes
-
-   • Release 0.3.6
-        • Test multiple emacs version -
-          <https://github.com/org-trello/org-trello/issues/52>
-        • Add a logo to website -
-          <https://github.com/org-trello/org-trello/issues/129>
-        • Synchronize user comments -
-          <https://github.com/org-trello/org-trello/issues/86>
-        • Add a comment to a card -
-          <https://github.com/org-trello/org-trello/issues/132>
-        • Take control over the test file which is now too big
-          (dispatch in ’namespace’ test buffer)
-        • Version
-        • Release notes
-
-   • Release 0.3.5
-        • Test multiple emacs version -
-          <https://github.com/org-trello/org-trello/issues/52>
-        • Version
-        • Update documentation note for the package view
-        • Release note
-
-   • Release 0.3.4
-        • PR fix typo in readme -
-          <https://github.com/org-trello/org-trello/pull/120>
-        • Fix webadmin button to delete running action
-        • Add version emacs 24.3.50 in documentation
-        • Improve computation level for checkbox (checklist/items) -
-          <https://github.com/org-trello/org-trello/issues/121#issuecomment-37559929>
-        • Improve documentation
-        • Upgrade version
-        • Release notes
-
-   • Release 0.3.3
-        • Issue when installing on melpa reported wrongly on melpa and
-          reported back
-          <https://github.com/org-trello/org-trello/issues/117>
-        • Fix typo when-let in -when-let
-        • Remove org as a dependency, the plugins org- do not seem to
-          declare it + problem in dependency
-        • Upgrade to dash 2.5.0
-        • Clarify the possible manipulation to install the package as
-          a file or directly from the multiple repository
-        • Integration test to install the file with marmalade
-        • Integration test to install the file with melpa
-        • Integration test to fully install the package on marmalade
-        • Integration test to fully install the package on melpa
-        • Update README-dev.md about those targets
-        • Decline these tests with multiple emacs versions
-        • Use these targets on travis (even if the feedback will be
-          way longer, it’s better than no feedback)
-        • Upgrade version
-        • Ensure org-trello works with emacs 24.4 (how do i install
-          it...)
-
-   • Release 0.3.2
-        • Use standard remapping to override the org-end-of-line
-          routine -
-          <https://www.gnu.org/software/emacs/manual/html_node/elisp/Remapping-Commands.html>
-        • Clean some dead code
-        • Use standard mode map definition for the org-trello bindings
-        • Fix description extract -
-          <https://github.com/org-trello/org-trello/issues/114>
-        • Version
-        • Release notes
-
-   • Release 0.3.1.1
-        • Installation failure -
-          <https://github.com/org-trello/org-trello/issues/112>
-        • Version
-        • Release notes
-
-   • Release 0.3.1
-        • Backlog
-        • Version
-        • Avoid duplication in declaring the org-trello version
-        • Add the important information about emacs 24.3+ (org-trello
-          is only supported from this version range)
-        • Clean the code regarding the old checklist/item entities
-          (with stars) -
-          <https://github.com/org-trello/org-trello/issues/105>
-        • Sometimes, multiple cards are created more than once.
-          Improve the proxy policy regarding this - Unable to
-          reproduce so do nothing.
-        • Release notes
-
-   • Release 0.3.0
-        • Backlog
-        • Upgrade Version
-        • org-trello bindings remains present when org-trello is
-          switched off.  Fix it.
-        • Update doc
-        • Release notes
-
-   • Release 0.2.9.1
-        • Forgot to ship code
-        • Update version
-        • Release notes
-
-   • Release 0.2.9
-        • Remove org-trello.el at the root of the code (as the package
-          generates this file and the test load without it, no longer
-          needs to be gitted)
-        • Invisible checkbox identifier -
-          <https://github.com/org-trello/org-trello/issues/98>
-        • Fix sync from trello which loses the state of the checkboxes
-        • Fix tests break since org-trello.el has been destroyed and
-          simplify the testing
-        • Overload the C-e mapping to go at the end of the line for
-          the org-trello mode
-        • Update doc
-        • Release notes
-
-   • Release 0.2.8.2
-        • Fix yet another error on synchronization from trello.
-        • Update doc
-        • Release notes
-
-   • Release 0.2.8.1
-        • Fix error on synchronization from trello
-        • Update doc
-        • Release notes
-
-   • Release 0.2.8
-        • Backlog
-        • Synchronize description -
-          <https://github.com/org-trello/org-trello/issues/80>
-        • Use –reduce-from from dash instead of cl-reduce to reduce
-          the cl deps
-        • Version
-        • Update doc
-        • Release notes
-
-   • Release 0.2.7
-        • Backlog
-        • Create TODO template for the backlog start
-        • Clean obsolete files (org-trello.org is no longer
-          maintained, TODO-tests.org is no longer used)
-        • Retry to split into ‘namespace’ files -
-          <https://github.com/org-trello/org-trello/issues/93>
-
-             • Split into ‘namespace’ files
-             • Ensure packaging is generated and ok for marmalade
-             • Ensure packaging is generated and ok for melpa - yes,
-               ensure that the root ‘org-trello.el’ is generated
-               before pushing on master.
-             • Ensure the tests are still ok
-
-        • README-dev -
-          <https://github.com/org-trello/org-trello/issues/99>
-        • Rewrite the abstraction around fetched results to unify the
-          ‘data model’ (in and out identical) -
-          <https://github.com/org-trello/org-trello/issues/100>
-        • Unify the terms around users-assigned (org-trello) and
-          members (trello)
-        • Split the last org-trello namespace into 2 (‘controller’ for
-          the orchestration function call triggered by interactive
-          commands and ‘org-trello’ for the interactive commands)
-        • Unfold every entries before triggering the sync from trello
-          to avoid problems similar as
-          <https://github.com/org-trello/org-trello/issues/53>
-        • Version
-        • Release notes
-
-   • Release 0.2.6
-        • Jump to card -
-          <https://github.com/org-trello/org-trello/issues/88>
-        • Rewrite convention for the "goto board" action into "jump to
-          board"
-        • Update README.md
-        • Version
-        • Release Note
-
-   • Release 0.2.5
-        • Backlog updates
-        • Global properties in upper case -
-          <https://github.com/org-trello/org-trello/issues/83>
-        • Hide the global properties -
-          <https://github.com/org-trello/org-trello/issues/77>
-        • Use of checkbox convention -
-          <https://github.com/org-trello/org-trello/issues/78>
-        • Jumping from emacs to the current trello board -
-          <https://github.com/org-trello/org-trello/issues/76>
-        • Simplify the update of the help menu to avoid possible
-          desynchronisation with code
-        • Update documentation + TOC
-        • Version
-        • Release notes
-
-   • Release 0.2.4
-        • Sprint backlog
-        • Some refactoring + tests coverage
-        • Fix sync-from-trello - Merge org card’s users assigned list
-          and the trello one
-        • Fix sync-from-trello - if new entities are referenced but
-          not yet sync’ed on trello, they will disappear from the
-          buffer when sync-from-trello (they should not) -
-          <https://github.com/org-trello/org-trello/issues/71>
-
-             • Compute the entities without sync’ed properties
-             • Write them silly at the end of the computation of the
-               sync’ed data (trello and org merge) to the org buffer
-
-        • Upgrade version
-        • Release notes
-
-   • Release 0.2.3
-        • Version
-        • Fix discrepancy between docstring and binding to delete the
-          setup - <https://github.com/org-trello/org-trello/issues/74>
-        • Use a prefix binding which does not override the emacs’s
-          default user prefix (keep the original for the moment to
-          avoid disturbing people which already use it) -
-          <https://github.com/org-trello/org-trello/issues/72>
-        • Update documentation about the possibility to change the
-          default prefix key
-        • Fix ci-travis build due to change in cask installation
-          command
-        • Release notes
-
-   • Release 0.2.2
-        • Version
-        • Improve abstraction around data from trello (not complete
-          yet)
-        • Show people assigned to card -
-          <https://github.com/org-trello/org-trello/issues/67>
-
-             • Compute user properties part from the board’s
-               informations
-             • Install board setup routine (C-c o I) also install
-               board users
-             • Create board routine (C-c o i) should also install user
-               boards (only the current user should then appear)
-             • Setuping properties before doing any actions
-             • Cleanup routine should also remove user global
-               properties
-             • User assigns oneself to the card
-             • User unassigns oneself to the card
-             • sync-to-trello also assign users
-             • sync-to-trello also unassign users
-             • sync-from-trello also retrieve user informations and
-               update the org buffer
-             • cleanup routine must cleanup card properties regarding
-               user assigned
-
-        • Update README about new command
-        • Update README TOC
-        • Release notes
-
-   • Release 0.2.1.2
-        • Version
-        • Release notes
-        • Fix typography in naming windows-nt system
-
-   • Release 0.2.1.1
-        • Version
-        • Release notes
-        • Fix error in packaging manipulation
-
-   • Release 0.2.1
-        • Version
-        • Improve sync from trello - In case of new item/checklist,
-          the entry will be added at the end of the buffer instead of
-          its rightful place.
-        • Problem regarding some function on windows system -
-          <https://github.com/org-trello/org-trello/issues/62>
-        • Release notes
-
-   • Release 0.2.0
-        • Version
-        • Improve cleanup of the org-trello metadata
-        • Videos about org-trello
-
-             • Webadmin
-             • Checkbox
-             • Sync from trello
-             • Cleanup trello board
-             • Cleanup org-trello buffe
-
-        • Reference videos to README
-        • Improve sync to trello
-        • Release notes
-
-   • Release 0.1.9
-        • Clean install org-trello
-        • Ensure sync-from-trello keep the order of the checklists
-          clean
-        • Version
-        • Release notes
-
-   • Release 0.1.8
-        • Simplify Cask file
-        • webadmin: Improve rendering [2/2]
-
-             • Better display for the delete buttons.
-             • Use css for the play/pause entities
-
-        • Ensure checks before sync request to the proxy.
-        • Fix sync full entity (related to map-checkbox) -
-          <https://github.com/org-trello/org-trello/issues/53>
-        • Improve the justify policy once and for all (this blinks at
-          the moment!)
-        • Version
-        • Fix problem with archive/unarchive file routine
-        • Fix problem with delete file routine (does not take place)
-        • Add missing callback for the delete action
-        • Improve the post-actions
-
-             • Justify once
-             • Saving once
-             • Unify the saving behaviour with the delete action
-
-   • Release 0.1.7.1
-        • Fix problem requiring cl-lib -
-          <https://github.com/org-trello/org-trello/issues/51>
-        • Fix error on when-let -
-          <https://github.com/org-trello/org-trello/issues/54>
-        • Version
-        • release notes
-
-   • Release 0.1.7
-        • webadmin: Add an action button on action to stop it
-        • webadmin: Add an action button to stop every running actions
-          on entities
-        • URLencode/Protect the data from the query before executing
-          the query -
-          <https://github.com/org-trello/org-trello/issues/46>
-        • Some refactoring about:
-
-             • Docstring position (same level as function definition,
-               this way, when toggling sexp, we see the docstring too)
-             • Simplification of cond statement
-             • Adding some missing tests
-             • Simplifying some code function (removing let when not
-               needed)
-
-        • Fix the scan problem with level 3 (must have been introduced
-          with the refactoring from number to variable level)
-        • Remove the marker notion and use the identifier in its place
-          (we already use it as marker)
-        • Fix the :PROPERTIES: font lock (which is not painted as
-          keyword)
-        • Improve the justify policy (trim the content before
-          computing the justifying) -> There remains erratic behaviour
-        • Improve map-checkbox to deal with limit (map over checkbox
-          inferior to current level, at the moment, we scan all
-          checkboxes)
-        • Version
-        • Release notes
-
-   • Release 0.1.6
-        • Use the native org checklist to sync to trello
-        • Sync entity and arborescence tree
-        • Sync to trello must sync the native checklist if the flag is
-          activated
-        • Sync from trello must create native checklists if the flag
-          is activated
-        • Cleanup routine must cleanup the new checklist.
-        • Delete entity must remove entity on point
-        • Upgrade version
-        • Automate the release to marmalade
-        • Justify the #PROPERTIES# to the left for a better rendering
-        • Keywordify the #PROPERTIES#
-        • Merge the org :PROPERTIES: and the org-trello #PROPERTIES#
-          into one.
-        • Improve the activation/deactivation of the new way
-        • Update the readme about the new checkbox mode
-        • Release notes
-        • Release
-
-   • Release 0.1.5
-        • Symmetry in the architecture - the deletion must pass
-          through the consumer too.
-        • Upgrade version
-        • webadmin: Improve the rendering of the webadmin page to add
-          headers and action
-        • webadmin: Add a current scanning entry in the webadmin page
-        • Defining log level using variable
-        • Redefine main function to sync an entity (they are badly
-          named).
-        • Release notes
-        • Release
-
-   • Release 0.1.4
-        • Prepare the hierarchy files to avoid problem like
-          <https://github.com/org-trello/org-trello/issues/37#issuecomment-23151353>
-        • Adding a version interactive command (it will help for
-          asking people the version they use).
-        • Upgrade version
-        • Refactoring - simplify code
-        • Improve message labels
-        • Improve failure dealing regarding the sync
-        • Improve the marker computation
-        • Remove the label/title notion and use the name notion (same
-          as trello), this will reduce error reasoning.
-        • Fix the format with missing argument on the callback sync
-          success
-        • Improve the test regarding the synchro completion of a level
-        • Order when syncing to trello
-        • Release notes
-        • Release
-
-   • Release 0.1.3
-        • Leverage elnode’s webserver capacity to display some basic
-          monitoring about the synchronization
-        • Install bootstrap and jquery.js directly to avoid the user’s
-          manual installation (the first query to static files install
-          bootstrap and jquery now)
-        • Simple end to end test - simple entity creation
-        • Improve the logging policy
-        • Improve the saving policy
-        • Upgrade version
-        • Release notes
-        • Release
-
-   • Release 0.1.2
-        • Use an intermediary server between org and trello to permit
-          asynchronous actions
-        • Change org-trello’s loading policy + update the readme about
-          it
-        • Find a way to make the proxy less verbose
-        • Fix the loss of todo keywords after the synchronization ->
-          no idea what’s wrong here
-        • Improve the attachment board routine to add the missing |
-          keyword (hardcode with DONE for example)
-        • Improve the clearing of already present heading metadata
-        • Improve the help message to categorize the bindings
-        • Improve the starting/stopping of org-trello
-        • Remove end to end test as this can no longer works with
-          asynchronous
-        • Update the readme to explain the migration from 0.1.1 to
-          0.1.2
-        • Render the sync to trello routine asynchronous
-        • Render the sync complex entity routine asynchronous
-        • Render the sync from trello asynchronous
-        • Fix check setup routine
-        • Interactive command to cleanup the org-trello data from the
-          current buffer
-        • Interactive command to delete all entities from the board
-          and the org buffer
-        • Update version
-        • Release notes
-        • Release
-
-   • Release 0.1.1
-        • Literate org-trello
-        • Testing the packaging, at the moment, this is done manually
-          (make package & M-x package-install-file)
-        • Introducing C-c o h at the loading of the buffer when ot is
-          loaded
-        • Update readme/main page with images on videos
-        • Replace already present properties regarding boards before
-          injecting new ones.
-        • Improve the current attach board and list routine to avoid
-          manual setup for the user
-        • Update version
-        • Update dependencies lib to more recent version.
-        • Remove some warnings
-        • Add some message for the user to warn the user to use UTF-8
-        • Force utf-8 for the routine of board installation (create
-          aend attach)
-        • Some more refactoring
-        • Refactoring: formatting code, install consume-key and access
-          token routine improved, ...
-        • Refactoring: UTF-8 warning for every routine + Forcing UTF-8
-          at setup time (create board and attach board routine)
-        • Refactoring: Adding ^L break line inside the code to delimit
-          the ‘namespace’
-        • Refactoring: Improve the callback use by avoiding to specify
-          them
-        • Refactoring: Restart org-mode after synchronization to avoid
-          losing the user’s setup.
-        • Refactoring: Fix some problems (version, checklist mechanism
-          update, warning on format, create complex entity which sync
-          only the current entity)
-        • Release notes
-        • Release
-
-   • Release 0.1.0
-        • Fix importing of cards with due date -
-          <https://github.com/org-trello/org-trello/pull/22>
-        • Migrate carton to card.el (travis-ci builds break because of
-          this)
-        • Order of creation of list (from keywords) in trello does not
-          match the order of the keyword
-        • Abstract away the query (:method, :uri, ...) implementation
-        • Abstract away the implementation of the org-data some more
-          (access of the information from the map are embedded in the
-          function instead of delegating to dedicated function, thus
-          not hiding the implementation)
-        • Version
-        • Order when synchronizing from trello does not match trello’s
-          order
-        • Refactor the sync from trello routine function (2 reduce
-          embedded, only one is sufficient)
-        • Enforce the order of the card accord to the org keywords
-          after dumping the new entries from trello
-        • Abstract away the return data from the http request
-        • Update org version to the latest stable
-        • Release notes
-
-   • Release 0.0.9
-        • Update videos with the new features in the readme
-        • Fix bug regarding the saving buffer routine
-        • Refactoring action code regarding the message to display in
-          the minibuffer (ATM we do not see what is done or not any
-          longer)
-        • Refactoring the http and http-sync functions
-        • Improve the delete entity action by forcing the caret to go
-          at the begin of the line of the heading before killing
-          anything.
-        • Update version
-        • Release notes
-
-   • Release 0.0.8
-        • Fix the cl-lib dependency
-        • Improve the message when an action is done to let the user
-          know when the action is done!
-        • Better saving buffer policy
-        • Sync org DEADLINE with trello card due -
-          <https://github.com/org-trello/org-trello/issues/17>
-        • Done, Todo on "check lists" - Once the user sets a "check
-          list" to DONE or TODO, then check or uncheck all the tasks
-          it contains.  -
-          <https://github.com/org-trello/org-trello/issues/16>
-        • A simple and parametrable setup to make the user choose to
-          use the checklist system or not
-        • Upgrade version
-        • Release notes
-        • Release
-        • Update documentation about deadline, checklist
-        • Cleanup the debugging functions
-
-   • Release 0.0.7
-        • Reference missing bindings in documentation
-        • Upgrade version
-        • Improve the error message around the setup (the setup
-          message is too generic and must be more detailed)
-        • Save the buffer after the synchronization is done (after all
-          we write the trello ids in the buffer)
-        • Release
-
-   • Release 0.0.6.1
-        • Fix the json-1.3 dependency, sometimes only 1.2 is available
-        • Update version
-        • Release
-
-   • Release 0.0.6
-        • Test that the title/label of the entity is set when syncing
-          to avoid a 400 error
-        • Before making the request, ensure that everything is ok
-          (checklist needs the card id, items needs the checklist id,
-          etc...)
-        • Up the demo video in the beginning of the readme
-        • Improve readme with links to org-mode and trello
-        • Improve readme’s use cases
-        • Mention the possible errors
-        • Mention the emacs version
-        • Update release notes
-        • Update the version
-        • Make a release
-
-   • Release 0.0.5
-        • Synchronizing from the trello board must simply computes and
-          add/remove what’s changed [100%]
-        • Rewrite the release notes in their own file
-        • Look on how to make a toc in the README.md in github
-        • Update the release notes
-        • Release on github, marmalade, melpa
-
-   • Release 0.0.4.1
-        • Fix the creation board routine regarding the org-mode
-          keywords (dynamic typing hell!)
-        • Improve documentation regarding the possibilities to setup
-          the org-mode keyword
-        • Upgrade version to 0.0.4.1
-        • Release on github, melpa, marmalade
-
-   • Release 0.0.4
-        • Permit the user to deal with his/her own trello list (based
-          on his/her org-mode keywords -
-          cf. <http://orgmode.org/manual/In_002dbuffer-settings.html>)
-        • Deploy on marmalade the stable version (and update the
-          readme about it)
-        • Rewrite tests using ‘expectations’
-        • Simplify some code regarding destructuring for example
-        • Remove useless code
-        • Improve documentations and sync the routine check message
-          with the documentation.
-        • Update documentation
-        • Release on github, melpa, marmalade
-
-   • Release 0.0.3
-        • Syncing complex entities
-        • cleanup useless tests
-        • Namespace cleanup
-        • Building package is now able to deal with the right version
-        • Create a board from org-mode
-        • Display the name of the board as a property file
-        • Cleanup the useless controls
-        • Given a org-mode file, fill in the trello board
-        • Announce in emacs mailing list
-        • Filter out the closed boards from the "choose board list"
-        • filter out level > 4 when syncing.
-        • Given a trello board, sync into a org-mode file
-        • cf. todo/done (./TODO.org) for the remains
-        • Release on github (and the previous version too)
-
-   • Release 0.0.2
-        • Technical release fixing technical details
-        • Fixing the packaging (inlining into org-trello.el)
-        • Adding ci-travis
-        • Local packaging to help testing
-
-   • Release 0.0.1
-        • write only mode at the moment (org-mode pushes to trello, no
-          reading yet)
-        • simple entity creation (card, checklist, item/task), the
-          request is asynchroneous
-        • entity deletion (card, checklist, item/task)
-        • Interactive command to ease the setup of the consumer-key
-          and the access-token
-        • Interactive command to ease the setup of one org-mode file
-          (which represents one trello board).  I assume there exists
-          a ’todo’, ’doing’, and ’done’ list (named that way too)
-        • Control that the setup file (consumer-key and access-token)
-          are rightly generated (to avoid later problem)
-        • Control that the properties on the current org-mode file are
-          rightly setuped to access a trello board
-        • packaging for melpa
+* org-trello-current-prefix-keybinding:  Prefix Keys.           (line 6)
+* org-trello-mode-map:                   Individual Keys.       (line 6)
 
 
 
 Tag Table:
 Node: Top2022
-Node: Installing5300
-Node: Connecting5449
-Node: Using5606
-Node: Key-Bindings6117
-Node: Connection Functions6884
-Node: Synchronization Functions7180
-Node: Editing Functions7605
-Node: Misc Functions7853
-Node: FAQ8038
-Node: Troubleshooting8190
-Node: Customizing8360
-Node: Prefix Keys8716
-Node: Individual Keys9950
-Node: Contributing12501
-Node: Credits12669
-Node: GNU GPL14196
-Node: GNU FDL52051
-Node: Concepts77435
-Node: Keys78585
-Node: Functions79098
-Node: Variables79398
-Node: Releases79705
+Node: About5636
+Node: Installing5790
+Node: Connecting5955
+Node: Using6126
+Node: Quick Start6473
+Node: Command Descriptions6606
+Node: Summary7071
+Node: Connection Cmds7853
+Node: Synch Cmds8155
+Node: Editing Cmds8581
+Node: Misc Cmds8835
+Node: How to…9041
+Node: FAQ9271
+Node: Troubleshooting9437
+Node: Customizing9621
+Node: Prefix Keys10031
+Node: Individual Keys11280
+Node: Variables13876
+Node: Contributing14050
+Node: Credits14336
+Node: Releases15828
+Node: GNU GPL16177
+Node: GNU FDL53959
+Node: Indices79301
+Node: Concepts79691
+Node: Command Index80852
+Node: Functions81228
+Node: Variables (1)81465
 
 End Tag Table
 

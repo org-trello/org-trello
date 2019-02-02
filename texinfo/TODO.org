@@ -11,45 +11,85 @@
 Use wget to grab the existing documentation, then convert it to org-mode
 through pandoc for easier reference and cut/paste.
 
-* TODO Complete 1st Draft
+* WORK Extract Existing Documentation [1/13]
+The first draft must extract all the content from all files and sections of
+the existing documentation.
 
-Draft and Review all sections of the Manual, including:
-
-- [-] Draft
-  - [ ] Installing
-  - [ ] Connecting
-  - [ ] Using
-  - [ ] FAQ
-  - [ ] Troubleshooting
-  - [ ] Customizing
-  - [ ] Contributing
-  - [ ] Credits
-  - [X] Licenses
-  - [X] GNU GPL
-  - [X] GNU FDL
-  - [X] Concepts
-  - [X] Key Bindings
-  - [X] Functions
-  - [X] Variables
-  - [X] Release Notes
-
-- [ ] Review
-  - [ ] Installing
-  - [ ] Connecting
-  - [ ] Using
-  - [ ] FAQ
-  - [ ] Troubleshooting
-  - [ ] Customizing
-  - [ ] Contributing
-  - [ ] Credits
-  - [ ] Licenses
-  - [ ] GNU GPL
-  - [ ] GNU FDL
-  - [ ] Concepts
-  - [ ] Key Bindings
-  - [ ] Functions
-  - [ ] Variables
+- [ ] About
+- [ ] Demo Videos
+- [ ] Install [0/2]
+  - [ ] Package
+    - [ ] Melpa
+    - [ ] Melpa-Stable
+  - [ ] Install
+    - [ ] Load org-trello
+    - [ ] Alternative Install
+      - [ ] Tarball
+      - [ ] el-get
+      - [ ] Git + Cask (dev)
+- [ ] Trello Setup [0/4]
+  - [ ] Credentials
+  - [ ] Connect org-mode buffer to board
+  - [ ] Create a board
+  - [ ] Migrations (link to Migration page)
+- [ ] Quick Start
+- [ ] Migration
+  - [ ] 0.8.1
+  - [ ] 0.7.0
+  - [ ] 0.6.7
+  - [ ] 0.6.6
+  - [ ] 0.5.5
+  - [ ] 0.5.3
+  - [ ] 0.5.2
+  - [ ] 0.3.8
+  - [ ] 0.3.1
+  - [ ] 0.2.9
+  - [ ] 0.2.8
+  - [ ] 0.2.1 -> 0.2.2
+  - [ ] 0.1.5 -> 0.1.6
+  - [ ] 0.1.1 -> 0.1.2
+- [-] Bindings [2/3]
+  - [-] Keybindings -> [[file:org-trello.org::*Summary%20of%20Commands][Using/Summary of Commands]]
+  - [X] Bindings Override -> [[file:org-trello.org::*Customizing%20Individual%20Keybindings][Customizing/Individual]]
+  - [X] Prefix binding override -> [[file:org-trello.org::*Customizing%20the%20Prefix%20Keybinding][Customizing/Prefix]]
+- [ ] Usage [0/5]
+  - [ ] Format
+  - [ ] Sample
+  - [ ] Use-Cases
+    - [ ] Card and deadline/due date
+    - [ ] Sync entity to Trello board
+    - [ ] Creation of a full entity
+    - [ ] Sync entity with structure from Trello board
+    - [ ] Sync org-mode file to Trello board
+    - [ ] Sync org-mode file from Trello board
+    - [ ] Remove entity
+    - [ ] Remove entities
+    - [ ] Cleanup org-trello setup
+    - [ ] Jump to Trello card
+    - [ ] Jump to Trello board
+    - [ ] Add comments
+  - [ ] Possible errors
+  - [ ] Automatic org-trello files
+- [ ] FAQ
+- [ ] Customize [0/2]
+  - [ ] Lisp
+  - [ ] Customize
+- [ ] Downloads [0/4]
+  - [ ] Releases
   - [ ] Release Notes
+  - [ ] Compatibility
+  - [ ] Continuous Integration
+- [-] Contributions [1/4]
+  - [ ] org-trello
+  - [ ] Issues [0/5]
+    - [ ] Report
+    - [ ] Automatic
+    - [ ] Manual
+    - [ ] log verbosity
+    - [ ] scramble data
+  - [ ] Mailing List
+  - [X] Credits -> [[file:org-trello.org::*Credits][Credits]]
+- [X] License -> ([[file:org-trello.org::*COPYING][Copying]], [[file:org-trello.org::*GNU%20General%20Public%20License][GPL]], [[file:org-trello.org::*GNU%20Free%20Documentation%20License][FDL]])
 
 * TODO Convert release-notes from .md to .org
 
@@ -59,7 +99,9 @@ release-notes.md to release-notes.org (already prettified in the
 texinfo folder) will permit the Manual to INCLUDE directly from the
 project’s release notes, not a separately maintained copy of it.
 
-* HOLD Replace README.md with rewritten brief README.org
+- [ ] Update the link to release-notes.org in the manual
+
+* HOLD Replace README.md with rewritten README.org
 
   - Note [2019-01-30 Wed 12:32] by danielb \\
     Hold until the manual is complete and approved.
@@ -67,3 +109,12 @@ project’s release notes, not a separately maintained copy of it.
 Replace README.md with a new README.org (for easier maintenance) with
 a Table of Contents that references the HTML manual sections directly.
 Also reference the legacy documentation for as long as it exists.
+
+* DONE Separate Release Notes Document
+  CLOSED: [2019-02-01 Fri 20:45]
+
+The release notes section is very long and is low-priority information. Separate
+this section into its own document and link to the .org file (not
+HTML).
+
+Remove the Release Notes and #+INCLUDE from the org-trello.org file.
