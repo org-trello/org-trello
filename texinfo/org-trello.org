@@ -12,8 +12,8 @@
 #+LANGUAGE: en
 
 #+TEXINFO_FILENAME: org-trello.info
-#+TEXINFO_DIR_CATEGORY: Emacs
-#+TEXINFO_DIR_TITLE: org-trello
+#+TEXINFO_DIR_CATEGORY: Emacs editing modes
+#+TEXINFO_DIR_TITLE: org-trello: (org-trello)
 #+TEXINFO_DIR_DESC: Sync Emacs org-mode with Trello.com.
 #+TEXINFO_HEADER: @documentdescription
 #+TEXINFO_HEADER: Sync Emacs org-mode with Trello.com.
@@ -99,7 +99,7 @@ which begins with this license and non-warranty statement:
 :END:
 Why use org-trello?
 - You use Emacs [[https://orgmode.org][org-mode]].
-- Your team uses [[https://trello.com/danielbirket/boards][Trello.com]].
+- Your team uses [[https://trello.com/][Trello.com]].
 - [[https://github.com/org-trello/org-trello][org-trello]] is the bridge.
 - Everyone wins!
 * TODO Installing org-trello

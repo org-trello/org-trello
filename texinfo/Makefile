@@ -1,5 +1,10 @@
 # tools
-TexInfoDir := /usr/local/Cellar/texinfo/6.5/bin
+# set TexInfoDir to location of Texinfo commands or leave blank if in PATH
+TexInfoDir := /usr/local/Cellar/texinfo/6.5/bin/
+
+# installation
+# set InfoInstallDir to desired location of .info in INFOPATH. Must contain "dir" file.
+InfoInstallDir := ~/info
 
 # Source
 BaseName := org-trello
@@ -18,9 +23,6 @@ HtmlOut := $(BaseName).html
 PdfOut := $(BaseName).pdf
 Outputs := $(InfoOut) $(InfoGzOut) $(HtmlOut) $(PdfOut)
 
-# installation
-InstallDir := ~/info
-
 info : $(InfoOut)
 
 .PHONY : all view info html pdf install clean cleanall
@@ -30,19 +32,20 @@ all  : info html pdf
 install : $(InfoOut)
 	rm $(InfoGzOut) || True
 	gzip -k $<
-	echo install $(InfoGzOut) in $(InstallDir)... eventually
+	install $(InfoGzOut) $(InfoInstallDir)
+	install-info $(InfoInstallDir)/$(InfoGzOut) $(InfoInstallDir)/dir
 
 view : $(InfoOut)
-	info ./$<
+	$(TexInfoDir)info ./$<
 
 $(InfoOut) : $(TexiSrc) $(TexiInc) README.org
-	makeinfo $<
+	$(TexInfoDir)makeinfo $<
 
 html : $(TexiSrc) info
-	texi2any --html --no-split $<
+	$(TexInfoDir)texi2any --html --no-split $<
 
 pdf : $(TexiSrc) info texinfo.png
-	texi2pdf $<
+	$(TexInfoDir)texi2pdf $<
 
 clean :
 	rm $(Objects) || True

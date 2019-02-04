@@ -103,8 +103,8 @@ ul.no-bullet {list-style: none}
     <li><a name="toc-Installing-the-org_002dtrello-package" href="#Install-Package">2.1 Installing the org-trello package</a></li>
     <li><a name="toc-Getting-the-org_002dtrello-manual" href="#Install-Manual">2.2 Getting the org-trello manual</a>
     <ul class="no-bullet">
-      <li><a name="toc-Building-the-Manual-1" href="#Building-the-Manual">2.2.1 Building the Manual</a></li>
-      <li><a name="toc-Installing-the-_002einfo-Manual" href="#Installing-the-info-Manual">2.2.2 Installing the .info Manual</a></li>
+      <li><a name="toc-Building-the-Manual" href="#Building-Manual">2.2.1 Building the Manual</a></li>
+      <li><a name="toc-Installing-the-_002einfo-Manual" href="#Installing-Manual">2.2.2 Installing the .info Manual</a></li>
     </ul></li>
     <li><a name="toc-Migrating-to-New-Releases" href="#Migrating">2.3 Migrating to New Releases</a>
     <ul class="no-bullet">
@@ -259,9 +259,9 @@ Installing
 
 Install Manual
 
-</pre></th></tr><tr><td align="left" valign="top">&bull; <a href="#Building-the-Manual">Building the Manual</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</pre></th></tr><tr><td align="left" valign="top">&bull; <a href="#Building-Manual">Building Manual</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Building the Manual
 </td></tr>
-<tr><td align="left" valign="top">&bull; <a href="#Installing-the-info-Manual">Installing the .info Manual</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+<tr><td align="left" valign="top">&bull; <a href="#Installing-Manual">Installing Manual</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Install the .info Manual
 </td></tr>
 <tr><th colspan="3" align="left" valign="top"><pre class="menu-comment">
 
@@ -365,7 +365,7 @@ Next: <a href="#Installing" accesskey="n" rel="next">Installing</a>, Previous: <
 <p>Why use org-trello?
 </p><ul>
 <li> You use Emacs <a href="https://orgmode.org">org-mode</a>.
-</li><li> Your team uses <a href="https://trello.com/danielbirket/boards">Trello.com</a>.
+</li><li> Your team uses <a href="https://trello.com/">Trello.com</a>.
 </li><li> <a href="https://github.com/org-trello/org-trello">org-trello</a> is the bridge.
 </li><li> Everyone wins!
 </li></ul>
@@ -416,30 +416,33 @@ Next: <a href="#Migrating" accesskey="n" rel="next">Migrating</a>, Previous: <a 
 “org-trello Manual”. TexInfo is the standard documentation format of
 the GNU-project and is used by Emacs and org-mode. (org-trello is NOT
 part of GNU emacs.) This manual is presented in three formats:
-</p><ul>
-<li> INFO hyper-linked text format, to read from within Emacs (or with “info”)
-</li><li> HTML format, to read with a web-browser
+</p>
+<ul>
+<li> INFO hyper-linked text format, to read from within Emacs (or with
+“info” at the command-line).
+</li><li> HTML format, to read with a web-browser.
 </li><li> PDF format, to read or print nicely-formatted on paper.
 </li></ul>
+
 <p>This org-trello manual may be installed in a folder on your INFOPATH
-and listed in the INFO directory. You may access INFO manual directory
-from within Emacs by typing “C-h i d” or from the command-line using
-the command “info”.
+and listed in the INFO directory of manuals. You may access the INFO
+manual directory of manuals from within Emacs by typing “C-h i d” or
+from the command-line using the command “info”.
 </p>
 <table class="menu" border="0" cellspacing="0">
-<tr><td align="left" valign="top">&bull; <a href="#Building-the-Manual" accesskey="1">Building the Manual</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+<tr><td align="left" valign="top">&bull; <a href="#Building-Manual" accesskey="1">Building Manual</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Building the Manual
 </td></tr>
-<tr><td align="left" valign="top">&bull; <a href="#Installing-the-info-Manual" accesskey="2">Installing the .info Manual</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+<tr><td align="left" valign="top">&bull; <a href="#Installing-Manual" accesskey="2">Installing Manual</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Install the .info Manual
 </td></tr>
 </table>
 
 <hr>
-<a name="Building-the-Manual"></a>
+<a name="Building-Manual"></a>
 <div class="header">
 <p>
-Next: <a href="#Installing-the-info-Manual" accesskey="n" rel="next">Installing the info Manual</a>, Up: <a href="#Install-Manual" accesskey="u" rel="up">Install Manual</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Indices" title="Index" rel="index">Index</a>]</p>
+Next: <a href="#Installing-Manual" accesskey="n" rel="next">Installing Manual</a>, Up: <a href="#Install-Manual" accesskey="u" rel="up">Install Manual</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Indices" title="Index" rel="index">Index</a>]</p>
 </div>
-<a name="Building-the-Manual-1"></a>
+<a name="Building-the-Manual"></a>
 <h4 class="subsection">2.2.1 Building the Manual</h4>
 
 <p>It should not be necessary to rebuild the org-trello manual. The
@@ -453,29 +456,52 @@ exporter included with org-mode. Then, the .texi file should be
 converted to .info, .HTML, or .PDF using the commands included with
 the Texinfo package.
 </p>
+<p>The “Makefile” includes the commands to mall all three formats when
+you invoke it with “make all”. You may also request “make info”, “make
+view” (to view the new info manual), “make html” and “make pdf”. For
+any of these commands, you must install Texinfo and provide the
+location of the Texinfo commands at the top of the “Makefile”.
+</p>
 <p>If you lack Texinfo, you may instead export org-trello.org directly to
-.info .HTML or .PDF from Emacs. Without Texinfo, the resulting HTML or
+.info, .HTML or .PDF using Emacs. Without Texinfo, the resulting HTML or
 PDF document will have slight differences and will not have an index.
-Texinfo creates the most attractive manual and conforms to GNU style.
+Texinfo creates a more attractive manual and conforms to GNU style.
 </p>
 <div class="float">
 <img src="texinfo.png" alt="texinfo">
 
 <div class="float-caption"><p><strong>Figure: </strong>Building the Manual with Texinfo</p></div></div>
 <hr>
-<a name="Installing-the-info-Manual"></a>
+<a name="Installing-Manual"></a>
 <div class="header">
 <p>
-Previous: <a href="#Building-the-Manual" accesskey="p" rel="prev">Building the Manual</a>, Up: <a href="#Install-Manual" accesskey="u" rel="up">Install Manual</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Indices" title="Index" rel="index">Index</a>]</p>
+Previous: <a href="#Building-Manual" accesskey="p" rel="prev">Building Manual</a>, Up: <a href="#Install-Manual" accesskey="u" rel="up">Install Manual</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Indices" title="Index" rel="index">Index</a>]</p>
 </div>
 <a name="Installing-the-_002einfo-Manual"></a>
 <h4 class="subsection">2.2.2 Installing the .info Manual</h4>
 
-<p>You may optionally use “gzip” to compress the info file. After you
-copy the .info or .info.gz file to a folder in your INFOPATH, you
-should use install-info, provided with Texinfo, to insert the .info
-file into the directory of info manuals. This process is described in
-the <a href="http://www.gnu.org/software/texinfo/manual/texinfo/texinfo.html#Creating-an-Info-File">(texinfo)Texinfo manual</a>.
+<p>To install the org-trello.info manual so that it may be used by Emacs’
+internal info reader or the command-line “info” command, you must:
+</p>
+<ol>
+<li> optionally, use gzip to compress the .info file to .info.gz
+</li><li> copy or “install” the .info.gz (or .info) file info a folder listed in INFOPATH
+</li><li> use “install-info” to insert the new .info.gz file into info’s “dir”
+file in that folder.
+</li></ol>
+
+<p>This process is described in the <a href="http://www.gnu.org/software/texinfo/manual/texinfo/texinfo.html#Creating-an-Info-File">(texinfo)Texinfo manual</a>.
+</p>
+<p>If you edit the top of the “Makefile” to provide the location of the
+folder in your INFOPATH where the .info should be installed, the
+“Makefile” will execute the gzip, install and install-info commands
+when you type “make install”.
+</p>
+<p>Once installed, you may invoke command-line “info” reader or Emacs
+internal info reader to view the listing of info manuals. The info
+reader assembles the directory from all the “dir” files in the
+INFOPATH and may appear different in each reader. Locate “org-trello”
+in this list or use “m org-trello” to jump to it.
 </p>
 <hr>
 <a name="Migrating"></a>

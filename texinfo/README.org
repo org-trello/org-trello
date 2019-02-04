@@ -3,14 +3,21 @@ This section describes how to build and install the TexInfo-format
 “org-trello Manual”. TexInfo is the standard documentation format of
 the GNU-project and is used by Emacs and org-mode. (org-trello is NOT
 part of GNU emacs.) This manual is presented in three formats:
-- INFO hyper-linked text format, to read from within Emacs (or with “info”)
-- HTML format, to read with a web-browser
+
+- INFO hyper-linked text format, to read from within Emacs (or with
+  “info” at the command-line).
+- HTML format, to read with a web-browser.
 - PDF format, to read or print nicely-formatted on paper.
+
 This org-trello manual may be installed in a folder on your INFOPATH
-and listed in the INFO directory. You may access INFO manual directory
-from within Emacs by typing “C-h i d” or from the command-line using
-the command “info”.
+and listed in the INFO directory of manuals. You may access the INFO
+manual directory of manuals from within Emacs by typing “C-h i d” or
+from the command-line using the command “info”.
 * Building the Manual
+  :PROPERTIES:
+  :ALT_TITLE: Building Manual
+  :DESCRIPTION: Building the Manual
+  :END:
 It should not be necessary to rebuild the org-trello manual. The
 manual is distributed with all three formats already built and ready
 to read. If the org-trello.info, .HTML and .PDF files already exist,
@@ -22,10 +29,16 @@ exporter included with org-mode. Then, the .texi file should be
 converted to .info, .HTML, or .PDF using the commands included with
 the Texinfo package.
 
+The “Makefile” includes the commands to mall all three formats when
+you invoke it with “make all”. You may also request “make info”, “make
+view” (to view the new info manual), “make html” and “make pdf”. For
+any of these commands, you must install Texinfo and provide the
+location of the Texinfo commands at the top of the “Makefile”.
+
 If you lack Texinfo, you may instead export org-trello.org directly to
-.info .HTML or .PDF from Emacs. Without Texinfo, the resulting HTML or
+.info, .HTML or .PDF using Emacs. Without Texinfo, the resulting HTML or
 PDF document will have slight differences and will not have an index.
-Texinfo creates the most attractive manual and conforms to GNU style.
+Texinfo creates a more attractive manual and conforms to GNU style.
 
 # This graphic requires ‘graphviz’
 #+begin_src dot :file texinfo.png
@@ -76,9 +89,28 @@ Texinfo creates the most attractive manual and conforms to GNU style.
 [[file:texinfo.png]]
 
 * Installing the .info Manual
+  :PROPERTIES:
+  :ALT_TITLE: Installing Manual
+  :DESCRIPTION: Install the .info Manual
+  :END:
 
-You may optionally use “gzip” to compress the info file. After you
-copy the .info or .info.gz file to a folder in your INFOPATH, you
-should use install-info, provided with Texinfo, to insert the .info
-file into the directory of info manuals. This process is described in
-the [[info:texinfo#Creating%20an%20Info%20File][Texinfo manual]].
+To install the org-trello.info manual so that it may be used by Emacs’
+internal info reader or the command-line “info” command, you must:
+
+1. optionally, use gzip to compress the .info file to .info.gz
+2. copy or “install” the .info.gz (or .info) file info a folder listed in INFOPATH
+3. use “install-info” to insert the new .info.gz file into info’s “dir”
+   file in that folder.
+
+This process is described in the [[info:texinfo#Creating%20an%20Info%20File][Texinfo manual]].
+
+If you edit the top of the “Makefile” to provide the location of the
+folder in your INFOPATH where the .info should be installed, the
+“Makefile” will execute the gzip, install and install-info commands
+when you type “make install”.
+
+Once installed, you may invoke command-line “info” reader or Emacs
+internal info reader to view the listing of info manuals. The info
+reader assembles the directory from all the “dir” files in the
+INFOPATH and may appear different in each reader. Locate “org-trello”
+in this list or use “m org-trello” to jump to it.
