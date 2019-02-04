@@ -99,6 +99,34 @@ Sync Emacs org-mode with Trello.com.
 @detailmenu
 --- The Detailed Node Listing ---
 
+Installing
+
+* Install Package::              Installing the Package
+* Install Manual::               Installing the Manual
+* Migrating::                    Migrating to New Releases
+
+Install Manual
+
+* Building the Manual::
+* Installing the .info Manual: Installing the info Manual. 
+
+Migrating
+
+* 0.8.1: 081. 
+* 0.7.0: 070. 
+* 0.6.7: 067. 
+* 0.6.6: 066. 
+* 0.5.5: 055. 
+* 0.5.3: 053. 
+* 0.5.2: 052. 
+* 0.3.8: 038. 
+* 0.3.1: 031. 
+* 0.2.9: 029. 
+* 0.2.8: 028. 
+* 0.2.1 -> 0.2.2: 021 -> 022. 
+* 0.1.5 -> 0.1.6: 015 -> 016. 
+* 0.1.1 -> 0.1.2: 011 -> 012. 
+
 Using
 
 * Quick Start::                  First Steps with org-trello
@@ -138,12 +166,307 @@ Indices
 @chapter @strong{TODO} About org-trello
 
 Why use org-trello?
+@itemize
+@item
+You use Emacs @uref{https://orgmode.org, org-mode}.
+@item
+Your team uses @uref{https://trello.com/danielbirket/boards, Trello.com}.
+@item
+@uref{https://github.com/org-trello/org-trello, org-trello} is the bridge.
+@item
+Everyone wins!
+@end itemize
 
 @node Installing
 @chapter @strong{TODO} Installing org-trello
 
+This section describes how to obtain and install the org-trello
+package and manual.
+
+@menu
+* Install Package::              Installing the Package
+* Install Manual::               Installing the Manual
+* Migrating::                    Migrating to New Releases
+@end menu
+
+@node Install Package
+@section Installing the org-trello package
+
 @cindex org-trello, installing
-Installing…
+
+@node Install Manual
+@section Getting the org-trello manual
+
+@cindex manual, installing
+This section describes how to build and install the TexInfo-format
+“org-trello Manual”. TexInfo is the standard documentation format of
+the GNU-project and is used by Emacs and org-mode. (org-trello is NOT
+part of GNU emacs.) This manual is presented in three formats:
+@itemize
+@item
+INFO hyper-linked text format, to read from within Emacs (or with “info”)
+@item
+HTML format, to read with a web-browser
+@item
+PDF format, to read or print nicely-formatted on paper.
+@end itemize
+This org-trello manual may be installed in a folder on your INFOPATH
+and listed in the INFO directory. You may access INFO manual directory
+from within Emacs by typing “C-h i d” or from the command-line using
+the command “info”.
+
+@menu
+* Building the Manual::
+* Installing the .info Manual: Installing the info Manual. 
+@end menu
+
+@node Building the Manual
+@subsection Building the Manual
+
+It should not be necessary to rebuild the org-trello manual. The
+manual is distributed with all three formats already built and ready
+to read. If the org-trello.info, .HTML and .PDF files already exist,
+you don’t need to read this section.
+
+This manual was written with Emacs and org-mode as “org-trello.org”,
+then exported to TexInfo format as “org-trello.texi” using the Texinfo
+exporter included with org-mode. Then, the .texi file should be
+converted to .info, .HTML, or .PDF using the commands included with
+the Texinfo package.
+
+If you lack Texinfo, you may instead export org-trello.org directly to
+.info .HTML or .PDF from Emacs. Without Texinfo, the resulting HTML or
+PDF document will have slight differences and will not have an index.
+Texinfo creates the most attractive manual and conforms to GNU style.
+
+@float Figure
+@image{texinfo,,,,png}
+@caption{Building the Manual with Texinfo}
+@end float
+
+@node Installing the info Manual
+@subsection Installing the .info Manual
+
+You may optionally use “gzip” to compress the info file. After you
+copy the .info or .info.gz file to a folder in your INFOPATH, you
+should use install-info, provided with Texinfo, to insert the .info
+file into the directory of info manuals. This process is described in
+the @ref{Creating an Info File,Texinfo manual,,texinfo,}.
+
+@node Migrating
+@section Migrating to New Releases
+
+If you have previously installed and used a previous release of
+org-trello, this section describes how to migrate your existing
+org-trello installation to a new release.
+
+@menu
+* 0.8.1: 081. 
+* 0.7.0: 070. 
+* 0.6.7: 067. 
+* 0.6.6: 066. 
+* 0.5.5: 055. 
+* 0.5.3: 053. 
+* 0.5.2: 052. 
+* 0.3.8: 038. 
+* 0.3.1: 031. 
+* 0.2.9: 029. 
+* 0.2.8: 028. 
+* 0.2.1 -> 0.2.2: 021 -> 022. 
+* 0.1.5 -> 0.1.6: 015 -> 016. 
+* 0.1.1 -> 0.1.2: 011 -> 012. 
+@end menu
+
+@node 081
+@subsection 0.8.1
+
+The org-trello key properties used in the buffer were clashing with
+higher org-mode functionality (lookup, cf.
+@uref{https://github.com/org-trello/org-trello/issues/366}).
+
+Those properties were renamed with clash free names (@samp{-} separator
+symbol was replaced with @samp{_}).
+
+To help the migration, a routine has been integrated. This should not be
+needed by the user though (the migration is integrated to the actions).
+Still, if the user wants it, (s)he can do it through M-x
+org-trello-migrate-buffer.
+
+@node 070
+@subsection 0.7.0
+
+As of now, org-trello respects elisp conventions regarding the setup
+file location. So the default @emph{~}.trello// will be moved silently to
+@emph{~}.emacs.d/.trello//
+
+Also, now users can use multiple trello accounts. So, provided you have
+multiple accounts, some commands will ask you when they need you to
+choose an account. Also, a silent migration will occur to existing
+buffers. For example, if you have a buffer setup-ed with a user @emph{tony},
+your existing configuration file @emph{~}.trello/config.el/ will be moved to
+@emph{~}.emacs.d/.trello/tony.el/
+
+Again, org-trello tries to respect elisp conventions regarding command
+names. So the command names have been renamed from @emph{org-trello/} to
+@emph{org-trello-}. Still, the old command names are available.
+
+@node 067
+@subsection 0.6.7
+
+The comments are now displayed inline in the card. So the binding to
+show the comments have been removed. To see comments, simply unfold the
+card.
+
+@node 066
+@subsection 0.6.6
+
+We can now remove a comment at point (if we are the owner of the
+comment). Use M-x org-trello-delete-card-comment
+
+@node 055
+@subsection 0.5.5
+
+Default bindings have been updated.
+
+@multitable {aaaaaaaaa} {aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa}
+@headitem Bindings
+@tab Action
+@item C-c o C
+@tab Add comments to the cards at point. To show the cards comments, use C-u M-x org-trello-add-card-comments (C-u C-c o C)
+@item C-c o o
+@tab Removed. To show the cards comments, use C-u C-c o C
+@end multitable
+
+Of course, as usual, if you are not happy with this, simply update
+@uref{bindings.html#bindings-override, your configuration file}.
+
+@node 053
+@subsection 0.5.3
+
+Lots of work has been done to make org-trello:
+
+@itemize
+@item
+more responsive (almost no more blocking actions).
+@item
+faster (trello queries have been improved to let the trello servers do
+the computations)
+@end itemize
+
+Default @uref{http://org-trello.github.io/bindings.html#keybindings, interactive commands} names have been renamed to be explicit
+and aligned between them.
+
+@node 052
+@subsection 0.5.2
+
+Decision has been taken to remove the intermediary proxy used to bounce
+requests to trello. This was introduced to permit asynchronous requests.
+This was only partially applied. So too many lines of code to maintain
+for small benefits.
+
+This version is synchronous as it was in the beginning (The base code is
+not the same though).
+
+This is a temporary setback. We need time to craft a better
+implementation for asynchronous requests (deferred, async libraries
+seems interesting enough).
+
+@node 038
+@subsection 0.3.8
+
+org-trello now tries to enforce symmetry, mainly regarding the sync
+actions. So by default, an action pushes to trello. Using C-u, the
+symmetric action pulls from trello.
+
+@multitable {aaaaaaaaaaa} {aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa}
+@headitem Bindings
+@tab Action
+@item C-c o c
+@tab sync the entity TO trello without its structure
+@item C-u C-c o c
+@tab sync the entity FROM trello without its structure
+@item C-c o C
+@tab sync the entity and its structure TO trello
+@item C-u C-c o C
+@tab sync the entity and its structure FROM trello
+@item C-c o s
+@tab sync the buffer TO trello
+@item C-u C-c o s
+@tab sync the buffer FROM trello
+@item C-c o a
+@tab assign yourself to the card
+@item C-u C-c o a
+@tab unassign yourself from the card
+@end multitable
+
+@node 031
+@subsection 0.3.1
+
+The old checklist/item format has been removed -
+@uref{https://github.com/org-trello/org-trello/issues/105}. Now the org
+checkbox way is the standard one.
+
+@node 029
+@subsection 0.2.9
+
+For information, from 0.2.9 onward, the property “orgtrello-id” from the
+checkbox (checklists, items) will be hidden.
+
+@emph{Note}
+
+@itemize
+@item
+Upon activating org-trello minor mode, all existing checkbox will be
+migrated and should disappear before your eyes.
+@item
+Symmetrically, when deactivating org-trello, all checkbox will appear.
+@item
+For this, org-trello use @uref{https://www.gnu.org/software/emacs/manual/html_node/elisp/Overlays.html, overlays}
+(implementation detail which permits to hide buffer region).
+@end itemize
+
+If you began to use org-trello, nothing to do.
+
+@node 028
+@subsection 0.2.8
+
+From 0.2.8 onward, the card description can be synchronized too. Just
+synchronize as usual.
+
+@node 021 -> 022
+@subsection 0.2.1 -> 0.2.2
+
+From the 0.2.2 version onward, we can assign people to card. As a
+pre-requisite, we need to re-install the board (C-c o I), so that new
+properties will be installed (users currently assigned to the board we
+attach to).
+
+This way, you will be able to use the assign (C-c o a) / unassign (C-c o
+u) yourself to the card.
+
+@node 015 -> 016
+@subsection 0.1.5 -> 0.1.6
+
+Org-trello now uses more natural ways of dealing with checklists using
+checkboxes!
+
+cf. @uref{migration.html#natural-org-format-from-016-onwards, natural org format (from 0.1.6 onwards)} for more details.
+
+@node 011 -> 012
+@subsection 0.1.1 -> 0.1.2
+
+@itemize
+@item
+From version 0.1.1, some http requests will be asynchronous. For this,
+we use elnode as a proxy server to make requests to trello. The elnode
+server is started on the port 9876. You can always change this port
+@end itemize
+
+@example
+(setq *ORGTRELLO-PROXY-PORT* 9876)
+@end example
+
+Then M-x orgtrello-proxy/reload
 
 @node Connecting
 @chapter @strong{TODO} Connecting to Trello.com

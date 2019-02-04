@@ -1,4 +1,10 @@
-- Release 0.8.1
+#+TITLE: org-trello Release Notes
+#+AUTHOR: Antoine R. Dumont
+#+DATE: 2018-03-11
+
+This documents the history of releases.
+
+- Release 0.8.1: Mar 11, 2018
   - [X] Make adding trello colors to =org-tag-alist= optional - Close #365
   - [X] Fix typo in link to issue tracker - Close #364
   - [X] Fix ci
@@ -8,7 +14,7 @@
   - [X] Update version
   - [X] Release notes
 
-- Release 0.8.0
+- Release 0.8.0: Feb 25, 2017
   - [X] Update travis ci configuration
   - [X] Fix ci's multiple problems
   - [X] Fix some emacs25 incompatibilities
@@ -17,26 +23,26 @@
   - [X] Upgrade version
   - [X] Release notes
 
-- Release 0.7.9
+- Release 0.7.9: Jun 4, 2016
   - [X] Fix problem with custom kill-whole-line properties - Close #270
   - [X] Fix problem with scheduled deadline - Close #326
   - [X] Upgrade version
   - [X] Release notes
 
-- Release 0.7.8
+- Release 0.7.8: Mar 1, 2016
   - [X] Fix cyrillic encoding problem - Close #318 #270
   - [X] Update version
   - [X] Sign tag release
   - [X] Release notes
 
-- Release 0.7.7
+- Release 0.7.7: Feb 24, 2016
   - [X] Rework packaging problem
   - [X] Add issue/pr templates
   - [X] Add request-backend to the org-trello-bug-report
   - [X] Update version
   - [X] Release notes
 
-- Release 0.7.6
+- Release 0.7.6: Feb 13, 2016
   - [X] Update version
   - [X] Support unicode characters in sync - Close #307 Close #309
   - [X] Fix parsing username comments - Close #301
@@ -52,7 +58,7 @@
   - [X] Improve documentation about the setup account - #306
   - [X] Release notes
 
-- Release 0.7.5
+- Release 0.7.5: Sep 5, 2015
   - [X] #290 - Toggling users assignments to card
   - [X] Add binding =C-c o t= for the toggling command (code, doc, etc...)
   - [X] #293 - Add a basic user driven completing mechanism (default ido,
@@ -69,7 +75,7 @@
   - [X] Update version
   - [X] Release notes
 
-- Release 0.7.4
+- Release 0.7.4 Aug 24, 2015
   - [X] Improve release script + fix typo
   - [X] Update version
   - [X] Coverage [10/10]
@@ -88,7 +94,7 @@
   - [X] #283 - Toggle assign me action
   - [X] Release notes
 
-- Release 0.7.3
+- Release 0.7.3: Aug 14, 2015
   - [X] Update version
   - [X] Close #277 - Improve date time policy conversion
   - [X] Improve release + upload to marmalade scripts
@@ -96,7 +102,7 @@
   - [X] Some refactoring
   - [X] Release notes
 
-- Release 0.7.2
+- Release 0.7.2: Aug 5, 2015
   - [X] Update version
   - [X] Close #276 - Markdown rendering in comments
   - [X] Add test coverage

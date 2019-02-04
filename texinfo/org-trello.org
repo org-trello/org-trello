@@ -98,13 +98,234 @@ which begins with this license and non-warranty statement:
 :DESCRIPTION: About org-trello
 :END:
 Why use org-trello?
+- You use Emacs [[https://orgmode.org][org-mode]].
+- Your team uses [[https://trello.com/danielbirket/boards][Trello.com]].
+- [[https://github.com/org-trello/org-trello][org-trello]] is the bridge.
+- Everyone wins!
 * TODO Installing org-trello
   :PROPERTIES:
   :ALT_TITLE: Installing
   :DESCRIPTION: Installing org-trello
   :END:
+This section describes how to obtain and install the org-trello
+package and manual.
+** Installing the org-trello package
+:PROPERTIES:
+:ALT_TITLE: Install Package
+:DESCRIPTION: Installing the Package
+:END:
 #+CINDEX: org-trello, installing
-Installing…
+
+** Getting the org-trello manual
+:PROPERTIES:
+:ALT_TITLE: Install Manual
+:DESCRIPTION: Installing the Manual
+:END:
+#+CINDEX: manual, installing
+#+INCLUDE: README.org
+** Migrating to New Releases
+:PROPERTIES:
+:CUSTOM_ID: migration
+:ALT_TITLE: Migrating
+:DESCRIPTION: Migrating to New Releases
+:END:
+If you have previously installed and used a previous release of
+org-trello, this section describes how to migrate your existing
+org-trello installation to a new release.
+
+*** 0.8.1
+:PROPERTIES:
+:CUSTOM_ID: 081
+:END:
+
+The org-trello key properties used in the buffer were clashing with
+higher org-mode functionality (lookup, cf.
+https://github.com/org-trello/org-trello/issues/366).
+
+Those properties were renamed with clash free names (=-= separator
+symbol was replaced with =_=).
+
+To help the migration, a routine has been integrated. This should not be
+needed by the user though (the migration is integrated to the actions).
+Still, if the user wants it, (s)he can do it through M-x
+org-trello-migrate-buffer.
+
+*** 0.7.0
+:PROPERTIES:
+:CUSTOM_ID: 070
+:END:
+
+As of now, org-trello respects elisp conventions regarding the setup
+file location. So the default /~/.trello// will be moved silently to
+/~/.emacs.d/.trello//
+
+Also, now users can use multiple trello accounts. So, provided you have
+multiple accounts, some commands will ask you when they need you to
+choose an account. Also, a silent migration will occur to existing
+buffers. For example, if you have a buffer setup-ed with a user /tony/,
+your existing configuration file /~/.trello/config.el/ will be moved to
+/~/.emacs.d/.trello/tony.el/
+
+Again, org-trello tries to respect elisp conventions regarding command
+names. So the command names have been renamed from /org-trello// to
+/org-trello-/. Still, the old command names are available.
+
+*** 0.6.7
+:PROPERTIES:
+:CUSTOM_ID: 067
+:END:
+
+The comments are now displayed inline in the card. So the binding to
+show the comments have been removed. To see comments, simply unfold the
+card.
+
+*** 0.6.6
+:PROPERTIES:
+:CUSTOM_ID: 066
+:END:
+
+We can now remove a comment at point (if we are the owner of the
+comment). Use M-x org-trello-delete-card-comment
+
+*** 0.5.5
+:PROPERTIES:
+:CUSTOM_ID: 055
+:END:
+
+Default bindings have been updated.
+
+| Bindings    | Action                                                                                                                   |
+|-------------+--------------------------------------------------------------------------------------------------------------------------|
+| C-c o C     | Add comments to the cards at point. To show the cards comments, use C-u M-x org-trello-add-card-comments (C-u C-c o C)   |
+| +C-c o o+   | Removed. To show the cards comments, use C-u C-c o C                                                                     |
+
+Of course, as usual, if you are not happy with this, simply update
+[[file:bindings.html#bindings-override][your configuration file]].
+
+*** 0.5.3
+:PROPERTIES:
+:CUSTOM_ID: 053
+:END:
+
+Lots of work has been done to make org-trello:
+
+- more responsive (almost no more blocking actions).
+- faster (trello queries have been improved to let the trello servers do
+  the computations)
+
+Default [[http://org-trello.github.io/bindings.html#keybindings][interactive commands]] names have been renamed to be explicit
+and aligned between them.
+
+*** 0.5.2
+:PROPERTIES:
+:CUSTOM_ID: 052
+:END:
+
+Decision has been taken to remove the intermediary proxy used to bounce
+requests to trello. This was introduced to permit asynchronous requests.
+This was only partially applied. So too many lines of code to maintain
+for small benefits.
+
+This version is synchronous as it was in the beginning (The base code is
+not the same though).
+
+This is a temporary setback. We need time to craft a better
+implementation for asynchronous requests (deferred, async libraries
+seems interesting enough).
+
+*** 0.3.8
+:PROPERTIES:
+:CUSTOM_ID: 038
+:END:
+
+org-trello now tries to enforce symmetry, mainly regarding the sync
+actions. So by default, an action pushes to trello. Using C-u, the
+symmetric action pulls from trello.
+
+| Bindings      | Action                                              |
+|---------------+-----------------------------------------------------|
+| C-c o c       | sync the entity TO trello without its structure     |
+| C-u C-c o c   | sync the entity FROM trello without its structure   |
+| C-c o C       | sync the entity and its structure TO trello         |
+| C-u C-c o C   | sync the entity and its structure FROM trello       |
+| C-c o s       | sync the buffer TO trello                           |
+| C-u C-c o s   | sync the buffer FROM trello                         |
+| C-c o a       | assign yourself to the card                         |
+| C-u C-c o a   | unassign yourself from the card                     |
+
+*** 0.3.1
+:PROPERTIES:
+:CUSTOM_ID: 031
+:END:
+
+The old checklist/item format has been removed -
+https://github.com/org-trello/org-trello/issues/105. Now the org
+checkbox way is the standard one.
+
+*** 0.2.9
+:PROPERTIES:
+:CUSTOM_ID: 029
+:END:
+
+For information, from 0.2.9 onward, the property “orgtrello-id” from the
+checkbox (checklists, items) will be hidden.
+
+/Note/
+
+- Upon activating org-trello minor mode, all existing checkbox will be
+  migrated and should disappear before your eyes.
+- Symmetrically, when deactivating org-trello, all checkbox will appear.
+- For this, org-trello use [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Overlays.html][overlays]]
+  (implementation detail which permits to hide buffer region).
+
+If you began to use org-trello, nothing to do.
+
+*** 0.2.8
+:PROPERTIES:
+:CUSTOM_ID: 028
+:END:
+
+From 0.2.8 onward, the card description can be synchronized too. Just
+synchronize as usual.
+
+*** 0.2.1 -> 0.2.2
+:PROPERTIES:
+:CUSTOM_ID: 021---022
+:END:
+
+From the 0.2.2 version onward, we can assign people to card. As a
+pre-requisite, we need to re-install the board (C-c o I), so that new
+properties will be installed (users currently assigned to the board we
+attach to).
+
+This way, you will be able to use the assign (C-c o a) / unassign (C-c o
+u) yourself to the card.
+
+*** 0.1.5 -> 0.1.6
+:PROPERTIES:
+:CUSTOM_ID: 015---016
+:END:
+
+Org-trello now uses more natural ways of dealing with checklists using
+checkboxes!
+
+cf. [[file:migration.html#natural-org-format-from-016-onwards][natural org format (from 0.1.6 onwards)]] for more details.
+
+*** 0.1.1 -> 0.1.2
+:PROPERTIES:
+:CUSTOM_ID: 011---012
+:END:
+
+- From version 0.1.1, some http requests will be asynchronous. For this,
+  we use elnode as a proxy server to make requests to trello. The elnode
+  server is started on the port 9876. You can always change this port
+
+#+BEGIN_EXAMPLE
+    (setq *ORGTRELLO-PROXY-PORT* 9876)
+#+END_EXAMPLE
+
+Then M-x orgtrello-proxy/reload
+
 * TODO Connecting to Trello.com
   :PROPERTIES:
   :ALT_TITLE: Connecting

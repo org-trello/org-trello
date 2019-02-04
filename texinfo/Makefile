@@ -35,13 +35,13 @@ install : $(InfoOut)
 view : $(InfoOut)
 	info ./$<
 
-$(InfoOut) : $(TexiSrc) $(TexiInc)
+$(InfoOut) : $(TexiSrc) $(TexiInc) README.org
 	makeinfo $<
 
 html : $(TexiSrc) info
 	texi2any --html --no-split $<
 
-pdf : $(TexiSrc) info
+pdf : $(TexiSrc) info texinfo.png
 	texi2pdf $<
 
 clean :

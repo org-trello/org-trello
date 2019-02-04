@@ -109,6 +109,34 @@ which begins with this license and non-warranty statement:
 
 — The Detailed Node Listing —
 
+Installing
+
+* Install Package::              Installing the Package
+* Install Manual::               Installing the Manual
+* Migrating::                    Migrating to New Releases
+
+Install Manual
+
+* Building the Manual::
+* Installing the .info Manual: Installing the info Manual.
+
+Migrating
+
+* 0.8.1: 081.
+* 0.7.0: 070.
+* 0.6.7: 067.
+* 0.6.6: 066.
+* 0.5.5: 055.
+* 0.5.3: 053.
+* 0.5.2: 052.
+* 0.3.8: 038.
+* 0.3.1: 031.
+* 0.2.9: 029.
+* 0.2.8: 028.
+* 0.2.1 -> 0.2.2: 021 -> 022.
+* 0.1.5 -> 0.1.6: 015 -> 016.
+* 0.1.1 -> 0.1.2: 011 -> 012.
+
 Using
 
 * Quick Start::                  First Steps with org-trello
@@ -149,6 +177,11 @@ File: org-trello.info,  Node: About,  Next: Installing,  Prev: Top,  Up: Top
 *************************
 
 Why use org-trello?
+   • You use Emacs org-mode (https://orgmode.org).
+   • Your team uses Trello.com (https://trello.com/danielbirket/boards).
+   • org-trello (https://github.com/org-trello/org-trello) is the
+     bridge.
+   • Everyone wins!
 
 
 File: org-trello.info,  Node: Installing,  Next: Connecting,  Prev: About,  Up: Top
@@ -156,7 +189,321 @@ File: org-trello.info,  Node: Installing,  Next: Connecting,  Prev: About,  Up: 
 2 *TODO* Installing org-trello
 ******************************
 
-Installing…
+This section describes how to obtain and install the org-trello package
+and manual.
+
+* Menu:
+
+* Install Package::              Installing the Package
+* Install Manual::               Installing the Manual
+* Migrating::                    Migrating to New Releases
+
+
+File: org-trello.info,  Node: Install Package,  Next: Install Manual,  Up: Installing
+
+2.1 Installing the org-trello package
+=====================================
+
+
+File: org-trello.info,  Node: Install Manual,  Next: Migrating,  Prev: Install Package,  Up: Installing
+
+2.2 Getting the org-trello manual
+=================================
+
+This section describes how to build and install the TexInfo-format
+“org-trello Manual”.  TexInfo is the standard documentation format of
+the GNU-project and is used by Emacs and org-mode.  (org-trello is NOT
+part of GNU emacs.)  This manual is presented in three formats:
+   • INFO hyper-linked text format, to read from within Emacs (or with
+     “info”)
+   • HTML format, to read with a web-browser
+   • PDF format, to read or print nicely-formatted on paper.
+   This org-trello manual may be installed in a folder on your INFOPATH
+and listed in the INFO directory.  You may access INFO manual directory
+from within Emacs by typing “C-h i d” or from the command-line using the
+command “info”.
+
+* Menu:
+
+* Building the Manual::
+* Installing the .info Manual: Installing the info Manual.
+
+
+File: org-trello.info,  Node: Building the Manual,  Next: Installing the info Manual,  Up: Install Manual
+
+2.2.1 Building the Manual
+-------------------------
+
+It should not be necessary to rebuild the org-trello manual.  The manual
+is distributed with all three formats already built and ready to read.
+If the org-trello.info, .HTML and .PDF files already exist, you don’t
+need to read this section.
+
+   This manual was written with Emacs and org-mode as “org-trello.org”,
+then exported to TexInfo format as “org-trello.texi” using the Texinfo
+exporter included with org-mode.  Then, the .texi file should be
+converted to .info, .HTML, or .PDF using the commands included with the
+Texinfo package.
+
+   If you lack Texinfo, you may instead export org-trello.org directly
+to .info .HTML or .PDF from Emacs.  Without Texinfo, the resulting HTML
+or PDF document will have slight differences and will not have an index.
+Texinfo creates the most attractive manual and conforms to GNU style.
+
+ [image src="texinfo.png" ]
+
+Figure: Building the Manual with Texinfo
+
+
+File: org-trello.info,  Node: Installing the info Manual,  Prev: Building the Manual,  Up: Install Manual
+
+2.2.2 Installing the .info Manual
+---------------------------------
+
+You may optionally use “gzip” to compress the info file.  After you copy
+the .info or .info.gz file to a folder in your INFOPATH, you should use
+install-info, provided with Texinfo, to insert the .info file into the
+directory of info manuals.  This process is described in the *note
+Texinfo manual: (texinfo)Creating an Info File.
+
+
+File: org-trello.info,  Node: Migrating,  Prev: Install Manual,  Up: Installing
+
+2.3 Migrating to New Releases
+=============================
+
+If you have previously installed and used a previous release of
+org-trello, this section describes how to migrate your existing
+org-trello installation to a new release.
+
+* Menu:
+
+* 0.8.1: 081.
+* 0.7.0: 070.
+* 0.6.7: 067.
+* 0.6.6: 066.
+* 0.5.5: 055.
+* 0.5.3: 053.
+* 0.5.2: 052.
+* 0.3.8: 038.
+* 0.3.1: 031.
+* 0.2.9: 029.
+* 0.2.8: 028.
+* 0.2.1 -> 0.2.2: 021 -> 022.
+* 0.1.5 -> 0.1.6: 015 -> 016.
+* 0.1.1 -> 0.1.2: 011 -> 012.
+
+
+File: org-trello.info,  Node: 081,  Next: 070,  Up: Migrating
+
+2.3.1 0.8.1
+-----------
+
+The org-trello key properties used in the buffer were clashing with
+higher org-mode functionality (lookup, cf.
+<https://github.com/org-trello/org-trello/issues/366>).
+
+   Those properties were renamed with clash free names (‘-’ separator
+symbol was replaced with ‘_’).
+
+   To help the migration, a routine has been integrated.  This should
+not be needed by the user though (the migration is integrated to the
+actions).  Still, if the user wants it, (s)he can do it through M-x
+org-trello-migrate-buffer.
+
+
+File: org-trello.info,  Node: 070,  Next: 067,  Prev: 081,  Up: Migrating
+
+2.3.2 0.7.0
+-----------
+
+As of now, org-trello respects elisp conventions regarding the setup
+file location.  So the default _~_.trello// will be moved silently to
+_~_.emacs.d/.trello//
+
+   Also, now users can use multiple trello accounts.  So, provided you
+have multiple accounts, some commands will ask you when they need you to
+choose an account.  Also, a silent migration will occur to existing
+buffers.  For example, if you have a buffer setup-ed with a user _tony_,
+your existing configuration file _~_.trello/config.el/ will be moved to
+_~_.emacs.d/.trello/tony.el/
+
+   Again, org-trello tries to respect elisp conventions regarding
+command names.  So the command names have been renamed from
+_org-trello/_ to _org-trello-_.  Still, the old command names are
+available.
+
+
+File: org-trello.info,  Node: 067,  Next: 066,  Prev: 070,  Up: Migrating
+
+2.3.3 0.6.7
+-----------
+
+The comments are now displayed inline in the card.  So the binding to
+show the comments have been removed.  To see comments, simply unfold the
+card.
+
+
+File: org-trello.info,  Node: 066,  Next: 055,  Prev: 067,  Up: Migrating
+
+2.3.4 0.6.6
+-----------
+
+We can now remove a comment at point (if we are the owner of the
+comment).  Use M-x org-trello-delete-card-comment
+
+
+File: org-trello.info,  Node: 055,  Next: 053,  Prev: 066,  Up: Migrating
+
+2.3.5 0.5.5
+-----------
+
+Default bindings have been updated.
+
+Bindings    Action
+-------------------------------------------------------------------------------------------------------------------------------------
+C-c o C     Add comments to the cards at point.  To show the cards comments, use C-u M-x org-trello-add-card-comments (C-u C-c o
+            C)
+C-c o o     Removed.  To show the cards comments, use C-u C-c o C
+
+   Of course, as usual, if you are not happy with this, simply update
+your configuration file (bindings.html#bindings-override).
+
+
+File: org-trello.info,  Node: 053,  Next: 052,  Prev: 055,  Up: Migrating
+
+2.3.6 0.5.3
+-----------
+
+Lots of work has been done to make org-trello:
+
+   • more responsive (almost no more blocking actions).
+   • faster (trello queries have been improved to let the trello servers
+     do the computations)
+
+   Default interactive commands
+(http://org-trello.github.io/bindings.html#keybindings) names have been
+renamed to be explicit and aligned between them.
+
+
+File: org-trello.info,  Node: 052,  Next: 038,  Prev: 053,  Up: Migrating
+
+2.3.7 0.5.2
+-----------
+
+Decision has been taken to remove the intermediary proxy used to bounce
+requests to trello.  This was introduced to permit asynchronous
+requests.  This was only partially applied.  So too many lines of code
+to maintain for small benefits.
+
+   This version is synchronous as it was in the beginning (The base code
+is not the same though).
+
+   This is a temporary setback.  We need time to craft a better
+implementation for asynchronous requests (deferred, async libraries
+seems interesting enough).
+
+
+File: org-trello.info,  Node: 038,  Next: 031,  Prev: 052,  Up: Migrating
+
+2.3.8 0.3.8
+-----------
+
+org-trello now tries to enforce symmetry, mainly regarding the sync
+actions.  So by default, an action pushes to trello.  Using C-u, the
+symmetric action pulls from trello.
+
+Bindings      Action
+------------------------------------------------------------------
+C-c o c       sync the entity TO trello without its structure
+C-u C-c o c   sync the entity FROM trello without its structure
+C-c o C       sync the entity and its structure TO trello
+C-u C-c o C   sync the entity and its structure FROM trello
+C-c o s       sync the buffer TO trello
+C-u C-c o s   sync the buffer FROM trello
+C-c o a       assign yourself to the card
+C-u C-c o a   unassign yourself from the card
+
+
+File: org-trello.info,  Node: 031,  Next: 029,  Prev: 038,  Up: Migrating
+
+2.3.9 0.3.1
+-----------
+
+The old checklist/item format has been removed -
+<https://github.com/org-trello/org-trello/issues/105>.  Now the org
+checkbox way is the standard one.
+
+
+File: org-trello.info,  Node: 029,  Next: 028,  Prev: 031,  Up: Migrating
+
+2.3.10 0.2.9
+------------
+
+For information, from 0.2.9 onward, the property “orgtrello-id” from the
+checkbox (checklists, items) will be hidden.
+
+   _Note_
+
+   • Upon activating org-trello minor mode, all existing checkbox will
+     be migrated and should disappear before your eyes.
+   • Symmetrically, when deactivating org-trello, all checkbox will
+     appear.
+   • For this, org-trello use overlays
+     (https://www.gnu.org/software/emacs/manual/html_node/elisp/Overlays.html)
+     (implementation detail which permits to hide buffer region).
+
+   If you began to use org-trello, nothing to do.
+
+
+File: org-trello.info,  Node: 028,  Next: 021 -> 022,  Prev: 029,  Up: Migrating
+
+2.3.11 0.2.8
+------------
+
+From 0.2.8 onward, the card description can be synchronized too.  Just
+synchronize as usual.
+
+
+File: org-trello.info,  Node: 021 -> 022,  Next: 015 -> 016,  Prev: 028,  Up: Migrating
+
+2.3.12 0.2.1 -> 0.2.2
+---------------------
+
+From the 0.2.2 version onward, we can assign people to card.  As a
+pre-requisite, we need to re-install the board (C-c o I), so that new
+properties will be installed (users currently assigned to the board we
+attach to).
+
+   This way, you will be able to use the assign (C-c o a) / unassign
+(C-c o u) yourself to the card.
+
+
+File: org-trello.info,  Node: 015 -> 016,  Next: 011 -> 012,  Prev: 021 -> 022,  Up: Migrating
+
+2.3.13 0.1.5 -> 0.1.6
+---------------------
+
+Org-trello now uses more natural ways of dealing with checklists using
+checkboxes!
+
+   cf.  natural org format (from 0.1.6 onwards)
+(migration.html#natural-org-format-from-016-onwards) for more details.
+
+
+File: org-trello.info,  Node: 011 -> 012,  Prev: 015 -> 016,  Up: Migrating
+
+2.3.14 0.1.1 -> 0.1.2
+---------------------
+
+   • From version 0.1.1, some http requests will be asynchronous.  For
+     this, we use elnode as a proxy server to make requests to trello.
+     The elnode server is started on the port 9876.  You can always
+     change this port
+
+     (setq *ORGTRELLO-PROXY-PORT* 9876)
+
+   Then M-x orgtrello-proxy/reload
 
 
 File: org-trello.info,  Node: Connecting,  Next: Using,  Prev: Installing,  Up: Top
@@ -1671,7 +2018,8 @@ C.1 Concepts Index
 * FAQ:                                   FAQ.                   (line 6)
 * license, manual:                       GNU FDL.               (line 6)
 * license, software:                     GNU GPL.               (line 6)
-* org-trello, installing:                Installing.            (line 6)
+* manual, installing:                    Install Manual.        (line 6)
+* org-trello, installing:                Install Package.       (line 5)
 * org-trello, using:                     Using.                 (line 6)
 * release notes:                         Releases.              (line 6)
 * trello.com, connecting:                Connecting.            (line 6)
@@ -1718,34 +2066,53 @@ C.4 Variables Index
 
 Tag Table:
 Node: Top2022
-Node: About5636
-Node: Installing5790
-Node: Connecting5955
-Node: Using6126
-Node: Quick Start6473
-Node: Command Descriptions6606
-Node: Summary7071
-Node: Connection Cmds7853
-Node: Synch Cmds8155
-Node: Editing Cmds8581
-Node: Misc Cmds8835
-Node: How to…9041
-Node: FAQ9271
-Node: Troubleshooting9437
-Node: Customizing9621
-Node: Prefix Keys10031
-Node: Individual Keys11280
-Node: Variables13876
-Node: Contributing14050
-Node: Credits14336
-Node: Releases15828
-Node: GNU GPL16177
-Node: GNU FDL53959
-Node: Indices79301
-Node: Concepts79691
-Node: Command Index80852
-Node: Functions81228
-Node: Variables (1)81465
+Node: About6175
+Node: Installing6560
+Node: Install Package6975
+Node: Install Manual7141
+Node: Building the Manual8128
+Node: Installing the info Manual9200
+Node: Migrating9714
+Node: 08110283
+Node: 07010886
+Node: 06711741
+Node: 06611993
+Node: 05512211
+Node: 05312844
+Node: 05213308
+Node: 03813909
+Node: 03114688
+Node: 02914942
+Node: 02815630
+Node: 021 -> 02215835
+Node: 015 -> 01616294
+Node: 011 -> 01216641
+Node: Connecting17077
+Node: Using17248
+Node: Quick Start17595
+Node: Command Descriptions17728
+Node: Summary18193
+Node: Connection Cmds18975
+Node: Synch Cmds19277
+Node: Editing Cmds19703
+Node: Misc Cmds19957
+Node: How to…20163
+Node: FAQ20393
+Node: Troubleshooting20559
+Node: Customizing20743
+Node: Prefix Keys21153
+Node: Individual Keys22402
+Node: Variables24998
+Node: Contributing25172
+Node: Credits25458
+Node: Releases26950
+Node: GNU GPL27299
+Node: GNU FDL65081
+Node: Indices90423
+Node: Concepts90813
+Node: Command Index92047
+Node: Functions92423
+Node: Variables (1)92660
 
 End Tag Table
 

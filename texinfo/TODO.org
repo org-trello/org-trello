@@ -11,11 +11,11 @@
 Use wget to grab the existing documentation, then convert it to org-mode
 through pandoc for easier reference and cut/paste.
 
-* WORK Extract Existing Documentation [1/13]
+* WORK Extract Existing Documentation [3/13]
 The first draft must extract all the content from all files and sections of
 the existing documentation.
 
-- [ ] About
+- [X] About
 - [ ] Demo Videos
 - [ ] Install [0/2]
   - [ ] Package
@@ -27,27 +27,27 @@ the existing documentation.
       - [ ] Tarball
       - [ ] el-get
       - [ ] Git + Cask (dev)
-- [ ] Trello Setup [0/4]
+- [-] Trello Setup [1/4]
   - [ ] Credentials
   - [ ] Connect org-mode buffer to board
   - [ ] Create a board
-  - [ ] Migrations (link to Migration page)
+  - [X] Migrations (link to Migration page)
 - [ ] Quick Start
-- [ ] Migration
-  - [ ] 0.8.1
-  - [ ] 0.7.0
-  - [ ] 0.6.7
-  - [ ] 0.6.6
-  - [ ] 0.5.5
-  - [ ] 0.5.3
-  - [ ] 0.5.2
-  - [ ] 0.3.8
-  - [ ] 0.3.1
-  - [ ] 0.2.9
-  - [ ] 0.2.8
-  - [ ] 0.2.1 -> 0.2.2
-  - [ ] 0.1.5 -> 0.1.6
-  - [ ] 0.1.1 -> 0.1.2
+- [X] Migration -> [[file:org-trello.org::#migration][Migrating to New Releases]]
+  - [X] 0.8.1
+  - [X] 0.7.0
+  - [X] 0.6.7
+  - [X] 0.6.6
+  - [X] 0.5.5
+  - [X] 0.5.3
+  - [X] 0.5.2
+  - [X] 0.3.8
+  - [X] 0.3.1
+  - [X] 0.2.9
+  - [X] 0.2.8
+  - [X] 0.2.1 -> 0.2.2
+  - [X] 0.1.5 -> 0.1.6
+  - [X] 0.1.1 -> 0.1.2
 - [-] Bindings [2/3]
   - [-] Keybindings -> [[file:org-trello.org::*Summary%20of%20Commands][Using/Summary of Commands]]
   - [X] Bindings Override -> [[file:org-trello.org::*Customizing%20Individual%20Keybindings][Customizing/Individual]]
@@ -91,14 +91,16 @@ the existing documentation.
   - [X] Credits -> [[file:org-trello.org::*Credits][Credits]]
 - [X] License -> ([[file:org-trello.org::*COPYING][Copying]], [[file:org-trello.org::*GNU%20General%20Public%20License][GPL]], [[file:org-trello.org::*GNU%20Free%20Documentation%20License][FDL]])
 
-* TODO Convert release-notes from .md to .org
+* WORK Convert release-notes from .md to .org
 
-The release-notes log is currently in GitHub’s favored markdown
-format, but GitHub can also display org-mode format. Changing
-release-notes.md to release-notes.org (already prettified in the
-texinfo folder) will permit the Manual to INCLUDE directly from the
-project’s release notes, not a separately maintained copy of it.
+The existing release-notes log is currently in GitHub’s flavored
+markdown format. However, this projects author and users are org-mode
+users and GitHub can also render org-mode format. As the release-notes
+originate in the org-format TODO list, lets just stay in that format.
 
+- [X] Convert the release-notes.md to texinfo/release-notes.org (for review)
+- [X] Reference the release-notes file in the manual.
+- [ ] Remove the existing release-notes.md file and move the .org file there.
 - [ ] Update the link to release-notes.org in the manual
 
 * HOLD Replace README.md with rewritten README.org
@@ -118,3 +120,7 @@ this section into its own document and link to the .org file (not
 HTML).
 
 Remove the Release Notes and #+INCLUDE from the org-trello.org file.
+* Create texinfo/README.org to reference texinfo instructions
+
+- [ ] Write build and install instructions for texinfo in a README.org
+- [ ] INCLUDE the instructions in a section of the manual
