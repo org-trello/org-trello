@@ -1,4 +1,3 @@
-#+STARTUP: inlineimages
 This section describes how to build and install the TexInfo-format
 “org-trello Manual”. TexInfo is the standard documentation format of
 the GNU-project and is used by Emacs and org-mode. (org-trello is NOT
@@ -13,6 +12,57 @@ This org-trello manual may be installed in a folder on your INFOPATH
 and listed in the INFO directory of manuals. You may access the INFO
 manual directory of manuals from within Emacs by typing “C-h i d” or
 from the command-line using the command “info”.
+
+#+TEXINFO: @ifnotinfo
+# This graphic requires ‘graphviz’
+#+begin_src dot :file texinfo.png
+  digraph texinfo {
+	  size="4,6"
+	  node [shape=oval]
+	  emacs
+	  makeinfo
+	  texi2pdf
+	  texi2any
+	  gzip
+	  install
+	  install_info [label="install-info"]
+	  info_emacs [label="info or\nemacs"]
+	  browser
+	  pdf_viewer
+
+	  node [shape=note]
+	  org
+	  texi
+	  info
+	  pdf
+	  html
+	  infogz [label="info.gz"]
+	  dir
+
+	  node [shape=folder]
+	  INFOPATH
+
+	  node [shape=circle]
+	  user
+
+	  org -> emacs -> texi
+	  texi -> makeinfo -> info
+	  info -> gzip -> infogz
+	  infogz -> install -> INFOPATH
+	  dir -> install_info
+	  info -> install_info -> dir -> INFOPATH
+	  texi -> texi2pdf -> pdf
+	  pdf -> pdf_viewer -> user
+	  texi -> texi2any -> html -> browser -> user
+	  INFOPATH -> info_emacs -> user
+	  }
+#+end_src
+
+#+CAPTION: Building the Manual with Texinfo
+#+RESULTS:
+[[file:texinfo.png]]
+#+TEXINFO: @end ifnotinfo
+
 * Building the Manual
   :PROPERTIES:
   :ALT_TITLE: Building Manual
@@ -39,55 +89,6 @@ If you lack Texinfo, you may instead export org-trello.org directly to
 .info, .HTML or .PDF using Emacs. Without Texinfo, the resulting HTML or
 PDF document will have slight differences and will not have an index.
 Texinfo creates a more attractive manual and conforms to GNU style.
-
-# This graphic requires ‘graphviz’
-#+begin_src dot :file texinfo.png
-  digraph texinfo {
-	  size="4,6"
-	  node [shape=oval]
-	  emacs
-	  makeinfo
-	  texi2pdf
-	  texi2any
-	  gzip
-	  install
-	  install_info [label="install-info"]
-	  info_emacs [label="info or\nemacs"]
-	  web_browser
-	  pdf_viewer
-	  printer
-
-	  node [shape=note]
-	  org
-	  texi
-	  ginfo
-	  pdf
-	  html
-	  infogz [label="info.gz"]
-	  dir
-
-	  node [shape=folder]
-	  INFOPATH
-
-	  node [shape=circle]
-	  user
-
-	  org -> emacs -> texi
-	  texi -> makeinfo -> info
-	  info -> gzip -> infogz
-	  infogz -> install -> INFOPATH
-	  info -> install_info -> dir
-	  texi -> texi2pdf -> pdf
-	  pdf -> printer -> user
-	  texi -> texi2any -> html -> web_browser -> user
-	  {INFOPATH dir} -> info_emacs -> user
-	  }
-#+end_src
-
-#+CAPTION: Building the Manual with Texinfo
-#+RESULTS:
-[[file:texinfo.png]]
-
 * Installing the .info Manual
   :PROPERTIES:
   :ALT_TITLE: Installing Manual

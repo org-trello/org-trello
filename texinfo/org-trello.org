@@ -100,8 +100,24 @@ which begins with this license and non-warranty statement:
 Why use org-trello?
 - You use Emacs [[https://orgmode.org][org-mode]].
 - Your team uses [[https://trello.com/][Trello.com]].
-- [[https://github.com/org-trello/org-trello][org-trello]] is the bridge.
+- org-trello is the bridge between org-mode and Trello.com.
 - Everyone wins!
+* TODO Demo Videos
+:PROPERTIES:
+:ALT_TITLE: Demos
+:DESCRIPTION: Demonstration Videos
+:END:
+#+TEXINFO: @ifnothtml
+Please see the HTML version of this manual for links to the
+demonstration videos. They are not included in the info and PDF-format
+manuals.
+#+TEXINFO: @end ifnothtml
+#+TEXINFO: @ifhtml
+This section provides links to several demo videos.
+
+/Note:/ The format of org-trello buffers has changed since these
+videos were created. Please see the [[*The Format of org-trello][current org-trello format]].
+#+TEXINFO: @end ifhtml
 * TODO Installing org-trello
   :PROPERTIES:
   :ALT_TITLE: Installing
@@ -109,21 +125,68 @@ Why use org-trello?
   :END:
 This section describes how to obtain and install the org-trello
 package and manual.
-** Installing the org-trello package
+** TODO Installing org-trello using Package (recommended)
 :PROPERTIES:
-:ALT_TITLE: Install Package
-:DESCRIPTION: Installing the Package
+:ALT_TITLE: Installing
+:DESCRIPTION: Recommended Installation
 :END:
 #+CINDEX: org-trello, installing
+*** TODO Using MELPA with Package
+:PROPERTIES:
+:ALT_TITLE: About MELPA
+:DESCRIPTION: Using MELPA with Package
+:END:
+This section describes how to use “package” to download and install
+packages including org-trello. If you already use “package” to access
+“melpa” or “melpa-stable”, you don’t need to install “package” again.
+*** TODO Installing from MELPA with Package
+:PROPERTIES:
+:ALT_TITLE: Installing from MELPA
+:DESCRIPTION: Installing from MELPA with Package
+:END:
+This section describes how to download and install org-trello once you
+have installed Package and configured it to access MELPA.
+** TODO Alternate Ways to Install
+:PROPERTIES:
+:ALT_TITLE: Alternate Installations
+:DESCRIPTION: Alternate Ways to Install
+:END:
+*** TODO Download and Install the Tarball
+:PROPERTIES:
+:ALT_TITLE: Tarball
+:DESCRIPTION: Download and Install the Tarball
+:END:
+*** TODO Get and Install with el-get
+:PROPERTIES:
+:ALT_TITLE: el-get
+:DESCRIPTION: Get and Install with el-get
+:END:
+*** TODO Clone from GitHub and Install with Cask
+:PROPERTIES:
+:ALT_TITLE: GitHub & Cask
+:DESCRIPTION: Clone from GitHub and Install with Cask
+:END:
+** TODO Loading org-trello in Emacs
+:PROPERTIES:
+:ALT_TITLE: Loading
+:DESCRIPTION: Loading org-trello in Emacs
+:END:
+Once org-trello is installed, it must be loading during initialization
+of Emacs. Add this in your emacs configuration file “~/.emacs” or
+“~/.emacs.d/init.el” to load org-trello when Emacs starts:
 
-** Getting the org-trello manual
+#+BEGIN_SRC emacs-lisp
+    (require 'org-trello)
+#+END_SRC
+
+** Using the org-trello manual
 :PROPERTIES:
 :ALT_TITLE: Install Manual
 :DESCRIPTION: Installing the Manual
 :END:
 #+CINDEX: manual, installing
 #+INCLUDE: README.org
-** Migrating to New Releases
+** CHEK Migrating to New Releases
 :PROPERTIES:
 :CUSTOM_ID: migration
 :ALT_TITLE: Migrating
@@ -332,7 +395,25 @@ Then M-x orgtrello-proxy/reload
   :DESCRIPTION: Connecting to Trello.com
   :END:
 #+CINDEX: trello.com, connecting
-Connecting…
+
+** Installing Your Trello.com Credentials
+:PROPERTIES:
+:ALT_TITLE: Installing Credentials
+:DESCRIPTION: Installing Your Trello.com Credentials
+:END:
+
+** Connect an org-mode buffer with an existing Trello board.
+:PROPERTIES:
+:ALT_TITLE: Connect Existing Board
+:DESCRIPTION: Connect a Buffer to an Existing board
+:END:
+
+** Create a Trello board from your org-mode buffer.
+:PROPERTIES:
+:ALT_TITLE: Create a Board
+:DESCRIPTION: Create a Board from a Buffer
+:END:
+
 * Using org-trello
   :PROPERTIES:
   :ALT_TITLE: Using
@@ -350,7 +431,7 @@ This section describes how to use org-trello.
 :ALT_TEXT: Commands
 :DESCRIPTION: Command Descriptions
 :END:
-This section describes all commands.
+This section describes all commands and their key bindings.
 *** WORK Summary of Commands
 :PROPERTIES:
 :ALT_TITLE: Summary
@@ -362,16 +443,27 @@ All default org-trello key-bindings use the “C-c o” prefix.
 /Note:/ You may type “C-c o C-h” to display help for most org-trello
 key bindings.
 
-| Keys      | Command                                                     |
-|-----------+-------------------------------------------------------------|
-| C-c o C-h | Display help on all key-bindings with C-c o prefix.         |
-| C-c o v   | Display the version of org-trello.                          |
-|-----------+-------------------------------------------------------------|
-| C-c o i   | Install the Trello.com access key and token.                |
-| C-c o I   | Select an existing Trello board and attach this file to it. |
-| C-c o b   | Create a new Trello board and attach this file to it.       |
-| C-c o u   | Update this file’s attachment to its Trello board.          |
-|           |                                                             |
+| Keys        | Command                                                 |
+|-------------+---------------------------------------------------------|
+| C-c o C-h   | Display help on all key-bindings with C-c o prefix.     |
+| C-c o v     | Display the version of org-trello.                      |
+|-------------+---------------------------------------------------------|
+| C-c o i     | Install the Trello.com access key and token.            |
+| C-c o I     | Choose an existing Trello board and attach this buffer. |
+| C-c o b     | Create a new Trello board and attach this buffer        |
+| C-c o u     | Update this file’s attachment to its Trello board.      |
+| C-c o d     | Diagnose the setup.                                     |
+| C-c o D     | Delete all Trello metadata from this buffer.            |
+|-------------+---------------------------------------------------------|
+| C-c o c     | Create or Update a complete card.                       |
+| C-c o s     | Synchronize FROM the entire buffer TO Trello.           |
+| C-u C-c o s | Synchronize TO the entire buffer FROM Trello.           |
+| C-c o g     | Abort any synchronization in progress. (like C-g)       |
+|-------------+---------------------------------------------------------|
+| C-c $       | Archive the card at point. (Standard org binding)       |
+| C-c o A     | Archive all DONE cards.                                 |
+|-------------+---------------------------------------------------------|
+|             |                                                         |
 *** TODO Connection Commands
 :PROPERTIES:
 :ALT_TITLE: Connection Cmds
@@ -412,13 +504,6 @@ This section describes other functions not listed above.
 :DESCRIPTION: How to Perform Tasks
 :END:
 This section is describes how to use commands to perform tasks with org-trello.
-* TODO Frequently-Asked Questions
-  :PROPERTIES:
-  :ALT_TITLE: FAQ
-  :DESCRIPTION: Frequently-Asked Questions
-  :END:
-#+CINDEX: FAQ
-FAQ…
 * TODO Troubleshooting org-trello
   :PROPERTIES:
   :ALT_TITLE: Troubleshooting
@@ -517,6 +602,9 @@ remove specific existing org-trello keybindings:
 :ALT_TITLE: Variables
 :DESCRIPTION: Customizing Variables
 :END:
+
+** TODO The Format of org-trello
+This section describes the format of the text in an org-trello buffer.
 
 * Contributing to org-trello
   :PROPERTIES:

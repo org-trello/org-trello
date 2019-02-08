@@ -85,10 +85,10 @@ Sync Emacs org-mode with Trello.com.
 
 @menu
 * About::                        About org-trello
+* Demos::                        Demonstration Videos
 * Installing::                   Installing org-trello
 * Connecting::                   Connecting to Trello.com
 * Using::                        Using org-trello
-* FAQ::                          Frequently-Asked Questions
 * Troubleshooting::              Troubleshooting org-trello
 * Customizing::                  Customizing org-trello
 * Contributing::                 Contributing to org-trello
@@ -101,9 +101,22 @@ Sync Emacs org-mode with Trello.com.
 
 Installing
 
-* Install Package::              Installing the Package
+* Installing: Installing (1).    Recommended Installation
+* Alternate Installations::      Alternate Ways to Install
+* Loading::                      Loading org-trello in Emacs
 * Install Manual::               Installing the Manual
 * Migrating::                    Migrating to New Releases
+
+Installing
+
+* About MELPA::                  Using MELPA with Package
+* Installing from MELPA::        Installing from MELPA with Package
+
+Alternate Installations
+
+* Tarball::                      Download and Install the Tarball
+* el-get::                       Get and Install with el-get
+* GitHub & Cask::                Clone from GitHub and Install with Cask
 
 Install Manual
 
@@ -127,6 +140,12 @@ Migrating
 * 0.1.5 -> 0.1.6: 015 -> 016. 
 * 0.1.1 -> 0.1.2: 011 -> 012. 
 
+Connecting
+
+* Installing Credentials::       Installing Your Trello.com Credentials
+* Connect Existing Board::       Connect a Buffer to an Existing board
+* Create a Board::               Create a Board from a Buffer
+
 Using
 
 * Quick Start::                  First Steps with org-trello
@@ -146,6 +165,7 @@ Customizing
 * Prefix Keys::                  Customizing the Prefix Keybinding
 * Individual Keys::              Customizing Individual Key Bindings
 * Variables::                    Customizing Variables
+* The Format of org-trello::
 
 Contributing
 
@@ -172,10 +192,25 @@ You use Emacs @uref{https://orgmode.org, org-mode}.
 @item
 Your team uses @uref{https://trello.com/, Trello.com}.
 @item
-@uref{https://github.com/org-trello/org-trello, org-trello} is the bridge.
+org-trello is the bridge between org-mode and Trello.com.
 @item
 Everyone wins!
 @end itemize
+
+@node Demos
+@chapter @strong{TODO} Demo Videos
+
+@ifnothtml
+Please see the HTML version of this manual for links to the
+demonstration videos. They are not included in the info and PDF-format
+manuals.
+@end ifnothtml
+@ifhtml
+This section provides links to several demo videos.
+
+@emph{Note:} The format of org-trello buffers has changed since these
+videos were created. Please see the @ref{The Format of org-trello, , current org-trello format}.
+@end ifhtml
 
 @node Installing
 @chapter @strong{TODO} Installing org-trello
@@ -184,18 +219,67 @@ This section describes how to obtain and install the org-trello
 package and manual.
 
 @menu
-* Install Package::              Installing the Package
+* Installing: Installing (1).    Recommended Installation
+* Alternate Installations::      Alternate Ways to Install
+* Loading::                      Loading org-trello in Emacs
 * Install Manual::               Installing the Manual
 * Migrating::                    Migrating to New Releases
 @end menu
 
-@node Install Package
-@section Installing the org-trello package
+@node Installing (1)
+@section @strong{TODO} Installing org-trello using Package (recommended)
 
 @cindex org-trello, installing
 
+@menu
+* About MELPA::                  Using MELPA with Package
+* Installing from MELPA::        Installing from MELPA with Package
+@end menu
+
+@node About MELPA
+@subsection @strong{TODO} Using MELPA with Package
+
+This section describes how to use “package” to download and install
+packages including org-trello. If you already use “package” to access
+“melpa” or “melpa-stable”, you don’t need to install “package” again.
+
+@node Installing from MELPA
+@subsection @strong{TODO} Installing from MELPA with Package
+
+This section describes how to download and install org-trello once you
+have installed Package and configured it to access MELPA@.
+
+@node Alternate Installations
+@section @strong{TODO} Alternate Ways to Install
+
+@menu
+* Tarball::                      Download and Install the Tarball
+* el-get::                       Get and Install with el-get
+* GitHub & Cask::                Clone from GitHub and Install with Cask
+@end menu
+
+@node Tarball
+@subsection @strong{TODO} Download and Install the Tarball
+
+@node el-get
+@subsection @strong{TODO} Get and Install with el-get
+
+@node GitHub & Cask
+@subsection @strong{TODO} Clone from GitHub and Install with Cask
+
+@node Loading
+@section @strong{TODO} Loading org-trello in Emacs
+
+Once org-trello is installed, it must be loading during initialization
+of Emacs. Add this in your emacs configuration file “~/.emacs” or
+“~/.emacs.d/init.el” to load org-trello when Emacs starts:
+
+@lisp
+(require 'org-trello)
+@end lisp
+
 @node Install Manual
-@section Getting the org-trello manual
+@section Using the org-trello manual
 
 @cindex manual, installing
 This section describes how to build and install the TexInfo-format
@@ -217,6 +301,14 @@ This org-trello manual may be installed in a folder on your INFOPATH
 and listed in the INFO directory of manuals. You may access the INFO
 manual directory of manuals from within Emacs by typing “C-h i d” or
 from the command-line using the command “info”.
+
+@ifnotinfo
+
+@float Figure
+@image{texinfo,,,,png}
+@caption{Building the Manual with Texinfo}
+@end float
+@end ifnotinfo
 
 @menu
 * Building Manual::              Building the Manual
@@ -248,11 +340,6 @@ If you lack Texinfo, you may instead export org-trello.org directly to
 PDF document will have slight differences and will not have an index.
 Texinfo creates a more attractive manual and conforms to GNU style.
 
-@float Figure
-@image{texinfo,,,,png}
-@caption{Building the Manual with Texinfo}
-@end float
-
 @node Installing Manual
 @subsection Installing the .info Manual
 
@@ -283,7 +370,7 @@ INFOPATH and may appear different in each reader. Locate “org-trello”
 in this list or use “m org-trello” to jump to it.
 
 @node Migrating
-@section Migrating to New Releases
+@section @strong{CHEK} Migrating to New Releases
 
 If you have previously installed and used a previous release of
 org-trello, this section describes how to migrate your existing
@@ -501,7 +588,21 @@ Then M-x orgtrello-proxy/reload
 @chapter @strong{TODO} Connecting to Trello.com
 
 @cindex trello.com, connecting
-Connecting…
+
+@menu
+* Installing Credentials::       Installing Your Trello.com Credentials
+* Connect Existing Board::       Connect a Buffer to an Existing board
+* Create a Board::               Create a Board from a Buffer
+@end menu
+
+@node Installing Credentials
+@section Installing Your Trello.com Credentials
+
+@node Connect Existing Board
+@section Connect an org-mode buffer with an existing Trello board.
+
+@node Create a Board
+@section Create a Trello board from your org-mode buffer.
 
 @node Using
 @chapter Using org-trello
@@ -521,7 +622,7 @@ This section describes how to use org-trello.
 @node Command Descriptions
 @section Command Descriptions
 
-This section describes all commands.
+This section describes all commands and their key bindings.
 
 @menu
 * Summary::                      Summary of Commands
@@ -540,7 +641,7 @@ All default org-trello key-bindings use the “C-c o” prefix.
 @emph{Note:} You may type “C-c o C-h” to display help for most org-trello
 key bindings.
 
-@multitable {aaaaaaaaa} {aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa}
+@multitable {aaaaaaaaaaa} {aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa}
 @headitem Keys
 @tab Command
 @item C-c o C-h
@@ -550,11 +651,27 @@ key bindings.
 @item C-c o i
 @tab Install the Trello.com access key and token.
 @item C-c o I
-@tab Select an existing Trello board and attach this file to it.
+@tab Choose an existing Trello board and attach this buffer.
 @item C-c o b
-@tab Create a new Trello board and attach this file to it.
+@tab Create a new Trello board and attach this buffer
 @item C-c o u
 @tab Update this file’s attachment to its Trello board.
+@item C-c o d
+@tab Diagnose the setup.
+@item C-c o D
+@tab Delete all Trello metadata from this buffer.
+@item C-c o c
+@tab Create or Update a complete card.
+@item C-c o s
+@tab Synchronize FROM the entire buffer TO Trello.
+@item C-u C-c o s
+@tab Synchronize TO the entire buffer FROM Trello.
+@item C-c o g
+@tab Abort any synchronization in progress. (like C-g)
+@item C-c $
+@tab Archive the card at point. (Standard org binding)
+@item C-c o A
+@tab Archive all DONE cards.
 @item 
 @tab 
 @end multitable
@@ -594,12 +711,6 @@ This section describes other functions not listed above.
 
 This section is describes how to use commands to perform tasks with org-trello.
 
-@node FAQ
-@chapter @strong{TODO} Frequently-Asked Questions
-
-@cindex FAQ
-FAQ…
-
 @node Troubleshooting
 @chapter @strong{TODO} Troubleshooting org-trello
 
@@ -617,6 +728,7 @@ This section describes how you may customize org-trello.
 * Prefix Keys::                  Customizing the Prefix Keybinding
 * Individual Keys::              Customizing Individual Key Bindings
 * Variables::                    Customizing Variables
+* The Format of org-trello::
 @end menu
 
 @node Prefix Keys
@@ -695,6 +807,11 @@ remove specific existing org-trello keybindings:
 
 @node Variables
 @section @strong{TODO} Customizing org-trello Variables
+
+@node The Format of org-trello
+@section @strong{TODO} The Format of org-trello
+
+This section describes the format of the text in an org-trello buffer.
 
 @node Contributing
 @chapter Contributing to org-trello
