@@ -151,6 +151,7 @@ Using
 * Quick Start::                  First Steps with org-trello
 * Command Descriptions::         Command Descriptions
 * How to…::                      How to Perform Tasks
+* Format::                       Format of org-trello
 
 Command Descriptions
 
@@ -160,17 +161,38 @@ Command Descriptions
 * Editing Cmds::                 Editing Commands
 * Misc Cmds::                    Misc. Commands
 
+Troubleshooting
+
+* Common Issues::
+* Error Messages::
+
 Customizing
 
 * Prefix Keys::                  Customizing the Prefix Keybinding
 * Individual Keys::              Customizing Individual Key Bindings
 * Variables::                    Customizing Variables
-* The Format of org-trello::
+* Example::                      Example Emacs-Lisp Customization
+* Auto Files::                   Automatic org-trello Files
 
 Contributing
 
 * Credits::                      Contributor Credits
-* Releases::                     Release Notes History
+* Issues::                       Issue List
+* Mailing List::                 Mailing List
+* Releases::                     Release List & Notes
+* Compatibility::                Compatibility with Emacs
+* CI Tests::                     Continuous Integration Tests
+* Conventions::                  Developer’s Conventions
+
+Issues
+
+* Using @samp{M-x org-trello-bug-report}::
+* Using @samp{orgtrello-log-trace}::
+
+Conventions
+
+* Sources::
+* Makefile::
 
 Indices
 
@@ -197,6 +219,16 @@ org-trello is the bridge between org-mode and Trello.com.
 Everyone wins!
 @end itemize
 
+@emph{Links:}
+@itemize
+@item
+Download Zip
+@item
+Download Tarball
+@item
+View on GitHub
+@end itemize
+
 @node Demos
 @chapter @strong{TODO} Demo Videos
 
@@ -209,7 +241,7 @@ manuals.
 This section provides links to several demo videos.
 
 @emph{Note:} The format of org-trello buffers has changed since these
-videos were created. Please see the @ref{The Format of org-trello, , current org-trello format}.
+videos were created. Please see the @ref{Format, , current org-trello format}.
 @end ifhtml
 
 @node Installing
@@ -329,15 +361,15 @@ exporter included with org-mode. Then, the .texi file should be
 converted to .info, .HTML, or .PDF using the commands included with
 the Texinfo package.
 
-The “Makefile” includes the commands to mall all three formats when
+The “Makefile” includes the commands to make all three formats when
 you invoke it with “make all”. You may also request “make info”, “make
 view” (to view the new info manual), “make html” and “make pdf”. For
-any of these commands, you must install Texinfo and provide the
-location of the Texinfo commands at the top of the “Makefile”.
+any of these commands, you must install Texinfo and edit the top of
+the Makefile to provide the location of the Texinfo commands.
 
 If you lack Texinfo, you may instead export org-trello.org directly to
 .info, .HTML or .PDF using Emacs. Without Texinfo, the resulting HTML or
-PDF document will have slight differences and will not have an index.
+PDF document will be slightly different and will not have an index.
 Texinfo creates a more attractive manual and conforms to GNU style.
 
 @node Installing Manual
@@ -348,11 +380,11 @@ internal info reader or the command-line “info” command, you must:
 
 @enumerate
 @item
-optionally, use gzip to compress the .info file to .info.gz
+Optionally, use gzip to compress the .info file to .info.gz
 @item
-copy or “install” the .info.gz (or .info) file info a folder listed in INFOPATH
+Copy or “install” the .info.gz (or .info) file info a folder listed in INFOPATH
 @item
-use “install-info” to insert the new .info.gz file into info’s “dir”
+Use “install-info” to insert the new .info.gz file into info’s “dir”
 file in that folder.
 @end enumerate
 
@@ -363,11 +395,11 @@ folder in your INFOPATH where the .info should be installed, the
 “Makefile” will execute the gzip, install and install-info commands
 when you type “make install”.
 
-Once installed, you may invoke command-line “info” reader or Emacs
-internal info reader to view the listing of info manuals. The info
-reader assembles the directory from all the “dir” files in the
-INFOPATH and may appear different in each reader. Locate “org-trello”
-in this list or use “m org-trello” to jump to it.
+Once installed, you may invoke the command-line “info” reader or
+Emacs’ internal info reader to view the listing of info manuals. The
+info reader assembles the directory of info manuals from all the “dir”
+files in the INFOPATH and may be different in each reader. Locate
+“org-trello” in this list or use “m org-trello” to jump to it.
 
 @node Migrating
 @section @strong{CHEK} Migrating to New Releases
@@ -605,7 +637,7 @@ Then M-x orgtrello-proxy/reload
 @section Create a Trello board from your org-mode buffer.
 
 @node Using
-@chapter Using org-trello
+@chapter @strong{TODO} Using org-trello
 
 @cindex org-trello, using
 This section describes how to use org-trello.
@@ -614,6 +646,7 @@ This section describes how to use org-trello.
 * Quick Start::                  First Steps with org-trello
 * Command Descriptions::         Command Descriptions
 * How to…::                      How to Perform Tasks
+* Format::                       Format of org-trello
 @end menu
 
 @node Quick Start
@@ -707,19 +740,34 @@ list items.
 This section describes other functions not listed above.
 
 @node How to…
-@section @strong{TODO} How to Perform Tasks
+@section @strong{TODO} How to…
 
 This section is describes how to use commands to perform tasks with org-trello.
+
+@node Format
+@section @strong{TODO} Format of org-trello
+
+This section describes the format of the text in an org-trello buffer.
 
 @node Troubleshooting
 @chapter @strong{TODO} Troubleshooting org-trello
 
 @cindex troubleshooting
 @cindex errors
-Troubleshooting…
+
+@menu
+* Common Issues::
+* Error Messages::
+@end menu
+
+@node Common Issues
+@section Common Issues
+
+@node Error Messages
+@section Error Messages
 
 @node Customizing
-@chapter Customizing org-trello
+@chapter @strong{TODO} Customizing org-trello
 
 @cindex customizing
 This section describes how you may customize org-trello.
@@ -728,7 +776,8 @@ This section describes how you may customize org-trello.
 * Prefix Keys::                  Customizing the Prefix Keybinding
 * Individual Keys::              Customizing Individual Key Bindings
 * Variables::                    Customizing Variables
-* The Format of org-trello::
+* Example::                      Example Emacs-Lisp Customization
+* Auto Files::                   Automatic org-trello Files
 @end menu
 
 @node Prefix Keys
@@ -808,20 +857,25 @@ remove specific existing org-trello keybindings:
 @node Variables
 @section @strong{TODO} Customizing org-trello Variables
 
-@node The Format of org-trello
-@section @strong{TODO} The Format of org-trello
+@node Example
+@section @strong{TODO} Example Emacs-Lisp Customization
 
-This section describes the format of the text in an org-trello buffer.
+@node Auto Files
+@section Automatic org-trello Files
 
 @node Contributing
-@chapter Contributing to org-trello
+@chapter @strong{CHEK} Development of org-trello
 
 @cindex contributing
-Contributing…
 
 @menu
 * Credits::                      Contributor Credits
-* Releases::                     Release Notes History
+* Issues::                       Issue List
+* Mailing List::                 Mailing List
+* Releases::                     Release List & Notes
+* Compatibility::                Compatibility with Emacs
+* CI Tests::                     Continuous Integration Tests
+* Conventions::                  Developer’s Conventions
 @end menu
 
 @node Credits
@@ -854,14 +908,458 @@ and thanks to all those that opened @uref{https://github.com/org-trello/org-trel
 Also, thank you to the entire free-software community world-wide, including the
 creators and contributors of Emacs and org-mode.
 
+@node Issues
+@section @strong{CHEK} Issue List
+
+If you experience an issue while using org-trello, please first
+confirm that you have the newest version of org-trello. If you
+have an old version, please upgrade to the newest version - your issue
+may already have been solved. You may display the version of your copy
+of org-trello by typing “C-c o v” or “M-x org-trello-version”.
+
+If you have the newest version, please search the @uref{https://github.com/org-trello/org-trello/issues, issue list} for
+issues similar to yours. If your issue already exists, please describe
+your experiences in the comments, if different, and try the
+advice offered there, if any.
+
+If you don’t find an issue like yours, you should create a new issue.
+
+You should include the following information in your issue entry:
+
+@itemize
+@item
+Your org-trello version
+@item
+Your org-mode version
+@item
+Your emacs version
+@item
+Your system type and OS version
+@item
+How you installed org-trello:
+@itemize
+@item
+melpa
+@item
+melpa-stable
+@item
+el-get
+@item
+tarball
+@item
+git clone
+@item
+other
+@end itemize
+@item
+A clear, concise and complete description of the issue. Please do state the obvious.
+@item
+Supporting data:
+@itemize
+@item
+A copy of any pertinent messages produced by org-trello or Emacs
+@item
+A copy of buffer data necessary to reproduce the issue. (Please avoid posting
+private data. Do not post your Trello.com or other login credentials.)
+@item
+If the issue is with installation, include the @samp{*Compile Log*}
+buffer contents.
+@end itemize
+@end itemize
+
+Please use GitHub’s markdown formatting to improve readability.
+
+We may have questions about your issue or question if we don’t
+understand. You can help us to help you better and faster by being
+clear, concise and complete in your issue description.
+
+@menu
+* Using @samp{M-x org-trello-bug-report}::
+* Using @samp{orgtrello-log-trace}::
+@end menu
+
+@node Using @samp{M-x org-trello-bug-report}
+@subsection Using @samp{M-x org-trello-bug-report}
+
+You may use the bug-report function of org-trello to print some
+information about org-trello to the @strong{Messages} buffer to copy into the
+issue entry. To print the bug-report data, type “M-x
+org-trello-bug-report” or “C-c o B”. Then open the @strong{Messages} buffer
+and copy the block of data it produced to paste into the issue on
+GitHub. The block of data will resemble:
+
+@example
+System information:
+- system-type: darwin
+- locale-coding-system: utf-8-unix
+- emacs-version: GNU Emacs 26.1
+- org version: 9.2
+- org-trello version: 0.8.0
+- org-trello path: ~/.emacs.d/elpa/org-trello-20180331.631/org-trello.el
+- request-backend: curl
+- kill-whole-line: nil
+@end example
+
+If you type “C-u C-c o B” instead, org-trello will open a new issue on
+GitHub for you to complete.
+
+@node Using @samp{orgtrello-log-trace}
+@subsection Using @samp{orgtrello-log-trace}
+
+To obtain a more verbose output in the @strong{@strong{Message}} buffer, you can put
+this snippet of code in a @samp{*scratch*} buffer.
+
+@lisp
+(custom-set-variables '(orgtrello-log-level orgtrello-log-trace))
+@end lisp
+
+and evaluate it with M-x eval-buffer. Then, return to your org-trello
+buffer and repeat the conditions that cause the issue. Copy the
+resulting detailed log messages into your bug-report.
+
+@node Mailing List
+@section @strong{CHEK} Mailing List
+
+This project has a mailing list at librelist.com for communication
+and community among its users and contributors. You may join the
+list by sending an email to:
+
+@itemize
+@item
+subscribe: emacs.org.trello [AT] librelist.com
+@item
+unsubscribe: emacs.org.trello-unsubscribe [AT] librelist.com
+@end itemize
+
 @node Releases
-@section @strong{CHEK} Release Notes
+@section @strong{CHEK} Release List and Notes
 
 @cindex release notes
 @cindex version history
+The @uref{https://github.com/org-trello/org-trello/releases, release list} of org-trello is on GitHub.
+
 The separate @uref{release-notes.org, release-notes file} records the primary changes in each
-release of org-trello. Please also see the @uref{https://github.com/org-trello/org-trello, repository} on GitHub for a
-detailed history.
+release of org-trello. Please also see the @uref{https://github.com/org-trello/org-trello/commits/master, commit history} of the
+@uref{https://github.com/org-trello/org-trello, repository} on GitHub.
+
+@node Compatibility
+@section @strong{CHEK} Compatibility with Emacs
+
+org-trello has been tested with the following versions of Emacs and
+Operating Systems:
+
+@multitable {aaaaaaaaa} {aaaaaaaaaaaaaaaaaaaaaaaaaaaa} {aaaaaa}
+@headitem Version
+@tab OS
+@tab Status
+@item 24.3.1
+@tab Linux Mint 14
+@tab OK
+@item 24.3.1
+@tab Linux Mint 15 (ubuntu based)
+@tab OK
+@item 24.3.1
+@tab Ubuntu 13.04
+@tab OK
+@item 24.3.1
+@tab Ubuntu 13.10
+@tab OK
+@item 24.3.50.1
+@tab Linux Mint 16 (debian based)
+@tab OK
+@item 24.4.1
+@tab NixOS
+@tab OK
+@end multitable
+
+@emph{Note:} We cannot test under MacOS X or MS windows so any feedback on
+those is welcome.
+
+@node CI Tests
+@section @strong{CHEK} Continuous Integration Tests
+
+org-trello uses @uref{https://travis-ci.org/org-trello/org-trello, Travis CI} for continuous integration testing.
+
+The CI tests and installs:
+
+@multitable {aaaaaaa} {aaaaaaaaaa} {aaaaaaaaaaa}
+@headitem Version
+@tab CI
+@tab Manual Test
+@item 24.1
+@tab Not tested
+@tab Not tested
+@item 24.2
+@tab Not tested
+@tab Not tested
+@item 24.3.1
+@tab OK
+@tab OK
+@item 24.3.50
+@tab OK
+@tab OK
+@item 24.4.1
+@tab OK
+@tab OK
+@end multitable
+
+@emph{Note:} Any feedback regarding the untested versions is welcome.
+
+@node Conventions
+@section @strong{CHEK} Developer’s Conventions
+
+This describes the current conventions for org-trello's development.
+
+@menu
+* Sources::
+* Makefile::
+@end menu
+
+@node Sources
+@subsection Sources
+
+The sources are split into @samp{namespaces} in the @uref{./src/, src/} folder.
+This is described in the Namespaces section below.
+
+@enumerate
+@item
+Conventions
+
+
+As there exists no namespace in emacs-lisp, I use: 
+
+@itemize
+@item
+convention in function names to determine the nature private/public 
+@item
+splitted files that represents namespaces.
+@end itemize
+
+@enumerate
+@item
+Rules
+
+
+These conventions are enforced in org-trello:
+
+@itemize
+@item
+functions are prefixed with
+@samp{orgtrello-<NAMESPACE-FILENAME>-<FUNCTION-NAME>}
+@item
+@samp{<NAMESPACE-FILENAME>} is the filename without its path nor its
+extension. For example, @samp{src/buffer.el} renders @samp{buffer}
+@item
+@samp{<FUNCTION-NAME>} is an alphanumeric symbol with @samp{-} as separator. For
+example, @samp{orgtrello-api-add-board} is a public function which does
+create a request to add a board.
+@item
+private functions are prefixed with @samp{--}. For example,
+@samp{orgtrello-api--deal-with-optional-values} which is a private utility
+function to help in creating api request.
+@item
+predicate functions are suffixed by @samp{-p}. For example,
+@samp{orgtrello-data-entity-card-p} which checks if the parameter entity is
+a card or not.
+@end itemize
+
+@emph{Note:} I adapted the code to abide by @uref{https://www.gnu.org/software/emacs/manual/html_node/elisp/Coding-Conventions.html, emacs-lisp's conventions}.
+
+@item
+Exception
+
+
+@samp{org-trello.el} is the main namespace that declares the:
+
+@itemize
+@item
+interactive commands used throughout all of org-trello 
+@item
+minor mode
+@end itemize
+
+Every exposed interactive command is named @samp{org-trello-fn-name}.
+@end enumerate
+
+@item
+Namespaces
+
+
+The namespaces are in loading order:
+
+@multitable {aaaaaaaaaaaaaaaaaaaaaaaa} {aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa}
+@headitem Namespaces file
+@tab Description of the namespace
+@item org-trello-log.el
+@tab Provide log facilities
+@item org-trello-setup.el
+@tab Main variable definition that permits internal
+@item 
+@tab … org-trello functions customization
+@item org-trello-date.el
+@tab org-trello's date manipulation
+@item org-trello-hash.el
+@tab Hash-map manipulation utilities
+@item org-trello-action.el
+@tab Higher-order functions helper
+@item org-trello-data.el
+@tab Internal org-trello data manipulation
+@item org-trello-entity.el
+@tab Entity (card/checklist/item) predicates
+@item org-trello-cbx.el
+@tab Checkbox manipulation utilities
+@item org-trello-api.el
+@tab Trello API abstraction DSL
+@item org-trello-query.el
+@tab HTTP query utilities
+@item org-trello-backend.el
+@tab Deals with trello requests
+@item org-trello-proxy.el
+@tab Proxy utilities - Namespace in charge of dealing
+@item 
+@tab … with the orchestration of trello requests
+@item org-trello-buffer.el
+@tab Buffer manipulation functions
+@item org-trello-input.el
+@tab Text input functions
+@item org-trello-controller.el
+@tab Controller used by org-trello.el
+@item org-trello-deferred.el
+@tab Deferred computation in org-trello
+@item org-trello.el
+@tab Main information about org-trello (version,
+@item 
+@tab … licence, deps, etc@dots{}) + org-trello
+@item 
+@tab … minor mode definition which defines
+@item 
+@tab … interactive commands and the mode
+@item utilities.el
+@tab test utilities functions
+@end multitable
+
+@item
+Loading
+
+
+Use the @uref{./load-org-trello.el, load-org-trello.el} file to load org-trello for development
+purposes and keep the emacs way of browsing source code (@samp{M-.} ,
+@samp{M-,}).
+
+Open the file and @samp{M-x eval-buffer}.
+@end enumerate
+
+@node Makefile
+@subsection Makefile
+
+The @uref{./Makefile, Makefile} is your ally for: 
+@itemize
+@item
+package 
+@item
+test 
+@item
+release
+@end itemize
+
+@enumerate
+@item
+Package
+
+
+This packages all the @emph{org-trello*.el} into a standard tar file.
+
+@example
+make package
+@end example
+
+@item
+Test
+
+
+@example
+make test
+@end example
+
+@item
+Install
+
+
+To test that the package, once created, can be installed (using the
+repository to fetch the dependencies).
+
+@example
+make install-file-with-deps-from-melpa
+@end example
+
+@emph{Note:} This will trigger the installation from a local package
+@samp{org-trello-<VERSION>.tar}. The installation is used with the
+dependencies fetched from melpa.
+
+@emph{Note:} These are the targets used by the CI (cf. @uref{./.travis.yml, .travis.yml})
+
+@item
+Full install testing
+
+
+As we deploy in melpa, we can ensure that once delivered, the
+installation is ok using those targets.
+
+@example
+make install-package-from-melpa
+@end example
+
+@item
+Release
+
+
+The release process is done through 2 steps:
+
+@enumerate
+@item
+Self Pull Request from the feature branch inside master
+
+@example
+make pr
+@end example
+
+@emph{Note:} You need `hub` installed for this target to work.
+
+@item
+Then trigger release through the call to the release target from the Makefile:
+
+@example
+make release
+@end example
+
+This will:
+@itemize
+@item
+fetch the latest modifications on your repository 
+@item
+checkout the master branch
+@item
+fast-forward to the latest master commit 
+@item
+tag the latest commit from master using the $VERSION you submit to the
+script (defaulting to the version from the org-trello.el header)
+@item
+push the tag to the upstream branch repository
+@item
+trigger the package target from the Makefile (thus building a new package to the latest version)
+@item
+Then manual delivery of the tar to the github release page
+@end itemize
+
+@emph{Note:}
+@itemize
+@item
+this is an orchestration of the @uref{./release.sh, release.sh} script 
+@item
+the packaging for MELPA is automatically done from @samp{org-trello/org-trello} repository
+@end itemize
+@end enumerate
+@end enumerate
 
 @node GNU GPL
 @appendix @strong{DONE} GNU General Public License

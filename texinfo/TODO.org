@@ -11,10 +11,10 @@
 Use wget to grab the existing documentation, then convert it to org-mode
 through pandoc for easier reference and cut/paste.
 
-* WORK Extract Existing Documentation [3/14]
-The first draft must extract all the content from all files and sections of
+* WORK Cover Existing Documentation [5/14]
+The first draft must cover all the content from all files and sections of
 the existing documentation.
-- [ ] Page Margins
+- [ ] Page Margins -> [[file:org-trello.org::*About%20org-trello][About org-trello]]
   - [ ] Top/Logo
   - [ ] Download Zip
   - [ ] Download Tarball
@@ -43,10 +43,10 @@ the existing documentation.
   - [-] Keybindings -> [[file:org-trello.org::*Summary%20of%20Commands][Using/Summary of Commands]]
   - [X] Bindings Override -> [[file:org-trello.org::*Customizing%20Individual%20Keybindings][Customizing/Individual]]
   - [X] Prefix binding override -> [[file:org-trello.org::*Customizing%20the%20Prefix%20Keybinding][Customizing/Prefix]]
-- [ ] Usage [0/5]
-  - [ ] Format
-  - [ ] Sample
-  - [ ] Use-Cases
+- [ ] Usage [0/4]
+  - [ ] Format -> [[file:org-trello.org::*Format%20of%20org-trello][Format of org-trello]]
+    - [ ] Sample
+  - [ ] Use-Cases -> [[file:org-trello.org::*How%20to%E2%80%A6][How to…]]
     - [ ] Card and deadline/due date
     - [ ] Sync entity to Trello board
     - [ ] Creation of a full entity
@@ -59,26 +59,29 @@ the existing documentation.
     - [ ] Jump to Trello card
     - [ ] Jump to Trello board
     - [ ] Add comments
-  - [ ] Possible errors
-  - [ ] Automatic org-trello files
+  - [ ] Possible errors -> [[file:org-trello.org::*Error%20Messages][Error Messages]]
+  - [ ] Automatic org-trello files -> [[file:org-trello.org::*Automatic%20org-trello%20Files][Automatic org-trello Files]]
 - [ ] FAQ
+  - [ ] Issue Tracker -> [[file:org-trello.org::*Common%20Issues][Common Issues]]
+  - [ ] title =org <$> trello= about? -> [[file:org-trello.org::*About%20org-trello][About org-trello]]
+  - [ ] error about credentials loading? -> [[file:org-trello.org::*Common%20Issues][Common Issues]]
 - [ ] Customize [0/2]
-  - [ ] Lisp
-  - [ ] Customize
-- [ ] Downloads [0/4]
-  - [ ] Releases
-  - [ ] Release Notes
-  - [ ] Compatibility
-  - [ ] Continuous Integration
-- [-] Contributions [1/4]
-  - [ ] org-trello
-  - [ ] Issues [0/5]
-    - [ ] Report
-    - [ ] Automatic
-    - [ ] Manual
-    - [ ] log verbosity
-    - [ ] scramble data
-  - [ ] Mailing List
+  - [ ] Lisp -> [[file:org-trello.org::*Example%20Emacs-Lisp%20Customization][Example Emacs-Lisp Customization]]
+  - [ ] Customize -> [[file:org-trello.org::*Customizing%20org-trello%20Variables][Customizing org-trello Variables]]
+- [X] Downloads [4/4]
+  - [X] Releases -> [[file:org-trello.org::*Release%20List%20and%20Notes][Release List and Notes]]
+  - [X] Release Notes -> [[file:org-trello.org::*Release%20List%20and%20Notes][Release List and Notes]]
+  - [X] Compatibility -> [[file:org-trello.org::*Compatibility%20with%20Emacs][Compatibility with Emacs]]
+  - [X] Continuous Integration -> [[file:org-trello.org::*Continuous%20Integration%20Tests][Continuous Integration Tests]]
+- [X] Contributions [4/4]
+  - [X] org-trello -> [[file:org-trello.org::*Development%20of%20org-trello][Development of org-trello]]
+  - [X] Issues -> [[file:org-trello.org::*Issue%20List][Issue List]]
+    - [X] Report
+    - [X] Automatic
+    - [X] Manual
+    - [X] log verbosity
+    - [X] scramble data
+  - [X] Mailing List -> [[file:org-trello.org::*Mailing%20List][Mailing List]]
   - [X] Credits -> [[file:org-trello.org::*Credits][Credits]]
 - [X] License -> ([[file:org-trello.org::*COPYING][Copying]], [[file:org-trello.org::*GNU%20General%20Public%20License][GPL]], [[file:org-trello.org::*GNU%20Free%20Documentation%20License][FDL]])
 
@@ -103,6 +106,10 @@ Replace README.md with a new README.org (for easier maintenance) with
 a Table of Contents that references the HTML manual sections directly.
 Also reference the legacy documentation for as long as it exists.
 
+* WORK Convert README-dev.md to README-dev.org
+Convert the developer’s README-dev.md to .org format for inclusion in
+the manual. Remove the .md file and move the .org file up to the main
+folder. Fix the include in the org-trello.org manual.
 * DONE Separate Release Notes Document
   CLOSED: [2019-02-01 Fri 20:45]
 

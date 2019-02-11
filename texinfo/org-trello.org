@@ -102,6 +102,11 @@ Why use org-trello?
 - Your team uses [[https://trello.com/][Trello.com]].
 - org-trello is the bridge between org-mode and Trello.com.
 - Everyone wins!
+
+/Links:/
+- Download Zip
+- Download Tarball
+- View on GitHub
 * TODO Demo Videos
 :PROPERTIES:
 :ALT_TITLE: Demos
@@ -116,7 +121,7 @@ manuals.
 This section provides links to several demo videos.
 
 /Note:/ The format of org-trello buffers has changed since these
-videos were created. Please see the [[*The Format of org-trello][current org-trello format]].
+videos were created. Please see the [[*Format of org-trello][current org-trello format]].
 #+TEXINFO: @end ifhtml
 * TODO Installing org-trello
   :PROPERTIES:
@@ -414,7 +419,7 @@ Then M-x orgtrello-proxy/reload
 :DESCRIPTION: Create a Board from a Buffer
 :END:
 
-* Using org-trello
+* TODO Using org-trello
   :PROPERTIES:
   :ALT_TITLE: Using
   :DESCRIPTION: Using org-trello
@@ -498,12 +503,19 @@ list items.
 :END:
 This section describes other functions not listed above.
 
-** TODO How to Perform Tasks
+** TODO How to…
 :PROPERTIES:
 :ALT_TITLE: How to…
 :DESCRIPTION: How to Perform Tasks
 :END:
 This section is describes how to use commands to perform tasks with org-trello.
+** TODO Format of org-trello
+:PROPERTIES:
+:ALT_TITLE: Format
+:DESCRIPTION: Format of org-trello
+:END:
+This section describes the format of the text in an org-trello buffer.
+
 * TODO Troubleshooting org-trello
   :PROPERTIES:
   :ALT_TITLE: Troubleshooting
@@ -511,8 +523,9 @@ This section is describes how to use commands to perform tasks with org-trello.
   :END:
 #+CINDEX: troubleshooting
 #+CINDEX: errors
-Troubleshooting…
-* Customizing org-trello
+** Common Issues
+** Error Messages
+* TODO Customizing org-trello
   :PROPERTIES:
   :ALT_TITLE: Customizing
   :DESCRIPTION: Customizing org-trello
@@ -603,16 +616,25 @@ remove specific existing org-trello keybindings:
 :DESCRIPTION: Customizing Variables
 :END:
 
-** TODO The Format of org-trello
-This section describes the format of the text in an org-trello buffer.
+** TODO Example Emacs-Lisp Customization
+:PROPERTIES:
+:ALT_TITLE: Example
+:DESCRIPTION: Example Emacs-Lisp Customization
+:END:
 
-* Contributing to org-trello
+** Automatic org-trello Files
+:PROPERTIES:
+:ALT_TITLE: Auto Files
+:DESCRIPTION: Automatic org-trello Files
+:END:
+
+* CHEK Development of org-trello
   :PROPERTIES:
   :ALT_TITLE: Contributing
   :DESCRIPTION: Contributing to org-trello
   :END:
 #+CINDEX: contributing
-Contributing…
+
 ** CHEK Credits
 :PROPERTIES:
 :ALT_TITLE: Credits
@@ -636,16 +658,162 @@ and thanks to all those that opened [[https://github.com/org-trello/org-trello/i
 Also, thank you to the entire free-software community world-wide, including the
 creators and contributors of Emacs and org-mode.
 
-** CHEK Release Notes
+** CHEK Issue List
+:PROPERTIES:
+:ALT_TITLE: Issues
+:DESCRIPTION: Issue List
+:END:
+
+If you experience an issue while using org-trello, please first
+confirm that you have the newest version of org-trello. If you
+have an old version, please upgrade to the newest version - your issue
+may already have been solved. You may display the version of your copy
+of org-trello by typing “C-c o v” or “M-x org-trello-version”.
+
+If you have the newest version, please search the [[https://github.com/org-trello/org-trello/issues][issue list]] for
+issues similar to yours. If your issue already exists, please describe
+your experiences in the comments, if different, and try the
+advice offered there, if any.
+
+If you don’t find an issue like yours, you should create a new issue.
+
+You should include the following information in your issue entry:
+
+- Your org-trello version
+- Your org-mode version
+- Your emacs version
+- Your system type and OS version
+- How you installed org-trello:
+  - melpa
+  - melpa-stable
+  - el-get
+  - tarball
+  - git clone
+  - other
+- A clear, concise and complete description of the issue. Please do state the obvious.
+- Supporting data:
+  - A copy of any pertinent messages produced by org-trello or Emacs
+  - A copy of buffer data necessary to reproduce the issue. (Please avoid posting
+    private data. Do _not_ post your Trello.com or other login credentials.)
+  - If the issue is with installation, include the =*Compile Log*=
+    buffer contents.
+
+Please use GitHub’s markdown formatting to improve readability.
+
+We may have questions about your issue or question if we don’t
+understand. You can help us to help you better and faster by being
+clear, concise and complete in your issue description.
+
+*** Using =M-x org-trello-bug-report=
+
+You may use the bug-report function of org-trello to print some
+information about org-trello to the *Messages* buffer to copy into the
+issue entry. To print the bug-report data, type “M-x
+org-trello-bug-report” or “C-c o B”. Then open the *Messages* buffer
+and copy the block of data it produced to paste into the issue on
+GitHub. The block of data will resemble:
+
+#+BEGIN_EXAMPLE
+  System information:
+  - system-type: darwin
+  - locale-coding-system: utf-8-unix
+  - emacs-version: GNU Emacs 26.1
+  - org version: 9.2
+  - org-trello version: 0.8.0
+  - org-trello path: ~/.emacs.d/elpa/org-trello-20180331.631/org-trello.el
+  - request-backend: curl
+  - kill-whole-line: nil
+#+END_EXAMPLE
+
+If you type “C-u C-c o B” instead, org-trello will open a new issue on
+GitHub for you to complete.
+
+*** Using =orgtrello-log-trace=
+
+To obtain a more verbose output in the **Message** buffer, you can put
+this snippet of code in a =*scratch*= buffer.
+
+#+BEGIN_SRC emacs-lisp
+  (custom-set-variables '(orgtrello-log-level orgtrello-log-trace))
+#+END_SRC
+
+and evaluate it with M-x eval-buffer. Then, return to your org-trello
+buffer and repeat the conditions that cause the issue. Copy the
+resulting detailed log messages into your bug-report.
+
+** CHEK Mailing List
+:PROPERTIES:
+:ALT_TITLE: Mailing List
+:DESCRIPTION: Mailing List
+:END:
+
+This project has a mailing list at librelist.com for communication
+and community among its users and contributors. You may join the
+list by sending an email to:
+
+- subscribe: emacs.org.trello [AT] librelist.com
+- unsubscribe: emacs.org.trello-unsubscribe [AT] librelist.com
+
+** CHEK Release List and Notes
 :PROPERTIES:
 :ALT_TITLE: Releases
-:DESCRIPTION: Release Notes History
+:DESCRIPTION: Release List & Notes
 :END:
 #+CINDEX: release notes
 #+CINDEX: version history
+The [[https://github.com/org-trello/org-trello/releases][release list]] of org-trello is on GitHub.
+
 The separate [[file:release-notes.org][release-notes file]] records the primary changes in each
-release of org-trello. Please also see the [[https://github.com/org-trello/org-trello][repository]] on GitHub for a
-detailed history.
+release of org-trello. Please also see the [[https://github.com/org-trello/org-trello/commits/master][commit history]] of the
+[[https://github.com/org-trello/org-trello][repository]] on GitHub.
+
+** CHEK Compatibility with Emacs
+:PROPERTIES:
+:ALT_TITLE: Compatibility
+:DESCRIPTION: Compatibility with Emacs
+:END:
+
+org-trello has been tested with the following versions of Emacs and
+Operating Systems:
+
+| Version     | OS                             | Status   |
+|-------------+--------------------------------+----------|
+| 24.3.1      | Linux Mint 14                  | OK       |
+| 24.3.1      | Linux Mint 15 (ubuntu based)   | OK       |
+| 24.3.1      | Ubuntu 13.04                   | OK       |
+| 24.3.1      | Ubuntu 13.10                   | OK       |
+| 24.3.50.1   | Linux Mint 16 (debian based)   | OK       |
+| 24.4.1      | NixOS                          | OK       |
+
+/Note:/ We cannot test under MacOS X or MS windows so any feedback on
+those is welcome.
+
+** CHEK Continuous Integration Tests
+:PROPERTIES:
+:ALT_TITLE: CI Tests
+:DESCRIPTION: Continuous Integration Tests
+:END:
+
+org-trello uses [[https://travis-ci.org/org-trello/org-trello][Travis CI]] for continuous integration testing.
+
+The CI tests and installs:
+
+| Version   | CI           | Manual Test   |
+|-----------+--------------+---------------|
+| 24.1      | Not tested   | Not tested    |
+| 24.2      | Not tested   | Not tested    |
+| 24.3.1    | OK           | OK            |
+| 24.3.50   | OK           | OK            |
+| 24.4.1    | OK           | OK            |
+
+/Note:/ Any feedback regarding the untested versions is welcome.
+
+** CHEK Developer’s Conventions
+:PROPERTIES:
+:ALT_TITLE: Conventions
+:DESCRIPTION: Developer’s Conventions
+:END:
+#+INCLUDE: README-dev.org
 
 * DONE GNU General Public License
 CLOSED: [2019-02-01 Fri 20:21]
