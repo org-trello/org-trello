@@ -11,7 +11,7 @@
 Use wget to grab the existing documentation, then convert it to org-mode
 through pandoc for easier reference and cut/paste.
 
-* WORK Cover Existing Documentation [5/14]
+* WORK Cover Existing Documentation [6/14]
 The first draft must cover all the content from all files and sections of
 the existing documentation.
 - [ ] Page Margins -> [[file:org-trello.org::*About%20org-trello][About org-trello]]
@@ -43,7 +43,7 @@ the existing documentation.
   - [-] Keybindings -> [[file:org-trello.org::*Summary%20of%20Commands][Using/Summary of Commands]]
   - [X] Bindings Override -> [[file:org-trello.org::*Customizing%20Individual%20Keybindings][Customizing/Individual]]
   - [X] Prefix binding override -> [[file:org-trello.org::*Customizing%20the%20Prefix%20Keybinding][Customizing/Prefix]]
-- [ ] Usage [0/4]
+- [-] Usage [1/4]
   - [ ] Format -> [[file:org-trello.org::*Format%20of%20org-trello][Format of org-trello]]
     - [ ] Sample
   - [ ] Use-Cases -> [[file:org-trello.org::*How%20to%E2%80%A6][How to…]]
@@ -60,14 +60,14 @@ the existing documentation.
     - [ ] Jump to Trello board
     - [ ] Add comments
   - [ ] Possible errors -> [[file:org-trello.org::*Error%20Messages][Error Messages]]
-  - [ ] Automatic org-trello files -> [[file:org-trello.org::*Automatic%20org-trello%20Files][Automatic org-trello Files]]
+  - [X] Automatic org-trello files -> [[file:org-trello.org::*Automatic%20org-trello%20Files][Automatic org-trello Files]]
 - [ ] FAQ
   - [ ] Issue Tracker -> [[file:org-trello.org::*Common%20Issues][Common Issues]]
   - [ ] title =org <$> trello= about? -> [[file:org-trello.org::*About%20org-trello][About org-trello]]
   - [ ] error about credentials loading? -> [[file:org-trello.org::*Common%20Issues][Common Issues]]
-- [ ] Customize [0/2]
-  - [ ] Lisp -> [[file:org-trello.org::*Example%20Emacs-Lisp%20Customization][Example Emacs-Lisp Customization]]
-  - [ ] Customize -> [[file:org-trello.org::*Customizing%20org-trello%20Variables][Customizing org-trello Variables]]
+- [X] Customize [2/2]
+  - [X] Lisp -> [[file:org-trello.org::*Example%20Emacs-Lisp%20Customization][Example Emacs-Lisp Customization]]
+  - [X] Customize -> [[file:org-trello.org::*Customizing%20org-trello%20Variables][Customizing org-trello Variables]]
 - [X] Downloads [4/4]
   - [X] Releases -> [[file:org-trello.org::*Release%20List%20and%20Notes][Release List and Notes]]
   - [X] Release Notes -> [[file:org-trello.org::*Release%20List%20and%20Notes][Release List and Notes]]

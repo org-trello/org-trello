@@ -161,13 +161,13 @@ ul.no-bullet {list-style: none}
     <li><a name="toc-Common-Issues-1" href="#Common-Issues">6.1 Common Issues</a></li>
     <li><a name="toc-Error-Messages-1" href="#Error-Messages">6.2 Error Messages</a></li>
   </ul></li>
-  <li><a name="toc-TODO-Customizing-org_002dtrello" href="#Customizing">7 <strong>TODO</strong> Customizing org-trello</a>
+  <li><a name="toc-CHEK-Customizing-org_002dtrello" href="#Customizing">7 <strong>CHEK</strong> Customizing org-trello</a>
   <ul class="no-bullet">
     <li><a name="toc-CHEK-Customizing-the-Prefix-Keybinding" href="#Prefix-Keys">7.1 <strong>CHEK</strong> Customizing the Prefix Keybinding</a></li>
     <li><a name="toc-CHEK-Customizing-Individual-Keybindings" href="#Individual-Keys">7.2 <strong>CHEK</strong> Customizing Individual Keybindings</a></li>
-    <li><a name="toc-TODO-Customizing-org_002dtrello-Variables" href="#Variables">7.3 <strong>TODO</strong> Customizing org-trello Variables</a></li>
-    <li><a name="toc-TODO-Example-Emacs_002dLisp-Customization" href="#Example">7.4 <strong>TODO</strong> Example Emacs-Lisp Customization</a></li>
-    <li><a name="toc-Automatic-org_002dtrello-Files" href="#Auto-Files">7.5 Automatic org-trello Files</a></li>
+    <li><a name="toc-CHEK-Customizing-org_002dtrello-Variables" href="#Variables">7.3 <strong>CHEK</strong> Customizing org-trello Variables</a></li>
+    <li><a name="toc-CHEK-Example-Emacs_002dLisp-Customization" href="#Example">7.4 <strong>CHEK</strong> Example Emacs-Lisp Customization</a></li>
+    <li><a name="toc-CHEK-Automatic-org_002dtrello-Files" href="#Auto-Files">7.5 <strong>CHEK</strong> Automatic org-trello Files</a></li>
   </ul></li>
   <li><a name="toc-CHEK-Development-of-org_002dtrello" href="#Contributing">8 <strong>CHEK</strong> Development of org-trello</a>
   <ul class="no-bullet">
@@ -1291,8 +1291,8 @@ Previous: <a href="#Common-Issues" accesskey="p" rel="prev">Common Issues</a>, U
 <p>
 Next: <a href="#Contributing" accesskey="n" rel="next">Contributing</a>, Previous: <a href="#Troubleshooting" accesskey="p" rel="prev">Troubleshooting</a>, Up: <a href="#Top" accesskey="u" rel="up">Top</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Indices" title="Index" rel="index">Index</a>]</p>
 </div>
-<a name="TODO-Customizing-org_002dtrello"></a>
-<h2 class="chapter">7 <strong>TODO</strong> Customizing org-trello</h2>
+<a name="CHEK-Customizing-org_002dtrello"></a>
+<h2 class="chapter">7 <strong>CHEK</strong> Customizing org-trello</h2>
 
 <a name="index-customizing"></a>
 <p>This section describes how you may customize org-trello.
@@ -1402,8 +1402,75 @@ remove specific existing org-trello keybindings:
 <p>
 Next: <a href="#Example" accesskey="n" rel="next">Example</a>, Previous: <a href="#Individual-Keys" accesskey="p" rel="prev">Individual Keys</a>, Up: <a href="#Customizing" accesskey="u" rel="up">Customizing</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Indices" title="Index" rel="index">Index</a>]</p>
 </div>
-<a name="TODO-Customizing-org_002dtrello-Variables"></a>
-<h3 class="section">7.3 <strong>TODO</strong> Customizing org-trello Variables</h3>
+<a name="CHEK-Customizing-org_002dtrello-Variables"></a>
+<h3 class="section">7.3 <strong>CHEK</strong> Customizing org-trello Variables</h3>
+
+<p>You may customize org-trello settings by typing: <br>
+“M-x customize-group RET org-trello RET”.
+</p>
+<p>You may customize any of the following variables from the user-interface.
+</p>
+<div class="example">
+<pre class="example">Parent groups: Org
+
+Org-trello group:  Org-trello customisation group.
+       State : visible group members are all at standard values.
+   
+Org Trello Add Tags 
+   Add trello colors to org tags list?
+
+Org Trello Current Prefix Keybinding 
+   The default prefix keybinding to execute org-trello commands.
+
+Org Trello Files 
+   Org-trello files that needs org-trello activated when opened. Hide
+   This does not support regular expression.
+
+Org Trello Input Completion Mechanism 
+   The completion mechanism the user can choose from. Hide
+   Default is the native ido mechanism.
+   Other possibilities is helm but it’s up to you to install the dependencies.
+   (require ’helm)
+   (custom-set-variables ’(org-trello-input-completion-mechanism ’helm))
+
+Org Trello Mode Hook 
+   Define org-trello hook for user to extend mode with their own behavior.
+
+Orgtrello Log Level 
+   Set log level. Hide
+   Levels:
+   0 - no log   (‘orgtrello-log-quiet’)
+   1 - errors   (‘orgtrello-log-error’)
+   2 - warnings (‘orgtrello-log-warn’)
+   3 - info     (‘orgtrello-log-info’)
+   4 - debug    (‘orgtrello-log-debug’)
+   5 - trace    (‘orgtrello-log-trace’)
+   To change such level, add this to your init.el file:
+   (custom-set-variables ’(orgtrello-log-level orgtrello-log-trace))
+
+Orgtrello Setup Use Position In Checksum Computation 
+   Let the user decide if (s)he wants to use the position in the checksum. Hide
+   The checksum is a hash computation of the current entity’s data to prevent
+   sending too many sync requests if unnecessary (no real change since last time).
+   
+   If t, when sync to trello, any change for the current entity will be reflected
+   in trello’s board.  However, a global sync to trello, will trigger many
+   unnecessary sync to trello queries for any entity below the current entity
+   changed...  Indeed, the position changes anytime you insert or delete a char.
+   This renders almost useless the checksum computation.
+   
+   Cf.  https://github.com/org-trello/org-trello-issues/271.
+   Please, do not hesitate to provide a better idea or a better implementation.
+   
+   If nil, the default, the sync to trello will be limited to what’s really changed
+   (except for the position).  So the entity’s position in trello’s board can be
+   slightly different than the one from the buffer.
+
+Orgtrello With Check On Sensible Actions 
+   Some action can be dangerous removing entity for example. Hide
+   This custom determine if the user wants to be asked confirmation
+   before doing some of those sensitive actions.
+</pre></div>
 
 <hr>
 <a name="Example"></a>
@@ -1411,18 +1478,56 @@ Next: <a href="#Example" accesskey="n" rel="next">Example</a>, Previous: <a href
 <p>
 Next: <a href="#Auto-Files" accesskey="n" rel="next">Auto Files</a>, Previous: <a href="#Variables" accesskey="p" rel="prev">Variables</a>, Up: <a href="#Customizing" accesskey="u" rel="up">Customizing</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Indices" title="Index" rel="index">Index</a>]</p>
 </div>
-<a name="TODO-Example-Emacs_002dLisp-Customization"></a>
-<h3 class="section">7.4 <strong>TODO</strong> Example Emacs-Lisp Customization</h3>
+<a name="CHEK-Example-Emacs_002dLisp-Customization"></a>
+<h3 class="section">7.4 <strong>CHEK</strong> Example Emacs-Lisp Customization</h3>
 
+<p>Here is an example of how to configure org-trello user-customized
+variables using emacs-lisp:
+</p>
+<div class="lisp">
+<pre class="lisp">(custom-set-variables
+   '(orgtrello-log-level orgtrello-log-debug) ;; log level to debug
+   '(org-trello-current-prefix-keybinding &quot;C-c x&quot;) ;; C-c x as the default prefix
+   '(orgtrello-setup-use-position-in-checksum-computation nil) ;; checksum without position
+   '(org-trello-files '(&quot;~/docs/some-doc.trello&quot;
+                        &quot;~/docs/some-other-doc.org&quot;))) ;; automatic org-trello on files
+</pre></div>
+
+<p>To set these variables for the current session, place the cursor after
+the entire s-exp and evaluate it using “M-x eval-last-sexp”.
+</p>
+<p>To make these settings permanent in later sessions, put this code
+inside your emacs setup file (“~/.emacs” or “~/emacs.d/init.el”).
+</p>
 <hr>
 <a name="Auto-Files"></a>
 <div class="header">
 <p>
 Previous: <a href="#Example" accesskey="p" rel="prev">Example</a>, Up: <a href="#Customizing" accesskey="u" rel="up">Customizing</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Indices" title="Index" rel="index">Index</a>]</p>
 </div>
-<a name="Automatic-org_002dtrello-Files"></a>
-<h3 class="section">7.5 Automatic org-trello Files</h3>
+<a name="CHEK-Automatic-org_002dtrello-Files"></a>
+<h3 class="section">7.5 <strong>CHEK</strong> Automatic org-trello Files</h3>
 
+<p>To have emacs automatically start org-trello when you open a file with
+a “.trello” extension, add this to your personal emacs setup file:
+</p>
+<div class="lisp">
+<pre class="lisp">;; org-trello major mode for all .trello files
+
+(add-to-list 'auto-mode-alist '(&quot;\\.trello$&quot; . org-mode))
+
+;; add a hook function to check if this is trello file,
+;; then activate the org-trello minor mode.
+
+(add-hook 'org-mode-hook
+          (lambda ()
+            (let ((filename (buffer-file-name (current-buffer))))
+              (when (and filename (string= &quot;trello&quot; (file-name-extension filename)))
+              (org-trello-mode)))))
+</pre></div>
+
+<p>source: <a href="https://github.com/org-trello/org-trello/issues/249">https://github.com/org-trello/org-trello/issues/249</a>
+</p>
 <hr>
 <a name="Contributing"></a>
 <div class="header">

@@ -767,7 +767,7 @@ This section describes the format of the text in an org-trello buffer.
 @section Error Messages
 
 @node Customizing
-@chapter @strong{TODO} Customizing org-trello
+@chapter @strong{CHEK} Customizing org-trello
 
 @cindex customizing
 This section describes how you may customize org-trello.
@@ -855,13 +855,118 @@ remove specific existing org-trello keybindings:
 @end lisp
 
 @node Variables
-@section @strong{TODO} Customizing org-trello Variables
+@section @strong{CHEK} Customizing org-trello Variables
+
+You may customize org-trello settings by typing: @*
+“M-x customize-group RET org-trello RET”.
+
+You may customize any of the following variables from the user-interface.
+
+@example
+Parent groups: Org
+
+Org-trello group:  Org-trello customisation group.
+       State : visible group members are all at standard values.
+   
+Org Trello Add Tags 
+   Add trello colors to org tags list?
+
+Org Trello Current Prefix Keybinding 
+   The default prefix keybinding to execute org-trello commands.
+
+Org Trello Files 
+   Org-trello files that needs org-trello activated when opened. Hide
+   This does not support regular expression.
+
+Org Trello Input Completion Mechanism 
+   The completion mechanism the user can choose from. Hide
+   Default is the native ido mechanism.
+   Other possibilities is helm but it’s up to you to install the dependencies.
+   (require ’helm)
+   (custom-set-variables ’(org-trello-input-completion-mechanism ’helm))
+
+Org Trello Mode Hook 
+   Define org-trello hook for user to extend mode with their own behavior.
+
+Orgtrello Log Level 
+   Set log level. Hide
+   Levels:
+   0 - no log   (‘orgtrello-log-quiet’)
+   1 - errors   (‘orgtrello-log-error’)
+   2 - warnings (‘orgtrello-log-warn’)
+   3 - info     (‘orgtrello-log-info’)
+   4 - debug    (‘orgtrello-log-debug’)
+   5 - trace    (‘orgtrello-log-trace’)
+   To change such level, add this to your init.el file:
+   (custom-set-variables ’(orgtrello-log-level orgtrello-log-trace))
+
+Orgtrello Setup Use Position In Checksum Computation 
+   Let the user decide if (s)he wants to use the position in the checksum. Hide
+   The checksum is a hash computation of the current entity’s data to prevent
+   sending too many sync requests if unnecessary (no real change since last time).
+   
+   If t, when sync to trello, any change for the current entity will be reflected
+   in trello’s board.  However, a global sync to trello, will trigger many
+   unnecessary sync to trello queries for any entity below the current entity
+   changed...  Indeed, the position changes anytime you insert or delete a char.
+   This renders almost useless the checksum computation.
+   
+   Cf.  https://github.com/org-trello/org-trello-issues/271.
+   Please, do not hesitate to provide a better idea or a better implementation.
+   
+   If nil, the default, the sync to trello will be limited to what’s really changed
+   (except for the position).  So the entity’s position in trello’s board can be
+   slightly different than the one from the buffer.
+
+Orgtrello With Check On Sensible Actions 
+   Some action can be dangerous removing entity for example. Hide
+   This custom determine if the user wants to be asked confirmation
+   before doing some of those sensitive actions.
+@end example
 
 @node Example
-@section @strong{TODO} Example Emacs-Lisp Customization
+@section @strong{CHEK} Example Emacs-Lisp Customization
+
+Here is an example of how to configure org-trello user-customized
+variables using emacs-lisp:
+
+@lisp
+(custom-set-variables
+   '(orgtrello-log-level orgtrello-log-debug) ;; log level to debug
+   '(org-trello-current-prefix-keybinding "C-c x") ;; C-c x as the default prefix
+   '(orgtrello-setup-use-position-in-checksum-computation nil) ;; checksum without position
+   '(org-trello-files '("~/docs/some-doc.trello"
+                        "~/docs/some-other-doc.org"))) ;; automatic org-trello on files
+@end lisp
+
+To set these variables for the current session, place the cursor after
+the entire s-exp and evaluate it using “M-x eval-last-sexp”.
+
+To make these settings permanent in later sessions, put this code
+inside your emacs setup file (“~/.emacs” or “~/emacs.d/init.el”).
 
 @node Auto Files
-@section Automatic org-trello Files
+@section @strong{CHEK} Automatic org-trello Files
+
+To have emacs automatically start org-trello when you open a file with
+a “.trello” extension, add this to your personal emacs setup file:
+
+@lisp
+;; org-trello major mode for all .trello files
+
+(add-to-list 'auto-mode-alist '("\\.trello$" . org-mode))
+
+;; add a hook function to check if this is trello file,
+;; then activate the org-trello minor mode.
+
+(add-hook 'org-mode-hook
+          (lambda ()
+            (let ((filename (buffer-file-name (current-buffer))))
+              (when (and filename (string= "trello" (file-name-extension filename)))
+              (org-trello-mode)))))
+@end lisp
+
+source: @uref{https://github.com/org-trello/org-trello/issues/249}
 
 @node Contributing
 @chapter @strong{CHEK} Development of org-trello
