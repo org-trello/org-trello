@@ -11,15 +11,15 @@
 Use wget to grab the existing documentation, then convert it to org-mode
 through pandoc for easier reference and cut/paste.
 
-* WORK Cover Existing Documentation [7/14]
+* WORK Cover Existing Documentation [9/14]
 The first draft must cover all the content from all files and sections of
 the existing documentation.
-- [ ] Page Margins -> [[file:org-trello.org::*About%20org-trello][About org-trello]]
-  - [ ] Top/Logo
-  - [ ] Download Zip
-  - [ ] Download Tarball
-  - [ ] View on GitHub
-  - [ ] Table of Contents
+- [-] Page Margins -> [[file:org-trello.org::*About%20org-trello][About org-trello]]
+  - [ ] Logo
+  - [X] Download Zip
+  - [X] Download Tarball
+  - [X] View on GitHub
+  - [X] Table of Contents
 - [X] About -> [[file:org-trello.org::*About%20org-trello][About org-trello]]
 - [ ] Demo Videos -> [[file:org-trello.org::*Demo%20Videos][Demo Videos]]
 - [X] Install [2/2]
@@ -30,10 +30,10 @@ the existing documentation.
       - [X] Tarball -> [[file:org-trello.org::*Download%20and%20Install%20the%20org-trello%20tarball][Download and Install the org-trello tarball]]
       - [X] el-get -> [[file:org-trello.org::*Get%20org-trello%20with%20el-get][Get org-trello with el-get]]
       - [X] Git + Cask (dev) -> [[file:org-trello.org::*Clone%20from%20GitHub%20and%20Install%20with%20Cask][Clone from GitHub and Install with Cask]]
-- [-] Trello Setup [1/4]
-  - [ ] Credentials -> [[file:org-trello.org::*Installing%20Your%20Trello.com%20Credentials][Installing Your Trello.com Credentials]]
-  - [ ] Connect org-mode buffer to board -> [[file:org-trello.org::*Connect%20an%20org-mode%20buffer%20with%20an%20existing%20Trello%20board.][Connect an org-mode buffer with an existing Trello board.]]
-  - [ ] Create a board -> [[file:org-trello.org::*Create%20a%20Trello%20board%20from%20your%20org-mode%20buffer.][Create a Trello board from your org-mode buffer.]]
+- [X] Trello Setup [4/4]
+  - [X] Credentials -> [[file:org-trello.org::*Installing%20Your%20Trello.com%20Credentials][Installing Your Trello.com Credentials]]
+  - [X] Connect org-mode buffer to board -> [[file:org-trello.org::*Connect%20an%20org-mode%20buffer%20with%20an%20existing%20Trello%20board.][Connect an org-mode buffer with an existing Trello board.]]
+  - [X] Create a board -> [[file:org-trello.org::*Create%20a%20Trello%20board%20from%20your%20org-mode%20buffer.][Create a Trello board from your org-mode buffer.]]
   - [X] Migrations-> [[file:org-trello.org::#migration][Migrating to New Releases]]
 - [ ] Quick Start -> [[file:org-trello.org::*Quick%20Start][Quick Start]]
 - [X] Migration -> [[file:org-trello.org::#migration][Migrating to New Releases]]
@@ -41,9 +41,9 @@ the existing documentation.
   - [-] Keybindings -> [[file:org-trello.org::*Summary%20of%20Commands][Using/Summary of Commands]]
   - [X] Bindings Override -> [[file:org-trello.org::*Customizing%20Individual%20Keybindings][Customizing/Individual]]
   - [X] Prefix binding override -> [[file:org-trello.org::*Customizing%20the%20Prefix%20Keybinding][Customizing/Prefix]]
-- [-] Usage [1/4]
-  - [ ] Format -> [[file:org-trello.org::*Format%20of%20org-trello][Format of org-trello]]
-    - [ ] Sample
+- [-] Usage [3/4]
+  - [X] Format -> [[file:org-trello.org::*Format%20of%20org-trello][Format of org-trello]]
+    - [X] Sample
   - [ ] Use-Cases -> [[file:org-trello.org::*How%20to%E2%80%A6][How to…]]
     - [ ] Card and deadline/due date
     - [ ] Sync entity to Trello board
@@ -57,12 +57,12 @@ the existing documentation.
     - [ ] Jump to Trello card
     - [ ] Jump to Trello board
     - [ ] Add comments
-  - [ ] Possible errors -> [[file:org-trello.org::*Error%20Messages][Error Messages]]
+  - [X] Possible errors -> [[file:org-trello.org::*Error%20Messages][Error Messages]]
   - [X] Automatic org-trello files -> [[file:org-trello.org::*Automatic%20org-trello%20Files][Automatic org-trello Files]]
-- [ ] FAQ
-  - [ ] Issue Tracker -> [[file:org-trello.org::*Common%20Issues][Common Issues]]
-  - [ ] title =org <$> trello= about? -> [[file:org-trello.org::*About%20org-trello][About org-trello]]
-  - [ ] error about credentials loading? -> [[file:org-trello.org::*Common%20Issues][Common Issues]]
+- [X] FAQ
+  - [X] Issue Tracker -> [[file:org-trello.org::*Common%20Issues][Common Issues]]
+  - [X] title =org <$> trello= about? -> [[file:org-trello.org::*About%20org-trello][About org-trello]]
+  - [X] error about credentials loading? -> [[file:org-trello.org::*Common%20Issues][Common Issues]]
 - [X] Customize [2/2]
   - [X] Lisp -> [[file:org-trello.org::*Example%20Emacs-Lisp%20Customization][Example Emacs-Lisp Customization]]
   - [X] Customize -> [[file:org-trello.org::*Customizing%20org-trello%20Variables][Customizing org-trello Variables]]

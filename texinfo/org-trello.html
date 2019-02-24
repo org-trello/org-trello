@@ -86,7 +86,7 @@ ul.no-bullet {list-style: none}
 </head>
 
 <body lang="en">
-<h1 class="settitle" align="center">org-trello Manual</h1>
+<h1 class="settitle" align="center">&lsquo;<samp>org-trello</samp>&rsquo; Manual</h1>
 
 
 
@@ -97,52 +97,52 @@ ul.no-bullet {list-style: none}
 <div class="contents">
 
 <ul class="no-bullet">
-  <li><a name="toc-TODO-About-org_002dtrello" href="#About">1 <strong>TODO</strong> About org-trello</a></li>
+  <li><a name="toc-CHEK-About-org_002dtrello" href="#About">1 <strong>CHEK</strong> About &lsquo;<samp>org-trello</samp>&rsquo;</a></li>
   <li><a name="toc-TODO-Demo-Videos" href="#Demos">2 <strong>TODO</strong> Demo Videos</a></li>
-  <li><a name="toc-CHEK-Installing-org_002dtrello" href="#Installing">3 <strong>CHEK</strong> Installing org-trello</a>
+  <li><a name="toc-Installing-org_002dtrello" href="#Installing">3 Installing &lsquo;<samp>org-trello</samp>&rsquo;</a>
   <ul class="no-bullet">
-    <li><a name="toc-CHEK-Installing-org_002dtrello-using-Package-_0028recommended_0029" href="#Installing-with-Package">3.1 <strong>CHEK</strong> Installing org-trello using Package (recommended)</a>
+    <li><a name="toc-Installing-org_002dtrello-using-Package-_0028recommended_0029" href="#Installing-with-Package">3.1 Installing &lsquo;<samp>org-trello</samp>&rsquo; using Package (recommended)</a>
     <ul class="no-bullet">
-      <li><a name="toc-CHEK-Using-MELPA-with-Package" href="#Using-MELPA">3.1.1 <strong>CHEK</strong> Using MELPA with Package</a></li>
-      <li><a name="toc-CHEK-Installing-from-MELPA-with-Package" href="#Installing-from-MELPA">3.1.2 <strong>CHEK</strong> Installing from MELPA with Package</a></li>
+      <li><a name="toc-Using-MELPA-with-Package" href="#Using-MELPA">3.1.1 Using MELPA with Package</a></li>
+      <li><a name="toc-Installing-from-MELPA-with-Package" href="#Installing-from-MELPA">3.1.2 Installing from MELPA with Package</a></li>
     </ul></li>
-    <li><a name="toc-CHEK-Alternate-Ways-to-Install" href="#Alternate-Installations">3.2 <strong>CHEK</strong> Alternate Ways to Install</a>
+    <li><a name="toc-Alternate-Ways-to-Install" href="#Alternate-Installations">3.2 Alternate Ways to Install</a>
     <ul class="no-bullet">
-      <li><a name="toc-CHEK-Download-and-Install-the-Tarball" href="#Tarball">3.2.1 <strong>CHEK</strong> Download and Install the Tarball</a></li>
-      <li><a name="toc-CHEK-Get-and-Install-with-el_002dget" href="#el_002dget">3.2.2 <strong>CHEK</strong> Get and Install with el-get</a></li>
-      <li><a name="toc-CHEK-Clone-from-GitHub-and-Install-with-Cask" href="#GitHub-_0026-Cask">3.2.3 <strong>CHEK</strong> Clone from GitHub and Install with Cask</a></li>
+      <li><a name="toc-Download-and-Install-the-Tarball" href="#Tarball">3.2.1 Download and Install the Tarball</a></li>
+      <li><a name="toc-Get-and-Install-with-el_002dget" href="#el_002dget">3.2.2 Get and Install with el-get</a></li>
+      <li><a name="toc-Clone-from-GitHub-and-Install-with-Cask" href="#GitHub-_0026-Cask">3.2.3 Clone from GitHub and Install with Cask</a></li>
     </ul></li>
-    <li><a name="toc-CHEK-Loading-org_002dtrello-in-Emacs" href="#Loading">3.3 <strong>CHEK</strong> Loading org-trello in Emacs</a></li>
-    <li><a name="toc-Using-the-org_002dtrello-manual" href="#Install-Manual">3.4 Using the org-trello manual</a>
+    <li><a name="toc-Loading-org_002dtrello-in-Emacs" href="#Loading">3.3 Loading &lsquo;<samp>org-trello</samp>&rsquo; in Emacs</a></li>
+    <li><a name="toc-Using-the-org_002dtrello-manual" href="#Install-Manual">3.4 Using the &lsquo;<samp>org-trello</samp>&rsquo; manual</a>
     <ul class="no-bullet">
       <li><a name="toc-Building-the-Manual" href="#Building-Manual">3.4.1 Building the Manual</a></li>
       <li><a name="toc-Installing-the-_002einfo-Manual" href="#Installing-Manual">3.4.2 Installing the .info Manual</a></li>
     </ul></li>
     <li><a name="toc-Migrating-to-New-Releases" href="#Migrating">3.5 Migrating to New Releases</a>
     <ul class="no-bullet">
-      <li><a name="toc-0_002e8_002e1" href="#g_t081">3.5.1 0.8.1</a></li>
-      <li><a name="toc-0_002e7_002e0" href="#g_t070">3.5.2 0.7.0</a></li>
-      <li><a name="toc-0_002e6_002e7" href="#g_t067">3.5.3 0.6.7</a></li>
-      <li><a name="toc-0_002e6_002e6" href="#g_t066">3.5.4 0.6.6</a></li>
-      <li><a name="toc-0_002e5_002e5" href="#g_t055">3.5.5 0.5.5</a></li>
-      <li><a name="toc-0_002e5_002e3" href="#g_t053">3.5.6 0.5.3</a></li>
-      <li><a name="toc-0_002e5_002e2" href="#g_t052">3.5.7 0.5.2</a></li>
-      <li><a name="toc-0_002e3_002e8" href="#g_t038">3.5.8 0.3.8</a></li>
-      <li><a name="toc-0_002e3_002e1" href="#g_t031">3.5.9 0.3.1</a></li>
-      <li><a name="toc-0_002e2_002e9" href="#g_t029">3.5.10 0.2.9</a></li>
-      <li><a name="toc-0_002e2_002e8" href="#g_t028">3.5.11 0.2.8</a></li>
-      <li><a name="toc-0_002e2_002e1-_002d_003e-0_002e2_002e2" href="#g_t021-_002d_003e-022">3.5.12 0.2.1 -&gt; 0.2.2</a></li>
-      <li><a name="toc-0_002e1_002e5-_002d_003e-0_002e1_002e6" href="#g_t015-_002d_003e-016">3.5.13 0.1.5 -&gt; 0.1.6</a></li>
-      <li><a name="toc-0_002e1_002e1-_002d_003e-0_002e1_002e2" href="#g_t011-_002d_003e-012">3.5.14 0.1.1 -&gt; 0.1.2</a></li>
+      <li><a name="toc-Migrate-to-0_002e8_002e1" href="#Migrate-to-081">3.5.1 Migrate to 0.8.1</a></li>
+      <li><a name="toc-Migrate-to-0_002e7_002e0" href="#Migrate-to-070">3.5.2 Migrate to 0.7.0</a></li>
+      <li><a name="toc-Migrate-to-0_002e6_002e7" href="#Migrate-to-067">3.5.3 Migrate to 0.6.7</a></li>
+      <li><a name="toc-Migrate-to-0_002e6_002e6" href="#Migrate-to-066">3.5.4 Migrate to 0.6.6</a></li>
+      <li><a name="toc-Migrate-to-0_002e5_002e5" href="#Migrate-to-055">3.5.5 Migrate to 0.5.5</a></li>
+      <li><a name="toc-Migrate-to-0_002e5_002e3" href="#Migrate-to-053">3.5.6 Migrate to 0.5.3</a></li>
+      <li><a name="toc-Migrate-to-0_002e5_002e2" href="#Migrate-to-052">3.5.7 Migrate to 0.5.2</a></li>
+      <li><a name="toc-Migrate-to-0_002e3_002e8" href="#Migrate-to-038">3.5.8 Migrate to 0.3.8</a></li>
+      <li><a name="toc-Migrate-to-0_002e3_002e1" href="#Migrate-to-031">3.5.9 Migrate to 0.3.1</a></li>
+      <li><a name="toc-Migrate-to-0_002e2_002e9" href="#Migrate-to-029">3.5.10 Migrate to 0.2.9</a></li>
+      <li><a name="toc-Migrate-to-0_002e2_002e8" href="#Migrate-to-028">3.5.11 Migrate to 0.2.8</a></li>
+      <li><a name="toc-Migrate-0_002e2_002e1-to-0_002e2_002e2" href="#Migrate-021-to-022">3.5.12 Migrate 0.2.1 to 0.2.2</a></li>
+      <li><a name="toc-Migrate-0_002e1_002e5-to-0_002e1_002e6" href="#Migrate-015-to-016">3.5.13 Migrate 0.1.5 to 0.1.6</a></li>
+      <li><a name="toc-Migrate-0_002e1_002e1-to-0_002e1_002e2" href="#Migrate-011-to-012">3.5.14 Migrate 0.1.1 to 0.1.2</a></li>
     </ul></li>
   </ul></li>
-  <li><a name="toc-TODO-Connecting-to-Trello_002ecom" href="#Connecting">4 <strong>TODO</strong> Connecting to Trello.com</a>
+  <li><a name="toc-CHEK-Connecting-to-Trello_002ecom" href="#Connecting">4 <strong>CHEK</strong> Connecting to Trello.com</a>
   <ul class="no-bullet">
     <li><a name="toc-Installing-Your-Trello_002ecom-Credentials" href="#Installing-Credentials">4.1 Installing Your Trello.com Credentials</a></li>
     <li><a name="toc-Connect-an-org_002dmode-buffer-with-an-existing-Trello-board_002e" href="#Connect-Existing-Board">4.2 Connect an org-mode buffer with an existing Trello board.</a></li>
     <li><a name="toc-Create-a-Trello-board-from-your-org_002dmode-buffer_002e" href="#Create-a-Board">4.3 Create a Trello board from your org-mode buffer.</a></li>
   </ul></li>
-  <li><a name="toc-TODO-Using-org_002dtrello" href="#Using">5 <strong>TODO</strong> Using org-trello</a>
+  <li><a name="toc-TODO-Using-org_002dtrello" href="#Using">5 <strong>TODO</strong> Using &lsquo;<samp>org-trello</samp>&rsquo;</a>
   <ul class="no-bullet">
     <li><a name="toc-TODO-Quick-Start" href="#Quick-Start">5.1 <strong>TODO</strong> Quick Start</a></li>
     <li><a name="toc-Command-Descriptions-1" href="#Command-Descriptions">5.2 Command Descriptions</a>
@@ -156,20 +156,20 @@ ul.no-bullet {list-style: none}
     <li><a name="toc-TODO-How-to_2026" href="#How-to_2026">5.3 <strong>TODO</strong> How to…</a></li>
     <li><a name="toc-TODO-Format-of-org_002dtrello" href="#Format">5.4 <strong>TODO</strong> Format of org-trello</a></li>
   </ul></li>
-  <li><a name="toc-TODO-Troubleshooting-org_002dtrello" href="#Troubleshooting">6 <strong>TODO</strong> Troubleshooting org-trello</a>
+  <li><a name="toc-CHEK-Troubleshooting-org_002dtrello" href="#Troubleshooting">6 <strong>CHEK</strong> Troubleshooting &lsquo;<samp>org-trello</samp>&rsquo;</a>
   <ul class="no-bullet">
     <li><a name="toc-Common-Issues-1" href="#Common-Issues">6.1 Common Issues</a></li>
     <li><a name="toc-Error-Messages-1" href="#Error-Messages">6.2 Error Messages</a></li>
   </ul></li>
-  <li><a name="toc-Customizing-org_002dtrello" href="#Customizing">7 Customizing org-trello</a>
+  <li><a name="toc-Customizing-org_002dtrello" href="#Customizing">7 Customizing &lsquo;<samp>org-trello</samp>&rsquo;</a>
   <ul class="no-bullet">
     <li><a name="toc-Customizing-the-Prefix-Keybinding" href="#Prefix-Keys">7.1 Customizing the Prefix Keybinding</a></li>
     <li><a name="toc-Customizing-Individual-Keybindings" href="#Individual-Keys">7.2 Customizing Individual Keybindings</a></li>
-    <li><a name="toc-Customizing-org_002dtrello-Variables" href="#Variables">7.3 Customizing org-trello Variables</a></li>
+    <li><a name="toc-Customizing-org_002dtrello-Variables" href="#Variables">7.3 Customizing &lsquo;<samp>org-trello</samp>&rsquo; Variables</a></li>
     <li><a name="toc-Example-Emacs_002dLisp-Customization" href="#Example">7.4 Example Emacs-Lisp Customization</a></li>
-    <li><a name="toc-Automatic-org_002dtrello-Files" href="#Auto-Files">7.5 Automatic org-trello Files</a></li>
+    <li><a name="toc-Automatic-org_002dtrello-Files" href="#Auto-Files">7.5 Automatic &lsquo;<samp>org-trello</samp>&rsquo; Files</a></li>
   </ul></li>
-  <li><a name="toc-Development-of-org_002dtrello" href="#Contributing">8 Development of org-trello</a>
+  <li><a name="toc-Development-of-org_002dtrello" href="#Contributing">8 Development of &lsquo;<samp>org-trello</samp>&rsquo;</a>
   <ul class="no-bullet">
     <li><a name="toc-Credits-1" href="#Credits">8.1 Credits</a></li>
     <li><a name="toc-Issue-List" href="#Issues">8.2 Issue List</a>
@@ -206,11 +206,11 @@ ul.no-bullet {list-style: none}
 Next: <a href="#About" accesskey="n" rel="next">About</a>, Up: <a href="dir.html#Top" accesskey="u" rel="up">(dir)</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Indices" title="Index" rel="index">Index</a>]</p>
 </div>
 <a name="org_002dtrello-Manual"></a>
-<h1 class="top">org-trello Manual</h1>
+<h1 class="top">&lsquo;<samp>org-trello</samp>&rsquo; Manual</h1>
 
 <p>Sync Emacs org-mode with Trello.com.
 </p>
-<p>This is the org-trello Manual, edition 0.8.1.a, released 2019-01-30,
+<p>This is the &lsquo;<samp>org-trello</samp>&rsquo; Manual, edition 0.8.1.a, released 2019-01-30,
 written and copyright ©2019 by Daniel Birket.
 </p>
 <blockquote>
@@ -224,11 +224,11 @@ Free Documentation License.
 </blockquote>
 
 <p>This manaul describes how to install and use the Emacs package
-org-trello, version 0.8.1, released 2018-03-18,
+&lsquo;<samp>org-trello</samp>&rsquo;, version 0.8.1, released 2018-03-18,
 written and copyright ©2013-2017 by Antoine Dumont,
 to synchronize org-mode TO-DO lists with <a href="https://trello.com">Trello.com</a>.
 </p>
-<p>This manual was written with reference to the org-trello source-code,
+<p>This manual was written with reference to the &lsquo;<samp>org-trello</samp>&rsquo; source-code,
 which begins with this license and non-warranty statement:
 </p>
 <div class="lisp">
@@ -257,21 +257,21 @@ which begins with this license and non-warranty statement:
 
 
 <table class="menu" border="0" cellspacing="0">
-<tr><td align="left" valign="top">&bull; <a href="#About" accesskey="1">About</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">About org-trello
+<tr><td align="left" valign="top">&bull; <a href="#About" accesskey="1">About</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">About =org-trello=
 </td></tr>
 <tr><td align="left" valign="top">&bull; <a href="#Demos" accesskey="2">Demos</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Demonstration Videos
 </td></tr>
-<tr><td align="left" valign="top">&bull; <a href="#Installing" accesskey="3">Installing</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Installing org-trello
+<tr><td align="left" valign="top">&bull; <a href="#Installing" accesskey="3">Installing</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Installing =org-trello=
 </td></tr>
 <tr><td align="left" valign="top">&bull; <a href="#Connecting" accesskey="4">Connecting</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Connecting to Trello.com
 </td></tr>
-<tr><td align="left" valign="top">&bull; <a href="#Using" accesskey="5">Using</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Using org-trello
+<tr><td align="left" valign="top">&bull; <a href="#Using" accesskey="5">Using</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Using =org-trello=
 </td></tr>
-<tr><td align="left" valign="top">&bull; <a href="#Troubleshooting" accesskey="6">Troubleshooting</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Troubleshooting org-trello
+<tr><td align="left" valign="top">&bull; <a href="#Troubleshooting" accesskey="6">Troubleshooting</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Troubleshooting =org-trello=
 </td></tr>
-<tr><td align="left" valign="top">&bull; <a href="#Customizing" accesskey="7">Customizing</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Customizing org-trello
+<tr><td align="left" valign="top">&bull; <a href="#Customizing" accesskey="7">Customizing</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Customizing =org-trello=
 </td></tr>
-<tr><td align="left" valign="top">&bull; <a href="#Contributing" accesskey="8">Contributing</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Contributing to org-trello
+<tr><td align="left" valign="top">&bull; <a href="#Contributing" accesskey="8">Contributing</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Contributing to =org-trello=
 </td></tr>
 <tr><td align="left" valign="top">&bull; <a href="#GNU-GPL" accesskey="9">GNU GPL</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">GNU General Public License
 </td></tr>
@@ -289,7 +289,7 @@ Installing
 </td></tr>
 <tr><td align="left" valign="top">&bull; <a href="#Alternate-Installations">Alternate Installations</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Alternate Ways to Install
 </td></tr>
-<tr><td align="left" valign="top">&bull; <a href="#Loading">Loading</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Loading org-trello in Emacs
+<tr><td align="left" valign="top">&bull; <a href="#Loading">Loading</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Loading =org-trello= in Emacs
 </td></tr>
 <tr><td align="left" valign="top">&bull; <a href="#Install-Manual">Install Manual</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Installing the Manual
 </td></tr>
@@ -325,33 +325,33 @@ Install Manual
 
 Migrating
 
-</pre></th></tr><tr><td align="left" valign="top">&bull; <a href="#g_t081">0.8.1</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</pre></th></tr><tr><td align="left" valign="top">&bull; <a href="#Migrate-to-081">Migrate to 0.8.1</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
-<tr><td align="left" valign="top">&bull; <a href="#g_t070">0.7.0</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+<tr><td align="left" valign="top">&bull; <a href="#Migrate-to-070">Migrate to 0.7.0</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
-<tr><td align="left" valign="top">&bull; <a href="#g_t067">0.6.7</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+<tr><td align="left" valign="top">&bull; <a href="#Migrate-to-067">Migrate to 0.6.7</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
-<tr><td align="left" valign="top">&bull; <a href="#g_t066">0.6.6</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+<tr><td align="left" valign="top">&bull; <a href="#Migrate-to-066">Migrate to 0.6.6</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
-<tr><td align="left" valign="top">&bull; <a href="#g_t055">0.5.5</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+<tr><td align="left" valign="top">&bull; <a href="#Migrate-to-055">Migrate to 0.5.5</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
-<tr><td align="left" valign="top">&bull; <a href="#g_t053">0.5.3</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+<tr><td align="left" valign="top">&bull; <a href="#Migrate-to-053">Migrate to 0.5.3</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
-<tr><td align="left" valign="top">&bull; <a href="#g_t052">0.5.2</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+<tr><td align="left" valign="top">&bull; <a href="#Migrate-to-052">Migrate to 0.5.2</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
-<tr><td align="left" valign="top">&bull; <a href="#g_t038">0.3.8</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+<tr><td align="left" valign="top">&bull; <a href="#Migrate-to-038">Migrate to 0.3.8</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
-<tr><td align="left" valign="top">&bull; <a href="#g_t031">0.3.1</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+<tr><td align="left" valign="top">&bull; <a href="#Migrate-to-031">Migrate to 0.3.1</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
-<tr><td align="left" valign="top">&bull; <a href="#g_t029">0.2.9</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+<tr><td align="left" valign="top">&bull; <a href="#Migrate-to-029">Migrate to 0.2.9</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
-<tr><td align="left" valign="top">&bull; <a href="#g_t028">0.2.8</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+<tr><td align="left" valign="top">&bull; <a href="#Migrate-to-028">Migrate to 0.2.8</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
-<tr><td align="left" valign="top">&bull; <a href="#g_t021-_002d_003e-022">0.2.1 -&gt; 0.2.2</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+<tr><td align="left" valign="top">&bull; <a href="#Migrate-021-to-022">Migrate 0.2.1 to 0.2.2</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
-<tr><td align="left" valign="top">&bull; <a href="#g_t015-_002d_003e-016">0.1.5 -&gt; 0.1.6</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+<tr><td align="left" valign="top">&bull; <a href="#Migrate-015-to-016">Migrate 0.1.5 to 0.1.6</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
-<tr><td align="left" valign="top">&bull; <a href="#g_t011-_002d_003e-012">0.1.1 -&gt; 0.1.2</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+<tr><td align="left" valign="top">&bull; <a href="#Migrate-011-to-012">Migrate 0.1.1 to 0.1.2</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
 <tr><th colspan="3" align="left" valign="top"><pre class="menu-comment">
 
@@ -367,13 +367,13 @@ Connecting
 
 Using
 
-</pre></th></tr><tr><td align="left" valign="top">&bull; <a href="#Quick-Start">Quick Start</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">First Steps with org-trello
+</pre></th></tr><tr><td align="left" valign="top">&bull; <a href="#Quick-Start">Quick Start</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">First Steps with =org-trello=
 </td></tr>
 <tr><td align="left" valign="top">&bull; <a href="#Command-Descriptions">Command Descriptions</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Command Descriptions
 </td></tr>
 <tr><td align="left" valign="top">&bull; <a href="#How-to_2026">How to…</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">How to Perform Tasks
 </td></tr>
-<tr><td align="left" valign="top">&bull; <a href="#Format">Format</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Format of org-trello
+<tr><td align="left" valign="top">&bull; <a href="#Format">Format</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Format of =org-trello=
 </td></tr>
 <tr><th colspan="3" align="left" valign="top"><pre class="menu-comment">
 
@@ -409,7 +409,7 @@ Customizing
 </td></tr>
 <tr><td align="left" valign="top">&bull; <a href="#Example">Example</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Example Emacs-Lisp Customization
 </td></tr>
-<tr><td align="left" valign="top">&bull; <a href="#Auto-Files">Auto Files</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Automatic org-trello Files
+<tr><td align="left" valign="top">&bull; <a href="#Auto-Files">Auto Files</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Automatic =org-trello= Files
 </td></tr>
 <tr><th colspan="3" align="left" valign="top"><pre class="menu-comment">
 
@@ -467,23 +467,34 @@ Indices
 <p>
 Next: <a href="#Demos" accesskey="n" rel="next">Demos</a>, Previous: <a href="#Top" accesskey="p" rel="prev">Top</a>, Up: <a href="#Top" accesskey="u" rel="up">Top</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Indices" title="Index" rel="index">Index</a>]</p>
 </div>
-<a name="TODO-About-org_002dtrello"></a>
-<h2 class="chapter">1 <strong>TODO</strong> About org-trello</h2>
+<a name="CHEK-About-org_002dtrello"></a>
+<h2 class="chapter">1 <strong>CHEK</strong> About &lsquo;<samp>org-trello</samp>&rsquo;</h2>
 
-<p>Why use org-trello?
-</p><ul>
+<ul>
+<li> Why use &lsquo;<samp>org-trello</samp>&rsquo;?
+
+<ul>
 <li> You use Emacs <a href="https://orgmode.org">org-mode</a>.
 </li><li> Your team uses <a href="https://trello.com/">Trello.com</a>.
-</li><li> org-trello is the bridge between org-mode and Trello.com.
+</li><li> &lsquo;<samp>org-trello</samp>&rsquo; is the bridge between org-mode and Trello.com.
 </li><li> Everyone wins!
 </li></ul>
 
-<p><em>Links:</em>
-</p><ul>
-<li> Download Zip
-</li><li> Download Tarball
-</li><li> View on GitHub
+</li><li> Links:
+
+<ul>
+<li> <a href="https://github.com/org-trello/org-trello/zipball/master">Download Zip</a>
+</li><li> <a href="https://github.com/org-trello/org-trello/tarball/master">Download Tarball</a>
+</li><li> <a href="https://github.com/org-trello/org-trello">View on GitHub</a>
 </li></ul>
+
+</li><li> What does your page title &lsquo;<samp>org &lt;$&gt; trello</samp>&rsquo; mean?
+
+<p>It means “map org functions to the trello world”.
+</p>
+<p>At the time, I was learning Haskell and it made an everlasting
+awesome impression on me. <a href="http://hackage.haskell.org/package/base-4.9.1.0/docs/Prelude.html#v:fmap">See fmap&rsquo;s documentation for more detail</a>.
+</p></li></ul>
 
 <hr>
 <a name="Demos"></a>
@@ -496,8 +507,8 @@ Next: <a href="#Installing" accesskey="n" rel="next">Installing</a>, Previous: <
 
 <p>This section provides links to several demo videos.
 </p>
-<p><em>Note:</em> The format of org-trello buffers has changed since these
-videos were created. Please see the <a href="#Format">current org-trello format</a>.
+<p><em>Note:</em> The format of &lsquo;<samp>org-trello</samp>&rsquo; buffers has changed since these
+videos were created. Please see the <a href="#Format">current &lsquo;<samp>org-trello</samp>&rsquo; format</a>.
 </p>
 <hr>
 <a name="Installing"></a>
@@ -505,10 +516,10 @@ videos were created. Please see the <a href="#Format">current org-trello format<
 <p>
 Next: <a href="#Connecting" accesskey="n" rel="next">Connecting</a>, Previous: <a href="#Demos" accesskey="p" rel="prev">Demos</a>, Up: <a href="#Top" accesskey="u" rel="up">Top</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Indices" title="Index" rel="index">Index</a>]</p>
 </div>
-<a name="CHEK-Installing-org_002dtrello"></a>
-<h2 class="chapter">3 <strong>CHEK</strong> Installing org-trello</h2>
+<a name="Installing-org_002dtrello"></a>
+<h2 class="chapter">3 Installing &lsquo;<samp>org-trello</samp>&rsquo;</h2>
 
-<p>This section describes how to obtain and install the org-trello
+<p>This section describes how to obtain and install the &lsquo;<samp>org-trello</samp>&rsquo;
 package and manual.
 </p>
 <table class="menu" border="0" cellspacing="0">
@@ -516,7 +527,7 @@ package and manual.
 </td></tr>
 <tr><td align="left" valign="top">&bull; <a href="#Alternate-Installations" accesskey="2">Alternate Installations</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Alternate Ways to Install
 </td></tr>
-<tr><td align="left" valign="top">&bull; <a href="#Loading" accesskey="3">Loading</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Loading org-trello in Emacs
+<tr><td align="left" valign="top">&bull; <a href="#Loading" accesskey="3">Loading</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Loading =org-trello= in Emacs
 </td></tr>
 <tr><td align="left" valign="top">&bull; <a href="#Install-Manual" accesskey="4">Install Manual</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Installing the Manual
 </td></tr>
@@ -530,10 +541,10 @@ package and manual.
 <p>
 Next: <a href="#Alternate-Installations" accesskey="n" rel="next">Alternate Installations</a>, Up: <a href="#Installing" accesskey="u" rel="up">Installing</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Indices" title="Index" rel="index">Index</a>]</p>
 </div>
-<a name="CHEK-Installing-org_002dtrello-using-Package-_0028recommended_0029"></a>
-<h3 class="section">3.1 <strong>CHEK</strong> Installing org-trello using Package (recommended)</h3>
+<a name="Installing-org_002dtrello-using-Package-_0028recommended_0029"></a>
+<h3 class="section">3.1 Installing &lsquo;<samp>org-trello</samp>&rsquo; using Package (recommended)</h3>
 
-<a name="index-org_002dtrello_002c-installing"></a>
+<a name="index-_003dorg_002dtrello_003d_002c-installing"></a>
 
 <p>This section describes how to use &lsquo;<samp>package</samp>&rsquo; to install &lsquo;<samp>org-trello</samp>&rsquo;.
 </p>
@@ -550,19 +561,20 @@ Next: <a href="#Alternate-Installations" accesskey="n" rel="next">Alternate Inst
 <p>
 Next: <a href="#Installing-from-MELPA" accesskey="n" rel="next">Installing from MELPA</a>, Up: <a href="#Installing-with-Package" accesskey="u" rel="up">Installing with Package</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Indices" title="Index" rel="index">Index</a>]</p>
 </div>
-<a name="CHEK-Using-MELPA-with-Package"></a>
-<h4 class="subsection">3.1.1 <strong>CHEK</strong> Using MELPA with Package</h4>
+<a name="Using-MELPA-with-Package"></a>
+<h4 class="subsection">3.1.1 Using MELPA with Package</h4>
 
 <p>This section describes how to use &lsquo;<samp>package</samp>&rsquo; to download and install any
-packages including org-trello. If you already use &lsquo;<samp>package</samp>&rsquo; to access
+packages including &lsquo;<samp>org-trello</samp>&rsquo;. If you already use &lsquo;<samp>package</samp>&rsquo; to access
 “melpa” or “melpa-stable”, you don’t need to do this again. See the
 next section for how to install &lsquo;<samp>org-trello</samp>&rsquo;.
 </p>
 <p><a href="https://melpa.org">MELPA.org</a> is a large repository of ready-to-install Emacs packages.
-There are two flavors: melpa and melpa-stable. Melpa contains the
-bleeding-edge version of each package. Melpa-stable contains the last
-stable release. Use Melpa if you like to help test the latest
-features. Use Melpa-Stable if you want something that just works.
+There are two flavors: melpa and melpa-stable. Melpa usually contains
+the bleeding-edge version of each package. Melpa-stable should contain
+the last stable releases of the same packages, but the two may be the
+same. Use Melpa if you like to help test the latest features. Use
+Melpa-Stable if you want something that just works.
 </p>
 <p>Add the code snippet below (from <a href="https://melpa.org/#/getting-started">melpa.org</a>) to your Emacs startup file
 (.emacs or .emacs.d/init.el). The Melpa repository is pre-selected. If
@@ -575,13 +587,7 @@ the line for Melpa-stable.
 (let* ((no-ssl (and (memq system-type '(windows-nt ms-dos))
                     (not (gnutls-available-p))))
        (proto (if no-ssl &quot;http&quot; &quot;https&quot;)))
-  (when no-ssl
-    (warn &quot;\
-Your version of Emacs does not support SSL connections,
-which is unsafe because it allows man-in-the-middle attacks.
-There are two things you can do about this warning:
-1. Install an Emacs version that does support SSL and be safe.
-2. Remove this warning from your init file so you won't see it again.&quot;))
+
   ;; Comment/uncomment these two lines to enable/disable MELPA and MELPA Stable as desired
   (add-to-list 'package-archives (cons &quot;melpa&quot; (concat proto &quot;://melpa.org/packages/&quot;)) t)
   ;;(add-to-list 'package-archives (cons &quot;melpa-stable&quot; (concat proto &quot;://stable.melpa.org/packages/&quot;)) t)
@@ -591,7 +597,7 @@ There are two things you can do about this warning:
 (package-initialize)
 </pre></div>
 
-<p>After you add this snippet, restart Emacs or use <code>M-x eval-buffer</code> to
+<p>After you add this code snippet, exit and restart Emacs or use <code>M-x eval-buffer</code> to
 re-evaluate your initialization file.
 </p>
 <hr>
@@ -600,17 +606,17 @@ re-evaluate your initialization file.
 <p>
 Previous: <a href="#Using-MELPA" accesskey="p" rel="prev">Using MELPA</a>, Up: <a href="#Installing-with-Package" accesskey="u" rel="up">Installing with Package</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Indices" title="Index" rel="index">Index</a>]</p>
 </div>
-<a name="CHEK-Installing-from-MELPA-with-Package"></a>
-<h4 class="subsection">3.1.2 <strong>CHEK</strong> Installing from MELPA with Package</h4>
+<a name="Installing-from-MELPA-with-Package"></a>
+<h4 class="subsection">3.1.2 Installing from MELPA with Package</h4>
 
-<p>This section describes how to download and install org-trello once you
+<p>This section describes how to download and install &lsquo;<samp>org-trello</samp>&rsquo; once you
 have installed Package and configured it to access MELPA.
 </p>
 <p>To load the latest package list from MELPA, type <code>M-x package-refresh-contents</code>.
 </p>
-<p>To install org-trello from Melpa, type <code>M-x package-install RET org-trello RET</code>.
+<p>To install &lsquo;<samp>org-trello</samp>&rsquo; from Melpa, type <code>M-x package-install RET org-trello RET</code>.
 </p>
-<p>Once you have installed the package, please see <a href="#Loading">Loading org-trello in Emacs</a>.
+<p>Once you have installed the package, please see <a href="#Loading">Loading &lsquo;<samp>org-trello</samp>&rsquo; in Emacs</a>.
 </p>
 <hr>
 <a name="Alternate-Installations"></a>
@@ -618,8 +624,8 @@ have installed Package and configured it to access MELPA.
 <p>
 Next: <a href="#Loading" accesskey="n" rel="next">Loading</a>, Previous: <a href="#Installing-with-Package" accesskey="p" rel="prev">Installing with Package</a>, Up: <a href="#Installing" accesskey="u" rel="up">Installing</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Indices" title="Index" rel="index">Index</a>]</p>
 </div>
-<a name="CHEK-Alternate-Ways-to-Install"></a>
-<h3 class="section">3.2 <strong>CHEK</strong> Alternate Ways to Install</h3>
+<a name="Alternate-Ways-to-Install"></a>
+<h3 class="section">3.2 Alternate Ways to Install</h3>
 
 <p>This section describes alternate ways to install if you do not use
 Package and Melpa as recommended.
@@ -642,23 +648,23 @@ Package and Melpa as recommended.
 <p>
 Next: <a href="#el_002dget" accesskey="n" rel="next">el-get</a>, Up: <a href="#Alternate-Installations" accesskey="u" rel="up">Alternate Installations</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Indices" title="Index" rel="index">Index</a>]</p>
 </div>
-<a name="CHEK-Download-and-Install-the-Tarball"></a>
-<h4 class="subsection">3.2.1 <strong>CHEK</strong> Download and Install the Tarball</h4>
+<a name="Download-and-Install-the-Tarball"></a>
+<h4 class="subsection">3.2.1 Download and Install the Tarball</h4>
 
-<p>To retrieve the tarball from <a href="https://github.com/org-trello/org-trello/releases">github</a>, type this at the command line:
+<p>To retrieve the tarball from <a href="https://github.com/org-trello/org-trello/releases">github</a>, type this at the command line,
+substituting the /path/to your chosen folder.
+Replace “0.8.1” with the current version, if different.
 </p>
 <div class="example">
-<pre class="example">$VERSION=&quot;0.8.0&quot;
+<pre class="example">VERSION=&quot;0.8.1&quot;
 wget https://github.com/org-trello/org-trello/releases/download/$VERSION/org-trello-$VERSION.tar -o /path/to/org-trello-$VERSION.tar
 </pre></div>
 
-<p>Alternately, navigate to <a href="https://github.com/org-trello/org-trello">org-trello on github</a> with a browser and click
-on the “releases” link, locate and download the same file.
+<p>Alternately, navigate to <a href="https://github.com/org-trello/org-trello">&lsquo;<samp>org-trello</samp>&rsquo; on github</a> with a browser and click
+on the “releases” link, then locate and download the same file.
 </p>
 <p>Then, inside Emacs, type <code>M-x package-install-file RET
-/path/to/org-trello-0.8.0.tar RET</code>
-</p>
-<p>In the commands above, replace “0.8.0” with the current version, if different.
+/path/to/org-trello-0.8.1.tar RET</code>
 </p>
 <hr>
 <a name="el_002dget"></a>
@@ -666,10 +672,10 @@ on the “releases” link, locate and download the same file.
 <p>
 Next: <a href="#GitHub-_0026-Cask" accesskey="n" rel="next">GitHub &amp; Cask</a>, Previous: <a href="#Tarball" accesskey="p" rel="prev">Tarball</a>, Up: <a href="#Alternate-Installations" accesskey="u" rel="up">Alternate Installations</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Indices" title="Index" rel="index">Index</a>]</p>
 </div>
-<a name="CHEK-Get-and-Install-with-el_002dget"></a>
-<h4 class="subsection">3.2.2 <strong>CHEK</strong> Get and Install with el-get</h4>
+<a name="Get-and-Install-with-el_002dget"></a>
+<h4 class="subsection">3.2.2 Get and Install with el-get</h4>
 
-<p>If you use <a href="https://github.com/dimitri/el-get">el-get</a> to install packages, you may install <a href="https://github.com/dimitri/el-get/blob/master/recipes/org-trello.rcp">org-trello</a>
+<p>If you use <a href="https://github.com/dimitri/el-get">el-get</a> to install packages, you may install the <a href="https://github.com/dimitri/el-get/blob/master/recipes/org-trello.rcp">&lsquo;<samp>org-trello</samp>&rsquo; recipe</a>
 with it. Inside Emacs, type: <code>M-x el-get-install RET org-trello RET</code>.
 </p>
 <hr>
@@ -678,12 +684,12 @@ with it. Inside Emacs, type: <code>M-x el-get-install RET org-trello RET</code>.
 <p>
 Previous: <a href="#el_002dget" accesskey="p" rel="prev">el-get</a>, Up: <a href="#Alternate-Installations" accesskey="u" rel="up">Alternate Installations</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Indices" title="Index" rel="index">Index</a>]</p>
 </div>
-<a name="CHEK-Clone-from-GitHub-and-Install-with-Cask"></a>
-<h4 class="subsection">3.2.3 <strong>CHEK</strong> Clone from GitHub and Install with Cask</h4>
+<a name="Clone-from-GitHub-and-Install-with-Cask"></a>
+<h4 class="subsection">3.2.3 Clone from GitHub and Install with Cask</h4>
 
-<p>Use this section only if you are a developer modifying and testing org-trello.
+<p>Use this section only if you are a developer modifying and testing &lsquo;<samp>org-trello</samp>&rsquo;.
 </p>
-<p>Clone org-trello from GitHub:
+<p>Clone &lsquo;<samp>org-trello</samp>&rsquo; from GitHub:
 </p>
 <div class="example">
 <pre class="example">git clone http://github.com/org-trello/org-trello.git
@@ -696,7 +702,7 @@ Previous: <a href="#el_002dget" accesskey="p" rel="prev">el-get</a>, Up: <a href
 </pre></div>
 
 <p><em>Note</em> &lsquo;<samp>install</samp>&rsquo; will download Cask and &lsquo;<samp>package</samp>&rsquo; will create an
-org-trello tarball archive containing org-trello.
+&lsquo;<samp>org-trello</samp>&rsquo; tarball archive containing &lsquo;<samp>org-trello</samp>&rsquo;.
 </p>
 <p>Now install the built &lsquo;<samp>org-trello-$VERSION.tar</samp>&rsquo; using Emacs. Type:
 </p>
@@ -708,23 +714,24 @@ org-trello tarball archive containing org-trello.
 <p>
 Next: <a href="#Install-Manual" accesskey="n" rel="next">Install Manual</a>, Previous: <a href="#Alternate-Installations" accesskey="p" rel="prev">Alternate Installations</a>, Up: <a href="#Installing" accesskey="u" rel="up">Installing</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Indices" title="Index" rel="index">Index</a>]</p>
 </div>
-<a name="CHEK-Loading-org_002dtrello-in-Emacs"></a>
-<h3 class="section">3.3 <strong>CHEK</strong> Loading org-trello in Emacs</h3>
+<a name="Loading-org_002dtrello-in-Emacs"></a>
+<h3 class="section">3.3 Loading &lsquo;<samp>org-trello</samp>&rsquo; in Emacs</h3>
 
-<p>Once org-trello is installed, it must be loading during initialization
-of Emacs. Add this in your emacs configuration file “~/.emacs” or
-“~/.emacs.d/init.el” to load org-trello when Emacs starts:
+<p>Once &lsquo;<samp>org-trello</samp>&rsquo; is installed, it must be loaded into Emacs before it
+can be used, preferably during initialization of Emacs. Add this in
+your emacs configuration file (“~/.emacs” or “~/.emacs.d/init.el”) to
+load &lsquo;<samp>org-trello</samp>&rsquo; when Emacs starts:
 </p>
 <div class="lisp">
 <pre class="lisp">(require 'org-trello)
 </pre></div>
 
-<p><em>Note</em> We do not recommend loading org-trello for every org-mode buffer
-(see <a href="https://github.com/org-trello/org-trello/issues/209">https://github.com/org-trello/org-trello/issues/209</a>). org-trello is
-an org minor mode with trello abilities that unfortunately limit
+<p><em>Note</em> We do not recommend starting <code>org-trello-mode</code> for every org-mode buffer
+(see <a href="https://github.com/org-trello/org-trello/issues/209">https://github.com/org-trello/org-trello/issues/209</a>). &lsquo;<samp>org-trello</samp>&rsquo; is
+an org minor mode that adds trello abilities that unfortunately limit
 org&rsquo;s power. It should only be applied to buffers synced with trello.com.
 </p>
-<p>There is a variable to activate org-trello only for specific files:
+<p>There is a variable to activate &lsquo;<samp>org-trello</samp>&rsquo; only for specific files:
 </p>
 <p>For example: to activate &lsquo;<samp>org-trello</samp>&rsquo; when opening &lsquo;<samp>/path/to/file0</samp>&rsquo;
 and &lsquo;<samp>/path/to/file1</samp>&rsquo;.
@@ -740,7 +747,7 @@ and &lsquo;<samp>/path/to/file1</samp>&rsquo;.
 Next: <a href="#Migrating" accesskey="n" rel="next">Migrating</a>, Previous: <a href="#Loading" accesskey="p" rel="prev">Loading</a>, Up: <a href="#Installing" accesskey="u" rel="up">Installing</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Indices" title="Index" rel="index">Index</a>]</p>
 </div>
 <a name="Using-the-org_002dtrello-manual"></a>
-<h3 class="section">3.4 Using the org-trello manual</h3>
+<h3 class="section">3.4 Using the &lsquo;<samp>org-trello</samp>&rsquo; manual</h3>
 
 <a name="index-manual_002c-installing"></a>
 <p>This section describes how to build and install the TexInfo-format
@@ -762,7 +769,7 @@ from the command-line using the command “info”.
 </p>
 
 <div class="float">
-<img src="texinfo.png" alt="texinfo">
+<img src="images/texinfo.png" alt="images/texinfo">
 
 <div class="float-caption"><p><strong>Figure: </strong>Building the Manual with Texinfo</p></div></div>
 <table class="menu" border="0" cellspacing="0">
@@ -845,50 +852,50 @@ Previous: <a href="#Install-Manual" accesskey="p" rel="prev">Install Manual</a>,
 <h3 class="section">3.5 Migrating to New Releases</h3>
 
 <p>If you have previously installed and used a previous release of
-org-trello, this section describes how to migrate your existing
-org-trello installation to a new release.
+&lsquo;<samp>org-trello</samp>&rsquo;, this section describes how to migrate your existing
+&lsquo;<samp>org-trello</samp>&rsquo; installation to a new release.
 </p>
 <table class="menu" border="0" cellspacing="0">
-<tr><td align="left" valign="top">&bull; <a href="#g_t081" accesskey="1">0.8.1</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+<tr><td align="left" valign="top">&bull; <a href="#Migrate-to-081" accesskey="1">Migrate to 0.8.1</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
-<tr><td align="left" valign="top">&bull; <a href="#g_t070" accesskey="2">0.7.0</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+<tr><td align="left" valign="top">&bull; <a href="#Migrate-to-070" accesskey="2">Migrate to 0.7.0</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
-<tr><td align="left" valign="top">&bull; <a href="#g_t067" accesskey="3">0.6.7</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+<tr><td align="left" valign="top">&bull; <a href="#Migrate-to-067" accesskey="3">Migrate to 0.6.7</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
-<tr><td align="left" valign="top">&bull; <a href="#g_t066" accesskey="4">0.6.6</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+<tr><td align="left" valign="top">&bull; <a href="#Migrate-to-066" accesskey="4">Migrate to 0.6.6</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
-<tr><td align="left" valign="top">&bull; <a href="#g_t055" accesskey="5">0.5.5</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+<tr><td align="left" valign="top">&bull; <a href="#Migrate-to-055" accesskey="5">Migrate to 0.5.5</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
-<tr><td align="left" valign="top">&bull; <a href="#g_t053" accesskey="6">0.5.3</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+<tr><td align="left" valign="top">&bull; <a href="#Migrate-to-053" accesskey="6">Migrate to 0.5.3</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
-<tr><td align="left" valign="top">&bull; <a href="#g_t052" accesskey="7">0.5.2</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+<tr><td align="left" valign="top">&bull; <a href="#Migrate-to-052" accesskey="7">Migrate to 0.5.2</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
-<tr><td align="left" valign="top">&bull; <a href="#g_t038" accesskey="8">0.3.8</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+<tr><td align="left" valign="top">&bull; <a href="#Migrate-to-038" accesskey="8">Migrate to 0.3.8</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
-<tr><td align="left" valign="top">&bull; <a href="#g_t031" accesskey="9">0.3.1</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+<tr><td align="left" valign="top">&bull; <a href="#Migrate-to-031" accesskey="9">Migrate to 0.3.1</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
-<tr><td align="left" valign="top">&bull; <a href="#g_t029">0.2.9</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+<tr><td align="left" valign="top">&bull; <a href="#Migrate-to-029">Migrate to 0.2.9</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
-<tr><td align="left" valign="top">&bull; <a href="#g_t028">0.2.8</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+<tr><td align="left" valign="top">&bull; <a href="#Migrate-to-028">Migrate to 0.2.8</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
-<tr><td align="left" valign="top">&bull; <a href="#g_t021-_002d_003e-022">0.2.1 -&gt; 0.2.2</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+<tr><td align="left" valign="top">&bull; <a href="#Migrate-021-to-022">Migrate 0.2.1 to 0.2.2</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
-<tr><td align="left" valign="top">&bull; <a href="#g_t015-_002d_003e-016">0.1.5 -&gt; 0.1.6</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+<tr><td align="left" valign="top">&bull; <a href="#Migrate-015-to-016">Migrate 0.1.5 to 0.1.6</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
-<tr><td align="left" valign="top">&bull; <a href="#g_t011-_002d_003e-012">0.1.1 -&gt; 0.1.2</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+<tr><td align="left" valign="top">&bull; <a href="#Migrate-011-to-012">Migrate 0.1.1 to 0.1.2</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
 </td></tr>
 </table>
 
 <hr>
-<a name="g_t081"></a>
+<a name="Migrate-to-081"></a>
 <div class="header">
 <p>
-Next: <a href="#g_t070" accesskey="n" rel="next">070</a>, Up: <a href="#Migrating" accesskey="u" rel="up">Migrating</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Indices" title="Index" rel="index">Index</a>]</p>
+Next: <a href="#Migrate-to-070" accesskey="n" rel="next">Migrate to 070</a>, Up: <a href="#Migrating" accesskey="u" rel="up">Migrating</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Indices" title="Index" rel="index">Index</a>]</p>
 </div>
-<a name="g_t0_002e8_002e1"></a>
-<h4 class="subsection">3.5.1 0.8.1</h4>
+<a name="Migrate-to-0_002e8_002e1"></a>
+<h4 class="subsection">3.5.1 Migrate to 0.8.1</h4>
 
-<p>The org-trello key properties used in the buffer were clashing with
+<p>The &lsquo;<samp>org-trello</samp>&rsquo; key properties used in the buffer were clashing with
 higher org-mode functionality (lookup, cf.
 <a href="https://github.com/org-trello/org-trello/issues/366">https://github.com/org-trello/org-trello/issues/366</a>).
 </p>
@@ -897,19 +904,19 @@ symbol was replaced with &lsquo;<samp>_</samp>&rsquo;).
 </p>
 <p>To help the migration, a routine has been integrated. This should not be
 needed by the user though (the migration is integrated to the actions).
-Still, if the user wants it, (s)he can do it through M-x
-org-trello-migrate-buffer.
+Still, if the user wants it, (s)he can do it through <code>M-x
+org-trello-migrate-buffer</code>.
 </p>
 <hr>
-<a name="g_t070"></a>
+<a name="Migrate-to-070"></a>
 <div class="header">
 <p>
-Next: <a href="#g_t067" accesskey="n" rel="next">067</a>, Previous: <a href="#g_t081" accesskey="p" rel="prev">081</a>, Up: <a href="#Migrating" accesskey="u" rel="up">Migrating</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Indices" title="Index" rel="index">Index</a>]</p>
+Next: <a href="#Migrate-to-067" accesskey="n" rel="next">Migrate to 067</a>, Previous: <a href="#Migrate-to-081" accesskey="p" rel="prev">Migrate to 081</a>, Up: <a href="#Migrating" accesskey="u" rel="up">Migrating</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Indices" title="Index" rel="index">Index</a>]</p>
 </div>
-<a name="g_t0_002e7_002e0"></a>
-<h4 class="subsection">3.5.2 0.7.0</h4>
+<a name="Migrate-to-0_002e7_002e0"></a>
+<h4 class="subsection">3.5.2 Migrate to 0.7.0</h4>
 
-<p>As of now, org-trello respects elisp conventions regarding the setup
+<p>As of now, &lsquo;<samp>org-trello</samp>&rsquo; respects elisp conventions regarding the setup
 file location. So the default <em>~</em>.trello// will be moved silently to
 <em>~</em>.emacs.d/.trello//
 </p>
@@ -920,65 +927,65 @@ buffers. For example, if you have a buffer setup-ed with a user <em>tony</em>,
 your existing configuration file <em>~</em>.trello/config.el/ will be moved to
 <em>~</em>.emacs.d/.trello/tony.el/
 </p>
-<p>Again, org-trello tries to respect elisp conventions regarding command
+<p>Again, &lsquo;<samp>org-trello</samp>&rsquo; tries to respect elisp conventions regarding command
 names. So the command names have been renamed from <em>org-trello/</em> to
 <em>org-trello-</em>. Still, the old command names are available.
 </p>
 <hr>
-<a name="g_t067"></a>
+<a name="Migrate-to-067"></a>
 <div class="header">
 <p>
-Next: <a href="#g_t066" accesskey="n" rel="next">066</a>, Previous: <a href="#g_t070" accesskey="p" rel="prev">070</a>, Up: <a href="#Migrating" accesskey="u" rel="up">Migrating</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Indices" title="Index" rel="index">Index</a>]</p>
+Next: <a href="#Migrate-to-066" accesskey="n" rel="next">Migrate to 066</a>, Previous: <a href="#Migrate-to-070" accesskey="p" rel="prev">Migrate to 070</a>, Up: <a href="#Migrating" accesskey="u" rel="up">Migrating</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Indices" title="Index" rel="index">Index</a>]</p>
 </div>
-<a name="g_t0_002e6_002e7"></a>
-<h4 class="subsection">3.5.3 0.6.7</h4>
+<a name="Migrate-to-0_002e6_002e7"></a>
+<h4 class="subsection">3.5.3 Migrate to 0.6.7</h4>
 
 <p>The comments are now displayed inline in the card. So the binding to
 show the comments have been removed. To see comments, simply unfold the
 card.
 </p>
 <hr>
-<a name="g_t066"></a>
+<a name="Migrate-to-066"></a>
 <div class="header">
 <p>
-Next: <a href="#g_t055" accesskey="n" rel="next">055</a>, Previous: <a href="#g_t067" accesskey="p" rel="prev">067</a>, Up: <a href="#Migrating" accesskey="u" rel="up">Migrating</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Indices" title="Index" rel="index">Index</a>]</p>
+Next: <a href="#Migrate-to-055" accesskey="n" rel="next">Migrate to 055</a>, Previous: <a href="#Migrate-to-067" accesskey="p" rel="prev">Migrate to 067</a>, Up: <a href="#Migrating" accesskey="u" rel="up">Migrating</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Indices" title="Index" rel="index">Index</a>]</p>
 </div>
-<a name="g_t0_002e6_002e6"></a>
-<h4 class="subsection">3.5.4 0.6.6</h4>
+<a name="Migrate-to-0_002e6_002e6"></a>
+<h4 class="subsection">3.5.4 Migrate to 0.6.6</h4>
 
 <p>We can now remove a comment at point (if we are the owner of the
-comment). Use M-x org-trello-delete-card-comment
+comment). Use <code>M-x org-trello-delete-card-comment</code>.
 </p>
 <hr>
-<a name="g_t055"></a>
+<a name="Migrate-to-055"></a>
 <div class="header">
 <p>
-Next: <a href="#g_t053" accesskey="n" rel="next">053</a>, Previous: <a href="#g_t066" accesskey="p" rel="prev">066</a>, Up: <a href="#Migrating" accesskey="u" rel="up">Migrating</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Indices" title="Index" rel="index">Index</a>]</p>
+Next: <a href="#Migrate-to-053" accesskey="n" rel="next">Migrate to 053</a>, Previous: <a href="#Migrate-to-066" accesskey="p" rel="prev">Migrate to 066</a>, Up: <a href="#Migrating" accesskey="u" rel="up">Migrating</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Indices" title="Index" rel="index">Index</a>]</p>
 </div>
-<a name="g_t0_002e5_002e5"></a>
-<h4 class="subsection">3.5.5 0.5.5</h4>
+<a name="Migrate-to-0_002e5_002e5"></a>
+<h4 class="subsection">3.5.5 Migrate to 0.5.5</h4>
 
 <p>Default bindings have been updated.
 </p>
 <table>
 <thead><tr><th>Bindings</th><th>Action</th></tr></thead>
-<tr><td>C-c o C</td><td>Add comments to the cards at point. To show the cards comments, use C-u M-x org-trello-add-card-comments (C-u C-c o C)</td></tr>
+<tr><td>C-c o C</td><td>Add comments to the cards at point.</td></tr>
+<tr><td></td><td>To show the cards comments, use <code>C-u M-x org-trello-add-card-comments</code> (C-u C-c o C)</td></tr>
 <tr><td>C-c o o</td><td>Removed. To show the cards comments, use C-u C-c o C</td></tr>
 </table>
 
-<p>Of course, as usual, if you are not happy with this, simply update
-<a href="bindings.html#bindings-override">your configuration file</a>.
+<p>Of course, as usual, if you are not happy with this, simply update <a href="bindings.html#bindings-override">your configuration file</a>.
 </p>
 <hr>
-<a name="g_t053"></a>
+<a name="Migrate-to-053"></a>
 <div class="header">
 <p>
-Next: <a href="#g_t052" accesskey="n" rel="next">052</a>, Previous: <a href="#g_t055" accesskey="p" rel="prev">055</a>, Up: <a href="#Migrating" accesskey="u" rel="up">Migrating</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Indices" title="Index" rel="index">Index</a>]</p>
+Next: <a href="#Migrate-to-052" accesskey="n" rel="next">Migrate to 052</a>, Previous: <a href="#Migrate-to-055" accesskey="p" rel="prev">Migrate to 055</a>, Up: <a href="#Migrating" accesskey="u" rel="up">Migrating</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Indices" title="Index" rel="index">Index</a>]</p>
 </div>
-<a name="g_t0_002e5_002e3"></a>
-<h4 class="subsection">3.5.6 0.5.3</h4>
+<a name="Migrate-to-0_002e5_002e3"></a>
+<h4 class="subsection">3.5.6 Migrate to 0.5.3</h4>
 
-<p>Lots of work has been done to make org-trello:
+<p>Lots of work has been done to make &lsquo;<samp>org-trello</samp>&rsquo;:
 </p>
 <ul>
 <li> more responsive (almost no more blocking actions).
@@ -990,13 +997,13 @@ the computations)
 and aligned between them.
 </p>
 <hr>
-<a name="g_t052"></a>
+<a name="Migrate-to-052"></a>
 <div class="header">
 <p>
-Next: <a href="#g_t038" accesskey="n" rel="next">038</a>, Previous: <a href="#g_t053" accesskey="p" rel="prev">053</a>, Up: <a href="#Migrating" accesskey="u" rel="up">Migrating</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Indices" title="Index" rel="index">Index</a>]</p>
+Next: <a href="#Migrate-to-038" accesskey="n" rel="next">Migrate to 038</a>, Previous: <a href="#Migrate-to-053" accesskey="p" rel="prev">Migrate to 053</a>, Up: <a href="#Migrating" accesskey="u" rel="up">Migrating</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Indices" title="Index" rel="index">Index</a>]</p>
 </div>
-<a name="g_t0_002e5_002e2"></a>
-<h4 class="subsection">3.5.7 0.5.2</h4>
+<a name="Migrate-to-0_002e5_002e2"></a>
+<h4 class="subsection">3.5.7 Migrate to 0.5.2</h4>
 
 <p>Decision has been taken to remove the intermediary proxy used to bounce
 requests to trello. This was introduced to permit asynchronous requests.
@@ -1011,15 +1018,15 @@ implementation for asynchronous requests (deferred, async libraries
 seems interesting enough).
 </p>
 <hr>
-<a name="g_t038"></a>
+<a name="Migrate-to-038"></a>
 <div class="header">
 <p>
-Next: <a href="#g_t031" accesskey="n" rel="next">031</a>, Previous: <a href="#g_t052" accesskey="p" rel="prev">052</a>, Up: <a href="#Migrating" accesskey="u" rel="up">Migrating</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Indices" title="Index" rel="index">Index</a>]</p>
+Next: <a href="#Migrate-to-031" accesskey="n" rel="next">Migrate to 031</a>, Previous: <a href="#Migrate-to-052" accesskey="p" rel="prev">Migrate to 052</a>, Up: <a href="#Migrating" accesskey="u" rel="up">Migrating</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Indices" title="Index" rel="index">Index</a>]</p>
 </div>
-<a name="g_t0_002e3_002e8"></a>
-<h4 class="subsection">3.5.8 0.3.8</h4>
+<a name="Migrate-to-0_002e3_002e8"></a>
+<h4 class="subsection">3.5.8 Migrate to 0.3.8</h4>
 
-<p>org-trello now tries to enforce symmetry, mainly regarding the sync
+<p>&lsquo;<samp>org-trello</samp>&rsquo; now tries to enforce symmetry, mainly regarding the sync
 actions. So by default, an action pushes to trello. Using C-u, the
 symmetric action pulls from trello.
 </p>
@@ -1036,26 +1043,26 @@ symmetric action pulls from trello.
 </table>
 
 <hr>
-<a name="g_t031"></a>
+<a name="Migrate-to-031"></a>
 <div class="header">
 <p>
-Next: <a href="#g_t029" accesskey="n" rel="next">029</a>, Previous: <a href="#g_t038" accesskey="p" rel="prev">038</a>, Up: <a href="#Migrating" accesskey="u" rel="up">Migrating</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Indices" title="Index" rel="index">Index</a>]</p>
+Next: <a href="#Migrate-to-029" accesskey="n" rel="next">Migrate to 029</a>, Previous: <a href="#Migrate-to-038" accesskey="p" rel="prev">Migrate to 038</a>, Up: <a href="#Migrating" accesskey="u" rel="up">Migrating</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Indices" title="Index" rel="index">Index</a>]</p>
 </div>
-<a name="g_t0_002e3_002e1"></a>
-<h4 class="subsection">3.5.9 0.3.1</h4>
+<a name="Migrate-to-0_002e3_002e1"></a>
+<h4 class="subsection">3.5.9 Migrate to 0.3.1</h4>
 
 <p>The old checklist/item format has been removed -
 <a href="https://github.com/org-trello/org-trello/issues/105">https://github.com/org-trello/org-trello/issues/105</a>. Now the org
 checkbox way is the standard one.
 </p>
 <hr>
-<a name="g_t029"></a>
+<a name="Migrate-to-029"></a>
 <div class="header">
 <p>
-Next: <a href="#g_t028" accesskey="n" rel="next">028</a>, Previous: <a href="#g_t031" accesskey="p" rel="prev">031</a>, Up: <a href="#Migrating" accesskey="u" rel="up">Migrating</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Indices" title="Index" rel="index">Index</a>]</p>
+Next: <a href="#Migrate-to-028" accesskey="n" rel="next">Migrate to 028</a>, Previous: <a href="#Migrate-to-031" accesskey="p" rel="prev">Migrate to 031</a>, Up: <a href="#Migrating" accesskey="u" rel="up">Migrating</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Indices" title="Index" rel="index">Index</a>]</p>
 </div>
-<a name="g_t0_002e2_002e9"></a>
-<h4 class="subsection">3.5.10 0.2.9</h4>
+<a name="Migrate-to-0_002e2_002e9"></a>
+<h4 class="subsection">3.5.10 Migrate to 0.2.9</h4>
 
 <p>For information, from 0.2.9 onward, the property “orgtrello-id” from the
 checkbox (checklists, items) will be hidden.
@@ -1063,35 +1070,35 @@ checkbox (checklists, items) will be hidden.
 <p><em>Note</em>
 </p>
 <ul>
-<li> Upon activating org-trello minor mode, all existing checkbox will be
+<li> Upon activating &lsquo;<samp>org-trello</samp>&rsquo; minor mode, all existing checkbox will be
 migrated and should disappear before your eyes.
-</li><li> Symmetrically, when deactivating org-trello, all checkbox will appear.
-</li><li> For this, org-trello use <a href="https://www.gnu.org/software/emacs/manual/html_node/elisp/Overlays.html">overlays</a>
+</li><li> Symmetrically, when deactivating &lsquo;<samp>org-trello</samp>&rsquo;, all checkbox will appear.
+</li><li> For this, &lsquo;<samp>org-trello</samp>&rsquo; use <a href="https://www.gnu.org/software/emacs/manual/html_node/elisp/Overlays.html">overlays</a>
 (implementation detail which permits to hide buffer region).
 </li></ul>
 
-<p>If you began to use org-trello, nothing to do.
+<p>If you began to use &lsquo;<samp>org-trello</samp>&rsquo;, nothing to do.
 </p>
 <hr>
-<a name="g_t028"></a>
+<a name="Migrate-to-028"></a>
 <div class="header">
 <p>
-Next: <a href="#g_t021-_002d_003e-022" accesskey="n" rel="next">021 -&gt; 022</a>, Previous: <a href="#g_t029" accesskey="p" rel="prev">029</a>, Up: <a href="#Migrating" accesskey="u" rel="up">Migrating</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Indices" title="Index" rel="index">Index</a>]</p>
+Next: <a href="#Migrate-021-to-022" accesskey="n" rel="next">Migrate 021 to 022</a>, Previous: <a href="#Migrate-to-029" accesskey="p" rel="prev">Migrate to 029</a>, Up: <a href="#Migrating" accesskey="u" rel="up">Migrating</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Indices" title="Index" rel="index">Index</a>]</p>
 </div>
-<a name="g_t0_002e2_002e8"></a>
-<h4 class="subsection">3.5.11 0.2.8</h4>
+<a name="Migrate-to-0_002e2_002e8"></a>
+<h4 class="subsection">3.5.11 Migrate to 0.2.8</h4>
 
 <p>From 0.2.8 onward, the card description can be synchronized too. Just
 synchronize as usual.
 </p>
 <hr>
-<a name="g_t021-_002d_003e-022"></a>
+<a name="Migrate-021-to-022"></a>
 <div class="header">
 <p>
-Next: <a href="#g_t015-_002d_003e-016" accesskey="n" rel="next">015 -&gt; 016</a>, Previous: <a href="#g_t028" accesskey="p" rel="prev">028</a>, Up: <a href="#Migrating" accesskey="u" rel="up">Migrating</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Indices" title="Index" rel="index">Index</a>]</p>
+Next: <a href="#Migrate-015-to-016" accesskey="n" rel="next">Migrate 015 to 016</a>, Previous: <a href="#Migrate-to-028" accesskey="p" rel="prev">Migrate to 028</a>, Up: <a href="#Migrating" accesskey="u" rel="up">Migrating</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Indices" title="Index" rel="index">Index</a>]</p>
 </div>
-<a name="g_t0_002e2_002e1-_002d_003e-0_002e2_002e2"></a>
-<h4 class="subsection">3.5.12 0.2.1 -&gt; 0.2.2</h4>
+<a name="Migrate-0_002e2_002e1-to-0_002e2_002e2"></a>
+<h4 class="subsection">3.5.12 Migrate 0.2.1 to 0.2.2</h4>
 
 <p>From the 0.2.2 version onward, we can assign people to card. As a
 pre-requisite, we need to re-install the board (C-c o I), so that new
@@ -1102,27 +1109,27 @@ attach to).
 u) yourself to the card.
 </p>
 <hr>
-<a name="g_t015-_002d_003e-016"></a>
+<a name="Migrate-015-to-016"></a>
 <div class="header">
 <p>
-Next: <a href="#g_t011-_002d_003e-012" accesskey="n" rel="next">011 -&gt; 012</a>, Previous: <a href="#g_t021-_002d_003e-022" accesskey="p" rel="prev">021 -&gt; 022</a>, Up: <a href="#Migrating" accesskey="u" rel="up">Migrating</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Indices" title="Index" rel="index">Index</a>]</p>
+Next: <a href="#Migrate-011-to-012" accesskey="n" rel="next">Migrate 011 to 012</a>, Previous: <a href="#Migrate-021-to-022" accesskey="p" rel="prev">Migrate 021 to 022</a>, Up: <a href="#Migrating" accesskey="u" rel="up">Migrating</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Indices" title="Index" rel="index">Index</a>]</p>
 </div>
-<a name="g_t0_002e1_002e5-_002d_003e-0_002e1_002e6"></a>
-<h4 class="subsection">3.5.13 0.1.5 -&gt; 0.1.6</h4>
+<a name="Migrate-0_002e1_002e5-to-0_002e1_002e6"></a>
+<h4 class="subsection">3.5.13 Migrate 0.1.5 to 0.1.6</h4>
 
-<p>Org-trello now uses more natural ways of dealing with checklists using
+<p>&lsquo;<samp>org-trello</samp>&rsquo; now uses more natural ways of dealing with checklists using
 checkboxes!
 </p>
 <p>cf. <a href="migration.html#natural-org-format-from-016-onwards">natural org format (from 0.1.6 onwards)</a> for more details.
 </p>
 <hr>
-<a name="g_t011-_002d_003e-012"></a>
+<a name="Migrate-011-to-012"></a>
 <div class="header">
 <p>
-Previous: <a href="#g_t015-_002d_003e-016" accesskey="p" rel="prev">015 -&gt; 016</a>, Up: <a href="#Migrating" accesskey="u" rel="up">Migrating</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Indices" title="Index" rel="index">Index</a>]</p>
+Previous: <a href="#Migrate-015-to-016" accesskey="p" rel="prev">Migrate 015 to 016</a>, Up: <a href="#Migrating" accesskey="u" rel="up">Migrating</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Indices" title="Index" rel="index">Index</a>]</p>
 </div>
-<a name="g_t0_002e1_002e1-_002d_003e-0_002e1_002e2"></a>
-<h4 class="subsection">3.5.14 0.1.1 -&gt; 0.1.2</h4>
+<a name="Migrate-0_002e1_002e1-to-0_002e1_002e2"></a>
+<h4 class="subsection">3.5.14 Migrate 0.1.1 to 0.1.2</h4>
 
 <ul>
 <li> From version 0.1.1, some http requests will be asynchronous. For this,
@@ -1142,8 +1149,8 @@ server is started on the port 9876. You can always change this port
 <p>
 Next: <a href="#Using" accesskey="n" rel="next">Using</a>, Previous: <a href="#Installing" accesskey="p" rel="prev">Installing</a>, Up: <a href="#Top" accesskey="u" rel="up">Top</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Indices" title="Index" rel="index">Index</a>]</p>
 </div>
-<a name="TODO-Connecting-to-Trello_002ecom"></a>
-<h2 class="chapter">4 <strong>TODO</strong> Connecting to Trello.com</h2>
+<a name="CHEK-Connecting-to-Trello_002ecom"></a>
+<h2 class="chapter">4 <strong>CHEK</strong> Connecting to Trello.com</h2>
 
 <a name="index-trello_002ecom_002c-connecting"></a>
 
@@ -1165,6 +1172,72 @@ Next: <a href="#Connect-Existing-Board" accesskey="n" rel="next">Connect Existin
 <a name="Installing-Your-Trello_002ecom-Credentials"></a>
 <h3 class="section">4.1 Installing Your Trello.com Credentials</h3>
 
+<p>You must install the <code>org-trello-consumer-key</code> and the read-write
+<code>org-trello-access-token</code> to permit org-trello to access your trello
+boards.
+</p>
+<p><em>Remark:</em> This procedure only needs to be done once unless you revoke
+the token.
+</p>
+<p>First, ensure that:
+</p><ul>
+<li> emacs is configured to use an external web browser. Text-only web
+browsers internal to Emacs, like &lsquo;<samp>eww</samp>&rsquo;, &lsquo;<samp>w3</samp>&rsquo; or &lsquo;<samp>w3m-mode</samp>&rsquo;, can not
+execute the required JavaScript.
+</li><li> the web browser emacs is configured to use is started
+</li><li> you are logged into Trello.
+</li><li> you know your exact Trello account name. <strong>DO NOT</strong> use your
+email address as your account name. To confirm your account name,
+check that <a href="https://trello.com/*your-account-name">https://trello.com/*your-account-name</a>* exists.
+</li></ul>
+
+<p>Then, in Emacs, type:
+</p><ul>
+<li> <code>C-c o i</code>, or 
+</li><li> <code>M-x org-trello-install-key-and-token</code>
+</li></ul>
+
+<p>This command will:
+</p>
+<ul>
+<li> ask for an account name, which must be your trello login. <strong>DO NOT</strong> use your
+email address as your account name.
+
+</li><li> open your browser for you to select and copy your
+<em>org-trello-consumer-key</em> (Developer API Keys / key entry) and paste
+it inside emacs&rsquo; minibuffer (hit RET when done).
+</li></ul>
+
+<img src="images/retrieve-consumer-key.png" alt="images/retrieve-consumer-key">
+
+<ul>
+<li> open a second tab to ask you to authorize org-trello to work in your
+name on your account
+</li></ul>
+
+<img src="images/authorize-org-trello.png" alt="images/authorize-org-trello">
+
+<ul>
+<li> If you are not ok with this, hit <em>Deny</em>. You won&rsquo;t be
+able to use org-trello.
+
+</li><li> Otherwise, hit <em>Allow</em>, this will then present you a form with the
+read/write <em>org-trello-access-token</em>, select and copy it, then paste it
+inside emacs&rsquo; minibuffer and hit RET.
+</li></ul>
+
+<p><em>Note:</em> This command, if accepted, results in a file stored <em>only</em> on
+your disk in ~/.emacs.d/.trello/.el&lt;/kbd&gt; (this path may vary depending
+on <strong><strong>user-emacs-directory</strong></strong>).
+</p>
+<p>This file contains your credentials and will be used to identify you
+when requesting trello.
+</p>
+<div class="lisp">
+<pre class="lisp">(setq org-trello-consumer-key &quot;abc...&quot;)  ;; 32 characters string
+(setq org-trello-access-token &quot;def...&quot;)  ;; 64 characters string
+</pre></div>
+
 <hr>
 <a name="Connect-Existing-Board"></a>
 <div class="header">
@@ -1173,6 +1246,31 @@ Next: <a href="#Create-a-Board" accesskey="n" rel="next">Create a Board</a>, Pre
 </div>
 <a name="Connect-an-org_002dmode-buffer-with-an-existing-Trello-board_002e"></a>
 <h3 class="section">4.2 Connect an org-mode buffer with an existing Trello board.</h3>
+
+<p>For each org-mode file that you wish to use with Trello.com, you need
+to connect your org-mode file with a Trello board.
+</p>
+<p><em>Remarks:</em> This procedure must be done only once for each org-mode file you want to
+sync with a trello board.
+</p>
+<p>To connect an buffer to an existing board, type:
+</p>
+<ul>
+<li> <code>C-c o I</code>, or 
+</li><li> <code>M-x org-trello-install-board-metadata</code>
+</li></ul>
+
+<p>This will:
+</p>
+<ul>
+<li> ask you for the accounts you want to use (if you have multiple ones,
+otherwise, it will select the only one and pass to the next step silently)
+
+</li><li> present you with a list of boards for the selected account. Select the
+one you want and hit enter.
+
+</li><li> edit your org-mode file to add the properties needed.
+</li></ul>
 
 <hr>
 <a name="Create-a-Board"></a>
@@ -1183,6 +1281,28 @@ Previous: <a href="#Connect-Existing-Board" accesskey="p" rel="prev">Connect Exi
 <a name="Create-a-Trello-board-from-your-org_002dmode-buffer_002e"></a>
 <h3 class="section">4.3 Create a Trello board from your org-mode buffer.</h3>
 
+<p>You can create a new Trello board from your existing org-mode file. 
+</p>
+<p><em>Remarks:</em> This procedure must be done only once for each org-mode
+file you want to sync with a trello board.
+</p>
+<p>Type:
+</p>
+<ul>
+<li> <code>C-c o b</code>, or
+</li><li> <code>M-x org-trello-create-board-and-install-metadata</code>
+</li></ul>
+
+<p>This will:
+</p>
+<ul>
+<li> ask you for the accounts you want to use (if you have multiple ones,
+otherwise, it will select the only one and pass to the next step silently)
+
+</li><li> create the Trello board lists from the keywords configured in your
+org-mode (cf. <a href="http://orgmode.org/manual/In_002dbuffer-settings.html">org-todo-keywords</a>)
+</li></ul>
+
 <hr>
 <a name="Using"></a>
 <div class="header">
@@ -1190,19 +1310,19 @@ Previous: <a href="#Connect-Existing-Board" accesskey="p" rel="prev">Connect Exi
 Next: <a href="#Troubleshooting" accesskey="n" rel="next">Troubleshooting</a>, Previous: <a href="#Connecting" accesskey="p" rel="prev">Connecting</a>, Up: <a href="#Top" accesskey="u" rel="up">Top</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Indices" title="Index" rel="index">Index</a>]</p>
 </div>
 <a name="TODO-Using-org_002dtrello"></a>
-<h2 class="chapter">5 <strong>TODO</strong> Using org-trello</h2>
+<h2 class="chapter">5 <strong>TODO</strong> Using &lsquo;<samp>org-trello</samp>&rsquo;</h2>
 
-<a name="index-org_002dtrello_002c-using"></a>
-<p>This section describes how to use org-trello.
+<a name="index-_003dorg_002dtrello_003d_002c-using"></a>
+<p>This section describes how to use &lsquo;<samp>org-trello</samp>&rsquo;.
 </p>
 <table class="menu" border="0" cellspacing="0">
-<tr><td align="left" valign="top">&bull; <a href="#Quick-Start" accesskey="1">Quick Start</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">First Steps with org-trello
+<tr><td align="left" valign="top">&bull; <a href="#Quick-Start" accesskey="1">Quick Start</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">First Steps with =org-trello=
 </td></tr>
 <tr><td align="left" valign="top">&bull; <a href="#Command-Descriptions" accesskey="2">Command Descriptions</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Command Descriptions
 </td></tr>
 <tr><td align="left" valign="top">&bull; <a href="#How-to_2026" accesskey="3">How to…</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">How to Perform Tasks
 </td></tr>
-<tr><td align="left" valign="top">&bull; <a href="#Format" accesskey="4">Format</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Format of org-trello
+<tr><td align="left" valign="top">&bull; <a href="#Format" accesskey="4">Format</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Format of =org-trello=
 </td></tr>
 </table>
 
@@ -1248,16 +1368,16 @@ Next: <a href="#Connection-Cmds" accesskey="n" rel="next">Connection Cmds</a>, U
 <a name="WORK-Summary-of-Commands"></a>
 <h4 class="subsection">5.2.1 <strong>WORK</strong> Summary of Commands</h4>
 
-<p>All default org-trello key-bindings use the “C-c o” prefix.
+<p>All default &lsquo;<samp>org-trello</samp>&rsquo; key-bindings use the “C-c o” prefix.
 </p>
 <a name="index-C_002dc-o-C_002dh"></a>
-<p><em>Note:</em> You may type “C-c o C-h” to display help for most org-trello
+<p><em>Note:</em> You may type “C-c o C-h” to display help for most &lsquo;<samp>org-trello</samp>&rsquo;
 key bindings.
 </p>
 <table>
 <thead><tr><th>Keys</th><th>Command</th></tr></thead>
 <tr><td>C-c o C-h</td><td>Display help on all key-bindings with C-c o prefix.</td></tr>
-<tr><td>C-c o v</td><td>Display the version of org-trello.</td></tr>
+<tr><td>C-c o v</td><td>Display the version of &lsquo;<samp>org-trello</samp>&rsquo;.</td></tr>
 <tr><td>C-c o i</td><td>Install the Trello.com access key and token.</td></tr>
 <tr><td>C-c o I</td><td>Choose an existing Trello board and attach this buffer.</td></tr>
 <tr><td>C-c o b</td><td>Create a new Trello board and attach this buffer</td></tr>
@@ -1282,7 +1402,7 @@ Next: <a href="#Synch-Cmds" accesskey="n" rel="next">Synch Cmds</a>, Previous: <
 <a name="TODO-Connection-Commands"></a>
 <h4 class="subsection">5.2.2 <strong>TODO</strong> Connection Commands</h4>
 
-<p>This section describes the functions used to connect org-trello to
+<p>This section describes the functions used to connect &lsquo;<samp>org-trello</samp>&rsquo; to
 Trello.com and to attach an org file to a Trello board.
 </p>
 <hr>
@@ -1339,7 +1459,7 @@ Next: <a href="#Format" accesskey="n" rel="next">Format</a>, Previous: <a href="
 <a name="TODO-How-to_2026"></a>
 <h3 class="section">5.3 <strong>TODO</strong> How to…</h3>
 
-<p>This section describes how to use commands to perform tasks with org-trello.
+<p>This section describes how to use commands to perform tasks with &lsquo;<samp>org-trello</samp>&rsquo;.
 </p>
 <hr>
 <a name="Format"></a>
@@ -1350,7 +1470,7 @@ Previous: <a href="#How-to_2026" accesskey="p" rel="prev">How to…</a>, Up: <a 
 <a name="TODO-Format-of-org_002dtrello"></a>
 <h3 class="section">5.4 <strong>TODO</strong> Format of org-trello</h3>
 
-<p>This section describes the format of the text in an org-trello buffer.
+<p>This section describes the format of the text in an &lsquo;<samp>org-trello</samp>&rsquo; buffer.
 </p>
 <hr>
 <a name="Troubleshooting"></a>
@@ -1358,11 +1478,10 @@ Previous: <a href="#How-to_2026" accesskey="p" rel="prev">How to…</a>, Up: <a 
 <p>
 Next: <a href="#Customizing" accesskey="n" rel="next">Customizing</a>, Previous: <a href="#Using" accesskey="p" rel="prev">Using</a>, Up: <a href="#Top" accesskey="u" rel="up">Top</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Indices" title="Index" rel="index">Index</a>]</p>
 </div>
-<a name="TODO-Troubleshooting-org_002dtrello"></a>
-<h2 class="chapter">6 <strong>TODO</strong> Troubleshooting org-trello</h2>
+<a name="CHEK-Troubleshooting-org_002dtrello"></a>
+<h2 class="chapter">6 <strong>CHEK</strong> Troubleshooting &lsquo;<samp>org-trello</samp>&rsquo;</h2>
 
 <a name="index-troubleshooting"></a>
-<a name="index-errors"></a>
 
 <table class="menu" border="0" cellspacing="0">
 <tr><td align="left" valign="top">&bull; <a href="#Common-Issues" accesskey="1">Common Issues</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Common Issues
@@ -1380,6 +1499,35 @@ Next: <a href="#Error-Messages" accesskey="n" rel="next">Error Messages</a>, Up:
 <a name="Common-Issues-1"></a>
 <h3 class="section">6.1 Common Issues</h3>
 
+<p>This section addresses some common issues with installing and using &lsquo;<samp>org-trello</samp>&rsquo;.
+</p>
+<ul>
+<li> Why am I getting errors about credentials loading, like below?
+
+<div class="example">
+<pre class="example">org-trello - Request ’sync org buffer to trello board’...
+org-trello - List of errors:
+ - Setup problem - Problem during credentials loading (consumer-key
+   and read/write access-token) - C-c o i or M-x org-trello-install-key-and-token
+ - Setup problem - You need to install the consumer-key and the
+   read/write access-token - C-c o i or M-x org-trello-install-key-and-token
+</pre></div>
+
+<p>If you have already <a href="#Installing-Credentials">set up your credentials</a>, then please make sure the
+login you used in the credential installation step match your trello
+login exactly, that is:
+</p>
+<ul>
+<li> Check &lsquo;<samp>https://trello.com/&lt;user-login&gt;</samp>&rsquo; exists
+</li><li> &lsquo;<samp>&lt;User-login&gt;</samp>&rsquo; in the buffer is the same as the org-trello login:
+&lsquo;<samp>#+PROPERTY: orgtrello-user-me &lt;user-login&gt;</samp>&rsquo;<br>
+at the org-trello buffer top must match too.
+</li></ul>
+
+</li><li> For issues not listed above, please see <a href="#Issues">these instructions</a> about the
+issue list on GitHub.
+</li></ul>
+
 <hr>
 <a name="Error-Messages"></a>
 <div class="header">
@@ -1389,6 +1537,102 @@ Previous: <a href="#Common-Issues" accesskey="p" rel="prev">Common Issues</a>, U
 <a name="Error-Messages-1"></a>
 <h3 class="section">6.2 Error Messages</h3>
 
+<a name="index-errors"></a>
+
+<p>&lsquo;<samp>org-trello</samp>&rsquo; can display the following possible error messages:
+</p>
+<ul>
+<li> Failed to set up the consumer-key and the access-token:
+
+<blockquote>
+<p>Setup problem - You need to install the consumer-key and the
+read/write access-token - C-c o i or M-x
+org-trello-install-board-metadata
+</p>
+</blockquote>
+
+</li><li> Failed to setting up the org-mode buffer:
+
+<blockquote>
+<p>Setup problem. Either you did not connect your org-mode buffer
+with a trello board, to correct this:
+</p>
+<ul>
+<li> attach to a board through C-c o I or M-x
+org-trello-install-board-metadata
+</li><li> or create a board from scratch with C-c o b or M-x
+org-trello-create-board-and-install-metadata). Either your
+org-mode&rsquo;s todo keyword list and your trello board lists are not
+named the same way (which they must). For this, connect to
+trello and rename your board&rsquo;s list according to your org-mode&rsquo;s
+todo list.
+</li></ul>
+
+</blockquote>
+
+</li><li> The board&rsquo;s list names are different from your org-mode&rsquo;s keyword
+list:
+
+<blockquote>
+<p>Setup problem. Either you did not connect your org-mode buffer
+with a trello board, to correct this:
+</p>
+<ul>
+<li> attach to a board through C-c o I or M-x
+org-trello-install-board-metadata
+</li><li> or create a board from scratch with C-c o b or M-x
+org-trello-create-board-and-install-metadata). Either your
+org-mode&rsquo;s todo keyword list and your trello board lists are not
+named the same way (which they must). For this, connect to
+trello and rename your board&rsquo;s list according to your org-mode&rsquo;s
+todo list. Also, you can specify on your org-mode buffer the
+todo list you want to work with, for example: #+TODO: TODO DOING
+<table>
+<tr><td>DONE FAIL (hit C-c C-c to refresh the setup)</td></tr>
+</table>
+</li></ul>
+
+</blockquote>
+
+</li><li> No label on the card:
+
+<blockquote>
+<p>Cannot synchronize the card - missing mandatory label. Skip it&hellip;
+</p>
+</blockquote>
+
+</li><li> No label on the checklist:
+
+<blockquote>
+<p>Cannot synchronize the checklist - missing mandatory label. Skip
+it&hellip;
+</p>
+</blockquote>
+
+</li><li> No label on the item:
+
+<blockquote>
+<p>Cannot synchronize the item - missing mandatory label. Skip it&hellip;
+</p>
+</blockquote>
+
+</li><li> syncing the checklist without syncing the card first:
+
+<blockquote>
+<p>Cannot synchronize the checklist - the card must synchronized first.
+Skip it&hellip;
+</p>
+</blockquote>
+
+</li><li> Syncing the item without syncing the checklist first:
+
+<blockquote>
+<p>Cannot synchronize the item - the checklist must be synchronized
+first. Skip it&hellip;
+</p>
+</blockquote>
+</li></ul>
+
 <hr>
 <a name="Customizing"></a>
 <div class="header">
@@ -1396,10 +1640,10 @@ Previous: <a href="#Common-Issues" accesskey="p" rel="prev">Common Issues</a>, U
 Next: <a href="#Contributing" accesskey="n" rel="next">Contributing</a>, Previous: <a href="#Troubleshooting" accesskey="p" rel="prev">Troubleshooting</a>, Up: <a href="#Top" accesskey="u" rel="up">Top</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Indices" title="Index" rel="index">Index</a>]</p>
 </div>
 <a name="Customizing-org_002dtrello"></a>
-<h2 class="chapter">7 Customizing org-trello</h2>
+<h2 class="chapter">7 Customizing &lsquo;<samp>org-trello</samp>&rsquo;</h2>
 
 <a name="index-customizing"></a>
-<p>This section describes how you may customize org-trello.
+<p>This section describes how you may customize &lsquo;<samp>org-trello</samp>&rsquo;.
 </p>
 <table class="menu" border="0" cellspacing="0">
 <tr><td align="left" valign="top">&bull; <a href="#Prefix-Keys" accesskey="1">Prefix Keys</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Customizing the Prefix Keybinding
@@ -1410,7 +1654,7 @@ Next: <a href="#Contributing" accesskey="n" rel="next">Contributing</a>, Previou
 </td></tr>
 <tr><td align="left" valign="top">&bull; <a href="#Example" accesskey="4">Example</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Example Emacs-Lisp Customization
 </td></tr>
-<tr><td align="left" valign="top">&bull; <a href="#Auto-Files" accesskey="5">Auto Files</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Automatic org-trello Files
+<tr><td align="left" valign="top">&bull; <a href="#Auto-Files" accesskey="5">Auto Files</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Automatic =org-trello= Files
 </td></tr>
 </table>
 
@@ -1424,21 +1668,21 @@ Next: <a href="#Individual-Keys" accesskey="n" rel="next">Individual Keys</a>, U
 <h3 class="section">7.1 Customizing the Prefix Keybinding</h3>
 
 <a name="index-org_002dtrello_002dcurrent_002dprefix_002dkeybinding"></a>
-<p>By default, org-trello uses the prefix keybinding “C-c o” to begin
+<p>By default, &lsquo;<samp>org-trello</samp>&rsquo; uses the prefix keybinding “C-c o” to begin
 (almost) all of its commands. You may change this by customizing the
-variable “org-trello-current-prefix-keybinding”.
+variable <code>org-trello-current-prefix-keybinding</code>.
 </p>
-<p>To customize “org-trello-current-prefix-keybinding”, type “C-h v
-org-trello-current-prefix-keybinding RET” to display the help text for this
+<p>To customize <code>org-trello-current-prefix-keybinding</code>, type <code>C-h v
+org-trello-current-prefix-keybinding RET</code> to display the help text for this
 variable. Then follow the “customize” link on the last line. You
 may then use the customize interface to set another prefix keybinding.
 </p>
-<p><em>Note:</em> If org-trello is already running, you must restart emacs after
-customizing this variable (or run “M-x org-trello-mode” - <em>twice</em>).
+<p><em>Note:</em> If &lsquo;<samp>org-trello</samp>&rsquo; is already running, you must restart emacs after
+customizing this variable (or run <code>M-x org-trello-mode</code> - <em>twice</em>).
 </p>
 <p>You may also change this setting in your emacs initialization file.
-For example, to change the org-trello prefix keybinding to “C-c x” add
-these lines to your ~/.emacs (or ~/.emacs.d/.init.el) file:
+For example, to change the &lsquo;<samp>org-trello</samp>&rsquo; prefix keybinding to <code>C-c x</code> add
+these lines to your Emacs initialization file (~/.emacs or ~/.emacs.d/.init.el):
 </p>
 <div class="lisp">
 <pre class="lisp">(require 'org-trello)
@@ -1459,7 +1703,7 @@ Next: <a href="#Variables" accesskey="n" rel="next">Variables</a>, Previous: <a 
 <a name="index-org_002dtrello_002dmode_002dmap"></a>
 <p>To redefine one or more org-trello-mode command keybindings, you should create a
 function to define keys in the org-trello-mode-map and hook your
-function to the org-trello-mode-hook. This will make org-trello run
+function to the org-trello-mode-hook. This will make &lsquo;<samp>org-trello</samp>&rsquo; run
 your function each time it starts.
 </p>
 <div class="lisp">
@@ -1494,7 +1738,7 @@ your function each time it starts.
 key-bindings nor remove the default keybindings.
 </p>
 <p>You may add several lines like this one to your hook function to
-remove specific existing org-trello keybindings:
+remove specific existing &lsquo;<samp>org-trello</samp>&rsquo; keybindings:
 </p>
 <div class="lisp">
 <pre class="lisp">(define-key org-trello-mode-map (kbd &quot;C-c o v&quot;) nil)
@@ -1507,10 +1751,10 @@ remove specific existing org-trello keybindings:
 Next: <a href="#Example" accesskey="n" rel="next">Example</a>, Previous: <a href="#Individual-Keys" accesskey="p" rel="prev">Individual Keys</a>, Up: <a href="#Customizing" accesskey="u" rel="up">Customizing</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Indices" title="Index" rel="index">Index</a>]</p>
 </div>
 <a name="Customizing-org_002dtrello-Variables"></a>
-<h3 class="section">7.3 Customizing org-trello Variables</h3>
+<h3 class="section">7.3 Customizing &lsquo;<samp>org-trello</samp>&rsquo; Variables</h3>
 
-<p>You may customize org-trello settings by typing: <br>
-“M-x customize-group RET org-trello RET”.
+<p>You may customize &lsquo;<samp>org-trello</samp>&rsquo; settings by typing: <br>
+<code>M-x customize-group RET org-trello RET</code>.
 </p>
 <p>You may customize any of the following variables from the user-interface.
 </p>
@@ -1585,7 +1829,7 @@ Next: <a href="#Auto-Files" accesskey="n" rel="next">Auto Files</a>, Previous: <
 <a name="Example-Emacs_002dLisp-Customization"></a>
 <h3 class="section">7.4 Example Emacs-Lisp Customization</h3>
 
-<p>Here is an example of how to configure org-trello user-customized
+<p>Here is an example of how to configure &lsquo;<samp>org-trello</samp>&rsquo; user-customized
 variables using emacs-lisp:
 </p>
 <div class="lisp">
@@ -1610,9 +1854,9 @@ inside your emacs setup file (“~/.emacs” or “~/emacs.d/init.el”).
 Previous: <a href="#Example" accesskey="p" rel="prev">Example</a>, Up: <a href="#Customizing" accesskey="u" rel="up">Customizing</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Indices" title="Index" rel="index">Index</a>]</p>
 </div>
 <a name="Automatic-org_002dtrello-Files"></a>
-<h3 class="section">7.5 Automatic org-trello Files</h3>
+<h3 class="section">7.5 Automatic &lsquo;<samp>org-trello</samp>&rsquo; Files</h3>
 
-<p>To have emacs automatically start org-trello when you open a file with
+<p>To have emacs automatically start &lsquo;<samp>org-trello</samp>&rsquo; when you open a file with
 a “.trello” extension, add this to your personal emacs setup file:
 </p>
 <div class="lisp">
@@ -1639,7 +1883,7 @@ a “.trello” extension, add this to your personal emacs setup file:
 Next: <a href="#GNU-GPL" accesskey="n" rel="next">GNU GPL</a>, Previous: <a href="#Customizing" accesskey="p" rel="prev">Customizing</a>, Up: <a href="#Top" accesskey="u" rel="up">Top</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Indices" title="Index" rel="index">Index</a>]</p>
 </div>
 <a name="Development-of-org_002dtrello"></a>
-<h2 class="chapter">8 Development of org-trello</h2>
+<h2 class="chapter">8 Development of &lsquo;<samp>org-trello</samp>&rsquo;</h2>
 
 <a name="index-contributing"></a>
 
@@ -1672,7 +1916,7 @@ Next: <a href="#Issues" accesskey="n" rel="next">Issues</a>, Up: <a href="#Contr
 <a name="index-credits"></a>
 <a name="index-contributors"></a>
 
-<p>Many thanks to all the <a href="https://github.com/org-trello/org-trello/graphs/contributors">contributors</a> to org-trello, including:
+<p>Many thanks to all the <a href="https://github.com/org-trello/org-trello/graphs/contributors">contributors</a> to &lsquo;<samp>org-trello</samp>&rsquo;, including:
 </p>
 <dl compact="compact">
 <dt><a href="https://github.com/dtebbs">@dtebbs</a></dt>
@@ -1712,11 +1956,11 @@ Next: <a href="#Mailing-List" accesskey="n" rel="next">Mailing List</a>, Previou
 <a name="Issue-List"></a>
 <h3 class="section">8.2 Issue List</h3>
 
-<p>If you experience an issue while using org-trello, please first
-confirm that you have the newest version of org-trello. If you
-have an old version, please upgrade to the newest version - your issue
-may already have been solved. You may display the version of your copy
-of org-trello by typing “C-c o v” or “M-x org-trello-version”.
+<p>If you experience an issue while using &lsquo;<samp>org-trello</samp>&rsquo;, please first
+confirm that you have the newest version. If you have an old version,
+please upgrade to the newest version - your issue may already have
+been solved. You may display the version of your copy of &lsquo;<samp>org-trello</samp>&rsquo; by
+typing <code>C-c o v</code> or <code>M-x org-trello-version</code>.
 </p>
 <p>If you have the newest version, please search the <a href="https://github.com/org-trello/org-trello/issues">issue list</a> for
 issues similar to yours. If your issue already exists, please describe
@@ -1728,11 +1972,11 @@ advice offered there, if any.
 <p>You should include the following information in your issue entry:
 </p>
 <ul>
-<li> Your org-trello version
-</li><li> Your org-mode version
+<li> Your &lsquo;<samp>org-trello</samp>&rsquo; version
+</li><li> Your &lsquo;<samp>org-mode</samp>&rsquo; version
 </li><li> Your emacs version
 </li><li> Your system type and OS version
-</li><li> How you installed org-trello:
+</li><li> How you installed &lsquo;<samp>org-trello</samp>&rsquo;:
 <ul>
 <li> melpa
 </li><li> melpa-stable
@@ -1744,7 +1988,7 @@ advice offered there, if any.
 </li><li> A clear, concise and complete description of the issue. Please do state the obvious.
 </li><li> Supporting data:
 <ul>
-<li> A copy of any pertinent messages produced by org-trello or Emacs
+<li> A copy of any pertinent messages produced by &lsquo;<samp>org-trello</samp>&rsquo; or Emacs
 </li><li> A copy of buffer data necessary to reproduce the issue. (Please avoid posting
 private data. Do not post your Trello.com or other login credentials.)
 </li><li> If the issue is with installation, include the &lsquo;<samp>*Compile Log*</samp>&rsquo;
@@ -1774,10 +2018,10 @@ Next: <a href="#Using-orgtrello_002dlog_002dtrace" accesskey="n" rel="next">Usin
 <a name="Using-M_002dx-org_002dtrello_002dbug_002dreport-1"></a>
 <h4 class="subsection">8.2.1 Using &lsquo;<samp>M-x org-trello-bug-report</samp>&rsquo;</h4>
 
-<p>You may use the bug-report function of org-trello to print some
-information about org-trello to the <strong>Messages</strong> buffer to copy into the
-issue entry. To print the bug-report data, type “M-x
-org-trello-bug-report” or “C-c o B”. Then open the <strong>Messages</strong> buffer
+<p>You may use the bug-report function of &lsquo;<samp>org-trello</samp>&rsquo; to print some
+information about &lsquo;<samp>org-trello</samp>&rsquo; to the &lsquo;<samp>*Messages*</samp>&rsquo; buffer to copy into the
+issue entry. To print the bug-report data, type <code>M-x
+org-trello-bug-report</code> or <code>C-c o B</code>. Then open the &lsquo;<samp>*Messages*</samp>&rsquo; buffer
 and copy the block of data it produced to paste into the issue on
 GitHub. The block of data will resemble:
 </p>
@@ -1793,7 +2037,7 @@ GitHub. The block of data will resemble:
 - kill-whole-line: nil
 </pre></div>
 
-<p>If you type “C-u C-c o B” instead, org-trello will open a new issue on
+<p>If you type <code>C-u C-c o B</code> instead, &lsquo;<samp>org-trello</samp>&rsquo; will open a new issue on
 GitHub for you to complete.
 </p>
 <hr>
@@ -1812,7 +2056,7 @@ this snippet of code in a &lsquo;<samp>*scratch*</samp>&rsquo; buffer.
 <pre class="lisp">(custom-set-variables '(orgtrello-log-level orgtrello-log-trace))
 </pre></div>
 
-<p>and evaluate it with M-x eval-buffer. Then, return to your org-trello
+<p>and evaluate it with M-x eval-buffer. Then, return to your &lsquo;<samp>org-trello</samp>&rsquo;
 buffer and repeat the conditions that cause the issue. Copy the
 resulting detailed log messages into your bug-report.
 </p>
@@ -1845,10 +2089,10 @@ Next: <a href="#Compatibility" accesskey="n" rel="next">Compatibility</a>, Previ
 
 <a name="index-release-notes"></a>
 <a name="index-version-history"></a>
-<p>The <a href="https://github.com/org-trello/org-trello/releases">release list</a> of org-trello is on GitHub.
+<p>The <a href="https://github.com/org-trello/org-trello/releases">release list</a> of &lsquo;<samp>org-trello</samp>&rsquo; is on GitHub.
 </p>
 <p>The separate <a href="release-notes.org">release-notes file</a> records the primary changes in each
-release of org-trello. Please also see the <a href="https://github.com/org-trello/org-trello/commits/master">commit history</a> of the
+release of &lsquo;<samp>org-trello</samp>&rsquo;. Please also see the <a href="https://github.com/org-trello/org-trello/commits/master">commit history</a> of the
 <a href="https://github.com/org-trello/org-trello">repository</a> on GitHub.
 </p>
 <hr>
@@ -1860,7 +2104,7 @@ Next: <a href="#CI-Tests" accesskey="n" rel="next">CI Tests</a>, Previous: <a hr
 <a name="Compatibility-with-Emacs"></a>
 <h3 class="section">8.5 Compatibility with Emacs</h3>
 
-<p>org-trello has been tested with the following versions of Emacs and
+<p>&lsquo;<samp>org-trello</samp>&rsquo; has been tested with the following versions of Emacs and
 Operating Systems:
 </p>
 <table>
@@ -1885,7 +2129,7 @@ Next: <a href="#Conventions" accesskey="n" rel="next">Conventions</a>, Previous:
 <a name="Continuous-Integration-Tests"></a>
 <h3 class="section">8.6 Continuous Integration Tests</h3>
 
-<p>org-trello uses <a href="https://travis-ci.org/org-trello/org-trello">Travis CI</a> for continuous integration testing.
+<p>&lsquo;<samp>org-trello</samp>&rsquo; uses <a href="https://travis-ci.org/org-trello/org-trello">Travis CI</a> for continuous integration testing.
 </p>
 <p>The CI tests and installs:
 </p>
@@ -3343,15 +3587,16 @@ Next: <a href="#Command-Index" accesskey="n" rel="next">Command Index</a>, Up: <
 <a name="Concepts-Index"></a>
 <h3 class="appendixsec">C.1 Concepts Index</h3>
 
-<table><tr><th valign="top">Jump to: &nbsp; </th><td><a class="summary-letter" href="#Concepts_cp_letter-C"><b>C</b></a>
+<table><tr><th valign="top">Jump to: &nbsp; </th><td><a class="summary-letter" href="#Concepts_cp_symbol-1"><b>=</b></a>
+ &nbsp; 
+<br>
+<a class="summary-letter" href="#Concepts_cp_letter-C"><b>C</b></a>
  &nbsp; 
 <a class="summary-letter" href="#Concepts_cp_letter-E"><b>E</b></a>
  &nbsp; 
 <a class="summary-letter" href="#Concepts_cp_letter-L"><b>L</b></a>
  &nbsp; 
 <a class="summary-letter" href="#Concepts_cp_letter-M"><b>M</b></a>
- &nbsp; 
-<a class="summary-letter" href="#Concepts_cp_letter-O"><b>O</b></a>
  &nbsp; 
 <a class="summary-letter" href="#Concepts_cp_letter-R"><b>R</b></a>
  &nbsp; 
@@ -3363,6 +3608,10 @@ Next: <a href="#Command-Index" accesskey="n" rel="next">Command Index</a>, Up: <
 <table class="index-cp" border="0">
 <tr><td></td><th align="left">Index Entry</th><td>&nbsp;</td><th align="left"> Section</th></tr>
 <tr><td colspan="4"> <hr></td></tr>
+<tr><th><a name="Concepts_cp_symbol-1">=</a></th><td></td><td></td></tr>
+<tr><td></td><td valign="top"><a href="#index-_003dorg_002dtrello_003d_002c-installing">=org-trello=, installing</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Installing-with-Package">Installing with Package</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-_003dorg_002dtrello_003d_002c-using">=org-trello=, using</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Using">Using</a></td></tr>
+<tr><td colspan="4"> <hr></td></tr>
 <tr><th><a name="Concepts_cp_letter-C">C</a></th><td></td><td></td></tr>
 <tr><td></td><td valign="top"><a href="#index-contributing">contributing</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Contributing">Contributing</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-contributors">contributors</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Credits">Credits</a></td></tr>
@@ -3370,7 +3619,7 @@ Next: <a href="#Command-Index" accesskey="n" rel="next">Command Index</a>, Up: <
 <tr><td></td><td valign="top"><a href="#index-customizing">customizing</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Customizing">Customizing</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th><a name="Concepts_cp_letter-E">E</a></th><td></td><td></td></tr>
-<tr><td></td><td valign="top"><a href="#index-errors">errors</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Troubleshooting">Troubleshooting</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-errors">errors</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Error-Messages">Error Messages</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th><a name="Concepts_cp_letter-L">L</a></th><td></td><td></td></tr>
 <tr><td></td><td valign="top"><a href="#index-license_002c-manual">license, manual</a>:</td><td>&nbsp;</td><td valign="top"><a href="#GNU-FDL">GNU FDL</a></td></tr>
@@ -3378,10 +3627,6 @@ Next: <a href="#Command-Index" accesskey="n" rel="next">Command Index</a>, Up: <
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th><a name="Concepts_cp_letter-M">M</a></th><td></td><td></td></tr>
 <tr><td></td><td valign="top"><a href="#index-manual_002c-installing">manual, installing</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Install-Manual">Install Manual</a></td></tr>
-<tr><td colspan="4"> <hr></td></tr>
-<tr><th><a name="Concepts_cp_letter-O">O</a></th><td></td><td></td></tr>
-<tr><td></td><td valign="top"><a href="#index-org_002dtrello_002c-installing">org-trello, installing</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Installing-with-Package">Installing with Package</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-org_002dtrello_002c-using">org-trello, using</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Using">Using</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th><a name="Concepts_cp_letter-R">R</a></th><td></td><td></td></tr>
 <tr><td></td><td valign="top"><a href="#index-release-notes">release notes</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Releases">Releases</a></td></tr>
@@ -3394,15 +3639,16 @@ Next: <a href="#Command-Index" accesskey="n" rel="next">Command Index</a>, Up: <
 <tr><td></td><td valign="top"><a href="#index-version-history">version history</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Releases">Releases</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
 </table>
-<table><tr><th valign="top">Jump to: &nbsp; </th><td><a class="summary-letter" href="#Concepts_cp_letter-C"><b>C</b></a>
+<table><tr><th valign="top">Jump to: &nbsp; </th><td><a class="summary-letter" href="#Concepts_cp_symbol-1"><b>=</b></a>
+ &nbsp; 
+<br>
+<a class="summary-letter" href="#Concepts_cp_letter-C"><b>C</b></a>
  &nbsp; 
 <a class="summary-letter" href="#Concepts_cp_letter-E"><b>E</b></a>
  &nbsp; 
 <a class="summary-letter" href="#Concepts_cp_letter-L"><b>L</b></a>
  &nbsp; 
 <a class="summary-letter" href="#Concepts_cp_letter-M"><b>M</b></a>
- &nbsp; 
-<a class="summary-letter" href="#Concepts_cp_letter-O"><b>O</b></a>
  &nbsp; 
 <a class="summary-letter" href="#Concepts_cp_letter-R"><b>R</b></a>
  &nbsp; 

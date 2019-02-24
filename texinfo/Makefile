@@ -41,10 +41,10 @@ view : $(InfoOut)
 $(InfoOut) : $(TexiSrc) $(TexiInc) README.org
 	$(TexInfoDir)makeinfo $<
 
-html : $(TexiSrc) info
+html : $(TexiSrc) info images/texinfo.png
 	$(TexInfoDir)texi2any --html --no-split $<
 
-pdf : $(TexiSrc) info texinfo.png
+pdf : $(TexiSrc) info images/texinfo.png
 	$(TexInfoDir)texi2pdf $<
 
 clean :

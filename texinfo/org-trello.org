@@ -92,23 +92,31 @@ which begins with this license and non-warranty statement:
 ;; GNU General Public License for more details.
 #+END_SRC
 
-* TODO About =org-trello=
+* CHEK About =org-trello=
 :PROPERTIES:
 :ALT_TITLE: About
 :DESCRIPTION: About =org-trello=
 :END:
-Why use =org-trello=?
+- Why use =org-trello=?
 
-- You use Emacs [[https://orgmode.org][org-mode]].
-- Your team uses [[https://trello.com/][Trello.com]].
-- =org-trello= is the bridge between org-mode and Trello.com.
-- Everyone wins!
+  - You use Emacs [[https://orgmode.org][org-mode]].
+  - Your team uses [[https://trello.com/][Trello.com]].
+  - =org-trello= is the bridge between org-mode and Trello.com.
+  - Everyone wins!
 
-/Links:/
+- Links:
 
-- [[https://github.com/org-trello/org-trello/zipball/master][Download Zip]]
-- [[https://github.com/org-trello/org-trello/tarball/master][Download Tarball]]
-- [[https://github.com/org-trello/org-trello][View on GitHub]]
+  - [[https://github.com/org-trello/org-trello/zipball/master][Download Zip]]
+  - [[https://github.com/org-trello/org-trello/tarball/master][Download Tarball]]
+  - [[https://github.com/org-trello/org-trello][View on GitHub]]
+
+- What does your page title =org <$> trello= mean?
+
+  It means “map org functions to the trello world”.
+
+  At the time, I was learning Haskell and it made an everlasting
+  awesome impression on me. [[http://hackage.haskell.org/package/base-4.9.1.0/docs/Prelude.html#v:fmap][See fmap's documentation for more detail]].
+
 * TODO Demo Videos
 :PROPERTIES:
 :ALT_TITLE: Demos
@@ -125,7 +133,7 @@ This section provides links to several demo videos.
 /Note:/ The format of =org-trello= buffers has changed since these
 videos were created. Please see the [[#org-trello-format][current =org-trello= format]].
 #+TEXINFO: @end ifhtml
-* CHEK Installing =org-trello=
+* Installing =org-trello=
   :PROPERTIES:
   :ALT_TITLE: Installing
   :DESCRIPTION: Installing =org-trello=
@@ -133,7 +141,7 @@ videos were created. Please see the [[#org-trello-format][current =org-trello= f
 This section describes how to obtain and install the =org-trello=
 package and manual.
 
-** CHEK Installing =org-trello= using Package (recommended)
+** Installing =org-trello= using Package (recommended)
 :PROPERTIES:
 :ALT_TITLE: Installing with Package
 :DESCRIPTION: Recommended Installation
@@ -142,7 +150,7 @@ package and manual.
 
 This section describes how to use =package= to install =org-trello=.
 
-*** CHEK Using MELPA with Package
+*** Using MELPA with Package
 :PROPERTIES:
 :ALT_TITLE: Using MELPA
 :DESCRIPTION: Using MELPA with Package
@@ -153,10 +161,11 @@ packages including =org-trello=. If you already use =package= to access
 next section for how to install =org-trello=.
 
 [[https://melpa.org][MELPA.org]] is a large repository of ready-to-install Emacs packages.
-There are two flavors: melpa and melpa-stable. Melpa contains the
-bleeding-edge version of each package. Melpa-stable contains the last
-stable release. Use Melpa if you like to help test the latest
-features. Use Melpa-Stable if you want something that just works.
+There are two flavors: melpa and melpa-stable. Melpa usually contains
+the bleeding-edge version of each package. Melpa-stable should contain
+the last stable releases of the same packages, but the two may be the
+same. Use Melpa if you like to help test the latest features. Use
+Melpa-Stable if you want something that just works.
 
 Add the code snippet below (from [[https://melpa.org/#/getting-started][melpa.org]]) to your Emacs startup file
 (.emacs or .emacs.d/init.el). The Melpa repository is pre-selected. If
@@ -182,7 +191,7 @@ the line for Melpa-stable.
 After you add this code snippet, exit and restart Emacs or use ~M-x eval-buffer~ to
 re-evaluate your initialization file.
 
-*** CHEK Installing from MELPA with Package
+*** Installing from MELPA with Package
 :PROPERTIES:
 :ALT_TITLE: Installing from MELPA
 :DESCRIPTION: Installing from MELPA with Package
@@ -196,7 +205,7 @@ To install =org-trello= from Melpa, type ~M-x package-install RET org-trello RET
 
 Once you have installed the package, please see [[#loading-org-trello][Loading =org-trello= in Emacs]].
 
-** CHEK Alternate Ways to Install
+** Alternate Ways to Install
 :PROPERTIES:
 :ALT_TITLE: Alternate Installations
 :DESCRIPTION: Alternate Ways to Install
@@ -208,7 +217,7 @@ Package and Melpa as recommended.
 /Note/ org-trello's [[http://marmalade-repo.org/packages/org-trello][Marmalade package]] is no longer maintained. Use
 [[http://melpa-stable.milkbox.net/#/org-trello][melpa-stable package]] instead.
 
-*** CHEK Download and Install the Tarball
+*** Download and Install the Tarball
 :PROPERTIES:
 :ALT_TITLE: Tarball
 :DESCRIPTION: Download and Install the Tarball
@@ -216,10 +225,10 @@ Package and Melpa as recommended.
 
 To retrieve the tarball from [[https://github.com/org-trello/org-trello/releases][github]], type this at the command line,
 substituting the /path/to your chosen folder.
-Replace “0.8.0” with the current version, if different.
+Replace “0.8.1” with the current version, if different.
 
 #+begin_src shell
-  VERSION="0.8.0"
+  VERSION="0.8.1"
   wget https://github.com/org-trello/org-trello/releases/download/$VERSION/org-trello-$VERSION.tar -o /path/to/org-trello-$VERSION.tar
 #+end_src
 
@@ -227,9 +236,9 @@ Alternately, navigate to [[https://github.com/org-trello/org-trello][=org-trello
 on the “releases” link, then locate and download the same file.
 
 Then, inside Emacs, type ~M-x package-install-file RET
-/path/to/org-trello-0.8.0.tar RET~
+/path/to/org-trello-0.8.1.tar RET~
 
-*** CHEK Get and Install with el-get
+*** Get and Install with el-get
 :PROPERTIES:
 :ALT_TITLE: el-get
 :DESCRIPTION: Get and Install with el-get
@@ -238,7 +247,7 @@ Then, inside Emacs, type ~M-x package-install-file RET
 If you use [[https://github.com/dimitri/el-get][el-get]] to install packages, you may install the [[https://github.com/dimitri/el-get/blob/master/recipes/org-trello.rcp][=org-trello= recipe]]
 with it. Inside Emacs, type: ~M-x el-get-install RET org-trello RET~.
 
-*** CHEK Clone from GitHub and Install with Cask
+*** Clone from GitHub and Install with Cask
 :PROPERTIES:
 :ALT_TITLE: GitHub & Cask
 :DESCRIPTION: Clone from GitHub and Install with Cask
@@ -265,7 +274,7 @@ Now install the built =org-trello-$VERSION.tar= using Emacs. Type:
 
 ~M-x package-install-file RET /path/to/org-trello-$VERSION.tar RET~
 
-** CHEK Loading =org-trello= in Emacs
+** Loading =org-trello= in Emacs
 :PROPERTIES:
 :ALT_TITLE: Loading
 :DESCRIPTION: Loading =org-trello= in Emacs
@@ -311,7 +320,7 @@ If you have previously installed and used a previous release of
 =org-trello=, this section describes how to migrate your existing
 =org-trello= installation to a new release.
 
-*** 0.8.1
+*** Migrate to 0.8.1
 :PROPERTIES:
 :CUSTOM_ID: 081
 :END:
@@ -328,7 +337,7 @@ needed by the user though (the migration is integrated to the actions).
 Still, if the user wants it, (s)he can do it through ~M-x
 org-trello-migrate-buffer~.
 
-*** 0.7.0
+*** Migrate to 0.7.0
 :PROPERTIES:
 :CUSTOM_ID: 070
 :END:
@@ -348,7 +357,7 @@ Again, =org-trello= tries to respect elisp conventions regarding command
 names. So the command names have been renamed from /org-trello// to
 /org-trello-/. Still, the old command names are available.
 
-*** 0.6.7
+*** Migrate to 0.6.7
 :PROPERTIES:
 :CUSTOM_ID: 067
 :END:
@@ -357,7 +366,7 @@ The comments are now displayed inline in the card. So the binding to
 show the comments have been removed. To see comments, simply unfold the
 card.
 
-*** 0.6.6
+*** Migrate to 0.6.6
 :PROPERTIES:
 :CUSTOM_ID: 066
 :END:
@@ -365,7 +374,7 @@ card.
 We can now remove a comment at point (if we are the owner of the
 comment). Use ~M-x org-trello-delete-card-comment~.
 
-*** 0.5.5
+*** Migrate to 0.5.5
 :PROPERTIES:
 :CUSTOM_ID: 055
 :END:
@@ -380,7 +389,7 @@ Default bindings have been updated.
 
 Of course, as usual, if you are not happy with this, simply update [[file:bindings.html#bindings-override][your configuration file]].
 
-*** 0.5.3
+*** Migrate to 0.5.3
 :PROPERTIES:
 :CUSTOM_ID: 053
 :END:
@@ -394,7 +403,7 @@ Lots of work has been done to make =org-trello=:
 Default [[http://org-trello.github.io/bindings.html#keybindings][interactive commands]] names have been renamed to be explicit
 and aligned between them.
 
-*** 0.5.2
+*** Migrate to 0.5.2
 :PROPERTIES:
 :CUSTOM_ID: 052
 :END:
@@ -411,7 +420,7 @@ This is a temporary setback. We need time to craft a better
 implementation for asynchronous requests (deferred, async libraries
 seems interesting enough).
 
-*** 0.3.8
+*** Migrate to 0.3.8
 :PROPERTIES:
 :CUSTOM_ID: 038
 :END:
@@ -431,7 +440,7 @@ symmetric action pulls from trello.
 | C-c o a       | assign yourself to the card                         |
 | C-u C-c o a   | unassign yourself from the card                     |
 
-*** 0.3.1
+*** Migrate to 0.3.1
 :PROPERTIES:
 :CUSTOM_ID: 031
 :END:
@@ -440,7 +449,7 @@ The old checklist/item format has been removed -
 https://github.com/org-trello/org-trello/issues/105. Now the org
 checkbox way is the standard one.
 
-*** 0.2.9
+*** Migrate to 0.2.9
 :PROPERTIES:
 :CUSTOM_ID: 029
 :END:
@@ -458,7 +467,7 @@ checkbox (checklists, items) will be hidden.
 
 If you began to use =org-trello=, nothing to do.
 
-*** 0.2.8
+*** Migrate to 0.2.8
 :PROPERTIES:
 :CUSTOM_ID: 028
 :END:
@@ -466,7 +475,7 @@ If you began to use =org-trello=, nothing to do.
 From 0.2.8 onward, the card description can be synchronized too. Just
 synchronize as usual.
 
-*** 0.2.1 -> 0.2.2
+*** Migrate 0.2.1 to 0.2.2
 :PROPERTIES:
 :CUSTOM_ID: 021---022
 :END:
@@ -479,7 +488,7 @@ attach to).
 This way, you will be able to use the assign (C-c o a) / unassign (C-c o
 u) yourself to the card.
 
-*** 0.1.5 -> 0.1.6
+*** Migrate 0.1.5 to 0.1.6
 :PROPERTIES:
 :CUSTOM_ID: 015---016
 :END:
@@ -489,7 +498,7 @@ checkboxes!
 
 cf. [[file:migration.html#natural-org-format-from-016-onwards][natural org format (from 0.1.6 onwards)]] for more details.
 
-*** 0.1.1 -> 0.1.2
+*** Migrate 0.1.1 to 0.1.2
 :PROPERTIES:
 :CUSTOM_ID: 011---012
 :END:
@@ -504,7 +513,7 @@ cf. [[file:migration.html#natural-org-format-from-016-onwards][natural org forma
 
 Then M-x orgtrello-proxy/reload
 
-* TODO Connecting to Trello.com
+* CHEK Connecting to Trello.com
   :PROPERTIES:
   :ALT_TITLE: Connecting
   :DESCRIPTION: Connecting to Trello.com
@@ -515,19 +524,114 @@ Then M-x orgtrello-proxy/reload
 :PROPERTIES:
 :ALT_TITLE: Installing Credentials
 :DESCRIPTION: Installing Your Trello.com Credentials
+:CUSTOM_ID: installing-credentials
 :END:
+
+You must install the ~org-trello-consumer-key~ and the read-write
+~org-trello-access-token~ to permit org-trello to access your trello
+boards.
+
+/Remark:/ This procedure only needs to be done once unless you revoke
+the token.
+
+First, ensure that:
+- emacs is configured to use an external web browser. Text-only web
+  browsers internal to Emacs, like =eww=, =w3= or =w3m-mode=, can not
+  execute the required JavaScript.
+- the web browser emacs is configured to use is started
+- you are logged into Trello.
+- you know your exact Trello account name. *DO NOT* use your
+  email address as your account name. To confirm your account name,
+  check that https://trello.com/*your-account-name* exists.
+
+Then, in Emacs, type:
+- ~C-c o i~, or 
+- ~M-x org-trello-install-key-and-token~
+
+This command will:
+
+- ask for an account name, which must be your trello login. *DO NOT* use your
+  email address as your account name.
+
+- open your browser for you to select and copy your
+  /org-trello-consumer-key/ (Developer API Keys / key entry) and paste
+  it inside emacs' minibuffer (hit RET when done).
+
+[[file:images/retrieve-consumer-key.png]]
+
+- open a second tab to ask you to authorize org-trello to work in your
+  name on your account
+
+[[file:images/authorize-org-trello.png]]
+
+- If you are not ok with this, hit /Deny/. You won't be
+  able to use org-trello.
+
+- Otherwise, hit /Allow/, this will then present you a form with the
+  read/write /org-trello-access-token/, select and copy it, then paste it
+  inside emacs' minibuffer and hit RET.
+
+/Note:/ This command, if accepted, results in a file stored /only/ on
+your disk in ~/.emacs.d/.trello/.el</kbd> (this path may vary depending
+on **user-emacs-directory**).
+
+This file contains your credentials and will be used to identify you
+when requesting trello.
+
+#+BEGIN_SRC emacs-lisp
+    (setq org-trello-consumer-key "abc...")  ;; 32 characters string
+    (setq org-trello-access-token "def...")  ;; 64 characters string
+#+END_SRC
 
 ** Connect an org-mode buffer with an existing Trello board.
 :PROPERTIES:
 :ALT_TITLE: Connect Existing Board
 :DESCRIPTION: Connect a Buffer to an Existing board
 :END:
+For each org-mode file that you wish to use with Trello.com, you need
+to connect your org-mode file with a Trello board.
+
+/Remarks:/ This procedure must be done only once for each org-mode file you want to
+sync with a trello board.
+
+To connect an buffer to an existing board, type:
+
+- ~C-c o I~, or 
+- ~M-x org-trello-install-board-metadata~
+
+This will:
+
+- ask you for the accounts you want to use (if you have multiple ones,
+  otherwise, it will select the only one and pass to the next step silently)
+
+- present you with a list of boards for the selected account. Select the
+  one you want and hit enter.
+
+- edit your org-mode file to add the properties needed.
 
 ** Create a Trello board from your org-mode buffer.
 :PROPERTIES:
 :ALT_TITLE: Create a Board
 :DESCRIPTION: Create a Board from a Buffer
 :END:
+
+You can create a new Trello board from your existing org-mode file. 
+
+/Remarks:/ This procedure must be done only once for each org-mode
+file you want to sync with a trello board.
+
+Type:
+
+- ~C-c o b~, or
+- ~M-x org-trello-create-board-and-install-metadata~
+
+This will:
+
+- ask you for the accounts you want to use (if you have multiple ones,
+  otherwise, it will select the only one and pass to the next step silently)
+
+- create the Trello board lists from the keywords configured in your
+  org-mode (cf. [[http://orgmode.org/manual/In_002dbuffer-settings.html][org-todo-keywords]])
 
 * TODO Using =org-trello=
   :PROPERTIES:
@@ -619,7 +723,7 @@ This section describes other functions not listed above.
 :DESCRIPTION: How to Perform Tasks
 :END:
 This section describes how to use commands to perform tasks with =org-trello=.
-** TODO Format of org-trello
+** CHEK Format of org-trello
 :PROPERTIES:
 :ALT_TITLE: Format
 :DESCRIPTION: Format of =org-trello=
@@ -627,23 +731,176 @@ This section describes how to use commands to perform tasks with =org-trello=.
 :END:
 This section describes the format of the text in an =org-trello= buffer.
 
-* TODO Troubleshooting =org-trello=
+There are 3 levels of meta-data:
+
+- level 1 - Card
+- level 2 - Checklist
+- level 3 - Item
+
+[[http://orgmode.org/manual/Checkboxes.html][Natural org checkboxes]].
+Thanks to @sw1nn [[https://github.com/org-trello/org-trello/issues/14][for showing me this org feature, this is awesome!]]
+
+#+BEGIN_EXAMPLE
+    * IN-PROGRESS Joy of FUN(ctional) LANGUAGES
+    - [-] LISP
+      - [X] Emacs-Lisp
+      - [X] Common-Lisp
+      - [ ] Scheme
+      - [X] Clojure
+    - [X] ML
+      - [X] Haskell
+      - [X] Ocaml
+    - [X] Hybrid
+      - [X] Scala
+    - [ ] little more detail, this is level 2, so checklist in trello board
+      - [ ] item 3
+        - [ ] any entities with level superior to 4 are considered level 3
+#+END_EXAMPLE
+
+For example, once synced to trello, this looks like:
+
+#+BEGIN_EXAMPLE
+    * IN-PROGRESS Joy of FUN(ctional) LANGUAGES
+    :PROPERTIES:
+    :orgtrello-id: 521dc9f3edeabee47600401e
+    :END:
+    - [-] LISP :PROPERTIES: {"orgtrello-id":"521dc9f48e95d74636004107"}
+      - [X] Emacs-Lisp :PROPERTIES: {"orgtrello-id":"521dc9f7487c2e9b250047a5"}
+      - [X] Common-Lisp :PROPERTIES: {"orgtrello-id":"521dc9f7ae27842a36003b26"}
+      - [ ] Scheme :PROPERTIES: {"orgtrello-id":"521dc9f834f52df935003b15"}
+      - [X] Clojure :PROPERTIES: {"orgtrello-id":"521dc9f9c1b85c905f006b4e"}
+    - [X] ML :PROPERTIES: {"orgtrello-id":"521dc9f5d49a919614000266"}
+      - [X] Haskell :PROPERTIES: {"orgtrello-id":"521dc9fa5699f00b25003bd0"}
+      - [X] Ocaml :PROPERTIES: {"orgtrello-id":"521dc9fb7ef4310554003ab3"}
+    - [X] Hybrid :PROPERTIES: {"orgtrello-id":"521dc9f6238d072770007217"}
+      - [X] Scala :PROPERTIES: {"orgtrello-id":"521dc9fc8e95d74636004109"}
+#+END_EXAMPLE
+
+/Note/ In the org-trello buffer, the :PROPERTIES: for the checklists/items
+won't be visible for the user.
+
+* CHEK Troubleshooting =org-trello=
   :PROPERTIES:
   :ALT_TITLE: Troubleshooting
   :DESCRIPTION: Troubleshooting =org-trello=
   :END:
 #+CINDEX: troubleshooting
-#+CINDEX: errors
 ** Common Issues
 :PROPERTIES:
 :ALT_TITLE: Common Issues
 :DESCRIPTION: Common Issues
 :END:
+
+This section addresses some common issues with installing and using =org-trello=.
+
+- Why am I getting errors about credentials loading, like below?
+
+  #+BEGIN_EXAMPLE
+      org-trello - Request ’sync org buffer to trello board’...
+      org-trello - List of errors:
+       - Setup problem - Problem during credentials loading (consumer-key
+         and read/write access-token) - C-c o i or M-x org-trello-install-key-and-token
+       - Setup problem - You need to install the consumer-key and the
+         read/write access-token - C-c o i or M-x org-trello-install-key-and-token
+  #+END_EXAMPLE
+
+  If you have already [[#installing-credentials][set up your credentials]], then please make sure the
+  login you used in the credential installation step match your trello
+  login exactly, that is:
+
+  - Check =https://trello.com/<user-login>= exists
+  - =<User-login>= in the buffer is the same as the org-trello login:
+    =#+PROPERTY: orgtrello-user-me <user-login>=\\
+    at the org-trello buffer top must match too.
+
+- For issues not listed above, please see [[#issue-list][these instructions]] about the
+  issue list on GitHub.
+
 ** Error Messages
 :PROPERTIES:
 :ALT_TITLE: Error Messages
 :DESCRIPTION: Error Messages
 :END:
+#+CINDEX: errors
+
+=org-trello= can display the following possible error messages:
+
+- Failed to set up the consumer-key and the access-token:
+
+  #+BEGIN_QUOTE
+    Setup problem - You need to install the consumer-key and the
+    read/write access-token - C-c o i or M-x
+    org-trello-install-board-metadata
+  #+END_QUOTE
+
+- Failed to setting up the org-mode buffer:
+
+  #+BEGIN_QUOTE
+    Setup problem. Either you did not connect your org-mode buffer
+    with a trello board, to correct this:
+
+    - attach to a board through C-c o I or M-x
+      org-trello-install-board-metadata
+    - or create a board from scratch with C-c o b or M-x
+      org-trello-create-board-and-install-metadata). Either your
+      org-mode's todo keyword list and your trello board lists are not
+      named the same way (which they must). For this, connect to
+      trello and rename your board's list according to your org-mode's
+      todo list.
+  #+END_QUOTE
+
+- The board's list names are different from your org-mode's keyword
+  list:
+
+  #+BEGIN_QUOTE
+    Setup problem. Either you did not connect your org-mode buffer
+    with a trello board, to correct this:
+
+    - attach to a board through C-c o I or M-x
+      org-trello-install-board-metadata
+    - or create a board from scratch with C-c o b or M-x
+      org-trello-create-board-and-install-metadata). Either your
+      org-mode's todo keyword list and your trello board lists are not
+      named the same way (which they must). For this, connect to
+      trello and rename your board's list according to your org-mode's
+      todo list. Also, you can specify on your org-mode buffer the
+      todo list you want to work with, for example: #+TODO: TODO DOING
+      | DONE FAIL (hit C-c C-c to refresh the setup)
+  #+END_QUOTE
+
+- No label on the card:
+
+  #+BEGIN_QUOTE
+    Cannot synchronize the card - missing mandatory label. Skip it...
+  #+END_QUOTE
+
+- No label on the checklist:
+
+  #+BEGIN_QUOTE
+    Cannot synchronize the checklist - missing mandatory label. Skip
+    it...
+  #+END_QUOTE
+
+- No label on the item:
+
+  #+BEGIN_QUOTE
+    Cannot synchronize the item - missing mandatory label. Skip it...
+  #+END_QUOTE
+
+- syncing the checklist without syncing the card first:
+
+  #+BEGIN_QUOTE
+    Cannot synchronize the checklist - the card must synchronized first.
+    Skip it...
+  #+END_QUOTE
+
+- Syncing the item without syncing the checklist first:
+
+  #+BEGIN_QUOTE
+    Cannot synchronize the item - the checklist must be synchronized
+    first. Skip it...
+  #+END_QUOTE
+
 * Customizing =org-trello=
   :PROPERTIES:
   :ALT_TITLE: Customizing
@@ -886,6 +1143,7 @@ creators and contributors of Emacs and org-mode.
 :PROPERTIES:
 :ALT_TITLE: Issues
 :DESCRIPTION: Issue List
+:CUSTOM_ID: issue-list
 :END:
 
 If you experience an issue while using =org-trello=, please first

@@ -15,7 +15,7 @@ from the command-line using the command “info”.
 
 #+TEXINFO: @ifnotinfo
 # This graphic requires ‘graphviz’
-#+begin_src dot :file texinfo.png
+#+begin_src dot :file images/texinfo.png
   digraph texinfo {
 	  size="4,6"
 	  node [shape=oval]
@@ -60,7 +60,7 @@ from the command-line using the command “info”.
 
 #+CAPTION: Building the Manual with Texinfo
 #+RESULTS:
-[[file:texinfo.png]]
+[[file:images/texinfo.png]]
 #+TEXINFO: @end ifnotinfo
 
 * Building the Manual

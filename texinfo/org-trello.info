@@ -135,20 +135,20 @@ Install Manual
 
 Migrating
 
-* 0.8.1: 081.
-* 0.7.0: 070.
-* 0.6.7: 067.
-* 0.6.6: 066.
-* 0.5.5: 055.
-* 0.5.3: 053.
-* 0.5.2: 052.
-* 0.3.8: 038.
-* 0.3.1: 031.
-* 0.2.9: 029.
-* 0.2.8: 028.
-* 0.2.1 -> 0.2.2: 021 -> 022.
-* 0.1.5 -> 0.1.6: 015 -> 016.
-* 0.1.1 -> 0.1.2: 011 -> 012.
+* Migrate to 0.8.1: Migrate to 081.
+* Migrate to 0.7.0: Migrate to 070.
+* Migrate to 0.6.7: Migrate to 067.
+* Migrate to 0.6.6: Migrate to 066.
+* Migrate to 0.5.5: Migrate to 055.
+* Migrate to 0.5.3: Migrate to 053.
+* Migrate to 0.5.2: Migrate to 052.
+* Migrate to 0.3.8: Migrate to 038.
+* Migrate to 0.3.1: Migrate to 031.
+* Migrate to 0.2.9: Migrate to 029.
+* Migrate to 0.2.8: Migrate to 028.
+* Migrate 0.2.1 to 0.2.2: Migrate 021 to 022.
+* Migrate 0.1.5 to 0.1.6: Migrate 015 to 016.
+* Migrate 0.1.1 to 0.1.2: Migrate 011 to 012.
 
 Connecting
 
@@ -215,23 +215,31 @@ Indices
 
 File: org-trello.info,  Node: About,  Next: Demos,  Prev: Top,  Up: Top
 
-1 *TODO* About ‘org-trello’
+1 *CHEK* About ‘org-trello’
 ***************************
 
-Why use ‘org-trello’?
+   • Why use ‘org-trello’?
 
-   • You use Emacs org-mode (https://orgmode.org).
-   • Your team uses Trello.com (https://trello.com/).
-   • ‘org-trello’ is the bridge between org-mode and Trello.com.
-   • Everyone wins!
+        • You use Emacs org-mode (https://orgmode.org).
+        • Your team uses Trello.com (https://trello.com/).
+        • ‘org-trello’ is the bridge between org-mode and Trello.com.
+        • Everyone wins!
 
-   _Links:_
+   • Links:
 
-   • Download Zip
-     (https://github.com/org-trello/org-trello/zipball/master)
-   • Download Tarball
-     (https://github.com/org-trello/org-trello/tarball/master)
-   • View on GitHub (https://github.com/org-trello/org-trello)
+        • Download Zip
+          (https://github.com/org-trello/org-trello/zipball/master)
+        • Download Tarball
+          (https://github.com/org-trello/org-trello/tarball/master)
+        • View on GitHub (https://github.com/org-trello/org-trello)
+
+   • What does your page title ‘org <$> trello’ mean?
+
+     It means “map org functions to the trello world”.
+
+     At the time, I was learning Haskell and it made an everlasting
+     awesome impression on me.  See fmap’s documentation for more detail
+     (http://hackage.haskell.org/package/base-4.9.1.0/docs/Prelude.html#v:fmap).
 
 
 File: org-trello.info,  Node: Demos,  Next: Installing,  Prev: About,  Up: Top
@@ -246,8 +254,8 @@ manuals.
 
 File: org-trello.info,  Node: Installing,  Next: Connecting,  Prev: Demos,  Up: Top
 
-3 *CHEK* Installing ‘org-trello’
-********************************
+3 Installing ‘org-trello’
+*************************
 
 This section describes how to obtain and install the ‘org-trello’
 package and manual.
@@ -263,8 +271,8 @@ package and manual.
 
 File: org-trello.info,  Node: Installing with Package,  Next: Alternate Installations,  Up: Installing
 
-3.1 *CHEK* Installing ‘org-trello’ using Package (recommended)
-==============================================================
+3.1 Installing ‘org-trello’ using Package (recommended)
+=======================================================
 
 This section describes how to use ‘package’ to install ‘org-trello’.
 
@@ -276,8 +284,8 @@ This section describes how to use ‘package’ to install ‘org-trello’.
 
 File: org-trello.info,  Node: Using MELPA,  Next: Installing from MELPA,  Up: Installing with Package
 
-3.1.1 *CHEK* Using MELPA with Package
--------------------------------------
+3.1.1 Using MELPA with Package
+------------------------------
 
 This section describes how to use ‘package’ to download and install any
 packages including ‘org-trello’.  If you already use ‘package’ to access
@@ -286,8 +294,9 @@ next section for how to install ‘org-trello’.
 
    MELPA.org (https://melpa.org) is a large repository of
 ready-to-install Emacs packages.  There are two flavors: melpa and
-melpa-stable.  Melpa contains the bleeding-edge version of each package.
-Melpa-stable contains the last stable release.  Use Melpa if you like to
+melpa-stable.  Melpa usually contains the bleeding-edge version of each
+package.  Melpa-stable should contain the last stable releases of the
+same packages, but the two may be the same.  Use Melpa if you like to
 help test the latest features.  Use Melpa-Stable if you want something
 that just works.
 
@@ -317,8 +326,8 @@ eval-buffer’ to re-evaluate your initialization file.
 
 File: org-trello.info,  Node: Installing from MELPA,  Prev: Using MELPA,  Up: Installing with Package
 
-3.1.2 *CHEK* Installing from MELPA with Package
------------------------------------------------
+3.1.2 Installing from MELPA with Package
+----------------------------------------
 
 This section describes how to download and install ‘org-trello’ once you
 have installed Package and configured it to access MELPA.
@@ -335,8 +344,8 @@ org-trello RET’.
 
 File: org-trello.info,  Node: Alternate Installations,  Next: Loading,  Prev: Installing with Package,  Up: Installing
 
-3.2 *CHEK* Alternate Ways to Install
-====================================
+3.2 Alternate Ways to Install
+=============================
 
 This section describes alternate ways to install if you do not use
 Package and Melpa as recommended.
@@ -355,15 +364,15 @@ instead.
 
 File: org-trello.info,  Node: Tarball,  Next: el-get,  Up: Alternate Installations
 
-3.2.1 *CHEK* Download and Install the Tarball
----------------------------------------------
+3.2.1 Download and Install the Tarball
+--------------------------------------
 
 To retrieve the tarball from github
 (https://github.com/org-trello/org-trello/releases), type this at the
 command line, substituting the /path/to your chosen folder.  Replace
-“0.8.0” with the current version, if different.
+“0.8.1” with the current version, if different.
 
-     VERSION="0.8.0"
+     VERSION="0.8.1"
      wget https://github.com/org-trello/org-trello/releases/download/$VERSION/org-trello-$VERSION.tar -o /path/to/org-trello-$VERSION.tar
 
    Alternately, navigate to ‘org-trello’ on github
@@ -371,13 +380,13 @@ command line, substituting the /path/to your chosen folder.  Replace
 the “releases” link, then locate and download the same file.
 
    Then, inside Emacs, type ‘M-x package-install-file RET
-/path/to/org-trello-0.8.0.tar RET’
+/path/to/org-trello-0.8.1.tar RET’
 
 
 File: org-trello.info,  Node: el-get,  Next: GitHub & Cask,  Prev: Tarball,  Up: Alternate Installations
 
-3.2.2 *CHEK* Get and Install with el-get
-----------------------------------------
+3.2.2 Get and Install with el-get
+---------------------------------
 
 If you use el-get (https://github.com/dimitri/el-get) to install
 packages, you may install the ‘org-trello’ recipe
@@ -387,8 +396,8 @@ with it.  Inside Emacs, type: ‘M-x el-get-install RET org-trello RET’.
 
 File: org-trello.info,  Node: GitHub & Cask,  Prev: el-get,  Up: Alternate Installations
 
-3.2.3 *CHEK* Clone from GitHub and Install with Cask
-----------------------------------------------------
+3.2.3 Clone from GitHub and Install with Cask
+---------------------------------------------
 
 Use this section only if you are a developer modifying and testing
 ‘org-trello’.
@@ -412,8 +421,8 @@ and then install using Emacs:
 
 File: org-trello.info,  Node: Loading,  Next: Install Manual,  Prev: Alternate Installations,  Up: Installing
 
-3.3 *CHEK* Loading ‘org-trello’ in Emacs
-========================================
+3.3 Loading ‘org-trello’ in Emacs
+=================================
 
 Once ‘org-trello’ is installed, it must be loaded into Emacs before it
 can be used, preferably during initialization of Emacs.  Add this in
@@ -532,26 +541,26 @@ If you have previously installed and used a previous release of
 
 * Menu:
 
-* 0.8.1: 081.
-* 0.7.0: 070.
-* 0.6.7: 067.
-* 0.6.6: 066.
-* 0.5.5: 055.
-* 0.5.3: 053.
-* 0.5.2: 052.
-* 0.3.8: 038.
-* 0.3.1: 031.
-* 0.2.9: 029.
-* 0.2.8: 028.
-* 0.2.1 -> 0.2.2: 021 -> 022.
-* 0.1.5 -> 0.1.6: 015 -> 016.
-* 0.1.1 -> 0.1.2: 011 -> 012.
+* Migrate to 0.8.1: Migrate to 081.
+* Migrate to 0.7.0: Migrate to 070.
+* Migrate to 0.6.7: Migrate to 067.
+* Migrate to 0.6.6: Migrate to 066.
+* Migrate to 0.5.5: Migrate to 055.
+* Migrate to 0.5.3: Migrate to 053.
+* Migrate to 0.5.2: Migrate to 052.
+* Migrate to 0.3.8: Migrate to 038.
+* Migrate to 0.3.1: Migrate to 031.
+* Migrate to 0.2.9: Migrate to 029.
+* Migrate to 0.2.8: Migrate to 028.
+* Migrate 0.2.1 to 0.2.2: Migrate 021 to 022.
+* Migrate 0.1.5 to 0.1.6: Migrate 015 to 016.
+* Migrate 0.1.1 to 0.1.2: Migrate 011 to 012.
 
 
-File: org-trello.info,  Node: 081,  Next: 070,  Up: Migrating
+File: org-trello.info,  Node: Migrate to 081,  Next: Migrate to 070,  Up: Migrating
 
-3.5.1 0.8.1
------------
+3.5.1 Migrate to 0.8.1
+----------------------
 
 The ‘org-trello’ key properties used in the buffer were clashing with
 higher org-mode functionality (lookup, cf.
@@ -566,10 +575,10 @@ actions).  Still, if the user wants it, (s)he can do it through ‘M-x
 org-trello-migrate-buffer’.
 
 
-File: org-trello.info,  Node: 070,  Next: 067,  Prev: 081,  Up: Migrating
+File: org-trello.info,  Node: Migrate to 070,  Next: Migrate to 067,  Prev: Migrate to 081,  Up: Migrating
 
-3.5.2 0.7.0
------------
+3.5.2 Migrate to 0.7.0
+----------------------
 
 As of now, ‘org-trello’ respects elisp conventions regarding the setup
 file location.  So the default _~_.trello// will be moved silently to
@@ -588,29 +597,29 @@ _org-trello/_ to _org-trello-_.  Still, the old command names are
 available.
 
 
-File: org-trello.info,  Node: 067,  Next: 066,  Prev: 070,  Up: Migrating
+File: org-trello.info,  Node: Migrate to 067,  Next: Migrate to 066,  Prev: Migrate to 070,  Up: Migrating
 
-3.5.3 0.6.7
------------
+3.5.3 Migrate to 0.6.7
+----------------------
 
 The comments are now displayed inline in the card.  So the binding to
 show the comments have been removed.  To see comments, simply unfold the
 card.
 
 
-File: org-trello.info,  Node: 066,  Next: 055,  Prev: 067,  Up: Migrating
+File: org-trello.info,  Node: Migrate to 066,  Next: Migrate to 055,  Prev: Migrate to 067,  Up: Migrating
 
-3.5.4 0.6.6
------------
+3.5.4 Migrate to 0.6.6
+----------------------
 
 We can now remove a comment at point (if we are the owner of the
 comment).  Use ‘M-x org-trello-delete-card-comment’.
 
 
-File: org-trello.info,  Node: 055,  Next: 053,  Prev: 066,  Up: Migrating
+File: org-trello.info,  Node: Migrate to 055,  Next: Migrate to 053,  Prev: Migrate to 066,  Up: Migrating
 
-3.5.5 0.5.5
------------
+3.5.5 Migrate to 0.5.5
+----------------------
 
 Default bindings have been updated.
 
@@ -624,10 +633,10 @@ C-c o o     Removed.  To show the cards comments, use C-u C-c o C
 your configuration file (bindings.html#bindings-override).
 
 
-File: org-trello.info,  Node: 053,  Next: 052,  Prev: 055,  Up: Migrating
+File: org-trello.info,  Node: Migrate to 053,  Next: Migrate to 052,  Prev: Migrate to 055,  Up: Migrating
 
-3.5.6 0.5.3
------------
+3.5.6 Migrate to 0.5.3
+----------------------
 
 Lots of work has been done to make ‘org-trello’:
 
@@ -640,10 +649,10 @@ Lots of work has been done to make ‘org-trello’:
 renamed to be explicit and aligned between them.
 
 
-File: org-trello.info,  Node: 052,  Next: 038,  Prev: 053,  Up: Migrating
+File: org-trello.info,  Node: Migrate to 052,  Next: Migrate to 038,  Prev: Migrate to 053,  Up: Migrating
 
-3.5.7 0.5.2
------------
+3.5.7 Migrate to 0.5.2
+----------------------
 
 Decision has been taken to remove the intermediary proxy used to bounce
 requests to trello.  This was introduced to permit asynchronous
@@ -658,10 +667,10 @@ implementation for asynchronous requests (deferred, async libraries
 seems interesting enough).
 
 
-File: org-trello.info,  Node: 038,  Next: 031,  Prev: 052,  Up: Migrating
+File: org-trello.info,  Node: Migrate to 038,  Next: Migrate to 031,  Prev: Migrate to 052,  Up: Migrating
 
-3.5.8 0.3.8
------------
+3.5.8 Migrate to 0.3.8
+----------------------
 
 ‘org-trello’ now tries to enforce symmetry, mainly regarding the sync
 actions.  So by default, an action pushes to trello.  Using C-u, the
@@ -679,20 +688,20 @@ C-c o a       assign yourself to the card
 C-u C-c o a   unassign yourself from the card
 
 
-File: org-trello.info,  Node: 031,  Next: 029,  Prev: 038,  Up: Migrating
+File: org-trello.info,  Node: Migrate to 031,  Next: Migrate to 029,  Prev: Migrate to 038,  Up: Migrating
 
-3.5.9 0.3.1
------------
+3.5.9 Migrate to 0.3.1
+----------------------
 
 The old checklist/item format has been removed -
 <https://github.com/org-trello/org-trello/issues/105>.  Now the org
 checkbox way is the standard one.
 
 
-File: org-trello.info,  Node: 029,  Next: 028,  Prev: 031,  Up: Migrating
+File: org-trello.info,  Node: Migrate to 029,  Next: Migrate to 028,  Prev: Migrate to 031,  Up: Migrating
 
-3.5.10 0.2.9
-------------
+3.5.10 Migrate to 0.2.9
+-----------------------
 
 For information, from 0.2.9 onward, the property “orgtrello-id” from the
 checkbox (checklists, items) will be hidden.
@@ -710,19 +719,19 @@ checkbox (checklists, items) will be hidden.
    If you began to use ‘org-trello’, nothing to do.
 
 
-File: org-trello.info,  Node: 028,  Next: 021 -> 022,  Prev: 029,  Up: Migrating
+File: org-trello.info,  Node: Migrate to 028,  Next: Migrate 021 to 022,  Prev: Migrate to 029,  Up: Migrating
 
-3.5.11 0.2.8
-------------
+3.5.11 Migrate to 0.2.8
+-----------------------
 
 From 0.2.8 onward, the card description can be synchronized too.  Just
 synchronize as usual.
 
 
-File: org-trello.info,  Node: 021 -> 022,  Next: 015 -> 016,  Prev: 028,  Up: Migrating
+File: org-trello.info,  Node: Migrate 021 to 022,  Next: Migrate 015 to 016,  Prev: Migrate to 028,  Up: Migrating
 
-3.5.12 0.2.1 -> 0.2.2
----------------------
+3.5.12 Migrate 0.2.1 to 0.2.2
+-----------------------------
 
 From the 0.2.2 version onward, we can assign people to card.  As a
 pre-requisite, we need to re-install the board (C-c o I), so that new
@@ -733,10 +742,10 @@ attach to).
 (C-c o u) yourself to the card.
 
 
-File: org-trello.info,  Node: 015 -> 016,  Next: 011 -> 012,  Prev: 021 -> 022,  Up: Migrating
+File: org-trello.info,  Node: Migrate 015 to 016,  Next: Migrate 011 to 012,  Prev: Migrate 021 to 022,  Up: Migrating
 
-3.5.13 0.1.5 -> 0.1.6
----------------------
+3.5.13 Migrate 0.1.5 to 0.1.6
+-----------------------------
 
 ‘org-trello’ now uses more natural ways of dealing with checklists using
 checkboxes!
@@ -745,10 +754,10 @@ checkboxes!
 (migration.html#natural-org-format-from-016-onwards) for more details.
 
 
-File: org-trello.info,  Node: 011 -> 012,  Prev: 015 -> 016,  Up: Migrating
+File: org-trello.info,  Node: Migrate 011 to 012,  Prev: Migrate 015 to 016,  Up: Migrating
 
-3.5.14 0.1.1 -> 0.1.2
----------------------
+3.5.14 Migrate 0.1.1 to 0.1.2
+-----------------------------
 
    • From version 0.1.1, some http requests will be asynchronous.  For
      this, we use elnode as a proxy server to make requests to trello.
@@ -762,7 +771,7 @@ File: org-trello.info,  Node: 011 -> 012,  Prev: 015 -> 016,  Up: Migrating
 
 File: org-trello.info,  Node: Connecting,  Next: Using,  Prev: Installing,  Up: Top
 
-4 *TODO* Connecting to Trello.com
+4 *CHEK* Connecting to Trello.com
 *********************************
 
 * Menu:
@@ -777,17 +786,113 @@ File: org-trello.info,  Node: Installing Credentials,  Next: Connect Existing Bo
 4.1 Installing Your Trello.com Credentials
 ==========================================
 
+You must install the ‘org-trello-consumer-key’ and the read-write
+‘org-trello-access-token’ to permit org-trello to access your trello
+boards.
+
+   _Remark:_ This procedure only needs to be done once unless you revoke
+the token.
+
+   First, ensure that:
+   • emacs is configured to use an external web browser.  Text-only web
+     browsers internal to Emacs, like ‘eww’, ‘w3’ or ‘w3m-mode’, can not
+     execute the required JavaScript.
+   • the web browser emacs is configured to use is started
+   • you are logged into Trello.
+   • you know your exact Trello account name.  *DO NOT* use your email
+     address as your account name.  To confirm your account name, check
+     that <https://trello.com/*your-account-name>* exists.
+
+   Then, in Emacs, type:
+   • ‘C-c o i’, or
+   • ‘M-x org-trello-install-key-and-token’
+
+   This command will:
+
+   • ask for an account name, which must be your trello login.  *DO NOT*
+     use your email address as your account name.
+
+   • open your browser for you to select and copy your
+     _org-trello-consumer-key_ (Developer API Keys / key entry) and
+     paste it inside emacs’ minibuffer (hit RET when done).
+
+ [image src="images/retrieve-consumer-key.png" ]
+
+   • open a second tab to ask you to authorize org-trello to work in
+     your name on your account
+
+ [image src="images/authorize-org-trello.png" ]
+
+   • If you are not ok with this, hit _Deny_.  You won’t be able to use
+     org-trello.
+
+   • Otherwise, hit _Allow_, this will then present you a form with the
+     read/write _org-trello-access-token_, select and copy it, then
+     paste it inside emacs’ minibuffer and hit RET.
+
+   _Note:_ This command, if accepted, results in a file stored _only_ on
+your disk in ~/.emacs.d/.trello/.el</kbd> (this path may vary depending
+on **user-emacs-directory**).
+
+   This file contains your credentials and will be used to identify you
+when requesting trello.
+
+     (setq org-trello-consumer-key "abc...")  ;; 32 characters string
+     (setq org-trello-access-token "def...")  ;; 64 characters string
+
 
 File: org-trello.info,  Node: Connect Existing Board,  Next: Create a Board,  Prev: Installing Credentials,  Up: Connecting
 
 4.2 Connect an org-mode buffer with an existing Trello board.
 =============================================================
 
+For each org-mode file that you wish to use with Trello.com, you need to
+connect your org-mode file with a Trello board.
+
+   _Remarks:_ This procedure must be done only once for each org-mode
+file you want to sync with a trello board.
+
+   To connect an buffer to an existing board, type:
+
+   • ‘C-c o I’, or
+   • ‘M-x org-trello-install-board-metadata’
+
+   This will:
+
+   • ask you for the accounts you want to use (if you have multiple
+     ones, otherwise, it will select the only one and pass to the next
+     step silently)
+
+   • present you with a list of boards for the selected account.  Select
+     the one you want and hit enter.
+
+   • edit your org-mode file to add the properties needed.
+
 
 File: org-trello.info,  Node: Create a Board,  Prev: Connect Existing Board,  Up: Connecting
 
 4.3 Create a Trello board from your org-mode buffer.
 ====================================================
+
+You can create a new Trello board from your existing org-mode file.
+
+   _Remarks:_ This procedure must be done only once for each org-mode
+file you want to sync with a trello board.
+
+   Type:
+
+   • ‘C-c o b’, or
+   • ‘M-x org-trello-create-board-and-install-metadata’
+
+   This will:
+
+   • ask you for the accounts you want to use (if you have multiple
+     ones, otherwise, it will select the only one and pass to the next
+     step silently)
+
+   • create the Trello board lists from the keywords configured in your
+     org-mode (cf.  org-todo-keywords
+     (http://orgmode.org/manual/In_002dbuffer-settings.html))
 
 
 File: org-trello.info,  Node: Using,  Next: Troubleshooting,  Prev: Connecting,  Up: Top
@@ -912,7 +1017,7 @@ This section describes the format of the text in an ‘org-trello’ buffer.
 
 File: org-trello.info,  Node: Troubleshooting,  Next: Customizing,  Prev: Using,  Up: Top
 
-6 *TODO* Troubleshooting ‘org-trello’
+6 *CHEK* Troubleshooting ‘org-trello’
 *************************************
 
 * Menu:
@@ -926,11 +1031,101 @@ File: org-trello.info,  Node: Common Issues,  Next: Error Messages,  Up: Trouble
 6.1 Common Issues
 =================
 
+This section addresses some common issues with installing and using
+‘org-trello’.
+
+   • Why am I getting errors about credentials loading, like below?
+
+          org-trello - Request ’sync org buffer to trello board’...
+          org-trello - List of errors:
+           - Setup problem - Problem during credentials loading (consumer-key
+             and read/write access-token) - C-c o i or M-x org-trello-install-key-and-token
+           - Setup problem - You need to install the consumer-key and the
+             read/write access-token - C-c o i or M-x org-trello-install-key-and-token
+
+     If you have already *note set up your credentials: Installing
+     Credentials, then please make sure the login you used in the
+     credential installation step match your trello login exactly, that
+     is:
+
+        • Check ‘https://trello.com/<user-login>’ exists
+        • ‘<User-login>’ in the buffer is the same as the org-trello
+          login: ‘#+PROPERTY: orgtrello-user-me <user-login>’
+          at the org-trello buffer top must match too.
+
+   • For issues not listed above, please see *note these instructions:
+     Issues. about the issue list on GitHub.
+
 
 File: org-trello.info,  Node: Error Messages,  Prev: Common Issues,  Up: Troubleshooting
 
 6.2 Error Messages
 ==================
+
+‘org-trello’ can display the following possible error messages:
+
+   • Failed to set up the consumer-key and the access-token:
+
+          Setup problem - You need to install the consumer-key and the
+          read/write access-token - C-c o i or M-x
+          org-trello-install-board-metadata
+
+   • Failed to setting up the org-mode buffer:
+
+          Setup problem.  Either you did not connect your org-mode
+          buffer with a trello board, to correct this:
+
+             • attach to a board through C-c o I or M-x
+               org-trello-install-board-metadata
+             • or create a board from scratch with C-c o b or M-x
+               org-trello-create-board-and-install-metadata).  Either
+               your org-mode’s todo keyword list and your trello board
+               lists are not named the same way (which they must).  For
+               this, connect to trello and rename your board’s list
+               according to your org-mode’s todo list.
+
+   • The board’s list names are different from your org-mode’s keyword
+     list:
+
+          Setup problem.  Either you did not connect your org-mode
+          buffer with a trello board, to correct this:
+
+             • attach to a board through C-c o I or M-x
+               org-trello-install-board-metadata
+             • or create a board from scratch with C-c o b or M-x
+               org-trello-create-board-and-install-metadata).  Either
+               your org-mode’s todo keyword list and your trello board
+               lists are not named the same way (which they must).  For
+               this, connect to trello and rename your board’s list
+               according to your org-mode’s todo list.  Also, you can
+               specify on your org-mode buffer the todo list you want to
+               work with, for example: #+TODO: TODO DOING
+               DONE FAIL (hit C-c C-c to refresh the setup)
+
+   • No label on the card:
+
+          Cannot synchronize the card - missing mandatory label.  Skip
+          it...
+
+   • No label on the checklist:
+
+          Cannot synchronize the checklist - missing mandatory label.
+          Skip it...
+
+   • No label on the item:
+
+          Cannot synchronize the item - missing mandatory label.  Skip
+          it...
+
+   • syncing the checklist without syncing the card first:
+
+          Cannot synchronize the checklist - the card must synchronized
+          first.  Skip it...
+
+   • Syncing the item without syncing the checklist first:
+
+          Cannot synchronize the item - the checklist must be
+          synchronized first.  Skip it...
 
 
 File: org-trello.info,  Node: Customizing,  Next: Contributing,  Prev: Troubleshooting,  Up: Top
@@ -2768,7 +2963,7 @@ C.1 Concepts Index
 * contributors:                          Credits.               (line 6)
 * credits:                               Credits.               (line 6)
 * customizing:                           Customizing.           (line 6)
-* errors:                                Troubleshooting.       (line 6)
+* errors:                                Error Messages.        (line 6)
 * license, manual:                       GNU FDL.               (line 6)
 * license, software:                     GNU GPL.               (line 6)
 * manual, installing:                    Install Manual.        (line 6)
@@ -2817,77 +3012,77 @@ C.4 Variables Index
 
 Tag Table:
 Node: Top2058
-Node: About7672
-Node: Demos8287
-Node: Installing8554
-Node: Installing with Package9107
-Node: Using MELPA9558
-Node: Installing from MELPA11569
-Node: Alternate Installations12193
-Node: Tarball12900
-Node: el-get13757
-Node: GitHub & Cask14214
-Node: Loading15018
-Node: Install Manual16097
-Node: Building Manual17158
-Node: Installing Manual18511
-Node: Migrating19788
-Node: 08120369
-Node: 07020984
-Node: 06721851
-Node: 06622103
-Node: 05522328
-Node: 05322932
-Node: 05223402
-Node: 03824003
-Node: 03124788
-Node: 02925042
-Node: 02825754
-Node: 021 -> 02225959
-Node: 015 -> 01626418
-Node: 011 -> 01226771
-Node: Connecting27207
-Node: Installing Credentials27578
-Node: Connect Existing Board27769
-Node: Create a Board28021
-Node: Using28224
-Node: Quick Start28669
-Node: Command Descriptions28802
-Node: Summary29290
-Node: Connection Cmds30522
-Node: Synch Cmds30830
-Node: Editing Cmds31256
-Node: Misc Cmds31510
-Node: How to…31716
-Node: Format31940
-Node: Troubleshooting32153
-Node: Common Issues32432
-Node: Error Messages32561
-Node: Customizing32692
-Node: Prefix Keys33244
-Node: Individual Keys34518
-Node: Variables37112
-Node: Example40266
-Node: Auto Files41254
-Node: Contributing42105
-Node: Credits42648
-Node: Issues44130
-Node: Using M-x org-trello-bug-report46169
-Node: Using orgtrello-log-trace47201
-Node: Mailing List47779
-Node: Releases48246
-Node: Compatibility48796
-Node: CI Tests49521
-Node: Conventions50126
-Node: Sources50373
-Node: Makefile54305
-Node: GNU GPL56530
-Node: GNU FDL94298
-Node: Indices119626
-Node: Concepts120030
-Node: Command Index121257
-Node: Functions121633
-Node: Variables (1)121870
+Node: About7962
+Node: Demos8977
+Node: Installing9244
+Node: Installing with Package9783
+Node: Using MELPA10220
+Node: Installing from MELPA12283
+Node: Alternate Installations12893
+Node: Tarball13586
+Node: el-get14429
+Node: GitHub & Cask14872
+Node: Loading15662
+Node: Install Manual16727
+Node: Building Manual17788
+Node: Installing Manual19141
+Node: Migrating20418
+Node: Migrate to 08121289
+Node: Migrate to 07021948
+Node: Migrate to 06722870
+Node: Migrate to 06623177
+Node: Migrate to 05523457
+Node: Migrate to 05324116
+Node: Migrate to 05224641
+Node: Migrate to 03825297
+Node: Migrate to 03126137
+Node: Migrate to 02926446
+Node: Migrate to 02827213
+Node: Migrate 021 to 02227470
+Node: Migrate 015 to 01627972
+Node: Migrate 011 to 01228365
+Node: Connecting28833
+Node: Installing Credentials29204
+Node: Connect Existing Board31502
+Node: Create a Board32472
+Node: Using33308
+Node: Quick Start33753
+Node: Command Descriptions33886
+Node: Summary34374
+Node: Connection Cmds35606
+Node: Synch Cmds35914
+Node: Editing Cmds36340
+Node: Misc Cmds36594
+Node: How to…36800
+Node: Format37024
+Node: Troubleshooting37237
+Node: Common Issues37516
+Node: Error Messages38840
+Node: Customizing41592
+Node: Prefix Keys42144
+Node: Individual Keys43418
+Node: Variables46012
+Node: Example49166
+Node: Auto Files50154
+Node: Contributing51005
+Node: Credits51548
+Node: Issues53030
+Node: Using M-x org-trello-bug-report55069
+Node: Using orgtrello-log-trace56101
+Node: Mailing List56679
+Node: Releases57146
+Node: Compatibility57696
+Node: CI Tests58421
+Node: Conventions59026
+Node: Sources59273
+Node: Makefile63205
+Node: GNU GPL65430
+Node: GNU FDL103198
+Node: Indices128526
+Node: Concepts128930
+Node: Command Index130157
+Node: Functions130533
+Node: Variables (1)130770
 
 End Tag Table
 
