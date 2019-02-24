@@ -11,7 +11,7 @@
 Use wget to grab the existing documentation, then convert it to org-mode
 through pandoc for easier reference and cut/paste.
 
-* WORK Cover Existing Documentation [6/14]
+* WORK Cover Existing Documentation [7/14]
 The first draft must cover all the content from all files and sections of
 the existing documentation.
 - [ ] Page Margins -> [[file:org-trello.org::*About%20org-trello][About org-trello]]
@@ -22,16 +22,14 @@ the existing documentation.
   - [ ] Table of Contents
 - [X] About -> [[file:org-trello.org::*About%20org-trello][About org-trello]]
 - [ ] Demo Videos -> [[file:org-trello.org::*Demo%20Videos][Demo Videos]]
-- [ ] Install [0/2]
-  - [ ] Package -> [[file:org-trello.org::*Using%20Package%20and%20MELPA][Using Package and MELPA]]
-    - [ ] Melpa
-    - [ ] Melpa-Stable
-  - [ ] Install -> [[file:org-trello.org::*Installing%20org-trello%20from%20MELPA%20using%20Package.][Installing org-trello from MELPA using Package.]]
-    - [ ] Load org-trello -> [[file:org-trello.org::*Loading%20org-trello][Loading org-trello]]
-    - [ ] Alternative Install -> [[file:org-trello.org::*Alternate%20Ways%20to%20Install%20org-trello][Alternate Ways to Install org-trello]]
-      - [ ] Tarball -> [[file:org-trello.org::*Download%20and%20Install%20the%20org-trello%20tarball][Download and Install the org-trello tarball]]
-      - [ ] el-get -> [[file:org-trello.org::*Get%20org-trello%20with%20el-get][Get org-trello with el-get]]
-      - [ ] Git + Cask (dev) -> [[file:org-trello.org::*Clone%20from%20GitHub%20and%20Install%20with%20Cask][Clone from GitHub and Install with Cask]]
+- [X] Install [2/2]
+  - [X] Package -> [[file:org-trello.org::*Using%20MELPA%20with%20Package][Using MELPA with Package]]
+  - [X] Install -> [[file:org-trello.org::*Installing%20from%20MELPA%20with%20Package][Installing from MELPA with Package]]
+    - [X] Load org-trello -> [[file:org-trello.org::*Loading%20org-trello][Loading org-trello]]
+    - [X] Alternative Install -> [[file:org-trello.org::*Alternate%20Ways%20to%20Install%20org-trello][Alternate Ways to Install org-trello]]
+      - [X] Tarball -> [[file:org-trello.org::*Download%20and%20Install%20the%20org-trello%20tarball][Download and Install the org-trello tarball]]
+      - [X] el-get -> [[file:org-trello.org::*Get%20org-trello%20with%20el-get][Get org-trello with el-get]]
+      - [X] Git + Cask (dev) -> [[file:org-trello.org::*Clone%20from%20GitHub%20and%20Install%20with%20Cask][Clone from GitHub and Install with Cask]]
 - [-] Trello Setup [1/4]
   - [ ] Credentials -> [[file:org-trello.org::*Installing%20Your%20Trello.com%20Credentials][Installing Your Trello.com Credentials]]
   - [ ] Connect org-mode buffer to board -> [[file:org-trello.org::*Connect%20an%20org-mode%20buffer%20with%20an%20existing%20Trello%20board.][Connect an org-mode buffer with an existing Trello board.]]

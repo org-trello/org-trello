@@ -101,15 +101,15 @@ Sync Emacs org-mode with Trello.com.
 
 Installing
 
-* Installing: Installing (1).    Recommended Installation
+* Installing with Package::      Recommended Installation
 * Alternate Installations::      Alternate Ways to Install
 * Loading::                      Loading org-trello in Emacs
 * Install Manual::               Installing the Manual
 * Migrating::                    Migrating to New Releases
 
-Installing
+Installing with Package
 
-* About MELPA::                  Using MELPA with Package
+* Using MELPA::                  Using MELPA with Package
 * Installing from MELPA::        Installing from MELPA with Package
 
 Alternate Installations
@@ -163,8 +163,8 @@ Command Descriptions
 
 Troubleshooting
 
-* Common Issues::
-* Error Messages::
+* Common Issues::                Common Issues
+* Error Messages::               Error Messages
 
 Customizing
 
@@ -245,44 +245,95 @@ videos were created. Please see the @ref{Format, , current org-trello format}.
 @end ifhtml
 
 @node Installing
-@chapter @strong{TODO} Installing org-trello
+@chapter @strong{CHEK} Installing org-trello
 
 This section describes how to obtain and install the org-trello
 package and manual.
 
 @menu
-* Installing: Installing (1).    Recommended Installation
+* Installing with Package::      Recommended Installation
 * Alternate Installations::      Alternate Ways to Install
 * Loading::                      Loading org-trello in Emacs
 * Install Manual::               Installing the Manual
 * Migrating::                    Migrating to New Releases
 @end menu
 
-@node Installing (1)
-@section @strong{TODO} Installing org-trello using Package (recommended)
+@node Installing with Package
+@section @strong{CHEK} Installing org-trello using Package (recommended)
 
 @cindex org-trello, installing
 
+This section describes how to use @samp{package} to install @samp{org-trello}.
+
 @menu
-* About MELPA::                  Using MELPA with Package
+* Using MELPA::                  Using MELPA with Package
 * Installing from MELPA::        Installing from MELPA with Package
 @end menu
 
-@node About MELPA
-@subsection @strong{TODO} Using MELPA with Package
+@node Using MELPA
+@subsection @strong{CHEK} Using MELPA with Package
 
-This section describes how to use “package” to download and install
-packages including org-trello. If you already use “package” to access
-“melpa” or “melpa-stable”, you don’t need to install “package” again.
+This section describes how to use @samp{package} to download and install any
+packages including org-trello. If you already use @samp{package} to access
+“melpa” or “melpa-stable”, you don’t need to do this again. See the
+next section for how to install @samp{org-trello}.
+
+@uref{https://melpa.org, MELPA.org} is a large repository of ready-to-install Emacs packages.
+There are two flavors: melpa and melpa-stable. Melpa contains the
+bleeding-edge version of each package. Melpa-stable contains the last
+stable release. Use Melpa if you like to help test the latest
+features. Use Melpa-Stable if you want something that just works.
+
+Add the code snippet below (from @uref{https://melpa.org/#/getting-started, melpa.org}) to your Emacs startup file
+(.emacs or .emacs.d/init.el). The Melpa repository is pre-selected. If
+you prefer Melpa-stable, comment out the line for Melpa and un-comment
+the line for Melpa-stable.
+
+@lisp
+;; https://melpa.org/#/getting-started
+(require 'package)
+(let* ((no-ssl (and (memq system-type '(windows-nt ms-dos))
+                    (not (gnutls-available-p))))
+       (proto (if no-ssl "http" "https")))
+  (when no-ssl
+    (warn "\
+Your version of Emacs does not support SSL connections,
+which is unsafe because it allows man-in-the-middle attacks.
+There are two things you can do about this warning:
+1. Install an Emacs version that does support SSL and be safe.
+2. Remove this warning from your init file so you won't see it again."))
+  ;; Comment/uncomment these two lines to enable/disable MELPA and MELPA Stable as desired
+  (add-to-list 'package-archives (cons "melpa" (concat proto "://melpa.org/packages/")) t)
+  ;;(add-to-list 'package-archives (cons "melpa-stable" (concat proto "://stable.melpa.org/packages/")) t)
+  (when (< emacs-major-version 24)
+    ;; For important compatibility libraries like cl-lib
+    (add-to-list 'package-archives (cons "gnu" (concat proto "://elpa.gnu.org/packages/")))))
+(package-initialize)
+@end lisp
+
+After you add this snippet, restart Emacs or use @code{M-x eval-buffer} to
+re-evaluate your initialization file.
 
 @node Installing from MELPA
-@subsection @strong{TODO} Installing from MELPA with Package
+@subsection @strong{CHEK} Installing from MELPA with Package
 
 This section describes how to download and install org-trello once you
 have installed Package and configured it to access MELPA@.
 
+To load the latest package list from MELPA, type @code{M-x package-refresh-contents}.
+
+To install org-trello from Melpa, type @code{M-x package-install RET org-trello RET}.
+
+Once you have installed the package, please see @ref{Loading, , Loading org-trello in Emacs}.
+
 @node Alternate Installations
-@section @strong{TODO} Alternate Ways to Install
+@section @strong{CHEK} Alternate Ways to Install
+
+This section describes alternate ways to install if you do not use
+Package and Melpa as recommended.
+
+@emph{Note} org-trello's @uref{http://marmalade-repo.org/packages/org-trello, Marmalade package} is no longer maintained. Use
+@uref{http://melpa-stable.milkbox.net/#/org-trello, melpa-stable package} instead.
 
 @menu
 * Tarball::                      Download and Install the Tarball
@@ -291,16 +342,55 @@ have installed Package and configured it to access MELPA@.
 @end menu
 
 @node Tarball
-@subsection @strong{TODO} Download and Install the Tarball
+@subsection @strong{CHEK} Download and Install the Tarball
+
+To retrieve the tarball from @uref{https://github.com/org-trello/org-trello/releases, github}, type this at the command line:
+
+@example
+$VERSION="0.8.0"
+wget https://github.com/org-trello/org-trello/releases/download/$VERSION/org-trello-$VERSION.tar -o /path/to/org-trello-$VERSION.tar
+@end example
+
+Alternately, navigate to @uref{https://github.com/org-trello/org-trello, org-trello on github} with a browser and click
+on the “releases” link, locate and download the same file.
+
+Then, inside Emacs, type @code{M-x package-install-file RET
+/path/to/org-trello-0.8.0.tar RET}
+
+In the commands above, replace “0.8.0” with the current version, if different.
 
 @node el-get
-@subsection @strong{TODO} Get and Install with el-get
+@subsection @strong{CHEK} Get and Install with el-get
+
+If you use @uref{https://github.com/dimitri/el-get, el-get} to install packages, you may install @uref{https://github.com/dimitri/el-get/blob/master/recipes/org-trello.rcp, org-trello}
+with it. Inside Emacs, type: @code{M-x el-get-install RET org-trello RET}.
 
 @node GitHub & Cask
-@subsection @strong{TODO} Clone from GitHub and Install with Cask
+@subsection @strong{CHEK} Clone from GitHub and Install with Cask
+
+Use this section only if you are a developer modifying and testing org-trello.
+
+Clone org-trello from GitHub:
+
+@example
+git clone http://github.com/org-trello/org-trello.git
+@end example
+
+You can use @uref{https://cask.github.io/, Cask} to make a local tarball and then install using Emacs:
+
+@example
+make install package
+@end example
+
+@emph{Note} @samp{install} will download Cask and @samp{package} will create an
+org-trello tarball archive containing org-trello.
+
+Now install the built @samp{org-trello-$VERSION.tar} using Emacs. Type:
+
+@code{M-x package-install-file RET /path/to/org-trello-$VERSION.tar RET}
 
 @node Loading
-@section @strong{TODO} Loading org-trello in Emacs
+@section @strong{CHEK} Loading org-trello in Emacs
 
 Once org-trello is installed, it must be loading during initialization
 of Emacs. Add this in your emacs configuration file “~/.emacs” or
@@ -308,6 +398,20 @@ of Emacs. Add this in your emacs configuration file “~/.emacs” or
 
 @lisp
 (require 'org-trello)
+@end lisp
+
+@emph{Note} We do not recommend loading org-trello for every org-mode buffer
+(see @uref{https://github.com/org-trello/org-trello/issues/209}). org-trello is
+an org minor mode with trello abilities that unfortunately limit
+org's power. It should only be applied to buffers synced with trello.com.
+
+There is a variable to activate org-trello only for specific files:
+
+For example: to activate @samp{org-trello} when opening @samp{/path/to/file0}
+and @samp{/path/to/file1}.
+
+@lisp
+(custom-set-variables '(org-trello-files '("/path/to/file0" "/path/to/file1")))
 @end lisp
 
 @node Install Manual
@@ -402,7 +506,7 @@ files in the INFOPATH and may be different in each reader. Locate
 “org-trello” in this list or use “m org-trello” to jump to it.
 
 @node Migrating
-@section @strong{CHEK} Migrating to New Releases
+@section Migrating to New Releases
 
 If you have previously installed and used a previous release of
 org-trello, this section describes how to migrate your existing
@@ -742,7 +846,7 @@ This section describes other functions not listed above.
 @node How to…
 @section @strong{TODO} How to…
 
-This section is describes how to use commands to perform tasks with org-trello.
+This section describes how to use commands to perform tasks with org-trello.
 
 @node Format
 @section @strong{TODO} Format of org-trello
@@ -756,8 +860,8 @@ This section describes the format of the text in an org-trello buffer.
 @cindex errors
 
 @menu
-* Common Issues::
-* Error Messages::
+* Common Issues::                Common Issues
+* Error Messages::               Error Messages
 @end menu
 
 @node Common Issues
@@ -767,7 +871,7 @@ This section describes the format of the text in an org-trello buffer.
 @section Error Messages
 
 @node Customizing
-@chapter @strong{CHEK} Customizing org-trello
+@chapter Customizing org-trello
 
 @cindex customizing
 This section describes how you may customize org-trello.
@@ -781,7 +885,7 @@ This section describes how you may customize org-trello.
 @end menu
 
 @node Prefix Keys
-@section @strong{CHEK} Customizing the Prefix Keybinding
+@section Customizing the Prefix Keybinding
 
 @vindex org-trello-current-prefix-keybinding
 By default, org-trello uses the prefix keybinding “C-c o” to begin
@@ -808,7 +912,7 @@ these lines to your ~/.emacs (or ~/.emacs.d/.init.el) file:
 For an example, please see my @uref{https://github.com/ardumont/orgmode-pack/blob/master/orgmode-pack.el#L57, startup file}.
 
 @node Individual Keys
-@section @strong{CHEK} Customizing Individual Keybindings
+@section Customizing Individual Keybindings
 
 @vindex org-trello-mode-map
 To redefine one or more org-trello-mode command keybindings, you should create a
@@ -855,7 +959,7 @@ remove specific existing org-trello keybindings:
 @end lisp
 
 @node Variables
-@section @strong{CHEK} Customizing org-trello Variables
+@section Customizing org-trello Variables
 
 You may customize org-trello settings by typing: @*
 “M-x customize-group RET org-trello RET”.
@@ -925,7 +1029,7 @@ Orgtrello With Check On Sensible Actions
 @end example
 
 @node Example
-@section @strong{CHEK} Example Emacs-Lisp Customization
+@section Example Emacs-Lisp Customization
 
 Here is an example of how to configure org-trello user-customized
 variables using emacs-lisp:
@@ -946,7 +1050,7 @@ To make these settings permanent in later sessions, put this code
 inside your emacs setup file (“~/.emacs” or “~/emacs.d/init.el”).
 
 @node Auto Files
-@section @strong{CHEK} Automatic org-trello Files
+@section Automatic org-trello Files
 
 To have emacs automatically start org-trello when you open a file with
 a “.trello” extension, add this to your personal emacs setup file:
@@ -969,7 +1073,7 @@ a “.trello” extension, add this to your personal emacs setup file:
 source: @uref{https://github.com/org-trello/org-trello/issues/249}
 
 @node Contributing
-@chapter @strong{CHEK} Development of org-trello
+@chapter Development of org-trello
 
 @cindex contributing
 
@@ -984,7 +1088,7 @@ source: @uref{https://github.com/org-trello/org-trello/issues/249}
 @end menu
 
 @node Credits
-@section @strong{CHEK} Credits
+@section Credits
 
 @cindex credits
 @cindex contributors
@@ -1014,7 +1118,7 @@ Also, thank you to the entire free-software community world-wide, including the
 creators and contributors of Emacs and org-mode.
 
 @node Issues
-@section @strong{CHEK} Issue List
+@section Issue List
 
 If you experience an issue while using org-trello, please first
 confirm that you have the newest version of org-trello. If you
@@ -1123,9 +1227,9 @@ buffer and repeat the conditions that cause the issue. Copy the
 resulting detailed log messages into your bug-report.
 
 @node Mailing List
-@section @strong{CHEK} Mailing List
+@section Mailing List
 
-This project has a mailing list at librelist.com for communication
+This project has a mailing list at @uref{http://librelist.com/browser/emacs.org.trello/, librelist.com} for communication
 and community among its users and contributors. You may join the
 list by sending an email to:
 
@@ -1137,7 +1241,7 @@ unsubscribe: emacs.org.trello-unsubscribe [AT] librelist.com
 @end itemize
 
 @node Releases
-@section @strong{CHEK} Release List and Notes
+@section Release List and Notes
 
 @cindex release notes
 @cindex version history
@@ -1148,7 +1252,7 @@ release of org-trello. Please also see the @uref{https://github.com/org-trello/o
 @uref{https://github.com/org-trello/org-trello, repository} on GitHub.
 
 @node Compatibility
-@section @strong{CHEK} Compatibility with Emacs
+@section Compatibility with Emacs
 
 org-trello has been tested with the following versions of Emacs and
 Operating Systems:
@@ -1181,7 +1285,7 @@ Operating Systems:
 those is welcome.
 
 @node CI Tests
-@section @strong{CHEK} Continuous Integration Tests
+@section Continuous Integration Tests
 
 org-trello uses @uref{https://travis-ci.org/org-trello/org-trello, Travis CI} for continuous integration testing.
 
@@ -1211,7 +1315,7 @@ The CI tests and installs:
 @emph{Note:} Any feedback regarding the untested versions is welcome.
 
 @node Conventions
-@section @strong{CHEK} Developer’s Conventions
+@section Developer’s Conventions
 
 This describes the current conventions for org-trello's development.
 
@@ -1467,19 +1571,19 @@ the packaging for MELPA is automatically done from @samp{org-trello/org-trello} 
 @end enumerate
 
 @node GNU GPL
-@appendix @strong{DONE} GNU General Public License
+@appendix GNU General Public License
 
 @cindex license, software
 @include gpl.texi
 
 @node GNU FDL
-@appendix @strong{DONE} GNU Free Documentation License
+@appendix GNU Free Documentation License
 
 @cindex license, manual
 @include fdl.texi
 
 @node Indices
-@appendix Indices
+@appendix @strong{TODO} Indices
 
 This section contains the concepts, commands, functions and variables indices.
 

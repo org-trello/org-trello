@@ -44,7 +44,7 @@
 {{{DESCR}}}
 
 #+TEXINFO: @insertcopying
-* CHEK COPYING
+* COPYING
   :PROPERTIES:
   :COPYING:  t
   :END:
@@ -123,55 +123,153 @@ This section provides links to several demo videos.
 /Note:/ The format of org-trello buffers has changed since these
 videos were created. Please see the [[*Format of org-trello][current org-trello format]].
 #+TEXINFO: @end ifhtml
-* TODO Installing org-trello
+* CHEK Installing org-trello
   :PROPERTIES:
   :ALT_TITLE: Installing
   :DESCRIPTION: Installing org-trello
   :END:
 This section describes how to obtain and install the org-trello
 package and manual.
-** TODO Installing org-trello using Package (recommended)
+
+** CHEK Installing org-trello using Package (recommended)
 :PROPERTIES:
-:ALT_TITLE: Installing
+:ALT_TITLE: Installing with Package
 :DESCRIPTION: Recommended Installation
 :END:
 #+CINDEX: org-trello, installing
-*** TODO Using MELPA with Package
+
+This section describes how to use =package= to install =org-trello=.
+
+*** CHEK Using MELPA with Package
 :PROPERTIES:
-:ALT_TITLE: About MELPA
+:ALT_TITLE: Using MELPA
 :DESCRIPTION: Using MELPA with Package
 :END:
-This section describes how to use “package” to download and install
-packages including org-trello. If you already use “package” to access
-“melpa” or “melpa-stable”, you don’t need to install “package” again.
-*** TODO Installing from MELPA with Package
+This section describes how to use =package= to download and install any
+packages including org-trello. If you already use =package= to access
+“melpa” or “melpa-stable”, you don’t need to do this again. See the
+next section for how to install =org-trello=.
+
+[[https://melpa.org][MELPA.org]] is a large repository of ready-to-install Emacs packages.
+There are two flavors: melpa and melpa-stable. Melpa contains the
+bleeding-edge version of each package. Melpa-stable contains the last
+stable release. Use Melpa if you like to help test the latest
+features. Use Melpa-Stable if you want something that just works.
+
+Add the code snippet below (from [[https://melpa.org/#/getting-started][melpa.org]]) to your Emacs startup file
+(.emacs or .emacs.d/init.el). The Melpa repository is pre-selected. If
+you prefer Melpa-stable, comment out the line for Melpa and un-comment
+the line for Melpa-stable.
+
+#+begin_src emacs-lisp
+  ;; https://melpa.org/#/getting-started
+  (require 'package)
+  (let* ((no-ssl (and (memq system-type '(windows-nt ms-dos))
+                      (not (gnutls-available-p))))
+         (proto (if no-ssl "http" "https")))
+    (when no-ssl
+      (warn "\
+  Your version of Emacs does not support SSL connections,
+  which is unsafe because it allows man-in-the-middle attacks.
+  There are two things you can do about this warning:
+  1. Install an Emacs version that does support SSL and be safe.
+  2. Remove this warning from your init file so you won't see it again."))
+    ;; Comment/uncomment these two lines to enable/disable MELPA and MELPA Stable as desired
+    (add-to-list 'package-archives (cons "melpa" (concat proto "://melpa.org/packages/")) t)
+    ;;(add-to-list 'package-archives (cons "melpa-stable" (concat proto "://stable.melpa.org/packages/")) t)
+    (when (< emacs-major-version 24)
+      ;; For important compatibility libraries like cl-lib
+      (add-to-list 'package-archives (cons "gnu" (concat proto "://elpa.gnu.org/packages/")))))
+  (package-initialize)
+#+end_src
+
+After you add this snippet, restart Emacs or use ~M-x eval-buffer~ to
+re-evaluate your initialization file.
+
+*** CHEK Installing from MELPA with Package
 :PROPERTIES:
 :ALT_TITLE: Installing from MELPA
 :DESCRIPTION: Installing from MELPA with Package
 :END:
 This section describes how to download and install org-trello once you
 have installed Package and configured it to access MELPA.
-** TODO Alternate Ways to Install
+
+To load the latest package list from MELPA, type ~M-x package-refresh-contents~.
+
+To install org-trello from Melpa, type ~M-x package-install RET org-trello RET~.
+
+Once you have installed the package, please see [[*Loading org-trello in Emacs][Loading org-trello in Emacs]].
+
+** CHEK Alternate Ways to Install
 :PROPERTIES:
 :ALT_TITLE: Alternate Installations
 :DESCRIPTION: Alternate Ways to Install
 :END:
-*** TODO Download and Install the Tarball
+
+This section describes alternate ways to install if you do not use
+Package and Melpa as recommended.
+
+/Note/ org-trello's [[http://marmalade-repo.org/packages/org-trello][Marmalade package]] is no longer maintained. Use
+[[http://melpa-stable.milkbox.net/#/org-trello][melpa-stable package]] instead.
+
+*** CHEK Download and Install the Tarball
 :PROPERTIES:
 :ALT_TITLE: Tarball
 :DESCRIPTION: Download and Install the Tarball
 :END:
-*** TODO Get and Install with el-get
+
+To retrieve the tarball from [[https://github.com/org-trello/org-trello/releases][github]], type this at the command line:
+
+#+begin_src shell
+  $VERSION="0.8.0"
+  wget https://github.com/org-trello/org-trello/releases/download/$VERSION/org-trello-$VERSION.tar -o /path/to/org-trello-$VERSION.tar
+#+end_src
+
+Alternately, navigate to [[https://github.com/org-trello/org-trello][org-trello on github]] with a browser and click
+on the “releases” link, locate and download the same file.
+
+Then, inside Emacs, type ~M-x package-install-file RET
+/path/to/org-trello-0.8.0.tar RET~
+
+In the commands above, replace “0.8.0” with the current version, if different.
+
+*** CHEK Get and Install with el-get
 :PROPERTIES:
 :ALT_TITLE: el-get
 :DESCRIPTION: Get and Install with el-get
 :END:
-*** TODO Clone from GitHub and Install with Cask
+
+If you use [[https://github.com/dimitri/el-get][el-get]] to install packages, you may install [[https://github.com/dimitri/el-get/blob/master/recipes/org-trello.rcp][org-trello]]
+with it. Inside Emacs, type: ~M-x el-get-install RET org-trello RET~.
+
+*** CHEK Clone from GitHub and Install with Cask
 :PROPERTIES:
 :ALT_TITLE: GitHub & Cask
 :DESCRIPTION: Clone from GitHub and Install with Cask
 :END:
-** TODO Loading org-trello in Emacs
+
+Use this section only if you are a developer modifying and testing org-trello.
+
+Clone org-trello from GitHub:
+
+#+BEGIN_SRC shell
+    git clone http://github.com/org-trello/org-trello.git
+#+END_SRC
+
+You can use [[https://cask.github.io/][Cask]] to make a local tarball and then install using Emacs:
+
+#+BEGIN_SRC shell
+    make install package
+#+END_SRC
+
+/Note/ =install= will download Cask and =package= will create an
+org-trello tarball archive containing org-trello.
+
+Now install the built =org-trello-$VERSION.tar= using Emacs. Type:
+
+~M-x package-install-file RET /path/to/org-trello-$VERSION.tar RET~
+
+** CHEK Loading org-trello in Emacs
 :PROPERTIES:
 :ALT_TITLE: Loading
 :DESCRIPTION: Loading org-trello in Emacs
@@ -184,6 +282,20 @@ of Emacs. Add this in your emacs configuration file “~/.emacs” or
     (require 'org-trello)
 #+END_SRC
 
+/Note/ We do not recommend loading org-trello for every org-mode buffer
+(see https://github.com/org-trello/org-trello/issues/209). org-trello is
+an org minor mode with trello abilities that unfortunately limit
+org's power. It should only be applied to buffers synced with trello.com.
+
+There is a variable to activate org-trello only for specific files:
+
+For example: to activate =org-trello= when opening =/path/to/file0=
+and =/path/to/file1=.
+
+#+BEGIN_SRC emacs-lisp
+  (custom-set-variables '(org-trello-files '("/path/to/file0" "/path/to/file1")))
+#+END_SRC
+
 ** Using the org-trello manual
 :PROPERTIES:
 :ALT_TITLE: Install Manual
@@ -191,7 +303,7 @@ of Emacs. Add this in your emacs configuration file “~/.emacs” or
 :END:
 #+CINDEX: manual, installing
 #+INCLUDE: README.org
-** CHEK Migrating to New Releases
+** Migrating to New Releases
 :PROPERTIES:
 :CUSTOM_ID: migration
 :ALT_TITLE: Migrating
@@ -508,7 +620,7 @@ This section describes other functions not listed above.
 :ALT_TITLE: How to…
 :DESCRIPTION: How to Perform Tasks
 :END:
-This section is describes how to use commands to perform tasks with org-trello.
+This section describes how to use commands to perform tasks with org-trello.
 ** TODO Format of org-trello
 :PROPERTIES:
 :ALT_TITLE: Format
@@ -524,15 +636,23 @@ This section describes the format of the text in an org-trello buffer.
 #+CINDEX: troubleshooting
 #+CINDEX: errors
 ** Common Issues
+:PROPERTIES:
+:ALT_TITLE: Common Issues
+:DESCRIPTION: Common Issues
+:END:
 ** Error Messages
-* CHEK Customizing org-trello
+:PROPERTIES:
+:ALT_TITLE: Error Messages
+:DESCRIPTION: Error Messages
+:END:
+* Customizing org-trello
   :PROPERTIES:
   :ALT_TITLE: Customizing
   :DESCRIPTION: Customizing org-trello
   :END:
 #+CINDEX: customizing
 This section describes how you may customize org-trello.
-** CHEK Customizing the Prefix Keybinding
+** Customizing the Prefix Keybinding
 :PROPERTIES:
 :ALT_TITLE: Prefix Keys
 :DESCRIPTION: Customizing the Prefix Keybinding
@@ -561,7 +681,7 @@ these lines to your ~/.emacs (or ~/.emacs.d/.init.el) file:
 
 For an example, please see my [[https://github.com/ardumont/orgmode-pack/blob/master/orgmode-pack.el#L57][startup file]].
 
-** CHEK Customizing Individual Keybindings
+** Customizing Individual Keybindings
 :PROPERTIES:
 :ALT_TITLE: Individual Keys
 :DESCRIPTION: Customizing Individual Key Bindings
@@ -610,7 +730,7 @@ remove specific existing org-trello keybindings:
     (define-key org-trello-mode-map (kbd "C-c o v") nil)
 #+END_SRC
 
-** CHEK Customizing org-trello Variables
+** Customizing org-trello Variables
 :PROPERTIES:
 :ALT_TITLE: Variables
 :DESCRIPTION: Customizing Variables
@@ -683,7 +803,7 @@ Orgtrello With Check On Sensible Actions
    before doing some of those sensitive actions.
 #+END_EXAMPLE
 
-** CHEK Example Emacs-Lisp Customization
+** Example Emacs-Lisp Customization
 :PROPERTIES:
 :ALT_TITLE: Example
 :DESCRIPTION: Example Emacs-Lisp Customization
@@ -707,7 +827,7 @@ the entire s-exp and evaluate it using “M-x eval-last-sexp”.
 To make these settings permanent in later sessions, put this code
 inside your emacs setup file (“~/.emacs” or “~/emacs.d/init.el”).
 
-** CHEK Automatic org-trello Files
+** Automatic org-trello Files
 :PROPERTIES:
 :ALT_TITLE: Auto Files
 :DESCRIPTION: Automatic org-trello Files
@@ -733,14 +853,14 @@ a “.trello” extension, add this to your personal emacs setup file:
 
 source: https://github.com/org-trello/org-trello/issues/249
 
-* CHEK Development of org-trello
+* Development of org-trello
   :PROPERTIES:
   :ALT_TITLE: Contributing
   :DESCRIPTION: Contributing to org-trello
   :END:
 #+CINDEX: contributing
 
-** CHEK Credits
+** Credits
 :PROPERTIES:
 :ALT_TITLE: Credits
 :DESCRIPTION: Contributor Credits
@@ -763,7 +883,7 @@ and thanks to all those that opened [[https://github.com/org-trello/org-trello/i
 Also, thank you to the entire free-software community world-wide, including the
 creators and contributors of Emacs and org-mode.
 
-** CHEK Issue List
+** Issue List
 :PROPERTIES:
 :ALT_TITLE: Issues
 :DESCRIPTION: Issue List
@@ -846,20 +966,20 @@ and evaluate it with M-x eval-buffer. Then, return to your org-trello
 buffer and repeat the conditions that cause the issue. Copy the
 resulting detailed log messages into your bug-report.
 
-** CHEK Mailing List
+** Mailing List
 :PROPERTIES:
 :ALT_TITLE: Mailing List
 :DESCRIPTION: Mailing List
 :END:
 
-This project has a mailing list at librelist.com for communication
+This project has a mailing list at [[http://librelist.com/browser/emacs.org.trello/][librelist.com]] for communication
 and community among its users and contributors. You may join the
 list by sending an email to:
 
 - subscribe: emacs.org.trello [AT] librelist.com
 - unsubscribe: emacs.org.trello-unsubscribe [AT] librelist.com
 
-** CHEK Release List and Notes
+** Release List and Notes
 :PROPERTIES:
 :ALT_TITLE: Releases
 :DESCRIPTION: Release List & Notes
@@ -872,7 +992,7 @@ The separate [[file:release-notes.org][release-notes file]] records the primary 
 release of org-trello. Please also see the [[https://github.com/org-trello/org-trello/commits/master][commit history]] of the
 [[https://github.com/org-trello/org-trello][repository]] on GitHub.
 
-** CHEK Compatibility with Emacs
+** Compatibility with Emacs
 :PROPERTIES:
 :ALT_TITLE: Compatibility
 :DESCRIPTION: Compatibility with Emacs
@@ -893,7 +1013,7 @@ Operating Systems:
 /Note:/ We cannot test under MacOS X or MS windows so any feedback on
 those is welcome.
 
-** CHEK Continuous Integration Tests
+** Continuous Integration Tests
 :PROPERTIES:
 :ALT_TITLE: CI Tests
 :DESCRIPTION: Continuous Integration Tests
@@ -913,15 +1033,14 @@ The CI tests and installs:
 
 /Note:/ Any feedback regarding the untested versions is welcome.
 
-** CHEK Developer’s Conventions
+** Developer’s Conventions
 :PROPERTIES:
 :ALT_TITLE: Conventions
 :DESCRIPTION: Developer’s Conventions
 :END:
 #+INCLUDE: README-dev.org
 
-* DONE GNU General Public License
-CLOSED: [2019-02-01 Fri 20:21]
+* GNU General Public License
 :PROPERTIES:
 :ALT_TITLE: GNU GPL
 :DESCRIPTION: GNU General Public License
@@ -929,8 +1048,7 @@ CLOSED: [2019-02-01 Fri 20:21]
 :END:
 #+CINDEX: license, software
 #+TEXINFO: @include gpl.texi
-* DONE GNU Free Documentation License
-CLOSED: [2019-02-01 Fri 20:21]
+* GNU Free Documentation License
 :PROPERTIES:
 :ALT_TITLE: GNU FDL
 :DESCRIPTION: GNU Free Documentation License
@@ -938,12 +1056,13 @@ CLOSED: [2019-02-01 Fri 20:21]
 :END:
 #+CINDEX: license, manual
 #+TEXINFO: @include fdl.texi
-* Indices
+* TODO Indices
 :PROPERTIES:
 :ALT_TITLE: Indices
 :DESCRIPTION: Indices
 :APPENDIX: t
 :END:
+# TODO: Need to add index commands throughout document.
 This section contains the concepts, commands, functions and variables indices.
 ** Concepts Index
 :PROPERTIES:
