@@ -41,6 +41,7 @@
 #+TODO: TODO(t) NEXT(n) WORK(w) CHEK(c) HOLD(h) | DONE(d) KILL(k)
 #+STARTUP: indent
 :END:
+[[file:images/org-trello-logo-light-blue-pastel-unicorn.200x200.png]]
 {{{DESCR}}}
 
 #+TEXINFO: @insertcopying
@@ -97,6 +98,7 @@ which begins with this license and non-warranty statement:
 :ALT_TITLE: About
 :DESCRIPTION: About =org-trello=
 :END:
+[[file:images/org-trello-logo-light-blue-pastel-unicorn.200x200.png]]
 - Why use =org-trello=?
 
   - You use Emacs [[https://orgmode.org][org-mode]].

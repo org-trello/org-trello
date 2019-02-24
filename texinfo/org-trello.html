@@ -154,7 +154,7 @@ ul.no-bullet {list-style: none}
       <li><a name="toc-TODO-Misc_002e-Commands" href="#Misc-Cmds">5.2.5 <strong>TODO</strong> Misc. Commands</a></li>
     </ul></li>
     <li><a name="toc-TODO-How-to_2026" href="#How-to_2026">5.3 <strong>TODO</strong> How to…</a></li>
-    <li><a name="toc-TODO-Format-of-org_002dtrello" href="#Format">5.4 <strong>TODO</strong> Format of org-trello</a></li>
+    <li><a name="toc-CHEK-Format-of-org_002dtrello" href="#Format">5.4 <strong>CHEK</strong> Format of org-trello</a></li>
   </ul></li>
   <li><a name="toc-CHEK-Troubleshooting-org_002dtrello" href="#Troubleshooting">6 <strong>CHEK</strong> Troubleshooting &lsquo;<samp>org-trello</samp>&rsquo;</a>
   <ul class="no-bullet">
@@ -208,6 +208,7 @@ Next: <a href="#About" accesskey="n" rel="next">About</a>, Up: <a href="dir.html
 <a name="org_002dtrello-Manual"></a>
 <h1 class="top">&lsquo;<samp>org-trello</samp>&rsquo; Manual</h1>
 
+<img src="images/org-trello-logo-light-blue-pastel-unicorn.200x200.png" alt="images/org-trello-logo-light-blue-pastel-unicorn.200x200">
 <p>Sync Emacs org-mode with Trello.com.
 </p>
 <p>This is the &lsquo;<samp>org-trello</samp>&rsquo; Manual, edition 0.8.1.a, released 2019-01-30,
@@ -470,6 +471,7 @@ Next: <a href="#Demos" accesskey="n" rel="next">Demos</a>, Previous: <a href="#T
 <a name="CHEK-About-org_002dtrello"></a>
 <h2 class="chapter">1 <strong>CHEK</strong> About &lsquo;<samp>org-trello</samp>&rsquo;</h2>
 
+<img src="images/org-trello-logo-light-blue-pastel-unicorn.200x200.png" alt="images/org-trello-logo-light-blue-pastel-unicorn.200x200">
 <ul>
 <li> Why use &lsquo;<samp>org-trello</samp>&rsquo;?
 
@@ -1467,10 +1469,60 @@ Next: <a href="#Format" accesskey="n" rel="next">Format</a>, Previous: <a href="
 <p>
 Previous: <a href="#How-to_2026" accesskey="p" rel="prev">How to…</a>, Up: <a href="#Using" accesskey="u" rel="up">Using</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Indices" title="Index" rel="index">Index</a>]</p>
 </div>
-<a name="TODO-Format-of-org_002dtrello"></a>
-<h3 class="section">5.4 <strong>TODO</strong> Format of org-trello</h3>
+<a name="CHEK-Format-of-org_002dtrello"></a>
+<h3 class="section">5.4 <strong>CHEK</strong> Format of org-trello</h3>
 
 <p>This section describes the format of the text in an &lsquo;<samp>org-trello</samp>&rsquo; buffer.
+</p>
+<p>There are 3 levels of meta-data:
+</p>
+<ul>
+<li> level 1 - Card
+</li><li> level 2 - Checklist
+</li><li> level 3 - Item
+</li></ul>
+
+<p><a href="http://orgmode.org/manual/Checkboxes.html">Natural org checkboxes</a>.
+Thanks to @sw1nn <a href="https://github.com/org-trello/org-trello/issues/14">this is awesome!</a>
+</p>
+<div class="example">
+<pre class="example">* IN-PROGRESS Joy of FUN(ctional) LANGUAGES
+- [-] LISP
+  - [X] Emacs-Lisp
+  - [X] Common-Lisp
+  - [ ] Scheme
+  - [X] Clojure
+- [X] ML
+  - [X] Haskell
+  - [X] Ocaml
+- [X] Hybrid
+  - [X] Scala
+- [ ] little more detail, this is level 2, so checklist in trello board
+  - [ ] item 3
+    - [ ] any entities with level superior to 4 are considered level 3
+</pre></div>
+
+<p>For example, once synced to trello, this looks like:
+</p>
+<div class="example">
+<pre class="example">* IN-PROGRESS Joy of FUN(ctional) LANGUAGES
+:PROPERTIES:
+:orgtrello-id: 521dc9f3edeabee47600401e
+:END:
+- [-] LISP :PROPERTIES: {&quot;orgtrello-id&quot;:&quot;521dc9f48e95d74636004107&quot;}
+  - [X] Emacs-Lisp :PROPERTIES: {&quot;orgtrello-id&quot;:&quot;521dc9f7487c2e9b250047a5&quot;}
+  - [X] Common-Lisp :PROPERTIES: {&quot;orgtrello-id&quot;:&quot;521dc9f7ae27842a36003b26&quot;}
+  - [ ] Scheme :PROPERTIES: {&quot;orgtrello-id&quot;:&quot;521dc9f834f52df935003b15&quot;}
+  - [X] Clojure :PROPERTIES: {&quot;orgtrello-id&quot;:&quot;521dc9f9c1b85c905f006b4e&quot;}
+- [X] ML :PROPERTIES: {&quot;orgtrello-id&quot;:&quot;521dc9f5d49a919614000266&quot;}
+  - [X] Haskell :PROPERTIES: {&quot;orgtrello-id&quot;:&quot;521dc9fa5699f00b25003bd0&quot;}
+  - [X] Ocaml :PROPERTIES: {&quot;orgtrello-id&quot;:&quot;521dc9fb7ef4310554003ab3&quot;}
+- [X] Hybrid :PROPERTIES: {&quot;orgtrello-id&quot;:&quot;521dc9f6238d072770007217&quot;}
+  - [X] Scala :PROPERTIES: {&quot;orgtrello-id&quot;:&quot;521dc9fc8e95d74636004109&quot;}
+</pre></div>
+
+<p><em>Note</em> In the org-trello buffer, the :PROPERTIES: for the checklists/items
+won&rsquo;t be visible for the user.
 </p>
 <hr>
 <a name="Troubleshooting"></a>

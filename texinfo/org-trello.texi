@@ -78,6 +78,7 @@ which begins with this license and non-warranty statement:
 @node Top
 @top @samp{org-trello} Manual
 
+@image{images/org-trello-logo-light-blue-pastel-unicorn.200x200,,,,png}
 Sync Emacs org-mode with Trello.com.
 
 @insertcopying
@@ -207,6 +208,7 @@ Indices
 @node About
 @chapter @strong{CHEK} About @samp{org-trello}
 
+@image{images/org-trello-logo-light-blue-pastel-unicorn.200x200,,,,png}
 @itemize
 @item
 Why use @samp{org-trello}?
@@ -993,9 +995,62 @@ This section describes other functions not listed above.
 This section describes how to use commands to perform tasks with @samp{org-trello}.
 
 @node Format
-@section @strong{TODO} Format of org-trello
+@section @strong{CHEK} Format of org-trello
 
 This section describes the format of the text in an @samp{org-trello} buffer.
+
+There are 3 levels of meta-data:
+
+@itemize
+@item
+level 1 - Card
+@item
+level 2 - Checklist
+@item
+level 3 - Item
+@end itemize
+
+@uref{http://orgmode.org/manual/Checkboxes.html, Natural org checkboxes}.
+Thanks to @@sw1nn @uref{https://github.com/org-trello/org-trello/issues/14, for showing me this org feature, this is awesome!}
+
+@example
+* IN-PROGRESS Joy of FUN(ctional) LANGUAGES
+- [-] LISP
+  - [X] Emacs-Lisp
+  - [X] Common-Lisp
+  - [ ] Scheme
+  - [X] Clojure
+- [X] ML
+  - [X] Haskell
+  - [X] Ocaml
+- [X] Hybrid
+  - [X] Scala
+- [ ] little more detail, this is level 2, so checklist in trello board
+  - [ ] item 3
+    - [ ] any entities with level superior to 4 are considered level 3
+@end example
+
+For example, once synced to trello, this looks like:
+
+@example
+* IN-PROGRESS Joy of FUN(ctional) LANGUAGES
+:PROPERTIES:
+:orgtrello-id: 521dc9f3edeabee47600401e
+:END:
+- [-] LISP :PROPERTIES: @{"orgtrello-id":"521dc9f48e95d74636004107"@}
+  - [X] Emacs-Lisp :PROPERTIES: @{"orgtrello-id":"521dc9f7487c2e9b250047a5"@}
+  - [X] Common-Lisp :PROPERTIES: @{"orgtrello-id":"521dc9f7ae27842a36003b26"@}
+  - [ ] Scheme :PROPERTIES: @{"orgtrello-id":"521dc9f834f52df935003b15"@}
+  - [X] Clojure :PROPERTIES: @{"orgtrello-id":"521dc9f9c1b85c905f006b4e"@}
+- [X] ML :PROPERTIES: @{"orgtrello-id":"521dc9f5d49a919614000266"@}
+  - [X] Haskell :PROPERTIES: @{"orgtrello-id":"521dc9fa5699f00b25003bd0"@}
+  - [X] Ocaml :PROPERTIES: @{"orgtrello-id":"521dc9fb7ef4310554003ab3"@}
+- [X] Hybrid :PROPERTIES: @{"orgtrello-id":"521dc9f6238d072770007217"@}
+  - [X] Scala :PROPERTIES: @{"orgtrello-id":"521dc9fc8e95d74636004109"@}
+@end example
+
+@emph{Note} In the org-trello buffer, the :PROPERTIES: for the checklists/items
+won't be visible for the user.
 
 @node Troubleshooting
 @chapter @strong{CHEK} Troubleshooting @samp{org-trello}
