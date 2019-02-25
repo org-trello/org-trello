@@ -157,6 +157,7 @@ Using
 Command Descriptions
 
 * Summary::                      Summary of Commands
+* Help Cmds::                    Help Commands
 * Connection Cmds::              Connection Commands
 * Synch Cmds::                   Synchronization Commands
 * Editing Cmds::                 Editing Commands
@@ -751,7 +752,7 @@ You must install the @code{org-trello-consumer-key} and the read-write
 @code{org-trello-access-token} to permit org-trello to access your trello
 boards.
 
-@emph{Remark:} This procedure only needs to be done once unless you revoke
+@emph{Note:} This procedure only needs to be done once unless you revoke
 the token.
 
 First, ensure that:
@@ -830,7 +831,7 @@ when requesting trello.
 For each org-mode file that you wish to use with Trello.com, you need
 to connect your org-mode file with a Trello board.
 
-@emph{Remarks:} This procedure must be done only once for each org-mode file you want to
+@emph{Note:} This procedure must be done only once for each org-mode file you want to
 sync with a trello board.
 
 To connect an buffer to an existing board, type:
@@ -862,7 +863,7 @@ edit your org-mode file to add the properties needed.
 
 You can create a new Trello board from your existing org-mode file. 
 
-@emph{Remarks:} This procedure must be done only once for each org-mode
+@emph{Note:} This procedure must be done only once for each org-mode
 file you want to sync with a trello board.
 
 Type:
@@ -887,7 +888,7 @@ org-mode (cf. @uref{http://orgmode.org/manual/In_002dbuffer-settings.html, org-t
 @end itemize
 
 @node Using
-@chapter @strong{TODO} Using @samp{org-trello}
+@chapter @strong{WORK} Using @samp{org-trello}
 
 @cindex =org-trello=, using
 This section describes how to use @samp{org-trello}.
@@ -900,7 +901,42 @@ This section describes how to use @samp{org-trello}.
 @end menu
 
 @node Quick Start
-@section @strong{TODO} Quick Start
+@section @strong{CHEK} Quick Start
+
+First, do the @ref{Installing, , installation} and the @ref{Connecting, , connection}.
+
+A typical starting point is to synchronize a trello board to the
+current buffer. To do this, type:
+
+@itemize
+@item
+@code{C-u C-c o s}, or
+@item
+@code{C-u M-x org-trello-sync-buffer}
+@end itemize
+
+This will fetch the current board's data and write it inside the current
+buffer. From then on, you can use your org buffer as usual.
+
+When you want to update the trello board from the org buffer, type:
+
+@itemize
+@item
+@code{C-c o c/C-c o C}, to update the card at point, or
+@item
+@code{C-c o s}, to sync all the entities from your buffer to Trello.
+@end itemize
+
+When you want to update the org buffer from trello:
+
+@itemize
+@item
+@code{C-u C-c o c}, or
+@item
+@code{C-u C-c o C}, to update the card at point from Trello.
+@end itemize
+
+For more usage details, see below.
 
 @node Command Descriptions
 @section Command Descriptions
@@ -909,6 +945,7 @@ This section describes all commands and their key bindings.
 
 @menu
 * Summary::                      Summary of Commands
+* Help Cmds::                    Help Commands
 * Connection Cmds::              Connection Commands
 * Synch Cmds::                   Synchronization Commands
 * Editing Cmds::                 Editing Commands
@@ -916,7 +953,7 @@ This section describes all commands and their key bindings.
 @end menu
 
 @node Summary
-@subsection @strong{WORK} Summary of Commands
+@subsection @strong{CHEK} Summary of Commands
 
 All default @samp{org-trello} key-bindings use the “C-c o” prefix.
 
@@ -925,39 +962,70 @@ All default @samp{org-trello} key-bindings use the “C-c o” prefix.
 key bindings.
 
 @multitable {aaaaaaaaaaa} {aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa}
-@headitem Keys
+@headitem ‍Keys
 @tab Command
+@item 
+@tab @strong{Help Commands}
 @item C-c o C-h
 @tab Display help on all key-bindings with C-c o prefix.
+@item C-c o h
+@tab Display a help message from org-trello.
 @item C-c o v
 @tab Display the version of @samp{org-trello}.
+@item 
+@tab @strong{Connection Commands}
 @item C-c o i
-@tab Install the Trello.com access key and token.
+@tab Install the Trello.com login key and access token.
 @item C-c o I
 @tab Choose an existing Trello board and attach this buffer.
 @item C-c o b
-@tab Create a new Trello board and attach this buffer
+@tab Create a new Trello board and connect this buffer
 @item C-c o u
-@tab Update this file’s attachment to its Trello board.
+@tab Update this buffer’s Trello board meta-data.
 @item C-c o d
 @tab Diagnose the setup.
 @item C-c o D
 @tab Delete all Trello metadata from this buffer.
+@item 
+@tab @strong{Synchronization Commands}
 @item C-c o c
-@tab Create or Update a complete card.
+@tab Create or synchronize a complete card.
 @item C-c o s
 @tab Synchronize FROM the entire buffer TO Trello.
 @item C-u C-c o s
 @tab Synchronize TO the entire buffer FROM Trello.
 @item C-c o g
 @tab Abort any synchronization in progress. (like C-g)
+@item 
+@tab @strong{Editing Commands}
 @item C-c $
 @tab Archive the card at point. (Standard org binding)
 @item C-c o A
 @tab Archive all DONE cards.
+@item C-c o k
+@tab Kill the entity and its tree from buffer and Trello.
+@item C-c o K
+@tab Kill ALL entities and trees from buffer and Trello.
+@item C-c o a
+@tab Assign myself to this card.
+@item C-u C-c o a
+@tab Un-assign myself from this card.
+@item C-c o C
+@tab Add a comment to this card.
+@item C-u C-c o C
+@tab Remove this comment from the card.
 @item 
-@tab 
+@tab @strong{Misc. Commands}
+@item C-c o l
+@tab Display the board’s labels in a pop-up buffer.
+@item C-c o j
+@tab Jump to this card on Trello.com in browser.
+@item C-c o J
+@tab Jump to this board on Trello.com in browser.
 @end multitable
+
+@node Help Cmds
+@subsection @strong{TODO} Help Commands
 
 @node Connection Cmds
 @subsection @strong{TODO} Connection Commands
@@ -968,7 +1036,8 @@ Trello.com and to attach an org file to a Trello board.
 @node Synch Cmds
 @subsection @strong{WORK} Synchronization Commands
 
-This section describes the synchronization functions.
+This section describes the synchronization commands used to move data
+between the buffer and Trello.com.
 
 @kindex C-c o s
 @kindex C-u C-c o s
@@ -981,8 +1050,8 @@ Type “C-u C-c o s” to sync the entire buffer FROM the Trello board.
 @node Editing Cmds
 @subsection @strong{TODO} Editing Commands
 
-This section describes the functions used to edit cards, comments and
-list items.
+This section describes the functions used to edit, archive and delete
+cards, comments and list items.
 
 @node Misc Cmds
 @subsection @strong{TODO} Misc. Commands
