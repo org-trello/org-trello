@@ -86,7 +86,6 @@ Sync Emacs org-mode with Trello.com.
 
 @menu
 * About::                        About =org-trello=
-* Demos::                        Demonstration Videos
 * Installing::                   Installing =org-trello=
 * Connecting::                   Connecting to Trello.com
 * Using::                        Using =org-trello=
@@ -150,11 +149,11 @@ Connecting
 Using
 
 * Quick Start::                  First Steps with =org-trello=
-* Command Descriptions::         Command Descriptions
+* Commands::                     Commands
 * How to…::                      How to Perform Tasks
 * Format::                       Format of =org-trello=
 
-Command Descriptions
+Commands
 
 * Summary::                      Summary of Commands
 * Help Cmds::                    Help Commands
@@ -207,7 +206,7 @@ Indices
 @end menu
 
 @node About
-@chapter @strong{CHEK} About @samp{org-trello}
+@chapter About @samp{org-trello}
 
 @image{images/org-trello-logo-light-blue-pastel-unicorn.200x200,,,,png}
 @itemize
@@ -235,6 +234,8 @@ Links:
 @uref{https://github.com/org-trello/org-trello/tarball/master, Download Tarball}
 @item
 @uref{https://github.com/org-trello/org-trello, View on GitHub}
+@item
+@uref{http://org-trello.github.io/demo.html, Demonstration Videos}
 @end itemize
 
 @item
@@ -245,21 +246,6 @@ It means “map org functions to the trello world”.
 At the time, I was learning Haskell and it made an everlasting
 awesome impression on me. @uref{http://hackage.haskell.org/package/base-4.9.1.0/docs/Prelude.html#v:fmap, See fmap's documentation for more detail}.
 @end itemize
-
-@node Demos
-@chapter @strong{TODO} Demo Videos
-
-@ifnothtml
-Please see the HTML version of this manual for links to the
-demonstration videos. They are not included in the info and PDF-format
-manuals.
-@end ifnothtml
-@ifhtml
-This section provides links to several demo videos.
-
-@emph{Note:} The format of @samp{org-trello} buffers has changed since these
-videos were created. Please see the @ref{Format, , current @samp{org-trello} format}.
-@end ifhtml
 
 @node Installing
 @chapter Installing @samp{org-trello}
@@ -735,7 +721,7 @@ server is started on the port 9876. You can always change this port
 Then M-x orgtrello-proxy/reload
 
 @node Connecting
-@chapter @strong{CHEK} Connecting to Trello.com
+@chapter Connecting to Trello.com
 
 @cindex trello.com, connecting
 
@@ -895,13 +881,13 @@ This section describes how to use @samp{org-trello}.
 
 @menu
 * Quick Start::                  First Steps with =org-trello=
-* Command Descriptions::         Command Descriptions
+* Commands::                     Commands
 * How to…::                      How to Perform Tasks
 * Format::                       Format of =org-trello=
 @end menu
 
 @node Quick Start
-@section @strong{CHEK} Quick Start
+@section Quick Start
 
 First, do the @ref{Installing, , installation} and the @ref{Connecting, , connection}.
 
@@ -938,8 +924,8 @@ When you want to update the org buffer from trello:
 
 For more usage details, see below.
 
-@node Command Descriptions
-@section Command Descriptions
+@node Commands
+@section Commands
 
 This section describes all commands and their key bindings.
 
@@ -957,11 +943,10 @@ This section describes all commands and their key bindings.
 
 All default @samp{org-trello} key-bindings use the “C-c o” prefix.
 
-@kindex C-c o C-h
 @emph{Note:} You may type “C-c o C-h” to display help for most @samp{org-trello}
 key bindings.
 
-@multitable {aaaaaaaaaaa} {aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa}
+@multitable {aaaaaaaaaaa} {aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa}
 @headitem ‍Keys
 @tab Command
 @item 
@@ -972,12 +957,14 @@ key bindings.
 @tab Display a help message from org-trello.
 @item C-c o v
 @tab Display the version of @samp{org-trello}.
+@item .
+@tab 
 @item 
 @tab @strong{Connection Commands}
 @item C-c o i
 @tab Install the Trello.com login key and access token.
 @item C-c o I
-@tab Choose an existing Trello board and attach this buffer.
+@tab Choose an existing board and connect this buffer.
 @item C-c o b
 @tab Create a new Trello board and connect this buffer
 @item C-c o u
@@ -986,6 +973,8 @@ key bindings.
 @tab Diagnose the setup.
 @item C-c o D
 @tab Delete all Trello metadata from this buffer.
+@item .
+@tab 
 @item 
 @tab @strong{Synchronization Commands}
 @item C-c o c
@@ -996,6 +985,8 @@ key bindings.
 @tab Synchronize TO the entire buffer FROM Trello.
 @item C-c o g
 @tab Abort any synchronization in progress. (like C-g)
+@item .
+@tab 
 @item 
 @tab @strong{Editing Commands}
 @item C-c $
@@ -1014,24 +1005,96 @@ key bindings.
 @tab Add a comment to this card.
 @item C-u C-c o C
 @tab Remove this comment from the card.
+@item .
+@tab 
 @item 
-@tab @strong{Misc. Commands}
+@tab @strong{Other Commands}
 @item C-c o l
 @tab Display the board’s labels in a pop-up buffer.
 @item C-c o j
 @tab Jump to this card on Trello.com in browser.
 @item C-c o J
 @tab Jump to this board on Trello.com in browser.
+@item C-c o B
+@tab Prepare a bug report.
 @end multitable
 
 @node Help Cmds
-@subsection @strong{TODO} Help Commands
+@subsection @strong{WORK} Help Commands
+
+This section describes the help functions.
+
+@kindex C-c o C-h
+@kindex C-c o h
+@findex org-trello-help-describing-bindings
+@kindex C-c o v
+@findex org-trello-version
+@table @kbd
+@item C-c o C-h
+Display help for all bindings with C-c o prefix. This
+is a standard Emacs help function.
+
+@item C-c o h
+@itemx M-x org-trello-help-describing-bindings
+Display a help
+message from @samp{org-trello} describing bindings.
+
+@item C-c o v
+@itemx M-x org-trello-version
+Display the version of
+@samp{org-trello}.
+@end table
 
 @node Connection Cmds
-@subsection @strong{TODO} Connection Commands
+@subsection @strong{WORK} Connection Commands
 
 This section describes the functions used to connect @samp{org-trello} to
 Trello.com and to attach an org file to a Trello board.
+
+@kindex C-c o i
+@findex org-trello-install-key-and-token
+@kindex C-c o I
+@findex org-trello-install-board-metadata
+@kindex C-c o b
+@findex org-trello-create-board-and-install-metadata
+@kindex C-c o u
+@findex org-trello-update-board-metadata
+@kindex C-c o d
+@findex org-trello-check-setup
+@kindex C-c o D
+@findex org-trello-delete-setup
+@table @kbd
+@item C-c o i
+@itemx M-x org-trello-install-key-and-token
+Install the keys
+and the access-token.
+
+@item C-c o I
+@itemx M-x org-trello-install-board-metadata
+Select the board
+and attach the todo, doing and done list.
+
+@item C-c o b
+@itemx M-x org-trello-create-board-and-install-metadata
+Create
+interactively a board and attach the newly created trello board
+with the current org file.
+
+@item C-c o u
+@itemx M-x org-trello-update-board-metadata
+Update the buffer’s
+trello board metadata.
+
+@item C-c o d
+@itemx M-x org-trello-check-setup
+Check that the setup is ok.
+If everything is ok, will simply display ’Setup ok!’.
+
+@item C-c o D
+@itemx M-x org-trello-delete-setup
+Clean up the org buffer from
+all org-trello information.
+@end table
 
 @node Synch Cmds
 @subsection @strong{WORK} Synchronization Commands
@@ -1039,24 +1102,134 @@ Trello.com and to attach an org file to a Trello board.
 This section describes the synchronization commands used to move data
 between the buffer and Trello.com.
 
+@kindex C-c o c
+@findex org-trello-sync-card
 @kindex C-c o s
 @kindex C-u C-c o s
-@ftable @code
-@item org-trello-sync-buffer
-Type “C-c o s” to sync the entire buffer TO the Trello board.@*
-Type “C-u C-c o s” to sync the entire buffer FROM the Trello board.
-@end ftable
+@findex org-trello-sync-buffer
+@kindex C-c o g
+@findex org-trello-abort-sync
+@table @kbd
+@item C-c o c
+@itemx M-x org-trello-sync-card
+Create/Update a complete card.
+
+@item C-c o s
+@itemx M-x org-trello-sync-buffer
+Synchronize the org-mode file
+to the trello board (org-mode -> trello). 
+
+@item C-u C-c o s
+With prefix C-u, sync-from-trello (org-mode <-
+trello).
+
+@item C-c o g
+@itemx M-x org-trello-abort-sync
+Abort synchronization
+activities.
+@end table
 
 @node Editing Cmds
-@subsection @strong{TODO} Editing Commands
+@subsection @strong{WORK} Editing Commands
 
 This section describes the functions used to edit, archive and delete
 cards, comments and list items.
 
+@kindex C-c C-x C-s
+@findex org-archive-subtree
+@kindex C-c o A
+@findex org-trello-archive-cards
+@kindex C-c o k
+@findex org-trello-kill-entity
+@kindex C-c o K
+@findex org-trello-kill-cards
+@kindex C-c o a
+@kindex C-c o t
+@findex org-trello-toggle-assign-me
+@kindex C-c o C
+@kindex C-u C-c o C
+@findex org-trello-add-card-comment
+@kindex C-c o U
+@kindex C-u C-c o U
+@findex org-trello-sync-comment
+@table @kbd
+@item C-c C-x C-s
+@itemx M-x org-archive-subtree
+Archive the subtree starting
+at point position to the location given by
+@code{org-archive-location}. This is a standard org-mode function.
+
+@item C-c o k
+@itemx M-x org-trello-kill-entity
+Kill the entity (and its
+arborescence tree) from the trello board and the org buffer.
+
+@item C-c o K
+@itemx M-x org-trello-kill-cards
+Kill all the entities (and
+their arborescence tree) from the trello board and the org
+buffer.
+
+@item C-c o a
+@itemx C-c o t
+@itemx M-x org-trello-toggle-assign-me
+Toggle assign oneself to
+the card. If not assigned, assign and vice versa.
+
+@item C-c o C
+@itemx M-x org-trello-add-card-comment
+Add a comment to the
+card. 
+
+@item C-u C-c o C
+With C-u, remove the current card’s comment.
+
+@item C-c o U
+@itemx M-x org-trello-sync-comment
+Sync a comment to trello.
+
+@item C-u C-c o U
+With C-u : remove the current card’s comment.
+@end table
+
 @node Misc Cmds
-@subsection @strong{TODO} Misc. Commands
+@subsection @strong{WORK} Other Commands
 
 This section describes other functions not listed above.
+
+@kindex C-c o l
+@findex org-trello-show-board-labels
+@kindex C-c o j
+@findex org-trello-jump-to-trello-card
+@kindex C-c o J
+@findex org-trello-jump-to-trello-board
+@kindex C-c o B
+@kindex C-u C-c o B
+@findex org-trello-bug-report
+@table @kbd
+@item C-c o l
+@itemx M-x org-trello-show-board-labels
+Display the board’s
+labels in a pop-up buffer.
+
+@item C-c o j
+@itemx M-x org-trello-jump-to-trello-card
+Jump to card in
+browser.
+
+@item C-c o J
+@itemx M-x org-trello-jump-to-trello-board
+Open the browser to
+your current trello board.
+
+@item C-c o B
+@itemx M-x org-trello-bug-report
+Prepare a bug report message.
+
+@item C-u C-c o B
+With C-u, opens a new issue in org-trello’s github
+tracker too.
+@end table
 
 @node How to…
 @section @strong{TODO} How to…
@@ -1064,7 +1237,7 @@ This section describes other functions not listed above.
 This section describes how to use commands to perform tasks with @samp{org-trello}.
 
 @node Format
-@section @strong{CHEK} Format of org-trello
+@section Format of org-trello
 
 This section describes the format of the text in an @samp{org-trello} buffer.
 
@@ -1122,7 +1295,7 @@ For example, once synced to trello, this looks like:
 won't be visible for the user.
 
 @node Troubleshooting
-@chapter @strong{CHEK} Troubleshooting @samp{org-trello}
+@chapter Troubleshooting @samp{org-trello}
 
 @cindex troubleshooting
 

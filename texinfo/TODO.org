@@ -11,7 +11,7 @@
 Use wget to grab the existing documentation, then convert it to org-mode
 through pandoc for easier reference and cut/paste.
 
-* WORK Cover Existing Documentation [11/14]
+* WORK Cover Existing Documentation [13/14]
 The first draft must cover all the content from all files and sections of
 the existing documentation.
 - [X] Page Margins -> [[file:org-trello.org::*About%20org-trello][About org-trello]]
@@ -21,7 +21,7 @@ the existing documentation.
   - [X] View on GitHub
   - [X] Table of Contents
 - [X] About -> [[file:org-trello.org::*About%20org-trello][About org-trello]]
-- [ ] Demo Videos -> [[file:org-trello.org::*Demo%20Videos][Demo Videos]]
+- [X] Demo Videos -> [[file:org-trello.org::*About%20org-trello][About org-trello]]
 - [X] Install [2/2]
   - [X] Package -> [[file:org-trello.org::*Using%20MELPA%20with%20Package][Using MELPA with Package]]
   - [X] Install -> [[file:org-trello.org::*Installing%20from%20MELPA%20with%20Package][Installing from MELPA with Package]]
@@ -37,8 +37,8 @@ the existing documentation.
   - [X] Migrations-> [[file:org-trello.org::#migration][Migrating to New Releases]]
 - [X] Quick Start -> [[file:org-trello.org::*Quick%20Start][Quick Start]]
 - [X] Migration -> [[file:org-trello.org::#migration][Migrating to New Releases]]
-- [-] Bindings [2/3]
-  - [-] Keybindings -> [[file:org-trello.org::*Summary%20of%20Commands][Using/Summary of Commands]]
+- [X] Bindings [3/3]
+  - [X] Keybindings -> [[file:org-trello.org::*Summary%20of%20Commands][Using/Summary of Commands]]
   - [X] Bindings Override -> [[file:org-trello.org::*Customizing%20Individual%20Keybindings][Customizing/Individual]]
   - [X] Prefix binding override -> [[file:org-trello.org::*Customizing%20the%20Prefix%20Keybinding][Customizing/Prefix]]
 - [-] Usage [3/4]

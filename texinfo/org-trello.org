@@ -93,7 +93,7 @@ which begins with this license and non-warranty statement:
 ;; GNU General Public License for more details.
 #+END_SRC
 
-* CHEK About =org-trello=
+* About =org-trello=
 :PROPERTIES:
 :ALT_TITLE: About
 :DESCRIPTION: About =org-trello=
@@ -111,6 +111,7 @@ which begins with this license and non-warranty statement:
   - [[https://github.com/org-trello/org-trello/zipball/master][Download Zip]]
   - [[https://github.com/org-trello/org-trello/tarball/master][Download Tarball]]
   - [[https://github.com/org-trello/org-trello][View on GitHub]]
+  - [[http://org-trello.github.io/demo.html][Demonstration Videos]]
 
 - What does your page title =org <$> trello= mean?
 
@@ -119,22 +120,6 @@ which begins with this license and non-warranty statement:
   At the time, I was learning Haskell and it made an everlasting
   awesome impression on me. [[http://hackage.haskell.org/package/base-4.9.1.0/docs/Prelude.html#v:fmap][See fmap's documentation for more detail]].
 
-* TODO Demo Videos
-:PROPERTIES:
-:ALT_TITLE: Demos
-:DESCRIPTION: Demonstration Videos
-:END:
-#+TEXINFO: @ifnothtml
-Please see the HTML version of this manual for links to the
-demonstration videos. They are not included in the info and PDF-format
-manuals.
-#+TEXINFO: @end ifnothtml
-#+TEXINFO: @ifhtml
-This section provides links to several demo videos.
-
-/Note:/ The format of =org-trello= buffers has changed since these
-videos were created. Please see the [[#org-trello-format][current =org-trello= format]].
-#+TEXINFO: @end ifhtml
 * Installing =org-trello=
   :PROPERTIES:
   :ALT_TITLE: Installing
@@ -516,7 +501,7 @@ cf. [[file:migration.html#natural-org-format-from-016-onwards][natural org forma
 
 Then M-x orgtrello-proxy/reload
 
-* CHEK Connecting to Trello.com
+* Connecting to Trello.com
   :PROPERTIES:
   :ALT_TITLE: Connecting
   :DESCRIPTION: Connecting to Trello.com
@@ -644,7 +629,7 @@ This will:
   :END:
 #+CINDEX: =org-trello=, using
 This section describes how to use =org-trello=.
-** CHEK Quick Start
+** Quick Start
 :PROPERTIES:
 :ALT_TITLE: Quick Start
 :DESCRIPTION: First Steps with =org-trello=
@@ -673,10 +658,10 @@ When you want to update the org buffer from trello:
 
 For more usage details, see below.
 
-** Command Descriptions
+** Commands
 :PROPERTIES:
 :ALT_TEXT: Commands
-:DESCRIPTION: Command Descriptions
+:DESCRIPTION: Commands
 :END:
 This section describes all commands and their key bindings.
 *** CHEK Summary of Commands
@@ -686,59 +671,112 @@ This section describes all commands and their key bindings.
 :END:
 All default =org-trello= key-bindings use the “C-c o” prefix.
 
-#+KINDEX: C-c o C-h
 /Note:/ You may type “C-c o C-h” to display help for most =org-trello=
 key bindings.
 
-| ‍Keys        | Command                                                 |
-|-------------+---------------------------------------------------------|
-|             | *Help Commands*                                         |
-| C-c o C-h   | Display help on all key-bindings with C-c o prefix.     |
-| C-c o h     | Display a help message from org-trello.                 |
-| C-c o v     | Display the version of =org-trello=.                    |
-|-------------+---------------------------------------------------------|
-|             | *Connection Commands*                                   |
-| C-c o i     | Install the Trello.com login key and access token.      |
-| C-c o I     | Choose an existing Trello board and attach this buffer. |
-| C-c o b     | Create a new Trello board and connect this buffer       |
-| C-c o u     | Update this buffer’s Trello board meta-data.            |
-| C-c o d     | Diagnose the setup.                                     |
-| C-c o D     | Delete all Trello metadata from this buffer.            |
-|-------------+---------------------------------------------------------|
-|             | *Synchronization Commands*                              |
-| C-c o c     | Create or synchronize a complete card.                  |
-| C-c o s     | Synchronize FROM the entire buffer TO Trello.           |
-| C-u C-c o s | Synchronize TO the entire buffer FROM Trello.           |
-| C-c o g     | Abort any synchronization in progress. (like C-g)       |
-|-------------+---------------------------------------------------------|
-|             | *Editing Commands*                                      |
-| C-c $       | Archive the card at point. (Standard org binding)       |
-| C-c o A     | Archive all DONE cards.                                 |
-| C-c o k     | Kill the entity and its tree from buffer and Trello.    |
-| C-c o K     | Kill ALL entities and trees from buffer and Trello.     |
-| C-c o a     | Assign myself to this card.                             |
-| C-u C-c o a | Un-assign myself from this card.                        |
-| C-c o C     | Add a comment to this card.                             |
-| C-u C-c o C | Remove this comment from the card.                      |
-|-------------+---------------------------------------------------------|
-|             | *Misc. Commands*                                        |
-| C-c o l     | Display the board’s labels in a pop-up buffer.          |
-| C-c o j     | Jump to this card on Trello.com in browser.             |
-| C-c o J     | Jump to this board on Trello.com in browser.            |
+| ‍Keys        | Command                                              |
+|-------------+------------------------------------------------------|
+|             | *Help Commands*                                      |
+| C-c o C-h   | Display help on all key-bindings with C-c o prefix.  |
+| C-c o h     | Display a help message from org-trello.              |
+| C-c o v     | Display the version of =org-trello=.                 |
+| .           |                                                      |
+|-------------+------------------------------------------------------|
+|             | *Connection Commands*                                |
+| C-c o i     | Install the Trello.com login key and access token.   |
+| C-c o I     | Choose an existing board and connect this buffer.    |
+| C-c o b     | Create a new Trello board and connect this buffer    |
+| C-c o u     | Update this buffer’s Trello board meta-data.         |
+| C-c o d     | Diagnose the setup.                                  |
+| C-c o D     | Delete all Trello metadata from this buffer.         |
+| .           |                                                      |
+|-------------+------------------------------------------------------|
+|             | *Synchronization Commands*                           |
+| C-c o c     | Create or synchronize a complete card.               |
+| C-c o s     | Synchronize FROM the entire buffer TO Trello.        |
+| C-u C-c o s | Synchronize TO the entire buffer FROM Trello.        |
+| C-c o g     | Abort any synchronization in progress. (like C-g)    |
+| .           |                                                      |
+|-------------+------------------------------------------------------|
+|             | *Editing Commands*                                   |
+| C-c $       | Archive the card at point. (Standard org binding)    |
+| C-c o A     | Archive all DONE cards.                              |
+| C-c o k     | Kill the entity and its tree from buffer and Trello. |
+| C-c o K     | Kill ALL entities and trees from buffer and Trello.  |
+| C-c o a     | Assign myself to this card.                          |
+| C-u C-c o a | Un-assign myself from this card.                     |
+| C-c o C     | Add a comment to this card.                          |
+| C-u C-c o C | Remove this comment from the card.                   |
+| .           |                                                     |
+|-------------+------------------------------------------------------|
+|             | *Other Commands*                                     |
+| C-c o l     | Display the board’s labels in a pop-up buffer.       |
+| C-c o j     | Jump to this card on Trello.com in browser.          |
+| C-c o J     | Jump to this board on Trello.com in browser.         |
+| C-c o B     | Prepare a bug report.                                |
 
-*** TODO Help Commands
+*** WORK Help Commands
 :PROPERTIES:
 :ALT_TITLE: Help Cmds
 :DESCRIPTION: Help Commands
 :END:
+This section describes the help functions.
 
-*** TODO Connection Commands
+#+KINDEX: C-c o C-h
+#+KINDEX: C-c o h
+#+FINDEX: org-trello-help-describing-bindings
+#+KINDEX: C-c o v
+#+FINDEX: org-trello-version
+#+ATTR_TEXINFO: :sep , :indic kbd
+- C-c o C-h :: Display help for all bindings with C-c o prefix. This
+               is a standard Emacs help function.
+
+- C-c o h, M-x org-trello-help-describing-bindings :: Display a help
+     message from =org-trello= describing bindings.
+
+- C-c o v, M-x org-trello-version :: Display the version of
+     =org-trello=.
+
+*** WORK Connection Commands
 :PROPERTIES:
 :ALT_TITLE: Connection Cmds
 :DESCRIPTION: Connection Commands
 :END:
 This section describes the functions used to connect =org-trello= to
 Trello.com and to attach an org file to a Trello board.
+
+#+KINDEX: C-c o i
+#+FINDEX: org-trello-install-key-and-token
+#+KINDEX: C-c o I
+#+FINDEX: org-trello-install-board-metadata
+#+KINDEX: C-c o b
+#+FINDEX: org-trello-create-board-and-install-metadata
+#+KINDEX: C-c o u
+#+FINDEX: org-trello-update-board-metadata
+#+KINDEX: C-c o d
+#+FINDEX: org-trello-check-setup 
+#+KINDEX: C-c o D
+#+FINDEX: org-trello-delete-setup
+#+ATTR_TEXINFO: :sep , :indic kbd
++ C-c o i, M-x org-trello-install-key-and-token :: Install the keys
+     and the access-token.
+
++ C-c o I, M-x org-trello-install-board-metadata :: Select the board
+     and attach the todo, doing and done list.
+
++ C-c o b, M-x org-trello-create-board-and-install-metadata :: Create
+     interactively a board and attach the newly created trello board
+     with the current org file.
+
++ C-c o u, M-x org-trello-update-board-metadata :: Update the buffer’s
+     trello board metadata.
+
++ C-c o d, M-x org-trello-check-setup :: Check that the setup is ok.
+     If everything is ok, will simply display ’Setup ok!’.
+
++ C-c o D, M-x org-trello-delete-setup :: Clean up the org buffer from
+     all org-trello information.
+
 *** WORK Synchronization Commands
 :PROPERTIES:
 :ALT_TITLE: Synch Cmds
@@ -747,25 +785,104 @@ Trello.com and to attach an org file to a Trello board.
 This section describes the synchronization commands used to move data
 between the buffer and Trello.com.
 
+#+KINDEX: C-c o c
+#+FINDEX: org-trello-sync-card
 #+KINDEX: C-c o s
 #+KINDEX: C-u C-c o s
-#+ATTR_TEXINFO: :table-type ftable :indic code
-- org-trello-sync-buffer :: 
-  Type “C-c o s” to sync the entire buffer TO the Trello board.\\
-  Type “C-u C-c o s” to sync the entire buffer FROM the Trello board.
-*** TODO Editing Commands
+#+FINDEX: org-trello-sync-buffer
+#+KINDEX: C-c o g
+#+FINDEX: org-trello-abort-sync
+#+ATTR_TEXINFO: :sep , :indic kbd
+- C-c o c, M-x org-trello-sync-card :: Create/Update a complete card.
+
+- C-c o s, M-x org-trello-sync-buffer :: Synchronize the org-mode file
+     to the trello board (org-mode -> trello). 
+
+- C-u C-c o s :: With prefix C-u, sync-from-trello (org-mode <-
+                 trello).
+
+- C-c o g, M-x org-trello-abort-sync :: Abort synchronization
+     activities.
+
+*** WORK Editing Commands
 :PROPERTIES:
 :ALT_TITLE: Editing Cmds
 :DESCRIPTION: Editing Commands
 :END:
 This section describes the functions used to edit, archive and delete
 cards, comments and list items.
-*** TODO Misc. Commands
+
+#+KINDEX: C-c C-x C-s
+#+FINDEX: org-archive-subtree
+#+KINDEX: C-c o A
+#+FINDEX: org-trello-archive-cards
+#+KINDEX: C-c o k
+#+FINDEX: org-trello-kill-entity
+#+KINDEX: C-c o K
+#+FINDEX: org-trello-kill-cards
+#+KINDEX: C-c o a
+#+KINDEX: C-c o t
+#+FINDEX: org-trello-toggle-assign-me
+#+KINDEX: C-c o C
+#+KINDEX: C-u C-c o C
+#+FINDEX: org-trello-add-card-comment
+#+KINDEX: C-c o U
+#+KINDEX: C-u C-c o U
+#+FINDEX: org-trello-sync-comment
+#+ATTR_TEXINFO: :sep , :indic kbd
+- C-c C-x C-s, M-x org-archive-subtree :: Archive the subtree starting
+     at point position to the location given by
+     ~org-archive-location~. This is a standard org-mode function.
+
+- C-c o k, M-x org-trello-kill-entity :: Kill the entity (and its
+     arborescence tree) from the trello board and the org buffer.
+
+- C-c o K, M-x org-trello-kill-cards :: Kill all the entities (and
+     their arborescence tree) from the trello board and the org
+     buffer.
+
+- C-c o a, C-c o t, M-x org-trello-toggle-assign-me :: Toggle assign oneself to
+     the card. If not assigned, assign and vice versa.
+
+- C-c o C, M-x org-trello-add-card-comment :: Add a comment to the
+     card. 
+
+- C-u C-c o C :: With C-u, remove the current card’s comment.
+
+- C-c o U, M-x org-trello-sync-comment :: Sync a comment to trello.
+     
+- C-u C-c o U :: With C-u : remove the current card’s comment.
+
+*** WORK Other Commands
 :PROPERTIES:
 :ALT_TITLE: Misc Cmds
 :DESCRIPTION: Misc. Commands
 :END:
 This section describes other functions not listed above.
+
+#+KINDEX: C-c o l
+#+FINDEX: org-trello-show-board-labels
+#+KINDEX: C-c o j
+#+FINDEX: org-trello-jump-to-trello-card
+#+KINDEX: C-c o J
+#+FINDEX: org-trello-jump-to-trello-board
+#+KINDEX: C-c o B
+#+KINDEX: C-u C-c o B
+#+FINDEX: org-trello-bug-report
+#+ATTR_TEXINFO: :sep , :indic kbd
+- C-c o l, M-x org-trello-show-board-labels :: Display the board’s
+     labels in a pop-up buffer.
+
+- C-c o j, M-x org-trello-jump-to-trello-card :: Jump to card in
+     browser.
+
+- C-c o J, M-x org-trello-jump-to-trello-board :: Open the browser to
+     your current trello board.
+
+- C-c o B, M-x org-trello-bug-report :: Prepare a bug report message.
+     
+- C-u C-c o B :: With C-u, opens a new issue in org-trello’s github
+                 tracker too.
 
 ** TODO How to…
 :PROPERTIES:
@@ -773,7 +890,7 @@ This section describes other functions not listed above.
 :DESCRIPTION: How to Perform Tasks
 :END:
 This section describes how to use commands to perform tasks with =org-trello=.
-** CHEK Format of org-trello
+** Format of org-trello
 :PROPERTIES:
 :ALT_TITLE: Format
 :DESCRIPTION: Format of =org-trello=
@@ -829,7 +946,7 @@ For example, once synced to trello, this looks like:
 /Note/ In the org-trello buffer, the :PROPERTIES: for the checklists/items
 won't be visible for the user.
 
-* CHEK Troubleshooting =org-trello=
+* Troubleshooting =org-trello=
   :PROPERTIES:
   :ALT_TITLE: Troubleshooting
   :DESCRIPTION: Troubleshooting =org-trello=
