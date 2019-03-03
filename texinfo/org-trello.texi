@@ -150,12 +150,10 @@ Using
 
 * Quick Start::                  First Steps with =org-trello=
 * Commands::                     Commands
-* How to…::                      How to Perform Tasks
 * Format::                       Format of =org-trello=
 
 Commands
 
-* Summary::                      Summary of Commands
 * Help Cmds::                    Help Commands
 * Connection Cmds::              Connection Commands
 * Synch Cmds::                   Synchronization Commands
@@ -187,8 +185,8 @@ Contributing
 
 Issues
 
-* Using @samp{M-x org-trello-bug-report}::
-* Using @samp{orgtrello-log-trace}::
+* Using Bug-Report::             Using org-trello-bug-report
+* Using Log Trace::              Using org-trello-log-trace
 
 Conventions
 
@@ -818,7 +816,7 @@ For each org-mode file that you wish to use with Trello.com, you need
 to connect your org-mode file with a Trello board.
 
 @emph{Note:} This procedure must be done only once for each org-mode file you want to
-sync with a trello board.
+sync with a Trello board.
 
 To connect an buffer to an existing board, type:
 
@@ -850,7 +848,7 @@ edit your org-mode file to add the properties needed.
 You can create a new Trello board from your existing org-mode file. 
 
 @emph{Note:} This procedure must be done only once for each org-mode
-file you want to sync with a trello board.
+file you want to sync with a Trello board.
 
 Type:
 
@@ -882,7 +880,6 @@ This section describes how to use @samp{org-trello}.
 @menu
 * Quick Start::                  First Steps with =org-trello=
 * Commands::                     Commands
-* How to…::                      How to Perform Tasks
 * Format::                       Format of =org-trello=
 @end menu
 
@@ -891,7 +888,7 @@ This section describes how to use @samp{org-trello}.
 
 First, do the @ref{Installing, , installation} and the @ref{Connecting, , connection}.
 
-A typical starting point is to synchronize a trello board to the
+A typical starting point is to synchronize a Trello board to the
 current buffer. To do this, type:
 
 @itemize
@@ -904,7 +901,7 @@ current buffer. To do this, type:
 This will fetch the current board's data and write it inside the current
 buffer. From then on, you can use your org buffer as usual.
 
-When you want to update the trello board from the org buffer, type:
+When you want to update the Trello board from the org buffer, type:
 
 @itemize
 @item
@@ -925,21 +922,9 @@ When you want to update the org buffer from trello:
 For more usage details, see below.
 
 @node Commands
-@section Commands
+@section @strong{CHEK} Commands
 
 This section describes all commands and their key bindings.
-
-@menu
-* Summary::                      Summary of Commands
-* Help Cmds::                    Help Commands
-* Connection Cmds::              Connection Commands
-* Synch Cmds::                   Synchronization Commands
-* Editing Cmds::                 Editing Commands
-* Misc Cmds::                    Misc. Commands
-@end menu
-
-@node Summary
-@subsection @strong{CHEK} Summary of Commands
 
 All default @samp{org-trello} key-bindings use the “C-c o” prefix.
 
@@ -947,8 +932,8 @@ All default @samp{org-trello} key-bindings use the “C-c o” prefix.
 key bindings.
 
 @multitable {aaaaaaaaaaa} {aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa}
-@headitem ‍Keys
-@tab Command
+@headitem ‍Binding
+@tab Description
 @item 
 @tab @strong{Help Commands}
 @item C-c o C-h
@@ -978,7 +963,7 @@ key bindings.
 @item 
 @tab @strong{Synchronization Commands}
 @item C-c o c
-@tab Create or synchronize a complete card.
+@tab Create or synchronize a complete card, list or item.
 @item C-c o s
 @tab Synchronize FROM the entire buffer TO Trello.
 @item C-u C-c o s
@@ -989,7 +974,7 @@ key bindings.
 @tab 
 @item 
 @tab @strong{Editing Commands}
-@item C-c $
+@item C-c C-x C-s
 @tab Archive the card at point. (Standard org binding)
 @item C-c o A
 @tab Archive all DONE cards.
@@ -998,13 +983,17 @@ key bindings.
 @item C-c o K
 @tab Kill ALL entities and trees from buffer and Trello.
 @item C-c o a
-@tab Assign myself to this card.
-@item C-u C-c o a
-@tab Un-assign myself from this card.
+@tab Toggle assign/un-assign myself to this card.
+@item C-c o t
+@tab Toggle assign/un-assign myself to this card.
 @item C-c o C
-@tab Add a comment to this card.
+@tab Add a comment to this card in buffer and Trello.
 @item C-u C-c o C
-@tab Remove this comment from the card.
+@tab Remove this comment from the buffer and Trello.
+@item C-c o U
+@tab Update an existing comment in the buffer to Trello.
+@item C-u C-c o U
+@tab Remove this comment from the buffer and Trello.
 @item .
 @tab 
 @item 
@@ -1019,8 +1008,36 @@ key bindings.
 @tab Prepare a bug report.
 @end multitable
 
+Some commands are modified by adding a C-u prefix to the command.
+
+@multitable {aaaaaaa} {aaaaaaaaaaaaaaaaaaaaa} {aaaaaaaaaaaaaaaaaaaaaaa}
+@headitem Command
+@tab Unmodified
+@tab With C-u Prefix
+@item C-c o s
+@tab Sync buffer to Trello
+@tab Sync buffer from Trello
+@item C-c o C
+@tab Add a comment
+@tab Remove this comment
+@item C-c o U
+@tab Update a comment
+@tab Remove this comment
+@item C-c o B
+@tab Create a bug-report
+@tab Open an issue too
+@end multitable
+
+@menu
+* Help Cmds::                    Help Commands
+* Connection Cmds::              Connection Commands
+* Synch Cmds::                   Synchronization Commands
+* Editing Cmds::                 Editing Commands
+* Misc Cmds::                    Misc. Commands
+@end menu
+
 @node Help Cmds
-@subsection @strong{WORK} Help Commands
+@subsection @strong{CHEK} Help Commands
 
 This section describes the help functions.
 
@@ -1041,12 +1058,12 @@ message from @samp{org-trello} describing bindings.
 
 @item C-c o v
 @itemx M-x org-trello-version
-Display the version of
+Display the installed version of
 @samp{org-trello}.
 @end table
 
 @node Connection Cmds
-@subsection @strong{WORK} Connection Commands
+@subsection @strong{CHEK} Connection Commands
 
 This section describes the functions used to connect @samp{org-trello} to
 Trello.com and to attach an org file to a Trello board.
@@ -1072,32 +1089,32 @@ and the access-token.
 @item C-c o I
 @itemx M-x org-trello-install-board-metadata
 Select the board
-and attach the todo, doing and done list.
+and connect the todo, doing and done list.
 
 @item C-c o b
 @itemx M-x org-trello-create-board-and-install-metadata
 Create
-interactively a board and attach the newly created trello board
-with the current org file.
+a board interactively and connect the newly created Trello board
+to the current org file.
 
 @item C-c o u
 @itemx M-x org-trello-update-board-metadata
-Update the buffer’s
-trello board metadata.
+Update the current
+buffer’s Trello board metadata.
 
 @item C-c o d
 @itemx M-x org-trello-check-setup
 Check that the setup is ok.
-If everything is ok, will simply display ’Setup ok!’.
+If everything is ok, this will simply display ’Setup ok!’.
 
 @item C-c o D
 @itemx M-x org-trello-delete-setup
-Clean up the org buffer from
-all org-trello information.
+Delete all Trello metadata
+from the current buffer.
 @end table
 
 @node Synch Cmds
-@subsection @strong{WORK} Synchronization Commands
+@subsection @strong{CHEK} Synchronization Commands
 
 This section describes the synchronization commands used to move data
 between the buffer and Trello.com.
@@ -1112,16 +1129,16 @@ between the buffer and Trello.com.
 @table @kbd
 @item C-c o c
 @itemx M-x org-trello-sync-card
-Create/Update a complete card.
+Create or update a complete card.
 
 @item C-c o s
 @itemx M-x org-trello-sync-buffer
 Synchronize the org-mode file
-to the trello board (org-mode -> trello). 
+to the Trello board (org-mode -> trello). 
 
 @item C-u C-c o s
-With prefix C-u, sync-from-trello (org-mode <-
-trello).
+With prefix C-u, synchronize the Trello board to the
+org-mode file (org-mode <- trello).
 
 @item C-c o g
 @itemx M-x org-trello-abort-sync
@@ -1130,7 +1147,7 @@ activities.
 @end table
 
 @node Editing Cmds
-@subsection @strong{WORK} Editing Commands
+@subsection @strong{CHEK} Editing Commands
 
 This section describes the functions used to edit, archive and delete
 cards, comments and list items.
@@ -1155,26 +1172,30 @@ cards, comments and list items.
 @table @kbd
 @item C-c C-x C-s
 @itemx M-x org-archive-subtree
-Archive the subtree starting
-at point position to the location given by
-@code{org-archive-location}. This is a standard org-mode function.
+Archive the sub-tree at
+point position to the location given by @code{org-archive-location}.
+This is a standard org-mode function.
+
+@item C-c o A
+@itemx M-xx org-trello-archive-cards
+Archive all the DONE cards
+from the buffer.
 
 @item C-c o k
 @itemx M-x org-trello-kill-entity
-Kill the entity (and its
-arborescence tree) from the trello board and the org buffer.
+Kill the entity and its
+tree from the Trello board and the org buffer.
 
 @item C-c o K
 @itemx M-x org-trello-kill-cards
-Kill all the entities (and
-their arborescence tree) from the trello board and the org
-buffer.
+Kill all the entities and
+their trees from the Trello board and the org buffer.
 
 @item C-c o a
 @itemx C-c o t
 @itemx M-x org-trello-toggle-assign-me
 Toggle assign oneself to
-the card. If not assigned, assign and vice versa.
+the card. If not assigned, assign self and vice versa.
 
 @item C-c o C
 @itemx M-x org-trello-add-card-comment
@@ -1182,18 +1203,18 @@ Add a comment to the
 card. 
 
 @item C-u C-c o C
-With C-u, remove the current card’s comment.
+With prefix C-u, remove the current card’s comment.
 
 @item C-c o U
 @itemx M-x org-trello-sync-comment
 Sync a comment to trello.
 
 @item C-u C-c o U
-With C-u : remove the current card’s comment.
+With prefix C-u, remove the current card’s comment.
 @end table
 
 @node Misc Cmds
-@subsection @strong{WORK} Other Commands
+@subsection @strong{CHEK} Other Commands
 
 This section describes other functions not listed above.
 
@@ -1214,27 +1235,22 @@ labels in a pop-up buffer.
 
 @item C-c o j
 @itemx M-x org-trello-jump-to-trello-card
-Jump to card in
+Jump to card in the
 browser.
 
 @item C-c o J
 @itemx M-x org-trello-jump-to-trello-board
 Open the browser to
-your current trello board.
+your current Trello board.
 
 @item C-c o B
 @itemx M-x org-trello-bug-report
 Prepare a bug report message.
 
 @item C-u C-c o B
-With C-u, opens a new issue in org-trello’s github
+With C-u, also opens a new issue in org-trello’s github
 tracker too.
 @end table
-
-@node How to…
-@section @strong{TODO} How to…
-
-This section describes how to use commands to perform tasks with @samp{org-trello}.
 
 @node Format
 @section Format of org-trello
@@ -1267,9 +1283,9 @@ Thanks to @@sw1nn @uref{https://github.com/org-trello/org-trello/issues/14, for 
   - [X] Ocaml
 - [X] Hybrid
   - [X] Scala
-- [ ] little more detail, this is level 2, so checklist in trello board
-  - [ ] item 3
-    - [ ] any entities with level superior to 4 are considered level 3
+- [ ] little more detail, this is level 2, so a checklist in trello board
+  - [ ] item level 3
+    - [ ] any entities at level 4 or higher are considered level 3
 @end example
 
 For example, once synced to trello, this looks like:
@@ -1314,7 +1330,7 @@ This section addresses some common issues with installing and using @samp{org-tr
 Why am I getting errors about credentials loading, like below?
 
 @example
-org-trello - Request ’sync org buffer to trello board’...
+org-trello - Request ’sync org buffer to Trello board’...
 org-trello - List of errors:
  - Setup problem - Problem during credentials loading (consumer-key
    and read/write access-token) - C-c o i or M-x org-trello-install-key-and-token
@@ -1363,7 +1379,7 @@ Failed to setting up the org-mode buffer:
 
 @quotation
 Setup problem. Either you did not connect your org-mode buffer
-with a trello board, to correct this:
+with a Trello board, to correct this:
 
 @itemize
 @item
@@ -1372,7 +1388,7 @@ org-trello-install-board-metadata
 @item
 or create a board from scratch with C-c o b or M-x
 org-trello-create-board-and-install-metadata). Either your
-org-mode's todo keyword list and your trello board lists are not
+org-mode's todo keyword list and your Trello board lists are not
 named the same way (which they must). For this, connect to
 trello and rename your board's list according to your org-mode's
 todo list.
@@ -1386,7 +1402,7 @@ list:
 
 @quotation
 Setup problem. Either you did not connect your org-mode buffer
-with a trello board, to correct this:
+with a Trello board, to correct this:
 
 @itemize
 @item
@@ -1395,7 +1411,7 @@ org-trello-install-board-metadata
 @item
 or create a board from scratch with C-c o b or M-x
 org-trello-create-board-and-install-metadata). Either your
-org-mode's todo keyword list and your trello board lists are not
+org-mode's todo keyword list and your Trello board lists are not
 named the same way (which they must). For this, connect to
 trello and rename your board's list according to your org-mode's
 todo list. Also, you can specify on your org-mode buffer the
@@ -1552,7 +1568,7 @@ Parent groups: Org
 
 Org-trello group:  Org-trello customisation group.
        State : visible group members are all at standard values.
-   
+
 Org Trello Add Tags 
    Add trello colors to org tags list?
 
@@ -1589,16 +1605,16 @@ Orgtrello Setup Use Position In Checksum Computation
    Let the user decide if (s)he wants to use the position in the checksum. Hide
    The checksum is a hash computation of the current entity’s data to prevent
    sending too many sync requests if unnecessary (no real change since last time).
-   
+
    If t, when sync to trello, any change for the current entity will be reflected
    in trello’s board.  However, a global sync to trello, will trigger many
    unnecessary sync to trello queries for any entity below the current entity
    changed...  Indeed, the position changes anytime you insert or delete a char.
    This renders almost useless the checksum computation.
-   
+
    Cf.  https://github.com/org-trello/org-trello-issues/271.
    Please, do not hesitate to provide a better idea or a better implementation.
-   
+
    If nil, the default, the sync to trello will be limited to what’s really changed
    (except for the position).  So the entity’s position in trello’s board can be
    slightly different than the one from the buffer.
@@ -1648,7 +1664,7 @@ a “.trello” extension, add this to your personal emacs setup file:
           (lambda ()
             (let ((filename (buffer-file-name (current-buffer))))
               (when (and filename (string= "trello" (file-name-extension filename)))
-              (org-trello-mode)))))
+                (org-trello-mode)))))
 @end lisp
 
 source: @uref{https://github.com/org-trello/org-trello/issues/249}
@@ -1764,11 +1780,11 @@ understand. You can help us to help you better and faster by being
 clear, concise and complete in your issue description.
 
 @menu
-* Using @samp{M-x org-trello-bug-report}::
-* Using @samp{orgtrello-log-trace}::
+* Using Bug-Report::             Using org-trello-bug-report
+* Using Log Trace::              Using org-trello-log-trace
 @end menu
 
-@node Using @samp{M-x org-trello-bug-report}
+@node Using Bug-Report
 @subsection Using @samp{M-x org-trello-bug-report}
 
 You may use the bug-report function of @samp{org-trello} to print some
@@ -1793,7 +1809,7 @@ System information:
 If you type @code{C-u C-c o B} instead, @samp{org-trello} will open a new issue on
 GitHub for you to complete.
 
-@node Using @samp{orgtrello-log-trace}
+@node Using Log Trace
 @subsection Using @samp{orgtrello-log-trace}
 
 To obtain a more verbose output in the @strong{@strong{Message}} buffer, you can put
