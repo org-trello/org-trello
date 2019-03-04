@@ -114,7 +114,7 @@ Please consider upgrading Emacs." emacs-version)
 (require 'json)
 (require 'parse-time)
 
-(defconst org-trello--version "0.8.0" "Current org-trello version installed.")
+(defconst org-trello--version "0.8.1" "Current org-trello version installed.")
 
 
 
