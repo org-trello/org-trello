@@ -141,7 +141,7 @@ ul.no-bullet {list-style: none}
     <li><a name="toc-Connect-an-org_002dmode-buffer-with-an-existing-Trello-board_002e" href="#Connect-Existing-Board">3.2 Connect an org-mode buffer with an existing Trello board.</a></li>
     <li><a name="toc-Create-a-Trello-board-from-your-org_002dmode-buffer_002e" href="#Create-a-Board">3.3 Create a Trello board from your org-mode buffer.</a></li>
   </ul></li>
-  <li><a name="toc-WORK-Using-org_002dtrello" href="#Using">4 <strong>WORK</strong> Using &lsquo;<samp>org-trello</samp>&rsquo;</a>
+  <li><a name="toc-Using-org_002dtrello" href="#Using">4 Using &lsquo;<samp>org-trello</samp>&rsquo;</a>
   <ul class="no-bullet">
     <li><a name="toc-Quick-Start-1" href="#Quick-Start">4.1 Quick Start</a></li>
     <li><a name="toc-CHEK-Commands" href="#Commands">4.2 <strong>CHEK</strong> Commands</a>
@@ -163,7 +163,17 @@ ul.no-bullet {list-style: none}
   <ul class="no-bullet">
     <li><a name="toc-Customizing-the-Prefix-Keybinding" href="#Prefix-Keys">6.1 Customizing the Prefix Keybinding</a></li>
     <li><a name="toc-Customizing-Individual-Keybindings" href="#Individual-Keys">6.2 Customizing Individual Keybindings</a></li>
-    <li><a name="toc-Customizing-org_002dtrello-Variables" href="#Variables">6.3 Customizing &lsquo;<samp>org-trello</samp>&rsquo; Variables</a></li>
+    <li><a name="toc-Customizing-org_002dtrello-Variables" href="#Variables">6.3 Customizing &lsquo;<samp>org-trello</samp>&rsquo; Variables</a>
+    <ul class="no-bullet">
+      <li><a name="toc-org_002dtrello_002dadd_002dtags-1" href="#org_002dtrello_002dadd_002dtags">6.3.1 org-trello-add-tags</a></li>
+      <li><a name="toc-org_002dtrello_002dcurrent_002dprefix_002dkeybinding-1" href="#org_002dtrello_002dcurrent_002dprefix_002dkeybinding">6.3.2 org-trello-current-prefix-keybinding</a></li>
+      <li><a name="toc-org_002dtrello_002dfiles-1" href="#org_002dtrello_002dfiles">6.3.3 org-trello-files</a></li>
+      <li><a name="toc-org_002dtrello_002dinput_002dcompletion_002dmechanism-1" href="#org_002dtrello_002dinput_002dcompletion_002dmechanism">6.3.4 org-trello-input-completion-mechanism</a></li>
+      <li><a name="toc-org_002dtrello_002dmode_002dhook-1" href="#org_002dtrello_002dmode_002dhook">6.3.5 org-trello-mode-hook</a></li>
+      <li><a name="toc-orgtrello_002dlog_002dlevel-1" href="#orgtrello_002dlog_002dlevel">6.3.6 orgtrello-log-level</a></li>
+      <li><a name="toc-orgtrello_002dsetup_002duse_002dposition_002din_002dchecksum_002dcomputation-1" href="#orgtrello_002dsetup_002duse_002dposition_002din_002dchecksum_002dcomputation">6.3.7 orgtrello-setup-use-position-in-checksum-computation</a></li>
+      <li><a name="toc-orgtrello_002dwith_002dcheck_002don_002dsensible_002dactions-1" href="#orgtrello_002dwith_002dcheck_002don_002dsensible_002dactions">6.3.8 orgtrello-with-check-on-sensible-actions</a></li>
+    </ul></li>
     <li><a name="toc-Example-Emacs_002dLisp-Customization" href="#Example">6.4 Example Emacs-Lisp Customization</a></li>
     <li><a name="toc-Automatic-org_002dtrello-Files" href="#Auto-Files">6.5 Automatic &lsquo;<samp>org-trello</samp>&rsquo; Files</a></li>
   </ul></li>
@@ -187,7 +197,7 @@ ul.no-bullet {list-style: none}
   </ul></li>
   <li><a name="toc-GNU-General-Public-License" href="#GNU-GPL">Appendix A GNU General Public License</a></li>
   <li><a name="toc-GNU-Free-Documentation-License" href="#GNU-FDL">Appendix B GNU Free Documentation License</a></li>
-  <li><a name="toc-TODO-Indices" href="#Indices">Appendix C <strong>TODO</strong> Indices</a>
+  <li><a name="toc-CHEK-Indices" href="#Indices">Appendix C <strong>CHEK</strong> Indices</a>
   <ul class="no-bullet">
     <li><a name="toc-Concepts-Index" href="#Concepts">C.1 Concepts Index</a></li>
     <li><a name="toc-Commands-Index" href="#Command-Index">C.2 Commands Index</a></li>
@@ -408,6 +418,26 @@ Customizing
 </td></tr>
 <tr><th colspan="3" align="left" valign="top"><pre class="menu-comment">
 
+Variables
+
+</pre></th></tr><tr><td align="left" valign="top">&bull; <a href="#org_002dtrello_002dadd_002dtags">org-trello-add-tags</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="#org_002dtrello_002dcurrent_002dprefix_002dkeybinding">org-trello-current-prefix-keybinding</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="#org_002dtrello_002dfiles">org-trello-files</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="#org_002dtrello_002dinput_002dcompletion_002dmechanism">org-trello-input-completion-mechanism</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="#org_002dtrello_002dmode_002dhook">org-trello-mode-hook</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="#orgtrello_002dlog_002dlevel">orgtrello-log-level</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="#orgtrello_002dsetup_002duse_002dposition_002din_002dchecksum_002dcomputation">orgtrello-setup-use-position-in-checksum-computation</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="#orgtrello_002dwith_002dcheck_002don_002dsensible_002dactions">orgtrello-with-check-on-sensible-actions</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><th colspan="3" align="left" valign="top"><pre class="menu-comment">
+
 Contributing
 
 </pre></th></tr><tr><td align="left" valign="top">&bull; <a href="#Credits">Credits</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Contributor Credits
@@ -466,9 +496,8 @@ Next: <a href="#Installing" accesskey="n" rel="next">Installing</a>, Previous: <
 <h2 class="chapter">1 About &lsquo;<samp>org-trello</samp>&rsquo;</h2>
 
 <img src="images/org-trello-logo-light-blue-pastel-unicorn.200x200.png" alt="images/org-trello-logo-light-blue-pastel-unicorn.200x200">
-<ul>
-<li> Why use &lsquo;<samp>org-trello</samp>&rsquo;?
-
+<p>Why use &lsquo;<samp>org-trello</samp>&rsquo;?
+</p>
 <ul>
 <li> You use Emacs <a href="https://orgmode.org">org-mode</a>.
 </li><li> Your team uses <a href="https://trello.com/">Trello.com</a>.
@@ -476,8 +505,11 @@ Next: <a href="#Installing" accesskey="n" rel="next">Installing</a>, Previous: <
 </li><li> Everyone wins!
 </li></ul>
 
-</li><li> Links:
-
+<p>Links:
+<a name="index-links"></a>
+<a name="index-download"></a>
+<a name="index-videos"></a>
+</p>
 <ul>
 <li> <a href="https://github.com/org-trello/org-trello/zipball/master">Download Zip</a>
 </li><li> <a href="https://github.com/org-trello/org-trello/tarball/master">Download Tarball</a>
@@ -485,10 +517,11 @@ Next: <a href="#Installing" accesskey="n" rel="next">Installing</a>, Previous: <
 </li><li> <a href="http://org-trello.github.io/demo.html">Demonstration Videos</a>
 </li></ul>
 
-</li><li> What does your page title &lsquo;<samp>org &lt;$&gt; trello</samp>&rsquo; mean?
-
-<p>It means “map org functions to the trello world”.
+<p>What does your page title &lsquo;<samp>org &lt;$&gt; trello</samp>&rsquo; mean?
 </p>
+<ul>
+<li> It means “map org functions to the trello world”.
+
 <p>At the time, I was learning Haskell and it made an everlasting
 awesome impression on me. <a href="http://hackage.haskell.org/package/base-4.9.1.0/docs/Prelude.html#v:fmap">See fmap&rsquo;s documentation for more detail</a>.
 </p></li></ul>
@@ -527,7 +560,7 @@ Next: <a href="#Alternate-Installations" accesskey="n" rel="next">Alternate Inst
 <a name="Installing-org_002dtrello-using-Package-_0028recommended_0029"></a>
 <h3 class="section">2.1 Installing &lsquo;<samp>org-trello</samp>&rsquo; using Package (recommended)</h3>
 
-<a name="index-_003dorg_002dtrello_003d_002c-installing"></a>
+<a name="index-installing-with-package"></a>
 
 <p>This section describes how to use &lsquo;<samp>package</samp>&rsquo; to install &lsquo;<samp>org-trello</samp>&rsquo;.
 </p>
@@ -547,6 +580,7 @@ Next: <a href="#Installing-from-MELPA" accesskey="n" rel="next">Installing from 
 <a name="Using-MELPA-with-Package"></a>
 <h4 class="subsection">2.1.1 Using MELPA with Package</h4>
 
+<a name="index-MELPA"></a>
 <p>This section describes how to use &lsquo;<samp>package</samp>&rsquo; to download and install any
 packages including &lsquo;<samp>org-trello</samp>&rsquo;. If you already use &lsquo;<samp>package</samp>&rsquo; to access
 “melpa” or “melpa-stable”, you don’t need to do this again. See the
@@ -634,6 +668,7 @@ Next: <a href="#el_002dget" accesskey="n" rel="next">el-get</a>, Up: <a href="#A
 <a name="Download-and-Install-the-Tarball"></a>
 <h4 class="subsection">2.2.1 Download and Install the Tarball</h4>
 
+<a name="index-installing-from-tarball"></a>
 <p>To retrieve the tarball from <a href="https://github.com/org-trello/org-trello/releases">github</a>, type this at the command line,
 substituting the /path/to your chosen folder.
 Replace “0.8.1” with the current version, if different.
@@ -658,6 +693,7 @@ Next: <a href="#GitHub-_0026-Cask" accesskey="n" rel="next">GitHub &amp; Cask</a
 <a name="Get-and-Install-with-el_002dget"></a>
 <h4 class="subsection">2.2.2 Get and Install with el-get</h4>
 
+<a name="index-installing-with-el_002dget"></a>
 <p>If you use <a href="https://github.com/dimitri/el-get">el-get</a> to install packages, you may install the <a href="https://github.com/dimitri/el-get/blob/master/recipes/org-trello.rcp">&lsquo;<samp>org-trello</samp>&rsquo; recipe</a>
 with it. Inside Emacs, type: <code>M-x el-get-install RET org-trello RET</code>.
 </p>
@@ -670,6 +706,7 @@ Previous: <a href="#el_002dget" accesskey="p" rel="prev">el-get</a>, Up: <a href
 <a name="Clone-from-GitHub-and-Install-with-Cask"></a>
 <h4 class="subsection">2.2.3 Clone from GitHub and Install with Cask</h4>
 
+<a name="index-installing-from-GitHub"></a>
 <p>Use this section only if you are a developer modifying and testing &lsquo;<samp>org-trello</samp>&rsquo;.
 </p>
 <p>Clone &lsquo;<samp>org-trello</samp>&rsquo; from GitHub:
@@ -700,6 +737,7 @@ Next: <a href="#Install-Manual" accesskey="n" rel="next">Install Manual</a>, Pre
 <a name="Loading-org_002dtrello-in-Emacs"></a>
 <h3 class="section">2.3 Loading &lsquo;<samp>org-trello</samp>&rsquo; in Emacs</h3>
 
+<a name="index-koading"></a>
 <p>Once &lsquo;<samp>org-trello</samp>&rsquo; is installed, it must be loaded into Emacs before it
 can be used, preferably during initialization of Emacs. Add this in
 your emacs configuration file (“~/.emacs” or “~/.emacs.d/init.el”) to
@@ -834,6 +872,7 @@ Previous: <a href="#Install-Manual" accesskey="p" rel="prev">Install Manual</a>,
 <a name="Migrating-to-New-Releases"></a>
 <h3 class="section">2.5 Migrating to New Releases</h3>
 
+<a name="index-migrating"></a>
 <p>If you have previously installed and used a previous release of
 &lsquo;<samp>org-trello</samp>&rsquo;, this section describes how to migrate your existing
 &lsquo;<samp>org-trello</samp>&rsquo; installation to a new release.
@@ -1135,7 +1174,13 @@ Next: <a href="#Using" accesskey="n" rel="next">Using</a>, Previous: <a href="#I
 <a name="Connecting-to-Trello_002ecom"></a>
 <h2 class="chapter">3 Connecting to Trello.com</h2>
 
-<a name="index-trello_002ecom_002c-connecting"></a>
+<a name="index-connecting"></a>
+<p>This section describes how to connect org-trello to Trello.com. There
+are two steps:
+</p><ul>
+<li> Installing your Trello-com Credentials
+</li><li> Connecting a buffer to a Trello board.
+</li></ul>
 
 <table class="menu" border="0" cellspacing="0">
 <tr><td align="left" valign="top">&bull; <a href="#Installing-Credentials" accesskey="1">Installing Credentials</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Installing Your Trello.com Credentials
@@ -1155,6 +1200,8 @@ Next: <a href="#Connect-Existing-Board" accesskey="n" rel="next">Connect Existin
 <a name="Installing-Your-Trello_002ecom-Credentials"></a>
 <h3 class="section">3.1 Installing Your Trello.com Credentials</h3>
 
+<a name="index-installing_002c-credentials"></a>
+<a name="index-connecting_002c-credentials"></a>
 <p>You must install the <code>org-trello-consumer-key</code> and the read-write
 <code>org-trello-access-token</code> to permit org-trello to access your trello
 boards.
@@ -1230,6 +1277,7 @@ Next: <a href="#Create-a-Board" accesskey="n" rel="next">Create a Board</a>, Pre
 <a name="Connect-an-org_002dmode-buffer-with-an-existing-Trello-board_002e"></a>
 <h3 class="section">3.2 Connect an org-mode buffer with an existing Trello board.</h3>
 
+<a name="index-connnecting_002c-existing-board"></a>
 <p>For each org-mode file that you wish to use with Trello.com, you need
 to connect your org-mode file with a Trello board.
 </p>
@@ -1264,6 +1312,7 @@ Previous: <a href="#Connect-Existing-Board" accesskey="p" rel="prev">Connect Exi
 <a name="Create-a-Trello-board-from-your-org_002dmode-buffer_002e"></a>
 <h3 class="section">3.3 Create a Trello board from your org-mode buffer.</h3>
 
+<a name="index-connecting_002c-new-board"></a>
 <p>You can create a new Trello board from your existing org-mode file. 
 </p>
 <p><em>Note:</em> This procedure must be done only once for each org-mode
@@ -1292,10 +1341,10 @@ org-mode (cf. <a href="http://orgmode.org/manual/In_002dbuffer-settings.html">or
 <p>
 Next: <a href="#Troubleshooting" accesskey="n" rel="next">Troubleshooting</a>, Previous: <a href="#Connecting" accesskey="p" rel="prev">Connecting</a>, Up: <a href="#Top" accesskey="u" rel="up">Top</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Indices" title="Index" rel="index">Index</a>]</p>
 </div>
-<a name="WORK-Using-org_002dtrello"></a>
-<h2 class="chapter">4 <strong>WORK</strong> Using &lsquo;<samp>org-trello</samp>&rsquo;</h2>
+<a name="Using-org_002dtrello"></a>
+<h2 class="chapter">4 Using &lsquo;<samp>org-trello</samp>&rsquo;</h2>
 
-<a name="index-_003dorg_002dtrello_003d_002c-using"></a>
+<a name="index-using"></a>
 <p>This section describes how to use &lsquo;<samp>org-trello</samp>&rsquo;.
 </p>
 <table class="menu" border="0" cellspacing="0">
@@ -1316,6 +1365,7 @@ Next: <a href="#Commands" accesskey="n" rel="next">Commands</a>, Up: <a href="#U
 <a name="Quick-Start-1"></a>
 <h3 class="section">4.1 Quick Start</h3>
 
+<a name="index-quick-start"></a>
 <p>First, do the <a href="#Installing">installation</a> and the <a href="#Connecting">connection</a>.
 </p>
 <p>A typical starting point is to synchronize a Trello board to the
@@ -1354,6 +1404,7 @@ Next: <a href="#Format" accesskey="n" rel="next">Format</a>, Previous: <a href="
 <a name="CHEK-Commands"></a>
 <h3 class="section">4.2 <strong>CHEK</strong> Commands</h3>
 
+<a name="index-commands_002c-summary"></a>
 <p>This section describes all commands and their key bindings.
 </p>
 <p>All default &lsquo;<samp>org-trello</samp>&rsquo; key-bindings use the “C-c o” prefix.
@@ -1433,6 +1484,8 @@ Next: <a href="#Connection-Cmds" accesskey="n" rel="next">Connection Cmds</a>, U
 <a name="CHEK-Help-Commands"></a>
 <h4 class="subsection">4.2.1 <strong>CHEK</strong> Help Commands</h4>
 
+<a name="index-commands_002c-help"></a>
+<a name="index-help-commands"></a>
 <p>This section describes the help functions.
 </p>
 <a name="index-C_002dc-o-C_002dh"></a>
@@ -1468,6 +1521,8 @@ Next: <a href="#Synch-Cmds" accesskey="n" rel="next">Synch Cmds</a>, Previous: <
 <a name="CHEK-Connection-Commands"></a>
 <h4 class="subsection">4.2.2 <strong>CHEK</strong> Connection Commands</h4>
 
+<a name="index-commands_002c-connection"></a>
+<a name="index-connection-commands"></a>
 <p>This section describes the functions used to connect &lsquo;<samp>org-trello</samp>&rsquo; to
 Trello.com and to attach an org file to a Trello board.
 </p>
@@ -1531,6 +1586,8 @@ Next: <a href="#Editing-Cmds" accesskey="n" rel="next">Editing Cmds</a>, Previou
 <a name="CHEK-Synchronization-Commands"></a>
 <h4 class="subsection">4.2.3 <strong>CHEK</strong> Synchronization Commands</h4>
 
+<a name="index-commands_002c-synchronization"></a>
+<a name="index-sync_002e-commands"></a>
 <p>This section describes the synchronization commands used to move data
 between the buffer and Trello.com.
 </p>
@@ -1574,6 +1631,8 @@ Next: <a href="#Misc-Cmds" accesskey="n" rel="next">Misc Cmds</a>, Previous: <a 
 <a name="CHEK-Editing-Commands"></a>
 <h4 class="subsection">4.2.4 <strong>CHEK</strong> Editing Commands</h4>
 
+<a name="index-commands_002c-editing"></a>
+<a name="index-editing-commands"></a>
 <p>This section describes the functions used to edit, archive and delete
 cards, comments and list items.
 </p>
@@ -1656,6 +1715,8 @@ Previous: <a href="#Editing-Cmds" accesskey="p" rel="prev">Editing Cmds</a>, Up:
 <a name="CHEK-Other-Commands"></a>
 <h4 class="subsection">4.2.5 <strong>CHEK</strong> Other Commands</h4>
 
+<a name="index-commands_002c-other"></a>
+<a name="index-browser-commands"></a>
 <p>This section describes other functions not listed above.
 </p>
 <a name="index-C_002dc-o-l"></a>
@@ -1706,6 +1767,8 @@ Previous: <a href="#Commands" accesskey="p" rel="prev">Commands</a>, Up: <a href
 <a name="Format-of-org_002dtrello"></a>
 <h3 class="section">4.3 Format of org-trello</h3>
 
+<a name="index-format"></a>
+<a name="index-buffer-format"></a>
 <p>This section describes the format of the text in an &lsquo;<samp>org-trello</samp>&rsquo; buffer.
 </p>
 <p>There are 3 levels of meta-data:
@@ -1768,7 +1831,8 @@ Next: <a href="#Customizing" accesskey="n" rel="next">Customizing</a>, Previous:
 <h2 class="chapter">5 Troubleshooting &lsquo;<samp>org-trello</samp>&rsquo;</h2>
 
 <a name="index-troubleshooting"></a>
-
+<p>This section gives information helpful for troubleshooting org-trello.
+</p>
 <table class="menu" border="0" cellspacing="0">
 <tr><td align="left" valign="top">&bull; <a href="#Common-Issues" accesskey="1">Common Issues</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">Common Issues
 </td></tr>
@@ -1785,7 +1849,8 @@ Next: <a href="#Error-Messages" accesskey="n" rel="next">Error Messages</a>, Up:
 <a name="Common-Issues-1"></a>
 <h3 class="section">5.1 Common Issues</h3>
 
-<p>This section addresses some common issues with installing and using &lsquo;<samp>org-trello</samp>&rsquo;.
+<p>#+CINDEX issues
+This section addresses some common issues with installing and using &lsquo;<samp>org-trello</samp>&rsquo;.
 </p>
 <ul>
 <li> Why am I getting errors about credentials loading, like below?
@@ -1823,7 +1888,7 @@ Previous: <a href="#Common-Issues" accesskey="p" rel="prev">Common Issues</a>, U
 <a name="Error-Messages-1"></a>
 <h3 class="section">5.2 Error Messages</h3>
 
-<a name="index-errors"></a>
+<a name="index-error-messages"></a>
 
 <p>&lsquo;<samp>org-trello</samp>&rsquo; can display the following possible error messages:
 </p>
@@ -1953,6 +2018,7 @@ Next: <a href="#Individual-Keys" accesskey="n" rel="next">Individual Keys</a>, U
 <a name="Customizing-the-Prefix-Keybinding"></a>
 <h3 class="section">6.1 Customizing the Prefix Keybinding</h3>
 
+<a name="index-customizing_002c-prefix-keybinding"></a>
 <a name="index-org_002dtrello_002dcurrent_002dprefix_002dkeybinding"></a>
 <p>By default, &lsquo;<samp>org-trello</samp>&rsquo; uses the prefix keybinding “C-c o” to begin
 (almost) all of its commands. You may change this by customizing the
@@ -1986,6 +2052,7 @@ Next: <a href="#Variables" accesskey="n" rel="next">Variables</a>, Previous: <a 
 <a name="Customizing-Individual-Keybindings"></a>
 <h3 class="section">6.2 Customizing Individual Keybindings</h3>
 
+<a name="index-customizing_002c-keybindings"></a>
 <a name="index-org_002dtrello_002dmode_002dmap"></a>
 <p>To redefine one or more org-trello-mode command keybindings, you should create a
 function to define keys in the org-trello-mode-map and hook your
@@ -2039,6 +2106,7 @@ Next: <a href="#Example" accesskey="n" rel="next">Example</a>, Previous: <a href
 <a name="Customizing-org_002dtrello-Variables"></a>
 <h3 class="section">6.3 Customizing &lsquo;<samp>org-trello</samp>&rsquo; Variables</h3>
 
+<a name="index-customizing_002c-variables"></a>
 <p>You may customize &lsquo;<samp>org-trello</samp>&rsquo; settings by typing: <br>
 <code>M-x customize-group RET org-trello RET</code>.
 </p>
@@ -2049,28 +2117,141 @@ Next: <a href="#Example" accesskey="n" rel="next">Example</a>, Previous: <a href
 
 Org-trello group:  Org-trello customisation group.
        State : visible group members are all at standard values.
+</pre></div>
 
-Org Trello Add Tags 
+<table class="menu" border="0" cellspacing="0">
+<tr><td align="left" valign="top">&bull; <a href="#org_002dtrello_002dadd_002dtags" accesskey="1">org-trello-add-tags</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="#org_002dtrello_002dcurrent_002dprefix_002dkeybinding" accesskey="2">org-trello-current-prefix-keybinding</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="#org_002dtrello_002dfiles" accesskey="3">org-trello-files</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="#org_002dtrello_002dinput_002dcompletion_002dmechanism" accesskey="4">org-trello-input-completion-mechanism</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="#org_002dtrello_002dmode_002dhook" accesskey="5">org-trello-mode-hook</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="#orgtrello_002dlog_002dlevel" accesskey="6">orgtrello-log-level</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="#orgtrello_002dsetup_002duse_002dposition_002din_002dchecksum_002dcomputation" accesskey="7">orgtrello-setup-use-position-in-checksum-computation</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+<tr><td align="left" valign="top">&bull; <a href="#orgtrello_002dwith_002dcheck_002don_002dsensible_002dactions" accesskey="8">orgtrello-with-check-on-sensible-actions</a>:</td><td>&nbsp;&nbsp;</td><td align="left" valign="top">
+</td></tr>
+</table>
+
+<hr>
+<a name="org_002dtrello_002dadd_002dtags"></a>
+<div class="header">
+<p>
+Next: <a href="#org_002dtrello_002dcurrent_002dprefix_002dkeybinding" accesskey="n" rel="next">org-trello-current-prefix-keybinding</a>, Up: <a href="#Variables" accesskey="u" rel="up">Variables</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Indices" title="Index" rel="index">Index</a>]</p>
+</div>
+<a name="org_002dtrello_002dadd_002dtags-1"></a>
+<h4 class="subsection">6.3.1 org-trello-add-tags</h4>
+
+<a name="index-org_002dtrello_002dadd_002dtags"></a>
+<p>Set this variable to <code>t</code> to add the Trello category colors to the
+org-mode tags list, otherwise set to <code>nil</code>. The default is <code>t</code>.
+</p>
+<div class="example">
+<pre class="example">Org Trello Add Tags 
    Add trello colors to org tags list?
+</pre></div>
 
-Org Trello Current Prefix Keybinding 
+<hr>
+<a name="org_002dtrello_002dcurrent_002dprefix_002dkeybinding"></a>
+<div class="header">
+<p>
+Next: <a href="#org_002dtrello_002dfiles" accesskey="n" rel="next">org-trello-files</a>, Previous: <a href="#org_002dtrello_002dadd_002dtags" accesskey="p" rel="prev">org-trello-add-tags</a>, Up: <a href="#Variables" accesskey="u" rel="up">Variables</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Indices" title="Index" rel="index">Index</a>]</p>
+</div>
+<a name="org_002dtrello_002dcurrent_002dprefix_002dkeybinding-1"></a>
+<h4 class="subsection">6.3.2 org-trello-current-prefix-keybinding</h4>
+
+<a name="index-org_002dtrello_002dcurrent_002dprefix_002dkeybinding-1"></a>
+<p>Set this variable to the key prefix you want for org-trello commands.
+The default is <code>C-c o</code>.
+</p>
+<div class="example">
+<pre class="example">Org Trello Current Prefix Keybinding 
    The default prefix keybinding to execute org-trello commands.
+</pre></div>
 
-Org Trello Files 
+<hr>
+<a name="org_002dtrello_002dfiles"></a>
+<div class="header">
+<p>
+Next: <a href="#org_002dtrello_002dinput_002dcompletion_002dmechanism" accesskey="n" rel="next">org-trello-input-completion-mechanism</a>, Previous: <a href="#org_002dtrello_002dcurrent_002dprefix_002dkeybinding" accesskey="p" rel="prev">org-trello-current-prefix-keybinding</a>, Up: <a href="#Variables" accesskey="u" rel="up">Variables</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Indices" title="Index" rel="index">Index</a>]</p>
+</div>
+<a name="org_002dtrello_002dfiles-1"></a>
+<h4 class="subsection">6.3.3 org-trello-files</h4>
+
+<a name="index-org_002dtrello_002dfiles"></a>
+<p>Set this list to the files with matching Trello boards that you wish
+to have start org-trello when they open. The default is <code>()</code>. If you
+do not set this variable, you must start org-trello using <code>M-x org-trello</code>.  
+</p>
+<div class="example">
+<pre class="example">Org Trello Files 
    Org-trello files that needs org-trello activated when opened. Hide
    This does not support regular expression.
+</pre></div>
 
-Org Trello Input Completion Mechanism 
+<hr>
+<a name="org_002dtrello_002dinput_002dcompletion_002dmechanism"></a>
+<div class="header">
+<p>
+Next: <a href="#org_002dtrello_002dmode_002dhook" accesskey="n" rel="next">org-trello-mode-hook</a>, Previous: <a href="#org_002dtrello_002dfiles" accesskey="p" rel="prev">org-trello-files</a>, Up: <a href="#Variables" accesskey="u" rel="up">Variables</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Indices" title="Index" rel="index">Index</a>]</p>
+</div>
+<a name="org_002dtrello_002dinput_002dcompletion_002dmechanism-1"></a>
+<h4 class="subsection">6.3.4 org-trello-input-completion-mechanism</h4>
+
+<a name="index-org_002dtrello_002dinput_002dcompletion_002dmechanism"></a>
+<p>Set this variable to either <code>default</code> or <code>helm</code> to specify the input
+completion mechanism that org-trello should use. If you select <code>helm</code>,
+you must install the dependencies.
+</p>
+<div class="example">
+<pre class="example">Org Trello Input Completion Mechanism 
    The completion mechanism the user can choose from. Hide
    Default is the native ido mechanism.
    Other possibilities is helm but it’s up to you to install the dependencies.
    (require ’helm)
    (custom-set-variables ’(org-trello-input-completion-mechanism ’helm))
+</pre></div>
 
-Org Trello Mode Hook 
+<hr>
+<a name="org_002dtrello_002dmode_002dhook"></a>
+<div class="header">
+<p>
+Next: <a href="#orgtrello_002dlog_002dlevel" accesskey="n" rel="next">orgtrello-log-level</a>, Previous: <a href="#org_002dtrello_002dinput_002dcompletion_002dmechanism" accesskey="p" rel="prev">org-trello-input-completion-mechanism</a>, Up: <a href="#Variables" accesskey="u" rel="up">Variables</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Indices" title="Index" rel="index">Index</a>]</p>
+</div>
+<a name="org_002dtrello_002dmode_002dhook-1"></a>
+<h4 class="subsection">6.3.5 org-trello-mode-hook</h4>
+
+<a name="index-org_002dtrello_002dmode_002dhook"></a>
+<p>Use this hook to extend org-trello with your own function. See &lsquo;<samp>hooks</samp>&rsquo;
+  in the Emacs manual.
+</p>
+<div class="example">
+<pre class="example">Org Trello Mode Hook 
    Define org-trello hook for user to extend mode with their own behavior.
+</pre></div>
 
-Orgtrello Log Level 
+<hr>
+<a name="orgtrello_002dlog_002dlevel"></a>
+<div class="header">
+<p>
+Next: <a href="#orgtrello_002dsetup_002duse_002dposition_002din_002dchecksum_002dcomputation" accesskey="n" rel="next">orgtrello-setup-use-position-in-checksum-computation</a>, Previous: <a href="#org_002dtrello_002dmode_002dhook" accesskey="p" rel="prev">org-trello-mode-hook</a>, Up: <a href="#Variables" accesskey="u" rel="up">Variables</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Indices" title="Index" rel="index">Index</a>]</p>
+</div>
+<a name="orgtrello_002dlog_002dlevel-1"></a>
+<h4 class="subsection">6.3.6 orgtrello-log-level</h4>
+
+<a name="index-orgtrello_002dlog_002dlevel"></a>
+
+<p>Set this variables to one of the constants below to specify the log
+message level for org-trello to use. The default is <code>3</code>,
+orgtrello-log-info. Higher levels are useful when submitting a bug-report.
+</p>
+<div class="example">
+<pre class="example">Orgtrello Log Level 
    Set log level. Hide
    Levels:
    0 - no log   (‘orgtrello-log-quiet’)
@@ -2081,8 +2262,25 @@ Orgtrello Log Level
    5 - trace    (‘orgtrello-log-trace’)
    To change such level, add this to your init.el file:
    (custom-set-variables ’(orgtrello-log-level orgtrello-log-trace))
+</pre></div>
 
-Orgtrello Setup Use Position In Checksum Computation 
+<hr>
+<a name="orgtrello_002dsetup_002duse_002dposition_002din_002dchecksum_002dcomputation"></a>
+<div class="header">
+<p>
+Next: <a href="#orgtrello_002dwith_002dcheck_002don_002dsensible_002dactions" accesskey="n" rel="next">orgtrello-with-check-on-sensible-actions</a>, Previous: <a href="#orgtrello_002dlog_002dlevel" accesskey="p" rel="prev">orgtrello-log-level</a>, Up: <a href="#Variables" accesskey="u" rel="up">Variables</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Indices" title="Index" rel="index">Index</a>]</p>
+</div>
+<a name="orgtrello_002dsetup_002duse_002dposition_002din_002dchecksum_002dcomputation-1"></a>
+<h4 class="subsection">6.3.7 orgtrello-setup-use-position-in-checksum-computation</h4>
+
+<a name="index-orgtrello_002dsetup_002duse_002dposition_002din_002dchecksum_002dcomputation"></a>
+
+<p>Set this variable to <code>t</code> to use the position of an entity in the
+check-sum computation that triggers updates to Trello. Use <code>nil</code>
+otherwise. The default is <code>nil</code>. See the note below.
+</p>
+<div class="example">
+<pre class="example">Orgtrello Setup Use Position In Checksum Computation 
    Let the user decide if (s)he wants to use the position in the checksum. Hide
    The checksum is a hash computation of the current entity’s data to prevent
    sending too many sync requests if unnecessary (no real change since last time).
@@ -2099,8 +2297,24 @@ Orgtrello Setup Use Position In Checksum Computation
    If nil, the default, the sync to trello will be limited to what’s really changed
    (except for the position).  So the entity’s position in trello’s board can be
    slightly different than the one from the buffer.
+</pre></div>
 
-Orgtrello With Check On Sensible Actions 
+<hr>
+<a name="orgtrello_002dwith_002dcheck_002don_002dsensible_002dactions"></a>
+<div class="header">
+<p>
+Previous: <a href="#orgtrello_002dsetup_002duse_002dposition_002din_002dchecksum_002dcomputation" accesskey="p" rel="prev">orgtrello-setup-use-position-in-checksum-computation</a>, Up: <a href="#Variables" accesskey="u" rel="up">Variables</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Indices" title="Index" rel="index">Index</a>]</p>
+</div>
+<a name="orgtrello_002dwith_002dcheck_002don_002dsensible_002dactions-1"></a>
+<h4 class="subsection">6.3.8 orgtrello-with-check-on-sensible-actions</h4>
+
+<a name="index-orgtrello_002dwith_002dcheck_002don_002dsensible_002dactions"></a>
+
+<p>Set this variable to <code>t</code> to ask the use before doing sensitive actions
+like removing an entity. Set to <code>nil</code> otherwise.
+</p>
+<div class="example">
+<pre class="example">Orgtrello With Check On Sensible Actions 
    Some action can be dangerous removing entity for example. Hide
    This custom determine if the user wants to be asked confirmation
    before doing some of those sensitive actions.
@@ -2115,6 +2329,11 @@ Next: <a href="#Auto-Files" accesskey="n" rel="next">Auto Files</a>, Previous: <
 <a name="Example-Emacs_002dLisp-Customization"></a>
 <h3 class="section">6.4 Example Emacs-Lisp Customization</h3>
 
+<a name="index-customizing_002c-using-emacs_002dlisp"></a>
+<a name="index-orgtrello_002dlog_002dlevel-1"></a>
+<a name="index-orgtrello_002dsetup_002duse_002dposition_002din_002dchecksum_002dcomputation-1"></a>
+<a name="index-org_002dtrello_002dfiles-1"></a>
+<a name="index-org_002dtrello_002dcurrent_002dprefix_002dkeybinding-2"></a>
 <p>Here is an example of how to configure &lsquo;<samp>org-trello</samp>&rsquo; user-customized
 variables using emacs-lisp:
 </p>
@@ -2142,7 +2361,8 @@ Previous: <a href="#Example" accesskey="p" rel="prev">Example</a>, Up: <a href="
 <a name="Automatic-org_002dtrello-Files"></a>
 <h3 class="section">6.5 Automatic &lsquo;<samp>org-trello</samp>&rsquo; Files</h3>
 
-<p>To have emacs automatically start &lsquo;<samp>org-trello</samp>&rsquo; when you open a file with
+<p>#+CINDEX loading, automatically
+To have emacs automatically start &lsquo;<samp>org-trello</samp>&rsquo; when you open a file with
 a “.trello” extension, add this to your personal emacs setup file:
 </p>
 <div class="lisp">
@@ -2242,6 +2462,7 @@ Next: <a href="#Mailing-List" accesskey="n" rel="next">Mailing List</a>, Previou
 <a name="Issue-List"></a>
 <h3 class="section">7.2 Issue List</h3>
 
+<a name="index-issues_002c-list-on-GitHub"></a>
 <p>If you experience an issue while using &lsquo;<samp>org-trello</samp>&rsquo;, please first
 confirm that you have the newest version. If you have an old version,
 please upgrade to the newest version - your issue may already have
@@ -2304,6 +2525,7 @@ Next: <a href="#Using-Log-Trace" accesskey="n" rel="next">Using Log Trace</a>, U
 <a name="Using-M_002dx-org_002dtrello_002dbug_002dreport"></a>
 <h4 class="subsection">7.2.1 Using &lsquo;<samp>M-x org-trello-bug-report</samp>&rsquo;</h4>
 
+<a name="index-org_002dtrello_002dbug_002dreport-1"></a>
 <p>You may use the bug-report function of &lsquo;<samp>org-trello</samp>&rsquo; to print some
 information about &lsquo;<samp>org-trello</samp>&rsquo; to the &lsquo;<samp>*Messages*</samp>&rsquo; buffer to copy into the
 issue entry. To print the bug-report data, type <code>M-x
@@ -2335,6 +2557,7 @@ Previous: <a href="#Using-Bug_002dReport" accesskey="p" rel="prev">Using Bug-Rep
 <a name="Using-orgtrello_002dlog_002dtrace"></a>
 <h4 class="subsection">7.2.2 Using &lsquo;<samp>orgtrello-log-trace</samp>&rsquo;</h4>
 
+<a name="index-orgtrello_002dlog_002dtrace"></a>
 <p>To obtain a more verbose output in the <strong><strong>Message</strong></strong> buffer, you can put
 this snippet of code in a &lsquo;<samp>*scratch*</samp>&rsquo; buffer.
 </p>
@@ -2355,6 +2578,7 @@ Next: <a href="#Releases" accesskey="n" rel="next">Releases</a>, Previous: <a hr
 <a name="Mailing-List-1"></a>
 <h3 class="section">7.3 Mailing List</h3>
 
+<a name="index-mailing-list"></a>
 <p>This project has a mailing list at <a href="http://librelist.com/browser/emacs.org.trello/">librelist.com</a> for communication
 and community among its users and contributors. You may join the
 list by sending an email to:
@@ -2390,6 +2614,7 @@ Next: <a href="#CI-Tests" accesskey="n" rel="next">CI Tests</a>, Previous: <a hr
 <a name="Compatibility-with-Emacs"></a>
 <h3 class="section">7.5 Compatibility with Emacs</h3>
 
+<a name="index-compatibility"></a>
 <p>&lsquo;<samp>org-trello</samp>&rsquo; has been tested with the following versions of Emacs and
 Operating Systems:
 </p>
@@ -2415,6 +2640,7 @@ Next: <a href="#Conventions" accesskey="n" rel="next">Conventions</a>, Previous:
 <a name="Continuous-Integration-Tests"></a>
 <h3 class="section">7.6 Continuous Integration Tests</h3>
 
+<a name="index-tests_002c-continuous-integration"></a>
 <p>&lsquo;<samp>org-trello</samp>&rsquo; uses <a href="https://travis-ci.org/org-trello/org-trello">Travis CI</a> for continuous integration testing.
 </p>
 <p>The CI tests and installs:
@@ -2439,6 +2665,7 @@ Previous: <a href="#CI-Tests" accesskey="p" rel="prev">CI Tests</a>, Up: <a href
 <a name="Developer_2019s-Conventions"></a>
 <h3 class="section">7.7 Developer’s Conventions</h3>
 
+<a name="index-contributing_002c-conventions"></a>
 <p>This describes the current conventions for org-trello&rsquo;s development.
 </p>
 <table class="menu" border="0" cellspacing="0">
@@ -3848,8 +4075,8 @@ to permit their use in free software.
 <p>
 Previous: <a href="#GNU-FDL" accesskey="p" rel="prev">GNU FDL</a>, Up: <a href="#Top" accesskey="u" rel="up">Top</a> &nbsp; [<a href="#SEC_Contents" title="Table of contents" rel="contents">Contents</a>][<a href="#Indices" title="Index" rel="index">Index</a>]</p>
 </div>
-<a name="TODO-Indices"></a>
-<h2 class="appendix">Appendix C <strong>TODO</strong> Indices</h2>
+<a name="CHEK-Indices"></a>
+<h2 class="appendix">Appendix C <strong>CHEK</strong> Indices</h2>
 
 <p>This section contains the concepts, commands, functions and variables indices.
 </p>
@@ -3873,20 +4100,35 @@ Next: <a href="#Command-Index" accesskey="n" rel="next">Command Index</a>, Up: <
 <a name="Concepts-Index"></a>
 <h3 class="appendixsec">C.1 Concepts Index</h3>
 
-<table><tr><th valign="top">Jump to: &nbsp; </th><td><a class="summary-letter" href="#Concepts_cp_symbol-1"><b>=</b></a>
+<table><tr><th valign="top">Jump to: &nbsp; </th><td><a class="summary-letter" href="#Concepts_cp_letter-B"><b>B</b></a>
  &nbsp; 
-<br>
 <a class="summary-letter" href="#Concepts_cp_letter-C"><b>C</b></a>
  &nbsp; 
+<a class="summary-letter" href="#Concepts_cp_letter-D"><b>D</b></a>
+ &nbsp; 
 <a class="summary-letter" href="#Concepts_cp_letter-E"><b>E</b></a>
+ &nbsp; 
+<a class="summary-letter" href="#Concepts_cp_letter-F"><b>F</b></a>
+ &nbsp; 
+<a class="summary-letter" href="#Concepts_cp_letter-H"><b>H</b></a>
+ &nbsp; 
+<a class="summary-letter" href="#Concepts_cp_letter-I"><b>I</b></a>
+ &nbsp; 
+<a class="summary-letter" href="#Concepts_cp_letter-K"><b>K</b></a>
  &nbsp; 
 <a class="summary-letter" href="#Concepts_cp_letter-L"><b>L</b></a>
  &nbsp; 
 <a class="summary-letter" href="#Concepts_cp_letter-M"><b>M</b></a>
  &nbsp; 
+<a class="summary-letter" href="#Concepts_cp_letter-Q"><b>Q</b></a>
+ &nbsp; 
 <a class="summary-letter" href="#Concepts_cp_letter-R"><b>R</b></a>
  &nbsp; 
+<a class="summary-letter" href="#Concepts_cp_letter-S"><b>S</b></a>
+ &nbsp; 
 <a class="summary-letter" href="#Concepts_cp_letter-T"><b>T</b></a>
+ &nbsp; 
+<a class="summary-letter" href="#Concepts_cp_letter-U"><b>U</b></a>
  &nbsp; 
 <a class="summary-letter" href="#Concepts_cp_letter-V"><b>V</b></a>
  &nbsp; 
@@ -3894,51 +4136,118 @@ Next: <a href="#Command-Index" accesskey="n" rel="next">Command Index</a>, Up: <
 <table class="index-cp" border="0">
 <tr><td></td><th align="left">Index Entry</th><td>&nbsp;</td><th align="left"> Section</th></tr>
 <tr><td colspan="4"> <hr></td></tr>
-<tr><th><a name="Concepts_cp_symbol-1">=</a></th><td></td><td></td></tr>
-<tr><td></td><td valign="top"><a href="#index-_003dorg_002dtrello_003d_002c-installing">=org-trello=, installing</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Installing-with-Package">Installing with Package</a></td></tr>
-<tr><td></td><td valign="top"><a href="#index-_003dorg_002dtrello_003d_002c-using">=org-trello=, using</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Using">Using</a></td></tr>
+<tr><th><a name="Concepts_cp_letter-B">B</a></th><td></td><td></td></tr>
+<tr><td></td><td valign="top"><a href="#index-browser-commands">browser commands</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Misc-Cmds">Misc Cmds</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-buffer-format">buffer format</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Format">Format</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th><a name="Concepts_cp_letter-C">C</a></th><td></td><td></td></tr>
+<tr><td></td><td valign="top"><a href="#index-commands_002c-connection">commands, connection</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Connection-Cmds">Connection Cmds</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-commands_002c-editing">commands, editing</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Editing-Cmds">Editing Cmds</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-commands_002c-help">commands, help</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Help-Cmds">Help Cmds</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-commands_002c-other">commands, other</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Misc-Cmds">Misc Cmds</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-commands_002c-summary">commands, summary</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Commands">Commands</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-commands_002c-synchronization">commands, synchronization</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Synch-Cmds">Synch Cmds</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-compatibility">compatibility</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Compatibility">Compatibility</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-connecting">connecting</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Connecting">Connecting</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-connecting_002c-credentials">connecting, credentials</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Installing-Credentials">Installing Credentials</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-connecting_002c-new-board">connecting, new board</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Create-a-Board">Create a Board</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-connection-commands">connection commands</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Connection-Cmds">Connection Cmds</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-connnecting_002c-existing-board">connnecting, existing board</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Connect-Existing-Board">Connect Existing Board</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-contributing">contributing</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Contributing">Contributing</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-contributing_002c-conventions">contributing, conventions</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Conventions">Conventions</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-contributors">contributors</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Credits">Credits</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-credits">credits</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Credits">Credits</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-customizing">customizing</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Customizing">Customizing</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-customizing_002c-keybindings">customizing, keybindings</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Individual-Keys">Individual Keys</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-customizing_002c-prefix-keybinding">customizing, prefix keybinding</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Prefix-Keys">Prefix Keys</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-customizing_002c-using-emacs_002dlisp">customizing, using emacs-lisp</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Example">Example</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-customizing_002c-variables">customizing, variables</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Variables">Variables</a></td></tr>
+<tr><td colspan="4"> <hr></td></tr>
+<tr><th><a name="Concepts_cp_letter-D">D</a></th><td></td><td></td></tr>
+<tr><td></td><td valign="top"><a href="#index-download">download</a>:</td><td>&nbsp;</td><td valign="top"><a href="#About">About</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th><a name="Concepts_cp_letter-E">E</a></th><td></td><td></td></tr>
-<tr><td></td><td valign="top"><a href="#index-errors">errors</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Error-Messages">Error Messages</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-editing-commands">editing commands</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Editing-Cmds">Editing Cmds</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-error-messages">error messages</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Error-Messages">Error Messages</a></td></tr>
+<tr><td colspan="4"> <hr></td></tr>
+<tr><th><a name="Concepts_cp_letter-F">F</a></th><td></td><td></td></tr>
+<tr><td></td><td valign="top"><a href="#index-format">format</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Format">Format</a></td></tr>
+<tr><td colspan="4"> <hr></td></tr>
+<tr><th><a name="Concepts_cp_letter-H">H</a></th><td></td><td></td></tr>
+<tr><td></td><td valign="top"><a href="#index-help-commands">help commands</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Help-Cmds">Help Cmds</a></td></tr>
+<tr><td colspan="4"> <hr></td></tr>
+<tr><th><a name="Concepts_cp_letter-I">I</a></th><td></td><td></td></tr>
+<tr><td></td><td valign="top"><a href="#index-installing-from-GitHub">installing from GitHub</a>:</td><td>&nbsp;</td><td valign="top"><a href="#GitHub-_0026-Cask">GitHub &amp; Cask</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-installing-from-tarball">installing from tarball</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Tarball">Tarball</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-installing-with-el_002dget">installing with el-get</a>:</td><td>&nbsp;</td><td valign="top"><a href="#el_002dget">el-get</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-installing-with-package">installing with package</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Installing-with-Package">Installing with Package</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-installing_002c-credentials">installing, credentials</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Installing-Credentials">Installing Credentials</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-issues_002c-list-on-GitHub">issues, list on GitHub</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Issues">Issues</a></td></tr>
+<tr><td colspan="4"> <hr></td></tr>
+<tr><th><a name="Concepts_cp_letter-K">K</a></th><td></td><td></td></tr>
+<tr><td></td><td valign="top"><a href="#index-koading">koading</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Loading">Loading</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th><a name="Concepts_cp_letter-L">L</a></th><td></td><td></td></tr>
 <tr><td></td><td valign="top"><a href="#index-license_002c-manual">license, manual</a>:</td><td>&nbsp;</td><td valign="top"><a href="#GNU-FDL">GNU FDL</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-license_002c-software">license, software</a>:</td><td>&nbsp;</td><td valign="top"><a href="#GNU-GPL">GNU GPL</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-links">links</a>:</td><td>&nbsp;</td><td valign="top"><a href="#About">About</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th><a name="Concepts_cp_letter-M">M</a></th><td></td><td></td></tr>
+<tr><td></td><td valign="top"><a href="#index-mailing-list">mailing list</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Mailing-List">Mailing List</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-manual_002c-installing">manual, installing</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Install-Manual">Install Manual</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-MELPA">MELPA</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Using-MELPA">Using MELPA</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-migrating">migrating</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Migrating">Migrating</a></td></tr>
+<tr><td colspan="4"> <hr></td></tr>
+<tr><th><a name="Concepts_cp_letter-Q">Q</a></th><td></td><td></td></tr>
+<tr><td></td><td valign="top"><a href="#index-quick-start">quick start</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Quick-Start">Quick Start</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th><a name="Concepts_cp_letter-R">R</a></th><td></td><td></td></tr>
 <tr><td></td><td valign="top"><a href="#index-release-notes">release notes</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Releases">Releases</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
+<tr><th><a name="Concepts_cp_letter-S">S</a></th><td></td><td></td></tr>
+<tr><td></td><td valign="top"><a href="#index-sync_002e-commands">sync. commands</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Synch-Cmds">Synch Cmds</a></td></tr>
+<tr><td colspan="4"> <hr></td></tr>
 <tr><th><a name="Concepts_cp_letter-T">T</a></th><td></td><td></td></tr>
-<tr><td></td><td valign="top"><a href="#index-trello_002ecom_002c-connecting">trello.com, connecting</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Connecting">Connecting</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-tests_002c-continuous-integration">tests, continuous integration</a>:</td><td>&nbsp;</td><td valign="top"><a href="#CI-Tests">CI Tests</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-troubleshooting">troubleshooting</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Troubleshooting">Troubleshooting</a></td></tr>
+<tr><td colspan="4"> <hr></td></tr>
+<tr><th><a name="Concepts_cp_letter-U">U</a></th><td></td><td></td></tr>
+<tr><td></td><td valign="top"><a href="#index-using">using</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Using">Using</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th><a name="Concepts_cp_letter-V">V</a></th><td></td><td></td></tr>
 <tr><td></td><td valign="top"><a href="#index-version-history">version history</a>:</td><td>&nbsp;</td><td valign="top"><a href="#Releases">Releases</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-videos">videos</a>:</td><td>&nbsp;</td><td valign="top"><a href="#About">About</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
 </table>
-<table><tr><th valign="top">Jump to: &nbsp; </th><td><a class="summary-letter" href="#Concepts_cp_symbol-1"><b>=</b></a>
+<table><tr><th valign="top">Jump to: &nbsp; </th><td><a class="summary-letter" href="#Concepts_cp_letter-B"><b>B</b></a>
  &nbsp; 
-<br>
 <a class="summary-letter" href="#Concepts_cp_letter-C"><b>C</b></a>
  &nbsp; 
+<a class="summary-letter" href="#Concepts_cp_letter-D"><b>D</b></a>
+ &nbsp; 
 <a class="summary-letter" href="#Concepts_cp_letter-E"><b>E</b></a>
+ &nbsp; 
+<a class="summary-letter" href="#Concepts_cp_letter-F"><b>F</b></a>
+ &nbsp; 
+<a class="summary-letter" href="#Concepts_cp_letter-H"><b>H</b></a>
+ &nbsp; 
+<a class="summary-letter" href="#Concepts_cp_letter-I"><b>I</b></a>
+ &nbsp; 
+<a class="summary-letter" href="#Concepts_cp_letter-K"><b>K</b></a>
  &nbsp; 
 <a class="summary-letter" href="#Concepts_cp_letter-L"><b>L</b></a>
  &nbsp; 
 <a class="summary-letter" href="#Concepts_cp_letter-M"><b>M</b></a>
  &nbsp; 
+<a class="summary-letter" href="#Concepts_cp_letter-Q"><b>Q</b></a>
+ &nbsp; 
 <a class="summary-letter" href="#Concepts_cp_letter-R"><b>R</b></a>
  &nbsp; 
+<a class="summary-letter" href="#Concepts_cp_letter-S"><b>S</b></a>
+ &nbsp; 
 <a class="summary-letter" href="#Concepts_cp_letter-T"><b>T</b></a>
+ &nbsp; 
+<a class="summary-letter" href="#Concepts_cp_letter-U"><b>U</b></a>
  &nbsp; 
 <a class="summary-letter" href="#Concepts_cp_letter-V"><b>V</b></a>
  &nbsp; 
@@ -4015,6 +4324,7 @@ Next: <a href="#Variables-_00281_0029" accesskey="n" rel="next">Variables (1)</a
 <tr><td></td><td valign="top"><a href="#index-org_002dtrello_002dadd_002dcard_002dcomment"><code>org-trello-add-card-comment</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Editing-Cmds">Editing Cmds</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-org_002dtrello_002darchive_002dcards"><code>org-trello-archive-cards</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Editing-Cmds">Editing Cmds</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-org_002dtrello_002dbug_002dreport"><code>org-trello-bug-report</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Misc-Cmds">Misc Cmds</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-org_002dtrello_002dbug_002dreport-1"><code>org-trello-bug-report</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Using-Bug_002dReport">Using Bug-Report</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-org_002dtrello_002dcheck_002dsetup"><code>org-trello-check-setup</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Connection-Cmds">Connection Cmds</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-org_002dtrello_002dcreate_002dboard_002dand_002dinstall_002dmetadata"><code>org-trello-create-board-and-install-metadata</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Connection-Cmds">Connection Cmds</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-org_002dtrello_002ddelete_002dsetup"><code>org-trello-delete-setup</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Connection-Cmds">Connection Cmds</a></td></tr>
@@ -4032,6 +4342,7 @@ Next: <a href="#Variables-_00281_0029" accesskey="n" rel="next">Variables (1)</a
 <tr><td></td><td valign="top"><a href="#index-org_002dtrello_002dtoggle_002dassign_002dme"><code>org-trello-toggle-assign-me</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Editing-Cmds">Editing Cmds</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-org_002dtrello_002dupdate_002dboard_002dmetadata"><code>org-trello-update-board-metadata</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Connection-Cmds">Connection Cmds</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-org_002dtrello_002dversion"><code>org-trello-version</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Help-Cmds">Help Cmds</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-orgtrello_002dlog_002dtrace"><code>orgtrello-log-trace</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Using-Log-Trace">Using Log Trace</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
 </table>
 <table><tr><th valign="top">Jump to: &nbsp; </th><td><a class="summary-letter" href="#Functions_fn_letter-O"><b>O</b></a>
@@ -4054,8 +4365,20 @@ Previous: <a href="#Functions" accesskey="p" rel="prev">Functions</a>, Up: <a hr
 <tr><td></td><th align="left">Index Entry</th><td>&nbsp;</td><th align="left"> Section</th></tr>
 <tr><td colspan="4"> <hr></td></tr>
 <tr><th><a name="Variables-_00281_0029_vr_letter-O">O</a></th><td></td><td></td></tr>
+<tr><td></td><td valign="top"><a href="#index-org_002dtrello_002dadd_002dtags"><code>org-trello-add-tags</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#org_002dtrello_002dadd_002dtags">org-trello-add-tags</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-org_002dtrello_002dcurrent_002dprefix_002dkeybinding"><code>org-trello-current-prefix-keybinding</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Prefix-Keys">Prefix Keys</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-org_002dtrello_002dcurrent_002dprefix_002dkeybinding-1"><code>org-trello-current-prefix-keybinding</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#org_002dtrello_002dcurrent_002dprefix_002dkeybinding">org-trello-current-prefix-keybinding</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-org_002dtrello_002dcurrent_002dprefix_002dkeybinding-2"><code>org-trello-current-prefix-keybinding</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Example">Example</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-org_002dtrello_002dfiles"><code>org-trello-files</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#org_002dtrello_002dfiles">org-trello-files</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-org_002dtrello_002dfiles-1"><code>org-trello-files</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Example">Example</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-org_002dtrello_002dinput_002dcompletion_002dmechanism"><code>org-trello-input-completion-mechanism</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#org_002dtrello_002dinput_002dcompletion_002dmechanism">org-trello-input-completion-mechanism</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-org_002dtrello_002dmode_002dhook"><code>org-trello-mode-hook</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#org_002dtrello_002dmode_002dhook">org-trello-mode-hook</a></td></tr>
 <tr><td></td><td valign="top"><a href="#index-org_002dtrello_002dmode_002dmap"><code>org-trello-mode-map</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Individual-Keys">Individual Keys</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-orgtrello_002dlog_002dlevel"><code>orgtrello-log-level</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#orgtrello_002dlog_002dlevel">orgtrello-log-level</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-orgtrello_002dlog_002dlevel-1"><code>orgtrello-log-level</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Example">Example</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-orgtrello_002dsetup_002duse_002dposition_002din_002dchecksum_002dcomputation"><code>orgtrello-setup-use-position-in-checksum-computation</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#orgtrello_002dsetup_002duse_002dposition_002din_002dchecksum_002dcomputation">orgtrello-setup-use-position-in-checksum-computation</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-orgtrello_002dsetup_002duse_002dposition_002din_002dchecksum_002dcomputation-1"><code>orgtrello-setup-use-position-in-checksum-computation</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#Example">Example</a></td></tr>
+<tr><td></td><td valign="top"><a href="#index-orgtrello_002dwith_002dcheck_002don_002dsensible_002dactions"><code>orgtrello-with-check-on-sensible-actions</code></a>:</td><td>&nbsp;</td><td valign="top"><a href="#orgtrello_002dwith_002dcheck_002don_002dsensible_002dactions">orgtrello-with-check-on-sensible-actions</a></td></tr>
 <tr><td colspan="4"> <hr></td></tr>
 </table>
 <table><tr><th valign="top">Jump to: &nbsp; </th><td><a class="summary-letter" href="#Variables-_00281_0029_vr_letter-O"><b>O</b></a>

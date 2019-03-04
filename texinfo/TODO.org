@@ -11,7 +11,8 @@
 Use wget to grab the existing documentation, then convert it to org-mode
 through pandoc for easier reference and cut/paste.
 
-* WORK Cover Existing Documentation [13/14]
+* DONE Cover Existing Documentation [14/14]
+  CLOSED: [2019-03-03 Sun 21:04]
 The first draft must cover all the content from all files and sections of
 the existing documentation.
 - [X] Page Margins -> [[file:org-trello.org::*About%20org-trello][About org-trello]]
@@ -41,22 +42,9 @@ the existing documentation.
   - [X] Keybindings -> [[file:org-trello.org::*Summary%20of%20Commands][Using/Summary of Commands]]
   - [X] Bindings Override -> [[file:org-trello.org::*Customizing%20Individual%20Keybindings][Customizing/Individual]]
   - [X] Prefix binding override -> [[file:org-trello.org::*Customizing%20the%20Prefix%20Keybinding][Customizing/Prefix]]
-- [-] Usage [3/4]
+- [X] Usage [3/3]
   - [X] Format -> [[file:org-trello.org::*Format%20of%20org-trello][Format of org-trello]]
     - [X] Sample
-  - [ ] Use-Cases -> [[file:org-trello.org::*How%20to%E2%80%A6][How to…]]
-    - [ ] Card and deadline/due date
-    - [ ] Sync entity to Trello board
-    - [ ] Creation of a full entity
-    - [ ] Sync entity with structure from Trello board
-    - [ ] Sync org-mode file to Trello board
-    - [ ] Sync org-mode file from Trello board
-    - [ ] Remove entity
-    - [ ] Remove entities
-    - [ ] Cleanup org-trello setup
-    - [ ] Jump to Trello card
-    - [ ] Jump to Trello board
-    - [ ] Add comments
   - [X] Possible errors -> [[file:org-trello.org::*Error%20Messages][Error Messages]]
   - [X] Automatic org-trello files -> [[file:org-trello.org::*Automatic%20org-trello%20Files][Automatic org-trello Files]]
 - [X] FAQ
@@ -82,6 +70,21 @@ the existing documentation.
   - [X] Mailing List -> [[file:org-trello.org::*Mailing%20List][Mailing List]]
   - [X] Credits -> [[file:org-trello.org::*Credits][Credits]]
 - [X] License -> ([[file:org-trello.org::*COPYING][Copying]], [[file:org-trello.org::*GNU%20General%20Public%20License][GPL]], [[file:org-trello.org::*GNU%20Free%20Documentation%20License][FDL]])
+
+** Not included above:
+  - [ ] Use-Cases -> [[file:org-trello.org::*How%20to%E2%80%A6][How to…]]
+    - [ ] Card and deadline/due date
+    - [ ] Sync entity to Trello board
+    - [ ] Creation of a full entity
+    - [ ] Sync entity with structure from Trello board
+    - [ ] Sync org-mode file to Trello board
+    - [ ] Sync org-mode file from Trello board
+    - [ ] Remove entity
+    - [ ] Remove entities
+    - [ ] Cleanup org-trello setup
+    - [ ] Jump to Trello card
+    - [ ] Jump to Trello board
+    - [ ] Add comments
 
 * WORK Convert release-notes from .md to .org
 

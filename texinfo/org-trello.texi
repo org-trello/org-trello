@@ -173,6 +173,17 @@ Customizing
 * Example::                      Example Emacs-Lisp Customization
 * Auto Files::                   Automatic =org-trello= Files
 
+Variables
+
+* org-trello-add-tags::
+* org-trello-current-prefix-keybinding::
+* org-trello-files::
+* org-trello-input-completion-mechanism::
+* org-trello-mode-hook::
+* orgtrello-log-level::
+* orgtrello-setup-use-position-in-checksum-computation::
+* orgtrello-with-check-on-sensible-actions::
+
 Contributing
 
 * Credits::                      Contributor Credits
@@ -207,8 +218,6 @@ Indices
 @chapter About @samp{org-trello}
 
 @image{images/org-trello-logo-light-blue-pastel-unicorn.200x200,,,,png}
-@itemize
-@item
 Why use @samp{org-trello}?
 
 @itemize
@@ -222,8 +231,10 @@ Your team uses @uref{https://trello.com/, Trello.com}.
 Everyone wins!
 @end itemize
 
-@item
 Links:
+@cindex links
+@cindex download
+@cindex videos
 
 @itemize
 @item
@@ -236,9 +247,10 @@ Links:
 @uref{http://org-trello.github.io/demo.html, Demonstration Videos}
 @end itemize
 
-@item
 What does your page title @samp{org <$> trello} mean?
 
+@itemize
+@item
 It means “map org functions to the trello world”.
 
 At the time, I was learning Haskell and it made an everlasting
@@ -262,7 +274,7 @@ package and manual.
 @node Installing with Package
 @section Installing @samp{org-trello} using Package (recommended)
 
-@cindex =org-trello=, installing
+@cindex installing with package
 
 This section describes how to use @samp{package} to install @samp{org-trello}.
 
@@ -274,6 +286,7 @@ This section describes how to use @samp{package} to install @samp{org-trello}.
 @node Using MELPA
 @subsection Using MELPA with Package
 
+@cindex MELPA
 This section describes how to use @samp{package} to download and install any
 packages including @samp{org-trello}. If you already use @samp{package} to access
 “melpa” or “melpa-stable”, you don’t need to do this again. See the
@@ -340,6 +353,7 @@ Package and Melpa as recommended.
 @node Tarball
 @subsection Download and Install the Tarball
 
+@cindex installing from tarball
 To retrieve the tarball from @uref{https://github.com/org-trello/org-trello/releases, github}, type this at the command line,
 substituting the /path/to your chosen folder.
 Replace “0.8.1” with the current version, if different.
@@ -358,12 +372,14 @@ Then, inside Emacs, type @code{M-x package-install-file RET
 @node el-get
 @subsection Get and Install with el-get
 
+@cindex installing with el-get
 If you use @uref{https://github.com/dimitri/el-get, el-get} to install packages, you may install the @uref{https://github.com/dimitri/el-get/blob/master/recipes/org-trello.rcp, @samp{org-trello} recipe}
 with it. Inside Emacs, type: @code{M-x el-get-install RET org-trello RET}.
 
 @node GitHub & Cask
 @subsection Clone from GitHub and Install with Cask
 
+@cindex installing from GitHub
 Use this section only if you are a developer modifying and testing @samp{org-trello}.
 
 Clone @samp{org-trello} from GitHub:
@@ -388,6 +404,7 @@ Now install the built @samp{org-trello-$VERSION.tar} using Emacs. Type:
 @node Loading
 @section Loading @samp{org-trello} in Emacs
 
+@cindex koading
 Once @samp{org-trello} is installed, it must be loaded into Emacs before it
 can be used, preferably during initialization of Emacs. Add this in
 your emacs configuration file (“~/.emacs” or “~/.emacs.d/init.el”) to
@@ -505,6 +522,7 @@ files in the INFOPATH and may be different in each reader. Locate
 @node Migrating
 @section Migrating to New Releases
 
+@cindex migrating
 If you have previously installed and used a previous release of
 @samp{org-trello}, this section describes how to migrate your existing
 @samp{org-trello} installation to a new release.
@@ -721,7 +739,15 @@ Then M-x orgtrello-proxy/reload
 @node Connecting
 @chapter Connecting to Trello.com
 
-@cindex trello.com, connecting
+@cindex connecting
+This section describes how to connect org-trello to Trello.com. There
+are two steps:
+@itemize
+@item
+Installing your Trello-com Credentials
+@item
+Connecting a buffer to a Trello board.
+@end itemize
 
 @menu
 * Installing Credentials::       Installing Your Trello.com Credentials
@@ -732,6 +758,8 @@ Then M-x orgtrello-proxy/reload
 @node Installing Credentials
 @section Installing Your Trello.com Credentials
 
+@cindex installing, credentials
+@cindex connecting, credentials
 You must install the @code{org-trello-consumer-key} and the read-write
 @code{org-trello-access-token} to permit org-trello to access your trello
 boards.
@@ -812,6 +840,7 @@ when requesting trello.
 @node Connect Existing Board
 @section Connect an org-mode buffer with an existing Trello board.
 
+@cindex connnecting, existing board
 For each org-mode file that you wish to use with Trello.com, you need
 to connect your org-mode file with a Trello board.
 
@@ -845,6 +874,7 @@ edit your org-mode file to add the properties needed.
 @node Create a Board
 @section Create a Trello board from your org-mode buffer.
 
+@cindex connecting, new board
 You can create a new Trello board from your existing org-mode file. 
 
 @emph{Note:} This procedure must be done only once for each org-mode
@@ -872,9 +902,9 @@ org-mode (cf. @uref{http://orgmode.org/manual/In_002dbuffer-settings.html, org-t
 @end itemize
 
 @node Using
-@chapter @strong{WORK} Using @samp{org-trello}
+@chapter Using @samp{org-trello}
 
-@cindex =org-trello=, using
+@cindex using
 This section describes how to use @samp{org-trello}.
 
 @menu
@@ -886,6 +916,7 @@ This section describes how to use @samp{org-trello}.
 @node Quick Start
 @section Quick Start
 
+@cindex quick start
 First, do the @ref{Installing, , installation} and the @ref{Connecting, , connection}.
 
 A typical starting point is to synchronize a Trello board to the
@@ -924,6 +955,7 @@ For more usage details, see below.
 @node Commands
 @section @strong{CHEK} Commands
 
+@cindex commands, summary
 This section describes all commands and their key bindings.
 
 All default @samp{org-trello} key-bindings use the “C-c o” prefix.
@@ -1039,6 +1071,8 @@ Some commands are modified by adding a C-u prefix to the command.
 @node Help Cmds
 @subsection @strong{CHEK} Help Commands
 
+@cindex commands, help
+@cindex help commands
 This section describes the help functions.
 
 @kindex C-c o C-h
@@ -1065,6 +1099,8 @@ Display the installed version of
 @node Connection Cmds
 @subsection @strong{CHEK} Connection Commands
 
+@cindex commands, connection
+@cindex connection commands
 This section describes the functions used to connect @samp{org-trello} to
 Trello.com and to attach an org file to a Trello board.
 
@@ -1116,6 +1152,8 @@ from the current buffer.
 @node Synch Cmds
 @subsection @strong{CHEK} Synchronization Commands
 
+@cindex commands, synchronization
+@cindex sync. commands
 This section describes the synchronization commands used to move data
 between the buffer and Trello.com.
 
@@ -1149,6 +1187,8 @@ activities.
 @node Editing Cmds
 @subsection @strong{CHEK} Editing Commands
 
+@cindex commands, editing
+@cindex editing commands
 This section describes the functions used to edit, archive and delete
 cards, comments and list items.
 
@@ -1216,6 +1256,8 @@ With prefix C-u, remove the current card’s comment.
 @node Misc Cmds
 @subsection @strong{CHEK} Other Commands
 
+@cindex commands, other
+@cindex browser commands
 This section describes other functions not listed above.
 
 @kindex C-c o l
@@ -1255,6 +1297,8 @@ tracker too.
 @node Format
 @section Format of org-trello
 
+@cindex format
+@cindex buffer format
 This section describes the format of the text in an @samp{org-trello} buffer.
 
 There are 3 levels of meta-data:
@@ -1314,6 +1358,7 @@ won't be visible for the user.
 @chapter Troubleshooting @samp{org-trello}
 
 @cindex troubleshooting
+This section gives information helpful for troubleshooting org-trello.
 
 @menu
 * Common Issues::                Common Issues
@@ -1323,6 +1368,7 @@ won't be visible for the user.
 @node Common Issues
 @section Common Issues
 
+#+CINDEX issues
 This section addresses some common issues with installing and using @samp{org-trello}.
 
 @itemize
@@ -1359,7 +1405,7 @@ issue list on GitHub.
 @node Error Messages
 @section Error Messages
 
-@cindex errors
+@cindex error messages
 
 @samp{org-trello} can display the following possible error messages:
 
@@ -1484,6 +1530,7 @@ This section describes how you may customize @samp{org-trello}.
 @node Prefix Keys
 @section Customizing the Prefix Keybinding
 
+@cindex customizing, prefix keybinding
 @vindex org-trello-current-prefix-keybinding
 By default, @samp{org-trello} uses the prefix keybinding “C-c o” to begin
 (almost) all of its commands. You may change this by customizing the
@@ -1511,6 +1558,7 @@ For an example, please see my @uref{https://github.com/ardumont/orgmode-pack/blo
 @node Individual Keys
 @section Customizing Individual Keybindings
 
+@cindex customizing, keybindings
 @vindex org-trello-mode-map
 To redefine one or more org-trello-mode command keybindings, you should create a
 function to define keys in the org-trello-mode-map and hook your
@@ -1558,6 +1606,7 @@ remove specific existing @samp{org-trello} keybindings:
 @node Variables
 @section Customizing @samp{org-trello} Variables
 
+@cindex customizing, variables
 You may customize @samp{org-trello} settings by typing: @*
 @code{M-x customize-group RET org-trello RET}.
 
@@ -1568,27 +1617,96 @@ Parent groups: Org
 
 Org-trello group:  Org-trello customisation group.
        State : visible group members are all at standard values.
+@end example
 
+@menu
+* org-trello-add-tags::
+* org-trello-current-prefix-keybinding::
+* org-trello-files::
+* org-trello-input-completion-mechanism::
+* org-trello-mode-hook::
+* orgtrello-log-level::
+* orgtrello-setup-use-position-in-checksum-computation::
+* orgtrello-with-check-on-sensible-actions::
+@end menu
+
+@node org-trello-add-tags
+@subsection org-trello-add-tags
+
+@vindex org-trello-add-tags
+Set this variable to @code{t} to add the Trello category colors to the
+org-mode tags list, otherwise set to @code{nil}. The default is @code{t}.
+
+@example
 Org Trello Add Tags 
    Add trello colors to org tags list?
+@end example
 
+@node org-trello-current-prefix-keybinding
+@subsection org-trello-current-prefix-keybinding
+
+@vindex org-trello-current-prefix-keybinding
+Set this variable to the key prefix you want for org-trello commands.
+The default is @code{C-c o}.
+
+@example
 Org Trello Current Prefix Keybinding 
    The default prefix keybinding to execute org-trello commands.
+@end example
 
+@node org-trello-files
+@subsection org-trello-files
+
+@vindex org-trello-files
+Set this list to the files with matching Trello boards that you wish
+to have start org-trello when they open. The default is @code{()}. If you
+do not set this variable, you must start org-trello using @code{M-x org-trello}.  
+
+@example
 Org Trello Files 
    Org-trello files that needs org-trello activated when opened. Hide
    This does not support regular expression.
+@end example
 
+@node org-trello-input-completion-mechanism
+@subsection org-trello-input-completion-mechanism
+
+@vindex org-trello-input-completion-mechanism
+Set this variable to either @code{default} or @code{helm} to specify the input
+completion mechanism that org-trello should use. If you select @code{helm},
+you must install the dependencies.
+
+@example
 Org Trello Input Completion Mechanism 
    The completion mechanism the user can choose from. Hide
    Default is the native ido mechanism.
    Other possibilities is helm but it’s up to you to install the dependencies.
    (require ’helm)
    (custom-set-variables ’(org-trello-input-completion-mechanism ’helm))
+@end example
 
+@node org-trello-mode-hook
+@subsection org-trello-mode-hook
+
+@vindex org-trello-mode-hook
+Use this hook to extend org-trello with your own function. See @samp{hooks}
+  in the Emacs manual.
+
+@example
 Org Trello Mode Hook 
    Define org-trello hook for user to extend mode with their own behavior.
+@end example
 
+@node orgtrello-log-level
+@subsection orgtrello-log-level
+
+@vindex orgtrello-log-level
+
+Set this variables to one of the constants below to specify the log
+message level for org-trello to use. The default is @code{3},
+orgtrello-log-info. Higher levels are useful when submitting a bug-report.
+
+@example
 Orgtrello Log Level 
    Set log level. Hide
    Levels:
@@ -1600,7 +1718,18 @@ Orgtrello Log Level
    5 - trace    (‘orgtrello-log-trace’)
    To change such level, add this to your init.el file:
    (custom-set-variables ’(orgtrello-log-level orgtrello-log-trace))
+@end example
 
+@node orgtrello-setup-use-position-in-checksum-computation
+@subsection orgtrello-setup-use-position-in-checksum-computation
+
+@vindex orgtrello-setup-use-position-in-checksum-computation
+
+Set this variable to @code{t} to use the position of an entity in the
+check-sum computation that triggers updates to Trello. Use @code{nil}
+otherwise. The default is @code{nil}. See the note below.
+
+@example
 Orgtrello Setup Use Position In Checksum Computation 
    Let the user decide if (s)he wants to use the position in the checksum. Hide
    The checksum is a hash computation of the current entity’s data to prevent
@@ -1618,7 +1747,17 @@ Orgtrello Setup Use Position In Checksum Computation
    If nil, the default, the sync to trello will be limited to what’s really changed
    (except for the position).  So the entity’s position in trello’s board can be
    slightly different than the one from the buffer.
+@end example
 
+@node orgtrello-with-check-on-sensible-actions
+@subsection orgtrello-with-check-on-sensible-actions
+
+@vindex orgtrello-with-check-on-sensible-actions
+
+Set this variable to @code{t} to ask the use before doing sensitive actions
+like removing an entity. Set to @code{nil} otherwise.
+
+@example
 Orgtrello With Check On Sensible Actions 
    Some action can be dangerous removing entity for example. Hide
    This custom determine if the user wants to be asked confirmation
@@ -1628,6 +1767,11 @@ Orgtrello With Check On Sensible Actions
 @node Example
 @section Example Emacs-Lisp Customization
 
+@cindex customizing, using emacs-lisp
+@vindex orgtrello-log-level
+@vindex orgtrello-setup-use-position-in-checksum-computation
+@vindex org-trello-files
+@vindex org-trello-current-prefix-keybinding
 Here is an example of how to configure @samp{org-trello} user-customized
 variables using emacs-lisp:
 
@@ -1649,6 +1793,7 @@ inside your emacs setup file (“~/.emacs” or “~/emacs.d/init.el”).
 @node Auto Files
 @section Automatic @samp{org-trello} Files
 
+#+CINDEX loading, automatically
 To have emacs automatically start @samp{org-trello} when you open a file with
 a “.trello” extension, add this to your personal emacs setup file:
 
@@ -1717,6 +1862,7 @@ creators and contributors of Emacs and org-mode.
 @node Issues
 @section Issue List
 
+@cindex issues, list on GitHub
 If you experience an issue while using @samp{org-trello}, please first
 confirm that you have the newest version. If you have an old version,
 please upgrade to the newest version - your issue may already have
@@ -1787,6 +1933,7 @@ clear, concise and complete in your issue description.
 @node Using Bug-Report
 @subsection Using @samp{M-x org-trello-bug-report}
 
+@findex org-trello-bug-report
 You may use the bug-report function of @samp{org-trello} to print some
 information about @samp{org-trello} to the @samp{*Messages*} buffer to copy into the
 issue entry. To print the bug-report data, type @code{M-x
@@ -1812,6 +1959,7 @@ GitHub for you to complete.
 @node Using Log Trace
 @subsection Using @samp{orgtrello-log-trace}
 
+@findex orgtrello-log-trace
 To obtain a more verbose output in the @strong{@strong{Message}} buffer, you can put
 this snippet of code in a @samp{*scratch*} buffer.
 
@@ -1826,6 +1974,7 @@ resulting detailed log messages into your bug-report.
 @node Mailing List
 @section Mailing List
 
+@cindex mailing list
 This project has a mailing list at @uref{http://librelist.com/browser/emacs.org.trello/, librelist.com} for communication
 and community among its users and contributors. You may join the
 list by sending an email to:
@@ -1851,6 +2000,7 @@ release of @samp{org-trello}. Please also see the @uref{https://github.com/org-t
 @node Compatibility
 @section Compatibility with Emacs
 
+@cindex compatibility
 @samp{org-trello} has been tested with the following versions of Emacs and
 Operating Systems:
 
@@ -1884,6 +2034,7 @@ those is welcome.
 @node CI Tests
 @section Continuous Integration Tests
 
+@cindex tests, continuous integration
 @samp{org-trello} uses @uref{https://travis-ci.org/org-trello/org-trello, Travis CI} for continuous integration testing.
 
 The CI tests and installs:
@@ -1914,6 +2065,7 @@ The CI tests and installs:
 @node Conventions
 @section Developer’s Conventions
 
+@cindex contributing, conventions
 This describes the current conventions for org-trello's development.
 
 @menu
@@ -2180,7 +2332,7 @@ the packaging for MELPA is automatically done from @samp{org-trello/org-trello} 
 @include fdl.texi
 
 @node Indices
-@appendix @strong{TODO} Indices
+@appendix @strong{CHEK} Indices
 
 This section contains the concepts, commands, functions and variables indices.
 
