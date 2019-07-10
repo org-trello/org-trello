@@ -1,0 +1,2366 @@
+\input texinfo    @c -*- texinfo -*-
+@c %**start of header
+@setfilename org-trello.info
+@settitle @samp{org-trello} Manual
+@documentencoding UTF-8
+@documentlanguage en
+@documentdescription
+Sync Emacs org-mode with Trello.com.
+@end documentdescription
+@c %**end of header
+
+@copying
+This is the @samp{org-trello} Manual, edition 0.8.1.a, released 2019-01-30,
+written and copyright ©2019 by Daniel Birket.
+
+@quotation
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.3 or
+any later version published by the Free Software Foundation; with no
+Invariant Sections, with no Front-Cover Texts, and with no Back-Cover
+Texts. A copy of the license is included in the section entitled GNU
+Free Documentation License.
+
+@end quotation
+
+This manaul describes how to install and use the Emacs package
+@samp{org-trello}, version 0.8.1, released 2018-03-18,
+written and copyright ©2013-2017 by Antoine Dumont,
+to synchronize org-mode TO-DO lists with @uref{https://trello.com, Trello.com}.
+
+This manual was written with reference to the @samp{org-trello} source-code,
+which begins with this license and non-warranty statement:
+
+@lisp
+;;; org-trello.el 
+;; Minor mode to synchronize org-mode buffer and trello board
+
+;; Copyright (C) 2013-2017 by Antoine R. Dumont (@@ardumont) 
+;; Author: Antoine R. Dumont <antoine.romain.dumont@@gmail.com>
+;; Maintainer: Antoine R. Dumont
+
+;; Version: 0.8.1
+;; URL: https://github.com/org-trello/org-trello
+
+;; This file is NOT part of GNU Emacs.
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation; either version 3, or (at your option)
+;; any later version.
+;;
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+;; GNU General Public License for more details.
+@end lisp
+@end copying
+
+@dircategory Emacs editing modes
+@direntry
+* org-trello: (org-trello). Sync Emacs org-mode with Trello.com.
+@end direntry
+
+@finalout
+@titlepage
+@title @samp{org-trello} Manual
+@subtitle Sync Emacs org-mode with Trello.com.
+@author Manual by Daniel Birket
+@author Package by Antoine R. Dumont
+@page
+@vskip 0pt plus 1filll
+@insertcopying
+@end titlepage
+
+@contents
+
+@ifnottex
+@node Top
+@top @samp{org-trello} Manual
+
+@image{images/org-trello-logo-light-blue-pastel-unicorn.200x200,,,,png}
+Sync Emacs org-mode with Trello.com.
+
+@insertcopying
+@end ifnottex
+
+@menu
+* About::                        About =org-trello=
+* Installing::                   Installing =org-trello=
+* Connecting::                   Connecting to Trello.com
+* Using::                        Using =org-trello=
+* Troubleshooting::              Troubleshooting =org-trello=
+* Customizing::                  Customizing =org-trello=
+* Contributing::                 Contributing to =org-trello=
+* GNU GPL::                      GNU General Public License
+* GNU FDL::                      GNU Free Documentation License
+* Indices::                      Indices
+
+@detailmenu
+--- The Detailed Node Listing ---
+
+Installing
+
+* Installing with Package::      Recommended Installation
+* Alternate Installations::      Alternate Ways to Install
+* Loading::                      Loading =org-trello= in Emacs
+* Install Manual::               Installing the Manual
+* Migrating::                    Migrating to New Releases
+
+Installing with Package
+
+* Using MELPA::                  Using MELPA with Package
+* Installing from MELPA::        Installing from MELPA with Package
+
+Alternate Installations
+
+* Tarball::                      Download and Install the Tarball
+* el-get::                       Get and Install with el-get
+* GitHub & Cask::                Clone from GitHub and Install with Cask
+
+Install Manual
+
+* Building Manual::              Building the Manual
+* Installing Manual::            Install the .info Manual
+
+Migrating
+
+* Migrate to 0.8.1: Migrate to 081. 
+* Migrate to 0.7.0: Migrate to 070. 
+* Migrate to 0.6.7: Migrate to 067. 
+* Migrate to 0.6.6: Migrate to 066. 
+* Migrate to 0.5.5: Migrate to 055. 
+* Migrate to 0.5.3: Migrate to 053. 
+* Migrate to 0.5.2: Migrate to 052. 
+* Migrate to 0.3.8: Migrate to 038. 
+* Migrate to 0.3.1: Migrate to 031. 
+* Migrate to 0.2.9: Migrate to 029. 
+* Migrate to 0.2.8: Migrate to 028. 
+* Migrate 0.2.1 to 0.2.2: Migrate 021 to 022. 
+* Migrate 0.1.5 to 0.1.6: Migrate 015 to 016. 
+* Migrate 0.1.1 to 0.1.2: Migrate 011 to 012. 
+
+Connecting
+
+* Installing Credentials::       Installing Your Trello.com Credentials
+* Connect Existing Board::       Connect a Buffer to an Existing board
+* Create a Board::               Create a Board from a Buffer
+
+Using
+
+* Quick Start::                  First Steps with =org-trello=
+* Commands::                     Commands
+* Format::                       Format of =org-trello=
+
+Commands
+
+* Help Cmds::                    Help Commands
+* Connection Cmds::              Connection Commands
+* Synch Cmds::                   Synchronization Commands
+* Editing Cmds::                 Editing Commands
+* Misc Cmds::                    Misc. Commands
+
+Troubleshooting
+
+* Common Issues::                Common Issues
+* Error Messages::               Error Messages
+
+Customizing
+
+* Prefix Keys::                  Customizing the Prefix Keybinding
+* Individual Keys::              Customizing Individual Key Bindings
+* Variables::                    Customizing Variables
+* Example::                      Example Emacs-Lisp Customization
+* Auto Files::                   Automatic =org-trello= Files
+
+Variables
+
+* org-trello-add-tags::
+* org-trello-current-prefix-keybinding::
+* org-trello-files::
+* org-trello-input-completion-mechanism::
+* org-trello-mode-hook::
+* orgtrello-log-level::
+* orgtrello-setup-use-position-in-checksum-computation::
+* orgtrello-with-check-on-sensible-actions::
+
+Contributing
+
+* Credits::                      Contributor Credits
+* Issues::                       Issue List
+* Mailing List::                 Mailing List
+* Releases::                     Release List & Notes
+* Compatibility::                Compatibility with Emacs
+* CI Tests::                     Continuous Integration Tests
+* Conventions::                  Developer’s Conventions
+
+Issues
+
+* Using Bug-Report::             Using org-trello-bug-report
+* Using Log Trace::              Using org-trello-log-trace
+
+Conventions
+
+* Sources::
+* Makefile::
+
+Indices
+
+* Concepts::                     Concepts Index
+* Command Index::                Commands Index
+* Functions::                    Functions Index
+* Variables: Variables (1).      Variables Index
+
+@end detailmenu
+@end menu
+
+@node About
+@chapter About @samp{org-trello}
+
+@image{images/org-trello-logo-light-blue-pastel-unicorn.200x200,,,,png}
+Why use @samp{org-trello}?
+
+@itemize
+@item
+You use Emacs @uref{https://orgmode.org, org-mode}.
+@item
+Your team uses @uref{https://trello.com/, Trello.com}.
+@item
+@samp{org-trello} is the bridge between org-mode and Trello.com.
+@item
+Everyone wins!
+@end itemize
+
+Links:
+@cindex links
+@cindex download
+@cindex videos
+
+@itemize
+@item
+@uref{https://github.com/org-trello/org-trello/zipball/master, Download Zip}
+@item
+@uref{https://github.com/org-trello/org-trello/tarball/master, Download Tarball}
+@item
+@uref{https://github.com/org-trello/org-trello, View on GitHub}
+@item
+@uref{http://org-trello.github.io/demo.html, Demonstration Videos}
+@end itemize
+
+What does your page title @samp{org <$> trello} mean?
+
+@itemize
+@item
+It means “map org functions to the trello world”.
+
+At the time, I was learning Haskell and it made an everlasting
+awesome impression on me. @uref{http://hackage.haskell.org/package/base-4.9.1.0/docs/Prelude.html#v:fmap, See fmap's documentation for more detail}.
+@end itemize
+
+@node Installing
+@chapter Installing @samp{org-trello}
+
+This section describes how to obtain and install the @samp{org-trello}
+package and manual.
+
+@menu
+* Installing with Package::      Recommended Installation
+* Alternate Installations::      Alternate Ways to Install
+* Loading::                      Loading =org-trello= in Emacs
+* Install Manual::               Installing the Manual
+* Migrating::                    Migrating to New Releases
+@end menu
+
+@node Installing with Package
+@section Installing @samp{org-trello} using Package (recommended)
+
+@cindex installing with package
+
+This section describes how to use @samp{package} to install @samp{org-trello}.
+
+@menu
+* Using MELPA::                  Using MELPA with Package
+* Installing from MELPA::        Installing from MELPA with Package
+@end menu
+
+@node Using MELPA
+@subsection Using MELPA with Package
+
+@cindex MELPA
+This section describes how to use @samp{package} to download and install any
+packages including @samp{org-trello}. If you already use @samp{package} to access
+“melpa” or “melpa-stable”, you don’t need to do this again. See the
+next section for how to install @samp{org-trello}.
+
+@uref{https://melpa.org, MELPA.org} is a large repository of ready-to-install Emacs packages.
+There are two flavors: melpa and melpa-stable. Melpa usually contains
+the bleeding-edge version of each package. Melpa-stable should contain
+the last stable releases of the same packages, but the two may be the
+same. Use Melpa if you like to help test the latest features. Use
+Melpa-Stable if you want something that just works.
+
+Add the code snippet below (from @uref{https://melpa.org/#/getting-started, melpa.org}) to your Emacs startup file
+(.emacs or .emacs.d/init.el). The Melpa repository is pre-selected. If
+you prefer Melpa-stable, comment out the line for Melpa and un-comment
+the line for Melpa-stable.
+
+@lisp
+;; https://melpa.org/#/getting-started
+(require 'package)
+(let* ((no-ssl (and (memq system-type '(windows-nt ms-dos))
+                    (not (gnutls-available-p))))
+       (proto (if no-ssl "http" "https")))
+
+  ;; Comment/uncomment these two lines to enable/disable MELPA and MELPA Stable as desired
+  (add-to-list 'package-archives (cons "melpa" (concat proto "://melpa.org/packages/")) t)
+  ;;(add-to-list 'package-archives (cons "melpa-stable" (concat proto "://stable.melpa.org/packages/")) t)
+  (when (< emacs-major-version 24)
+    ;; For important compatibility libraries like cl-lib
+    (add-to-list 'package-archives (cons "gnu" (concat proto "://elpa.gnu.org/packages/")))))
+(package-initialize)
+@end lisp
+
+After you add this code snippet, exit and restart Emacs or use @code{M-x eval-buffer} to
+re-evaluate your initialization file.
+
+@node Installing from MELPA
+@subsection Installing from MELPA with Package
+
+This section describes how to download and install @samp{org-trello} once you
+have installed Package and configured it to access MELPA@.
+
+To load the latest package list from MELPA, type @code{M-x package-refresh-contents}.
+
+To install @samp{org-trello} from Melpa, type @code{M-x package-install RET org-trello RET}.
+
+Once you have installed the package, please see @ref{Loading, , Loading @samp{org-trello} in Emacs}.
+
+@node Alternate Installations
+@section Alternate Ways to Install
+
+This section describes alternate ways to install if you do not use
+Package and Melpa as recommended.
+
+@emph{Note} org-trello's @uref{http://marmalade-repo.org/packages/org-trello, Marmalade package} is no longer maintained. Use
+@uref{http://melpa-stable.milkbox.net/#/org-trello, melpa-stable package} instead.
+
+@menu
+* Tarball::                      Download and Install the Tarball
+* el-get::                       Get and Install with el-get
+* GitHub & Cask::                Clone from GitHub and Install with Cask
+@end menu
+
+@node Tarball
+@subsection Download and Install the Tarball
+
+@cindex installing from tarball
+To retrieve the tarball from @uref{https://github.com/org-trello/org-trello/releases, github}, type this at the command line,
+substituting the /path/to your chosen folder.
+Replace “0.8.1” with the current version, if different.
+
+@example
+VERSION="0.8.1"
+wget https://github.com/org-trello/org-trello/releases/download/$VERSION/org-trello-$VERSION.tar -o /path/to/org-trello-$VERSION.tar
+@end example
+
+Alternately, navigate to @uref{https://github.com/org-trello/org-trello, @samp{org-trello} on github} with a browser and click
+on the “releases” link, then locate and download the same file.
+
+Then, inside Emacs, type @code{M-x package-install-file RET
+/path/to/org-trello-0.8.1.tar RET}
+
+@node el-get
+@subsection Get and Install with el-get
+
+@cindex installing with el-get
+If you use @uref{https://github.com/dimitri/el-get, el-get} to install packages, you may install the @uref{https://github.com/dimitri/el-get/blob/master/recipes/org-trello.rcp, @samp{org-trello} recipe}
+with it. Inside Emacs, type: @code{M-x el-get-install RET org-trello RET}.
+
+@node GitHub & Cask
+@subsection Clone from GitHub and Install with Cask
+
+@cindex installing from GitHub
+Use this section only if you are a developer modifying and testing @samp{org-trello}.
+
+Clone @samp{org-trello} from GitHub:
+
+@example
+git clone http://github.com/org-trello/org-trello.git
+@end example
+
+You can use @uref{https://cask.github.io/, Cask} to make a local tarball and then install using Emacs:
+
+@example
+make install package
+@end example
+
+@emph{Note} @samp{install} will download Cask and @samp{package} will create an
+@samp{org-trello} tarball archive containing @samp{org-trello}.
+
+Now install the built @samp{org-trello-$VERSION.tar} using Emacs. Type:
+
+@code{M-x package-install-file RET /path/to/org-trello-$VERSION.tar RET}
+
+@node Loading
+@section Loading @samp{org-trello} in Emacs
+
+@cindex koading
+Once @samp{org-trello} is installed, it must be loaded into Emacs before it
+can be used, preferably during initialization of Emacs. Add this in
+your emacs configuration file (“~/.emacs” or “~/.emacs.d/init.el”) to
+load @samp{org-trello} when Emacs starts:
+
+@lisp
+(require 'org-trello)
+@end lisp
+
+@emph{Note} We do not recommend starting @code{org-trello-mode} for every org-mode buffer
+(see @uref{https://github.com/org-trello/org-trello/issues/209}). @samp{org-trello} is
+an org minor mode that adds trello abilities that unfortunately limit
+org's power. It should only be applied to buffers synced with trello.com.
+
+There is a variable to activate @samp{org-trello} only for specific files:
+
+For example: to activate @samp{org-trello} when opening @samp{/path/to/file0}
+and @samp{/path/to/file1}.
+
+@lisp
+(custom-set-variables '(org-trello-files '("/path/to/file0" "/path/to/file1")))
+@end lisp
+
+@node Install Manual
+@section Using the @samp{org-trello} manual
+
+@cindex manual, installing
+This section describes how to build and install the TexInfo-format
+“org-trello Manual”. TexInfo is the standard documentation format of
+the GNU-project and is used by Emacs and org-mode. (org-trello is NOT
+part of GNU emacs.) This manual is presented in three formats:
+
+@itemize
+@item
+INFO hyper-linked text format, to read from within Emacs (or with
+“info” at the command-line).
+@item
+HTML format, to read with a web-browser.
+@item
+PDF format, to read or print nicely-formatted on paper.
+@end itemize
+
+This org-trello manual may be installed in a folder on your INFOPATH
+and listed in the INFO directory of manuals. You may access the INFO
+manual directory of manuals from within Emacs by typing “C-h i d” or
+from the command-line using the command “info”.
+
+@ifnotinfo
+
+@float Figure
+@image{images/texinfo,,,,png}
+@caption{Building the Manual with Texinfo}
+@end float
+@end ifnotinfo
+
+@menu
+* Building Manual::              Building the Manual
+* Installing Manual::            Install the .info Manual
+@end menu
+
+@node Building Manual
+@subsection Building the Manual
+
+It should not be necessary to rebuild the org-trello manual. The
+manual is distributed with all three formats already built and ready
+to read. If the org-trello.info, .HTML and .PDF files already exist,
+you don’t need to read this section.
+
+This manual was written with Emacs and org-mode as “org-trello.org”,
+then exported to TexInfo format as “org-trello.texi” using the Texinfo
+exporter included with org-mode. Then, the .texi file should be
+converted to .info, .HTML, or .PDF using the commands included with
+the Texinfo package.
+
+The “Makefile” includes the commands to make all three formats when
+you invoke it with “make all”. You may also request “make info”, “make
+view” (to view the new info manual), “make html” and “make pdf”. For
+any of these commands, you must install Texinfo and edit the top of
+the Makefile to provide the location of the Texinfo commands.
+
+If you lack Texinfo, you may instead export org-trello.org directly to
+.info, .HTML or .PDF using Emacs. Without Texinfo, the resulting HTML or
+PDF document will be slightly different and will not have an index.
+Texinfo creates a more attractive manual and conforms to GNU style.
+
+@node Installing Manual
+@subsection Installing the .info Manual
+
+To install the org-trello.info manual so that it may be used by Emacs’
+internal info reader or the command-line “info” command, you must:
+
+@enumerate
+@item
+Optionally, use gzip to compress the .info file to .info.gz
+@item
+Copy or “install” the .info.gz (or .info) file info a folder listed in INFOPATH
+@item
+Use “install-info” to insert the new .info.gz file into info’s “dir”
+file in that folder.
+@end enumerate
+
+This process is described in the @ref{Creating an Info File,Texinfo manual,,texinfo,}.
+
+If you edit the top of the “Makefile” to provide the location of the
+folder in your INFOPATH where the .info should be installed, the
+“Makefile” will execute the gzip, install and install-info commands
+when you type “make install”.
+
+Once installed, you may invoke the command-line “info” reader or
+Emacs’ internal info reader to view the listing of info manuals. The
+info reader assembles the directory of info manuals from all the “dir”
+files in the INFOPATH and may be different in each reader. Locate
+“org-trello” in this list or use “m org-trello” to jump to it.
+
+@node Migrating
+@section Migrating to New Releases
+
+@cindex migrating
+If you have previously installed and used a previous release of
+@samp{org-trello}, this section describes how to migrate your existing
+@samp{org-trello} installation to a new release.
+
+@menu
+* Migrate to 0.8.1: Migrate to 081. 
+* Migrate to 0.7.0: Migrate to 070. 
+* Migrate to 0.6.7: Migrate to 067. 
+* Migrate to 0.6.6: Migrate to 066. 
+* Migrate to 0.5.5: Migrate to 055. 
+* Migrate to 0.5.3: Migrate to 053. 
+* Migrate to 0.5.2: Migrate to 052. 
+* Migrate to 0.3.8: Migrate to 038. 
+* Migrate to 0.3.1: Migrate to 031. 
+* Migrate to 0.2.9: Migrate to 029. 
+* Migrate to 0.2.8: Migrate to 028. 
+* Migrate 0.2.1 to 0.2.2: Migrate 021 to 022. 
+* Migrate 0.1.5 to 0.1.6: Migrate 015 to 016. 
+* Migrate 0.1.1 to 0.1.2: Migrate 011 to 012. 
+@end menu
+
+@node Migrate to 081
+@subsection Migrate to 0.8.1
+
+The @samp{org-trello} key properties used in the buffer were clashing with
+higher org-mode functionality (lookup, cf.
+@uref{https://github.com/org-trello/org-trello/issues/366}).
+
+Those properties were renamed with clash free names (@samp{-} separator
+symbol was replaced with @samp{_}).
+
+To help the migration, a routine has been integrated. This should not be
+needed by the user though (the migration is integrated to the actions).
+Still, if the user wants it, (s)he can do it through @code{M-x
+org-trello-migrate-buffer}.
+
+@node Migrate to 070
+@subsection Migrate to 0.7.0
+
+As of now, @samp{org-trello} respects elisp conventions regarding the setup
+file location. So the default @emph{~}.trello// will be moved silently to
+@emph{~}.emacs.d/.trello//
+
+Also, now users can use multiple trello accounts. So, provided you have
+multiple accounts, some commands will ask you when they need you to
+choose an account. Also, a silent migration will occur to existing
+buffers. For example, if you have a buffer setup-ed with a user @emph{tony},
+your existing configuration file @emph{~}.trello/config.el/ will be moved to
+@emph{~}.emacs.d/.trello/tony.el/
+
+Again, @samp{org-trello} tries to respect elisp conventions regarding command
+names. So the command names have been renamed from @emph{org-trello/} to
+@emph{org-trello-}. Still, the old command names are available.
+
+@node Migrate to 067
+@subsection Migrate to 0.6.7
+
+The comments are now displayed inline in the card. So the binding to
+show the comments have been removed. To see comments, simply unfold the
+card.
+
+@node Migrate to 066
+@subsection Migrate to 0.6.6
+
+We can now remove a comment at point (if we are the owner of the
+comment). Use @code{M-x org-trello-delete-card-comment}.
+
+@node Migrate to 055
+@subsection Migrate to 0.5.5
+
+Default bindings have been updated.
+
+@multitable {aaaaaaaaa} {aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa}
+@headitem Bindings
+@tab Action
+@item C-c o C
+@tab Add comments to the cards at point.
+@item 
+@tab To show the cards comments, use @code{C-u M-x org-trello-add-card-comments} (C-u C-c o C)
+@item C-c o o
+@tab Removed. To show the cards comments, use C-u C-c o C
+@end multitable
+
+Of course, as usual, if you are not happy with this, simply update @uref{bindings.html#bindings-override, your configuration file}.
+
+@node Migrate to 053
+@subsection Migrate to 0.5.3
+
+Lots of work has been done to make @samp{org-trello}:
+
+@itemize
+@item
+more responsive (almost no more blocking actions).
+@item
+faster (trello queries have been improved to let the trello servers do
+the computations)
+@end itemize
+
+Default @uref{http://org-trello.github.io/bindings.html#keybindings, interactive commands} names have been renamed to be explicit
+and aligned between them.
+
+@node Migrate to 052
+@subsection Migrate to 0.5.2
+
+Decision has been taken to remove the intermediary proxy used to bounce
+requests to trello. This was introduced to permit asynchronous requests.
+This was only partially applied. So too many lines of code to maintain
+for small benefits.
+
+This version is synchronous as it was in the beginning (The base code is
+not the same though).
+
+This is a temporary setback. We need time to craft a better
+implementation for asynchronous requests (deferred, async libraries
+seems interesting enough).
+
+@node Migrate to 038
+@subsection Migrate to 0.3.8
+
+@samp{org-trello} now tries to enforce symmetry, mainly regarding the sync
+actions. So by default, an action pushes to trello. Using C-u, the
+symmetric action pulls from trello.
+
+@multitable {aaaaaaaaaaa} {aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa}
+@headitem Bindings
+@tab Action
+@item C-c o c
+@tab sync the entity TO trello without its structure
+@item C-u C-c o c
+@tab sync the entity FROM trello without its structure
+@item C-c o C
+@tab sync the entity and its structure TO trello
+@item C-u C-c o C
+@tab sync the entity and its structure FROM trello
+@item C-c o s
+@tab sync the buffer TO trello
+@item C-u C-c o s
+@tab sync the buffer FROM trello
+@item C-c o a
+@tab assign yourself to the card
+@item C-u C-c o a
+@tab unassign yourself from the card
+@end multitable
+
+@node Migrate to 031
+@subsection Migrate to 0.3.1
+
+The old checklist/item format has been removed -
+@uref{https://github.com/org-trello/org-trello/issues/105}. Now the org
+checkbox way is the standard one.
+
+@node Migrate to 029
+@subsection Migrate to 0.2.9
+
+For information, from 0.2.9 onward, the property “orgtrello-id” from the
+checkbox (checklists, items) will be hidden.
+
+@emph{Note}
+
+@itemize
+@item
+Upon activating @samp{org-trello} minor mode, all existing checkbox will be
+migrated and should disappear before your eyes.
+@item
+Symmetrically, when deactivating @samp{org-trello}, all checkbox will appear.
+@item
+For this, @samp{org-trello} use @uref{https://www.gnu.org/software/emacs/manual/html_node/elisp/Overlays.html, overlays}
+(implementation detail which permits to hide buffer region).
+@end itemize
+
+If you began to use @samp{org-trello}, nothing to do.
+
+@node Migrate to 028
+@subsection Migrate to 0.2.8
+
+From 0.2.8 onward, the card description can be synchronized too. Just
+synchronize as usual.
+
+@node Migrate 021 to 022
+@subsection Migrate 0.2.1 to 0.2.2
+
+From the 0.2.2 version onward, we can assign people to card. As a
+pre-requisite, we need to re-install the board (C-c o I), so that new
+properties will be installed (users currently assigned to the board we
+attach to).
+
+This way, you will be able to use the assign (C-c o a) / unassign (C-c o
+u) yourself to the card.
+
+@node Migrate 015 to 016
+@subsection Migrate 0.1.5 to 0.1.6
+
+@samp{org-trello} now uses more natural ways of dealing with checklists using
+checkboxes!
+
+cf. @uref{migration.html#natural-org-format-from-016-onwards, natural org format (from 0.1.6 onwards)} for more details.
+
+@node Migrate 011 to 012
+@subsection Migrate 0.1.1 to 0.1.2
+
+@itemize
+@item
+From version 0.1.1, some http requests will be asynchronous. For this,
+we use elnode as a proxy server to make requests to trello. The elnode
+server is started on the port 9876. You can always change this port
+@end itemize
+
+@example
+(setq *ORGTRELLO-PROXY-PORT* 9876)
+@end example
+
+Then M-x orgtrello-proxy/reload
+
+@node Connecting
+@chapter Connecting to Trello.com
+
+@cindex connecting
+This section describes how to connect org-trello to Trello.com. There
+are two steps:
+@itemize
+@item
+Installing your Trello-com Credentials
+@item
+Connecting a buffer to a Trello board.
+@end itemize
+
+@menu
+* Installing Credentials::       Installing Your Trello.com Credentials
+* Connect Existing Board::       Connect a Buffer to an Existing board
+* Create a Board::               Create a Board from a Buffer
+@end menu
+
+@node Installing Credentials
+@section Installing Your Trello.com Credentials
+
+@cindex installing, credentials
+@cindex connecting, credentials
+You must install the @code{org-trello-consumer-key} and the read-write
+@code{org-trello-access-token} to permit org-trello to access your trello
+boards.
+
+@emph{Note:} This procedure only needs to be done once unless you revoke
+the token.
+
+First, ensure that:
+@itemize
+@item
+emacs is configured to use an external web browser. Text-only web
+browsers internal to Emacs, like @samp{eww}, @samp{w3} or @samp{w3m-mode}, can not
+execute the required JavaScript.
+@item
+the web browser emacs is configured to use is started
+@item
+you are logged into Trello.
+@item
+you know your exact Trello account name. @strong{DO NOT} use your
+email address as your account name. To confirm your account name,
+check that @uref{https://trello.com/*your-account-name}* exists.
+@end itemize
+
+Then, in Emacs, type:
+@itemize
+@item
+@code{C-c o i}, or 
+@item
+@code{M-x org-trello-install-key-and-token}
+@end itemize
+
+This command will:
+
+@itemize
+@item
+ask for an account name, which must be your trello login. @strong{DO NOT} use your
+email address as your account name.
+
+@item
+open your browser for you to select and copy your
+@emph{org-trello-consumer-key} (Developer API Keys / key entry) and paste
+it inside emacs' minibuffer (hit RET when done).
+@end itemize
+
+@image{images/retrieve-consumer-key,,,,png}
+
+@itemize
+@item
+open a second tab to ask you to authorize org-trello to work in your
+name on your account
+@end itemize
+
+@image{images/authorize-org-trello,,,,png}
+
+@itemize
+@item
+If you are not ok with this, hit @emph{Deny}. You won't be
+able to use org-trello.
+
+@item
+Otherwise, hit @emph{Allow}, this will then present you a form with the
+read/write @emph{org-trello-access-token}, select and copy it, then paste it
+inside emacs' minibuffer and hit RET@.
+@end itemize
+
+@emph{Note:} This command, if accepted, results in a file stored @emph{only} on
+your disk in ~/.emacs.d/.trello/.el</kbd> (this path may vary depending
+on @strong{@strong{user-emacs-directory}}).
+
+This file contains your credentials and will be used to identify you
+when requesting trello.
+
+@lisp
+(setq org-trello-consumer-key "abc...")  ;; 32 characters string
+(setq org-trello-access-token "def...")  ;; 64 characters string
+@end lisp
+
+@node Connect Existing Board
+@section Connect an org-mode buffer with an existing Trello board.
+
+@cindex connnecting, existing board
+For each org-mode file that you wish to use with Trello.com, you need
+to connect your org-mode file with a Trello board.
+
+@emph{Note:} This procedure must be done only once for each org-mode file you want to
+sync with a Trello board.
+
+To connect an buffer to an existing board, type:
+
+@itemize
+@item
+@code{C-c o I}, or 
+@item
+@code{M-x org-trello-install-board-metadata}
+@end itemize
+
+This will:
+
+@itemize
+@item
+ask you for the accounts you want to use (if you have multiple ones,
+otherwise, it will select the only one and pass to the next step silently)
+
+@item
+present you with a list of boards for the selected account. Select the
+one you want and hit enter.
+
+@item
+edit your org-mode file to add the properties needed.
+@end itemize
+
+@node Create a Board
+@section Create a Trello board from your org-mode buffer.
+
+@cindex connecting, new board
+You can create a new Trello board from your existing org-mode file. 
+
+@emph{Note:} This procedure must be done only once for each org-mode
+file you want to sync with a Trello board.
+
+Type:
+
+@itemize
+@item
+@code{C-c o b}, or
+@item
+@code{M-x org-trello-create-board-and-install-metadata}
+@end itemize
+
+This will:
+
+@itemize
+@item
+ask you for the accounts you want to use (if you have multiple ones,
+otherwise, it will select the only one and pass to the next step silently)
+
+@item
+create the Trello board lists from the keywords configured in your
+org-mode (cf. @uref{http://orgmode.org/manual/In_002dbuffer-settings.html, org-todo-keywords})
+@end itemize
+
+@node Using
+@chapter Using @samp{org-trello}
+
+@cindex using
+This section describes how to use @samp{org-trello}.
+
+@menu
+* Quick Start::                  First Steps with =org-trello=
+* Commands::                     Commands
+* Format::                       Format of =org-trello=
+@end menu
+
+@node Quick Start
+@section Quick Start
+
+@cindex quick start
+First, do the @ref{Installing, , installation} and the @ref{Connecting, , connection}.
+
+A typical starting point is to synchronize a Trello board to the
+current buffer. To do this, type:
+
+@itemize
+@item
+@code{C-u C-c o s}, or
+@item
+@code{C-u M-x org-trello-sync-buffer}
+@end itemize
+
+This will fetch the current board's data and write it inside the current
+buffer. From then on, you can use your org buffer as usual.
+
+When you want to update the Trello board from the org buffer, type:
+
+@itemize
+@item
+@code{C-c o c/C-c o C}, to update the card at point, or
+@item
+@code{C-c o s}, to sync all the entities from your buffer to Trello.
+@end itemize
+
+When you want to update the org buffer from trello:
+
+@itemize
+@item
+@code{C-u C-c o c}, or
+@item
+@code{C-u C-c o C}, to update the card at point from Trello.
+@end itemize
+
+For more usage details, see below.
+
+@node Commands
+@section @strong{CHEK} Commands
+
+@cindex commands, summary
+This section describes all commands and their key bindings.
+
+All default @samp{org-trello} key-bindings use the “C-c o” prefix.
+
+@emph{Note:} You may type “C-c o C-h” to display help for most @samp{org-trello}
+key bindings.
+
+@multitable {aaaaaaaaaaa} {aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa}
+@headitem ‍Binding
+@tab Description
+@item 
+@tab @strong{Help Commands}
+@item C-c o C-h
+@tab Display help on all key-bindings with C-c o prefix.
+@item C-c o h
+@tab Display a help message from org-trello.
+@item C-c o v
+@tab Display the version of @samp{org-trello}.
+@item .
+@tab 
+@item 
+@tab @strong{Connection Commands}
+@item C-c o i
+@tab Install the Trello.com login key and access token.
+@item C-c o I
+@tab Choose an existing board and connect this buffer.
+@item C-c o b
+@tab Create a new Trello board and connect this buffer
+@item C-c o u
+@tab Update this buffer’s Trello board meta-data.
+@item C-c o d
+@tab Diagnose the setup.
+@item C-c o D
+@tab Delete all Trello metadata from this buffer.
+@item .
+@tab 
+@item 
+@tab @strong{Synchronization Commands}
+@item C-c o c
+@tab Create or synchronize a complete card, list or item.
+@item C-c o s
+@tab Synchronize FROM the entire buffer TO Trello.
+@item C-u C-c o s
+@tab Synchronize TO the entire buffer FROM Trello.
+@item C-c o g
+@tab Abort any synchronization in progress. (like C-g)
+@item .
+@tab 
+@item 
+@tab @strong{Editing Commands}
+@item C-c C-x C-s
+@tab Archive the card at point. (Standard org binding)
+@item C-c o A
+@tab Archive all DONE cards.
+@item C-c o k
+@tab Kill the entity and its tree from buffer and Trello.
+@item C-c o K
+@tab Kill ALL entities and trees from buffer and Trello.
+@item C-c o a
+@tab Toggle assign/un-assign myself to this card.
+@item C-c o t
+@tab Toggle assign/un-assign myself to this card.
+@item C-c o C
+@tab Add a comment to this card in buffer and Trello.
+@item C-u C-c o C
+@tab Remove this comment from the buffer and Trello.
+@item C-c o U
+@tab Update an existing comment in the buffer to Trello.
+@item C-u C-c o U
+@tab Remove this comment from the buffer and Trello.
+@item .
+@tab 
+@item 
+@tab @strong{Other Commands}
+@item C-c o l
+@tab Display the board’s labels in a pop-up buffer.
+@item C-c o j
+@tab Jump to this card on Trello.com in browser.
+@item C-c o J
+@tab Jump to this board on Trello.com in browser.
+@item C-c o B
+@tab Prepare a bug report.
+@end multitable
+
+Some commands are modified by adding a C-u prefix to the command.
+
+@multitable {aaaaaaa} {aaaaaaaaaaaaaaaaaaaaa} {aaaaaaaaaaaaaaaaaaaaaaa}
+@headitem Command
+@tab Unmodified
+@tab With C-u Prefix
+@item C-c o s
+@tab Sync buffer to Trello
+@tab Sync buffer from Trello
+@item C-c o C
+@tab Add a comment
+@tab Remove this comment
+@item C-c o U
+@tab Update a comment
+@tab Remove this comment
+@item C-c o B
+@tab Create a bug-report
+@tab Open an issue too
+@end multitable
+
+@menu
+* Help Cmds::                    Help Commands
+* Connection Cmds::              Connection Commands
+* Synch Cmds::                   Synchronization Commands
+* Editing Cmds::                 Editing Commands
+* Misc Cmds::                    Misc. Commands
+@end menu
+
+@node Help Cmds
+@subsection @strong{CHEK} Help Commands
+
+@cindex commands, help
+@cindex help commands
+This section describes the help functions.
+
+@kindex C-c o C-h
+@kindex C-c o h
+@findex org-trello-help-describing-bindings
+@kindex C-c o v
+@findex org-trello-version
+@table @kbd
+@item C-c o C-h
+Display help for all bindings with C-c o prefix. This
+is a standard Emacs help function.
+
+@item C-c o h
+@itemx M-x org-trello-help-describing-bindings
+Display a help
+message from @samp{org-trello} describing bindings.
+
+@item C-c o v
+@itemx M-x org-trello-version
+Display the installed version of
+@samp{org-trello}.
+@end table
+
+@node Connection Cmds
+@subsection @strong{CHEK} Connection Commands
+
+@cindex commands, connection
+@cindex connection commands
+This section describes the functions used to connect @samp{org-trello} to
+Trello.com and to attach an org file to a Trello board.
+
+@kindex C-c o i
+@findex org-trello-install-key-and-token
+@kindex C-c o I
+@findex org-trello-install-board-metadata
+@kindex C-c o b
+@findex org-trello-create-board-and-install-metadata
+@kindex C-c o u
+@findex org-trello-update-board-metadata
+@kindex C-c o d
+@findex org-trello-check-setup
+@kindex C-c o D
+@findex org-trello-delete-setup
+@table @kbd
+@item C-c o i
+@itemx M-x org-trello-install-key-and-token
+Install the keys
+and the access-token.
+
+@item C-c o I
+@itemx M-x org-trello-install-board-metadata
+Select the board
+and connect the todo, doing and done list.
+
+@item C-c o b
+@itemx M-x org-trello-create-board-and-install-metadata
+Create
+a board interactively and connect the newly created Trello board
+to the current org file.
+
+@item C-c o u
+@itemx M-x org-trello-update-board-metadata
+Update the current
+buffer’s Trello board metadata.
+
+@item C-c o d
+@itemx M-x org-trello-check-setup
+Check that the setup is ok.
+If everything is ok, this will simply display ’Setup ok!’.
+
+@item C-c o D
+@itemx M-x org-trello-delete-setup
+Delete all Trello metadata
+from the current buffer.
+@end table
+
+@node Synch Cmds
+@subsection @strong{CHEK} Synchronization Commands
+
+@cindex commands, synchronization
+@cindex sync. commands
+This section describes the synchronization commands used to move data
+between the buffer and Trello.com.
+
+@kindex C-c o c
+@findex org-trello-sync-card
+@kindex C-c o s
+@kindex C-u C-c o s
+@findex org-trello-sync-buffer
+@kindex C-c o g
+@findex org-trello-abort-sync
+@table @kbd
+@item C-c o c
+@itemx M-x org-trello-sync-card
+Create or update a complete card.
+
+@item C-c o s
+@itemx M-x org-trello-sync-buffer
+Synchronize the org-mode file
+to the Trello board (org-mode -> trello). 
+
+@item C-u C-c o s
+With prefix C-u, synchronize the Trello board to the
+org-mode file (org-mode <- trello).
+
+@item C-c o g
+@itemx M-x org-trello-abort-sync
+Abort synchronization
+activities.
+@end table
+
+@node Editing Cmds
+@subsection @strong{CHEK} Editing Commands
+
+@cindex commands, editing
+@cindex editing commands
+This section describes the functions used to edit, archive and delete
+cards, comments and list items.
+
+@kindex C-c C-x C-s
+@findex org-archive-subtree
+@kindex C-c o A
+@findex org-trello-archive-cards
+@kindex C-c o k
+@findex org-trello-kill-entity
+@kindex C-c o K
+@findex org-trello-kill-cards
+@kindex C-c o a
+@kindex C-c o t
+@findex org-trello-toggle-assign-me
+@kindex C-c o C
+@kindex C-u C-c o C
+@findex org-trello-add-card-comment
+@kindex C-c o U
+@kindex C-u C-c o U
+@findex org-trello-sync-comment
+@table @kbd
+@item C-c C-x C-s
+@itemx M-x org-archive-subtree
+Archive the sub-tree at
+point position to the location given by @code{org-archive-location}.
+This is a standard org-mode function.
+
+@item C-c o A
+@itemx M-xx org-trello-archive-cards
+Archive all the DONE cards
+from the buffer.
+
+@item C-c o k
+@itemx M-x org-trello-kill-entity
+Kill the entity and its
+tree from the Trello board and the org buffer.
+
+@item C-c o K
+@itemx M-x org-trello-kill-cards
+Kill all the entities and
+their trees from the Trello board and the org buffer.
+
+@item C-c o a
+@itemx C-c o t
+@itemx M-x org-trello-toggle-assign-me
+Toggle assign oneself to
+the card. If not assigned, assign self and vice versa.
+
+@item C-c o C
+@itemx M-x org-trello-add-card-comment
+Add a comment to the
+card. 
+
+@item C-u C-c o C
+With prefix C-u, remove the current card’s comment.
+
+@item C-c o U
+@itemx M-x org-trello-sync-comment
+Sync a comment to trello.
+
+@item C-u C-c o U
+With prefix C-u, remove the current card’s comment.
+@end table
+
+@node Misc Cmds
+@subsection @strong{CHEK} Other Commands
+
+@cindex commands, other
+@cindex browser commands
+This section describes other functions not listed above.
+
+@kindex C-c o l
+@findex org-trello-show-board-labels
+@kindex C-c o j
+@findex org-trello-jump-to-trello-card
+@kindex C-c o J
+@findex org-trello-jump-to-trello-board
+@kindex C-c o B
+@kindex C-u C-c o B
+@findex org-trello-bug-report
+@table @kbd
+@item C-c o l
+@itemx M-x org-trello-show-board-labels
+Display the board’s
+labels in a pop-up buffer.
+
+@item C-c o j
+@itemx M-x org-trello-jump-to-trello-card
+Jump to card in the
+browser.
+
+@item C-c o J
+@itemx M-x org-trello-jump-to-trello-board
+Open the browser to
+your current Trello board.
+
+@item C-c o B
+@itemx M-x org-trello-bug-report
+Prepare a bug report message.
+
+@item C-u C-c o B
+With C-u, also opens a new issue in org-trello’s github
+tracker too.
+@end table
+
+@node Format
+@section Format of org-trello
+
+@cindex format
+@cindex buffer format
+This section describes the format of the text in an @samp{org-trello} buffer.
+
+There are 3 levels of meta-data:
+
+@itemize
+@item
+level 1 - Card
+@item
+level 2 - Checklist
+@item
+level 3 - Item
+@end itemize
+
+@uref{http://orgmode.org/manual/Checkboxes.html, Natural org checkboxes}.
+Thanks to @@sw1nn @uref{https://github.com/org-trello/org-trello/issues/14, for showing me this org feature, this is awesome!}
+
+@example
+* IN-PROGRESS Joy of FUN(ctional) LANGUAGES
+- [-] LISP
+  - [X] Emacs-Lisp
+  - [X] Common-Lisp
+  - [ ] Scheme
+  - [X] Clojure
+- [X] ML
+  - [X] Haskell
+  - [X] Ocaml
+- [X] Hybrid
+  - [X] Scala
+- [ ] little more detail, this is level 2, so a checklist in trello board
+  - [ ] item level 3
+    - [ ] any entities at level 4 or higher are considered level 3
+@end example
+
+For example, once synced to trello, this looks like:
+
+@example
+* IN-PROGRESS Joy of FUN(ctional) LANGUAGES
+:PROPERTIES:
+:orgtrello-id: 521dc9f3edeabee47600401e
+:END:
+- [-] LISP :PROPERTIES: @{"orgtrello-id":"521dc9f48e95d74636004107"@}
+  - [X] Emacs-Lisp :PROPERTIES: @{"orgtrello-id":"521dc9f7487c2e9b250047a5"@}
+  - [X] Common-Lisp :PROPERTIES: @{"orgtrello-id":"521dc9f7ae27842a36003b26"@}
+  - [ ] Scheme :PROPERTIES: @{"orgtrello-id":"521dc9f834f52df935003b15"@}
+  - [X] Clojure :PROPERTIES: @{"orgtrello-id":"521dc9f9c1b85c905f006b4e"@}
+- [X] ML :PROPERTIES: @{"orgtrello-id":"521dc9f5d49a919614000266"@}
+  - [X] Haskell :PROPERTIES: @{"orgtrello-id":"521dc9fa5699f00b25003bd0"@}
+  - [X] Ocaml :PROPERTIES: @{"orgtrello-id":"521dc9fb7ef4310554003ab3"@}
+- [X] Hybrid :PROPERTIES: @{"orgtrello-id":"521dc9f6238d072770007217"@}
+  - [X] Scala :PROPERTIES: @{"orgtrello-id":"521dc9fc8e95d74636004109"@}
+@end example
+
+@emph{Note} In the org-trello buffer, the :PROPERTIES: for the checklists/items
+won't be visible for the user.
+
+@node Troubleshooting
+@chapter Troubleshooting @samp{org-trello}
+
+@cindex troubleshooting
+This section gives information helpful for troubleshooting org-trello.
+
+@menu
+* Common Issues::                Common Issues
+* Error Messages::               Error Messages
+@end menu
+
+@node Common Issues
+@section Common Issues
+
+#+CINDEX issues
+This section addresses some common issues with installing and using @samp{org-trello}.
+
+@itemize
+@item
+Why am I getting errors about credentials loading, like below?
+
+@example
+org-trello - Request ’sync org buffer to Trello board’...
+org-trello - List of errors:
+ - Setup problem - Problem during credentials loading (consumer-key
+   and read/write access-token) - C-c o i or M-x org-trello-install-key-and-token
+ - Setup problem - You need to install the consumer-key and the
+   read/write access-token - C-c o i or M-x org-trello-install-key-and-token
+@end example
+
+If you have already @ref{Installing Credentials, , set up your credentials}, then please make sure the
+login you used in the credential installation step match your trello
+login exactly, that is:
+
+@itemize
+@item
+Check @samp{https://trello.com/<user-login>} exists
+@item
+@samp{<User-login>} in the buffer is the same as the org-trello login:
+@samp{#+PROPERTY: orgtrello-user-me <user-login>}@*
+at the org-trello buffer top must match too.
+@end itemize
+
+@item
+For issues not listed above, please see @ref{Issues, , these instructions} about the
+issue list on GitHub.
+@end itemize
+
+@node Error Messages
+@section Error Messages
+
+@cindex error messages
+
+@samp{org-trello} can display the following possible error messages:
+
+@itemize
+@item
+Failed to set up the consumer-key and the access-token:
+
+@quotation
+Setup problem - You need to install the consumer-key and the
+read/write access-token - C-c o i or M-x
+org-trello-install-board-metadata
+
+@end quotation
+
+@item
+Failed to setting up the org-mode buffer:
+
+@quotation
+Setup problem. Either you did not connect your org-mode buffer
+with a Trello board, to correct this:
+
+@itemize
+@item
+attach to a board through C-c o I or M-x
+org-trello-install-board-metadata
+@item
+or create a board from scratch with C-c o b or M-x
+org-trello-create-board-and-install-metadata). Either your
+org-mode's todo keyword list and your Trello board lists are not
+named the same way (which they must). For this, connect to
+trello and rename your board's list according to your org-mode's
+todo list.
+@end itemize
+
+@end quotation
+
+@item
+The board's list names are different from your org-mode's keyword
+list:
+
+@quotation
+Setup problem. Either you did not connect your org-mode buffer
+with a Trello board, to correct this:
+
+@itemize
+@item
+attach to a board through C-c o I or M-x
+org-trello-install-board-metadata
+@item
+or create a board from scratch with C-c o b or M-x
+org-trello-create-board-and-install-metadata). Either your
+org-mode's todo keyword list and your Trello board lists are not
+named the same way (which they must). For this, connect to
+trello and rename your board's list according to your org-mode's
+todo list. Also, you can specify on your org-mode buffer the
+todo list you want to work with, for example: #+TODO: TODO DOING
+@multitable {aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa}
+@item DONE FAIL (hit C-c C-c to refresh the setup)
+@end multitable
+@end itemize
+
+@end quotation
+
+@item
+No label on the card:
+
+@quotation
+Cannot synchronize the card - missing mandatory label. Skip it@dots{}
+
+@end quotation
+
+@item
+No label on the checklist:
+
+@quotation
+Cannot synchronize the checklist - missing mandatory label. Skip
+it@dots{}
+
+@end quotation
+
+@item
+No label on the item:
+
+@quotation
+Cannot synchronize the item - missing mandatory label. Skip it@dots{}
+
+@end quotation
+
+@item
+syncing the checklist without syncing the card first:
+
+@quotation
+Cannot synchronize the checklist - the card must synchronized first.
+Skip it@dots{}
+
+@end quotation
+
+@item
+Syncing the item without syncing the checklist first:
+
+@quotation
+Cannot synchronize the item - the checklist must be synchronized
+first. Skip it@dots{}
+
+@end quotation
+@end itemize
+
+@node Customizing
+@chapter Customizing @samp{org-trello}
+
+@cindex customizing
+This section describes how you may customize @samp{org-trello}.
+
+@menu
+* Prefix Keys::                  Customizing the Prefix Keybinding
+* Individual Keys::              Customizing Individual Key Bindings
+* Variables::                    Customizing Variables
+* Example::                      Example Emacs-Lisp Customization
+* Auto Files::                   Automatic =org-trello= Files
+@end menu
+
+@node Prefix Keys
+@section Customizing the Prefix Keybinding
+
+@cindex customizing, prefix keybinding
+@vindex org-trello-current-prefix-keybinding
+By default, @samp{org-trello} uses the prefix keybinding “C-c o” to begin
+(almost) all of its commands. You may change this by customizing the
+variable @code{org-trello-current-prefix-keybinding}.
+
+To customize @code{org-trello-current-prefix-keybinding}, type @code{C-h v
+org-trello-current-prefix-keybinding RET} to display the help text for this
+variable. Then follow the “customize” link on the last line. You
+may then use the customize interface to set another prefix keybinding.
+
+@emph{Note:} If @samp{org-trello} is already running, you must restart emacs after
+customizing this variable (or run @code{M-x org-trello-mode} - @emph{twice}).
+
+You may also change this setting in your emacs initialization file.
+For example, to change the @samp{org-trello} prefix keybinding to @code{C-c x} add
+these lines to your Emacs initialization file (~/.emacs or ~/.emacs.d/.init.el):
+
+@lisp
+(require 'org-trello)
+(custom-set-variables '(org-trello-current-prefix-keybinding "C-c x"))
+@end lisp
+
+For an example, please see my @uref{https://github.com/ardumont/orgmode-pack/blob/master/orgmode-pack.el#L57, startup file}.
+
+@node Individual Keys
+@section Customizing Individual Keybindings
+
+@cindex customizing, keybindings
+@vindex org-trello-mode-map
+To redefine one or more org-trello-mode command keybindings, you should create a
+function to define keys in the org-trello-mode-map and hook your
+function to the org-trello-mode-hook. This will make @samp{org-trello} run
+your function each time it starts.
+
+@lisp
+(require 'org-trello)
+
+(defun def-my-org-trello-keys () "Define my org-trello keys."
+  (define-key org-trello-mode-map (kbd "C-c x v") 'org-trello-version)
+  (define-key org-trello-mode-map (kbd "C-c x i") 'org-trello-install-key-and-token)
+  (define-key org-trello-mode-map (kbd "C-c x I") 'org-trello-install-board-metadata)
+  (define-key org-trello-mode-map (kbd "C-c x c") 'org-trello-sync-card)
+  (define-key org-trello-mode-map (kbd "C-c x s") 'org-trello-sync-buffer)
+  (define-key org-trello-mode-map (kbd "C-c x a") 'org-trello-assign-me)
+  (define-key org-trello-mode-map (kbd "C-c x d") 'org-trello-check-setup)
+  (define-key org-trello-mode-map (kbd "C-c x D") 'org-trello-delete-setup)
+  (define-key org-trello-mode-map (kbd "C-c x b") 'org-trello-create-board-and-install-metadata)
+  (define-key org-trello-mode-map (kbd "C-c x k") 'org-trello-kill-entity)
+  (define-key org-trello-mode-map (kbd "C-c x K") 'org-trello-kill-cards)
+  (define-key org-trello-mode-map (kbd "C-c x a") 'org-trello-archive-card)
+  (define-key org-trello-mode-map (kbd "C-c x A") 'org-trello-archive-cards)
+  (define-key org-trello-mode-map (kbd "C-c x j") 'org-trello-jump-to-trello-card)
+  (define-key org-trello-mode-map (kbd "C-c x J") 'org-trello-jump-to-trello-board)
+  (define-key org-trello-mode-map (kbd "C-c x C") 'org-trello-add-card-comments)
+  (define-key org-trello-mode-map (kbd "C-c x o") 'org-trello-show-card-comments)
+  (define-key org-trello-mode-map (kbd "C-c x l") 'org-trello-show-card-labels)
+  (define-key org-trello-mode-map (kbd "C-c x u") 'org-trello-update-board-metadata)
+  (define-key org-trello-mode-map (kbd "C-c x h") 'org-trello-help-describing-bindings))
+
+(add-hook 'org-trello-mode-hook 'def-my-org-trello-keys)
+@end lisp
+
+@emph{Note:} This will not update the help messages to match your
+key-bindings nor remove the default keybindings.
+
+You may add several lines like this one to your hook function to
+remove specific existing @samp{org-trello} keybindings:
+
+@lisp
+(define-key org-trello-mode-map (kbd "C-c o v") nil)
+@end lisp
+
+@node Variables
+@section Customizing @samp{org-trello} Variables
+
+@cindex customizing, variables
+You may customize @samp{org-trello} settings by typing: @*
+@code{M-x customize-group RET org-trello RET}.
+
+You may customize any of the following variables from the user-interface.
+
+@example
+Parent groups: Org
+
+Org-trello group:  Org-trello customisation group.
+       State : visible group members are all at standard values.
+@end example
+
+@menu
+* org-trello-add-tags::
+* org-trello-current-prefix-keybinding::
+* org-trello-files::
+* org-trello-input-completion-mechanism::
+* org-trello-mode-hook::
+* orgtrello-log-level::
+* orgtrello-setup-use-position-in-checksum-computation::
+* orgtrello-with-check-on-sensible-actions::
+@end menu
+
+@node org-trello-add-tags
+@subsection org-trello-add-tags
+
+@vindex org-trello-add-tags
+Set this variable to @code{t} to add the Trello category colors to the
+org-mode tags list, otherwise set to @code{nil}. The default is @code{t}.
+
+@example
+Org Trello Add Tags 
+   Add trello colors to org tags list?
+@end example
+
+@node org-trello-current-prefix-keybinding
+@subsection org-trello-current-prefix-keybinding
+
+@vindex org-trello-current-prefix-keybinding
+Set this variable to the key prefix you want for org-trello commands.
+The default is @code{C-c o}.
+
+@example
+Org Trello Current Prefix Keybinding 
+   The default prefix keybinding to execute org-trello commands.
+@end example
+
+@node org-trello-files
+@subsection org-trello-files
+
+@vindex org-trello-files
+Set this list to the files with matching Trello boards that you wish
+to have start org-trello when they open. The default is @code{()}. If you
+do not set this variable, you must start org-trello using @code{M-x org-trello}.  
+
+@example
+Org Trello Files 
+   Org-trello files that needs org-trello activated when opened. Hide
+   This does not support regular expression.
+@end example
+
+@node org-trello-input-completion-mechanism
+@subsection org-trello-input-completion-mechanism
+
+@vindex org-trello-input-completion-mechanism
+Set this variable to either @code{default} or @code{helm} to specify the input
+completion mechanism that org-trello should use. If you select @code{helm},
+you must install the dependencies.
+
+@example
+Org Trello Input Completion Mechanism 
+   The completion mechanism the user can choose from. Hide
+   Default is the native ido mechanism.
+   Other possibilities is helm but it’s up to you to install the dependencies.
+   (require ’helm)
+   (custom-set-variables ’(org-trello-input-completion-mechanism ’helm))
+@end example
+
+@node org-trello-mode-hook
+@subsection org-trello-mode-hook
+
+@vindex org-trello-mode-hook
+Use this hook to extend org-trello with your own function. See @samp{hooks}
+  in the Emacs manual.
+
+@example
+Org Trello Mode Hook 
+   Define org-trello hook for user to extend mode with their own behavior.
+@end example
+
+@node orgtrello-log-level
+@subsection orgtrello-log-level
+
+@vindex orgtrello-log-level
+
+Set this variables to one of the constants below to specify the log
+message level for org-trello to use. The default is @code{3},
+orgtrello-log-info. Higher levels are useful when submitting a bug-report.
+
+@example
+Orgtrello Log Level 
+   Set log level. Hide
+   Levels:
+   0 - no log   (‘orgtrello-log-quiet’)
+   1 - errors   (‘orgtrello-log-error’)
+   2 - warnings (‘orgtrello-log-warn’)
+   3 - info     (‘orgtrello-log-info’)
+   4 - debug    (‘orgtrello-log-debug’)
+   5 - trace    (‘orgtrello-log-trace’)
+   To change such level, add this to your init.el file:
+   (custom-set-variables ’(orgtrello-log-level orgtrello-log-trace))
+@end example
+
+@node orgtrello-setup-use-position-in-checksum-computation
+@subsection orgtrello-setup-use-position-in-checksum-computation
+
+@vindex orgtrello-setup-use-position-in-checksum-computation
+
+Set this variable to @code{t} to use the position of an entity in the
+check-sum computation that triggers updates to Trello. Use @code{nil}
+otherwise. The default is @code{nil}. See the note below.
+
+@example
+Orgtrello Setup Use Position In Checksum Computation 
+   Let the user decide if (s)he wants to use the position in the checksum. Hide
+   The checksum is a hash computation of the current entity’s data to prevent
+   sending too many sync requests if unnecessary (no real change since last time).
+
+   If t, when sync to trello, any change for the current entity will be reflected
+   in trello’s board.  However, a global sync to trello, will trigger many
+   unnecessary sync to trello queries for any entity below the current entity
+   changed...  Indeed, the position changes anytime you insert or delete a char.
+   This renders almost useless the checksum computation.
+
+   Cf.  https://github.com/org-trello/org-trello-issues/271.
+   Please, do not hesitate to provide a better idea or a better implementation.
+
+   If nil, the default, the sync to trello will be limited to what’s really changed
+   (except for the position).  So the entity’s position in trello’s board can be
+   slightly different than the one from the buffer.
+@end example
+
+@node orgtrello-with-check-on-sensible-actions
+@subsection orgtrello-with-check-on-sensible-actions
+
+@vindex orgtrello-with-check-on-sensible-actions
+
+Set this variable to @code{t} to ask the use before doing sensitive actions
+like removing an entity. Set to @code{nil} otherwise.
+
+@example
+Orgtrello With Check On Sensible Actions 
+   Some action can be dangerous removing entity for example. Hide
+   This custom determine if the user wants to be asked confirmation
+   before doing some of those sensitive actions.
+@end example
+
+@node Example
+@section Example Emacs-Lisp Customization
+
+@cindex customizing, using emacs-lisp
+@vindex orgtrello-log-level
+@vindex orgtrello-setup-use-position-in-checksum-computation
+@vindex org-trello-files
+@vindex org-trello-current-prefix-keybinding
+Here is an example of how to configure @samp{org-trello} user-customized
+variables using emacs-lisp:
+
+@lisp
+(custom-set-variables
+   '(orgtrello-log-level orgtrello-log-debug) ;; log level to debug
+   '(org-trello-current-prefix-keybinding "C-c x") ;; C-c x as the default prefix
+   '(orgtrello-setup-use-position-in-checksum-computation nil) ;; checksum without position
+   '(org-trello-files '("~/docs/some-doc.trello"
+                        "~/docs/some-other-doc.org"))) ;; automatic org-trello on files
+@end lisp
+
+To set these variables for the current session, place the cursor after
+the entire s-exp and evaluate it using “M-x eval-last-sexp”.
+
+To make these settings permanent in later sessions, put this code
+inside your emacs setup file (“~/.emacs” or “~/emacs.d/init.el”).
+
+@node Auto Files
+@section Automatic @samp{org-trello} Files
+
+#+CINDEX loading, automatically
+To have emacs automatically start @samp{org-trello} when you open a file with
+a “.trello” extension, add this to your personal emacs setup file:
+
+@lisp
+;; org-trello major mode for all .trello files
+
+(add-to-list 'auto-mode-alist '("\\.trello$" . org-mode))
+
+;; add a hook function to check if this is trello file,
+;; then activate the org-trello minor mode.
+
+(add-hook 'org-mode-hook
+          (lambda ()
+            (let ((filename (buffer-file-name (current-buffer))))
+              (when (and filename (string= "trello" (file-name-extension filename)))
+                (org-trello-mode)))))
+@end lisp
+
+source: @uref{https://github.com/org-trello/org-trello/issues/249}
+
+@node Contributing
+@chapter Development of @samp{org-trello}
+
+@cindex contributing
+
+@menu
+* Credits::                      Contributor Credits
+* Issues::                       Issue List
+* Mailing List::                 Mailing List
+* Releases::                     Release List & Notes
+* Compatibility::                Compatibility with Emacs
+* CI Tests::                     Continuous Integration Tests
+* Conventions::                  Developer’s Conventions
+@end menu
+
+@node Credits
+@section Credits
+
+@cindex credits
+@cindex contributors
+
+Many thanks to all the @uref{https://github.com/org-trello/org-trello/graphs/contributors, contributors} to @samp{org-trello}, including:
+
+@table @asis
+@item @uref{https://github.com/dtebbs, @@dtebbs}       
+@uref{https://github.com/org-trello/org-trello/pull/173, PR - fix on the card description}
+@item @uref{https://github.com/jasom, @@jasom}        
+@uref{https://github.com/org-trello/org-trello/pull/175, PR - improvements on the trello card's description rendering}.
+@item @uref{https://github.com/nicferrier, @@nicferrier}   
+@uref{http://marmalade-repo.org/, marmalade}, @uref{https://github.com/nicferrier/elnode, elnode}, @uref{http://nic.ferrier.me.uk/blog/2012_07/emacs-packages-for-programmers, emacs clean install}@dots{}
+@item @uref{https://twitter.com/nicolas_roche, @@nicolas_roche}
+logo and the multiple suggestions regarding the web design part.
+@item @uref{https://twitter.com/nmassyl, @@nmassyl}      
+multiple exchanges on design and functionalities.
+@item @uref{https://github.com/purcell, @@purcell}      
+various discussions, suggestions regarding packaging on @uref{http://melpa.milkbox.net/, Melpa}
+@item @uref{https://github.com/puzan, @@puzan}        
+org-trello's el-get recipe
+@end table
+
+and thanks to all those that opened @uref{https://github.com/org-trello/org-trello/issues, issues} or @uref{https://github.com/org-trello/org-trello/pulls, pull requests}.
+
+Also, thank you to the entire free-software community world-wide, including the
+creators and contributors of Emacs and org-mode.
+
+@node Issues
+@section Issue List
+
+@cindex issues, list on GitHub
+If you experience an issue while using @samp{org-trello}, please first
+confirm that you have the newest version. If you have an old version,
+please upgrade to the newest version - your issue may already have
+been solved. You may display the version of your copy of @samp{org-trello} by
+typing @code{C-c o v} or @code{M-x org-trello-version}.
+
+If you have the newest version, please search the @uref{https://github.com/org-trello/org-trello/issues, issue list} for
+issues similar to yours. If your issue already exists, please describe
+your experiences in the comments, if different, and try the
+advice offered there, if any.
+
+If you don’t find an issue like yours, you should create a new issue.
+
+You should include the following information in your issue entry:
+
+@itemize
+@item
+Your @samp{org-trello} version
+@item
+Your @samp{org-mode} version
+@item
+Your emacs version
+@item
+Your system type and OS version
+@item
+How you installed @samp{org-trello}:
+@itemize
+@item
+melpa
+@item
+melpa-stable
+@item
+el-get
+@item
+tarball
+@item
+git clone
+@item
+other
+@end itemize
+@item
+A clear, concise and complete description of the issue. Please do state the obvious.
+@item
+Supporting data:
+@itemize
+@item
+A copy of any pertinent messages produced by @samp{org-trello} or Emacs
+@item
+A copy of buffer data necessary to reproduce the issue. (Please avoid posting
+private data. Do not post your Trello.com or other login credentials.)
+@item
+If the issue is with installation, include the @samp{*Compile Log*}
+buffer contents.
+@end itemize
+@end itemize
+
+Please use GitHub’s markdown formatting to improve readability.
+
+We may have questions about your issue or question if we don’t
+understand. You can help us to help you better and faster by being
+clear, concise and complete in your issue description.
+
+@menu
+* Using Bug-Report::             Using org-trello-bug-report
+* Using Log Trace::              Using org-trello-log-trace
+@end menu
+
+@node Using Bug-Report
+@subsection Using @samp{M-x org-trello-bug-report}
+
+@findex org-trello-bug-report
+You may use the bug-report function of @samp{org-trello} to print some
+information about @samp{org-trello} to the @samp{*Messages*} buffer to copy into the
+issue entry. To print the bug-report data, type @code{M-x
+org-trello-bug-report} or @code{C-c o B}. Then open the @samp{*Messages*} buffer
+and copy the block of data it produced to paste into the issue on
+GitHub. The block of data will resemble:
+
+@example
+System information:
+- system-type: darwin
+- locale-coding-system: utf-8-unix
+- emacs-version: GNU Emacs 26.1
+- org version: 9.2
+- org-trello version: 0.8.0
+- org-trello path: ~/.emacs.d/elpa/org-trello-20180331.631/org-trello.el
+- request-backend: curl
+- kill-whole-line: nil
+@end example
+
+If you type @code{C-u C-c o B} instead, @samp{org-trello} will open a new issue on
+GitHub for you to complete.
+
+@node Using Log Trace
+@subsection Using @samp{orgtrello-log-trace}
+
+@findex orgtrello-log-trace
+To obtain a more verbose output in the @strong{@strong{Message}} buffer, you can put
+this snippet of code in a @samp{*scratch*} buffer.
+
+@lisp
+(custom-set-variables '(orgtrello-log-level orgtrello-log-trace))
+@end lisp
+
+and evaluate it with M-x eval-buffer. Then, return to your @samp{org-trello}
+buffer and repeat the conditions that cause the issue. Copy the
+resulting detailed log messages into your bug-report.
+
+@node Mailing List
+@section Mailing List
+
+@cindex mailing list
+This project has a mailing list at @uref{http://librelist.com/browser/emacs.org.trello/, librelist.com} for communication
+and community among its users and contributors. You may join the
+list by sending an email to:
+
+@itemize
+@item
+subscribe: emacs.org.trello [AT] librelist.com
+@item
+unsubscribe: emacs.org.trello-unsubscribe [AT] librelist.com
+@end itemize
+
+@node Releases
+@section Release List and Notes
+
+@cindex release notes
+@cindex version history
+The @uref{https://github.com/org-trello/org-trello/releases, release list} of @samp{org-trello} is on GitHub.
+
+The separate @uref{release-notes.org, release-notes file} records the primary changes in each
+release of @samp{org-trello}. Please also see the @uref{https://github.com/org-trello/org-trello/commits/master, commit history} of the
+@uref{https://github.com/org-trello/org-trello, repository} on GitHub.
+
+@node Compatibility
+@section Compatibility with Emacs
+
+@cindex compatibility
+@samp{org-trello} has been tested with the following versions of Emacs and
+Operating Systems:
+
+@multitable {aaaaaaaaa} {aaaaaaaaaaaaaaaaaaaaaaaaaaaa} {aaaaaa}
+@headitem Version
+@tab OS
+@tab Status
+@item 24.3.1
+@tab Linux Mint 14
+@tab OK
+@item 24.3.1
+@tab Linux Mint 15 (ubuntu based)
+@tab OK
+@item 24.3.1
+@tab Ubuntu 13.04
+@tab OK
+@item 24.3.1
+@tab Ubuntu 13.10
+@tab OK
+@item 24.3.50.1
+@tab Linux Mint 16 (debian based)
+@tab OK
+@item 24.4.1
+@tab NixOS
+@tab OK
+@end multitable
+
+@emph{Note:} We cannot test under MacOS X or MS windows so any feedback on
+those is welcome.
+
+@node CI Tests
+@section Continuous Integration Tests
+
+@cindex tests, continuous integration
+@samp{org-trello} uses @uref{https://travis-ci.org/org-trello/org-trello, Travis CI} for continuous integration testing.
+
+The CI tests and installs:
+
+@multitable {aaaaaaa} {aaaaaaaaaa} {aaaaaaaaaaa}
+@headitem Version
+@tab CI
+@tab Manual Test
+@item 24.1
+@tab Not tested
+@tab Not tested
+@item 24.2
+@tab Not tested
+@tab Not tested
+@item 24.3.1
+@tab OK
+@tab OK
+@item 24.3.50
+@tab OK
+@tab OK
+@item 24.4.1
+@tab OK
+@tab OK
+@end multitable
+
+@emph{Note:} Any feedback regarding the untested versions is welcome.
+
+@node Conventions
+@section Developer’s Conventions
+
+@cindex contributing, conventions
+This describes the current conventions for org-trello's development.
+
+@menu
+* Sources::
+* Makefile::
+@end menu
+
+@node Sources
+@subsection Sources
+
+The sources are split into @samp{namespaces} in the @uref{./src/, src/} folder.
+This is described in the Namespaces section below.
+
+@enumerate
+@item
+Conventions
+
+
+As there exists no namespace in emacs-lisp, I use: 
+
+@itemize
+@item
+convention in function names to determine the nature private/public 
+@item
+splitted files that represents namespaces.
+@end itemize
+
+@enumerate
+@item
+Rules
+
+
+These conventions are enforced in org-trello:
+
+@itemize
+@item
+functions are prefixed with
+@samp{orgtrello-<NAMESPACE-FILENAME>-<FUNCTION-NAME>}
+@item
+@samp{<NAMESPACE-FILENAME>} is the filename without its path nor its
+extension. For example, @samp{src/buffer.el} renders @samp{buffer}
+@item
+@samp{<FUNCTION-NAME>} is an alphanumeric symbol with @samp{-} as separator. For
+example, @samp{orgtrello-api-add-board} is a public function which does
+create a request to add a board.
+@item
+private functions are prefixed with @samp{--}. For example,
+@samp{orgtrello-api--deal-with-optional-values} which is a private utility
+function to help in creating api request.
+@item
+predicate functions are suffixed by @samp{-p}. For example,
+@samp{orgtrello-data-entity-card-p} which checks if the parameter entity is
+a card or not.
+@end itemize
+
+@emph{Note:} I adapted the code to abide by @uref{https://www.gnu.org/software/emacs/manual/html_node/elisp/Coding-Conventions.html, emacs-lisp's conventions}.
+
+@item
+Exception
+
+
+@samp{org-trello.el} is the main namespace that declares the:
+
+@itemize
+@item
+interactive commands used throughout all of org-trello 
+@item
+minor mode
+@end itemize
+
+Every exposed interactive command is named @samp{org-trello-fn-name}.
+@end enumerate
+
+@item
+Namespaces
+
+
+The namespaces are in loading order:
+
+@multitable {aaaaaaaaaaaaaaaaaaaaaaaa} {aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa}
+@headitem Namespaces file
+@tab Description of the namespace
+@item org-trello-log.el
+@tab Provide log facilities
+@item org-trello-setup.el
+@tab Main variable definition that permits internal
+@item 
+@tab … org-trello functions customization
+@item org-trello-date.el
+@tab org-trello's date manipulation
+@item org-trello-hash.el
+@tab Hash-map manipulation utilities
+@item org-trello-action.el
+@tab Higher-order functions helper
+@item org-trello-data.el
+@tab Internal org-trello data manipulation
+@item org-trello-entity.el
+@tab Entity (card/checklist/item) predicates
+@item org-trello-cbx.el
+@tab Checkbox manipulation utilities
+@item org-trello-api.el
+@tab Trello API abstraction DSL
+@item org-trello-query.el
+@tab HTTP query utilities
+@item org-trello-backend.el
+@tab Deals with trello requests
+@item org-trello-proxy.el
+@tab Proxy utilities - Namespace in charge of dealing
+@item 
+@tab … with the orchestration of trello requests
+@item org-trello-buffer.el
+@tab Buffer manipulation functions
+@item org-trello-input.el
+@tab Text input functions
+@item org-trello-controller.el
+@tab Controller used by org-trello.el
+@item org-trello-deferred.el
+@tab Deferred computation in org-trello
+@item org-trello.el
+@tab Main information about org-trello (version,
+@item 
+@tab … licence, deps, etc@dots{}) + org-trello
+@item 
+@tab … minor mode definition which defines
+@item 
+@tab … interactive commands and the mode
+@item utilities.el
+@tab test utilities functions
+@end multitable
+
+@item
+Loading
+
+
+Use the @uref{./load-org-trello.el, load-org-trello.el} file to load org-trello for development
+purposes and keep the emacs way of browsing source code (@samp{M-.} ,
+@samp{M-,}).
+
+Open the file and @samp{M-x eval-buffer}.
+@end enumerate
+
+@node Makefile
+@subsection Makefile
+
+The @uref{./Makefile, Makefile} is your ally for: 
+@itemize
+@item
+package 
+@item
+test 
+@item
+release
+@end itemize
+
+@enumerate
+@item
+Package
+
+
+This packages all the @emph{org-trello*.el} into a standard tar file.
+
+@example
+make package
+@end example
+
+@item
+Test
+
+
+@example
+make test
+@end example
+
+@item
+Install
+
+
+To test that the package, once created, can be installed (using the
+repository to fetch the dependencies).
+
+@example
+make install-file-with-deps-from-melpa
+@end example
+
+@emph{Note:} This will trigger the installation from a local package
+@samp{org-trello-<VERSION>.tar}. The installation is used with the
+dependencies fetched from melpa.
+
+@emph{Note:} These are the targets used by the CI (cf. @uref{./.travis.yml, .travis.yml})
+
+@item
+Full install testing
+
+
+As we deploy in melpa, we can ensure that once delivered, the
+installation is ok using those targets.
+
+@example
+make install-package-from-melpa
+@end example
+
+@item
+Release
+
+
+The release process is done through 2 steps:
+
+@enumerate
+@item
+Self Pull Request from the feature branch inside master
+
+@example
+make pr
+@end example
+
+@emph{Note:} You need `hub` installed for this target to work.
+
+@item
+Then trigger release through the call to the release target from the Makefile:
+
+@example
+make release
+@end example
+
+This will:
+@itemize
+@item
+fetch the latest modifications on your repository 
+@item
+checkout the master branch
+@item
+fast-forward to the latest master commit 
+@item
+tag the latest commit from master using the $VERSION you submit to the
+script (defaulting to the version from the org-trello.el header)
+@item
+push the tag to the upstream branch repository
+@item
+trigger the package target from the Makefile (thus building a new package to the latest version)
+@item
+Then manual delivery of the tar to the github release page
+@end itemize
+
+@emph{Note:}
+@itemize
+@item
+this is an orchestration of the @uref{./release.sh, release.sh} script 
+@item
+the packaging for MELPA is automatically done from @samp{org-trello/org-trello} repository
+@end itemize
+@end enumerate
+@end enumerate
+
+@node GNU GPL
+@appendix GNU General Public License
+
+@cindex license, software
+@include gpl.texi
+
+@node GNU FDL
+@appendix GNU Free Documentation License
+
+@cindex license, manual
+@include fdl.texi
+
+@node Indices
+@appendix @strong{CHEK} Indices
+
+This section contains the concepts, commands, functions and variables indices.
+
+@menu
+* Concepts::                     Concepts Index
+* Command Index::                Commands Index
+* Functions::                    Functions Index
+* Variables: Variables (1).      Variables Index
+@end menu
+
+@node Concepts
+@appendixsec Concepts Index
+
+@printindex cp
+
+@node Command Index
+@appendixsec Commands Index
+
+@printindex ky
+
+@node Functions
+@appendixsec Functions Index
+
+@printindex fn
+
+@node Variables (1)
+@appendixsec Variables Index
+
+@printindex vr
+
+@bye

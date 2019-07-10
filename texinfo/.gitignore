@@ -1,0 +1,13 @@
+*.aux
+*.cp
+*.cps
+*.fn
+*.fns
+*.ky
+*.kys
+*.log
+*.toc
+*.vr
+*.vrs
+!org-trello.html
+legacy/
