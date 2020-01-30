@@ -1266,7 +1266,7 @@ DATA is a list of (card-id comment-id comment-text buffername)."
 (defun orgtrello-controller-do-cleanup-from-buffer (&optional globally-flag)
   "Clean org-trello data in current buffer.
 When GLOBALLY-FLAG is not nil, remove also local entities properties."
-  (when org-file-properties
+  (when (orgtrello-buffer-org-file-properties)
     (orgtrello-controller--remove-properties-file
      org-trello--org-keyword-trello-list-names
      org-trello--hmap-users-name-id

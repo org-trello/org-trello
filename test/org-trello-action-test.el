@@ -14,7 +14,21 @@
 "
                   (let ((org-file-properties))
                     (orgtrello-action-reload-setup)
-                    org-file-properties)))))
+                    (orgtrello-buffer-org-file-properties))))))
+
+(ert-deftest test-orgtrello-action-reload-setup-2 ()
+  (should (equal '(("foo" . "10") ("bar" . "20"))
+                 (orgtrello-tests-with-temp-buffer
+                  ":PROPERTIES:
+#+PROPERTY: foo 10
+#+PROPERTY: bar 20
+:END
+
+* heading
+"
+                  (let ((org-keyword-properties))
+                    (orgtrello-action-reload-setup)
+                    (orgtrello-buffer-org-file-properties))))))
 
 (ert-deftest test-orgtrello-action--execute-controls ()
   (should (equal '(:ok) (orgtrello-action--execute-controls '((lambda (e) :ok)))))
