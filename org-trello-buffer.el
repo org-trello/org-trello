@@ -750,8 +750,8 @@ Make it a hashmap with key :level,  :keyword,  :name and their respective value.
 
 (defun orgtrello-buffer-org-file-properties ()
   "Compute the org buffer's file properties."
-  (let ((org-trello-file-properties org-file-properties))
-    org-trello-file-properties))
+  (cond ((boundp 'org-file-properties) org-file-properties)
+        ((boundp 'org-keyword-properties) org-keyword-properties)))
 
 (defun orgtrello-buffer-org-map-entries (fn-to-execute)
   "Execute for each heading the FN-TO-EXECUTE."
