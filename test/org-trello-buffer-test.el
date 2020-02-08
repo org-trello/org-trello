@@ -768,8 +768,6 @@ this comment will be ignored
                     (orgtrello-buffer-org-entry-put (point-min) "something" "with-value"))))
   (should (string=
            "* card
-:PROPERTIES:
-:END:
 "
            (orgtrello-tests-with-temp-buffer-and-return-buffer-content
             "* card
@@ -780,14 +778,9 @@ this comment will be ignored
             (orgtrello-buffer-org-entry-put (point-min) "something" nil))))
   (should (string=
            "* card
-:PROPERTIES:
-:END:
 "
            (orgtrello-tests-with-temp-buffer-and-return-buffer-content
             "* card
-:PROPERTIES:
-:something: with-value
-:END:
 "
             (orgtrello-buffer-org-entry-put (point-min) "something" "")))))
 
@@ -1018,7 +1011,8 @@ another description which will be indented
   (should (string= "* card
   :PROPERTIES:
   :orgtrello_id: card-id-abc
-  :END:"
+  :END:
+"
                    (orgtrello-tests-with-temp-buffer-and-return-buffer-content
                     "* card"
                     (orgtrello-buffer-set-property org-trello--label-key-id "card-id-abc"))))
@@ -1208,7 +1202,7 @@ hello there
                   (format ":PROPERTIES:\n#+PROPERTY: %s this-is-the-user\n:END:\n* card\n" org-trello--property-user-me)
                   (orgtrello-buffer-me)))))
 
-(ert-deftest test-orgtrello-buffer-write-card-header ()
+(ert-deftest test-orgtrello-buffer-write-card-header-1 ()
   (should (equal ":PROPERTIES:
 #+PROPERTY: orgtrello_user_ardumont ardumont-id
 #+PROPERTY: orgtrello_user_dude dude-id
@@ -1224,25 +1218,26 @@ hello there
 #+PROPERTY: orgtrello_user_dude dude-id
 :END:
 "
+                  (orgtrello-buffer-write-card-header "some-card-id"
+                                                      (orgtrello-hash-make-properties
+                                                       `((:keyword . "TODO")
+                                                         (:member-ids . "ardumont,dude")
+                                                         (:comments . 'no-longer-exploited-here-comments)
+                                                         (:desc . "some description")
+                                                         (:level . ,org-trello--card-level)
+                                                         (:name . "some card name"))))
+                  0))))
 
-                  (orgtrello-buffer-write-card-header "some-card-id" (orgtrello-hash-make-properties `((:keyword . "TODO")
-                                                                                                       (:member-ids . "ardumont,dude")
-                                                                                                       (:comments . 'no-longer-exploited-here-comments)
-                                                                                                       (:desc . "some description")
-                                                                                                       (:level . ,org-trello--card-level)
-                                                                                                       (:name . "some card name"))))
-
-                  0)))
-
+(ert-deftest test-orgtrello-buffer-write-card-header-2 ()
   (should (equal ":PROPERTIES:
 #+PROPERTY: orgtrello_user_ardumont ardumont-id
 #+PROPERTY: orgtrello_user_dude dude-id
 :END:
 * TODO some card name                                                   :red:green:
 DEADLINE: <dummy-date-with-right-locale>
-  :PROPERTIES:
-  :orgtrello_users: ardumont,dude
-  :END:
+:PROPERTIES:
+:orgtrello_users: ardumont,dude
+:END:
   some description"
                  (orgtrello-tests-with-temp-buffer-and-return-buffer-content
                   ":PROPERTIES:
@@ -1252,14 +1247,16 @@ DEADLINE: <dummy-date-with-right-locale>
 "
                   (with-mock
                     (mock (orgtrello-date-convert-trello-date-to-org-date "2015-09-22T23:45:00.000Z") => "dummy-date-with-right-locale")
-                    (orgtrello-buffer-write-card-header "some-card-id" (orgtrello-hash-make-properties `((:keyword . "TODO")
-                                                                                                         (:member-ids . "ardumont,dude")
-                                                                                                         (:comments . 'no-longer-exploited-here-comments)
-                                                                                                         (:tags . ":red:green:")
-                                                                                                         (:desc . "some description")
-                                                                                                         (:level . ,org-trello--card-level)
-                                                                                                         (:name . "some card name")
-                                                                                                         (:due . "2015-09-22T23:45:00.000Z")))))
+                    (orgtrello-buffer-write-card-header "some-card-id"
+                                                        (orgtrello-hash-make-properties
+                                                         `((:keyword . "TODO")
+                                                           (:member-ids . "ardumont,dude")
+                                                           (:comments . 'no-longer-exploited-here-comments)
+                                                           (:tags . ":red:green:")
+                                                           (:desc . "some description")
+                                                           (:level . ,org-trello--card-level)
+                                                           (:name . "some card name")
+                                                           (:due . "2015-09-22T23:45:00.000Z")))))
                   0))))
 
 (ert-deftest test-orgtrello-buffer-write-checklist-header ()
@@ -1293,8 +1290,8 @@ DEADLINE: <dummy-date-with-right-locale>
   some old description
   - [ ] some old checklist name\n"
                   (orgtrello-buffer-write-checklist-header "some-id" (orgtrello-hash-make-properties `((:keyword . "DONE")
-                                                                                                        (:level . ,org-trello--checklist-level)
-                                                                                                        (:name . "some checklist name"))))
+                                                                                                       (:level . ,org-trello--checklist-level)
+                                                                                                       (:name . "some checklist name"))))
                   0))))
 
 (ert-deftest test-orgtrello-buffer-write-card ()
@@ -1879,7 +1876,7 @@ nothing enforces the content of the description
 
 (ert-deftest test-orgtrello-buffer-org-unknown-drawer-properties ()
   (should (equal
-           '(("some-unknown-thingy" . "some value"))
+           '(("SOME-UNKNOWN-THINGY" . "some value"))
            (orgtrello-tests-with-temp-buffer
             "* TODO Joy of FUN(ctional) LANGUAGES
 DEADLINE: <2014-05-17 Sat>
@@ -2241,6 +2238,7 @@ DEADLINE: <2014-05-17 Sat>
   - [-] some other checklist name :PROPERTIES: {\"orgtrello_id\":\"some-other-checklist-id\"}
 "
                                                                              (orgtrello-buffer-org-delete-property org-trello--label-key-id))))
+
   ;; on checklist without property
   (should (equal "* TODO some card name
 :PROPERTIES:
@@ -2312,8 +2310,6 @@ DEADLINE: <2014-05-17 Sat>
                                                                              -2)))
   ;; On a card.
   (should (equal "* TODO some card name
-:PROPERTIES:
-:END:
   some description
   - [-] some checklist name :PROPERTIES: {\"orgtrello_id\":\"some-checklist-id\"}
     - [X] some item :PROPERTIES: {\"orgtrello_id\":\"some-item-id\"}
@@ -2335,8 +2331,6 @@ DEADLINE: <2014-05-17 Sat>
 
   ;; On a card - no previous property.
   (should (equal "* TODO some card name
-:PROPERTIES:
-:END:
   some description
   - [-] some checklist name :PROPERTIES: {\"orgtrello_id\":\"some-checklist-id\"}
     - [X] some item :PROPERTIES: {\"orgtrello_id\":\"some-item-id\"}
@@ -3245,23 +3239,23 @@ generates another checksum
 
 (ert-deftest test-orgtrello-buffer-org-file-properties ()
   (should (equal
-           '(("board-name" . "api test board")
-             ("board-id" . "abc")
-             ("CANCELLED" . "def")
-             ("FAILED" . "ijk")
-             ("DELEGATED" . "lmn")
-             ("PENDING" . "opq")
-             ("DONE" . "rst")
-             ("IN-PROGRESS" . "uvw")
-             ("TODO" . "xyz")
-             ("orgtrello_user_orgmode" . "888")
-             ("orgtrello_user_ardumont" . "999")
-             (":yellow" . "yellow label")
-             (":red" . "red label")
-             (":purple" . "this is the purple label")
-             (":orange" . "orange label")
-             (":green" . "green label with & char")
-             ("orgtrello_user_me" . "ardumont"))
+           (nreverse '(("board-name" . "api test board")
+                       ("board-id" . "abc")
+                       ("CANCELLED" . "def")
+                       ("FAILED" . "ijk")
+                       ("DELEGATED" . "lmn")
+                       ("PENDING" . "opq")
+                       ("DONE" . "rst")
+                       ("IN-PROGRESS" . "uvw")
+                       ("TODO" . "xyz")
+                       ("orgtrello_user_orgmode" . "888")
+                       ("orgtrello_user_ardumont" . "999")
+                       (":yellow" . "yellow label")
+                       (":red" . "red label")
+                       (":purple" . "this is the purple label")
+                       (":orange" . "orange label")
+                       (":green" . "green label with & char")
+                       ("orgtrello_user_me" . "ardumont")))
            (orgtrello-tests-with-temp-buffer
             ":PROPERTIES:
 #+PROPERTY: board-name api test board
@@ -3345,7 +3339,7 @@ generates another checksum
   - [-] some checklist name :PROPERTIES: {\"orgtrello_id\":\"some-checklist-id\"}
     - [X] some item :PROPERTIES: {\"orgtrello_id\":\"some-item-id\", \"orgtrello_local_checksum\":\"d5503e92e8880ddb839c42e31e8ead17a70f09d39f069fbfd9956424984047fc\"}
 "
-           
+
            (orgtrello-tests-with-temp-buffer-and-return-buffer-content "
 :PROPERTIES:
 #+PROPERTY: board-name api test board
@@ -3448,7 +3442,7 @@ generates another checksum
     - [X] some item :PROPERTIES: {\"orgtrello_id\":\"some-item-id\", \"orgtrello_local_checksum\":\"d5503e92e8880ddb839c42e31e8ead17a70f09d39f069fbfd9956424984047fc\"}
 "
                (orgtrello-buffer-to-migrate-p)
-               
+
                )))
 
 (provide 'org-trello-buffer-test)

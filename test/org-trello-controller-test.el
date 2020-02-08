@@ -130,8 +130,6 @@
   ;; no more entries, does nothing
   (should (string=
            "* card
-:PROPERTIES:
-:END:
 "
            (orgtrello-tests-with-temp-buffer-and-return-buffer-content
             "* card
@@ -661,7 +659,7 @@
                  :board-labels
                  :board-users-name-id)))))
 
-(ert-deftest test-orgtrello-controller-do-cleanup-from-buffer ()
+(ert-deftest test-orgtrello-controller-do-cleanup-from-buffer-1 ()
   ;; should not break when nothing is present
   (should-not (orgtrello-tests-with-temp-buffer
                ""
@@ -733,13 +731,13 @@
   - [-] LISP family :PROPERTIES: {\"orgtrello_id\":\"456\",\"orgtrello_local_checksum\":\"5102037e8960abd7ffab6983ede9a0744779a85e36072ad27dbe85e1a038f9eb\"}
     - [X] Emacs-Lisp :PROPERTIES: {\"orgtrello_id\":\"789\",\"orgtrello_local_checksum\":\"7e573221fc50afd48d52c6575845a282b7c48091e616ee48214436cb3e49a09b\"}
 "
-                    (orgtrello-controller-do-cleanup-from-buffer))))
+                    (orgtrello-controller-do-cleanup-from-buffer)))))
+
+(ert-deftest test-orgtrello-controller-do-cleanup-from-buffer-2 ()
   (should (string= "#+title: dummy sample to sync with trello
 #+author: Antoine R. Dumont
 
 * TODO Joy of FUN(ctional) LANGUAGES
-:PROPERTIES:
-:END:
   hello description
   - with many
   - lines
@@ -1112,8 +1110,6 @@ See http://org-trello.github.io/trello-setup.html#credentials for more informati
 #+PROPERTY: orgtrello_user_me user2
 :END:
 * card
-  :PROPERTIES:
-  :END:
 "
                    (orgtrello-tests-with-temp-buffer-and-return-buffer-content
                     "
