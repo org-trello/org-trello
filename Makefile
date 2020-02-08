@@ -56,9 +56,3 @@ version:
 
 install-cask:
 	curl -fsSkL https://raw.github.com/cask/cask/master/go | python
-
-emacs-install-clean: package
-	~/bin/emacs/emacs-install-clean.sh ./$(ARCHIVE)
-
-tests:
-	./run-tests.sh 24.4-travis 24.5-travis 25.1-travis
