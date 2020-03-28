@@ -50,6 +50,7 @@ BODY-TEST is the assertion to test on the buffer.
 NB-LINES-FORWARD is the number of lines to get back to."
   `(with-temp-buffer
      (org-mode)
+     (org-indent-mode -1)
      (insert ,text)
      (forward-line (if ,nb-lines-forward ,nb-lines-forward -1))
      (org-trello-mode-test)
@@ -111,6 +112,7 @@ BODY-TEST is the assertion to test on the buffer."
   `(with-temp-buffer
      (insert ,text)
      (org-mode)
+     (org-indent-mode -1)
      ,body-test))
 
 (provide 'org-trello-tests)
