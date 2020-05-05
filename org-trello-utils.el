@@ -36,7 +36,7 @@
 
 (defun orgtrello-utils-space (n)
   "Given a level, compute N times the number of spaces for an org checkbox entry."
-  (orgtrello-utils-symbol " "  n))
+  (orgtrello-utils-symbol " " n))
 
 (provide 'org-trello-utils)
 ;;; org-trello-utils.el ends here
