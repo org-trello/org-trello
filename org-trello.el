@@ -1,6 +1,6 @@
 ;;; org-trello.el --- Minor mode to synchronize org-mode buffer and trello board
 
-;; Copyright (C) 2013-2017 Antoine R. Dumont (@ardumont) <antoine.romain.dumont@gmail.com>
+;; Copyright (C) 2013-2020 Antoine R. Dumont (@ardumont) <antoine.romain.dumont@gmail.com>
 
 ;; Author: Antoine R. Dumont (@ardumont) <antoine.romain.dumont@gmail.com>
 ;; Maintainer: Antoine R. Dumont (@ardumont) <antoine.romain.dumont@gmail.com>
@@ -561,6 +561,12 @@ opens new issue in org-trello's github tracker."
                                (orgtrello-setup-startup-message
                                 org-trello-current-prefix-keybinding)))
           'do-append)
+
+(add-hook 'org-trello-mode-on-hook
+          (lambda ()
+            ;; deactivate org-indent-mode if activated
+            (when (and (boundp 'org-indent-mode) org-indent-mode)
+              (org-indent-mode -1))))
 
 (defvar org-trello-mode-off-hook)
 (setq org-trello-mode-off-hook nil) ;; for dev

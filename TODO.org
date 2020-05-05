@@ -31,7 +31,13 @@
 - [ ] #245 - Trying to sync a card: orgtrello-buffer/compute-marker: Wrong type argument: numberp, nil
 - [ ] #248 - Installing from melpa (unstable) works, but then it errs on an undefined variable "error-messages"
 - [ ] #263 - Colors broken in org trello
-* IN-PROGRESS 0.8.1 [100%]
+
+* IN-PROGRESS 0.8.2
+- [X] #406: Deactivate org-indent-mode alongside org-trello minor mode
+- [ ] #407: Improve card formatting step
+
+* DONE 0.8.1 [100%]
+  CLOSED: [2020-05-08 Fri 18:09]
 - [X] Make adding trello colors to `org-tag-alist` optional - Close #365
 - [X] Fix typo in link to issue tracker - Close #364
 - [X] Fix ci
