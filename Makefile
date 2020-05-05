@@ -53,6 +53,3 @@ release:
 
 version:
 	@echo "application $(PACKAGE): $(VERSION)\npackage: $(ARCHIVE)"
-
-install-cask:
-	curl -fsSkL https://raw.github.com/cask/cask/master/go | python
