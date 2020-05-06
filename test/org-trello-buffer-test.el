@@ -60,14 +60,14 @@
 (ert-deftest test-orgtrello-buffer-org-decorator ()
   (should (eq :done
               (with-mock
-                (mock (orgtrello-buffer-indent-card-descriptions) => :indent-card-desc-done)
-                (mock (orgtrello-buffer-indent-card-data) => :indent-card-data-done)
+                (mock (orgtrello-buffer-indent-all-card-descriptions) => :indent-card-desc-done)
+                (mock (orgtrello-buffer-indent-all-card-data) => :indent-card-data-done)
                 (mock (orgtrello-entity-org-checkbox-p) => nil)
                 (orgtrello-buffer-org-decorator (lambda () :done)))))
   (should (eq :done
               (with-mock
-                (mock (orgtrello-buffer-indent-card-descriptions) => :indent-card-desc-done)
-                (mock (orgtrello-buffer-indent-card-data) => :indent-card-data-done)
+                (mock (orgtrello-buffer-indent-all-card-descriptions) => :indent-card-desc-done)
+                (mock (orgtrello-buffer-indent-all-card-data) => :indent-card-data-done)
                 (mock (orgtrello-entity-org-checkbox-p) => t)
                 (mock (org-end-of-line) => :end-of-line-done)
                 (orgtrello-buffer-org-decorator (lambda () :done))))))
@@ -223,7 +223,7 @@
 :orgtrello-checksum: checksum
 :unknown: something
 :END
-  description here
+description here
 "
                   (orgtrello-buffer-org-entity-metadata)))))
 
@@ -856,7 +856,20 @@ on all string"
 so the second one won't be"
             (orgtrello-buffer-indent-region 2 `(,(point-min) ,(point-max)))))))
 
-(ert-deftest test-orgtrello-buffer-indent-card-descriptions ()
+(ert-deftest test-orgtrello-buffer-indent-card-description ()
+  (should (string=
+           "* card
+  description will be indented
+  after function call.
+"
+           (orgtrello-tests-with-temp-buffer-and-return-buffer-content
+            "* card
+description will be indented
+after function call.
+"
+            (orgtrello-buffer-indent-card-description)))))
+
+(ert-deftest test-orgtrello-buffer-indent-all-card-descriptions ()
   (should (string=
            "* card
   description not indented
@@ -871,7 +884,7 @@ but this will be after function call.
 * card 2
 another description which will be indented
 "
-            (orgtrello-buffer-indent-card-descriptions))))
+            (orgtrello-buffer-indent-all-card-descriptions))))
   ;; not indented
   (should (string=
            "* card
@@ -888,7 +901,7 @@ but this will be after function call.
 another description which will be indented
 "
             (let ((org-trello--mode-activated-p))
-              (orgtrello-buffer-indent-card-descriptions))))))
+              (orgtrello-buffer-indent-all-card-descriptions))))))
 
 (ert-deftest  test-orgtrello-buffer-get-usernames-assigned-property ()
   (should (string= "user1,user2,user3"
@@ -964,7 +977,7 @@ another description which will be indented
 "
                     (orgtrello-buffer-extract-identifier (point-min))))))
 
-(ert-deftest test-orgtrello-buffer-indent-card-data ()
+(ert-deftest test-orgtrello-buffer-indent-all-card-data ()
   ;; indentation
   (should (string= "* card0
   - [ ] check1
@@ -975,7 +988,7 @@ another description which will be indented
 - [ ] check1
   - [ ] item1
 "
-                    (orgtrello-buffer-indent-card-data))))
+                    (orgtrello-buffer-indent-all-card-data))))
   ;; not indented because no org-trello activated
   (should (string= "* card0
 - [ ] check1
@@ -987,7 +1000,7 @@ another description which will be indented
   - [ ] item1
 "
                     (let (org-trello--mode-activated-p)
-                      (orgtrello-buffer-indent-card-data))))))
+                      (orgtrello-buffer-indent-all-card-data))))))
 
 (ert-deftest test-orgtrello-buffer--extract-metadata ()
   (should (equal '(1 1 nil nil "card" nil)

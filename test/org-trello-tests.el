@@ -86,8 +86,8 @@ This returns the buffer content after body-test has been performed."
 
 (defun orgtrello-tests-prepare-buffer ()
   "Prepare the buffer to receive org-trello data."
-  (orgtrello-buffer-indent-card-descriptions)
-  (orgtrello-buffer-indent-card-data))
+  (orgtrello-buffer-indent-all-card-descriptions)
+  (orgtrello-buffer-indent-all-card-data))
 
 (defmacro orgtrello-tests-with-temp-buffer-and-return-indented-content
     (text body-test &optional nb-lines-forward)

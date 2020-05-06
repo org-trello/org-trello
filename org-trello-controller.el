@@ -1,6 +1,6 @@
 ;;; org-trello-controller.el --- Controller of org-trello mode
 
-;; Copyright (C) 2015-2017  Antoine R. Dumont (@ardumont) <antoine.romain.dumont@gmail.com>
+;; Copyright (C) 2015-2020  Antoine R. Dumont (@ardumont) <antoine.romain.dumont@gmail.com>
 
 ;; Author: Antoine R. Dumont (@ardumont) <antoine.romain.dumont@gmail.com>
 ;; Keywords:
@@ -261,12 +261,19 @@ BUFFER-NAME to specify the buffer with which we currently work."
       (orgtrello-data-put-entity-id marker current)
       (eval (orgtrello-proxy-delete-entity current)))))
 
+(defun orgtrello-controller--indent-card (entity)
+  "Indent properly the card information (whatever the ENTITY is)."
+  (orgtrello-buffer-indent-card-description)
+  (orgtrello-buffer-indent-card-data)
+  :ok)
+
 (defun orgtrello-controller-checks-then-sync-card-to-trello ()
   "Check then do the actual sync if everything is ok."
   (orgtrello-action-functional-controls-then-do
    '(orgtrello-controller--on-entity-p
      orgtrello-controller--right-level-p
-     orgtrello-controller--mandatory-name-ok-p)
+     orgtrello-controller--mandatory-name-ok-p
+     orgtrello-controller--indent-card)
    (orgtrello-buffer-safe-entry-full-metadata)
    'orgtrello-controller-sync-card-to-trello
    (current-buffer)))
@@ -1431,8 +1438,8 @@ Returns to BUFFER-NAME at POINT when done."
   "Prepare the buffer to receive org-trello data."
   (when (orgtrello-setup-org-trello-on-p)
     (orgtrello-buffer-install-overlays)
-    (orgtrello-buffer-indent-card-descriptions)
-    (orgtrello-buffer-indent-card-data)))
+    (orgtrello-buffer-indent-all-card-descriptions)
+    (orgtrello-buffer-indent-all-card-data)))
 
 (defun orgtrello-controller-mode-on-hook-fn ()
   "Start org-trello hook function to install some org-trello setup."

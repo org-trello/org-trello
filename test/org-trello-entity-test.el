@@ -111,6 +111,30 @@ description"
                "* card
   description"
                (orgtrello-entity-card-description-start-point))))
+
+  (should (eq 27
+              (orgtrello-tests-with-temp-buffer
+               "* card
+:PROPERTIES:
+:END:
+  description
+* card 2
+:PROPERTIES:
+:END:"
+               (orgtrello-entity-card-description-start-point)
+               -4)))
+
+  (should (eq 8
+              (orgtrello-tests-with-temp-buffer
+               "* card
+  description
+* card 2
+:PROPERTIES:
+:END:"
+               (progn
+                 (goto-char (point-min))
+                 (orgtrello-entity-card-description-start-point)))))
+
   (should (eq 27
               (orgtrello-tests-with-temp-buffer
                "* card

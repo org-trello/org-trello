@@ -1062,8 +1062,8 @@ See http://org-trello.github.io/trello-setup.html#credentials for more informati
               (with-mock
                 (mock (orgtrello-setup-org-trello-on-p) => t)
                 (mock (orgtrello-buffer-install-overlays) => :done)
-                (mock (orgtrello-buffer-indent-card-descriptions) => :done)
-                (mock (orgtrello-buffer-indent-card-data) => :prepared-buffer-done)
+                (mock (orgtrello-buffer-indent-all-card-descriptions) => :done)
+                (mock (orgtrello-buffer-indent-all-card-data) => :prepared-buffer-done)
                 (orgtrello-controller-prepare-buffer))))
   (should-not
    (with-mock
@@ -1503,7 +1503,8 @@ See http://org-trello.github.io/trello-setup.html#credentials for more informati
                 (mock (orgtrello-action-functional-controls-then-do
                        '(orgtrello-controller--on-entity-p
                          orgtrello-controller--right-level-p
-                         orgtrello-controller--mandatory-name-ok-p)
+                         orgtrello-controller--mandatory-name-ok-p
+                         orgtrello-controller--indent-card)
                        :entity
                        'orgtrello-controller-sync-card-to-trello
                        :buffer) => :result-sync)
@@ -2735,6 +2736,12 @@ some description
                   (mock (orgtrello-controller-list-user-accounts :some-config-file) => '(:account0 :account1))
                   (mock (orgtrello-controller--choose-account '(:account0 :account1)) => :account0)
                   (orgtrello-controller-set-account)))))
+(ert-deftest test-orgtrello-controller--indent-card ()
+  (equal :ok
+         (with-mock
+           (mock (orgtrello-buffer-indent-card-description) => nil)
+           (mock (orgtrello-buffer-indent-card-data) => nil)
+           (orgtrello-controller--indent-card :entity))))
 
 (provide 'org-trello-controller-test)
 ;;; org-trello-controller-test.el ends here

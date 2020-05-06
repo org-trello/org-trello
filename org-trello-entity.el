@@ -1,6 +1,6 @@
 ;;; org-trello-entity.el --- Predicates to determine if we are currently on a card/checklist/item + some default movments
 
-;; Copyright (C) 2015-2017  Antoine R. Dumont (@ardumont) <antoine.romain.dumont@gmail.com>
+;; Copyright (C) 2015-2020  Antoine R. Dumont (@ardumont) <antoine.romain.dumont@gmail.com>
 
 ;; Author: Antoine R. Dumont (@ardumont) <antoine.romain.dumont@gmail.com>
 ;; Keywords:
@@ -113,10 +113,12 @@ If hitting a heading or the end of the file, return nil."
 (defun orgtrello-entity-card-metadata-end-point ()
   "Compute the card's metadata end point.
 This corresponds to the card's first checkbox position."
-  (save-excursion
-    (orgtrello-entity-back-to-card)
-    (orgtrello-entity-goto-end-card-metadata)
-    (1- (point))))
+  (save-restriction
+    (apply 'narrow-to-region (orgtrello-entity-card-region))
+    (save-excursion
+      (orgtrello-entity-back-to-card)
+      (orgtrello-entity-goto-end-card-metadata)
+      (1- (point)))))
 
 (defun orgtrello-entity-card-at-pt ()
   "Determine if currently on the card region."
@@ -134,10 +136,12 @@ This corresponds to the card's first checkbox position."
 
 (defun orgtrello-entity-card-description-start-point ()
   "Compute the first character of the card's description content."
-  (save-excursion
-    (orgtrello-entity-back-to-card)
-    (search-forward ":END:" nil t) ;; if not found, return nil & do not move pt
-    (1+ (point-at-eol))))
+  (save-restriction
+    (apply 'narrow-to-region (orgtrello-entity-card-region))
+    (save-excursion
+      (orgtrello-entity-back-to-card)
+      (search-forward ":END:" nil t) ;; if not found, return nil & do not move pt
+      (1+ (point-at-eol)))))
 ;; in any case, the description is then just 1 point
 ;; more than the current position
 
@@ -151,19 +155,21 @@ This corresponds to the card's first checkbox position."
   "Compute the card's first comment position.
 Does preserve position.
 If no comment is found, return the card's end region."
-  (save-excursion
-    (orgtrello-entity-back-to-card)
-    (let ((card-region (orgtrello-entity-card-region)))
-      (apply 'narrow-to-region card-region)
-      (let ((next-pt (-if-let (next-pt
-                               (search-forward-regexp "\\*\\* COMMENT " nil t))
-                         ;; if not found, return nil and do not move point
-                         (save-excursion
-                           (goto-char next-pt)
-                           (point-at-bol))
-                       (orgtrello-entity-card-end-point))))
-        (widen)
-        next-pt))))
+  (save-restriction
+    (apply 'narrow-to-region (orgtrello-entity-card-region))
+    (save-excursion
+      (orgtrello-entity-back-to-card)
+      (let ((card-region (orgtrello-entity-card-region)))
+        (apply 'narrow-to-region card-region)
+        (let ((next-pt (-if-let (next-pt
+                                 (search-forward-regexp "\\*\\* COMMENT " nil t))
+                           ;; if not found, return nil and do not move point
+                           (save-excursion
+                             (goto-char next-pt)
+                             (point-at-bol))
+                         (orgtrello-entity-card-end-point))))
+          (widen)
+          next-pt)))))
 
 (defun orgtrello-entity-compute-checklist-header-region ()
   "Compute the checklist's region.

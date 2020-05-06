@@ -1,6 +1,6 @@
 ;;; org-trello-buffer.el --- Manipulation functions of org-trello buffer
 
-;; Copyright (C) 2015-2017  Antoine R. Dumont (@ardumont) <antoine.romain.dumont@gmail.com>
+;; Copyright (C) 2015-2020  Antoine R. Dumont (@ardumont) <antoine.romain.dumont@gmail.com>
 
 ;; Author: Antoine R. Dumont (@ardumont) <antoine.romain.dumont@gmail.com>
 ;; Keywords:
@@ -577,28 +577,31 @@ If yes, indent such region with INDENT space."
         (unless (<= indent (org-get-indentation));; if need be
           (indent-rigidly start end indent))))));; indent rightfully
 
-(defun orgtrello-buffer-indent-card-descriptions ()
-  "Indent the buffer's card descriptions rigidly starting at 2.
+(defun orgtrello-buffer-indent-card-description ()
+  "Indent a card description rigidly 2 spaces from beginning of line."
+  (save-excursion
+    (orgtrello-entity-back-to-card)
+    (orgtrello-buffer-indent-region
+     org-trello-buffer--indent-description
+     (orgtrello-entity-card-metadata-region))))
+
+(defun orgtrello-buffer-indent-all-card-descriptions ()
+  "Indent buffer's card descriptions rigidly 2 spaces from beginning of line.
 Function to be triggered by `before-save-hook` on org-trello-mode buffer."
   (when (orgtrello-setup-org-trello-on-p)
     (orgtrello-buffer-org-map-entries
-     (lambda ()
-       (-when-let (card-description
-                   (-> (orgtrello-buffer-entry-get-full-metadata)
-                       orgtrello-data-current
-                       orgtrello-data-entity-description))
-         (orgtrello-buffer-indent-region
-          org-trello-buffer--indent-description
-          (orgtrello-entity-card-metadata-region)))))))
+     'orgtrello-buffer-indent-card-description)))
 
 (defun orgtrello-buffer-indent-card-data ()
-  "Indent the card data rigidly starting at 2.
+  "Indent a card rigidly 2 spaces from beginning of line."
+  (orgtrello-buffer-indent-region org-trello--checklist-indent
+                                  (orgtrello-entity-card-data-region)))
+
+(defun orgtrello-buffer-indent-all-card-data ()
+  "Indent the card data rigidly 2 spaces from beginning of line.
 Function to be triggered by `before-save-hook` on org-trello-mode buffer."
   (when (orgtrello-setup-org-trello-on-p)
-    (orgtrello-buffer-org-map-entries
-     (lambda ()
-       (orgtrello-buffer-indent-region org-trello--checklist-indent
-                                       (orgtrello-entity-card-data-region))))))
+    (orgtrello-buffer-org-map-entries 'orgtrello-buffer-indent-card-data)))
 
 (defalias 'orgtrello-buffer-org-entity-metadata 'org-heading-components
   "Compute the basic org-mode metadata.")
@@ -776,8 +779,8 @@ For a checkbox, move to the 1- point (because of overlays)."
   "If on org-trello checkbox move to the org end of the line.
 Trigger the needed indentation for the card's description and data.
 In any case, execute ORG-FN."
-  (orgtrello-buffer-indent-card-descriptions)
-  (orgtrello-buffer-indent-card-data)
+  (orgtrello-buffer-indent-all-card-descriptions)
+  (orgtrello-buffer-indent-all-card-data)
   (when (orgtrello-entity-org-checkbox-p)
     (org-end-of-line))
   (funcall org-fn))
