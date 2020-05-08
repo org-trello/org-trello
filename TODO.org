@@ -32,9 +32,11 @@
 - [ ] #248 - Installing from melpa (unstable) works, but then it errs on an undefined variable "error-messages"
 - [ ] #263 - Colors broken in org trello
 
-* IN-PROGRESS 0.8.2 [100%]
+* DONE 0.8.2 [100%]
+  CLOSED: [2020-05-08 Fri 18:57]
 - [X] #406: Deactivate org-indent-mode alongside org-trello minor mode
 - [X] #407: Improve card formatting step
+- [X] Clean up no longer used scripts
 
 * DONE 0.8.1 [100%]
   CLOSED: [2020-05-08 Fri 18:09]

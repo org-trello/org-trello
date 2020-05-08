@@ -42,12 +42,6 @@ package: clean pkg-el
 info:
 	${CASK} info
 
-install-package-from-melpa:
-	./install-package-from.sh melpa
-
-install-file-with-deps-from-melpa: package
-	./install-file-with-deps-from.sh melpa $(VERSION)
-
 release:
 	./release.sh $(VERSION) $(PACKAGE)
 
