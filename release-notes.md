@@ -1,3 +1,10 @@
+# 0.8.2
+
+- [X] #406: Deactivate org-indent-mode alongside org-trello minor mode
+- [X] #407: Improve card formatting step
+- [X] Clean up no longer used scripts
+
+
 # 0.8.1
 
 - [X] Make adding trello colors to `org-tag-alist` optional - Close #365

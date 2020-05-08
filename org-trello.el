@@ -4,7 +4,7 @@
 
 ;; Author: Antoine R. Dumont (@ardumont) <antoine.romain.dumont@gmail.com>
 ;; Maintainer: Antoine R. Dumont (@ardumont) <antoine.romain.dumont@gmail.com>
-;; Version: 0.8.1
+;; Version: 0.8.2
 ;; Package-Requires: ((dash "2.12.1") (dash-functional "2.12.1") (s "1.11.0") (deferred "0.4.0") (request-deferred "0.2.0"))
 ;; Keywords: org-mode trello sync org-trello
 ;; URL: https://github.com/org-trello/org-trello
@@ -114,7 +114,7 @@ Please consider upgrading Emacs." emacs-version)
 (require 'json)
 (require 'parse-time)
 
-(defconst org-trello--version "0.8.1" "Current org-trello version installed.")
+(defconst org-trello--version "0.8.2" "Current org-trello version installed.")
 
 
 
