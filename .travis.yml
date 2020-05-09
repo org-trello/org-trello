@@ -17,8 +17,6 @@ install:
   # The default "emacs" executable on the $PATH will now be the version named by $EMACS_CI
   - bash <(curl https://raw.githubusercontent.com/purcell/nix-emacs-ci/master/travis-install)
   - nix-env -iA nixpkgs.cask
-  # install deps for cask
-  - cask install
 
 script:
   - make install test
