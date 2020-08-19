@@ -135,7 +135,7 @@ All maps are indexed by trello or marker id."
                                     (progn ;; not present, update with trello id
                                       (orgtrello-buffer-write-properties-at-pt
                                        entry-new-id)
-                                      (format "Newly entity '%s' with id '%s' synced!"
+                                      (format "New entity '%s' with id '%s' synced!"
                                               entity-name
                                               entry-new-id)))))
               (let* ((updates (orgtrello-proxy--update-entities-adjacencies
