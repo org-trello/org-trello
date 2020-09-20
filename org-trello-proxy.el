@@ -1,6 +1,6 @@
 ;;; org-trello-proxy.el --- `Proxy' namespace
 
-;; Copyright (C) 2015-2017  Antoine R. Dumont (@ardumont) <antoine.romain.dumont@gmail.com>
+;; Copyright (C) 2015-2021  Antoine R. Dumont (@ardumont) <antoine.romain.dumont@gmail.com>
 
 ;; Author: Antoine R. Dumont (@ardumont) <antoine.romain.dumont@gmail.com>
 ;; Keywords:
@@ -30,7 +30,10 @@
 ;;; Commentary:
 ;;; Code:
 
-(eval-when-compile (require 'cl)) ;; lexical-let
+(if (version< emacs-version "27")
+    (eval-when-compile (require 'cl))
+  (eval-when-compile (require 'cl-lib)))
+
 (require 'org-trello-log)
 (require 'org-trello-setup)
 (require 'org-trello-query)

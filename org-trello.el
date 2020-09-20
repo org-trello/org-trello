@@ -1,6 +1,6 @@
 ;;; org-trello.el --- Minor mode to synchronize org-mode buffer and trello board
 
-;; Copyright (C) 2013-2020 Antoine R. Dumont (@ardumont) <antoine.romain.dumont@gmail.com>
+;; Copyright (C) 2013-2021 Antoine R. Dumont (@ardumont) <antoine.romain.dumont@gmail.com>
 
 ;; Author: Antoine R. Dumont (@ardumont) <antoine.romain.dumont@gmail.com>
 ;; Maintainer: Antoine R. Dumont (@ardumont) <antoine.romain.dumont@gmail.com>
@@ -107,7 +107,9 @@ Please consider upgrading Emacs." emacs-version)
 
 (when (version< emacs-version "24") (error org-trello-error-install-msg))
 
-(require 'cl)
+(if (version< emacs-version "27")
+    (eval-when-compile (require 'cl))
+  (eval-when-compile (require 'cl-lib)))
 
 ;; Dependency on internal Emacs libs
 (require 'org)
