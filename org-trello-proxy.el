@@ -30,7 +30,9 @@
 ;;; Commentary:
 ;;; Code:
 
-(eval-when-compile (require 'cl)) ;; lexical-let
+(if (version< emacs-version "27")
+    (eval-when-compile (require 'cl))
+    (eval-when-compile (require 'cl-lib)))
 (require 'org-trello-log)
 (require 'org-trello-setup)
 (require 'org-trello-query)

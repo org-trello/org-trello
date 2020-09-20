@@ -107,7 +107,7 @@ Please consider upgrading Emacs." emacs-version)
 
 (when (version< emacs-version "24") (error org-trello-error-install-msg))
 
-(require 'cl)
+(if (version< emacs-version "27") (require 'cl) (require 'cl-lib))
 
 ;; Dependency on internal Emacs libs
 (require 'org)
