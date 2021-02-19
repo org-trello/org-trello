@@ -289,7 +289,7 @@
                    (orgtrello-query-http-trello :query-map :sync :success-callback :error-callback)))))
 
 (ert-deftest test-orgtrello-query--standard-error-callback ()
-  (should (equal "org-trello - Detailed response: #s(request-response nil nil nil \"some error thrown\" nil nil nil nil nil nil nil nil nil)"
+  (should (equal "org-trello - Detailed response: #s(request-response nil nil nil \"some error thrown\" nil nil nil nil nil nil nil nil)"
                  (let ((orgtrello-log-level orgtrello-log-debug))
                    (orgtrello-query--standard-error-callback :response (make-request-response :error-thrown "some error thrown"))))))
 
