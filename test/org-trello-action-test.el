@@ -12,21 +12,10 @@
 
 * heading
 "
-                  (let ((org-file-properties))
-                    (orgtrello-action-reload-setup)
-                    (orgtrello-buffer-org-file-properties))))))
-
-(ert-deftest test-orgtrello-action-reload-setup-2 ()
-  (should (equal '(("bar" . "20") ("foo" . "10"))
-                 (orgtrello-tests-with-temp-buffer
-                  ":PROPERTIES:
-#+PROPERTY: foo 10
-#+PROPERTY: bar 20
-:END
-
-* heading
-"
-                  (let ((org-keyword-properties))
+                  ;; depending on emacs/org version, either one or the other is defined.
+                  (let* ((symbol (cond ((boundp 'org-keyword-properties) org-keyword-properties)
+                                       ((boundp 'org-file-properties) org-file-properties))))
+                    (setq symbol nil)  ;; either org-keyword-properties or org-file-properties
                     (orgtrello-action-reload-setup)
                     (orgtrello-buffer-org-file-properties))))))
 
