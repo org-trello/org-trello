@@ -39,7 +39,7 @@
 (require 'org-trello-input)
 (require 'org-trello-proxy)
 (require 'org-trello-deferred)
-(require 'dash-functional)
+(require 'dash)
 (require 's)
 
 (defun orgtrello-controller-log-success (prefix-log)

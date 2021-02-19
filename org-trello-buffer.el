@@ -35,7 +35,7 @@
 (require 'org-trello-cbx)
 (require 'org-trello-backend)
 (require 'org-trello-date)
-(require 'dash-functional)
+(require 'dash)
 
 (defun orgtrello-buffer-global-properties-region ()
   "Compute the global properties from the buffer.

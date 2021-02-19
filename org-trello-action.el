@@ -24,7 +24,7 @@
 (require 'org)
 (require 'org-trello-setup)
 (require 'org-trello-log)
-(require 'dash-functional)
+(require 'dash)
 (require 's)
 
 (defalias 'orgtrello-action-reload-setup 'org-set-regexps-and-options

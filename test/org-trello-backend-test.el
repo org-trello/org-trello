@@ -1,5 +1,5 @@
 (require 'org-trello-backend)
-(require 'dash-functional)
+(require 'dash)
 (require 'ert)
 (require 'el-mock)
 
