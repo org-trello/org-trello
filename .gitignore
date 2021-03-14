@@ -12,3 +12,5 @@
 /_site/
 /dist/
 flycheck_*.el
+/undercover.json
+/coverage-final.json
