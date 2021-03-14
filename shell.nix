@@ -1,8 +1,6 @@
-with import <nixpkgs> {};
-
 let sources = import ./nix/sources.nix;
     pkgs = import sources.nixpkgs {};
-in stdenv.mkDerivation {
+in pkgs.stdenv.mkDerivation {
   name = "org-trello-env";
   buildInputs = [
     pkgs.cask
