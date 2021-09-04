@@ -121,28 +121,20 @@ make test
 
 ## Install
 
-To test that the package, once created, can be installed (using the repository
-to fetch the dependencies).
+To test that the package, once created, activate the develop shell. That triggers.
 
 ```sh
-make install-file-with-deps-from-melpa
+make activate
+emacs -q
 ```
 
 *Note*:
-This will trigger the installation from a local package `org-trello-<VERSION>.tar`.
-The installation is used with the dependencies fetched from melpa.
+This will trigger the build of the current source in this repository, installs a
+dedicated emacs with org-trello and its dependencies. The installation is used with the
+dependencies fetched from nixpkgs.
 
-*Note 2*
-These are the targets used by the CI (cf. [.travis.yml](./.travis.yml))
-
-## Full install testing
-
-As we deploy in melpa, we can ensure that once delivered, the installation is ok
-using those targets.
-
-```sh
-make install-package-from-melpa
-```
+*Note2*:
+This requires nix and the flake options activated.
 
 ## Release
 
