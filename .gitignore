@@ -14,3 +14,4 @@
 flycheck_*.el
 /undercover.json
 /coverage-final.json
+/result
