@@ -4,7 +4,6 @@ let org-trello-emacs = pkgs.emacsWithPackages (epkgs:
       (with epkgs.melpaStablePackages; [
         s dash
         request-deferred deferred
-        pkgs.org-trello
       ]) ++ (with pkgs; [ emacs org-trello])
     );
 in pkgs.stdenv.mkDerivation {
