@@ -13,23 +13,23 @@ activate:
 pr:
 	hub pull-request -b org-trello:master
 
-deps:
-	${CASK}
-
 build:
 	${CASK} build
 
-clean-dist:
-	rm -rf dist/
+clean-cask:
+	[ -d .cask ] && rm -rf .cask/ || echo
 
-clean: clean-dist
-	rm -rf *.tar
+clean-dist:
+	[ -d dist ] && rm -rf dist/ || echo
+
+clean: clean-dist clean-cask
+	rm -rf ${ARCHIVE}
 	${CASK} clean-elc
 
 install:
-	${CASK} install
+	[ ! -d .cask ] && ${CASK} install || echo
 
-test: clean
+test: install
 	${CASK} exec ert-runner
 
 pkg-file:
