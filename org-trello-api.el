@@ -93,12 +93,20 @@ When UNDO-FLAG is set, trigger the undo computation."
   "Retrieve the memberships from a BOARD-ID."
   (orgtrello-api-make-query "GET" (format "/boards/%s/members" board-id)))
 
+(defun orgtrello-get-predefined-card-filters-for-request ()
+  (list
+   (if (not (s-blank? org-trello-mode-limit-fetch-since))
+       (cons "since" org-trello-mode-limit-fetch-since))
+   (if (not (s-blank? org-trello-mode-limit-fetch-before))
+       (cons "before" org-trello-mode-limit-fetch-before))))
+
 (defun orgtrello-api-get-cards (board-id)
   "Create a cards retrieval from the board with BOARD-ID query."
   (orgtrello-api-make-query
    "GET"
    (format "/boards/%s/cards" board-id)
-   '(("actions" .  "commentCard")
+   `(("actions" .  "commentCard")
+     ,@(orgtrello-get-predefined-card-filters-for-request)
      ("fields" .
       "closed,desc,due,idBoard,idChecklists,idList,idMembers,name,pos"))))
 
@@ -107,9 +115,10 @@ When UNDO-FLAG is set, trigger the undo computation."
   (orgtrello-api-make-query
    "GET"
    (format "/boards/%s/cards" board-id)
-   '(("actions" .  "commentCard")
+   `(("actions" .  "commentCard")
      ("checklists" . "all")
      ;;("checkItemStates" . "true")
+     ,@(orgtrello-get-predefined-card-filters-for-request)
      ("filter" . "open")
      ("fields" .
       "closed,desc,due,idBoard,idList,idMembers,labels,name,pos"))))
@@ -119,7 +128,8 @@ When UNDO-FLAG is set, trigger the undo computation."
   (orgtrello-api-make-query
    "GET"
    (format "/boards/%s/cards" board-id)
-   '(("filter" . "closed")
+   `(("filter" . "closed")
+     ,@(orgtrello-get-predefined-card-filters-for-request)
      ("fields" .
       "closed,desc,due,idBoard,idList,idMembers,labels,name,pos"))))
 
