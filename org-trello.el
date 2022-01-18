@@ -538,6 +538,16 @@ opens new issue in org-trello's github tracker."
   :type 'hook
   :group 'org-trello)
 
+(defcustom org-trello-mode-limit-fetch-since ""
+  "During sync from trello to org fetch only cards created since given date in ISO ISO 8601 format."
+  :type 'string
+  :group 'org-trello)
+
+(defcustom org-trello-mode-limit-fetch-before ""
+  "During sync from trello to org fetch only cards created before given date in ISO ISO 8601 format."
+  :type 'string
+  :group 'org-trello)
+
 (defvar org-trello-mode-on-hook)
 (setq org-trello-mode-on-hook nil) ;; for dev
 (add-hook 'org-trello-mode-on-hook 'orgtrello-controller-mode-on-hook-fn)
